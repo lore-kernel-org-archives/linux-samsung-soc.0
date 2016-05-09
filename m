@@ -1,38 +1,38 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v2 15/22] ARM: dts: exynos: Use phandle to get parent node
- in exynos5250-snow
-Date: Mon, 9 May 2016 17:29:48 -0400
-Message-ID: <a978eba1-5dc9-0b20-d131-b180047cc143@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 16/22] ARM: dts: exynos: Move Exynos5250 and Exynos5420
+ nodes under soc
+Date: Mon, 9 May 2016 17:35:03 -0400
+Message-ID: <4d0516dc-bed4-8017-374b-bd197a64026f@osg.samsung.com>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <1462734367-5619-16-git-send-email-krzk@kernel.org>
+ <1462734367-5619-17-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462734367-5619-16-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1462734367-5619-17-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Krzysztof,
 
 On 05/08/2016 03:06 PM, Krzysztof Kozlowski wrote:
-> The i2c-arbitrator node in exynos5250-snow-common used absolute path to
-> reference other node (the i2c parent). Use phandle instead, because the
-> depth of the other node may be changed (like moving it under 'soc'
-> node).
+> The conventions it to put SoC devices under 'soc' node. In fact other
+
+s/it/is
+
+> our DTSes (like exynos3250.dtsi or exynos5410.dtsi) already follows it.
+> Adjust exynos5250 and exynos5420 DTSI to follow this convention. This is
+> also necessary for the upcoming change in exynos5410.dtsi to inherit
+> from common exynos5.dtsi.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
