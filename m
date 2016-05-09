@@ -1,102 +1,187 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v5 1/5] drm: add generic zpos property
-Date: Mon, 9 May 2016 12:21:19 +0200
-Message-ID: <5730649F.4000403@math.uni-bielefeld.de>
-References: <1453905883-6807-1-git-send-email-m.szyprowski@samsung.com>
- <1453905883-6807-2-git-send-email-m.szyprowski@samsung.com>
- <20160229151219.GW15993@intel.com>
- <CA+M3ks4cg3T_q9Ug1_Uc4yrZKsK97rK+QA0FijDUnUKCMkpcAg@mail.gmail.com>
- <CA+M3ks5UCaFu2qGWQk-xbvrnVf88m-vgBX8vZ4Rbsz1ypY-jyA@mail.gmail.com>
- <20160509090522.GW27098@phenom.ffwll.local>
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [PATCH 3/6] drm/exynos/hdmi: expose HDMI-PHY clock as pipeline clock
+Date: Mon, 9 May 2016 22:25:50 +0900
+Message-ID: <CAAQKjZP9KXz0bNaPnPTHq-CtetrmbmasD9-SEg82FcwZFEZ_1Q@mail.gmail.com>
+References: <1458739562-32327-1-git-send-email-a.hajda@samsung.com>
+ <1458739562-32327-4-git-send-email-a.hajda@samsung.com> <5729C64A.3020708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160509090522.GW27098@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:34972 "EHLO
+	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751282AbcEIN0b (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 May 2016 09:26:31 -0400
+Received: by mail-yw0-f193.google.com with SMTP id v81so23489760ywa.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 May 2016 06:26:31 -0700 (PDT)
+In-Reply-To: <5729C64A.3020708@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-SGVsbG8sCgpqdXN0IHZvaWNpbmcgbXkgaW50ZXJlc3QgaW4gaGF2aW5nIHRoaXMgZmVhdHVyZSBp
-biBEUk0gY29yZS4KCi0gVG9iaWFzCgoKRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBNb24sIE1h
-eSAwOSwgMjAxNiBhdCAxMDo0Mjo0NUFNICswMjAwLCBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToK
-Pj4gSGVsbG8sCj4+Cj4+IEkgbGl0dGxlIHVwIGluIHRoaXMgdG9waWMuCj4+IElmIGdlbmVyaWMg
-ei1vcmRlciBwYXRjaGVzIGNhbid0IGxhbmQgaW50byBkcm0gY29yZSwKPj4gSSB3aWxsZSBoYXZl
-IHRvIHJlc2VuZCB0aGUgcGF0Y2ggdG8gZW5hYmxlIGl0IHdpdGhpbiBTVEkgZHJpdmVyOgo+PiBo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNi1KYW51
-YXJ5LzA5ODE0MC5odG1sCj4gCj4gSXQncyB0aGUgcGF0Y2ggYXV0aG9yJ3MgZHV0eSB0byBwaW5n
-IGZvbGtzIGZvciByZXZpZXdzIHRvIG1vdmUgYSBwYXRjaAo+IGZvcndhcmQuIFRoYXQgZG9lc24n
-dCBoYXBwZW4gYXV0b21hdGljYWxseS4KPiAKPiBJdCBoZWxwcyB0aG91Z2ggaWYgeW91IGNjIGV2
-ZXJ5b25lIHdobyBjb21tZW50ZWQgb24gZWFybGllciBpdGVyYXRpb25zIChJCj4gcHJlZmVyIENj
-OiBsaW5lcyBpbiB0aGUgY29tbWl0IG1lc3NhZ2UpLiBWaWxsZSBzZWVtcyB0byBoYXZlIG5vdCBi
-ZWVuCj4gYWRkZWQgZm9yIHRoaXMgb25lIGhlcmUuCj4gCj4gQWxzbyB0aGVyZSdzIGEgbWV0cmlj
-IHBpbGUgb2YgZHJpdmVyIHBhdGNoZXMgdGhhdCBmbG9hdGVkIGFyb3VuZCB0bwo+IGNvbnZlcnQg
-dGhlbSBvdmVyIHRvIGNvcmUgenBvcy4gQ2FuIHlvdSBwbHMgcGljayB0aG9zZSB1cCB0b28/Cj4g
-Cj4gSSBkZWZpbml0ZWx5IHdhbnQgdG8gbGFuZCB0aGlzIGluIGRybSBjb3JlLCBzbyBub3QgZ29p
-bmcgdG8gdGFrZSBhCj4gcmFnZXF1aXRlLUknbGwtZG8taXQtaW4tbXktZHJpdmVyIGZvciBhbiBh
-bnN3ZXIgOy0pCj4gCj4gVGhhbmtzLCBEYW5pZWwKPiAKPj4KPj4gUmVnYXJkcywKPj4gQmVuamFt
-aW4KPj4KPj4gMjAxNi0wNC0wMSAxNDo0OCBHTVQrMDI6MDAgQmVuamFtaW4gR2FpZ25hcmQgPGJl
-bmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+Ogo+Pj4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQg
-Zm9yIGdlbmVyaWMgcGxhbmUncyB6cG9zIHByb3BlcnR5IHByb3BlcnR5IHdpdGgKPj4+IHdlbGwt
-ZGVmaW5lZCBzZW1hbnRpY3M6Cj4+PiAtIGFkZGVkIHpwb3MgcHJvcGVydGllcyB0byBwbGFuZSBh
-bmQgcGxhbmUgc3RhdGUgc3RydWN0dXJlcwo+Pj4gLSBhZGRlZCBoZWxwZXJzIGZvciBub3JtYWxp
-emluZyB6cG9zIHByb3BlcnRpZXMgb2YgZ2l2ZW4gc2V0IG9mIHBsYW5lcwo+Pj4gLSB3ZWxsIGRl
-ZmluZWQgc2VtYW50aWNzOiBwbGFuZXMgYXJlIHNvcnRlZCBieSB6cG9zIHZhbHVlcyBhbmQgdGhl
-biBwbGFuZQo+Pj4gICBpZCB2YWx1ZSBpZiB6cG9zIGVxdWFscwo+Pj4KPj4+IE5vcm1hbGl6ZWQg
-enBvcyB2YWx1ZXMgYXJlIGNhbGN1bGF0ZWQgYXV0b21hdGljYWxseSB3aGVuIGdlbmVyaWMKPj4+
-IG11dHRhYmxlIHpwb3MgcHJvcGVydHkgaGFzIGJlZW4gaW5pdGlhbGl6ZWQuIERyaXZlcnMgY2Fu
-IHNpbXBseSB1c2UKPj4+IHBsYW5lX3N0YXRlLT5ub3JtYWxpemVkX3pwb3MgaW4gdGhlaXIgYXRv
-bWljX2NoZWNrIGFuZC9vciBwbGFuZV91cGRhdGUKPj4+IGNhbGxiYWNrcyB3aXRob3V0IGFueSBh
-ZGRpdGlvbmFsIGNhbGxzIHRvIERSTSBjb3JlLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IE1hcmVr
-IFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPj4+Cj4+PiBDb21wYXJlIHRv
-IE1hcmVrJ3Mgb3JpZ2luYWwgcGF0Y2ggenBvcyBwcm9wZXJ0eSBpcyBub3cgc3BlY2lmaWMgdG8g
-ZWFjaAo+Pj4gcGxhbmUgYW5kIG5vIG1vcmUgdG8gdGhlIGNvcmUuCj4+PiBOb3JtYWxpemUgZnVu
-Y3Rpb24gdGFrZSBjYXJlIG9mIHRoZSByYW5nZSBvZiBwZXIgcGxhbmUgZGVmaW5lZCByYW5nZQo+
-Pj4gYmVmb3JlIHNldCBub3JtYWxpemVkX3pwb3MuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogQmVu
-amFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQGxpbmFyby5vcmc+Cj4+PiAtLS0KPj4+
-ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwgICAgICB8ICAxMCArKwo+Pj4gIGRyaXZl
-cnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgIHwgICAyICstCj4+PiAgZHJpdmVycy9ncHUv
-ZHJtL2RybV9hdG9taWNfaGVscGVyLmMgfCAgIDYgKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1f
-YmxlbmQuYyAgICAgICAgIHwgMjgzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oIHwgICAzICsKPj4+ICBp
-bmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICB8ICAyNSArKysrCj4+PiAgNiBmaWxl
-cyBjaGFuZ2VkLCAzMjggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Pj4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPj4+Cj4+PiBkaWZmIC0tZ2l0
-IGEvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsIGIvRG9jdW1lbnRhdGlvbi9Eb2NCb29r
-L2dwdS50bXBsCj4+PiBpbmRleCAxNjkyYzRkLi5iN2E1MTYxIDEwMDY0NAo+Pj4gLS0tIGEvRG9j
-dW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsCj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL0RvY0Jv
-b2svZ3B1LnRtcGwKPj4+IEBAIC0yMTQ3LDYgKzIxNDcsMTYgQEAgdm9pZCBpbnRlbF9jcnRfaW5p
-dChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+Pj4gICB0aGUgdW5kZXJseWluZyBoYXJkd2FyZSku
-PC90ZD4KPj4+ICAgPC90cj4KPj4+ICAgPHRyPgo+Pj4gKyA8dGQgdmFsaWduPSJ0b3AiID4gInpw
-b3MiIDwvdGQ+Cj4+PiArIDx0ZCB2YWxpZ249InRvcCIgPlJBTkdFPC90ZD4KPj4+ICsgPHRkIHZh
-bGlnbj0idG9wIiA+TWluPSBkcml2ZXIgZGVwZW5kZW50LCBNYXg9IGRyaXZlciBkZXBlbmRlbnQ8
-L3RkPgo+Pj4gKyA8dGQgdmFsaWduPSJ0b3AiID5QbGFuZTwvdGQ+Cj4+PiArIDx0ZCB2YWxpZ249
-InRvcCIgPlBsYW5lJ3MgJ3onIHBvc2l0aW9uIGR1cmluZyBibGVuZGluZyBvcGVyYXRpb24gKDAK
-Pj4+IGZvciBiYWNrZ3JvdW5kLCBoaWdoZXN0IGZvciBmcm9udG1vc3QpLgo+Pj4gKyBJZiB0d28g
-cGxhbmVzIGFzc2lnbmVkIHRvIHNhbWUgQ1JUQyBoYXZlIGVxdWFsIHpwb3MgdmFsdWVzLCB0aGUK
-Pj4+IHBsYW5lIHdpdGggaGlnaGVyIHBsYW5lCj4+PiArIGlkIGlzIHRyZWF0ZWQgYXMgY2xvc2Vy
-IHRvIGZyb250LiBDYW4gYmUgSU1NVVRBQkxFIGlmIGRyaXZlciBkb2Vzbid0Cj4+PiBzdXBwb3J0
-IGNoYW5naW5nCj4+PiArIHBsYW5lcycgb3JkZXIuIEV4YWN0IHZhbHVlIHJhbmdlIGlzIGRyaXZl
-ciBkZXBlbmRlbnQuPC90ZD4KPj4+ICsgPC90cj4KPj4+ICsgPHRyPgo+Pj4gICA8dGQgcm93c3Bh
-bj0iMjAiIHZhbGlnbj0idG9wIiA+aTkxNTwvdGQ+Cj4+PiAgIDx0ZCByb3dzcGFuPSIyIiB2YWxp
-Z249InRvcCIgPkdlbmVyaWM8L3RkPgo+Pj4gICA8dGQgdmFsaWduPSJ0b3AiID4iQnJvYWRjYXN0
-IFJHQiI8L3RkPgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSBiL2Ry
-aXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+Pj4gaW5kZXggNmViOTRmYy4uMThkYzU2MyAxMDA2NDQK
-Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+Pj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL01ha2VmaWxlCj4+PiBAQCAtMiw3ICsyLDcgQEAKPj4+ICAjIE1ha2VmaWxlIGZvciB0aGUg
-ZHJtIGRldmljZSBkcml2ZXIuICBUaGlzIGRyaXZlciBwcm92aWRlcyBzdXBwb3J0IGZvciB0aGUK
-Pj4KPj4KPj4KPj4gLS0gCj4+IEJlbmphbWluIEdhaWduYXJkCj4+Cj4+IEdyYXBoaWMgV29ya2lu
-ZyBHcm91cAo+Pgo+PiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJN
-IFNvQ3MKPj4KPj4gRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwo+IAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Andrzej,
+
+
+
+2016-05-04 18:52 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> Hi Inki,
+>
+> It looks like this patch felt through the cracks.
+> It is a part of "drm/exynos: add pipeline clock support" patchset.
+
+Ah, sorry.
+
+> Other patches from the patchset were taken already.
+> Could you queue it to next pull request?
+>
+
+Got it.
+
+Thanks,
+Inki Dae
+
+> Regards
+> Andrzej
+>
+> On 03/23/2016 02:25 PM, Andrzej Hajda wrote:
+>> HDMI-PHY clock should be accessible from other components in the pipeline.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c | 67 ++++++++++++++++++++++++++----------
+>>  1 file changed, 48 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> index 49a5902..0d1c2f0 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -146,6 +146,7 @@ struct hdmi_context {
+>>       struct clk                      **clk_muxes;
+>>       struct regulator_bulk_data      regul_bulk[ARRAY_SIZE(supply)];
+>>       struct regulator                *reg_hdmi_en;
+>> +     struct exynos_drm_clk           phy_clk;
+>>  };
+>>
+>>  static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+>> @@ -1448,7 +1449,6 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+>>
+>>  static void hdmi_conf_apply(struct hdmi_context *hdata)
+>>  {
+>> -     hdmiphy_conf_apply(hdata);
+>>       hdmi_start(hdata, false);
+>>       hdmi_conf_init(hdata);
+>>       hdmi_audio_init(hdata);
+>> @@ -1481,10 +1481,8 @@ static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
+>>                          SYSREG_HDMI_REFCLK_INT_CLK, on ? ~0 : 0);
+>>  }
+>>
+>> -static void hdmi_enable(struct drm_encoder *encoder)
+>> +static void hdmiphy_enable(struct hdmi_context *hdata)
+>>  {
+>> -     struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+>> -
+>>       if (hdata->powered)
+>>               return;
+>>
+>> @@ -1500,11 +1498,40 @@ static void hdmi_enable(struct drm_encoder *encoder)
+>>
+>>       hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0, HDMI_PHY_POWER_OFF_EN);
+>>
+>> -     hdmi_conf_apply(hdata);
+>> +     hdmiphy_conf_apply(hdata);
+>>
+>>       hdata->powered = true;
+>>  }
+>>
+>> +static void hdmiphy_disable(struct hdmi_context *hdata)
+>> +{
+>> +     if (!hdata->powered)
+>> +             return;
+>> +
+>> +     hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+>> +
+>> +     hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
+>> +
+>> +     hdmi_set_refclk(hdata, false);
+>> +
+>> +     regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>> +                     PMU_HDMI_PHY_ENABLE_BIT, 0);
+>> +
+>> +     regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
+>> +
+>> +     pm_runtime_put_sync(hdata->dev);
+>> +
+>> +     hdata->powered = false;
+>> +}
+>> +
+>> +static void hdmi_enable(struct drm_encoder *encoder)
+>> +{
+>> +     struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+>> +
+>> +     hdmiphy_enable(hdata);
+>> +     hdmi_conf_apply(hdata);
+>> +}
+>> +
+>>  static void hdmi_disable(struct drm_encoder *encoder)
+>>  {
+>>       struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+>> @@ -1528,22 +1555,9 @@ static void hdmi_disable(struct drm_encoder *encoder)
+>>       if (funcs && funcs->disable)
+>>               (*funcs->disable)(crtc);
+>>
+>> -     hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
+>> -
+>>       cancel_delayed_work(&hdata->hotplug_work);
+>>
+>> -     hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0, HDMI_PHY_POWER_OFF_EN);
+>> -
+>> -     hdmi_set_refclk(hdata, false);
+>> -
+>> -     regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>> -                     PMU_HDMI_PHY_ENABLE_BIT, 0);
+>> -
+>> -     regulator_bulk_disable(ARRAY_SIZE(supply), hdata->regul_bulk);
+>> -
+>> -     pm_runtime_put_sync(hdata->dev);
+>> -
+>> -     hdata->powered = false;
+>> +     hdmiphy_disable(hdata);
+>>  }
+>>
+>>  static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+>> @@ -1627,6 +1641,17 @@ static int hdmi_clk_init(struct hdmi_context *hdata)
+>>       return hdmi_clks_get(hdata, &drv_data->clk_muxes, hdata->clk_muxes);
+>>  }
+>>
+>> +static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
+>> +{
+>> +     struct hdmi_context *hdata = container_of(clk, struct hdmi_context,
+>> +                                               phy_clk);
+>> +
+>> +     if (enable)
+>> +             hdmiphy_enable(hdata);
+>> +     else
+>> +             hdmiphy_disable(hdata);
+>> +}
+>> +
+>>  static int hdmi_resources_init(struct hdmi_context *hdata)
+>>  {
+>>       struct device *dev = hdata->dev;
+>> @@ -1710,6 +1735,10 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+>>       if (pipe < 0)
+>>               return pipe;
+>>
+>> +     hdata->phy_clk.enable = hdmiphy_clk_enable;
+>> +
+>> +     exynos_drm_crtc_from_pipe(drm_dev, pipe)->pipe_clk = &hdata->phy_clk;
+>> +
+>>       encoder->possible_crtcs = 1 << pipe;
+>>
+>>       DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
