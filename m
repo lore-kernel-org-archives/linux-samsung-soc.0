@@ -1,35 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM: dts: exynos: Devfreq for v4.7
-Date: Tue, 10 May 2016 16:18:20 +0200
-Message-ID: <4199175.Sym2be3WAj@wuerfel>
-References: <1462367136-28627-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1462367136-28627-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, myungjoo.ham@samsung.com, cw00.choi@samsung.com, linux-pm@vger.kernel.org, rjw@rjwysocki.net
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] soc: samsung: pm_domains: Enable COMPILE_TEST for build
+ coverage
+Date: Tue, 10 May 2016 16:31:26 +0200
+Message-ID: <1462890686-8843-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 04 May 2016 15:05:36 Krzysztof Kozlowski wrote:
-> Topic branch for Device Tree changes adding new generic devfreq driver, for
-> v4.7:
-> 1. Add bus nodes for Exynos3250, Exynos4x12, Exynos4210 and Exynos542x.
-> 2. Split out common PPMU (Performance Monitoring Unit) nodes into separate
->    DTSI. The PPMU provides performance data for devfreq.
-> 3. Add NoCP (Network on Chip Probe) node for Exynos542x. On this SoC, like PPMU
->    on older designs, provides performance data for devfreq.
-> 4. Enable DFVS (Dynamic Voltage and Frequency Scaling) on boards:
->    - Exynos3250 Rinato,
->    - Exynos4412 Odroid-X/X2/U3 and Trats2,
->    - Exynos5422 Odroid XU3/XU3-Lite/XU4.
-> 
-> 
+Introduce a platform selectable symbol EXYNOS_PM_DOMAINS which can be
+also toggled on by COMPILE_TEST for some build coverage.
 
-Merged into next/late now, so we can track the clk dependency more easily.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig | 1 +
+ drivers/soc/samsung/Kconfig  | 4 ++++
+ drivers/soc/samsung/Makefile | 2 +-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-Thanks,
-
-	Arnd
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e65aa7d11b20..58b334f5f1d6 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -19,6 +19,7 @@ menuconfig ARCH_EXYNOS
+ 	select EXYNOS_THERMAL
+ 	select EXYNOS_PMU
+ 	select EXYNOS_SROM
++	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index d7fc123006a3..245533907d1b 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -10,4 +10,8 @@ config EXYNOS_PMU
+ 	bool "Exynos PMU controller driver" if COMPILE_TEST
+ 	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+ 
++config EXYNOS_PM_DOMAINS
++	bool "Exynos PM domains" if COMPILE_TEST
++	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
++
+ endif
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 8acba2bbbd78..e60f173c503a 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -1,3 +1,3 @@
+-obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
++obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+ 					exynos5250-pmu.o exynos5420-pmu.o
+-- 
+1.9.1
