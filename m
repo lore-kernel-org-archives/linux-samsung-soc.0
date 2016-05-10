@@ -1,55 +1,41 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v6 7/9] extcon: max8997: Fix inconsistent indenting
-Date: Tue, 10 May 2016 10:24:28 +0900
-Message-ID: <5731384C.6000209@samsung.com>
-References: <1462519289-2356-2-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-1-git-send-email-k.kozlowski@samsung.com>
- <1462519636-3250-6-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid
+ XU
+Date: Tue, 10 May 2016 07:13:52 +0200
+Message-ID: <57316E10.2030300@kernel.org>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1462519636-3250-6-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: r.baldyga-anjuHVi6/WSaMJb+Lgu22Q@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:30534 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750934AbcEJFN6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 May 2016 01:13:58 -0400
+In-reply-to: <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+On 05/10/2016 12:05 AM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+>>
+>> Hi,
+>>
+>> Patchset adds necessary clocks, reorganizes existing stuff and finally
+>> adds Odroid XU support.
+>>
+> 
+> Do you have a branch available so I can pull these patches and test in
+> the Exynos5 boards I've access to?
 
-On 2016=EB=85=84 05=EC=9B=94 06=EC=9D=BC 16:27, Krzysztof Kozlowski wro=
-te:
-> Fix smatch warning:
-> 	max8997_muic_probe() warn: inconsistent indenting
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/extcon/extcon-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-=
-max8997.c
-> index 0afa3e8b5dc3..cf8de5be2405 100644
-> --- a/drivers/extcon/extcon-max8997.c
-> +++ b/drivers/extcon/extcon-max8997.c
-> @@ -737,7 +737,7 @@ static int max8997_muic_probe(struct platform_dev=
-ice *pdev)
->  	}
-> =20
->  	/* Set initial path for UART */
-> -	 max8997_muic_set_path(info, info->path_uart, true);
-> +	max8997_muic_set_path(info, info->path_uart, true);
-> =20
->  	/* Set ADC debounce time */
->  	max8997_muic_set_debounce_time(info, ADC_DEBOUNCE_TIME_25MS);
->=20
+Of course. It sits on my private repo, on Github:
+https://github.com/krzk/linux
+branch: for-next/odroid-xu-v2
 
-Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Thanks,
-Chanwoo Choi
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
