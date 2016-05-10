@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 22/27] ARM: dts: exynos: Add initial support for Odroid XU board
-Date: Tue, 10 May 2016 22:09:25 +0200
-Message-ID: <1462910970-1812-23-git-send-email-krzk@kernel.org>
+Subject: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
+Date: Tue, 10 May 2016 22:09:30 +0200
+Message-ID: <1462910970-1812-28-git-send-email-krzk@kernel.org>
 References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
@@ -10,178 +10,104 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-from Samsung: the Exynos5410. Comparing the board to more popular now
-Odroid XU3, the differences are:
-1. Exynos5410 instead of 5422,
-2. MIPI DSI LCD connector,
-3. Main PMIC: Maxim 77802 instead of S2MPS11,
-4. USB3503+LAN9730 instead of integrated LAN9514,
-5. eMMC 4.5 instead of eMMC 5.0,
-
-This patch adds initial support for the XU board with working basic
-functions, eMMC/SD and USB (including attached ethernet adapter).
+Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
+This still does not enable them on the board level though.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos5410-odroidxu.dts          | 121 +++++++++++++++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index f5deace2b380..0ea7f14ef294 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -47,6 +47,7 @@ Required root node properties:
- 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
- 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
- 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
- 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
- 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
- 					 Odroid XU3 Lite board.
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5aeb10674370..9ed1c7abedb1 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-snow-rev5.dtb \
- 	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
-+	exynos5410-odroidxu.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-new file mode 100644
-index 000000000000..44ba00a6636f
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -0,0 +1,121 @@
-+/*
-+ * Hardkernel Odroid XU board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index dd4d6d752865..ae64cb0a8efd 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -114,6 +114,9 @@
+ 			status = "disabled";
+ 		};
+ 
++		/* i2c_0-3 are defined in exynos5.dtsi */
++		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
 +
-+/dts-v1/;
-+#include "exynos5410.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "exynos54xx-odroidxu-leds.dtsi"
-+
-+/ {
-+	model = "Hardkernel Odroid XU";
-+	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
-+
-+	memory {
-+		reg = <0x40000000 0x7ea00000>;
-+	};
-+
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
-+
-+	emmc_pwrseq: pwrseq {
-+		pinctrl-0 = <&emmc_nrst_pin>;
-+		pinctrl-names = "default";
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	samsung,read-strobe-delay = <90>;
+ 		pinctrl_0: pinctrl@13400000 {
+ 			compatible = "samsung,exynos5410-pinctrl";
+ 			reg = <0x13400000 0x1000>;
+@@ -146,6 +149,62 @@
+ 	};
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
++	pinctrl-0 = <&i2c0_bus>;
 +};
 +
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
++	pinctrl-0 = <&i2c1_bus>;
 +};
 +
-+&pinctrl_0 {
-+	emmc_nrst_pin: emmc-nrst {
-+		samsung,pins = "gpd1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
 +};
 +
-+&serial_0 {
-+	status = "okay";
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
 +};
 +
-+&serial_1 {
-+	status = "okay";
++&hsi2c_4 {
++	clocks = <&clock CLK_USI0>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c4_hs_bus>;
 +};
 +
-+&serial_2 {
-+	status = "okay";
++&hsi2c_5 {
++	clocks = <&clock CLK_USI1>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c5_hs_bus>;
 +};
 +
-+&serial_3 {
-+	status = "okay";
++&hsi2c_6 {
++	clocks = <&clock CLK_USI2>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_hs_bus>;
 +};
 +
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
++&hsi2c_7 {
++	clocks = <&clock CLK_USI3>;
++	clock-names = "hsi2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c7_hs_bus>;
 +};
 +
-+&usbdrd_dwc3_1 {
-+	dr_mode = "peripheral";
+ &mct {
+ 	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 	clock-names = "fin_pll", "mct";
+@@ -156,6 +215,13 @@
+ 	clock-names = "timers";
+ };
+ 
++&rtc {
++	clocks = <&clock CLK_RTC>;
++	clock-names = "rtc";
++	interrupt-parent = <&pmu_system_controller>;
++	status = "disabled";
 +};
++
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
 -- 
 2.5.0
