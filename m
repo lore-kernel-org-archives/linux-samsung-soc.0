@@ -1,127 +1,55 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] soc: samsung: pm_domains: Prepare for supporting ARMv8
- Exynos
-Date: Tue, 10 May 2016 15:52:21 +0200
-Message-ID: <1462888341-21963-2-git-send-email-k.kozlowski@samsung.com>
-References: <1462888341-21963-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1462888341-21963-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid
+ XU
+Date: Tue, 10 May 2016 10:00:05 -0400
+Message-ID: <671c34fa-fbb7-4499-8dbd-87957cd49e15@osg.samsung.com>
+References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
+ <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
+ <57316E10.2030300@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:40526 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751380AbcEJOAQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 May 2016 10:00:16 -0400
+In-Reply-To: <57316E10.2030300@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-The ARMv8 Exynos family (Exynos5433 and Exynos7420) uses different value
-(0xf instead of 0x7) for controlling the power domain on/off registers
-(both for control and for status).
+Hello Krzysztof,
 
-Choose the value depending on the compatible. This prepares the driver
-for supporting ARMv8 SoCs.
+On 05/10/2016 01:13 AM, Krzysztof Kozlowski wrote:
+> On 05/10/2016 12:05 AM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
+>>
+>> On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+>>>
+>>> Hi,
+>>>
+>>> Patchset adds necessary clocks, reorganizes existing stuff and finally
+>>> adds Odroid XU support.
+>>>
+>>
+>> Do you have a branch available so I can pull these patches and test in
+>> the Exynos5 boards I've access to?
+> 
+> Of course. It sits on my private repo, on Github:
+> https://github.com/krzk/linux
+> branch: for-next/odroid-xu-v2
+>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/soc/samsung/pm_domains.c | 34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
+Thanks for the information, I'll give a try today.
+ 
+> Best regards,
+> Krzysztof
+> 
 
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index 875a2bab64f6..f60515eefb66 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -23,9 +23,13 @@
- #include <linux/of_platform.h>
- #include <linux/sched.h>
- 
--#define INT_LOCAL_PWR_EN	0x7
- #define MAX_CLK_PER_DOMAIN	4
- 
-+struct exynos_pm_domain_config {
-+	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
-+	u32 local_pwr_cfg;
-+};
-+
- /*
-  * Exynos specific wrapper around the generic power domain
-  */
-@@ -38,6 +42,7 @@ struct exynos_pm_domain {
- 	struct clk *clk[MAX_CLK_PER_DOMAIN];
- 	struct clk *pclk[MAX_CLK_PER_DOMAIN];
- 	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
-+	u32 local_pwr_cfg;
- };
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-@@ -69,13 +74,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		}
- 	}
- 
--	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
-+	pwr = power_on ? pd->local_pwr_cfg : 0;
- 	__raw_writel(pwr, base);
- 
- 	/* Wait max 1ms */
- 	timeout = 10;
- 
--	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN) != pwr) {
-+	while ((__raw_readl(base + 0x4) & pd->local_pwr_cfg) != pwr) {
- 		if (!timeout) {
- 			op = (power_on) ? "enable" : "disable";
- 			pr_err("Power domain %s %s failed\n", domain->name, op);
-@@ -119,14 +124,30 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	return exynos_pd_power(domain, false);
- }
- 
-+static const struct exynos_pm_domain_config exynos4210_cfg __initconst = {
-+	.local_pwr_cfg		= 0x7,
-+};
-+
-+static const struct of_device_id exynos_pm_domain_of_match[] __initconst = {
-+	{
-+		.compatible = "samsung,exynos4210-pd",
-+		.data = &exynos4210_cfg,
-+	},
-+	{ },
-+};
-+
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct device_node *np;
-+	const struct of_device_id *match;
- 
--	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
-+		const struct exynos_pm_domain_config *pm_domain_cfg;
- 		struct exynos_pm_domain *pd;
- 		int on, i;
- 
-+		pm_domain_cfg = match->data;
-+
- 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
- 		if (!pd) {
- 			pr_err("%s: failed to allocate memory for domain\n",
-@@ -153,6 +174,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
-+		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			char clk_name[8];
-@@ -185,14 +207,14 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
- 
- no_clk:
--		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
-+		on = __raw_readl(pd->base + 0x4) & pd->local_pwr_cfg;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 		of_genpd_add_provider_simple(np, &pd->pd);
- 	}
- 
- 	/* Assign the child power domains to their parents */
--	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+	for_each_matching_node(np, exynos_pm_domain_of_match) {
- 		struct generic_pm_domain *child_domain, *parent_domain;
- 		struct of_phandle_args args;
- 
+Best regards,
 -- 
-1.9.1
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
