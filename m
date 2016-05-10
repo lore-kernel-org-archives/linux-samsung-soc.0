@@ -1,57 +1,93 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] soc: samsung: pm_domains: Enable COMPILE_TEST for build
- coverage
-Date: Tue, 10 May 2016 16:31:26 +0200
-Message-ID: <1462890686-8843-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARM: dts: exynos: Replace deprecated hsi2c compatible on Exynos5420
+Date: Tue, 10 May 2016 20:29:30 +0200
+Message-ID: <1462904970-31526-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:35010 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751602AbcEJS3x (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 May 2016 14:29:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 
-Introduce a platform selectable symbol EXYNOS_PM_DOMAINS which can be
-also toggled on by COMPILE_TEST for some build coverage.
+Since commit 218e1496135e ("i2c: exynos5: add support for HSI2C on
+Exynos5260 SoC") the "samsung,exynos5-hsi2c" is deprecated in favor of
+SoC version specific: "samsung,exynos5250-hsi2c".
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/mach-exynos/Kconfig | 1 +
- drivers/soc/samsung/Kconfig  | 4 ++++
- drivers/soc/samsung/Makefile | 2 +-
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index e65aa7d11b20..58b334f5f1d6 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -19,6 +19,7 @@ menuconfig ARCH_EXYNOS
- 	select EXYNOS_THERMAL
- 	select EXYNOS_PMU
- 	select EXYNOS_SROM
-+	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index d7fc123006a3..245533907d1b 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -10,4 +10,8 @@ config EXYNOS_PMU
- 	bool "Exynos PMU controller driver" if COMPILE_TEST
- 	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 4c8523471c65..549ebf23fee0 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -645,7 +645,7 @@
+ 	};
  
-+config EXYNOS_PM_DOMAINS
-+	bool "Exynos PM domains" if COMPILE_TEST
-+	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
-+
- endif
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index 8acba2bbbd78..e60f173c503a 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -1,3 +1,3 @@
--obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
-+obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
- obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o
+ 	hsi2c_4: i2c@12CA0000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CA0000 0x1000>;
+ 		interrupts = <0 60 0>;
+ 		#address-cells = <1>;
+@@ -658,7 +658,7 @@
+ 	};
+ 
+ 	hsi2c_5: i2c@12CB0000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CB0000 0x1000>;
+ 		interrupts = <0 61 0>;
+ 		#address-cells = <1>;
+@@ -671,7 +671,7 @@
+ 	};
+ 
+ 	hsi2c_6: i2c@12CC0000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CC0000 0x1000>;
+ 		interrupts = <0 62 0>;
+ 		#address-cells = <1>;
+@@ -684,7 +684,7 @@
+ 	};
+ 
+ 	hsi2c_7: i2c@12CD0000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CD0000 0x1000>;
+ 		interrupts = <0 63 0>;
+ 		#address-cells = <1>;
+@@ -697,7 +697,7 @@
+ 	};
+ 
+ 	hsi2c_8: i2c@12E00000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12E00000 0x1000>;
+ 		interrupts = <0 87 0>;
+ 		#address-cells = <1>;
+@@ -710,7 +710,7 @@
+ 	};
+ 
+ 	hsi2c_9: i2c@12E10000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12E10000 0x1000>;
+ 		interrupts = <0 88 0>;
+ 		#address-cells = <1>;
+@@ -723,7 +723,7 @@
+ 	};
+ 
+ 	hsi2c_10: i2c@12E20000 {
+-		compatible = "samsung,exynos5-hsi2c";
++		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12E20000 0x1000>;
+ 		interrupts = <0 203 0>;
+ 		#address-cells = <1>;
 -- 
-1.9.1
+2.5.0
