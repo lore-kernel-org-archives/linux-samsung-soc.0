@@ -1,107 +1,126 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
- with CPU thermal nodes
-Date: Wed, 11 May 2016 01:15:33 +0530
-Message-ID: <CANAwSgQGhrBca7=Ow8+Hh9t0W9HWp=F43KR0Frfpx9fGngPSaw@mail.gmail.com>
-References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
- <CANAwSgT9SY3kj8+beMpc1xGoC=rMBSya+2v2dyZQp6ykH+V0=g@mail.gmail.com>
- <573198BE.6020900@samsung.com> <CANAwSgTy6p9AVmmOWATpSO1JqVbwE0v+y_y-RLd+32RnNJTA+Q@mail.gmail.com>
- <5731D764.8070007@samsung.com> <CANAwSgRsjdQh6ygT__5XcH8-cF9Ch+zbk8oupebwYzY1kCZu6g@mail.gmail.com>
- <5731EA1B.4070201@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5731EA1B.4070201-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid XU
+Date: Tue, 10 May 2016 22:09:03 +0200
+Message-ID: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi,
 
-On 10 May 2016 at 19:33, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 05/10/2016 04:00 PM, Anand Moon wrote:
->> Hi Krzysztof,
->>
->> On 10 May 2016 at 18:13, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> On 05/10/2016 11:29 AM, Anand Moon wrote:
->>>>>
->>>>> I am sorry but I do not understand.
->>>>> 1. Are you saying that my patch causes the issue?
->>>>> 2. Are you saying that I should not send some patches because of
->>>>> conflicting work? (that would be peculiar...)
->>>>> 3. Are you saying that I should not apply this patch to me tree because
->>>>> of conflicting work?
->>>>> 4. Other?
->>>>>
->>>>> Best regards.
->>>>> Krzysztof
->>>>>
->>>>>
->>>>
->>>> Sorry for the confusion it's not about you patch.
->>>> The feature is not working correctly as per my testing with the
->>>> original source code.
->>>> It need to be more tuned or some other approach to the issue need to found.
->>>
->>> Known issue. You don't have cpufreq cooling enabled. I sent patches for
->>> that and they are in the mainline. However cpufreq cooling requires
->>> cpufreq which cannot work with BL_SWITCHER and on Exynos542x on
->>> exynos_defconfig BL_SWITCHER is enabled.
->>>
->>> Just disable the BL_Krzysztof.
->>>
->>> Best regards,
->>> Krzysztof
->>
->> I have already disabled BL_SWITCHER in my exynos_defconfig. to support
->> CONFIG_CPUFREQ_DT.
->>
->> But how about adjust the  the cputemp so that all the core will have
->> same tip points.
->
->
-> I don't understand you. All of the cores have same trip points.
->
-> Best regards,
-> Krzysztof
->
->>
->> xcpu0-t 0:[ 44][>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>     A50
->>      A60       P70            P85                                C120
->> ]
->> xcpu1-t 1:[ 46][>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>                               A85               A103   A110      C120
->> ]
->> xcpu2-t 2:[ 51][>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>                          A85               A103   A110      C120 ]
->> xcpu3-t 3:[ 47][>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>                              A85               A103   A110      C120 ]
->> xgpu-th 4:[ 48][>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
->>                             A85               A103   A110      C120 ]
->
->
+Patchset adds necessary clocks, reorganizes existing stuff and finally
+adds Odroid XU support.
 
-Sorry I am not able to explain my self clearly.
-But I have once gain tested these changes.
 
-Only could you append with following changes.
---------------------------------------------------------
-+                               cpu_crit0: cpu-crit-0 {
-+                                       temperature = <120000>; /*
-millicelsius */
-+                                       hysteresis = <5000>; /* millicelsius */
-+                                       type = "critical";
-+                               };
---------------------------------------------------------
-hysteresis time help to adjust the present and past temperature inputs
-before critical shutdown.
+Changes since v2
+================
+1. Got global-ack from Stephen for the clock changes. I think merging
+   everything through arm-soc might be the easiest but:
+   a. In such case I will prepare a tag with clock changes,
+   b. Anyway I will wait for response from Sylwester and Tomasz.
+2. Applied comments from Javier and added his Reviewed-by.
+3. Patch 22: added ack from Rob.
+4. Minor improvements in existing patches.
+5. Five new patches at the end: 23-27 (not reviewed yet).
+   Some of them could be squashed with existing ones but existing
+   changes got reviews. Although the final Odroid XU DTS works fine but
+   in general this is still work-in-progress so I suspect it will grow.
+   I am releasing it early following Linux concept. :)
 
-Tested-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Patchset is available at my private repo @github:
+https://github.com/krzk/linux.git for-next/odroid-xu-v3
 
-Best Regards
--Anand Moon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+(previous version is in for-next/odroid-xu-v2 branch, if someone would
+like to compare them)
+
+
+Changes since v1
+================
+1. A lot of new patches.
+2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+3. New clocks, more reorganization.
+4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+   and more complicated but this might help removing duplications
+   and keeping everything under control.
+
+
+
+Merging strategy
+================
+Complicated! The clock dt-bindings and driver changes can go to clock
+tree. However there are three DTS patches in the middle.
+a. This has to go in before adding "fin_pll_new" to clock driver:
+   - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+
+b. This should go in before renaming "fin_pll_new" back to original name:
+   - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+   - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+
+The order of patches in the patchset is really how it should go in
+to reduce any bisectability glitches.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (27):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+  ARM: dts: exynos: Add fin_pll node for clock driver
+  clk: samsung: exynos5410: Provide fin_pll external fixed clock
+  ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+  ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+  clk: samsung: exynos5410: Rename fin_pll from temporary to regular
+    name
+  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+  ARM: dts: exynos: MCT is not an interrupt controller and extend length
+    of iomap
+  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+  ARM: dts: exynos: Add USB to Exynos5410
+  ARM: dts: exynos: Add initial support for Odroid XU board
+  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+  ARM: dts: exynos: Add RTC and I2C to Exynos5410
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  | 1701 ++++++++---------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   16 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  270 +--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 1992 +++++++++-----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+ arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
+ drivers/clk/samsung/clk-exynos5410.c               |   61 +
+ include/dt-bindings/clock/exynos5410.h             |   73 +-
+ 17 files changed, 2758 insertions(+), 2225 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
+
+-- 
+2.5.0
+
