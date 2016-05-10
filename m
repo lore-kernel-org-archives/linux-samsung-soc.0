@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 17/27] ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
-Date: Tue, 10 May 2016 22:09:20 +0200
-Message-ID: <1462910970-1812-18-git-send-email-krzk@kernel.org>
+Subject: [PATCH v3 20/27] ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+Date: Tue, 10 May 2016 22:09:23 +0200
+Message-ID: <1462910970-1812-21-git-send-email-krzk@kernel.org>
 References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
@@ -10,177 +10,262 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The exynos5.dtsi is used for common nodes shared between Exynos5250 and
-Exynos542x. Since Exynos5410 is very similar to Exynos5420 it can
-include the common file as well to remove duplication and make
-everything more consistent.
+The Exynos5410/542x/5800 are very similar designs. Create a new
+DTSI with common nodes to remove DTS duplication. Although currently
+only MCT and SysRAM are shared but in future more nodes will be added to
+the common file.
+
+The patch should not have functional impact.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5410-smdk5410.dts |   6 +-
- arch/arm/boot/dts/exynos5410.dtsi         | 103 ++++++++++--------------------
- 2 files changed, 35 insertions(+), 74 deletions(-)
+ arch/arm/boot/dts/exynos5410.dtsi | 55 ++++---------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 54 ++++---------------------------
+ arch/arm/boot/dts/exynos54xx.dtsi | 68 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 97 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
-diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-index 377a679b454b..501f776f327d 100644
---- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
-+++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
-@@ -102,14 +102,14 @@
- 	};
- };
- 
--&uart0 {
-+&serial_0 {
- 	status = "okay";
- };
- 
--&uart1 {
-+&serial_1 {
- 	status = "okay";
- };
- 
--&uart2 {
-+&serial_2 {
- 	status = "okay";
- };
 diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 58d3844ef923..c0540eb76271 100644
+index 62dc3b4aef93..850343d3c2af 100644
 --- a/arch/arm/boot/dts/exynos5410.dtsi
 +++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -14,6 +14,7 @@
+@@ -13,8 +13,7 @@
+  * published by the Free Software Foundation.
   */
  
- #include "skeleton.dtsi"
-+#include "exynos5.dtsi"
+-#include "skeleton.dtsi"
+-#include "exynos5.dtsi"
++#include "exynos54xx.dtsi"
  #include "exynos-syscon-restart.dtsi"
  #include <dt-bindings/clock/exynos5410.h>
  
-@@ -26,9 +27,6 @@
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
--		serial0 = &uart0;
--		serial1 = &uart1;
--		serial2 = &uart2;
- 	};
- 
- 	cpus {
-@@ -70,49 +68,6 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		combiner: interrupt-controller@10440000 {
--			compatible = "samsung,exynos4210-combiner";
--			#interrupt-cells = <2>;
--			interrupt-controller;
--			samsung,combiner-nr = <32>;
--			reg = <0x10440000 0x1000>;
--			interrupts =	<0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--					<0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--					<0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--					<0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--					<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
--					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
--					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
--					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
--		};
--
--		gic: interrupt-controller@10481000 {
--			compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
--			#interrupt-cells = <3>;
--			interrupt-controller;
--			reg =	<0x10481000 0x1000>,
--				<0x10482000 0x1000>,
--				<0x10484000 0x2000>,
--				<0x10486000 0x2000>;
--			interrupts = <1 9 0xf04>;
--		};
--
--		chipid@10000000 {
--			compatible = "samsung,exynos4210-chipid";
--			reg = <0x10000000 0x100>;
--		};
--
--		sromc: memory-controller@12250000 {
--			compatible = "samsung,exynos4210-srom";
--			reg = <0x12250000 0x14>;
--			#address-cells = <2>;
--			#size-cells = <1>;
--			ranges = <0 0 0x04000000 0x20000
--				  1 0 0x05000000 0x20000
--				  2 0 0x06000000 0x20000
--				  3 0 0x07000000 0x20000>;
--		};
--
- 		pmu_system_controller: system-controller@10040000 {
- 			compatible = "samsung,exynos5410-pmu", "syscon";
+@@ -73,53 +72,6 @@
  			reg = <0x10040000 0x5000>;
-@@ -236,34 +191,40 @@
- 			reg = <0x03860000 0x1000>;
- 			interrupts = <0 47 0>;
  		};
-+	};
-+};
  
--		uart0: serial@12C00000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C00000 0x100>;
--			interrupts = <0 51 0>;
--			clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&interrupt_map>;
+-			interrupts = <0>, <1>, <2>, <3>,
+-				<4>, <5>, <6>, <7>,
+-				<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			interrupt_map: interrupt-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
 -		};
-+&pwm {
-+	clocks = <&clock CLK_PWM>;
-+	clock-names = "timers";
-+};
- 
--		uart1: serial@12C10000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C10000 0x100>;
--			interrupts = <0 52 0>;
--			clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
+-
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
 -		};
-+&serial_0 {
-+	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
- 
--		uart2: serial@12C20000 {
--			compatible = "samsung,exynos4210-uart";
--			reg = <0x12C20000 0x100>;
--			interrupts = <0 53 0>;
--			clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
--			clock-names = "uart", "clk_uart_baud0";
--			status = "disabled";
--		};
--	};
-+&serial_1 {
-+	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_2 {
-+	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_3 {
-+	status = "disabled";
-+};
-+
-+&sromc {
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+	ranges = <0 0 0x04000000 0x20000
-+		  1 0 0x05000000 0x20000
-+		  2 0 0x06000000 0x20000
-+		  3 0 0x07000000 0x20000>;
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5410-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -194,6 +146,11 @@
+ 	};
  };
  
- #include "exynos5410-pinctrl.dtsi"
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 872dadf0f2d4..ebf2ed3c5ff8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -13,9 +13,8 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include "exynos54xx.dtsi"
+ #include <dt-bindings/clock/exynos5420.h>
+-#include "exynos5.dtsi"
+-
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+ 
+ / {
+@@ -181,24 +180,6 @@
+ 			};
+ 		};
+ 
+-		sysram@02020000 {
+-			compatible = "mmio-sram";
+-			reg = <0x02020000 0x54000>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x54000>;
+-
+-			smp-sysram@0 {
+-				compatible = "samsung,exynos4210-sysram";
+-				reg = <0x0 0x1000>;
+-			};
+-
+-			smp-sysram@53000 {
+-				compatible = "samsung,exynos4210-sysram-ns";
+-				reg = <0x53000 0x1000>;
+-			};
+-		};
+-
+ 		clock: clock-controller@10010000 {
+ 			compatible = "samsung,exynos5420-clock";
+ 			reg = <0x10010000 0x30000>;
+@@ -261,34 +242,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		mct: mct@101C0000 {
+-			compatible = "samsung,exynos4210-mct";
+-			reg = <0x101C0000 0xB00>;
+-			interrupt-parent = <&mct_map>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+-					<8>, <9>, <10>, <11>;
+-			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-			clock-names = "fin_pll", "mct";
+-
+-			mct_map: mct-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map = <0 &combiner 23 3>,
+-						<1 &combiner 23 4>,
+-						<2 &combiner 25 2>,
+-						<3 &combiner 25 3>,
+-						<4 &gic 0 120 0>,
+-						<5 &gic 0 121 0>,
+-						<6 &gic 0 122 0>,
+-						<7 &gic 0 123 0>,
+-						<8 &gic 0 128 0>,
+-						<9 &gic 0 129 0>,
+-						<10 &gic 0 130 0>,
+-						<11 &gic 0 131 0>;
+-			};
+-		};
+-
+ 		gsc_pd: power-domain@10044000 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044000 0x20>;
+@@ -1163,6 +1116,11 @@
+ 	pinctrl-0 = <&i2c3_bus>;
+ };
+ 
++&mct {
++	clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
++	clock-names = "fin_pll", "mct";
++};
++
+ &pwm {
+ 	clocks = <&clock CLK_PWM>;
+ 	clock-names = "timers";
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+new file mode 100644
+index 000000000000..9ce625bd79c1
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -0,0 +1,68 @@
++/*
++ * Samsung's Exynos54xx SoC series common device tree source
++ *
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2016 Krzysztof Kozlowski
++ *
++ * Device nodes common for Samsung Exynos5410/5420/5422/5800. Specific
++ * Exynos 54xx SoCs should include this file and customize it further
++ * (e.g. with clocks).
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "skeleton.dtsi"
++#include "exynos5.dtsi"
++
++/ {
++	compatible = "samsung,exynos5";
++
++	soc: soc {
++		sysram@02020000 {
++			compatible = "mmio-sram";
++			reg = <0x02020000 0x54000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0x02020000 0x54000>;
++
++			smp-sysram@0 {
++				compatible = "samsung,exynos4210-sysram";
++				reg = <0x0 0x1000>;
++			};
++
++			smp-sysram@53000 {
++				compatible = "samsung,exynos4210-sysram-ns";
++				reg = <0x53000 0x1000>;
++			};
++		};
++
++		mct: mct@101C0000 {
++			compatible = "samsung,exynos4210-mct";
++			reg = <0x101C0000 0xB00>;
++			interrupt-parent = <&mct_map>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
++					<8>, <9>, <10>, <11>;
++
++			mct_map: mct-map {
++				#interrupt-cells = <1>;
++				#address-cells = <0>;
++				#size-cells = <0>;
++				interrupt-map = <0 &combiner 23 3>,
++						<1 &combiner 23 4>,
++						<2 &combiner 25 2>,
++						<3 &combiner 25 3>,
++						<4 &gic 0 120 0>,
++						<5 &gic 0 121 0>,
++						<6 &gic 0 122 0>,
++						<7 &gic 0 123 0>,
++						<8 &gic 0 128 0>,
++						<9 &gic 0 129 0>,
++						<10 &gic 0 130 0>,
++						<11 &gic 0 131 0>;
++			};
++		};
++	};
++};
 -- 
 2.5.0
