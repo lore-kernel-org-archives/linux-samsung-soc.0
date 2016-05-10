@@ -1,339 +1,221 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
- with CPU thermal nodes
-Date: Tue, 10 May 2016 12:13:12 +0530
-Message-ID: <CANAwSgT9SY3kj8+beMpc1xGoC=rMBSya+2v2dyZQp6ykH+V0=g@mail.gmail.com>
-References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] exynos: change the license to X11/MIT
+Date: Tue, 10 May 2016 16:18:53 +0900
+Message-ID: <1462864733-31610-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: emil.l.velikov@gmail.com
+Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof ,
-
-On 9 May 2016 at 11:49, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> Include the CPU thermal nodes directly in Odroid XU3-family common DTS
-> because it is the only user of it. Keeping it in separate DTSI node does
-> not bring benefits because:
-> 1. It is not re-usable on other non-fan boards (fan is referenced),
-> 2. It won't be re-used on future Odroid XU board because different
->    CPU cluster behavior.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi      | 103 ---------------------
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  94 ++++++++++++++++++-
->  2 files changed, 92 insertions(+), 105 deletions(-)
->  delete mode 100644 arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
->
-> diff --git a/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
-> deleted file mode 100644
-> index 3e4c4ad96d63..000000000000
-> --- a/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
-> +++ /dev/null
-> @@ -1,103 +0,0 @@
-> -/*
-> - * Device tree sources for Exynos5422 thermal zone
-> - *
-> - * Copyright (c) 2015 Lukasz Majewski <l.majewski@samsung.com>
-> - *                     Anand Moon <linux.amoon@gmail.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - */
-> -
-> -#include <dt-bindings/thermal/thermal.h>
-> -
-> -/ {
-> -       thermal-zones {
-> -               cpu0_thermal: cpu0-thermal {
-> -                       thermal-sensors = <&tmu_cpu0 0>;
-> -                       polling-delay-passive = <250>;
-> -                       polling-delay = <0>;
-> -                       trips {
-> -                               cpu_alert0: cpu-alert-0 {
-> -                                       temperature = <50000>; /* millicelsius */
-> -                                       hysteresis = <5000>; /* millicelsius */
-> -                                       type = "active";
-> -                               };
-> -                               cpu_alert1: cpu-alert-1 {
-> -                                       temperature = <60000>; /* millicelsius */
-> -                                       hysteresis = <5000>; /* millicelsius */
-> -                                       type = "active";
-> -                               };
-> -                               cpu_alert2: cpu-alert-2 {
-> -                                       temperature = <70000>; /* millicelsius */
-> -                                       hysteresis = <5000>; /* millicelsius */
-> -                                       type = "active";
-> -                               };
-> -                               cpu_crit0: cpu-crit-0 {
-> -                                       temperature = <120000>; /* millicelsius */
-> -                                       hysteresis = <0>; /* millicelsius */
-> -                                       type = "critical";
-> -                               };
-> -                               /*
-> -                                * Exyunos542x support only 4 trip-points
-> -                                * so for these polling mode is required.
-> -                                * Start polling at temperature level of last
-> -                                * interrupt-driven trip: cpu_alert2
-> -                                */
-> -                               cpu_alert3: cpu-alert-3 {
-> -                                       temperature = <70000>; /* millicelsius */
-> -                                       hysteresis = <10000>; /* millicelsius */
-> -                                       type = "passive";
-> -                               };
-> -                               cpu_alert4: cpu-alert-4 {
-> -                                       temperature = <85000>; /* millicelsius */
-> -                                       hysteresis = <10000>; /* millicelsius */
-> -                                       type = "passive";
-> -                               };
-> -
-> -                       };
-> -                       cooling-maps {
-> -                               map0 {
-> -                                    trip = <&cpu_alert0>;
-> -                                    cooling-device = <&fan0 0 1>;
-> -                               };
-> -                               map1 {
-> -                                    trip = <&cpu_alert1>;
-> -                                    cooling-device = <&fan0 1 2>;
-> -                               };
-> -                               map2 {
-> -                                    trip = <&cpu_alert2>;
-> -                                    cooling-device = <&fan0 2 3>;
-> -                               };
-> -                               /*
-> -                                * When reaching cpu_alert3, reduce CPU
-> -                                * by 2 steps. On Exynos5422/5800 that would
-> -                                * be: 1500 MHz and 1100 MHz.
-> -                                */
-> -                               map3 {
-> -                                    trip = <&cpu_alert3>;
-> -                                    cooling-device = <&cpu0 0 2>;
-> -                               };
-> -                               map4 {
-> -                                    trip = <&cpu_alert3>;
-> -                                    cooling-device = <&cpu4 0 2>;
-> -                               };
-> -
-> -                               /*
-> -                                * When reaching cpu_alert4, reduce CPU
-> -                                * further, down to 600 MHz (11 steps for big,
-> -                                * 7 steps for LITTLE).
-> -                                */
-> -                               map5 {
-> -                                    trip = <&cpu_alert4>;
-> -                                    cooling-device = <&cpu0 3 7>;
-> -                               };
-> -                               map6 {
-> -                                    trip = <&cpu_alert4>;
-> -                                    cooling-device = <&cpu4 3 11>;
-> -                               };
-> -                       };
-> -               };
-> -       };
-> -};
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 2a4e10bc8801..ff05041835e5 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -1,9 +1,11 @@
->  /*
->   * Hardkernel Odroid XU3 board device tree source
->   *
-> - * Copyright (c) 2014 Collabora Ltd.
->   * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->   *             http://www.samsung.com
-> + * Copyright (c) 2014 Collabora Ltd.
-> + * Copyright (c) 2015 Lukasz Majewski <l.majewski@samsung.com>
-> + *                    Anand Moon <linux.amoon@gmail.com>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 as
-> @@ -16,7 +18,6 @@
->  #include <dt-bindings/sound/samsung-i2s.h>
->  #include "exynos5800.dtsi"
->  #include "exynos5422-cpus.dtsi"
-> -#include "exynos5422-cpu-thermal.dtsi"
->
->  / {
->         memory {
-> @@ -54,6 +55,95 @@
->                 #cooling-cells = <2>;
->                 cooling-levels = <0 130 170 230>;
->         };
-> +
-> +       thermal-zones {
-> +               cpu0_thermal: cpu0-thermal {
-> +                       thermal-sensors = <&tmu_cpu0 0>;
-> +                       polling-delay-passive = <250>;
-> +                       polling-delay = <0>;
-> +                       trips {
-> +                               cpu_alert0: cpu-alert-0 {
-> +                                       temperature = <50000>; /* millicelsius */
-> +                                       hysteresis = <5000>; /* millicelsius */
-> +                                       type = "active";
-> +                               };
-> +                               cpu_alert1: cpu-alert-1 {
-> +                                       temperature = <60000>; /* millicelsius */
-> +                                       hysteresis = <5000>; /* millicelsius */
-> +                                       type = "active";
-> +                               };
-> +                               cpu_alert2: cpu-alert-2 {
-> +                                       temperature = <70000>; /* millicelsius */
-> +                                       hysteresis = <5000>; /* millicelsius */
-> +                                       type = "active";
-> +                               };
-> +                               cpu_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>; /* millicelsius */
-> +                                       hysteresis = <0>; /* millicelsius */
-> +                                       type = "critical";
-> +                               };
-> +                               /*
-> +                                * Exynos542x supports only 4 trip-points
-> +                                * so for these polling mode is required.
-> +                                * Start polling at temperature level of last
-> +                                * interrupt-driven trip: cpu_alert2
-> +                                */
-> +                               cpu_alert3: cpu-alert-3 {
-> +                                       temperature = <70000>; /* millicelsius */
-> +                                       hysteresis = <10000>; /* millicelsius */
-> +                                       type = "passive";
-> +                               };
-> +                               cpu_alert4: cpu-alert-4 {
-> +                                       temperature = <85000>; /* millicelsius */
-> +                                       hysteresis = <10000>; /* millicelsius */
-> +                                       type = "passive";
-> +                               };
-> +
-> +                       };
-> +                       cooling-maps {
-> +                               map0 {
-> +                                    trip = <&cpu_alert0>;
-> +                                    cooling-device = <&fan0 0 1>;
-> +                               };
-> +                               map1 {
-> +                                    trip = <&cpu_alert1>;
-> +                                    cooling-device = <&fan0 1 2>;
-> +                               };
-> +                               map2 {
-> +                                    trip = <&cpu_alert2>;
-> +                                    cooling-device = <&fan0 2 3>;
-> +                               };
-> +                               /*
-> +                                * When reaching cpu_alert3, reduce CPU
-> +                                * by 2 steps. On Exynos5422/5800 that would
-> +                                * be: 1500 MHz and 1100 MHz.
-> +                                */
-> +                               map3 {
-> +                                    trip = <&cpu_alert3>;
-> +                                    cooling-device = <&cpu0 0 2>;
-> +                               };
-> +                               map4 {
-> +                                    trip = <&cpu_alert3>;
-> +                                    cooling-device = <&cpu4 0 2>;
-> +                               };
-> +
-> +                               /*
-> +                                * When reaching cpu_alert4, reduce CPU
-> +                                * further, down to 600 MHz (11 steps for big,
-> +                                * 7 steps for LITTLE).
-> +                                */
-> +                               map5 {
-> +                                    trip = <&cpu_alert4>;
-> +                                    cooling-device = <&cpu0 3 7>;
-> +                               };
-> +                               map6 {
-> +                                    trip = <&cpu_alert4>;
-> +                                    cooling-device = <&cpu4 3 11>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
->  };
->
->  &bus_wcore {
-> --
-> 1.9.1
->
-
-Could you defer this patch, during my testing with pm-qa from linaro.
-
-git://git.linaro.org/tools/pm-qa.git
-
-When their is running of thermal test case cpu usage reaches around
-300+ percentage
-and some time's the Odroid XU4 hang down.
--------------------------------------------------------------------------
-[ 1028.056619] CPU4: shutdown
-[ 1148.510372] IRQ54 no longer affine to CPU5
-[ 1148.511864] CPU5: shutdown
-[ 1268.921073] IRQ55 no longer affine to CPU6
-[ 1268.922564] CPU6: shutdown
-[ 1389.271930] cpu cpu4: Failed to find opp_table: -19
-[ 1389.301668] IRQ56 no longer affine to CPU7
-[ 1389.303132] CPU7: shutdown
-[ 1510.538424] cpu cpu4: opp_list_debug_create_link: Failed to create link
-[ 1510.543762] cpu cpu4: _add_opp_dev: Failed to register opp debugfs (-12)
-[ 1510.550625] cpu cpu7: opp_list_debug_create_link: Failed to create link
-[ 1510.557037] cpu cpu7: _add_opp_dev: Failed to register opp debugfs (-12)
-[ 1510.664649] cpu cpu5: cpufreq_init: failed to get clk: -2
-[ 1510.720567] cpu cpu6: cpufreq_init: failed to get clk: -2
-[ 1510.788280] cpu cpu7: cpufreq_init: failed to get clk: -2
-root@odroidxu4l:/home/odroid/study/linaro/pm-qa# killall heat_cpu
-
--------------------------------------------------------------------------
-And some time I observed that the board will poweroff on reaching
-temperature 120 degree C.
-when I am compiling the kernel with or above. make -j8
--------------------------------------------------------------------------
-root@odroidxu4l:~#  * Starting NTP server ntpd                           [ OK ]
-saned disabled; edit /etc/default/saned
-[ 4118.924470] thermal thermal_zone3: critical temperature reached(121
-C),shutting down
-[ 4119.014327] thermal thermal_zone3: critical temperature reached(121
-C),shutting down
-
-Broadcast message from root@odroidxu4l
-        (unknown) at 20:41 ...
-
-The system is going down for power off NOW!
-
-Broadcast message from root@odroidxu4l
-        (unknown) at 20:41 ...
-
-The system is going down for power off NOW!
-[ 4119.431386] thermal thermal_zone3: critical temperature reached(121
-C),shutting down
-[ 4120.206709] thermal thermal_zone3: critical temperature reached(120
-C),shutting down
-
-Broadcast message from root@odroidxu4l
-        (unknown) at 20:41 ...
-
-The system is going down for power off NOW!
-wait-for-state stop/waiting
-[ 4157.574406] reboo
-
-U-Boot 2016.03-00665-g563d8d9-dirty (Apr 04 2016 - 22:27:07 +0930) for
-ODROID-XU3
-
-CPU:   Exynos5422 @ 800 MHz
-Model: Odroid XU3 based on EXYNOS5422
-Board: Odroid XU3 based on EXYNOS5422
-Type:  xu4
-DRAM:  2 GiB
-MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
-*** Warning - bad CRC, using default environment
--------------------------------------------------------------------------
-Once the thermal issue is fixed we can redo this changes.
-
-Best Regards
--Anand Moon
+VGhpcyBwYXRjaCBjaGFuZ2VzIEdQTCBsaWNlbnNlIHRvIFgxMS9NSVQuCgpTaWduZWQtb2ZmLWJ5
+OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogZXh5bm9zL2V4eW5vc19maW1n
+MmQuYyAgICAgICAgICAgICB8IDIxICsrKysrKysrKysrKysrKysrLS0tLQogZXh5bm9zL2V4eW5v
+c19maW1nMmQuaCAgICAgICAgICAgICB8IDIxICsrKysrKysrKysrKysrKysrLS0tLQogZXh5bm9z
+L2ZpbWcyZF9yZWcuaCAgICAgICAgICAgICAgICB8IDIxICsrKysrKysrKysrKysrKysrLS0tLQog
+dGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfZXZlbnQuYyB8IDI3ICsrKysrKysrKysrKysrKysr
+LS0tLS0tLS0tLQogdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfcGVyZi5jICB8IDI3ICsrKysr
+KysrKysrKysrKysrLS0tLS0tLS0tLQogdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5j
+ICB8IDIxICsrKysrKysrKysrKysrKysrLS0tLQogNiBmaWxlcyBjaGFuZ2VkLCAxMDIgaW5zZXJ0
+aW9ucygrKSwgMzYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1n
+MmQuYyBiL2V4eW5vcy9leHlub3NfZmltZzJkLmMKaW5kZXggN2YxZDEwNS4uNzEyN2VmMCAxMDA2
+NDQKLS0tIGEvZXh5bm9zL2V4eW5vc19maW1nMmQuYworKysgYi9leHlub3MvZXh5bm9zX2ZpbWcy
+ZC5jCkBAIC0zLDExICszLDI0IEBACiAgKiBBdXRob3JzOgogICoJSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPgogICoKLSAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3Ug
+Y2FuIHJlZGlzdHJpYnV0ZSAgaXQgYW5kL29yIG1vZGlmeSBpdAotICogdW5kZXIgIHRoZSB0ZXJt
+cyBvZiAgdGhlIEdOVSBHZW5lcmFsICBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkgdGhl
+Ci0gKiBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSAg
+TGljZW5zZSwgb3IgKGF0IHlvdXIKLSAqIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCisgKiBQ
+ZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNv
+biBvYnRhaW5pbmcgYQorICogY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRv
+Y3VtZW50YXRpb24gZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwKKyAqIHRvIGRlYWwgaW4gdGhlIFNv
+ZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24K
+KyAqIHRoZSByaWdodHMgdG8gdXNlLCBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0
+cmlidXRlLCBzdWJsaWNlbnNlLAorICogYW5kL29yIHNlbGwgY29waWVzIG9mIHRoZSBTb2Z0d2Fy
+ZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlCisgKiBTb2Z0d2FyZSBpcyBmdXJu
+aXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgogICoK
+KyAqIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNl
+IChpbmNsdWRpbmcgdGhlIG5leHQKKyAqIHBhcmFncmFwaCkgc2hhbGwgYmUgaW5jbHVkZWQgaW4g
+YWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUKKyAqIFNvZnR3YXJlLgor
+ICoKKyAqIFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VUIFdBUlJBTlRZ
+IE9GIEFOWSBLSU5ELCBFWFBSRVNTIE9SCisgKiBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBM
+SU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKKyAqIEZJVE5FU1Mg
+Rk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuICBJTiBOTyBFVkVO
+VCBTSEFMTAorICogVkEgTElOVVggU1lTVEVNUyBBTkQvT1IgSVRTIFNVUFBMSUVSUyBCRSBMSUFC
+TEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUgorICogT1RIRVIgTElBQklMSVRZLCBXSEVUSEVS
+IElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsCisgKiBBUklTSU5H
+IEZST00sIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBV
+U0UgT1IKKyAqIE9USEVSIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4KICAqLwogCiAjaWZkZWYg
+SEFWRV9DT05GSUdfSApkaWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19maW1nMmQuaCBiL2V4eW5v
+cy9leHlub3NfZmltZzJkLmgKaW5kZXggYTgyNWM2OC4uYTRkZmJlNyAxMDA2NDQKLS0tIGEvZXh5
+bm9zL2V4eW5vc19maW1nMmQuaAorKysgYi9leHlub3MvZXh5bm9zX2ZpbWcyZC5oCkBAIC0zLDEx
+ICszLDI0IEBACiAgKiBBdXRob3JzOgogICoJSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29t
+PgogICoKLSAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJp
+YnV0ZSAgaXQgYW5kL29yIG1vZGlmeSBpdAotICogdW5kZXIgIHRoZSB0ZXJtcyBvZiAgdGhlIEdO
+VSBHZW5lcmFsICBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkgdGhlCi0gKiBGcmVlIFNv
+ZnR3YXJlIEZvdW5kYXRpb247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSAgTGljZW5zZSwgb3Ig
+KGF0IHlvdXIKLSAqIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCisgKiBQZXJtaXNzaW9uIGlz
+IGhlcmVieSBncmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcg
+YQorICogY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24g
+ZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwKKyAqIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdpdGhv
+dXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24KKyAqIHRoZSByaWdo
+dHMgdG8gdXNlLCBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJs
+aWNlbnNlLAorICogYW5kL29yIHNlbGwgY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBl
+cm1pdCBwZXJzb25zIHRvIHdob20gdGhlCisgKiBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8g
+c28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgogICoKKyAqIFRoZSBhYm92
+ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIChpbmNsdWRpbmcg
+dGhlIG5leHQKKyAqIHBhcmFncmFwaCkgc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsIGNvcGllcyBv
+ciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUKKyAqIFNvZnR3YXJlLgorICoKKyAqIFRIRSBT
+T0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5E
+LCBFWFBSRVNTIE9SCisgKiBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRI
+RSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKKyAqIEZJVE5FU1MgRk9SIEEgUEFSVElD
+VUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuICBJTiBOTyBFVkVOVCBTSEFMTAorICog
+VkEgTElOVVggU1lTVEVNUyBBTkQvT1IgSVRTIFNVUFBMSUVSUyBCRSBMSUFCTEUgRk9SIEFOWSBD
+TEFJTSwgREFNQUdFUyBPUgorICogT1RIRVIgTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElP
+TiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsCisgKiBBUklTSU5HIEZST00sIE9VVCBP
+RiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IKKyAqIE9U
+SEVSIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4KICAqLwogCiAjaWZuZGVmIF9GSU1HMkRfSF8K
+ZGlmZiAtLWdpdCBhL2V4eW5vcy9maW1nMmRfcmVnLmggYi9leHlub3MvZmltZzJkX3JlZy5oCmlu
+ZGV4IDA3ZGQ2MzQuLmQ0MjI5NmQgMTAwNjQ0Ci0tLSBhL2V4eW5vcy9maW1nMmRfcmVnLmgKKysr
+IGIvZXh5bm9zL2ZpbWcyZF9yZWcuaApAQCAtMywxMSArMywyNCBAQAogICogQXV0aG9yczoKICAq
+CUlua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KICAqCi0gKiBUaGlzIHByb2dyYW0gaXMg
+ZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgIGl0IGFuZC9vciBtb2RpZnkgaXQK
+LSAqIHVuZGVyICB0aGUgdGVybXMgb2YgIHRoZSBHTlUgR2VuZXJhbCAgUHVibGljIExpY2Vuc2Ug
+YXMgcHVibGlzaGVkIGJ5IHRoZQotICogRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uOyAgZWl0aGVy
+IHZlcnNpb24gMiBvZiB0aGUgIExpY2Vuc2UsIG9yIChhdCB5b3VyCi0gKiBvcHRpb24pIGFueSBs
+YXRlciB2ZXJzaW9uLgorICogUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJlZSBvZiBj
+aGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEKKyAqIGNvcHkgb2YgdGhpcyBzb2Z0d2Fy
+ZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksCisg
+KiB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcg
+d2l0aG91dCBsaW1pdGF0aW9uCisgKiB0aGUgcmlnaHRzIHRvIHVzZSwgY29weSwgbW9kaWZ5LCBt
+ZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwKKyAqIGFuZC9vciBzZWxsIGNv
+cGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZQor
+ICogU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRoZSBmb2xsb3dp
+bmcgY29uZGl0aW9uczoKICAqCisgKiBUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhp
+cyBwZXJtaXNzaW9uIG5vdGljZSAoaW5jbHVkaW5nIHRoZSBuZXh0CisgKiBwYXJhZ3JhcGgpIHNo
+YWxsIGJlIGluY2x1ZGVkIGluIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwgcG9ydGlvbnMgb2Yg
+dGhlCisgKiBTb2Z0d2FyZS4KKyAqCisgKiBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElT
+IiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgorICogSU1QTElFRCwg
+SU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFC
+SUxJVFksCisgKiBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQgTk9OSU5GUklO
+R0VNRU5ULiAgSU4gTk8gRVZFTlQgU0hBTEwKKyAqIFZBIExJTlVYIFNZU1RFTVMgQU5EL09SIElU
+UyBTVVBQTElFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IKKyAqIE9USEVS
+IExJQUJJTElUWSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09OVFJBQ1QsIFRPUlQgT1IgT1RI
+RVJXSVNFLAorICogQVJJU0lORyBGUk9NLCBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRI
+RSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SCisgKiBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09GVFdB
+UkUuCiAgKi8KIAogI2lmbmRlZiBfRklNRzJEX1JFR19IXwpkaWZmIC0tZ2l0IGEvdGVzdHMvZXh5
+bm9zL2V4eW5vc19maW1nMmRfZXZlbnQuYyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX2V2
+ZW50LmMKaW5kZXggOWVkNWEzMC4uMzUzZTA4NyAxMDA2NDQKLS0tIGEvdGVzdHMvZXh5bm9zL2V4
+eW5vc19maW1nMmRfZXZlbnQuYworKysgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9ldmVu
+dC5jCkBAIC0xLDE3ICsxLDI0IEBACiAvKgogICogQ29weXJpZ2h0IChDKSAyMDE1IC0gVG9iaWFz
+IEpha29iaQogICoKLSAqIFRoaXMgaXMgZnJlZSBzb2Z0d2FyZTogeW91IGNhbiByZWRpc3RyaWJ1
+dGUgaXQgYW5kL29yIG1vZGlmeQotICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
+ZXJhbCBQdWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQKLSAqIGJ5IHRoZSBGcmVlIFNvZnR3YXJl
+IEZvdW5kYXRpb24sIGVpdGhlciB2ZXJzaW9uIDIgb2YgdGhlIExpY2Vuc2UsCi0gKiBvciAoYXQg
+eW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgorICogUGVybWlzc2lvbiBpcyBoZXJlYnkg
+Z3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEKKyAqIGNv
+cHkgb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0
+aGUgIlNvZnR3YXJlIiksCisgKiB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3Ry
+aWN0aW9uLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCisgKiB0aGUgcmlnaHRzIHRvIHVz
+ZSwgY29weSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwK
+KyAqIGFuZC9vciBzZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVy
+c29ucyB0byB3aG9tIHRoZQorICogU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJq
+ZWN0IHRvIHRoZSBmb2xsb3dpbmcgY29uZGl0aW9uczoKICAqCi0gKiBJdCBpcyBkaXN0cmlidXRl
+ZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsLCBidXQKLSAqIFdJVEhPVVQgQU5Z
+IFdBUlJBTlRZOyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFudHkgb2YKLSAqIE1FUkNI
+QU5UQUJJTElUWSBvciBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gU2VlIHRoZQot
+ICogR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgZm9yIG1vcmUgZGV0YWlscy4KLSAqIFlvdSBz
+aG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNl
+bnNlCi0gKiBhbG9uZyB3aXRoIGl0LiBJZiBub3QsIHNlZSA8aHR0cDovL3d3dy5nbnUub3JnL2xp
+Y2Vuc2VzLz4uCisgKiBUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNz
+aW9uIG5vdGljZSAoaW5jbHVkaW5nIHRoZSBuZXh0CisgKiBwYXJhZ3JhcGgpIHNoYWxsIGJlIGlu
+Y2x1ZGVkIGluIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwgcG9ydGlvbnMgb2YgdGhlCisgKiBT
+b2Z0d2FyZS4KKyAqCisgKiBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9V
+VCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgorICogSU1QTElFRCwgSU5DTFVESU5H
+IEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFCSUxJVFksCisg
+KiBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQgTk9OSU5GUklOR0VNRU5ULiAg
+SU4gTk8gRVZFTlQgU0hBTEwKKyAqIFZBIExJTlVYIFNZU1RFTVMgQU5EL09SIElUUyBTVVBQTElF
+UlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IKKyAqIE9USEVSIExJQUJJTElU
+WSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09OVFJBQ1QsIFRPUlQgT1IgT1RIRVJXSVNFLAor
+ICogQVJJU0lORyBGUk9NLCBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FS
+RSBPUiBUSEUgVVNFIE9SCisgKiBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09GVFdBUkUuCiAgKi8K
+IAogI2luY2x1ZGUgPHVuaXN0ZC5oPgpkaWZmIC0tZ2l0IGEvdGVzdHMvZXh5bm9zL2V4eW5vc19m
+aW1nMmRfcGVyZi5jIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfcGVyZi5jCmluZGV4IDE2
+OTliYmEuLmEyZDVjMTkgMTAwNjQ0Ci0tLSBhL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Bl
+cmYuYworKysgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9wZXJmLmMKQEAgLTEsMTcgKzEs
+MjQgQEAKIC8qCiAgKiBDb3B5cmlnaHQgKEMpIDIwMTUgLSBUb2JpYXMgSmFrb2JpCiAgKgotICog
+VGhpcyBpcyBmcmVlIHNvZnR3YXJlOiB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IgbW9k
+aWZ5Ci0gKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNl
+bnNlIGFzIHB1Ymxpc2hlZAotICogYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbiwgZWl0
+aGVyIHZlcnNpb24gMiBvZiB0aGUgTGljZW5zZSwKLSAqIG9yIChhdCB5b3VyIG9wdGlvbikgYW55
+IGxhdGVyIHZlcnNpb24uCisgKiBQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBmcmVlIG9m
+IGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcgYQorICogY29weSBvZiB0aGlzIHNvZnR3
+YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwK
+KyAqIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGlu
+ZyB3aXRob3V0IGxpbWl0YXRpb24KKyAqIHRoZSByaWdodHMgdG8gdXNlLCBjb3B5LCBtb2RpZnks
+IG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLAorICogYW5kL29yIHNlbGwg
+Y29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhl
+CisgKiBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxv
+d2luZyBjb25kaXRpb25zOgogICoKLSAqIEl0IGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRo
+YXQgaXQgd2lsbCBiZSB1c2VmdWwsIGJ1dAotICogV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhv
+dXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBvZgotICogTUVSQ0hBTlRBQklMSVRZIG9yIEZJ
+VE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiBTZWUgdGhlCi0gKiBHTlUgR2VuZXJhbCBQ
+dWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgotICogWW91IHNob3VsZCBoYXZlIHJlY2Vp
+dmVkIGEgY29weSBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UKLSAqIGFsb25nIHdp
+dGggaXQuIElmIG5vdCwgc2VlIDxodHRwOi8vd3d3LmdudS5vcmcvbGljZW5zZXMvPi4KKyAqIFRo
+ZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIChpbmNs
+dWRpbmcgdGhlIG5leHQKKyAqIHBhcmFncmFwaCkgc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsIGNv
+cGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUKKyAqIFNvZnR3YXJlLgorICoKKyAq
+IFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFO
+WSBLSU5ELCBFWFBSRVNTIE9SCisgKiBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVE
+IFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKKyAqIEZJVE5FU1MgRk9SIEEg
+UEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuICBJTiBOTyBFVkVOVCBTSEFM
+TAorICogVkEgTElOVVggU1lTVEVNUyBBTkQvT1IgSVRTIFNVUFBMSUVSUyBCRSBMSUFCTEUgRk9S
+IEFOWSBDTEFJTSwgREFNQUdFUyBPUgorICogT1RIRVIgTElBQklMSVRZLCBXSEVUSEVSIElOIEFO
+IEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsCisgKiBBUklTSU5HIEZST00s
+IE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IK
+KyAqIE9USEVSIERFQUxJTkdTIElOIFRIRSBTT0ZUV0FSRS4KICAqLwogCiAjaW5jbHVkZSA8c3Rk
+bGliLmg+CmRpZmYgLS1naXQgYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMgYi90
+ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKaW5kZXggNzk3ZmI2ZS4uNzNhNzRkYyAx
+MDA2NDQKLS0tIGEvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCisrKyBiL3Rlc3Rz
+L2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYwpAQCAtMywxMSArMywyNCBAQAogICogQXV0aG9y
+czoKICAqCUlua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KICAqCi0gKiBUaGlzIHByb2dy
+YW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgIGl0IGFuZC9vciBtb2Rp
+ZnkgaXQKLSAqIHVuZGVyICB0aGUgdGVybXMgb2YgIHRoZSBHTlUgR2VuZXJhbCAgUHVibGljIExp
+Y2Vuc2UgYXMgcHVibGlzaGVkIGJ5IHRoZQotICogRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uOyAg
+ZWl0aGVyIHZlcnNpb24gMiBvZiB0aGUgIExpY2Vuc2UsIG9yIChhdCB5b3VyCi0gKiBvcHRpb24p
+IGFueSBsYXRlciB2ZXJzaW9uLgorICogUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJl
+ZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEKKyAqIGNvcHkgb2YgdGhpcyBz
+b2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJl
+IiksCisgKiB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNs
+dWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCisgKiB0aGUgcmlnaHRzIHRvIHVzZSwgY29weSwgbW9k
+aWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwKKyAqIGFuZC9vciBz
+ZWxsIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9t
+IHRoZQorICogU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRoZSBm
+b2xsb3dpbmcgY29uZGl0aW9uczoKICAqCisgKiBUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBh
+bmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSAoaW5jbHVkaW5nIHRoZSBuZXh0CisgKiBwYXJhZ3Jh
+cGgpIHNoYWxsIGJlIGluY2x1ZGVkIGluIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwgcG9ydGlv
+bnMgb2YgdGhlCisgKiBTb2Z0d2FyZS4KKyAqCisgKiBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQg
+IkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgorICogSU1Q
+TElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJD
+SEFOVEFCSUxJVFksCisgKiBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQgTk9O
+SU5GUklOR0VNRU5ULiAgSU4gTk8gRVZFTlQgU0hBTEwKKyAqIFZBIExJTlVYIFNZU1RFTVMgQU5E
+L09SIElUUyBTVVBQTElFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IKKyAq
+IE9USEVSIExJQUJJTElUWSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09OVFJBQ1QsIFRPUlQg
+T1IgT1RIRVJXSVNFLAorICogQVJJU0lORyBGUk9NLCBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBX
+SVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SCisgKiBPVEhFUiBERUFMSU5HUyBJTiBUSEUg
+U09GVFdBUkUuCiAgKi8KIAogI2lmZGVmIEhBVkVfQ09ORklHX0gKLS0gCjEuOS4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
