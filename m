@@ -1,98 +1,37 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 07/27] clk: samsung: exynos5410: Rename fin_pll from
- temporary to regular name
-Date: Tue, 10 May 2016 22:09:10 +0200
-Message-ID: <1462910970-1812-8-git-send-email-krzk@kernel.org>
+Subject: [PATCH v3 14/27] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
+Date: Tue, 10 May 2016 22:09:17 +0200
+Message-ID: <1462910970-1812-15-git-send-email-krzk@kernel.org>
 References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-clk-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-For smooth transition of fin_pll to clk-exynos5410.c from fixed-clock
-driver, initially it was named "fin_pll_new". Fix this here.
+Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
+can be referenced by inheriting DTSI.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5410.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/exynos5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 35f2cb36f7ef..a7d714435307 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -59,27 +59,27 @@ enum exynos5410_plls {
- };
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index c5d198c70b86..30a0b63b06c9 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -35,7 +35,7 @@
+ 		reg = <0x10000000 0x100>;
+ 	};
  
- /* list of all parent clocks */
--PNAME(apll_p)		= { "fin_pll_new", "fout_apll", };
--PNAME(bpll_p)		= { "fin_pll_new", "fout_bpll", };
--PNAME(cpll_p)		= { "fin_pll_new", "fout_cpll" };
--PNAME(mpll_p)		= { "fin_pll_new", "fout_mpll", };
--PNAME(kpll_p)		= { "fin_pll_new", "fout_kpll", };
-+PNAME(apll_p)		= { "fin_pll", "fout_apll", };
-+PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
-+PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
-+PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
-+PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
- 
- PNAME(mout_cpu_p)	= { "mout_apll", "sclk_mpll", };
- PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
- 
--PNAME(mpll_user_p)	= { "fin_pll_new", "sclk_mpll", };
--PNAME(bpll_user_p)	= { "fin_pll_new", "sclk_bpll", };
-+PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
-+PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
- PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
- 
--PNAME(group2_p)		= { "fin_pll_new", "fin_pll_new", "none", "none",
-+PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
- 			"none", "none", "sclk_mpll_bpll",
- 			 "none", "none", "sclk_cpll" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
- 		exynos5x_fixed_rate_ext_clks[] __initdata = {
--	FRATE(CLK_FIN_PLL, "fin_pll_new", NULL, 0, 0),
-+	FRATE(CLK_FIN_PLL, "fin_pll", NULL, 0, 0),
- };
- 
- static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
-@@ -174,15 +174,15 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- };
- 
- static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
--	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll_new", APLL_LOCK,
-+	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
--	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll_new", CPLL_LOCK,
-+	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
- 		CPLL_CON0, NULL),
--	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll_new", MPLL_LOCK,
-+	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
- 		MPLL_CON0, NULL),
--	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll_new", BPLL_LOCK,
-+	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
- 		BPLL_CON0, NULL),
--	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll_new", KPLL_LOCK,
-+	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
- 		KPLL_CON0, NULL),
- };
- 
+-	memory-controller@12250000 {
++	sromc: memory-controller@12250000 {
+ 		compatible = "samsung,exynos4210-srom";
+ 		reg = <0x12250000 0x14>;
+ 	};
 -- 
 2.5.0
+
