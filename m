@@ -1,41 +1,69 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 00/22] ARM: dts: exynos: Add initial support for Odroid
- XU
-Date: Tue, 10 May 2016 07:13:52 +0200
-Message-ID: <57316E10.2030300@kernel.org>
+Subject: Re: [PATCH v2 04/22] clk: samsung: exynos5410: Provide fin_pll
+ external fixed clock
+Date: Tue, 10 May 2016 07:26:19 +0200
+Message-ID: <573170FB.4010808@kernel.org>
 References: <1462734367-5619-1-git-send-email-krzk@kernel.org>
- <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
+ <1462734367-5619-5-git-send-email-krzk@kernel.org>
+ <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:30534 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750934AbcEJFN6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 May 2016 01:13:58 -0400
-In-reply-to: <0aacc9fe-01c2-a9cd-35c7-db2c17a737c3@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <e805f0d3-038b-72ce-4464-ac3605e9e5bb@osg.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/10/2016 12:05 AM, Javier Martinez Canillas wrote:
+On 05/09/2016 10:19 PM, Javier Martinez Canillas wrote:
 > Hello Krzysztof,
 > 
 > On 05/08/2016 03:05 PM, Krzysztof Kozlowski wrote:
+>> Just like clock driver for Exynos542x/5800, provide the fixed clock here
+>> so the clock bindings and their consumers would be consistent and
+>> similar.
 >>
->> Hi,
+>> However a clock named "fin_pll" is already provided by generic
+>> fixed-clock and it is both referenced in the clock driver (by name) and
+>> in DT (by phandle). To make the transition smooth, first introduce the
+>> new external fixed clock here under temporary, different name and switch
+>> internal users to it.
 >>
->> Patchset adds necessary clocks, reorganizes existing stuff and finally
->> adds Odroid XU support.
->>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
 > 
-> Do you have a branch available so I can pull these patches and test in
-> the Exynos5 boards I've access to?
+> [snip]
+> 
+>>  
+>> +/* Same as in Exynos5420 */
+>> +static const struct of_device_id ext_clk_match[] __initconst = {
+>> +	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
+> 
+> Since using designated initializers, I was about to say that there is no need
+> to explicitly set .data to 0 since omitted fields are implicitly initialized...
+> 
+>> +	{ },
+>> +};
+>> +
+>>  /* register exynos5410 clocks */
+>>  static void __init exynos5410_clk_init(struct device_node *np)
+>>  {
+>> @@ -192,6 +204,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>  
+>>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+>>  
+>> +	samsung_clk_of_register_fixed_ext(ctx, exynos5x_fixed_rate_ext_clks,
+>> +			ARRAY_SIZE(exynos5x_fixed_rate_ext_clks),
+>> +			ext_clk_match);
+>> +
+> 
+> ... but then I noticed that .data is used as exynos5x_fixed_rate_ext_clks
+> array index in samsung_clk_of_register_fixed_ext(). So makes sense to set
+> it explicitly to make the intent clear.
 
-Of course. It sits on my private repo, on Github:
-https://github.com/krzk/linux
-branch: for-next/odroid-xu-v2
+Yes, that is the intention here. The '(void *)0' is a hint that clock
+needs frequency from DT.
 
-Best regards,
+Thanks for review,
 Krzysztof
+
