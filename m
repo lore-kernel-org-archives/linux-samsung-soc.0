@@ -1,39 +1,56 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/4] drm/exynos: use generic code for managing zpos plane
- property
-Date: Wed, 11 May 2016 14:52:56 +0200
-Message-ID: <57332B28.3000904@samsung.com>
-References: <1462969881-2447-1-git-send-email-benjamin.gaignard@linaro.org>
- <1462969881-2447-3-git-send-email-benjamin.gaignard@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
+Date: Wed, 11 May 2016 14:54:18 +0200
+Message-ID: <57332B7A.5070909@kernel.org>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+ <1462910970-1812-28-git-send-email-krzk@kernel.org>
+ <b1f47282-f70e-4354-9146-9b4b27ba1726@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:35417 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932103AbcEKMxB (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32628 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751923AbcEKMyX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:53:01 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O7000EAKJSAJ870@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 May 2016 13:52:58 +0100 (BST)
-In-reply-to: <1462969881-2447-3-git-send-email-benjamin.gaignard@linaro.org>
+	Wed, 11 May 2016 08:54:23 -0400
+In-reply-to: <b1f47282-f70e-4354-9146-9b4b27ba1726@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, vincent.abriou@st.com, fabien.dessenne@st.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
 
-On 05/11/2016 02:31 PM, Benjamin Gaignard wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
+On 05/11/2016 02:44 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> This patch replaces zpos property handling custom code in Exynos DRM
-> driver with calls to generic DRM code.
+> On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+>> Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
+>> This still does not enable them on the board level though.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 66 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+>> index dd4d6d752865..ae64cb0a8efd 100644
+>> --- a/arch/arm/boot/dts/exynos5410.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+>> @@ -114,6 +114,9 @@
+>>  			status = "disabled";
+>>  		};
+>>  
+>> +		/* i2c_0-3 are defined in exynos5.dtsi */
+>> +		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
+>> +
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> I don't think these comments are needed. For each DTS, there are usually a lot of
+> nodes defined in higher levels of the DT hierarchy but isn't common to mention it.
+> 
+> Specially since the mentioned nodes are referenced here by their labels so it is
+> implicit that are defined in one of the included DTSI (or dtc will fail to build).
 
-Your signed-off-by is missing.
+Okay, if it does not make sense to you then I'll remove them.
 
-Best regards,
+Thanks for review!
 Krzysztof
