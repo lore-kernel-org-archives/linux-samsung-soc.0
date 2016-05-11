@@ -1,39 +1,50 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/4] drm/exynos: use generic code for managing zpos plane
- property
-Date: Wed, 11 May 2016 14:16:34 +0200
-Message-ID: <573322A2.5050603@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 3/4] drm/exynos: use generic code for managing zpos plane property
+Date: Wed, 11 May 2016 08:26:41 -0400
+Message-ID: <CABxcv==2Dv3XrNPQ3rgNvWzjM-X66+7YzT2aW6pK5Hd8trtcxA@mail.gmail.com>
 References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
- <1462962308-13410-3-git-send-email-benjamin.gaignard@linaro.org>
- <57331D7F.5080000@samsung.com>
- <CA+M3ks7JptQqptmZNn7Xd74_=Rt2wUVauewkpez71tBFnKSEWQ@mail.gmail.com>
+	<1462962308-13410-3-git-send-email-benjamin.gaignard@linaro.org>
+	<57331D7F.5080000@samsung.com>
+	<CA+M3ks7JptQqptmZNn7Xd74_=Rt2wUVauewkpez71tBFnKSEWQ@mail.gmail.com>
+	<573322A2.5050603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CA+M3ks7JptQqptmZNn7Xd74_=Rt2wUVauewkpez71tBFnKSEWQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f193.google.com ([209.85.213.193]:33742 "EHLO
+	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751552AbcEKM0n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 May 2016 08:26:43 -0400
+Received: by mail-ig0-f193.google.com with SMTP id rc4so4008272igc.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 May 2016 05:26:42 -0700 (PDT)
+In-Reply-To: <573322A2.5050603@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-T24gMDUvMTEvMjAxNiAwMjowOSBQTSwgQmVuamFtaW4gR2FpZ25hcmQgd3JvdGU6Cj4gSSBoYXZl
-bid0IGRvdWJsZSBjaGVjayBidXQgSSBoYWQgdG8gZG8gY2hhbmdlcyBpbnRvIHRoZSBvcmlnaW5h
-bCBwYXRjaAo+IHNvIEkgZ3Vlc3MgdGhhdCAiZnJvbSIgZmllbGQgY29tZXMgdGhlIG5ldyBjb21t
-aXQuCj4gCj4gSSB3aWxsIG1hbnVhbGx5IGVkaXQgdGhlIGNvbW1pdCBmb3IgdjIsCgpHaXQga2Vl
-cHMgb3JpZ2luYWwgYXV0aG9yIHVudG91Y2hlZC4gWW91IGhhdmUgdG8gbWFudWFsbHkgY2hhbmdl
-IHRoZQphdXRob3IgdG8gcmVtb3ZlIHRoZSBvcmlnaW5hbCBvbmUgKG9yIHVzZSBub24tc3RhbmRh
-cmQgd2F5IG9mIGFwcGx5aW5nCnBhdGNoZXMpLiBJZiB5b3UgdXNlIEdpdCwganVzdCBzdGljayB0
-byB0eXBpY2FsIHdvcmtmbG93IC0gZ2l0IGFtLCBnaXQKY29tbWl0IC0tYW1lbmQgLS1zaWdub2Zm
-LCBnaXQgZm9ybWF0LXBhdGNoLCBldGMuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, May 11, 2016 at 8:16 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 05/11/2016 02:09 PM, Benjamin Gaignard wrote:
+>> I haven't double check but I had to do changes into the original patch
+>> so I guess that "from" field comes the new commit.
+>>
+>> I will manually edit the commit for v2,
+>
+> Git keeps original author untouched. You have to manually change the
+> author to remove the original one (or use non-standard way of applying
+> patches). If you use Git, just stick to typical workflow - git am, git
+> commit --amend --signoff, git format-patch, etc.
+>
+
+and if the patch doesn't apply cleanly anymore and need to manually
+re-do it, git allows to change the author when doing a commit with:
+
+$ git commit --author='Marek Szyprowski <m.szyprowski@samsung.com>'
+
+> Best regards,
+> Krzysztof
+> --
+
+Best regards,
+Javier
