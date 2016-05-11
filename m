@@ -1,1044 +1,410 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 14/18] clk: samsung: exynos5433: Constify all clock initializers
-Date: Wed, 11 May 2016 14:02:10 +0200
-Message-ID: <1462968134-6085-14-git-send-email-k.kozlowski@samsung.com>
-References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH 1/4] drm: add generic zpos property
+Date: Wed, 11 May 2016 14:05:49 +0200
+Message-ID: <CA+M3ks4z0fuoCGJfPfHFMuz5geGrQry9MoA00wJ-hwBdCQTUOA@mail.gmail.com>
+References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
+ <7326036.oCkcemzpKu@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <7326036.oCkcemzpKu@avalon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All of initialization data can be made const.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 240 +++++++++++++++++------------------
- 1 file changed, 120 insertions(+), 120 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 128527b8fbeb..f202a51ff99b 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -108,7 +108,7 @@
- #define ENABLE_CMU_TOP			0x0c00
- #define ENABLE_CMU_TOP_DIV_STAT		0x0c04
- 
--static unsigned long top_clk_regs[] __initdata = {
-+static const unsigned long top_clk_regs[] __initconst = {
- 	ISP_PLL_LOCK,
- 	AUD_PLL_LOCK,
- 	ISP_PLL_CON0,
-@@ -218,11 +218,11 @@ PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "oscclk",
- 
- PNAME(mout_sclk_hdmi_spdif_p)	= { "sclk_audio1", "ioclk_spdif_extclk", };
- 
--static struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "oscclk_efuse_common", "oscclk", 1, 1, 0),
- };
- 
--static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
- 	/* Xi2s{0|1}CDCLK input clock for I2S/PCM */
- 	FRATE(0, "ioclk_audiocdclk1", NULL, 0, 100000000),
- 	FRATE(0, "ioclk_audiocdclk0", NULL, 0, 100000000),
-@@ -238,7 +238,7 @@ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
- 	FRATE(0, "ioclk_i2s1_bclk_in", NULL, 0, 12288000),
- };
- 
--static struct samsung_mux_clock top_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	/* MUX_SEL_TOP0 */
- 	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
- 			4, 1),
-@@ -374,7 +374,7 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 			mout_sclk_hdmi_spdif_p, MUX_SEL_TOP_DISP, 0, 1),
- };
- 
--static struct samsung_div_clock top_div_clks[] __initdata = {
-+static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	/* DIV_TOP0 */
- 	DIV(CLK_DIV_ACLK_CAM1_333, "div_aclk_cam1_333", "mout_aclk_cam1_333",
- 			DIV_TOP0, 28, 3),
-@@ -538,7 +538,7 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
- 			DIV_TOP_PERIC4, 0, 4),
- };
- 
--static struct samsung_gate_clock top_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock top_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_TOP */
- 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
- 			ENABLE_ACLK_TOP, 30, 0, 0),
-@@ -693,7 +693,7 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
-  * ATLAS_PLL & APOLLO_PLL & MEM0_PLL & MEM1_PLL & BUS_PLL & MFC_PLL
-  * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
-  */
--static struct samsung_pll_rate_table exynos5443_pll_rates[] = {
-+static const struct samsung_pll_rate_table exynos5443_pll_rates[] = {
- 	PLL_35XX_RATE(2500000000U, 625, 6,  0),
- 	PLL_35XX_RATE(2400000000U, 500, 5,  0),
- 	PLL_35XX_RATE(2300000000U, 575, 6,  0),
-@@ -744,7 +744,7 @@ static struct samsung_pll_rate_table exynos5443_pll_rates[] = {
- };
- 
- /* AUD_PLL */
--static struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
-+static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
- 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
- 	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
- 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
-@@ -757,14 +757,14 @@ static struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
- 	{ /* sentinel */ }
- };
- 
--static struct samsung_pll_clock top_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock top_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_ISP_PLL, "fout_isp_pll", "oscclk",
- 		ISP_PLL_LOCK, ISP_PLL_CON0, exynos5443_pll_rates),
- 	PLL(pll_36xx, CLK_FOUT_AUD_PLL, "fout_aud_pll", "oscclk",
- 		AUD_PLL_LOCK, AUD_PLL_CON0, exynos5443_aud_pll_rates),
- };
- 
--static struct samsung_cmu_info top_cmu_info __initdata = {
-+static const struct samsung_cmu_info top_cmu_info __initconst = {
- 	.pll_clks		= top_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(top_pll_clks),
- 	.mux_clks		= top_mux_clks,
-@@ -800,7 +800,7 @@ CLK_OF_DECLARE(exynos5433_cmu_top, "samsung,exynos5433-cmu-top",
- #define DIV_CPIF		0x0600
- #define ENABLE_SCLK_CPIF	0x0a00
- 
--static unsigned long cpif_clk_regs[] __initdata = {
-+static const unsigned long cpif_clk_regs[] __initconst = {
- 	MPHY_PLL_LOCK,
- 	MPHY_PLL_CON0,
- 	MPHY_PLL_CON1,
-@@ -813,24 +813,24 @@ static unsigned long cpif_clk_regs[] __initdata = {
- /* list of all parent clock list */
- PNAME(mout_mphy_pll_p)		= { "oscclk", "fout_mphy_pll", };
- 
--static struct samsung_pll_clock cpif_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock cpif_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_MPHY_PLL, "fout_mphy_pll", "oscclk",
- 		MPHY_PLL_LOCK, MPHY_PLL_CON0, exynos5443_pll_rates),
- };
- 
--static struct samsung_mux_clock cpif_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock cpif_mux_clks[] __initconst = {
- 	/* MUX_SEL_CPIF0 */
- 	MUX(CLK_MOUT_MPHY_PLL, "mout_mphy_pll", mout_mphy_pll_p, MUX_SEL_CPIF0,
- 			0, 1),
- };
- 
--static struct samsung_div_clock cpif_div_clks[] __initdata = {
-+static const struct samsung_div_clock cpif_div_clks[] __initconst = {
- 	/* DIV_CPIF */
- 	DIV(CLK_DIV_SCLK_MPHY, "div_sclk_mphy", "mout_mphy_pll", DIV_CPIF,
- 			0, 6),
- };
- 
--static struct samsung_gate_clock cpif_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock cpif_gate_clks[] __initconst = {
- 	/* ENABLE_SCLK_CPIF */
- 	GATE(CLK_SCLK_MPHY_PLL, "sclk_mphy_pll", "mout_mphy_pll",
- 			ENABLE_SCLK_CPIF, 9, 0, 0),
-@@ -838,7 +838,7 @@ static struct samsung_gate_clock cpif_gate_clks[] __initdata = {
- 			ENABLE_SCLK_CPIF, 4, 0, 0),
- };
- 
--static struct samsung_cmu_info cpif_cmu_info __initdata = {
-+static const struct samsung_cmu_info cpif_cmu_info __initconst = {
- 	.pll_clks		= cpif_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(cpif_pll_clks),
- 	.mux_clks		= cpif_mux_clks,
-@@ -939,7 +939,7 @@ CLK_OF_DECLARE(exynos5433_cmu_cpif, "samsung,exynos5433-cmu-cpif",
- #define PAUSE				0x1008
- #define DDRPHY_LOCK_CTRL		0x100c
- 
--static unsigned long mif_clk_regs[] __initdata = {
-+static const unsigned long mif_clk_regs[] __initconst = {
- 	MEM0_PLL_LOCK,
- 	MEM1_PLL_LOCK,
- 	BUS_PLL_LOCK,
-@@ -1004,7 +1004,7 @@ static unsigned long mif_clk_regs[] __initdata = {
- 	DDRPHY_LOCK_CTRL,
- };
- 
--static struct samsung_pll_clock mif_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock mif_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_MEM0_PLL, "fout_mem0_pll", "oscclk",
- 		MEM0_PLL_LOCK, MEM0_PLL_CON0, exynos5443_pll_rates),
- 	PLL(pll_35xx, CLK_FOUT_MEM1_PLL, "fout_mem1_pll", "oscclk",
-@@ -1065,7 +1065,7 @@ PNAME(mout_sclk_decon_tv_vclk_b_p) = { "mout_sclk_decon_tv_vclk_a",
- PNAME(mout_sclk_dsim1_c_p)	= { "mout_sclk_dsim1_b", "sclk_mphy_pll", };
- PNAME(mout_sclk_dsim1_b_p)	= { "mout_sclk_dsim1_a", "mout_mfc_pll_div2",};
- 
--static struct samsung_fixed_factor_clock mif_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock mif_fixed_factor_clks[] __initconst = {
- 	/* dout_{mfc|bus|mem1|mem0}_pll is half fixed rate from parent mux */
- 	FFACTOR(CLK_DOUT_MFC_PLL, "dout_mfc_pll", "mout_mfc_pll", 1, 1, 0),
- 	FFACTOR(CLK_DOUT_BUS_PLL, "dout_bus_pll", "mout_bus_pll", 1, 1, 0),
-@@ -1073,7 +1073,7 @@ static struct samsung_fixed_factor_clock mif_fixed_factor_clks[] __initdata = {
- 	FFACTOR(CLK_DOUT_MEM0_PLL, "dout_mem0_pll", "mout_mem0_pll", 1, 1, 0),
- };
- 
--static struct samsung_mux_clock mif_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock mif_mux_clks[] __initconst = {
- 	/* MUX_SEL_MIF0 */
- 	MUX(CLK_MOUT_MFC_PLL_DIV2, "mout_mfc_pll_div2", mout_mfc_pll_div2_p,
- 			MUX_SEL_MIF0, 28, 1),
-@@ -1169,7 +1169,7 @@ static struct samsung_mux_clock mif_mux_clks[] __initdata = {
- 			MUX_SEL_MIF7, 0, 1),
- };
- 
--static struct samsung_div_clock mif_div_clks[] __initdata = {
-+static const struct samsung_div_clock mif_div_clks[] __initconst = {
- 	/* DIV_MIF1 */
- 	DIV(CLK_DIV_SCLK_HPM_MIF, "div_sclk_hpm_mif", "div_clk2x_phy",
- 			DIV_MIF1, 16, 2),
-@@ -1223,7 +1223,7 @@ static struct samsung_div_clock mif_div_clks[] __initdata = {
- 			0, 3),
- };
- 
--static struct samsung_gate_clock mif_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock mif_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_MIF0 */
- 	GATE(CLK_CLK2X_PHY1, "clk2k_phy1", "div_clk2x_phy", ENABLE_ACLK_MIF0,
- 			19, CLK_IGNORE_UNUSED, 0),
-@@ -1486,7 +1486,7 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
- 			ENABLE_SCLK_MIF, 0, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info mif_cmu_info __initdata = {
-+static const struct samsung_cmu_info mif_cmu_info __initconst = {
- 	.pll_clks		= mif_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(mif_pll_clks),
- 	.mux_clks		= mif_mux_clks,
-@@ -1522,7 +1522,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
- #define ENABLE_IP_PERIC1		0x0B04
- #define ENABLE_IP_PERIC2		0x0B08
- 
--static unsigned long peric_clk_regs[] __initdata = {
-+static const unsigned long peric_clk_regs[] __initconst = {
- 	DIV_PERIC,
- 	ENABLE_ACLK_PERIC,
- 	ENABLE_PCLK_PERIC0,
-@@ -1533,13 +1533,13 @@ static unsigned long peric_clk_regs[] __initdata = {
- 	ENABLE_IP_PERIC2,
- };
- 
--static struct samsung_div_clock peric_div_clks[] __initdata = {
-+static const struct samsung_div_clock peric_div_clks[] __initconst = {
- 	/* DIV_PERIC */
- 	DIV(CLK_DIV_SCLK_SCI, "div_sclk_sci", "oscclk", DIV_PERIC, 4, 4),
- 	DIV(CLK_DIV_SCLK_SC_IN, "div_sclk_sc_in", "oscclk", DIV_PERIC, 0, 4),
- };
- 
--static struct samsung_gate_clock peric_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_PERIC */
- 	GATE(CLK_ACLK_AHB2APB_PERIC2P, "aclk_ahb2apb_peric2p", "aclk_peric_66",
- 			ENABLE_ACLK_PERIC, 3, CLK_IGNORE_UNUSED, 0),
-@@ -1681,7 +1681,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 			ENABLE_SCLK_PERIC, 0, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_cmu_info peric_cmu_info __initdata = {
-+static const struct samsung_cmu_info peric_cmu_info __initconst = {
- 	.div_clks		= peric_div_clks,
- 	.nr_div_clks		= ARRAY_SIZE(peric_div_clks),
- 	.gate_clks		= peric_gate_clks,
-@@ -1728,7 +1728,7 @@ CLK_OF_DECLARE(exynos5433_cmu_peric, "samsung,exynos5433-cmu-peric",
- #define ENABLE_IP_PERIS_SECURE_ANTIBRK_CNT		0x0b1c
- #define ENABLE_IP_PERIS_SECURE_OTP_CON			0x0b20
- 
--static unsigned long peris_clk_regs[] __initdata = {
-+static const unsigned long peris_clk_regs[] __initconst = {
- 	ENABLE_ACLK_PERIS,
- 	ENABLE_PCLK_PERIS,
- 	ENABLE_PCLK_PERIS_SECURE_TZPC,
-@@ -1756,7 +1756,7 @@ static unsigned long peris_clk_regs[] __initdata = {
- 	ENABLE_IP_PERIS_SECURE_OTP_CON,
- };
- 
--static struct samsung_gate_clock peris_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_PERIS */
- 	GATE(CLK_ACLK_AHB2APB_PERIS1P, "aclk_ahb2apb_peris1p", "aclk_peris_66",
- 			ENABLE_ACLK_PERIS, 2, CLK_IGNORE_UNUSED, 0),
-@@ -1875,7 +1875,7 @@ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
- 			ENABLE_SCLK_PERIS_SECURE_OTP_CON, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info peris_cmu_info __initdata = {
-+static const struct samsung_cmu_info peris_cmu_info __initconst = {
- 	.gate_clks		= peris_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(peris_gate_clks),
- 	.nr_clk_ids		= PERIS_NR_CLK,
-@@ -1959,7 +1959,7 @@ PNAME(mout_sclk_mphy_p)
- 		= { "mout_sclk_ufs_mphy_user",
- 			    "mout_phyclk_lli_mphy_to_ufs_user", };
- 
--static unsigned long fsys_clk_regs[] __initdata = {
-+static const unsigned long fsys_clk_regs[] __initconst = {
- 	MUX_SEL_FSYS0,
- 	MUX_SEL_FSYS1,
- 	MUX_SEL_FSYS2,
-@@ -1980,7 +1980,7 @@ static unsigned long fsys_clk_regs[] __initdata = {
- 	ENABLE_IP_FSYS1,
- };
- 
--static struct samsung_fixed_rate_clock fsys_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock fsys_fixed_clks[] __initconst = {
- 	/* PHY clocks from USBDRD30_PHY */
- 	FRATE(CLK_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_PHY,
- 			"phyclk_usbdrd30_udrd30_phyclock_phy", NULL,
-@@ -2020,7 +2020,7 @@ static struct samsung_fixed_rate_clock fsys_fixed_clks[] __initdata = {
- 			NULL, 0, 26000000),
- };
- 
--static struct samsung_mux_clock fsys_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	/* MUX_SEL_FSYS0 */
- 	MUX(CLK_MOUT_SCLK_UFS_MPHY_USER, "mout_sclk_ufs_mphy_user",
- 			mout_sclk_ufs_mphy_user_p, MUX_SEL_FSYS0, 4, 1),
-@@ -2104,7 +2104,7 @@ static struct samsung_mux_clock fsys_mux_clks[] __initdata = {
- 			MUX_SEL_FSYS4, 0, 1),
- };
- 
--static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_FSYS0 */
- 	GATE(CLK_ACLK_PCIE, "aclk_pcie", "mout_aclk_fsys_200_user",
- 			ENABLE_ACLK_FSYS0, 13, CLK_IGNORE_UNUSED, 0),
-@@ -2274,7 +2274,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 	GATE(CLK_PDMA0, "pdma0", "aclk_pdma0", ENABLE_IP_FSYS0, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info fsys_cmu_info __initdata = {
-+static const struct samsung_cmu_info fsys_cmu_info __initconst = {
- 	.mux_clks		= fsys_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(fsys_mux_clks),
- 	.gate_clks		= fsys_gate_clks,
-@@ -2310,7 +2310,7 @@ CLK_OF_DECLARE(exynos5433_cmu_fsys, "samsung,exynos5433-cmu-fsys",
- #define DIV_ENABLE_IP_G2D1			0x0b04
- #define DIV_ENABLE_IP_G2D_SECURE_SMMU_G2D	0x0b08
- 
--static unsigned long g2d_clk_regs[] __initdata = {
-+static const unsigned long g2d_clk_regs[] __initconst = {
- 	MUX_SEL_G2D0,
- 	MUX_SEL_ENABLE_G2D0,
- 	DIV_G2D,
-@@ -2327,7 +2327,7 @@ static unsigned long g2d_clk_regs[] __initdata = {
- PNAME(mout_aclk_g2d_266_user_p)		= { "oscclk", "aclk_g2d_266", };
- PNAME(mout_aclk_g2d_400_user_p)		= { "oscclk", "aclk_g2d_400", };
- 
--static struct samsung_mux_clock g2d_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock g2d_mux_clks[] __initconst = {
- 	/* MUX_SEL_G2D0 */
- 	MUX(CLK_MUX_ACLK_G2D_266_USER, "mout_aclk_g2d_266_user",
- 			mout_aclk_g2d_266_user_p, MUX_SEL_G2D0, 4, 1),
-@@ -2335,13 +2335,13 @@ static struct samsung_mux_clock g2d_mux_clks[] __initdata = {
- 			mout_aclk_g2d_400_user_p, MUX_SEL_G2D0, 0, 1),
- };
- 
--static struct samsung_div_clock g2d_div_clks[] __initdata = {
-+static const struct samsung_div_clock g2d_div_clks[] __initconst = {
- 	/* DIV_G2D */
- 	DIV(CLK_DIV_PCLK_G2D, "div_pclk_g2d", "mout_aclk_g2d_266_user",
- 			DIV_G2D, 0, 2),
- };
- 
--static struct samsung_gate_clock g2d_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock g2d_gate_clks[] __initconst = {
- 	/* DIV_ENABLE_ACLK_G2D */
- 	GATE(CLK_ACLK_SMMU_MDMA1, "aclk_smmu_mdma1", "mout_aclk_g2d_266_user",
- 			DIV_ENABLE_ACLK_G2D, 12, 0, 0),
-@@ -2398,7 +2398,7 @@ static struct samsung_gate_clock g2d_gate_clks[] __initdata = {
- 		DIV_ENABLE_PCLK_G2D_SECURE_SMMU_G2D, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info g2d_cmu_info __initdata = {
-+static const struct samsung_cmu_info g2d_cmu_info __initconst = {
- 	.mux_clks		= g2d_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(g2d_mux_clks),
- 	.div_clks		= g2d_div_clks,
-@@ -2454,7 +2454,7 @@ CLK_OF_DECLARE(exynos5433_cmu_g2d, "samsung,exynos5433-cmu-g2d",
- #define CLKOUT_CMU_DISP			0x0c00
- #define CLKOUT_CMU_DISP_DIV_STAT	0x0c04
- 
--static unsigned long disp_clk_regs[] __initdata = {
-+static const unsigned long disp_clk_regs[] __initconst = {
- 	DISP_PLL_LOCK,
- 	DISP_PLL_CON0,
- 	DISP_PLL_CON1,
-@@ -2527,12 +2527,12 @@ PNAME(mout_sclk_decon_tv_vclk_c_disp_p)	= {
- PNAME(mout_sclk_decon_tv_vclk_b_disp_p)	= { "mout_sclk_decon_tv_vclk_a_disp",
- 					    "mout_sclk_decon_tv_vclk_user", };
- 
--static struct samsung_pll_clock disp_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock disp_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_DISP_PLL, "fout_disp_pll", "oscclk",
- 		DISP_PLL_LOCK, DISP_PLL_CON0, exynos5443_pll_rates),
- };
- 
--static struct samsung_fixed_factor_clock disp_fixed_factor_clks[] __initdata = {
-+static const struct samsung_fixed_factor_clock disp_fixed_factor_clks[] __initconst = {
- 	/*
- 	 * sclk_rgb_{vclk|tv_vclk} is half clock of sclk_decon_{vclk|tv_vclk}.
- 	 * The divider has fixed value (2) between sclk_rgb_{vclk|tv_vclk}
-@@ -2544,7 +2544,7 @@ static struct samsung_fixed_factor_clock disp_fixed_factor_clks[] __initdata = {
- 			1, 2, 0),
- };
- 
--static struct samsung_fixed_rate_clock disp_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock disp_fixed_clks[] __initconst = {
- 	/* PHY clocks from MIPI_DPHY1 */
- 	FRATE(0, "phyclk_mipidphy1_bitclkdiv8_phy", NULL, 0, 188000000),
- 	FRATE(0, "phyclk_mipidphy1_rxclkesc0_phy", NULL, 0, 100000000),
-@@ -2558,7 +2558,7 @@ static struct samsung_fixed_rate_clock disp_fixed_clks[] __initdata = {
- 			NULL, 0, 166000000),
- };
- 
--static struct samsung_mux_clock disp_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock disp_mux_clks[] __initconst = {
- 	/* MUX_SEL_DISP0 */
- 	MUX(CLK_MOUT_DISP_PLL, "mout_disp_pll", mout_disp_pll_p, MUX_SEL_DISP0,
- 			0, 1),
-@@ -2633,7 +2633,7 @@ static struct samsung_mux_clock disp_mux_clks[] __initdata = {
- 			mout_sclk_decon_vclk_p, MUX_SEL_DISP4, 0, 1),
- };
- 
--static struct samsung_div_clock disp_div_clks[] __initdata = {
-+static const struct samsung_div_clock disp_div_clks[] __initconst = {
- 	/* DIV_DISP */
- 	DIV(CLK_DIV_SCLK_DSIM1_DISP, "div_sclk_dsim1_disp",
- 			"mout_sclk_dsim1_b_disp", DIV_DISP, 24, 3),
-@@ -2651,7 +2651,7 @@ static struct samsung_div_clock disp_div_clks[] __initdata = {
- 			DIV_DISP, 0, 2),
- };
- 
--static struct samsung_gate_clock disp_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock disp_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_DISP0 */
- 	GATE(CLK_ACLK_DECON_TV, "aclk_decon_tv", "mout_aclk_disp_333_user",
- 			ENABLE_ACLK_DISP0, 2, 0, 0),
-@@ -2811,7 +2811,7 @@ static struct samsung_gate_clock disp_gate_clks[] __initdata = {
- 			"div_sclk_decon_eclk_disp", ENABLE_SCLK_DISP, 2, 0, 0),
- };
- 
--static struct samsung_cmu_info disp_cmu_info __initdata = {
-+static const struct samsung_cmu_info disp_cmu_info __initconst = {
- 	.pll_clks		= disp_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(disp_pll_clks),
- 	.mux_clks		= disp_mux_clks,
-@@ -2856,7 +2856,7 @@ CLK_OF_DECLARE(exynos5433_cmu_disp, "samsung,exynos5433-cmu-disp",
- #define ENABLE_IP_AUD0			0x0b00
- #define ENABLE_IP_AUD1			0x0b04
- 
--static unsigned long aud_clk_regs[] __initdata = {
-+static const unsigned long aud_clk_regs[] __initconst = {
- 	MUX_SEL_AUD0,
- 	MUX_SEL_AUD1,
- 	MUX_ENABLE_AUD0,
-@@ -2875,13 +2875,13 @@ static unsigned long aud_clk_regs[] __initdata = {
- PNAME(mout_aud_pll_user_aud_p)	= { "oscclk", "fout_aud_pll", };
- PNAME(mout_sclk_aud_pcm_p)	= { "mout_aud_pll_user", "ioclk_audiocdclk0",};
- 
--static struct samsung_fixed_rate_clock aud_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock aud_fixed_clks[] __initconst = {
- 	FRATE(0, "ioclk_jtag_tclk", NULL, 0, 33000000),
- 	FRATE(0, "ioclk_slimbus_clk", NULL, 0, 25000000),
- 	FRATE(0, "ioclk_i2s_bclk", NULL, 0, 50000000),
- };
- 
--static struct samsung_mux_clock aud_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock aud_mux_clks[] __initconst = {
- 	/* MUX_SEL_AUD0 */
- 	MUX(CLK_MOUT_AUD_PLL_USER, "mout_aud_pll_user",
- 			mout_aud_pll_user_aud_p, MUX_SEL_AUD0, 0, 1),
-@@ -2893,7 +2893,7 @@ static struct samsung_mux_clock aud_mux_clks[] __initdata = {
- 			MUX_SEL_AUD1, 0, 1),
- };
- 
--static struct samsung_div_clock aud_div_clks[] __initdata = {
-+static const struct samsung_div_clock aud_div_clks[] __initconst = {
- 	/* DIV_AUD0 */
- 	DIV(CLK_DIV_ATCLK_AUD, "div_atclk_aud", "div_aud_ca5", DIV_AUD0,
- 			12, 4),
-@@ -2915,7 +2915,7 @@ static struct samsung_div_clock aud_div_clks[] __initdata = {
- 			DIV_AUD1, 0, 4),
- };
- 
--static struct samsung_gate_clock aud_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_AUD */
- 	GATE(CLK_ACLK_INTR_CTRL, "aclk_intr_ctrl", "div_aclk_aud",
- 			ENABLE_ACLK_AUD, 12, 0, 0),
-@@ -2985,7 +2985,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
- 			ENABLE_SCLK_AUD1, 0, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info aud_cmu_info __initdata = {
-+static const struct samsung_cmu_info aud_cmu_info __initconst = {
- 	.mux_clks		= aud_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(aud_mux_clks),
- 	.div_clks		= aud_div_clks,
-@@ -3031,24 +3031,24 @@ PNAME(mout_aclk_bus2_400_p)	= { "oscclk", "aclk_bus2_400", };
- 	ENABLE_IP_BUS0,		\
- 	ENABLE_IP_BUS1
- 
--static unsigned long bus01_clk_regs[] __initdata = {
-+static const unsigned long bus01_clk_regs[] __initconst = {
- 	CMU_BUS_COMMON_CLK_REGS,
- };
- 
--static unsigned long bus2_clk_regs[] __initdata = {
-+static const unsigned long bus2_clk_regs[] __initconst = {
- 	MUX_SEL_BUS2,
- 	MUX_ENABLE_BUS2,
- 	CMU_BUS_COMMON_CLK_REGS,
- };
- 
--static struct samsung_div_clock bus0_div_clks[] __initdata = {
-+static const struct samsung_div_clock bus0_div_clks[] __initconst = {
- 	/* DIV_BUS0 */
- 	DIV(CLK_DIV_PCLK_BUS_133, "div_pclk_bus0_133", "aclk_bus0_400",
- 			DIV_BUS, 0, 3),
- };
- 
- /* CMU_BUS0 clocks */
--static struct samsung_gate_clock bus0_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock bus0_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_BUS0 */
- 	GATE(CLK_ACLK_AHB2APB_BUSP, "aclk_ahb2apb_bus0p", "div_pclk_bus0_133",
- 			ENABLE_ACLK_BUS, 4, CLK_IGNORE_UNUSED, 0),
-@@ -3067,13 +3067,13 @@ static struct samsung_gate_clock bus0_gate_clks[] __initdata = {
- };
- 
- /* CMU_BUS1 clocks */
--static struct samsung_div_clock bus1_div_clks[] __initdata = {
-+static const struct samsung_div_clock bus1_div_clks[] __initconst = {
- 	/* DIV_BUS1 */
- 	DIV(CLK_DIV_PCLK_BUS_133, "div_pclk_bus1_133", "aclk_bus1_400",
- 			DIV_BUS, 0, 3),
- };
- 
--static struct samsung_gate_clock bus1_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock bus1_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_BUS1 */
- 	GATE(CLK_ACLK_AHB2APB_BUSP, "aclk_ahb2apb_bus1p", "div_pclk_bus1_133",
- 			ENABLE_ACLK_BUS, 4, CLK_IGNORE_UNUSED, 0),
-@@ -3092,19 +3092,19 @@ static struct samsung_gate_clock bus1_gate_clks[] __initdata = {
- };
- 
- /* CMU_BUS2 clocks */
--static struct samsung_mux_clock bus2_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock bus2_mux_clks[] __initconst = {
- 	/* MUX_SEL_BUS2 */
- 	MUX(CLK_MOUT_ACLK_BUS2_400_USER, "mout_aclk_bus2_400_user",
- 			mout_aclk_bus2_400_p, MUX_SEL_BUS2, 0, 1),
- };
- 
--static struct samsung_div_clock bus2_div_clks[] __initdata = {
-+static const struct samsung_div_clock bus2_div_clks[] __initconst = {
- 	/* DIV_BUS2 */
- 	DIV(CLK_DIV_PCLK_BUS_133, "div_pclk_bus2_133",
- 			"mout_aclk_bus2_400_user", DIV_BUS, 0, 3),
- };
- 
--static struct samsung_gate_clock bus2_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock bus2_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_BUS2 */
- 	GATE(CLK_ACLK_AHB2APB_BUSP, "aclk_ahb2apb_bus2p", "div_pclk_bus2_133",
- 			ENABLE_ACLK_BUS, 3, CLK_IGNORE_UNUSED, 0),
-@@ -3133,19 +3133,19 @@ static struct samsung_gate_clock bus2_gate_clks[] __initdata = {
- 	.nr_gate_clks		= ARRAY_SIZE(bus##id##_gate_clks),	\
- 	.nr_clk_ids		= BUSx_NR_CLK
- 
--static struct samsung_cmu_info bus0_cmu_info __initdata = {
-+static const struct samsung_cmu_info bus0_cmu_info __initconst = {
- 	CMU_BUS_INFO_CLKS(0),
- 	.clk_regs		= bus01_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(bus01_clk_regs),
- };
- 
--static struct samsung_cmu_info bus1_cmu_info __initdata = {
-+static const struct samsung_cmu_info bus1_cmu_info __initconst = {
- 	CMU_BUS_INFO_CLKS(1),
- 	.clk_regs		= bus01_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(bus01_clk_regs),
- };
- 
--static struct samsung_cmu_info bus2_cmu_info __initdata = {
-+static const struct samsung_cmu_info bus2_cmu_info __initconst = {
- 	CMU_BUS_INFO_CLKS(2),
- 	.mux_clks		= bus2_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(bus2_mux_clks),
-@@ -3189,7 +3189,7 @@ exynos5433_cmu_bus_init(2);
- #define CLKOUT_CMU_G3D_DIV_STAT		0x0c04
- #define CLK_STOPCTRL			0x1000
- 
--static unsigned long g3d_clk_regs[] __initdata = {
-+static const unsigned long g3d_clk_regs[] __initconst = {
- 	G3D_PLL_LOCK,
- 	G3D_PLL_CON0,
- 	G3D_PLL_CON1,
-@@ -3212,12 +3212,12 @@ static unsigned long g3d_clk_regs[] __initdata = {
- PNAME(mout_aclk_g3d_400_p)	= { "mout_g3d_pll", "aclk_g3d_400", };
- PNAME(mout_g3d_pll_p)		= { "oscclk", "fout_g3d_pll", };
- 
--static struct samsung_pll_clock g3d_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock g3d_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
- 		G3D_PLL_LOCK, G3D_PLL_CON0, exynos5443_pll_rates),
- };
- 
--static struct samsung_mux_clock g3d_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock g3d_mux_clks[] __initconst = {
- 	/* MUX_SEL_G3D */
- 	MUX_F(CLK_MOUT_ACLK_G3D_400, "mout_aclk_g3d_400", mout_aclk_g3d_400_p,
- 			MUX_SEL_G3D, 8, 1, CLK_SET_RATE_PARENT, 0),
-@@ -3225,7 +3225,7 @@ static struct samsung_mux_clock g3d_mux_clks[] __initdata = {
- 			MUX_SEL_G3D, 0, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_div_clock g3d_div_clks[] __initdata = {
-+static const struct samsung_div_clock g3d_div_clks[] __initconst = {
- 	/* DIV_G3D */
- 	DIV(CLK_DIV_SCLK_HPM_G3D, "div_sclk_hpm_g3d", "mout_g3d_pll", DIV_G3D,
- 			8, 2),
-@@ -3235,7 +3235,7 @@ static struct samsung_div_clock g3d_div_clks[] __initdata = {
- 			0, 3, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_gate_clock g3d_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock g3d_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_G3D */
- 	GATE(CLK_ACLK_BTS_G3D1, "aclk_bts_g3d1", "div_aclk_g3d",
- 			ENABLE_ACLK_G3D, 7, 0, 0),
-@@ -3269,7 +3269,7 @@ static struct samsung_gate_clock g3d_gate_clks[] __initdata = {
- 			ENABLE_SCLK_G3D, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info g3d_cmu_info __initdata = {
-+static const struct samsung_cmu_info g3d_cmu_info __initconst = {
- 	.pll_clks		= g3d_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(g3d_pll_clks),
- 	.mux_clks		= g3d_mux_clks,
-@@ -3310,7 +3310,7 @@ CLK_OF_DECLARE(exynos5433_cmu_g3d, "samsung,exynos5433-cmu-g3d",
- #define ENABLE_IP_GSCL_SECURE_SMMU_GSCL1	0x0b0c
- #define ENABLE_IP_GSCL_SECURE_SMMU_GSCL2	0x0b10
- 
--static unsigned long gscl_clk_regs[] __initdata = {
-+static const unsigned long gscl_clk_regs[] __initconst = {
- 	MUX_SEL_GSCL,
- 	MUX_ENABLE_GSCL,
- 	ENABLE_ACLK_GSCL,
-@@ -3332,7 +3332,7 @@ static unsigned long gscl_clk_regs[] __initdata = {
- PNAME(aclk_gscl_111_user_p)	= { "oscclk", "aclk_gscl_111", };
- PNAME(aclk_gscl_333_user_p)	= { "oscclk", "aclk_gscl_333", };
- 
--static struct samsung_mux_clock gscl_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock gscl_mux_clks[] __initconst = {
- 	/* MUX_SEL_GSCL */
- 	MUX(CLK_MOUT_ACLK_GSCL_111_USER, "mout_aclk_gscl_111_user",
- 			aclk_gscl_111_user_p, MUX_SEL_GSCL, 4, 1),
-@@ -3340,7 +3340,7 @@ static struct samsung_mux_clock gscl_mux_clks[] __initdata = {
- 			aclk_gscl_333_user_p, MUX_SEL_GSCL, 0, 1),
- };
- 
--static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock gscl_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_GSCL */
- 	GATE(CLK_ACLK_BTS_GSCL2, "aclk_bts_gscl2", "mout_aclk_gscl_333_user",
- 			ENABLE_ACLK_GSCL, 11, 0, 0),
-@@ -3412,7 +3412,7 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
- 		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info gscl_cmu_info __initdata = {
-+static const struct samsung_cmu_info gscl_cmu_info __initconst = {
- 	.mux_clks		= gscl_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(gscl_mux_clks),
- 	.gate_clks		= gscl_gate_clks,
-@@ -3465,7 +3465,7 @@ CLK_OF_DECLARE(exynos5433_cmu_gscl, "samsung,exynos5433-cmu-gscl",
- #define APOLLO_INTR_SPREAD_USE_STANDBYWFI	0x1084
- #define APOLLO_INTR_SPREAD_BLOCKING_DURATION	0x1088
- 
--static unsigned long apollo_clk_regs[] __initdata = {
-+static const unsigned long apollo_clk_regs[] __initconst = {
- 	APOLLO_PLL_LOCK,
- 	APOLLO_PLL_CON0,
- 	APOLLO_PLL_CON1,
-@@ -3500,12 +3500,12 @@ PNAME(mout_bus_pll_apollo_user_p)	= { "oscclk", "sclk_bus_pll_apollo", };
- PNAME(mout_apollo_p)			= { "mout_apollo_pll",
- 					    "mout_bus_pll_apollo_user", };
- 
--static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock apollo_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_APOLLO_PLL, "fout_apollo_pll", "oscclk",
- 		APOLLO_PLL_LOCK, APOLLO_PLL_CON0, exynos5443_pll_rates),
- };
- 
--static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock apollo_mux_clks[] __initconst = {
- 	/* MUX_SEL_APOLLO0 */
- 	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
- 			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT, 0),
-@@ -3519,7 +3519,7 @@ static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
- 			0, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_div_clock apollo_div_clks[] __initdata = {
-+static const struct samsung_div_clock apollo_div_clks[] __initconst = {
- 	/* DIV_APOLLO0 */
- 	DIV_F(CLK_DIV_CNTCLK_APOLLO, "div_cntclk_apollo", "div_apollo2",
- 			DIV_APOLLO0, 24, 3, CLK_GET_RATE_NOCACHE,
-@@ -3550,7 +3550,7 @@ static struct samsung_div_clock apollo_div_clks[] __initdata = {
- 			CLK_DIVIDER_READ_ONLY),
- };
- 
--static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock apollo_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_APOLLO */
- 	GATE(CLK_ACLK_ASATBSLV_APOLLO_3_CSSYS, "aclk_asatbslv_apollo_3_cssys",
- 			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-@@ -3594,7 +3594,7 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_cmu_info apollo_cmu_info __initdata = {
-+static const struct samsung_cmu_info apollo_cmu_info __initconst = {
- 	.pll_clks		= apollo_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(apollo_pll_clks),
- 	.mux_clks		= apollo_mux_clks,
-@@ -3651,7 +3651,7 @@ CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
- #define ATLAS_INTR_SPREAD_USE_STANDBYWFI	0x1084
- #define ATLAS_INTR_SPREAD_BLOCKING_DURATION	0x1088
- 
--static unsigned long atlas_clk_regs[] __initdata = {
-+static const unsigned long atlas_clk_regs[] __initconst = {
- 	ATLAS_PLL_LOCK,
- 	ATLAS_PLL_CON0,
- 	ATLAS_PLL_CON1,
-@@ -3686,12 +3686,12 @@ PNAME(mout_bus_pll_atlas_user_p)	= { "oscclk", "sclk_bus_pll_atlas", };
- PNAME(mout_atlas_p)			= { "mout_atlas_pll",
- 					    "mout_bus_pll_atlas_user", };
- 
--static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
-+static const struct samsung_pll_clock atlas_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_ATLAS_PLL, "fout_atlas_pll", "oscclk",
- 		ATLAS_PLL_LOCK, ATLAS_PLL_CON0, exynos5443_pll_rates),
- };
- 
--static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock atlas_mux_clks[] __initconst = {
- 	/* MUX_SEL_ATLAS0 */
- 	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
- 			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT, 0),
-@@ -3705,7 +3705,7 @@ static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
- 			0, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_div_clock atlas_div_clks[] __initdata = {
-+static const struct samsung_div_clock atlas_div_clks[] __initconst = {
- 	/* DIV_ATLAS0 */
- 	DIV_F(CLK_DIV_CNTCLK_ATLAS, "div_cntclk_atlas", "div_atlas2",
- 			DIV_ATLAS0, 24, 3, CLK_GET_RATE_NOCACHE,
-@@ -3736,7 +3736,7 @@ static struct samsung_div_clock atlas_div_clks[] __initdata = {
- 			CLK_DIVIDER_READ_ONLY),
- };
- 
--static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock atlas_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_ATLAS */
- 	GATE(CLK_ACLK_ATB_AUD_CSSYS, "aclk_atb_aud_cssys",
- 			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-@@ -3806,7 +3806,7 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_cmu_info atlas_cmu_info __initdata = {
-+static const struct samsung_cmu_info atlas_cmu_info __initconst = {
- 	.pll_clks		= atlas_pll_clks,
- 	.nr_pll_clks		= ARRAY_SIZE(atlas_pll_clks),
- 	.mux_clks		= atlas_mux_clks,
-@@ -3853,7 +3853,7 @@ CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
- #define ENABLE_IP_MSCL_SECURE_SMMU_M2MSCALER1		0x0b0c
- #define ENABLE_IP_MSCL_SECURE_SMMU_JPEG			0x0b10
- 
--static unsigned long mscl_clk_regs[] __initdata = {
-+static const unsigned long mscl_clk_regs[] __initconst = {
- 	MUX_SEL_MSCL0,
- 	MUX_SEL_MSCL1,
- 	MUX_ENABLE_MSCL0,
-@@ -3881,7 +3881,7 @@ PNAME(mout_aclk_mscl_400_user_p)	= { "oscclk", "aclk_mscl_400", };
- PNAME(mout_sclk_jpeg_p)			= { "mout_sclk_jpeg_user",
- 					"mout_aclk_mscl_400_user", };
- 
--static struct samsung_mux_clock mscl_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock mscl_mux_clks[] __initconst = {
- 	/* MUX_SEL_MSCL0 */
- 	MUX(CLK_MOUT_SCLK_JPEG_USER, "mout_sclk_jpeg_user",
- 			mout_sclk_jpeg_user_p, MUX_SEL_MSCL0, 4, 1),
-@@ -3893,13 +3893,13 @@ static struct samsung_mux_clock mscl_mux_clks[] __initdata = {
- 			MUX_SEL_MSCL1, 0, 1),
- };
- 
--static struct samsung_div_clock mscl_div_clks[] __initdata = {
-+static const struct samsung_div_clock mscl_div_clks[] __initconst = {
- 	/* DIV_MSCL */
- 	DIV(CLK_DIV_PCLK_MSCL, "div_pclk_mscl", "mout_aclk_mscl_400_user",
- 			DIV_MSCL, 0, 3),
- };
- 
--static struct samsung_gate_clock mscl_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock mscl_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_MSCL */
- 	GATE(CLK_ACLK_BTS_JPEG, "aclk_bts_jpeg", "mout_aclk_mscl_400_user",
- 			ENABLE_ACLK_MSCL, 9, 0, 0),
-@@ -3977,7 +3977,7 @@ static struct samsung_gate_clock mscl_gate_clks[] __initdata = {
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- };
- 
--static struct samsung_cmu_info mscl_cmu_info __initdata = {
-+static const struct samsung_cmu_info mscl_cmu_info __initconst = {
- 	.mux_clks		= mscl_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(mscl_mux_clks),
- 	.div_clks		= mscl_div_clks,
-@@ -4012,7 +4012,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mscl, "samsung,exynos5433-cmu-mscl",
- #define ENABLE_IP_MFC1				0x0b04
- #define ENABLE_IP_MFC_SECURE_SMMU_MFC		0x0b08
- 
--static unsigned long mfc_clk_regs[] __initdata = {
-+static const unsigned long mfc_clk_regs[] __initconst = {
- 	MUX_SEL_MFC,
- 	MUX_ENABLE_MFC,
- 	DIV_MFC,
-@@ -4027,19 +4027,19 @@ static unsigned long mfc_clk_regs[] __initdata = {
- 
- PNAME(mout_aclk_mfc_400_user_p)		= { "oscclk", "aclk_mfc_400", };
- 
--static struct samsung_mux_clock mfc_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock mfc_mux_clks[] __initconst = {
- 	/* MUX_SEL_MFC */
- 	MUX(CLK_MOUT_ACLK_MFC_400_USER, "mout_aclk_mfc_400_user",
- 			mout_aclk_mfc_400_user_p, MUX_SEL_MFC, 0, 0),
- };
- 
--static struct samsung_div_clock mfc_div_clks[] __initdata = {
-+static const struct samsung_div_clock mfc_div_clks[] __initconst = {
- 	/* DIV_MFC */
- 	DIV(CLK_DIV_PCLK_MFC, "div_pclk_mfc", "mout_aclk_mfc_400_user",
- 			DIV_MFC, 0, 2),
- };
- 
--static struct samsung_gate_clock mfc_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock mfc_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_MFC */
- 	GATE(CLK_ACLK_BTS_MFC_1, "aclk_bts_mfc_1", "mout_aclk_mfc_400_user",
- 			ENABLE_ACLK_MFC, 6, 0, 0),
-@@ -4085,7 +4085,7 @@ static struct samsung_gate_clock mfc_gate_clks[] __initdata = {
- 			0, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info mfc_cmu_info __initdata = {
-+static const struct samsung_cmu_info mfc_cmu_info __initconst = {
- 	.mux_clks		= mfc_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(mfc_mux_clks),
- 	.div_clks		= mfc_div_clks,
-@@ -4120,7 +4120,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mfc, "samsung,exynos5433-cmu-mfc",
- #define ENABLE_IP_HEVC1				0x0b04
- #define ENABLE_IP_HEVC_SECURE_SMMU_HEVC		0x0b08
- 
--static unsigned long hevc_clk_regs[] __initdata = {
-+static const unsigned long hevc_clk_regs[] __initconst = {
- 	MUX_SEL_HEVC,
- 	MUX_ENABLE_HEVC,
- 	DIV_HEVC,
-@@ -4135,19 +4135,19 @@ static unsigned long hevc_clk_regs[] __initdata = {
- 
- PNAME(mout_aclk_hevc_400_user_p)	= { "oscclk", "aclk_hevc_400", };
- 
--static struct samsung_mux_clock hevc_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock hevc_mux_clks[] __initconst = {
- 	/* MUX_SEL_HEVC */
- 	MUX(CLK_MOUT_ACLK_HEVC_400_USER, "mout_aclk_hevc_400_user",
- 			mout_aclk_hevc_400_user_p, MUX_SEL_HEVC, 0, 0),
- };
- 
--static struct samsung_div_clock hevc_div_clks[] __initdata = {
-+static const struct samsung_div_clock hevc_div_clks[] __initconst = {
- 	/* DIV_HEVC */
- 	DIV(CLK_DIV_PCLK_HEVC, "div_pclk_hevc", "mout_aclk_hevc_400_user",
- 			DIV_HEVC, 0, 2),
- };
- 
--static struct samsung_gate_clock hevc_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock hevc_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_HEVC */
- 	GATE(CLK_ACLK_BTS_HEVC_1, "aclk_bts_hevc_1", "mout_aclk_hevc_400_user",
- 			ENABLE_ACLK_HEVC, 6, 0, 0),
-@@ -4195,7 +4195,7 @@ static struct samsung_gate_clock hevc_gate_clks[] __initdata = {
- 			0, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info hevc_cmu_info __initdata = {
-+static const struct samsung_cmu_info hevc_cmu_info __initconst = {
- 	.mux_clks		= hevc_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(hevc_mux_clks),
- 	.div_clks		= hevc_div_clks,
-@@ -4232,7 +4232,7 @@ CLK_OF_DECLARE(exynos5433_cmu_hevc, "samsung,exynos5433-cmu-hevc",
- #define ENABLE_IP_ISP2			0x0b08
- #define ENABLE_IP_ISP3			0x0b0c
- 
--static unsigned long isp_clk_regs[] __initdata = {
-+static const unsigned long isp_clk_regs[] __initconst = {
- 	MUX_SEL_ISP,
- 	MUX_ENABLE_ISP,
- 	DIV_ISP,
-@@ -4250,7 +4250,7 @@ static unsigned long isp_clk_regs[] __initdata = {
- PNAME(mout_aclk_isp_dis_400_user_p)	= { "oscclk", "aclk_isp_dis_400", };
- PNAME(mout_aclk_isp_400_user_p)		= { "oscclk", "aclk_isp_400", };
- 
--static struct samsung_mux_clock isp_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock isp_mux_clks[] __initconst = {
- 	/* MUX_SEL_ISP */
- 	MUX(CLK_MOUT_ACLK_ISP_DIS_400_USER, "mout_aclk_isp_dis_400_user",
- 			mout_aclk_isp_dis_400_user_p, MUX_SEL_ISP, 4, 0),
-@@ -4258,7 +4258,7 @@ static struct samsung_mux_clock isp_mux_clks[] __initdata = {
- 			mout_aclk_isp_400_user_p, MUX_SEL_ISP, 0, 0),
- };
- 
--static struct samsung_div_clock isp_div_clks[] __initdata = {
-+static const struct samsung_div_clock isp_div_clks[] __initconst = {
- 	/* DIV_ISP */
- 	DIV(CLK_DIV_PCLK_ISP_DIS, "div_pclk_isp_dis",
- 			"mout_aclk_isp_dis_400_user", DIV_ISP, 12, 3),
-@@ -4270,7 +4270,7 @@ static struct samsung_div_clock isp_div_clks[] __initdata = {
- 			"mout_aclk_isp_400_user", DIV_ISP, 0, 3),
- };
- 
--static struct samsung_gate_clock isp_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock isp_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_ISP0 */
- 	GATE(CLK_ACLK_ISP_D_GLUE, "aclk_isp_d_glue", "mout_aclk_isp_400_user",
- 			ENABLE_ACLK_ISP0, 6, CLK_IGNORE_UNUSED, 0),
-@@ -4448,7 +4448,7 @@ static struct samsung_gate_clock isp_gate_clks[] __initdata = {
- 			0, CLK_IGNORE_UNUSED, 0),
- };
- 
--static struct samsung_cmu_info isp_cmu_info __initdata = {
-+static const struct samsung_cmu_info isp_cmu_info __initconst = {
- 	.mux_clks		= isp_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(isp_mux_clks),
- 	.div_clks		= isp_div_clks,
-@@ -4504,7 +4504,7 @@ CLK_OF_DECLARE(exynos5433_cmu_isp, "samsung,exynos5433-cmu-isp",
- #define ENABLE_IP_CAM02			0X0b08
- #define ENABLE_IP_CAM03			0X0b0C
- 
--static unsigned long cam0_clk_regs[] __initdata = {
-+static const unsigned long cam0_clk_regs[] __initconst = {
- 	MUX_SEL_CAM00,
- 	MUX_SEL_CAM01,
- 	MUX_SEL_CAM02,
-@@ -4588,14 +4588,14 @@ PNAME(mout_sclk_pixelasync_lite_c_init_a_p) = {
- 					"mout_aclk_cam0_552_user",
- 					"mout_aclk_cam0_400_user", };
- 
--static struct samsung_fixed_rate_clock cam0_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock cam0_fixed_clks[] __initconst = {
- 	FRATE(CLK_PHYCLK_RXBYTEECLKHS0_S4_PHY, "phyclk_rxbyteclkhs0_s4_phy",
- 			NULL, 0, 100000000),
- 	FRATE(CLK_PHYCLK_RXBYTEECLKHS0_S2A_PHY, "phyclk_rxbyteclkhs0_s2a_phy",
- 			NULL, 0, 100000000),
- };
- 
--static struct samsung_mux_clock cam0_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock cam0_mux_clks[] __initconst = {
- 	/* MUX_SEL_CAM00 */
- 	MUX(CLK_MOUT_ACLK_CAM0_333_USER, "mout_aclk_cam0_333_user",
- 			mout_aclk_cam0_333_user_p, MUX_SEL_CAM00, 8, 1),
-@@ -4669,7 +4669,7 @@ static struct samsung_mux_clock cam0_mux_clks[] __initdata = {
- 			MUX_SEL_CAM04, 0, 1),
- };
- 
--static struct samsung_div_clock cam0_div_clks[] __initdata = {
-+static const struct samsung_div_clock cam0_div_clks[] __initconst = {
- 	/* DIV_CAM00 */
- 	DIV(CLK_DIV_PCLK_CAM0_50, "div_pclk_cam0_50", "div_aclk_cam0_200",
- 			DIV_CAM00, 8, 2),
-@@ -4716,7 +4716,7 @@ static struct samsung_div_clock cam0_div_clks[] __initdata = {
- 			"mout_sclk_pixelasync_lite_c_init_b", DIV_CAM03, 0, 3),
- };
- 
--static struct samsung_gate_clock cam0_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock cam0_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_CAM00 */
- 	GATE(CLK_ACLK_CSIS1, "aclk_csis1", "div_aclk_csis1", ENABLE_ACLK_CAM00,
- 			6, 0, 0),
-@@ -4923,7 +4923,7 @@ static struct samsung_gate_clock cam0_gate_clks[] __initdata = {
- 			ENABLE_SCLK_CAM0, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info cam0_cmu_info __initdata = {
-+static const struct samsung_cmu_info cam0_cmu_info __initconst = {
- 	.mux_clks		= cam0_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(cam0_mux_clks),
- 	.div_clks		= cam0_div_clks,
-@@ -4970,7 +4970,7 @@ CLK_OF_DECLARE(exynos5433_cmu_cam0, "samsung,exynos5433-cmu-cam0",
- #define ENABLE_IP_CAM11			0X0b04
- #define ENABLE_IP_CAM12			0X0b08
- 
--static unsigned long cam1_clk_regs[] __initdata = {
-+static const unsigned long cam1_clk_regs[] __initconst = {
- 	MUX_SEL_CAM10,
- 	MUX_SEL_CAM11,
- 	MUX_SEL_CAM12,
-@@ -5016,12 +5016,12 @@ PNAME(mout_aclk_lite_c_b_p)		= { "mout_aclk_lite_c_a",
- PNAME(mout_aclk_lite_c_a_p)		= { "mout_aclk_cam1_552_user",
- 					    "mout_aclk_cam1_400_user", };
- 
--static struct samsung_fixed_rate_clock cam1_fixed_clks[] __initdata = {
-+static const struct samsung_fixed_rate_clock cam1_fixed_clks[] __initconst = {
- 	FRATE(CLK_PHYCLK_RXBYTEECLKHS0_S2B, "phyclk_rxbyteclkhs0_s2b_phy", NULL,
- 			0, 100000000),
- };
- 
--static struct samsung_mux_clock cam1_mux_clks[] __initdata = {
-+static const struct samsung_mux_clock cam1_mux_clks[] __initconst = {
- 	/* MUX_SEL_CAM10 */
- 	MUX(CLK_MOUT_SCLK_ISP_UART_USER, "mout_sclk_isp_uart_user",
- 			mout_sclk_isp_uart_user_p, MUX_SEL_CAM10, 20, 1),
-@@ -5057,7 +5057,7 @@ static struct samsung_mux_clock cam1_mux_clks[] __initdata = {
- 			MUX_SEL_CAM12, 0, 1),
- };
- 
--static struct samsung_div_clock cam1_div_clks[] __initdata = {
-+static const struct samsung_div_clock cam1_div_clks[] __initconst = {
- 	/* DIV_CAM10 */
- 	DIV(CLK_DIV_SCLK_ISP_MPWM, "div_sclk_isp_mpwm",
- 			"div_pclk_cam1_83", DIV_CAM10, 16, 2),
-@@ -5081,7 +5081,7 @@ static struct samsung_div_clock cam1_div_clks[] __initdata = {
- 			DIV_CAM11, 0, 3),
- };
- 
--static struct samsung_gate_clock cam1_gate_clks[] __initdata = {
-+static const struct samsung_gate_clock cam1_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_CAM10 */
- 	GATE(CLK_ACLK_ISP_GIC, "aclk_isp_gic", "mout_aclk_cam1_333_user",
- 			ENABLE_ACLK_CAM10, 4, 0, 0),
-@@ -5296,7 +5296,7 @@ static struct samsung_gate_clock cam1_gate_clks[] __initdata = {
- 			ENABLE_SCLK_CAM1, 0, 0, 0),
- };
- 
--static struct samsung_cmu_info cam1_cmu_info __initdata = {
-+static const struct samsung_cmu_info cam1_cmu_info __initconst = {
- 	.mux_clks		= cam1_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(cam1_mux_clks),
- 	.div_clks		= cam1_div_clks,
--- 
-1.9.1
+SGkgTGF1cmVudCwKCgoyMDE2LTA1LTExIDEzOjI0IEdNVCswMjowMCBMYXVyZW50IFBpbmNoYXJ0
+IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Ogo+IEhpIEJlbmphbWluLAo+Cj4g
+VGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCj4KPiBJIHdvdWxkIGhhdmUgc3RhcnRlZCB3b3JraW5n
+IG9uIHRoaXMgbmV4dCB3ZWVrLCB0aGFua3MgZm9yIGJlYXRpbmcgbWUgdG8gaXQKPiA6LSkKPgo+
+IE9uIFdlZG5lc2RheSAxMSBNYXkgMjAxNiAxMjoyNTowNSBCZW5qYW1pbiBHYWlnbmFyZCB3cm90
+ZToKPj4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIGdlbmVyaWMgcGxhbmUncyB6cG9zIHBy
+b3BlcnR5IHByb3BlcnR5IHdpdGgKPj4gd2VsbC1kZWZpbmVkIHNlbWFudGljczoKPj4gLSBhZGRl
+ZCB6cG9zIHByb3BlcnRpZXMgdG8gcGxhbmUgYW5kIHBsYW5lIHN0YXRlIHN0cnVjdHVyZXMKPj4g
+LSBhZGRlZCBoZWxwZXJzIGZvciBub3JtYWxpemluZyB6cG9zIHByb3BlcnRpZXMgb2YgZ2l2ZW4g
+c2V0IG9mIHBsYW5lcwo+PiAtIHdlbGwgZGVmaW5lZCBzZW1hbnRpY3M6IHBsYW5lcyBhcmUgc29y
+dGVkIGJ5IHpwb3MgdmFsdWVzIGFuZCB0aGVuIHBsYW5lCj4+ICAgaWQgdmFsdWUgaWYgenBvcyBl
+cXVhbHMKPj4KPj4gTm9ybWFsaXplZCB6cG9zIHZhbHVlcyBhcmUgY2FsY3VsYXRlZCBhdXRvbWF0
+aWNhbGx5IHdoZW4gZ2VuZXJpYwo+PiBtdXR0YWJsZSB6cG9zIHByb3BlcnR5IGhhcyBiZWVuIGlu
+aXRpYWxpemVkLiBEcml2ZXJzIGNhbiBzaW1wbHkgdXNlCj4+IHBsYW5lX3N0YXRlLT5ub3JtYWxp
+emVkX3pwb3MgaW4gdGhlaXIgYXRvbWljX2NoZWNrIGFuZC9vciBwbGFuZV91cGRhdGUKPj4gY2Fs
+bGJhY2tzIHdpdGhvdXQgYW55IGFkZGl0aW9uYWwgY2FsbHMgdG8gRFJNIGNvcmUuCj4+Cj4+IFNp
+Z25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4K
+Pj4KPj4gQ29tcGFyZSB0byBNYXJlaydzIG9yaWdpbmFsIHBhdGNoIHpwb3MgcHJvcGVydHkgaXMg
+bm93IHNwZWNpZmljIHRvIGVhY2gKPj4gcGxhbmUgYW5kIG5vIG1vcmUgdG8gdGhlIGNvcmUuCj4+
+IE5vcm1hbGl6ZSBmdW5jdGlvbiB0YWtlIGNhcmUgb2YgdGhlIHJhbmdlIG9mIHBlciBwbGFuZSBk
+ZWZpbmVkIHJhbmdlCj4+IGJlZm9yZSBzZXQgbm9ybWFsaXplZF96cG9zLgo+Pgo+PiBTaWduZWQt
+b2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4K
+Pj4KPj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gQ2M6IERhbmllbCBW
+ZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4KPj4gQ2M6IFZpbGxlIFN5cmphbGEgPHZpbGxlLnN5cmph
+bGFAbGludXguaW50ZWwuY29tPgo+PiBDYzogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNh
+bXN1bmcuY29tPgo+PiBDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4K
+Pj4gQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+IENjOiBLcnp5c3p0
+b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KPj4gQ2M6IEJhcnRsb21pZWog
+Wm9sbmllcmtpZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4KPj4gQ2M6IFRvYmlhcyBK
+YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+PiBDYzogR3VzdGF2byBQYWRv
+dmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPgo+PiBDYzogdmluY2VudC5hYnJpb3VAc3QuY29tCj4+
+IENjOiBmYWJpZW4uZGVzc2VubmVAc3QuY29tCj4+IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVy
+ZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4+Cj4+IC0tLQo+PiAgRG9jdW1lbnRhdGlv
+bi9Eb2NCb29rL2dwdS50bXBsICAgICAgfCAgMTAgKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9NYWtl
+ZmlsZSAgICAgICAgICAgIHwgICAyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19o
+ZWxwZXIuYyB8ICAgNiArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgICAgICAgICB8
+IDI4NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9kcm1fY3J0Y19pbnRlcm5hbC5oIHwgICAzICsKPj4gIGluY2x1ZGUvZHJtL2RybV9jcnRjLmgg
+ICAgICAgICAgICAgIHwgIDI1ICsrKysKPj4gIDYgZmlsZXMgY2hhbmdlZCwgMzI5IGluc2VydGlv
+bnMoKyksIDEgZGVsZXRpb24oLSkKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2JsZW5kLmMKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vRG9jQm9vay9n
+cHUudG1wbCBiL0RvY3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbAo+PiBpbmRleCA5ZGQ0OGY3
+Li4wZGY2YWJiIDEwMDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwK
+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsCj4+IEBAIC0yMTUxLDYgKzIx
+NTEsMTYgQEAgdm9pZCBpbnRlbF9jcnRfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+PiAg
+ICAgICAgICAgICAgIHRoZSB1bmRlcmx5aW5nIGhhcmR3YXJlKS48L3RkPgo+PiAgICAgICA8L3Ry
+Pgo+PiAgICAgICA8dHI+Cj4+ICsgICAgIDx0ZCB2YWxpZ249InRvcCIgPiAienBvcyIgPC90ZD4K
+Pj4gKyAgICAgPHRkIHZhbGlnbj0idG9wIiA+UkFOR0U8L3RkPgo+PiArICAgICA8dGQgdmFsaWdu
+PSJ0b3AiID5NaW49IGRyaXZlciBkZXBlbmRlbnQsIE1heD0gZHJpdmVyIGRlcGVuZGVudDwvdGQ+
+Cj4+ICsgICAgIDx0ZCB2YWxpZ249InRvcCIgPlBsYW5lPC90ZD4KPj4gKyAgICAgPHRkIHZhbGln
+bj0idG9wIiA+UGxhbmUncyAneicgcG9zaXRpb24gZHVyaW5nIGJsZW5kaW5nIG9wZXJhdGlvbiAo
+MCBmb3IKPj4gYmFja2dyb3VuZCwgaGlnaGVzdCBmb3IgZnJvbnRtb3N0KS4KPj4gKyAgICAgICAg
+ICAgICBJZiB0d28gcGxhbmVzIGFzc2lnbmVkIHRvIHNhbWUgQ1JUQyBoYXZlIGVxdWFsIHpwb3Mg
+dmFsdWVzLCB0aGUgcGxhbmUKPj4gd2l0aCBoaWdoZXIgcGxhbmUKPj4gKyAgICAgICAgICAgICBp
+ZCBpcyB0cmVhdGVkIGFzIGNsb3NlciB0byBmcm9udC4gQ2FuIGJlIElNTVVUQUJMRSBpZiBkcml2
+ZXIgZG9lc24ndAo+PiBzdXBwb3J0IGNoYW5naW5nCj4+ICsgICAgICAgICAgICAgcGxhbmVzJyBv
+cmRlci4gRXhhY3QgdmFsdWUgcmFuZ2UgaXMgZHJpdmVyIGRlcGVuZGVudC48L3RkPgo+PiArICAg
+ICA8L3RyPgo+PiArICAgICA8dHI+Cj4+ICAgICAgIDx0ZCByb3dzcGFuPSIyMCIgdmFsaWduPSJ0
+b3AiID5pOTE1PC90ZD4KPj4gICAgICAgPHRkIHJvd3NwYW49IjIiIHZhbGlnbj0idG9wIiA+R2Vu
+ZXJpYzwvdGQ+Cj4+ICAgICAgIDx0ZCB2YWxpZ249InRvcCIgPiJCcm9hZGNhc3QgUkdCIjwvdGQ+
+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUgYi9kcml2ZXJzL2dwdS9k
+cm0vTWFrZWZpbGUKPj4gaW5kZXggMmJkM2U1YS4uZGY4ODI1MyAxMDA2NDQKPj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL01ha2VmaWxlCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+
+PiBAQCAtMiw3ICsyLDcgQEAKPj4gICMgTWFrZWZpbGUgZm9yIHRoZSBkcm0gZGV2aWNlIGRyaXZl
+ci4gIFRoaXMgZHJpdmVyIHByb3ZpZGVzIHN1cHBvcnQgZm9yIHRoZQo+PiAjIERpcmVjdCBSZW5k
+ZXJpbmcgSW5mcmFzdHJ1Y3R1cmUgKERSSSkgaW4gWEZyZWU4NiA0LjEuMCBhbmQgaGlnaGVyLgo+
+Pgo+PiAtZHJtLXkgICAgICAgOj0gICAgICAgZHJtX2F1dGgubyBkcm1fYnVmcy5vIGRybV9jYWNo
+ZS5vIFwKPj4gK2RybS15ICAgICAgIDo9ICAgICAgIGRybV9hdXRoLm8gZHJtX2J1ZnMubyBkcm1f
+YmxlbmQubyBkcm1fY2FjaGUubyBcCj4+ICAgICAgICAgICAgICAgZHJtX2NvbnRleHQubyBkcm1f
+ZG1hLm8gXAo+PiAgICAgICAgICAgICAgIGRybV9mb3BzLm8gZHJtX2dlbS5vIGRybV9pb2N0bC5v
+IGRybV9pcnEubyBcCj4+ICAgICAgICAgICAgICAgZHJtX2xvY2subyBkcm1fbWVtb3J5Lm8gZHJt
+X2Rydi5vIGRybV92bS5vIFwKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRv
+bWljX2hlbHBlci5jCj4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgaW5k
+ZXggOTk3ZmQyMS4uZjEwNjUyZiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9h
+dG9taWNfaGVscGVyLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVy
+LmMKPj4gQEAgLTMyLDYgKzMyLDggQEAKPj4gICNpbmNsdWRlIDxkcm0vZHJtX2F0b21pY19oZWxw
+ZXIuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9mZW5jZS5oPgo+Pgo+PiArI2luY2x1ZGUgImRybV9j
+cnRjX2ludGVybmFsLmgiCj4KPiBkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcygpIGlz
+IGRlY2xhcmVkIGluIDxkcm0vZHJtX2NydGMuaD4sIHdoeSBkbyB5b3UKPiBuZWVkIHRvIGluY2x1
+ZGUgZHJtX2NydGNfaW50ZXJuYWwuaCA/Cgpkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBv
+cygpIGlzIGRlY2xhcmVkIGluIGRybV9jcnRjX2ludGVybmFsLmgKbm90IGludG8gPGRybS9kcm1f
+Y3J0Yy5oPgoKPgo+PiAgLyoqCj4+ICAgKiBET0M6IG92ZXJ2aWV3Cj4+ICAgKgo+PiBAQCAtNTg3
+LDYgKzU4OSwxMCBAQCBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19wbGFuZXMoc3RydWN0IGRybV9k
+ZXZpY2UgKmRldiwKPj4gICAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqcGxhbmVfc3RhdGU7
+Cj4+ICAgICAgIGludCBpLCByZXQgPSAwOwo+Pgo+PiArICAgICByZXQgPSBkcm1fYXRvbWljX2hl
+bHBlcl9ub3JtYWxpemVfenBvcyhkZXYsIHN0YXRlKTsKPj4gKyAgICAgaWYgKHJldCkKPj4gKyAg
+ICAgICAgICAgICByZXR1cm4gcmV0Owo+PiArCj4+ICAgICAgIGZvcl9lYWNoX3BsYW5lX2luX3N0
+YXRlKHN0YXRlLCBwbGFuZSwgcGxhbmVfc3RhdGUsIGkpIHsKPj4gICAgICAgICAgICAgICBjb25z
+dCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9mdW5jcyAqZnVuY3M7Cj4+Cj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5k
+LmMKPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPj4gaW5kZXggMDAwMDAwMC4uNzAxNzcxNQo+PiAt
+LS0gL2Rldi9udWxsCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYwo+PiBAQCAt
+MCwwICsxLDI4NCBAQAo+Cj4gW3NuaXBdCj4KPj4gKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+Cj4+
+ICsjaW5jbHVkZSA8bGludXgvc29ydC5oPgo+PiArI2luY2x1ZGUgPGxpbnV4L2V4cG9ydC5oPgo+
+PiArI2luY2x1ZGUgPGRybS9kcm1QLmg+Cj4+ICsjaW5jbHVkZSA8ZHJtL2RybV9jcnRjLmg+Cj4+
+ICsjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWMuaD4KPgo+IE5pdHBpY2tpbmcsIGNvdWxkIHlvdSBw
+bGVhc2Uga2VlcCBoZWFkZXIgZmlsZXMgYWxwaGFiZXRpY2FsbHkgc29ydGVkID8gSXQKPiBoZWxw
+cyBsb2NhdGluZyBhbmQgYXZvaWRpbmcgZHVwbGljYXRlcy4KPgoKc3VyZSwgSSB3aWxsIGZvciB2
+MgoKPj4gKyNpbmNsdWRlICJkcm1faW50ZXJuYWwuaCIKPj4gKwo+PiArI2RlZmluZSBNQVgoYSwg
+YikgKCgoYSkgPiAoYikpID8gKGEpIDogKGIpKQo+Cj4gbGludXgva2VybmVsLmggaGFzIG1heCBh
+bmQgbWF4X3QsIGlzIHRoZXJlIHJlYWxseSBhIG5lZWQgZm9yIGEgbmV3IG1hY3JvID8KCm9rIEkg
+d2lsbCByZXBsYWNlIGJ5IG1heF90Cgo+Cj4+ICsvKioKPj4gKyAqIGRybV9wbGFuZV9hdG9taWNf
+c2V0X3pwb3NfcHJvcGVydHkgLSBzZXQgcGxhbmUgenBvcyBwcm9wZXJ0eQo+PiArICogQHBsYW5l
+OiBkcm0gcGxhbmUKPj4gKyAqIEBzdGF0ZTogZHJtIHBsYW5lIHN0YXRlCj4+ICsgKiBAcHJvcGVy
+dHk6IG11c3QgYmUgdGhlIHpwb3MgcHJvcGVydHkgYXNzb2NpYXRlZCB0byB0aGUgcGxhbmUKPj4g
+KyAqIEB2YWw6IHpwb3MgdmFsdWUgdG8gYmUgc2V0Cj4+ICsgKgo+PiArICogUmV0dXJuczoKPj4g
+KyAqIFplcm8gb24gc3VjY2VzcywgbmVnYXRpdmUgZXJybm8gb24gZmFpbHVyZS4KPj4gKyAqLwo+
+PiAraW50IGRybV9wbGFuZV9hdG9taWNfc2V0X3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFu
+ZSAqcGxhbmUsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
+ZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3BlcnR5LAo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgdWludDY0X3QgdmFsKQo+PiArewo+PiArICAgICBzdHJ1Y3Qg
+ZHJtX21vZGVfb2JqZWN0ICpvYmogPSAmcGxhbmUtPmJhc2U7Cj4+ICsgICAgIGludCBpOwo+PiAr
+Cj4+ICsgICAgIGZvciAoaSA9IDA7IGkgPCBvYmotPnByb3BlcnRpZXMtPmNvdW50OyBpKyspIHsK
+Pj4gKyAgICAgICAgICAgICBpZiAob2JqLT5wcm9wZXJ0aWVzLT5wcm9wZXJ0aWVzW2ldID09IHBy
+b3BlcnR5KSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICBzdGF0ZS0+enBvcyA9IHZhbDsKPj4g
+KyAgICAgICAgICAgICAgICAgICAgIHJldHVybiAwOwo+PiArICAgICAgICAgICAgIH0KPj4gKyAg
+ICAgfQo+PiArCj4+ICsgICAgIHJldHVybiAtRUlOVkFMOwo+PiArfQo+PiArRVhQT1JUX1NZTUJP
+TChkcm1fcGxhbmVfYXRvbWljX3NldF96cG9zX3Byb3BlcnR5KTsKPgo+IFdoeSBkbyB5b3UgbmVl
+ZCB0aGlzIGZ1bmN0aW9uIGluc3RlYWQgb2YgYWRkaW5nIHpwb3Mgc3VwcG9ydCB0bwo+IGRybV9h
+dG9taWNfcGxhbmVfc2V0X3Byb3BlcnR5KCkgPyBTYW1lIHF1ZXN0aW9uIGZvciB0aGUgZ2V0IGhh
+bmRsZXIuCj4KPj4gKy8qKgo+PiArICogZHJtX3BsYW5lX2F0b21pY19nZXRfenBvc19wcm9wZXJ0
+eSAtIHNldCBwbGFuZSB6cG9zIHByb3BlcnR5Cj4+ICsgKiBAcGxhbmU6IGRybSBwbGFuZQo+PiAr
+ICogQHN0YXRlOiBkcm0gcGxhbmUgc3RhdGUKPj4gKyAqIEBwcm9wZXJ0eTogbXVzdCBiZSB0aGUg
+enBvcyBwcm9wZXJ0eSBhc3NvY2lhdGVkIHRvIHRoZSBwbGFuZQo+PiArICogQHZhbDogenBvcyB2
+YWx1ZSB0byBiZSByZXRyaWV2ZQo+PiArICoKPj4gKyAqIFJldHVybnM6Cj4+ICsgKiBaZXJvIG9u
+IHN1Y2Nlc3MsIG5lZ2F0aXZlIGVycm5vIG9uIGZhaWx1cmUuCj4+ICsgKi8KPj4gK2ludCBkcm1f
+cGxhbmVfYXRvbWljX2dldF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IGRybV9w
+bGFuZV9zdGF0ZSAqc3RhdGUsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpwcm9wZXJ0eSwKPj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHVpbnQ2NF90ICp2YWwpCj4+ICt7Cj4+ICsgICAgIHN0cnVjdCBkcm1f
+bW9kZV9vYmplY3QgKm9iaiA9ICZwbGFuZS0+YmFzZTsKPj4gKyAgICAgaW50IGk7Cj4+ICsKPj4g
+KyAgICAgZm9yIChpID0gMDsgaSA8IG9iai0+cHJvcGVydGllcy0+Y291bnQ7IGkrKykgewo+PiAr
+ICAgICAgICAgICAgIGlmIChvYmotPnByb3BlcnRpZXMtPnByb3BlcnRpZXNbaV0gPT0gcHJvcGVy
+dHkpIHsKPj4gKyAgICAgICAgICAgICAgICAgICAgICp2YWwgPSBzdGF0ZS0+enBvczsKPj4gKyAg
+ICAgICAgICAgICAgICAgICAgIHJldHVybiAwOwo+PiArICAgICAgICAgICAgIH0KPj4gKyAgICAg
+fQo+PiArCj4+ICsgICAgIHJldHVybiAtRUlOVkFMOwo+PiArfQo+PiArRVhQT1JUX1NZTUJPTChk
+cm1fcGxhbmVfYXRvbWljX2dldF96cG9zX3Byb3BlcnR5KTsKPj4gKwo+PiArLyoqCj4+ICsgKiBk
+cm1fcGxhbmVfY3JlYXRlX3pwb3NfcHJvcGVydHkgLSBjcmVhdGUgbXV0YWJsZSB6cG9zIHByb3Bl
+cnR5Cj4+ICsgKiBAcGxhbmU6IGRybSBwbGFuZQo+PiArICogQG1pbjogbWluaW1hbCBwb3NzaWJs
+ZSB2YWx1ZSBvZiB6cG9zIHByb3BlcnR5Cj4+ICsgKiBAbWF4OiBtYXhpbWFsIHBvc3NpYmxlIHZh
+bHVlIG9mIHpwb3MgcHJvcGVydHkKPj4gKyAqCj4+ICsgKiBUaGlzIGZ1bmN0aW9uIGluaXRpYWxp
+emVzIGdlbmVyaWMgbXV0YWJsZSB6cG9zIHByb3BlcnR5IGFuZCBlbmFibGVzCj4+IHN1cHBvcnQK
+Pj4gKyAqIGZvciBpdCBpbiBkcm0gY29yZS4gRHJpdmVycyBjYW4gdGhlbiBhdHRhY2ggdGhpcyBw
+cm9wZXJ0eSB0byBwbGFuZXMgdG8KPj4gZW5hYmxlCj4+ICsgKiBzdXBwb3J0IGZvciBjb25maWd1
+cmFibGUgcGxhbmVzIGFycmFuZ2VtZW50IGR1cmluZyBibGVuZGluZyBvcGVyYXRpb24uCj4+ICsg
+KiBPbmNlIG11dGFibGUgenBvcyBwcm9wZXJ0eSBoYXMgYmVlbiBlbmFibGVkLCB0aGUgRFJNIGNv
+cmUgd2lsbAo+PiBhdXRvbWF0aWNhbGx5Cj4+ICsgKiBjYWxjdWxhdGUgZHJtX3BsYW5lX3N0YXRl
+LT5ub3JtYWxpemVkX3pwb3MgdmFsdWVzLiBVc3VhbGx5IG1pbiBzaG91bGQgYmUKPj4gc2V0Cj4+
+ICsgKiB0byAwIGFuZCBtYXggdG8gbWF4aW1hbCBudW1iZXIgb2YgcGxhbmVzIGZvciBnaXZlbiBj
+cnRjIC0gMS4KPj4gKyAqCj4+ICsgKiBJZiB6cG9zIG9mIHNvbWUgcGxhbmVzIGNhbm5vdCBiZSBj
+aGFuZ2VkIChsaWtlIGZpeGVkIGJhY2tncm91bmQgb3IKPj4gKyAqIGN1cnNvci90b3Btb3N0IHBs
+YW5lcyksIGRyaXZlciBzaG91bGQgYWRqdXN0IG1pbi9tYXggdmFsdWVzIGFuZCBhc3NpZ24KPj4g
+dGhvc2UKPj4gKyAqIHBsYW5lcyBpbW11dGFibGUgenBvcyBwcm9wZXJ0eSB3aXRoIGxvd2VyIG9y
+IGhpZ2hlciB2YWx1ZXMgKGZvciBtb3JlCj4+ICsgKiBpbmZvcm1hdGlvbiwgc2VlIGRybV9tb2Rl
+X2NyZWF0ZV96cG9zX2ltbXV0YWJsZV9wcm9wZXJ0eSgpIGZ1bmN0aW9uKS4gSW4KPj4gc3VjaAo+
+PiArICogY2FzZSBkcml2ZXIgc2hvdWxkIGFsc28gYXNzaWduIHByb3BlciBpbml0aWFsIHpwb3Mg
+dmFsdWVzIGZvciBhbGwgcGxhbmVzCj4+IGluCj4+ICsgKiBpdHMgcGxhbmVfcmVzZXQoKSBjYWxs
+YmFjaywgc28gdGhlIHBsYW5lcyB3aWxsIGJlIGFsd2F5cyBzb3J0ZWQKPj4gcHJvcGVybHkuCj4+
+ICsgKgo+PiArICogUmV0dXJuczoKPj4gKyAqIFplcm8gb24gc3VjY2VzcywgbmVnYXRpdmUgZXJy
+bm8gb24gZmFpbHVyZS4KPj4gKyAqLwo+PiAraW50IGRybV9wbGFuZV9jcmVhdGVfenBvc19wcm9w
+ZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgdW5zaWduZWQgaW50IG1pbiwgdW5zaWduZWQgaW50IG1heCkKPj4gK3sKPj4gKyAg
+ICAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcDsKPj4gKwo+PiArICAgICBwcm9wID0gZHJtX3By
+b3BlcnR5X2NyZWF0ZV9yYW5nZShwbGFuZS0+ZGV2LCAwLCAienBvcyIsIG1pbiwgbWF4KTsKPj4g
+KyAgICAgaWYgKCFwcm9wKQo+PiArICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOwo+PiArCj4K
+PiBZb3Ugc2hvdWxkIGNhY2hlIHByb3AgKGluIGRybV9tb2RlX2NvbmZpZykgaW5zdGVhZCBvZiBy
+ZWNyZWF0aW5nIGl0IGZvciBlYWNoCj4gcGxhbmUsIGxpa2UgZG9uZSBmb3IgdGhlIG90aGVyIHBy
+b3BlcnRpZXMuIFNhbWUgaW4gdGhlIG5leHQgZnVuY3Rpb24uCj4KPj4gKyAgICAgZHJtX29iamVj
+dF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLCBwcm9wLCBtaW4pOwo+PiArICAgICByZXR1
+cm4gMDsKPj4gK30KPj4gK0VYUE9SVF9TWU1CT0woZHJtX3BsYW5lX2NyZWF0ZV96cG9zX3Byb3Bl
+cnR5KTsKPj4gKwo+PiArLyoqCj4+ICsgKiBkcm1fcGxhbmVfY3JlYXRlX3pwb3NfaW1tdXRhYmxl
+X3Byb3BlcnR5IC0gY3JlYXRlIGltbXV0dGFibGUgenBvcwo+PiBwcm9wZXJ0eQo+PiArICogQHBs
+YW5lOiBkcm0gcGxhbmUKPj4gKyAqIEBtaW46IG1pbmltYWwgcG9zc2libGUgdmFsdWUgb2YgenBv
+cyBwcm9wZXJ0eQo+PiArICogQG1heDogbWF4aW1hbCBwb3NzaWJsZSB2YWx1ZSBvZiB6cG9zIHBy
+b3BlcnR5Cj4+ICsgKgo+PiArICogVGhpcyBmdW5jdGlvbiBpbml0aWFsaXplcyBnZW5lcmljIGlt
+bXV0YWJsZSB6cG9zIHByb3BlcnR5IGFuZCBlbmFibGVzCj4+ICsgKiBzdXBwb3J0IGZvciBpdCBp
+biBkcm0gY29yZS4gVXNpbmcgdGhpcyBwcm9wZXJ0eSBkcml2ZXIgbGV0cyB1c2Vyc3BhY2UKPj4g
+KyAqIHRvIGdldCB0aGUgYXJyYW5nZW1lbnQgb2YgdGhlIHBsYW5lcyBmb3IgYmxlbmRpbmcgb3Bl
+cmF0aW9uIGFuZCBub3RpZmllcwo+PiArICogaXQgdGhhdCB0aGUgaGFyZHdhcmUgKG9yIGRyaXZl
+cikgZG9lc24ndCBzdXBwb3J0IGNoYW5naW5nIG9mIHRoZQo+PiBwbGFuZXMnCj4+ICsgKiBvcmRl
+ci4KPj4gKyAqCj4+ICsgKiBSZXR1cm5zOgo+PiArICogWmVybyBvbiBzdWNjZXNzLCBuZWdhdGl2
+ZSBlcnJubyBvbiBmYWlsdXJlLgo+PiArICovCj4+ICtpbnQgZHJtX3BsYW5lX2NyZWF0ZV96cG9z
+X2ltbXV0YWJsZV9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBtaW4sIHVuc2ln
+bmVkIGludCBtYXgpCj4+ICt7Cj4+ICsgICAgIHN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3A7Cj4+
+ICsKPj4gKyAgICAgcHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocGxhbmUtPmRldiwg
+RFJNX01PREVfUFJPUF9JTU1VVEFCTEUsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICJ6cG9zIiwgbWluLCBtYXgpOwo+Cj4gQ2FuIHR3byBwcm9wZXJ0aWVzIGV4aXN0
+IHdpdGggdGhlIHNhbWUgbmFtZSBidXQgZGlmZmVyZW50IGZsYWdzIChpbW11dGFibGUgYW5kCj4g
+bXV0YWJsZSkgPyBPciB3aXRoIGRpZmZlcmVudCBtaW4vbWF4IHZhbHVlcyA/IEkgZG9uJ3QgZXhw
+ZWN0IG1pbi9tYXggdG8gYmUKPiBkaWZmZXJlbnQgZm9yIGV2ZXJ5IHBsYW5lLCBzbyBtYXliZSBh
+IGZ1bmN0aW9uIHRoYXQgY3JlYXRlcyB0aGUgenBvcyBwcm9wZXJ0eQo+IG9uY2Ugd2l0aCBtaW4v
+bWF4IHZhbHVlcyBhbmQgYSBzZWNvbmQgb25lIHRoYXQgYXR0YWNoZXMgdGhlIHByb3BlcnR5IHRv
+IHBsYW5lcwo+IHdvdWxkIGJlIGEgYmV0dGVyIEFQSS4KPgoKQmUgYWJsZSB0byBoYXZlIGEgcGVy
+IHBsYW5lIHpwb3MgcHJvcGVydHkgd2FzIGEgVmlsbGUgcmVxdWVzdCBiZWNhdXNlCmFsbCB0aGUg
+cGxhbmVzIG1heSBub3QgaGF2ZSB0aGUgc2FtZSBtaW4vbWF4IHpwb3MuClRoZSBjb25zZXF1ZW5j
+ZXMgb2YgdGhpcyBkZXNpZ24gYXJlIHRoYXQgd2UgY2FuIGNhY2hlIHRoZSBwcm9wZXJ0eSBpbgpk
+cm1fbW9kZV9jb25maWcKYW5kIHdlIG5lZWQgdG8gaGF2ZSBoZWxwZXJzIGZ1bmN0aW9ucwpkcm1f
+cGxhbmVfYXRvbWljX3tzZXQsZ2V0fV96cG9zX3Byb3BlcnR5IHRvIGJlIGFibGUgZmluZAp0aGUg
+cHJvcGVydHkgYXR0YWNoZWQgdG8gdGhlIGRybV9wbGFuZS4KCj4+ICsgICAgIGlmICghcHJvcCkK
+Pj4gKyAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsKPj4gKwo+PiArICAgICBkcm1fb2JqZWN0
+X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPmJhc2UsIHByb3AsIG1pbik7Cj4+ICsgICAgIHJldHVy
+biAwOwo+PiArfQo+PiArRVhQT1JUX1NZTUJPTChkcm1fcGxhbmVfY3JlYXRlX3pwb3NfaW1tdXRh
+YmxlX3Byb3BlcnR5KTsKPj4gKwo+PiArc3RhdGljIGludCBkcm1fYXRvbWljX3N0YXRlX3pwb3Nf
+Y21wKGNvbnN0IHZvaWQgKmEsIGNvbnN0IHZvaWQgKmIpCj4+ICt7Cj4+ICsgICAgIGNvbnN0IHN0
+cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnNhID0gKihzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICoqKWE7
+Cj4+ICsgICAgIGNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnNiID0gKihzdHJ1Y3QgZHJt
+X3BsYW5lX3N0YXRlICoqKWI7Cj4+ICsgICAgIGludCB6cG9zX2EgPSAoc2EtPnpwb3MgPDwgMTYp
+ICsgc2EtPnBsYW5lLT5iYXNlLmlkOwo+PiArICAgICBpbnQgenBvc19iID0gKHNiLT56cG9zIDw8
+IDE2KSArIHNiLT5wbGFuZS0+YmFzZS5pZDsKPj4gKwo+PiArICAgICByZXR1cm4genBvc19hIC0g
+enBvc19iOwo+Cj4gSW5zdGVhZCBvZiBwbGF5aW5nIHRyaWNrcyB3aXRoIHRoZSBpZHMgdGhhdCB3
+aWxsIGNyZWF0ZSBhIGRlcGVuZGVuY3kgb24gdGhlCj4gcGxhbmUgaWQgdmFsdWUgcmFuZ2UsIGhv
+dyBhYm91dAo+Cj4gICAgICAgICBpZiAoc2EtPnpwb3MgIT0gc2ItPnpwb3MpCj4gICAgICAgICAg
+ICAgICAgIHJldHVybiBzYS0+enBvcyAtIHNiLT56cG9zOwo+ICAgICAgICAgZWxzZQo+ICAgICAg
+ICAgICAgICAgICByZXR1cm4gc2EtPnBsYW5lLT5iYXNlLmlkIC0gc2ItPnBsYW5lLT5iYXNlLmlk
+Owo+CgpJdCBpcyBob3cgTWFyZWsgaGF2ZSBjb2RlIGl0IGJ1dCB5b3Ugc29sdXRpb24gaXMgbW9y
+ZSByZWFkYWJsZS4KCj4+ICt9Cj4+ICsKPj4gKy8qKgo+PiArICogZHJtX2F0b21pY19oZWxwZXJf
+Y3J0Y19ub3JtYWxpemVfenBvcyAtIGNhbGN1bGF0ZSBub3JtYWxpemVkIHpwb3MgdmFsdWVzCj4+
+ICsgKiBAY3J0YzogY3J0YyB3aXRoIHBsYW5lcywgd2hpY2ggaGF2ZSB0byBiZSBjb25zaWRlcmVk
+IGZvciBub3JtYWxpemF0aW9uCj4+ICsgKiBAY3J0Y19zdGF0ZTogbmV3IGF0b21pYyBzdGF0ZSB0
+byBhcHBseQo+PiArICoKPj4gKyAqIFRoaXMgZnVuY3Rpb24gY2hlY2tzIG5ldyBzdGF0ZXMgb2Yg
+YWxsIHBsYW5lcyBhc3NpZ25lZCB0byBnaXZlbiBjcnRjIGFuZAo+PiArICogY2FsY3VsYXRlcyBu
+b3JtYWxpemVkIHpwb3MgdmFsdWUgZm9yIHRoZW0uIFBsYW5lcyBhcmUgY29tcGFyZWQgZmlyc3Qg
+YnkKPj4gdGhlaXIKPj4gKyAqIHpwb3MgdmFsdWVzLCB0aGVuIGJ5IHBsYW5lIGlkIChpZiB6cG9z
+IGVxdWFscykuIFBsYW5lIHdpdGggbG93ZXN0IHpwb3MKPj4gdmFsdWUKPj4gKyAqIGlzIGF0IHRo
+ZSBib3R0b20uIFRoZSBwbGFuZV9zdGF0ZS0+bm9ybWFsaXplZF96cG9zIGlzIHRoZW4gZmlsbGVk
+IHdpdGgKPj4gdW5pcXVlCj4+ICsgKiB2YWx1ZXMgZnJvbSAwIHRvIG51bWJlciBvZiBhY3RpdmUg
+cGxhbmVzIGluIGNydGMgbWludXMgb25lLgo+PiArICoKPj4gKyAqIFJFVFVSTlMKPj4gKyAqIFpl
+cm8gZm9yIHN1Y2Nlc3Mgb3IgLWVycm5vCj4+ICsgKi8KPj4gK2ludCBkcm1fYXRvbWljX2hlbHBl
+cl9jcnRjX25vcm1hbGl6ZV96cG9zKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0
+Y19zdGF0ZSkKPj4gK3sKPj4gKyAgICAgc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlID0g
+Y3J0Y19zdGF0ZS0+c3RhdGU7Cj4+ICsgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRj
+LT5kZXY7Cj4+ICsgICAgIGludCB0b3RhbF9wbGFuZXMgPSBkZXYtPm1vZGVfY29uZmlnLm51bV90
+b3RhbF9wbGFuZTsKPj4gKyAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqKnN0YXRlczsKPj4g
+KyAgICAgc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4+ICsgICAgIGludCBpLCB6cG9zLCBuID0g
+MDsKPj4gKyAgICAgaW50IHJldCA9IDA7Cj4+ICsKPj4gKyAgICAgRFJNX0RFQlVHX0FUT01JQygi
+W0NSVEM6JWQ6JXNdIGNhbGN1bGF0aW5nIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZXNcbiIsCj4+ICsg
+ICAgICAgICAgICAgICAgICAgICAgY3J0Yy0+YmFzZS5pZCwgY3J0Yy0+bmFtZSk7Cj4+ICsKPj4g
+KyAgICAgc3RhdGVzID0ga21hbGxvYyh0b3RhbF9wbGFuZXMgKiBzaXplb2YoKnN0YXRlcyksIEdG
+UF9LRVJORUwpOwo+PiArICAgICBpZiAoIXN0YXRlcykKPj4gKyAgICAgICAgICAgICByZXR1cm4g
+LUVOT01FTTsKPj4gKwo+PiArICAgICAvKgo+PiArICAgICAgKiBOb3JtYWxpemF0aW9uIHByb2Nl
+c3MgbWlnaHQgY3JlYXRlIG5ldyBzdGF0ZXMgZm9yIHBsYW5lcyB3aGljaAo+PiArICAgICAgKiBu
+b3JtYWxpemVkX3pwb3MgaGFzIHRvIGJlIHJlY2FsY3VsYXRlZC4KPj4gKyAgICAgICovCj4+ICsg
+ICAgIGRybV9mb3JfZWFjaF9wbGFuZV9tYXNrKHBsYW5lLCBkZXYsIGNydGNfc3RhdGUtPnBsYW5l
+X21hc2spIHsKPj4gKyAgICAgICAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpwbGFuZV9z
+dGF0ZSA9Cj4+ICsgICAgICAgICAgICAgICAgICAgICBkcm1fYXRvbWljX2dldF9wbGFuZV9zdGF0
+ZShzdGF0ZSwgcGxhbmUpOwo+PiArICAgICAgICAgICAgIGlmIChJU19FUlIocGxhbmVfc3RhdGUp
+KSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKHBsYW5lX3N0YXRlKTsK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGdvdG8gZmFpbDsKPj4gKyAgICAgICAgICAgICB9Cj4+
+ICsgICAgICAgICAgICAgc3RhdGVzW24rK10gPSBwbGFuZV9zdGF0ZTsKPj4gKyAgICAgICAgICAg
+ICBEUk1fREVCVUdfQVRPTUlDKCJbUExBTkU6JWQ6JXNdIHByb2Nlc3NpbmcgenBvcyB2YWx1ZSAl
+ZFxuIiwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBsYW5lLT5iYXNlLmlkLCBw
+bGFuZS0+bmFtZSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBsYW5lX3N0YXRl
+LT56cG9zKTsKPj4gKyAgICAgfQo+PiArCj4+ICsgICAgIHNvcnQoc3RhdGVzLCBuLCBzaXplb2Yo
+KnN0YXRlcyksIGRybV9hdG9taWNfc3RhdGVfenBvc19jbXAsIE5VTEwpOwo+PiArCj4+ICsgICAg
+IGZvciAoaSA9IDAsIHpwb3MgPSAwOyBpIDwgbjsgaSsrLCB6cG9zKyspIHsKPj4gKyAgICAgICAg
+ICAgICBwbGFuZSA9IHN0YXRlc1tpXS0+cGxhbmU7Cj4+ICsKPj4gKyAgICAgICAgICAgICB6cG9z
+ID0gTUFYKHpwb3MsIHN0YXRlc1tpXS0+enBvcyk7Cj4+ICsKPj4gKyAgICAgICAgICAgICBzdGF0
+ZXNbaV0tPm5vcm1hbGl6ZWRfenBvcyA9IHpwb3M7Cj4KPiBDYW4ndCB5b3UganVzdCB1c2UgaSBp
+bnN0ZWFkIG9mIE1BWCh6cG9zLCBzdGF0ZXNbaV0tPnpwb3MpID8KCk5vIGJlY2F1c2Ugc2luY2Ug
+ZWFjaCBwbGFuZSBjb3VsZCBoYXZlIGRpZmZlcmVudCBtaW4vbWF4IHlvdSBjb3VsZApoYXZlIGdh
+cHMgYmV0d2VlbiB0d28gcGxhbmUuCkZvciBleGFtcGxlIGlmIHBsYW5lWCByYW5nZSBpcyBbMCwy
+XSBhbmQgcGxhbmVZIHJhbmdlIGlzIFs0LDZdIHdlIG5lZWQKdG8gYmUgc3VyZSB0aGUgbWluIHZh
+bHVlIG9mIHBsYW5lWSBpcyA0Cgo+Cj4+ICsgICAgICAgICAgICAgRFJNX0RFQlVHX0FUT01JQygi
+W1BMQU5FOiVkOiVzXSBub3JtYWxpemVkIHpwb3MgdmFsdWUgJWRcbiIsCj4+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBwbGFuZS0+YmFzZS5pZCwgcGxhbmUtPm5hbWUsIHpwb3MpOwo+
+PiArICAgICB9Cj4+ICsgICAgIGNydGNfc3RhdGUtPnpwb3NfY2hhbmdlZCA9IHRydWU7Cj4+ICsK
+Pj4gK2ZhaWw6Cj4KPiBXZSByZWFjaCB0aGUgbGFiZWwgaW4gdGhlIG5vcm1hbCBjb2RlIHBhdGgg
+dG9vLCBJIHdvdWxkIHRodXMgY2FsbCBpdCBkb25lIG9yCj4gZXhpdCBpbnN0ZWFkIG9mIGZhaWwu
+CgpJIHdpbGwgY2hhbmdlIGl0IHRvIGRvbmUKCj4KPj4gKyAgICAga2ZyZWUoc3RhdGVzKTsKPj4g
+KyAgICAgcmV0dXJuIHJldDsKPj4gK30KPj4gK0VYUE9SVF9TWU1CT0woZHJtX2F0b21pY19oZWxw
+ZXJfY3J0Y19ub3JtYWxpemVfenBvcyk7Cj4+ICsKPj4gKy8qKgo+PiArICogZHJtX2F0b21pY19o
+ZWxwZXJfbm9ybWFsaXplX3pwb3MgLSBjYWxjdWxhdGUgbm9ybWFsaXplZCB6cG9zIHZhbHVlcyBm
+b3IKPj4gYWxsCj4+ICsgKiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNydGNzCj4+
+ICsgKiBAZGV2OiBEUk0gZGV2aWNlCj4+ICsgKiBAc3RhdGU6IGF0b21pYyBzdGF0ZSBvZiBEUk0g
+ZGV2aWNlCj4+ICsgKgo+PiArICogVGhpcyBmdW5jdGlvbiBjYWxjdWxhdGVzIG5vcm1hbGl6ZWQg
+enBvcyB2YWx1ZSBmb3IgYWxsIG1vZGlmaWVkIHBsYW5lcwo+PiBpbgo+PiArICogdGhlIHByb3Zp
+ZGVkIGF0b21pYyBzdGF0ZSBvZiBEUk0gZGV2aWNlLiBGb3IgbW9yZSBpbmZvcm1hdGlvbiwgc2Vl
+Cj4+ICsgKiBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX25vcm1hbGl6ZV96cG9zKCkgZnVuY3Rpb24u
+Cj4+ICsgKgo+PiArICogUkVUVVJOUwo+PiArICogWmVybyBmb3Igc3VjY2VzcyBvciAtZXJybm8K
+Pj4gKyAqLwo+PiAraW50IGRybV9hdG9taWNfaGVscGVyX25vcm1hbGl6ZV96cG9zKHN0cnVjdCBk
+cm1fZGV2aWNlICpkZXYsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3Ry
+dWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlKQo+PiArewo+PiArICAgICBzdHJ1Y3QgZHJtX2Ny
+dGMgKmNydGM7Cj4+ICsgICAgIHN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdGF0ZTsKPj4g
+KyAgICAgc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4+ICsgICAgIHN0cnVjdCBkcm1fcGxhbmVf
+c3RhdGUgKnBsYW5lX3N0YXRlOwo+PiArICAgICBpbnQgaSwgcmV0ID0gMDsKPj4gKwo+PiArICAg
+ICBmb3JfZWFjaF9wbGFuZV9pbl9zdGF0ZShzdGF0ZSwgcGxhbmUsIHBsYW5lX3N0YXRlLCBpKSB7
+Cj4+ICsgICAgICAgICAgICAgY3J0YyA9IHBsYW5lX3N0YXRlLT5jcnRjOwo+PiArICAgICAgICAg
+ICAgIGlmICghY3J0YykKPj4gKyAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOwo+PiArICAg
+ICAgICAgICAgIGlmIChwbGFuZS0+c3RhdGUtPnpwb3MgIT0gcGxhbmVfc3RhdGUtPnpwb3MpIHsK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGNydGNfc3RhdGUgPQo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBkcm1fYXRvbWljX2dldF9leGlzdGluZ19jcnRjX3N0YXRlKHN0YXRlLCBj
+cnRjKTsKPj4gKyAgICAgICAgICAgICAgICAgICAgIGNydGNfc3RhdGUtPnpwb3NfY2hhbmdlZCA9
+IHRydWU7Cj4+ICsgICAgICAgICAgICAgfQo+PiArICAgICB9Cj4+ICsKPj4gKyAgICAgZm9yX2Vh
+Y2hfY3J0Y19pbl9zdGF0ZShzdGF0ZSwgY3J0YywgY3J0Y19zdGF0ZSwgaSkgewo+PiArICAgICAg
+ICAgICAgIGlmIChjcnRjX3N0YXRlLT5wbGFuZV9tYXNrICE9IGNydGMtPnN0YXRlLT5wbGFuZV9t
+YXNrIHx8Cj4+ICsgICAgICAgICAgICAgICAgIGNydGNfc3RhdGUtPnpwb3NfY2hhbmdlZCkgewo+
+PiArICAgICAgICAgICAgICAgICAgICAgcmV0ID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19ub3Jt
+YWxpemVfenBvcyhjcnRjLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjcnRjX3N0YXRlKTsKPj4gKyAgICAgICAgICAg
+ICAgICAgICAgIGlmIChyZXQpCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVy
+biByZXQ7Cj4+ICsgICAgICAgICAgICAgfQo+PiArICAgICB9Cj4+ICsgICAgIHJldHVybiAwOwo+
+PiArfQo+PiArRVhQT1JUX1NZTUJPTChkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcyk7
+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2NydGNfaW50ZXJuYWwuaAo+PiBi
+L2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oIGluZGV4IGE3OGMxMzguLjM3ZDkw
+NjggMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oCj4+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oCj4+IEBAIC00MiwzICs0
+Miw2IEBAIGludCBkcm1fYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX21vZGVfb2JqZWN0
+ICpvYmosCj4+ICBpbnQgZHJtX21vZGVfYXRvbWljX2lvY3RsKHN0cnVjdCBkcm1fZGV2aWNlICpk
+ZXYsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHZvaWQgKmRhdGEsIHN0cnVjdCBkcm1fZmls
+ZSAqZmlsZV9wcml2KTsKPj4KPj4gKy8qIGRybV9ibGVuZC5jICovCj4+ICtpbnQgZHJtX2F0b21p
+Y19oZWxwZXJfbm9ybWFsaXplX3pwb3Moc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3Rh
+dGUpOwo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX2NydGMuaCBiL2luY2x1ZGUvZHJt
+L2RybV9jcnRjLmgKPj4gaW5kZXggZDE1NTljZC4uYTM0YmMyOSAxMDA2NDQKPj4gLS0tIGEvaW5j
+bHVkZS9kcm0vZHJtX2NydGMuaAo+PiArKysgYi9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oCj4+IEBA
+IC0zMDUsNiArMzA1LDcgQEAgc3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3M7Cj4+ICAgKiBA
+bW9kZV9jaGFuZ2VkOiBjcnRjX3N0YXRlLT5tb2RlIG9yIGNydGNfc3RhdGUtPmVuYWJsZSBoYXMg
+YmVlbiBjaGFuZ2VkCj4+ICAgKiBAYWN0aXZlX2NoYW5nZWQ6IGNydGNfc3RhdGUtPmFjdGl2ZSBo
+YXMgYmVlbiB0b2dnbGVkLgo+PiAgICogQGNvbm5lY3RvcnNfY2hhbmdlZDogY29ubmVjdG9ycyB0
+byB0aGlzIGNydGMgaGF2ZSBiZWVuIHVwZGF0ZWQKPj4gKyAqIEB6cG9zX2NoYW5nZWQ6IHpwb3Mg
+dmFsdWVzIG9mIHBsYW5lcyBvbiB0aGlzIGNydGMgaGF2ZSBiZWVuIHVwZGF0ZWQKPj4gICAqIEBj
+b2xvcl9tZ210X2NoYW5nZWQ6IGNvbG9yIG1hbmFnZW1lbnQgcHJvcGVydGllcyBoYXZlIGNoYW5n
+ZWQgKGRlZ2FtbWEKPj4gb3IgKiAgZ2FtbWEgTFVUIG9yIENTQyBtYXRyaXgpCj4+ICAgKiBAcGxh
+bmVfbWFzazogYml0bWFzayBvZiAoMSA8PCBkcm1fcGxhbmVfaW5kZXgocGxhbmUpKSBvZiBhdHRh
+Y2hlZCBwbGFuZXMKPj4gQEAgLTM0MCw2ICszNDEsNyBAQCBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUg
+ewo+PiAgICAgICBib29sIG1vZGVfY2hhbmdlZCA6IDE7Cj4+ICAgICAgIGJvb2wgYWN0aXZlX2No
+YW5nZWQgOiAxOwo+PiAgICAgICBib29sIGNvbm5lY3RvcnNfY2hhbmdlZCA6IDE7Cj4+ICsgICAg
+IGJvb2wgenBvc19jaGFuZ2VkIDogMTsKPj4gICAgICAgYm9vbCBjb2xvcl9tZ210X2NoYW5nZWQg
+OiAxOwo+Pgo+PiAgICAgICAvKiBhdHRhY2hlZCBwbGFuZXMgYml0bWFzazoKPj4gQEAgLTEyNjMs
+NiArMTI2NSw5IEBAIHN0cnVjdCBkcm1fY29ubmVjdG9yIHsKPj4gICAqICAgcGxhbmUgKGluIDE2
+LjE2KQo+PiAgICogQHNyY193OiB3aWR0aCBvZiB2aXNpYmxlIHBvcnRpb24gb2YgcGxhbmUgKGlu
+IDE2LjE2KQo+PiAgICogQHNyY19oOiBoZWlnaHQgb2YgdmlzaWJsZSBwb3J0aW9uIG9mIHBsYW5l
+IChpbiAxNi4xNikKPj4gKyAqIEB6cG9zOiBwcmlvcml0eSBvZiB0aGUgZ2l2ZW4gcGxhbmUgb24g
+Y3J0YyAob3B0aW9uYWwpCj4+ICsgKiBAbm9ybWFsaXplZF96cG9zOiBub3JtYWxpemVkIHZhbHVl
+IG9mIHpwb3M6IHVuaXF1ZSwgcmFuZ2UgZnJvbSAwIHRvIE4KPj4gKyAqICAgIGZvciBnaXZlbiBj
+cnRjCj4KPiBJZiBOIGlzIHRoZSBudW1iZXIgb2YgYWN0aXZlIHBsYW5lcyB0aGF0IHdvdWxkIGJl
+IDAgdG8gTi0xLiBJZiBOIGlzIHRoZSBudW1iZXIKPiBvZiBhY3RpdmUgcGxhbmVzIG1pbnVzIG9u
+ZSB0aGVuIHRoaXMgaXMgY29ycmVjdCA6LSkKCkkgd2lsbCBmaXggdGhhdC4KCj4KPj4gICAqIEBz
+dGF0ZTogYmFja3BvaW50ZXIgdG8gZ2xvYmFsIGRybV9hdG9taWNfc3RhdGUKPj4gICAqLwo+PiAg
+c3RydWN0IGRybV9wbGFuZV9zdGF0ZSB7Cj4+IEBAIC0xMjgzLDYgKzEyODgsMTAgQEAgc3RydWN0
+IGRybV9wbGFuZV9zdGF0ZSB7Cj4+ICAgICAgIC8qIFBsYW5lIHJvdGF0aW9uICovCj4+ICAgICAg
+IHVuc2lnbmVkIGludCByb3RhdGlvbjsKPj4KPj4gKyAgICAgLyogUGxhbmUgenBvcyAqLwo+PiAr
+ICAgICB1bnNpZ25lZCBpbnQgenBvczsKPj4gKyAgICAgdW5zaWduZWQgaW50IG5vcm1hbGl6ZWRf
+enBvczsKPj4gKwo+PiAgICAgICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGU7Cj4+ICB9
+Owo+Pgo+PiBAQCAtMjU1NCw2ICsyNTYzLDIyIEBAIGV4dGVybiBzdHJ1Y3QgZHJtX3Byb3BlcnR5
+Cj4+ICpkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVydHkoc3RydWN0IGRybV9kZXZpY2Ug
+ZXh0ZXJuIHVuc2lnbmVkIGludAo+PiBkcm1fcm90YXRpb25fc2ltcGxpZnkodW5zaWduZWQgaW50
+IHJvdGF0aW9uLAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5z
+aWduZWQgaW50IHN1cHBvcnRlZF9yb3RhdGlvbnMpOwo+Pgo+PiArZXh0ZXJuIGludCBkcm1fcGxh
+bmVfYXRvbWljX3NldF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fcGxh
+bmVfc3RhdGUgKnN0YXRlLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3BlcnR5LAo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVpbnQ2NF90IHZhbCk7Cj4+ICsKPgo+IFlvdSBj
+YW4gZHJvcCB0aGUgZXh0ZXJuIGtleXdvcmRzLCB0aGV5J3JlIG5vdCBuZWVkZWQuIEkga25vdyB0
+aGF0IGxvdHMgb2YKPiBmdW5jdGlvbnMgaW4gdGhpcyBoZWFkZXIgZmlsZSB1c2UgZXh0ZXJuLCBi
+dXQgbm90IGFsbCBvZiB0aGVtIGRvLCBhbmQgbW92aW5nCj4gZm9yd2FyZCBJIGRvbid0IHNlZSBh
+IGJpZyByZWFzb24gdG8ga2VlcCB1c2luZyB1bm5lZWRlZCBrZXl3b3Jkcy4KPgoKb2sgZG9uZQoK
+Pj4gK2V4dGVybiBpbnQgZHJtX3BsYW5lX2F0b21pY19nZXRfenBvc19wcm9wZXJ0eShzdHJ1Y3Qg
+ZHJtX3BsYW5lICpwbGFuZSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSwKPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX3Byb3BlcnR5ICpw
+cm9wZXJ0eSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1
+aW50NjRfdCAqdmFsKTsKPj4gKwo+PiArZXh0ZXJuIGludCBkcm1fcGxhbmVfY3JlYXRlX3pwb3Nf
+cHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgbWluLCB1bnNpZ25lZCBpbnQgbWF4KTsK
+Pgo+IFNob3VsZG4ndCB0aGlzIGJlIG5hbWVkIGRybV9wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0
+eSgpIGluc3RlYWQgPyBUaGUgbWFpbgo+IHB1cnBvc2Ugb2YgdGhlIGZ1bmN0aW9uIGlzIHRvIGF0
+dGFjaCB0aGUgcHJvcGVydHksIGV2ZW4gaWYgaXQgaGFzIHRvIGNyZWF0ZSBpdAo+IG9uIGZpcnN0
+IGludm9jYXRpb24gYXMgYSBzaWRlIGVmZmVjdC4KPgo+PiArZXh0ZXJuIGludCBkcm1fcGxhbmVf
+Y3JlYXRlX3pwb3NfaW1tdXRhYmxlX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUKPj4gKnBsYW5l
+LAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVu
+c2lnbmVkIGludCBtaW4sCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdW5zaWduZWQgaW50IG1heCk7Cj4+ICsKPj4gIC8qIEhlbHBlcnMgKi8KPj4K
+Pj4gIHN0YXRpYyBpbmxpbmUgc3RydWN0IGRybV9wbGFuZSAqZHJtX3BsYW5lX2ZpbmQoc3RydWN0
+IGRybV9kZXZpY2UgKmRldiwKPgo+IC0tCj4gUmVnYXJkcywKPgo+IExhdXJlbnQgUGluY2hhcnQK
+PgoKCgotLSAKQmVuamFtaW4gR2FpZ25hcmQKCkdyYXBoaWMgV29ya2luZyBHcm91cAoKTGluYXJv
+Lm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCgpGb2xsb3cgTGluYXJv
+OiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
