@@ -1,59 +1,112 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Enable AX88760 USB hub on Origen board
-Date: Wed, 11 May 2016 09:06:52 +0200
-Message-ID: <1462950412-16681-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Matthew Leach <matthew@mattleach.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
+ with CPU thermal nodes
+Date: Wed, 11 May 2016 12:58:30 +0530
+Message-ID: <CANAwSgQHHE=USgjea4DpySC7T2+t7Ta8LuyL36cz3DpiyDgaWg@mail.gmail.com>
+References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
+ <CANAwSgT9SY3kj8+beMpc1xGoC=rMBSya+2v2dyZQp6ykH+V0=g@mail.gmail.com>
+ <573198BE.6020900@samsung.com> <CANAwSgTy6p9AVmmOWATpSO1JqVbwE0v+y_y-RLd+32RnNJTA+Q@mail.gmail.com>
+ <5731D764.8070007@samsung.com> <CANAwSgRsjdQh6ygT__5XcH8-cF9Ch+zbk8oupebwYzY1kCZu6g@mail.gmail.com>
+ <5731EA1B.4070201@samsung.com> <CANAwSgQGhrBca7=Ow8+Hh9t0W9HWp=F43KR0Frfpx9fGngPSaw@mail.gmail.com>
+ <5732C7DF.2080800@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:33125 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751324AbcEKH2v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 May 2016 03:28:51 -0400
+In-Reply-To: <5732C7DF.2080800@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-From: Matthew Leach <matthew@mattleach.net>
+Hi Krzysztof,
 
-Enable the Origen's usb phy and ohci devices in the device tree.  Also
-add the "samsung,vbus-gpio" property to enable the GPX3(5) gpio pin so
-the AX88760 hub is powered.
+On 11 May 2016 at 11:19, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> On 05/10/2016 09:45 PM, Anand Moon wrote:
+>> Hi Krzysztof,
+>>
+>> Sorry I am not able to explain my self clearly.
+>> But I have once gain tested these changes.
+>>
+>> Only could you append with following changes.
+>> --------------------------------------------------------
+>> +                               cpu_crit0: cpu-crit-0 {
+>> +                                       temperature = <120000>; /*
+>> millicelsius */
+>> +                                       hysteresis = <5000>; /* millicelsius */
+>> +                                       type = "critical";
+>> +                               };
+>> --------------------------------------------------------
+>> hysteresis time help to adjust the present and past temperature inputs
+>> before critical shutdown.
+>
+> I need more details why you want this patch. What is the point of
+> hysteresis on critical trip point? When reaching this trip point the
+> system shutdowns... there is nothing more to do, I think.
 
-Signed-off-by: Matthew Leach <matthew@mattleach.net>
-[k.kozlowski: Extend nodes by label notation instead of path]
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-origen.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Ok you are correct and I am completely wrong, It dose not critical
+temperate so easily.
 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 8bca699b7f20..4c59bdb0e6f3 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -77,12 +77,29 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
- };
- 
- &cpu0 {
- 	cpu0-supply = <&buck2_reg>;
- };
- 
-+&exynos_usbphy {
-+	status = "okay";
-+};
-+
-+&ehci {
-+	samsung,vbus-gpio = <&gpx3 5 1>;
-+	status = "okay";
-+
-+	port@1{
-+		status = "okay";
-+	};
-+	port@2 {
-+		status = "okay";
-+	};
-+};
-+
- &fimd {
- 	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
- 	pinctrl-names = "default";
--- 
-1.9.1
+>
+> Best regards,
+> Krzysztof
+>
+
+I have enable CONFIG_DYNAMIC_DEBUG and tested with following.
+
+# echo 'module thermal_sys +fp' > /sys/kernel/debug/dynamic_debug/control
+
+Below is the  output of console for stress testing.
+[ 1728.744182] update_temperature: thermal thermal_zone3:
+last_temperature=92000, current_temperature=92000
+[ 1728.744211] thermal_zone_trip_update: thermal thermal_zone3:
+Trip0[type=0,temp=85000]:trend=0,throttle=1
+[ 1728.744231] thermal_zone_trip_update: thermal thermal_zone3:
+Trip1[type=0,temp=103000]:trend=0,throttle=0
+[ 1728.744248] thermal_zone_trip_update: thermal thermal_zone3:
+Trip2[type=0,temp=110000]:trend=0,throttle=0
+[ 1728.755227] update_temperature: thermal thermal_zone2:
+last_temperature=86000, current_temperature=86000
+[ 1728.755269] thermal_zone_trip_update: thermal thermal_zone2:
+Trip0[type=0,temp=85000]:trend=0,throttle=1
+[ 1728.755306] thermal_zone_trip_update: thermal thermal_zone2:
+Trip1[type=0,temp=103000]:trend=0,throttle=0
+[ 1728.755340] thermal_zone_trip_update: thermal thermal_zone2:
+Trip2[type=0,temp=110000]:trend=0,throttle=0
+[ 1728.964753] update_temperature: thermal thermal_zone0:
+last_temperature=78000, current_temperature=83000
+[ 1728.964782] thermal_zone_trip_update: thermal thermal_zone0:
+Trip0[type=0,temp=50000]:trend=1,throttle=1
+[ 1728.964797] get_target_state: thermal cooling_device0: cur_state=2
+[ 1728.964810] thermal_zone_trip_update: thermal cooling_device0:
+old_target=1, target=1
+[ 1728.964837] thermal_zone_trip_update: thermal thermal_zone0:
+Trip1[type=0,temp=60000]:trend=1,throttle=1
+[ 1728.964850] get_target_state: thermal cooling_device0: cur_state=2
+[ 1728.964861] thermal_zone_trip_update: thermal cooling_device0:
+old_target=1, target=2
+[ 1728.964875] thermal_cdev_update: thermal cooling_device0: zone0->target=1
+[ 1728.964886] thermal_cdev_update: thermal cooling_device0: zone0->target=2
+[ 1728.964897] thermal_cdev_update: thermal cooling_device0: zone0->target=2
+[ 1728.964909] thermal_cdev_update: thermal cooling_device0: set to state 2
+[ 1728.964925] thermal_zone_trip_update: thermal thermal_zone0:
+Trip2[type=0,temp=70000]:trend=1,throttle=1
+[ 1728.964937] get_target_state: thermal cooling_device0: cur_state=2
+[ 1728.964948] thermal_zone_trip_update: thermal cooling_device0:
+old_target=2, target=3
+[ 1728.964962] thermal_cdev_update: thermal cooling_device0: zone0->target=1
+[ 1728.964973] thermal_cdev_update: thermal cooling_device0: zone0->target=2
+[ 1728.964983] thermal_cdev_update: thermal cooling_device0: zone0->target=3
+[ 1728.965000] thermal_cdev_update: thermal cooling_device0: set to state 3
+[ 1728.965019] thermal_zone_trip_update: thermal thermal_zone0:
+Trip4[type=1,temp=70000]:trend=1,throttle=1
+
+Ok I admit that thermal throttle is working correctly on my Odroid XU4.
+Opps .... Sorry for the trouble.
+
+Best Regards
+-Anand Moon
