@@ -1,50 +1,34 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 3/4] drm/exynos: use generic code for managing zpos plane property
-Date: Wed, 11 May 2016 08:26:41 -0400
-Message-ID: <CABxcv==2Dv3XrNPQ3rgNvWzjM-X66+7YzT2aW6pK5Hd8trtcxA@mail.gmail.com>
-References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
-	<1462962308-13410-3-git-send-email-benjamin.gaignard@linaro.org>
-	<57331D7F.5080000@samsung.com>
-	<CA+M3ks7JptQqptmZNn7Xd74_=Rt2wUVauewkpez71tBFnKSEWQ@mail.gmail.com>
-	<573322A2.5050603@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 23/27] dt-bindings: clock: Add I2C, HSI2C and RTC clock
+ IDs to Exynos5410
+Date: Wed, 11 May 2016 08:31:00 -0400
+Message-ID: <ee0b3b8f-d499-c735-1b46-1710e2e91b59@osg.samsung.com>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+ <1462910970-1812-24-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f193.google.com ([209.85.213.193]:33742 "EHLO
-	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751552AbcEKM0n (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:26:43 -0400
-Received: by mail-ig0-f193.google.com with SMTP id rc4so4008272igc.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 May 2016 05:26:42 -0700 (PDT)
-In-Reply-To: <573322A2.5050603@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1462910970-1812-24-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On Wed, May 11, 2016 at 8:16 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 05/11/2016 02:09 PM, Benjamin Gaignard wrote:
->> I haven't double check but I had to do changes into the original patch
->> so I guess that "from" field comes the new commit.
->>
->> I will manually edit the commit for v2,
->
-> Git keeps original author untouched. You have to manually change the
-> author to remove the original one (or use non-standard way of applying
-> patches). If you use Git, just stick to typical workflow - git am, git
-> commit --amend --signoff, git format-patch, etc.
->
+Hello Krzysztof,
 
-and if the patch doesn't apply cleanly anymore and need to manually
-re-do it, git allows to change the author when doing a commit with:
+On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
+> Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
+> number as for Exynos5420 just in case in future these drivers were
+> merged.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-$ git commit --author='Marek Szyprowski <m.szyprowski@samsung.com>'
-
-> Best regards,
-> Krzysztof
-> --
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
-Javier
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
