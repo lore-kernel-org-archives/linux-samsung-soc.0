@@ -1,54 +1,46 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH 3/4] drm/exynos: use generic code for managing zpos plane property
-Date: Wed, 11 May 2016 14:09:43 +0200
-Message-ID: <CA+M3ks7JptQqptmZNn7Xd74_=Rt2wUVauewkpez71tBFnKSEWQ@mail.gmail.com>
-References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
-	<1462962308-13410-3-git-send-email-benjamin.gaignard@linaro.org>
-	<57331D7F.5080000@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:36576 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751790AbcEKMJp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:09:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id u64so47168388lff.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 May 2016 05:09:45 -0700 (PDT)
-In-Reply-To: <57331D7F.5080000@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] clk: samsung: exynos3250: Move PLL rates data to init section
+Date: Wed, 11 May 2016 14:12:16 +0200
+Message-ID: <1462968736-7568-1-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I haven't double check but I had to do changes into the original patch
-so I guess that "from" field comes the new commit.
+The arrays with initialization data of PLLs can be moved to initconst
+section because they are referenced only from other initconst-level
+symbols.
 
-I will manually edit the commit for v2,
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 057c3f0d0e35..b2513959252d 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -669,7 +669,7 @@ static const struct samsung_gate_clock gate_clks[] __initconst = {
+ };
+ 
+ /* APLL & MPLL & BPLL & UPLL */
+-static const struct samsung_pll_rate_table exynos3250_pll_rates[] = {
++static const struct samsung_pll_rate_table exynos3250_pll_rates[] __initconst = {
+ 	PLL_35XX_RATE(1200000000, 400, 4, 1),
+ 	PLL_35XX_RATE(1100000000, 275, 3, 1),
+ 	PLL_35XX_RATE(1066000000, 533, 6, 1),
+@@ -691,7 +691,7 @@ static const struct samsung_pll_rate_table exynos3250_pll_rates[] = {
+ };
+ 
+ /* EPLL */
+-static const struct samsung_pll_rate_table exynos3250_epll_rates[] = {
++static const struct samsung_pll_rate_table exynos3250_epll_rates[] __initconst = {
+ 	PLL_36XX_RATE(800000000, 200, 3, 1,     0),
+ 	PLL_36XX_RATE(288000000,  96, 2, 2,     0),
+ 	PLL_36XX_RATE(192000000, 128, 2, 3,     0),
+-- 
+1.9.1
 
-2016-05-11 13:54 GMT+02:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
->:
-> On 05/11/2016 12:25 PM, Benjamin Gaignard wrote:
->> This patch replaces zpos property handling custom code in Exynos DRM
->> driver with calls to generic DRM code.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Ekhm? From=3DBenjamin, SoB=3DMarek... why did you change the author?
->
-> Best regards,
-> Krzysztof
-
-
-
---=20
-Benjamin Gaignard
-
-Graphic Working Group
-
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-
-=46ollow Linaro: Facebook | Twitter | Blog
