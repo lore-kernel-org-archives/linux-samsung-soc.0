@@ -1,129 +1,155 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 2/4] drm: sti: use generic zpos for plane
-Date: Wed, 11 May 2016 12:25:06 +0200
-Message-ID: <1462962308-13410-2-git-send-email-benjamin.gaignard@linaro.org>
-References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 4/4] drm: rcar: use generic code for managing zpos plane property
+Date: Wed, 11 May 2016 13:49:25 +0300
+Message-ID: <4457905.DGxQthB9uu@avalon>
+References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org> <1462962308-13410-4-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, vincent.abriou@st.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49209 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752447AbcEKKta (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 May 2016 06:49:30 -0400
+In-Reply-To: <1462962308-13410-4-git-send-email-benjamin.gaignard@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch, Ville Syrjala <ville.syrjala@linux.intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-cmVtb3ZlIHByaXZhdGUgenBvcyBwcm9wZXJ0eSBhbmQgdXNlIGluc3RlYWQgdGhlIGdlbmVyaWMg
-bmV3Lgp6cG9zIHJhbmdlIGlzIG5vdyBmaXhlZCBwZXIgcGxhbmUgdHlwZSBhbmQgbm9ybWFsaXpl
-ZCBiZWZvcmUKYmVpbmcgdXNpbmcgaW4gbWl4ZXIuCgpTaWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBH
-YWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4KCkNjOiBJbmtpIERhZSA8aW5r
-aS5kYWVAc2Ftc3VuZy5jb20+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+CkNj
-OiBWaWxsZSBTeXJqYWxhIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KQ2M6IEpvb255
-b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KQ2M6IFNldW5nLVdvbyBLaW0gPHN3
-MDMxMi5raW1Ac2Ftc3VuZy5jb20+CkNjOiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPgpDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+CkNj
-OiBCYXJ0bG9taWVqIFpvbG5pZXJraWV3aWN6IDxiLnpvbG5pZXJraWVAc2Ftc3VuZy5jb20+CkNj
-OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KQ2M6IEd1c3Rh
-dm8gUGFkb3ZhbiA8Z3VzdGF2b0BwYWRvdmFuLm9yZz4KQ2M6IHZpbmNlbnQuYWJyaW91QHN0LmNv
-bQpDYzogZmFiaWVuLmRlc3Nlbm5lQHN0LmNvbQpDYzogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVu
-dC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
-X21peGVyLmMgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfcGxhbmUuYyB8IDg0ICsr
-KysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-c3RpL3N0aV9wbGFuZS5oIHwgIDIgLQogMyBmaWxlcyBjaGFuZ2VkLCAzMyBpbnNlcnRpb25zKCsp
-LCA1NSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9t
-aXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfbWl4ZXIuYwppbmRleCBlNzQyNWMzLi4w
-NDBhYmZlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9taXhlci5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX21peGVyLmMKQEAgLTI0NSw3ICsyNDUsNyBAQCBzdGF0
-aWMgdm9pZCBzdGlfbWl4ZXJfc2V0X2JhY2tncm91bmRfYXJlYShzdHJ1Y3Qgc3RpX21peGVyICpt
-aXhlciwKIAogaW50IHN0aV9taXhlcl9zZXRfcGxhbmVfZGVwdGgoc3RydWN0IHN0aV9taXhlciAq
-bWl4ZXIsIHN0cnVjdCBzdGlfcGxhbmUgKnBsYW5lKQogewotCWludCBwbGFuZV9pZCwgZGVwdGgg
-PSBwbGFuZS0+em9yZGVyOworCWludCBwbGFuZV9pZCwgZGVwdGggPSBwbGFuZS0+ZHJtX3BsYW5l
-LnN0YXRlLT5ub3JtYWxpemVkX3pwb3MgKyAxOwogCXVuc2lnbmVkIGludCBpOwogCXUzMiBtYXNr
-LCB2YWw7CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9wbGFuZS5jCmluZGV4IGYxMGM5OGQuLjdjMmU5ZDMgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3N0aS9zdGlfcGxhbmUuYwpAQCAtMTQsMTUgKzE0LDYgQEAKICNpbmNsdWRlICJzdGlf
-ZHJ2LmgiCiAjaW5jbHVkZSAic3RpX3BsYW5lLmgiCiAKLS8qIChCYWNrZ3JvdW5kKSA8IEdEUDAg
-PCBHRFAxIDwgSFFWRFAwIDwgR0RQMiA8IEdEUDMgPCAoRm9yZUdyb3VuZCkgKi8KLWVudW0gc3Rp
-X3BsYW5lX2Rlc2Mgc3RpX3BsYW5lX2RlZmF1bHRfem9yZGVyW10gPSB7Ci0JU1RJX0dEUF8wLAot
-CVNUSV9HRFBfMSwKLQlTVElfSFFWRFBfMCwKLQlTVElfR0RQXzIsCi0JU1RJX0dEUF8zLAotfTsK
-LQogY29uc3QgY2hhciAqc3RpX3BsYW5lX3RvX3N0cihzdHJ1Y3Qgc3RpX3BsYW5lICpwbGFuZSkK
-IHsKIAlzd2l0Y2ggKHBsYW5lLT5kZXNjKSB7CkBAIC0xMTQsNjkgKzEwNSw1OCBAQCBzdGF0aWMg
-dm9pZCBzdGlfcGxhbmVfZGVzdHJveShzdHJ1Y3QgZHJtX3BsYW5lICpkcm1fcGxhbmUpCiAJZHJt
-X3BsYW5lX2NsZWFudXAoZHJtX3BsYW5lKTsKIH0KIAotc3RhdGljIGludCBzdGlfcGxhbmVfc2V0
-X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKmRybV9wbGFuZSwKLQkJCQkgIHN0cnVjdCBkcm1f
-cHJvcGVydHkgKnByb3BlcnR5LAotCQkJCSAgdWludDY0X3QgdmFsKQorc3RhdGljIGludCBzdGlf
-cGxhbmVfZ2V0X2RlZmF1bHRfenBvcyhlbnVtIGRybV9wbGFuZV90eXBlIHR5cGUpCiB7Ci0Jc3Ry
-dWN0IGRybV9kZXZpY2UgKmRldiA9IGRybV9wbGFuZS0+ZGV2OwotCXN0cnVjdCBzdGlfcHJpdmF0
-ZSAqcHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7Ci0Jc3RydWN0IHN0aV9wbGFuZSAqcGxhbmUg
-PSB0b19zdGlfcGxhbmUoZHJtX3BsYW5lKTsKLQotCURSTV9ERUJVR19EUklWRVIoIlxuIik7Ci0K
-LQlpZiAocHJvcGVydHkgPT0gcHJpdmF0ZS0+cGxhbmVfem9yZGVyX3Byb3BlcnR5KSB7Ci0JCXBs
-YW5lLT56b3JkZXIgPSB2YWw7CisJc3dpdGNoICh0eXBlKSB7CisJY2FzZSBEUk1fUExBTkVfVFlQ
-RV9QUklNQVJZOgogCQlyZXR1cm4gMDsKKwljYXNlIERSTV9QTEFORV9UWVBFX09WRVJMQVk6CisJ
-CXJldHVybiAxOworCWNhc2UgRFJNX1BMQU5FX1RZUEVfQ1VSU09SOgorCQlyZXR1cm4gODsKIAl9
-CisJcmV0dXJuIDA7Cit9CiAKLQlyZXR1cm4gLUVJTlZBTDsKK3N0YXRpYyB2b2lkIHN0aV9wbGFu
-ZV9yZXNldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKK3sKKwlkcm1fYXRvbWljX2hlbHBlcl9w
-bGFuZV9yZXNldChwbGFuZSk7CisJcGxhbmUtPnN0YXRlLT56cG9zID0gc3RpX3BsYW5lX2dldF9k
-ZWZhdWx0X3pwb3MocGxhbmUtPnR5cGUpOwogfQogCi1zdGF0aWMgdm9pZCBzdGlfcGxhbmVfYXR0
-YWNoX3pvcmRlcl9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpkcm1fcGxhbmUpCitzdGF0aWMg
-dm9pZCBzdGlfcGxhbmVfYXR0YWNoX3pvcmRlcl9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpk
-cm1fcGxhbmUsCisJCQkJCSAgICAgZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlKQogewotCXN0cnVj
-dCBkcm1fZGV2aWNlICpkZXYgPSBkcm1fcGxhbmUtPmRldjsKLQlzdHJ1Y3Qgc3RpX3ByaXZhdGUg
-KnByaXZhdGUgPSBkZXYtPmRldl9wcml2YXRlOwotCXN0cnVjdCBzdGlfcGxhbmUgKnBsYW5lID0g
-dG9fc3RpX3BsYW5lKGRybV9wbGFuZSk7Ci0Jc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcDsKLQot
-CXByb3AgPSBwcml2YXRlLT5wbGFuZV96b3JkZXJfcHJvcGVydHk7Ci0JaWYgKCFwcm9wKSB7Ci0J
-CXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRlX3JhbmdlKGRldiwgMCwgInpwb3MiLCAxLAotCQkJ
-CQkJIEdBTV9NSVhFUl9OQl9ERVBUSF9MRVZFTCk7Ci0JCWlmICghcHJvcCkKLQkJCXJldHVybjsK
-LQotCQlwcml2YXRlLT5wbGFuZV96b3JkZXJfcHJvcGVydHkgPSBwcm9wOworCXN3aXRjaCAodHlw
-ZSkgeworCWNhc2UgRFJNX1BMQU5FX1RZUEVfUFJJTUFSWToKKwkJZHJtX3BsYW5lX2NyZWF0ZV96
-cG9zX2ltbXV0YWJsZV9wcm9wZXJ0eShkcm1fcGxhbmUsIDAsIDApOworCQlicmVhazsKKwljYXNl
-IERSTV9QTEFORV9UWVBFX09WRVJMQVk6CisJCWRybV9wbGFuZV9jcmVhdGVfenBvc19wcm9wZXJ0
-eShkcm1fcGxhbmUsIDEsIDcpOworCQlicmVhazsKKwljYXNlIERSTV9QTEFORV9UWVBFX0NVUlNP
-UjoKKwkJZHJtX3BsYW5lX2NyZWF0ZV96cG9zX2ltbXV0YWJsZV9wcm9wZXJ0eShkcm1fcGxhbmUs
-IDgsIDgpOworCQlicmVhazsKIAl9Ci0KLQlkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmZHJt
-X3BsYW5lLT5iYXNlLCBwcm9wLCBwbGFuZS0+em9yZGVyKTsKIH0KIAogdm9pZCBzdGlfcGxhbmVf
-aW5pdF9wcm9wZXJ0eShzdHJ1Y3Qgc3RpX3BsYW5lICpwbGFuZSwKIAkJCSAgICAgZW51bSBkcm1f
-cGxhbmVfdHlwZSB0eXBlKQogewotCXVuc2lnbmVkIGludCBpOwotCi0JZm9yIChpID0gMDsgaSA8
-IEFSUkFZX1NJWkUoc3RpX3BsYW5lX2RlZmF1bHRfem9yZGVyKTsgaSsrKQotCQlpZiAoc3RpX3Bs
-YW5lX2RlZmF1bHRfem9yZGVyW2ldID09IHBsYW5lLT5kZXNjKQotCQkJYnJlYWs7Ci0KLQlwbGFu
-ZS0+em9yZGVyID0gaSArIDE7Ci0KLQlpZiAodHlwZSA9PSBEUk1fUExBTkVfVFlQRV9PVkVSTEFZ
-KQotCQlzdGlfcGxhbmVfYXR0YWNoX3pvcmRlcl9wcm9wZXJ0eSgmcGxhbmUtPmRybV9wbGFuZSk7
-CisJc3RpX3BsYW5lX2F0dGFjaF96b3JkZXJfcHJvcGVydHkoJnBsYW5lLT5kcm1fcGxhbmUsIHR5
-cGUpOwogCi0JRFJNX0RFQlVHX0RSSVZFUigiZHJtIHBsYW5lOiVkIG1hcHBlZCB0byAlcyB3aXRo
-IHpvcmRlcjolZFxuIiwKLQkJCSBwbGFuZS0+ZHJtX3BsYW5lLmJhc2UuaWQsCi0JCQkgc3RpX3Bs
-YW5lX3RvX3N0cihwbGFuZSksIHBsYW5lLT56b3JkZXIpOworCURSTV9ERUJVR19EUklWRVIoImRy
-bSBwbGFuZTolZCBtYXBwZWQgdG8gJXNcbiIsCisJCQkgcGxhbmUtPmRybV9wbGFuZS5iYXNlLmlk
-LCBzdGlfcGxhbmVfdG9fc3RyKHBsYW5lKSk7CiB9CiAKIHN0cnVjdCBkcm1fcGxhbmVfZnVuY3Mg
-c3RpX3BsYW5lX2hlbHBlcnNfZnVuY3MgPSB7CiAJLnVwZGF0ZV9wbGFuZSA9IGRybV9hdG9taWNf
-aGVscGVyX3VwZGF0ZV9wbGFuZSwKIAkuZGlzYWJsZV9wbGFuZSA9IGRybV9hdG9taWNfaGVscGVy
-X2Rpc2FibGVfcGxhbmUsCiAJLmRlc3Ryb3kgPSBzdGlfcGxhbmVfZGVzdHJveSwKLQkuc2V0X3By
-b3BlcnR5ID0gc3RpX3BsYW5lX3NldF9wcm9wZXJ0eSwKLQkucmVzZXQgPSBkcm1fYXRvbWljX2hl
-bHBlcl9wbGFuZV9yZXNldCwKKwkuc2V0X3Byb3BlcnR5ID0gZHJtX2F0b21pY19oZWxwZXJfcGxh
-bmVfc2V0X3Byb3BlcnR5LAorCS5yZXNldCA9IHN0aV9wbGFuZV9yZXNldCwKIAkuYXRvbWljX2R1
-cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX3BsYW5lX2R1cGxpY2F0ZV9zdGF0ZSwK
-IAkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9kZXN0cm95
-X3N0YXRlLAorCS5hdG9taWNfc2V0X3Byb3BlcnR5ID0gZHJtX3BsYW5lX2F0b21pY19zZXRfenBv
-c19wcm9wZXJ0eSwKKwkuYXRvbWljX2dldF9wcm9wZXJ0eSA9IGRybV9wbGFuZV9hdG9taWNfZ2V0
-X3pwb3NfcHJvcGVydHksCiB9OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlf
-cGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmgKaW5kZXggYzUwYTNiOS4u
-Mjc0Nzc3MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfcGxhbmUuaAorKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9wbGFuZS5oCkBAIC02OCwxNCArNjgsMTIgQEAgc3Ry
-dWN0IHN0aV9mcHNfaW5mbyB7CiAgKiBAcGxhbmU6ICAgICAgICAgICAgICBkcm0gcGxhbmUgaXQg
-aXMgYm91bmQgdG8gKGlmIGFueSkKICAqIEBkZXNjOiAgICAgICAgICAgICAgIHBsYW5lIHR5cGUg
-JiBpZAogICogQHN0YXR1czogICAgICAgICAgICAgdG8ga25vdyB0aGUgc3RhdHVzIG9mIHRoZSBw
-bGFuZQotICogQHpvcmRlcjogICAgICAgICAgICAgcGxhbmUgei1vcmRlcgogICogQGZwc19pbmZv
-OiAgICAgICAgICAgZnJhbWUgcGVyIHNlY29uZCBpbmZvCiAgKi8KIHN0cnVjdCBzdGlfcGxhbmUg
-ewogCXN0cnVjdCBkcm1fcGxhbmUgZHJtX3BsYW5lOwogCWVudW0gc3RpX3BsYW5lX2Rlc2MgZGVz
-YzsKIAllbnVtIHN0aV9wbGFuZV9zdGF0dXMgc3RhdHVzOwotCWludCB6b3JkZXI7CiAJc3RydWN0
-IHN0aV9mcHNfaW5mbyBmcHNfaW5mbzsKIH07CiAKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Benjamin,
+
+Thank you for the patch.
+
+On Wednesday 11 May 2016 12:25:08 Benjamin Gaignard wrote:
+> This patch replaces zpos property handling custom code in rcar DRM
+> driver with calls to generic DRM code.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> 
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h   | 1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 5 -----
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 9 ++-------
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.h | 2 --
+>  5 files changed, 3 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 0d8bdda..28d2cb6 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -196,7 +196,7 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
+> 
+>  static unsigned int plane_zpos(struct rcar_du_plane *plane)
+>  {
+> -	return to_rcar_plane_state(plane->plane.state)->zpos;
+> +	return plane->plane.state->normalized_zpos;
+>  }
+
+More code can be removed from the driver as the core now normalizes the zpos, 
+but I can handle that as a follow-up patch.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> 
+>  static const struct rcar_du_format_info *
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index ed35467..c843c31 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -92,7 +92,6 @@ struct rcar_du_device {
+>  	struct {
+>  		struct drm_property *alpha;
+>  		struct drm_property *colorkey;
+> -		struct drm_property *zpos;
+>  	} props;
+> 
+>  	unsigned int dpad0_source;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index e70a4f3..4ace0aa 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -527,11 +527,6 @@ static int rcar_du_properties_init(struct
+> rcar_du_device *rcdu) if (rcdu->props.colorkey == NULL)
+>  		return -ENOMEM;
+> 
+> -	rcdu->props.zpos =
+> -		drm_property_create_range(rcdu->ddev, 0, "zpos", 1, 7);
+> -	if (rcdu->props.zpos == NULL)
+> -		return -ENOMEM;
+> -
+>  	return 0;
+>  }
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index 8460ae1..4764afc 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> @@ -656,7 +656,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
+> state->source = RCAR_DU_PLANE_MEMORY;
+>  	state->alpha = 255;
+>  	state->colorkey = RCAR_DU_COLORKEY_NONE;
+> -	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
+> +	plane->state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
+> 
+>  	plane->state = &state->state;
+>  	plane->state->plane = plane;
+> @@ -674,8 +674,6 @@ static int rcar_du_plane_atomic_set_property(struct
+> drm_plane *plane, rstate->alpha = val;
+>  	else if (property == rcdu->props.colorkey)
+>  		rstate->colorkey = val;
+> -	else if (property == rcdu->props.zpos)
+> -		rstate->zpos = val;
+>  	else
+>  		return -EINVAL;
+> 
+> @@ -694,8 +692,6 @@ static int rcar_du_plane_atomic_get_property(struct
+> drm_plane *plane, *val = rstate->alpha;
+>  	else if (property == rcdu->props.colorkey)
+>  		*val = rstate->colorkey;
+> -	else if (property == rcdu->props.zpos)
+> -		*val = rstate->zpos;
+>  	else
+>  		return -EINVAL;
+> 
+> @@ -767,8 +763,7 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
+>  		drm_object_attach_property(&plane->plane.base,
+>  					   rcdu->props.colorkey,
+>  					   RCAR_DU_COLORKEY_NONE);
+> -		drm_object_attach_property(&plane->plane.base,
+> -					   rcdu->props.zpos, 1);
+> +		drm_plane_create_zpos_property(&plane->plane, 1, 7);
+>  	}
+> 
+>  	return 0;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_plane.h index b18b7b2..8b91dd3 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> @@ -51,7 +51,6 @@ static inline struct rcar_du_plane *to_rcar_plane(struct
+> drm_plane *plane) * @hwindex: 0-based hardware plane index, -1 means unused
+>   * @alpha: value of the plane alpha property
+>   * @colorkey: value of the plane colorkey property
+> - * @zpos: value of the plane zpos property
+>   */
+>  struct rcar_du_plane_state {
+>  	struct drm_plane_state state;
+> @@ -62,7 +61,6 @@ struct rcar_du_plane_state {
+> 
+>  	unsigned int alpha;
+>  	unsigned int colorkey;
+> -	unsigned int zpos;
+>  };
+> 
+>  static inline struct rcar_du_plane_state *
+
+-- 
+Regards,
+
+Laurent Pinchart
