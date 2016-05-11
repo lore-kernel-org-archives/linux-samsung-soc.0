@@ -1,112 +1,103 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
- with CPU thermal nodes
-Date: Wed, 11 May 2016 12:58:30 +0530
-Message-ID: <CANAwSgQHHE=USgjea4DpySC7T2+t7Ta8LuyL36cz3DpiyDgaWg@mail.gmail.com>
-References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
- <CANAwSgT9SY3kj8+beMpc1xGoC=rMBSya+2v2dyZQp6ykH+V0=g@mail.gmail.com>
- <573198BE.6020900@samsung.com> <CANAwSgTy6p9AVmmOWATpSO1JqVbwE0v+y_y-RLd+32RnNJTA+Q@mail.gmail.com>
- <5731D764.8070007@samsung.com> <CANAwSgRsjdQh6ygT__5XcH8-cF9Ch+zbk8oupebwYzY1kCZu6g@mail.gmail.com>
- <5731EA1B.4070201@samsung.com> <CANAwSgQGhrBca7=Ow8+Hh9t0W9HWp=F43KR0Frfpx9fGngPSaw@mail.gmail.com>
- <5732C7DF.2080800@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH 4/4] drm: rcar: use generic code for managing zpos plane
+ property
+Date: Wed, 11 May 2016 12:25:08 +0200
+Message-ID: <1462962308-13410-4-git-send-email-benjamin.gaignard@linaro.org>
+References: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33125 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751324AbcEKH2v (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 03:28:51 -0400
-In-Reply-To: <5732C7DF.2080800@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1462962308-13410-1-git-send-email-benjamin.gaignard@linaro.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
-
-On 11 May 2016 at 11:19, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> On 05/10/2016 09:45 PM, Anand Moon wrote:
->> Hi Krzysztof,
->>
->> Sorry I am not able to explain my self clearly.
->> But I have once gain tested these changes.
->>
->> Only could you append with following changes.
->> --------------------------------------------------------
->> +                               cpu_crit0: cpu-crit-0 {
->> +                                       temperature = <120000>; /*
->> millicelsius */
->> +                                       hysteresis = <5000>; /* millicelsius */
->> +                                       type = "critical";
->> +                               };
->> --------------------------------------------------------
->> hysteresis time help to adjust the present and past temperature inputs
->> before critical shutdown.
->
-> I need more details why you want this patch. What is the point of
-> hysteresis on critical trip point? When reaching this trip point the
-> system shutdowns... there is nothing more to do, I think.
-
-Ok you are correct and I am completely wrong, It dose not critical
-temperate so easily.
-
->
-> Best regards,
-> Krzysztof
->
-
-I have enable CONFIG_DYNAMIC_DEBUG and tested with following.
-
-# echo 'module thermal_sys +fp' > /sys/kernel/debug/dynamic_debug/control
-
-Below is the  output of console for stress testing.
-[ 1728.744182] update_temperature: thermal thermal_zone3:
-last_temperature=92000, current_temperature=92000
-[ 1728.744211] thermal_zone_trip_update: thermal thermal_zone3:
-Trip0[type=0,temp=85000]:trend=0,throttle=1
-[ 1728.744231] thermal_zone_trip_update: thermal thermal_zone3:
-Trip1[type=0,temp=103000]:trend=0,throttle=0
-[ 1728.744248] thermal_zone_trip_update: thermal thermal_zone3:
-Trip2[type=0,temp=110000]:trend=0,throttle=0
-[ 1728.755227] update_temperature: thermal thermal_zone2:
-last_temperature=86000, current_temperature=86000
-[ 1728.755269] thermal_zone_trip_update: thermal thermal_zone2:
-Trip0[type=0,temp=85000]:trend=0,throttle=1
-[ 1728.755306] thermal_zone_trip_update: thermal thermal_zone2:
-Trip1[type=0,temp=103000]:trend=0,throttle=0
-[ 1728.755340] thermal_zone_trip_update: thermal thermal_zone2:
-Trip2[type=0,temp=110000]:trend=0,throttle=0
-[ 1728.964753] update_temperature: thermal thermal_zone0:
-last_temperature=78000, current_temperature=83000
-[ 1728.964782] thermal_zone_trip_update: thermal thermal_zone0:
-Trip0[type=0,temp=50000]:trend=1,throttle=1
-[ 1728.964797] get_target_state: thermal cooling_device0: cur_state=2
-[ 1728.964810] thermal_zone_trip_update: thermal cooling_device0:
-old_target=1, target=1
-[ 1728.964837] thermal_zone_trip_update: thermal thermal_zone0:
-Trip1[type=0,temp=60000]:trend=1,throttle=1
-[ 1728.964850] get_target_state: thermal cooling_device0: cur_state=2
-[ 1728.964861] thermal_zone_trip_update: thermal cooling_device0:
-old_target=1, target=2
-[ 1728.964875] thermal_cdev_update: thermal cooling_device0: zone0->target=1
-[ 1728.964886] thermal_cdev_update: thermal cooling_device0: zone0->target=2
-[ 1728.964897] thermal_cdev_update: thermal cooling_device0: zone0->target=2
-[ 1728.964909] thermal_cdev_update: thermal cooling_device0: set to state 2
-[ 1728.964925] thermal_zone_trip_update: thermal thermal_zone0:
-Trip2[type=0,temp=70000]:trend=1,throttle=1
-[ 1728.964937] get_target_state: thermal cooling_device0: cur_state=2
-[ 1728.964948] thermal_zone_trip_update: thermal cooling_device0:
-old_target=2, target=3
-[ 1728.964962] thermal_cdev_update: thermal cooling_device0: zone0->target=1
-[ 1728.964973] thermal_cdev_update: thermal cooling_device0: zone0->target=2
-[ 1728.964983] thermal_cdev_update: thermal cooling_device0: zone0->target=3
-[ 1728.965000] thermal_cdev_update: thermal cooling_device0: set to state 3
-[ 1728.965019] thermal_zone_trip_update: thermal thermal_zone0:
-Trip4[type=1,temp=70000]:trend=1,throttle=1
-
-Ok I admit that thermal throttle is working correctly on my Odroid XU4.
-Opps .... Sorry for the trouble.
-
-Best Regards
--Anand Moon
+VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
+IHJjYXIgRFJNCmRyaXZlciB3aXRoIGNhbGxzIHRvIGdlbmVyaWMgRFJNIGNvZGUuCgpTaWduZWQt
+b2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4K
+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+CkNjOiBWaWxsZSBTeXJqYWxhIDx2
+aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJl
+bnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KQ2M6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5
+cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1
+X2NydGMuYyAgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAg
+fCAxIC0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfa21zLmMgICB8IDUgLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyB8IDkgKystLS0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggfCAyIC0tCiA1IGZpbGVzIGNo
+YW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNh
+ci1kdS9yY2FyX2R1X2NydGMuYwppbmRleCAwZDhiZGRhLi4yOGQyY2I2IDEwMDY0NAotLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwpAQCAtMTk2LDcgKzE5Niw3IEBAIHZvaWQgcmNhcl9k
+dV9jcnRjX3JvdXRlX291dHB1dChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiAKIHN0YXRpYyB1bnNp
+Z25lZCBpbnQgcGxhbmVfenBvcyhzdHJ1Y3QgcmNhcl9kdV9wbGFuZSAqcGxhbmUpCiB7Ci0JcmV0
+dXJuIHRvX3JjYXJfcGxhbmVfc3RhdGUocGxhbmUtPnBsYW5lLnN0YXRlKS0+enBvczsKKwlyZXR1
+cm4gcGxhbmUtPnBsYW5lLnN0YXRlLT5ub3JtYWxpemVkX3pwb3M7CiB9CiAKIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgcmNhcl9kdV9mb3JtYXRfaW5mbyAqCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
+dV9kcnYuaAppbmRleCBlZDM1NDY3Li5jODQzYzMxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
+YXJfZHVfZHJ2LmgKQEAgLTkyLDcgKzkyLDYgQEAgc3RydWN0IHJjYXJfZHVfZGV2aWNlIHsKIAlz
+dHJ1Y3QgewogCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICphbHBoYTsKIAkJc3RydWN0IGRybV9wcm9w
+ZXJ0eSAqY29sb3JrZXk7Ci0JCXN0cnVjdCBkcm1fcHJvcGVydHkgKnpwb3M7CiAJfSBwcm9wczsK
+IAogCXVuc2lnbmVkIGludCBkcGFkMF9zb3VyY2U7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
+dV9rbXMuYwppbmRleCBlNzBhNGYzLi40YWNlMGFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
+YXJfZHVfa21zLmMKQEAgLTUyNywxMSArNTI3LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3Byb3Bl
+cnRpZXNfaW5pdChzdHJ1Y3QgcmNhcl9kdV9kZXZpY2UgKnJjZHUpCiAJaWYgKHJjZHUtPnByb3Bz
+LmNvbG9ya2V5ID09IE5VTEwpCiAJCXJldHVybiAtRU5PTUVNOwogCi0JcmNkdS0+cHJvcHMuenBv
+cyA9Ci0JCWRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocmNkdS0+ZGRldiwgMCwgInpwb3MiLCAx
+LCA3KTsKLQlpZiAocmNkdS0+cHJvcHMuenBvcyA9PSBOVUxMKQotCQlyZXR1cm4gLUVOT01FTTsK
+LQogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
+Y2FyX2R1X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMK
+aW5kZXggODQ2MGFlMS4uNDc2NGFmYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JjYXIt
+ZHUvcmNhcl9kdV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVf
+cGxhbmUuYwpAQCAtNjU2LDcgKzY1Niw3IEBAIHN0YXRpYyB2b2lkIHJjYXJfZHVfcGxhbmVfcmVz
+ZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAJc3RhdGUtPnNvdXJjZSA9IFJDQVJfRFVfUExB
+TkVfTUVNT1JZOwogCXN0YXRlLT5hbHBoYSA9IDI1NTsKIAlzdGF0ZS0+Y29sb3JrZXkgPSBSQ0FS
+X0RVX0NPTE9SS0VZX05PTkU7Ci0Jc3RhdGUtPnpwb3MgPSBwbGFuZS0+dHlwZSA9PSBEUk1fUExB
+TkVfVFlQRV9QUklNQVJZID8gMCA6IDE7CisJcGxhbmUtPnN0YXRlLT56cG9zID0gcGxhbmUtPnR5
+cGUgPT0gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA/IDAgOiAxOwogCiAJcGxhbmUtPnN0YXRlID0g
+JnN0YXRlLT5zdGF0ZTsKIAlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CkBAIC02NzQsOCAr
+Njc0LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3BsYW5lX2F0b21pY19zZXRfcHJvcGVydHkoc3Ry
+dWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCXJzdGF0ZS0+YWxwaGEgPSB2YWw7CiAJZWxzZSBpZiAo
+cHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCXJzdGF0ZS0+Y29sb3JrZXkgPSB2
+YWw7Ci0JZWxzZSBpZiAocHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuenBvcykKLQkJcnN0YXRlLT56
+cG9zID0gdmFsOwogCWVsc2UKIAkJcmV0dXJuIC1FSU5WQUw7CiAKQEAgLTY5NCw4ICs2OTIsNiBA
+QCBzdGF0aWMgaW50IHJjYXJfZHVfcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJt
+X3BsYW5lICpwbGFuZSwKIAkJKnZhbCA9IHJzdGF0ZS0+YWxwaGE7CiAJZWxzZSBpZiAocHJvcGVy
+dHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCSp2YWwgPSByc3RhdGUtPmNvbG9ya2V5Owot
+CWVsc2UgaWYgKHByb3BlcnR5ID09IHJjZHUtPnByb3BzLnpwb3MpCi0JCSp2YWwgPSByc3RhdGUt
+Pnpwb3M7CiAJZWxzZQogCQlyZXR1cm4gLUVJTlZBTDsKIApAQCAtNzY3LDggKzc2Myw3IEBAIGlu
+dCByY2FyX2R1X3BsYW5lc19pbml0KHN0cnVjdCByY2FyX2R1X2dyb3VwICpyZ3JwKQogCQlkcm1f
+b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCiAJCQkJCSAgIHJjZHUt
+PnByb3BzLmNvbG9ya2V5LAogCQkJCQkgICBSQ0FSX0RVX0NPTE9SS0VZX05PTkUpOwotCQlkcm1f
+b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCi0JCQkJCSAgIHJjZHUt
+PnByb3BzLnpwb3MsIDEpOworCQlkcm1fcGxhbmVfY3JlYXRlX3pwb3NfcHJvcGVydHkoJnBsYW5l
+LT5wbGFuZSwgMSwgNyk7CiAJfQogCiAJcmV0dXJuIDA7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
+Y2FyX2R1X3BsYW5lLmgKaW5kZXggYjE4YjdiMi4uOGI5MWRkMyAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9y
+Y2FyLWR1L3JjYXJfZHVfcGxhbmUuaApAQCAtNTEsNyArNTEsNiBAQCBzdGF0aWMgaW5saW5lIHN0
+cnVjdCByY2FyX2R1X3BsYW5lICp0b19yY2FyX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
+KQogICogQGh3aW5kZXg6IDAtYmFzZWQgaGFyZHdhcmUgcGxhbmUgaW5kZXgsIC0xIG1lYW5zIHVu
+dXNlZAogICogQGFscGhhOiB2YWx1ZSBvZiB0aGUgcGxhbmUgYWxwaGEgcHJvcGVydHkKICAqIEBj
+b2xvcmtleTogdmFsdWUgb2YgdGhlIHBsYW5lIGNvbG9ya2V5IHByb3BlcnR5Ci0gKiBAenBvczog
+dmFsdWUgb2YgdGhlIHBsYW5lIHpwb3MgcHJvcGVydHkKICAqLwogc3RydWN0IHJjYXJfZHVfcGxh
+bmVfc3RhdGUgewogCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgc3RhdGU7CkBAIC02Miw3ICs2MSw2
+IEBAIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlIHsKIAogCXVuc2lnbmVkIGludCBhbHBoYTsK
+IAl1bnNpZ25lZCBpbnQgY29sb3JrZXk7Ci0JdW5zaWduZWQgaW50IHpwb3M7CiB9OwogCiBzdGF0
+aWMgaW5saW5lIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlICoKLS0gCjEuOS4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
