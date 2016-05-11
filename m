@@ -1,52 +1,59 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Only Odroid XU3-family boards use DTSI
- with CPU thermal nodes
-Date: Wed, 11 May 2016 07:49:19 +0200
-Message-ID: <5732C7DF.2080800@samsung.com>
-References: <1462774789-15360-1-git-send-email-k.kozlowski@samsung.com>
- <CANAwSgT9SY3kj8+beMpc1xGoC=rMBSya+2v2dyZQp6ykH+V0=g@mail.gmail.com>
- <573198BE.6020900@samsung.com>
- <CANAwSgTy6p9AVmmOWATpSO1JqVbwE0v+y_y-RLd+32RnNJTA+Q@mail.gmail.com>
- <5731D764.8070007@samsung.com>
- <CANAwSgRsjdQh6ygT__5XcH8-cF9Ch+zbk8oupebwYzY1kCZu6g@mail.gmail.com>
- <5731EA1B.4070201@samsung.com>
- <CANAwSgQGhrBca7=Ow8+Hh9t0W9HWp=F43KR0Frfpx9fGngPSaw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38033 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751152AbcEKFtZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 01:49:25 -0400
-In-reply-to: <CANAwSgQGhrBca7=Ow8+Hh9t0W9HWp=F43KR0Frfpx9fGngPSaw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos: Enable AX88760 USB hub on Origen board
+Date: Wed, 11 May 2016 09:06:52 +0200
+Message-ID: <1462950412-16681-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Matthew Leach <matthew@mattleach.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 05/10/2016 09:45 PM, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> Sorry I am not able to explain my self clearly.
-> But I have once gain tested these changes.
-> 
-> Only could you append with following changes.
-> --------------------------------------------------------
-> +                               cpu_crit0: cpu-crit-0 {
-> +                                       temperature = <120000>; /*
-> millicelsius */
-> +                                       hysteresis = <5000>; /* millicelsius */
-> +                                       type = "critical";
-> +                               };
-> --------------------------------------------------------
-> hysteresis time help to adjust the present and past temperature inputs
-> before critical shutdown.
+From: Matthew Leach <matthew@mattleach.net>
 
-I need more details why you want this patch. What is the point of
-hysteresis on critical trip point? When reaching this trip point the
-system shutdowns... there is nothing more to do, I think.
+Enable the Origen's usb phy and ohci devices in the device tree.  Also
+add the "samsung,vbus-gpio" property to enable the GPX3(5) gpio pin so
+the AX88760 hub is powered.
 
-Best regards,
-Krzysztof
+Signed-off-by: Matthew Leach <matthew@mattleach.net>
+[k.kozlowski: Extend nodes by label notation instead of path]
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-origen.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 8bca699b7f20..4c59bdb0e6f3 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -77,12 +77,29 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
+ };
+ 
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
+ };
+ 
++&exynos_usbphy {
++	status = "okay";
++};
++
++&ehci {
++	samsung,vbus-gpio = <&gpx3 5 1>;
++	status = "okay";
++
++	port@1{
++		status = "okay";
++	};
++	port@2 {
++		status = "okay";
++	};
++};
++
+ &fimd {
+ 	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
+ 	pinctrl-names = "default";
+-- 
+1.9.1
