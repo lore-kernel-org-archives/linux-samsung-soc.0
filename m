@@ -1,37 +1,54 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v3 26/27] ARM: dts: exynos: Add I2C, PWM and UART pinctrl
- to Exynos5410
-Date: Wed, 11 May 2016 08:36:34 -0400
-Message-ID: <1d8b5479-3e29-9523-1862-4dc5fe5da384@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
+Date: Wed, 11 May 2016 08:44:16 -0400
+Message-ID: <b1f47282-f70e-4354-9146-9b4b27ba1726@osg.samsung.com>
 References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <1462910970-1812-27-git-send-email-krzk@kernel.org>
+ <1462910970-1812-28-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462910970-1812-27-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1462910970-1812-28-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Krzysztof,
 
 On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Add pincontrol groups for HSI2C (USI), I2C, PWM and UART to Exynos5410.
-> This allows configuring these pins to specific functions.
+> Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
+> This still does not enable them on the board level though.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
+>  arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index dd4d6d752865..ae64cb0a8efd 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -114,6 +114,9 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		/* i2c_0-3 are defined in exynos5.dtsi */
+> +		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
+> +
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+I don't think these comments are needed. For each DTS, there are usually a lot of
+nodes defined in higher levels of the DT hierarchy but isn't common to mention it.
+
+Specially since the mentioned nodes are referenced here by their labels so it is
+implicit that are defined in one of the included DTSI (or dtc will fail to build).
+
+The actual change looks good to me though:
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
