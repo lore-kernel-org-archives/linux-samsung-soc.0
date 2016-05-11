@@ -1,54 +1,58 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 27/27] ARM: dts: exynos: Add RTC and I2C to Exynos5410
-Date: Wed, 11 May 2016 08:44:16 -0400
-Message-ID: <b1f47282-f70e-4354-9146-9b4b27ba1726@osg.samsung.com>
-References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
- <1462910970-1812-28-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] phy: exynos-mipi-video: avoid uninitialized variable use
+Date: Wed, 11 May 2016 14:49:53 +0200
+Message-ID: <1462971012-562097-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462910970-1812-28-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+A rework of the exynos-mipi-video driver caused a warning
+about the new __set_phy_state function potentially accessing
+a variable before its initialization:
 
-On 05/10/2016 04:09 PM, Krzysztof Kozlowski wrote:
-> Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
-> This still does not enable them on the board level though.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5410.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index dd4d6d752865..ae64cb0a8efd 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -114,6 +114,9 @@
->  			status = "disabled";
->  		};
->  
-> +		/* i2c_0-3 are defined in exynos5.dtsi */
-> +		/* hsi2c_4-7 are defined in exynos5xx.dtsi */
-> +
+drivers/phy/phy-exynos-mipi-video.c: In function '__set_phy_state':
+drivers/phy/phy-exynos-mipi-video.c:238:13: error: 'val' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  return val & data->resetn_val;
+         ~~~~^~~~~~~~~~~~~~~~~~
+drivers/phy/phy-exynos-mipi-video.c:235:6: note: 'val' was declared here
+  u32 val;
 
-I don't think these comments are needed. For each DTS, there are usually a lot of
-nodes defined in higher levels of the DT hierarchy but isn't common to mention it.
+The failure scenario here is the offset passed into a the
+stub regmap_read() function that does not modify its output,
+however regmap_read() can also fail for other reasons, so
+adding error handling (in this case, returning zero from
+is_running) seems the best solution.
 
-Specially since the mentioned nodes are referenced here by their labels so it is
-implicit that are defined in one of the included DTSI (or dtc will fail to build).
+Note that this warning showed up with the ARM s5pv210_defconfig,
+indicating that we most likely want to either enable CONFIG_REGMAP
+in that defconfig as well, or disable the phy-exynos-mipi-video
+driver.
 
-The actual change looks good to me though:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 97a3042f7616 ("phy: exynos-mipi-video: Rewrite handling of phy registers")
+---
+ drivers/phy/phy-exynos-mipi-video.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
+index cc093ebfda94..8b851f718123 100644
+--- a/drivers/phy/phy-exynos-mipi-video.c
++++ b/drivers/phy/phy-exynos-mipi-video.c
+@@ -233,8 +233,12 @@ static inline int __is_running(const struct exynos_mipi_phy_desc *data,
+ 			struct exynos_mipi_video_phy *state)
+ {
+ 	u32 val;
++	int ret;
++
++	ret = regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
++	if (ret)
++		return 0;
+ 
+-	regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
+ 	return val & data->resetn_val;
+ }
+ 
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.0
