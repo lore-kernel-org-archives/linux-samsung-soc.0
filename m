@@ -1,89 +1,36 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 01/18] clk: samsung: Constify clock init data with clock arrays
-Date: Wed, 11 May 2016 14:01:57 +0200
-Message-ID: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:62236 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751360AbcEKMCd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:02:33 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 04/18] clk: samsung: exynos4: Move local function to init
+ section
+Date: Wed, 11 May 2016 14:02:00 +0200
+Message-ID: <1462968134-6085-4-git-send-email-k.kozlowski@samsung.com>
+References: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1462968134-6085-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-samsung_cmu_register_one() can accept pointer to const initialization
-data: struct samsung_cmu_info. The members of the latter can also be
-pointers to const data.
+The local exynos4_get_xom() function is referenced only from other
+init-level functions.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/samsung/clk.c |  2 +-
- drivers/clk/samsung/clk.h | 16 ++++++++--------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/clk/samsung/clk-exynos4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index f38a6c49f744..e4d14589cc4a 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -381,7 +381,7 @@ static void samsung_clk_sleep_init(void __iomem *reg_base,
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 7b3d0f975987..b599ca30d6d0 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1211,7 +1211,7 @@ static struct samsung_clock_alias exynos4x12_aliases[] __initdata = {
+  * controller is first remapped and the value of XOM[0] bit is read to
+  * determine the parent clock.
   */
- struct samsung_clk_provider * __init samsung_cmu_register_one(
- 			struct device_node *np,
--			struct samsung_cmu_info *cmu)
-+			const struct samsung_cmu_info *cmu)
+-static unsigned long exynos4_get_xom(void)
++static unsigned long __init exynos4_get_xom(void)
  {
- 	void __iomem *reg_base;
- 	struct samsung_clk_provider *ctx;
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index aa872d2c5105..61db98dd01a2 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -330,28 +330,28 @@ struct samsung_clock_reg_cache {
- 
- struct samsung_cmu_info {
- 	/* list of pll clocks and respective count */
--	struct samsung_pll_clock *pll_clks;
-+	const struct samsung_pll_clock *pll_clks;
- 	unsigned int nr_pll_clks;
- 	/* list of mux clocks and respective count */
--	struct samsung_mux_clock *mux_clks;
-+	const struct samsung_mux_clock *mux_clks;
- 	unsigned int nr_mux_clks;
- 	/* list of div clocks and respective count */
--	struct samsung_div_clock *div_clks;
-+	const struct samsung_div_clock *div_clks;
- 	unsigned int nr_div_clks;
- 	/* list of gate clocks and respective count */
--	struct samsung_gate_clock *gate_clks;
-+	const struct samsung_gate_clock *gate_clks;
- 	unsigned int nr_gate_clks;
- 	/* list of fixed clocks and respective count */
--	struct samsung_fixed_rate_clock *fixed_clks;
-+	const struct samsung_fixed_rate_clock *fixed_clks;
- 	unsigned int nr_fixed_clks;
- 	/* list of fixed factor clocks and respective count */
--	struct samsung_fixed_factor_clock *fixed_factor_clks;
-+	const struct samsung_fixed_factor_clock *fixed_factor_clks;
- 	unsigned int nr_fixed_factor_clks;
- 	/* total number of clocks with IDs assigned*/
- 	unsigned int nr_clk_ids;
- 
- 	/* list and number of clocks registers */
--	unsigned long *clk_regs;
-+	const unsigned long *clk_regs;
- 	unsigned int nr_clk_regs;
- };
- 
-@@ -395,7 +395,7 @@ extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 
- extern struct samsung_clk_provider __init *samsung_cmu_register_one(
- 			struct device_node *,
--			struct samsung_cmu_info *);
-+			const struct samsung_cmu_info *);
- 
- extern unsigned long _get_rate(const char *clk_name);
- 
+ 	unsigned long xom = 0;
+ 	void __iomem *chipid_base;
 -- 
 1.9.1
