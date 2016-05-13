@@ -1,222 +1,103 @@
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v3 3/4] drm/exynos: use generic code for managing zpos plane property
-Date: Fri, 13 May 2016 09:15:26 +0200
-Message-ID: <1463123727-28028-4-git-send-email-benjamin.gaignard@linaro.org>
+Subject: [PATCH v3 4/4] drm: rcar: use generic code for managing zpos plane
+ property
+Date: Fri, 13 May 2016 09:15:27 +0200
+Message-ID: <1463123727-28028-5-git-send-email-benjamin.gaignard@linaro.org>
 References: <1463123727-28028-1-git-send-email-benjamin.gaignard@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:37850 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751104AbcEMHPx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:15:53 -0400
-Received: by mail-wm0-f44.google.com with SMTP id a17so14345222wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 May 2016 00:15:53 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1463123727-28028-1-git-send-email-benjamin.gaignard@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch
-Cc: linaro-mm-sig@lists.linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, vincent.abriou@st.com, fabien.dessenne@st.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linaro-mm-sig@lists.linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-
-This patch replaces zpos property handling custom code in Exynos DRM
-driver with calls to generic DRM code.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Gustavo Padovan <gustavo@padovan.org>
-Cc: vincent.abriou@st.com
-Cc: fabien.dessenne@st.com
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 -
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 67 +++++--------------------------
- drivers/gpu/drm/exynos/exynos_mixer.c     |  6 ++-
- 3 files changed, 13 insertions(+), 62 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index cc33ec9..b34a7b9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -64,7 +64,6 @@ struct exynos_drm_plane_state {
- 	struct exynos_drm_rect src;
- 	unsigned int h_ratio;
- 	unsigned int v_ratio;
--	unsigned int zpos;
- };
- 
- static inline struct exynos_drm_plane_state *
-@@ -221,7 +220,6 @@ struct exynos_drm_private {
- 	 * this array is used to be aware of which crtc did it request vblank.
- 	 */
- 	struct drm_crtc *crtc[MAX_CRTC];
--	struct drm_property *plane_zpos_property;
- 
- 	struct device *dma_dev;
- 	unsigned long da_start;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 50185ac..bbaf6d3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -139,9 +139,9 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
- 
- 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
- 	if (exynos_state) {
--		exynos_state->zpos = exynos_plane->config->zpos;
- 		plane->state = &exynos_state->base;
- 		plane->state->plane = plane;
-+		plane->state->zpos = exynos_plane->config->zpos;
- 	}
- }
- 
-@@ -157,7 +157,6 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
- 		return NULL;
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
--	copy->zpos = exynos_state->zpos;
- 	return &copy->base;
- }
- 
-@@ -170,43 +169,6 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
- 	kfree(old_exynos_state);
- }
- 
--static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
--						struct drm_plane_state *state,
--						struct drm_property *property,
--						uint64_t val)
--{
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
--	struct exynos_drm_plane_state *exynos_state =
--					to_exynos_plane_state(state);
--	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
--	const struct exynos_drm_plane_config *config = exynos_plane->config;
--
--	if (property == dev_priv->plane_zpos_property &&
--	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
--		exynos_state->zpos = val;
--	else
--		return -EINVAL;
--
--	return 0;
--}
--
--static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
--					  const struct drm_plane_state *state,
--					  struct drm_property *property,
--					  uint64_t *val)
--{
--	const struct exynos_drm_plane_state *exynos_state =
--		container_of(state, const struct exynos_drm_plane_state, base);
--	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
--
--	if (property == dev_priv->plane_zpos_property)
--		*val = exynos_state->zpos;
--	else
--		return -EINVAL;
--
--	return 0;
--}
--
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
-@@ -215,8 +177,6 @@ static struct drm_plane_funcs exynos_plane_funcs = {
- 	.reset		= exynos_drm_plane_reset,
- 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
- 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
--	.atomic_set_property = exynos_drm_plane_atomic_set_property,
--	.atomic_get_property = exynos_drm_plane_atomic_get_property,
- };
- 
- static int
-@@ -304,23 +264,13 @@ static const struct drm_plane_helper_funcs plane_helper_funcs = {
- };
- 
- static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
--					      unsigned int zpos)
-+					      bool immutable)
- {
--	struct drm_device *dev = plane->dev;
--	struct exynos_drm_private *dev_priv = dev->dev_private;
--	struct drm_property *prop;
--
--	prop = dev_priv->plane_zpos_property;
--	if (!prop) {
--		prop = drm_property_create_range(dev, 0, "zpos",
--						 0, MAX_PLANE - 1);
--		if (!prop)
--			return;
--
--		dev_priv->plane_zpos_property = prop;
--	}
--
--	drm_object_attach_property(&plane->base, prop, zpos);
-+	if (immutable)
-+		drm_plane_create_zpos_immutable_property(plane,
-+							 0, MAX_PLANE - 1);
-+	else
-+		drm_plane_create_zpos_property(plane, 0, MAX_PLANE - 1);
- }
- 
- int exynos_plane_init(struct drm_device *dev,
-@@ -346,7 +296,8 @@ int exynos_plane_init(struct drm_device *dev,
- 	exynos_plane->index = index;
- 	exynos_plane->config = config;
- 
--	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
-+	exynos_plane_attach_zpos_property(&exynos_plane->base,
-+			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 74a4269..e1d47f9 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -477,6 +477,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	struct drm_framebuffer *fb = state->base.fb;
-+	unsigned int priority = state->base.normalized_zpos + 1;
- 	unsigned long flags;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
- 	bool tiled_mode = false;
-@@ -561,7 +562,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 
- 	mixer_cfg_scan(ctx, mode->vdisplay);
- 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
--	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
-+	mixer_cfg_layer(ctx, plane->index, priority, true);
- 	mixer_cfg_vp_blend(ctx);
- 	mixer_run(ctx);
- 
-@@ -586,6 +587,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	struct drm_framebuffer *fb = state->base.fb;
-+	unsigned int priority = state->base.normalized_zpos + 1;
- 	unsigned long flags;
- 	unsigned int win = plane->index;
- 	unsigned int x_ratio = 0, y_ratio = 0;
-@@ -677,7 +679,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 
- 	mixer_cfg_scan(ctx, mode->vdisplay);
- 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
--	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
-+	mixer_cfg_layer(ctx, win, priority, true);
- 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
- 
- 	/* layer update mandatory for mixer 16.0.33.0 */
--- 
-1.9.1
+VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
+IHJjYXIgRFJNCmRyaXZlciB3aXRoIGNhbGxzIHRvIGdlbmVyaWMgRFJNIGNvZGUuCgpTaWduZWQt
+b2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4K
+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+CkNjOiBWaWxsZSBTeXJqYWxhIDx2
+aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJl
+bnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KQ2M6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5
+cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1
+X2NydGMuYyAgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAg
+fCAxIC0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfa21zLmMgICB8IDUgLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyB8IDkgKystLS0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggfCAyIC0tCiA1IGZpbGVzIGNo
+YW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNh
+ci1kdS9yY2FyX2R1X2NydGMuYwppbmRleCAwZDhiZGRhLi4yOGQyY2I2IDEwMDY0NAotLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwpAQCAtMTk2LDcgKzE5Niw3IEBAIHZvaWQgcmNhcl9k
+dV9jcnRjX3JvdXRlX291dHB1dChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiAKIHN0YXRpYyB1bnNp
+Z25lZCBpbnQgcGxhbmVfenBvcyhzdHJ1Y3QgcmNhcl9kdV9wbGFuZSAqcGxhbmUpCiB7Ci0JcmV0
+dXJuIHRvX3JjYXJfcGxhbmVfc3RhdGUocGxhbmUtPnBsYW5lLnN0YXRlKS0+enBvczsKKwlyZXR1
+cm4gcGxhbmUtPnBsYW5lLnN0YXRlLT5ub3JtYWxpemVkX3pwb3M7CiB9CiAKIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgcmNhcl9kdV9mb3JtYXRfaW5mbyAqCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
+dV9kcnYuaAppbmRleCBlZDM1NDY3Li5jODQzYzMxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
+YXJfZHVfZHJ2LmgKQEAgLTkyLDcgKzkyLDYgQEAgc3RydWN0IHJjYXJfZHVfZGV2aWNlIHsKIAlz
+dHJ1Y3QgewogCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICphbHBoYTsKIAkJc3RydWN0IGRybV9wcm9w
+ZXJ0eSAqY29sb3JrZXk7Ci0JCXN0cnVjdCBkcm1fcHJvcGVydHkgKnpwb3M7CiAJfSBwcm9wczsK
+IAogCXVuc2lnbmVkIGludCBkcGFkMF9zb3VyY2U7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
+dV9rbXMuYwppbmRleCBlNzBhNGYzLi40YWNlMGFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
+YXJfZHVfa21zLmMKQEAgLTUyNywxMSArNTI3LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3Byb3Bl
+cnRpZXNfaW5pdChzdHJ1Y3QgcmNhcl9kdV9kZXZpY2UgKnJjZHUpCiAJaWYgKHJjZHUtPnByb3Bz
+LmNvbG9ya2V5ID09IE5VTEwpCiAJCXJldHVybiAtRU5PTUVNOwogCi0JcmNkdS0+cHJvcHMuenBv
+cyA9Ci0JCWRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocmNkdS0+ZGRldiwgMCwgInpwb3MiLCAx
+LCA3KTsKLQlpZiAocmNkdS0+cHJvcHMuenBvcyA9PSBOVUxMKQotCQlyZXR1cm4gLUVOT01FTTsK
+LQogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
+Y2FyX2R1X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMK
+aW5kZXggODQ2MGFlMS4uNDc2NGFmYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JjYXIt
+ZHUvcmNhcl9kdV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVf
+cGxhbmUuYwpAQCAtNjU2LDcgKzY1Niw3IEBAIHN0YXRpYyB2b2lkIHJjYXJfZHVfcGxhbmVfcmVz
+ZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAJc3RhdGUtPnNvdXJjZSA9IFJDQVJfRFVfUExB
+TkVfTUVNT1JZOwogCXN0YXRlLT5hbHBoYSA9IDI1NTsKIAlzdGF0ZS0+Y29sb3JrZXkgPSBSQ0FS
+X0RVX0NPTE9SS0VZX05PTkU7Ci0Jc3RhdGUtPnpwb3MgPSBwbGFuZS0+dHlwZSA9PSBEUk1fUExB
+TkVfVFlQRV9QUklNQVJZID8gMCA6IDE7CisJcGxhbmUtPnN0YXRlLT56cG9zID0gcGxhbmUtPnR5
+cGUgPT0gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA/IDAgOiAxOwogCiAJcGxhbmUtPnN0YXRlID0g
+JnN0YXRlLT5zdGF0ZTsKIAlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CkBAIC02NzQsOCAr
+Njc0LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3BsYW5lX2F0b21pY19zZXRfcHJvcGVydHkoc3Ry
+dWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCXJzdGF0ZS0+YWxwaGEgPSB2YWw7CiAJZWxzZSBpZiAo
+cHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCXJzdGF0ZS0+Y29sb3JrZXkgPSB2
+YWw7Ci0JZWxzZSBpZiAocHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuenBvcykKLQkJcnN0YXRlLT56
+cG9zID0gdmFsOwogCWVsc2UKIAkJcmV0dXJuIC1FSU5WQUw7CiAKQEAgLTY5NCw4ICs2OTIsNiBA
+QCBzdGF0aWMgaW50IHJjYXJfZHVfcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJt
+X3BsYW5lICpwbGFuZSwKIAkJKnZhbCA9IHJzdGF0ZS0+YWxwaGE7CiAJZWxzZSBpZiAocHJvcGVy
+dHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCSp2YWwgPSByc3RhdGUtPmNvbG9ya2V5Owot
+CWVsc2UgaWYgKHByb3BlcnR5ID09IHJjZHUtPnByb3BzLnpwb3MpCi0JCSp2YWwgPSByc3RhdGUt
+Pnpwb3M7CiAJZWxzZQogCQlyZXR1cm4gLUVJTlZBTDsKIApAQCAtNzY3LDggKzc2Myw3IEBAIGlu
+dCByY2FyX2R1X3BsYW5lc19pbml0KHN0cnVjdCByY2FyX2R1X2dyb3VwICpyZ3JwKQogCQlkcm1f
+b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCiAJCQkJCSAgIHJjZHUt
+PnByb3BzLmNvbG9ya2V5LAogCQkJCQkgICBSQ0FSX0RVX0NPTE9SS0VZX05PTkUpOwotCQlkcm1f
+b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCi0JCQkJCSAgIHJjZHUt
+PnByb3BzLnpwb3MsIDEpOworCQlkcm1fcGxhbmVfY3JlYXRlX3pwb3NfcHJvcGVydHkoJnBsYW5l
+LT5wbGFuZSwgMSwgNyk7CiAJfQogCiAJcmV0dXJuIDA7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
+Y2FyX2R1X3BsYW5lLmgKaW5kZXggYjE4YjdiMi4uOGI5MWRkMyAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9y
+Y2FyLWR1L3JjYXJfZHVfcGxhbmUuaApAQCAtNTEsNyArNTEsNiBAQCBzdGF0aWMgaW5saW5lIHN0
+cnVjdCByY2FyX2R1X3BsYW5lICp0b19yY2FyX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
+KQogICogQGh3aW5kZXg6IDAtYmFzZWQgaGFyZHdhcmUgcGxhbmUgaW5kZXgsIC0xIG1lYW5zIHVu
+dXNlZAogICogQGFscGhhOiB2YWx1ZSBvZiB0aGUgcGxhbmUgYWxwaGEgcHJvcGVydHkKICAqIEBj
+b2xvcmtleTogdmFsdWUgb2YgdGhlIHBsYW5lIGNvbG9ya2V5IHByb3BlcnR5Ci0gKiBAenBvczog
+dmFsdWUgb2YgdGhlIHBsYW5lIHpwb3MgcHJvcGVydHkKICAqLwogc3RydWN0IHJjYXJfZHVfcGxh
+bmVfc3RhdGUgewogCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgc3RhdGU7CkBAIC02Miw3ICs2MSw2
+IEBAIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlIHsKIAogCXVuc2lnbmVkIGludCBhbHBoYTsK
+IAl1bnNpZ25lZCBpbnQgY29sb3JrZXk7Ci0JdW5zaWduZWQgaW50IHpwb3M7CiB9OwogCiBzdGF0
+aWMgaW5saW5lIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlICoKLS0gCjEuOS4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
