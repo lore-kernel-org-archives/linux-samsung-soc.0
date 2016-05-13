@@ -1,103 +1,150 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v3 4/4] drm: rcar: use generic code for managing zpos plane
- property
-Date: Fri, 13 May 2016 09:15:27 +0200
-Message-ID: <1463123727-28028-5-git-send-email-benjamin.gaignard@linaro.org>
-References: <1463123727-28028-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 00/27] ARM: dts: exynos: Add initial support for Odroid
+ XU
+Date: Fri, 13 May 2016 13:03:00 +0100
+Message-ID: <5735C274.50504@arm.com>
+References: <1462910970-1812-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1463123727-28028-1-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, daniel@ffwll.ch
-Cc: linaro-mm-sig@lists.linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:35932 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751625AbcEMMDF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 May 2016 08:03:05 -0400
+In-Reply-To: <1462910970-1812-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>
 
-VGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhhbmRsaW5nIGN1c3RvbSBjb2RlIGlu
-IHJjYXIgRFJNCmRyaXZlciB3aXRoIGNhbGxzIHRvIGdlbmVyaWMgRFJNIGNvZGUuCgpTaWduZWQt
-b2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4K
-CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+CkNjOiBWaWxsZSBTeXJqYWxhIDx2
-aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJl
-bnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KQ2M6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5
-cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1
-X2NydGMuYyAgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAg
-fCAxIC0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfa21zLmMgICB8IDUgLS0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyB8IDkgKystLS0tLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggfCAyIC0tCiA1IGZpbGVzIGNo
-YW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNh
-ci1kdS9yY2FyX2R1X2NydGMuYwppbmRleCAwZDhiZGRhLi4yOGQyY2I2IDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9k
-cm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwpAQCAtMTk2LDcgKzE5Niw3IEBAIHZvaWQgcmNhcl9k
-dV9jcnRjX3JvdXRlX291dHB1dChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiAKIHN0YXRpYyB1bnNp
-Z25lZCBpbnQgcGxhbmVfenBvcyhzdHJ1Y3QgcmNhcl9kdV9wbGFuZSAqcGxhbmUpCiB7Ci0JcmV0
-dXJuIHRvX3JjYXJfcGxhbmVfc3RhdGUocGxhbmUtPnBsYW5lLnN0YXRlKS0+enBvczsKKwlyZXR1
-cm4gcGxhbmUtPnBsYW5lLnN0YXRlLT5ub3JtYWxpemVkX3pwb3M7CiB9CiAKIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgcmNhcl9kdV9mb3JtYXRfaW5mbyAqCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
-dV9kcnYuaAppbmRleCBlZDM1NDY3Li5jODQzYzMxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
-YXJfZHVfZHJ2LmgKQEAgLTkyLDcgKzkyLDYgQEAgc3RydWN0IHJjYXJfZHVfZGV2aWNlIHsKIAlz
-dHJ1Y3QgewogCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICphbHBoYTsKIAkJc3RydWN0IGRybV9wcm9w
-ZXJ0eSAqY29sb3JrZXk7Ci0JCXN0cnVjdCBkcm1fcHJvcGVydHkgKnpwb3M7CiAJfSBwcm9wczsK
-IAogCXVuc2lnbmVkIGludCBkcGFkMF9zb3VyY2U7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jIGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9k
-dV9rbXMuYwppbmRleCBlNzBhNGYzLi40YWNlMGFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
-YXJfZHVfa21zLmMKQEAgLTUyNywxMSArNTI3LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3Byb3Bl
-cnRpZXNfaW5pdChzdHJ1Y3QgcmNhcl9kdV9kZXZpY2UgKnJjZHUpCiAJaWYgKHJjZHUtPnByb3Bz
-LmNvbG9ya2V5ID09IE5VTEwpCiAJCXJldHVybiAtRU5PTUVNOwogCi0JcmNkdS0+cHJvcHMuenBv
-cyA9Ci0JCWRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocmNkdS0+ZGRldiwgMCwgInpwb3MiLCAx
-LCA3KTsKLQlpZiAocmNkdS0+cHJvcHMuenBvcyA9PSBOVUxMKQotCQlyZXR1cm4gLUVOT01FTTsK
-LQogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
-Y2FyX2R1X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMK
-aW5kZXggODQ2MGFlMS4uNDc2NGFmYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JjYXIt
-ZHUvcmNhcl9kdV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVf
-cGxhbmUuYwpAQCAtNjU2LDcgKzY1Niw3IEBAIHN0YXRpYyB2b2lkIHJjYXJfZHVfcGxhbmVfcmVz
-ZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAJc3RhdGUtPnNvdXJjZSA9IFJDQVJfRFVfUExB
-TkVfTUVNT1JZOwogCXN0YXRlLT5hbHBoYSA9IDI1NTsKIAlzdGF0ZS0+Y29sb3JrZXkgPSBSQ0FS
-X0RVX0NPTE9SS0VZX05PTkU7Ci0Jc3RhdGUtPnpwb3MgPSBwbGFuZS0+dHlwZSA9PSBEUk1fUExB
-TkVfVFlQRV9QUklNQVJZID8gMCA6IDE7CisJcGxhbmUtPnN0YXRlLT56cG9zID0gcGxhbmUtPnR5
-cGUgPT0gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA/IDAgOiAxOwogCiAJcGxhbmUtPnN0YXRlID0g
-JnN0YXRlLT5zdGF0ZTsKIAlwbGFuZS0+c3RhdGUtPnBsYW5lID0gcGxhbmU7CkBAIC02NzQsOCAr
-Njc0LDYgQEAgc3RhdGljIGludCByY2FyX2R1X3BsYW5lX2F0b21pY19zZXRfcHJvcGVydHkoc3Ry
-dWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCXJzdGF0ZS0+YWxwaGEgPSB2YWw7CiAJZWxzZSBpZiAo
-cHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCXJzdGF0ZS0+Y29sb3JrZXkgPSB2
-YWw7Ci0JZWxzZSBpZiAocHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuenBvcykKLQkJcnN0YXRlLT56
-cG9zID0gdmFsOwogCWVsc2UKIAkJcmV0dXJuIC1FSU5WQUw7CiAKQEAgLTY5NCw4ICs2OTIsNiBA
-QCBzdGF0aWMgaW50IHJjYXJfZHVfcGxhbmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwKIAkJKnZhbCA9IHJzdGF0ZS0+YWxwaGE7CiAJZWxzZSBpZiAocHJvcGVy
-dHkgPT0gcmNkdS0+cHJvcHMuY29sb3JrZXkpCiAJCSp2YWwgPSByc3RhdGUtPmNvbG9ya2V5Owot
-CWVsc2UgaWYgKHByb3BlcnR5ID09IHJjZHUtPnByb3BzLnpwb3MpCi0JCSp2YWwgPSByc3RhdGUt
-Pnpwb3M7CiAJZWxzZQogCQlyZXR1cm4gLUVJTlZBTDsKIApAQCAtNzY3LDggKzc2Myw3IEBAIGlu
-dCByY2FyX2R1X3BsYW5lc19pbml0KHN0cnVjdCByY2FyX2R1X2dyb3VwICpyZ3JwKQogCQlkcm1f
-b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCiAJCQkJCSAgIHJjZHUt
-PnByb3BzLmNvbG9ya2V5LAogCQkJCQkgICBSQ0FSX0RVX0NPTE9SS0VZX05PTkUpOwotCQlkcm1f
-b2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLmJhc2UsCi0JCQkJCSAgIHJjZHUt
-PnByb3BzLnpwb3MsIDEpOworCQlkcm1fcGxhbmVfY3JlYXRlX3pwb3NfcHJvcGVydHkoJnBsYW5l
-LT5wbGFuZSwgMSwgNyk7CiAJfQogCiAJcmV0dXJuIDA7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
-Y2FyX2R1X3BsYW5lLmgKaW5kZXggYjE4YjdiMi4uOGI5MWRkMyAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9y
-Y2FyLWR1L3JjYXJfZHVfcGxhbmUuaApAQCAtNTEsNyArNTEsNiBAQCBzdGF0aWMgaW5saW5lIHN0
-cnVjdCByY2FyX2R1X3BsYW5lICp0b19yY2FyX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-KQogICogQGh3aW5kZXg6IDAtYmFzZWQgaGFyZHdhcmUgcGxhbmUgaW5kZXgsIC0xIG1lYW5zIHVu
-dXNlZAogICogQGFscGhhOiB2YWx1ZSBvZiB0aGUgcGxhbmUgYWxwaGEgcHJvcGVydHkKICAqIEBj
-b2xvcmtleTogdmFsdWUgb2YgdGhlIHBsYW5lIGNvbG9ya2V5IHByb3BlcnR5Ci0gKiBAenBvczog
-dmFsdWUgb2YgdGhlIHBsYW5lIHpwb3MgcHJvcGVydHkKICAqLwogc3RydWN0IHJjYXJfZHVfcGxh
-bmVfc3RhdGUgewogCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgc3RhdGU7CkBAIC02Miw3ICs2MSw2
-IEBAIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlIHsKIAogCXVuc2lnbmVkIGludCBhbHBoYTsK
-IAl1bnNpZ25lZCBpbnQgY29sb3JrZXk7Ci0JdW5zaWduZWQgaW50IHpwb3M7CiB9OwogCiBzdGF0
-aWMgaW5saW5lIHN0cnVjdCByY2FyX2R1X3BsYW5lX3N0YXRlICoKLS0gCjEuOS4xCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Krzysztof,
+
+On 10/05/16 21:09, Krzysztof Kozlowski wrote:
+> Hi,
+>
+> Patchset adds necessary clocks, reorganizes existing stuff and finally
+> adds Odroid XU support.
+>
+>
+> Changes since v2
+> ================
+> 1. Got global-ack from Stephen for the clock changes. I think merging
+>     everything through arm-soc might be the easiest but:
+>     a. In such case I will prepare a tag with clock changes,
+>     b. Anyway I will wait for response from Sylwester and Tomasz.
+> 2. Applied comments from Javier and added his Reviewed-by.
+> 3. Patch 22: added ack from Rob.
+> 4. Minor improvements in existing patches.
+> 5. Five new patches at the end: 23-27 (not reviewed yet).
+>     Some of them could be squashed with existing ones but existing
+>     changes got reviews. Although the final Odroid XU DTS works fine but
+>     in general this is still work-in-progress so I suspect it will grow.
+>     I am releasing it early following Linux concept. :)
+>
+> Patchset is available at my private repo @github:
+> https://github.com/krzk/linux.git for-next/odroid-xu-v3
+
+Since I have one of these gathering dust on my desk, it's really cool to 
+see this series, thanks!
+
+I've successfully booted that branch to a filesystem on SD card, but USB 
+clearly isn't quite right - the USB 2.0 hub is powered up, but only the 
+bottom right port will actually enumerate devices; the ethernet is 
+nowhere to be seen. However, if I drop into the bootloader and do a "usb 
+start" beforehand, it all keeps working into the kernel. As for the USB 
+3.0, though, the ports report over-current conditions shortly after the 
+XHCI probe despite having nothing plugged in :(
+
+Robin.
+
+> (previous version is in for-next/odroid-xu-v2 branch, if someone would
+> like to compare them)
+>
+>
+> Changes since v1
+> ================
+> 1. A lot of new patches.
+> 2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+> 3. New clocks, more reorganization.
+> 4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+>     and more complicated but this might help removing duplications
+>     and keeping everything under control.
+>
+>
+>
+> Merging strategy
+> ================
+> Complicated! The clock dt-bindings and driver changes can go to clock
+> tree. However there are three DTS patches in the middle.
+> a. This has to go in before adding "fin_pll_new" to clock driver:
+>     - [PATCH v2 03/22] ARM: dts: exynos: Add fin_pll node for clock driver
+>
+> b. This should go in before renaming "fin_pll_new" back to original name:
+>     - [PATCH v2 05/22] ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+>     - [PATCH v2 06/22] ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+>
+> The order of patches in the patchset is really how it should go in
+> to reduce any bisectability glitches.
+>
+>
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (27):
+>    dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+>    dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+>    ARM: dts: exynos: Add fin_pll node for clock driver
+>    clk: samsung: exynos5410: Provide fin_pll external fixed clock
+>    ARM: dts: exynos: Switch MCT node to a new fin_pll clock
+>    ARM: dts: exynos: Remove old fixed-clock provider on SMDK5410
+>    clk: samsung: exynos5410: Rename fin_pll from temporary to regular
+>      name
+>    clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+>    ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+>      nodes
+>    ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+>    ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+>    ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+>    ARM: dts: exynos: Move common nodes to exynos5.dtsi
+>    ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+>      exynos5410.dtsi
+>    ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+>    ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+>    ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+>    ARM: dts: exynos: Enable UART3 on Exynos5410
+>    ARM: dts: exynos: MCT is not an interrupt controller and extend length
+>      of iomap
+>    ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+>    ARM: dts: exynos: Add USB to Exynos5410
+>    ARM: dts: exynos: Add initial support for Odroid XU board
+>    dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+>    clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+>    ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+>    ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+>    ARM: dts: exynos: Add RTC and I2C to Exynos5410
+>
+>   .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+>   arch/arm/boot/dts/Makefile                         |    1 +
+>   arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
+>   arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+>   arch/arm/boot/dts/exynos5250.dtsi                  | 1701 ++++++++---------
+>   arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
+>   arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
+>   arch/arm/boot/dts/exynos5410-smdk5410.dts          |   16 +-
+>   arch/arm/boot/dts/exynos5410.dtsi                  |  270 +--
+>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+>   arch/arm/boot/dts/exynos5420.dtsi                  | 1992 +++++++++-----------
+>   arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+>   arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+>   arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+>   arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
+>   drivers/clk/samsung/clk-exynos5410.c               |   61 +
+>   include/dt-bindings/clock/exynos5410.h             |   73 +-
+>   17 files changed, 2758 insertions(+), 2225 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+>   create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+>   create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
+>
