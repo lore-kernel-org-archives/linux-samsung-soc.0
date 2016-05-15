@@ -1,195 +1,49 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 07/22] ARM: dts: exynos: Split Odroid XU3 LEDs to separate
- DTSI
-Date: Sun, 15 May 2016 22:13:48 +0200
-Message-ID: <1463343243-26429-8-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 19/22] clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+Date: Sun, 15 May 2016 22:14:00 +0200
+Message-ID: <1463343243-26429-20-git-send-email-krzk@kernel.org>
 References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The LED nodes can be shared between Odroid XU3, XU3-Lite and XU (not yet
-added) thus removing duplication.
+Add clocks for I2C, USI (HSI2C) and RTC to the Exynos5410 clock driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 35 +----------------
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 35 +----------------
- arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 50 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 68 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ drivers/clk/samsung/clk-exynos5410.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 2ae1cf41dcb6..03fa88c45426 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -14,44 +14,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index 5f892128849a..6c2e59c576ee 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -159,6 +159,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
  
- / {
- 	model = "Hardkernel Odroid XU3 Lite";
- 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
- };
+ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
++	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
  
- &pwm {
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 432406db85de..9ed6564acfb0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -13,44 +13,11 @@
- /dts-v1/;
- #include "exynos5422-odroidxu3-common.dtsi"
- #include "exynos5422-odroidxu3-audio.dtsi"
-+#include "exynos54xx-odroidxu-leds.dtsi"
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
+ 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+@@ -187,6 +188,14 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 	GATE(CLK_UART1, "uart1", "aclk66", GATE_IP_PERIC, 1, 0, 0),
+ 	GATE(CLK_UART2, "uart2", "aclk66", GATE_IP_PERIC, 2, 0, 0),
+ 	GATE(CLK_UART3, "uart3", "aclk66", GATE_IP_PERIC, 3, 0, 0),
++	GATE(CLK_I2C0, "i2c0", "aclk66", GATE_IP_PERIC, 6, 0, 0),
++	GATE(CLK_I2C1, "i2c1", "aclk66", GATE_IP_PERIC, 7, 0, 0),
++	GATE(CLK_I2C2, "i2c2", "aclk66", GATE_IP_PERIC, 8, 0, 0),
++	GATE(CLK_I2C3, "i2c3", "aclk66", GATE_IP_PERIC, 9, 0, 0),
++	GATE(CLK_USI0, "usi0", "aclk66", GATE_IP_PERIC, 10, 0, 0),
++	GATE(CLK_USI1, "usi1", "aclk66", GATE_IP_PERIC, 11, 0, 0),
++	GATE(CLK_USI2, "usi2", "aclk66", GATE_IP_PERIC, 12, 0, 0),
++	GATE(CLK_USI3, "usi3", "aclk66", GATE_IP_PERIC, 13, 0, 0),
+ 	GATE(CLK_PWM, "pwm", "aclk66", GATE_IP_PERIC, 24, 0, 0),
  
- / {
- 	model = "Hardkernel Odroid XU3";
- 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
--
--	pwmleds {
--		compatible = "pwm-leds";
--
--		greenled {
--			label = "green:mmc0";
--			pwms = <&pwm 1 2000000 0>;
--			pwm-names = "pwm1";
--			/*
--			 * Green LED is much brighter than the others
--			 * so limit its max brightness
--			 */
--			max_brightness = <127>;
--			linux,default-trigger = "mmc0";
--		};
--
--		blueled {
--			label = "blue:heartbeat";
--			pwms = <&pwm 2 2000000 0>;
--			pwm-names = "pwm2";
--			max_brightness = <255>;
--			linux,default-trigger = "heartbeat";
--		};
--	};
--
--	gpioleds {
--		compatible = "gpio-leds";
--		redled {
--			label = "red:microSD";
--			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--			linux,default-trigger = "mmc1";
--		};
--	};
- };
- 
- &i2c_0 {
-diff --git a/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-new file mode 100644
-index 000000000000..0ed30206625c
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
-@@ -0,0 +1,50 @@
-+/*
-+ * Hardkernel Odroid XU/XU3 LED device tree source
-+ *
-+ * Copyright (c) 2015,2016 Krzysztof Kozlowski
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		greenled {
-+			label = "green:mmc0";
-+			pwms = <&pwm 1 2000000 0>;
-+			pwm-names = "pwm1";
-+			/*
-+			 * Green LED is much brighter than the others
-+			 * so limit its max brightness
-+			 */
-+			max_brightness = <127>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		blueled {
-+			label = "blue:heartbeat";
-+			pwms = <&pwm 2 2000000 0>;
-+			pwm-names = "pwm2";
-+			max_brightness = <255>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	gpioleds {
-+		compatible = "gpio-leds";
-+		redled {
-+			label = "red:microSD";
-+			gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc1";
-+		};
-+	};
-+};
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
 -- 
 2.5.0
