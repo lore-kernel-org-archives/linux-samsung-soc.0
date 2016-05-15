@@ -1,187 +1,168 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 17/22] ARM: dts: exynos: Add initial support for Odroid XU board
-Date: Sun, 15 May 2016 22:13:58 +0200
-Message-ID: <1463343243-26429-18-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 21/22] ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+Date: Sun, 15 May 2016 22:14:02 +0200
+Message-ID: <1463343243-26429-22-git-send-email-krzk@kernel.org>
 References: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-Reply-To: <1463343243-26429-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Hardkernel's Odroid XU board was first design with big.LITTLE SoC
-from Samsung: the Exynos5410. Comparing the board to more popular now
-Odroid XU3, the differences are:
-1. Exynos5410 instead of 5422,
-2. MIPI DSI LCD connector,
-3. Main PMIC: Maxim 77802 instead of S2MPS11,
-4. USB3503+LAN9730 instead of integrated LAN9514,
-5. eMMC 4.5 instead of eMMC 5.0,
-
-This patch adds initial support for the XU board with working basic
-functions, eMMC/SD and USB (including attached ethernet adapter).
+Add pincontrol groups for HSI2C (USI), I2C, PWM and UART to Exynos5410.
+This allows configuring these pins to specific functions.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos5410-odroidxu.dts          | 121 +++++++++++++++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 133 ++++++++++++++++++++++++++++++
+ 1 file changed, 133 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index f5deace2b380..0ea7f14ef294 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -47,6 +47,7 @@ Required root node properties:
- 	- "hardkernel,odroid-u3"  - for Exynos4412-based Hardkernel Odroid U3.
- 	- "hardkernel,odroid-x"   - for Exynos4412-based Hardkernel Odroid X.
- 	- "hardkernel,odroid-x2"  - for Exynos4412-based Hardkernel Odroid X2.
-+	- "hardkernel,odroid-xu"  - for Exynos5410-based Hardkernel Odroid XU.
- 	- "hardkernel,odroid-xu3" - for Exynos5422-based Hardkernel Odroid XU3.
- 	- "hardkernel,odroid-xu3-lite" - for Exynos5422-based Hardkernel
- 					 Odroid XU3 Lite board.
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5aeb10674370..9ed1c7abedb1 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-snow-rev5.dtb \
- 	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
-+	exynos5410-odroidxu.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-new file mode 100644
-index 000000000000..9fe04500ecaf
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -0,0 +1,121 @@
-+/*
-+ * Hardkernel Odroid XU board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include "exynos5410.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "exynos54xx-odroidxu-leds.dtsi"
-+
-+/ {
-+	model = "Hardkernel Odroid XU";
-+	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
-+
-+	memory {
-+		reg = <0x40000000 0x7ea00000>;
-+	};
-+
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
-+
-+	emmc_pwrseq: pwrseq {
-+		pinctrl-0 = <&emmc_nrst_pin>;
-+		pinctrl-names = "default";
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
-+	};
-+
-+	fin_pll: xxti {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "fin_pll";
-+		#clock-cells = <0>;
-+	};
-+
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	samsung,read-strobe-delay = <90>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+};
-+
-+&pinctrl_0 {
-+	emmc_nrst_pin: emmc-nrst {
-+		samsung,pins = "gpd1-0";
-+		samsung,pin-function = <0>;
+diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+index ddacafa1e907..b58a0f29f42c 100644
+--- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+@@ -278,6 +278,139 @@
+ 		#interrupt-cells = <2>;
+ 	};
+ 
++	uart0_data: uart0-data {
++		samsung,pins = "gpa0-0", "gpa0-1";
++		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <0>;
 +	};
-+};
 +
-+&serial_0 {
-+	status = "okay";
-+};
++	uart0_fctl: uart0-fctl {
++		samsung,pins = "gpa0-2", "gpa0-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
 +
-+&serial_1 {
-+	status = "okay";
-+};
++	uart1_data: uart1-data {
++		samsung,pins = "gpa0-4", "gpa0-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
 +
-+&serial_2 {
-+	status = "okay";
-+};
++	uart1_fctl: uart1-fctl {
++		samsung,pins = "gpa0-6", "gpa0-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
 +
-+&serial_3 {
-+	status = "okay";
-+};
++	i2c2_bus: i2c2-bus {
++		samsung,pins = "gpa0-6", "gpa0-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
 +
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+};
++	uart2_data: uart2-data {
++		samsung,pins = "gpa1-0", "gpa1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
 +
-+&usbdrd_dwc3_1 {
-+	dr_mode = "peripheral";
-+};
++	uart2_fctl: uart2-fctl {
++		samsung,pins = "gpa1-2", "gpa1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c3_bus: i2c3-bus {
++		samsung,pins = "gpa1-2", "gpa1-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart3_data: uart3-data {
++		samsung,pins = "gpa1-4", "gpa1-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c4_hs_bus: i2c4-hs-bus {
++		samsung,pins = "gpa2-0", "gpa2-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c5_hs_bus: i2c5-hs-bus {
++		samsung,pins = "gpa2-2", "gpa2-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c6_hs_bus: i2c6-hs-bus {
++		samsung,pins = "gpb1-3", "gpb1-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm0_out: pwm0-out {
++		samsung,pins = "gpb2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm1_out: pwm1-out {
++		samsung,pins = "gpb2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm2_out: pwm2-out {
++		samsung,pins = "gpb2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm3_out: pwm3-out {
++		samsung,pins = "gpb2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c7_hs_bus: i2c7-hs-bus {
++		samsung,pins = "gpb2-2", "gpb2-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c0_bus: i2c0-bus {
++		samsung,pins = "gpb3-0", "gpb3-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c1_bus: i2c1-bus {
++		samsung,pins = "gpb3-2", "gpb3-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	sd0_clk: sd0-clk {
+ 		samsung,pins = "gpc0-0";
+ 		samsung,pin-function = <2>;
 -- 
 2.5.0
+
