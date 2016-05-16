@@ -1,48 +1,87 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos: Enable CLKOUT on Exynos5410
-Date: Mon, 16 May 2016 10:26:48 +0200
-Message-ID: <1463387208-9277-2-git-send-email-k.kozlowski@samsung.com>
-References: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 0/2] Introducing Exynos ChipId driver
+Date: Mon, 16 May 2016 15:22:29 +0200
+Message-ID: <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
+References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1463387208-9277-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32973 "EHLO
+	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751921AbcEPNWa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 May 2016 09:22:30 -0400
+In-Reply-To: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, heiko@sntech.de, arnd@arndb.de, Tomasz Figa <tomasz.figa@gmail.com>, thomas.ab@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 
-The CLKOUT (which control is provided by PMU) is necessary for some of
-the drivers using this as a clock, e.g. usb3503 USB HUB on Odroid XU
-board.
+On Thu, Dec 11, 2014 at 9:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> This patch series introduces Exynos Chipid platform driver.
+> Each Exynos SoC has ChipID block which can give information about SoC's
+> product Id and revision number.
+> At the same time it reduces dependency of mach-exynos files from plat-samsung,
+> by removing samsung_rev API, similar API is introduced in chipid driver itself
+> to get revision number and product id.
+>
+> This patch series is based on Kukjin Kim's for-next having SHA_ID:
+> 9db7d78aca2c7fbc19a26ce2ef01c805dc010c72
+>
+> It can also be cleanly applied on latest (next-20141209) linux-next.
+>
+> This has been tested against both tree on Exynos3250 and Exynos5250 (SMDK) board.
+>
+> Revision 4 and it's discussion can be found here
+>  - https://lkml.org/lkml/2014/12/3/115
+>
+> Changes since v4:
+>  - Removed custom sysfs entries as they were not providing any new information
+>    as pointed out by Arnd.
+>  - Removed functions exporting product_id and revision, instead we will export
+>    exynos_chipid_info structure. It will be helpfull when we need to provide more
+>    fields of chipid outside of chipid, as commented by Yadwinder
+>  - Converted all funcions as __init.
+>
+> Change since v3:
+>  - This patch set contains 5/6 and 6/6 patch from v3 series.
+>  - Made EXYNOS_CHIPID config option non-user selectable,
+>    as suggested by Tomasz Figa.
+>  - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
+>    suggested by Tomasz Figa.
+>  - Made local variables static in chipid driver.
+>  - Added existing SoC's product id's.
+>  - Added platform driver support.
+>
+> Changes since v2:
+>  - Reorganized patches as suggested by Tomasz Figa.
+>  - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+>
+> Changes since v1:
+>  - Added patch to move i2c interrupt re-configuration code from exynos.c
+>    to i2c driver, as suggested by Arnd.
+>  - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+>    save/restore of this register also into i2c driver.
+>  - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+>    soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+>  - Changed location of chipid driver to "drivers/soc".
+>  - Added drivers/base/soc.c provided infrastructure to make SoC specific
+>    information avaible to user space via sysfs entry, as suggested by Arnd.
+>
+>
+> Pankaj Dubey (2):
+>   soc: samsung: add exynos chipid driver support
+>   ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5410.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Hi,
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index e9564ab5b5d3..f1effd3f03c4 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -70,6 +70,9 @@
- 		pmu_system_controller: system-controller@10040000 {
- 			compatible = "samsung,exynos5410-pmu", "syscon";
- 			reg = <0x10040000 0x5000>;
-+			clock-names = "clkout16";
-+			clocks = <&fin_pll>;
-+			#clock-cells = <1>;
- 		};
- 
- 		clock: clock-controller@10010000 {
--- 
-1.9.1
+This is quite old patchset and apparently was not merged. I quickly
+looked at previous discussions (for previous versions) and it seems
+all review feedback was addressed.
+
+Any other obstacles?
+
+Pankaj, maybe you could respin this (after merge window)?
+
+Best regards,
+Krzysztof
