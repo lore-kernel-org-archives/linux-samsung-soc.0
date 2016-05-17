@@ -1,87 +1,75 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 0/2] Introducing Exynos ChipId driver
-Date: Mon, 16 May 2016 15:22:29 +0200
-Message-ID: <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
-References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: samsung: Suppress unbinding to prevent theoretical
+ attacks
+Date: Tue, 17 May 2016 08:02:06 +0200
+Message-ID: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:32973 "EHLO
-	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751921AbcEPNWa (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36158 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754317AbcEQGCU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 May 2016 09:22:30 -0400
-In-Reply-To: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
+	Tue, 17 May 2016 02:02:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, heiko@sntech.de, arnd@arndb.de, Tomasz Figa <tomasz.figa@gmail.com>, thomas.ab@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Dec 11, 2014 at 9:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> This patch series introduces Exynos Chipid platform driver.
-> Each Exynos SoC has ChipID block which can give information about SoC's
-> product Id and revision number.
-> At the same time it reduces dependency of mach-exynos files from plat-samsung,
-> by removing samsung_rev API, similar API is introduced in chipid driver itself
-> to get revision number and product id.
->
-> This patch series is based on Kukjin Kim's for-next having SHA_ID:
-> 9db7d78aca2c7fbc19a26ce2ef01c805dc010c72
->
-> It can also be cleanly applied on latest (next-20141209) linux-next.
->
-> This has been tested against both tree on Exynos3250 and Exynos5250 (SMDK) board.
->
-> Revision 4 and it's discussion can be found here
->  - https://lkml.org/lkml/2014/12/3/115
->
-> Changes since v4:
->  - Removed custom sysfs entries as they were not providing any new information
->    as pointed out by Arnd.
->  - Removed functions exporting product_id and revision, instead we will export
->    exynos_chipid_info structure. It will be helpfull when we need to provide more
->    fields of chipid outside of chipid, as commented by Yadwinder
->  - Converted all funcions as __init.
->
-> Change since v3:
->  - This patch set contains 5/6 and 6/6 patch from v3 series.
->  - Made EXYNOS_CHIPID config option non-user selectable,
->    as suggested by Tomasz Figa.
->  - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
->    suggested by Tomasz Figa.
->  - Made local variables static in chipid driver.
->  - Added existing SoC's product id's.
->  - Added platform driver support.
->
-> Changes since v2:
->  - Reorganized patches as suggested by Tomasz Figa.
->  - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
->
-> Changes since v1:
->  - Added patch to move i2c interrupt re-configuration code from exynos.c
->    to i2c driver, as suggested by Arnd.
->  - After above patch only user of SYS_I2C_CFG register is pm.c so moving
->    save/restore of this register also into i2c driver.
->  - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
->    soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
->  - Changed location of chipid driver to "drivers/soc".
->  - Added drivers/base/soc.c provided infrastructure to make SoC specific
->    information avaible to user space via sysfs entry, as suggested by Arnd.
->
->
-> Pankaj Dubey (2):
->   soc: samsung: add exynos chipid driver support
->   ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
+Although unbinding a pinctrl driver requires root privileges but it
+still might be used theoretically in certain attacks (by triggering NULL
+pointer exception or memory corruption).
 
-Hi,
+Samsung pincontrol drivers are essential for system operation so their
+removal is not expected. They do not implement remove() driver callback
+and they are not buildable as modules.
 
-This is quite old patchset and apparently was not merged. I quickly
-looked at previous discussions (for previous versions) and it seems
-all review feedback was addressed.
+Suppression of the unbinding will prevent triggering NULL pointer
+exception like this (Odroid XU3):
 
-Any other obstacles?
+  $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
+  $ cat /sys/kernel/debug/gpio
 
-Pankaj, maybe you could respin this (after merge window)?
+  Unable to handle kernel NULL pointer dereference at virtual address 00000c44
+  pgd = ec41c000
+  [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
+  Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+    (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
+    (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
+    (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
+    (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
+    (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
+    (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
+    (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
 
-Best regards,
-Krzysztof
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c    | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index fb71fc3e5aa0..3000df80709f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -998,6 +998,7 @@ static struct platform_driver exynos5440_pinctrl_driver = {
+ 	.driver = {
+ 		.name	= "exynos5440-pinctrl",
+ 		.of_match_table = exynos5440_pinctrl_dt_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ed0b70881e19..513fe6b23248 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1274,6 +1274,7 @@ static struct platform_driver samsung_pinctrl_driver = {
+ 	.driver = {
+ 		.name	= "samsung-pinctrl",
+ 		.of_match_table = samsung_pinctrl_dt_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
+-- 
+1.9.1
