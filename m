@@ -1,75 +1,62 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] pinctrl: samsung: Suppress unbinding to prevent theoretical
- attacks
-Date: Tue, 17 May 2016 08:02:06 +0200
-Message-ID: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36158 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754317AbcEQGCU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 May 2016 02:02:20 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical attacks
+Date: Tue, 17 May 2016 09:26:14 +0200
+Message-ID: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Although unbinding a pinctrl driver requires root privileges but it
-still might be used theoretically in certain attacks (by triggering NULL
-pointer exception or memory corruption).
+Although unbinding a driver requires root privileges but it still might
+be used theoretically in certain attacks (by triggering NULL pointer
+exception or memory corruption if driver does not provide proper remove
+callbacks or core does not handle it).
 
-Samsung pincontrol drivers are essential for system operation so their
-removal is not expected. They do not implement remove() driver callback
-and they are not buildable as modules.
+Samsung clock drivers are essential for system operation so their
+removal is not expected. More over, the Exynos3250 ISP clock driver does
+not implement remove() driver callback and it is not buildable as
+modules.
 
-Suppression of the unbinding will prevent triggering NULL pointer
-exception like this (Odroid XU3):
-
-  $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
-  $ cat /sys/kernel/debug/gpio
-
-  Unable to handle kernel NULL pointer dereference at virtual address 00000c44
-  pgd = ec41c000
-  [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
-  Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-    (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
-    (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
-    (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
-    (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
-    (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
-    (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
-    (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
+Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
+drivers.
 
 Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1 +
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/clk/samsung/clk-exynos3250.c   | 1 +
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index fb71fc3e5aa0..3000df80709f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -998,6 +998,7 @@ static struct platform_driver exynos5440_pinctrl_driver = {
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 16575ee874cb..dc4d493e61c2 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -1087,6 +1087,7 @@ static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
+ static struct platform_driver exynos3250_cmu_isp_driver = {
  	.driver = {
- 		.name	= "exynos5440-pinctrl",
- 		.of_match_table = exynos5440_pinctrl_dt_match,
+ 		.name = "exynos3250-cmu-isp",
 +		.suppress_bind_attrs = true,
+ 		.of_match_table = exynos3250_cmu_isp_of_match,
  	},
  };
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index ec6fb14d951c..ae9a595c72d0 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -428,8 +428,9 @@ MODULE_DEVICE_TABLE(platform, s3c24xx_dclk_driver_ids);
  
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ed0b70881e19..513fe6b23248 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1274,6 +1274,7 @@ static struct platform_driver samsung_pinctrl_driver = {
+ static struct platform_driver s3c24xx_dclk_driver = {
  	.driver = {
- 		.name	= "samsung-pinctrl",
- 		.of_match_table = samsung_pinctrl_dt_match,
-+		.suppress_bind_attrs = true,
+-		.name		= "s3c24xx-dclk",
+-		.pm		= &s3c24xx_dclk_pm_ops,
++		.name			= "s3c24xx-dclk",
++		.pm			= &s3c24xx_dclk_pm_ops,
++		.suppress_bind_attrs	= true,
  	},
- };
- 
+ 	.probe = s3c24xx_dclk_probe,
+ 	.remove = s3c24xx_dclk_remove,
 -- 
 1.9.1
+
