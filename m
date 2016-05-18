@@ -1,59 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: don't select keyboard driver
-Date: Wed, 18 May 2016 17:01:50 +0200
-Message-ID: <573C83DE.60106@samsung.com>
-References: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 0/5] drm: fixes for merge-window regressions
+Date: Wed, 18 May 2016 18:05:24 +0200
+Message-ID: <20160518160524.GI27098@phenom.ffwll.local>
+References: <1463579106-400827-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1463579106-400827-1-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/18/2016 04:17 PM, Arnd Bergmann wrote:
-> The samsung-keypad driver is implicitly selected by ARCH_EXYNOS4 (why?),
-> but this fails if CONFIG_INPUT is a loadable module:
-> 
-> drivers/input/built-in.o: In function `samsung_keypad_remove':
-> drivers/input/keyboard/samsung-keypad.c:461: undefined reference to `input_unregister_device'
-> drivers/input/built-in.o: In function `samsung_keypad_irq':
-> drivers/input/keyboard/samsung-keypad.c:137: undefined reference to `input_event'
-> drivers/input/built-in.o: In function `samsung_keypad_irq':
-> include/linux/input.h:389: undefined reference to `input_event'
-> drivers/input/built-in.o: In function `samsung_keypad_probe':
-> drivers/input/keyboard/samsung-keypad.c:358: undefined reference to `devm_input_allocate_device'
-> drivers/input/built-in.o:(.debug_addr+0x34): undefined reference to `input_set_capability'
-> 
-> This removes the 'select' as suggested by Krzysztof Kozlowski and
-> instead enables the driver from the defconfig files.
-> 
-> The problem does not happen on mainline kernels, as we don't normally
-> build built-in input drivers when CONFIG_INPUT=m, but I am experimenting
-> with a patch to change this, and the samsung keypad driver showed up
-> as one example that was silently broken before.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Link: https://lkml.org/lkml/2016/2/14/55
-> ---
->  arch/arm/configs/exynos_defconfig   | 1 +
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  arch/arm/mach-exynos/Kconfig        | 1 -
->  3 files changed, 2 insertions(+), 1 deletion(-)
-
-Thanks for update.
-
-Applied for v4.7 (same reason as in plat-samsung/devs.c).
-
-Best regards,
-Krzysztof
+T24gV2VkLCBNYXkgMTgsIDIwMTYgYXQgMDM6NDU6MDFQTSArMDIwMCwgQXJuZCBCZXJnbWFubiB3
+cm90ZToKPiBBIGNvdXBsZSBvZiBuZXcgd2FybmluZ3MgYW5kIGJ1aWxkIGVycm9ycyBhcHBlYXJl
+ZCB0aHJvdWdoIHRoZSBEUk0KPiB0cmVlIGluIGxpbnV4LW5leHQgYWZ0ZXIgdGhlIG1lcmdlIHdp
+bmRvdyBvcGVuZWQuIFRoZSBmaXJzdCBwYXRjaAo+IGhlcmUgaXMgZm9yIHNjcmlwdHMvaGVhZGVy
+c19jaGVjay5wbCwgYnV0IGFzIHRoZSBidWcgaXMgb25seQo+IHByZXNlbnQgaW4gZHJtLW5leHQg
+YXQgdGhlIG1vbWVudCwgaXQgd291bGQgYmUgZ29vZCB0byBhZGQgYWxsCj4gZml2ZSBwYXRjaGVz
+IHRvIHRoYXQgdHJlZSBiZWZvcmUgdGhleSBtYWtlIGl0IGludG8gbWFpbmxpbmUuCj4gCj4gSXQn
+cyBsaWtlbHkgdGhhdCBzb21lIG9mIHRoZXNlIGhhdmUgYWxyZWFkeSBiZWVuIGZpeGVkIHNpbmNl
+Cj4gdGhpcyBtb3JuaW5nJ3MgbGludXgtbmV4dCwgc28ganVzdCBpZ25vcmUgdGhlIG9uZXMgYXJl
+IG5vCj4gbG9uZ2VyIG5lZWRlZC4KPiAKPiBBcm5kIEJlcmdtYW5uICg1KToKPiAgIGhlYWRlcnNf
+Y2hlY2s6IGRvbid0IHdhcm4gYWJvdXQgYysrIGd1YXJkcwo+ICAgZHJtOiBtZWRpYXRlazogYWRk
+IENPTkZJR19PRiBkZXBlbmRlbmN5Cj4gICBkcm06IG1lZGlhdGVrOiBmaXh1cCBkcm1fZ2VtX29i
+amVjdF9sb29rdXAgQVBJIGNoYW5nZQo+ICAgZHJtOiBleHlub3M6IG1hcmsgcG0gZnVuY3Rpb25z
+IGFzIF9fbWF5YmVfdW51c2VkCj4gICBkcm06IHJlbW92ZSB1bnVzZWQgZGV2IHZhcmlhYmxlcwoK
+Tm9uZSBvZiB0aGUgYWN0dWFsIHBhdGNoZXMgc2VlbXMgdG8gaGF2ZSBtYWRlIGl0IG9udG8gZHJp
+LWRldmVsLiBTdHVjawpzb21ld2hlcmU/Ci1EYW5pZWwKCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9h
+cm1hZGEvYXJtYWRhX2NydGMuYyAgIHwgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2hkbWkuYyAgIHwgNiArKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL0tjb25m
+aWcgICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZmIuYyAg
+fCAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2dlbS5jIHwgMiArLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jICB8IDEgLQo+ICBkcml2ZXJz
+L2dwdS9kcm0vbm91dmVhdS9udjUwX2Rpc3BsYXkuYyB8IDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+cmFkZW9uL3JhZGVvbl9jcy5jICAgICB8IDEgLQo+ICBzY3JpcHRzL2hlYWRlcnNfY2hlY2sucGwg
+ICAgICAgICAgICAgICB8IDQgKysrKwo+ICA5IGZpbGVzIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygr
+KSwgMTAgZGVsZXRpb25zKC0pCj4gCj4gCj4gQ2M6IFJ1c3NlbGwgS2luZyA8cm1rK2tlcm5lbEBh
+cm1saW51eC5vcmcudWs+Cj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBD
+YzogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+IENjOiBTZXVuZy1X
+b28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPgo+IENjOiBLeXVuZ21pbiBQYXJrIDxreXVu
+Z21pbi5wYXJrQHNhbXN1bmcuY29tPgo+IENjOiBLdWtqaW4gS2ltIDxrZ2VuZUBrZXJuZWwub3Jn
+Pgo+IENjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KPiBD
+YzogTWF0dGhpYXMgQnJ1Z2dlciA8bWF0dGhpYXMuYmdnQGdtYWlsLmNvbT4KPiBDYzogQmVuIFNr
+ZWdncyA8YnNrZWdnc0ByZWRoYXQuY29tPgo+IENjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5k
+ZXVjaGVyQGFtZC5jb20+Cj4gQ2M6ICJDaHJpc3RpYW4gS8O2bmlnIiA8Y2hyaXN0aWFuLmtvZW5p
+Z0BhbWQuY29tPgo+IENjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+IENjOiBkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmcKPiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj4gQ2M6IGxp
+bnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZwo+IENjOiBsaW51eC1tZWRpYXRla0BsaXN0
+cy5pbmZyYWRlYWQub3JnCj4gQ2M6IG5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gCj4g
+LS0gCj4gMi43LjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBD
+b3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL25vdXZlYXUK
