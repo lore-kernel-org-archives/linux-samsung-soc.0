@@ -1,101 +1,53 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v5 0/2] Introducing Exynos ChipId driver
-Date: Thu, 19 May 2016 19:02:38 +0530
-Message-ID: <CAGcde9HN7AWge=b10OJ5Xn71GJUOJoxs8DJpoxWG=Jqp7yCg3g@mail.gmail.com>
-References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com> <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 2/5] drm: mediatek: add CONFIG_OF dependency
+Date: Thu, 19 May 2016 16:55:53 +0200
+Message-ID: <573DD3F9.5010702@gmail.com>
+References: <1463587653-3035181-1-git-send-email-arnd@arndb.de>
+ <1463587653-3035181-3-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:36397 "EHLO
-	mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753433AbcESNc6 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33575 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754321AbcESO4B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 May 2016 09:32:58 -0400
-In-Reply-To: <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
+	Thu, 19 May 2016 10:56:01 -0400
+In-Reply-To: <1463587653-3035181-3-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, heiko@sntech.de, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Skeggs <bskeggs@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, nouveau@lists.freedesktop.org
 
-Hi Krzysztof,
 
-On 16 May 2016 at 18:52, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->
-> On Thu, Dec 11, 2014 at 9:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> > This patch series introduces Exynos Chipid platform driver.
-> > Each Exynos SoC has ChipID block which can give information about SoC's
-> > product Id and revision number.
-> > At the same time it reduces dependency of mach-exynos files from plat-samsung,
-> > by removing samsung_rev API, similar API is introduced in chipid driver itself
-> > to get revision number and product id.
-> >
-> > This patch series is based on Kukjin Kim's for-next having SHA_ID:
-> > 9db7d78aca2c7fbc19a26ce2ef01c805dc010c72
-> >
-> > It can also be cleanly applied on latest (next-20141209) linux-next.
-> >
-> > This has been tested against both tree on Exynos3250 and Exynos5250 (SMDK) board.
-> >
-> > Revision 4 and it's discussion can be found here
-> >  - https://lkml.org/lkml/2014/12/3/115
-> >
-> > Changes since v4:
-> >  - Removed custom sysfs entries as they were not providing any new information
-> >    as pointed out by Arnd.
-> >  - Removed functions exporting product_id and revision, instead we will export
-> >    exynos_chipid_info structure. It will be helpfull when we need to provide more
-> >    fields of chipid outside of chipid, as commented by Yadwinder
-> >  - Converted all funcions as __init.
-> >
-> > Change since v3:
-> >  - This patch set contains 5/6 and 6/6 patch from v3 series.
-> >  - Made EXYNOS_CHIPID config option non-user selectable,
-> >    as suggested by Tomasz Figa.
-> >  - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
-> >    suggested by Tomasz Figa.
-> >  - Made local variables static in chipid driver.
-> >  - Added existing SoC's product id's.
-> >  - Added platform driver support.
-> >
-> > Changes since v2:
-> >  - Reorganized patches as suggested by Tomasz Figa.
-> >  - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
-> >
-> > Changes since v1:
-> >  - Added patch to move i2c interrupt re-configuration code from exynos.c
-> >    to i2c driver, as suggested by Arnd.
-> >  - After above patch only user of SYS_I2C_CFG register is pm.c so moving
-> >    save/restore of this register also into i2c driver.
-> >  - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
-> >    soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
-> >  - Changed location of chipid driver to "drivers/soc".
-> >  - Added drivers/base/soc.c provided infrastructure to make SoC specific
-> >    information avaible to user space via sysfs entry, as suggested by Arnd.
-> >
-> >
-> > Pankaj Dubey (2):
-> >   soc: samsung: add exynos chipid driver support
-> >   ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
->
-> Hi,
->
-> This is quite old patchset and apparently was not merged. I quickly
-> looked at previous discussions (for previous versions) and it seems
-> all review feedback was addressed.
->
-> Any other obstacles?
->
-> Pankaj, maybe you could respin this (after merge window)?
 
-Thanks for looking into this.
-Infact I also wanted to respin this patchset. Will do it soon.
-
-Thanks,
-Pankaj Dubey
+On 18/05/16 18:07, Arnd Bergmann wrote:
+> The mediatek DRM driver can be configured for compile testing with
+> CONFIG_OF disabled, but then fails to link:
 >
-> Best regards,
-> Krzysztof
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> drivers/gpu/built-in.o: In function `mtk_drm_bind':
+> analogix_dp_reg.c:(.text+0x52888): undefined reference to `of_find_device_by_node'
+> analogix_dp_reg.c:(.text+0x52930): undefined reference to `of_find_device_by_node'
+>
+> This adds an explicit Kconfig dependency.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/gpu/drm/mediatek/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediatek/Kconfig
+> index 545973f6b743..67183e26971d 100644
+> --- a/drivers/gpu/drm/mediatek/Kconfig
+> +++ b/drivers/gpu/drm/mediatek/Kconfig
+> @@ -3,6 +3,7 @@ config DRM_MEDIATEK
+>   	depends on DRM
+>   	depends on ARCH_MEDIATEK || (ARM && COMPILE_TEST)
+>   	depends on COMMON_CLK
+> +	depends on OF
+>   	select DRM_GEM_CMA_HELPER
+>   	select DRM_KMS_HELPER
+>   	select DRM_MIPI_DSI
+>
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
