@@ -1,57 +1,101 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/5] headers_check: don't warn about c++ guards
-Date: Wed, 18 May 2016 21:20:29 +0100
-Message-ID: <CACvgo51FkfzzhFjYKyyHfxb-DyZeheQP2oZG-tWf1-EiBakp2w@mail.gmail.com>
-References: <1463587653-3035181-1-git-send-email-arnd@arndb.de>
- <1463587653-3035181-2-git-send-email-arnd@arndb.de>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 0/2] Introducing Exynos ChipId driver
+Date: Thu, 19 May 2016 19:02:38 +0530
+Message-ID: <CAGcde9HN7AWge=b10OJ5Xn71GJUOJoxs8DJpoxWG=Jqp7yCg3g@mail.gmail.com>
+References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com> <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1463587653-3035181-2-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>, LAKML <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:36397 "EHLO
+	mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753433AbcESNc6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 May 2016 09:32:58 -0400
+In-Reply-To: <CAJKOXPdteY4DH_QpCztbnuY6Njhxb4nvKt14gOundwGdHyb+cQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, heiko@sntech.de, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 
-T24gMTggTWF5IDIwMTYgYXQgMTc6MDcsIEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+IHdy
-b3RlOgo+IEEgcmVjZW50IGFkZGl0aW9uIHRvIHRoZSBEUk0gdHJlZSBmb3IgNC43IGFkZGVkICdl
-eHRlcm4gIkMiJyBndWFyZHMKPiBmb3IgYysrIHRvIGFsbCB0aGUgRFJNIGhlYWRlcnMsIGFuZCB0
-aGF0IG5vdyBjYXVzZXMgd2FybmluZ3MKPiBpbiAnbWFrZSBoZWFkZXJzX2NoZWNrJzoKPgo+IHVz
-ci9pbmNsdWRlL2RybS9hbWRncHVfZHJtLmg6Mzg6IHVzZXJzcGFjZSBjYW5ub3QgcmVmZXJlbmNl
-IGZ1bmN0aW9uIG9yIHZhcmlhYmxlIGRlZmluZWQgaW4gdGhlIGtlcm5lbAo+IHVzci9pbmNsdWRl
-L2RybS9kcm0uaDo2MzogdXNlcnNwYWNlIGNhbm5vdCByZWZlcmVuY2UgZnVuY3Rpb24gb3IgdmFy
-aWFibGUgZGVmaW5lZCBpbiB0aGUga2VybmVsCj4gdXNyL2luY2x1ZGUvZHJtL2RybS5oOjY5OTog
-dXNlcnNwYWNlIGNhbm5vdCByZWZlcmVuY2UgZnVuY3Rpb24gb3IgdmFyaWFibGUgZGVmaW5lZCBp
-biB0aGUga2VybmVsCj4gdXNyL2luY2x1ZGUvZHJtL2RybV9mb3VyY2MuaDozMDogdXNlcnNwYWNl
-IGNhbm5vdCByZWZlcmVuY2UgZnVuY3Rpb24gb3IgdmFyaWFibGUgZGVmaW5lZCBpbiB0aGUga2Vy
-bmVsCj4gdXNyL2luY2x1ZGUvZHJtL2RybV9tb2RlLmg6MzM6IHVzZXJzcGFjZSBjYW5ub3QgcmVm
-ZXJlbmNlIGZ1bmN0aW9uIG9yIHZhcmlhYmxlIGRlZmluZWQgaW4gdGhlIGtlcm5lbAo+IHVzci9p
-bmNsdWRlL2RybS9kcm1fc2FyZWEuaDozODogdXNlcnNwYWNlIGNhbm5vdCByZWZlcmVuY2UgZnVu
-Y3Rpb24gb3IgdmFyaWFibGUgZGVmaW5lZCBpbiB0aGUga2VybmVsCj4gdXNyL2luY2x1ZGUvZHJt
-L2V4eW5vc19kcm0uaDoyMTogdXNlcnNwYWNlIGNhbm5vdCByZWZlcmVuY2UgZnVuY3Rpb24gb3Ig
-dmFyaWFibGUgZGVmaW5lZCBpbiB0aGUga2VybmVsCj4gdXNyL2luY2x1ZGUvZHJtL2k4MTBfZHJt
-Lmg6NzogdXNlcnNwYWNlIGNhbm5vdCByZWZlcmVuY2UgZnVuY3Rpb24gb3IgdmFyaWFibGUgZGVm
-aW5lZCBpbiB0aGUga2VybmVsCj4KPiBUaGlzIGNoYW5nZXMgdGhlIGhlYWRlcnNfY2hlY2sucGwg
-c2NyaXB0IHRvIG5vdCB3YXJuIGFib3V0IHRoaXMuCj4gSSdtIGxpc3RpbmcgdGhlIG1lcmdlIGNv
-bW1pdCBhcyBpbnRyb2R1Y2luZyB0aGUgcHJvYmxlbSwgYmVjYXVzZQo+IHRoZXJlIGFyZSBzZXZl
-cmFsIHBhdGNoZXMgaW4gdGhpcyBicmFuY2ggdGhhdCBlYWNoIGRvIHRoaXMgZm9yCj4gb25lIGZp
-bGUuCj4KPiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+IEZp
-eGVzOiA3YzEwZGRmODc0NzIgKCJNZXJnZSBicmFuY2ggJ2RybS11YXBpLWV4dGVybi1jLWZpeGVz
-JyBvZiBodHRwczovL2dpdGh1Yi5jb20vZXZlbGlrb3YvbGludXggaW50byBkcm0tbmV4dCIpClJl
-dmlld2VkLWJ5OiBFbWlsIFZlbGlrb3YgPGVtaWwubC52ZWxpa292QGdtYWlsLmNvbT4KClRoYW5r
-cyBBcm5kICEKCkFzIERhdmUgbWVudGlvbmVkIC0gdGhlIGJlc3Qgc29sdXRpb24gd291bGQgYmUg
-dG8gaGF2ZSB0aGUgaHVua3MKZ2VuZXJhdGVkIG9uIHRoZSBmbHkuIFNhZGx5IFBlcmwgYW5kIG1l
-IGRvbid0IGdvIGhhbmQgaW4gaGFuZCBzbyBpZgp5b3UncmUgaW50ZXJlc3RlZCBJJ2xsIGJlIHJl
-YWxseSBncmF0ZWZ1bC4KCi1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
-dmVhdQo=
+Hi Krzysztof,
+
+On 16 May 2016 at 18:52, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>
+> On Thu, Dec 11, 2014 at 9:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> > This patch series introduces Exynos Chipid platform driver.
+> > Each Exynos SoC has ChipID block which can give information about SoC's
+> > product Id and revision number.
+> > At the same time it reduces dependency of mach-exynos files from plat-samsung,
+> > by removing samsung_rev API, similar API is introduced in chipid driver itself
+> > to get revision number and product id.
+> >
+> > This patch series is based on Kukjin Kim's for-next having SHA_ID:
+> > 9db7d78aca2c7fbc19a26ce2ef01c805dc010c72
+> >
+> > It can also be cleanly applied on latest (next-20141209) linux-next.
+> >
+> > This has been tested against both tree on Exynos3250 and Exynos5250 (SMDK) board.
+> >
+> > Revision 4 and it's discussion can be found here
+> >  - https://lkml.org/lkml/2014/12/3/115
+> >
+> > Changes since v4:
+> >  - Removed custom sysfs entries as they were not providing any new information
+> >    as pointed out by Arnd.
+> >  - Removed functions exporting product_id and revision, instead we will export
+> >    exynos_chipid_info structure. It will be helpfull when we need to provide more
+> >    fields of chipid outside of chipid, as commented by Yadwinder
+> >  - Converted all funcions as __init.
+> >
+> > Change since v3:
+> >  - This patch set contains 5/6 and 6/6 patch from v3 series.
+> >  - Made EXYNOS_CHIPID config option non-user selectable,
+> >    as suggested by Tomasz Figa.
+> >  - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
+> >    suggested by Tomasz Figa.
+> >  - Made local variables static in chipid driver.
+> >  - Added existing SoC's product id's.
+> >  - Added platform driver support.
+> >
+> > Changes since v2:
+> >  - Reorganized patches as suggested by Tomasz Figa.
+> >  - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+> >
+> > Changes since v1:
+> >  - Added patch to move i2c interrupt re-configuration code from exynos.c
+> >    to i2c driver, as suggested by Arnd.
+> >  - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+> >    save/restore of this register also into i2c driver.
+> >  - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+> >    soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+> >  - Changed location of chipid driver to "drivers/soc".
+> >  - Added drivers/base/soc.c provided infrastructure to make SoC specific
+> >    information avaible to user space via sysfs entry, as suggested by Arnd.
+> >
+> >
+> > Pankaj Dubey (2):
+> >   soc: samsung: add exynos chipid driver support
+> >   ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
+>
+> Hi,
+>
+> This is quite old patchset and apparently was not merged. I quickly
+> looked at previous discussions (for previous versions) and it seems
+> all review feedback was addressed.
+>
+> Any other obstacles?
+>
+> Pankaj, maybe you could respin this (after merge window)?
+
+Thanks for looking into this.
+Infact I also wanted to respin this patchset. Will do it soon.
+
+Thanks,
+Pankaj Dubey
+>
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
