@@ -1,69 +1,139 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 3/5] drm: mediatek: fixup drm_gem_object_lookup API change
-Date: Thu, 19 May 2016 16:56:30 +0200
-Message-ID: <573DD41E.3050506@gmail.com>
-References: <1463587653-3035181-1-git-send-email-arnd@arndb.de>
- <1463587653-3035181-4-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators on Peach boards
+Date: Thu, 19 May 2016 17:52:33 -0400
+Message-ID: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34000 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754217AbcESO4e (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:38603 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754282AbcESVxF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 May 2016 10:56:34 -0400
-In-Reply-To: <1463587653-3035181-4-git-send-email-arnd@arndb.de>
+	Thu, 19 May 2016 17:53:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Skeggs <bskeggs@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, nouveau@lists.freedesktop.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 
+The regulator always-on property should only be used for regulators
+that either can't be disabled or the drivers for the client devices
+are not enabling the regulator and so being disabled due to unused.
 
+There are some max77802 regulators in the Peach Pit and Pi boards
+that are always-on but shouldn't since they are enabled by drivers:
 
-On 18/05/16 18:07, Arnd Bergmann wrote:
-> The drm_gem_object_lookup() function prototype changed while this
-> driver was added, so it fails to build now:
->
-> drivers/gpu/drm/mediatek/mtk_drm_gem.c: In function 'mtk_drm_gem_dumb_map_offset':
-> drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
->    obj = drm_gem_object_lookup(dev, file_priv, handle);
->
-> This fixes the new caller as well.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: a8ad0bd84f98 ("drm: Remove unused drm_device from drm_gem_object_lookup()")
-> ---
->   drivers/gpu/drm/mediatek/mtk_drm_fb.c  | 2 +-
->   drivers/gpu/drm/mediatek/mtk_drm_gem.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-> index 33d30c19f35f..147df85399ab 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-> @@ -138,7 +138,7 @@ struct drm_framebuffer *mtk_drm_mode_fb_create(struct drm_device *dev,
->   	if (drm_format_num_planes(cmd->pixel_format) != 1)
->   		return ERR_PTR(-EINVAL);
->
-> -	gem = drm_gem_object_lookup(dev, file, cmd->handles[0]);
-> +	gem = drm_gem_object_lookup(file, cmd->handles[0]);
->   	if (!gem)
->   		return ERR_PTR(-ENOENT);
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_gem.c b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> index a773bfaea913..fa2ec0cd00e8 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> @@ -139,7 +139,7 @@ int mtk_drm_gem_dumb_map_offset(struct drm_file *file_priv,
->   	struct drm_gem_object *obj;
->   	int ret;
->
-> -	obj = drm_gem_object_lookup(dev, file_priv, handle);
-> +	obj = drm_gem_object_lookup(file_priv, handle);
->   	if (!obj) {
->   		DRM_ERROR("failed to lookup gem object.\n");
->   		return -EINVAL;
->
+BUCK5 is max77802 inl1 supply
+BUCK7 is max77802 inl{2,10} supply
+BUCK9 is max77802 inl{3,4,5,7} supply
+BUCK10 is mmc1 vqmmc supply
+LDO9 is adc vdd supply
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+This patch removes the always-on property for these regulators.
+
+Some regulators should remain always-on even when they are used as
+input supplies, because these regulators are also used by other
+components that are not described in the DT, for example:
+
+LDO10 is hdmi vdd_osc supply but it's also used as input supply for
+the Exynos5420 temperature sensor.
+
+LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
+the Exynos5420 Display port.
+
+BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
+ 2 files changed, 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index f9d2e4f1a0e0..c1247402cb17 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -278,7 +278,6 @@
+ 				regulator-name = "vdd_1v2";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+@@ -301,7 +300,6 @@
+ 				regulator-name = "vdd_1v35";
+ 				regulator-min-microvolt = <1350000>;
+ 				regulator-max-microvolt = <1350000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -323,7 +321,6 @@
+ 				regulator-name = "vdd_2v";
+ 				regulator-min-microvolt = <2000000>;
+ 				regulator-max-microvolt = <2000000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -334,7 +331,6 @@
+ 				regulator-name = "vdd_1v8";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -419,7 +415,6 @@
+ 				regulator-name = "vdd_ldo9";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-				regulator-always-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+ 					regulator-mode = <MAX77802_OPMODE_LP>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 62ceb89e073f..af1c9b9a63f9 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -278,7 +278,6 @@
+ 				regulator-name = "vdd_1v2";
+ 				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1200000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+@@ -301,7 +300,6 @@
+ 				regulator-name = "vdd_1v35";
+ 				regulator-min-microvolt = <1350000>;
+ 				regulator-max-microvolt = <1350000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -323,7 +321,6 @@
+ 				regulator-name = "vdd_2v";
+ 				regulator-min-microvolt = <2000000>;
+ 				regulator-max-microvolt = <2000000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -334,7 +331,6 @@
+ 				regulator-name = "vdd_1v8";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+@@ -419,7 +415,6 @@
+ 				regulator-name = "vdd_ldo9";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+-				regulator-always-on;
+ 				regulator-state-mem {
+ 					regulator-on-in-suspend;
+ 					regulator-mode = <MAX77802_OPMODE_LP>;
+-- 
+2.5.5
