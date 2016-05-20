@@ -1,32 +1,91 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] iommu/exynos: Suppress unbinding to prevent system failure
-Date: Fri, 20 May 2016 16:02:36 +0200
-Message-ID: <573F18FC.9000506@samsung.com>
-References: <1463752114-23653-1-git-send-email-m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators
+ on Peach boards
+Date: Fri, 20 May 2016 11:13:41 -0400
+Message-ID: <66cd7fed-c281-0645-0a60-5e1300419642@osg.samsung.com>
+References: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
+ <573EDEF2.8020903@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <1463752114-23653-1-git-send-email-m.szyprowski@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:42847 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751517AbcETPNx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 May 2016 11:13:53 -0400
+In-Reply-To: <573EDEF2.8020903@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-On 05/20/2016 03:48 PM, Marek Szyprowski wrote:
-> Removal of IOMMU driver cannot be done reliably, so Exynos IOMMU driver
-> doesn't support this operation. It is essential for system operation, so
-> it makes sense to prevent unbinding by disabling bind/unbind sysfs
-> feature for SYSMMU controller driver to avoid kernel ops or trashing
-> memory caused by such operation.
+Hello Krzysztof,
+
+Thanks a lot for the feedback.
+
+On 05/20/2016 05:54 AM, Krzysztof Kozlowski wrote:
+> On 05/19/2016 11:52 PM, Javier Martinez Canillas wrote:
+>> The regulator always-on property should only be used for regulators
+>> that either can't be disabled or the drivers for the client devices
+>> are not enabling the regulator and so being disabled due to unused.
+>>
+>> There are some max77802 regulators in the Peach Pit and Pi boards
+>> that are always-on but shouldn't since they are enabled by drivers:
+>>
+>> BUCK5 is max77802 inl1 supply
+>> BUCK7 is max77802 inl{2,10} supply
+>> BUCK9 is max77802 inl{3,4,5,7} supply
+>> BUCK10 is mmc1 vqmmc supply
+>> LDO9 is adc vdd supply
+>>
+>> This patch removes the always-on property for these regulators.
+>>
+>> Some regulators should remain always-on even when they are used as
+>> input supplies, because these regulators are also used by other
+>> components that are not described in the DT, for example:
+>>
+>> LDO10 is hdmi vdd_osc supply but it's also used as input supply for
+>> the Exynos5420 temperature sensor.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> CC: stable@vger.kernel.org  # v4.2+
-> ---
->  drivers/iommu/exynos-iommu.c | 1 +
->  1 file changed, 1 insertion(+)
+> I don't have the schematics, so just guessing: by temperature sensor do
+> you mean the tmu_cpu* node (supplying power to VDD_TS01/23/4)?
+>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Yes, I meant that the LDO10 regulator supplies 1v8 to VDD18_TS{01,23,4}.
+ 
+> If yes then you can also change it, like on Odroid XU boards.
+>
+
+Indeed, I think that should be a separate patch though. I'll do it
+next week since I don't have access to the machine today to test.
+ 
+>>
+>> LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
+>> the Exynos5420 Display port.
+>>
+>> BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>>
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
+>>  2 files changed, 10 deletions(-)
+> 
+> Anyway,
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+
+Thanks!
+ 
+> Best regards,
+> Krzysztof
+> --
 
 Best regards,
-Krzysztof
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
