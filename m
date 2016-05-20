@@ -1,139 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators on Peach boards
-Date: Thu, 19 May 2016 17:52:33 -0400
-Message-ID: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators
+ on Peach boards
+Date: Fri, 20 May 2016 11:54:58 +0200
+Message-ID: <573EDEF2.8020903@samsung.com>
+References: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:38603 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754282AbcESVxF (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59836 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752930AbcETJzE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 May 2016 17:53:05 -0400
+	Fri, 20 May 2016 05:55:04 -0400
+In-reply-to: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-The regulator always-on property should only be used for regulators
-that either can't be disabled or the drivers for the client devices
-are not enabling the regulator and so being disabled due to unused.
+On 05/19/2016 11:52 PM, Javier Martinez Canillas wrote:
+> The regulator always-on property should only be used for regulators
+> that either can't be disabled or the drivers for the client devices
+> are not enabling the regulator and so being disabled due to unused.
+> 
+> There are some max77802 regulators in the Peach Pit and Pi boards
+> that are always-on but shouldn't since they are enabled by drivers:
+> 
+> BUCK5 is max77802 inl1 supply
+> BUCK7 is max77802 inl{2,10} supply
+> BUCK9 is max77802 inl{3,4,5,7} supply
+> BUCK10 is mmc1 vqmmc supply
+> LDO9 is adc vdd supply
+> 
+> This patch removes the always-on property for these regulators.
+> 
+> Some regulators should remain always-on even when they are used as
+> input supplies, because these regulators are also used by other
+> components that are not described in the DT, for example:
+> 
+> LDO10 is hdmi vdd_osc supply but it's also used as input supply for
+> the Exynos5420 temperature sensor.
 
-There are some max77802 regulators in the Peach Pit and Pi boards
-that are always-on but shouldn't since they are enabled by drivers:
+I don't have the schematics, so just guessing: by temperature sensor do
+you mean the tmu_cpu* node (supplying power to VDD_TS01/23/4)?
 
-BUCK5 is max77802 inl1 supply
-BUCK7 is max77802 inl{2,10} supply
-BUCK9 is max77802 inl{3,4,5,7} supply
-BUCK10 is mmc1 vqmmc supply
-LDO9 is adc vdd supply
+If yes then you can also change it, like on Odroid XU boards.
 
-This patch removes the always-on property for these regulators.
+> 
+> LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
+> the Exynos5420 Display port.
+> 
+> BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
+>  2 files changed, 10 deletions(-)
 
-Some regulators should remain always-on even when they are used as
-input supplies, because these regulators are also used by other
-components that are not described in the DT, for example:
+Anyway,
 
-LDO10 is hdmi vdd_osc supply but it's also used as input supply for
-the Exynos5420 temperature sensor.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
-the Exynos5420 Display port.
-
-BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
- 2 files changed, 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f9d2e4f1a0e0..c1247402cb17 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -278,7 +278,6 @@
- 				regulator-name = "vdd_1v2";
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
-@@ -301,7 +300,6 @@
- 				regulator-name = "vdd_1v35";
- 				regulator-min-microvolt = <1350000>;
- 				regulator-max-microvolt = <1350000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -323,7 +321,6 @@
- 				regulator-name = "vdd_2v";
- 				regulator-min-microvolt = <2000000>;
- 				regulator-max-microvolt = <2000000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -334,7 +331,6 @@
- 				regulator-name = "vdd_1v8";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -419,7 +415,6 @@
- 				regulator-name = "vdd_ldo9";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
--				regulator-always-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
- 					regulator-mode = <MAX77802_OPMODE_LP>;
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 62ceb89e073f..af1c9b9a63f9 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -278,7 +278,6 @@
- 				regulator-name = "vdd_1v2";
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
-@@ -301,7 +300,6 @@
- 				regulator-name = "vdd_1v35";
- 				regulator-min-microvolt = <1350000>;
- 				regulator-max-microvolt = <1350000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -323,7 +321,6 @@
- 				regulator-name = "vdd_2v";
- 				regulator-min-microvolt = <2000000>;
- 				regulator-max-microvolt = <2000000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -334,7 +331,6 @@
- 				regulator-name = "vdd_1v8";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
-@@ -419,7 +415,6 @@
- 				regulator-name = "vdd_ldo9";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
--				regulator-always-on;
- 				regulator-state-mem {
- 					regulator-on-in-suspend;
- 					regulator-mode = <MAX77802_OPMODE_LP>;
--- 
-2.5.5
+Best regards,
+Krzysztof
