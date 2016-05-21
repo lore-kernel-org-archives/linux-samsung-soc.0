@@ -1,49 +1,50 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: exynos: don't select keyboard driver
-Date: Fri, 20 May 2016 22:11:37 -0400
-Message-ID: <b20eb044-f575-9504-2446-ca74df9d1724@osg.samsung.com>
-References: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
+Subject: Re: [PATCH] pinctrl: samsung: Suppress unbinding to prevent
+ theoretical attacks
+Date: Fri, 20 May 2016 22:29:50 -0400
+Message-ID: <7d725a0a-216e-40d9-8a65-62eeb2faaf34@osg.samsung.com>
+References: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:45513 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751582AbcEUCLq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 May 2016 22:11:46 -0400
-In-Reply-To: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Arnd,
+Hello Krzysztof,
 
-On 05/18/2016 10:17 AM, Arnd Bergmann wrote:
-> The samsung-keypad driver is implicitly selected by ARCH_EXYNOS4 (why?),
-> but this fails if CONFIG_INPUT is a loadable module:
+On 05/17/2016 02:02 AM, Krzysztof Kozlowski wrote:
+> Although unbinding a pinctrl driver requires root privileges but it
+> still might be used theoretically in certain attacks (by triggering NULL
+> pointer exception or memory corruption).
 > 
-> drivers/input/built-in.o: In function `samsung_keypad_remove':
-> drivers/input/keyboard/samsung-keypad.c:461: undefined reference to `input_unregister_device'
-> drivers/input/built-in.o: In function `samsung_keypad_irq':
-> drivers/input/keyboard/samsung-keypad.c:137: undefined reference to `input_event'
-> drivers/input/built-in.o: In function `samsung_keypad_irq':
-> include/linux/input.h:389: undefined reference to `input_event'
-> drivers/input/built-in.o: In function `samsung_keypad_probe':
-> drivers/input/keyboard/samsung-keypad.c:358: undefined reference to `devm_input_allocate_device'
-> drivers/input/built-in.o:(.debug_addr+0x34): undefined reference to `input_set_capability'
+> Samsung pincontrol drivers are essential for system operation so their
+> removal is not expected. They do not implement remove() driver callback
+> and they are not buildable as modules.
 > 
-> This removes the 'select' as suggested by Krzysztof Kozlowski and
-> instead enables the driver from the defconfig files.
+> Suppression of the unbinding will prevent triggering NULL pointer
+> exception like this (Odroid XU3):
 > 
-> The problem does not happen on mainline kernels, as we don't normally
-> build built-in input drivers when CONFIG_INPUT=m, but I am experimenting
-> with a patch to change this, and the samsung keypad driver showed up
-> as one example that was silently broken before.
+>   $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
+>   $ cat /sys/kernel/debug/gpio
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Link: https://lkml.org/lkml/2016/2/14/55
+>   Unable to handle kernel NULL pointer dereference at virtual address 00000c44
+>   pgd = ec41c000
+>   [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
+>   Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+>     (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
+>     (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
+>     (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
+>     (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
+>     (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
+>     (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
+>     (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
+> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
