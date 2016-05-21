@@ -1,35 +1,37 @@
 From: Andrea Gelmini <andrea.gelmini@gelma.net>
-Subject: [PATCH 0015/1529] Fix typo
-Date: Sat, 21 May 2016 13:37:22 +0200
-Message-ID: <20160521113722.32053-1-andrea.gelmini@gelma.net>
+Subject: [PATCH 0116/1529] Fix typo
+Date: Sat, 21 May 2016 13:51:23 +0200
+Message-ID: <20160521115123.5447-1-andrea.gelmini@gelma.net>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f195.google.com ([209.85.217.195]:34251 "EHLO
-	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086AbcEULha (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36153 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751156AbcEULv3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 May 2016 07:37:30 -0400
+	Sat, 21 May 2016 07:51:29 -0400
+Received: by mail-lf0-f67.google.com with SMTP id d132so1669340lfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2016 04:51:29 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: andrea.gelmini@gelma.net
-Cc: trivial@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: trivial@kernel.org, kgene@kernel.org, k.kozlowski@samsung.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 Signed-off-by: Andrea Gelmini <andrea.gelmini@gelma.net>
 ---
- Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 2 +-
+ arch/arm/mach-s3c24xx/include/mach/regs-gpio.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-index 3e36c1d..616428a 100644
---- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-+++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-@@ -8,7 +8,7 @@ use to analyze system performance, to make behaviors visible and to count
- usages of each IP (DMC, CPU, RIGHTBUS, LEFTBUS, CAM interface, LCD, G3D, MFC).
- The Exynos PPMU driver uses the devfreq-event class to provide event data
- to various devfreq devices. The devfreq devices would use the event data when
--derterming the current state of each IP.
-+determing the current state of each IP.
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+index c6583cf..0d622f3 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+@@ -520,7 +520,7 @@
+ #define S3C24XX_EXTINT1	   S3C24XX_GPIOREG2(0x8C)
+ #define S3C24XX_EXTINT2	   S3C24XX_GPIOREG2(0x90)
  
- Required properties:
- - compatible: Should be "samsung,exynos-ppmu" or "samsung,exynos-ppmu-v2.
+-/* interrupt filtering conrrol for EINT16..EINT23 */
++/* interrupt filtering control for EINT16..EINT23 */
+ #define S3C2410_EINFLT0	   S3C2410_GPIOREG(0x94)
+ #define S3C2410_EINFLT1	   S3C2410_GPIOREG(0x98)
+ #define S3C2410_EINFLT2	   S3C2410_GPIOREG(0x9C)
 -- 
 2.8.2.534.g1f66975
