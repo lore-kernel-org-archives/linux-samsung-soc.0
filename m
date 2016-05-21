@@ -1,44 +1,35 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: samsung: Suppress unbinding to prevent theoretical
- attacks
-Date: Fri, 20 May 2016 22:30:30 -0400
-Message-ID: <b71ecdbc-8650-a246-5e53-94eb620737ba@osg.samsung.com>
-References: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1463469974-13340-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Andrea Gelmini <andrea.gelmini@gelma.net>
+Subject: [PATCH 0015/1529] Fix typo
+Date: Sat, 21 May 2016 13:37:22 +0200
+Message-ID: <20160521113722.32053-1-andrea.gelmini@gelma.net>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f195.google.com ([209.85.217.195]:34251 "EHLO
+	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086AbcEULha (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 21 May 2016 07:37:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: andrea.gelmini@gelma.net
+Cc: trivial@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Signed-off-by: Andrea Gelmini <andrea.gelmini@gelma.net>
+---
+ Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 05/17/2016 03:26 AM, Krzysztof Kozlowski wrote:
-> Although unbinding a driver requires root privileges but it still might
-> be used theoretically in certain attacks (by triggering NULL pointer
-> exception or memory corruption if driver does not provide proper remove
-> callbacks or core does not handle it).
-> 
-> Samsung clock drivers are essential for system operation so their
-> removal is not expected. More over, the Exynos3250 ISP clock driver does
-> not implement remove() driver callback and it is not buildable as
-> modules.
-> 
-> Suppress the unbind interface for Exynos3250 ISP and S3C2410 DCLK clock
-> drivers.
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+index 3e36c1d..616428a 100644
+--- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
++++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+@@ -8,7 +8,7 @@ use to analyze system performance, to make behaviors visible and to count
+ usages of each IP (DMC, CPU, RIGHTBUS, LEFTBUS, CAM interface, LCD, G3D, MFC).
+ The Exynos PPMU driver uses the devfreq-event class to provide event data
+ to various devfreq devices. The devfreq devices would use the event data when
+-derterming the current state of each IP.
++determing the current state of each IP.
+ 
+ Required properties:
+ - compatible: Should be "samsung,exynos-ppmu" or "samsung,exynos-ppmu-v2.
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.8.2.534.g1f66975
