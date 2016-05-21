@@ -1,88 +1,52 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators
- on Peach boards
-Date: Fri, 20 May 2016 11:13:41 -0400
-Message-ID: <66cd7fed-c281-0645-0a60-5e1300419642@osg.samsung.com>
-References: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
- <573EDEF2.8020903@samsung.com>
+Subject: Re: [PATCH] ARM: exynos: don't select keyboard driver
+Date: Fri, 20 May 2016 22:11:37 -0400
+Message-ID: <b20eb044-f575-9504-2446-ca74df9d1724@osg.samsung.com>
+References: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:42847 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:45513 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751517AbcETPNx (ORCPT
+	id S1751582AbcEUCLq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 May 2016 11:13:53 -0400
-In-Reply-To: <573EDEF2.8020903@samsung.com>
+	Fri, 20 May 2016 22:11:46 -0400
+In-Reply-To: <1463581102-1007639-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Krzysztof,
+Hello Arnd,
 
-Thanks a lot for the feedback.
-
-On 05/20/2016 05:54 AM, Krzysztof Kozlowski wrote:
-> On 05/19/2016 11:52 PM, Javier Martinez Canillas wrote:
->> The regulator always-on property should only be used for regulators
->> that either can't be disabled or the drivers for the client devices
->> are not enabling the regulator and so being disabled due to unused.
->>
->> There are some max77802 regulators in the Peach Pit and Pi boards
->> that are always-on but shouldn't since they are enabled by drivers:
->>
->> BUCK5 is max77802 inl1 supply
->> BUCK7 is max77802 inl{2,10} supply
->> BUCK9 is max77802 inl{3,4,5,7} supply
->> BUCK10 is mmc1 vqmmc supply
->> LDO9 is adc vdd supply
->>
->> This patch removes the always-on property for these regulators.
->>
->> Some regulators should remain always-on even when they are used as
->> input supplies, because these regulators are also used by other
->> components that are not described in the DT, for example:
->>
->> LDO10 is hdmi vdd_osc supply but it's also used as input supply for
->> the Exynos5420 temperature sensor.
+On 05/18/2016 10:17 AM, Arnd Bergmann wrote:
+> The samsung-keypad driver is implicitly selected by ARCH_EXYNOS4 (why?),
+> but this fails if CONFIG_INPUT is a loadable module:
 > 
-> I don't have the schematics, so just guessing: by temperature sensor do
-> you mean the tmu_cpu* node (supplying power to VDD_TS01/23/4)?
->
-
-Yes, I meant that the LDO10 regulator supplies 1v8 to VDD18_TS{01,23,4}.
- 
-> If yes then you can also change it, like on Odroid XU boards.
->
-
-Indeed, I think that should be a separate patch though. I'll do it
-next week since I don't have access to the machine today to test.
- 
->>
->> LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
->> the Exynos5420 Display port.
->>
->> BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> ---
->>
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
->>  2 files changed, 10 deletions(-)
+> drivers/input/built-in.o: In function `samsung_keypad_remove':
+> drivers/input/keyboard/samsung-keypad.c:461: undefined reference to `input_unregister_device'
+> drivers/input/built-in.o: In function `samsung_keypad_irq':
+> drivers/input/keyboard/samsung-keypad.c:137: undefined reference to `input_event'
+> drivers/input/built-in.o: In function `samsung_keypad_irq':
+> include/linux/input.h:389: undefined reference to `input_event'
+> drivers/input/built-in.o: In function `samsung_keypad_probe':
+> drivers/input/keyboard/samsung-keypad.c:358: undefined reference to `devm_input_allocate_device'
+> drivers/input/built-in.o:(.debug_addr+0x34): undefined reference to `input_set_capability'
 > 
-> Anyway,
+> This removes the 'select' as suggested by Krzysztof Kozlowski and
+> instead enables the driver from the defconfig files.
 > 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+> The problem does not happen on mainline kernels, as we don't normally
+> build built-in input drivers when CONFIG_INPUT=m, but I am experimenting
+> with a patch to change this, and the samsung keypad driver showed up
+> as one example that was silently broken before.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Link: https://lkml.org/lkml/2016/2/14/55
+> ---
 
-Thanks!
- 
-> Best regards,
-> Krzysztof
-> --
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
