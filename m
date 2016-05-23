@@ -1,54 +1,69 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/5] Exynos DRM: add support for ARM 64bit arch with IOMMU
-Date: Mon, 23 May 2016 12:50:39 +0200
-Message-ID: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/5] drm/exynos: iommu: remove unused entries from
+ exynos_drm_private strcuture
+Date: Mon, 23 May 2016 12:50:42 +0200
+Message-ID: <1464000644-12227-4-git-send-email-m.szyprowski@samsung.com>
+References: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17128 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752076AbcEWKu6 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:13999 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752425AbcEWKvA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 May 2016 06:50:58 -0400
+	Mon, 23 May 2016 06:51:00 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O7M00H0JM4UFM60@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 23 May 2016 11:50:55 +0100 (BST)
+ with ESMTP id <0O7M00MCJM4W9O90@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 23 May 2016 11:50:56 +0100 (BST)
+In-reply-to: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello,
+This patch removes unused entries from exynos_drm_private strcuture.
+da_start/da_space_size were only used in drm_create_iommu_mapping()
+function and never set to other value than the defaults. Instead use
+default values directly in arm_iommu_create_mapping() call.
 
-This patch series reworks IOMMU integration code to add support for ARM
-64bit architecture with DMA-IOMMU glue code. Current inplementation uses
-conditional code (hidden in the exynos_drm_iommu.h file) because ARM
-32bit and 64bit are not compatible in the area of DMA-mapping and IOMMU
-glue code. Once both architectures are unified, the conditional code can
-be removed, but for now it lets one to use Exynos DRM on both
-architectures.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   | 2 --
+ drivers/gpu/drm/exynos/exynos_drm_iommu.c | 9 ++-------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Marek Szyprowski (5):
-  drm/exynos: iommu: move dma_params configuration code to separate
-    functions
-  drm/exynos: iommu: add a check if all sub-devices have iommu
-    controller
-  drm/exynos: iommu: remove unused entries from exynos_drm_private
-    strcuture
-  drm/exynos: iommu: move ARM specific code to exynos_drm_iommu.h
-  drm/exynos: iommu: add support for ARM64 specific code for IOMMU glue
-
- drivers/gpu/drm/exynos/Kconfig            |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c   |  7 +--
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 -
- drivers/gpu/drm/exynos/exynos_drm_iommu.c | 77 +++++++++++---------------
- drivers/gpu/drm/exynos/exynos_drm_iommu.h | 91 +++++++++++++++++++++++++++++++
- 5 files changed, 126 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index cc33ec9..b39d521 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -224,8 +224,6 @@ struct exynos_drm_private {
+ 	struct drm_property *plane_zpos_property;
+ 
+ 	struct device *dma_dev;
+-	unsigned long da_start;
+-	unsigned long da_space_size;
+ 	void *mapping;
+ 
+ 	unsigned int pipe;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.c b/drivers/gpu/drm/exynos/exynos_drm_iommu.c
+index 36dde96..0229bad 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_iommu.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.c
+@@ -48,13 +48,8 @@ int drm_create_iommu_mapping(struct drm_device *drm_dev)
+ 	struct dma_iommu_mapping *mapping = NULL;
+ 	struct exynos_drm_private *priv = drm_dev->dev_private;
+ 
+-	if (!priv->da_start)
+-		priv->da_start = EXYNOS_DEV_ADDR_START;
+-	if (!priv->da_space_size)
+-		priv->da_space_size = EXYNOS_DEV_ADDR_SIZE;
+-
+-	mapping = arm_iommu_create_mapping(&platform_bus_type, priv->da_start,
+-						priv->da_space_size);
++	mapping = arm_iommu_create_mapping(&platform_bus_type,
++			EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
+ 
+ 	if (IS_ERR(mapping))
+ 		return PTR_ERR(mapping);
 -- 
 1.9.2
