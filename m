@@ -1,151 +1,68 @@
 From: Mark Brown <broonie@debian.org>
 Subject: Re: Endless "supply vcc not found, using dummy regulator"
-Date: Mon, 23 May 2016 19:44:20 +0100
-Message-ID: <20160523184420.GC8206@sirena.org.uk>
+Date: Mon, 23 May 2016 19:56:05 +0100
+Message-ID: <20160523185605.GD8206@sirena.org.uk>
 References: <20160521144308.GA13960@sesse.net>
  <20160523134737.GA21683@sesse.net>
  <20160523144047.GA36908@sesse.net>
  <20160523162455.GW8206@sirena.org.uk>
  <20160523170617.GA8997@sesse.net>
+ <20160523174643.GA33973@sesse.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7KvBbaRjXS2SFKKp"
+	protocol="application/pgp-signature"; boundary="80KdhljSN0pKc7w4"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59954 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60018 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753691AbcEWSob (ORCPT
+	with ESMTP id S1752239AbcEWS4O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 May 2016 14:44:31 -0400
+	Mon, 23 May 2016 14:56:14 -0400
 Content-Disposition: inline
-In-Reply-To: <20160523170617.GA8997@sesse.net>
+In-Reply-To: <20160523174643.GA33973@sesse.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
 Cc: linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
 
 
---7KvBbaRjXS2SFKKp
-Content-Type: text/plain; charset=utf-8
+--80KdhljSN0pKc7w4
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 23, 2016 at 07:06:17PM +0200, Steinar H. Gunderson wrote:
-> On Mon, May 23, 2016 at 05:24:55PM +0100, Mark Brown wrote:
+On Mon, May 23, 2016 at 07:46:43PM +0200, Steinar H. Gunderson wrote:
+> On Mon, May 23, 2016 at 07:06:17PM +0200, Steinar H. Gunderson wrote:
 
-> >>> Cc-ing Mark in case he has any insights (I hope I have the right email
-> >>> address).
+> > Then, there's the issue of why the messages come for each deferred probe
+> > attempt. It seems from your message this is about something in the
+> > declaration of the device tree; I don't understand the nuances here, but I
+> > suppose it's pretty easy?
 
-> > But nobody who works on probe deferral or made any of the suggestions I
-> > mentioned in the message you linked to, nor anyone who works on the
-> > driver you've identified a bug in...  :(
+> FWIW, from reading drivers/usb/phy/phy-generic.c, it looks like vcc-supply on
+> the USB phy is supposed to be optional.
 
-> As for the former, I have no idea who they would be, sorry. For the latte=
-r,
+No, not unless the device can operate without power which seems
+improbable.  Optional supplies are for supplies which may be physically
+absent, not to shut up warnings from partially specified system
+descriptions.  If there is an optional supply with no configuration of
+the device to operate in a different mode without that supply it is most
+likely that the API is being abused.  The API is there to support users
+with things like optional external reference voltages that may be
+missing in some system designs, it's not there to support broken system
+integrations.
 
-There's the people I mentioned in the e-mail you linked to for
-exmaple...  you could also look at git annotate for the probe deferral
-code and see who worked on it, or do whatever it is lead to you finding
-me.
-
-> isn't linux-samsung-soc@ the right place? MAINTAINERS said it was.
-
-That's just the list, not people.  You really want to see who's working
-on the driver and talk to them, you can't guarantee that everyone reads
-the lists sufficiently well that they will notice some random post that
-doesn't even mention the driver in the subject line (it's probably a
-good idea to submit that patch BTW).  Note also that if MAINTAINERS has
-multiple hits you want to pay attention to them.
-
-> Then, there's the issue of why the messages come for each deferred probe
-> attempt. It seems from your message this is about something in the
-> declaration of the device tree; I don't understand the nuances here, but I
-> suppose it's pretty easy?
-
-No.  This is nothing to do with the device tree.  The dwc3-exynos driver
-is continually creating new, partially specified devices.  Since each of
-these new devices has the same problem they all get the same warning
-reported for them.
-
-The regulator API has no idea that this is anything to do with deferred
-probe, it's printing a warning message because something asked for a
-supply that not mapped at all which is a potential concern if we explode
-later due to this being an error in the code.  All the regulator API can
-realistically do is remove all diagnostics in case someone triggers them
-with deferred probe but that's probably not enormously helpful to people
-if they run into an error directly triggered at the regulator level who
-might like some diagnostics to help them figure out what went wrong.
-
-> Fourth, there's the question of why there are thousands of probe attempts;
-> it shouldn't be even if the regulator takes a long time to come up. I gue=
-ss
-> this is what your original message was about, and fixing that would also
-> reduce the amount of logging a ton (plus presumably speed up boot by wast=
-ing
-> less CPU on repeated probing). But as I understand you, it's not strictly
-> necessary to actually fix this issue?
-
-No, this is the way probe deferral is supposed to work.  It is a bit
-wasteful of CPU but realistically it's not that much and it's really
-simple to implement robustly unlike anything that involves actually
-looking at dependencies.  Some breakage in your system is triggering
-vastly more retries than are normal, even a hundred rounds would be
-*extremely* high for the initial boot.
-
-We're doing repeated probes because the way deferred probe works is that
-every time a new device binds we start a new retry of all deferred
-devices to see if that new device unblocked anything (if multiple
-devices progress in one run it should only schedule one new run).  The
-reason you're seeing the spectacular volume is that every time we retry
-we add more devices (notice that you're not complaining about the log
-message generated by the underlying Designware controller failing to get
-the supply it requests which will print once per probe but rather by the
-PHY devices it spams in).
-
-The fact that the Exynos driver is instantiating subdevices before it's
-even acquired its own resources is probably not helping here of course,
-it's more than likely that at least some of those resources need to be
-passed on to the child devices and of course if the children did
-actually instantiate that'd trigger continual probe deferral runs.
-Looking at the code I've got a horrible feeling that might be the root
-cause here, it's a single regulator that's being requested so the
-diagnostics should be being printed in the caller but that just silently
-passes back failures to get supplies (which is why it wasn't immediately
-obvious that that was failing).
-
-> > The patch you linked to was for a completely different error message
-> > which is at least related to probe deferral
-
-> Yes, it's a different error message, but points to the same issue as #4
-> above, no?
-
-Not from the point of the view of the regulator API and really as far as
-I can tell this is just a driver specific issue.  The regulator API has
-no idea this is anything to do with deferred probe.
-
-> > though fundamentally unless
-> > we just stop printing diagnostics (which is getting more and more
-> > tempting to be honest) I'm not sure anything is going to fully resolve
-> > leaks like this, the best chance you've got is something that explicitly
-> > looks at the dependencies like Raphael was proposing.
-
-> What do you mean by =E2=80=9Cleaks=E2=80=9D here?
-
-Resources that are not cleaned up are said to be leaks, as you identifed
-the dwc3-exynos code isn't cleaning up the child devices it creates.
-
---7KvBbaRjXS2SFKKp
+--80KdhljSN0pKc7w4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJXQ0+DAAoJECTWi3JdVIfQpdwH/3L6f1iFZjqQ3cb9vH+LB+9v
-y+AuGZI73UHUdvnAreZHOwQF/UEFUG1zC3zEKqjo1/wR99IkTkZpMXwIkVGWCEPN
-d2YoF3jbJ1aW99KopAFZrjHwV6niOVWx6/9Cmq3zPiskVa9Y5vZBH6seWzhmbnh/
-5eWot/ebgU0EUBkqKX2vjQlgcRTD6NKCR4FirN6CI0s14Ozkm5DmQ7pVNAwtqsoD
-2VoFV9dOiivrEY9M634RQpMVj/+eedfAUI1VymH2f0H0vpagujQm9PyxgyeNoai/
-TeDQ0GNavwlXzfIE5UornN3AB/hAeogS5izA/4cHLuVtme6ju6Sa53+GP53V8rg=
-=1u/y
+iQEcBAEBCAAGBQJXQ1JEAAoJECTWi3JdVIfQsWIH/j8NST4t/5HiYzcF88XHiLy+
+QqONMi/1QSjcLbK80eGOBp8zM//Dqdakd4ymM/0jAfZ4JLMfUoC1i8nrSoa7aVjP
+lDbJr/4dupf96R7vrp+xEoVgo42cMeTQjl6XQ7NGTbU0/eqDijFaqTFW7X7P4a/d
+K2OtUHRjLR2LNMrnDATYIZV+v4irRTzNQq9/lCaERNX43eagqxTjVx5d5C+3EXJC
+avEGUiA3I7vi5JFyK+Mtc1Mh1BA9PniPnEE18SMKJMnFUMvLkZXej5ZGMeXGJza0
+8xNJH+8IRUgesF3Dy8rrMls7PEq9iIF+7NvkWCwe1Fr5aT1ow67LQLwIZAqMqUo=
+=4Ijd
 -----END PGP SIGNATURE-----
 
---7KvBbaRjXS2SFKKp--
+--80KdhljSN0pKc7w4--
