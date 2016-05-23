@@ -1,96 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/5] drm/exynos: iommu: move dma_params configuration code to
- separate functions
-Date: Mon, 23 May 2016 12:50:40 +0200
-Message-ID: <1464000644-12227-2-git-send-email-m.szyprowski@samsung.com>
-References: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:39065 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752205AbcEWKu6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 May 2016 06:50:58 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O7M00FJ3M4VH560@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 23 May 2016 11:50:55 +0100 (BST)
-In-reply-to: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 4/3] iommu/exynos: Prepare for deferred probe support
+Date: Mon, 23 May 2016 13:01:27 +0200
+Message-ID: <1464001287-12748-1-git-send-email-m.szyprowski@samsung.com>
+References: <1463995809-26862-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1463995809-26862-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Move code for managing DMA max segment size parameter to separate
-functions. This patch also replaces devm_kzalloc() with kzalloc() and
-adds proper kfree call. devm_kzalloc() cannot be used for dma_params
-structure, because it will be freed on driver remove not on device
-release. This means in case of Exynos DRM being compiled as module and
-loaded 2 times, a user-after-free issue will happen.
+Register iommu_ops at the end of successful probe instead of doing that
+unconditionally. This makes Exynos IOMMU driver ready for deferred probe
+caused by not-yet-available clocks.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_iommu.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+I'm sorry for the confussing patch number. This patch got lost while
+rebasing, but it should belong to the "Exynos IOMMU: improve clock
+management" patchset.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.c b/drivers/gpu/drm/exynos/exynos_drm_iommu.c
-index 7ca09ee..1e82529 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_iommu.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.c
-@@ -21,6 +21,23 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_iommu.h"
- 
-+static inline int configure_dma_max_seg_size(struct device *dev)
-+{
-+	if (!dev->dma_parms)
-+		dev->dma_parms = kzalloc(sizeof(*dev->dma_parms), GFP_KERNEL);
-+	if (!dev->dma_parms)
-+		return -ENOMEM;
-+
-+	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
-+	return 0;
-+}
-+
-+static inline void clear_dma_max_seg_size(struct device *dev)
-+{
-+	kfree(dev->dma_parms);
-+	dev->dma_parms = NULL;
-+}
-+
- /*
-  * drm_create_iommu_mapping - create a mapping structure
-  *
-@@ -80,13 +97,10 @@ int drm_iommu_attach_device(struct drm_device *drm_dev,
- 	if (!priv->mapping)
- 		return 0;
- 
--	subdrv_dev->dma_parms = devm_kzalloc(subdrv_dev,
--					sizeof(*subdrv_dev->dma_parms),
--					GFP_KERNEL);
--	if (!subdrv_dev->dma_parms)
--		return -ENOMEM;
- 
--	dma_set_max_seg_size(subdrv_dev, 0xffffffffu);
-+	ret = configure_dma_max_seg_size(subdrv_dev);
-+	if (ret)
-+		return ret;
- 
- 	if (subdrv_dev->archdata.mapping)
- 		arm_iommu_detach_device(subdrv_dev);
-@@ -94,6 +108,7 @@ int drm_iommu_attach_device(struct drm_device *drm_dev,
- 	ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
- 	if (ret < 0) {
- 		DRM_DEBUG_KMS("failed iommu attach.\n");
-+		clear_dma_max_seg_size(subdrv_dev);
- 		return ret;
- 	}
- 
-@@ -119,4 +134,5 @@ void drm_iommu_detach_device(struct drm_device *drm_dev,
- 		return;
- 
- 	arm_iommu_detach_device(subdrv_dev);
-+	clear_dma_max_seg_size(subdrv_dev);
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+---
+ drivers/iommu/exynos-iommu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index e0b834375f17..633e6d023c0d 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -581,6 +581,8 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 	spin_unlock_irqrestore(&data->lock, flags);
  }
+ 
++static struct iommu_ops exynos_iommu_ops;
++
+ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ {
+ 	int irq, ret;
+@@ -654,6 +656,8 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(dev);
+ 
++	of_iommu_set_ops(dev->of_node, &exynos_iommu_ops);
++
+ 	return 0;
+ }
+ 
+@@ -1347,7 +1351,6 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
+ 	if (!dma_dev)
+ 		dma_dev = &pdev->dev;
+ 
+-	of_iommu_set_ops(np, &exynos_iommu_ops);
+ 	return 0;
+ }
+ 
 -- 
 1.9.2
