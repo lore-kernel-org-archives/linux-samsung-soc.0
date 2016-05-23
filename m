@@ -1,116 +1,54 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/3] iommu/exynos: Return proper errors from getting clocks
-Date: Mon, 23 May 2016 11:30:07 +0200
-Message-ID: <1463995809-26862-2-git-send-email-m.szyprowski@samsung.com>
-References: <1463995809-26862-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1463995809-26862-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/5] Exynos DRM: add support for ARM 64bit arch with IOMMU
+Date: Mon, 23 May 2016 12:50:39 +0200
+Message-ID: <1464000644-12227-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17128 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752076AbcEWKu6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 May 2016 06:50:58 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0O7M00H0JM4UFM60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 23 May 2016 11:50:55 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch reworks driver probe code to propagate error codes from
-clk_get() operation. This will allow to properly handle deferred probe
-in the future.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 56 +++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 32 deletions(-)
+This patch series reworks IOMMU integration code to add support for ARM
+64bit architecture with DMA-IOMMU glue code. Current inplementation uses
+conditional code (hidden in the exynos_drm_iommu.h file) because ARM
+32bit and 64bit are not compatible in the area of DMA-mapping and IOMMU
+glue code. Once both architectures are unified, the conditional code can
+be removed, but for now it lets one to use Exynos DRM on both
+architectures.
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index e27e3b7df4e7..989365682d14 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -602,37 +602,31 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	}
- 
- 	data->clk = devm_clk_get(dev, "sysmmu");
--	if (!IS_ERR(data->clk)) {
--		ret = clk_prepare(data->clk);
--		if (ret) {
--			dev_err(dev, "Failed to prepare clk\n");
--			return ret;
--		}
--	} else {
-+	if (PTR_ERR(data->clk) == -ENOENT)
- 		data->clk = NULL;
--	}
-+	else if (IS_ERR(data->clk))
-+		return PTR_ERR(data->clk);
-+	ret = clk_prepare(data->clk);
-+	if (ret)
-+		return ret;
- 
- 	data->aclk = devm_clk_get(dev, "aclk");
--	if (!IS_ERR(data->aclk)) {
--		ret = clk_prepare(data->aclk);
--		if (ret) {
--			dev_err(dev, "Failed to prepare aclk\n");
--			return ret;
--		}
--	} else {
-+	if (PTR_ERR(data->aclk) == -ENOENT)
- 		data->aclk = NULL;
--	}
-+	else if (IS_ERR(data->aclk))
-+		return PTR_ERR(data->aclk);
-+	ret = clk_prepare(data->aclk);
-+	if (ret)
-+		return ret;
- 
- 	data->pclk = devm_clk_get(dev, "pclk");
--	if (!IS_ERR(data->pclk)) {
--		ret = clk_prepare(data->pclk);
--		if (ret) {
--			dev_err(dev, "Failed to prepare pclk\n");
--			return ret;
--		}
--	} else {
-+	if (PTR_ERR(data->pclk) == -ENOENT)
- 		data->pclk = NULL;
--	}
-+	else if (IS_ERR(data->pclk))
-+		return PTR_ERR(data->pclk);
-+	ret = clk_prepare(data->pclk);
-+	if (ret)
-+		return ret;
- 
- 	if (!data->clk && (!data->aclk || !data->pclk)) {
- 		dev_err(dev, "Failed to get device clock(s)!\n");
-@@ -640,15 +634,13 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	}
- 
- 	data->clk_master = devm_clk_get(dev, "master");
--	if (!IS_ERR(data->clk_master)) {
--		ret = clk_prepare(data->clk_master);
--		if (ret) {
--			dev_err(dev, "Failed to prepare master's clk\n");
--			return ret;
--		}
--	} else {
-+	if (PTR_ERR(data->clk_master) == -ENOENT)
- 		data->clk_master = NULL;
--	}
-+	else if (IS_ERR(data->clk_master))
-+		return PTR_ERR(data->clk_master);
-+	ret = clk_prepare(data->clk_master);
-+	if (ret)
-+		return ret;
- 
- 	data->sysmmu = dev;
- 	spin_lock_init(&data->lock);
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Marek Szyprowski (5):
+  drm/exynos: iommu: move dma_params configuration code to separate
+    functions
+  drm/exynos: iommu: add a check if all sub-devices have iommu
+    controller
+  drm/exynos: iommu: remove unused entries from exynos_drm_private
+    strcuture
+  drm/exynos: iommu: move ARM specific code to exynos_drm_iommu.h
+  drm/exynos: iommu: add support for ARM64 specific code for IOMMU glue
+
+ drivers/gpu/drm/exynos/Kconfig            |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   |  7 +--
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 -
+ drivers/gpu/drm/exynos/exynos_drm_iommu.c | 77 +++++++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_iommu.h | 91 +++++++++++++++++++++++++++++++
+ 5 files changed, 126 insertions(+), 53 deletions(-)
+
 -- 
 1.9.2
