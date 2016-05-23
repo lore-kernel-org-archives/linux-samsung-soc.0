@@ -1,82 +1,116 @@
-From: Mark Brown <broonie@debian.org>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
 Subject: Re: Endless "supply vcc not found, using dummy regulator"
-Date: Mon, 23 May 2016 17:24:55 +0100
-Message-ID: <20160523162455.GW8206@sirena.org.uk>
+Date: Mon, 23 May 2016 19:06:17 +0200
+Message-ID: <20160523170617.GA8997@sesse.net>
 References: <20160521144308.GA13960@sesse.net>
  <20160523134737.GA21683@sesse.net>
  <20160523144047.GA36908@sesse.net>
+ <20160523162455.GW8206@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+1d8mk/W7pQzMfc7"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59398 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752021AbcEWQZF (ORCPT
+Received: from cassarossa.samfundet.no ([193.35.52.29]:44012 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752997AbcEWRGV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 May 2016 12:25:05 -0400
+	Mon, 23 May 2016 13:06:21 -0400
 Content-Disposition: inline
-In-Reply-To: <20160523144047.GA36908@sesse.net>
+In-Reply-To: <20160523162455.GW8206@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+To: Mark Brown <broonie@debian.org>
 Cc: linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
 
+On Mon, May 23, 2016 at 05:24:55PM +0100, Mark Brown wrote:
+>>> Cc-ing Mark in case he has any insights (I hope I have the right em=
+ail
+>>> address).
+> But nobody who works on probe deferral or made any of the suggestions=
+ I
+> mentioned in the message you linked to, nor anyone who works on the
+> driver you've identified a bug in...  :(
 
---+1d8mk/W7pQzMfc7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+As for the former, I have no idea who they would be, sorry. For the lat=
+ter,
+isn't linux-samsung-soc@ the right place? MAINTAINERS said it was.
 
-On Mon, May 23, 2016 at 04:40:47PM +0200, Steinar H. Gunderson wrote:
-> On Mon, May 23, 2016 at 03:47:37PM +0200, Steinar H. Gunderson wrote:
+>> So fixing initramfs-tools to include the driver will seemingly fix (=
+or maybe
+>> more work around) the huge amounts of spam, but this is still a larg=
+er issue
+>> that needs resolving.
+> Not really, the issue you're seeing is just a plain resource leak in =
+the
+> driver that happens to blow up worse than normal in your particular
+> configuration.  This isn't even something related to probe deferral a=
+t
+> the regulator level, the core is complaining that your system
+> description is buggy as it has omitted some of the supplies for the
+> device (notice how it says "using dummy regulator"...).   This is
+> happening a lot as the DWC3 driver is leaking, it is happening at all
+> because when the Exynos DWC3 integration creates it PHYs it doesn't m=
+ap
+> the supplies through to them (it should be registering a supply alias=
+ to
+> do this).
 
-> > In this case, it's not just an annoyance, though; they're so many that they
-> > keep the system from booting unless loglevel is turned down. Cc-ing Mark in
-> > case he has any insights (I hope I have the right email address).
+So there are multiple issues in play here. First of all, the leak is ba=
+d,
+but it doesn't affect the issue with the system not booting. If I set
+loglevel=3D0, it boots with or without the leak patch; however, it stil=
+l sends
+a gazillion error lines to dmesg (with or without the deferral).
 
-But nobody who works on probe deferral or made any of the suggestions I
-mentioned in the message you linked to, nor anyone who works on the
-driver you've identified a bug in...  :(
+Second, there's the issue that the driver takes so long to load in the =
+first
+place. This is because the regulator isn't up and doesn't come up befor=
+e
+after initramfs is done. This is a bug in Debian's initramfs-tools, but
+hopefully easily remedied.
 
-> > I don't understand entirely why it tries 2000+ times before it succeeds
+Then, there's the issue of why the messages come for each deferred prob=
+e
+attempt. It seems from your message this is about something in the
+declaration of the device tree; I don't understand the nuances here, bu=
+t I
+suppose it's pretty easy?
 
-> Now I do; the initramfs doesn't include i2c-exynos5, and before that is
-> loaded, s2mps11 (the regulator) can't come up either.
+=46ourth, there's the question of why there are thousands of probe atte=
+mpts;
+it shouldn't be even if the regulator takes a long time to come up. I g=
+uess
+this is what your original message was about, and fixing that would als=
+o
+reduce the amount of logging a ton (plus presumably speed up boot by wa=
+sting
+less CPU on repeated probing). But as I understand you, it's not strict=
+ly
+necessary to actually fix this issue?
 
-> So fixing initramfs-tools to include the driver will seemingly fix (or maybe
-> more work around) the huge amounts of spam, but this is still a larger issue
-> that needs resolving.
+=46ifth and finally, there's the question of whether we can suppress
+diagnostics on a probe that ends up being deferred. It would also solve=
+ the
+problem here, although perhaps less elegantly than fixing issues #3 or
+#4 (or to a lesser degree, #2), either of which will make my system boo=
+t. :-)
 
-Not really, the issue you're seeing is just a plain resource leak in the
-driver that happens to blow up worse than normal in your particular
-configuration.  This isn't even something related to probe deferral at
-the regulator level, the core is complaining that your system
-description is buggy as it has omitted some of the supplies for the
-device (notice how it says "using dummy regulator"...).   This is
-happening a lot as the DWC3 driver is leaking, it is happening at all
-because when the Exynos DWC3 integration creates it PHYs it doesn't map
-the supplies through to them (it should be registering a supply alias to
-do this).
+> The patch you linked to was for a completely different error message
+> which is at least related to probe deferral
 
-The patch you linked to was for a completely different error message
-which is at least related to probe deferral, though fundamentally unless
-we just stop printing diagnostics (which is getting more and more
-tempting to be honest) I'm not sure anything is going to fully resolve
-leaks like this, the best chance you've got is something that explicitly
-looks at the dependencies like Raphael was proposing.
+Yes, it's a different error message, but points to the same issue as #4
+above, no?
 
---+1d8mk/W7pQzMfc7
-Content-Type: application/pgp-signature; name="signature.asc"
+> though fundamentally unless
+> we just stop printing diagnostics (which is getting more and more
+> tempting to be honest) I'm not sure anything is going to fully resolv=
+e
+> leaks like this, the best chance you've got is something that explici=
+tly
+> looks at the dependencies like Raphael was proposing.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+What do you mean by =E2=80=9Cleaks=E2=80=9D here?
 
-iQEcBAEBCAAGBQJXQy7WAAoJECTWi3JdVIfQW6YH/RpDqn3MsIM1SxbAUeZKwxtO
-u6dpv3DQJYH+a74oUMxQOXvoaInXoBa3mNvH9JDcqQ+IK7RUywUBhaS0XsH3hWgP
-0g1s0avSisVAyUuIntPGAYTiQ6fKg6LV/x8F4HwACRM0AaZKvJt5URbZVIyOaDMR
-FcEourjsyyGFFWnDBKiLb6bvEijCXant1nXyEUK2/mavkg97hIQ+jSLVfqAMgs2Z
-7Jf79juGBUn3tklFM7iCzjgAFyZ7L1BSLBkQRXHDMs/qY1A/z4LbOM2YzywFQe+v
-rltwVHfKM3paPMELPMb4YAEHjSTTuWaf8ats+q7/I3yl9DBGRpuCrpqvYu+YBmc=
-=ugep
------END PGP SIGNATURE-----
-
---+1d8mk/W7pQzMfc7--
+/* Steinar */
+--=20
+Homepage: https://www.sesse.net/
