@@ -1,90 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "MAINTAINERS: ASoC: samsung: Add Sylwester Nawrocki and Krzysztof Kozlowski" to the asoc tree
-Date: Tue, 24 May 2016 17:25:54 +0100
-Message-ID: <E1b5F9W-0003ZA-B8@debutante>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Subject: Re: Endless "supply vcc not found, using dummy regulator"
+Date: Tue, 24 May 2016 18:44:30 +0200
+Message-ID: <20160524164430.GA28115@sesse.net>
+References: <20160521144308.GA13960@sesse.net>
+ <20160523134737.GA21683@sesse.net>
+ <20160523144047.GA36908@sesse.net>
+ <20160523162455.GW8206@sirena.org.uk>
+ <20160523170617.GA8997@sesse.net>
+ <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+ <20160524152638.GA20341@sesse.net>
+ <574478FE.4070800@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34646 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752846AbcEXQ0J (ORCPT
+Received: from cassarossa.samfundet.no ([193.35.52.29]:39589 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756053AbcEXQok (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 May 2016 12:26:09 -0400
-In-Reply-To: 
+	Tue, 24 May 2016 12:44:40 -0400
+Content-Disposition: inline
+In-Reply-To: <574478FE.4070800@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.orgMark Brown <broonie@kernel.org>
+Cc: Mark Brown <broonie@debian.org>, linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
 
-The patch
+On Tue, May 24, 2016 at 05:53:34PM +0200, Krzysztof Kozlowski wrote:
+>> Which devm_clk_get() error are you talking about? The one with susp_clk?
+> Now I saw your original report on Debian bugzilla. Let's stick to v4.5.
 
-   MAINTAINERS: ASoC: samsung: Add Sylwester Nawrocki and Krzysztof Kozlowski
+I'm actually developing on 4.6, but sure. The differences are small from what
+I can see.
 
-has been applied to the asoc tree at
+>         exynos->clk = devm_clk_get(dev, "usbdrd30");
+>         if (IS_ERR(exynos->clk)) {
+> +		// On each error path since here we need to
+> +		// revert work done by dwc3_exynos_register_phys()
+>                 dev_err(dev, "couldn't get clock\n");
+>                 return -EINVAL;
+>         }
+>         clk_prepare_enable(exynos->clk);
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+OK, sounds like these should be changed to the common goto pattern to save on
+the repeated cleanup. I'll have a stab at that later today.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>> That's an interesting case because a) nothing actually uses susp_clk
+>> (it's dead code, presumably waiting for further patches),
+> It does not look like dead code because it is enabled.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+But not a single DT seems to set such a suspend clock, from what I can see?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> Yeah, but you did not send it to appropriate people. get_maintainer.pl
+> will point you (Felipe Balbi handles the patches for this driver).
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Ack.
 
-Thanks,
-Mark
+> Apparently the s2mps11 regulator driver can be built as module... but is
+> not a commonly tested configuration. In our testing configs (exynos and
+> multi_v7) it is built-in. Actually most of PMICs are built in.
 
->From eea5495bab0d365f4dca04869b21e557a9df48d5 Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Date: Tue, 24 May 2016 15:35:42 +0200
-Subject: [PATCH] MAINTAINERS: ASoC: samsung: Add Sylwester Nawrocki and
- Krzysztof Kozlowski
+I don't have a lot of control over how Debian chooses to build kernels --
+from what I gather from previous conversations, the kernel team are unhappy
+about building things into the kernel if they can be modules. And in this
+case, it wasn't even about the s2mps11 module, it was just that it didn't
+have an I2C bus ready for init.
 
-Extend maintainer entry for Samsung SoC sound drivers with Krzysztof
-Kozlowski and Sylwester Nawrocki. The file pattern is duplicated in main
-Exynos ARM section so remove it from there.
-
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 03e00c7c88eb..45dd1db87cff 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1542,7 +1542,6 @@ F:	drivers/*/*s3c2410*
- F:	drivers/*/*/*s3c2410*
- F:	drivers/soc/samsung/*
- F:	drivers/spi/spi-s3c*
--F:	sound/soc/samsung/*
- F:	Documentation/arm/Samsung/
- F:	Documentation/devicetree/bindings/arm/samsung/
- F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
-@@ -9601,7 +9600,9 @@ S:	Maintained
- F:	drivers/platform/x86/samsung-laptop.c
- 
- SAMSUNG AUDIO (ASoC) DRIVERS
-+M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
- M:	Sangbeom Kim <sbkim73@samsung.com>
-+M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
- F:	sound/soc/samsung/
+/* Steinar */
 -- 
-2.8.1
+Homepage: https://www.sesse.net/
