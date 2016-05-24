@@ -1,105 +1,87 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v2 01/10] drm/bridge: analogix_dp: rename RK3288_DP to ROCKCHIP_DP
-Date: Tue, 24 May 2016 13:02:11 +0800
-Message-ID: <1464066131-22562-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v2 02/10] drm/rockchip: analogix_dp: split the lcdc select
+ setting into device data
+Date: Tue, 24 May 2016 13:02:15 +0800
+Message-ID: <1464066135-22605-1-git-send-email-ykk@rock-chips.com>
 References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:46602 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751154AbcEXFCW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 May 2016 01:02:22 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Douglas Anderson <dianders@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Javier Martinez Canillas <javier@osg.samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Rename RK3288_DP marcos to ROCKCHIP_DP, prepare to add eDP
-support for more Rockchip chips.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v2: None
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 6 +++---
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 2 +-
- include/drm/bridge/analogix_dp.h                   | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 7699597..4a1b3b8 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1207,9 +1207,9 @@ static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
- 	struct video_info *video_info = &dp->video_info;
- 
- 	switch (dp->plat_data->dev_type) {
--	case RK3288_DP:
-+	case ROCKCHIP_DP:
- 		/*
--		 * Like Rk3288 DisplayPort TRM indicate that "Main link
-+		 * Like Rockchip DisplayPort TRM indicate that "Main link
- 		 * containing 4 physical lanes of 2.7/1.62 Gbps/lane".
- 		 */
- 		video_info->max_link_rate = 0x0A;
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 49205ef..931a76c 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -74,7 +74,7 @@ void analogix_dp_init_analog_param(struct analogix_dp_device *dp)
- 	reg = SEL_24M | TX_DVDD_BIT_1_0625V;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_ANALOG_CTL_2);
- 
--	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP)) {
-+	if (dp->plat_data && (dp->plat_data->dev_type == ROCKCHIP_DP)) {
- 		writel(REF_CLK_24M, dp->reg_base + ANALOGIX_DP_PLL_REG_1);
- 		writel(0x95, dp->reg_base + ANALOGIX_DP_PLL_REG_2);
- 		writel(0x40, dp->reg_base + ANALOGIX_DP_PLL_REG_3);
-@@ -244,7 +244,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 	u32 reg;
- 	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
- 
--	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
-+	if (dp->plat_data && (dp->plat_data->dev_type == ROCKCHIP_DP))
- 		phy_pd_addr = ANALOGIX_DP_PD;
- 
- 	switch (block) {
-@@ -448,7 +448,7 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
- 	analogix_dp_reset_aux(dp);
- 
- 	/* Disable AUX transaction H/W retry */
--	if (dp->plat_data && (dp->plat_data->dev_type == RK3288_DP))
-+	if (dp->plat_data && (dp->plat_data->dev_type == ROCKCHIP_DP))
- 		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
- 		      AUX_HW_RETRY_COUNT_SEL(3) |
- 		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 7f6a55c..2bc8a7e 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -270,7 +270,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 
- 	dp->plat_data.encoder = &dp->encoder;
- 
--	dp->plat_data.dev_type = RK3288_DP;
-+	dp->plat_data.dev_type = ROCKCHIP_DP;
- 	dp->plat_data.power_on = rockchip_dp_poweron;
- 	dp->plat_data.power_off = rockchip_dp_powerdown;
- 
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 25afb31..9e5d013 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -15,7 +15,7 @@
- 
- enum analogix_dp_devtype {
- 	EXYNOS_DP,
--	RK3288_DP,
-+	ROCKCHIP_DP,
- };
- 
- struct analogix_dp_plat_data {
--- 
-1.9.1
+ZURQIGNvbnRyb2xsZXIgbmVlZCB0byBkZWNsYXJlIHdoaWNoIHZvcCBwcm92aWRlIHRoZSB2aWRl
+byBzb3VyY2UsCmFuZCBpdCdzIGRlZmluZWQgaW4gR1JGIHJlZ2lzdGVycy4KCkJ1dCBkaWZmZXJl
+bnQgY2hpcHMgaGF2ZSBkaWZmZXJlbnQgR1JGIHJlZ2lzdGVyIGFkZHJlc3MsIHNvIHdlIG5lZWQg
+dG8KY3JlYXRlIGEgZGV2aWNlIGRhdGEgdG8gZGVjbGFyZSB0aGUgR1JGIG1lc3NhZ2VzIGZvciBl
+YWNoIGNoaXBzLgoKU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29t
+PgotLS0KQ2hhbmdlcyBpbiB2MjogTm9uZQoKIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFs
+b2dpeF9kcC1yb2NrY2hpcC5jIHwgMzUgKysrKysrKysrKysrKysrKysrLS0tLS0tLQogMSBmaWxl
+IGNoYW5nZWQsIDI2IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwppbmRleCAyYmM4YTdlLi4y
+NjBjNDNmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAt
+cm9ja2NoaXAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9j
+a2NoaXAuYwpAQCAtMTQsNiArMTQsNyBAQAogCiAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+
+CiAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgorI2luY2x1ZGUgPGxpbnV4L29mX2Rldmlj
+ZS5oPgogI2luY2x1ZGUgPGxpbnV4L29mX2dyYXBoLmg+CiAjaW5jbHVkZSA8bGludXgvcmVnbWFw
+Lmg+CiAjaW5jbHVkZSA8bGludXgvcmVzZXQuaD4KQEAgLTM1LDExICszNiwxMiBAQAogCiAjZGVm
+aW5lIHRvX2RwKG5tKQljb250YWluZXJfb2Yobm0sIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2Us
+IG5tKQogCi0vKiBkcCBncmYgcmVnaXN0ZXIgb2Zmc2V0ICovCi0jZGVmaW5lIEdSRl9TT0NfQ09O
+NiAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDAyNWMKLSNkZWZpbmUgR1JGX0VEUF9MQ0Rf
+U0VMX01BU0sgICAgICAgICAgICAgICAgICAgIEJJVCg1KQotI2RlZmluZSBHUkZfRURQX1NFTF9W
+T1BfTElUICAgICAgICAgICAgICAgICAgICAgQklUKDUpCi0jZGVmaW5lIEdSRl9FRFBfU0VMX1ZP
+UF9CSUcgICAgICAgICAgICAgICAgICAgICAwCitzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRh
+IHsKKwl1MzIJbGNkc2VsX2dyZl9yZWc7CisJdTMyCWxjZHNlbF9iaWc7CisJdTMyCWxjZHNlbF9s
+aXQ7CisJdTMyCWxjZHNlbF9tYXNrOworfTsKIAogc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7
+CiAJc3RydWN0IGRybV9kZXZpY2UgICAgICAgICpkcm1fZGV2OwpAQCAtNTEsNiArNTMsOCBAQCBz
+dHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlIHsKIAlzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdy
+ZjsKIAlzdHJ1Y3QgcmVzZXRfY29udHJvbCAgICAgKnJzdDsKIAorCWNvbnN0IHN0cnVjdCByb2Nr
+Y2hpcF9kcF9jaGlwX2RhdGEgKmRhdGE7CisKIAlzdHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRh
+IHBsYXRfZGF0YTsKIH07CiAKQEAgLTExOSwxMyArMTIzLDEzIEBAIHN0YXRpYyB2b2lkIHJvY2tj
+aGlwX2RwX2RybV9lbmNvZGVyX2VuYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCiAJ
+CXJldHVybjsKIAogCWlmIChyZXQpCi0JCXZhbCA9IEdSRl9FRFBfU0VMX1ZPUF9MSVQgfCAoR1JG
+X0VEUF9MQ0RfU0VMX01BU0sgPDwgMTYpOworCQl2YWwgPSBkcC0+ZGF0YS0+bGNkc2VsX2xpdCB8
+IGRwLT5kYXRhLT5sY2RzZWxfbWFzazsKIAllbHNlCi0JCXZhbCA9IEdSRl9FRFBfU0VMX1ZPUF9C
+SUcgfCAoR1JGX0VEUF9MQ0RfU0VMX01BU0sgPDwgMTYpOworCQl2YWwgPSBkcC0+ZGF0YS0+bGNk
+c2VsX2JpZyB8IGRwLT5kYXRhLT5sY2RzZWxfbWFzazsKIAogCWRldl9kYmcoZHAtPmRldiwgInZv
+cCAlcyBvdXRwdXQgdG8gZHBcbiIsIChyZXQpID8gIkxJVCIgOiAiQklHIik7CiAKLQlyZXQgPSBy
+ZWdtYXBfd3JpdGUoZHAtPmdyZiwgR1JGX1NPQ19DT042LCB2YWwpOworCXJldCA9IHJlZ21hcF93
+cml0ZShkcC0+Z3JmLCBkcC0+ZGF0YS0+bGNkc2VsX2dyZl9yZWcsIHZhbCk7CiAJaWYgKHJldCAh
+PSAwKSB7CiAJCWRldl9lcnIoZHAtPmRldiwgIkNvdWxkIG5vdCB3cml0ZSB0byBHUkY6ICVkXG4i
+LCByZXQpOwogCQlyZXR1cm47CkBAIC0yNDYsNiArMjUwLDcgQEAgc3RhdGljIGludCByb2NrY2hp
+cF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCQkJ
+ICAgIHZvaWQgKmRhdGEpCiB7CiAJc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSBkZXZf
+Z2V0X2RydmRhdGEoZGV2KTsKKwljb25zdCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhICpk
+cF9kYXRhOwogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKIAlpbnQgcmV0Owog
+CkBAIC0yNTYsMTAgKzI2MSwxNSBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0
+IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJICovCiAJZGV2X3NldF9kcnZk
+YXRhKGRldiwgTlVMTCk7CiAKKwlkcF9kYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRl
+dik7CisJaWYgKCFkcF9kYXRhKQorCQlyZXR1cm4gLUVOT0RFVjsKKwogCXJldCA9IHJvY2tjaGlw
+X2RwX2luaXQoZHApOwogCWlmIChyZXQgPCAwKQogCQlyZXR1cm4gcmV0OwogCisJZHAtPmRhdGEg
+PSBkcF9kYXRhOwogCWRwLT5kcm1fZGV2ID0gZHJtX2RldjsKIAogCXJldCA9IHJvY2tjaGlwX2Rw
+X2RybV9jcmVhdGVfZW5jb2RlcihkcCk7CkBAIC0zNjUsOCArMzc1LDE1IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgZGV2X3BtX29wcyByb2NrY2hpcF9kcF9wbV9vcHMgPSB7CiAJU0VUX1NZU1RFTV9T
+TEVFUF9QTV9PUFMocm9ja2NoaXBfZHBfc3VzcGVuZCwgcm9ja2NoaXBfZHBfcmVzdW1lKQogfTsK
+IAorc3RhdGljIGNvbnN0IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgcmszMjg4X2RwID0g
+eworCS5sY2RzZWxfZ3JmX3JlZyA9IDB4MDI1YywKKwkubGNkc2VsX2JpZyA9IDAsCisJLmxjZHNl
+bF9saXQgPSBCSVQoNSksCisJLmxjZHNlbF9tYXNrID0gQklUKDIxKSwKK307CisKIHN0YXRpYyBj
+b25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHJvY2tjaGlwX2RwX2R0X2lkc1tdID0gewotCXsuY29t
+cGF0aWJsZSA9ICJyb2NrY2hpcCxyazMyODgtZHAiLH0sCisJey5jb21wYXRpYmxlID0gInJvY2tj
+aGlwLHJrMzI4OC1kcCIsIC5kYXRhID0gJnJrMzI4OF9kcCB9LAogCXt9CiB9OwogTU9EVUxFX0RF
+VklDRV9UQUJMRShvZiwgcm9ja2NoaXBfZHBfZHRfaWRzKTsKLS0gCjEuOS4xCgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
