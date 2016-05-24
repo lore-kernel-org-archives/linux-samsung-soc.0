@@ -1,57 +1,69 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
 Subject: Re: Endless "supply vcc not found, using dummy regulator"
-Date: Tue, 24 May 2016 17:06:43 +0200
-Message-ID: <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+Date: Tue, 24 May 2016 17:26:38 +0200
+Message-ID: <20160524152638.GA20341@sesse.net>
 References: <20160521144308.GA13960@sesse.net>
-	<20160523134737.GA21683@sesse.net>
-	<20160523144047.GA36908@sesse.net>
-	<20160523162455.GW8206@sirena.org.uk>
-	<20160523170617.GA8997@sesse.net>
+ <20160523134737.GA21683@sesse.net>
+ <20160523144047.GA36908@sesse.net>
+ <20160523162455.GW8206@sirena.org.uk>
+ <20160523170617.GA8997@sesse.net>
+ <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:32776 "EHLO
-	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932713AbcEXPGo (ORCPT
+Received: from cassarossa.samfundet.no ([193.35.52.29]:39049 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752518AbcEXP0s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 May 2016 11:06:44 -0400
-Received: by mail-oi0-f68.google.com with SMTP id m198so4610386oig.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 May 2016 08:06:44 -0700 (PDT)
-In-Reply-To: <20160523170617.GA8997@sesse.net>
+	Tue, 24 May 2016 11:26:48 -0400
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Mark Brown <broonie@debian.org>, linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
 
-On Mon, May 23, 2016 at 7:06 PM, Steinar H. Gunderson
-<sgunderson@bigfoot.com> wrote:
-> On Mon, May 23, 2016 at 05:24:55PM +0100, Mark Brown wrote:
->>>> Cc-ing Mark in case he has any insights (I hope I have the right email
->>>> address).
->> But nobody who works on probe deferral or made any of the suggestions I
->> mentioned in the message you linked to, nor anyone who works on the
->> driver you've identified a bug in...  :(
->
-> As for the former, I have no idea who they would be, sorry. For the latter,
-> isn't linux-samsung-soc@ the right place? MAINTAINERS said it was.
+On Tue, May 24, 2016 at 05:06:43PM +0200, Krzysztof Kozlowski wrote:
+> I looked quickly through the thread and I am not sure what is exactly
+> your problem.
 
-I looked quickly through the thread and I am not sure what is exactly
-your problem. I understood that the Exynos dwc3 driver is leaking the
-PHY. That is a good catch but your patch is not sufficient. You should
-clean up starting from devm_clk_get() error. Unless you are fixing
-this for different kernel version.
+My immediate problem is that the repeated (deferred) probing is causing so
+much logging that the system doesn't actually boot. The root causes are a bit
+more complex and muddy (see my previous email for a breakdown).
 
-Please send an appropriate separate patch for fixing this. Your email
-did not reach people, I think. Just make a patch, test it,
-scripts/checkpatch and scripts/get_maintainers. It is a fix so also a
-candidate for this release cycle. if you do not plan to send a patch,
-I can prepare on my own with your "Reported-by" tag but actually this
-is your finding so credits (and effort) should go to you. :)
+> I understood that the Exynos dwc3 driver is leaking the
+> PHY. That is a good catch but your patch is not sufficient. You should
+> clean up starting from devm_clk_get() error. Unless you are fixing
+> this for different kernel version.
 
-What other problems exactly do you have? Late binding of S2MPS11
-regulator driver? That does not look like a problem. If it is built as
-a module then it should be loaded, probably from initramfs because
-these are regulators.
+I have zero idea how all of this is supposed to be connected, much less how
+DWC3 works or what the driver is supposed to do. I'm just an end user trying
+to figure out why my system didn't boot. :-)
 
-Best regards,
-Krzysztof
+Which devm_clk_get() error are you talking about? The one with susp_clk?
+That's an interesting case because a) nothing actually uses susp_clk
+(it's dead code, presumably waiting for further patches), and b) there was a
+commit not too long ago (42f69a02) upgrading the message from dev_dbg to
+dev_info for reasons I don't understand, making the problem worse.
+(The commit message had an argument that I could accept for changing _to_
+dbg, but not the other way round.)
+
+> Please send an appropriate separate patch for fixing this. Your email
+> did not reach people, I think.
+
+I only sent one patch so far, namely the leak fix.
+
+> What other problems exactly do you have? Late binding of S2MPS11
+> regulator driver? That does not look like a problem. If it is built as
+> a module then it should be loaded, probably from initramfs because
+> these are regulators.
+
+In this specific case, Debian's initramfs has neglected to include the i2c
+driver in the initramfs, so the regulator doesn't come up until the boot is
+out of the initramfs. That's probably a bug in its own right, and fixing it
+reduces the amount of messages by a _lot_, but even so, it sounds to me like
+the kernel should be able to boot without that fix.
+
+/* Steinar */
+-- 
+Homepage: https://www.sesse.net/
