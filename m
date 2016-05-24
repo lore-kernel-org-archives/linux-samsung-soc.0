@@ -1,58 +1,62 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v2 08/10] drm/rockchip: analogix_dp: correct the connector
- display color format and bpc
-Date: Tue, 24 May 2016 13:02:44 +0800
-Message-ID: <1464066164-22863-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v2 10/10] drm/bridge: analogix_dp: fix no drm hpd event when
+ panel plug in
+Date: Tue, 24 May 2016 13:02:52 +0800
+Message-ID: <1464066172-22949-1-git-send-email-ykk@rock-chips.com>
 References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1464066086-21967-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Um9ja2NoaXAgVk9QIGNvdWxkbid0IG91dHB1dCBZVVYgdmlkZW8gZm9ybWF0IGZvciBlRFAgY29u
-dHJvbGxlciwgc28Kd2hlbiBkcml2ZXIgZGV0ZWN0IGNvbm5lY3RvciBzdXBwb3J0IFlVViB2aWRl
-byBmb3JtYXQsIHdlIG5lZWQgdG8gaGFjawppdCBkb3duIHRvIFJHQjg4OC4KClNpZ25lZC1vZmYt
-Ynk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjI6IE5v
-bmUKCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyB8IDE5
-ICsrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlw
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwppbmRl
-eCBmMjljYTNkLi45MTBjY2ViIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-YW5hbG9naXhfZHAtcm9ja2NoaXAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5h
-bG9naXhfZHAtcm9ja2NoaXAuYwpAQCAtOTcsNiArOTcsMjQgQEAgc3RhdGljIGludCByb2NrY2hp
-cF9kcF9wb3dlcmRvd24oc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhKQog
-CXJldHVybiAwOwogfQogCitzdGF0aWMgZW51bSBkcm1fbW9kZV9zdGF0dXMKK3JvY2tjaGlwX2Rw
-X21vZGVfdmFsaWQoc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhLAorCQkg
-ICAgICAgc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKKwkJICAgICAgIHN0cnVjdCBk
-cm1fZGlzcGxheV9tb2RlICptb2RlKQoreworCXN0cnVjdCBkcm1fZGlzcGxheV9pbmZvICpkaSA9
-ICZjb25uZWN0b3ItPmRpc3BsYXlfaW5mbzsKKworCWlmIChkaS0+Y29sb3JfZm9ybWF0cyAmIERS
-TV9DT0xPUl9GT1JNQVRfWUNSQ0I0NDQgfHwKKwkgICAgZGktPmNvbG9yX2Zvcm1hdHMgJiBEUk1f
-Q09MT1JfRk9STUFUX1lDUkNCNDIyKSB7CisJCWRpLT5jb2xvcl9mb3JtYXRzICY9IH4oRFJNX0NP
-TE9SX0ZPUk1BVF9ZQ1JDQjQyMiB8CisJCQkJICAgICAgIERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0
-NDQpOworCQlkaS0+Y29sb3JfZm9ybWF0cyB8PSBEUk1fQ09MT1JfRk9STUFUX1JHQjQ0NDsKKwkJ
-ZGktPmJwYyA9IDg7CisJfQorCisJcmV0dXJuIE1PREVfT0s7Cit9CisKIHN0YXRpYyBib29sCiBy
-b2NrY2hpcF9kcF9kcm1fZW5jb2Rlcl9tb2RlX2ZpeHVwKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2RlciwKIAkJCQkgICBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSwKQEAgLTMw
-Niw2ICszMjQsNyBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAq
-ZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJZHAtPnBsYXRfZGF0YS5zdWJkZXZfdHlwZSA9
-IGRwX2RhdGEtPmNoaXBfdHlwZTsKIAlkcC0+cGxhdF9kYXRhLnBvd2VyX29uID0gcm9ja2NoaXBf
-ZHBfcG93ZXJvbjsKIAlkcC0+cGxhdF9kYXRhLnBvd2VyX29mZiA9IHJvY2tjaGlwX2RwX3Bvd2Vy
-ZG93bjsKKwlkcC0+cGxhdF9kYXRhLm1vZGVfdmFsaWQgPSByb2NrY2hpcF9kcF9tb2RlX3ZhbGlk
-OwogCiAJcmV0dXJuIGFuYWxvZ2l4X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2RldiwgJmRwLT5wbGF0
-X2RhdGEpOwogfQotLSAKMS45LjEKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+The enum value of DP_IRQ_TYPE_HP_CABLE_IN is zero, but driver only
+send drm hp event when the irq_type and the enum value is true.
+
+if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN || ...)
+	drm_helper_hpd_irq_event(dp->drm_dev);
+
+So there would no drm hpd event when cable plug in, to fix that
+just need to assign all hotplug enum with no-zero values.
+
+Reported-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+---
+Changes in v2: None
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index f09275d..b456380 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -127,10 +127,10 @@ enum analog_power_block {
+ };
+ 
+ enum dp_irq_type {
+-	DP_IRQ_TYPE_HP_CABLE_IN,
+-	DP_IRQ_TYPE_HP_CABLE_OUT,
+-	DP_IRQ_TYPE_HP_CHANGE,
+-	DP_IRQ_TYPE_UNKNOWN,
++	DP_IRQ_TYPE_HP_CABLE_IN  = BIT(0),
++	DP_IRQ_TYPE_HP_CABLE_OUT = BIT(1),
++	DP_IRQ_TYPE_HP_CHANGE    = BIT(2),
++	DP_IRQ_TYPE_UNKNOWN      = BIT(3),
+ };
+ 
+ struct video_info {
+-- 
+1.9.1
