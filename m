@@ -1,111 +1,57 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 4/4] drm: rcar: use generic code for managing zpos
- plane property
-Date: Tue, 24 May 2016 17:53:19 +0300
-Message-ID: <4956644.qtDkDturNn@avalon>
-References: <1463123727-28028-1-git-send-email-benjamin.gaignard@linaro.org>
- <1463123727-28028-5-git-send-email-benjamin.gaignard@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: Endless "supply vcc not found, using dummy regulator"
+Date: Tue, 24 May 2016 17:06:43 +0200
+Message-ID: <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+References: <20160521144308.GA13960@sesse.net>
+	<20160523134737.GA21683@sesse.net>
+	<20160523144047.GA36908@sesse.net>
+	<20160523162455.GW8206@sirena.org.uk>
+	<20160523170617.GA8997@sesse.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1463123727-28028-5-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32776 "EHLO
+	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932713AbcEXPGo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 May 2016 11:06:44 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m198so4610386oig.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 May 2016 08:06:44 -0700 (PDT)
+In-Reply-To: <20160523170617.GA8997@sesse.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Cc: Mark Brown <broonie@debian.org>, linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
 
-SGkgQmVuamFtaW4sCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCk9uIEZyaWRheSAxMyBNYXkg
-MjAxNiAwOToxNToyNyBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToKPiBUaGlzIHBhdGNoIHJlcGxh
-Y2VzIHpwb3MgcHJvcGVydHkgaGFuZGxpbmcgY3VzdG9tIGNvZGUgaW4gcmNhciBEUk0KPiBkcml2
-ZXIgd2l0aCBjYWxscyB0byBnZW5lcmljIERSTSBjb2RlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEJl
-bmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPgo+IAo+IENjOiBE
-YW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gQ2M6IFZpbGxlIFN5cmphbGEgPHZpbGxl
-LnN5cmphbGFAbGludXguaW50ZWwuY29tPgo+IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50
-LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4gQ2M6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5
-cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNh
-cl9kdV9jcnRjLmMgIHwgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Ry
-di5oICAgfCAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9rbXMuYyAgIHwg
-NSAtLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMgfCA5ICsr
-LS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmggfCAyIC0t
-Cj4gIDUgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMKPiBi
-L2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfY3J0Yy5jIGluZGV4IDBkOGJkZGEuLjI4
-ZDJjYjYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRj
-LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwo+IEBAIC0x
-OTYsNyArMTk2LDcgQEAgdm9pZCByY2FyX2R1X2NydGNfcm91dGVfb3V0cHV0KHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywKPiAKPiAgc3RhdGljIHVuc2lnbmVkIGludCBwbGFuZV96cG9zKHN0cnVjdCBy
-Y2FyX2R1X3BsYW5lICpwbGFuZSkKPiAgewo+IC0JcmV0dXJuIHRvX3JjYXJfcGxhbmVfc3RhdGUo
-cGxhbmUtPnBsYW5lLnN0YXRlKS0+enBvczsKPiArCXJldHVybiBwbGFuZS0+cGxhbmUuc3RhdGUt
-Pm5vcm1hbGl6ZWRfenBvczsKPiAgfQo+IAo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHJjYXJfZHVf
-Zm9ybWF0X2luZm8gKgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2Fy
-X2R1X2Rydi5oCj4gYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oIGluZGV4
-IGVkMzU0NjcuLmM4NDNjMzEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUv
-cmNhcl9kdV9kcnYuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfZHJ2
-LmgKPiBAQCAtOTIsNyArOTIsNiBAQCBzdHJ1Y3QgcmNhcl9kdV9kZXZpY2Ugewo+ICAJc3RydWN0
-IHsKPiAgCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICphbHBoYTsKPiAgCQlzdHJ1Y3QgZHJtX3Byb3Bl
-cnR5ICpjb2xvcmtleTsKPiAtCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICp6cG9zOwo+ICAJfSBwcm9w
-czsKPiAKPiAgCXVuc2lnbmVkIGludCBkcGFkMF9zb3VyY2U7Cj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfa21zLmMKPiBiL2RyaXZlcnMvZ3B1L2RybS9yY2Fy
-LWR1L3JjYXJfZHVfa21zLmMgaW5kZXggZTcwYTRmMy4uNGFjZTBhYSAxMDA2NDQKPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jCj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL3JjYXItZHUvcmNhcl9kdV9rbXMuYwo+IEBAIC01MjcsMTEgKzUyNyw2IEBAIHN0YXRpYyBp
-bnQgcmNhcl9kdV9wcm9wZXJ0aWVzX2luaXQoc3RydWN0Cj4gcmNhcl9kdV9kZXZpY2UgKnJjZHUp
-IGlmIChyY2R1LT5wcm9wcy5jb2xvcmtleSA9PSBOVUxMKQo+ICAJCXJldHVybiAtRU5PTUVNOwo+
-IAo+IC0JcmNkdS0+cHJvcHMuenBvcyA9Cj4gLQkJZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShy
-Y2R1LT5kZGV2LCAwLCAienBvcyIsIDEsIDcpOwo+IC0JaWYgKHJjZHUtPnByb3BzLnpwb3MgPT0g
-TlVMTCkKPiAtCQlyZXR1cm4gLUVOT01FTTsKPiAtCj4gIAlyZXR1cm4gMDsKPiAgfQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMKPiBiL2Ry
-aXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyBpbmRleCA4NDYwYWUxLi40NzY0
-YWZjIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUu
-Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYwo+IEBAIC02
-NTYsNyArNjU2LDcgQEAgc3RhdGljIHZvaWQgcmNhcl9kdV9wbGFuZV9yZXNldChzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSkKPiBzdGF0ZS0+c291cmNlID0gUkNBUl9EVV9QTEFORV9NRU1PUlk7Cj4g
-IAlzdGF0ZS0+YWxwaGEgPSAyNTU7Cj4gIAlzdGF0ZS0+Y29sb3JrZXkgPSBSQ0FSX0RVX0NPTE9S
-S0VZX05PTkU7Cj4gLQlzdGF0ZS0+enBvcyA9IHBsYW5lLT50eXBlID09IERSTV9QTEFORV9UWVBF
-X1BSSU1BUlkgPyAwIDogMTsKPiArCXBsYW5lLT5zdGF0ZS0+enBvcyA9IHBsYW5lLT50eXBlID09
-IERSTV9QTEFORV9UWVBFX1BSSU1BUlkgPyAwIDogMTsKCnBsYW5lLT5zdGF0ZSBpcyBOVUxMIGF0
-IHRoaXMgcG9pbnQsIHRoaXMgc2hvdWxkIGJlIHN0YXRlLT5zdGF0ZS56cG9zID0gLi4uCgo+ICAJ
-cGxhbmUtPnN0YXRlID0gJnN0YXRlLT5zdGF0ZTsKPiAgCXBsYW5lLT5zdGF0ZS0+cGxhbmUgPSBw
-bGFuZTsKPiBAQCAtNjc0LDggKzY3NCw2IEBAIHN0YXRpYyBpbnQgcmNhcl9kdV9wbGFuZV9hdG9t
-aWNfc2V0X3Byb3BlcnR5KHN0cnVjdAo+IGRybV9wbGFuZSAqcGxhbmUsIHJzdGF0ZS0+YWxwaGEg
-PSB2YWw7Cj4gIAllbHNlIGlmIChwcm9wZXJ0eSA9PSByY2R1LT5wcm9wcy5jb2xvcmtleSkKPiAg
-CQlyc3RhdGUtPmNvbG9ya2V5ID0gdmFsOwo+IC0JZWxzZSBpZiAocHJvcGVydHkgPT0gcmNkdS0+
-cHJvcHMuenBvcykKPiAtCQlyc3RhdGUtPnpwb3MgPSB2YWw7Cj4gIAllbHNlCj4gIAkJcmV0dXJu
-IC1FSU5WQUw7Cj4gCj4gQEAgLTY5NCw4ICs2OTIsNiBAQCBzdGF0aWMgaW50IHJjYXJfZHVfcGxh
-bmVfYXRvbWljX2dldF9wcm9wZXJ0eShzdHJ1Y3QKPiBkcm1fcGxhbmUgKnBsYW5lLCAqdmFsID0g
-cnN0YXRlLT5hbHBoYTsKPiAgCWVsc2UgaWYgKHByb3BlcnR5ID09IHJjZHUtPnByb3BzLmNvbG9y
-a2V5KQo+ICAJCSp2YWwgPSByc3RhdGUtPmNvbG9ya2V5Owo+IC0JZWxzZSBpZiAocHJvcGVydHkg
-PT0gcmNkdS0+cHJvcHMuenBvcykKPiAtCQkqdmFsID0gcnN0YXRlLT56cG9zOwo+ICAJZWxzZQo+
-ICAJCXJldHVybiAtRUlOVkFMOwo+IAo+IEBAIC03NjcsOCArNzYzLDcgQEAgaW50IHJjYXJfZHVf
-cGxhbmVzX2luaXQoc3RydWN0IHJjYXJfZHVfZ3JvdXAgKnJncnApCj4gIAkJZHJtX29iamVjdF9h
-dHRhY2hfcHJvcGVydHkoJnBsYW5lLT5wbGFuZS5iYXNlLAo+ICAJCQkJCSAgIHJjZHUtPnByb3Bz
-LmNvbG9ya2V5LAo+ICAJCQkJCSAgIFJDQVJfRFVfQ09MT1JLRVlfTk9ORSk7Cj4gLQkJZHJtX29i
-amVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5wbGFuZS5iYXNlLAo+IC0JCQkJCSAgIHJjZHUt
-PnByb3BzLnpwb3MsIDEpOwo+ICsJCWRybV9wbGFuZV9jcmVhdGVfenBvc19wcm9wZXJ0eSgmcGxh
-bmUtPnBsYW5lLCAxLCA3KTsKPiAgCX0KPiAKPiAgCXJldHVybiAwOwo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmgKPiBiL2RyaXZlcnMvZ3B1L2Ry
-bS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuaCBpbmRleCBiMThiN2IyLi44YjkxZGQzIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuaAo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuaAo+IEBAIC01MSw3ICs1MSw2IEBA
-IHN0YXRpYyBpbmxpbmUgc3RydWN0IHJjYXJfZHVfcGxhbmUgKnRvX3JjYXJfcGxhbmUoc3RydWN0
-Cj4gZHJtX3BsYW5lICpwbGFuZSkgKiBAaHdpbmRleDogMC1iYXNlZCBoYXJkd2FyZSBwbGFuZSBp
-bmRleCwgLTEgbWVhbnMgdW51c2VkCj4gICAqIEBhbHBoYTogdmFsdWUgb2YgdGhlIHBsYW5lIGFs
-cGhhIHByb3BlcnR5Cj4gICAqIEBjb2xvcmtleTogdmFsdWUgb2YgdGhlIHBsYW5lIGNvbG9ya2V5
-IHByb3BlcnR5Cj4gLSAqIEB6cG9zOiB2YWx1ZSBvZiB0aGUgcGxhbmUgenBvcyBwcm9wZXJ0eQo+
-ICAgKi8KPiAgc3RydWN0IHJjYXJfZHVfcGxhbmVfc3RhdGUgewo+ICAJc3RydWN0IGRybV9wbGFu
-ZV9zdGF0ZSBzdGF0ZTsKPiBAQCAtNjIsNyArNjEsNiBAQCBzdHJ1Y3QgcmNhcl9kdV9wbGFuZV9z
-dGF0ZSB7Cj4gCj4gIAl1bnNpZ25lZCBpbnQgYWxwaGE7Cj4gIAl1bnNpZ25lZCBpbnQgY29sb3Jr
-ZXk7Cj4gLQl1bnNpZ25lZCBpbnQgenBvczsKPiAgfTsKPiAKPiAgc3RhdGljIGlubGluZSBzdHJ1
-Y3QgcmNhcl9kdV9wbGFuZV9zdGF0ZSAqCgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, May 23, 2016 at 7:06 PM, Steinar H. Gunderson
+<sgunderson@bigfoot.com> wrote:
+> On Mon, May 23, 2016 at 05:24:55PM +0100, Mark Brown wrote:
+>>>> Cc-ing Mark in case he has any insights (I hope I have the right email
+>>>> address).
+>> But nobody who works on probe deferral or made any of the suggestions I
+>> mentioned in the message you linked to, nor anyone who works on the
+>> driver you've identified a bug in...  :(
+>
+> As for the former, I have no idea who they would be, sorry. For the latter,
+> isn't linux-samsung-soc@ the right place? MAINTAINERS said it was.
+
+I looked quickly through the thread and I am not sure what is exactly
+your problem. I understood that the Exynos dwc3 driver is leaking the
+PHY. That is a good catch but your patch is not sufficient. You should
+clean up starting from devm_clk_get() error. Unless you are fixing
+this for different kernel version.
+
+Please send an appropriate separate patch for fixing this. Your email
+did not reach people, I think. Just make a patch, test it,
+scripts/checkpatch and scripts/get_maintainers. It is a fix so also a
+candidate for this release cycle. if you do not plan to send a patch,
+I can prepare on my own with your "Reported-by" tag but actually this
+is your finding so credits (and effort) should go to you. :)
+
+What other problems exactly do you have? Late binding of S2MPS11
+regulator driver? That does not look like a problem. If it is built as
+a module then it should be loaded, probably from initramfs because
+these are regulators.
+
+Best regards,
+Krzysztof
