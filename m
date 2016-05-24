@@ -1,138 +1,76 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v2 05/10] drm/rockchip: analogix_dp: add rk3399 eDP support
-Date: Tue, 24 May 2016 14:57:23 +0800
-Message-ID: <1464073043-4931-1-git-send-email-ykk@rock-chips.com>
-References: <1464066147-22734-1-git-send-email-ykk@rock-chips.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v5 0/2] vb2-dma-contig: configure DMA max segment size properly
+Date: Tue, 24 May 2016 09:16:05 +0200
+Message-ID: <1464074167-27330-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:56882 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751110AbcEXG5o (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50239 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753677AbcEXHQY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 May 2016 02:57:44 -0400
-In-Reply-To: <1464066147-22734-1-git-send-email-ykk@rock-chips.com>
+	Tue, 24 May 2016 03:16:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Douglas Anderson <dianders@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Javier Martinez Canillas <javier@osg.samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 
-RK3399 and RK3288 shared the same eDP IP controller, only some light
-difference with VOP configure and GRF configure.
+Hello,
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Changes in v2:
-- rebase with drm-next, fix some conflicts
+This patch is a follow-up of my previous attempts to let Exynos
+multimedia devices to work properly with shared buffers when IOMMU is
+enabled:
+1. https://www.mail-archive.com/linux-media@vger.kernel.org/msg96946.html
+2. http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/97316
+3. https://patchwork.linuxtv.org/patch/30870/
+4. http://www.spinics.net/lists/linux-media/msg100353.html
 
- .../bindings/display/bridge/analogix_dp.txt        |  1 +
- .../display/rockchip/analogix_dp-rockchip.txt      |  2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 36 ++++++++++++++++++++--
- include/drm/bridge/analogix_dp.h                   |  1 +
- 4 files changed, 37 insertions(+), 3 deletions(-)
+After another discussion (4th link above) I agree with Mauro that
+changing dma_parms should be done from device drivers not the
+videobuf2-dc module. Now drivers releases dma_parms structure (allocated
+by vb2_dc_set_max_seg_size()), which in theory might be allocated by
+other function than vb2_dc_set_max_seg_size(). This is however not a big
+issue, because no such case exist in mainline kernel (there is no
+generic bus code for platform devices, which allocates dma_parms
+structure).
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-index 4f2ba8c..4a0f4f7 100644
---- a/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
-@@ -5,6 +5,7 @@ Required properties for dp-controller:
- 		platform specific such as:
- 		 * "samsung,exynos5-dp"
- 		 * "rockchip,rk3288-dp"
-+		 * "rockchip,rk3399-edp"
- 	-reg:
- 		physical base address of the controller and length
- 		of memory mapped region.
-diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-index e832ff9..5ae55ca 100644
---- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-+++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-@@ -2,7 +2,7 @@ Rockchip RK3288 specific extensions to the Analogix Display Port
- ================================
- 
- Required properties:
--- compatible: "rockchip,rk3288-edp";
-+- compatible: "rockchip,rk3288-edp" or "rockchip,rk3399-edp";
- 
- - reg: physical base address of the controller and length
- 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 29c4105..d5d4e04 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -148,6 +148,10 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
- 				      struct drm_connector_state *conn_state)
- {
- 	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
-+	struct rockchip_dp_device *dp = to_dp(encoder);
-+	int ret;
-+
-+	s->output_type = DRM_MODE_CONNECTOR_eDP;
- 
- 	/*
- 	 * FIXME(Yakir): driver should configure the CRTC output video
-@@ -162,8 +166,27 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
- 	 * But if I configure CTRC to RGBaaa, and eDP driver still keep
- 	 * RGB666 input video mode, then screen would works prefect.
- 	 */
--	s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
--	s->output_type = DRM_MODE_CONNECTOR_eDP;
-+
-+	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
-+	if (ret < 0)
-+		return;
-+
-+	switch (dp->data->chip_type) {
-+	case RK3399_EDP:
-+		/*
-+		 * For RK3399, VOP Lit must code the out mode to RGB888,
-+		 * VOP Big must code the out mode to RGB10.
-+		 */
-+		if (ret)
-+			s->output_mode = ROCKCHIP_OUT_MODE_P888;
-+		else
-+			s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
-+		break;
-+
-+	default:
-+		s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
-+		break;
-+	}
- 
- 	return 0;
- }
-@@ -377,6 +400,14 @@ static const struct dev_pm_ops rockchip_dp_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(rockchip_dp_suspend, rockchip_dp_resume)
- };
- 
-+static const struct rockchip_dp_chip_data rk3399_edp = {
-+	.lcdsel_grf_reg = 0x6250,
-+	.lcdsel_big = 0,
-+	.lcdsel_lit = BIT(5),
-+	.lcdsel_mask = BIT(21),
-+	.chip_type = RK3399_EDP,
-+};
-+
- static const struct rockchip_dp_chip_data rk3288_dp = {
- 	.lcdsel_grf_reg = 0x025c,
- 	.lcdsel_big = 0,
-@@ -387,6 +418,7 @@ static const struct rockchip_dp_chip_data rk3288_dp = {
- 
- static const struct of_device_id rockchip_dp_dt_ids[] = {
- 	{.compatible = "rockchip,rk3288-dp", .data = &rk3288_dp },
-+	{.compatible = "rockchip,rk3399-edp", .data = &rk3399_edp },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 06c0250..82b8135 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -20,6 +20,7 @@ enum analogix_dp_devtype {
- 
- enum analogix_dp_sub_devtype {
- 	RK3288_DP,
-+	RK3399_EDP,
- };
- 
- struct analogix_dp_plat_data {
+Here is some more backgroud why this is done in videobuf2-dc not in the
+respective generic bus code:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/305913.html
+
+Best regards,
+Marek Szyprowski
+
+changelog:
+v5:
+- got back to the v1-style version on Mauro request
+- added function to clear dma_parms and release allocated structure
+
+v4: http://www.spinics.net/lists/linux-media/msg100182.html
+- rebased onto media master tree
+- call vb2_dc_set_max_seg_size after allocating vb2 buf object
+
+v3: http://www.spinics.net/lists/linux-media/msg100125.html
+- added FIXME note about possible memory leak
+
+v2: http://www.spinics.net/lists/linux-media/msg100011.html
+- fixes typos and other language issues in the comments
+
+v1: http://article.gmane.org/gmane.linux.kernel.samsung-soc/53690
+
+Marek Szyprowski (2):
+  media: vb2-dma-contig: add helper for setting dma max seg size
+  media: set proper max seg size for devices on Exynos SoCs
+
+ drivers/media/platform/exynos-gsc/gsc-core.c   |  2 +
+ drivers/media/platform/exynos4-is/fimc-core.c  |  2 +
+ drivers/media/platform/exynos4-is/fimc-is.c    |  2 +
+ drivers/media/platform/exynos4-is/fimc-lite.c  |  2 +
+ drivers/media/platform/s5p-g2d/g2d.c           |  2 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c    |  2 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c       |  4 ++
+ drivers/media/platform/s5p-tv/mixer_video.c    |  2 +
+ drivers/media/v4l2-core/videobuf2-dma-contig.c | 53 ++++++++++++++++++++++++++
+ include/media/videobuf2-dma-contig.h           |  2 +
+ 10 files changed, 73 insertions(+)
+
 -- 
-1.9.1
+1.9.2
