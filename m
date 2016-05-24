@@ -1,66 +1,46 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain for Exynos5420
-Date: Tue, 24 May 2016 13:41:02 -0400
-Message-ID: <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 05/10] drm/rockchip: analogix_dp: add rk3399 eDP support
+Date: Tue, 24 May 2016 11:12:20 -0700
+Message-ID: <CAD=FV=WH6xYE6UiDxVK=cLnhoHnCvecSL4tk7FUVAnkGbQ-QOg@mail.gmail.com>
+References: <1464066147-22734-1-git-send-email-ykk@rock-chips.com>
+ <1464073043-4931-1-git-send-email-ykk@rock-chips.com>
+ <6183955.XzKjc41sjW@phil>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <6183955.XzKjc41sjW@phil>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Mark Yao <yzq@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
-has to be ungated during a power domain switch. Trying to do it when the
-clock is gated will fail and lead to an imprecise external abort error
-when the driver tries to access the MFC registers with the PD disabled.
-
-For example, if the s5p-mfc module is removed and the MFC PD turned off:
-
-[  186.835606] Power domain power-domain@10044060 disable failed
-[  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
-[  186.837670] Power domain power-domain@10044060 disable failed
-
-And when the module is inserted again:
-
-[ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
-[ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
-[ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-[ 2395.177441] pgd = ec3b4000
-[ 2395.177467] [00000000] *pgd=00000000
-[ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
-[ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
-[ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
-[ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
-[ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
-[ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
-
-This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
-clock for the MFC power domain, so the PD configuration works properly.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4c8523471c65..f3e9d873633e 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -313,8 +313,9 @@
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "clk0";
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
-+			 <&clock CLK_ACLK333>;
-+		clock-names = "oscclk", "clk0","asb0";
- 		#power-domain-cells = <0>;
- 	};
- 
--- 
-2.5.5
+SGksCgpPbiBUdWUsIE1heSAyNCwgMjAxNiBhdCAzOjE3IEFNLCBIZWlrbyBTdHVlYm5lciA8aGVp
+a29Ac250ZWNoLmRlPiB3cm90ZToKPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dAo+PiArKysgYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0Cj4+
+IEBAIC01LDYgKzUsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZvciBkcC1jb250cm9sbGVyOgo+
+PiAgICAgICAgICAgICAgIHBsYXRmb3JtIHNwZWNpZmljIHN1Y2ggYXM6Cj4+ICAgICAgICAgICAg
+ICAgICogInNhbXN1bmcsZXh5bm9zNS1kcCIKPj4gICAgICAgICAgICAgICAgKiAicm9ja2NoaXAs
+cmszMjg4LWRwIgo+PiArICAgICAgICAgICAgICAqICJyb2NrY2hpcCxyazMzOTktZWRwIgo+Cj4g
+dGhlIGNsZWFubGluZXMtZnJlYWsgaW4gbXkgbGlrZXMgdG8ga25vdyBpZiB0aGVyZSBpcyBhIGRp
+ZmZlcmVuY2UgYmV0d2Vlbgo+IHRoZSByazMzOTkgYmVpbmcgY2FsbGVkIC1lZHAgaGVyZSBhbmQg
+LWRwIG9uIHRoZSByazMyODggOi0pCj4KPiBbLi4uXQoKSWYgSSB3YXMgYSBndWVzc2luZyBtYW4g
+KHdoaWNoIEknbSBub3QsIGJ1dCBpZiBJIHdhcyksIEknZCBndWVzcyB0aGF0CnRoaXMgaXMgYmVj
+YXVzZSBvbiByazMyODggdGhlcmUgd2FzIG9ubHkgb25lIERQIHBvcnQgYW5kIGl0IHdhcyBhbiBF
+RFAKcG9ydC4gIC4uLmJ1dCBzaW5jZSB0aGVyZSB3YXMgb25seSBvbmUgcGVvcGxlIGp1c3QgcmVm
+ZXJyZWQgdG8gaXQgYXMKdGhlICJEUCIgcG9ydCBhbmQgdGhhdCB3YXMgY29kaWZpZWQgaW4gdGhl
+IGJpbmRpbmdzLiAgT24gcmszMzk5IHRoZXJlCmFyZSB0d28gcG9ydHM6IG9uZSBFRFAgYW5kIG9u
+ZSBEUC4gIEFsbCBvZiBhIHN1ZGRlbiB3ZSBuZWVkIHRvCmRpZmZlcmVudGlhdGUuCgpBbnkgYmV0
+dGVyIHN1Z2dlc3Rpb25zIGZvciBob3cgdG8gZGVhbCB3aXRoIHRoYXQ/CgoKLURvdWcKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
