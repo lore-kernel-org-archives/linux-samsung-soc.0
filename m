@@ -1,68 +1,64 @@
-From: Mark Brown <broonie@debian.org>
-Subject: Re: Endless "supply vcc not found, using dummy regulator"
-Date: Mon, 23 May 2016 19:56:05 +0100
-Message-ID: <20160523185605.GD8206@sirena.org.uk>
-References: <20160521144308.GA13960@sesse.net>
- <20160523134737.GA21683@sesse.net>
- <20160523144047.GA36908@sesse.net>
- <20160523162455.GW8206@sirena.org.uk>
- <20160523170617.GA8997@sesse.net>
- <20160523174643.GA33973@sesse.net>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="80KdhljSN0pKc7w4"
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v2 0/10] Add RK3399 eDP support and fix some bugs to analogix_dp driver.
+Date: Tue, 24 May 2016 13:01:26 +0800
+Message-ID: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60018 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752239AbcEWS4O (ORCPT
+Received: from lucky1.263xmail.com ([211.157.147.132]:46447 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751154AbcEXFBl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 May 2016 14:56:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20160523174643.GA33973@sesse.net>
+	Tue, 24 May 2016 01:01:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
-Cc: linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org
+To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Douglas Anderson <dianders@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Javier Martinez Canillas <javier@osg.samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>
 
 
---80KdhljSN0pKc7w4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-On Mon, May 23, 2016 at 07:46:43PM +0200, Steinar H. Gunderson wrote:
-> On Mon, May 23, 2016 at 07:06:17PM +0200, Steinar H. Gunderson wrote:
+This series have been posted about one month, still no comments, help here :(
 
-> > Then, there's the issue of why the messages come for each deferred probe
-> > attempt. It seems from your message this is about something in the
-> > declaration of the device tree; I don't understand the nuances here, but I
-> > suppose it's pretty easy?
+RK3399 and RK3288 shared the same eDP IP controller, only some light
+difference with VOP configure and GRF configure.
 
-> FWIW, from reading drivers/usb/phy/phy-generic.c, it looks like vcc-supply on
-> the USB phy is supposed to be optional.
+Also same misc fix to analogix_dp driver:
+- Hotplug invalid which report by Dan Carpenter
+- Make panel detect to an optional action
+- correct the register bit define error in ANALOGIX_DP_PLL_REG_1
 
-No, not unless the device can operate without power which seems
-improbable.  Optional supplies are for supplies which may be physically
-absent, not to shut up warnings from partially specified system
-descriptions.  If there is an optional supply with no configuration of
-the device to operate in a different mode without that supply it is most
-likely that the API is being abused.  The API is there to support users
-with things like optional external reference voltages that may be
-missing in some system designs, it's not there to support broken system
-integrations.
 
---80KdhljSN0pKc7w4
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v2:
+- new patch in v2
+- rebase with drm-next, fix some conflicts
+- new patch in v2
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Yakir Yang (10):
+  drm/bridge: analogix_dp: rename RK3288_DP to ROCKCHIP_DP
+  drm/rockchip: analogix_dp: split the lcdc select setting into device
+    data
+  drm/bridge: analogix_dp: correct the register bit define error in
+    ANALOGIX_DP_PLL_REG_1
+  drm/bridge: analogix_dp: some rockchip chips need to flip REF_CLK bit
+    setting
+  drm/rockchip: analogix_dp: add rk3399 eDP support
+  drm/rockchip: analogix_dp: make panel detect to an optional action
+  drm/bridge: analogix_dp: introduce connector mode_valid callback to
+    plat driver
+  drm/rockchip: analogix_dp: correct the connector display color format
+    and bpc
+  drm/rockchip: analogix_dp: update the comments about why need to
+    hardcode VOP output mode
+  drm/bridge: analogix_dp: fix no drm hpd event when panel plug in
 
-iQEcBAEBCAAGBQJXQ1JEAAoJECTWi3JdVIfQsWIH/j8NST4t/5HiYzcF88XHiLy+
-QqONMi/1QSjcLbK80eGOBp8zM//Dqdakd4ymM/0jAfZ4JLMfUoC1i8nrSoa7aVjP
-lDbJr/4dupf96R7vrp+xEoVgo42cMeTQjl6XQ7NGTbU0/eqDijFaqTFW7X7P4a/d
-K2OtUHRjLR2LNMrnDATYIZV+v4irRTzNQq9/lCaERNX43eagqxTjVx5d5C+3EXJC
-avEGUiA3I7vi5JFyK+Mtc1Mh1BA9PniPnEE18SMKJMnFUMvLkZXej5ZGMeXGJza0
-8xNJH+8IRUgesF3Dy8rrMls7PEq9iIF+7NvkWCwe1Fr5aT1ow67LQLwIZAqMqUo=
-=4Ijd
------END PGP SIGNATURE-----
+ .../bindings/display/bridge/analogix_dp.txt        |   1 +
+ .../display/rockchip/analogix_dp-rockchip.txt      |   2 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  19 ++-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   8 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  12 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   5 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 157 ++++++++++++++-------
+ include/drm/bridge/analogix_dp.h                   |  10 ++
+ 8 files changed, 152 insertions(+), 62 deletions(-)
 
---80KdhljSN0pKc7w4--
+-- 
+1.9.1
