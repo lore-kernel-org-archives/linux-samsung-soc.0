@@ -1,85 +1,59 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 1/2] drm/exynos: g2d: Add support for old S5Pv210 type
-Date: Wed, 25 May 2016 14:59:48 +0200
-Message-ID: <5745A1C4.6060405@math.uni-bielefeld.de>
-References: <1464096493-13378-1-git-send-email-k.kozlowski@samsung.com>
- <57445BE5.7060702@math.uni-bielefeld.de> <57445E16.90301@samsung.com>
- <57447BDA.2000004@math.uni-bielefeld.de> <574596E0.4090104@samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 0/2] ARM: dts: Fix imprecise external abort error when
+ accessing Exynos MFC
+Date: Wed, 25 May 2016 10:17:52 -0400
+Message-ID: <d90b6245-1ed4-32c6-c98d-cc5f12601205@osg.samsung.com>
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+ <6479e0c0-97fb-ca3b-1337-6ed11410d94f@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <574596E0.4090104@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kamil Debski <k.debski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6479e0c0-97fb-ca3b-1337-6ed11410d94f-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Dufresne <nicolas.dufresne-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGV5IEtyenlzenRvZiwKCgpLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+IE9uIDA1LzI0LzIw
-MTYgMDY6MDUgUE0sIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEhlbGxvIEtyenlzenRvZiwKPj4K
-Pj4KPj4gS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPj4+IE9uIDA1LzI0LzIwMTYgMDM6NDkg
-UE0sIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+Pj4gSGVsbG8gS3J6eXN6dG9mLAo+Pj4+Cj4+Pj4g
-YXJlIHlvdSBzdXJlIHRoYXQgdGhlc2UgYXJlIHRoZSBvbmx5IGRpZmZlcmVuY2VzLiBCZWNhdXNl
-IEFGQUlLIHRoZXJlCj4+Pj4gYXJlIHF1aXRlIGEgZmV3IG1vcmU6Cj4+Pj4gLSBETUEgc3VibWlz
-c2lvbiBvZiBjb21tYW5kcwo+Pj4+IC0gYmxlbmQgbW9kZSAvIHJvdW5kaW5nCj4+Pj4gLSBzb2xp
-ZCBmaWxsCj4+Pj4gLSBZQ3JDYiBzdXBwb3J0Cj4+Pj4gLSBhbmQgcHJvYmFibHkgbW9yZQo+Pj4+
-Cj4+Pj4gT25lIHdvdWxkIG5lZWQgdG8gYWRkIGxlYXN0IHNwbGl0IHRoZSBjb21tYW5kIGxpc3Qg
-cGFyc2VyIGludG8gYSB2MyBhbmQKPj4+PiB2NDEgdmVyc2lvbiB0byBhY2NvbW9kYXRlIGZvciB0
-aGUgZGlmZmVyZW5jZXMuIEluIGZhY3QgdXNlcnNwYWNlL2xpYmRybQo+Pj4+IHdvdWxkIG5lZWQg
-dG8ga25vdyB3aGljaCBodyB0eXBlIGl0IGN1cnJlbnRseSB1c2VzLCBidXQgeW91IGN1cnJlbnRs
-eQo+Pj4+IGFsd2F5cyByZXR1cm4gNC4xIGluIHRoZSBjb3JyZXNwb25kaW5nIGlvY3RsLgo+Pj4K
-Pj4+IEVoLCBzbyBwcm9iYWJseSBteSBwYXRjaCBkb2VzIG5vdCBjb3ZlciBmdWxseSB0aGUgc3Vw
-cG9ydCBmb3IgdjMgRzJELiBJCj4+PiBsb29rZWQgbW9zdGx5IGF0IHRoZSBkaWZmZXJlbmNlcyBi
-ZXR3ZWVuIHYzIGFuZCB2NCBpbiB0aGUgczVwLWcyZCBkcml2ZXIKPj4+IGl0c2VsZi4gSG93ZXZl
-ciB5b3UgYXJlIHJpZ2h0IHRoYXQgdGhpcyBtaWdodCBiZSBub3Qgc3VmZmljaWVudCBiZWNhdXNl
-Cj4+PiBleHlub3MtZzJkIG1vdmVkIGZvcndhcmQgYW5kIGlzIGRpZmZlcmVudCB0aGFuIHM1cC1n
-MmQuCj4+Pgo+Pj4+IEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6Cj4+Pj4+IFRoZSBub24tRFJN
-IHM1cC1nMmQgZHJpdmVyIHN1cHBvcnRzIHR3byB2ZXJzaW9ucyBvZiBHMkQ6IHYzLjAgb24KPj4+
-Pj4gUzVQdjIxMCBhbmQgdjQueCBvbiBFeHlub3MgNHgxMiAob3IgbmV3ZXIpLiBUaGUgZHJpdmVy
-IGZvciAzLjAgZGV2aWNlCj4+Pj4+IHZlcnNpb24gaXMgZG9pbmcgdHdvIHRoaW5ncyBkaWZmZXJl
-bnRseToKPj4+Pj4gMS4gQmVmb3JlIHN0YXJ0aW5nIHRoZSByZW5kZXIgcHJvY2VzcywgaXQgaW52
-YWxpZGF0ZXMgY2FjaGVzIChwYXR0ZXJuLAo+Pj4+PiAgICBzb3VyY2UgYnVmZmVyIGFuZCBtYXNr
-IGJ1ZmZlcikuIENhY2hlIGNvbnRyb2wgaXMgbm90IHByZXNlbnQgb24gdjQueAo+Pj4+PiAgICBk
-ZXZpY2UuCj4+Pj4+IDIuIFNjYWxsaW5nIGlzIGRvbmUgdGhyb3VnaCBTdHJldGNoRW4gY29tbWFu
-ZCAoaW4gQklUQkxUX0NPTU1BTkRfUkVHCj4+Pj4+ICAgIHJlZ2lzdGVyKSBpbnN0ZWFkIG9mIFNS
-Q19TQ0FMRV9DVFJMX1JFRyBhcyBpbiB2NC54LiBIb3dldmVyIHRoZQo+Pj4+PiAgICBleHlub3Nf
-ZHJtX2cyZCBkcml2ZXIgZG9lcyBub3QgaW1wbGVtZW50IHRoZSBzY2FsbGluZyBzbyB0aGlzCj4+
-Pj4+ICAgIGRpZmZlcmVuY2UgY2FuIGJlIGVsaW1pbmF0ZWQuCj4+Pj4gSHVoPyBXaGVyZSBkaWQg
-eW91IGdldCB0aGlzIGZyb20/IFNjYWxpbmcgd29ya3Mgd2l0aCB0aGUgRFJNIGRyaXZlci4KPj4+
-Cj4+PiBJIHdhcyBsb29raW5nIGZvciB0aGUgdXNhZ2Ugb2Ygc2NhbGluZyByZWcgKGFzIHRoZXJl
-IGlzIG5vIHNjYWxpbmcKPj4+IGNvbW1hbmQpLiBIb3cgdGhlIHNjYWxpbmcgaXMgaW1wbGVtZW50
-ZWQgdGhlbj8KPj4gTGlrZSB5b3Ugc2FpZCBhYm92ZSB0aGUgZHJpdmVycyB3b3JrIGNvbXBsZXRs
-eSBkaWZmZXJlbnQuIFRoZSBEUk0gb25lCj4+IHJlY2VpdmVzIGEgY29tbWFuZCBsaXN0IHRoYXQg
-aXMgY29uc3RydWN0ZWQgYnkgdXNlcnNwYWNlIChsaWJkcm0KPj4gbW9zdGx5KSwgY29waWVzIGl0
-IHRvIGEgY29udGlndW91cyBidWZmZXIgYW5kIHBhc3NlcyB0aGUgbWVtb3J5IGFkZHJlc3MKPj4g
-b2YgdGhhdCBidWZmZXIgdG8gdGhlIGVuZ2luZSB3aGljaCB0aGVuIHdvcmtzIG9uIGl0LiBPZiBj
-b3Vyc2UKPj4gZXZlcnl0aGluZyBpcyBzbGlnaHRseSBtb3JlIGNvbXBsZXguCj4+Cj4+IFlvdSBk
-b24ndCBzZWUgYW55IHJlZmVyZW5jZSB0byBzY2FsaW5nIGluIHRoZSBkcml2ZXIgYmVjYXVzZSB0
-aGUgc2NhbGluZwo+PiByZWdzIGRvbid0IG5lZWQgYW55IGtpbmQgb2Ygc3BlY2lmaWMgdmFsaWRh
-dGlvbi4KPj4KPj4gSWYgeW91IHdhbnQgdG8ga25vdyBob3cgdGhlIGNvbW1hbmQgbGlzdCBpcyBj
-b25zdHJ1Y3RlZCwgdGhlIGJlc3Qgd2F5IGlzCj4+IHRvIGxvb2sgaW50byBsaWJkcm0uIFRoZSBF
-eHlub3Mgc3BlY2lmaWMgdGVzdHMgYWN0dWFsbHkgY292ZXIgc2NhbGluZy4KPiAKPiBUaGFua3Mg
-Zm9yIGV4cGxhbmF0aW9ucy4gVGhlIHBhdGNoIGlzIGluc3VmZmljaWVudCB0aGVuIGFuZCBpdCBy
-ZXF1aXJlcwo+IG11Y2ggbW9yZSBlZmZvcnQuIFBsZWFzZSBkcm9wIHRoZSBzZXJpZXMgYXMgb2Yg
-bm93LgpJZiB5b3UgaW50ZW5kIHRvIGFkZCBzdXBwb3J0IGZvciB2MyBoYXJkd2FyZSB3ZSBtaWdo
-dCB3YW50IHRvIGpvaW4KZm9yY2VzLiBJIGhhdmUgYW4gKG9uZ29pbmcpIHJld3JpdGUgb2YgdGhl
-IGRyaXZlciB0byBlbmFibGUgYWRkaXRpb25hbApmdW5jdGlvbmFsaXR5IGFuZCB0byBtYWtlIGl0
-IG1vcmUgc3VpdGFibGUgdG8gcHJvdmlkZSBFWEEgZm9yIGEgWDExIEREWC4KSG93ZXZlciB0aGlz
-IGJyZWFrcyB0aGUgZXhpc3RpbmcgQVBJIGFuZCByZXdyaXRlcyBxdWl0ZSBhIGJpdCBvZiB0aGUg
-ZHJpdmVyCgpIZXJlJ3Mgd2hhdCdzIHRoZXJlIHNvIGZhci4KaHR0cHM6Ly9naXRodWIuY29tL3Rv
-Ymlhc2pha29iaS9saW51eC1vZHJvaWQtcHVibGljL2NvbXBhcmUvZTM1Y2E5YWNhMTIxNGM1ZTEw
-NGU2OTA2YzFkOWFmZmViODBmZTVkZi4uLjNkMWRkYjg2ZGI3M2IwZDY2NGYzZTMzOTcwOWU4ZThk
-YWNkYzhlOTEKCkFuZCBoZXJlJ3MgdGhlIEREWDoKaHR0cHM6Ly9naXRodWIuY29tL3RvYmlhc2ph
-a29iaS94Zjg2LXZpZGVvLWFybXNvYy9jb21taXRzL2cyZAoKCldpdGggYmVzdCB3aXNoZXMsClRv
-YmlhcwoKCgo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello Marek,
+
+On 05/25/2016 02:51 AM, Marek Szyprowski wrote:
+> Hello,
+> 
+> 
+> On 2016-05-24 19:41, Javier Martinez Canillas wrote:
+>> This series fixes an imprecise external abort error when accessing the
+>> Exynos MFC registers due the power domain configuration requiring the
+>> aclk333 clock to be enabled during a domain switch.
+>>
+>> There isn't a dependency between the clock and Linux Samsung SoC trees
+>> because the CLK_ACLK333 clock ID is already defined so the patches can
+>> be picked indepedently by the relevant subsystem maintainers.
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> I'm really curious what kind of async-bridge is there, but this patch
+> really fixes the problem with mfc power domain.
+>
+
+Yes, the Exynos manual is not that clear about what clocks have to remain
+enabled during a power domain switch for an IP block so maybe I got wrong.
+
+I see that the MFC block has an async-bridge in "Figure 15-1" at section 
+"15.2.1 NoC Probes in 5420 Bus". And I thought that since the IP block
+has an async-bridge, the clock needs to remain ungated when the PMU turn
+it on and off on a power domain switch.
+
+I chose that clock because "Figure 7-10 MFC Clock Diagram" at section
+"7.4.7 MFC Clock Diagram" shows that ACLK_333 is associated with the
+MFC internal buses, or at least that's my understanding.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
