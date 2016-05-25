@@ -1,49 +1,51 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead of
- NULL
-Date: Wed, 25 May 2016 21:34:28 +0900
-Message-ID: <57459BD4.1030201@samsung.com>
-References: <20160518103707.GA9436@mwanda>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH] drm/exynos: remove superfluous inclusions of fbdev header
+Date: Wed, 25 May 2016 14:35:41 +0200
+Message-ID: <1464179741-10341-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20160518103707.GA9436@mwanda>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016=EB=85=84 05=EC=9B=94 18=EC=9D=BC 19:37, Dan Carpenter wrote:
-> The platform_get_resource() function returns NULL on error, it never
-> returns error pointers.
->=20
-> Fixes: 0179a913875a ('PM / devfreq: event: Add new Exynos NoC probe d=
-river')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/ev=
-ent/exynos-nocp.c
-> index 6b6a5f3..03b35d5 100644
-> --- a/drivers/devfreq/event/exynos-nocp.c
-> +++ b/drivers/devfreq/event/exynos-nocp.c
-> @@ -220,8 +220,8 @@ static int exynos_nocp_parse_dt(struct platform_d=
-evice *pdev,
-> =20
->  	/* Maps the memory mapped IO to control nocp register */
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (IS_ERR(res))
-> -		return PTR_ERR(res);
-> +	if (!res)
-> +		return -ENXIO;
-> =20
->  	base =3D devm_ioremap_resource(dev, res);
->  	if (IS_ERR(base))
-
-Looks good to me.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
-
+TmVpdGhlciBvZiB0aGVzZSBmaWxlcyBpc3N1ZSBhbnkgZmJkZXYgcmVsYXRlZCBjYWxscy4KClNp
+Z25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
+PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyB8IDEgLQog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYyAgIHwgMSAtCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgfCAxIC0KIDMgZmlsZXMgY2hhbmdl
+ZCwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vczdfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2Rl
+Y29uLmMKaW5kZXggZGExYmQ4NC4uZDliMmQ3NyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zN19kcm1fZGVjb24uYwpAQCAtMzEsNyArMzEsNiBAQAogI2luY2x1ZGUgImV4eW5vc19k
+cm1fcGxhbmUuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgogI2luY2x1ZGUgImV4eW5v
+c19kcm1fZmIuaCIKLSNpbmNsdWRlICJleHlub3NfZHJtX2ZiZGV2LmgiCiAjaW5jbHVkZSAiZXh5
+bm9zX2RybV9pb21tdS5oIgogCiAvKgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+b3JlLmMKaW5kZXggMDExMjExZS4uZWRiZDk4ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fY29yZS5jCkBAIC0xNSw3ICsxNSw2IEBACiAjaW5jbHVkZSA8ZHJtL2RybVAuaD4K
+ICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0Yy5o
+IgotI2luY2x1ZGUgImV4eW5vc19kcm1fZmJkZXYuaCIKIAogc3RhdGljIExJU1RfSEVBRChleHlu
+b3NfZHJtX3N1YmRydl9saXN0KTsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+aW1kLmMKaW5kZXggZTIwYTE5NC4uYmMxNzVkNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltZC5jCkBAIC0zMCw3ICszMCw2IEBACiAKICNpbmNsdWRlICJleHlub3NfZHJt
+X2Rydi5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKLSNpbmNsdWRlICJleHlub3NfZHJt
+X2ZiZGV2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgiCiAjaW5jbHVkZSAiZXh5bm9z
+X2RybV9wbGFuZS5oIgogI2luY2x1ZGUgImV4eW5vc19kcm1faW9tbXUuaCIKLS0gCjIuNy4zCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
