@@ -1,68 +1,77 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead
- of NULL
-Date: Wed, 25 May 2016 17:11:33 +0200 (CEST)
-Message-ID: <alpine.DEB.2.10.1605251710500.3644@hadrien>
-References: <20160518103707.GA9436@mwanda> <57459BD4.1030201@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 2/7] media: s5p-mfc: use generic reserved memory
+ bindings
+Date: Wed, 25 May 2016 11:18:59 -0400
+Message-ID: <a14c4f45-64c9-f72d-532b-ad1ff53fa9eb@osg.samsung.com>
+References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
+ <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-158073515-1464189096=:3644"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <57459BD4.1030201@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:43700 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751853AbcEYPTK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 May 2016 11:19:10 -0400
+In-Reply-To: <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello Marek,
 
---8323329-158073515-1464189096=:3644
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
+> Use generic reserved memory bindings and mark old, custom properties
+> as obsoleted.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/media/s5p-mfc.txt          | 39 +++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> index 2d5787e..92c94f5 100644
+> --- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> @@ -21,15 +21,18 @@ Required properties:
+>    - clock-names : from common clock binding: must contain "mfc",
+>  		  corresponding to entry in the clocks property.
+>  
+> -  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> -		    for DMA contiguous memory allocation and its size.
+> -
+> -  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> -		    for DMA contiguous memory allocation and its size.
+> -
+>  Optional properties:
+>    - power-domains : power-domain property defined with a phandle
+>  			   to respective power domain.
+> +  - memory-region : from reserved memory binding: phandles to two reserved
+> +	memory regions, first is for "left" mfc memory bus interfaces,
+> +	second if for the "right" mfc memory bus, used when no SYSMMU
+> +	support is available
+> +
+> +Obsolete properties:
+> +  - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
+> +	property instead
+> +
+> 
 
+I wonder if we should maintain backward compatibility for this driver
+since s5p-mfc memory allocation won't work with an old FDT if support
+for the old properties are removed.
 
+Although I'm not a big fan of keeping backward compatibility just to
+add dead code that will never be used and I don't know of any Exynos
+machine where the DTB and kernel are not updated together so I agree
+with this patch:
 
-On Wed, 25 May 2016, Chanwoo Choi wrote:
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-> On 2016년 05월 18일 19:37, Dan Carpenter wrote:
-> > The platform_get_resource() function returns NULL on error, it never
-> > returns error pointers.
-> >
-> > Fixes: 0179a913875a ('PM / devfreq: event: Add new Exynos NoC probe driver')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-> > index 6b6a5f3..03b35d5 100644
-> > --- a/drivers/devfreq/event/exynos-nocp.c
-> > +++ b/drivers/devfreq/event/exynos-nocp.c
-> > @@ -220,8 +220,8 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
-> >
-> >  	/* Maps the memory mapped IO to control nocp register */
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (IS_ERR(res))
-> > -		return PTR_ERR(res);
-> > +	if (!res)
-> > +		return -ENXIO;
-> >
-> >  	base = devm_ioremap_resource(dev, res);
-> >  	if (IS_ERR(base))
->
-> Looks good to me.
-
-I believe that there is no need for the test at all.
-devm_ioremap_resource should make the test.
-
-julia
-
->
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-> Thanks,
-> Chanwoo Choi
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-158073515-1464189096=:3644--
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
