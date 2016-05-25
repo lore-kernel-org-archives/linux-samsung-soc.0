@@ -1,20 +1,20 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 2/7] media: s5p-mfc: use generic reserved memory
- bindings
-Date: Wed, 25 May 2016 11:18:59 -0400
-Message-ID: <a14c4f45-64c9-f72d-532b-ad1ff53fa9eb@osg.samsung.com>
+Subject: Re: [PATCH v4 3/7] media: s5p-mfc: replace custom reserved memory
+ handling code with generic one
+Date: Wed, 25 May 2016 11:42:34 -0400
+Message-ID: <458196c1-806c-4cd6-abf1-f01dd23bff2a@osg.samsung.com>
 References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+ <1464096690-23605-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:43700 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:43800 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751853AbcEYPTK (ORCPT
+	id S1753469AbcEYPmp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 11:19:10 -0400
-In-Reply-To: <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+	Wed, 25 May 2016 11:42:45 -0400
+In-Reply-To: <1464096690-23605-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
@@ -23,52 +23,31 @@ Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kam
 Hello Marek,
 
 On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
-> Use generic reserved memory bindings and mark old, custom properties
-> as obsoleted.
+> This patch removes custom code for initialization and handling of
+> reserved memory regions in s5p-mfc driver and replaces it with generic
+> reserved memory regions api.
+> 
+> s5p-mfc driver now handles two reserved memory regions defined by
+> generic reserved memory bindings. Support for non-dt platform has been
+> removed, because all supported platforms have been already converted to
+> device tree.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  .../devicetree/bindings/media/s5p-mfc.txt          | 39 +++++++++++++++++-----
->  1 file changed, 31 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> index 2d5787e..92c94f5 100644
-> --- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> @@ -21,15 +21,18 @@ Required properties:
->    - clock-names : from common clock binding: must contain "mfc",
->  		  corresponding to entry in the clocks property.
->  
-> -  - samsung,mfc-r : Base address of the first memory bank used by MFC
-> -		    for DMA contiguous memory allocation and its size.
-> -
-> -  - samsung,mfc-l : Base address of the second memory bank used by MFC
-> -		    for DMA contiguous memory allocation and its size.
-> -
->  Optional properties:
->    - power-domains : power-domain property defined with a phandle
->  			   to respective power domain.
-> +  - memory-region : from reserved memory binding: phandles to two reserved
-> +	memory regions, first is for "left" mfc memory bus interfaces,
-> +	second if for the "right" mfc memory bus, used when no SYSMMU
-> +	support is available
-> +
-> +Obsolete properties:
-> +  - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
-> +	property instead
-> +
-> 
 
-I wonder if we should maintain backward compatibility for this driver
-since s5p-mfc memory allocation won't work with an old FDT if support
-for the old properties are removed.
+Similar question than for patch #2, shouldn't we include the in-kernel DTS
+changes with this patch to keep bisectability? Otherwise the mfc-{l,r} mem
+allocation will fail after this patch.
 
-Although I'm not a big fan of keeping backward compatibility just to
-add dead code that will never be used and I don't know of any Exynos
-machine where the DTB and kernel are not updated together so I agree
-with this patch:
+The patch looks good to me though:
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+I couldn't test this exact patch because my Odroid XU4 died but I've tested
+the previous version and the only difference is that the memory reserve is
+made by index now instead of name, so I think you can add:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
