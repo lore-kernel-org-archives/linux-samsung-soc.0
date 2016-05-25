@@ -1,32 +1,40 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 2/7] media: s5p-mfc: use generic reserved memory
- bindings
-Date: Wed, 25 May 2016 12:39:03 -0500
-Message-ID: <20160525173903.GA9365@rob-hp-laptop>
-References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Subject: Re: [PATCH] Re: Endless "supply vcc not found, using dummy regulator"
+Date: Wed, 25 May 2016 19:52:36 +0200
+Message-ID: <20160525175236.GA5788@sesse.net>
+References: <20160521144308.GA13960@sesse.net>
+ <20160523134737.GA21683@sesse.net>
+ <20160523144047.GA36908@sesse.net>
+ <20160523162455.GW8206@sirena.org.uk>
+ <20160523170617.GA8997@sesse.net>
+ <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+ <20160524152638.GA20341@sesse.net>
+ <574478FE.4070800@samsung.com>
+ <20160524192424.GA11690@sesse.net>
+ <CANAwSgSS=LPUJ4HXQ_D4tsMYXP=1qG_f_jn-G9xwN6AOKy6QMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33425 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754825AbcEYRjF (ORCPT
+Received: from cassarossa.samfundet.no ([193.35.52.29]:57310 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932527AbcEYRwy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 13:39:05 -0400
+	Wed, 25 May 2016 13:52:54 -0400
 Content-Disposition: inline
-In-Reply-To: <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <CANAwSgSS=LPUJ4HXQ_D4tsMYXP=1qG_f_jn-G9xwN6AOKy6QMw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, balbi@kernel.org, linux-usb@vger.kernel.org
 
-On Tue, May 24, 2016 at 03:31:25PM +0200, Marek Szyprowski wrote:
-> Use generic reserved memory bindings and mark old, custom properties
-> as obsoleted.
+On Wed, May 25, 2016 at 05:46:51PM +0530, Anand Moon wrote:
+> Actually their are some missing patches to tune the usb3 phy.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../devicetree/bindings/media/s5p-mfc.txt          | 39 +++++++++++++++++-----
->  1 file changed, 31 insertions(+), 8 deletions(-)
+> https://lkml.org/lkml/2014/10/31/266
 
-Acked-by: Rob Herring <robh@kernel.org>
+This explains why the default networking speed refused to go above
+~300 Mbit/sec! What happened to the patches, I wonder?
+
+/* Steinar */
+-- 
+Homepage: https://www.sesse.net/
