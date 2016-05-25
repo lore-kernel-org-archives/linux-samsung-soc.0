@@ -1,67 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: ARM: dts: exynos: Add MFC memory banks for Peach boards
-Date: Wed, 25 May 2016 11:02:04 -0400
-Message-ID: <d045b880-4a44-acd8-f7f6-e521caf374aa@osg.samsung.com>
-References: <1461871311-18344-1-git-send-email-javier@osg.samsung.com>
- <57456344.7020708@samsung.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead
+ of NULL
+Date: Wed, 25 May 2016 17:11:33 +0200 (CEST)
+Message-ID: <alpine.DEB.2.10.1605251710500.3644@hadrien>
+References: <20160518103707.GA9436@mwanda> <57459BD4.1030201@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57456344.7020708@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-158073515-1464189096=:3644"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <57459BD4.1030201@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Pankaj,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 05/25/2016 04:33 AM, pankaj.dubey wrote:
-> Hi Javier,
-> 
-> On Friday 29 April 2016 12:51 AM, Javier Martinez Canillas wrote:
->> The MFC nodes with the memory regions reserved for memory allocations
->> are missing in the Exynos5420 Peach Pit and Exynos5800 Peach Pi DTS.
->>
->> This causes the s5p-mfc driver probe to fail with the following error:
->>
->> [    4.140647] s5p_mfc_alloc_memdevs:1072: Failed to declare coherent memory for MFC device
->> [    4.216163] s5p-mfc: probe of 11000000.codec failed with error -12
->>
->> Add the missing nodes so the driver probes and the {en,de}coder video
->> nodes are registered correctly:
->>
->> [    4.096277] s5p-mfc 11000000.codec: decoder registered as /dev/video4
->> [    4.102282] s5p-mfc 11000000.codec: encoder registered as /dev/video5
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> Just noticed that, current krzk/for-next failed to boot on Exynos5880
-> based Chromebook device. Git bisect is showing culprit as this patch.
+--8323329-158073515-1464189096=:3644
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Strange, krzk/for-next boots correctly on my Exynos5800 Peach Pi:
 
-$ git log --pretty=oneline --abbrev-commit HEAD
-35e691cf5165 Merge branch 'fixes-v4.7' into for-next
 
-$ uname -r
-4.6.0-00073-g35e691cf5165
+On Wed, 25 May 2016, Chanwoo Choi wrote:
 
-> When I reverted this patch, its able to boot normally.
-> Is there any missing patches that we need to take on krzk/for-next to
-> boot on Chromebook.
+> On 2016년 05월 18일 19:37, Dan Carpenter wrote:
+> > The platform_get_resource() function returns NULL on error, it never
+> > returns error pointers.
+> >
+> > Fixes: 0179a913875a ('PM / devfreq: event: Add new Exynos NoC probe driver')
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> > diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> > index 6b6a5f3..03b35d5 100644
+> > --- a/drivers/devfreq/event/exynos-nocp.c
+> > +++ b/drivers/devfreq/event/exynos-nocp.c
+> > @@ -220,8 +220,8 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
+> >
+> >  	/* Maps the memory mapped IO to control nocp register */
+> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -	if (IS_ERR(res))
+> > -		return PTR_ERR(res);
+> > +	if (!res)
+> > +		return -ENXIO;
+> >
+> >  	base = devm_ioremap_resource(dev, res);
+> >  	if (IS_ERR(base))
 >
+> Looks good to me.
 
-No that I'm aware of. I wonder why it boots for me but fails for
-you. Can you please share your complete boot log to see if there
-are any hints there?
- 
+I believe that there is no need for the test at all.
+devm_ioremap_resource should make the test.
+
+julia
+
+>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>
 > Thanks,
-> Pankaj Dubey
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> Chanwoo Choi
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+--8323329-158073515-1464189096=:3644--
