@@ -1,21 +1,20 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 3/7] media: s5p-mfc: replace custom reserved memory
- handling code with generic one
-Date: Wed, 25 May 2016 12:51:20 -0400
-Message-ID: <b5ac3ad0-d262-bbb7-d902-a17a4ce3a37f@osg.samsung.com>
+Subject: Re: [PATCH v4 6/7] ARM: dts: exynos: convert MFC device to generic
+ reserved memory bindings
+Date: Wed, 25 May 2016 13:11:39 -0400
+Message-ID: <0158bb7a-02cf-bbb3-f903-d99c7351dfc4@osg.samsung.com>
 References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-4-git-send-email-m.szyprowski@samsung.com>
- <458196c1-806c-4cd6-abf1-f01dd23bff2a@osg.samsung.com>
+ <1464096690-23605-7-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:44086 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:44171 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754989AbcEYQve (ORCPT
+	id S1751840AbcEYRLw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 12:51:34 -0400
-In-Reply-To: <458196c1-806c-4cd6-abf1-f01dd23bff2a@osg.samsung.com>
+	Wed, 25 May 2016 13:11:52 -0400
+In-Reply-To: <1464096690-23605-7-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
@@ -23,19 +22,70 @@ Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kam
 
 Hello Marek,
 
-On 05/25/2016 11:42 AM, Javier Martinez Canillas wrote:
+On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
+> This patch replaces custom properties for defining reserved memory
+> regions with generic reserved memory bindings for MFC video codec
+> device.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
 [snip]
 
-> 
-> I couldn't test this exact patch because my Odroid XU4 died but I've tested
-> the previous version and the only difference is that the memory reserve is
-> made by index now instead of name, so I think you can add:
-> 
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+> +
+> +/ {
+> +	reserved-memory {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		mfc_left: region@51000000 {
+> +			compatible = "shared-dma-pool";
+> +			no-map;
+> +			reg = <0x51000000 0x800000>;
+> +		};
+> +
+> +		mfc_right: region@43000000 {
+> +			compatible = "shared-dma-pool";
+> +			no-map;
+> +			reg = <0x43000000 0x800000>;
+> +		};
+> +	};
 
-And now I also could test v4 of this patch on an Exynos5800 Peach Chromebook.
+I've a question probably for a follow up patch, but do you know what's a
+sane default size for these? I needed to bump the mfc_left size from 8 MiB
+to 16 MiB in order to decode a 480p H264 video using GStramer. So clearly
+the default sizes are not that useful.
+
+> +};
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index ad7394c..f5e4eb2 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -18,6 +18,7 @@
+>  #include "exynos4210.dtsi"
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+> +#include "exynos-mfc-reserved-memory.dtsi"
+>  
+>  / {
+>  	model = "Insignal Origen evaluation board based on Exynos4210";
+> @@ -288,8 +289,7 @@
+>  };
+>  
+>  &mfc {
+> -	samsung,mfc-r = <0x43000000 0x800000>;
+> -	samsung,mfc-l = <0x51000000 0x800000>;
+> +	memory-region = <&mfc_left>, <&mfc_right>;
+>  	status = "okay";
+
+I wonder if shouldn't be better to include the exynos-mfc-reserved-memory.dtsi
+on each SoC dtsi and set the memory-regions in the MFC node instead of doing
+it on each DTS, and let DTS to just replace with its own memory regions if the
+default sizes are not suitable for them.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
