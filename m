@@ -1,109 +1,93 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] dwc3-exynos: Fix deferred probing storm.
-Date: Wed, 25 May 2016 09:54:36 +0200
-Message-ID: <57455A3C.4010707@samsung.com>
-References: <20160524192424.GA11690@sesse.net>
- <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v6 0/2] Introducing Exynos ChipId driver
+Date: Wed, 25 May 2016 13:28:22 +0530
+Message-ID: <1464163104-8163-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:16825 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750969AbcEYHyk (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43848 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751025AbcEYH4a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 03:54:40 -0400
-In-reply-to: <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
+	Wed, 25 May 2016 03:56:30 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Steinar H. Gunderson" <sesse@google.com>
-Cc: broonie@debian.org, linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org, balbi@kernel.org, linux-usb@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de, k.kozlowski@samsung.com, thomas.ab@samsung.com, kgene@kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 05/24/2016 08:13 PM, Steinar H. Gunderson wrote:
-> dwc3-exynos has two problems during init if the regulators are slow
-> to come up (for instance if the I2C bus driver is not on the initramfs)
-> and return probe deferral. First, every time this happens, the driver
-> leaks the USB phys created; they need to be deallocated on error.
-> 
-> Second, since the phy devices are created before the regulators fail,
-> this means that there's a new device to re-trigger deferred probing,
-> which causes it to essentially go into a busy loop of re-probing the
-> device until the regulators come up.
-> 
-> Move the phy creation to after the regulators have succeeded, and also
-> fix cleanup on failure. On my ODROID XU4 system (with Debian's initramfs
-> which doesn't contain the I2C driver), this reduces the number of probe
-> attempts (for each of the two controllers) from more than 2000 to eight.
-> 
-> Reported-by: Steinar H. Gunderson <sgunderson@bigfoot.com>
-> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
+Once again I am respinning this quite old patch series to introduce 
+Exynos Chipid driver.
 
-This is the same person so no need for "Reported-by". The reported-by is
-used if someone else submits patch after your bug report.
+This patch series introduces Exynos Chipid platform driver.
+Each Exynos SoC has ChipID block which can give information about SoC's
+product Id and revision number.
+At the same time it reduces dependency of mach-exynos files from plat-samsung,
+by removing samsung_rev API, similar API is introduced in chipid driver itself
+to get revision number and product id. 
 
-Please (when resubmitting or applying) add following tags:
+I have tested this patch series on Exynos5880 based Chromebook for
+normal system boot and S2R.
 
-Fixes: d720f057fda4 ("usb: dwc3: exynos: add nop transceiver support")
-Cc: <stable@vger.kernel.org>
+Revisiion 5 and it's discussion can be found here
+ - http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310046.html
+Revision 4 and it's discussion can be found here
+ - https://lkml.org/lkml/2014/12/3/115
 
-This will help downstream (like Debian) using stable kernels.
+Change since v5:
+ - Addressed Rob's review comments.
+ - Rebased on latest krzk/for-next branch and retested.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Changes since v4:
+ - Removed custom sysfs entries as they were not providing any new information
+   as pointed out by Arnd.
+ - Removed functions exporting product_id and revision, instead we will export
+   exynos_chipid_info structure. It will be helpfull when we need to provide more
+   fields of chipid outside of chipid, as commented by Yadwinder
+ - Converted all funcions as __init. 
 
-Best regards,
-Krzysztof
+Change since v3: 
+ - This patch set contains 5/6 and 6/6 patch from v3 series.
+ - Made EXYNOS_CHIPID config option non-user selectable,
+   as suggested by Tomasz Figa.
+ - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
+   suggested by Tomasz Figa.
+ - Made local variables static in chipid driver.
+ - Added existing SoC's product id's.
+ - Added platform driver support.
 
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index dd5cb55..2f1fb7e 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -128,12 +128,6 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, exynos);
->  
-> -	ret = dwc3_exynos_register_phys(exynos);
-> -	if (ret) {
-> -		dev_err(dev, "couldn't register PHYs\n");
-> -		return ret;
-> -	}
-> -
->  	exynos->dev	= dev;
->  
->  	exynos->clk = devm_clk_get(dev, "usbdrd30");
-> @@ -183,20 +177,29 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  		goto err3;
->  	}
->  
-> +	ret = dwc3_exynos_register_phys(exynos);
-> +	if (ret) {
-> +		dev_err(dev, "couldn't register PHYs\n");
-> +		goto err4;
-> +	}
-> +
->  	if (node) {
->  		ret = of_platform_populate(node, NULL, NULL, dev);
->  		if (ret) {
->  			dev_err(dev, "failed to add dwc3 core\n");
-> -			goto err4;
-> +			goto err5;
->  		}
->  	} else {
->  		dev_err(dev, "no device node, failed to add dwc3 core\n");
->  		ret = -ENODEV;
-> -		goto err4;
-> +		goto err5;
->  	}
->  
->  	return 0;
->  
-> +err5:
-> +	platform_device_unregister(exynos->usb2_phy);
-> +	platform_device_unregister(exynos->usb3_phy);
->  err4:
->  	regulator_disable(exynos->vdd10);
->  err3:
-> 
+Changes since v2:
+ - Reorganized patches as suggested by Tomasz Figa.
+ - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+
+Changes since v1:
+ - Added patch to move i2c interrupt re-configuration code from exynos.c
+   to i2c driver, as suggested by Arnd.
+ - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+   save/restore of this register also into i2c driver.
+ - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+ - Changed location of chipid driver to "drivers/soc".
+ - Added drivers/base/soc.c provided infrastructure to make SoC specific 
+   information avaible to user space via sysfs entry, as suggested by Arnd.
+
+Pankaj Dubey (2):
+  soc: samsung: add exynos chipid driver support
+  ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
+
+ arch/arm/mach-exynos/Kconfig                 |   1 +
+ arch/arm/mach-exynos/common.h                |  53 ++++-----
+ arch/arm/mach-exynos/exynos.c                |  49 ++------
+ arch/arm/mach-exynos/include/mach/map.h      |   2 -
+ arch/arm/mach-exynos/platsmp.c               |   2 +-
+ arch/arm/mach-exynos/pm.c                    |   8 +-
+ arch/arm/plat-samsung/cpu.c                  |  14 ---
+ arch/arm/plat-samsung/include/plat/cpu.h     |   2 -
+ arch/arm/plat-samsung/include/plat/map-s5p.h |   1 -
+ drivers/soc/samsung/Kconfig                  |   5 +
+ drivers/soc/samsung/Makefile                 |   1 +
+ drivers/soc/samsung/exynos-chipid.c          | 172 +++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-soc.h       |  51 ++++++++
+ 13 files changed, 266 insertions(+), 95 deletions(-)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+ create mode 100644 include/linux/soc/samsung/exynos-soc.h
+
+-- 
+2.4.5
