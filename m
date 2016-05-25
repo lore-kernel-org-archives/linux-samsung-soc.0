@@ -1,80 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: g2d: Add support for old S5Pv210 type
-Date: Wed, 25 May 2016 14:13:20 +0200
-Message-ID: <574596E0.4090104@samsung.com>
-References: <1464096493-13378-1-git-send-email-k.kozlowski@samsung.com>
- <57445BE5.7060702@math.uni-bielefeld.de> <57445E16.90301@samsung.com>
- <57447BDA.2000004@math.uni-bielefeld.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] Re: Endless "supply vcc not found, using dummy regulator"
+Date: Wed, 25 May 2016 17:46:51 +0530
+Message-ID: <CANAwSgSS=LPUJ4HXQ_D4tsMYXP=1qG_f_jn-G9xwN6AOKy6QMw@mail.gmail.com>
+References: <20160521144308.GA13960@sesse.net> <20160523134737.GA21683@sesse.net>
+ <20160523144047.GA36908@sesse.net> <20160523162455.GW8206@sirena.org.uk>
+ <20160523170617.GA8997@sesse.net> <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+ <20160524152638.GA20341@sesse.net> <574478FE.4070800@samsung.com> <20160524192424.GA11690@sesse.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59893 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754084AbcEYMN2 (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34636 "EHLO
+	mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753207AbcEYMRL convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 08:13:28 -0400
-In-reply-to: <57447BDA.2000004@math.uni-bielefeld.de>
+	Wed, 25 May 2016 08:17:11 -0400
+In-Reply-To: <20160524192424.GA11690@sesse.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kamil Debski <k.debski@samsung.com>
+To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, balbi@kernel.org, linux-usb@vger.kernel.org
 
-On 05/24/2016 06:05 PM, Tobias Jakobi wrote:
-> Hello Krzysztof,
-> 
-> 
-> Krzysztof Kozlowski wrote:
->> On 05/24/2016 03:49 PM, Tobias Jakobi wrote:
->>> Hello Krzysztof,
->>>
->>> are you sure that these are the only differences. Because AFAIK there
->>> are quite a few more:
->>> - DMA submission of commands
->>> - blend mode / rounding
->>> - solid fill
->>> - YCrCb support
->>> - and probably more
->>>
->>> One would need to add least split the command list parser into a v3 and
->>> v41 version to accomodate for the differences. In fact userspace/libdrm
->>> would need to know which hw type it currently uses, but you currently
->>> always return 4.1 in the corresponding ioctl.
->>
->> Eh, so probably my patch does not cover fully the support for v3 G2D. I
->> looked mostly at the differences between v3 and v4 in the s5p-g2d driver
->> itself. However you are right that this might be not sufficient because
->> exynos-g2d moved forward and is different than s5p-g2d.
->>
->>> Krzysztof Kozlowski wrote:
->>>> The non-DRM s5p-g2d driver supports two versions of G2D: v3.0 on
->>>> S5Pv210 and v4.x on Exynos 4x12 (or newer). The driver for 3.0 device
->>>> version is doing two things differently:
->>>> 1. Before starting the render process, it invalidates caches (pattern,
->>>>    source buffer and mask buffer). Cache control is not present on v4.x
->>>>    device.
->>>> 2. Scalling is done through StretchEn command (in BITBLT_COMMAND_REG
->>>>    register) instead of SRC_SCALE_CTRL_REG as in v4.x. However the
->>>>    exynos_drm_g2d driver does not implement the scalling so this
->>>>    difference can be eliminated.
->>> Huh? Where did you get this from? Scaling works with the DRM driver.
->>
->> I was looking for the usage of scaling reg (as there is no scaling
->> command). How the scaling is implemented then?
-> Like you said above the drivers work completly different. The DRM one
-> receives a command list that is constructed by userspace (libdrm
-> mostly), copies it to a contiguous buffer and passes the memory address
-> of that buffer to the engine which then works on it. Of course
-> everything is slightly more complex.
-> 
-> You don't see any reference to scaling in the driver because the scaling
-> regs don't need any kind of specific validation.
-> 
-> If you want to know how the command list is constructed, the best way is
-> to look into libdrm. The Exynos specific tests actually cover scaling.
+Hi Steinar,
 
-Thanks for explanations. The patch is insufficient then and it requires
-much more effort. Please drop the series as of now.
+On 25 May 2016 at 00:54, Steinar H. Gunderson <sgunderson@bigfoot.com> =
+wrote:
+> On Tue, May 24, 2016 at 05:53:34PM +0200, Krzysztof Kozlowski wrote:
+>>         exynos->clk =3D devm_clk_get(dev, "usbdrd30");
+>>         if (IS_ERR(exynos->clk)) {
+>> +             // On each error path since here we need to
+>> +             // revert work done by dwc3_exynos_register_phys()
+>>                 dev_err(dev, "couldn't get clock\n");
+>>                 return -EINVAL;
+>>         }
+>>         clk_prepare_enable(exynos->clk);
+>
+> OK, so I took Mark's advice and moved the phy instantiation towards t=
+he end
+> of the function (after the regulators have successfully come up). It =
+reduced
+> the number of probes, even with the original initramfs, dramatically,=
+ so
+> it seems to work quite well. It also reduces the text for each deferr=
+ed probe
+> by a lot, since we no longer have the dummy regulator message for eac=
+h one
+> (only the message about =E2=80=9Cno suspend clk specified=E2=80=9D is=
+ left). Finally, this
+> arrangement reduced the need for extra error handling to a minimum.
+>
+> Cc-ing Felipe and and linux-usb@, and adding the patch as a reply to =
+this
+> message.
+>
+> /* Steinar */
+> --
+> Homepage: https://www.sesse.net/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Best regards,
-Krzysztof
+Actually their are some missing patches to tune the usb3 phy.
+
+https://lkml.org/lkml/2014/10/31/266
+
+Best Regards
+-Anand Moon
