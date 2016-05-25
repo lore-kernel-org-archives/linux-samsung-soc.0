@@ -1,46 +1,33 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 1/2] soc: samsung: add exynos chipid driver support
-Date: Wed, 25 May 2016 10:49:53 +0200
-Message-ID: <15114439.HIyt1ChUT2@wuerfel>
-References: <1464163104-8163-1-git-send-email-pankaj.dubey@samsung.com> <1464163104-8163-2-git-send-email-pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] clk: samsung: exynos5433: add CPU clocks configuration
+ data and instantiate CPU clocks
+Date: Wed, 25 May 2016 11:34:20 +0200
+Message-ID: <5745719C.4000106@samsung.com>
+References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
+ <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464163104-8163-2-git-send-email-pankaj.dubey@samsung.com>
+In-reply-to: <1464095957-25851-4-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, thomas.ab@samsung.com, kgene@kernel.org, Grant Likely <grant.likely@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, May 25, 2016 1:28:23 PM CEST Pankaj Dubey wrote:
-> Exynos SoCs have Chipid, for identification of product IDs
-> and SoC revisions. This patch intends to provide initialization
-> code for all these functionalities, at the same time it provides some
-> sysfs entries for accessing these information to user-space.
+On 05/24/2016 03:19 PM, Bartlomiej Zolnierkiewicz wrote:
+> Add the CPU clocks configuration data and instantiate the CPU clocks
+> type for Exynos5433.
 > 
-> This driver uses existing binding for exynos-chipid.
-> 
-> CC: Grant Likely <grant.likely@linaro.org>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  drivers/soc/samsung/Kconfig            |   5 +
->  drivers/soc/samsung/Makefile           |   1 +
->  drivers/soc/samsung/exynos-chipid.c    | 172 +++++++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-soc.h |  51 ++++++++++
+>  drivers/clk/samsung/clk-exynos5433.c | 72 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 64 insertions(+), 8 deletions(-)
 > 
 
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-I don't like how this exposes the internals of the samsung SoC in a global header
-file, after we spent a considerable amount of work on keeping it confined
-to arch/arm/{mach-exynos,mach-s3c64xx,plat-samsung}.
-
-Please remove the external interface of the driver, in particular the global
-data structure. We keep coming back to this for a lot of platforms, and
-I still think we should have an architecture-independent way of matching
-platforms to struct soc_device, using an exported function from drivers/base/soc.c
-that uses glob_match() to compare a platform string against the running system.
-
-	Arnd
+Best regards,
+Krzysztof
