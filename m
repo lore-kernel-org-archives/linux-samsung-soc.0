@@ -1,93 +1,109 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain
- for Exynos5420
-Date: Wed, 25 May 2016 09:48:47 +0200
-Message-ID: <574558DF.1090000@samsung.com>
-References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
- <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] dwc3-exynos: Fix deferred probing storm.
+Date: Wed, 25 May 2016 09:54:36 +0200
+Message-ID: <57455A3C.4010707@samsung.com>
+References: <20160524192424.GA11690@sesse.net>
+ <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:16469 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:16825 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751015AbcEYHsw (ORCPT
+	with ESMTP id S1750969AbcEYHyk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2016 03:48:52 -0400
-In-reply-to: <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
+	Wed, 25 May 2016 03:54:40 -0400
+In-reply-to: <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: broonie@debian.org, linux-samsung-soc@vger.kernel.org, 823552@bugs.debian.org, balbi@kernel.org, linux-usb@vger.kernel.org
 
-On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
-> The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
-> has to be ungated during a power domain switch. Trying to do it when the
-> clock is gated will fail and lead to an imprecise external abort error
-> when the driver tries to access the MFC registers with the PD disabled.
+On 05/24/2016 08:13 PM, Steinar H. Gunderson wrote:
+> dwc3-exynos has two problems during init if the regulators are slow
+> to come up (for instance if the I2C bus driver is not on the initramfs)
+> and return probe deferral. First, every time this happens, the driver
+> leaks the USB phys created; they need to be deallocated on error.
 > 
-> For example, if the s5p-mfc module is removed and the MFC PD turned off:
+> Second, since the phy devices are created before the regulators fail,
+> this means that there's a new device to re-trigger deferred probing,
+> which causes it to essentially go into a busy loop of re-probing the
+> device until the regulators come up.
 > 
-> [  186.835606] Power domain power-domain@10044060 disable failed
-> [  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
-> [  186.837670] Power domain power-domain@10044060 disable failed
+> Move the phy creation to after the regulators have succeeded, and also
+> fix cleanup on failure. On my ODROID XU4 system (with Debian's initramfs
+> which doesn't contain the I2C driver), this reduces the number of probe
+> attempts (for each of the two controllers) from more than 2000 to eight.
 > 
-> And when the module is inserted again:
-> 
-> [ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
-> [ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
-> [ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> [ 2395.177441] pgd = ec3b4000
-> [ 2395.177467] [00000000] *pgd=00000000
-> [ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
-> [ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
-> [ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
-> [ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
-> [ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
-> [ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
-> 
-> This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
-> clock for the MFC power domain, so the PD configuration works properly.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
->  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Reported-by: Steinar H. Gunderson <sgunderson@bigfoot.com>
+> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
 
-Indeed patch #1 is not a hard dependency here because there are no other
-asb clocks. It is entirely obvious but works fine.
+This is the same person so no need for "Reported-by". The reported-by is
+used if someone else submits patch after your bug report.
+
+Please (when resubmitting or applying) add following tags:
+
+Fixes: d720f057fda4 ("usb: dwc3: exynos: add nop transceiver support")
+Cc: <stable@vger.kernel.org>
+
+This will help downstream (like Debian) using stable kernels.
 
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Unless all other patches are meant to current fixes cycle (and/or
-cc-stable), I do not plan to apply it now. I'll take it for v4.8, because:
-1. Your previous patches are needed. Without them bind/unbind won't work.
-2. This is not reproducible in a regular driver operation.
-3. It needs clock change to actually be useful.
-
-Is it okay?
 
 Best regards,
 Krzysztof
 
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 4c8523471c65..f3e9d873633e 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -313,8 +313,9 @@
->  	mfc_pd: power-domain@10044060 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10044060 0x20>;
-> -		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
-> -		clock-names = "oscclk", "clk0";
-> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
-> +			 <&clock CLK_ACLK333>;
-> +		clock-names = "oscclk", "clk0","asb0";
->  		#power-domain-cells = <0>;
->  	};
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index dd5cb55..2f1fb7e 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -128,12 +128,6 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
 >  
+>  	platform_set_drvdata(pdev, exynos);
+>  
+> -	ret = dwc3_exynos_register_phys(exynos);
+> -	if (ret) {
+> -		dev_err(dev, "couldn't register PHYs\n");
+> -		return ret;
+> -	}
+> -
+>  	exynos->dev	= dev;
+>  
+>  	exynos->clk = devm_clk_get(dev, "usbdrd30");
+> @@ -183,20 +177,29 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  		goto err3;
+>  	}
+>  
+> +	ret = dwc3_exynos_register_phys(exynos);
+> +	if (ret) {
+> +		dev_err(dev, "couldn't register PHYs\n");
+> +		goto err4;
+> +	}
+> +
+>  	if (node) {
+>  		ret = of_platform_populate(node, NULL, NULL, dev);
+>  		if (ret) {
+>  			dev_err(dev, "failed to add dwc3 core\n");
+> -			goto err4;
+> +			goto err5;
+>  		}
+>  	} else {
+>  		dev_err(dev, "no device node, failed to add dwc3 core\n");
+>  		ret = -ENODEV;
+> -		goto err4;
+> +		goto err5;
+>  	}
+>  
+>  	return 0;
+>  
+> +err5:
+> +	platform_device_unregister(exynos->usb2_phy);
+> +	platform_device_unregister(exynos->usb3_phy);
+>  err4:
+>  	regulator_disable(exynos->vdd10);
+>  err3:
 > 
