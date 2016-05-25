@@ -1,38 +1,49 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH] drm/exynos: use logical AND in exynos_drm_plane_check_size()
-Date: Wed, 25 May 2016 14:30:07 +0200
-Message-ID: <1464179407-9004-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead of
+ NULL
+Date: Wed, 25 May 2016 21:34:28 +0900
+Message-ID: <57459BD4.1030201@samsung.com>
+References: <20160518103707.GA9436@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20160518103707.GA9436@mwanda>
+Sender: linux-pm-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIGN1cnJlbnQgYml0d2lzZSBBTkQgc2hvdWxkIHJlc3VsdCBpbiB0aGUgc2FtZSBhc3NlbWJs
-ZXIKYnV0IHRoaXMgaXMgd2hhdCB0aGUgY29kZSBpcyBhY3R1YWxseSBzdXBwb3NlZCB0byBkby4K
-ClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxk
-LmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgMiAr
-LQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBiM2YzYzJjLi5lNGExYTYz
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMjI2LDcg
-KzIyNiw3IEBAIGV4eW5vc19kcm1fcGxhbmVfY2hlY2tfc2l6ZShjb25zdCBzdHJ1Y3QgZXh5bm9z
-X2RybV9wbGFuZV9jb25maWcgKmNvbmZpZywKIAkgICAgc3RhdGUtPnZfcmF0aW8gPT0gKDEgPDwg
-MTUpKQogCQloZWlnaHRfb2sgPSB0cnVlOwogCi0JaWYgKHdpZHRoX29rICYgaGVpZ2h0X29rKQor
-CWlmICh3aWR0aF9vayAmJiBoZWlnaHRfb2spCiAJCXJldHVybiAwOwogCiAJRFJNX0RFQlVHX0tN
-Uygic2NhbGluZyBtb2RlIGlzIG5vdCBzdXBwb3J0ZWQiKTsKLS0gCjIuNy4zCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 2016=EB=85=84 05=EC=9B=94 18=EC=9D=BC 19:37, Dan Carpenter wrote:
+> The platform_get_resource() function returns NULL on error, it never
+> returns error pointers.
+>=20
+> Fixes: 0179a913875a ('PM / devfreq: event: Add new Exynos NoC probe d=
+river')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/ev=
+ent/exynos-nocp.c
+> index 6b6a5f3..03b35d5 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -220,8 +220,8 @@ static int exynos_nocp_parse_dt(struct platform_d=
+evice *pdev,
+> =20
+>  	/* Maps the memory mapped IO to control nocp register */
+>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (IS_ERR(res))
+> -		return PTR_ERR(res);
+> +	if (!res)
+> +		return -ENXIO;
+> =20
+>  	base =3D devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(base))
+
+Looks good to me.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Thanks,
+Chanwoo Choi
+
