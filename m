@@ -1,291 +1,101 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v6 1/2] soc: samsung: add exynos chipid driver support
-Date: Wed, 25 May 2016 13:28:23 +0530
-Message-ID: <1464163104-8163-2-git-send-email-pankaj.dubey@samsung.com>
-References: <1464163104-8163-1-git-send-email-pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Add async-bridge clock to MFC power domain
+ for Exynos5420
+Date: Wed, 25 May 2016 10:01:52 +0200
+Message-ID: <57455BF0.8080609@samsung.com>
+References: <1464111662-15336-1-git-send-email-javier@osg.samsung.com>
+ <1464111662-15336-3-git-send-email-javier@osg.samsung.com>
+ <574558DF.1090000@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1464163104-8163-1-git-send-email-pankaj.dubey@samsung.com>
+In-reply-to: <574558DF.1090000@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: arnd@arndb.de, k.kozlowski@samsung.com, thomas.ab@samsung.com, kgene@kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org, Nicolas Dufresne <nicolas.dufresne@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos SoCs have Chipid, for identification of product IDs
-and SoC revisions. This patch intends to provide initialization
-code for all these functionalities, at the same time it provides some
-sysfs entries for accessing these information to user-space.
+On 05/25/2016 09:48 AM, Krzysztof Kozlowski wrote:
+> On 05/24/2016 07:41 PM, Javier Martinez Canillas wrote:
+>> The MFC IP is also inter-connected by an Async-Bridge so the CLK_ACLK333
+>> has to be ungated during a power domain switch. Trying to do it when the
+>> clock is gated will fail and lead to an imprecise external abort error
+>> when the driver tries to access the MFC registers with the PD disabled.
+>>
+>> For example, if the s5p-mfc module is removed and the MFC PD turned off:
+>>
+>> [  186.835606] Power domain power-domain@10044060 disable failed
+>> [  186.835671] s5p-mfc 11000000.codec: Removing 11000000.codec
+>> [  186.837670] Power domain power-domain@10044060 disable failed
+>>
+>> And when the module is inserted again:
+>>
+>> [ 2395.176956] s5p_mfc_wait_for_done_dev:34: Interrupt (dev->int_type:0, command:12) timed out
+>> [ 2395.177031] s5p_mfc_init_hw:272: Failed to load firmware
+>> [ 2395.177384] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+>> [ 2395.177441] pgd = ec3b4000
+>> [ 2395.177467] [00000000] *pgd=00000000
+>> [ 2395.177507] Internal error: : 1406 [#1] PREEMPT SMP ARM
+>> [ 2395.177550] Modules linked in: s5p_mfc mwifiex_sdio mwifiex uvcvideo s5p_jpeg v4l2_mem2mem videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_core v4l2_common videodev media [last unloaded: s5p_mfc]
+>> [ 2395.177774] CPU: 1 PID: 2382 Comm: v4l_id Tainted: G        W       4.6.0-rc6-next-20160502-00010-g7730dc64d2c1-dirty #179
+>> [ 2395.177857] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [ 2395.177906] task: ed275500 ti: e6c8c000 task.ti: e6c8c000
+>> [ 2395.177996] PC is at s5p_mfc_reset+0x1c4/0x284 [s5p_mfc]
+>> [ 2395.178057] LR is at s5p_mfc_reset+0x1a4/0x284 [s5p_mfc]
+>>
+>> This patch fixes this issue by adding the CLK_ACLK333 as an Async-Bridge
+>> clock for the MFC power domain, so the PD configuration works properly.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>>
+>>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Indeed patch #1 is not a hard dependency here because there are no other
+> asb clocks. It is entirely obvious but works fine.
 
-This driver uses existing binding for exynos-chipid.
+Damn, I wanted to write:
+"It is not entirely obvious but works fine."
+(in Exynos pm_domains driver the clk_get() returns -ENOENT and the loop
+is escaped early)
 
-CC: Grant Likely <grant.likely@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- drivers/soc/samsung/Kconfig            |   5 +
- drivers/soc/samsung/Makefile           |   1 +
- drivers/soc/samsung/exynos-chipid.c    | 172 +++++++++++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-soc.h |  51 ++++++++++
- 4 files changed, 229 insertions(+)
- create mode 100644 drivers/soc/samsung/exynos-chipid.c
- create mode 100644 include/linux/soc/samsung/exynos-soc.h
+BR,
+Krzysztof
 
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index d7fc123..fc793f3 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -10,4 +10,9 @@ config EXYNOS_PMU
- 	bool "Exynos PMU controller driver" if COMPILE_TEST
- 	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
- 
-+config EXYNOS_CHIPID
-+	bool "Exynos Chipid controller driver" if COMPILE_TEST
-+	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
-+	select SOC_BUS
-+
- endif
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index f64ac4d..81023ed 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o
-+obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-new file mode 100644
-index 0000000..fa20fdd
---- /dev/null
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -0,0 +1,172 @@
-+/*
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ *	      http://www.samsung.com/
-+ *
-+ * EXYNOS - CHIP ID support
-+ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/sys_soc.h>
-+#include <linux/soc/samsung/exynos-soc.h>
-+
-+#define EXYNOS_SUBREV_MASK	(0xF << 4)
-+#define EXYNOS_MAINREV_MASK	(0xF << 0)
-+#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
-+
-+static void __iomem *exynos_chipid_base;
-+
-+struct exynos_chipid_info exynos_soc_info;
-+EXPORT_SYMBOL(exynos_soc_info);
-+
-+static const char * __init product_id_to_name(unsigned int product_id)
-+{
-+	const char *soc_name;
-+	unsigned int soc_id = product_id & EXYNOS_SOC_MASK;
-+
-+	switch (soc_id) {
-+	case EXYNOS3250_SOC_ID:
-+		soc_name = "EXYNOS3250";
-+		break;
-+	case EXYNOS4210_SOC_ID:
-+		soc_name = "EXYNOS4210";
-+		break;
-+	case EXYNOS4212_SOC_ID:
-+		soc_name = "EXYNOS4212";
-+		break;
-+	case EXYNOS4412_SOC_ID:
-+		soc_name = "EXYNOS4412";
-+		break;
-+	case EXYNOS4415_SOC_ID:
-+		soc_name = "EXYNOS4415";
-+		break;
-+	case EXYNOS5250_SOC_ID:
-+		soc_name = "EXYNOS5250";
-+		break;
-+	case EXYNOS5260_SOC_ID:
-+		soc_name = "EXYNOS5260";
-+		break;
-+	case EXYNOS5420_SOC_ID:
-+		soc_name = "EXYNOS5420";
-+		break;
-+	case EXYNOS5440_SOC_ID:
-+		soc_name = "EXYNOS5440";
-+		break;
-+	case EXYNOS5800_SOC_ID:
-+		soc_name = "EXYNOS5800";
-+		break;
-+	default:
-+		soc_name = "UNKNOWN";
-+	}
-+	return soc_name;
-+}
-+
-+static const struct of_device_id of_exynos_chipid_ids[] = {
-+	{
-+		.compatible	= "samsung,exynos4210-chipid",
-+	},
-+	{},
-+};
-+
-+/**
-+ *  exynos_chipid_early_init: Early chipid initialization
-+ *  @dev: pointer to chipid device
-+ */
-+int __init exynos_chipid_early_init(struct device *dev)
-+{
-+	struct device_node *np;
-+	const struct of_device_id *match;
-+
-+	if (exynos_chipid_base)
-+		return 0;
-+
-+	if (!dev)
-+		np = of_find_matching_node_and_match(NULL,
-+			of_exynos_chipid_ids, &match);
-+	else
-+		np = dev->of_node;
-+
-+	if (!np)
-+		return -ENODEV;
-+
-+	exynos_chipid_base = of_iomap(np, 0);
-+
-+	if (!exynos_chipid_base)
-+		return PTR_ERR(exynos_chipid_base);
-+	
-+	exynos_soc_info.product_id  = __raw_readl(exynos_chipid_base);
-+	exynos_soc_info.revision = exynos_soc_info.product_id & EXYNOS_REV_MASK;
-+
-+	return 0;
-+}
-+
-+static int __init exynos_chipid_probe(struct platform_device *pdev)
-+{
-+	struct soc_device_attribute *soc_dev_attr;
-+	struct soc_device *soc_dev;
-+	struct device_node *root;
-+	int ret;
-+
-+	ret = exynos_chipid_early_init(&pdev->dev);
-+	if (ret) {
-+		dev_dbg(&pdev->dev, "Exynos chipid probe failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-+	if (!soc_dev_attr)
-+		return -ENODEV;
-+
-+	soc_dev_attr->family = "Samsung Exynos";
-+
-+	root = of_find_node_by_path("/");
-+	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
-+	of_node_put(root);
-+	if (ret)
-+		goto free_soc;
-+
-+	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
-+					exynos_soc_info.revision);
-+	if (!soc_dev_attr->revision)
-+		goto free_soc;
-+
-+	soc_dev_attr->soc_id = product_id_to_name(exynos_soc_info.product_id);
-+
-+	soc_dev = soc_device_register(soc_dev_attr);
-+	if (IS_ERR(soc_dev))
-+		goto free_rev;
-+
-+	soc_device_to_device(soc_dev);
-+
-+	dev_info(&pdev->dev, "Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
-+			product_id_to_name(exynos_soc_info.product_id),
-+			exynos_soc_info.revision);
-+	return 0;
-+free_rev:
-+	kfree(soc_dev_attr->revision);
-+free_soc:
-+	kfree(soc_dev_attr);
-+	return -EINVAL;
-+}
-+
-+static struct platform_driver exynos_chipid_driver = {
-+	.driver = {
-+		.name = "exynos-chipid",
-+		.of_match_table = of_exynos_chipid_ids,
-+	},
-+};
-+
-+static int __init exynos_chipid_init(void)
-+{
-+	return platform_driver_probe(&exynos_chipid_driver, exynos_chipid_probe);
-+}
-+device_initcall(exynos_chipid_init);
-diff --git a/include/linux/soc/samsung/exynos-soc.h b/include/linux/soc/samsung/exynos-soc.h
-new file mode 100644
-index 0000000..38b95ad
---- /dev/null
-+++ b/include/linux/soc/samsung/exynos-soc.h
-@@ -0,0 +1,51 @@
-+/*
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Header for EXYNOS SoC Chipid support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __EXYNOS_SOC_H
-+#define __EXYNOS_SOC_H
-+
-+#define EXYNOS3250_SOC_ID	0xE3472000
-+#define EXYNOS4210_SOC_ID	0x43210000
-+#define EXYNOS4212_SOC_ID	0x43220000
-+#define EXYNOS4412_SOC_ID	0xE4412000
-+#define EXYNOS4415_SOC_ID	0xE4415000
-+#define EXYNOS5250_SOC_ID	0x43520000
-+#define EXYNOS5260_SOC_ID	0xE5260000
-+#define EXYNOS5410_SOC_ID	0xE5410000
-+#define EXYNOS5420_SOC_ID	0xE5420000
-+#define EXYNOS5440_SOC_ID	0xE5440000
-+#define EXYNOS5800_SOC_ID	0xE5422000
-+
-+#define EXYNOS_SOC_MASK		0xFFFFF000
-+
-+#define EXYNOS4210_REV_0	0x0
-+#define EXYNOS4210_REV_1_0	0x10
-+#define EXYNOS4210_REV_1_1	0x11
-+
-+/**
-+ * Struct exynos_chipid_info
-+ * @soc_product_id: product id allocated to exynos SoC
-+ * @soc_revision: revision of exynos SoC
-+ */
-+
-+struct exynos_chipid_info {
-+	u32 product_id;
-+	u32 revision;
-+};
-+
-+extern struct exynos_chipid_info exynos_soc_info;
-+
-+/* Since we need chipid to be initialized as early as possible
-+ * during secondary core bootup adding early initialization function
-+ */
-+extern int exynos_chipid_early_init(struct device *dev);
-+
-+#endif /* __EXYNOS_SOC_H */
--- 
-2.4.5
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Unless all other patches are meant to current fixes cycle (and/or
+> cc-stable), I do not plan to apply it now. I'll take it for v4.8, because:
+> 1. Your previous patches are needed. Without them bind/unbind won't work.
+> 2. This is not reproducible in a regular driver operation.
+> 3. It needs clock change to actually be useful.
+> 
+> Is it okay?
+> 
+> Best regards,
+> Krzysztof
+> 
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 4c8523471c65..f3e9d873633e 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -313,8 +313,9 @@
+>>  	mfc_pd: power-domain@10044060 {
+>>  		compatible = "samsung,exynos4210-pd";
+>>  		reg = <0x10044060 0x20>;
+>> -		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
+>> -		clock-names = "oscclk", "clk0";
+>> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
+>> +			 <&clock CLK_ACLK333>;
+>> +		clock-names = "oscclk", "clk0","asb0";
+>>  		#power-domain-cells = <0>;
+>>  	};
+>>  
+>>
+> 
+> 
