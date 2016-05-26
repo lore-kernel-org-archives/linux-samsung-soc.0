@@ -1,29 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch v2] PM / devfreq: exynos-nocp: Remove incorrect IS_ERR()
- check
-Date: Thu, 26 May 2016 19:06:12 +0300
-Message-ID: <20160526160612.GF10957@mwanda>
-References: <CGME20160526064612epcas1p4cb0d45fa11deafea51fa84974132afed@epcas1p4.samsung.com>
- <20160526064541.GA6680@mwanda>
- <5746AFE3.6030606@samsung.com>
- <20160526115629.GD10957@mwanda>
- <CAGTfZH2rqD_91D_Vt8EgXDO4ACJ-OKD5Os9RA4Mk7hg0EHzfcg@mail.gmail.com>
- <20160526135600.GE10957@mwanda>
- <CAGTfZH31_OOSg-kJ1tp8pCv55nWZbcd6dG2zXrtov8BGh0udcw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGTfZH31_OOSg-kJ1tp8pCv55nWZbcd6dG2zXrtov8BGh0udcw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: cw00.choi@samsung.com
-Cc: Julia Lawall <julia.lawall@lip6.fr>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [RESEND RFT PATCH 0/2] mfd: max14577: Allow the driver to be built as a module
+Date: Thu, 26 May 2016 12:32:18 -0400
+Message-ID: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The only duplicates that I know about currently are Dan Williams and Xi
-Wang.  I do sometimes get those people mixed up.  I hope someday there
-will be another Julia Lawall duplicate as well.  :)
+Hello,
 
-regards,
-dan carpenter
+This series is similar to [0] and allows the max14577 PMIC MFD driver to
+be built as a module. Currently the Kconfig symbol for the driver is a
+boolean but there isn't really a reason for this restriction.
 
+Chanwoo Choi tried to test the original post but found a build issue [1].
+The fix for that issue landed in v4.6 so I'm resending this series now
+that there are no in-flight dependencies anymore.
+
+The patches have been just built tested because I don't have any of the
+boards using this driver, so testing will be highly appreciated.
+
+[0]: https://lkml.org/lkml/2016/2/11/857
+[1]: https://lkml.org/lkml/2016/3/17/546
+
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (2):
+  mfd: max14577: Use module_init() instead of subsys_initcall()
+  mfd: max14577: Allow driver to be built as a module
+
+ drivers/mfd/Kconfig    | 4 ++--
+ drivers/mfd/max14577.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.5.5
