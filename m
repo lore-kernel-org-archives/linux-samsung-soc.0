@@ -1,73 +1,43 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: ARM: dts: exynos: Add MFC memory banks for Peach boards
-Date: Thu, 26 May 2016 08:14:29 -0400
-Message-ID: <869bee66-9aa8-6c17-d140-3e6644acaf91@osg.samsung.com>
-References: <1461871311-18344-1-git-send-email-javier@osg.samsung.com>
- <57456344.7020708@samsung.com>
- <d045b880-4a44-acd8-f7f6-e521caf374aa@osg.samsung.com>
- <574670E7.3060508@samsung.com>
- <476edff1-9f3e-fc5b-4385-d04ae917b58e@osg.samsung.com>
- <5746BD94.3070903@samsung.com>
+Subject: Re: [PATCH v2 0/10] Add RK3399 eDP support and fix some bugs to
+ analogix_dp driver.
+Date: Thu, 26 May 2016 08:48:47 -0400
+Message-ID: <4e1c65f8-5a5b-dbb9-35fe-ef09c0758536@osg.samsung.com>
+References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
+ <5746C321.9000707@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:48761 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752083AbcEZMOo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 May 2016 08:14:44 -0400
-In-Reply-To: <5746BD94.3070903@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5746C321.9000707@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Mark Yao <yzq@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kevin Hilman <khilman@baylibre.com>
 
-Hello Pankaj,
-
-On 05/26/2016 05:10 AM, pankaj.dubey wrote:
-
-[snip]
-
->>> [    0.000000] Kernel command line: cros_legacy console=ttySAC3,115200
->>> debug earlyprintk cros_debug no_console_suspend root=/dev/ram0 rw
->>> ramdisk=32768 initrd=0x42000000,3
->>> 2M
->>
->> I see that you are loading an initrd at 0x42000000 with size of 32 MiB.
->>
->> [...]
->>
->>> [    1.121421] Trying to unpack rootfs image as initramfs...
->>> [    1.126940] rootfs image is not initramfs (junk in compressed
->>> archive); looks like an initrd
->>> [    1.160139] Unable to handle kernel paging request at virtual address
->>> e3000000
->>
->> So I wonder if the problem is that the memblock_remove() is called very
->> early and so the kernel is not able to copy the initrd from 0x42000000
->> to 0x44000000 since overlaps with the mfc-r mem (0x43000000-0x43800000).
->>
->> Specially since the NULL pointer dereference below happens in the
->> populate_rootfs() function when calling xwrite() to do the copy.
->>
->> Could you please try to change the load address for your initrd, or
->> change the mfc-r start address to see if that prevents the issue?
->>
-> 
-> Yes, you are correct. This was the case.
-> I changed initrd location from 0x42000000 to 0x44000000, and it is able
-> to boot without any crash.
->
-
-Great, good to confirm that this was causing your boot failure.
- 
-> Thanks,
-> Pankaj Dubey
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+SGVsbG8gWWFraXIsCgpPbiAwNS8yNi8yMDE2IDA1OjM0IEFNLCBZYWtpciBZYW5nIHdyb3RlOgo+
+IEhpIEphdmllciwKPiAKPiBPbiAwNS8yNC8yMDE2IDAxOjAxIFBNLCBZYWtpciBZYW5nIHdyb3Rl
+Ogo+PiBIaSBhbGwsCj4+Cj4+IFRoaXMgc2VyaWVzIGhhdmUgYmVlbiBwb3N0ZWQgYWJvdXQgb25l
+IG1vbnRoLCBzdGlsbCBubyBjb21tZW50cywgaGVscCBoZXJlIDooCj4gVGhpcyBzZXJpZXMgd29y
+a3MgcmlnaHRseSBvbiBSb2NrY2hpcCBwbGF0Zm9ybSwgYW5kIG1vc3Qgb2YgdGhlbSBoYXZlbid0
+IHRvdWNoIHRoZQo+IGNvbW1vbiBhbmFsb2dpeF9kcCBkcml2ZXIgKGV4Y2VwdCBmb3IgdGhlIGhv
+dHBsdWcgZml4ZWQpLiBTbyBpIGd1ZXNzIEV4eW5vcyBwbGF0Zm9ybQo+IHNob3VsZCBhbHNvIGhh
+cHB5IHdpdGggdGhpcyBjaGFuZ2VzLgo+IAo+IEJ1dCBub3Qgc3VyZSBhYm91dCB0aGF0LiBTbywg
+aXMgaXQgcG9zc2libGUgdGhhdCB5b3UgY291bGQgaGVscCB0byBjaGVjayB0aGlzIG9uIEV4eW5v
+cwo+IENocm9tZWJvb2ssIGlmIHNvIGkgd291bGQgYmUgdmVyeSBncmF0ZWZ1bCBhYm91dCB0aGF0
+Lgo+CgpPZiBjb3Vyc2UsIEknIGxsIHRlc3QuIENvdWxkIHlvdSBwbGVhc2UgcHJvdmlkZSBtZSBh
+IGJyYW5jaCB0aGF0IEkgY2FuCnB1bGwgZGlyZWN0bHkgdG8gYXZvaWQgY2hlcnJ5LXBpY2tpbmcg
+YWxsIHRoZSBwYXRjaGVzIGZyb20gdGhlIGxpc3Q/IAogCj4gVGhhbmtzLAo+IC0gWWFraXIKPj4K
+CkJlc3QgcmVnYXJkcywKLS0gCkphdmllciBNYXJ0aW5leiBDYW5pbGxhcwpPcGVuIFNvdXJjZSBH
+cm91cApTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
