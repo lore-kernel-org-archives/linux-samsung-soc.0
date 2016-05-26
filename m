@@ -1,43 +1,41 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 0/10] Add RK3399 eDP support and fix some bugs to
- analogix_dp driver.
-Date: Thu, 26 May 2016 08:48:47 -0400
-Message-ID: <4e1c65f8-5a5b-dbb9-35fe-ef09c0758536@osg.samsung.com>
-References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
- <5746C321.9000707@rock-chips.com>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Subject: Re: [PATCH] Re: Endless "supply vcc not found, using dummy regulator"
+Date: Thu, 26 May 2016 14:57:57 +0200
+Message-ID: <20160526125757.GA23797@sesse.net>
+References: <20160523134737.GA21683@sesse.net>
+ <20160523144047.GA36908@sesse.net>
+ <20160523162455.GW8206@sirena.org.uk>
+ <20160523170617.GA8997@sesse.net>
+ <CAJKOXPds5PgVmcYLEOriyL-a6tp0jkg7x0GTjPZaN9YLL_gO_A@mail.gmail.com>
+ <20160524152638.GA20341@sesse.net>
+ <574478FE.4070800@samsung.com>
+ <20160524192424.GA11690@sesse.net>
+ <CANAwSgSS=LPUJ4HXQ_D4tsMYXP=1qG_f_jn-G9xwN6AOKy6QMw@mail.gmail.com>
+ <20160525175236.GA5788@sesse.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5746C321.9000707@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Mark Yao <yzq@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassarossa.samfundet.no ([193.35.52.29]:33721 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753465AbcEZM6J (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 May 2016 08:58:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20160525175236.GA5788@sesse.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, balbi@kernel.org, linux-usb@vger.kernel.org, gautam.vivek@samsung.com
 
-SGVsbG8gWWFraXIsCgpPbiAwNS8yNi8yMDE2IDA1OjM0IEFNLCBZYWtpciBZYW5nIHdyb3RlOgo+
-IEhpIEphdmllciwKPiAKPiBPbiAwNS8yNC8yMDE2IDAxOjAxIFBNLCBZYWtpciBZYW5nIHdyb3Rl
-Ogo+PiBIaSBhbGwsCj4+Cj4+IFRoaXMgc2VyaWVzIGhhdmUgYmVlbiBwb3N0ZWQgYWJvdXQgb25l
-IG1vbnRoLCBzdGlsbCBubyBjb21tZW50cywgaGVscCBoZXJlIDooCj4gVGhpcyBzZXJpZXMgd29y
-a3MgcmlnaHRseSBvbiBSb2NrY2hpcCBwbGF0Zm9ybSwgYW5kIG1vc3Qgb2YgdGhlbSBoYXZlbid0
-IHRvdWNoIHRoZQo+IGNvbW1vbiBhbmFsb2dpeF9kcCBkcml2ZXIgKGV4Y2VwdCBmb3IgdGhlIGhv
-dHBsdWcgZml4ZWQpLiBTbyBpIGd1ZXNzIEV4eW5vcyBwbGF0Zm9ybQo+IHNob3VsZCBhbHNvIGhh
-cHB5IHdpdGggdGhpcyBjaGFuZ2VzLgo+IAo+IEJ1dCBub3Qgc3VyZSBhYm91dCB0aGF0LiBTbywg
-aXMgaXQgcG9zc2libGUgdGhhdCB5b3UgY291bGQgaGVscCB0byBjaGVjayB0aGlzIG9uIEV4eW5v
-cwo+IENocm9tZWJvb2ssIGlmIHNvIGkgd291bGQgYmUgdmVyeSBncmF0ZWZ1bCBhYm91dCB0aGF0
-Lgo+CgpPZiBjb3Vyc2UsIEknIGxsIHRlc3QuIENvdWxkIHlvdSBwbGVhc2UgcHJvdmlkZSBtZSBh
-IGJyYW5jaCB0aGF0IEkgY2FuCnB1bGwgZGlyZWN0bHkgdG8gYXZvaWQgY2hlcnJ5LXBpY2tpbmcg
-YWxsIHRoZSBwYXRjaGVzIGZyb20gdGhlIGxpc3Q/IAogCj4gVGhhbmtzLAo+IC0gWWFraXIKPj4K
-CkJlc3QgcmVnYXJkcywKLS0gCkphdmllciBNYXJ0aW5leiBDYW5pbGxhcwpPcGVuIFNvdXJjZSBH
-cm91cApTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, May 25, 2016 at 07:52:36PM +0200, Steinar H. Gunderson wrote:
+>> Actually their are some missing patches to tune the usb3 phy.
+>> 
+>> https://lkml.org/lkml/2014/10/31/266
+> This explains why the default networking speed refused to go above
+> ~300 Mbit/sec! What happened to the patches, I wonder?
+
+Adding Vivek in case he knows. They certainly don't apply anymore, at least.
+
+/* Steinar */
+-- 
+Homepage: https://www.sesse.net/
