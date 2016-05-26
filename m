@@ -1,71 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead
- of NULL
-Date: Thu, 26 May 2016 09:39:07 +0300
-Message-ID: <20160526063907.GM11011@mwanda>
-References: <20160518103707.GA9436@mwanda>
- <57459BD4.1030201@samsung.com>
- <alpine.DEB.2.10.1605251710500.3644@hadrien>
+Subject: [patch v2] PM / devfreq: exynos-nocp: Remove incorrect IS_ERR() check
+Date: Thu, 26 May 2016 09:45:42 +0300
+Message-ID: <20160526064541.GA6680@mwanda>
+References: <alpine.DEB.2.10.1605251710500.3644@hadrien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:24952 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752759AbcEZGqB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 May 2016 02:46:01 -0400
 Content-Disposition: inline
 In-Reply-To: <alpine.DEB.2.10.1605251710500.3644@hadrien>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 25, 2016 at 05:11:33PM +0200, Julia Lawall wrote:
->=20
->=20
-> On Wed, 25 May 2016, Chanwoo Choi wrote:
->=20
-> > On 2016=EB=85=84 05=EC=9B=94 18=EC=9D=BC 19:37, Dan Carpenter wrote=
-:
-> > > The platform_get_resource() function returns NULL on error, it ne=
-ver
-> > > returns error pointers.
-> > >
-> > > Fixes: 0179a913875a ('PM / devfreq: event: Add new Exynos NoC pro=
-be driver')
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >
-> > > diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfre=
-q/event/exynos-nocp.c
-> > > index 6b6a5f3..03b35d5 100644
-> > > --- a/drivers/devfreq/event/exynos-nocp.c
-> > > +++ b/drivers/devfreq/event/exynos-nocp.c
-> > > @@ -220,8 +220,8 @@ static int exynos_nocp_parse_dt(struct platfo=
-rm_device *pdev,
-> > >
-> > >  	/* Maps the memory mapped IO to control nocp register */
-> > >  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > -	if (IS_ERR(res))
-> > > -		return PTR_ERR(res);
-> > > +	if (!res)
-> > > +		return -ENXIO;
-> > >
-> > >  	base =3D devm_ioremap_resource(dev, res);
-> > >  	if (IS_ERR(base))
-> >
-> > Looks good to me.
->=20
-> I believe that there is no need for the test at all.
-> devm_ioremap_resource should make the test.
+Smatch complains because platform_get_resource() returns NULL on error
+and not an error pointer so the check is wrong.  Julia Lawall pointed
+out that normally we don't check these, because devm_ioremap_resource()
+has a check for NULL.
 
-True.  The static checker warning here is just that "res" isn't an erro=
-r
-pointer, not that we dereference it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: just remove the check
 
-I'll resend.
-
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janito=
-rs" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+index 6b6a5f3..a584140 100644
+--- a/drivers/devfreq/event/exynos-nocp.c
++++ b/drivers/devfreq/event/exynos-nocp.c
+@@ -220,9 +220,6 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
+ 
+ 	/* Maps the memory mapped IO to control nocp register */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (IS_ERR(res))
+-		return PTR_ERR(res);
+-
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
