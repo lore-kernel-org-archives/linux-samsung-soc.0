@@ -1,61 +1,100 @@
-From: Felipe Balbi <balbi@kernel.org>
-Subject: Re: [PATCH] dwc3-exynos: Fix deferred probing storm.
-Date: Fri, 27 May 2016 16:26:42 +0300
-Message-ID: <877fefpr71.fsf@linux.intel.com>
-References: <20160524192424.GA11690@sesse.net> <E1b5Hwn-0005Be-UA@pannekake.samfundet.no> <CAFp+6iGFkquYkHCCJRkQALRZ2g-htiKbrJZbJwMoAMR=+A5u_Q@mail.gmail.com> <20160527114641.GA39472@sesse.net> <5748480D.8000501@samsung.com> <87bn3rprtw.fsf@linux.intel.com> <20160527132519.GA5268@sesse.net>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 2/7] media: s5p-mfc: use generic reserved memory
+ bindings
+Date: Fri, 27 May 2016 16:41:34 -0400
+Message-ID: <78803037-2aa8-0d62-c69a-f95caec393ab@osg.samsung.com>
+References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
+ <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
+ <a14c4f45-64c9-f72d-532b-ad1ff53fa9eb@osg.samsung.com>
+ <20160525173614.GA8309@rob-hp-laptop>
+ <709cf900-86dd-5020-d516-24caa971d74a@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:23650 "EHLO mga11.intel.com"
+Received: from lists.s-osg.org ([54.187.51.154]:56901 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751222AbcE0N3B (ORCPT
+	id S1756499AbcE0Ult (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 May 2016 09:29:01 -0400
-In-Reply-To: <20160527132519.GA5268@sesse.net>
+	Fri, 27 May 2016 16:41:49 -0400
+In-Reply-To: <709cf900-86dd-5020-d516-24caa971d74a@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vivek Gautam <gautamvivek1987@gmail.com>, "Steinar H. Gunderson" <sesse@google.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, Linux USB Mailing List <linux-usb@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello Marek,
 
-
-Hi,
-
-"Steinar H. Gunderson" <sgunderson@bigfoot.com> writes:
-> On Fri, May 27, 2016 at 04:12:59PM +0300, Felipe Balbi wrote:
->> yes, please do that. Keep in mind, also, that we're still in the middle
->> of the merge window and nothing will really happen until v4.7-rc1 is
->> tagged.
+On 05/27/2016 02:37 AM, Marek Szyprowski wrote:
+> Hello,
+> 
+> 
+> On 2016-05-25 19:36, Rob Herring wrote:
+>> On Wed, May 25, 2016 at 11:18:59AM -0400, Javier Martinez Canillas wrote:
+>>> Hello Marek,
+>>>
+>>> On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
+>>>> Use generic reserved memory bindings and mark old, custom properties
+>>>> as obsoleted.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> ---
+>>>>   .../devicetree/bindings/media/s5p-mfc.txt          | 39 +++++++++++++++++-----
+>>>>   1 file changed, 31 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+>>>> index 2d5787e..92c94f5 100644
+>>>> --- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
+>>>> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+>>>> @@ -21,15 +21,18 @@ Required properties:
+>>>>     - clock-names : from common clock binding: must contain "mfc",
+>>>>             corresponding to entry in the clocks property.
+>>>>   -  - samsung,mfc-r : Base address of the first memory bank used by MFC
+>>>> -            for DMA contiguous memory allocation and its size.
+>>>> -
+>>>> -  - samsung,mfc-l : Base address of the second memory bank used by MFC
+>>>> -            for DMA contiguous memory allocation and its size.
+>>>> -
+>>>>   Optional properties:
+>>>>     - power-domains : power-domain property defined with a phandle
+>>>>                  to respective power domain.
+>>>> +  - memory-region : from reserved memory binding: phandles to two reserved
+>>>> +    memory regions, first is for "left" mfc memory bus interfaces,
+>>>> +    second if for the "right" mfc memory bus, used when no SYSMMU
+>>>> +    support is available
+>>>> +
+>>>> +Obsolete properties:
+>>>> +  - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
+>>>> +    property instead
+>>>> +
+>>>>
+>>> I wonder if we should maintain backward compatibility for this driver
+>>> since s5p-mfc memory allocation won't work with an old FDT if support
+>>> for the old properties are removed.
+>> Well, minimally the commit log should indicate that compatibility is
+>> being broken.
+> 
+> Compatibility is only partially broken. I add this to the commit message. Old
+> bindings will still work with the new driver when IOMMU is enabled - in such case reserved
+> memory regions are ignored so this should not be a big issue. Using IOMMU also increases
+> total memory space for the video buffers without wasting it as 'reserved'. Hope that
+> once those patches are merged, the IOMMU can be finally enabled in the exynos_defconfig.
 >
-> Sent. As a fix, there's a chance it could go into 4.7, right?
 
-yup, shouldn't be a problem. But only after v4.7-rc1 is tagged.
+Yes, a problem is that some Exynos machines (for example the Snow and Peach
+Chromebooks) fail to boot when IOMMU is enabled due the bootloader leaving
+the FIMD enabled doing DMA operations automatically as you found before.
 
-=2D-=20
-balbi
+You proposed to add a "iommu-reserved-mapping" property [0] but that never
+landed due not having an agreement on how should be fixed properly IIUC [1].
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+So that has to be fixed before enabling the Exynos IOMMU support by default.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+[0]: http://www.spinics.net/lists/arm-kernel/msg415501.html
+[1]: http://www.spinics.net/lists/arm-kernel/msg419747.html 
 
-iQIcBAEBCAAGBQJXSEsSAAoJEIaOsuA1yqRE03wQAKK3sdNzZ9g2sic7b9DFQl1w
-jmjGfMSWigVcDRrQ2QLNnDUWGTV9bykoPW79BnLbzho8966QAPomMgMAXja2XtTc
-Fq/TWhZUCjPjzx7ui7iIEpVyVNkQJTOv2ilmYHZCJrptaz0uA1u1pFgaNMe8Oqnr
-ataWRHsjdjzBKWvxoSai5MR42MKiftVOr918PQKCKYzxsRQq/pBwFSz0KFqobtJL
-BCedkpmS+oNEyTZvsyLgFCVRqzljQ1ENe1LU0GHhsrIqRAAUnwLuUMAiKgD0+G9p
-ZsBZl/3qKk5PTp3bMG+0tTOWvG6hx3yI6K9PUXKueRvIHT4SicPQv0IFDdYVkqbP
-6Z3PRBhBUTP784NV7tDX/cWPLcRjb4LesVmWy/yEppHBn4pt84JljzlWtcfQZHTo
-ORpzXFzh/5DojQiLPzSYovw7mOvJpou4hmBc4P20GZqa4HdyaNbXjFXIBYp1HR8C
-UuUe7neCkBgl1MLdPJf8/GRDuLKU+oY8qbNMyli67F/1D11RtzIQ6QKMue1DBvnI
-6j5IlFLb7mQ61te+f3XxfYE2I1WljVwC/lYnSQtZZ3K/sw99S+spUqsl83zH2ibv
-JC4Dj1g4tw47t9RD0gw2tztTsaJvMItJFcXqf6+WUfr09QPxKzvxDYlsMUpXagu2
-5zt38SxY5SmifuBON9ks
-=DakT
------END PGP SIGNATURE-----
---=-=-=--
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
