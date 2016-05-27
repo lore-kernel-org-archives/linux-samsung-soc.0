@@ -1,97 +1,157 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 2/7] media: s5p-mfc: use generic reserved memory
- bindings
-Date: Fri, 27 May 2016 16:41:34 -0400
-Message-ID: <78803037-2aa8-0d62-c69a-f95caec393ab@osg.samsung.com>
+Subject: Re: [PATCH v4 6/7] ARM: dts: exynos: convert MFC device to generic
+ reserved memory bindings
+Date: Fri, 27 May 2016 16:54:28 -0400
+Message-ID: <2241b7f4-4565-d17b-10f3-5c27cd9985da@osg.samsung.com>
 References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-3-git-send-email-m.szyprowski@samsung.com>
- <a14c4f45-64c9-f72d-532b-ad1ff53fa9eb@osg.samsung.com>
- <20160525173614.GA8309@rob-hp-laptop>
- <709cf900-86dd-5020-d516-24caa971d74a@samsung.com>
+ <1464096690-23605-7-git-send-email-m.szyprowski@samsung.com>
+ <0158bb7a-02cf-bbb3-f903-d99c7351dfc4@osg.samsung.com>
+ <f0148d4b-a69c-c84b-4a5e-4ff6bb9fde6f@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56901 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:56966 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756499AbcE0Ult (ORCPT
+	id S1755197AbcE0Uyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 May 2016 16:41:49 -0400
-In-Reply-To: <709cf900-86dd-5020-d516-24caa971d74a@samsung.com>
+	Fri, 27 May 2016 16:54:39 -0400
+In-Reply-To: <f0148d4b-a69c-c84b-4a5e-4ff6bb9fde6f@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 Hello Marek,
 
-On 05/27/2016 02:37 AM, Marek Szyprowski wrote:
+On 05/27/2016 07:32 AM, Marek Szyprowski wrote:
 > Hello,
 > 
 > 
-> On 2016-05-25 19:36, Rob Herring wrote:
->> On Wed, May 25, 2016 at 11:18:59AM -0400, Javier Martinez Canillas wrote:
->>> Hello Marek,
+> On 2016-05-25 19:11, Javier Martinez Canillas wrote:
+>> Hello Marek,
+>>
+>> On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
+>>> This patch replaces custom properties for defining reserved memory
+>>> regions with generic reserved memory bindings for MFC video codec
+>>> device.
 >>>
->>> On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
->>>> Use generic reserved memory bindings and mark old, custom properties
->>>> as obsoleted.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>   .../devicetree/bindings/media/s5p-mfc.txt          | 39 +++++++++++++++++-----
->>>>   1 file changed, 31 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
->>>> index 2d5787e..92c94f5 100644
->>>> --- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
->>>> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
->>>> @@ -21,15 +21,18 @@ Required properties:
->>>>     - clock-names : from common clock binding: must contain "mfc",
->>>>             corresponding to entry in the clocks property.
->>>>   -  - samsung,mfc-r : Base address of the first memory bank used by MFC
->>>> -            for DMA contiguous memory allocation and its size.
->>>> -
->>>> -  - samsung,mfc-l : Base address of the second memory bank used by MFC
->>>> -            for DMA contiguous memory allocation and its size.
->>>> -
->>>>   Optional properties:
->>>>     - power-domains : power-domain property defined with a phandle
->>>>                  to respective power domain.
->>>> +  - memory-region : from reserved memory binding: phandles to two reserved
->>>> +    memory regions, first is for "left" mfc memory bus interfaces,
->>>> +    second if for the "right" mfc memory bus, used when no SYSMMU
->>>> +    support is available
->>>> +
->>>> +Obsolete properties:
->>>> +  - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
->>>> +    property instead
->>>> +
->>>>
->>> I wonder if we should maintain backward compatibility for this driver
->>> since s5p-mfc memory allocation won't work with an old FDT if support
->>> for the old properties are removed.
->> Well, minimally the commit log should indicate that compatibility is
->> being broken.
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>> [snip]
+>>
+>>> +
+>>> +/ {
+>>> +    reserved-memory {
+>>> +        #address-cells = <1>;
+>>> +        #size-cells = <1>;
+>>> +        ranges;
+>>> +
+>>> +        mfc_left: region@51000000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            no-map;
+>>> +            reg = <0x51000000 0x800000>;
+>>> +        };
+>>> +
+>>> +        mfc_right: region@43000000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            no-map;
+>>> +            reg = <0x43000000 0x800000>;
+>>> +        };
+>>> +    };
+>> I've a question probably for a follow up patch, but do you know what's a
+>> sane default size for these? I needed to bump the mfc_left size from 8 MiB
+>> to 16 MiB in order to decode a 480p H264 video using GStramer. So clearly
+>> the default sizes are not that useful.
 > 
-> Compatibility is only partially broken. I add this to the commit message. Old
-> bindings will still work with the new driver when IOMMU is enabled - in such case reserved
-> memory regions are ignored so this should not be a big issue. Using IOMMU also increases
-> total memory space for the video buffers without wasting it as 'reserved'. Hope that
-> once those patches are merged, the IOMMU can be finally enabled in the exynos_defconfig.
+> Right, the default size for the 'left' region can be increased. Frankly, those
+> values (8MiB/0x43000000+ 8MiB/0x51000000) comes from my initial patches
+> prepared for some demo and don't have much with any real requirements. They
+> were copied (blindly...) by various developers without any deeper understanding.
+
+Yes, I've to admit that I was one of those when added the MFC regions to the
+Peach Chromebooks but worked because I tested with small videos. When trying
+to decode bigger videos, then had to increase the 'left' region as mentioned.
+
+> Probably the most sane would be to use something like this:
+> 
+> mfc_left: region_mfc_left {
+>          compatible = "shared-dma-pool";
+>          no-map;
+>          size = <0x1000000>;
+>          alignment = <0x100000>;
+> };
+> 
+> mfc_right: region_mfc_right {
+>          compatible = "shared-dma-pool";
+>          no-map;
+>          size = <0x800000>;
+>          alignment = <0x100000>;
+> };
+> 
+> So the region will be allocated automatically from the available memory. This way
+> another nice feature of the generic reserved memory regions can be used.
 >
 
-Yes, a problem is that some Exynos machines (for example the Snow and Peach
-Chromebooks) fail to boot when IOMMU is enabled due the bootloader leaving
-the FIMD enabled doing DMA operations automatically as you found before.
+That sounds better indeed. Not requiring a certain memory offset will also have the
+nice side effect to prevent conflicts like the one Pankaj had with his initramfs [0].
+ 
+> The only platform which really requires MFC regions to be placed at certain memory
+> offsets is Samsung S5PV210/S5PC110 (sometimes called exynos3), where there is no
+> memory address interleaving and MFC device has limited memory interface, which cannot
+> do 2 transactions to the same physical memory bank. However S5PV210/S5PC110 machine
+> code lost support for MFC during conversion to device tree, so it is not a problem
+> here.
+>
+> All newer platforms (Exynos4, Exynos3250, Exynos5+) use memory interleaving, so the
+> actual offset of memory bank has no influence on the physical memory bank.
+>
 
-You proposed to add a "iommu-reserved-mapping" property [0] but that never
-landed due not having an agreement on how should be fixed properly IIUC [1].
+I see, thanks a lot for the explanation.
+ 
+>>> +};
+>>> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+>>> index ad7394c..f5e4eb2 100644
+>>> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+>>> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+>>> @@ -18,6 +18,7 @@
+>>>   #include "exynos4210.dtsi"
+>>>   #include <dt-bindings/gpio/gpio.h>
+>>>   #include <dt-bindings/input/input.h>
+>>> +#include "exynos-mfc-reserved-memory.dtsi"
+>>>     / {
+>>>       model = "Insignal Origen evaluation board based on Exynos4210";
+>>> @@ -288,8 +289,7 @@
+>>>   };
+>>>     &mfc {
+>>> -    samsung,mfc-r = <0x43000000 0x800000>;
+>>> -    samsung,mfc-l = <0x51000000 0x800000>;
+>>> +    memory-region = <&mfc_left>, <&mfc_right>;
+>>>       status = "okay";
+>> I wonder if shouldn't be better to include the exynos-mfc-reserved-memory.dtsi
+>> on each SoC dtsi and set the memory-regions in the MFC node instead of doing
+>> it on each DTS, and let DTS to just replace with its own memory regions if the
+>> default sizes are not suitable for them.
+> 
+> I don't have strong opinion on this. Maybe it would make more sense to move the
+> following entry:
+> 
+> &mfc {
+>         memory-region = <&mfc_left>, <&mfc_right>;
+> };
+> 
+> also to the exynos-mfc-reserved-memory.dtsi ? So board will just include it if
+> it want to use MFC device with reserved memory regions.
+>
 
-So that has to be fixed before enabling the Exynos IOMMU support by default.
+Ok, that also sounds like a good option for me.
+ 
+>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> Best regards
 
-[0]: http://www.spinics.net/lists/arm-kernel/msg415501.html
-[1]: http://www.spinics.net/lists/arm-kernel/msg419747.html 
+[0]: https://lkml.org/lkml/2016/5/26/98
 
 Best regards,
 -- 
