@@ -1,160 +1,111 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 6/7] ARM: dts: exynos: convert MFC device to generic
- reserved memory bindings
-Date: Fri, 27 May 2016 16:54:28 -0400
-Message-ID: <2241b7f4-4565-d17b-10f3-5c27cd9985da@osg.samsung.com>
-References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-7-git-send-email-m.szyprowski@samsung.com>
- <0158bb7a-02cf-bbb3-f903-d99c7351dfc4@osg.samsung.com>
- <f0148d4b-a69c-c84b-4a5e-4ff6bb9fde6f@samsung.com>
+From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
+Date: Sat, 28 May 2016 11:36:13 +0800
+Message-ID: <20160528033613.GA3291@shlinux2>
+References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
+ <20160505224240.GA31429@rob-hp-laptop>
+ <CAPDyKFqpoi03Egfuvd8qJXnn_+FBgPXAb7S4UvkxVs8BA+zwnA@mail.gmail.com>
+ <20160509181829.GA19687@rob-hp-laptop>
+ <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56966 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755197AbcE0Uyj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 May 2016 16:54:39 -0400
-In-Reply-To: <f0148d4b-a69c-c84b-4a5e-4ff6bb9fde6f@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Marek,
+On Tue, May 10, 2016 at 01:02:08PM +0200, Ulf Hansson wrote:
+> + Arnd
+> 
+> [...]
+> 
+> >> >> Solution
+> >> >> ========
+> >> >> This is very similar to the MMC pwrseq behavior so the idea is to:
+> >> >> 1. Move MMC pwrseq drivers to generic place,
+> >> >
+> >> > You can do that, but I'm going to NAK any use of pwrseq bindings outside
+> >> > of MMC. I think it is the wrong way to do things. The DT should describe
+> >>
+> >> Huh, I didn't know that was your view of the mmc pwrseq bindings. Why
+> >> didn't you NAK them before?
+> >
+> > Unfortunately, either I missed it or it was a time I couldn't spend much
+> > time on reviews.
+> 
+> Okay, I guess it's common issue among maintainers. The problem with DT
+> is that it gets really hard to be fixed up later. :-)
+> 
+> >
+> >> > the devices. If they happen to be "simple" then the core can walk the
+> >> > tree and do any setup. For example, look for "reset-gpios" and toggle
+> >> > that GPIO. There is no need for a special node.
+> >> >
+> >> >> 2. Extend the pwrseq-simple with regulator toggling,
+> >> >> 3. Add support to USB hub and port core for pwrseq,
+> >> >
+> >> > We discussed this for USB already[1] and is why we defined how to add
+> >> > USB child devices. The idea is not to add pwrseq to that.
+> >>
+> >> I am not familiar with the USB discussion.
+> >>
+> >> Still, let me give you some more background to the mmc pwrseq. The
+> >> idea from the mmc pwrseq bindings comes from the power-domain DT
+> >> bindings, as I thought these things were a bit related.
+> >> In both cases they are not directly a property of the device, but more
+> >> describing a HW dependency to allow the device to work.
+> >
+> > I could see this as a board level power domain. However the difference
+> > is we are not generally exposing internal SOC details the same way as
+> > board level components. Perhaps we could extend power domains to board
+> > level, but that is not what was done here.
+> >
+> >> One could probably use a child node instead of a phandle, but that
+> >> wasn't chosen back then. Of course you are the DT expert, but could
+> >> you perhaps tell me why a child node is better for cases like this?
+> >
+> > If there is a control path hierarchy, then we try to model that in DT
+> > with child nodes. In cases of SDIO and USB, there is a clear hierarchy.
+> > Ignoring the discovery ordering problem, we already have defined ways to
+> > describe GPIO connections, regulators, etc. to devices. Describing those
+> > things separately from the device to solve a particular issue that is
+> > really a kernel limitation is what I don't like.
+> 
+> Okay, I see.
+> 
+> To move forward in trying to make mmc pwrseq a generic pwrseq, could
+> we perhaps allow both cases?
+> 
+> In the mmc case, there are already deployed bindings so we need to
+> cope with these by using the phandle option, but for USB etc we could
+> force the child node option.
+> As long as we agree that we keep using a compatible string for the
+> child node as well, both options should be able to co-exist and we
+> should probably be able to managed them both from a common pwrseq
+> driver framework.
+> 
+> Although, I do remember from an older conversations around some of
+> mine submission for the mmc pwrseq code, that some people (maybe
+> Arnd?) wasn't keen on adding a new framework for this. Perhaps that
+> has changed?
+> 
 
-On 05/27/2016 07:32 AM, Marek Szyprowski wrote:
-> Hello,
-> 
-> 
-> On 2016-05-25 19:11, Javier Martinez Canillas wrote:
->> Hello Marek,
->>
->> On 05/24/2016 09:31 AM, Marek Szyprowski wrote:
->>> This patch replaces custom properties for defining reserved memory
->>> regions with generic reserved memory bindings for MFC video codec
->>> device.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->> [snip]
->>
->>> +
->>> +/ {
->>> +    reserved-memory {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <1>;
->>> +        ranges;
->>> +
->>> +        mfc_left: region@51000000 {
->>> +            compatible = "shared-dma-pool";
->>> +            no-map;
->>> +            reg = <0x51000000 0x800000>;
->>> +        };
->>> +
->>> +        mfc_right: region@43000000 {
->>> +            compatible = "shared-dma-pool";
->>> +            no-map;
->>> +            reg = <0x43000000 0x800000>;
->>> +        };
->>> +    };
->> I've a question probably for a follow up patch, but do you know what's a
->> sane default size for these? I needed to bump the mfc_left size from 8 MiB
->> to 16 MiB in order to decode a 480p H264 video using GStramer. So clearly
->> the default sizes are not that useful.
-> 
-> Right, the default size for the 'left' region can be increased. Frankly, those
-> values (8MiB/0x43000000+ 8MiB/0x51000000) comes from my initial patches
-> prepared for some demo and don't have much with any real requirements. They
-> were copied (blindly...) by various developers without any deeper understanding.
+All, how we move on for this?
 
-Yes, I've to admit that I was one of those when added the MFC regions to the
-Peach Chromebooks but worked because I tested with small videos. When trying
-to decode bigger videos, then had to increase the 'left' region as mentioned.
+1. Using a generic driver to manage both mmc and USB (and further
+subsystem), USB and further subsystem do not use pwrseq node in dts.
+2. USB creates the similar driver under drivers/usb for its own use. 
 
-> Probably the most sane would be to use something like this:
-> 
-> mfc_left: region_mfc_left {
->          compatible = "shared-dma-pool";
->          no-map;
->          size = <0x1000000>;
->          alignment = <0x100000>;
-> };
-> 
-> mfc_right: region_mfc_right {
->          compatible = "shared-dma-pool";
->          no-map;
->          size = <0x800000>;
->          alignment = <0x100000>;
-> };
-> 
-> So the region will be allocated automatically from the available memory. This way
-> another nice feature of the generic reserved memory regions can be used.
->
+Which one do you prefer, thanks.
 
-That sounds better indeed. Not requiring a certain memory offset will also have the
-nice side effect to prevent conflicts like the one Pankaj had with his initramfs [0].
- 
-> The only platform which really requires MFC regions to be placed at certain memory
-> offsets is Samsung S5PV210/S5PC110 (sometimes called exynos3), where there is no
-> memory address interleaving and MFC device has limited memory interface, which cannot
-> do 2 transactions to the same physical memory bank. However S5PV210/S5PC110 machine
-> code lost support for MFC during conversion to device tree, so it is not a problem
-> here.
->
-> All newer platforms (Exynos4, Exynos3250, Exynos5+) use memory interleaving, so the
-> actual offset of memory bank has no influence on the physical memory bank.
->
-
-I see, thanks a lot for the explanation.
- 
->>> +};
->>> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
->>> index ad7394c..f5e4eb2 100644
->>> --- a/arch/arm/boot/dts/exynos4210-origen.dts
->>> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
->>> @@ -18,6 +18,7 @@
->>>   #include "exynos4210.dtsi"
->>>   #include <dt-bindings/gpio/gpio.h>
->>>   #include <dt-bindings/input/input.h>
->>> +#include "exynos-mfc-reserved-memory.dtsi"
->>>     / {
->>>       model = "Insignal Origen evaluation board based on Exynos4210";
->>> @@ -288,8 +289,7 @@
->>>   };
->>>     &mfc {
->>> -    samsung,mfc-r = <0x43000000 0x800000>;
->>> -    samsung,mfc-l = <0x51000000 0x800000>;
->>> +    memory-region = <&mfc_left>, <&mfc_right>;
->>>       status = "okay";
->> I wonder if shouldn't be better to include the exynos-mfc-reserved-memory.dtsi
->> on each SoC dtsi and set the memory-regions in the MFC node instead of doing
->> it on each DTS, and let DTS to just replace with its own memory regions if the
->> default sizes are not suitable for them.
-> 
-> I don't have strong opinion on this. Maybe it would make more sense to move the
-> following entry:
-> 
-> &mfc {
->         memory-region = <&mfc_left>, <&mfc_right>;
-> };
-> 
-> also to the exynos-mfc-reserved-memory.dtsi ? So board will just include it if
-> it want to use MFC device with reserved memory regions.
->
-
-Ok, that also sounds like a good option for me.
- 
->> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> Best regards
-
-[0]: https://lkml.org/lkml/2016/5/26/98
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+
+Best Regards,
+Peter Chen
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
