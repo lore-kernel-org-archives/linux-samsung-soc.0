@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 05/22] ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
-Date: Sat, 28 May 2016 11:54:16 +0200
-Message-ID: <1464429273-23457-6-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 09/22] ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in exynos5410.dtsi
+Date: Sat, 28 May 2016 11:54:20 +0200
+Message-ID: <1464429273-23457-10-git-send-email-krzk@kernel.org>
 References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
@@ -10,50 +10,28 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-For consistency lowercase node labels are used.
+Add 'sromc' label to SROM memory controller in common exynos5.dtsi so it
+can be referenced by inheriting DTSI.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 477c6741c6dd..ef60a06211f1 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -35,28 +35,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index c5d198c70b86..30a0b63b06c9 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -35,7 +35,7 @@
+ 		reg = <0x10000000 0x100>;
+ 	};
  
--		CPU0: cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU1: cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x1>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU2: cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x2>;
- 			clock-frequency = <1600000000>;
- 		};
- 
--		CPU3: cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x3>;
+-	memory-controller@12250000 {
++	sromc: memory-controller@12250000 {
+ 		compatible = "samsung,exynos4210-srom";
+ 		reg = <0x12250000 0x14>;
+ 	};
 -- 
 2.7.4
