@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 02/22] dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-Date: Sat, 28 May 2016 11:54:13 +0200
-Message-ID: <1464429273-23457-3-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+Date: Sat, 28 May 2016 11:54:12 +0200
+Message-ID: <1464429273-23457-2-git-send-email-krzk@kernel.org>
 References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
@@ -10,52 +10,85 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add IDs for PWM and USB clocks to Exynos5410. Use the same number as for
-Exynos5420 just in case in future these drivers were merged.
+Add license and copyrights (file introduced in 2014) to header with
+Exynos5410 clock IDs. Additionally reformat it to improve readability.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- include/dt-bindings/clock/exynos5410.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 22 deletions(-)
 
 diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 213f19e02870..34c8e96987a1 100644
+index 9b180f032e2d..213f19e02870 100644
 --- a/include/dt-bindings/clock/exynos5410.h
 +++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -27,16 +28,25 @@
- #define CLK_SCLK_MMC0		132
- #define CLK_SCLK_MMC1		133
- #define CLK_SCLK_MMC2		134
-+#define CLK_SCLK_USBD300	150
-+#define CLK_SCLK_USBD301	151
-+#define CLK_SCLK_USBPHY300	152
-+#define CLK_SCLK_USBPHY301	153
-+#define CLK_SCLK_PWM		155
+@@ -1,33 +1,43 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants for Exynos5421 clock controller.
++*/
++
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ 
+ /* core clocks */
+-#define CLK_FIN_PLL 1
+-#define CLK_FOUT_APLL 2
+-#define CLK_FOUT_CPLL 3
+-#define CLK_FOUT_MPLL 4
+-#define CLK_FOUT_BPLL 5
+-#define CLK_FOUT_KPLL 6
++#define CLK_FIN_PLL		1
++#define CLK_FOUT_APLL		2
++#define CLK_FOUT_CPLL		3
++#define CLK_FOUT_MPLL		4
++#define CLK_FOUT_BPLL		5
++#define CLK_FOUT_KPLL		6
+ 
+ /* gate for special clocks (sclk) */
+-#define CLK_SCLK_UART0 128
+-#define CLK_SCLK_UART1 129
+-#define CLK_SCLK_UART2 130
+-#define CLK_SCLK_UART3 131
+-#define CLK_SCLK_MMC0 132
+-#define CLK_SCLK_MMC1 133
+-#define CLK_SCLK_MMC2 134
++#define CLK_SCLK_UART0		128
++#define CLK_SCLK_UART1		129
++#define CLK_SCLK_UART2		130
++#define CLK_SCLK_UART3		131
++#define CLK_SCLK_MMC0		132
++#define CLK_SCLK_MMC1		133
++#define CLK_SCLK_MMC2		134
  
  /* gate clocks */
- #define CLK_UART0		257
- #define CLK_UART1		258
- #define CLK_UART2		259
- #define CLK_UART3		260
-+#define CLK_PWM			279
- #define CLK_MCT			315
- #define CLK_MMC0		351
- #define CLK_MMC1		352
- #define CLK_MMC2		353
-+#define CLK_USBH20		365
-+#define CLK_USBD300		366
-+#define CLK_USBD301		367
+-#define CLK_UART0 257
+-#define CLK_UART1 258
+-#define CLK_UART2 259
+-#define CLK_UART3 260
+-#define CLK_MCT 315
+-#define CLK_MMC0 351
+-#define CLK_MMC1 352
+-#define CLK_MMC2 353
++#define CLK_UART0		257
++#define CLK_UART1		258
++#define CLK_UART2		259
++#define CLK_UART3		260
++#define CLK_MCT			315
++#define CLK_MMC0		351
++#define CLK_MMC1		352
++#define CLK_MMC2		353
  
- #define CLK_NR_CLKS		512
+-#define CLK_NR_CLKS 512
++#define CLK_NR_CLKS		512
  
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
 -- 
 2.7.4
