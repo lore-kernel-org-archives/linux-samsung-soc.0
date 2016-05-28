@@ -1,111 +1,125 @@
-From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
-Date: Sat, 28 May 2016 11:36:13 +0800
-Message-ID: <20160528033613.GA3291@shlinux2>
-References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
- <20160505224240.GA31429@rob-hp-laptop>
- <CAPDyKFqpoi03Egfuvd8qJXnn_+FBgPXAb7S4UvkxVs8BA+zwnA@mail.gmail.com>
- <20160509181829.GA19687@rob-hp-laptop>
- <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid XU
+Date: Sat, 28 May 2016 11:54:11 +0200
+Message-ID: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 10, 2016 at 01:02:08PM +0200, Ulf Hansson wrote:
-> + Arnd
-> 
-> [...]
-> 
-> >> >> Solution
-> >> >> ========
-> >> >> This is very similar to the MMC pwrseq behavior so the idea is to:
-> >> >> 1. Move MMC pwrseq drivers to generic place,
-> >> >
-> >> > You can do that, but I'm going to NAK any use of pwrseq bindings outside
-> >> > of MMC. I think it is the wrong way to do things. The DT should describe
-> >>
-> >> Huh, I didn't know that was your view of the mmc pwrseq bindings. Why
-> >> didn't you NAK them before?
-> >
-> > Unfortunately, either I missed it or it was a time I couldn't spend much
-> > time on reviews.
-> 
-> Okay, I guess it's common issue among maintainers. The problem with DT
-> is that it gets really hard to be fixed up later. :-)
-> 
-> >
-> >> > the devices. If they happen to be "simple" then the core can walk the
-> >> > tree and do any setup. For example, look for "reset-gpios" and toggle
-> >> > that GPIO. There is no need for a special node.
-> >> >
-> >> >> 2. Extend the pwrseq-simple with regulator toggling,
-> >> >> 3. Add support to USB hub and port core for pwrseq,
-> >> >
-> >> > We discussed this for USB already[1] and is why we defined how to add
-> >> > USB child devices. The idea is not to add pwrseq to that.
-> >>
-> >> I am not familiar with the USB discussion.
-> >>
-> >> Still, let me give you some more background to the mmc pwrseq. The
-> >> idea from the mmc pwrseq bindings comes from the power-domain DT
-> >> bindings, as I thought these things were a bit related.
-> >> In both cases they are not directly a property of the device, but more
-> >> describing a HW dependency to allow the device to work.
-> >
-> > I could see this as a board level power domain. However the difference
-> > is we are not generally exposing internal SOC details the same way as
-> > board level components. Perhaps we could extend power domains to board
-> > level, but that is not what was done here.
-> >
-> >> One could probably use a child node instead of a phandle, but that
-> >> wasn't chosen back then. Of course you are the DT expert, but could
-> >> you perhaps tell me why a child node is better for cases like this?
-> >
-> > If there is a control path hierarchy, then we try to model that in DT
-> > with child nodes. In cases of SDIO and USB, there is a clear hierarchy.
-> > Ignoring the discovery ordering problem, we already have defined ways to
-> > describe GPIO connections, regulators, etc. to devices. Describing those
-> > things separately from the device to solve a particular issue that is
-> > really a kernel limitation is what I don't like.
-> 
-> Okay, I see.
-> 
-> To move forward in trying to make mmc pwrseq a generic pwrseq, could
-> we perhaps allow both cases?
-> 
-> In the mmc case, there are already deployed bindings so we need to
-> cope with these by using the phandle option, but for USB etc we could
-> force the child node option.
-> As long as we agree that we keep using a compatible string for the
-> child node as well, both options should be able to co-exist and we
-> should probably be able to managed them both from a common pwrseq
-> driver framework.
-> 
-> Although, I do remember from an older conversations around some of
-> mine submission for the mmc pwrseq code, that some people (maybe
-> Arnd?) wasn't keen on adding a new framework for this. Perhaps that
-> has changed?
-> 
+Hi,
 
-All, how we move on for this?
+Patchset adds necessary clocks, reorganizes existing stuff and finally
+adds Odroid XU support.
 
-1. Using a generic driver to manage both mmc and USB (and further
-subsystem), USB and further subsystem do not use pwrseq node in dts.
-2. USB creates the similar driver under drivers/usb for its own use. 
 
-Which one do you prefer, thanks.
+Changes since v4
+================
+1. Patch 20: Remove the nodes in exynos5420.dtsi (before they were
+   actually just copied instead of moving).
+
+Changes since v3
+================
+1. Get rid of 5 patches changing the fin_pll after talk with Tomasz
+   Figa. The existing definition of oscillator in exynos5410.dtsi
+   is preferred over solution chosen for Exynos5420.
+   This simplifies also the merging strategy.
+2. Add tags from Javier (tested and reviewed).
+
+Patchset is available at my private repo @github:
+https://github.com/krzk/linux.git for-next/odroid-xu-v4
+(I have some more changes coming but I think it is easier for
+reviewers if the patchset does not grow infinitely)
+
+
+Changes since v2
+================
+1. Got global-ack from Stephen for the clock changes. I think merging
+   everything through arm-soc might be the easiest but:
+   a. In such case I will prepare a tag with clock changes,
+   b. Anyway I will wait for response from Sylwester and Tomasz.
+2. Applied comments from Javier and added his Reviewed-by.
+3. Patch 22: added ack from Rob.
+4. Minor improvements in existing patches.
+5. Five new patches at the end: 23-27 (not reviewed yet).
+   Some of them could be squashed with existing ones but existing
+   changes got reviews. Although the final Odroid XU DTS works fine but
+   in general this is still work-in-progress so I suspect it will grow.
+   I am releasing it early following Linux concept. :)
+
+
+Changes since v1
+================
+1. A lot of new patches.
+2. Removed some TODO notes (eMMC 4.5 so no RCLK pin).
+3. New clocks, more reorganization.
+4. New common DTSI: exynos54xx.dtsi. I know, it is getting more
+   and more complicated but this might help removing duplications
+   and keeping everything under control.
+
+
+
+Merging strategy
+================
+The clock changes can go to clock tree. ARM changes to samsung-soc tree.
+Please provide me a tag with include/dt-bindings/clock commits so I can
+merge it.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (22):
+  dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+  dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add serial3, USB and PWM clocks
+  ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl
+    nodes
+  ARM: dts: exynos: Use lowercase for Exynos5410 CPU node labels
+  ARM: dts: exynos: Configure Exynos5410 pinctrl for eMMC and SD card
+  ARM: dts: exynos: Split Odroid XU3 LEDs to separate DTSI
+  ARM: dts: exynos: Move common nodes to exynos5.dtsi
+  ARM: dts: exynos: Prepare for inclusion of exynos5.dtsi in
+    exynos5410.dtsi
+  ARM: dts: exynos: Use phandle to get parent node in exynos5250-snow
+  ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc
+  ARM: dts: exynos: Include common exynos5 in exynos5410.dtsi
+  ARM: dts: exynos: Enable UART3 on Exynos5410
+  ARM: dts: exynos: MCT is not an interrupt controller and extend length
+    of iomap
+  ARM: dts: exynos: Move common Exynos5410/542x/5800 nodes to new DTSI
+  ARM: dts: exynos: Add USB to Exynos5410
+  ARM: dts: exynos: Add initial support for Odroid XU board
+  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+  clk: samsung: exynos5410: Add I2C, HSI2C and RTC clocks
+  ARM: dts: exynos: Move HSI2C nodes to exynos54xx.dtsi
+  ARM: dts: exynos: Add I2C, PWM and UART pinctrl to Exynos5410
+  ARM: dts: exynos: Add RTC and I2C to Exynos5410
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  215 ++-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  | 1701 +++++++++--------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  121 ++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |  210 +++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |    6 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  267 +--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   12 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 1939 +++++++++-----------
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   35 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |   35 +-
+ arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    |   50 +
+ arch/arm/boot/dts/exynos54xx.dtsi                  |  188 ++
+ drivers/clk/samsung/clk-exynos5410.c               |   45 +
+ include/dt-bindings/clock/exynos5410.h             |   73 +-
+ 17 files changed, 2681 insertions(+), 2220 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos54xx.dtsi
 
 -- 
+2.7.4
 
-Best Regards,
-Peter Chen
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
