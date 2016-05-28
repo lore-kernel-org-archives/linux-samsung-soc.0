@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 22/22] ARM: dts: exynos: Add RTC and I2C to Exynos5410
-Date: Sat, 28 May 2016 11:54:33 +0200
-Message-ID: <1464429273-23457-23-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 18/22] dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+Date: Sat, 28 May 2016 11:54:29 +0200
+Message-ID: <1464429273-23457-19-git-send-email-krzk@kernel.org>
 References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
@@ -10,95 +10,38 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Configure Exynos5410-specific properties of RTC, I2C and HSI2C nodes.
-This still does not enable them on the board level though.
+Add IDs for I2C, USI (HSI2C) and RTC clocks to Exynos5410. Use the same
+number as for Exynos5420 just in case in future these drivers were
+merged.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos5410.dtsi | 63 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ include/dt-bindings/clock/exynos5410.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 6146bf164248..a937d9bdad90 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -149,6 +149,62 @@
- 	};
- };
- 
-+&i2c_0 {
-+	clocks = <&clock CLK_I2C0>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_bus>;
-+};
-+
-+&i2c_1 {
-+	clocks = <&clock CLK_I2C1>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_bus>;
-+};
-+
-+&i2c_2 {
-+	clocks = <&clock CLK_I2C2>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_bus>;
-+};
-+
-+&i2c_3 {
-+	clocks = <&clock CLK_I2C3>;
-+	clock-names = "i2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c3_bus>;
-+};
-+
-+&hsi2c_4 {
-+	clocks = <&clock CLK_USI0>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_hs_bus>;
-+};
-+
-+&hsi2c_5 {
-+	clocks = <&clock CLK_USI1>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_hs_bus>;
-+};
-+
-+&hsi2c_6 {
-+	clocks = <&clock CLK_USI2>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_hs_bus>;
-+};
-+
-+&hsi2c_7 {
-+	clocks = <&clock CLK_USI3>;
-+	clock-names = "hsi2c";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c7_hs_bus>;
-+};
-+
- &mct {
- 	clocks = <&fin_pll>, <&clock CLK_MCT>;
- 	clock-names = "fin_pll", "mct";
-@@ -159,6 +215,13 @@
- 	clock-names = "timers";
- };
- 
-+&rtc {
-+	clocks = <&clock CLK_RTC>;
-+	clock-names = "rtc";
-+	interrupt-parent = <&pmu_system_controller>;
-+	status = "disabled";
-+};
-+
- &serial_0 {
- 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 	clock-names = "uart", "clk_uart_baud0";
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 34c8e96987a1..e94b7bbfd6af 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -38,9 +38,18 @@
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
++#define CLK_I2C0		261
++#define CLK_I2C1		262
++#define CLK_I2C2		263
++#define CLK_I2C3		264
++#define CLK_USI0		265
++#define CLK_USI1		266
++#define CLK_USI2		267
++#define CLK_USI3		268
+ #define CLK_UART3		260
+ #define CLK_PWM			279
+ #define CLK_MCT			315
++#define CLK_RTC			317
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
 -- 
 2.7.4
