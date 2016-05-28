@@ -1,94 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 01/22] dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-Date: Sat, 28 May 2016 11:54:12 +0200
-Message-ID: <1464429273-23457-2-git-send-email-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v5 04/22] ARM: dts: exynos: Re-order alphabetically Exynos5420 SD0/SD1 pinctrl nodes
+Date: Sat, 28 May 2016 11:54:15 +0200
+Message-ID: <1464429273-23457-5-git-send-email-krzk@kernel.org>
 References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1464429273-23457-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add license and copyrights (file introduced in 2014) to header with
-Exynos5410 clock IDs. Additionally reformat it to improve readability.
+The 'sd0_rclk' was put in the middle of SD1 nodes. Remove the confusion.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 ---
- include/dt-bindings/clock/exynos5410.h | 54 ++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 9b180f032e2d..213f19e02870 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,33 +1,43 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for Exynos5421 clock controller.
-+*/
-+
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index 130563b2ca95..14beb7e07323 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -193,17 +193,17 @@
+ 		samsung,pin-drv = <3>;
+ 	};
  
- /* core clocks */
--#define CLK_FIN_PLL 1
--#define CLK_FOUT_APLL 2
--#define CLK_FOUT_CPLL 3
--#define CLK_FOUT_MPLL 4
--#define CLK_FOUT_BPLL 5
--#define CLK_FOUT_KPLL 6
-+#define CLK_FIN_PLL		1
-+#define CLK_FOUT_APLL		2
-+#define CLK_FOUT_CPLL		3
-+#define CLK_FOUT_MPLL		4
-+#define CLK_FOUT_BPLL		5
-+#define CLK_FOUT_KPLL		6
+-	sd1_clk: sd1-clk {
+-		samsung,pins = "gpc1-0";
++	sd0_rclk: sd0-rclk {
++		samsung,pins = "gpc0-7";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
++		samsung,pin-pud = <1>;
+ 		samsung,pin-drv = <3>;
+ 	};
  
- /* gate for special clocks (sclk) */
--#define CLK_SCLK_UART0 128
--#define CLK_SCLK_UART1 129
--#define CLK_SCLK_UART2 130
--#define CLK_SCLK_UART3 131
--#define CLK_SCLK_MMC0 132
--#define CLK_SCLK_MMC1 133
--#define CLK_SCLK_MMC2 134
-+#define CLK_SCLK_UART0		128
-+#define CLK_SCLK_UART1		129
-+#define CLK_SCLK_UART2		130
-+#define CLK_SCLK_UART3		131
-+#define CLK_SCLK_MMC0		132
-+#define CLK_SCLK_MMC1		133
-+#define CLK_SCLK_MMC2		134
+-	sd0_rclk: sd0-rclk {
+-		samsung,pins = "gpc0-7";
++	sd1_clk: sd1-clk {
++		samsung,pins = "gpc1-0";
+ 		samsung,pin-function = <2>;
+-		samsung,pin-pud = <1>;
++		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <3>;
+ 	};
  
- /* gate clocks */
--#define CLK_UART0 257
--#define CLK_UART1 258
--#define CLK_UART2 259
--#define CLK_UART3 260
--#define CLK_MCT 315
--#define CLK_MMC0 351
--#define CLK_MMC1 352
--#define CLK_MMC2 353
-+#define CLK_UART0		257
-+#define CLK_UART1		258
-+#define CLK_UART2		259
-+#define CLK_UART3		260
-+#define CLK_MCT			315
-+#define CLK_MMC0		351
-+#define CLK_MMC1		352
-+#define CLK_MMC2		353
- 
--#define CLK_NR_CLKS 512
-+#define CLK_NR_CLKS		512
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5410_H */
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
