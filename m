@@ -1,41 +1,418 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v5 14/22] ARM: dts: exynos: MCT is not an interrupt controller and extend length of iomap
-Date: Sat, 28 May 2016 11:54:25 +0200
-Message-ID: <1464429273-23457-15-git-send-email-krzk@kernel.org>
+Subject: [PATCH v5 08/22] ARM: dts: exynos: Move common nodes to exynos5.dtsi
+Date: Sat, 28 May 2016 11:54:19 +0200
+Message-ID: <1464429273-23457-9-git-send-email-krzk@kernel.org>
 References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Multi-Core Timer generates interrupts but it is not really an interrupt
-controller so remove the "interrupt-controller" and "interrupt-cells"
-properties. Additionally extend the length of mapped memory to cover all
-registers (last SFR is at 0x0A40).
+Exynos5420 and Exynos5250 share some nodes: the PWM, syscon
+(sysreg_system_controller) and first four I2C controllers. Move them to
+parent DTSI to avoid duplication.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
+---
+
+Important changes since v2:
+1. Move also i2c[0123] to exynos5.dtsi.
+---
+ arch/arm/boot/dts/exynos5.dtsi    |  56 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi | 108 ++++++++++++--------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 108 ++++++++++++--------------------------
+ 3 files changed, 124 insertions(+), 148 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index d5c0f18a4223..c5d198c70b86 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -20,6 +20,10 @@
+ 	interrupt-parent = <&gic>;
+ 
+ 	aliases {
++		i2c0 = &i2c_0;
++		i2c1 = &i2c_1;
++		i2c2 = &i2c_2;
++		i2c3 = &i2c_3;
+ 		serial0 = &serial_0;
+ 		serial1 = &serial_1;
+ 		serial2 = &serial_2;
+@@ -63,6 +67,11 @@
+ 		interrupts = <1 9 0xf04>;
+ 	};
+ 
++	sysreg_system_controller: syscon@10050000 {
++		compatible = "samsung,exynos5-sysreg", "syscon";
++		reg = <0x10050000 0x5000>;
++	};
++
+ 	serial_0: serial@12C00000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x12C00000 0x100>;
+@@ -87,6 +96,53 @@
+ 		interrupts = <0 54 0>;
+ 	};
+ 
++	i2c_0: i2c@12C60000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C60000 0x100>;
++		interrupts = <0 56 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_1: i2c@12C70000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C70000 0x100>;
++		interrupts = <0 57 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_2: i2c@12C80000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C80000 0x100>;
++		interrupts = <0 58 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	i2c_3: i2c@12C90000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x12C90000 0x100>;
++		interrupts = <0 59 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,sysreg-phandle = <&sysreg_system_controller>;
++		status = "disabled";
++	};
++
++	pwm: pwm@12DD0000 {
++		compatible = "samsung,exynos4210-pwm";
++		reg = <0x12DD0000 0x100>;
++		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
++		#pwm-cells = <3>;
++	};
++
+ 	rtc: rtc@101E0000 {
+ 		compatible = "samsung,s3c6410-rtc";
+ 		reg = <0x101E0000 0x100>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index c7158b2fb213..ae4970d1c74f 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -37,10 +37,6 @@
+ 		mshc1 = &mmc_1;
+ 		mshc2 = &mmc_2;
+ 		mshc3 = &mmc_3;
+-		i2c0 = &i2c_0;
+-		i2c1 = &i2c_1;
+-		i2c2 = &i2c_2;
+-		i2c3 = &i2c_3;
+ 		i2c4 = &i2c_4;
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+@@ -235,11 +231,6 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
+-	sysreg_system_controller: syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+-
+ 	watchdog@101D0000 {
+ 		compatible = "samsung,exynos5250-wdt";
+ 		reg = <0x101D0000 0x100>;
+@@ -328,62 +319,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c_0: i2c@12C60000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C60000 0x100>;
+-		interrupts = <0 56 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C0>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c0_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_1: i2c@12C70000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C70000 0x100>;
+-		interrupts = <0 57 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C1>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c1_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_2: i2c@12C80000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C80000 0x100>;
+-		interrupts = <0 58 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C2>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c2_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_3: i2c@12C90000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C90000 0x100>;
+-		interrupts = <0 59 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C3>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c3_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
++	/* i2c_0-3 are defined in exynos5.dtsi */
+ 	i2c_4: i2c@12CA0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CA0000 0x100>;
+@@ -662,15 +598,6 @@
+ 		samsung,pmureg-phandle = <&pmu_system_controller>;
+ 	};
+ 
+-	pwm: pwm@12dd0000 {
+-		compatible = "samsung,exynos4210-pwm";
+-		reg = <0x12dd0000 0x100>;
+-		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+-		#pwm-cells = <3>;
+-		clocks = <&clock CLK_PWM>;
+-		clock-names = "timers";
+-	};
+-
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -1070,6 +997,39 @@
+ 	iommus = <&sysmmu_fimd1>;
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
++
+ &rtc {
+ 	clocks = <&clock CLK_RTC>;
+ 	clock-names = "rtc";
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4b16a9376a24..872dadf0f2d4 100644
+index 549ebf23fee0..f2e8e6482888 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -263,9 +263,7 @@
+@@ -30,10 +30,6 @@
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+ 		pinctrl4 = &pinctrl_4;
+-		i2c0 = &i2c_0;
+-		i2c1 = &i2c_1;
+-		i2c2 = &i2c_2;
+-		i2c3 = &i2c_3;
+ 		i2c4 = &hsi2c_4;
+ 		i2c5 = &hsi2c_5;
+ 		i2c6 = &hsi2c_6;
+@@ -542,15 +538,6 @@
+ 		status = "disabled";
+ 	};
  
- 		mct: mct@101C0000 {
- 			compatible = "samsung,exynos4210-mct";
--			reg = <0x101C0000 0x800>;
--			interrupt-controller;
--			#interrupt-cells = <1>;
-+			reg = <0x101C0000 0xB00>;
- 			interrupt-parent = <&mct_map>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 					<8>, <9>, <10>, <11>;
+-	pwm: pwm@12dd0000 {
+-		compatible = "samsung,exynos4210-pwm";
+-		reg = <0x12dd0000 0x100>;
+-		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+-		#pwm-cells = <3>;
+-		clocks = <&clock CLK_PWM>;
+-		clock-names = "timers";
+-	};
+-
+ 	dp_phy: dp-video-phy {
+ 		compatible = "samsung,exynos5420-dp-video-phy";
+ 		samsung,pmu-syscon = <&pmu_system_controller>;
+@@ -588,62 +575,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c_0: i2c@12C60000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C60000 0x100>;
+-		interrupts = <0 56 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C0>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c0_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_1: i2c@12C70000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C70000 0x100>;
+-		interrupts = <0 57 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C1>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c1_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_2: i2c@12C80000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C80000 0x100>;
+-		interrupts = <0 58 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C2>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c2_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
+-	i2c_3: i2c@12C90000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x12C90000 0x100>;
+-		interrupts = <0 59 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&clock CLK_I2C3>;
+-		clock-names = "i2c";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&i2c3_bus>;
+-		samsung,sysreg-phandle = <&sysreg_system_controller>;
+-		status = "disabled";
+-	};
+-
++	/* i2c_0-3 are defined in exynos5.dtsi */
+ 	hsi2c_4: i2c@12CA0000 {
+ 		compatible = "samsung,exynos5250-hsi2c";
+ 		reg = <0x12CA0000 0x1000>;
+@@ -823,11 +755,6 @@
+ 		interrupt-parent = <&gic>;
+ 	};
+ 
+-	sysreg_system_controller: syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+-
+ 	tmu_cpu0: tmu@10060000 {
+ 		compatible = "samsung,exynos5420-tmu";
+ 		reg = <0x10060000 0x100>;
+@@ -1207,6 +1134,39 @@
+ 	iommu-names = "m0", "m1";
+ };
+ 
++&i2c_0 {
++	clocks = <&clock CLK_I2C0>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_bus>;
++};
++
++&i2c_1 {
++	clocks = <&clock CLK_I2C1>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_bus>;
++};
++
++&i2c_2 {
++	clocks = <&clock CLK_I2C2>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_bus>;
++};
++
++&i2c_3 {
++	clocks = <&clock CLK_I2C3>;
++	clock-names = "i2c";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_bus>;
++};
++
++&pwm {
++	clocks = <&clock CLK_PWM>;
++	clock-names = "timers";
++};
++
+ &rtc {
+ 	clocks = <&clock CLK_RTC>;
+ 	clock-names = "rtc";
 -- 
 2.7.4
