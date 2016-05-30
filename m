@@ -1,56 +1,36 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid
- XU
-Date: Mon, 30 May 2016 17:27:14 +0200
-Message-ID: <574C5BD2.60008@samsung.com>
-References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
+Subject: Re: [PATCH] dwc3-exynos: Fix deferred probing storm.
+Date: Mon, 30 May 2016 19:46:09 +0200
+Message-ID: <20160530174609.GB22557@sesse.net>
+References: <20160524192424.GA11690@sesse.net>
+ <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
+ <CAFp+6iGFkquYkHCCJRkQALRZ2g-htiKbrJZbJwMoAMR=+A5u_Q@mail.gmail.com>
+ <20160527114641.GA39472@sesse.net>
+ <5748480D.8000501@samsung.com>
+ <87bn3rprtw.fsf@linux.intel.com>
+ <20160527132519.GA5268@sesse.net>
+ <877fefpr71.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1464429273-23457-1-git-send-email-krzk@kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassarossa.samfundet.no ([193.35.52.29]:53475 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161249AbcE3Rq1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 May 2016 13:46:27 -0400
+Content-Disposition: inline
+In-Reply-To: <877fefpr71.fsf@linux.intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vivek Gautam <gautamvivek1987@gmail.com>, "Steinar H. Gunderson" <sesse@google.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-On 05/28/2016 11:54 AM, Krzysztof Kozlowski wrote:
->
-> The clock changes can go to clock tree. ARM changes to samsung-soc tree.
-> Please provide me a tag with include/dt-bindings/clock commits so I can
-> merge it.
+On Fri, May 27, 2016 at 04:26:42PM +0300, Felipe Balbi wrote:
+>> Sent. As a fix, there's a chance it could go into 4.7, right?
+> yup, shouldn't be a problem. But only after v4.7-rc1 is tagged.
 
-I applied the clock tree patches and here is the tag for the three
-include/dt-bindings patches:
+Seemingly v4.7-rc1 is out today (I was surprised at how quick that was).
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt
-
-for you to fetch changes up to ed1e1505db0c116affdfab01e650c44a9c459c65:
-
-  dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-(2016-05-30 16:00:11 +0200)
-
-----------------------------------------------------------------
-Adition of missing clock index definitions for exynos5410 SoC
-PWM, USB, I2C, and RTC device related clocks.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (3):
-      dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
-      dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
-      dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
-
- include/dt-bindings/clock/exynos5410.h | 73
-+++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 51 insertions(+), 22 deletions(-)
-
-
---
-Thanks,
-Sylwester
+/* Steinar */
+-- 
+Homepage: https://www.sesse.net/
