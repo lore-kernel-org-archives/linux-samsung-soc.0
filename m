@@ -1,36 +1,51 @@
-From: "Steinar H. Gunderson" <sgunderson@bigfoot.com>
-Subject: Re: [PATCH] dwc3-exynos: Fix deferred probing storm.
-Date: Mon, 30 May 2016 19:46:09 +0200
-Message-ID: <20160530174609.GB22557@sesse.net>
-References: <20160524192424.GA11690@sesse.net>
- <E1b5Hwn-0005Be-UA@pannekake.samfundet.no>
- <CAFp+6iGFkquYkHCCJRkQALRZ2g-htiKbrJZbJwMoAMR=+A5u_Q@mail.gmail.com>
- <20160527114641.GA39472@sesse.net>
- <5748480D.8000501@samsung.com>
- <87bn3rprtw.fsf@linux.intel.com>
- <20160527132519.GA5268@sesse.net>
- <877fefpr71.fsf@linux.intel.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/3] drm/exynos: fimd: add HW trigger support
+Date: Mon, 30 May 2016 18:58:47 -0400
+Message-ID: <a8e410dd-ef60-f8cd-f4ea-cf60414db5bd@osg.samsung.com>
+References: <1459844864-12065-1-git-send-email-inki.dae@samsung.com>
+ <1459844864-12065-3-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassarossa.samfundet.no ([193.35.52.29]:53475 "EHLO
-	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161249AbcE3Rq1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 May 2016 13:46:27 -0400
-Content-Disposition: inline
-In-Reply-To: <877fefpr71.fsf@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1459844864-12065-3-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vivek Gautam <gautamvivek1987@gmail.com>, "Steinar H. Gunderson" <sesse@google.com>, Mark Brown <broonie@debian.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 823552@bugs.debian.org, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-On Fri, May 27, 2016 at 04:26:42PM +0300, Felipe Balbi wrote:
->> Sent. As a fix, there's a chance it could go into 4.7, right?
-> yup, shouldn't be a problem. But only after v4.7-rc1 is tagged.
-
-Seemingly v4.7-rc1 is out today (I was surprised at how quick that was).
-
-/* Steinar */
--- 
-Homepage: https://www.sesse.net/
+SGVsbG8gSW5raSwKCk9uIDA0LzA1LzIwMTYgMDQ6MjcgQU0sIElua2kgRGFlIHdyb3RlOgo+IFRo
+aXMgcGF0Y2ggYWRkcyBIVyB0cmlnZ2VyIHN1cHBvcnQgb24gaTgwIG1vZGUuCj4gCj4gVW50aWwg
+bm93LCBFeHlub3MgRFJNIG9ubHkgc3VwcG9ydGVkIFNXIHRyaWdnZXIgd2hpY2ggd2FzIHNldAo+
+IFNXVFJHQ01EIGJpdCBvZiBUUklHQ09OIHJlZ2lzdGVyIGJ5IENQVSB0byB0cmFuc2ZlciBzY2Fu
+b3V0Cj4gYnVmZmVyIHRvIERpc3BsYXkgYnVzIGRldmljZSBvciBwYW5lbC4KPiAKPiBXaXRoIHRo
+aXMgcGF0Y2gsIHRoZSB0cmFuc21pc3Npb24gdG8gRGlzcGxheSBidXMgZGV2aWNlIG9yCj4gcGFu
+ZWwgd2lsbCBiZSBpbml0aWF0ZWQgYnkgRklNRCBjb250cm9sbGVyLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiAtLS0KClRoZXJlIGlzIGEgcmVn
+cmVzc2lvbiBmb3IgdGhlIEV4eW5vczU4MDAgUGVhY2ggUGkgQ2hyb21lYm9vayBkaXNwbGF5IGR1
+ZQp0aGlzIHBhdGNoLiBUaGUgZGlzcGxheSBpcyBibGFuayBhbmQgSSBub3RpY2VkIHRoYXQgaXQg
+b25seSBoYXBwZW5zIHdoZW4KSFcgc3RhcnQgdHJpZ2dlciBpcyBlbmFibGVkLCBidXQgd29ya3Mg
+d2l0aCBTVyB0cmlnZ2VyIChhcyBpdCB3YXMgYmVmb3JlKS4KClNvIGZvciBleGFtcGxlIHdpdGgg
+dGhlIGZvbGxvd2luZyBkaWZmIG9uIHRvcCBvZiB2NC43LXJjMSwgZGlzcGxheSB3b3JrcwphZ2Fp
+bi4gRG8geW91IGhhdmUgYW55IGhpbnRzIGFib3V0IHdoYXQgY291bGQgYmUgdGhlIGlzc3VlPwoK
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4IDA0NDRkN2ZjNDAw
+ZC4uOGM2MjgzMGU5NTE0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1k
+LmMKQEAgLTE3MSw3ICsxNzEsNyBAQCBzdGF0aWMgc3RydWN0IGZpbWRfZHJpdmVyX2RhdGEgZXh5
+bm9zNTQyMF9maW1kX2RyaXZlcl9kYXRhID0gewogCS5sY2RibGtfdnRfc2hpZnQgPSAyNCwKIAku
+bGNkYmxrX2J5cGFzc19zaGlmdCA9IDE1LAogCS5sY2RibGtfbWljX2J5cGFzc19zaGlmdCA9IDEx
+LAotCS50cmdfdHlwZSA9IEk4MF9IV19UUkcsCiAJLmhhc19zaGFkb3djb24gPSAxLAogCS5oYXNf
+dmlkb3V0Y29uID0gMSwKIAkuaGFzX3Z0c2VsID0gMSwKCkJlc3QgcmVnYXJkcywKLS0gCkphdmll
+ciBNYXJ0aW5leiBDYW5pbGxhcwpPcGVuIFNvdXJjZSBHcm91cApTYW1zdW5nIFJlc2VhcmNoIEFt
+ZXJpY2EKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
