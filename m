@@ -1,40 +1,42 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/7] ARM: exynos_defconfig: enable Exynos DRM Mixer driver
-Date: Mon, 30 May 2016 08:37:19 +0200
-Message-ID: <574BDF9F.8080509@samsung.com>
-References: <1445861025-23266-1-git-send-email-a.hajda@samsung.com>
- <1445861025-23266-4-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH v4 5/7] ARM: Exynos: remove code for MFC custom reserved
+ memory handling
+Date: Mon, 30 May 2016 09:28:56 +0200
+Message-ID: <574BEBB8.8040606@samsung.com>
+References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
+ <1464096690-23605-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:12312 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658AbcE3GhW (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:12214 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751658AbcE3H3B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 May 2016 02:37:22 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O7Z00A1A928TX40@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 May 2016 07:37:20 +0100 (BST)
-In-reply-to: <1445861025-23266-4-git-send-email-a.hajda@samsung.com>
+	Mon, 30 May 2016 03:29:01 -0400
+In-reply-to: <1464096690-23605-6-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "open list:DRM DRIVERS FOR EXYNOS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 10/26/2015 01:03 PM, Andrzej Hajda wrote:
-> Mixer driver is selected by CONFIG_DRM_EXYNOS_HDMI option. Since Exynos5433
-> HDMI does not require Mixer. There will be separate options to select Mixer
-> and HDMI. Adding new option to defconfig before Kconfig will allow to keep
-> bisectability.
+On 05/24/2016 03:31 PM, Marek Szyprowski wrote:
+> Once MFC driver has been converted to generic reserved memory bindings,
+> there is no need for custom memory reservation code.
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/mach-exynos/Makefile      |  2 -
+>  arch/arm/mach-exynos/exynos.c      | 19 --------
+>  arch/arm/mach-exynos/mfc.h         | 16 -------
+>  arch/arm/mach-exynos/s5p-dev-mfc.c | 93 --------------------------------------
+>  4 files changed, 130 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/mfc.h
+>  delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
 
 Thanks, applied.
+
+What is your final decision for DTS patches? Which approach for MFC
+reserved memory node?
 
 Krzysztof
