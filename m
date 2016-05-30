@@ -1,60 +1,70 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Remove unneded always-on for regulators
- on Peach boards
-Date: Mon, 30 May 2016 09:58:02 +0200
-Message-ID: <574BF28A.5000202@samsung.com>
-References: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17557 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753827AbcE3H6I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 May 2016 03:58:08 -0400
-In-reply-to: <1463694753-7259-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [RFC v2] Change dma_attrs from bitfield to unsigned long
+Date: Mon, 30 May 2016 13:54:05 +0200
+Message-ID: <1464609246-6948-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Andrew Morton <akpm@linux-foundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@techsingularity.net>, Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: hch@infradead.org, sstabellini@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-On 05/19/2016 11:52 PM, Javier Martinez Canillas wrote:
-> The regulator always-on property should only be used for regulators
-> that either can't be disabled or the drivers for the client devices
-> are not enabling the regulator and so being disabled due to unused.
-> 
-> There are some max77802 regulators in the Peach Pit and Pi boards
-> that are always-on but shouldn't since they are enabled by drivers:
-> 
-> BUCK5 is max77802 inl1 supply
-> BUCK7 is max77802 inl{2,10} supply
-> BUCK9 is max77802 inl{3,4,5,7} supply
-> BUCK10 is mmc1 vqmmc supply
-> LDO9 is adc vdd supply
-> 
-> This patch removes the always-on property for these regulators.
-> 
-> Some regulators should remain always-on even when they are used as
-> input supplies, because these regulators are also used by other
-> components that are not described in the DT, for example:
-> 
-> LDO10 is hdmi vdd_osc supply but it's also used as input supply for
-> the Exynos5420 temperature sensor.
-> 
-> LDO8 is hdmi vdd and vdd_pll supply but it's also used as supply for
-> the Exynos5420 Display port.
-> 
-> BUCK2 and BUCK6 are the vdd supplies for the EAGLE and KFC clusters.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
-> 
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 -----
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 -----
->  2 files changed, 10 deletions(-)
+Hi,
 
-Thanks, applied.
+
+This is second attempt to bring some safeness to dma_attrs.
+In v1 [0] I added const to data pointed by attrs. However Christoph
+Hellwig suggested getting rid of struct dma_attrs in favor of
+some simpler data type.
+
+
+Benefits of unsigned long for dma_attrs:
+1. This is just simpler.  Both in terms of reading the code and setting
+   attributes.  Instead of initializing local attributes on the stack and
+   passing pointer to it to dma_set_attr(), just set the bits.
+
+2. It brings safeness and checking for const correctness because the
+   attributes are passed by value.
+
+
+The problem is that the patch touches the dma-mapping API so all
+the users have to be converted (ARM and ARM64 as of now).
+
+Any ideas to split it per smaller patches?
+
+The work is not finished yet, I would rather get some feedback before
+progressing further.
+
 
 Best regards,
 Krzysztof
+
+
+Krzysztof Kozlowski (1):
+  dma-mapping: Use unsigned long for dma_attrs
+
+ Documentation/DMA-API.txt                 |   2 +-
+ Documentation/DMA-attributes.txt          |   2 +-
+ arch/arm/include/asm/dma-mapping.h        |  13 ++--
+ arch/arm/include/asm/xen/page-coherent.h  |  16 ++---
+ arch/arm/mm/dma-mapping.c                 |  82 +++++++++++------------
+ arch/arm/xen/mm.c                         |   4 +-
+ arch/arm64/mm/dma-mapping.c               |  57 ++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c   |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_gem.c   |  20 +++---
+ drivers/gpu/drm/exynos/exynos_drm_gem.h   |   2 +-
+ drivers/iommu/dma-iommu.c                 |   6 +-
+ drivers/xen/swiotlb-xen.c                 |  14 ++--
+ include/linux/dma-attrs.h                 |  71 --------------------
+ include/linux/dma-iommu.h                 |   6 +-
+ include/linux/dma-mapping.h               | 105 +++++++++++++++++-------------
+ include/linux/swiotlb.h                   |  10 +--
+ include/xen/swiotlb-xen.h                 |  12 ++--
+ lib/dma-noop.c                            |   9 +--
+ lib/swiotlb.c                             |  13 ++--
+ 20 files changed, 195 insertions(+), 252 deletions(-)
+ delete mode 100644 include/linux/dma-attrs.h
+
+-- 
+1.9.1
+
