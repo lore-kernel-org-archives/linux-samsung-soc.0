@@ -1,70 +1,78 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC PATCH v1 0/2]
-Date: Tue, 31 May 2016 16:38:31 +0200
-Message-ID: <20160531143831.GK7231@phenom.ffwll.local>
-References: <1464701856-8695-1-git-send-email-ykk@rock-chips.com>
+From: Marc Zyngier <maz@misterjones.org>
+Subject: Re: [PATCH 2/3] drm/exynos: fimd: add HW trigger support
+Date: Tue, 31 May 2016 16:18:01 +0100
+Message-ID: <62a251beb1b54fff34019c3cd4595984@www.loen.fr>
+References: <1459844864-12065-1-git-send-email-inki.dae@samsung.com>
+ <1459844864-12065-3-git-send-email-inki.dae@samsung.com>
+ <a8e410dd-ef60-f8cd-f4ea-cf60414db5bd@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1464701856-8695-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, tfiga@chromium.org, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from inca-roads.misterjones.org ([213.251.177.50]:51133 "EHLO
+	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754803AbcEaPbr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 31 May 2016 11:31:47 -0400
+In-Reply-To: <a8e410dd-ef60-f8cd-f4ea-cf60414db5bd@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, marc.zyngier@arm.com
 
-T24gVHVlLCBNYXkgMzEsIDIwMTYgYXQgMDk6Mzc6MzZQTSArMDgwMCwgWWFraXIgWWFuZyB3cm90
-ZToKPiBUaGUgZnVsbCBuYW1lIG9mIFBTUiBpcyBQYW5lbCBTZWxmIFJlZnJlc2gsIHBhbmVsIGRl
-dmljZSBjb3VsZCByZWZyZXNoCj4gaXRzZWxmIHdpdGggdGhlIGhhcmR3YXJlIGZyYW1lYnVmZmVy
-IGluIHBhbmVsLCB0aGlzIHdvdWxkIG1ha2UgYSBsb3RzCj4gb2Ygc2Vuc2UgdG8gc2F2ZSB0aGUg
-cG93ZXIgY29uc3VtcHRpb24uCj4gCj4gRm9yIGV4YW1wbGUsIHdoZW4gZGVza3RvcCBoYXZlbid0
-IGNoYW5nZSB0aGUgY29udGV4dCBmb3IgYSBsb25nIHRpbWUsCj4gdGhlbiB3ZSBjb3VsZCByZWZy
-ZXNoIHRoZSBkYXRhIHRvIHRoZSBoYXJkd2FyZSBmcmFtZWJ1ZmZlciBvZiBwYW5lbCwKPiBhbmQg
-dGhlbiBsZXQgcGFuZWwgZW50ZXIgaW50byBQU1IgbW9kZS4gQWZ0ZXIgdGhhdCBzeXN0ZW0gY291
-bGQgcG93ZXJvZmYKPiB0aGUgTENEQyBjb250cm9sbGVyIGFuZCBlRFAgY29udHJvbGxlciwganVz
-dCBsZXQgcGFuZWwgcmVmcmVzaCB0aGUgc2NyZWVuCj4gYnkgaXRzZWxmLgo+IAo+IEl0J3MgaGFy
-ZCB0byBkZWNpZGUgd2hlbiBwYW5lbCBzaG91bGQgZW50ZXIgaW50byBQU1Igb3IgZXhpdCBmcm9t
-IFBTUiwgaW4KPiB0aGlzIHRpbWUgSSBjaG9zZSB0byBsZXQgdGhlIGRybV92YmxhbmsgZW5hYmxl
-L2Rpc2FibGUgZXZlbnQgZHJpdmVyIHRoZSBQU1IuCj4gCj4gVGhpcyB0aHJlYWQgaXMgYmFzZWQg
-b24gTWFyaydzIFJLMzM5OSBWT1AgdGhyZWFkWzBdIGFuZCBteSBSSzMzOTkgZURQCj4gdGhyZWFk
-WzFdLgo+IAo+IFswXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC84ODg2MDQx
-Lwo+IFsxXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC85MTMyNzEzLwoKTG9v
-a3MgbGlrZSB5b3UgZGlkbid0IHdpcmUgdXAgdGhlIGRybV9mcmFtZWJ1ZmZlci0+ZnVuY3MtPmRp
-cnR5IGNhbGxiYWNrCmZvciBtYW51YWwgdXBsb2FkIG9mIHNpbXBsZSBjbGllbnRzIGxpa2UgYm9v
-dHNwbGFzaCBvciBmYmRldi4gSSB0aGluawp0aGF0J3MgbmVlZGVkLiBBdCBsZWFzdCBpdCdzIG5l
-ZWRlZCBmb3IgZXZlcnkgb3RoZXIgbWFudWFsIHVwbG9hZCBkc2kgYW5kCmVkcCBwc3IgaW1wbGVt
-ZW50YXRpb24uCi1EYW5pZWwKCj4gCj4gLSBZYWtpcgo+IFRoYW5rcywKPiAKPiAKPiBZYWtpciBZ
-YW5nICgyKToKPiAgIGRybS9yb2NrY2hpcDogYWRkIGEgbm90aWZ5IGV2ZW50IGFib3V0IHZibGFu
-ayBlbmFibGUvZGlzYWJsZQo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeDogYWRkIGVEUCBQU1Ig
-ZnVuY3Rpb24KPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
-cF9jb3JlLmMgfCAgNjkgKysrKysrKysrKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
-bmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmggfCAgIDUgKwo+ICBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8ICA1NCArKysrKysrKysrKwo+ICBkcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oICB8ICAyOCArKysr
-KysKPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL01ha2VmaWxlICAgICAgICAgICAgICAgICAg
-fCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlw
-LmMgICAgfCAgNjUgKysrKysrKysrKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
-a2NoaXBfZHJtX25vdGlmeS5jICAgICB8IDEwNSArKysrKysrKysrKysrKysrKysrKysKPiAgZHJp
-dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9ub3RpZnkuaCAgICAgfCAgMzMgKysr
-KysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5jICAgICAg
-ICB8ICA5NiArKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
-b2NrY2hpcF9kcm1fdm9wLmggICAgICAgIHwgICAzICsKPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyAgICAgICAgfCAgIDIgKwo+ICBpbmNsdWRlL2RybS9icmlk
-Z2UvYW5hbG9naXhfZHAuaCAgICAgICAgICAgICAgICAgICB8ICAgMyArCj4gIDEyIGZpbGVzIGNo
-YW5nZWQsIDQ2NCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX25vdGlmeS5jCj4gIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX25v
-dGlmeS5oCj4gCj4gLS0gCj4gMS45LjEKPiAKPiAKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJl
-IEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 2016-05-30 23:58, Javier Martinez Canillas wrote:
+> Hello Inki,
+>
+> On 04/05/2016 04:27 AM, Inki Dae wrote:
+>> This patch adds HW trigger support on i80 mode.
+>>
+>> Until now, Exynos DRM only supported SW trigger which was set
+>> SWTRGCMD bit of TRIGCON register by CPU to transfer scanout
+>> buffer to Display bus device or panel.
+>>
+>> With this patch, the transmission to Display bus device or
+>> panel will be initiated by FIMD controller.
+>>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> ---
+>
+> There is a regression for the Exynos5800 Peach Pi Chromebook display 
+> due
+> this patch. The display is blank and I noticed that it only happens 
+> when
+> HW start trigger is enabled, but works with SW trigger (as it was 
+> before).
+>
+> So for example with the following diff on top of v4.7-rc1, display 
+> works
+> again. Do you have any hints about what could be the issue?
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 0444d7fc400d..8c62830e9514 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -171,7 +171,7 @@ static struct fimd_driver_data
+> exynos5420_fimd_driver_data = {
+>  	.lcdblk_vt_shift = 24,
+>  	.lcdblk_bypass_shift = 15,
+>  	.lcdblk_mic_bypass_shift = 11,
+> -	.trg_type = I80_HW_TRG,
+>  	.has_shadowcon = 1,
+>  	.has_vidoutcon = 1,
+>  	.has_vtsel = 1,
+>
+> Best regards,
+
+On a related note, my Exynos5250 Chromebook (snow) has stopped working 
+as well since -rc1 has landed. I haven't had time to bisect it yet, but 
+the symptoms are vaguely similar (bright white screen).
+
+I'm happy to test patches.
+
+Thanks,
+
+         M.
+-- 
+Who you jivin' with that Cosmik Debris?
