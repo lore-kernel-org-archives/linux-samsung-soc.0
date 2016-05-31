@@ -1,49 +1,44 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
-Date: Tue, 31 May 2016 14:56:03 -0400
-Message-ID: <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
+Subject: Re: [PATCH 3/6] ARM: dts: exynos: Interrupt for USB DWC3-1 differs
+ between Exynos5420 and 5410
+Date: Tue, 31 May 2016 15:01:24 -0400
+Message-ID: <fca224e1-af8c-5540-d47a-9f05e494b2c4@osg.samsung.com>
 References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-2-git-send-email-krzk@kernel.org>
+ <1464719945-3417-3-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1464719945-3417-2-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1464719945-3417-3-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Krzysztof,
 
 On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> Add clock for TMU to the Exynos5410 clock driver.
+> On Exynos5410 the SPI interrupt for second USB DWC3 (called DRD: Dual
+> Role Device) is different - 200 instead of 73.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/clk/samsung/clk-exynos5410.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos54xx.dtsi | 1 -
+>  3 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index 6c2e59c576ee..db9978dc6e83 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
->  static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
->  	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
->  	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
-> +	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index a937d9bdad90..994d16a44fe4 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -267,6 +267,10 @@
+>  	clock-names = "usbdrd30";
+>  };
 >  
->  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
->  			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
-> 
+> +&usbdrd_dwc3_1 {
+> +	interrupts = <0 200 0>;
+
+Please use GIC_SPI from <dt-bindings/interrupt-controller/arm-gic.h> instead 0.
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
