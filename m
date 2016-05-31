@@ -1,116 +1,67 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
-Date: Tue, 31 May 2016 08:58:08 +0800
-Message-ID: <20160531005808.GA7913@shlinux2>
-References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
- <20160505224240.GA31429@rob-hp-laptop>
- <CAPDyKFqpoi03Egfuvd8qJXnn_+FBgPXAb7S4UvkxVs8BA+zwnA@mail.gmail.com>
- <20160509181829.GA19687@rob-hp-laptop>
- <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw@mail.gmail.com>
- <20160528033613.GA3291@shlinux2>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 00/22] ARM: dts: exynos: Add initial support for Odroid
+ XU
+Date: Tue, 31 May 2016 11:12:31 +0200
+Message-ID: <574D557F.70209@samsung.com>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <574C5BD2.60008@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160528033613.GA3291@shlinux2>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-usb@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, hverkuil@xs4all.nl, tjakobi@math.uni-bielefeld.de, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <574C5BD2.60008@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, May 28, 2016 at 11:36:13AM +0800, Peter Chen wrote:
-> On Tue, May 10, 2016 at 01:02:08PM +0200, Ulf Hansson wrote:
-> > + Arnd
-> > 
-> > [...]
-> > 
-> > >> >> Solution
-> > >> >> ========
-> > >> >> This is very similar to the MMC pwrseq behavior so the idea is to:
-> > >> >> 1. Move MMC pwrseq drivers to generic place,
-> > >> >
-> > >> > You can do that, but I'm going to NAK any use of pwrseq bindings outside
-> > >> > of MMC. I think it is the wrong way to do things. The DT should describe
-> > >>
-> > >> Huh, I didn't know that was your view of the mmc pwrseq bindings. Why
-> > >> didn't you NAK them before?
-> > >
-> > > Unfortunately, either I missed it or it was a time I couldn't spend much
-> > > time on reviews.
-> > 
-> > Okay, I guess it's common issue among maintainers. The problem with DT
-> > is that it gets really hard to be fixed up later. :-)
-> > 
-> > >
-> > >> > the devices. If they happen to be "simple" then the core can walk the
-> > >> > tree and do any setup. For example, look for "reset-gpios" and toggle
-> > >> > that GPIO. There is no need for a special node.
-> > >> >
-> > >> >> 2. Extend the pwrseq-simple with regulator toggling,
-> > >> >> 3. Add support to USB hub and port core for pwrseq,
-> > >> >
-> > >> > We discussed this for USB already[1] and is why we defined how to add
-> > >> > USB child devices. The idea is not to add pwrseq to that.
-> > >>
-> > >> I am not familiar with the USB discussion.
-> > >>
-> > >> Still, let me give you some more background to the mmc pwrseq. The
-> > >> idea from the mmc pwrseq bindings comes from the power-domain DT
-> > >> bindings, as I thought these things were a bit related.
-> > >> In both cases they are not directly a property of the device, but more
-> > >> describing a HW dependency to allow the device to work.
-> > >
-> > > I could see this as a board level power domain. However the difference
-> > > is we are not generally exposing internal SOC details the same way as
-> > > board level components. Perhaps we could extend power domains to board
-> > > level, but that is not what was done here.
-> > >
-> > >> One could probably use a child node instead of a phandle, but that
-> > >> wasn't chosen back then. Of course you are the DT expert, but could
-> > >> you perhaps tell me why a child node is better for cases like this?
-> > >
-> > > If there is a control path hierarchy, then we try to model that in DT
-> > > with child nodes. In cases of SDIO and USB, there is a clear hierarchy.
-> > > Ignoring the discovery ordering problem, we already have defined ways to
-> > > describe GPIO connections, regulators, etc. to devices. Describing those
-> > > things separately from the device to solve a particular issue that is
-> > > really a kernel limitation is what I don't like.
-> > 
-> > Okay, I see.
-> > 
-> > To move forward in trying to make mmc pwrseq a generic pwrseq, could
-> > we perhaps allow both cases?
-> > 
-> > In the mmc case, there are already deployed bindings so we need to
-> > cope with these by using the phandle option, but for USB etc we could
-> > force the child node option.
-> > As long as we agree that we keep using a compatible string for the
-> > child node as well, both options should be able to co-exist and we
-> > should probably be able to managed them both from a common pwrseq
-> > driver framework.
-> > 
-> > Although, I do remember from an older conversations around some of
-> > mine submission for the mmc pwrseq code, that some people (maybe
-> > Arnd?) wasn't keen on adding a new framework for this. Perhaps that
-> > has changed?
-> > 
+On 05/30/2016 05:27 PM, Sylwester Nawrocki wrote:
+> On 05/28/2016 11:54 AM, Krzysztof Kozlowski wrote:
+>>
+>> The clock changes can go to clock tree. ARM changes to samsung-soc tree.
+>> Please provide me a tag with include/dt-bindings/clock commits so I can
+>> merge it.
 > 
-> All, how we move on for this?
+> I applied the clock tree patches and here is the tag for the three
+> include/dt-bindings patches:
+
+Thanks mate!
+Pulled.
+
+Best regards,
+Krzysztof
+
 > 
-> 1. Using a generic driver to manage both mmc and USB (and further
-> subsystem), USB and further subsystem do not use pwrseq node in dts.
-> 2. USB creates the similar driver under drivers/usb for its own use. 
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 > 
-> Which one do you prefer, thanks.
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt
+> 
+> for you to fetch changes up to ed1e1505db0c116affdfab01e650c44a9c459c65:
+> 
+>   dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+> (2016-05-30 16:00:11 +0200)
+> 
+> ----------------------------------------------------------------
+> Adition of missing clock index definitions for exynos5410 SoC
+> PWM, USB, I2C, and RTC device related clocks.
+> 
+> ----------------------------------------------------------------
+> Krzysztof Kozlowski (3):
+>       dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+>       dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+>       dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+> 
+>  include/dt-bindings/clock/exynos5410.h | 73
+> +++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 51 insertions(+), 22 deletions(-)
+> 
+> 
+> --
+> Thanks,
+> Sylwester
 > 
 
-Hi Krzysztof Kozlowski,
-
-I think option 1 may be better according to Rob and Ulf's comment.
-Would you like going on your patch set? You can work on generic pwrseq
-driver, I will do USB stuffs based on generic pwrseq driver?
-
--- 
-
-Best Regards,
-Peter Chen
