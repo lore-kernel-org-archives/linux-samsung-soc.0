@@ -1,78 +1,75 @@
-From: Marc Zyngier <maz@misterjones.org>
-Subject: Re: [PATCH 2/3] drm/exynos: fimd: add HW trigger support
-Date: Tue, 31 May 2016 16:18:01 +0100
-Message-ID: <62a251beb1b54fff34019c3cd4595984@www.loen.fr>
-References: <1459844864-12065-1-git-send-email-inki.dae@samsung.com>
- <1459844864-12065-3-git-send-email-inki.dae@samsung.com>
- <a8e410dd-ef60-f8cd-f4ea-cf60414db5bd@osg.samsung.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC v2] dma-mapping: Use unsigned long for dma_attrs
+Date: Tue, 31 May 2016 10:04:20 -0700
+Message-ID: <20160531170420.GB25366@infradead.org>
+References: <1464609246-6948-1-git-send-email-k.kozlowski@samsung.com>
+ <1464609246-6948-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from inca-roads.misterjones.org ([213.251.177.50]:51133 "EHLO
-	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754803AbcEaPbr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 May 2016 11:31:47 -0400
-In-Reply-To: <a8e410dd-ef60-f8cd-f4ea-cf60414db5bd@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1464609246-6948-2-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michal Hocko <mhocko@suse.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Joerg Roedel <joro@8bytes.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, hch@infradead.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, sstabellini@kernel.org, Andy Lutomirski <luto@kernel.org>, xen-devel@lists.xenproject.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@techsingularity.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, marc.zyngier@arm.com
 
-On 2016-05-30 23:58, Javier Martinez Canillas wrote:
-> Hello Inki,
->
-> On 04/05/2016 04:27 AM, Inki Dae wrote:
->> This patch adds HW trigger support on i80 mode.
->>
->> Until now, Exynos DRM only supported SW trigger which was set
->> SWTRGCMD bit of TRIGCON register by CPU to transfer scanout
->> buffer to Display bus device or panel.
->>
->> With this patch, the transmission to Display bus device or
->> panel will be initiated by FIMD controller.
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> ---
->
-> There is a regression for the Exynos5800 Peach Pi Chromebook display 
-> due
-> this patch. The display is blank and I noticed that it only happens 
-> when
-> HW start trigger is enabled, but works with SW trigger (as it was 
-> before).
->
-> So for example with the following diff on top of v4.7-rc1, display 
-> works
-> again. Do you have any hints about what could be the issue?
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 0444d7fc400d..8c62830e9514 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -171,7 +171,7 @@ static struct fimd_driver_data
-> exynos5420_fimd_driver_data = {
->  	.lcdblk_vt_shift = 24,
->  	.lcdblk_bypass_shift = 15,
->  	.lcdblk_mic_bypass_shift = 11,
-> -	.trg_type = I80_HW_TRG,
->  	.has_shadowcon = 1,
->  	.has_vidoutcon = 1,
->  	.has_vtsel = 1,
->
-> Best regards,
+On Mon, May 30, 2016 at 01:54:06PM +0200, Krzysztof Kozlowski wrote:
+> The dma-mapping core and the implementations do not change the
+> DMA attributes passed by pointer.  Thus the pointer can point to const
+> data.  However the attributes do not have to be a bitfield. Instead
+> unsigned long will do fine:
+> 
+> 1. This is just simpler.  Both in terms of reading the code and setting
+>    attributes.  Instead of initializing local attributes on the stack and
+>    passing pointer to it to dma_set_attr(), just set the bits.
+> 
+> 2. It brings safeness and checking for const correctness because the
+>    attributes are passed by value.
+> 
+> Please have in mind that this is RFC, not finished yet.  Only ARM and
+> ARM64 are fixed (and not everywhere).
+> However other API users also have to be converted which is quite
+> intrusive.  I would rather avoid it until the overall approach is
+> accepted.
 
-On a related note, my Exynos5250 Chromebook (snow) has stopped working 
-as well since -rc1 has landed. I haven't had time to bisect it yet, but 
-the symptoms are vaguely similar (bright white screen).
+This looks great!  Please continue doing the full conversion.
 
-I'm happy to test patches.
+> +/**
+> + * List of possible attributes associated with a DMA mapping. The semantics
+> + * of each attribute should be defined in Documentation/DMA-attributes.txt.
+> + */
+> +#define DMA_ATTR_WRITE_BARRIER		BIT(1)
+> +#define DMA_ATTR_WEAK_ORDERING		BIT(2)
+> +#define DMA_ATTR_WRITE_COMBINE		BIT(3)
+> +#define DMA_ATTR_NON_CONSISTENT		BIT(4)
+> +#define DMA_ATTR_NO_KERNEL_MAPPING	BIT(5)
+> +#define DMA_ATTR_SKIP_CPU_SYNC		BIT(6)
+> +#define DMA_ATTR_FORCE_CONTIGUOUS	BIT(7)
+> +#define DMA_ATTR_ALLOC_SINGLE_PAGES	BIT(8)
 
-Thanks,
+No really for this patch, but I would much prefer to document them next
+to the code in the long run.  Also I really think these BIT() macros
+are a distraction compared to the (1 << N) notation.
 
-         M.
--- 
-Who you jivin' with that Cosmik Debris?
+> +/**
+> + * dma_get_attr - check for a specific attribute
+> + * @attr: attribute to look for
+> + * @attrs: attributes to check within
+> + */
+> +static inline bool dma_get_attr(unsigned long attr, unsigned long attrs)
+> +{
+> +	return !!(attr & attrs);
+> +}
+
+I'd just kill this helper, much easier to simply open code it in the
+caller.
