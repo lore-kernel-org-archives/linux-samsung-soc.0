@@ -1,49 +1,59 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC v2 00/13] usb/mmc/power: Fix USB/LAN when TFTP booting
-Date: Tue, 31 May 2016 13:54:31 +0200
-Message-ID: <574D7B77.4000606@samsung.com>
-References: <1462451666-17945-1-git-send-email-k.kozlowski@samsung.com>
- <20160505224240.GA31429@rob-hp-laptop>
- <CAPDyKFqpoi03Egfuvd8qJXnn_+FBgPXAb7S4UvkxVs8BA+zwnA@mail.gmail.com>
- <20160509181829.GA19687@rob-hp-laptop>
- <CAPDyKFq2=mqujFjvJSYxg2nVmK=OrBKLtFfb-ErNJO3Zr_LMVw@mail.gmail.com>
- <20160528033613.GA3291@shlinux2> <20160531005808.GA7913@shlinux2>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [RFC PATCH v1 0/2]
+Date: Tue, 31 May 2016 21:37:36 +0800
+Message-ID: <1464701856-8695-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160531005808.GA7913@shlinux2>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Chen <hzpeterchen@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-usb@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, hverkuil@xs4all.nl, tjakobi@math.uni-bielefeld.de, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Heiko Stuebner <heiko@sntech.de>, tfiga@chromium.org, Jingoo Han <jingoohan1@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/31/2016 02:58 AM, Peter Chen wrote:
-> On Sat, May 28, 2016 at 11:36:13AM +0800, Peter Chen wrote:
->> All, how we move on for this?
->>
->> 1. Using a generic driver to manage both mmc and USB (and further
->> subsystem), USB and further subsystem do not use pwrseq node in dts.
->> 2. USB creates the similar driver under drivers/usb for its own use. 
->>
->> Which one do you prefer, thanks.
->>
-> 
-> Hi Krzysztof Kozlowski,
-> 
-> I think option 1 may be better according to Rob and Ulf's comment.
-
-Hi,
-
-I like the option #1 as well. The generic driver should rely and parse
-existing bindings like 'reset-gpios'. Still additional property (e.g.
-"do-the-power-sequence") seems needed as we do not want to play with all
-reset-gpios in DTB.
-
-> Would you like going on your patch set? You can work on generic pwrseq
-> driver, I will do USB stuffs based on generic pwrseq driver?
-
-Great, that sounds good! I'll start the work.
-
-Best regards,
-Krzysztof
+VGhlIGZ1bGwgbmFtZSBvZiBQU1IgaXMgUGFuZWwgU2VsZiBSZWZyZXNoLCBwYW5lbCBkZXZpY2Ug
+Y291bGQgcmVmcmVzaAppdHNlbGYgd2l0aCB0aGUgaGFyZHdhcmUgZnJhbWVidWZmZXIgaW4gcGFu
+ZWwsIHRoaXMgd291bGQgbWFrZSBhIGxvdHMKb2Ygc2Vuc2UgdG8gc2F2ZSB0aGUgcG93ZXIgY29u
+c3VtcHRpb24uCgpGb3IgZXhhbXBsZSwgd2hlbiBkZXNrdG9wIGhhdmVuJ3QgY2hhbmdlIHRoZSBj
+b250ZXh0IGZvciBhIGxvbmcgdGltZSwKdGhlbiB3ZSBjb3VsZCByZWZyZXNoIHRoZSBkYXRhIHRv
+IHRoZSBoYXJkd2FyZSBmcmFtZWJ1ZmZlciBvZiBwYW5lbCwKYW5kIHRoZW4gbGV0IHBhbmVsIGVu
+dGVyIGludG8gUFNSIG1vZGUuIEFmdGVyIHRoYXQgc3lzdGVtIGNvdWxkIHBvd2Vyb2ZmCnRoZSBM
+Q0RDIGNvbnRyb2xsZXIgYW5kIGVEUCBjb250cm9sbGVyLCBqdXN0IGxldCBwYW5lbCByZWZyZXNo
+IHRoZSBzY3JlZW4KYnkgaXRzZWxmLgoKSXQncyBoYXJkIHRvIGRlY2lkZSB3aGVuIHBhbmVsIHNo
+b3VsZCBlbnRlciBpbnRvIFBTUiBvciBleGl0IGZyb20gUFNSLCBpbgp0aGlzIHRpbWUgSSBjaG9z
+ZSB0byBsZXQgdGhlIGRybV92YmxhbmsgZW5hYmxlL2Rpc2FibGUgZXZlbnQgZHJpdmVyIHRoZSBQ
+U1IuCgpUaGlzIHRocmVhZCBpcyBiYXNlZCBvbiBNYXJrJ3MgUkszMzk5IFZPUCB0aHJlYWRbMF0g
+YW5kIG15IFJLMzM5OSBlRFAKdGhyZWFkWzFdLgoKWzBdOiBodHRwczovL3BhdGNod29yay5rZXJu
+ZWwub3JnL3BhdGNoLzg4ODYwNDEvClsxXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
+YXRjaC85MTMyNzEzLwoKLSBZYWtpcgpUaGFua3MsCgoKWWFraXIgWWFuZyAoMik6CiAgZHJtL3Jv
+Y2tjaGlwOiBhZGQgYSBub3RpZnkgZXZlbnQgYWJvdXQgdmJsYW5rIGVuYWJsZS9kaXNhYmxlCiAg
+ZHJtL3JvY2tjaGlwOiBhbmFsb2dpeDogYWRkIGVEUCBQU1IgZnVuY3Rpb24KCiBkcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8ICA2OSArKysrKysrKysr
+KysrKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgg
+fCAgIDUgKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcu
+YyAgfCAgNTQgKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
+bG9naXhfZHBfcmVnLmggIHwgIDI4ICsrKysrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL01h
+a2VmaWxlICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jICAgIHwgIDY1ICsrKysrKysrKysrKysKIGRyaXZlcnMv
+Z3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fbm90aWZ5LmMgICAgIHwgMTA1ICsrKysrKysr
+KysrKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9ub3Rp
+ZnkuaCAgICAgfCAgMzMgKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
+X2RybV92b3AuYyAgICAgICAgfCAgOTYgKysrKysrKysrKysrKysrKysrKwogZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuaCAgICAgICAgfCAgIDMgKwogZHJpdmVycy9n
+cHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyAgICAgICAgfCAgIDIgKwogaW5jbHVk
+ZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmggICAgICAgICAgICAgICAgICAgfCAgIDMgKwogMTIg
+ZmlsZXMgY2hhbmdlZCwgNDY0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX25vdGlmeS5j
+CiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2Ry
+bV9ub3RpZnkuaAoKLS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
