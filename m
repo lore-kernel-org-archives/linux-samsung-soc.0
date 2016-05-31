@@ -1,57 +1,89 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 0/10] Add RK3399 eDP support and fix some bugs to
- analogix_dp driver.
-Date: Tue, 31 May 2016 16:01:15 -0400
-Message-ID: <f6fb95e2-6357-5219-ea08-263c017955e4@osg.samsung.com>
-References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
- <5746C321.9000707@rock-chips.com>
- <4e1c65f8-5a5b-dbb9-35fe-ef09c0758536@osg.samsung.com>
- <5747E648.6020100@rock-chips.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 5/6] ARM: dts: exynos: Configure PWM, usb3503, PMIC and
+ thermal on Odroid XU board
+Date: Tue, 31 May 2016 22:05:06 +0200
+Message-ID: <CAJKOXPfDtp1GLCkQQSKmzRLs4qqwY9Y019rXpUXSeoYQny-sfA@mail.gmail.com>
+References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
+	<1464719945-3417-5-git-send-email-krzk@kernel.org>
+	<1ec0f7fc-f6e0-e4d6-e424-43289bf31b16@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5747E648.6020100@rock-chips.com>
+In-Reply-To: <1ec0f7fc-f6e0-e4d6-e424-43289bf31b16@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Douglas Anderson <dianders@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Yakir,
-
-On 05/27/2016 02:16 AM, Yakir Yang wrote:
-> Hi Javier,
-> 
-> On 05/26/2016 08:48 PM, Javier Martinez Canillas wrote:
->> Hello Yakir,
->>
->> On 05/26/2016 05:34 AM, Yakir Yang wrote:
->>> Hi Javier,
->>>
->>> On 05/24/2016 01:01 PM, Yakir Yang wrote:
->>>> Hi all,
->>>>
->>>> This series have been posted about one month, still no comments, help here :(
->>> This series works rightly on Rockchip platform, and most of them haven't touch the
->>> common analogix_dp driver (except for the hotplug fixed). So i guess Exynos platform
->>> should also happy with this changes.
->>>
->>> But not sure about that. So, is it possible that you could help to check this on Exynos
->>> Chromebook, if so i would be very grateful about that.
->>>
->> Of course, I' ll test. Could you please provide me a branch that I can
->> pull directly to avoid cherry-picking all the patches from the list?
->>   
-> Ah, thanks a lot, I do have a tree https://github.com/yakir-Yang/linux/tree/fromlist/3399-edp
+On Tue, May 31, 2016 at 9:36 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> Hello Krzysztof,
 >
+> On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
+>> Extend the DTS for Exynos5410-based Odroid XU board with:
+>> 1. Proper PWM outputs,
+>> 2. usb3503 USB HUB (with integrated LAN9730 ethernet adapter (smsc95xx)),
+>> 3. Maxim 77802 PMIC (regulators, 32 kHz clocks, RTC),
+>> 4. CPU thermal (trip points are the same as in Odroid XU3/XU4 but
+>>    cooling maps are different as there is no CPU freq and only one
+>>    cluster available for now),
+>> 5. Regulator supplies for USB 3.0.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>> ---
+>>
+>
+> [snip]
+>
+>> +
+>> +                     ldo10_reg: LDO10 {
+>> +                             regulator-name = "vdd18_mipi";
+>> +                             regulator-min-microvolt = <1800000>;
+>> +                             regulator-max-microvolt = <1800000>;
+>> +                             regulator-always-on;
+>> +                     };
+>> +
+>
+> [snip]
+>
+>> +
+>> +                     ldo12_reg: LDO12 {
+>> +                             regulator-name = "vdd33_usb3";
+>> +                             regulator-min-microvolt = <3300000>;
+>> +                             regulator-max-microvolt = <3300000>;
+>> +                             regulator-always-on;
+>> +                     };
+>> +
+>
+> [snip]
+>
+>> +
+>> +                     ldo15_reg: LDO15 {
+>> +                             regulator-name = "vdd10_usb3";
+>> +                             regulator-min-microvolt = <1000000>;
+>> +                             regulator-max-microvolt = <1000000>;
+>> +                             regulator-always-on;
+>> +                     };
+>> +
+>
+> I see that LDO 10, 12 and 15 are used by still marked as always-on. Did
+> you try not marking as always-on those or that also causes issues like
+> in the other regulators were you added comments about being always-on?
+>
+> Besides that, patch looks good to me.
 
-I tested your branch on an Exynos5800 Peach Pi Chromebook and display
-is working correctly. So feel free to add for the whole series:
+The LDO10 is supplying few more elements (MIPI, HDMI, ADC and
+something called EFNAND). Having it non-always-on still works but
+maybe because I did not test these elements.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+LDO12 and LDO15 supply also VDD10_HSIC and UHOST (used by USB2.0 ports
+and attached on board: usb3503 and lan9730) so if it is not enabled by
+USB 3.0, then they won't work. I guess the usb 2.0 driver should also
+take regulators.
+
+So overall the board works after removing always-on but it is not
+properly described in DT so I prefer to leave them.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
