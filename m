@@ -1,34 +1,54 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 6/6] ARM: dts: exynos: No need to enable TMU nodes on
- Odroid XU3 family
-Date: Tue, 31 May 2016 15:37:28 -0400
-Message-ID: <c3222e0a-51a9-a93f-97e4-9a12e17167de@osg.samsung.com>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-6-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH v2 0/10] Add RK3399 eDP support and fix some bugs to
+ analogix_dp driver.
+Date: Tue, 31 May 2016 16:01:15 -0400
+Message-ID: <f6fb95e2-6357-5219-ea08-263c017955e4@osg.samsung.com>
+References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
+ <5746C321.9000707@rock-chips.com>
+ <4e1c65f8-5a5b-dbb9-35fe-ef09c0758536@osg.samsung.com>
+ <5747E648.6020100@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:52660 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751387AbcEaThi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 May 2016 15:37:38 -0400
-In-Reply-To: <1464719945-3417-6-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5747E648.6020100@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Douglas Anderson <dianders@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-Hello Krzysztof,
+Hello Yakir,
 
-On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
-> The thermal nodes are not disabled in exynos5420.dtsi so there is no
-> need to manually enable them on Odroid XU3/XU3-Lite/XU4 boards.
+On 05/27/2016 02:16 AM, Yakir Yang wrote:
+> Hi Javier,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+> On 05/26/2016 08:48 PM, Javier Martinez Canillas wrote:
+>> Hello Yakir,
+>>
+>> On 05/26/2016 05:34 AM, Yakir Yang wrote:
+>>> Hi Javier,
+>>>
+>>> On 05/24/2016 01:01 PM, Yakir Yang wrote:
+>>>> Hi all,
+>>>>
+>>>> This series have been posted about one month, still no comments, help here :(
+>>> This series works rightly on Rockchip platform, and most of them haven't touch the
+>>> common analogix_dp driver (except for the hotplug fixed). So i guess Exynos platform
+>>> should also happy with this changes.
+>>>
+>>> But not sure about that. So, is it possible that you could help to check this on Exynos
+>>> Chromebook, if so i would be very grateful about that.
+>>>
+>> Of course, I' ll test. Could you please provide me a branch that I can
+>> pull directly to avoid cherry-picking all the patches from the list?
+>>   
+> Ah, thanks a lot, I do have a tree https://github.com/yakir-Yang/linux/tree/fromlist/3399-edp
+>
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+I tested your branch on an Exynos5800 Peach Pi Chromebook and display
+is working correctly. So feel free to add for the whole series:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
