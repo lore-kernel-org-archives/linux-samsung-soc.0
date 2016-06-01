@@ -1,203 +1,87 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [RFC PATCH v1 1/2] drm/rockchip: add a notify event about vblank
- enable/disable
-Date: Wed, 1 Jun 2016 10:52:25 +0800
-Message-ID: <574E4DE9.3030408@rock-chips.com>
+Subject: Re: [RFC PATCH v1 0/2]
+Date: Wed, 1 Jun 2016 10:54:09 +0800
+Message-ID: <574E4E51.1030308@rock-chips.com>
 References: <1464701856-8695-1-git-send-email-ykk@rock-chips.com>
- <1464701959-9428-1-git-send-email-ykk@rock-chips.com>
- <20160531143615.GJ7231@phenom.ffwll.local>
+ <20160531143831.GK7231@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160531143615.GJ7231@phenom.ffwll.local>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160531143831.GK7231@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: daniel.vetter@intel.com
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Heiko Stuebner <heiko@sntech.de>, tfiga@chromium.org, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, tfiga@chromium.org, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
-
-On 05/31/2016 10:36 PM, Daniel Vetter wrote:
-> On Tue, May 31, 2016 at 09:39:19PM +0800, Yakir Yang wrote:
->> EDP PSR function is interesting in vblank enable or disable event,
->> so it would be great introduce a way to notify encoder about this
->> event.
->>
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> notifiers considered evil, especially if you add a global notifier for
-> something that's very specific to a given crtc.
-Oops, I haven't realized that. Yes, you're right, this is very specific to
-a given crtc, that's bad :(
-> I think the better fix would be add a suitable hook to drm_bridge to allow
-> encoders to go into self refresh, and to wake them up from self-refresh
-> again.
-Sounds good, need to found a better way.
-
-Thanks,
-- Yakir
-> -Daniel
->
->> ---
->>   drivers/gpu/drm/rockchip/Makefile              |  2 +-
->>   drivers/gpu/drm/rockchip/rockchip_drm_notify.c | 66 ++++++++++++++++++++++++++
->>   drivers/gpu/drm/rockchip/rockchip_drm_notify.h | 29 +++++++++++
->>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c    |  5 ++
->>   4 files changed, 101 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_notify.c
->>   create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_notify.h
->>
->> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
->> index 05d0713..49fee8c 100644
->> --- a/drivers/gpu/drm/rockchip/Makefile
->> +++ b/drivers/gpu/drm/rockchip/Makefile
->> @@ -3,7 +3,7 @@
->>   # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
->>   
->>   rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
->> -		rockchip_drm_gem.o rockchip_drm_vop.o
->> +		rockchip_drm_gem.o rockchip_drm_vop.o rockchip_drm_notify.o
->>   rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
->>   
->>   obj-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_notify.c b/drivers/gpu/drm/rockchip/rockchip_drm_notify.c
->> new file mode 100644
->> index 0000000..84111d9
->> --- /dev/null
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_notify.c
->> @@ -0,0 +1,66 @@
->> +#include "rockchip_drm_notify.h"
->> +
->> +static RAW_NOTIFIER_HEAD(vblank_chain);
->> +static DEFINE_MUTEX(vblank_lock);
->> +
->> +/**
->> + * rockchip_drm_vblank_enable - Send Vblank enable event. Will only enable send
->> + * Vblank if there are 1 or fewer notifiers.
->> + */
->> +void rockchip_drm_vblank_enable(void)
->> +{
->> +	mutex_lock(&vblank_lock);
->> +	raw_notifier_call_chain(&vblank_chain, VBLANK_ENABLE, NULL);
->> +	mutex_unlock(&vblank_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(rockchip_drm_vblank_enable);
->> +
->> +/**
->> + * rockchip_drm_vblank_disable - Send VBlank disable event.
->> + */
->> +void rockchip_drm_vblank_disable(void)
->> +{
->> +	mutex_lock(&vblank_lock);
->> +	raw_notifier_call_chain(&vblank_chain, VBLANK_DISABLE, NULL);
->> +	mutex_unlock(&vblank_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(rockchip_drm_vblank_disable);
->> +
->> +/**
->> + * rockchip_drm_vblank_register_notifier - Add notifier to Vblank notifiers.
->> + *
->> + * Enable notifiers are called when we enable/disable vblank. This can be done
->> + * through rockchip_drm_vblank_enable/disable or when there is more than one
->> + * sync notifier. Must call rockchip_drm_vblank_lock before calling this.
->> + * @nb The notifier to add
->> + */
->> +int rockchip_drm_vblank_register_notifier(struct notifier_block *nb)
->> +{
->> +	int ret = 0;
->> +
->> +	if (!nb)
->> +		return -EINVAL;
->> +
->> +	ret = raw_notifier_chain_register(&vblank_chain, nb);
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(rockchip_drm_vblank_register_notifier);
->> +
->> +/**
->> + * rockchip_drm_vblank_unregister_notifier - Remove notifier from Vblank
->> + * notifiers.
->> + *
->> + * Must call rockchip_drm_vblank_lock before calling this.
->> + * @nb The notifier to remove.
->> + */
->> +int rockchip_drm_vblank_unregister_notifier(struct notifier_block *nb)
->> +{
->> +	int ret = 0;
->> +
->> +	if (!nb)
->> +		return -EINVAL;
->> +
->> +	ret = raw_notifier_chain_unregister(&vblank_chain, nb);
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(rockchip_drm_vblank_unregister_notifier);
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_notify.h b/drivers/gpu/drm/rockchip/rockchip_drm_notify.h
->> new file mode 100644
->> index 0000000..2f28afa
->> --- /dev/null
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_notify.h
->> @@ -0,0 +1,29 @@
->> +/*
->> + * Copyright (C) 2014 Google, Inc.
->> + *
->> + * This software is licensed under the terms of the GNU General Public
->> + * License version 2, as published by the Free Software Foundation, and
->> + * may be copied, distributed, and modified under those terms.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#ifndef __ROCKCHIP_DRM_NOTIFY_H
->> +#define __ROCKCHIP_DRM_NOTIFY_H
->> +
->> +#include <linux/notifier.h>
->> +
->> +enum vblank_enable_op {
->> +	VBLANK_ENABLE = 0,
->> +	VBLANK_DISABLE,
->> +};
->> +
->> +void rockchip_drm_vblank_enable(void);
->> +void rockchip_drm_vblank_disable(void);
->> +int rockchip_drm_vblank_register_notifier(struct notifier_block *nb);
->> +int rockchip_drm_vblank_unregister_notifier(struct notifier_block *nb);
->> +
->> +#endif /* __ROCKCHIP_DRM_NOTIFY_H */
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> index 257501f..fb6ce4b 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> @@ -35,6 +35,7 @@
->>   #include "rockchip_drm_gem.h"
->>   #include "rockchip_drm_fb.h"
->>   #include "rockchip_drm_vop.h"
->> +#include "rockchip_drm_notify.h"
->>   
->>   #define __REG_SET_RELAXED(x, off, mask, shift, v, write_mask) \
->>   		vop_mask_write(x, off, mask, shift, v, write_mask, true)
->> @@ -851,6 +852,8 @@ static int vop_crtc_enable_vblank(struct drm_crtc *crtc)
->>   
->>   	spin_unlock_irqrestore(&vop->irq_lock, flags);
->>   
->> +	rockchip_drm_vblank_enable();
->> +
->>   	return 0;
->>   }
->>   
->> @@ -867,6 +870,8 @@ static void vop_crtc_disable_vblank(struct drm_crtc *crtc)
->>   	VOP_INTR_SET_TYPE(vop, enable, FS_INTR, 0);
->>   
->>   	spin_unlock_irqrestore(&vop->irq_lock, flags);
->> +
->> +	rockchip_drm_vblank_disable();
->>   }
->>   
->>   static void vop_crtc_wait_for_update(struct drm_crtc *crtc)
->> -- 
->> 1.9.1
->>
->>
+SGkgRGFuaWVsLAoKT24gMDUvMzEvMjAxNiAxMDozOCBQTSwgRGFuaWVsIFZldHRlciB3cm90ZToK
+PiBPbiBUdWUsIE1heSAzMSwgMjAxNiBhdCAwOTozNzozNlBNICswODAwLCBZYWtpciBZYW5nIHdy
+b3RlOgo+PiBUaGUgZnVsbCBuYW1lIG9mIFBTUiBpcyBQYW5lbCBTZWxmIFJlZnJlc2gsIHBhbmVs
+IGRldmljZSBjb3VsZCByZWZyZXNoCj4+IGl0c2VsZiB3aXRoIHRoZSBoYXJkd2FyZSBmcmFtZWJ1
+ZmZlciBpbiBwYW5lbCwgdGhpcyB3b3VsZCBtYWtlIGEgbG90cwo+PiBvZiBzZW5zZSB0byBzYXZl
+IHRoZSBwb3dlciBjb25zdW1wdGlvbi4KPj4KPj4gRm9yIGV4YW1wbGUsIHdoZW4gZGVza3RvcCBo
+YXZlbid0IGNoYW5nZSB0aGUgY29udGV4dCBmb3IgYSBsb25nIHRpbWUsCj4+IHRoZW4gd2UgY291
+bGQgcmVmcmVzaCB0aGUgZGF0YSB0byB0aGUgaGFyZHdhcmUgZnJhbWVidWZmZXIgb2YgcGFuZWws
+Cj4+IGFuZCB0aGVuIGxldCBwYW5lbCBlbnRlciBpbnRvIFBTUiBtb2RlLiBBZnRlciB0aGF0IHN5
+c3RlbSBjb3VsZCBwb3dlcm9mZgo+PiB0aGUgTENEQyBjb250cm9sbGVyIGFuZCBlRFAgY29udHJv
+bGxlciwganVzdCBsZXQgcGFuZWwgcmVmcmVzaCB0aGUgc2NyZWVuCj4+IGJ5IGl0c2VsZi4KPj4K
+Pj4gSXQncyBoYXJkIHRvIGRlY2lkZSB3aGVuIHBhbmVsIHNob3VsZCBlbnRlciBpbnRvIFBTUiBv
+ciBleGl0IGZyb20gUFNSLCBpbgo+PiB0aGlzIHRpbWUgSSBjaG9zZSB0byBsZXQgdGhlIGRybV92
+YmxhbmsgZW5hYmxlL2Rpc2FibGUgZXZlbnQgZHJpdmVyIHRoZSBQU1IuCj4+Cj4+IFRoaXMgdGhy
+ZWFkIGlzIGJhc2VkIG9uIE1hcmsncyBSSzMzOTkgVk9QIHRocmVhZFswXSBhbmQgbXkgUkszMzk5
+IGVEUAo+PiB0aHJlYWRbMV0uCj4+Cj4+IFswXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9y
+Zy9wYXRjaC84ODg2MDQxLwo+PiBbMV06IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0
+Y2gvOTEzMjcxMy8KPiBMb29rcyBsaWtlIHlvdSBkaWRuJ3Qgd2lyZSB1cCB0aGUgZHJtX2ZyYW1l
+YnVmZmVyLT5mdW5jcy0+ZGlydHkgY2FsbGJhY2sKPiBmb3IgbWFudWFsIHVwbG9hZCBvZiBzaW1w
+bGUgY2xpZW50cyBsaWtlIGJvb3RzcGxhc2ggb3IgZmJkZXYuIEkgdGhpbmsKPiB0aGF0J3MgbmVl
+ZGVkLiBBdCBsZWFzdCBpdCdzIG5lZWRlZCBmb3IgZXZlcnkgb3RoZXIgbWFudWFsIHVwbG9hZCBk
+c2kgYW5kCj4gZWRwIHBzciBpbXBsZW1lbnRhdGlvbi4KPiAtRGFuaWVsClRoYXQncyBncmVhdCwg
+dGhhbmtzIGZvciB5b3VyIHJlbWluZC4gU2VlbXMgbGlrZSB1c2Vyc3BhY2Ugd2hpY2ggZG9lcwpm
+cm9udGJ1ZmZlciByZW5kZXJpbmcgbXVzdCBjYWxsIHRoaXMgaW9jdGwgdG8gZmx1c2ggb3V0IHRo
+ZSBjaGFuZ2VzIG9uCm1hbnVhbC11cGRhdGUgZGlzcGxheSBvdXRwdXRzLiBJdCdzIGhlbHBmdWwg
+dG8gaG9vayB0aGlzIGNhbGxiYWNrIHRvCm5vdGlmeSBlRFAgcmVmcmVzaCB0aGUgZURQIFJGQihy
+ZW1vdGUgZnJhbWUgYnVmZmVyKS4KCkJ1dCBJIHRoaW5rIHRoaXMgaXMgaGFyZCB0byB1c2VkIG9u
+IFJvY2tjaGlwIGVEUCBjb250cm9sbGVyLCBSb2NrY2hpcCBlRFAKZHJpdmVyIGp1c3QgdXNlZCB0
+d28gbW9kZXMsIFNpbmsgRGV2aWNlIFBTUl9TMCAoUFNSIGluYWN0aXZlKSwgYW5kIFNpbmsKRGV2
+aWNlIFBTUl9TMiAoUFNSIGFjdGl2ZSwgZGlzcGxheSBmcm9tIFJGQikuCgpJIHRoaW5rIHRoZSAi
+ZGlydHkiIGNhbGxiYWNrIGlzIG9ubHkgdXNlZCB3aGVuIFNpbmsgZGV2aWNlIGVudGVyIGludG8g
+UFNSX1MzCm1vZGUgKFBTUiBhY3RpdmUsIGNhcHR1cmUgYW5kIGRpc3BsYXkpLCBuZWVkIHRvIHVw
+ZGF0ZSB0aGUgcmVtb3RlIGZyYW1lCmJ1ZmZlci4gQnV0IG9uIFJvY2tjaGlwIHBsYXRmb3JtIHRo
+ZSBwYW5lbCB3b3VsZCBiZSB2ZXJ5IGVhc3kgdG8gbG9zZSBmcmFtZQppbiB0aGlzIFBTUiBtb2Rl
+LiBJJ20gY29uZnVzZWQgaW4gdGhpcyBjYXNlLCBzbyBJIGRpZG4ndCBlbmFibGUgdGhhdC4KCklm
+IHdlIGRpZG4ndCBlbmFibGUgdGhlIFBTUl9TMyBtb2RlLCB0aGVuIHdlIGRvbid0IG5lZWQgdG8g
+dXBkYXRlIHRoZSBwYW5lbApyZW1vdGUgZnJhbWUgYnVmZmVyLCBzbyB0aGlzICItPmRpcnR5IiBj
+YWxsYmFjayB3b3VsZCBiZSB1bnVzZWQgaW4gdGhpcyAKY2FzZS4KClRoYW5rcywKLSBZYWtpcgo+
+PiAtIFlha2lyCj4+IFRoYW5rcywKPj4KPj4KPj4gWWFraXIgWWFuZyAoMik6Cj4+ICAgIGRybS9y
+b2NrY2hpcDogYWRkIGEgbm90aWZ5IGV2ZW50IGFib3V0IHZibGFuayBlbmFibGUvZGlzYWJsZQo+
+PiAgICBkcm0vcm9ja2NoaXA6IGFuYWxvZ2l4OiBhZGQgZURQIFBTUiBmdW5jdGlvbgo+Pgo+PiAg
+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgIDY5
+ICsrKysrKysrKysrKysrCj4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
+b2dpeF9kcF9jb3JlLmggfCAgIDUgKwo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfcmVnLmMgIHwgIDU0ICsrKysrKysrKysrCj4+ICAgZHJpdmVycy9ncHUv
+ZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaCAgfCAgMjggKysrKysrCj4+ICAg
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL01ha2VmaWxlICAgICAgICAgICAgICAgICAgfCAgIDIg
+Ky0KPj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAg
+ICB8ICA2NSArKysrKysrKysrKysrCj4+ICAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
+aGlwX2RybV9ub3RpZnkuYyAgICAgfCAxMDUgKysrKysrKysrKysrKysrKysrKysrCj4+ICAgZHJp
+dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9ub3RpZnkuaCAgICAgfCAgMzMgKysr
+KysrKwo+PiAgIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wLmMgICAg
+ICAgIHwgIDk2ICsrKysrKysrKysrKysrKysrKysKPj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvcm9ja2NoaXBfZHJtX3ZvcC5oICAgICAgICB8ICAgMyArCj4+ICAgZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyAgICAgICAgfCAgIDIgKwo+PiAgIGluY2x1ZGUv
+ZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgIHwgICAzICsKPj4gICAx
+MiBmaWxlcyBjaGFuZ2VkLCA0NjQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+PiAgIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX25v
+dGlmeS5jCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
+b2NrY2hpcF9kcm1fbm90aWZ5LmgKPj4KPj4gLS0gCj4+IDEuOS4xCj4+Cj4+CgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
