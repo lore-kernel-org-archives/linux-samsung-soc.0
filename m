@@ -1,53 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
-Date: Wed, 01 Jun 2016 11:59:02 +0200
-Message-ID: <574EB1E6.8050808@samsung.com>
-References: <1464719945-3417-1-git-send-email-krzk@kernel.org>
- <1464719945-3417-2-git-send-email-krzk@kernel.org>
- <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [patch v2] PM / devfreq: exynos-nocp: Remove incorrect IS_ERR() check
+Date: Wed, 1 Jun 2016 19:25:14 +0900
+Message-ID: <CAJ0PZbR4j+8dRpOsvEtdsu2Z7hoXN1UOD70qoJ5q3oMG4X+yDw@mail.gmail.com>
+References: <alpine.DEB.2.10.1605251710500.3644@hadrien> <20160526064541.GA6680@mwanda>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:8394 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751488AbcFAJ7S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 05:59:18 -0400
-In-reply-to: <8281b473-22c8-f87d-4282-45f93f61b937@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20160526064541.GA6680@mwanda>
+Sender: linux-pm-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-On 05/31/2016 08:56 PM, Javier Martinez Canillas wrote:
-> On 05/31/2016 02:39 PM, Krzysztof Kozlowski wrote:
->> > Add clock for TMU to the Exynos5410 clock driver.
->> > 
->> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> > ---
->> >  drivers/clk/samsung/clk-exynos5410.c | 1 +
->> >  1 file changed, 1 insertion(+)
->> > 
->> > diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
->> > index 6c2e59c576ee..db9978dc6e83 100644
->> > --- a/drivers/clk/samsung/clk-exynos5410.c
->> > +++ b/drivers/clk/samsung/clk-exynos5410.c
->> > @@ -160,6 +160,7 @@ static struct samsung_div_clock exynos5410_div_clks[] __initdata = {
->> >  static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
->> >  	GATE(CLK_MCT, "mct", "aclk66", GATE_IP_PERIS, 18, 0, 0),
->> >  	GATE(CLK_RTC, "rtc", "aclk66", GATE_IP_PERIS, 20, 0, 0),
->> > +	GATE(CLK_TMU, "tmu", "aclk66", GATE_IP_PERIS, 21, 0, 0),
->> >  
->> >  	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc_pre0",
->> >  			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
->> > 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+On Thu, May 26, 2016 at 3:45 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Smatch complains because platform_get_resource() returns NULL on error
+> and not an error pointer so the check is wrong.  Julia Lawall pointed
+> out that normally we don't check these, because devm_ioremap_resource()
+> has a check for NULL.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I have applied patches 1/6, 2/6. I will hold back for a moment
-with providing another tag for the "dt-bindings" patches, in case
-there are more such patches submitted in the coming days.
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+Queued in fixes branch to be sent with other fixes for RCx.
+
+> ---
+> v2: just remove the check
+>
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> index 6b6a5f3..a584140 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -220,9 +220,6 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
+>
+>         /* Maps the memory mapped IO to control nocp register */
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (IS_ERR(res))
+> -               return PTR_ERR(res);
+> -
+>         base = devm_ioremap_resource(dev, res);
+>         if (IS_ERR(base))
+>                 return PTR_ERR(base);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-Thanks,
-Sylwester
+MyungJoo Ham, Ph.D.
+Frontier CS Lab, S/W Center, Samsung Electronics
