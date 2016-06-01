@@ -1,44 +1,47 @@
-From: Stephen Boyd <stephen.boyd@linaro.org>
-Subject: Re: [PATCH v3 09/12] EXAMPLE CODE: usb: port: Parse pwrseq phandle from
- Device Tree
-Date: Wed, 01 Jun 2016 11:16:34 -0700
-Message-ID: <146480499491.3686.4996610748316511864@sboyd-linaro>
-References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
- <1464768141-25420-10-git-send-email-k.kozlowski@samsung.com>
- <146477144362.1485.3331887341591876278@sboyd-linaro>
- <20160601120520.GB16740@shlinux2>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+Date: Wed, 1 Jun 2016 12:57:52 -0700
+Message-ID: <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+	<1464429273-23457-14-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20160601120520.GB16740@shlinux2>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Peter Chen <hzpeterchen@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-pm@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1464429273-23457-14-git-send-email-krzk@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Peter Chen (2016-06-01 05:05:20)
-> On Wed, Jun 01, 2016 at 01:57:23AM -0700, Stephen Boyd wrote:
-> > Quoting Krzysztof Kozlowski (2016-06-01 01:02:18)
-> > > Parse usb-pwrseq property from Device Tree to get the phandle to pwrseq
-> > > device.  The pwrseq device will be used by USB hub to cycle the power
-> > > before activating ports.
-> > > 
-> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > 
-> > Drive by review comment.
-> > 
-> > I was hoping this would help me with a problem I'm having where I have a
-> > hub (smsc4604) that needs to be taken out of reset before my HSIC
-> > controller sends a USB reset to it, but it seems this is more about
-> > doing some sort of power on sequence after enumeration?
-> > 
-> 
-> No, you may need to do reset before enumeration, the general purpose of
-> reset is eliminate unstable hardware state, and let the controller find
-> the device.
-> 
-> Try to do it at bootloader to see if it works for you.
-> 
+Hi Krzysztof,
 
-Sorry the bootloader doesn't do this so that doesn't work for me.
+On Sat, May 28, 2016 at 2:54 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Just like other Exynos5 family SoCs, this one has four UARTs. Configure
+> clocks for UART3 and enable it.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+This patch landed in linux-next[1] and kernelci.org found a boot
+regression on the exynos5410-odroidxu[2], where it looks like it's
+faulting in clk_prepare().  Bisecting pointed to this patch.  I added
+"status = disabled" back into the DTS on top of next-20160601[3] and
+verified my odroid-XU to be booting fine again.
+
+Kevin
+
+[1] 594127ada6df ARM: dts: exynos: Enable UART3 on Exynos5410
+[2] https://kernelci.org/boot/exynos5410-odroidxu/job/next/kernel/next-20160601/defconfig/multi_v7_defconfig/lab/lab-baylibre-seattle/?_id=574e97c759b5140f4141c8ef
+[3] diff --git a/arch/arm/boot/dts/exynos5410.dtsi
+b/arch/arm/boot/dts/exynos5410.dtsi
+index a937d9bdad90..f4baf1d1e864 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -238,6 +238,7 @@
+ };
+
+ &serial_3 {
++       status = "disabled";
+        clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+        clock-names = "uart", "clk_uart_baud0";
+ };
