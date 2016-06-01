@@ -1,118 +1,122 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Wed, 01 Jun 2016 13:37:18 +0200
-Message-ID: <574EC8EE.5000509@samsung.com>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
+From: Peter Chen <hzpeterchen@gmail.com>
+Subject: Re: [PATCH v3 12/12] ARM: dts: exynos: Fix LAN and HUB after
+ bootloader initialization on Odroid U3
+Date: Wed, 1 Jun 2016 19:59:30 +0800
+Message-ID: <20160601115929.GA16740@shlinux2>
+References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
+ <1464768141-25420-13-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40225 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750697AbcFALhX (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35551 "EHLO
+	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752809AbcFAMFB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 07:37:23 -0400
-In-reply-to: <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
+	Wed, 1 Jun 2016 08:05:01 -0400
+Content-Disposition: inline
+In-Reply-To: <1464768141-25420-13-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-pm@vger.kernel.or, Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
+On Wed, Jun 01, 2016 at 10:02:21AM +0200, Krzysztof Kozlowski wrote:
+> On Odroid U3 (Exynos4412-based) board if USB was initialized by
+> bootloader (in U-Boot "usb start" before tftpboot), the HUB (usb3503)
+> and LAN (smsc95xx) after after successful probing were not visible in the
+> system ("lsusb").
+> 
+> In such case the devices had to be fully reset before configuring.
+> Reset by GPIO (called RESET_N pin) and by RESET field in STCD register
+> in usb3503 HUB are not sufficient. Instead full reset has to be done by
+> disabling and enabling regulator.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> index 31cdc036fda4..23e30e4609df 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> @@ -99,11 +99,15 @@
+>  	clock-names = "refclk";
+>  	clocks = <&pmu_system_controller 0>;
+>  	refclk-frequency = <24000000>;
+> +
+> +	power-sequence;
+> +	ext-supply = <&buck8_reg>;
+>  };
+>  
+>  &ehci {
+>  	port@1 {
+>  		status = "okay";
+> +		usb-pwrseq = <&usb3503>;
+>  	};
+>  	port@2 {
+>  		status = "okay";
+> -- 
+> 1.9.1
+> 
 
-One thing drew my attention while reviewing this again:
-max8997_led_brightness_set() can sleep, but the brightness_set
-op it is assigned to must not sleep. At the time when this driver was
-merged we were delegating brightness setting to workqueues task
-in LED class drivers that can sleep during this call.
-This must have been overlooked, which is even more likely, taking into
-account that the initial patch doesn't have LED maintainer's ack.
+The hub is under the port1, you may need to describe it
+under the port@1, see below:
+Documentation/devicetree/bindings/usb/usb-device.txt
 
-The non-sleeping requirement is motivated by the fact that brightness
-can be set from softirq context, e.g. when timer trigger is enabled.
+If I get Rob's comments correctly, you may need to consider 
+below MMC and USB device tree description together, it seems
+hard for USB to use pwrseq driver, sorry for confusing you.
 
-Currently LED class drivers don't have to use workqueue on their own,
-but are required to use brightness_set_blocking op instead of
-brightness_set if they can sleep while setting brightness.
+If rob can accept below USB device description, we have to
+do it under USB. In future, if there is some suitable framework,
+we can move it.
 
-Apart of that, I think that operations in max8997_led_brightness_set()
-should be protected with mutex to assure leaving the device in
-a consistent state in case of concurrent calls.
+1. MMC device:
+	usdhc3_pwrseq: usdhc3_pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		reset-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>, 	/* WL_REG_ON */
+			      <&gpio4 7 GPIO_ACTIVE_LOW>, 	/* WL_HOSTWAKE */
+			      <&gpio3 25 GPIO_ACTIVE_LOW>, 	/* BT_REG_ON */
+			      <&gpio3 27 GPIO_ACTIVE_LOW>,	/* BT_HOSTWAKE */
+			      <&gpio4 4 GPIO_ACTIVE_LOW>, 	/* BT_WAKE */
+			      <&gpio4 6 GPIO_ACTIVE_LOW>; 	/* BT_RST_N */
+	};
 
-I am aware that this is out of this patch scope, but I'd be grateful
-if you could apply those changes and test them on hardware if you have
-an access to.
+&usdhc3 {
+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+	pinctrl-0 = <&pinctrl_usdhc3>;
+	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
+	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
+	bus-width = <4>;
+	non-removable;
+	keep-power-in-suspend;
+	wakeup-source;
+	mmc-pwrseq = <&usdhc3_pwrseq>;
+	status = "okay";
+};
 
-Thanks,
-Jacek Anaszewski
+2. USB device 
 
-On 06/01/2016 11:53 AM, Krzysztof Kozlowski wrote:
-> From: Robert Baldyga <r.baldyga@samsung.com>
+&usbotg1 {
+	vbus-supply = <&reg_usb_otg1_vbus>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usb_otg1_id>;
+	status = "okay";
 
-> diff --git a/drivers/leds/leds-max8997.c b/drivers/leds/leds-max8997.c
-> index 4edf74f1d6d4..e5f0dc2e9edf 100644
-> --- a/drivers/leds/leds-max8997.c
-> +++ b/drivers/leds/leds-max8997.c
-> @@ -17,6 +17,7 @@
->   #include <linux/mfd/max8997.h>
->   #include <linux/mfd/max8997-private.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->
->   #define MAX8997_LED_FLASH_SHIFT			3
->   #define MAX8997_LED_FLASH_CUR_MASK		0xf8
-> @@ -52,7 +53,6 @@ static void max8997_led_set_mode(struct max8997_led *led,
->   			enum max8997_led_mode mode)
->   {
->   	int ret;
-> -	struct i2c_client *client = led->iodev->i2c;
->   	u8 mask = 0, val;
->
->   	switch (mode) {
-> @@ -88,8 +88,8 @@ static void max8997_led_set_mode(struct max8997_led *led,
->   	}
->
->   	if (mask) {
-> -		ret = max8997_update_reg(client, MAX8997_REG_LEN_CNTL, val,
-> -					 mask);
-> +		ret = regmap_update_bits(led->iodev->regmap,
-> +					MAX8997_REG_LEN_CNTL, mask, val);
->   		if (ret)
->   			dev_err(led->iodev->dev,
->   				"failed to update register(%d)\n", ret);
-> @@ -101,7 +101,6 @@ static void max8997_led_set_mode(struct max8997_led *led,
->   static void max8997_led_enable(struct max8997_led *led, bool enable)
->   {
->   	int ret;
-> -	struct i2c_client *client = led->iodev->i2c;
->   	u8 val = 0, mask = MAX8997_LED_BOOST_ENABLE_MASK;
->
->   	if (led->enabled == enable)
-> @@ -109,7 +108,8 @@ static void max8997_led_enable(struct max8997_led *led, bool enable)
->
->   	val = enable ? MAX8997_LED_BOOST_ENABLE_MASK : 0;
->
-> -	ret = max8997_update_reg(client, MAX8997_REG_BOOST_CNTL, val, mask);
-> +	ret = regmap_update_bits(led->iodev->regmap,
-> +				MAX8997_REG_BOOST_CNTL, mask, val);
->   	if (ret)
->   		dev_err(led->iodev->dev,
->   			"failed to update register(%d)\n", ret);
-> @@ -121,7 +121,6 @@ static void max8997_led_set_current(struct max8997_led *led,
->   				enum led_brightness value)
->   {
->   	int ret;
-> -	struct i2c_client *client = led->iodev->i2c;
->   	u8 val = 0, mask = 0, reg = 0;
->
->   	switch (led->led_mode) {
-> @@ -142,7 +141,7 @@ static void max8997_led_set_current(struct max8997_led *led,
->   	}
->
->   	if (mask) {
-> -		ret = max8997_update_reg(client, reg, val, mask);
-> +		ret = regmap_update_bits(led->iodev->regmap, reg, mask, val);
->   		if (ret)
->   			dev_err(led->iodev->dev,
->   				"failed to update register(%d)\n", ret);
+	#address-cells = <1>;
+	#size-cells = <0>;
+	hub: genesys@1 {
+		compatible = "usb5e3,608";
+		reg = <1>;
+		reset-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>; /* hub reset pin */
+		reset-duration-us = <10>;
+		clocks = <&clks IMX6SX_CLK_CKO>;
+	};
+};
+
+};
+-- 
+
+Best Regards,
+Peter Chen
