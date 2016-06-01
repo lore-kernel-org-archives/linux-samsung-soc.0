@@ -1,148 +1,72 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 5/9] clocksource/drivers/exynos_mct: Convert init function to
- return error
-Date: Wed,  1 Jun 2016 10:34:48 +0200
-Message-ID: <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
-References: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add TMU nodes regulator supply for Peach
+ boards
+Date: Wed, 01 Jun 2016 10:50:25 +0200
+Message-ID: <574EA1D1.6020606@samsung.com>
+References: <1464731280-24588-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, "moderated list:ARM/SAMSUNG EXYNO..." <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1464731280-24588-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The init functions do not return any error. They behave as the following:
+On 05/31/2016 11:48 PM, Javier Martinez Canillas wrote:
+> The Exynos5800 Peach Pi and Exynos5420 Peach Pit Chromebooks have the
+> LDO10 1.8V output connected to the VDD18_TS{01,23,4} Exynos SoC pins.
+> 
+> Add this regulator as the input supply of the Thermal Management Unit
+> channels and also remove the always-on property since all the devices
+> using LDO10 as input supply are now defined.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 21 ++++++++++++++++++++-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 21 ++++++++++++++++++++-
+>  2 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index c1247402cb17..a55760b5fa82 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -425,7 +425,6 @@
+>  				regulator-name = "vdd_ldo10";
+>  				regulator-min-microvolt = <1800000>;
+>  				regulator-max-microvolt = <1800000>;
+> -				regulator-always-on;
+>  				regulator-state-mem {
+>  					regulator-off-in-suspend;
+>  				};
+> @@ -924,6 +923,26 @@
+>  	assigned-clock-parents = <&clock CLK_FIN_PLL>;
+>  };
+>  
+> +&tmu_cpu0 {
+> +	vtmu-supply = <&ldo10_reg>;
+> +};
+> +
+> +&tmu_cpu1 {
+> +	vtmu-supply = <&ldo10_reg>;
+> +};
+> +
+> +&tmu_cpu2 {
+> +	vtmu-supply = <&ldo10_reg>;
+> +};
+> +
+> +&tmu_cpu3 {
+> +	vtmu-supply = <&ldo10_reg>;
+> +};
+> +
+> +&tmu_gpu {
+> +	vtmu-supply = <&ldo10_reg>;
+> +};
+> +
 
- - panic, thus leading to a kernel crash while another timer may work and
-   make the system boot up correctly
+Here and for Peach Pi please put the nodes in alphabetical order.
 
- or
-
- - print an error and let the caller unaware if the state of the system
-
-Change that by converting the init functions to return an error conforming
-to the CLOCKSOURCE_OF_RET prototype.
-
-Proper error handling (rollback, errno value) will be changed later case
-by case, thus this change just return back an error or success in the init
-function.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index be09bc0..f6caed0 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -232,7 +232,7 @@ static cycles_t exynos4_read_current_timer(void)
- 	return exynos4_read_count_32();
- }
- 
--static void __init exynos4_clocksource_init(void)
-+static int __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start();
- 
-@@ -244,6 +244,8 @@ static void __init exynos4_clocksource_init(void)
- 		panic("%s: can't register clocksource\n", mct_frc.name);
- 
- 	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-+
-+	return 0;
- }
- 
- static void exynos4_mct_comp0_stop(void)
-@@ -335,12 +337,14 @@ static struct irqaction mct_comp_event_irq = {
- 	.dev_id		= &mct_comp_device,
- };
- 
--static void exynos4_clockevent_init(void)
-+static int exynos4_clockevent_init(void)
- {
- 	mct_comp_device.cpumask = cpumask_of(0);
- 	clockevents_config_and_register(&mct_comp_device, clk_rate,
- 					0xf, 0xffffffff);
- 	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
-+
-+	return 0;
- }
- 
- static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
-@@ -516,7 +520,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
- 	.notifier_call = exynos4_mct_cpu_notify,
- };
- 
--static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
-+static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
- {
- 	int err, cpu;
- 	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
-@@ -572,15 +576,17 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
- 
- 	/* Immediately configure the timer on the boot CPU */
- 	exynos4_local_timer_setup(mevt);
--	return;
-+	return 0;
- 
- out_irq:
- 	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	return err;
- }
- 
--static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
-+static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- {
- 	u32 nr_irqs, i;
-+	int ret;
- 
- 	mct_int_type = int_type;
- 
-@@ -600,20 +606,26 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
- 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
- 		mct_irqs[i] = irq_of_parse_and_map(np, i);
- 
--	exynos4_timer_resources(np, of_iomap(np, 0));
--	exynos4_clocksource_init();
--	exynos4_clockevent_init();
-+	ret = exynos4_timer_resources(np, of_iomap(np, 0));
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos4_clocksource_init();
-+	if (ret)
-+		return ret;
-+
-+	return exynos4_clockevent_init();
- }
- 
- 
--static void __init mct_init_spi(struct device_node *np)
-+static int __init mct_init_spi(struct device_node *np)
- {
- 	return mct_init_dt(np, MCT_INT_SPI);
- }
- 
--static void __init mct_init_ppi(struct device_node *np)
-+static int __init mct_init_ppi(struct device_node *np)
- {
- 	return mct_init_dt(np, MCT_INT_PPI);
- }
--CLOCKSOURCE_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
--CLOCKSOURCE_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
-+CLOCKSOURCE_OF_DECLARE_RET(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
-+CLOCKSOURCE_OF_DECLARE_RET(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
--- 
-1.9.1
+Best regards,
+Krzysztof
