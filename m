@@ -1,63 +1,31 @@
 From: Mark yao <mark.yao@rock-chips.com>
-Subject: Re: [PATCH v2 08/10] drm/rockchip: analogix_dp: correct the connector
- display color format and bpc
-Date: Wed, 1 Jun 2016 11:52:04 +0800
-Message-ID: <574E5BE4.7050003@rock-chips.com>
+Subject: Re: [PATCH v2 06/10] drm/rockchip: analogix_dp: make panel detect to
+ an optional action
+Date: Wed, 1 Jun 2016 11:53:12 +0800
+Message-ID: <574E5C28.1030504@rock-chips.com>
 References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
- <1464066164-22863-1-git-send-email-ykk@rock-chips.com>
+ <1464066155-22777-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1464066164-22863-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464066155-22777-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Yakir Yang <ykk@rock-chips.com>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Thierry Reding <treding@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNuW5tDA15pyIMjTml6UgMTM6MDIsIFlha2lyIFlhbmcgd3JvdGU6Cj4gUm9ja2NoaXAg
-Vk9QIGNvdWxkbid0IG91dHB1dCBZVVYgdmlkZW8gZm9ybWF0IGZvciBlRFAgY29udHJvbGxlciwg
-c28KPiB3aGVuIGRyaXZlciBkZXRlY3QgY29ubmVjdG9yIHN1cHBvcnQgWVVWIHZpZGVvIGZvcm1h
-dCwgd2UgbmVlZCB0byBoYWNrCj4gaXQgZG93biB0byBSR0I4ODguCj4KPiBTaWduZWQtb2ZmLWJ5
-OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBpbiB2Mjog
-Tm9uZQo+Cj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAu
-YyB8IDE5ICsrKysrKysrKysrKysrKysrKysKPiAgIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRp
-b25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4
-X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9j
-a2NoaXAuYwo+IGluZGV4IGYyOWNhM2QuLjkxMGNjZWIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiArKysgYi9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+IEBAIC05Nyw2ICs5NywyNCBA
-QCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3Bvd2VyZG93bihzdHJ1Y3QgYW5hbG9naXhfZHBfcGxh
-dF9kYXRhICpwbGF0X2RhdGEpCj4gICAJcmV0dXJuIDA7Cj4gICB9Cj4gICAKPiArc3RhdGljIGVu
-dW0gZHJtX21vZGVfc3RhdHVzCj4gK3JvY2tjaGlwX2RwX21vZGVfdmFsaWQoc3RydWN0IGFuYWxv
-Z2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhLAo+ICsJCSAgICAgICBzdHJ1Y3QgZHJtX2Nvbm5l
-Y3RvciAqY29ubmVjdG9yLAo+ICsJCSAgICAgICBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9k
-ZSkKPiArewo+ICsJc3RydWN0IGRybV9kaXNwbGF5X2luZm8gKmRpID0gJmNvbm5lY3Rvci0+ZGlz
-cGxheV9pbmZvOwo+ICsKPiArCWlmIChkaS0+Y29sb3JfZm9ybWF0cyAmIERSTV9DT0xPUl9GT1JN
-QVRfWUNSQ0I0NDQgfHwKPiArCSAgICBkaS0+Y29sb3JfZm9ybWF0cyAmIERSTV9DT0xPUl9GT1JN
-QVRfWUNSQ0I0MjIpIHsKPiArCQlkaS0+Y29sb3JfZm9ybWF0cyAmPSB+KERSTV9DT0xPUl9GT1JN
-QVRfWUNSQ0I0MjIgfAo+ICsJCQkJICAgICAgIERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0NDQpOwo+
-ICsJCWRpLT5jb2xvcl9mb3JtYXRzIHw9IERSTV9DT0xPUl9GT1JNQVRfUkdCNDQ0Owo+ICsJCWRp
-LT5icGMgPSA4Owo+ICsJfQo+ICsKPiArCXJldHVybiBNT0RFX09LOwo+ICt9Cj4gKwo+ICAgc3Rh
-dGljIGJvb2wKPiAgIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX21vZGVfZml4dXAoc3RydWN0IGRy
-bV9lbmNvZGVyICplbmNvZGVyLAo+ICAgCQkJCSAgIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9t
-b2RlICptb2RlLAo+IEBAIC0zMDYsNiArMzI0LDcgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9i
-aW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+ICAgCWRwLT5w
-bGF0X2RhdGEuc3ViZGV2X3R5cGUgPSBkcF9kYXRhLT5jaGlwX3R5cGU7Cj4gICAJZHAtPnBsYXRf
-ZGF0YS5wb3dlcl9vbiA9IHJvY2tjaGlwX2RwX3Bvd2Vyb247Cj4gICAJZHAtPnBsYXRfZGF0YS5w
-b3dlcl9vZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247Cj4gKwlkcC0+cGxhdF9kYXRhLm1vZGVf
-dmFsaWQgPSByb2NrY2hpcF9kcF9tb2RlX3ZhbGlkOwo+ICAgCj4gICAJcmV0dXJuIGFuYWxvZ2l4
-X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2RldiwgJmRwLT5wbGF0X2RhdGEpOwo+ICAgfQpMb29rcyBm
-b3IgbWUsIFNvOgoKQWNrZWQtYnk6IE1hcmsgWWFvIDxtYXJrLnlhb0Byb2NrLWNoaXBzLmNvbT4K
-Ci0tIArvvK1hcmsgWWFvCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+On 2016=E5=B9=B405=E6=9C=8824=E6=97=A5 13:02, Yakir Yang wrote:
+> Some boards don't need to declare a panel device node, like the
+> display interface is DP monitors, so it's necessary to make the
+> panel detect to an optional action.
+>
+> Signed-off-by: Yakir Yang<ykk@rock-chips.com>
+> ---
+Looks for me, So:
+
+Acked-by: Mark Yao <mark.yao@rock-chips.com>
+
+--=20
+=EF=BC=ADark Yao
