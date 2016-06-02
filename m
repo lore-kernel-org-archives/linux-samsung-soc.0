@@ -1,42 +1,51 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
- where !funcs->best_encoder is valid
-Date: Thu, 2 Jun 2016 23:40:04 +0100
-Message-ID: <20160602224004.GA1819@nuc-i3427.alporthouse.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
- <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
- <8671722.LHaiaBNqfE@avalon>
- <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: Re: [PATCH v3 09/12] EXAMPLE CODE: usb: port: Parse pwrseq phandle
+ from Device Tree
+Date: Thu, 02 Jun 2016 16:59:55 -0700
+Message-ID: <146491199510.7580.5649614149557346848@sboyd-linaro>
+References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
+ <1464768141-25420-10-git-send-email-k.kozlowski@samsung.com>
+ <146477144362.1485.3331887341591876278@sboyd-linaro>
+ <20160601120520.GB16740@shlinux2>
+ <146480499491.3686.4996610748316511864@sboyd-linaro>
+ <20160602012419.GA7953@shlinux2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
- NET..." <virtualization@lists.linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Re ding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>in
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160602012419.GA7953@shlinux2>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter Chen <hzpeterchen@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, linux-pm@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBKdW4gMDIsIDIwMTYgYXQgMTE6NTc6MDJQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBkcm1fZW5jb2Rlcl9maW5kIGlzIGFuIGlkciBsb29rdXAuIFRoYXQgc2hvdWxkIGJl
-IHBsZW50eSBmYXN0LAo+IGVzcGVjaWFsbHkgZm9yIG1vZGVzZXQgY29kZS4gVXN1YWxseSB3aGF0
-J3MgdG9vIGV4cGVuc2l2ZSBldmVuIGZvcgo+IG1vZGVzZXQgY29kZSBpcyBsaW5lYXIgbGlzdCB3
-YWxrcy4gQnV0IENocmlzIGp1c3Qgc3VibWl0dGVkIHBhdGNoZXMgdG8KPiBjb252ZXJ0IG1vc3Qg
-b2YgdGhlbSBpbnRvIHNpbXBsZSBsb29rdXBzLgoKRm9yIHRoZSBpZHJfZmluZCwgSSdtIHRlbXB0
-ZWQgdG8gcmVwbGFjZSB0aGUgbXV0ZXggd2l0aCBhIHJ3bG9jay4gSXQKaGVscHMgcGF0aG9sb2dp
-Y2FsIGNhc2VzLCBidXQgaW4gcmVhbGl0eSB0aGVyZSBhcmUgbW9yZSBjcnVjaWFsCmxvY2tzIGFy
-b3VuZCB0aGUgaHcgdGhhdCBsaW1pdCBjb25jdXJyZW5jeS4gOy0pCi1DaHJpcwoKLS0gCkNocmlz
-IFdpbHNvbiwgSW50ZWwgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50cmUKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlz
-dApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Quoting Peter Chen (2016-06-01 18:24:19)
+> On Wed, Jun 01, 2016 at 11:16:34AM -0700, Stephen Boyd wrote:
+> > > 
+> > > No, you may need to do reset before enumeration, the general purpose of
+> > > reset is eliminate unstable hardware state, and let the controller find
+> > > the device.
+> > > 
+> > > Try to do it at bootloader to see if it works for you.
+> > > 
+> > 
+> > Sorry the bootloader doesn't do this so that doesn't work for me.
+> 
+> I mean try to see if the HUB can work if you reset it at bootloader.
+> If it works, it means you need to do reset before enumeration, and you
+> don't need to do anything after enumeration.
+> 
+
+Ah ok. Yes, I need to deassert the reset before enumeration. Right now I
+have a driver for the 4604 hub controller that deasserts a reset gpio
+and sends an i2c command to put the controller into "hub" mode. If I do
+this before the usb controller driver probes then everything works. If I
+do it after the controller probes it doesn't.
