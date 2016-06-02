@@ -1,33 +1,64 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/8] ARM: s3c24xx: Sort cpufreq tables
-Date: Thu, 02 Jun 2016 08:34:38 +0200
-Message-ID: <574FD37E.3090706@samsung.com>
-References: <cover.1464776797.git.viresh.kumar@linaro.org>
- <872a8b970ce7eabb06b988680eaf6b1154fe99fa.1464776797.git.viresh.kumar@linaro.org>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
+Date: Thu, 02 Jun 2016 09:08:54 +0200
+Message-ID: <574FDB86.2070107@samsung.com>
+References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
+ <574EC8EE.5000509@samsung.com> <574FB967.7090201@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <872a8b970ce7eabb06b988680eaf6b1154fe99fa.1464776797.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Rafael Wysocki <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:18924 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbcFBHJA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 03:09:00 -0400
+In-reply-to: <574FB967.7090201@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/01/2016 12:34 PM, Viresh Kumar wrote:
-> Some later changes in cpufreq core require these tables to be sorted
-> based on ascending order of their frequencies. There was only one
-> offender. Fix it and add comments over the arrays.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  arch/arm/mach-s3c24xx/pll-s3c2410.c          | 3 ++-
->  arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c | 1 +
->  arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c | 1 +
->  3 files changed, 4 insertions(+), 1 deletion(-)
-> 
+On 06/02/2016 06:43 AM, Krzysztof Kozlowski wrote:
+> On 06/01/2016 01:37 PM, Jacek Anaszewski wrote:
+>> Hi Krzysztof,
+>>
+>> One thing drew my attention while reviewing this again:
+>> max8997_led_brightness_set() can sleep, but the brightness_set
+>> op it is assigned to must not sleep. At the time when this driver was
+>> merged we were delegating brightness setting to workqueues task
+>> in LED class drivers that can sleep during this call.
+>> This must have been overlooked, which is even more likely, taking into
+>> account that the initial patch doesn't have LED maintainer's ack.
+>>
+>> The non-sleeping requirement is motivated by the fact that brightness
+>> can be set from softirq context, e.g. when timer trigger is enabled.
+>>
+>> Currently LED class drivers don't have to use workqueue on their own,
+>> but are required to use brightness_set_blocking op instead of
+>> brightness_set if they can sleep while setting brightness.
+>>
+>> Apart of that, I think that operations in max8997_led_brightness_set()
+>> should be protected with mutex to assure leaving the device in
+>> a consistent state in case of concurrent calls.
+>>
+>> I am aware that this is out of this patch scope, but I'd be grateful
+>> if you could apply those changes and test them on hardware if you have
+>> an access to.
+>
+> The problem you mention existed before the patch. It was using sleeping
+> primitives (mutex) before adding regmap so I understand you don't have
+> anything against this patch, right?
 
-Thanks, applied.
+Right, I just wanted to indicate the problem. The patch itself is ok.
 
+> I can fix the issue but it will be a little bit trickier because I don't
+> have the hardware. Other guys in the team tested the patchset for me so
+> I rely on them in that matter. Anyway I'll work on it.
+
+Ack.
+
+-- 
 Best regards,
-Krzysztof
+Jacek Anaszewski
