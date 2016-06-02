@@ -1,53 +1,78 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Thu, 02 Jun 2016 06:43:19 +0200
-Message-ID: <574FB967.7090201@samsung.com>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
- <574EC8EE.5000509@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-reply-to: <574EC8EE.5000509@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, r.baldyga@hackerion.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/4] ARM: multi_v7_defconfig: Enable Trats2 audio codec,
+ touchscreen and sensors
+Date: Thu, 02 Jun 2016 07:55:13 +0200
+Message-ID: <1464846916-3110-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:42524 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751121AbcFBFzj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 01:55:39 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/01/2016 01:37 PM, Jacek Anaszewski wrote:
-> Hi Krzysztof,
-> 
-> One thing drew my attention while reviewing this again:
-> max8997_led_brightness_set() can sleep, but the brightness_set
-> op it is assigned to must not sleep. At the time when this driver was
-> merged we were delegating brightness setting to workqueues task
-> in LED class drivers that can sleep during this call.
-> This must have been overlooked, which is even more likely, taking into
-> account that the initial patch doesn't have LED maintainer's ack.
-> 
-> The non-sleeping requirement is motivated by the fact that brightness
-> can be set from softirq context, e.g. when timer trigger is enabled.
-> 
-> Currently LED class drivers don't have to use workqueue on their own,
-> but are required to use brightness_set_blocking op instead of
-> brightness_set if they can sleep while setting brightness.
-> 
-> Apart of that, I think that operations in max8997_led_brightness_set()
-> should be protected with mutex to assure leaving the device in
-> a consistent state in case of concurrent calls.
-> 
-> I am aware that this is out of this patch scope, but I'd be grateful
-> if you could apply those changes and test them on hardware if you have
-> an access to.
+The Exynos4412-based Trats2 board has CM36651 proximity/ambient light
+sensor, MMS114 touchscreen and Wolfson Microelectronics WM1811 CODEC.
+Enable them in defconfig to get some testing coverage and use its
+features.
 
-The problem you mention existed before the patch. It was using sleeping
-primitives (mutex) before adding regmap so I understand you don't have
-anything against this patch, right?
+While saving defconfig the SND_SOC_ODROIDX2 is removed because it does
+not exist since commit ee12a817bb4b ("ASoC: samsung: Remove unused
+Odroid x2/u3 machine driver").
 
-I can fix the issue but it will be a little bit trickier because I don't
-have the hardware. Other guys in the team tested the patchset for me so
-I rely on them in that matter. Anyway I'll work on it.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 995cc9b444bf..c5db9cf02e31 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -270,6 +270,7 @@ CONFIG_MOUSE_CYAPA=m
+ CONFIG_MOUSE_ELAN_I2C=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++CONFIG_TOUCHSCREEN_MMS114=m
+ CONFIG_TOUCHSCREEN_ST1232=m
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_TOUCHSCREEN_SUN4I=y
+@@ -515,6 +516,7 @@ CONFIG_REGULATOR_TPS6586X=y
+ CONFIG_REGULATOR_TPS65910=y
+ CONFIG_REGULATOR_TWL4030=y
+ CONFIG_REGULATOR_VEXPRESS=y
++CONFIG_REGULATOR_WM8994=m
+ CONFIG_MEDIA_SUPPORT=m
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
+@@ -597,13 +599,14 @@ CONFIG_SND_SOC_ROCKCHIP=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_MAX98090=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
++CONFIG_SND_SOC_SAMSUNG=m
++CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
++CONFIG_SND_SOC_SMDK_WM8994_PCM=m
++CONFIG_SND_SOC_SNOW=m
+ CONFIG_SND_SOC_SH4_FSI=m
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_RSRC_CARD=m
+ CONFIG_SND_SUN4I_CODEC=m
+-CONFIG_SND_SOC_SAMSUNG=m
+-CONFIG_SND_SOC_SNOW=m
+-CONFIG_SND_SOC_ODROIDX2=m
+ CONFIG_SND_SOC_TEGRA=m
+ CONFIG_SND_SOC_TEGRA_RT5640=m
+ CONFIG_SND_SOC_TEGRA_WM8753=m
+@@ -800,6 +803,7 @@ CONFIG_BERLIN2_ADC=m
+ CONFIG_EXYNOS_ADC=m
+ CONFIG_VF610_ADC=m
+ CONFIG_XILINX_XADC=y
++CONFIG_CM36651=m
+ CONFIG_AK8975=y
+ CONFIG_RASPBERRYPI_POWER=y
+ CONFIG_PWM=y
+-- 
+1.9.1
