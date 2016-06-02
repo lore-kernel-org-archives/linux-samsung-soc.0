@@ -1,68 +1,43 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
- to Exynos5410
-Date: Thu, 02 Jun 2016 08:18:26 +0200
-Message-ID: <574FCFB2.1080607@samsung.com>
-References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
- <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
- <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add TMU nodes regulator supply for
+ Peach boards
+Date: Thu, 02 Jun 2016 08:21:29 +0200
+Message-ID: <574FD069.8020709@samsung.com>
+References: <1464787235-8400-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:40313 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750824AbcFBGSc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 02:18:32 -0400
-In-reply-to: <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1464787235-8400-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/01/2016 05:16 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On 06/01/2016 03:20 PM, Javier Martinez Canillas wrote:
+> The Exynos5800 Peach Pi and Exynos5420 Peach Pit Chromebooks have the
+> LDO10 1.8V output connected to the VDD18_TS{01,23,4} Exynos SoC pins.
 > 
-> On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
->> Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
->> shared with Exynos5410 and configure the clocks on the latter.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
+> Add this regulator as the input supply of the Thermal Management Unit
+> channels and also remove the always-on property since all the devices
+> using LDO10 as input supply are now defined.
 > 
-> [snip]
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
->>  
->> +&sss {
->> +	clocks = <&clock CLK_SSS>;
->> +	clock-names = "secss";
->> +};
->> +
+> ---
 > 
-> [snip]
+> Changes in v2:
+> - Sorted nodes in alphabetical order (Krzysztof Kozlowski).
+> - Added Krzysztof's Suggested-by tag since he mentioned in other
+>   thread that the TMU supplies were missing.
 > 
->>  
->> +&watchdog {
->> +	clocks = <&clock CLK_WDT>;
->> +	clock-names = "watchdog";
->> +	samsung,syscon-phandle = <&pmu_system_controller>;
->> +};
->> +
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 21 ++++++++++++++++++++-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 21 ++++++++++++++++++++-
+>  2 files changed, 40 insertions(+), 2 deletions(-)
 > 
-> Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
-> I wonder if the clock and clock-names shouldn't be just defined in the
-> shared exynos54xx.dtsi as is the case for the interrupts that are also
-> the same?
-> 
-> The patch looks good to me though, so whatever you decide:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Thanks for review and comments.
-
-The 'clock' property cannot be moved - there is no clock phandle and the
-clock IDs are not included in 54xx.
+Thanks, applied.
 
 Best regards,
 Krzysztof
