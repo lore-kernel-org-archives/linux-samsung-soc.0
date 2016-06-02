@@ -1,117 +1,68 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 4/4] ARM: exynos_defconfig: Save defconfig on current linux-next
-Date: Thu, 02 Jun 2016 07:55:16 +0200
-Message-ID: <1464846916-3110-4-git-send-email-k.kozlowski@samsung.com>
-References: <1464846916-3110-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1464846916-3110-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: Add watchdog amd Security SubSystem
+ to Exynos5410
+Date: Thu, 02 Jun 2016 08:18:26 +0200
+Message-ID: <574FCFB2.1080607@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-3-git-send-email-k.kozlowski@samsung.com>
+ <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:40313 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750824AbcFBGSc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 02:18:32 -0400
+In-reply-to: <f7e99aad-f773-27c6-d554-ba30bc54b5f7@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Save defconfig on next-20160602. Most of changes are just re-ordering of
-symbols.  Removed symbols:
- - FHANDLE (default y),
- - THERMAL, EXYNOS_THERMAL (selected by ARCH_EXYNOS),
- - CHROME_PLATFORMS (selected by MFD_CROS_EC),
- - EXT4_FS (selected by EXT3_FS)
- - SND_SOC_ODROIDX2 (obsolete since commit ee12a817bb4b ("ASoC: samsung:
-   Remove unused Odroid x2/u3 machine driver"), replaced with
-   SND_SIMPLE_CARD).
+On 06/01/2016 05:16 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 06/01/2016 05:45 AM, Krzysztof Kozlowski wrote:
+>> Move watchdog and Security SubSystem nodes from exynos5420.dtsi to file
+>> shared with Exynos5410 and configure the clocks on the latter.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+> 
+> [snip]
+> 
+>>  
+>> +&sss {
+>> +	clocks = <&clock CLK_SSS>;
+>> +	clock-names = "secss";
+>> +};
+>> +
+> 
+> [snip]
+> 
+>>  
+>> +&watchdog {
+>> +	clocks = <&clock CLK_WDT>;
+>> +	clock-names = "watchdog";
+>> +	samsung,syscon-phandle = <&pmu_system_controller>;
+>> +};
+>> +
+> 
+> Since you used the same ID than Exynos5420 for the SSS and WDT clocks,
+> I wonder if the clock and clock-names shouldn't be just defined in the
+> shared exynos54xx.dtsi as is the case for the interrupts that are also
+> the same?
+> 
+> The patch looks good to me though, so whatever you decide:
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/exynos_defconfig | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Thanks for review and comments.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 5e4fc3a771e9..9ee32375d05a 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -1,5 +1,4 @@
- CONFIG_SYSVIPC=y
--CONFIG_FHANDLE=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_CGROUPS=y
-@@ -71,6 +70,7 @@ CONFIG_MWIFIEX=m
- CONFIG_MWIFIEX_SDIO=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
-+CONFIG_KEYBOARD_SAMSUNG=y
- CONFIG_KEYBOARD_CROS_EC=y
- # CONFIG_MOUSE_PS2 is not set
- CONFIG_MOUSE_CYAPA=y
-@@ -80,11 +80,10 @@ CONFIG_TOUCHSCREEN_MMS114=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MAX77693_HAPTIC=y
- CONFIG_INPUT_MAX8997_HAPTIC=y
--CONFIG_KEYBOARD_SAMSUNG=y
- CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_SAMSUNG=y
- CONFIG_SERIAL_SAMSUNG_CONSOLE=y
--CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_HW_RANDOM=y
- CONFIG_TCG_TPM=y
- CONFIG_TCG_TIS_I2C_INFINEON=y
-@@ -110,10 +109,8 @@ CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_NTC_THERMISTOR=y
- CONFIG_SENSORS_PWM_FAN=y
- CONFIG_SENSORS_INA2XX=y
--CONFIG_THERMAL=y
- CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
--CONFIG_EXYNOS_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
- CONFIG_MFD_CROS_EC=y
-@@ -156,17 +153,17 @@ CONFIG_V4L_MEM2MEM_DRIVERS=y
- CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
- CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_DRM=y
--CONFIG_DRM_NXP_PTN3460=y
--CONFIG_DRM_PARADE_PS8622=y
- CONFIG_DRM_EXYNOS=y
- CONFIG_DRM_EXYNOS_FIMD=y
--CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_MIXER=y
- CONFIG_DRM_EXYNOS_DPI=y
-+CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_SAMSUNG_LD9040=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
-+CONFIG_DRM_NXP_PTN3460=y
-+CONFIG_DRM_PARADE_PS8622=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
- CONFIG_LCD_CLASS_DEVICE=y
-@@ -180,7 +177,6 @@ CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=y
- CONFIG_SND_SOC_SMDK_WM8994_PCM=y
- CONFIG_SND_SOC_SNOW=y
--CONFIG_SND_SOC_ODROIDX2=y
- CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
-@@ -218,7 +214,6 @@ CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
--CONFIG_CHROME_PLATFORMS=y
- CONFIG_CROS_EC_CHARDEV=y
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_MAX77802=y
-@@ -236,7 +231,6 @@ CONFIG_PWM_SAMSUNG=y
- CONFIG_PHY_EXYNOS5250_SATA=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
--CONFIG_EXT4_FS=y
- CONFIG_AUTOFS4_FS=y
- CONFIG_MSDOS_FS=y
- CONFIG_VFAT_FS=y
--- 
-1.9.1
+The 'clock' property cannot be moved - there is no clock phandle and the
+clock IDs are not included in 54xx.
+
+Best regards,
+Krzysztof
