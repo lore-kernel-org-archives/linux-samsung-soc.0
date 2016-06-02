@@ -1,48 +1,88 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 4/4] ARM: exynos_defconfig: Save defconfig on current
- linux-next
-Date: Thu, 2 Jun 2016 09:54:08 -0400
-Message-ID: <f5faaac7-7e26-b1fa-4327-fb3e4daee754@osg.samsung.com>
-References: <1464846916-3110-1-git-send-email-k.kozlowski@samsung.com>
- <1464846916-3110-4-git-send-email-k.kozlowski@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [RFC PATCH v1 0/2]
+Date: Thu, 2 Jun 2016 16:19:11 +0200
+Message-ID: <20160602141910.GL7231@phenom.ffwll.local>
+References: <1464701856-8695-1-git-send-email-ykk@rock-chips.com>
+ <20160531143831.GK7231@phenom.ffwll.local>
+ <574E4E51.1030308@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:39486 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751650AbcFBNyT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 09:54:19 -0400
-In-Reply-To: <1464846916-3110-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <574E4E51.1030308@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, daniel.vetter@intel.com, tfiga@chromium.org, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello Krzysztof,
-
-On 06/02/2016 01:55 AM, Krzysztof Kozlowski wrote:
-> Save defconfig on next-20160602. Most of changes are just re-ordering of
-> symbols.  Removed symbols:
->  - FHANDLE (default y),
->  - THERMAL, EXYNOS_THERMAL (selected by ARCH_EXYNOS),
->  - CHROME_PLATFORMS (selected by MFD_CROS_EC),
->  - EXT4_FS (selected by EXT3_FS)
->  - SND_SOC_ODROIDX2 (obsolete since commit ee12a817bb4b ("ASoC: samsung:
->    Remove unused Odroid x2/u3 machine driver"), replaced with
->    SND_SIMPLE_CARD).
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
-
-Looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+T24gV2VkLCBKdW4gMDEsIDIwMTYgYXQgMTA6NTQ6MDlBTSArMDgwMCwgWWFraXIgWWFuZyB3cm90
+ZToKPiBIaSBEYW5pZWwsCj4gCj4gT24gMDUvMzEvMjAxNiAxMDozOCBQTSwgRGFuaWVsIFZldHRl
+ciB3cm90ZToKPiA+IE9uIFR1ZSwgTWF5IDMxLCAyMDE2IGF0IDA5OjM3OjM2UE0gKzA4MDAsIFlh
+a2lyIFlhbmcgd3JvdGU6Cj4gPiA+IFRoZSBmdWxsIG5hbWUgb2YgUFNSIGlzIFBhbmVsIFNlbGYg
+UmVmcmVzaCwgcGFuZWwgZGV2aWNlIGNvdWxkIHJlZnJlc2gKPiA+ID4gaXRzZWxmIHdpdGggdGhl
+IGhhcmR3YXJlIGZyYW1lYnVmZmVyIGluIHBhbmVsLCB0aGlzIHdvdWxkIG1ha2UgYSBsb3RzCj4g
+PiA+IG9mIHNlbnNlIHRvIHNhdmUgdGhlIHBvd2VyIGNvbnN1bXB0aW9uLgo+ID4gPiAKPiA+ID4g
+Rm9yIGV4YW1wbGUsIHdoZW4gZGVza3RvcCBoYXZlbid0IGNoYW5nZSB0aGUgY29udGV4dCBmb3Ig
+YSBsb25nIHRpbWUsCj4gPiA+IHRoZW4gd2UgY291bGQgcmVmcmVzaCB0aGUgZGF0YSB0byB0aGUg
+aGFyZHdhcmUgZnJhbWVidWZmZXIgb2YgcGFuZWwsCj4gPiA+IGFuZCB0aGVuIGxldCBwYW5lbCBl
+bnRlciBpbnRvIFBTUiBtb2RlLiBBZnRlciB0aGF0IHN5c3RlbSBjb3VsZCBwb3dlcm9mZgo+ID4g
+PiB0aGUgTENEQyBjb250cm9sbGVyIGFuZCBlRFAgY29udHJvbGxlciwganVzdCBsZXQgcGFuZWwg
+cmVmcmVzaCB0aGUgc2NyZWVuCj4gPiA+IGJ5IGl0c2VsZi4KPiA+ID4gCj4gPiA+IEl0J3MgaGFy
+ZCB0byBkZWNpZGUgd2hlbiBwYW5lbCBzaG91bGQgZW50ZXIgaW50byBQU1Igb3IgZXhpdCBmcm9t
+IFBTUiwgaW4KPiA+ID4gdGhpcyB0aW1lIEkgY2hvc2UgdG8gbGV0IHRoZSBkcm1fdmJsYW5rIGVu
+YWJsZS9kaXNhYmxlIGV2ZW50IGRyaXZlciB0aGUgUFNSLgo+ID4gPiAKPiA+ID4gVGhpcyB0aHJl
+YWQgaXMgYmFzZWQgb24gTWFyaydzIFJLMzM5OSBWT1AgdGhyZWFkWzBdIGFuZCBteSBSSzMzOTkg
+ZURQCj4gPiA+IHRocmVhZFsxXS4KPiA+ID4gCj4gPiA+IFswXTogaHR0cHM6Ly9wYXRjaHdvcmsu
+a2VybmVsLm9yZy9wYXRjaC84ODg2MDQxLwo+ID4gPiBbMV06IGh0dHBzOi8vcGF0Y2h3b3JrLmtl
+cm5lbC5vcmcvcGF0Y2gvOTEzMjcxMy8KPiA+IExvb2tzIGxpa2UgeW91IGRpZG4ndCB3aXJlIHVw
+IHRoZSBkcm1fZnJhbWVidWZmZXItPmZ1bmNzLT5kaXJ0eSBjYWxsYmFjawo+ID4gZm9yIG1hbnVh
+bCB1cGxvYWQgb2Ygc2ltcGxlIGNsaWVudHMgbGlrZSBib290c3BsYXNoIG9yIGZiZGV2LiBJIHRo
+aW5rCj4gPiB0aGF0J3MgbmVlZGVkLiBBdCBsZWFzdCBpdCdzIG5lZWRlZCBmb3IgZXZlcnkgb3Ro
+ZXIgbWFudWFsIHVwbG9hZCBkc2kgYW5kCj4gPiBlZHAgcHNyIGltcGxlbWVudGF0aW9uLgo+ID4g
+LURhbmllbAo+IFRoYXQncyBncmVhdCwgdGhhbmtzIGZvciB5b3VyIHJlbWluZC4gU2VlbXMgbGlr
+ZSB1c2Vyc3BhY2Ugd2hpY2ggZG9lcwo+IGZyb250YnVmZmVyIHJlbmRlcmluZyBtdXN0IGNhbGwg
+dGhpcyBpb2N0bCB0byBmbHVzaCBvdXQgdGhlIGNoYW5nZXMgb24KPiBtYW51YWwtdXBkYXRlIGRp
+c3BsYXkgb3V0cHV0cy4gSXQncyBoZWxwZnVsIHRvIGhvb2sgdGhpcyBjYWxsYmFjayB0bwo+IG5v
+dGlmeSBlRFAgcmVmcmVzaCB0aGUgZURQIFJGQihyZW1vdGUgZnJhbWUgYnVmZmVyKS4KPiAKPiBC
+dXQgSSB0aGluayB0aGlzIGlzIGhhcmQgdG8gdXNlZCBvbiBSb2NrY2hpcCBlRFAgY29udHJvbGxl
+ciwgUm9ja2NoaXAgZURQCj4gZHJpdmVyIGp1c3QgdXNlZCB0d28gbW9kZXMsIFNpbmsgRGV2aWNl
+IFBTUl9TMCAoUFNSIGluYWN0aXZlKSwgYW5kIFNpbmsKPiBEZXZpY2UgUFNSX1MyIChQU1IgYWN0
+aXZlLCBkaXNwbGF5IGZyb20gUkZCKS4KPiAKPiBJIHRoaW5rIHRoZSAiZGlydHkiIGNhbGxiYWNr
+IGlzIG9ubHkgdXNlZCB3aGVuIFNpbmsgZGV2aWNlIGVudGVyIGludG8gUFNSX1MzCj4gbW9kZSAo
+UFNSIGFjdGl2ZSwgY2FwdHVyZSBhbmQgZGlzcGxheSksIG5lZWQgdG8gdXBkYXRlIHRoZSByZW1v
+dGUgZnJhbWUKPiBidWZmZXIuIEJ1dCBvbiBSb2NrY2hpcCBwbGF0Zm9ybSB0aGUgcGFuZWwgd291
+bGQgYmUgdmVyeSBlYXN5IHRvIGxvc2UgZnJhbWUKPiBpbiB0aGlzIFBTUiBtb2RlLiBJJ20gY29u
+ZnVzZWQgaW4gdGhpcyBjYXNlLCBzbyBJIGRpZG4ndCBlbmFibGUgdGhhdC4KPiAKPiBJZiB3ZSBk
+aWRuJ3QgZW5hYmxlIHRoZSBQU1JfUzMgbW9kZSwgdGhlbiB3ZSBkb24ndCBuZWVkIHRvIHVwZGF0
+ZSB0aGUgcGFuZWwKPiByZW1vdGUgZnJhbWUgYnVmZmVyLCBzbyB0aGlzICItPmRpcnR5IiBjYWxs
+YmFjayB3b3VsZCBiZSB1bnVzZWQgaW4gdGhpcwo+IGNhc2UuCgpTb3JyeSBtaXNzZWQgeW91ciBy
+ZXBseSBoZXJlIHNvbWVob3cuIEV2ZXJ5IHRpbWUgeW91IGRvbid0IHNjYW4gb3V0IHRoZQpkcm1f
+ZnJhbWVidWZmZXIgZGlyZWN0bHksIGJ1dCBmcm9tIGFueSBraW5kIG9mIGludGVybWVkaWF0ZSBi
+dWZmZXIsIHlvdQpfbXVzdF8gaW1wbGVtZW50IHRoZSBkaXJ0eSBjYWxsYmFjay4gVXN1YWxseSB0
+aGUgc2ltcGxlc3Qgd2F5IGlzIHRvIGtpY2sKdGhlIGRldmljZSBvdXQgb2Ygc2VsZi1yZWZyZXNo
+IGFuZCBhcm0gdGhlIHRpbWUgdG8gcmUtZW50ZXIgc2VsZi1yZWZyZXNoLgoKSSdtIG5vdCBlbnRp
+cmVseSBjbGVhciB3aGVyZSB5b3VyIFJGQiBpcywgc28gbm8gaWRlYSB3aGV0aGVyIHRoYXQgaXMK
+c2Nhbm5pbmcgb3V0IGZyb20gdGhlIGRybV9mcmFtZWJ1ZmZlciBkYXRhIGRpcmVjdGx5LCBvciB3
+aGV0aGVyIHRoYXQncwpzb21lIG9uLWNoaXAgb3IgaW4tc2luayBmcmFtZWJ1ZmZlciBjYWNoZS4K
+CldlIGhhdmUgYSByaWRpY3Vsb3VzbHkgbmFzdHkgdGVzdHVpdGUgaW4gaS1nLXQgZm9yIGFsbCB0
+aGVzZSBjYXNlcyAod2UgdXNlCml0IHRvIHZhbGlkYXRlIG91ciBmcmFtZWJ1ZmZlciBjb21wcmVz
+c2lvbiBjb2RlLCBwc3IgY29kZSBhbmQgc29vbiBhbHNvCmRzaSBtYW51YWwgdXBsb2FkKS4gVW5m
+b3J0dW5hdGVseSBpdCdzIG5vdCB5ZXQgcG9ydGVkIG92ZXIgdG8gYmUgYSBnZW5lcmljCnRlc3Rj
+YXNlLiBCdXQgYXQgbGVhc3QgZm9yIFBTUiB0aGF0IHdvdWxkIGJlIGVhc3ksIHNpbmNlIGV2ZXJ5
+IFBTUiBwYW5lbApoYXMgZURQIHNpbmsgY3JjIHN1cHBvcnQuIEFuZCB0aGUgdGVzdGNhc2UgZG9l
+cyByZXF1aXJlIHNvbWUga2luZCBvZgpkaXNwbGF5IENSQyBzdXBwb3J0IHRvIHZhbGlkYXRlIGFj
+dHVhbCBzY3JlZW4gY29udGVudHMsIGFzIG9wcG9zZWQgdG8Kd2hhdCdzIGluIG1lbW9yeSBpbiB0
+aGUgZHJtX2ZyYW1lYnVmZmVyLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVu
+Z2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
