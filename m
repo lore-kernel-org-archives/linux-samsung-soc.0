@@ -1,55 +1,44 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Subject: Re: [PATCH v3 09/12] EXAMPLE CODE: usb: port: Parse pwrseq phandle
- from Device Tree
-Date: Thu, 2 Jun 2016 09:24:19 +0800
-Message-ID: <20160602012419.GA7953@shlinux2>
-References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
- <1464768141-25420-10-git-send-email-k.kozlowski@samsung.com>
- <146477144362.1485.3331887341591876278@sboyd-linaro>
- <20160601120520.GB16740@shlinux2>
- <146480499491.3686.4996610748316511864@sboyd-linaro>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 13/22] ARM: dts: exynos: Enable UART3 on Exynos5410
+Date: Thu, 02 Jun 2016 06:17:05 +0200
+Message-ID: <574FB341.1090800@kernel.org>
+References: <1464429273-23457-1-git-send-email-krzk@kernel.org>
+ <1464429273-23457-14-git-send-email-krzk@kernel.org>
+ <CAOi56cXeRjGgE+=psk7K45oeAgZ27HFxbi+an-ELnA3-_Z_BTA@mail.gmail.com>
+ <CAJKOXPcDZFaqL7+wT9d9iD7Y4QbZWPFQw2hTR3AzyU4K099WYA@mail.gmail.com>
+ <e9a103cc-a5cf-95d8-ee49-d44542dbcb1e@osg.samsung.com>
+ <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <146480499491.3686.4996610748316511864@sboyd-linaro>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-pm@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <cabfd6c2-fc7e-622a-36e6-5be0b674cdd2@osg.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 01, 2016 at 11:16:34AM -0700, Stephen Boyd wrote:
-> Quoting Peter Chen (2016-06-01 05:05:20)
-> > On Wed, Jun 01, 2016 at 01:57:23AM -0700, Stephen Boyd wrote:
-> > > Quoting Krzysztof Kozlowski (2016-06-01 01:02:18)
-> > > > Parse usb-pwrseq property from Device Tree to get the phandle to pwrseq
-> > > > device.  The pwrseq device will be used by USB hub to cycle the power
-> > > > before activating ports.
-> > > > 
-> > > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > > 
-> > > Drive by review comment.
-> > > 
-> > > I was hoping this would help me with a problem I'm having where I have a
-> > > hub (smsc4604) that needs to be taken out of reset before my HSIC
-> > > controller sends a USB reset to it, but it seems this is more about
-> > > doing some sort of power on sequence after enumeration?
-> > > 
-> > 
-> > No, you may need to do reset before enumeration, the general purpose of
-> > reset is eliminate unstable hardware state, and let the controller find
-> > the device.
-> > 
-> > Try to do it at bootloader to see if it works for you.
-> > 
+On 06/01/2016 10:54 PM, Javier Martinez Canillas wrote:
+> On 06/01/2016 04:52 PM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
 > 
-> Sorry the bootloader doesn't do this so that doesn't work for me.
+> [snip]
+> 
+>>>
+>>> I left the commit in my tree as it is correct (strictly speaking).
+>>> Sorry for any trouble it makes.
+>>>
+>>
+>> Kevin pointed me to this issue over IRC and I was able to reproduce it in
+>> my Peach Pi by removing the UART3 clocks from the Exynos5420 clock driver.
+>>
+>> Your patch indeed fixes the issue, I'll add a Reviewed-by on that thread.
+>>
+> 
+> err, I meant a Tested-by tag... but yes I've also reviewed the patch :)
 
-I mean try to see if the HUB can work if you reset it at bootloader.
-If it works, it means you need to do reset before enumeration, and you
-don't need to do anything after enumeration.
+Sure, thanks!
 
--- 
+Best regards,
+Krzysztof
 
-Best Regards,
-Peter Chen
