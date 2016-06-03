@@ -1,144 +1,48 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 09/20] drm: rcar-du: Rely on the default
- ->best_encoder() behavior
-Date: Fri, 3 Jun 2016 09:38:49 +0200
-Message-ID: <20160603093849.136858be@bbrezillon>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1464877907-27723-10-git-send-email-boris.brezillon@free-electrons.com>
-	<5863270.jtrd0Kruzj@avalon>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC v3 02/45] dma-mapping: Use unsigned long for dma_attrs
+Date: Fri, 03 Jun 2016 09:50:40 +0200
+Message-ID: <575136D0.6000101@samsung.com>
+References: <1464881987-13203-1-git-send-email-k.kozlowski@samsung.com>
+	<1464881987-13203-3-git-send-email-k.kozlowski@samsung.com>
+	<CAMuHMdXWMf7Dt77wSUj8NytQqb99jzDiAz46kJkAEz+6BX3Uvw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5863270.jtrd0Kruzj@avalon>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vincent
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CAMuHMdXWMf7Dt77wSUj8NytQqb99jzDiAz46kJkAEz+6BX3Uvw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Linux MIPS Mailing List <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Aurelien Jacquiot <a-jacquiot-l0cyMroinI0@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "James E.J. Bottomley" <jejb-6jwH94ZQLHl74goWV3ctuw@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Matt Turner <mattst88-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 02 Jun 2016 23:57:14 +0300
-Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
+On 06/03/2016 09:17 AM, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Thu, Jun 2, 2016 at 5:39 PM, Krzysztof Kozlowski
+> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> --- a/include/linux/dma-mapping.h
+>> +++ b/include/linux/dma-mapping.h
+>> @@ -5,13 +5,25 @@
+> 
+>> +/**
+>> + * List of possible attributes associated with a DMA mapping. The semantics
+>> + * of each attribute should be defined in Documentation/DMA-attributes.txt.
+>> + */
+>> +#define DMA_ATTR_WRITE_BARRIER         (1UL << 1)
+> 
+> Any particular reason they start at 2, not 1?
 
-> Hi Boris,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 02 Jun 2016 16:31:36 Boris Brezillon wrote:
-> > All outputs have a 1:1 relationship between connectors and encoders,
-> > and the driver is relying on the atomic helpers: we can drop the custom  
-> > ->best_encoder() implementations and let the core call  
-> > drm_atomic_helper_best_encoder() for us.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 12 ------------
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 ---
-> >  drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c |  1 -
-> >  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  1 -
-> >  drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  1 -
-> >  5 files changed, 18 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c index 4e939e4..55149e9 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > @@ -27,18 +27,6 @@
-> >  #include "rcar_du_vgacon.h"
-> > 
-> >  /*
-> > ---------------------------------------------------------------------------
-> > -- - * Common connector functions
-> > - */
-> > -
-> > -struct drm_encoder *
-> > -rcar_du_connector_best_encoder(struct drm_connector *connector)
-> > -{
-> > -	struct rcar_du_connector *rcon = to_rcar_connector(connector);
-> > -
-> > -	return rcar_encoder_to_drm_encoder(rcon->encoder);
-> > -}
-> > -
-> > -/*
-> > ---------------------------------------------------------------------------
-> > -- * Encoder
-> >   */
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h index 719b6f2a..a8669c3 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > @@ -49,9 +49,6 @@ struct rcar_du_connector {
-> >  #define to_rcar_connector(c) \
-> >  	container_of(c, struct rcar_du_connector, connector)
-> > 
-> > -struct drm_encoder *
-> > -rcar_du_connector_best_encoder(struct drm_connector *connector);
-> > -
-> >  int rcar_du_encoder_init(struct rcar_du_device *rcdu,
-> >  			 enum rcar_du_encoder_type type,
-> >  			 enum rcar_du_output output,
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c index 6c92714..612b4d5 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > @@ -52,7 +52,6 @@ static int rcar_du_hdmi_connector_mode_valid(struct
-> > drm_connector *connector, static const struct drm_connector_helper_funcs
-> > connector_helper_funcs = { .get_modes = rcar_du_hdmi_connector_get_modes,
-> >  	.mode_valid = rcar_du_hdmi_connector_mode_valid,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c index e905f5d..6afd0af 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > @@ -59,7 +59,6 @@ static int rcar_du_lvds_connector_get_modes(struct
-> > drm_connector *connector)
-> > 
-> >  static const struct drm_connector_helper_funcs connector_helper_funcs = {
-> >  	.get_modes = rcar_du_lvds_connector_get_modes,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c index 9d7e5c9..68f7ffa 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > @@ -28,7 +28,6 @@ static int rcar_du_vga_connector_get_modes(struct
-> > drm_connector *connector)
-> > 
-> >  static const struct drm_connector_helper_funcs connector_helper_funcs = {
-> >  	.get_modes = rcar_du_vga_connector_get_modes,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status  
-> 
-> You can also remove
-> 
->         rcon->encoder = renc;
-> 
-> from rcar_du_vga_connector_init(), it's not needed anymore. The same code in 
-> rcar_du_hdmi_connector_init() has to stay for now though, as it's used to 
-> locate the slave encoder in the HDMI support code. That should change when the 
-> driver will be converted to use drm_bridge.
-> 
-> I can also fix this during the conversion to drm_bridge if you don't want to 
-> resubmit. In any case,
+No reason. I'll fix this in next version (and trim Cc-list). Anyway the
+values of constants won't match old ones but that should not be problem
+(unless they are hard-coded somewhere).
 
-There will be a v2 anyway, so I'll squash this change in the patch.
-
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> 
-
-Thanks,
-
-Boris
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best regards,
+Krzysztof
