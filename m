@@ -1,45 +1,103 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [RFC v3 29/45] m68k: dma-mapping: Use unsigned long for dma_attrs
-Date: Fri, 3 Jun 2016 09:18:44 +0200
-Message-ID: <CAMuHMdXpMu6iuSYRJwyqP8mx_A9cAnsgkTh-8nU+JMpD4f2-SA@mail.gmail.com>
-References: <1464881987-13203-1-git-send-email-k.kozlowski@samsung.com>
-	<1464881987-13203-30-git-send-email-k.kozlowski@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where
+	!funcs->best_encoder is valid
+Date: Fri, 3 Jun 2016 09:36:15 +0200
+Message-ID: <20160603093615.14ba5fb8@bbrezillon>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+	<8671722.LHaiaBNqfE@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1464881987-13203-30-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux MIPS Mailing List <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Aurelien Jacquiot <a-jacquiot-l0cyMroinI0@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "James E.J. Bottomley" <jejb-6jwH94ZQLHl74goWV3ctuw@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, Matt Turner <mattst88-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, uclinux-h8-devel-5NWGOfrQmneRv+LV9MX5uooqe+aC9MnS@public.gmane.org, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <8671722.LHaiaBNqfE@avalon>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Thierry Re ding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 2, 2016 at 5:39 PM, Krzysztof Kozlowski
-<k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Split out subsystem specific changes for easier reviews. This will be
-> squashed with main commit.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Fri, 03 Jun 2016 00:05:46 +0300
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
 
-Looks good.
+> Hi Boris,
+> 
+> Thank you for the patch.
+> 
+> On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
+> > Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+> > drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+> > that DRM drivers can leave this hook unassigned if they know they want
+> > to use drm_atomic_helper_best_encoder().  
+> 
+> Could you please update include/drm/drm_modeset_helper_vtables.h to document 
+> this new behaviour ?
 
-Acked-by: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Sure.
 
-Gr{oetje,eeting}s,
+> 
+> The only drawback I see in this patch is the additional object lookup 
+> performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could 
+> somehow cache the information, as the assignment can't change when there's a 
+> 1:1 correspondence between encoders and connectors.
+> 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> >  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+> >  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+> >  2 files changed, 15 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+> > b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
+> > *state, if (funcs->atomic_best_encoder)
+> >  		new_encoder = funcs->atomic_best_encoder(connector,
+> >  							 connector_state);
+> > -	else
+> > +	else if (funcs->best_encoder)
+> >  		new_encoder = funcs->best_encoder(connector);
+> > +	else
+> > +		new_encoder = drm_atomic_helper_best_encoder(connector);
+> > 
+> >  	if (!new_encoder) {
+> >  		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+> > diff --git a/drivers/gpu/drm/drm_fb_helper.c
+> > b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
+> > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
+> > *fb_helper, my_score++;
+> > 
+> >  	connector_funcs = connector->helper_private;
+> > -	encoder = connector_funcs->best_encoder(connector);
+> > +
+> > +	/*
+> > +	 * If the DRM device implements atomic hooks and ->best_encoder() is
+> > +	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
+> > +	 * helper.
+> > +	 */
+> > +	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
+> > +	    !connector_funcs->best_encoder)
+> > +		encoder = drm_atomic_helper_best_encoder(connector);
+> > +	else
+> > +		encoder = connector_funcs->best_encoder(connector);
+> > +
+> >  	if (!encoder)
+> >  		goto out;  
+> 
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
