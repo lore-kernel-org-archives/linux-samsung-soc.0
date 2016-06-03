@@ -1,194 +1,110 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V3 1/9] cpufreq: Use policy->freq_table in ->target_index()
-Date: Fri,  3 Jun 2016 19:05:07 +0530
-Message-ID: <c6b8e13cb2084abc5ec220d4b7dcba7e2749450c.1464960877.git.viresh.kumar@linaro.org>
-References: <cover.1464960877.git.viresh.kumar@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1464960877.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1464960877.git.viresh.kumar@linaro.org>
-References: <cover.1464960877.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, steve.muckle@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Steven Miao <realmz6@gmail.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
+ where !funcs->best_encoder is valid
+Date: Fri, 3 Jun 2016 21:01:51 +0200
+Message-ID: <20160603190151.GD7231@phenom.ffwll.local>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+ <8671722.LHaiaBNqfE@avalon>
+ <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+ <20160603093743.000ef95b@bbrezillon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160603093743.000ef95b@bbrezillon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Re ding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The 'policy' already contains a pointer to the freq table, use that
-instead of using driver specific tables name.
-
-This is done in order to make sure that the 'index' passed to the
-->target_index() callback is used *only* to index into the
-policy->freq_table and nothing else.
-
-Later patches would make changes in cpufreq core, after which
-policy->freq_table may be reordered by cpufreq core and it wouldn't be
-safe anymore to use 'index' for any other local array.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/arm_big_little.c       | 2 +-
- drivers/cpufreq/at32ap-cpufreq.c       | 2 +-
- drivers/cpufreq/blackfin-cpufreq.c     | 2 +-
- drivers/cpufreq/cris-artpec3-cpufreq.c | 2 +-
- drivers/cpufreq/cris-etraxfs-cpufreq.c | 2 +-
- drivers/cpufreq/dbx500-cpufreq.c       | 3 ++-
- drivers/cpufreq/e_powersaver.c         | 2 +-
- drivers/cpufreq/exynos5440-cpufreq.c   | 3 +--
- drivers/cpufreq/imx6q-cpufreq.c        | 2 +-
- drivers/cpufreq/kirkwood-cpufreq.c     | 2 +-
- drivers/cpufreq/loongson2_cpufreq.c    | 5 ++---
- 11 files changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
-index 418042201e6d..fc9e863e39d6 100644
---- a/drivers/cpufreq/arm_big_little.c
-+++ b/drivers/cpufreq/arm_big_little.c
-@@ -217,7 +217,7 @@ static int bL_cpufreq_set_target(struct cpufreq_policy *policy,
- 	cur_cluster = cpu_to_cluster(cpu);
- 	new_cluster = actual_cluster = per_cpu(physical_cluster, cpu);
- 
--	freqs_new = freq_table[cur_cluster][index].frequency;
-+	freqs_new = policy->freq_table[index].frequency;
- 
- 	if (is_bL_switching_enabled()) {
- 		if ((actual_cluster == A15_CLUSTER) &&
-diff --git a/drivers/cpufreq/at32ap-cpufreq.c b/drivers/cpufreq/at32ap-cpufreq.c
-index 7b612c8bb09e..9231b1efb70d 100644
---- a/drivers/cpufreq/at32ap-cpufreq.c
-+++ b/drivers/cpufreq/at32ap-cpufreq.c
-@@ -31,7 +31,7 @@ static int at32_set_target(struct cpufreq_policy *policy, unsigned int index)
- 	unsigned int old_freq, new_freq;
- 
- 	old_freq = policy->cur;
--	new_freq = freq_table[index].frequency;
-+	new_freq = policy->freq_table[index].frequency;
- 
- 	if (!ref_freq) {
- 		ref_freq = old_freq;
-diff --git a/drivers/cpufreq/blackfin-cpufreq.c b/drivers/cpufreq/blackfin-cpufreq.c
-index 12e97d8a9db0..1650c213f465 100644
---- a/drivers/cpufreq/blackfin-cpufreq.c
-+++ b/drivers/cpufreq/blackfin-cpufreq.c
-@@ -142,7 +142,7 @@ static int bfin_target(struct cpufreq_policy *policy, unsigned int index)
- #endif
- 
- 	old_freq = bfin_getfreq_khz(0);
--	new_freq = bfin_freq_table[index].frequency;
-+	new_freq = policy->freq_table[index].frequency;
- 
- #ifndef CONFIG_BF60x
- 	plldiv = (bfin_read_PLL_DIV() & SSEL) | dpm_state_table[index].csel;
-diff --git a/drivers/cpufreq/cris-artpec3-cpufreq.c b/drivers/cpufreq/cris-artpec3-cpufreq.c
-index 601b88c490cf..4e7dc8f1e619 100644
---- a/drivers/cpufreq/cris-artpec3-cpufreq.c
-+++ b/drivers/cpufreq/cris-artpec3-cpufreq.c
-@@ -36,7 +36,7 @@ static int cris_freq_target(struct cpufreq_policy *policy, unsigned int state)
- 
- 	/* Even though we may be SMP they will share the same clock
- 	 * so all settings are made on CPU0. */
--	if (cris_freq_table[state].frequency == 200000)
-+	if (policy->freq_table[state].frequency == 200000)
- 		clk_ctrl.pll = 1;
- 	else
- 		clk_ctrl.pll = 0;
-diff --git a/drivers/cpufreq/cris-etraxfs-cpufreq.c b/drivers/cpufreq/cris-etraxfs-cpufreq.c
-index 22b2cdde74d9..6ee434a54cae 100644
---- a/drivers/cpufreq/cris-etraxfs-cpufreq.c
-+++ b/drivers/cpufreq/cris-etraxfs-cpufreq.c
-@@ -36,7 +36,7 @@ static int cris_freq_target(struct cpufreq_policy *policy, unsigned int state)
- 
- 	/* Even though we may be SMP they will share the same clock
- 	 * so all settings are made on CPU0. */
--	if (cris_freq_table[state].frequency == 200000)
-+	if (policy->freq_table[state].frequency == 200000)
- 		clk_ctrl.pll = 1;
- 	else
- 		clk_ctrl.pll = 0;
-diff --git a/drivers/cpufreq/dbx500-cpufreq.c b/drivers/cpufreq/dbx500-cpufreq.c
-index 5c3ec1dd4921..84968889ab29 100644
---- a/drivers/cpufreq/dbx500-cpufreq.c
-+++ b/drivers/cpufreq/dbx500-cpufreq.c
-@@ -23,7 +23,8 @@ static int dbx500_cpufreq_target(struct cpufreq_policy *policy,
- 				unsigned int index)
- {
- 	/* update armss clk frequency */
--	return clk_set_rate(armss_clk, freq_table[index].frequency * 1000);
-+	return clk_set_rate(armss_clk,
-+			    policy->freq_table[index].frequency * 1000);
- }
- 
- static int dbx500_cpufreq_init(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/e_powersaver.c b/drivers/cpufreq/e_powersaver.c
-index cdf097b29862..a284bddfb067 100644
---- a/drivers/cpufreq/e_powersaver.c
-+++ b/drivers/cpufreq/e_powersaver.c
-@@ -163,7 +163,7 @@ static int eps_target(struct cpufreq_policy *policy, unsigned int index)
- 	centaur = eps_cpu[cpu];
- 
- 	/* Make frequency transition */
--	dest_state = centaur->freq_table[index].driver_data & 0xffff;
-+	dest_state = policy->freq_table[index].driver_data & 0xffff;
- 	ret = eps_set_state(centaur, policy, dest_state);
- 	if (ret)
- 		pr_err("Timeout!\n");
-diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
-index c0f3373706f4..085f07d31ef0 100644
---- a/drivers/cpufreq/exynos5440-cpufreq.c
-+++ b/drivers/cpufreq/exynos5440-cpufreq.c
-@@ -212,12 +212,11 @@ static int exynos_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	unsigned int tmp;
- 	int i;
--	struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
- 
- 	mutex_lock(&cpufreq_lock);
- 
- 	freqs.old = policy->cur;
--	freqs.new = freq_table[index].frequency;
-+	freqs.new = policy->freq_table[index].frequency;
- 
- 	cpufreq_freq_transition_begin(policy, &freqs);
- 
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index ef1fa8145419..3858dc7e617b 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -49,7 +49,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 	unsigned int old_freq, new_freq;
- 	int ret;
- 
--	new_freq = freq_table[index].frequency;
-+	new_freq = policy->freq_table[index].frequency;
- 	freq_hz = new_freq * 1000;
- 	old_freq = clk_get_rate(arm_clk) / 1000;
- 
-diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
-index be42f103db60..f63bf4fcb6fe 100644
---- a/drivers/cpufreq/kirkwood-cpufreq.c
-+++ b/drivers/cpufreq/kirkwood-cpufreq.c
-@@ -54,7 +54,7 @@ static unsigned int kirkwood_cpufreq_get_cpu_frequency(unsigned int cpu)
- static int kirkwood_cpufreq_target(struct cpufreq_policy *policy,
- 			    unsigned int index)
- {
--	unsigned int state = kirkwood_freq_table[index].driver_data;
-+	unsigned int state = policy->freq_table[index].driver_data;
- 	unsigned long reg;
- 
- 	local_irq_disable();
-diff --git a/drivers/cpufreq/loongson2_cpufreq.c b/drivers/cpufreq/loongson2_cpufreq.c
-index 6bbdac1065ff..e96c98f9245a 100644
---- a/drivers/cpufreq/loongson2_cpufreq.c
-+++ b/drivers/cpufreq/loongson2_cpufreq.c
-@@ -58,9 +58,8 @@ static int loongson2_cpufreq_target(struct cpufreq_policy *policy,
- 	cpus_allowed = current->cpus_allowed;
- 	set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 
--	freq =
--	    ((cpu_clock_freq / 1000) *
--	     loongson2_clockmod_table[index].driver_data) / 8;
-+	freq = (cpu_clock_freq / 1000) * policy->freq_table[index].driver_data;
-+	freq /= 8;
- 
- 	set_cpus_allowed_ptr(current, &cpus_allowed);
- 
--- 
-2.7.1.410.g6faf27b
+T24gRnJpLCBKdW4gMDMsIDIwMTYgYXQgMDk6Mzc6NDNBTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
+IHdyb3RlOgo+IE9uIFRodSwgMiBKdW4gMjAxNiAyMzo1NzowMiArMDIwMAo+IERhbmllbCBWZXR0
+ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4gCj4gPiBPbiBUaHUsIEp1biAyLCAyMDE2IGF0
+IDExOjA1IFBNLCBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA8bGF1cmVudC5waW5jaGFydEBpZGVhc29u
+Ym9hcmQuY29tPiB3cm90ZToKPiA+ID4gSGkgQm9yaXMsCj4gPiA+Cj4gPiA+IFRoYW5rIHlvdSBm
+b3IgdGhlIHBhdGNoLgo+ID4gPgo+ID4gPiBPbiBUaHVyc2RheSAwMiBKdW4gMjAxNiAxNjozMToy
+OCBCb3JpcyBCcmV6aWxsb24gd3JvdGU6ICAKPiA+ID4+IEFkYXB0IGRybV9waWNrX2NydGNzKCkg
+YW5kIHVwZGF0ZV9jb25uZWN0b3Jfcm91dGluZygpIHRvIGZhbGxiYWNrIHRvCj4gPiA+PiBkcm1f
+YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBpZiBmdW5jcy0+YmVzdF9lbmNvZGVyKCkgaXMg
+TlVMTCBzbwo+ID4gPj4gdGhhdCBEUk0gZHJpdmVycyBjYW4gbGVhdmUgdGhpcyBob29rIHVuYXNz
+aWduZWQgaWYgdGhleSBrbm93IHRoZXkgd2FudAo+ID4gPj4gdG8gdXNlIGRybV9hdG9taWNfaGVs
+cGVyX2Jlc3RfZW5jb2RlcigpLiAgCj4gPiA+Cj4gPiA+IENvdWxkIHlvdSBwbGVhc2UgdXBkYXRl
+IGluY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmggdG8gZG9jdW1lbnQKPiA+
+ID4gdGhpcyBuZXcgYmVoYXZpb3VyID8gIAo+ID4gCj4gPiBUaGFua3MgZm9yIHJlbWluZGluZyBt
+ZS4gUGxlYXNlIHVwZGF0ZSBob29rcyBmb3IgYm90aAo+ID4gYXRvbWljX2Jlc3RfZW5jb2RlciBh
+bmQgYmVzdF9lbmNvZGVyLiBBbHNvIG1lbnRpb24gdGhhdCBpdCdzIG9ubHkKPiA+IG9wdGlvbmFs
+IGZvciBhdG9taWMgZHJpdmVycy4gVGhlcmUncyBsb3RzIG9mIGV4YW1wbGVzIGluIHRoYXQgZmls
+ZSBmb3IKPiA+IHRoZSB3b3JkaW5nIHVzdWFsbHkgdXNlZC4KPiAKPiBIbSwgSSBoYXZlbid0IGNo
+YW5nZWQgYW55dGhpbmcgZm9yIHRoZSAtPmF0b21pY19iZXN0X2VuY29kZXIoKSBob29rLCBvcgo+
+IGFtIEkgbWlzc2luZyBzb21ldGhpbmc/CgpCZWZvcmUgeW91IG5lZWRlZCBhdG9taWNfYmVzdF9l
+bmNvZGVyIG9yIGJlc3RfZW5jb2RlciAod2VsbCB0aGF0J3MgdGhlCmlkZWEgYXQgbGVhc3QpLCBu
+b3cgYm90aCBhcmUgb3B0aW9uYWwuIEtlcm5lbGRvYyBuZWVkcyB0byBiZSBhZGp1c3RlZCBpbgpi
+b3RoIHBsYWNlcyB0byBtYXRjaCBuZXcgcmVhbGl0eSBhZnRlciB5b3VyIHBhdGNoLgotRGFuaWVs
+Cgo+IAo+ID4gCj4gPiA+IFRoZSBvbmx5IGRyYXdiYWNrIEkgc2VlIGluIHRoaXMgcGF0Y2ggaXMg
+dGhlIGFkZGl0aW9uYWwgb2JqZWN0IGxvb2t1cAo+ID4gPiBwZXJmb3JtZWQgYnkgZHJtX2F0b21p
+Y19oZWxwZXJfYmVzdF9lbmNvZGVyKCkgYXQgcnVudGltZS4gSSB3b25kZXIgaWYgd2UgY291bGQK
+PiA+ID4gc29tZWhvdyBjYWNoZSB0aGUgaW5mb3JtYXRpb24sIGFzIHRoZSBhc3NpZ25tZW50IGNh
+bid0IGNoYW5nZSB3aGVuIHRoZXJlJ3MgYQo+ID4gPiAxOjEgY29ycmVzcG9uZGVuY2UgYmV0d2Vl
+biBlbmNvZGVycyBhbmQgY29ubmVjdG9ycy4gIAo+ID4gCj4gPiBkcm1fZW5jb2Rlcl9maW5kIGlz
+IGFuIGlkciBsb29rdXAuIFRoYXQgc2hvdWxkIGJlIHBsZW50eSBmYXN0LAo+ID4gZXNwZWNpYWxs
+eSBmb3IgbW9kZXNldCBjb2RlLiBVc3VhbGx5IHdoYXQncyB0b28gZXhwZW5zaXZlIGV2ZW4gZm9y
+Cj4gPiBtb2Rlc2V0IGNvZGUgaXMgbGluZWFyIGxpc3Qgd2Fsa3MuIEJ1dCBDaHJpcyBqdXN0IHN1
+Ym1pdHRlZCBwYXRjaGVzIHRvCj4gPiBjb252ZXJ0IG1vc3Qgb2YgdGhlbSBpbnRvIHNpbXBsZSBs
+b29rdXBzLgo+ID4gLURhbmllbAo+ID4gCj4gPiA+Pj4gU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJl
+emlsbG9uIDxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPiAgCj4gPiA+PiAtLS0K
+PiA+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyB8ICA0ICsrKy0KPiA+
+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jICAgICB8IDEzICsrKysrKysrKysr
+Ky0KPiA+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4gPiA+Pgo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWlj
+X2hlbHBlci5jCj4gPiA+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGlu
+ZGV4IGY2YTMzNTAuLjg0OWQwMjkgMTAwNjQ0Cj4gPiA+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZHJtX2F0b21pY19oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
+aWNfaGVscGVyLmMKPiA+ID4+IEBAIC0zMDAsOCArMzAwLDEwIEBAIHVwZGF0ZV9jb25uZWN0b3Jf
+cm91dGluZyhzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZQo+ID4gPj4gKnN0YXRlLCBpZiAoZnVuY3Mt
+PmF0b21pY19iZXN0X2VuY29kZXIpCj4gPiA+PiAgICAgICAgICAgICAgIG5ld19lbmNvZGVyID0g
+ZnVuY3MtPmF0b21pY19iZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+ID4gPj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvcl9zdGF0
+ZSk7Cj4gPiA+PiAtICAgICBlbHNlCj4gPiA+PiArICAgICBlbHNlIGlmIChmdW5jcy0+YmVzdF9l
+bmNvZGVyKQo+ID4gPj4gICAgICAgICAgICAgICBuZXdfZW5jb2RlciA9IGZ1bmNzLT5iZXN0X2Vu
+Y29kZXIoY29ubmVjdG9yKTsKPiA+ID4+ICsgICAgIGVsc2UKPiA+ID4+ICsgICAgICAgICAgICAg
+bmV3X2VuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsK
+PiA+ID4+Cj4gPiA+PiAgICAgICBpZiAoIW5ld19lbmNvZGVyKSB7Cj4gPiA+PiAgICAgICAgICAg
+ICAgIERSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRhYmxlIGVuY29kZXIgZm91bmQgZm9yIFtDT05O
+RUNUT1I6JWQ6JXNdXG4iLAo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1f
+ZmJfaGVscGVyLmMKPiA+ID4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYyBpbmRl
+eCA3YzJlYjc1Li5kNDQzODlhIDEwMDY0NAo+ID4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Ry
+bV9mYl9oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIu
+Ywo+ID4gPj4gQEAgLTIwMDAsNyArMjAwMCwxOCBAQCBzdGF0aWMgaW50IGRybV9waWNrX2NydGNz
+KHN0cnVjdCBkcm1fZmJfaGVscGVyCj4gPiA+PiAqZmJfaGVscGVyLCBteV9zY29yZSsrOwo+ID4g
+Pj4KPiA+ID4+ICAgICAgIGNvbm5lY3Rvcl9mdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZh
+dGU7Cj4gPiA+PiAtICAgICBlbmNvZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIo
+Y29ubmVjdG9yKTsKPiA+ID4+ICsKPiA+ID4+ICsgICAgIC8qCj4gPiA+PiArICAgICAgKiBJZiB0
+aGUgRFJNIGRldmljZSBpbXBsZW1lbnRzIGF0b21pYyBob29rcyBhbmQgLT5iZXN0X2VuY29kZXIo
+KSBpcwo+ID4gPj4gKyAgICAgICogTlVMTCB3ZSBmYWxsYmFjayB0byB0aGUgZGVmYXVsdCBkcm1f
+YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKQo+ID4gPj4gKyAgICAgICogaGVscGVyLgo+ID4g
+Pj4gKyAgICAgICovCj4gPiA+PiArICAgICBpZiAoZmJfaGVscGVyLT5kZXYtPm1vZGVfY29uZmln
+LmZ1bmNzLT5hdG9taWNfY29tbWl0ICYmCj4gPiA+PiArICAgICAgICAgIWNvbm5lY3Rvcl9mdW5j
+cy0+YmVzdF9lbmNvZGVyKQo+ID4gPj4gKyAgICAgICAgICAgICBlbmNvZGVyID0gZHJtX2F0b21p
+Y19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gPiA+PiArICAgICBlbHNlCj4gPiA+
+PiArICAgICAgICAgICAgIGVuY29kZXIgPSBjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2Rlcihj
+b25uZWN0b3IpOwo+ID4gPj4gKwo+ID4gPj4gICAgICAgaWYgKCFlbmNvZGVyKQo+ID4gPj4gICAg
+ICAgICAgICAgICBnb3RvIG91dDsgIAo+ID4gPgo+ID4gPiAtLQo+ID4gPiBSZWdhcmRzLAo+ID4g
+Pgo+ID4gPiBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA+ICAKPiA+IAo+ID4gCj4gPiAKPiAKPiAKPiAK
+PiAtLSAKPiBCb3JpcyBCcmV6aWxsb24sIEZyZWUgRWxlY3Ryb25zCj4gRW1iZWRkZWQgTGludXgg
+YW5kIEtlcm5lbCBlbmdpbmVlcmluZwo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KCi0tIApE
+YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
+YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJl
+bm8K
