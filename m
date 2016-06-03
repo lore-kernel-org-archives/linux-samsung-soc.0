@@ -1,35 +1,137 @@
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-Subject: Re: [RFC v3 10/45] cris: dma-mapping: Use unsigned long for dma_attrs
-Date: Fri, 3 Jun 2016 09:52:19 +0200
-Message-ID: <20160603075219.GF3183@axis.com>
-References: <1464881987-13203-1-git-send-email-k.kozlowski@samsung.com>
- <1464881987-13203-11-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [ATTN] Re: [PATCH v4 5/7] ARM: Exynos: remove code for MFC custom
+ reserved memory handling
+Date: Fri, 03 Jun 2016 11:59:41 +0200
+Message-ID: <5751550D.3080404@samsung.com>
+References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
+ <1464096690-23605-6-git-send-email-m.szyprowski@samsung.com>
+ <574BEBB8.8040606@samsung.com>
+ <5a12a8be-0402-dc0c-d242-5d9f3145e001@osg.samsung.com>
+ <57505F5B.90101@samsung.com>
+ <e715a7d0-eb25-9d68-27ad-25cf03c499ca@osg.samsung.com>
+ <57512A6A.1050209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1464881987-13203-11-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Stefano Stabellini <sstabellini@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Steven Miao <realmz6@gmail.com>, Mark Salter <msalter@redhat.com>, Aurelien Jacquiot <a-jacquiot@ti.com>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jespern@axis.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, Richard Kuo <rkuo@codeaurora.org>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Konrad
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:13906 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752792AbcFCJ77 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 3 Jun 2016 05:59:59 -0400
+In-reply-to: <57512A6A.1050209@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Jun 02, 2016 at 05:39:12PM +0200, Krzysztof Kozlowski wrote:
-> Split out subsystem specific changes for easier reviews. This will be
-> squashed with main commit.
+On 06/03/2016 08:57 AM, Krzysztof Kozlowski wrote:
+> On 06/02/2016 07:25 PM, Javier Martinez Canillas wrote:
+>> On 06/02/2016 12:31 PM, Krzysztof Kozlowski wrote:
+>>> On 06/02/2016 05:20 PM, Javier Martinez Canillas wrote:
+>>>> On 05/30/2016 03:28 AM, Krzysztof Kozlowski wrote:
+>>>>> On 05/24/2016 03:31 PM, Marek Szyprowski wrote:
+>>>>>> Once MFC driver has been converted to generic reserved memory bindings,
+>>>>>> there is no need for custom memory reservation code.
+>>>>>>
+>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>>> ---
+>>>>>>  arch/arm/mach-exynos/Makefile      |  2 -
+>>>>>>  arch/arm/mach-exynos/exynos.c      | 19 --------
+>>>>>>  arch/arm/mach-exynos/mfc.h         | 16 -------
+>>>>>>  arch/arm/mach-exynos/s5p-dev-mfc.c | 93 -----------------------------
+>>>>>>  4 files changed, 130 deletions(-)
+>>>>>>  delete mode 100644 arch/arm/mach-exynos/mfc.h
+>>>>>>  delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+>>>>>
+>>>>> Thanks, applied.
+>>>>
+>>>> This patch can't be applied before patches 2/5 and 3/5, or the custom
+>>>> memory regions reservation will break with the current s5p-mfc driver.
+>>>
+>>> Yes, I know. As I understood from talk with Marek, the driver is broken
+>>> now so continuous work was not chosen. If it is not correct and full
+>>
+>> It's true that the driven is currently broken in mainline and is not really
+>> stable, I posted fixes for all the issues I found (mostly in module removal
+>> and insert paths).
+>>
+>> But with just the following patch from Ayaka on top of mainline, I'm able to
+>> have video decoding working: https://lkml.org/lkml/2016/5/6/577
+> 
+> Which is still a "future" patch, not current state...
+>>
+>> Marek mentioned that bisectability is only partially broken because the old
+>> binding will still work after this series if IOMMU is enabled (because the
+>> properties are ignored in this case). But will break if IOMMU isn't enabled
+>> which will be the case for some boards that fails to boot with IOMMU due the
+>> bootloader leaving the FIMD enabled doing DMA operations automatically AFAIU. 
+>>
+>> Now, I'm OK with not keeping backwards compatibility for the MFC dt bindings
+>> since arguably the driver has been broken for a long time and nobody cared
+>> and also I don't think anyone in practice boots a new kernel with an old DTB
+>> for Exynos.
+>>
+>> But I don't think is correct to introduce a new issue as is the case if this
+>> patch is applied before the previous patches in the series since this causes
+>> the driver to probe to fail and the following warn on boot (while it used to
+>> at least probe correctly in mainline):
+> 
+> Okay but the patches will go through separate tree. This is not a
+> problem, as I said, I just need a stable tag from media tree with first
+> four patches (Mauro?).
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+I have prepared a topic branch including media patches from this patch
+series and the dependency fix patches from Javier and Marek.
+So this could be used as a topic branch to pull into media master branch
+and a dependency topic branch for Krzysztof's samsung-soc tree.
+Mauro, can we do it this way? I already talked to Kamil about this.
 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---8<----
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
-/^JN - Jesper Nilsson
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git for-v4.8/media/exynos-mfc
+
+for you to fetch changes up to 04f776734c4e03e33111d3d5a994b589870df623:
+
+  media: s5p-mfc: add iommu support (2016-06-03 11:13:45 +0200)
+
+----------------------------------------------------------------
+Javier Martinez Canillas (3):
+      s5p-mfc: Set device name for reserved memory region devs
+      s5p-mfc: Add release callback for memory region devs
+      s5p-mfc: Fix race between s5p_mfc_probe() and s5p_mfc_open()
+
+Marek Szyprowski (6):
+      media: vb2-dma-contig: add helper for setting dma max seg size
+      media: set proper max seg size for devices on Exynos SoCs
+      of: reserved_mem: add support for using more than one region for given device
+      media: s5p-mfc: use generic reserved memory bindings
+      media: s5p-mfc: replace custom reserved memory handling code with generic one
+      media: s5p-mfc: add iommu support
+
+ Documentation/devicetree/bindings/media/s5p-mfc.txt |  39 ++++-
+ drivers/media/platform/exynos-gsc/gsc-core.c        |   2 +
+ drivers/media/platform/exynos4-is/fimc-core.c       |   2 +
+ drivers/media/platform/exynos4-is/fimc-is.c         |   2 +
+ drivers/media/platform/exynos4-is/fimc-lite.c       |   2 +
+ drivers/media/platform/s5p-g2d/g2d.c                |   2 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c         |   2 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c            | 198 ++++++++++++++-----------
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h      |  79 ++++++++++
+ drivers/media/platform/s5p-tv/mixer_video.c         |   2 +
+ drivers/media/v4l2-core/videobuf2-dma-contig.c      |  53 +++++++
+ drivers/of/of_reserved_mem.c                        |  85 ++++++++---
+ include/linux/of_reserved_mem.h                     |  25 +++-
+ include/media/videobuf2-dma-contig.h                |   2 +
+ 14 files changed, 379 insertions(+), 116 deletions(-)
+ create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
+---8<----
+
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Regards,
+Sylwester
