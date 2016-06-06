@@ -1,49 +1,55 @@
 From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] drm/exynos: fimd: fix trigger mode change regression
-Date: Mon, 06 Jun 2016 17:45:56 +0100
-Message-ID: <2934a74a530dbc5ad3d85065eaed4887@www.loen.fr>
-References: <1464760434-16709-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 0/2] arm/arm64: Fix architected timer interrupt trigger
+Date: Mon,  6 Jun 2016 18:56:29 +0100
+Message-ID: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from inca-roads.misterjones.org ([213.251.177.50]:36709 "EHLO
-	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752122AbcFFR3X (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:38582 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751919AbcFFR4x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 13:29:23 -0400
-In-Reply-To: <1464760434-16709-1-git-send-email-inki.dae@samsung.com>
+	Mon, 6 Jun 2016 13:56:53 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Dinh Nguyen <dinguyen@opensource.altera.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Duc Dang <dhdang@apm.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Jan Glauber <jglauber@cavium.com>, Hou Zhiqiang <B48286@freescale.com>, Wenbin Song <Wenbin.Song@freescale.com>, Yuan Yao <yao.yuan@nxp.com>, Liu Gang <Gang.Liu@nxp.co>
 
-On 2016-06-01 06:53, Inki Dae wrote:
-> This patch fixes a regression that Display panel doesn't work
-> since HW trigger mode was supported.
->
-> The trigger mode should be changed on PSR(Panel Self Refresh)
-> mode of Panel device according to HW guy's saying. However,
-> with previous HW trigger support, trigger mode could been changed
-> in normal mode of Panel device.
->
-> So this patch makes sure to change the trigger mode after power off
-> and on again. Later we need to add PSR relevant codes instead.
+I've noticed a while ago that we had a pretty creative approach to the
+arch timer trigger, with some platform describing as edge-triggered
+something that is architecturally a level interrupt.
 
-I'm afraid this patch doesn't fix the regression I'm seeing on my 
-Exynos5250 Chromebook.
+This short patch series tries to address it in two ways:
 
-I found out that using the 4.6 device tree allows the display to 
-function correctly (at least for a while), just enough to see it dying 
-before reaching userspace (and it scrolls up way to quickly for me to 
-read it). Adding printk_delay results in a hanging system.
+- Enforce the level aspect of the interrupt in the timer driver (and
+  shout at the user if the firmware describes it as edge)
+- Repaint all the in-tree platforms that are obviously doing the wrong
+  thing.
 
-Can someone with a servo-board investigate this? I'll try to bisect it 
-further, but an actual backtrace would help.
+Hopefully, this will stop DTs that are wrong from being blindly
+copy/pasted.
 
 Thanks,
 
-         M.
+	M.
+
+- From v2: Fix all in-tree device-trees.
+
+Marc Zyngier (2):
+  clocksource/arm_arch_timer: Force per-CPU interrupt to be
+    level-triggered
+  arm64: dts: Fix broken architected timer interrupt trigger
+
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |  8 +++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  8 +++----
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             |  8 +++----
+ arch/arm64/boot/dts/broadcom/ns2.dtsi              |  8 +++----
+ arch/arm64/boot/dts/cavium/thunder-88xx.dtsi       |  8 +++----
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  8 +++----
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     |  8 +++----
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi      |  8 +++----
+ .../boot/dts/socionext/uniphier-ph1-ld20.dtsi      |  8 +++----
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |  8 +++----
+ drivers/clocksource/arm_arch_timer.c               | 27 +++++++++++++++++++---
+ 11 files changed, 64 insertions(+), 43 deletions(-)
+
 -- 
-Fast, cheap, reliable. Pick two.
+2.1.4
