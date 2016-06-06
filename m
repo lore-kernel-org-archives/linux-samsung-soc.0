@@ -1,55 +1,150 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 5/7] ARM: Exynos: remove code for MFC custom reserved
- memory handling
-Date: Mon, 06 Jun 2016 09:40:44 +0200
-Message-ID: <575528FC.6050707@samsung.com>
-References: <1464096690-23605-1-git-send-email-m.szyprowski@samsung.com>
- <1464096690-23605-6-git-send-email-m.szyprowski@samsung.com>
- <574BEBB8.8040606@samsung.com>
- <5a12a8be-0402-dc0c-d242-5d9f3145e001@osg.samsung.com>
- <57505F5B.90101@samsung.com>
- <e715a7d0-eb25-9d68-27ad-25cf03c499ca@osg.samsung.com>
- <57512A6A.1050209@samsung.com>
+Subject: Re: [PATCH 5/9] clocksource/drivers/exynos_mct: Convert init function
+ to return error
+Date: Mon, 06 Jun 2016 12:51:56 +0200
+Message-ID: <575555CC.1020906@samsung.com>
+References: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
+ <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:50186 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751655AbcFFHkt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 03:40:49 -0400
-In-reply-to: <57512A6A.1050209@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Uli Middelberg <uli@middelberg.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/03/2016 08:57 AM, Krzysztof Kozlowski wrote:
-> On 06/02/2016 07:25 PM, Javier Martinez Canillas wrote:
->> Marek mentioned that bisectability is only partially broken because the old
->> binding will still work after this series if IOMMU is enabled (because the
->> properties are ignored in this case). But will break if IOMMU isn't enabled
->> which will be the case for some boards that fails to boot with IOMMU due the
->> bootloader leaving the FIMD enabled doing DMA operations automatically AFAIU. 
->>
->> Now, I'm OK with not keeping backwards compatibility for the MFC dt bindings
->> since arguably the driver has been broken for a long time and nobody cared
->> and also I don't think anyone in practice boots a new kernel with an old DTB
->> for Exynos.
->>
->> But I don't think is correct to introduce a new issue as is the case if this
->> patch is applied before the previous patches in the series since this causes
->> the driver to probe to fail and the following warn on boot (while it used to
->> at least probe correctly in mainline):
+On 06/01/2016 10:34 AM, Daniel Lezcano wrote:
+> The init functions do not return any error. They behave as the following:
 > 
-> Okay but the patches will go through separate tree. This is not a
-> problem, as I said, I just need a stable tag from media tree with first
-> four patches (Mauro?).
+>  - panic, thus leading to a kernel crash while another timer may work and
+>    make the system boot up correctly
+> 
+>  or
+> 
+>  - print an error and let the caller unaware if the state of the system
+> 
+> Change that by converting the init functions to return an error conforming
+> to the CLOCKSOURCE_OF_RET prototype.
+> 
+> Proper error handling (rollback, errno value) will be changed later case
+> by case, thus this change just return back an error or success in the init
+> function.
 
-Applied again this and DTS changes (remaining two patches) for v4.8 on
-top of branch provided by Sylwester:
-https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=for-v4.8/exynos-mfc
+I don't see the benefits of this change alone. You are replacing one
+non-return code to another always-return-success code. The effect is
+exactly the same. It would make sense to change it to CLOCKSOURCE_OF_RET
+along with proper error handling.
 
 Best regards,
 Krzysztof
+
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/clocksource/exynos_mct.c | 36 ++++++++++++++++++++++++------------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index be09bc0..f6caed0 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -232,7 +232,7 @@ static cycles_t exynos4_read_current_timer(void)
+>  	return exynos4_read_count_32();
+>  }
+>  
+> -static void __init exynos4_clocksource_init(void)
+> +static int __init exynos4_clocksource_init(void)
+>  {
+>  	exynos4_mct_frc_start();
+>  
+> @@ -244,6 +244,8 @@ static void __init exynos4_clocksource_init(void)
+>  		panic("%s: can't register clocksource\n", mct_frc.name);
+>  
+>  	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
+> +
+> +	return 0;
+>  }
+>  
+>  static void exynos4_mct_comp0_stop(void)
+> @@ -335,12 +337,14 @@ static struct irqaction mct_comp_event_irq = {
+>  	.dev_id		= &mct_comp_device,
+>  };
+>  
+> -static void exynos4_clockevent_init(void)
+> +static int exynos4_clockevent_init(void)
+>  {
+>  	mct_comp_device.cpumask = cpumask_of(0);
+>  	clockevents_config_and_register(&mct_comp_device, clk_rate,
+>  					0xf, 0xffffffff);
+>  	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
+> +
+> +	return 0;
+>  }
+>  
+>  static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
+> @@ -516,7 +520,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
+>  	.notifier_call = exynos4_mct_cpu_notify,
+>  };
+>  
+> -static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
+> +static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
+>  {
+>  	int err, cpu;
+>  	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
+> @@ -572,15 +576,17 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+>  
+>  	/* Immediately configure the timer on the boot CPU */
+>  	exynos4_local_timer_setup(mevt);
+> -	return;
+> +	return 0;
+>  
+>  out_irq:
+>  	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
+> +	return err;
+>  }
+>  
+> -static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
+> +static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>  {
+>  	u32 nr_irqs, i;
+> +	int ret;
+>  
+>  	mct_int_type = int_type;
+>  
+> @@ -600,20 +606,26 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>  	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+>  		mct_irqs[i] = irq_of_parse_and_map(np, i);
+>  
+> -	exynos4_timer_resources(np, of_iomap(np, 0));
+> -	exynos4_clocksource_init();
+> -	exynos4_clockevent_init();
+> +	ret = exynos4_timer_resources(np, of_iomap(np, 0));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = exynos4_clocksource_init();
+> +	if (ret)
+> +		return ret;
+> +
+> +	return exynos4_clockevent_init();
+>  }
+>  
+>  
+> -static void __init mct_init_spi(struct device_node *np)
+> +static int __init mct_init_spi(struct device_node *np)
+>  {
+>  	return mct_init_dt(np, MCT_INT_SPI);
+>  }
+>  
+> -static void __init mct_init_ppi(struct device_node *np)
+> +static int __init mct_init_ppi(struct device_node *np)
+>  {
+>  	return mct_init_dt(np, MCT_INT_PPI);
+>  }
+> -CLOCKSOURCE_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+> -CLOCKSOURCE_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
+> +CLOCKSOURCE_OF_DECLARE_RET(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+> +CLOCKSOURCE_OF_DECLARE_RET(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
+> 
