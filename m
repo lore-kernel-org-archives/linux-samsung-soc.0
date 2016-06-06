@@ -1,19 +1,14 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 2/8] arm64: exynos: Mach/soc changes for v4.8
-Date: Mon, 06 Jun 2016 14:25:27 +0200
-Message-ID: <1465215933-22709-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 8/8] ARM: defconfig: exynos: Defconfig for v4.8
+Date: Mon, 06 Jun 2016 14:25:33 +0200
+Message-ID: <1465215933-22709-9-git-send-email-k.kozlowski@samsung.com>
 References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11738 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751861AbcFFM1C (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 08:27:02 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
 The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
@@ -22,19 +17,39 @@ The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc64-4.8
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.8
 
-for you to fetch changes up to 3b3428e384b7aff6093d1a6773027c9095182c6b:
+for you to fetch changes up to 4b388071a2235ed8f05d05d069f5a5a29782a8c5:
 
-  arm64: exynos: Select SOC specific drivers (2016-05-30 08:44:33 +0200)
-
-----------------------------------------------------------------
-Samsung arm64 update for v4.8:
-1. Select drivers/soc/samsung.
+  ARM: exynos_defconfig: Save defconfig on current linux-next (2016-06-06 08:36:55 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      arm64: exynos: Select SOC specific drivers
+Samsung defconfig update for v4.8:
+1. Disable big.LITTLE switcher so the cpufreq-dt could be enabled.
+2. Enable Samsung media platform drivers.
+3. Enable some board-specific drivers for boards: Trats2, Universal C210.
+4. Few more minor additions.
 
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      ARM: multi_v7_defconfig: Enable Exynos DRM Mixer driver
+
+Bartlomiej Zolnierkiewicz (1):
+      ARM: exynos_defconfig: Disable big.LITTLE switcher
+
+Javier Martinez Canillas (4):
+      ARM: exynos_defconfig: Enable Samsung media platform drivers as modules
+      ARM: multi_v7_defconfig: Enable Samsung media platform drivers as modules
+      ARM: exynos_defconfig: Enable MFC driver as module
+      ARM: multi_v7_defconfig: Enable Exynos MFC driver as module
+
+Krzysztof Kozlowski (5):
+      ARM: multi_v7_defconfig: Switch max77693 to module
+      ARM: multi_v7_defconfig: Enable Trats2 audio codec, touchscreen and sensors
+      ARM: multi_v7_defconfig: Enable drivers for Exynos4210 Universal C210 board
+      ARM: multi_v7_defconfig: Enable s5p-secss driver
+      ARM: exynos_defconfig: Save defconfig on current linux-next
+
+ arch/arm/configs/exynos_defconfig   | 27 +++++++++++++++------------
+ arch/arm/configs/multi_v7_defconfig | 30 +++++++++++++++++++++++++-----
+ 2 files changed, 40 insertions(+), 17 deletions(-)
