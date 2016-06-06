@@ -1,150 +1,62 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 5/9] clocksource/drivers/exynos_mct: Convert init function
- to return error
-Date: Mon, 06 Jun 2016 12:51:56 +0200
-Message-ID: <575555CC.1020906@samsung.com>
-References: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
- <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/3] clk: samsung: exynos5410: Add WDT,
+ ACLK266 and SSS clocks
+Date: Mon, 06 Jun 2016 13:02:41 +0200
+Message-ID: <57555851.6020206@samsung.com>
+References: <1464774351-23604-1-git-send-email-k.kozlowski@samsung.com>
+ <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
+In-reply-to: <1464774351-23604-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/01/2016 10:34 AM, Daniel Lezcano wrote:
-> The init functions do not return any error. They behave as the following:
+On 06/01/2016 11:45 AM, Krzysztof Kozlowski wrote:
+> Add clock hierarchy for Security SubSystem clock and watchdog.
 > 
->  - panic, thus leading to a kernel crash while another timer may work and
->    make the system boot up correctly
-> 
->  or
-> 
->  - print an error and let the caller unaware if the state of the system
-> 
-> Change that by converting the init functions to return an error conforming
-> to the CLOCKSOURCE_OF_RET prototype.
-> 
-> Proper error handling (rollback, errno value) will be changed later case
-> by case, thus this change just return back an error or success in the init
-> function.
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-I don't see the benefits of this change alone. You are replacing one
-non-return code to another always-return-success code. The effect is
-exactly the same. It would make sense to change it to CLOCKSOURCE_OF_RET
-along with proper error handling.
+A applied patches: 
 
-Best regards,
-Krzysztof
+[PATCH 1/3] dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
+[PATCH 2/3] clk: samsung: exynos5410: Add WDT, ACLK266 and SSS clocks
 
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/clocksource/exynos_mct.c | 36 ++++++++++++++++++++++++------------
->  1 file changed, 24 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index be09bc0..f6caed0 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -232,7 +232,7 @@ static cycles_t exynos4_read_current_timer(void)
->  	return exynos4_read_count_32();
->  }
->  
-> -static void __init exynos4_clocksource_init(void)
-> +static int __init exynos4_clocksource_init(void)
->  {
->  	exynos4_mct_frc_start();
->  
-> @@ -244,6 +244,8 @@ static void __init exynos4_clocksource_init(void)
->  		panic("%s: can't register clocksource\n", mct_frc.name);
->  
->  	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-> +
-> +	return 0;
->  }
->  
->  static void exynos4_mct_comp0_stop(void)
-> @@ -335,12 +337,14 @@ static struct irqaction mct_comp_event_irq = {
->  	.dev_id		= &mct_comp_device,
->  };
->  
-> -static void exynos4_clockevent_init(void)
-> +static int exynos4_clockevent_init(void)
->  {
->  	mct_comp_device.cpumask = cpumask_of(0);
->  	clockevents_config_and_register(&mct_comp_device, clk_rate,
->  					0xf, 0xffffffff);
->  	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
-> +
-> +	return 0;
->  }
->  
->  static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
-> @@ -516,7 +520,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
->  	.notifier_call = exynos4_mct_cpu_notify,
->  };
->  
-> -static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
-> +static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
->  {
->  	int err, cpu;
->  	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
-> @@ -572,15 +576,17 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
->  
->  	/* Immediately configure the timer on the boot CPU */
->  	exynos4_local_timer_setup(mevt);
-> -	return;
-> +	return 0;
->  
->  out_irq:
->  	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-> +	return err;
->  }
->  
-> -static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
-> +static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
->  {
->  	u32 nr_irqs, i;
-> +	int ret;
->  
->  	mct_int_type = int_type;
->  
-> @@ -600,20 +606,26 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
->  	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
->  		mct_irqs[i] = irq_of_parse_and_map(np, i);
->  
-> -	exynos4_timer_resources(np, of_iomap(np, 0));
-> -	exynos4_clocksource_init();
-> -	exynos4_clockevent_init();
-> +	ret = exynos4_timer_resources(np, of_iomap(np, 0));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = exynos4_clocksource_init();
-> +	if (ret)
-> +		return ret;
-> +
-> +	return exynos4_clockevent_init();
->  }
->  
->  
-> -static void __init mct_init_spi(struct device_node *np)
-> +static int __init mct_init_spi(struct device_node *np)
->  {
->  	return mct_init_dt(np, MCT_INT_SPI);
->  }
->  
-> -static void __init mct_init_ppi(struct device_node *np)
-> +static int __init mct_init_ppi(struct device_node *np)
->  {
->  	return mct_init_dt(np, MCT_INT_PPI);
->  }
-> -CLOCKSOURCE_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
-> -CLOCKSOURCE_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
-> +CLOCKSOURCE_OF_DECLARE_RET(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
-> +CLOCKSOURCE_OF_DECLARE_RET(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
-> 
+[PATCH 1/6] dt-bindings: clock: Add TMU clock ID to Exynos5410
+[PATCH 2/6] clk: samsung: exynos5410: Add TMU clock
+
+And here is a subsequent tag from a stable branch including all 
+the dependency "dt-bindings" patches:
+
+------8<------
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.8-exynos5410-dt-2
+
+for you to fetch changes up to 4528dd8ed477bf202bd33ee48d38d656672d37f8:
+
+  dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410 (2016-06-02 11:17:55 +0200)
+
+----------------------------------------------------------------
+Adition of missing clock index definitions for exynos5410 SoC:
+PWM, USB, I2C, RTC, PMU, watchdog and the security device related
+clocks.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (5):
+      dt-bindings: clock: Add license and reformat Exynos5410 clock IDs
+      dt-bindings: clock: Add PWM and USB clock IDs to Exynos5410
+      dt-bindings: clock: Add I2C, HSI2C and RTC clock IDs to Exynos5410
+      dt-bindings: clock: Add TMU clock ID to Exynos5410
+      dt-bindings: clock: Add watchdog and SSS clock IDs to Exynos5410
+
+ include/dt-bindings/clock/exynos5410.h | 76 +++++++++++++++++++++++++++------------
+ 1 file changed, 54 insertions(+), 22 deletions(-)
+------8<------
