@@ -1,26 +1,85 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 3/8] ARM: exynos: Drivers for v4.8
-Date: Mon, 06 Jun 2016 14:25:28 +0200
-Message-ID: <1465215933-22709-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 4/8] ARM: exynos: Topic branch with driver changes for v4.8
+Date: Mon, 06 Jun 2016 14:25:29 +0200
+Message-ID: <1465215933-22709-5-git-send-email-k.kozlowski@samsung.com>
 References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
+
+A topic branch for MultiFormat Codec driver. This pulls in
+an external dependency from media tree (Sylwester Nawrocki).
+
+Below you will find two pull-request-changelogs
+
+
+Best regards,
+Krzysztof
+
+
+################################################################
+Samsung tree only changes:
+################################################################
+
+The following changes since commit 04f776734c4e03e33111d3d5a994b589870df623:
+
+  media: s5p-mfc: add iommu support (2016-06-03 11:13:45 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos-mfc-4.8
+
+for you to fetch changes up to 96167bd37dd604cbba0aed341765dda8556405b2:
+
+  ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards (2016-06-06 09:30:43 +0200)
+
+----------------------------------------------------------------
+Topic branch for Exynos MFC changes for v4.8:
+Pull s5p-mfc changes from media tree so the arm/mach-exynos code
+could be removed. The bindings are converted to generic reserved memory
+bindings.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      Merge branch 'for-v4.8/media/exynos-mfc' of git://linuxtv.org/snawrocki/samsung into for-v4.8/exynos-mfc
+
+Marek Szyprowski (3):
+      ARM: EXYNOS: Remove code for MFC custom reserved memory handling
+      ARM: dts: exynos: Convert MFC device to generic reserved memory bindings
+      ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards
+
+ arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi  | 29 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210-origen.dts            |  4 ++--
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  4 ++--
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  6 ++++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |  4 ++--
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |  4 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  4 ++--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  4 ++--
+ arch/arm/boot/dts/exynos5250-spring.dts            |  4 ++--
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  4 ++--
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  4 ++--
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  4 ++--
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  4 ++--
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  4 ++--
+ arch/arm/mach-exynos/Makefile                      |  2 --
+ arch/arm/mach-exynos/exynos.c                      | 19 -------------------
+ arch/arm/mach-exynos/mfc.h                         | 16 ----------------
+ arch/arm/mach-exynos/s5p-dev-mfc.c                 | 93 ---------------------------------------------------------------------------------------------
+ 18 files changed, 59 insertions(+), 154 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+ delete mode 100644 arch/arm/mach-exynos/mfc.h
+ delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+
+
+################################################################
+Full changes (including dependency):
+################################################################
 
 The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
@@ -28,28 +87,72 @@ The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-4.8
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos-mfc-4.8
 
-for you to fetch changes up to 9479f7cc91879c6ba75e70da41c4c9fe7842b342:
+for you to fetch changes up to 96167bd37dd604cbba0aed341765dda8556405b2:
 
-  soc: samsung: pm_domains: Enable COMPILE_TEST for build coverage (2016-05-30 09:12:57 +0200)
-
-----------------------------------------------------------------
-Samsung drivers/soc update for v4.8:
-1. Move the power domain driver from arm/mach-exynos and prepare
-   for supporting ARMv8.
-2. Add COMPILE_TEST.
+  ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards (2016-06-06 09:30:43 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (3):
-      ARM: EXYNOS: Move pm_domains driver to drivers/soc/samsung
-      soc: samsung: pm_domains: Prepare for supporting ARMv8 Exynos
-      soc: samsung: pm_domains: Enable COMPILE_TEST for build coverage
+Topic branch for Exynos MFC changes for v4.8:
+Pull s5p-mfc changes from media tree so the arm/mach-exynos code
+could be removed. The bindings are converted to generic reserved memory
+bindings.
 
- arch/arm/mach-exynos/Kconfig                       |  1 +
- arch/arm/mach-exynos/Makefile                      |  1 -
- drivers/soc/samsung/Kconfig                        |  4 +++
- drivers/soc/samsung/Makefile                       |  1 +
- .../soc/samsung}/pm_domains.c                      | 34 ++++++++++++++++++----
- 5 files changed, 34 insertions(+), 7 deletions(-)
- rename {arch/arm/mach-exynos => drivers/soc/samsung}/pm_domains.c (85%)
+----------------------------------------------------------------
+Javier Martinez Canillas (3):
+      s5p-mfc: Set device name for reserved memory region devs
+      s5p-mfc: Add release callback for memory region devs
+      s5p-mfc: Fix race between s5p_mfc_probe() and s5p_mfc_open()
+
+Krzysztof Kozlowski (1):
+      Merge branch 'for-v4.8/media/exynos-mfc' of git://linuxtv.org/snawrocki/samsung into for-v4.8/exynos-mfc
+
+Marek Szyprowski (9):
+      media: vb2-dma-contig: add helper for setting dma max seg size
+      media: set proper max seg size for devices on Exynos SoCs
+      of: reserved_mem: add support for using more than one region for given device
+      media: s5p-mfc: use generic reserved memory bindings
+      media: s5p-mfc: replace custom reserved memory handling code with generic one
+      media: s5p-mfc: add iommu support
+      ARM: EXYNOS: Remove code for MFC custom reserved memory handling
+      ARM: dts: exynos: Convert MFC device to generic reserved memory bindings
+      ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |  39 +++-
+ arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi  |  29 +++
+ arch/arm/boot/dts/exynos4210-origen.dts            |   4 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |   4 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   6 +
+ arch/arm/boot/dts/exynos4412-origen.dts            |   4 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |   4 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   4 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   4 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            |   4 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   4 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   4 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   4 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   4 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   4 +-
+ arch/arm/mach-exynos/Makefile                      |   2 -
+ arch/arm/mach-exynos/exynos.c                      |  19 --
+ arch/arm/mach-exynos/mfc.h                         |  16 --
+ arch/arm/mach-exynos/s5p-dev-mfc.c                 |  93 ----------
+ drivers/media/platform/exynos-gsc/gsc-core.c       |   2 +
+ drivers/media/platform/exynos4-is/fimc-core.c      |   2 +
+ drivers/media/platform/exynos4-is/fimc-is.c        |   2 +
+ drivers/media/platform/exynos4-is/fimc-lite.c      |   2 +
+ drivers/media/platform/s5p-g2d/g2d.c               |   2 +
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        |   2 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 198 ++++++++++++---------
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  79 ++++++++
+ drivers/media/platform/s5p-tv/mixer_video.c        |   2 +
+ drivers/media/v4l2-core/videobuf2-dma-contig.c     |  53 ++++++
+ drivers/of/of_reserved_mem.c                       |  85 ++++++---
+ include/linux/of_reserved_mem.h                    |  25 ++-
+ include/media/videobuf2-dma-contig.h               |   2 +
+ 32 files changed, 438 insertions(+), 270 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
+ delete mode 100644 arch/arm/mach-exynos/mfc.h
+ delete mode 100644 arch/arm/mach-exynos/s5p-dev-mfc.c
+ create mode 100644 drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
