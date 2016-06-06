@@ -1,75 +1,103 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 5/9] clocksource/drivers/exynos_mct: Convert init function
- to return error
-Date: Mon, 06 Jun 2016 13:28:57 +0200
-Message-ID: <57555E79.80606@samsung.com>
-References: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
- <1464770093-12667-6-git-send-email-daniel.lezcano@linaro.org>
- <575555CC.1020906@samsung.com> <57555D4A.8010001@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL 0/8] ARM: exynos: Early stuff for v4.8
+Date: Mon, 06 Jun 2016 14:25:25 +0200
+Message-ID: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <57555D4A.8010001@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/06/2016 01:23 PM, Daniel Lezcano wrote:
-> On 06/06/2016 12:51 PM, Krzysztof Kozlowski wrote:
->> On 06/01/2016 10:34 AM, Daniel Lezcano wrote:
->>> The init functions do not return any error. They behave as the
->>> following:
->>>
->>>   - panic, thus leading to a kernel crash while another timer may
->>> work and
->>>     make the system boot up correctly
->>>
->>>   or
->>>
->>>   - print an error and let the caller unaware if the state of the system
->>>
->>> Change that by converting the init functions to return an error
->>> conforming
->>> to the CLOCKSOURCE_OF_RET prototype.
->>>
->>> Proper error handling (rollback, errno value) will be changed later case
->>> by case, thus this change just return back an error or success in the
->>> init
->>> function.
->>
->> I don't see the benefits of this change alone. You are replacing one
->> non-return code to another always-return-success code. The effect is
->> exactly the same. It would make sense to change it to CLOCKSOURCE_OF_RET
->> along with proper error handling.
->>
-> 
-> Hi Krzysztof,
-> 
-> I can understand you expect an error handling but, as stated in the
-> changelog, proper error handling will be done later. Currently, there
-> are roughly 80 drivers to changes the init function to return a value in
-> order change the CLOCKSOURCE_OF_DECLARE macro. That is a quite important
-> number and changing also the internals will introduce bugs.
-> 
-> So the series (and there is a huge one coming right after this one),
-> will focus only on changing the init function to return a value, so we
-> can swap the clocksource table and rename CLOCKSOURCE_OF_DECLARE_RET
-> without the '_RET'. I want this to be done before the next PR in order
-> to prevent to have a double clksrc table.
-> 
-> If error handling is already taken into account and is trivial, I try to
-> do the change, otherwise I let the function to return a success value.
-> 
-> Regarding the important number of drivers, if you have time to change
-> the init function in the exynos_mct, that will be more than welcome :)
+Dear all,
 
-Ah, okay, you are planning to get rid of CLOCKSOURCE_OF_DECLARE. I
-didn't receive the cover letter so the big picture remained hidden. Now
-it looks good:
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This time I am sending a very early pull request because:
+1. I already have a lot of stuff.
+2. There are some conflicts, including annoying re-indent one (see below).
+3. I am going for holidays soon.  After this weekend, my availability
+   will be reduced.
+
+
+There is no specific order of branches to pull (no inter-dependencies).
+External dependencies (from Samsung clk and media) are pulled in.
+
+
+Expected conflicts:
+
+1. arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+   samsung-drivers-exynos-mfc-4.8 with samsung-dt-4.8
+
+   Just include both changes:
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@@ -18,6 -16,8 +18,7 @@@
+  #include <dt-bindings/sound/samsung-i2s.h>
+  #include "exynos5800.dtsi"
+  #include "exynos5422-cpus.dtsi"
+ -#include "exynos5422-cpu-thermal.dtsi"
++ #include "exynos-mfc-reserved-memory.dtsi"
+
+  / {
+        memory {
+
+
+2. arch/arm/configs/exynos_defconfig
+   samsung-defconfig-4.8 with current fixes
+
+   Just include both changes:
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@@ -80,11 -79,10 +79,11 @@@ CONFIG_TOUCHSCREEN_MMS114=
+  CONFIG_INPUT_MISC=y
+  CONFIG_INPUT_MAX77693_HAPTIC=y
+  CONFIG_INPUT_MAX8997_HAPTIC=y
+ +CONFIG_KEYBOARD_SAMSUNG=y
+  CONFIG_SERIAL_8250=y
++ CONFIG_SERIAL_OF_PLATFORM=y
+  CONFIG_SERIAL_SAMSUNG=y
+  CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+- CONFIG_SERIAL_OF_PLATFORM=y
+  CONFIG_HW_RANDOM=y
+  CONFIG_TCG_TPM=y
+  CONFIG_TCG_TIS_I2C_INFINEON=y
+
+
+3. arch/arm/boot/dts/exynos5420.dtsi
+   samsung-dt-4.8 with samsung-dt-odroid-xu-4.8
+
+   This is non-trivial.  One branch added clocks and second changed
+   the indentation.  Manual fix-up is needed by re-indenting the
+   change with three clocks, like this:
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
++               mfc_pd: power-domain@10044060 {
++                       compatible = "samsung,exynos4210-pd";
++                       reg = <0x10044060 0x20>;
+ -                      clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
+ -                      clock-names = "oscclk", "clk0";
+++                      clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>,
+++                               <&clock CLK_ACLK333>;
+++                      clock-names = "oscclk", "clk0","asb0";
++                       #power-domain-cells = <0>;
++               };
+
+
+4. arch/arm/mach-exynos/Kconfig
+   arm-soc with tags/samsung-drivers
+
+   Trivial:
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@@ -18,7 -19,7 +18,8 @@@ menuconfig ARCH_EXYNO
+        select EXYNOS_THERMAL
+        select EXYNOS_PMU
+        select EXYNOS_SROM
++       select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ +      select GPIOLIB
+        select HAVE_ARM_SCU if SMP
+        select HAVE_S3C2410_I2C if I2C
+        select HAVE_S3C2410_WATCHDOG if WATCHDOG
+
 
 Best regards,
 Krzysztof
