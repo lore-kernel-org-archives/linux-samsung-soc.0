@@ -1,38 +1,39 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: exynos: replace hardcoded reserved memory
- ranges with auto-allocated ones
-Date: Tue, 7 Jun 2016 18:32:59 -0400
-Message-ID: <0b4685cb-7fae-2dca-8136-4949a40bc3e9@osg.samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: enable MFC device for all boards
+Date: Tue, 7 Jun 2016 18:34:57 -0400
+Message-ID: <df3d4305-738f-3505-1064-95b913f6b854@osg.samsung.com>
 References: <2241b7f4-4565-d17b-10f3-5c27cd9985da@osg.samsung.com>
  <1465301018-9671-1-git-send-email-m.szyprowski@samsung.com>
+ <1465301018-9671-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1465301018-9671-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:50750 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1161129AbcFGWfF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 18:35:05 -0400
+In-Reply-To: <1465301018-9671-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Marek,
 
 On 06/07/2016 08:03 AM, Marek Szyprowski wrote:
-> Generic reserved memory regions bindings allow to automatically allocate
-> region of given parameters (alignment and size), so use this feature
-> instead of the hardcoded values, which had no dependency on the real
-> hardware. This patch also increases "left" region from 8MiB to 16MiB to
-> make the codec really usable with nowadays steams (with 8MiB reserved
-> region it was not even possible to decode 480p H264 video).
+> MFC device can be used without any external hardware dependencies (when
+> IOMMU is enabled), so it can be enabled by default (like it has been
+> already done for Exynos 542x platforms). This unifies handling of this
+> device for Exynos3250, Exynos4 and Exynos542x platforms. Board can still
+> include exynos-mfc-reserved-memory.dtsi to enable using this device
+> without IOMMU being enabled.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
 
-The patch looks good to me and I've also tested it on an Exynos5800 Peach
-Pi Chromebook and an Exynos5420 Odroid XU4 board.
-
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
 -- 
