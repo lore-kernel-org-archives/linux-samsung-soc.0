@@ -1,94 +1,177 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v2 01/20] drm/atomic: Fix remaining places
- where !funcs->best_encoder is valid
-Date: Tue, 7 Jun 2016 16:39:34 +0200
-Message-ID: <20160607143934.GA3363@phenom.ffwll.local>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
- <1465300095-16971-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v14.1 01/17] drm: bridge: analogix/dp: split exynos dp
+ driver to bridge directory
+Date: Tue, 7 Jun 2016 13:06:59 -0400
+Message-ID: <417ed48e-74e1-f747-34b9-0d1031a3d862@osg.samsung.com>
+References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
+ <1455534576-1486-1-git-send-email-ykk@rock-chips.com>
+ <1811552.qvsCm7GUs1@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1465300095-16971-2-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Ink
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:49267 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751833AbcFGRHU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 13:07:20 -0400
+In-Reply-To: <1811552.qvsCm7GUs1@diego>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Yakir Yang <ykk@rock-chips.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@gmail.com, Andy Yan <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.
 
-T24gVHVlLCBKdW4gMDcsIDIwMTYgYXQgMDE6NDc6NTZQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
-IHdyb3RlOgo+IEFkYXB0IGRybV9waWNrX2NydGNzKCkgYW5kIHVwZGF0ZV9jb25uZWN0b3Jfcm91
-dGluZygpIHRvIGZhbGxiYWNrIHRvCj4gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkg
-aWYgZnVuY3MtPmJlc3RfZW5jb2RlcigpIGlzIE5VTEwgc28KPiB0aGF0IERSTSBkcml2ZXJzIGNh
-biBsZWF2ZSB0aGlzIGhvb2sgdW5hc3NpZ25lZCBpZiB0aGV5IGtub3cgdGhleSB3YW50Cj4gdG8g
-dXNlIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpLgo+IAo+IFVwZGF0ZSB0aGUgdnRh
-YmxlcyBkb2N1bWVudGF0aW9uIGFjY29yZGluZ2x5Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IEJvcmlz
-IEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KCkFwcGxpZWQg
-dG8gZHJtLW1pc2MsIHRoYW5rcy4gSSB0aGluayBJJ2xsIHdhaXQgd2l0aCB0aGUgZHJpdmVyIHBh
-dGNoZXMKdW50aWwgbmV4dCB3ZWVrIG9yIHNvLgotRGFuaWVsCgo+IC0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyAgICAgIHwgIDQgKysrLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZHJtX2ZiX2hlbHBlci5jICAgICAgICAgIHwgMTMgKysrKysrKysrKysrLQo+ICBpbmNsdWRl
-L2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oIHwgMTAgKysrKysrKystLQo+ICAzIGZp
-bGVzIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBpbmRleCBmNmEzMzUwLi44NDlkMDI5IDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBAQCAtMzAwLDggKzMwMCwxMCBAQCB1cGRh
-dGVfY29ubmVjdG9yX3JvdXRpbmcoc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlLAo+ICAJ
-aWYgKGZ1bmNzLT5hdG9taWNfYmVzdF9lbmNvZGVyKQo+ICAJCW5ld19lbmNvZGVyID0gZnVuY3Mt
-PmF0b21pY19iZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+ICAJCQkJCQkJIGNvbm5lY3Rvcl9zdGF0
-ZSk7Cj4gLQllbHNlCj4gKwllbHNlIGlmIChmdW5jcy0+YmVzdF9lbmNvZGVyKQo+ICAJCW5ld19l
-bmNvZGVyID0gZnVuY3MtPmJlc3RfZW5jb2Rlcihjb25uZWN0b3IpOwo+ICsJZWxzZQo+ICsJCW5l
-d19lbmNvZGVyID0gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4g
-IAo+ICAJaWYgKCFuZXdfZW5jb2Rlcikgewo+ICAJCURSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRh
-YmxlIGVuY29kZXIgZm91bmQgZm9yIFtDT05ORUNUT1I6JWQ6JXNdXG4iLAo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9m
-Yl9oZWxwZXIuYwo+IGluZGV4IDdjMmViNzUuLmQ0NDM4OWEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJf
-aGVscGVyLmMKPiBAQCAtMjAwMCw3ICsyMDAwLDE4IEBAIHN0YXRpYyBpbnQgZHJtX3BpY2tfY3J0
-Y3Moc3RydWN0IGRybV9mYl9oZWxwZXIgKmZiX2hlbHBlciwKPiAgCQlteV9zY29yZSsrOwo+ICAK
-PiAgCWNvbm5lY3Rvcl9mdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZhdGU7Cj4gLQllbmNv
-ZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsKPiArCj4gKwkv
-Kgo+ICsJICogSWYgdGhlIERSTSBkZXZpY2UgaW1wbGVtZW50cyBhdG9taWMgaG9va3MgYW5kIC0+
-YmVzdF9lbmNvZGVyKCkgaXMKPiArCSAqIE5VTEwgd2UgZmFsbGJhY2sgdG8gdGhlIGRlZmF1bHQg
-ZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkKPiArCSAqIGhlbHBlci4KPiArCSAqLwo+
-ICsJaWYgKGZiX2hlbHBlci0+ZGV2LT5tb2RlX2NvbmZpZy5mdW5jcy0+YXRvbWljX2NvbW1pdCAm
-Jgo+ICsJICAgICFjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2RlcikKPiArCQllbmNvZGVyID0g
-ZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gKwllbHNlCj4gKwkJ
-ZW5jb2RlciA9IGNvbm5lY3Rvcl9mdW5jcy0+YmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gKwo+
-ICAJaWYgKCFlbmNvZGVyKQo+ICAJCWdvdG8gb3V0Owo+ICAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVk
-ZS9kcm0vZHJtX21vZGVzZXRfaGVscGVyX3Z0YWJsZXMuaCBiL2luY2x1ZGUvZHJtL2RybV9tb2Rl
-c2V0X2hlbHBlcl92dGFibGVzLmgKPiBpbmRleCBkNDYxOWRjLi40ZTdhNTNiIDEwMDY0NAo+IC0t
-LSBhL2luY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmgKPiArKysgYi9pbmNs
-dWRlL2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oCj4gQEAgLTczNiw2ICs3MzYsMTEg
-QEAgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzIHsKPiAgCSAqIGluc3BlY3QgZHlu
-YW1pYyBjb25maWd1cmF0aW9uIHN0YXRlIHNob3VsZCBpbnN0ZWFkIHVzZQo+ICAJICogQGF0b21p
-Y19iZXN0X2VuY29kZXIuCj4gIAkgKgo+ICsJICogWW91IGNhbiBsZWF2ZSB0aGlzIGZ1bmN0aW9u
-IHRvIE5VTEwgaWYgdGhlIGNvbm5lY3RvciBpcyBvbmx5Cj4gKwkgKiBhdHRhY2hlZCB0byBhIHNp
-bmdsZSBlbmNvZGVyIGFuZCB5b3UgYXJlIHVzaW5nIHRoZSBhdG9taWMgaGVscGVycy4KPiArCSAq
-IEluIHRoaXMgY2FzZSwgdGhlIGNvcmUgd2lsbCBjYWxsIGRybV9hdG9taWNfaGVscGVyX2Jlc3Rf
-ZW5jb2RlcigpCj4gKwkgKiBmb3IgeW91Lgo+ICsJICoKPiAgCSAqIFJFVFVSTlM6Cj4gIAkgKgo+
-ICAJICogRW5jb2RlciB0aGF0IHNob3VsZCBiZSB1c2VkIGZvciB0aGUgZ2l2ZW4gY29ubmVjdG9y
-IGFuZCBjb25uZWN0b3IKPiBAQCAtNzUyLDggKzc1Nyw5IEBAIHN0cnVjdCBkcm1fY29ubmVjdG9y
-X2hlbHBlcl9mdW5jcyB7Cj4gIAkgKiBuZWVkIHRvIHNlbGVjdCB0aGUgYmVzdCBlbmNvZGVyIGRl
-cGVuZGluZyB1cG9uIHRoZSBkZXNpcmVkCj4gIAkgKiBjb25maWd1cmF0aW9uIGFuZCBjYW4ndCBz
-ZWxlY3QgaXQgc3RhdGljYWxseS4KPiAgCSAqCj4gLQkgKiBUaGlzIGZ1bmN0aW9uIGlzIHVzZWQg
-YnkgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfbW9kZXNldCgpIGFuZCBlaXRoZXIKPiAtCSAqIHRo
-aXMgb3IgQGJlc3RfZW5jb2RlciBpcyByZXF1aXJlZC4KPiArCSAqIFRoaXMgZnVuY3Rpb24gaXMg
-dXNlZCBieSBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19tb2Rlc2V0KCkuCj4gKwkgKiBJZiBpdCBp
-cyBub3QgaW1wbGVtZW50ZWQsIHRoZSBjb3JlIHdpbGwgZmFsbGJhY2sgdG8gQGJlc3RfZW5jb2Rl
-cgo+ICsJICogKG9yIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpIGlmIEBiZXN0X2Vu
-Y29kZXIgaXMgTlVMTCkuCj4gIAkgKgo+ICAJICogTk9URToKPiAgCSAqCj4gLS0gCj4gMi43LjQK
-PiAKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
-bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9mcmVlZHJlbm8K
+Hello Yakir,
+
+On 03/17/2016 05:47 PM, Heiko St=FCbner wrote:
+> Split the dp core driver from exynos directory to bridge directory,
+> and rename the core driver to analogix_dp_*, rename the platform
+> code to exynos_dp.
+>=20
+> Beside the new analogix_dp driver would export six hooks.
+> "analogix_dp_bind()" and "analogix_dp_unbind()"
+> "analogix_dp_suspned()" and "analogix_dp_resume()"
+> "analogix_dp_detect()" and "analogix_dp_get_modes()"
+>=20
+> The bind/unbind symbols is used for analogix platform driver to conne=
+ct
+> with analogix_dp core driver. And the detect/get_modes is used for an=
+alogix
+> platform driver to init the connector.
+>=20
+> They reason why connector need register in helper driver is rockchip =
+drm
+> haven't implement the atomic API, but Exynos drm have implement it, s=
+o
+> there would need two different connector helper functions, that's why=
+ we
+> leave the connector register in helper driver.
+>=20
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
+
+Marc reported that his Exynos5250 Snow Chromebook fails to boot with v4=
+=2E7-rc.
+
+I've done a git bisect and tracked down to this commit. The problem is =
+a NULL
+pointer dereference to connector->dev in drm_mode_create(connector->dev=
+) when
+called from exynos_dp_get_modes(). The error log is at [1].=20
+
+I'm trying to figure out the issue but wanted to mention in case you ha=
+ve any
+hints about what could be the cause. AFAICT the problem is related to t=
+he fact
+that drm_connector_init() is called in analogix_dp_bridge_attach() and =
+the
+connector passed as argument is the one in struct analogix_dp_device *d=
+p, but
+later exynos_dp_get_modes() calls drm_mode_create() passing the connect=
+or in
+struct exynos_dp_device *dp, which has not been previously initialized.
+
+[1]
+[    4.175676] Unable to handle kernel NULL pointer dereference at virt=
+ual address 00000210
+[    4.182793] pgd =3D c0004000
+[    4.185171] [00000210] *pgd=3D00000000
+[    4.188657] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+[    4.194164] Modules linked in:
+[    4.196964] CPU: 1 PID: 68 Comm: kworker/1:1 Not tainted 4.7.0-rc2-n=
+ext-20160606-00006-g876c3150327a #97
+[    4.206565] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    4.212582] Workqueue: events hdmi_hotplug_work_func
+[    4.217383] task: ed758000 ti: ed75c000 task.ti: ed75c000
+[    4.222887] PC is at __mutex_lock_slowpath+0x6c/0x404
+[    4.227913] LR is at preempt_count_add+0xa4/0x140
+[    4.232592] pc : [<c06d21d4>]    lr : [<c0139de4>]    psr: 60000093
+[    4.232592] sp : ed75dd80  ip : 00000000  fp : ee8c1180
+[    4.244193] r10: 00000300  r9 : ed758000  r8 : 00000001
+[    4.249262] r7 : 60000013  r6 : c0b473a8  r5 : 00000210  r4 : 000002=
+0c
+[    4.261955] r3 : 00000000  r2 : 00000001  r1 : ee8c2808  r0 : 000000=
+00
+[    4.273270] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Se=
+gment none
+[    4.285336] Control: 10c5387d  Table: 4000406a  DAC: 00000051
+[    4.295885] Process kworker/1:1 (pid: 68, stack limit =3D 0xed75c210=
+)
+[    4.306979] Stack: (0xed75dd80 to 0xed75e000)
+[    4.316102] dd80: ee8c1180 c03dd21c ee8f0820 00000001 0000020c 00000=
+20c 00000000 00000000
+[    4.329201] dda0: 00000001 dededede 00000300 c06d2578 ee8c2808 c03d0=
+0f4 ee801d80 c0b0261c
+[    4.342362] ddc0: 00000041 ee8c2800 00000000 00000001 ee8f0810 ee8f0=
+b65 c074d2b4 c03d35b0
+[    4.353140] dde0: 00000000 00000300 ee8c1180 c03d81d0 c387cf74 ee8f0=
+820 00000001 c03eaffc
+[    4.361811] de00: 00000000 ee8f0820 00000001 c03f28bc ee8f0b65 c06d4=
+00c ee8c1180 006d40a4
+[    4.370483] de20: 00000000 01820a11 81010300 00000100 00000064 ee8f0=
+85c ee8f0820 c0b1f894
+[    4.379150] de40: c3872800 c0b82fac c074d2b4 c03b7550 c0b13274 c0327=
+974 00000001 eefb8530
+[    4.387805] de60: 00000556 00000000 c38729b0 c3872800 ee8c1180 00000=
+001 ee8c7000 00000000
+[    4.396467] de80: 00000556 00000300 c38729b0 00000002 ee8c1180 c03c1=
+07c ee8c7000 c3872800
+[    4.405121] dea0: ee8c7240 c3872800 c0b82fac c03c3268 c3872ad4 00000=
+001 c3872ae0 c03b7af0
+[    4.413776] dec0: eefb8000 c0139804 00000000 c0136484 ee8a0000 ee8c1=
+180 c3870b4c eefb7b00
+[    4.422415] dee0: eefbb000 00000000 00000000 eefb7b00 ee8c1180 c012f=
+f2c 00000008 eefb7b24
+[    4.431045] df00: eefb7b00 ee8c1198 00000008 eefb7b24 c0b02100 ed75c=
+000 eefb7b00 c0130178
+[    4.439664] df20: ed75c000 ee863040 ee8c1180 00000000 ee863040 ee8c1=
+180 c0130140 00000000
+[    4.448274] df40: 00000000 00000000 00000000 c0135454 00000000 00000=
+000 00000000 ee8c1180
+[    4.456879] df60: 00000000 00000000 dead4ead ffffffff ffffffff ed75d=
+f74 ed75df74 00000000
+[    4.465462] df80: 00000000 dead4ead ffffffff ffffffff ed75df90 ed75d=
+f90 ed75dfac ee863040
+[    4.474028] dfa0: c0135378 00000000 00000000 c0107978 00000000 00000=
+000 00000000 00000000
+[    4.482597] dfc0: 00000000 00000000 00000000 00000000 00000000 00000=
+000 00000000 00000000
+[    4.491133] dfe0: 00000000 00000000 00000000 00000000 00000013 00000=
+000 00000000 00000000
+[    4.499643] [<c06d21d4>] (__mutex_lock_slowpath) from [<c06d2578>] (=
+mutex_lock+0xc/0x24)
+[    4.507102] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+[    4.514264] [<c06d2578>] (mutex_lock) from [<c03d00f4>] (drm_mode_ob=
+ject_get_reg+0x28/0x80)
+[    4.522981] [<c03d00f4>] (drm_mode_object_get_reg) from [<c03d35b0>]=
+ (drm_mode_object_get+0x18/0x20)
+[    4.532491] [<c03d35b0>] (drm_mode_object_get) from [<c03d81d0>] (dr=
+m_mode_create+0x3c/0x58)
+[    4.541316] [<c03d81d0>] (drm_mode_create) from [<c03eaffc>] (exynos=
+_dp_get_modes+0x24/0x80)
+[    4.550160] [<c03eaffc>] (exynos_dp_get_modes) from [<c03f28bc>] (an=
+alogix_dp_get_modes+0x198/0x278)
+[    4.559735] [<c03f28bc>] (analogix_dp_get_modes) from [<c03b7550>] (=
+drm_helper_probe_single_connector_modes+0x114/0x554)
+[    4.571078] [<c03b7550>] (drm_helper_probe_single_connector_modes) f=
+rom [<c03c107c>] (drm_fb_helper_probe_connector_modes+0x48/0x68)
+[    4.583513] [<c03c107c>] (drm_fb_helper_probe_connector_modes) from =
+[<c03c3268>] (drm_fb_helper_hotplug_event+0x70/0xdc)
+[    4.594921] [<c03c3268>] (drm_fb_helper_hotplug_event) from [<c03b7a=
+f0>] (drm_helper_hpd_irq_event+0xd4/0x160)
+[    4.605474] [<c03b7af0>] (drm_helper_hpd_irq_event) from [<c012ff2c>=
+] (process_one_work+0x124/0x338)
+[    4.615144] [<c012ff2c>] (process_one_work) from [<c0130178>] (worke=
+r_thread+0x38/0x4d4)
+[    4.623764] [<c0130178>] (worker_thread) from [<c0135454>] (kthread+=
+0xdc/0xf4)
+[    4.631512] [<c0135454>] (kthread) from [<c0107978>] (ret_from_fork+=
+0x14/0x3c)
+[    4.639239] Code: e10f7000 f10c0080 e2845004 f595f000 (e1953f9f)=20
+[    4.645845] ---[ end trace 3bfc770b9638a54b ]---
+
+Best regards,
+--=20
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
