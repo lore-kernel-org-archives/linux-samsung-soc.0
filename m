@@ -1,98 +1,57 @@
-From: Liviu Dudau <liviu@dudau.co.uk>
-Subject: Re: [PATCH] media: s5p-mfc: fix error path in driver probe
-Date: Wed, 8 Jun 2016 15:35:44 +0100
-Message-ID: <20160608143544.GF21784@bart.dudau.co.uk>
-References: <20160608103629.GD21784@bart.dudau.co.uk>
- <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Subject: Re: [PATCH] of: reserved_mem: restore old behavior when no region is defined
+Date: Wed, 8 Jun 2016 21:05:22 +0530
+Message-ID: <CAO_48GFTbqQ0jRj93+cuax=F3Lf0DCnCnnuk8_pxkPKoXZwU4w@mail.gmail.com>
+References: <20160607143425.GE1165@e106497-lin.cambridge.arm.com>
+ <1465368713-17866-1-git-send-email-m.szyprowski@samsung.com> <CAL_JsqKNpx09UFkGB0n9W0GkAv8OVUdRN8cYriau83SdD6xnuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37279 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755556AbcFHPfn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 11:35:43 -0400
+Received: by mail-wm0-f42.google.com with SMTP id k204so22662281wmk.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jun 2016 08:35:43 -0700 (PDT)
+In-Reply-To: <CAL_JsqKNpx09UFkGB0n9W0GkAv8OVUdRN8cYriau83SdD6xnuw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Liviu Dudau <liviu.dudau@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Robin Murphy <robin.murphy@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 
-On Wed, Jun 08, 2016 at 01:33:40PM +0200, Marek Szyprowski wrote:
-> This patch fixes the error path in the driver probe, so in case of
-> any failure, the resources are not leaked.
-> 
-> Reported-by: Liviu Dudau <liviu.dudau@arm.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 8 June 2016 at 18:35, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Jun 8, 2016 at 1:51 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Change return value back to -ENODEV when no region is defined for gi=
+ven
+>> device. This restores old behavior of this function, as some drivers=
+ rely
+>> on such error code.
+>>
+>> Reported-by: Liviu Dudau <liviu.dudau@arm.com>
+>> Fixes: 59ce4039727ef40 ("of: reserved_mem: add support for using mor=
+e than
+>>        one region for given device")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/of/of_reserved_mem.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Looks reasonable; FWIW
+Reviewed-by: Sumit Semwal <sumit.semwal@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Looks good to me now! If it is useful:
 
-Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 6ee620ee8cd5..1f3a7ee753db 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1159,7 +1159,10 @@ static int s5p_mfc_probe(struct platform_device *pdev)
->  	dev->variant = mfc_get_drv_data(pdev);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -
-> +	if (res == NULL) {
-> +		dev_err(&pdev->dev, "failed to get io resource\n");
-> +		return -ENOENT;
-> +	}
->  	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(dev->regs_base))
->  		return PTR_ERR(dev->regs_base);
-> @@ -1167,15 +1170,14 @@ static int s5p_mfc_probe(struct platform_device *pdev)
->  	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->  	if (res == NULL) {
->  		dev_err(&pdev->dev, "failed to get irq resource\n");
-> -		ret = -ENOENT;
-> -		goto err_res;
-> +		return -ENOENT;
->  	}
->  	dev->irq = res->start;
->  	ret = devm_request_irq(&pdev->dev, dev->irq, s5p_mfc_irq,
->  					0, pdev->name, dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to install irq (%d)\n", ret);
-> -		goto err_res;
-> +		return ret;
->  	}
->  
->  	ret = s5p_mfc_configure_dma_memory(dev);
-> @@ -1187,7 +1189,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
->  	ret = s5p_mfc_init_pm(dev);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "failed to get mfc clock source\n");
-> -		return ret;
-> +		goto err_dma;
->  	}
->  
->  	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
-> @@ -1301,6 +1303,8 @@ err_mem_init_ctx_1:
->  	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
->  err_res:
->  	s5p_mfc_final_pm(dev);
-> +err_dma:
-> +	s5p_mfc_unconfigure_dma_memory(dev);
->  
->  	pr_debug("%s-- with error\n", __func__);
->  	return ret;
-> -- 
-> 1.9.2
-> 
+--=20
+Thanks and regards,
 
--- 
--------------------
-   .oooO
-   (   )
-    \ (  Oooo.
-     \_) (   )
-          ) /
-         (_/
-
- One small step
-   for me ...
+Sumit Semwal
+Linaro Mobile Group - Kernel Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
