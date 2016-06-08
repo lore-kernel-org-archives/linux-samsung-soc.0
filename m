@@ -1,80 +1,39 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] media: s5p-mfc: fix error path in driver probe
-Date: Wed, 08 Jun 2016 13:33:40 +0200
-Message-ID: <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
-References: <20160608103629.GD21784@bart.dudau.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19553 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751551AbcFHLd7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 07:33:59 -0400
-In-reply-to: <20160608103629.GD21784@bart.dudau.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] of: reserved_mem: restore old behavior when no region is
+ defined
+Date: Wed, 8 Jun 2016 08:05:56 -0500
+Message-ID: <CAL_JsqKNpx09UFkGB0n9W0GkAv8OVUdRN8cYriau83SdD6xnuw@mail.gmail.com>
+References: <20160607143425.GE1165@e106497-lin.cambridge.arm.com>
+ <1465368713-17866-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1465368713-17866-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Liviu Dudau <liviu.dudau@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Robin Murphy <robin.murphy@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liviu Dudau <liviu@dudau.co.uk>
 
-This patch fixes the error path in the driver probe, so in case of
-any failure, the resources are not leaked.
-
-Reported-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 6ee620ee8cd5..1f3a7ee753db 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1159,7 +1159,10 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 	dev->variant = mfc_get_drv_data(pdev);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--
-+	if (res == NULL) {
-+		dev_err(&pdev->dev, "failed to get io resource\n");
-+		return -ENOENT;
-+	}
- 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(dev->regs_base))
- 		return PTR_ERR(dev->regs_base);
-@@ -1167,15 +1170,14 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (res == NULL) {
- 		dev_err(&pdev->dev, "failed to get irq resource\n");
--		ret = -ENOENT;
--		goto err_res;
-+		return -ENOENT;
- 	}
- 	dev->irq = res->start;
- 	ret = devm_request_irq(&pdev->dev, dev->irq, s5p_mfc_irq,
- 					0, pdev->name, dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to install irq (%d)\n", ret);
--		goto err_res;
-+		return ret;
- 	}
- 
- 	ret = s5p_mfc_configure_dma_memory(dev);
-@@ -1187,7 +1189,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 	ret = s5p_mfc_init_pm(dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to get mfc clock source\n");
--		return ret;
-+		goto err_dma;
- 	}
- 
- 	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
-@@ -1301,6 +1303,8 @@ err_mem_init_ctx_1:
- 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
- err_res:
- 	s5p_mfc_final_pm(dev);
-+err_dma:
-+	s5p_mfc_unconfigure_dma_memory(dev);
- 
- 	pr_debug("%s-- with error\n", __func__);
- 	return ret;
--- 
-1.9.2
+T24gV2VkLCBKdW4gOCwgMjAxNiBhdCAxOjUxIEFNLCBNYXJlayBTenlwcm93c2tpCjxtLnN6eXBy
+b3dza2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IENoYW5nZSByZXR1cm4gdmFsdWUgYmFjayB0byAt
+RU5PREVWIHdoZW4gbm8gcmVnaW9uIGlzIGRlZmluZWQgZm9yIGdpdmVuCj4gZGV2aWNlLiBUaGlz
+IHJlc3RvcmVzIG9sZCBiZWhhdmlvciBvZiB0aGlzIGZ1bmN0aW9uLCBhcyBzb21lIGRyaXZlcnMg
+cmVseQo+IG9uIHN1Y2ggZXJyb3IgY29kZS4KPgo+IFJlcG9ydGVkLWJ5OiBMaXZpdSBEdWRhdSA8
+bGl2aXUuZHVkYXVAYXJtLmNvbT4KPiBGaXhlczogNTljZTQwMzk3MjdlZjQwICgib2Y6IHJlc2Vy
+dmVkX21lbTogYWRkIHN1cHBvcnQgZm9yIHVzaW5nIG1vcmUgdGhhbgo+ICAgICAgICBvbmUgcmVn
+aW9uIGZvciBnaXZlbiBkZXZpY2UiKQo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kg
+PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9vZi9vZl9yZXNlcnZl
+ZF9tZW0uYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
+aW9uKC0pCgpBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
