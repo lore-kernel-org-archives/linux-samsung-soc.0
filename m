@@ -1,89 +1,156 @@
 From: Matthew Leach <matthew@mattleach.net>
-Subject: [RFC PATCH 10/15] ARM: EXYNOS: fixup endian in pm/pmu
-Date: Wed,  8 Jun 2016 19:31:05 +0100
-Message-ID: <20160608183110.13851-11-matthew@mattleach.net>
+Subject: [RFC PATCH 12/15] irqchip/s3c24xx: fixup IO accessors for big endian
+Date: Wed,  8 Jun 2016 19:31:07 +0100
+Message-ID: <20160608183110.13851-13-matthew@mattleach.net>
 References: <20160608183110.13851-1-matthew@mattleach.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0.mattleach.net ([176.58.118.143]:50642 "EHLO
+	mx0.mattleach.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422910AbcFHScp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 14:32:45 -0400
 In-Reply-To: <20160608183110.13851-1-matthew@mattleach.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
 
 From: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Fix the PMU code endian access code to deal with kernels built for big endian
-operation.
+Instead of using the __raw accesors, use the _relaxed versions
+to deal with any issues due to endian-ness of the CPU.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- arch/arm/mach-exynos/common.h     | 4 ++--
- arch/arm/mach-exynos/pm.c         | 4 ++--
- arch/arm/mach-exynos/pm_domains.c | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 5365bf1..19e9d25 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -174,12 +174,12 @@ extern int exynos_get_boot_addr(u32 core_id, unsigned long *boot_addr);
+---
+CC: Thomas Gleixner <tglx@linutronix.de> (maintainer:IRQCHIP DRIVERS)
+CC: Jason Cooper <jason@lakedaemon.net> (maintainer:IRQCHIP DRIVERS)
+CC: Marc Zyngier <marc.zyngier@arm.com> (maintainer:IRQCHIP DRIVERS)
+CC: linux-kernel@vger.kernel.org (open list:IRQCHIP DRIVERS)
+CC: linux-arm-kernel@lists.infradead.org
+---
+ drivers/irqchip/irq-s3c24xx.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
+index 5dc5a76..c25ce5a 100644
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@ -92,9 +92,9 @@ static void s3c_irq_mask(struct irq_data *data)
+ 	unsigned long mask;
+ 	unsigned int irqno;
  
- static inline void pmu_raw_writel(u32 val, u32 offset)
- {
--	__raw_writel(val, pmu_base_addr + offset);
-+	writel_relaxed(val, pmu_base_addr + offset);
+-	mask = __raw_readl(intc->reg_mask);
++	mask = readl_relaxed(intc->reg_mask);
+ 	mask |= (1UL << irq_data->offset);
+-	__raw_writel(mask, intc->reg_mask);
++	writel_relaxed(mask, intc->reg_mask);
+ 
+ 	if (parent_intc) {
+ 		parent_data = &parent_intc->irqs[irq_data->parent_irq];
+@@ -119,9 +119,9 @@ static void s3c_irq_unmask(struct irq_data *data)
+ 	unsigned long mask;
+ 	unsigned int irqno;
+ 
+-	mask = __raw_readl(intc->reg_mask);
++	mask = readl_relaxed(intc->reg_mask);
+ 	mask &= ~(1UL << irq_data->offset);
+-	__raw_writel(mask, intc->reg_mask);
++	writel_relaxed(mask, intc->reg_mask);
+ 
+ 	if (parent_intc) {
+ 		irqno = irq_find_mapping(parent_intc->domain,
+@@ -136,9 +136,9 @@ static inline void s3c_irq_ack(struct irq_data *data)
+ 	struct s3c_irq_intc *intc = irq_data->intc;
+ 	unsigned long bitval = 1UL << irq_data->offset;
+ 
+-	__raw_writel(bitval, intc->reg_pending);
++	writel_relaxed(bitval, intc->reg_pending);
+ 	if (intc->reg_intpnd)
+-		__raw_writel(bitval, intc->reg_intpnd);
++		writel_relaxed(bitval, intc->reg_intpnd);
  }
  
- static inline u32 pmu_raw_readl(u32 offset)
- {
--	return __raw_readl(pmu_base_addr + offset);
-+	return readl_relaxed(pmu_base_addr + offset);
- }
+ static int s3c_irq_type(struct irq_data *data, unsigned int type)
+@@ -172,9 +172,9 @@ static int s3c_irqext_type_set(void __iomem *gpcon_reg,
+ 	unsigned long newvalue = 0, value;
  
- #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c43b776..52d78eb 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -132,9 +132,9 @@ static void exynos_set_wakeupmask(long mask)
+ 	/* Set the GPIO to external interrupt mode */
+-	value = __raw_readl(gpcon_reg);
++	value = readl_relaxed(gpcon_reg);
+ 	value = (value & ~(3 << gpcon_offset)) | (0x02 << gpcon_offset);
+-	__raw_writel(value, gpcon_reg);
++	writel_relaxed(value, gpcon_reg);
  
- static void exynos_cpu_set_boot_vector(long flags)
- {
--	__raw_writel(virt_to_phys(exynos_cpu_resume),
-+	writel_relaxed(virt_to_phys(exynos_cpu_resume),
- 		     exynos_boot_vector_addr());
--	__raw_writel(flags, exynos_boot_vector_flag());
-+	writel_relaxed(flags, exynos_boot_vector_flag());
- }
- 
- static int exynos_aftr_finisher(unsigned long flags)
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 875a2ba..0e075d9 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -70,12 +70,12 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	/* Set the external interrupt to pointed trigger type */
+ 	switch (type)
+@@ -208,9 +208,9 @@ static int s3c_irqext_type_set(void __iomem *gpcon_reg,
+ 			return -EINVAL;
  	}
  
- 	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
--	__raw_writel(pwr, base);
-+	writel_relaxed(pwr, base);
+-	value = __raw_readl(extint_reg);
++	value = readl_relaxed(extint_reg);
+ 	value = (value & ~(7 << extint_offset)) | (newvalue << extint_offset);
+-	__raw_writel(value, extint_reg);
++	writel_relaxed(value, extint_reg);
  
- 	/* Wait max 1ms */
- 	timeout = 10;
+ 	return 0;
+ }
+@@ -315,8 +315,8 @@ static void s3c_irq_demux(struct irq_desc *desc)
  
--	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN) != pwr) {
-+	while ((readl_relaxed(base + 0x4) & INT_LOCAL_PWR_EN) != pwr) {
- 		if (!timeout) {
- 			op = (power_on) ? "enable" : "disable";
- 			pr_err("Power domain %s %s failed\n", domain->name, op);
-@@ -185,7 +185,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
+ 	chained_irq_enter(chip, desc);
  
- no_clk:
--		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
-+		on = readl_relaxed(pd->base + 0x4) & INT_LOCAL_PWR_EN;
+-	src = __raw_readl(sub_intc->reg_pending);
+-	msk = __raw_readl(sub_intc->reg_mask);
++	src = readl_relaxed(sub_intc->reg_pending);
++	msk = readl_relaxed(sub_intc->reg_mask);
  
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 		of_genpd_add_provider_simple(np, &pd->pd);
+ 	src &= ~msk;
+ 	src &= irq_data->sub_bits;
+@@ -337,7 +337,7 @@ static inline int s3c24xx_handle_intc(struct s3c_irq_intc *intc,
+ 	int pnd;
+ 	int offset;
+ 
+-	pnd = __raw_readl(intc->reg_intpnd);
++	pnd = readl_relaxed(intc->reg_intpnd);
+ 	if (!pnd)
+ 		return false;
+ 
+@@ -352,7 +352,7 @@ static inline int s3c24xx_handle_intc(struct s3c_irq_intc *intc,
+ 	 *
+ 	 * Thanks to Klaus, Shannon, et al for helping to debug this problem
+ 	 */
+-	offset = __raw_readl(intc->reg_intpnd + 4);
++	offset = readl_relaxed(intc->reg_intpnd + 4);
+ 
+ 	/* Find the bit manually, when the offset is wrong.
+ 	 * The pending register only ever contains the one bit of the next
+@@ -406,7 +406,7 @@ int s3c24xx_set_fiq(unsigned int irq, bool on)
+ 		intmod = 0;
+ 	}
+ 
+-	__raw_writel(intmod, S3C2410_INTMOD);
++	writel_relaxed(intmod, S3C2410_INTMOD);
+ 	return 0;
+ }
+ 
+@@ -508,14 +508,14 @@ static void s3c24xx_clear_intc(struct s3c_irq_intc *intc)
+ 
+ 	last = 0;
+ 	for (i = 0; i < 4; i++) {
+-		pend = __raw_readl(reg_source);
++		pend = readl_relaxed(reg_source);
+ 
+ 		if (pend == 0 || pend == last)
+ 			break;
+ 
+-		__raw_writel(pend, intc->reg_pending);
++		writel_relaxed(pend, intc->reg_pending);
+ 		if (intc->reg_intpnd)
+-			__raw_writel(pend, intc->reg_intpnd);
++			writel_relaxed(pend, intc->reg_intpnd);
+ 
+ 		pr_info("irq: clearing pending status %08x\n", (int)pend);
+ 		last = pend;
 -- 
 2.8.3
