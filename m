@@ -1,71 +1,98 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v7 1/6] mfd: max8997: Use regmap to access registers
-Date: Wed, 08 Jun 2016 16:30:55 +0200
-Message-ID: <57582C1F.5040306@samsung.com>
-References: <1464773339-756-1-git-send-email-k.kozlowski@samsung.com>
- <1464774841-1439-1-git-send-email-k.kozlowski@samsung.com>
- <20160608142621.GG14888@dell>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Liviu Dudau <liviu@dudau.co.uk>
+Subject: Re: [PATCH] media: s5p-mfc: fix error path in driver probe
+Date: Wed, 8 Jun 2016 15:35:44 +0100
+Message-ID: <20160608143544.GF21784@bart.dudau.co.uk>
+References: <20160608103629.GD21784@bart.dudau.co.uk>
+ <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBDKZNNNLXAHBBJWY4C5AKGQENSCUBYY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-reply-to: <20160608142621.GG14888@dell>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, r.baldyga-anjuHVi6/WSaMJb+Lgu22Q@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/08/2016 04:26 PM, Lee Jones wrote:
-> On Wed, 01 Jun 2016, Krzysztof Kozlowski wrote:
+On Wed, Jun 08, 2016 at 01:33:40PM +0200, Marek Szyprowski wrote:
+> This patch fixes the error path in the driver probe, so in case of
+> any failure, the resources are not leaked.
 > 
->> From: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> This patch modifies max8997 driver and each associated function driver,
->> to use regmap instead of operating directly on i2c bus. It will allow to
->> simplify IRQ handling using regmap-irq.
->>
->> Signed-off-by: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> Acked-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Acked-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->> [k.kozlowski: Collect acks, rebase on v4.6-rc6]
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/extcon/extcon-max8997.c       |  31 ++++----
->>  drivers/input/misc/max8997_haptic.c   |  34 ++++----
->>  drivers/leds/leds-max8997.c           |  13 ++--
->>  drivers/mfd/Kconfig                   |   1 +
->>  drivers/mfd/max8997-irq.c             |  64 ++++++---------
->>  drivers/mfd/max8997.c                 | 141 +++++++++++++++-------------------
->>  drivers/power/max8997_charger.c       |  33 ++++----
->>  drivers/regulator/max8997-regulator.c |  87 ++++++++++-----------
+> Reported-by: Liviu Dudau <liviu.dudau@arm.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Looks good to me now! If it is useful:
+
+Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
+
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 > 
-> Is it just Mark's Ack you require?
-
-Yes, only Mark's is missing here. All other patches got everything they
-need.
-
-Best regards,
-Krzysztof
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index 6ee620ee8cd5..1f3a7ee753db 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -1159,7 +1159,10 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>  	dev->variant = mfc_get_drv_data(pdev);
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -
+> +	if (res == NULL) {
+> +		dev_err(&pdev->dev, "failed to get io resource\n");
+> +		return -ENOENT;
+> +	}
+>  	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(dev->regs_base))
+>  		return PTR_ERR(dev->regs_base);
+> @@ -1167,15 +1170,14 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>  	if (res == NULL) {
+>  		dev_err(&pdev->dev, "failed to get irq resource\n");
+> -		ret = -ENOENT;
+> -		goto err_res;
+> +		return -ENOENT;
+>  	}
+>  	dev->irq = res->start;
+>  	ret = devm_request_irq(&pdev->dev, dev->irq, s5p_mfc_irq,
+>  					0, pdev->name, dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to install irq (%d)\n", ret);
+> -		goto err_res;
+> +		return ret;
+>  	}
+>  
+>  	ret = s5p_mfc_configure_dma_memory(dev);
+> @@ -1187,7 +1189,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>  	ret = s5p_mfc_init_pm(dev);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "failed to get mfc clock source\n");
+> -		return ret;
+> +		goto err_dma;
+>  	}
+>  
+>  	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
+> @@ -1301,6 +1303,8 @@ err_mem_init_ctx_1:
+>  	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+>  err_res:
+>  	s5p_mfc_final_pm(dev);
+> +err_dma:
+> +	s5p_mfc_unconfigure_dma_memory(dev);
+>  
+>  	pr_debug("%s-- with error\n", __func__);
+>  	return ret;
+> -- 
+> 1.9.2
+> 
 
 -- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+-------------------
+   .oooO
+   (   )
+    \ (  Oooo.
+     \_) (   )
+          ) /
+         (_/
+
+ One small step
+   for me ...
