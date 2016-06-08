@@ -1,39 +1,58 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] of: reserved_mem: restore old behavior when no region is
- defined
-Date: Wed, 8 Jun 2016 08:05:56 -0500
-Message-ID: <CAL_JsqKNpx09UFkGB0n9W0GkAv8OVUdRN8cYriau83SdD6xnuw@mail.gmail.com>
-References: <20160607143425.GE1165@e106497-lin.cambridge.arm.com>
- <1465368713-17866-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1465368713-17866-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Liviu Dudau <liviu.dudau@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Robin Murphy <robin.murphy@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
+Date: Wed, 08 Jun 2016 15:47:59 +0200
+Message-ID: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBKdW4gOCwgMjAxNiBhdCAxOjUxIEFNLCBNYXJlayBTenlwcm93c2tpCjxtLnN6eXBy
-b3dza2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IENoYW5nZSByZXR1cm4gdmFsdWUgYmFjayB0byAt
-RU5PREVWIHdoZW4gbm8gcmVnaW9uIGlzIGRlZmluZWQgZm9yIGdpdmVuCj4gZGV2aWNlLiBUaGlz
-IHJlc3RvcmVzIG9sZCBiZWhhdmlvciBvZiB0aGlzIGZ1bmN0aW9uLCBhcyBzb21lIGRyaXZlcnMg
-cmVseQo+IG9uIHN1Y2ggZXJyb3IgY29kZS4KPgo+IFJlcG9ydGVkLWJ5OiBMaXZpdSBEdWRhdSA8
-bGl2aXUuZHVkYXVAYXJtLmNvbT4KPiBGaXhlczogNTljZTQwMzk3MjdlZjQwICgib2Y6IHJlc2Vy
-dmVkX21lbTogYWRkIHN1cHBvcnQgZm9yIHVzaW5nIG1vcmUgdGhhbgo+ICAgICAgICBvbmUgcmVn
-aW9uIGZvciBnaXZlbiBkZXZpY2UiKQo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kg
-PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9vZi9vZl9yZXNlcnZl
-ZF9tZW0uYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
-aW9uKC0pCgpBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+
+Some time ago, Robert tried to add VBUS detection to extcon-usb-gpio
+driver [1].  There was a discussion about patch #2 ("extcon: usb-gpio:
+add support for VBUS detection").
+
+The final conclusion was that Chanwoo will add VBUS/ID notifiers [2].
+That unfortunately never happened so this patchset is a follow up.
+
+1. Add VBUS/ID cable state notifiers to extcon, so USB controllers
+   could use it.
+2. Add VBUS detection to extcon-usb-gpio driver.
+
+Some parts are based on old Robert's work, some are new, some are
+reworked.
+
+
+Best regards,
+Krzysztof
+
+
+[1] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1923193
+[2] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1941152
+
+
+Krzysztof Kozlowski (5):
+  Revert "extcon: usb-gpio: switch to use pm wakeirq apis"
+  extcon: Add raw VBUS and ID cable states
+  extcon: usb-gpio: Add support for VBUS detection
+  ARM: exynos_defconfig: Enable EXTCON_USB_GPIO for Odroid XU3 USB OTG
+  ARM: dts: exynos: Add extcon-usb-gpio node for Odroid XU3
+
+Robert Baldyga (2):
+  Documentation: extcon: usb-gpio: update usb-gpio binding description
+  extcon: usb-gpio: make debounce value configurable in devicetree
+
+ .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  28 ++++-
+ arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  21 ++++
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  21 ++++
+ arch/arm/configs/exynos_defconfig                  |   1 +
+ drivers/extcon/extcon-usb-gpio.c                   | 138 +++++++++++++++++----
+ drivers/extcon/extcon.c                            |   3 +
+ include/linux/extcon.h                             |   8 +-
+ 7 files changed, 190 insertions(+), 30 deletions(-)
+
+-- 
+1.9.1
