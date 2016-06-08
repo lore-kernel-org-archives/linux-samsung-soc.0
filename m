@@ -1,61 +1,80 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v2 07/20] drm: mediatek: Rely on the default
- ->best_encoder() behavior
-Date: Wed, 8 Jun 2016 13:17:07 +0200
-Message-ID: <5757FEB3.8050001@gmail.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
- <1465300095-16971-8-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1465300095-16971-8-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thier>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] media: s5p-mfc: fix error path in driver probe
+Date: Wed, 08 Jun 2016 13:33:40 +0200
+Message-ID: <1465385620-4396-1-git-send-email-m.szyprowski@samsung.com>
+References: <20160608103629.GD21784@bart.dudau.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:19553 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751551AbcFHLd7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 07:33:59 -0400
+In-reply-to: <20160608103629.GD21784@bart.dudau.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liviu Dudau <liviu@dudau.co.uk>
 
+This patch fixes the error path in the driver probe, so in case of
+any failure, the resources are not leaked.
 
+Reported-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-On 07/06/16 13:48, Boris Brezillon wrote:
-> We have a 1:1 relationship between connectors and encoders and the
-> driver is relying on the atomic helpers: we can drop the custom
-> ->best_encoder() implementation and let the core call
-> drm_atomic_helper_best_encoder() for us.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->   drivers/gpu/drm/mediatek/mtk_dsi.c | 9 ---------
->   1 file changed, 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 2d808e5..7343ffc 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -575,14 +575,6 @@ static int mtk_dsi_connector_get_modes(struct drm_connector *connector)
->   	return drm_panel_get_modes(dsi->panel);
->   }
->
-> -static struct drm_encoder *mtk_dsi_connector_best_encoder(
-> -		struct drm_connector *connector)
-> -{
-> -	struct mtk_dsi *dsi = connector_to_dsi(connector);
-> -
-> -	return &dsi->encoder;
-> -}
-> -
->   static const struct drm_encoder_helper_funcs mtk_dsi_encoder_helper_funcs = {
->   	.mode_fixup = mtk_dsi_encoder_mode_fixup,
->   	.mode_set = mtk_dsi_encoder_mode_set,
-> @@ -603,7 +595,6 @@ static const struct drm_connector_funcs mtk_dsi_connector_funcs = {
->   static const struct drm_connector_helper_funcs
->   	mtk_dsi_connector_helper_funcs = {
->   	.get_modes = mtk_dsi_connector_get_modes,
-> -	.best_encoder = mtk_dsi_connector_best_encoder,
->   };
->
->   static int mtk_drm_attach_bridge(struct drm_bridge *bridge,
->
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 6ee620ee8cd5..1f3a7ee753db 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1159,7 +1159,10 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	dev->variant = mfc_get_drv_data(pdev);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
++	if (res == NULL) {
++		dev_err(&pdev->dev, "failed to get io resource\n");
++		return -ENOENT;
++	}
+ 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(dev->regs_base))
+ 		return PTR_ERR(dev->regs_base);
+@@ -1167,15 +1170,14 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (res == NULL) {
+ 		dev_err(&pdev->dev, "failed to get irq resource\n");
+-		ret = -ENOENT;
+-		goto err_res;
++		return -ENOENT;
+ 	}
+ 	dev->irq = res->start;
+ 	ret = devm_request_irq(&pdev->dev, dev->irq, s5p_mfc_irq,
+ 					0, pdev->name, dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to install irq (%d)\n", ret);
+-		goto err_res;
++		return ret;
+ 	}
+ 
+ 	ret = s5p_mfc_configure_dma_memory(dev);
+@@ -1187,7 +1189,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	ret = s5p_mfc_init_pm(dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to get mfc clock source\n");
+-		return ret;
++		goto err_dma;
+ 	}
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev->mem_dev_l, DMA_BIT_MASK(32));
+@@ -1301,6 +1303,8 @@ err_mem_init_ctx_1:
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+ err_res:
+ 	s5p_mfc_final_pm(dev);
++err_dma:
++	s5p_mfc_unconfigure_dma_memory(dev);
+ 
+ 	pr_debug("%s-- with error\n", __func__);
+ 	return ret;
+-- 
+1.9.2
