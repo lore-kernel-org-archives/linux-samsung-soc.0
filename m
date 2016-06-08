@@ -1,151 +1,38 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v14.1 01/17] drm: bridge: analogix/dp: split exynos dp
- driver to bridge directory
-Date: Wed, 8 Jun 2016 18:53:11 +0800
-Message-ID: <5757F917.2030506@rock-chips.com>
-References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
- <1455534576-1486-1-git-send-email-ykk@rock-chips.com>
- <1811552.qvsCm7GUs1@diego>
- <417ed48e-74e1-f747-34b9-0d1031a3d862@osg.samsung.com>
- <575774C0.4000900@rock-chips.com> <20160608084419.602f02d2@arm.com>
+Subject: Re: [PATCH v2 02/10] drm/rockchip: analogix_dp: split the lcdc select
+ setting into device data
+Date: Wed, 8 Jun 2016 18:56:48 +0800
+Message-ID: <5757F9F0.7040806@rock-chips.com>
+References: <1464066086-21967-1-git-send-email-ykk@rock-chips.com>
+ <1464066135-22605-1-git-send-email-ykk@rock-chips.com>
+ <574E411E.2040503@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:50120 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753638AbcFHKx2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 06:53:28 -0400
-In-Reply-To: <20160608084419.602f02d2@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <574E411E.2040503@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark yao <mark.yao@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, emil.l.velikov@gmail.com, Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Yao <mark.yao@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, djkurtz@chromium.org, Sean Paul <seanpaul@chromium.org>, Kukjin Kim <kgene@kernel.org>, Kumar Gala <galak@codeaurora.org>, emil.l.velikov@gmail.com, Ian Campbell <ijc+devicetree@hellion.org.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Pawel Moll <pawel.moll@arm.com>, ajaynumb@gmail.com, robherring2@g
 
-Marc, Javier
-
-On 06/08/2016 03:44 PM, Marc Zyngier wrote:
-> On Wed, 8 Jun 2016 09:28:32 +0800
-> Yakir Yang <ykk@rock-chips.com> wrote:
->
->> Hi Javier,
->>
->> On 06/08/2016 01:06 AM, Javier Martinez Canillas wrote:
->>> Hello Yakir,
->>>
->>> On 03/17/2016 05:47 PM, Heiko St=FCbner wrote:
->>>> Split the dp core driver from exynos directory to bridge directory=
-,
->>>> and rename the core driver to analogix_dp_*, rename the platform
->>>> code to exynos_dp.
->>>>
->>>> Beside the new analogix_dp driver would export six hooks.
->>>> "analogix_dp_bind()" and "analogix_dp_unbind()"
->>>> "analogix_dp_suspned()" and "analogix_dp_resume()"
->>>> "analogix_dp_detect()" and "analogix_dp_get_modes()"
->>>>
->>>> The bind/unbind symbols is used for analogix platform driver to co=
-nnect
->>>> with analogix_dp core driver. And the detect/get_modes is used for=
- analogix
->>>> platform driver to init the connector.
->>>>
->>>> They reason why connector need register in helper driver is rockch=
-ip drm
->>>> haven't implement the atomic API, but Exynos drm have implement it=
-, so
->>>> there would need two different connector helper functions, that's =
-why we
->>>> leave the connector register in helper driver.
->>>>
->>>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->>>> ---
->>> Marc reported that his Exynos5250 Snow Chromebook fails to boot wit=
-h v4.7-rc.
->>>
->>> I've done a git bisect and tracked down to this commit. The problem=
- is a NULL
->>> pointer dereference to connector->dev in drm_mode_create(connector-=
->dev) when
->>> called from exynos_dp_get_modes(). The error log is at [1].
->>>
->>> I'm trying to figure out the issue but wanted to mention in case yo=
-u have any
->>> hints about what could be the cause. AFAICT the problem is related =
-to the fact
->>> that drm_connector_init() is called in analogix_dp_bridge_attach() =
-and the
->>> connector passed as argument is the one in struct analogix_dp_devic=
-e *dp, but
->>> later exynos_dp_get_modes() calls drm_mode_create() passing the con=
-nector in
->>> struct exynos_dp_device *dp, which has not been previously initiali=
-zed.
->> Agree, this should be the problem, exynos_dp->connector haven't been
->> initialized, driver should make exynos_dp->dp to a connector point, =
-and
->> record the passing connector in exynos_dp_bridge_attach(), that shou=
-ld
->> fix this problem.
->>
->>
->> Thanks,
->> - Yakir
->>
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c
->> b/drivers/gpu/drm/exynos/exynos_dp.c
->> index 468498e..4c1fb3f 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->> @@ -34,7 +34,7 @@
->>
->>    struct exynos_dp_device {
->>           struct drm_encoder         encoder;
->> -       struct drm_connector       connector;
->> +       struct drm_connector       *connector;
->>           struct drm_bridge          *ptn_bridge;
->>           struct drm_device          *drm_dev;
->>           struct device              *dev;
->> @@ -70,7 +70,7 @@ static int exynos_dp_poweroff(struct
->> analogix_dp_plat_data *plat_data)
->>    static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat=
-_data)
->>    {
->>           struct exynos_dp_device *dp =3D to_dp(plat_data);
->> -       struct drm_connector *connector =3D &dp->connector;
->> +       struct drm_connector *connector =3D dp->connector;
->>           struct drm_display_mode *mode;
->>           int num_modes =3D 0;
->>
->> @@ -103,6 +103,7 @@ static int exynos_dp_bridge_attach(struct
->> analogix_dp_plat_data *plat_data,
->>           int ret;
->>
->>           drm_connector_register(connector);
->> +       dp->connector =3D connector;
->>
->>           /* Pre-empt DP connector creation if there's a bridge */
->>           if (dp->ptn_bridge) {
->>
-> I've just tested this change, and in combination with Javier's DT pat=
-ch,
-> my Snow is back to its useful state (I'm writing this email from that
-> very Chromebook).
->
-> Once you make this a proper patch, please add my:
->
-> Tested-by: Marc Zyngier <marc.zyngier@arm.com>
-
-I guess Javier should be the best one to create this patch, if he have=20
-no time, i would do it for him. thanks for your report ;)
-
-- Yakir
-
-> to it.
->
-> Thanks a lot to you and Javier for tracking this down!
->
-> 	M.
+TWFyaywKCk9uIDA2LzAxLzIwMTYgMDk6NTcgQU0sIE1hcmsgeWFvIHdyb3RlOgo+IE9uIDIwMTbl
+ubQwNeaciDI05pelIDEzOjAyLCBZYWtpciBZYW5nIHdyb3RlOgo+PiBlRFAgY29udHJvbGxlciBu
+ZWVkIHRvIGRlY2xhcmUgd2hpY2ggdm9wIHByb3ZpZGUgdGhlIHZpZGVvIHNvdXJjZSwKPj4gYW5k
+IGl0J3MgZGVmaW5lZCBpbiBHUkYgcmVnaXN0ZXJzLgo+Pgo+PiBCdXQgZGlmZmVyZW50IGNoaXBz
+IGhhdmUgZGlmZmVyZW50IEdSRiByZWdpc3RlciBhZGRyZXNzLCBzbyB3ZSBuZWVkIHRvCj4+IGNy
+ZWF0ZSBhIGRldmljZSBkYXRhIHRvIGRlY2xhcmUgdGhlIEdSRiBtZXNzYWdlcyBmb3IgZWFjaCBj
+aGlwcy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZzx5a2tAcm9jay1jaGlwcy5jb20+
+Cj4gTG9va3MgZm9yIG1lLCBTbzoKPgo+IEFja2VkLWJ5OiBNYXJrIFlhbyA8bWFyay55YW9Acm9j
+ay1jaGlwcy5jb20+Cj4KClRoYW5rcyBmb3IgeW91ciBhY2tzIDspCgotIFlha2lyCgoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
