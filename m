@@ -1,85 +1,250 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC v4 2/7] Revert "extcon: usb-gpio: switch to use pm wakeirq apis"
-Date: Wed, 08 Jun 2016 15:48:01 +0200
-Message-ID: <1465393686-16644-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC v4 4/7] extcon: usb-gpio: Add support for VBUS detection
+Date: Wed, 08 Jun 2016 15:48:03 +0200
+Message-ID: <1465393686-16644-5-git-send-email-k.kozlowski@samsung.com>
 References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:51303 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754215AbcFHNs0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 09:48:26 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, balbi@ti.com, kishon@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, rogerq@ti.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This reverts commit 8106e404174253639731cc30a44f5b3ab764c5b7.
+Add VBUS pin detection support to extcon-usb-gpio driver for boards
+which have both VBUS and ID pins, or only one of them.
 
-When using PM wakeirq API only one wakeup IRQ can be set. However the
-driver will support also VBUS GPIO so we need two wakeup interrupts.
+The logic behind reporting USB and USB-HOST extcon cables is not
+affected. The driver however will report extcon changes for USB-VBUS and
+USB-ID.
+
+Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
 ---
- drivers/extcon/extcon-usb-gpio.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+
+Some parts base on old Robert's patchset.
+---
+ drivers/extcon/extcon-usb-gpio.c | 125 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 99 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
-index 2512660dc4b9..a36aab007022 100644
+index a36aab007022..85b8a0ce5731 100644
 --- a/drivers/extcon/extcon-usb-gpio.c
 +++ b/drivers/extcon/extcon-usb-gpio.c
-@@ -24,7 +24,6 @@
- #include <linux/module.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
--#include <linux/pm_wakeirq.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- #include <linux/acpi.h>
-@@ -143,8 +142,7 @@ static int usb_extcon_probe(struct platform_device *pdev)
+@@ -35,7 +35,9 @@ struct usb_extcon_info {
+ 	struct extcon_dev *edev;
+ 
+ 	struct gpio_desc *id_gpiod;
++	struct gpio_desc *vbus_gpiod;
+ 	int id_irq;
++	int vbus_irq;
+ 
+ 	unsigned long debounce_jiffies;
+ 	struct delayed_work wq_detcable;
+@@ -44,6 +46,8 @@ struct usb_extcon_info {
+ static const unsigned int usb_extcon_cable[] = {
+ 	EXTCON_USB,
+ 	EXTCON_USB_HOST,
++	EXTCON_USB_ID,
++	EXTCON_USB_VBUS,
+ 	EXTCON_NONE,
+ };
+ 
+@@ -55,7 +59,8 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+ 						    wq_detcable);
+ 
+ 	/* check ID and update cable state */
+-	id = gpiod_get_value_cansleep(info->id_gpiod);
++	id = info->id_gpiod ? gpiod_get_value_cansleep(info->id_gpiod) : 1;
++
+ 	if (id) {
+ 		/*
+ 		 * ID = 1 means USB HOST cable detached.
+@@ -73,6 +78,14 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+ 		extcon_set_cable_state_(info->edev, EXTCON_USB, false);
+ 		extcon_set_cable_state_(info->edev, EXTCON_USB_HOST, true);
+ 	}
++
++	if (info->id_gpiod)
++		extcon_set_cable_state_(info->edev, EXTCON_USB_ID, id);
++	if (info->vbus_gpiod) {
++		int vbus = gpiod_get_value_cansleep(info->vbus_gpiod);
++
++		extcon_set_cable_state_(info->edev, EXTCON_USB_VBUS, vbus);
++	}
+ }
+ 
+ static irqreturn_t usb_irq_handler(int irq, void *dev_id)
+@@ -100,9 +113,11 @@ static int usb_extcon_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	info->dev = dev;
+-	info->id_gpiod = devm_gpiod_get(&pdev->dev, "id", GPIOD_IN);
+-	if (IS_ERR(info->id_gpiod)) {
+-		dev_err(dev, "failed to get ID GPIO\n");
++	info->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id", GPIOD_IN);
++	info->vbus_gpiod = devm_gpiod_get_optional(&pdev->dev, "vbus",
++						   GPIOD_IN);
++	if (!info->id_gpiod && !info->vbus_gpiod) {
++		dev_err(dev, "failed to get GPIOs\n");
+ 		return PTR_ERR(info->id_gpiod);
+ 	}
+ 
+@@ -118,27 +133,54 @@ static int usb_extcon_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = gpiod_set_debounce(info->id_gpiod,
+-				 USB_GPIO_DEBOUNCE_MS * 1000);
++	if (info->id_gpiod)
++		ret = gpiod_set_debounce(info->id_gpiod,
++			USB_GPIO_DEBOUNCE_MS * 1000);
++	if (!ret && info->vbus_gpiod) {
++		ret = gpiod_set_debounce(info->vbus_gpiod,
++			USB_GPIO_DEBOUNCE_MS * 1000);
++		if (ret < 0 && info->id_gpiod)
++			gpiod_set_debounce(info->vbus_gpiod, 0);
++	}
+ 	if (ret < 0)
+ 		info->debounce_jiffies = msecs_to_jiffies(USB_GPIO_DEBOUNCE_MS);
+ 
+ 	INIT_DELAYED_WORK(&info->wq_detcable, usb_extcon_detect_cable);
+ 
+-	info->id_irq = gpiod_to_irq(info->id_gpiod);
+-	if (info->id_irq < 0) {
+-		dev_err(dev, "failed to get ID IRQ\n");
+-		return info->id_irq;
++	if (info->id_gpiod) {
++		info->id_irq = gpiod_to_irq(info->id_gpiod);
++		if (info->id_irq < 0) {
++			dev_err(dev, "failed to get ID IRQ\n");
++			return info->id_irq;
++		}
++		ret = devm_request_threaded_irq(dev, info->id_irq, NULL,
++						usb_irq_handler,
++						IRQF_TRIGGER_RISING |
++						IRQF_TRIGGER_FALLING |
++						IRQF_ONESHOT,
++						pdev->name, info);
++		if (ret < 0) {
++			dev_err(dev, "failed to request handler for ID IRQ\n");
++			return ret;
++		}
+ 	}
+ 
+-	ret = devm_request_threaded_irq(dev, info->id_irq, NULL,
+-					usb_irq_handler,
+-					IRQF_TRIGGER_RISING |
+-					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+-					pdev->name, info);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to request handler for ID IRQ\n");
+-		return ret;
++	if (info->vbus_gpiod) {
++		info->vbus_irq = gpiod_to_irq(info->vbus_gpiod);
++		if (info->vbus_irq < 0) {
++			dev_err(dev, "failed to get VBUS IRQ\n");
++			return info->vbus_irq;
++		}
++		ret = devm_request_threaded_irq(dev, info->vbus_irq, NULL,
++						usb_irq_handler,
++						IRQF_TRIGGER_RISING |
++						IRQF_TRIGGER_FALLING |
++						IRQF_ONESHOT,
++						pdev->name, info);
++		if (ret < 0) {
++			dev_err(dev, "failed to request handler for VBUS IRQ\n");
++			return ret;
++		}
  	}
  
  	platform_set_drvdata(pdev, info);
--	device_init_wakeup(dev, true);
--	dev_pm_set_wake_irq(dev, info->id_irq);
-+	device_init_wakeup(dev, 1);
+@@ -166,9 +208,16 @@ static int usb_extcon_suspend(struct device *dev)
+ 	int ret = 0;
  
- 	/* Perform initial detection */
- 	usb_extcon_detect_cable(&info->wq_detcable.work);
-@@ -158,9 +156,6 @@ static int usb_extcon_remove(struct platform_device *pdev)
+ 	if (device_may_wakeup(dev)) {
+-		ret = enable_irq_wake(info->id_irq);
+-		if (ret)
+-			return ret;
++		if (info->id_gpiod) {
++			ret = enable_irq_wake(info->id_irq);
++			if (ret)
++				return ret;
++		}
++		if (info->vbus_gpiod) {
++			ret = enable_irq_wake(info->vbus_irq);
++			if (ret)
++				goto err;
++		}
+ 	}
  
- 	cancel_delayed_work_sync(&info->wq_detcable);
+ 	/*
+@@ -176,8 +225,16 @@ static int usb_extcon_suspend(struct device *dev)
+ 	 * as GPIOs used behind I2C subsystem might not be
+ 	 * accessible until resume completes. So disable IRQ.
+ 	 */
+-	disable_irq(info->id_irq);
++	if (info->id_gpiod)
++		disable_irq(info->id_irq);
++	if (info->vbus_gpiod)
++		disable_irq(info->vbus_irq);
++
++	return ret;
  
--	dev_pm_clear_wake_irq(&pdev->dev);
--	device_init_wakeup(&pdev->dev, false);
--
- 	return 0;
++err:
++	if (info->id_gpiod)
++		disable_irq_wake(info->id_irq);
+ 	return ret;
  }
  
-@@ -170,6 +165,12 @@ static int usb_extcon_suspend(struct device *dev)
- 	struct usb_extcon_info *info = dev_get_drvdata(dev);
+@@ -187,17 +244,33 @@ static int usb_extcon_resume(struct device *dev)
  	int ret = 0;
  
-+	if (device_may_wakeup(dev)) {
-+		ret = enable_irq_wake(info->id_irq);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/*
- 	 * We don't want to process any IRQs after this point
- 	 * as GPIOs used behind I2C subsystem might not be
-@@ -185,6 +186,12 @@ static int usb_extcon_resume(struct device *dev)
- 	struct usb_extcon_info *info = dev_get_drvdata(dev);
- 	int ret = 0;
+ 	if (device_may_wakeup(dev)) {
+-		ret = disable_irq_wake(info->id_irq);
+-		if (ret)
+-			return ret;
++		if (info->id_gpiod) {
++			ret = disable_irq_wake(info->id_irq);
++			if (ret)
++				return ret;
++		}
++		if (info->vbus_gpiod) {
++			ret = disable_irq_wake(info->vbus_irq);
++			if (ret)
++				goto err;
++		}
+ 	}
  
-+	if (device_may_wakeup(dev)) {
-+		ret = disable_irq_wake(info->id_irq);
-+		if (ret)
-+			return ret;
-+	}
+-	enable_irq(info->id_irq);
++	if (info->id_gpiod)
++		enable_irq(info->id_irq);
++	if (info->vbus_gpiod)
++		enable_irq(info->vbus_irq);
 +
- 	enable_irq(info->id_irq);
  	if (!device_may_wakeup(dev))
  		queue_delayed_work(system_power_efficient_wq,
+ 				   &info->wq_detcable, 0);
+ 
+ 	return ret;
++
++err:
++	if (info->id_gpiod)
++		enable_irq_wake(info->id_irq);
++	return ret;
+ }
+ #endif
+ 
 -- 
 1.9.1
