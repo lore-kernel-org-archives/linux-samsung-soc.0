@@ -1,87 +1,102 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC PATCH 15/15] iommu/exynos: update to use iommu big-endian
-Date: Thu, 09 Jun 2016 08:51:18 +0200
-Message-ID: <338cbdc6-2830-813b-713e-1cc40d23d1f9@samsung.com>
-References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-16-matthew@mattleach.net>
+From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RFC v4 2/7] Revert "extcon: usb-gpio: switch to use pm wakeirq
+ apis"
+Date: Thu, 9 Jun 2016 11:00:32 +0300
+Message-ID: <57592220.9030201@ti.com>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <1465393686-16644-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:15950 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753251AbcFIGvX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 02:51:23 -0400
-In-reply-to: <20160608183110.13851-16-matthew@mattleach.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1465393686-16644-3-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>, iommu@lists.linux-foundation.org
 
-Hi
+-balbi@ti
++balbi@kernel
 
+Hi,
 
-On 2016-06-08 20:31, Matthew Leach wrote:
-> From: Ben Dooks <ben.dooks@codethink.co.uk>
->
-> Add initial support for big endian by always writing the pte
-> in le32. Note, revisit if hardware capable of doing big endian
-> fetches.
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+On 08/06/16 16:48, Krzysztof Kozlowski wrote:
+> This reverts commit 8106e404174253639731cc30a44f5b3ab764c5b7.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The above commit id is not present in v4.7-rc1 and this patch doesn't apply properly.
+Can you please rebase this series on v4.7-rc1?
 
-Just to keep my curiosity satisfied - what's the reason to use
-big-endian on ARM?
-
-Good luck with fixing the kernel and userspace codes, which usually
-assume little-endian is the only possible order!
-
+> 
+> When using PM wakeirq API only one wakeup IRQ can be set. However the
+> driver will support also VBUS GPIO so we need two wakeup interrupts.
 > ---
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: iommu@lists.linux-foundation.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org (open list)
-> ---
->   drivers/iommu/exynos-iommu.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 5ecc86c..dd8b3b3 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -54,6 +54,10 @@ typedef u32 sysmmu_pte_t;
->   #define lv2ent_small(pent) ((*(pent) & 2) == 2)
->   #define lv2ent_large(pent) ((*(pent) & 3) == 1)
->   
-> +#ifdef CONFIG_BIG_ENDIAN
-> +#warning "revisit driver if we can enable big-endian ptes"
-> +#endif
+>  drivers/extcon/extcon-usb-gpio.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+> index 2512660dc4b9..a36aab007022 100644
+> --- a/drivers/extcon/extcon-usb-gpio.c
+> +++ b/drivers/extcon/extcon-usb-gpio.c
+> @@ -24,7 +24,6 @@
+>  #include <linux/module.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/pm_wakeirq.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/acpi.h>
+> @@ -143,8 +142,7 @@ static int usb_extcon_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	platform_set_drvdata(pdev, info);
+> -	device_init_wakeup(dev, true);
+> -	dev_pm_set_wake_irq(dev, info->id_irq);
+> +	device_init_wakeup(dev, 1);
+>  
+>  	/* Perform initial detection */
+>  	usb_extcon_detect_cable(&info->wq_detcable.work);
+> @@ -158,9 +156,6 @@ static int usb_extcon_remove(struct platform_device *pdev)
+>  
+>  	cancel_delayed_work_sync(&info->wq_detcable);
+>  
+> -	dev_pm_clear_wake_irq(&pdev->dev);
+> -	device_init_wakeup(&pdev->dev, false);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -170,6 +165,12 @@ static int usb_extcon_suspend(struct device *dev)
+>  	struct usb_extcon_info *info = dev_get_drvdata(dev);
+>  	int ret = 0;
+>  
+> +	if (device_may_wakeup(dev)) {
+> +		ret = enable_irq_wake(info->id_irq);
+> +		if (ret)
+> +			return ret;
+> +	}
 > +
+>  	/*
+>  	 * We don't want to process any IRQs after this point
+>  	 * as GPIOs used behind I2C subsystem might not be
+> @@ -185,6 +186,12 @@ static int usb_extcon_resume(struct device *dev)
+>  	struct usb_extcon_info *info = dev_get_drvdata(dev);
+>  	int ret = 0;
+>  
+> +	if (device_may_wakeup(dev)) {
+> +		ret = disable_irq_wake(info->id_irq);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	enable_irq(info->id_irq);
+>  	if (!device_may_wakeup(dev))
+>  		queue_delayed_work(system_power_efficient_wq,
+> 
 
-This warning can be removed. There is no way to force SYSMMU to operate with
-big-endian PTEs according to the datasheet.
-
->   /*
->    * v1.x - v3.x SYSMMU supports 32bit physical and 32bit virtual address spaces
->    * v5.0 introduced support for 36bit physical address space by shifting
-> @@ -716,7 +720,7 @@ static inline void update_pte(sysmmu_pte_t *ent, sysmmu_pte_t val)
->   {
->   	dma_sync_single_for_cpu(dma_dev, virt_to_phys(ent), sizeof(*ent),
->   				DMA_TO_DEVICE);
-> -	*ent = val;
-> +	*ent = cpu_to_le32(val);
->   	dma_sync_single_for_device(dma_dev, virt_to_phys(ent), sizeof(*ent),
->   				   DMA_TO_DEVICE);
->   }
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--
+cheers,
+-roger
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
