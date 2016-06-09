@@ -1,76 +1,114 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC v4 01/14] regulator: of: Add helper for getting all supplies
-Date: Thu, 09 Jun 2016 13:42:02 +0200
-Message-ID: <5759560A.70107@samsung.com>
-References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com>
- <1465465471-28740-2-git-send-email-k.kozlowski@samsung.com>
- <20160609102925.GS7510@sirena.org.uk>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: [RFC v4 4/7] extcon: usb-gpio: Add support for VBUS detection
+Date: Thu, 9 Jun 2016 15:13:41 +0300
+Message-ID: <57595D75.8090301@ti.com>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <1465393686-16644-5-git-send-email-k.kozlowski@samsung.com>
+ <57592B02.2070609@ti.com> <57592C18.8020609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <20160609102925.GS7510@sirena.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, hzpeterchen@gmail.com, Bartlomiej
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([198.47.19.11]:35698 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751172AbcFIMOX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 08:14:23 -0400
+In-Reply-To: <57592C18.8020609@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@kernel.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/09/2016 12:29 PM, Mark Brown wrote:
-> On Thu, Jun 09, 2016 at 11:44:18AM +0200, Krzysztof Kozlowski wrote:
->> Few drivers have a need of getting regulator supplies without knowing
->> their names:
->> 1. The Simple Framebuffer driver works on setup provided by bootloader
->>    (outside of scope of kernel);
->> 2. Generic power sequence driver may be attached to any device node.
+On 09/06/16 11:43, Krzysztof Kozlowski wrote:
+> On 06/09/2016 10:38 AM, Roger Quadros wrote:
+>> Hi,
 >>
->> Add a Device Tree helper for parsing "-supply" properties and returning
->> allocated bulk regulator consumers.
+>> On 08/06/16 16:48, Krzysztof Kozlowski wrote:
+>>> Add VBUS pin detection support to extcon-usb-gpio driver for boards
+>>> which have both VBUS and ID pins, or only one of them.
+>>>
+>>> The logic behind reporting USB and USB-HOST extcon cables is not
+>>> affected. The driver however will report extcon changes for USB-VBUS and
+>>> USB-ID.
+>>>
+>>> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>
+>>> ---
+>>>
+>>> Some parts base on old Robert's patchset.
+>>> ---
+>>>  drivers/extcon/extcon-usb-gpio.c | 125 +++++++++++++++++++++++++++++++--------
+>>>  1 file changed, 99 insertions(+), 26 deletions(-)
+>>>
+>>> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+>>> index a36aab007022..85b8a0ce5731 100644
+>>> --- a/drivers/extcon/extcon-usb-gpio.c
+>>> +++ b/drivers/extcon/extcon-usb-gpio.c
+>>> @@ -35,7 +35,9 @@ struct usb_extcon_info {
+>>>  	struct extcon_dev *edev;
+>>>  
+>>>  	struct gpio_desc *id_gpiod;
+>>> +	struct gpio_desc *vbus_gpiod;
+>>>  	int id_irq;
+>>> +	int vbus_irq;
+>>>  
+>>>  	unsigned long debounce_jiffies;
+>>>  	struct delayed_work wq_detcable;
+>>> @@ -44,6 +46,8 @@ struct usb_extcon_info {
+>>>  static const unsigned int usb_extcon_cable[] = {
+>>>  	EXTCON_USB,
+>>>  	EXTCON_USB_HOST,
+>>> +	EXTCON_USB_ID,
+>>> +	EXTCON_USB_VBUS,
+>>>  	EXTCON_NONE,
+>>>  };
+>>>  
+>>> @@ -55,7 +59,8 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+>>>  						    wq_detcable);
+>>>  
+>>>  	/* check ID and update cable state */
+>>> -	id = gpiod_get_value_cansleep(info->id_gpiod);
+>>> +	id = info->id_gpiod ? gpiod_get_value_cansleep(info->id_gpiod) : 1;
+>>> +
+>>>  	if (id) {
+>>>  		/*
+>>>  		 * ID = 1 means USB HOST cable detached.
+>>> @@ -73,6 +78,14 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+>>>  		extcon_set_cable_state_(info->edev, EXTCON_USB, false);
+>>>  		extcon_set_cable_state_(info->edev, EXTCON_USB_HOST, true);
+>>>  	}
+>>> +
+>>> +	if (info->id_gpiod)
+>>> +		extcon_set_cable_state_(info->edev, EXTCON_USB_ID, id);
+>>> +	if (info->vbus_gpiod) {
+>>> +		int vbus = gpiod_get_value_cansleep(info->vbus_gpiod);
+>>> +
+>>> +		extcon_set_cable_state_(info->edev, EXTCON_USB_VBUS, vbus);
+>>> +	}
+>>
+>> What happens if either id_gpiod or vbus_gpiod is present?
+>>
+>> As per the DT binding document
+>> "In general we have three cases:
+>> 1. If VBUS and ID gpios are present we pass them as is
+>> USB-HOST = !ID, USB = VBUS
+>> 2. If only VBUS gpio is present we assume that ID pin is always High.
+>> USB-HOST = false, USB = VBUS.
+>> 3. If only ID pin is available we infer the VBUS pin states based on ID.
+>> USB-HOST = !ID, USB = ID"
+>>
+>> So do you want to be consistent and infer VBUS and ID states based on the other?
 > 
-> I'm still very concerned that this is just an invitation to people to
-> write half baked regulator consumers and half baked DTs to go along with
-> it, making it a standard API that doesn't have big red flags on it that
-> will flag up when "normal" drivers use it is not good.  Right now this
-> just looks like a standard API and people are going to just start using
-> it.  If we are going to do this perhaps we need a separate header or
-> something to help flag this up.
-
-No problem, I can move it to a special header.  Actually, if you dislike
-this as an API, it does not have to be in header at all.  I can just
-duplicate the simplefb code.
-
-> In the case of power sequences I'd expect the sequences to perform
-> operations on named supplies - the core shouldn't know what the supplies
-> are but the thing specifying the sequence should.
-
-Hm, so maybe passing names like:
-
-usb3503@08 {
-	reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
-	initial-mode = <1>;
-	vdd-supply = <&buck8_reg>;
-	foo-supply = <&buck9_reg>;
-
-        power-sequence;
-	power-sequence-supplies = "vdd", "foo";
-};
-
-but this is getting against initial idea of not adding any
-power-sequence properties.
-
+> Right, I couldn't make up my mind whether I want to change/improve
+> existing logic or just add VBUS/ID raw notifying. Finally I left
+> original code for USB/USB-HOST cables alone.
 > 
->>  drivers/regulator/of_regulator.c       | 86 ++++++++++++++++++++++++++++++++++
->>  include/linux/regulator/of_regulator.h | 13 +++++
->>  2 files changed, 99 insertions(+)
-> 
-> The external interface shouldn't be DT specific, the Intel people are
-> busy importing all of DT into ACPI so they'll doubtless want an ACPI
-> version.
 
-Sure, I'll add it if this approach is acceptable.  At this moment this
-is not necessary to show my idea so I prefer to avoid doing work which
-might be discarded very fast by review.
+I think it is better to stick to raw notifying so nothing needs to be changed.
+If there is some mechanism to get the pin state and if the pin is not available
+it should return error.
 
-Thanks for feedback!
-
-Best regards,
-Krzysztof
+cheers,
+-roger
