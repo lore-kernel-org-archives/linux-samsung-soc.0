@@ -1,108 +1,122 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC v4 4/7] extcon: usb-gpio: Add support for VBUS detection
-Date: Thu, 09 Jun 2016 10:43:04 +0200
-Message-ID: <57592C18.8020609@samsung.com>
-References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
- <1465393686-16644-5-git-send-email-k.kozlowski@samsung.com>
- <57592B02.2070609@ti.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
+Date: Thu, 09 Jun 2016 18:32:42 +0900
+Message-ID: <575937BA.1070609@samsung.com>
+References: <CGME20160608134820epcas1p4ee75a89888f2ae2adb733124a330bd2c@epcas1p4.samsung.com>
+ <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <57592A40.9080608@samsung.com> <57592B4A.4000407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51086 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbcFIInJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 04:43:09 -0400
-In-reply-to: <57592B02.2070609@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <57592B4A.4000407-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rogerq-l0cyMroinI0@public.gmane.org, Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Roger Quadros <rogerq@ti.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@kernel.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/09/2016 10:38 AM, Roger Quadros wrote:
+Hi,
+
+On 2016=EB=85=84 06=EC=9B=94 09=EC=9D=BC 17:39, Krzysztof Kozlowski wro=
+te:
+>=20
 > Hi,
-> 
-> On 08/06/16 16:48, Krzysztof Kozlowski wrote:
->> Add VBUS pin detection support to extcon-usb-gpio driver for boards
->> which have both VBUS and ID pins, or only one of them.
+>=20
+>=20
+> On 06/09/2016 10:35 AM, Chanwoo Choi wrote:
+>> Hi,
 >>
->> The logic behind reporting USB and USB-HOST extcon cables is not
->> affected. The driver however will report extcon changes for USB-VBUS and
->> USB-ID.
+>> It is good to support USB_ID and USB_VBUS by extcon.
 >>
->> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> But,
+>> there is some issue about adding the new cable type for
+>> both EXTCON_USB_ID and EXTCON_USB_VBUS
 >>
->> ---
+>> I think that the ID and VBUS state are not cable type
+>> Instead, ID and VBUS state are the property of USB cable.
 >>
->> Some parts base on old Robert's patchset.
->> ---
->>  drivers/extcon/extcon-usb-gpio.c | 125 +++++++++++++++++++++++++++++++--------
->>  1 file changed, 99 insertions(+), 26 deletions(-)
+>> So, I'd like to add the following function to support
+>> the property of each cable as following:
+>> The client driver can get the state of property by using
+>> the extcon_get_cable_property_state().
 >>
->> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
->> index a36aab007022..85b8a0ce5731 100644
->> --- a/drivers/extcon/extcon-usb-gpio.c
->> +++ b/drivers/extcon/extcon-usb-gpio.c
->> @@ -35,7 +35,9 @@ struct usb_extcon_info {
->>  	struct extcon_dev *edev;
->>  
->>  	struct gpio_desc *id_gpiod;
->> +	struct gpio_desc *vbus_gpiod;
->>  	int id_irq;
->> +	int vbus_irq;
->>  
->>  	unsigned long debounce_jiffies;
->>  	struct delayed_work wq_detcable;
->> @@ -44,6 +46,8 @@ struct usb_extcon_info {
->>  static const unsigned int usb_extcon_cable[] = {
->>  	EXTCON_USB,
->>  	EXTCON_USB_HOST,
->> +	EXTCON_USB_ID,
->> +	EXTCON_USB_VBUS,
->>  	EXTCON_NONE,
->>  };
->>  
->> @@ -55,7 +59,8 @@ static void usb_extcon_detect_cable(struct work_struct *work)
->>  						    wq_detcable);
->>  
->>  	/* check ID and update cable state */
->> -	id = gpiod_get_value_cansleep(info->id_gpiod);
->> +	id = info->id_gpiod ? gpiod_get_value_cansleep(info->id_gpiod) : 1;
->> +
->>  	if (id) {
->>  		/*
->>  		 * ID = 1 means USB HOST cable detached.
->> @@ -73,6 +78,14 @@ static void usb_extcon_detect_cable(struct work_struct *work)
->>  		extcon_set_cable_state_(info->edev, EXTCON_USB, false);
->>  		extcon_set_cable_state_(info->edev, EXTCON_USB_HOST, true);
->>  	}
->> +
->> +	if (info->id_gpiod)
->> +		extcon_set_cable_state_(info->edev, EXTCON_USB_ID, id);
->> +	if (info->vbus_gpiod) {
->> +		int vbus = gpiod_get_value_cansleep(info->vbus_gpiod);
->> +
->> +		extcon_set_cable_state_(info->edev, EXTCON_USB_VBUS, vbus);
->> +	}
-> 
-> What happens if either id_gpiod or vbus_gpiod is present?
-> 
-> As per the DT binding document
-> "In general we have three cases:
-> 1. If VBUS and ID gpios are present we pass them as is
-> USB-HOST = !ID, USB = VBUS
-> 2. If only VBUS gpio is present we assume that ID pin is always High.
-> USB-HOST = false, USB = VBUS.
-> 3. If only ID pin is available we infer the VBUS pin states based on ID.
-> USB-HOST = !ID, USB = ID"
-> 
-> So do you want to be consistent and infer VBUS and ID states based on the other?
+>> - int extcon_get_cable_property_state(struct extcon_dev *edev,
+>> 				unsigned int id,
+>> 				enum extcon_property property);
+>> - int extcon_set_cable_property_state(struct extcon_dev *edev,
+>> 				unsigned int id,
+>> 				enum extcon_property property,
+>> 				unsigned int state);
+>>
+>> For example,
+>> In extcon-usb-gpio.c, set state of property as follwoing:
+>> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_I=
+D, 1);
+>> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_V=
+BUS, 1);
+>>
+>>
+>> In the extcon client driver, get state of property as following:
+>> 	id_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EXTC=
+ON_USB_PROP_ID);
+>> 	vbus_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EX=
+TCON_USB_PROP_VUBS);
+>=20
+> How one can receive notifications with this API?
 
-Right, I couldn't make up my mind whether I want to change/improve
-existing logic or just add VBUS/ID raw notifying. Finally I left
-original code for USB/USB-HOST cables alone.
+I think that the extcon don't support the notification only for propert=
+y.
+When USB or USB_HOST cable state is changed, the client driver
+call the extcon_get_cable_property_state() to read the state of propert=
+y.
 
-Best regards,
-Krzysztof
+Namely, the property depend on the specific external connector.
+
+>=20
+> Last time you wrote, at the end of discussion:
+> http://thread.gmane.org/gmane.linux.kernel/1923192/focus=3D1923193
+>> IMO, if some usb driver check both id and vbus pin at the same time,
+>> the usb driver can know the both id and vbus pin state through only
+> one notifier event.
+>>
+>> Also,
+>> If some usb driver want to know the state of id pin except of vbus s=
+tate,
+>> when receiving following events, id pin is low.
+>> 	#define EXTCON_USB_ID_L_VBUS_L0
+>> 	#define EXTCON_USB_ID_L_VBUS_H1
+>> when receiving following events, id pin is high.
+>> 	#define EXTCON_USB_ID_H_VBUS_L2
+>> 	#define EXTCON_USB_ID_H_VBUS_H3
+>> Also, some usb driver would catch the vbus pin state with same metho=
+d.
+>>
+>> But, it is just my opinion. We may use following notifier events for
+> each pin.
+>> We need to discuss it.
+>> 	#define EXTCON_USB_ID_LOW
+>> 	#define EXTCON_USB_ID_HIGH=09
+>> 	#define EXTCON_USB_VBUS_LOW
+>> 	#define EXTCON_USB_VBUS_HIGH
+>=20
+> ... all other participants agreed on that conclusion. So why change o=
+f
+> view point now?
+
+Unitl now, the extcon framework only handle the state of external conne=
+ctor(cable).
+- The state of external connector is either attached or detached.
+
+I think that ID and VBUS are not external connector(cable).
+The ID and VBUS are more appropriate as property than new type of exter=
+nal connector.
+
+Regards,
+Chanwoo Choi
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
