@@ -1,102 +1,45 @@
-From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC v4 2/7] Revert "extcon: usb-gpio: switch to use pm wakeirq
- apis"
-Date: Thu, 9 Jun 2016 11:00:32 +0300
-Message-ID: <57592220.9030201@ti.com>
-References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
- <1465393686-16644-3-git-send-email-k.kozlowski@samsung.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [RFC PATCH 00/15] Exynos big-endian fixes
+Date: Thu, 9 Jun 2016 09:09:34 +0100
+Message-ID: <2bd53bbc-b8de-e616-b4ee-412330910a34@codethink.co.uk>
+References: <20160608183110.13851-1-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1465393686-16644-3-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:38839 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161123AbcFIIJk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 04:09:40 -0400
+In-Reply-To: <20160608183110.13851-1-matthew@mattleach.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
--balbi@ti
-+balbi@kernel
-
-Hi,
-
-On 08/06/16 16:48, Krzysztof Kozlowski wrote:
-> This reverts commit 8106e404174253639731cc30a44f5b3ab764c5b7.
-
-The above commit id is not present in v4.7-rc1 and this patch doesn't apply properly.
-Can you please rebase this series on v4.7-rc1?
-
+On 08/06/16 19:30, Matthew Leach wrote:
+> Hi all,
 > 
-> When using PM wakeirq API only one wakeup IRQ can be set. However the
-> driver will support also VBUS GPIO so we need two wakeup interrupts.
-> ---
->  drivers/extcon/extcon-usb-gpio.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
+> I've been working with Ben Dooks to get a big-endian kernel working on
+> my Exynos 4412 board.  Primarily this series consists of:
 > 
-> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
-> index 2512660dc4b9..a36aab007022 100644
-> --- a/drivers/extcon/extcon-usb-gpio.c
-> +++ b/drivers/extcon/extcon-usb-gpio.c
-> @@ -24,7 +24,6 @@
->  #include <linux/module.h>
->  #include <linux/of_gpio.h>
->  #include <linux/platform_device.h>
-> -#include <linux/pm_wakeirq.h>
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
->  #include <linux/acpi.h>
-> @@ -143,8 +142,7 @@ static int usb_extcon_probe(struct platform_device *pdev)
->  	}
->  
->  	platform_set_drvdata(pdev, info);
-> -	device_init_wakeup(dev, true);
-> -	dev_pm_set_wake_irq(dev, info->id_irq);
-> +	device_init_wakeup(dev, 1);
->  
->  	/* Perform initial detection */
->  	usb_extcon_detect_cable(&info->wq_detcable.work);
-> @@ -158,9 +156,6 @@ static int usb_extcon_remove(struct platform_device *pdev)
->  
->  	cancel_delayed_work_sync(&info->wq_detcable);
->  
-> -	dev_pm_clear_wake_irq(&pdev->dev);
-> -	device_init_wakeup(&pdev->dev, false);
-> -
->  	return 0;
->  }
->  
-> @@ -170,6 +165,12 @@ static int usb_extcon_suspend(struct device *dev)
->  	struct usb_extcon_info *info = dev_get_drvdata(dev);
->  	int ret = 0;
->  
-> +	if (device_may_wakeup(dev)) {
-> +		ret = enable_irq_wake(info->id_irq);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	/*
->  	 * We don't want to process any IRQs after this point
->  	 * as GPIOs used behind I2C subsystem might not be
-> @@ -185,6 +186,12 @@ static int usb_extcon_resume(struct device *dev)
->  	struct usb_extcon_info *info = dev_get_drvdata(dev);
->  	int ret = 0;
->  
-> +	if (device_may_wakeup(dev)) {
-> +		ret = disable_irq_wake(info->id_irq);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	enable_irq(info->id_irq);
->  	if (!device_may_wakeup(dev))
->  		queue_delayed_work(system_power_efficient_wq,
+>   - Replacing the __raw_{read,write}l accessors, which aren't
+>     endian-clean, with their respective {read,write}l_relaxed versions
+>     across various drivers.
 > 
+>   - Adding endian-aware {set,clear}_bit functions to the Exynos serial
+>     driver as the __{set,clear}_bit() functions aren't endian-clean.
+> 
+>   - Make the low-level Exynos debug printing macros endian-clean.
+> 
+> There may well be other things that are broken under BE that we've not
+> tested but this series should be enough to allow a board to boot
+> user-space to a login prompt.
 
---
-cheers,
--roger
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The only nit is the use of "be", it would be nicer to either use
+BE8 consistently, or go for "big endian".
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
