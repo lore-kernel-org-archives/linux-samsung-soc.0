@@ -1,63 +1,51 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v3 06/12] power: pwrseq: simple: Add support for regulator
- and generic property
-Date: Thu, 9 Jun 2016 10:34:06 +0800
-Message-ID: <CAGb2v66OO0QJ75=hLnRukhXWdX7HgSy0LDakdZ_jxFRCHTUuJw@mail.gmail.com>
-References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
- <1464768141-25420-7-git-send-email-k.kozlowski@samsung.com>
- <20160603020218.GA19436@rob-hp-laptop> <575693DE.2010603@samsung.com> <20160608190333.GA5126@rob-hp-laptop>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig add CONFIG_EXYNOS_IOMMU in not set
+ mode
+Date: Thu, 09 Jun 2016 07:04:06 +0200
+Message-ID: <5758F8C6.2090700@samsung.com>
+References: <1465406523-7075-1-git-send-email-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160608190333.GA5126@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb <linux-usb@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>, hzpeterchen@gmail.co
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40206 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751354AbcFIFEN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 01:04:13 -0400
+In-reply-to: <1465406523-7075-1-git-send-email-shuahkh@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>, linux@armlinux.org.uk, kgene@kernel.org, javier@osg.samsung.com, linux.amoon@gmail.com, m.szyprowski@samsung.com, treding@nvidia.com, b.zolnierkie@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi
+On 06/08/2016 07:22 PM, Shuah Khan wrote:
+> Add CONFIG_EXYNOS_IOMMU in not set mode to make it easier to enable it.
 
-On Thu, Jun 9, 2016 at 3:03 AM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Jun 07, 2016 at 11:29:02AM +0200, Krzysztof Kozlowski wrote:
->> On 06/03/2016 04:02 AM, Rob Herring wrote:
->> >>  Optional properties:
->> >>  - reset-gpios : contains a list of GPIO specifiers. The reset GPIOs are asserted
->> >> @@ -16,6 +22,7 @@ Optional properties:
->> >>    See ../clocks/clock-bindings.txt for details.
->> >>  - clock-names : Must include the following entry:
->> >>    "ext_clock" (External clock provided to the card).
->> >> +- ext-supply : External regulator supply
->> >
->> > What happens when there are 2 supplies?
->> >
->> > I'd prefer the name not be genericish and use the real supply names.
->> > Then the power seq code should just turn on all supplies it finds. If
->> > the order or timing to turn on matters, then sorry, no generic sequence.
->>
->> I think the generic part for regulators might be a problem. Regulator
->> API requires a name for the supply... it cannot get "something" or
->> "everything".
->
-> That's the downside of variable property names...
->
->> The driver could attach itself to any kind of node (where power-sequence
->> property exists) so the supply name depends on the bindings of device
->> (not bindings of power sequence driver).
->>
->> The power sequence driver could however iterate over child properties
->> and get the names of all supplies. It is a little bit ugly...
->
-> Yes. Like this, right?
->
-> for_each_property_of_node(np, pp) {
->         if (!strstr(pp->name, "-supply"))
->                 continue;
->         // found supply
-> }
->
-> The uglyness can always be improved with a function to do this parsing.
+Hmmm... How does it make it easier? Enabling such item is just adding
+new line, so what is the problem solved here?
 
-There's already a version of this in simplefb. Maybe it's time to move
-this to a common function?
+Anyway the line will disappear on first savedefconfig (because it should
+not be there...) so there is really no point of it.
 
-ChenYu
+Best regards,
+Krzysztof
+
+> 
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index daf9762..16c2957 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -218,6 +218,7 @@ CONFIG_CROS_EC_CHARDEV=y
+>  CONFIG_COMMON_CLK_MAX77686=y
+>  CONFIG_COMMON_CLK_MAX77802=y
+>  CONFIG_COMMON_CLK_S2MPS11=y
+> +# CONFIG_EXYNOS_IOMMU is not set
+>  CONFIG_EXTCON=y
+>  CONFIG_EXTCON_MAX14577=y
+>  CONFIG_EXTCON_MAX77693=y
