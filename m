@@ -1,50 +1,54 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [RFC PATCH 05/15] tty: serial: samsung: fixup accessors for
- endian
-Date: Thu, 9 Jun 2016 09:12:24 +0100
-Message-ID: <b0100449-a6e2-f23a-7434-af947556037c@codethink.co.uk>
+Subject: Re: [RFC PATCH 15/15] iommu/exynos: update to use iommu big-endian
+Date: Thu, 9 Jun 2016 09:14:31 +0100
+Message-ID: <f3c322a3-b474-ff46-7be3-8fa9c069a51b@codethink.co.uk>
 References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-6-matthew@mattleach.net>
+ <20160608183110.13851-16-matthew@mattleach.net>
+ <338cbdc6-2830-813b-713e-1cc40d23d1f9@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160608183110.13851-6-matthew@mattleach.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:39031 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161123AbcFIIOg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 04:14:36 -0400
+In-Reply-To: <338cbdc6-2830-813b-713e-1cc40d23d1f9@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>, iommu@lists.linux-foundation.org
 
-On 08/06/16 19:31, Matthew Leach wrote:
-> Fix the serial access code to deal with kernels built for big endian
-> operation.
+On 09/06/16 07:51, Marek Szyprowski wrote:
+> Hi
 > 
-> Signed-off-by: Matthew Leach <matthew@mattleach.net>
-> ---
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Jiri Slaby <jslaby@suse.com>
-> CC: linux-serial@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  drivers/tty/serial/samsung.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
-> index fc5deaa..8818bdd 100644
-> --- a/drivers/tty/serial/samsung.h
-> +++ b/drivers/tty/serial/samsung.h
-> @@ -118,9 +118,9 @@ struct s3c24xx_uart_port {
->  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
->  
->  #define rd_regb(port, reg) (__raw_readb(portaddr(port, reg)))
-> -#define rd_regl(port, reg) (__raw_readl(portaddr(port, reg)))
-> +#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
->  
->  #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
-> -#define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
-> +#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
+> On 2016-06-08 20:31, Matthew Leach wrote:
+>> From: Ben Dooks <ben.dooks@codethink.co.uk>
+>>
+>> Add initial support for big endian by always writing the pte
+>> in le32. Note, revisit if hardware capable of doing big endian
+>> fetches.
+>>
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> 
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Just to keep my curiosity satisfied - what's the reason to use
+> big-endian on ARM?
 
-I suppose for complete-ness we should have changed the readbs as well.
+Because we can. It was interesting to try.
+
+> Good luck with fixing the kernel and userspace codes, which usually
+> assume little-endian is the only possible order!
+
+We did a BE8 build of the baserock userspace a year or two ago
+and found mostly it just worked. I think Matt is using that image
+for testing the work he's been doing.
+
+I've no idea if we would ever bother trying to build Debian for BE8
+or similar, as not sure it would be worth trying.
 
 -- 
 Ben Dooks				http://www.codethink.co.uk/
