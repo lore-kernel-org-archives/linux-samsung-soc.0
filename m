@@ -1,117 +1,271 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
-Date: Thu, 09 Jun 2016 17:35:12 +0900
-Message-ID: <57592A40.9080608@samsung.com>
-References: <CGME20160608134820epcas1p4ee75a89888f2ae2adb733124a330bd2c@epcas1p4.samsung.com>
- <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: [RFC v4 4/7] extcon: usb-gpio: Add support for VBUS detection
+Date: Thu, 9 Jun 2016 11:38:26 +0300
+Message-ID: <57592B02.2070609@ti.com>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <1465393686-16644-5-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42923 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751379AbcFIIfQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 04:35:16 -0400
-In-reply-to: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1465393686-16644-5-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, balbi@kernel.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, kishon@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 Hi,
 
-It is good to support USB_ID and USB_VBUS by extcon.
+On 08/06/16 16:48, Krzysztof Kozlowski wrote:
+> Add VBUS pin detection support to extcon-usb-gpio driver for boards
+> which have both VBUS and ID pins, or only one of them.
+> 
+> The logic behind reporting USB and USB-HOST extcon cables is not
+> affected. The driver however will report extcon changes for USB-VBUS and
+> USB-ID.
+> 
+> Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> Some parts base on old Robert's patchset.
+> ---
+>  drivers/extcon/extcon-usb-gpio.c | 125 +++++++++++++++++++++++++++++++--------
+>  1 file changed, 99 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+> index a36aab007022..85b8a0ce5731 100644
+> --- a/drivers/extcon/extcon-usb-gpio.c
+> +++ b/drivers/extcon/extcon-usb-gpio.c
+> @@ -35,7 +35,9 @@ struct usb_extcon_info {
+>  	struct extcon_dev *edev;
+>  
+>  	struct gpio_desc *id_gpiod;
+> +	struct gpio_desc *vbus_gpiod;
+>  	int id_irq;
+> +	int vbus_irq;
+>  
+>  	unsigned long debounce_jiffies;
+>  	struct delayed_work wq_detcable;
+> @@ -44,6 +46,8 @@ struct usb_extcon_info {
+>  static const unsigned int usb_extcon_cable[] = {
+>  	EXTCON_USB,
+>  	EXTCON_USB_HOST,
+> +	EXTCON_USB_ID,
+> +	EXTCON_USB_VBUS,
+>  	EXTCON_NONE,
+>  };
+>  
+> @@ -55,7 +59,8 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+>  						    wq_detcable);
+>  
+>  	/* check ID and update cable state */
+> -	id = gpiod_get_value_cansleep(info->id_gpiod);
+> +	id = info->id_gpiod ? gpiod_get_value_cansleep(info->id_gpiod) : 1;
+> +
+>  	if (id) {
+>  		/*
+>  		 * ID = 1 means USB HOST cable detached.
+> @@ -73,6 +78,14 @@ static void usb_extcon_detect_cable(struct work_struct *work)
+>  		extcon_set_cable_state_(info->edev, EXTCON_USB, false);
+>  		extcon_set_cable_state_(info->edev, EXTCON_USB_HOST, true);
+>  	}
+> +
+> +	if (info->id_gpiod)
+> +		extcon_set_cable_state_(info->edev, EXTCON_USB_ID, id);
+> +	if (info->vbus_gpiod) {
+> +		int vbus = gpiod_get_value_cansleep(info->vbus_gpiod);
+> +
+> +		extcon_set_cable_state_(info->edev, EXTCON_USB_VBUS, vbus);
+> +	}
 
-But,
-there is some issue about adding the new cable type for
-both EXTCON_USB_ID and EXTCON_USB_VBUS
+What happens if either id_gpiod or vbus_gpiod is present?
 
-I think that the ID and VBUS state are not cable type
-Instead, ID and VBUS state are the property of USB cable.
+As per the DT binding document
+"In general we have three cases:
+1. If VBUS and ID gpios are present we pass them as is
+USB-HOST = !ID, USB = VBUS
+2. If only VBUS gpio is present we assume that ID pin is always High.
+USB-HOST = false, USB = VBUS.
+3. If only ID pin is available we infer the VBUS pin states based on ID.
+USB-HOST = !ID, USB = ID"
 
-So, I'd like to add the following function to support
-the property of each cable as following:
-The client driver can get the state of property by using
-the extcon_get_cable_property_state().
+So do you want to be consistent and infer VBUS and ID states based on the other?
 
-- int extcon_get_cable_property_state(struct extcon_dev *edev,
-				unsigned int id,
-				enum extcon_property property);
-- int extcon_set_cable_property_state(struct extcon_dev *edev,
-				unsigned int id,
-				enum extcon_property property,
-				unsigned int state);
+>  }
+>  
+>  static irqreturn_t usb_irq_handler(int irq, void *dev_id)
+> @@ -100,9 +113,11 @@ static int usb_extcon_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	info->dev = dev;
+> -	info->id_gpiod = devm_gpiod_get(&pdev->dev, "id", GPIOD_IN);
+> -	if (IS_ERR(info->id_gpiod)) {
+> -		dev_err(dev, "failed to get ID GPIO\n");
+> +	info->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id", GPIOD_IN);
+> +	info->vbus_gpiod = devm_gpiod_get_optional(&pdev->dev, "vbus",
+> +						   GPIOD_IN);
+> +	if (!info->id_gpiod && !info->vbus_gpiod) {
+> +		dev_err(dev, "failed to get GPIOs\n");
+>  		return PTR_ERR(info->id_gpiod);
+>  	}
+>  
+> @@ -118,27 +133,54 @@ static int usb_extcon_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = gpiod_set_debounce(info->id_gpiod,
+> -				 USB_GPIO_DEBOUNCE_MS * 1000);
+> +	if (info->id_gpiod)
+> +		ret = gpiod_set_debounce(info->id_gpiod,
+> +			USB_GPIO_DEBOUNCE_MS * 1000);
+> +	if (!ret && info->vbus_gpiod) {
+> +		ret = gpiod_set_debounce(info->vbus_gpiod,
+> +			USB_GPIO_DEBOUNCE_MS * 1000);
+> +		if (ret < 0 && info->id_gpiod)
+> +			gpiod_set_debounce(info->vbus_gpiod, 0);
+> +	}
+>  	if (ret < 0)
+>  		info->debounce_jiffies = msecs_to_jiffies(USB_GPIO_DEBOUNCE_MS);
+>  
+>  	INIT_DELAYED_WORK(&info->wq_detcable, usb_extcon_detect_cable);
+>  
+> -	info->id_irq = gpiod_to_irq(info->id_gpiod);
+> -	if (info->id_irq < 0) {
+> -		dev_err(dev, "failed to get ID IRQ\n");
+> -		return info->id_irq;
+> +	if (info->id_gpiod) {
+> +		info->id_irq = gpiod_to_irq(info->id_gpiod);
+> +		if (info->id_irq < 0) {
+> +			dev_err(dev, "failed to get ID IRQ\n");
+> +			return info->id_irq;
+> +		}
+> +		ret = devm_request_threaded_irq(dev, info->id_irq, NULL,
+> +						usb_irq_handler,
+> +						IRQF_TRIGGER_RISING |
+> +						IRQF_TRIGGER_FALLING |
+> +						IRQF_ONESHOT,
+> +						pdev->name, info);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to request handler for ID IRQ\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+> -	ret = devm_request_threaded_irq(dev, info->id_irq, NULL,
+> -					usb_irq_handler,
+> -					IRQF_TRIGGER_RISING |
+> -					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> -					pdev->name, info);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to request handler for ID IRQ\n");
+> -		return ret;
+> +	if (info->vbus_gpiod) {
+> +		info->vbus_irq = gpiod_to_irq(info->vbus_gpiod);
+> +		if (info->vbus_irq < 0) {
+> +			dev_err(dev, "failed to get VBUS IRQ\n");
+> +			return info->vbus_irq;
+> +		}
+> +		ret = devm_request_threaded_irq(dev, info->vbus_irq, NULL,
+> +						usb_irq_handler,
+> +						IRQF_TRIGGER_RISING |
+> +						IRQF_TRIGGER_FALLING |
+> +						IRQF_ONESHOT,
+> +						pdev->name, info);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to request handler for VBUS IRQ\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	platform_set_drvdata(pdev, info);
+> @@ -166,9 +208,16 @@ static int usb_extcon_suspend(struct device *dev)
+>  	int ret = 0;
+>  
+>  	if (device_may_wakeup(dev)) {
+> -		ret = enable_irq_wake(info->id_irq);
+> -		if (ret)
+> -			return ret;
+> +		if (info->id_gpiod) {
+> +			ret = enable_irq_wake(info->id_irq);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		if (info->vbus_gpiod) {
+> +			ret = enable_irq_wake(info->vbus_irq);
+> +			if (ret)
+> +				goto err;
+> +		}
+>  	}
+>  
+>  	/*
+> @@ -176,8 +225,16 @@ static int usb_extcon_suspend(struct device *dev)
+>  	 * as GPIOs used behind I2C subsystem might not be
+>  	 * accessible until resume completes. So disable IRQ.
+>  	 */
+> -	disable_irq(info->id_irq);
+> +	if (info->id_gpiod)
+> +		disable_irq(info->id_irq);
+> +	if (info->vbus_gpiod)
+> +		disable_irq(info->vbus_irq);
+> +
+> +	return ret;
+>  
+> +err:
+> +	if (info->id_gpiod)
+> +		disable_irq_wake(info->id_irq);
+>  	return ret;
+>  }
+>  
+> @@ -187,17 +244,33 @@ static int usb_extcon_resume(struct device *dev)
+>  	int ret = 0;
+>  
+>  	if (device_may_wakeup(dev)) {
+> -		ret = disable_irq_wake(info->id_irq);
+> -		if (ret)
+> -			return ret;
+> +		if (info->id_gpiod) {
+> +			ret = disable_irq_wake(info->id_irq);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		if (info->vbus_gpiod) {
+> +			ret = disable_irq_wake(info->vbus_irq);
+> +			if (ret)
+> +				goto err;
+> +		}
+>  	}
+>  
+> -	enable_irq(info->id_irq);
+> +	if (info->id_gpiod)
+> +		enable_irq(info->id_irq);
+> +	if (info->vbus_gpiod)
+> +		enable_irq(info->vbus_irq);
+> +
+>  	if (!device_may_wakeup(dev))
+>  		queue_delayed_work(system_power_efficient_wq,
+>  				   &info->wq_detcable, 0);
+>  
+>  	return ret;
+> +
+> +err:
+> +	if (info->id_gpiod)
+> +		enable_irq_wake(info->id_irq);
+> +	return ret;
+>  }
+>  #endif
+>  
+> 
 
-=46or example,
-In extcon-usb-gpio.c, set state of property as follwoing:
-	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_ID, =
-1);
-	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_VBUS=
-, 1);
-
-
-In the extcon client driver, get state of property as following:
-	id_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EXTCON_=
-USB_PROP_ID);
-	vbus_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EXTCO=
-N_USB_PROP_VUBS);
-
-Regards,
-Chanwoo Choi
-
-
-On 2016=EB=85=84 06=EC=9B=94 08=EC=9D=BC 22:47, Krzysztof Kozlowski wro=
-te:
-> Hi,
->=20
->=20
-> Some time ago, Robert tried to add VBUS detection to extcon-usb-gpio
-> driver [1].  There was a discussion about patch #2 ("extcon: usb-gpio=
-:
-> add support for VBUS detection").
->=20
-> The final conclusion was that Chanwoo will add VBUS/ID notifiers [2].
-> That unfortunately never happened so this patchset is a follow up.
->=20
-> 1. Add VBUS/ID cable state notifiers to extcon, so USB controllers
->    could use it.
-> 2. Add VBUS detection to extcon-usb-gpio driver.
->=20
-> Some parts are based on old Robert's work, some are new, some are
-> reworked.
->=20
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> [1] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=3D192319=
-3
-> [2] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=3D194115=
-2
->=20
->=20
-> Krzysztof Kozlowski (5):
->   Revert "extcon: usb-gpio: switch to use pm wakeirq apis"
->   extcon: Add raw VBUS and ID cable states
->   extcon: usb-gpio: Add support for VBUS detection
->   ARM: exynos_defconfig: Enable EXTCON_USB_GPIO for Odroid XU3 USB OT=
-G
->   ARM: dts: exynos: Add extcon-usb-gpio node for Odroid XU3
->=20
-> Robert Baldyga (2):
->   Documentation: extcon: usb-gpio: update usb-gpio binding descriptio=
-n
->   extcon: usb-gpio: make debounce value configurable in devicetree
->=20
->  .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  28 ++++-
->  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  21 ++++
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  21 ++++
->  arch/arm/configs/exynos_defconfig                  |   1 +
->  drivers/extcon/extcon-usb-gpio.c                   | 138 +++++++++++=
-++++++----
->  drivers/extcon/extcon.c                            |   3 +
->  include/linux/extcon.h                             |   8 +-
->  7 files changed, 190 insertions(+), 30 deletions(-)
->=20
+--
+cheers,
+-roger
