@@ -1,51 +1,75 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig add CONFIG_EXYNOS_IOMMU in not set
- mode
-Date: Thu, 09 Jun 2016 07:04:06 +0200
-Message-ID: <5758F8C6.2090700@samsung.com>
-References: <1465406523-7075-1-git-send-email-shuahkh@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 06/12] power: pwrseq: simple: Add support for regulator
+ and generic property
+Date: Thu, 09 Jun 2016 07:11:32 +0200
+Message-ID: <5758FA84.3050909@samsung.com>
+References: <1464768141-25420-1-git-send-email-k.kozlowski@samsung.com>
+ <1464768141-25420-7-git-send-email-k.kozlowski@samsung.com>
+ <20160603020218.GA19436@rob-hp-laptop> <575693DE.2010603@samsung.com>
+ <20160608190333.GA5126@rob-hp-laptop>
+ <CAGb2v66OO0QJ75=hLnRukhXWdX7HgSy0LDakdZ_jxFRCHTUuJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40206 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354AbcFIFEN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 01:04:13 -0400
-In-reply-to: <1465406523-7075-1-git-send-email-shuahkh@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAGb2v66OO0QJ75=hLnRukhXWdX7HgSy0LDakdZ_jxFRCHTUuJw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-pm-u79uwXL29TaqPxH82wqD4g@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, linux@armlinux.org.uk, kgene@kernel.org, javier@osg.samsung.com, linux.amoon@gmail.com, m.szyprowski@samsung.com, treding@nvidia.com, b.zolnierkie@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/08/2016 07:22 PM, Shuah Khan wrote:
-> Add CONFIG_EXYNOS_IOMMU in not set mode to make it easier to enable it.
+On 06/09/2016 04:34 AM, Chen-Yu Tsai wrote:
+> Hi
+> 
+> On Thu, Jun 9, 2016 at 3:03 AM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> On Tue, Jun 07, 2016 at 11:29:02AM +0200, Krzysztof Kozlowski wrote:
+>>> On 06/03/2016 04:02 AM, Rob Herring wrote:
+>>>>>  Optional properties:
+>>>>>  - reset-gpios : contains a list of GPIO specifiers. The reset GPIOs are asserted
+>>>>> @@ -16,6 +22,7 @@ Optional properties:
+>>>>>    See ../clocks/clock-bindings.txt for details.
+>>>>>  - clock-names : Must include the following entry:
+>>>>>    "ext_clock" (External clock provided to the card).
+>>>>> +- ext-supply : External regulator supply
+>>>>
+>>>> What happens when there are 2 supplies?
+>>>>
+>>>> I'd prefer the name not be genericish and use the real supply names.
+>>>> Then the power seq code should just turn on all supplies it finds. If
+>>>> the order or timing to turn on matters, then sorry, no generic sequence.
+>>>
+>>> I think the generic part for regulators might be a problem. Regulator
+>>> API requires a name for the supply... it cannot get "something" or
+>>> "everything".
+>>
+>> That's the downside of variable property names...
+>>
+>>> The driver could attach itself to any kind of node (where power-sequence
+>>> property exists) so the supply name depends on the bindings of device
+>>> (not bindings of power sequence driver).
+>>>
+>>> The power sequence driver could however iterate over child properties
+>>> and get the names of all supplies. It is a little bit ugly...
+>>
+>> Yes. Like this, right?
+>>
+>> for_each_property_of_node(np, pp) {
+>>         if (!strstr(pp->name, "-supply"))
+>>                 continue;
+>>         // found supply
+>> }
+>>
+>> The uglyness can always be improved with a function to do this parsing.
+> 
+> There's already a version of this in simplefb. Maybe it's time to move
+> this to a common function?
 
-Hmmm... How does it make it easier? Enabling such item is just adding
-new line, so what is the problem solved here?
-
-Anyway the line will disappear on first savedefconfig (because it should
-not be there...) so there is really no point of it.
+Thanks, I'll make a generic one and let's see how Mark will respond to it.
 
 Best regards,
 Krzysztof
 
-> 
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index daf9762..16c2957 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -218,6 +218,7 @@ CONFIG_CROS_EC_CHARDEV=y
->  CONFIG_COMMON_CLK_MAX77686=y
->  CONFIG_COMMON_CLK_MAX77802=y
->  CONFIG_COMMON_CLK_S2MPS11=y
-> +# CONFIG_EXYNOS_IOMMU is not set
->  CONFIG_EXTCON=y
->  CONFIG_EXTCON_MAX14577=y
->  CONFIG_EXTCON_MAX77693=y
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
