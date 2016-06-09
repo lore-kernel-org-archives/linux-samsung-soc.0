@@ -1,122 +1,155 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
-Date: Thu, 09 Jun 2016 18:32:42 +0900
-Message-ID: <575937BA.1070609@samsung.com>
-References: <CGME20160608134820epcas1p4ee75a89888f2ae2adb733124a330bd2c@epcas1p4.samsung.com>
- <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
- <57592A40.9080608@samsung.com> <57592B4A.4000407@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <57592B4A.4000407-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: rogerq-l0cyMroinI0@public.gmane.org, Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC v4 02/14] simplefb: Use new devm_of_regulator_all_get helper and
+ bulk API
+Date: Thu, 09 Jun 2016 11:44:19 +0200
+Message-ID: <1465465471-28740-3-git-send-email-k.kozlowski@samsung.com>
+References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55257 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932752AbcFIJow (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 05:44:52 -0400
+In-reply-to: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@v
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi,
+Switch from manual way of getting all regulators to usage of
+devm_of_regulator_all_get().  Additionally use the regulator bulk API
+which changes the logic in case of failure of regulator enable.  Before
+if regulator_enable() returned error for one regulator, rest of them
+were still enabled.  The bulk API does everything atomically.
 
-On 2016=EB=85=84 06=EC=9B=94 09=EC=9D=BC 17:39, Krzysztof Kozlowski wro=
-te:
->=20
-> Hi,
->=20
->=20
-> On 06/09/2016 10:35 AM, Chanwoo Choi wrote:
->> Hi,
->>
->> It is good to support USB_ID and USB_VBUS by extcon.
->>
->> But,
->> there is some issue about adding the new cable type for
->> both EXTCON_USB_ID and EXTCON_USB_VBUS
->>
->> I think that the ID and VBUS state are not cable type
->> Instead, ID and VBUS state are the property of USB cable.
->>
->> So, I'd like to add the following function to support
->> the property of each cable as following:
->> The client driver can get the state of property by using
->> the extcon_get_cable_property_state().
->>
->> - int extcon_get_cable_property_state(struct extcon_dev *edev,
->> 				unsigned int id,
->> 				enum extcon_property property);
->> - int extcon_set_cable_property_state(struct extcon_dev *edev,
->> 				unsigned int id,
->> 				enum extcon_property property,
->> 				unsigned int state);
->>
->> For example,
->> In extcon-usb-gpio.c, set state of property as follwoing:
->> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_I=
-D, 1);
->> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_V=
-BUS, 1);
->>
->>
->> In the extcon client driver, get state of property as following:
->> 	id_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EXTC=
-ON_USB_PROP_ID);
->> 	vbus_state =3D extcon_get_cable_property_state(edev, EXTCON_USB, EX=
-TCON_USB_PROP_VUBS);
->=20
-> How one can receive notifications with this API?
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-I think that the extcon don't support the notification only for propert=
-y.
-When USB or USB_HOST cable state is changed, the client driver
-call the extcon_get_cable_property_state() to read the state of propert=
-y.
+---
 
-Namely, the property depend on the specific external connector.
+Not tested.
+---
+ drivers/video/fbdev/simplefb.c | 71 +++++++++---------------------------------
+ 1 file changed, 14 insertions(+), 57 deletions(-)
 
->=20
-> Last time you wrote, at the end of discussion:
-> http://thread.gmane.org/gmane.linux.kernel/1923192/focus=3D1923193
->> IMO, if some usb driver check both id and vbus pin at the same time,
->> the usb driver can know the both id and vbus pin state through only
-> one notifier event.
->>
->> Also,
->> If some usb driver want to know the state of id pin except of vbus s=
-tate,
->> when receiving following events, id pin is low.
->> 	#define EXTCON_USB_ID_L_VBUS_L0
->> 	#define EXTCON_USB_ID_L_VBUS_H1
->> when receiving following events, id pin is high.
->> 	#define EXTCON_USB_ID_H_VBUS_L2
->> 	#define EXTCON_USB_ID_H_VBUS_H3
->> Also, some usb driver would catch the vbus pin state with same metho=
-d.
->>
->> But, it is just my opinion. We may use following notifier events for
-> each pin.
->> We need to discuss it.
->> 	#define EXTCON_USB_ID_LOW
->> 	#define EXTCON_USB_ID_HIGH=09
->> 	#define EXTCON_USB_VBUS_LOW
->> 	#define EXTCON_USB_VBUS_HIGH
->=20
-> ... all other participants agreed on that conclusion. So why change o=
-f
-> view point now?
-
-Unitl now, the extcon framework only handle the state of external conne=
-ctor(cable).
-- The state of external connector is either attached or detached.
-
-I think that ID and VBUS are not external connector(cable).
-The ID and VBUS are more appropriate as property than new type of exter=
-nal connector.
-
-Regards,
-Chanwoo Choi
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+index e9cf19977285..897b95efa40d 100644
+--- a/drivers/video/fbdev/simplefb.c
++++ b/drivers/video/fbdev/simplefb.c
+@@ -32,6 +32,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/parser.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/regulator/of_regulator.h>
+ 
+ static struct fb_fix_screeninfo simplefb_fix = {
+ 	.id		= "simple",
+@@ -178,8 +179,8 @@ struct simplefb_par {
+ 	struct clk **clks;
+ #endif
+ #if defined CONFIG_OF && defined CONFIG_REGULATOR
+-	u32 regulator_count;
+-	struct regulator **regulators;
++	unsigned int regulator_count;
++	struct regulator_bulk_data *regulators;
+ #endif
+ };
+ 
+@@ -278,8 +279,6 @@ static void simplefb_clocks_destroy(struct simplefb_par *par) { }
+ 
+ #if defined CONFIG_OF && defined CONFIG_REGULATOR
+ 
+-#define SUPPLY_SUFFIX "-supply"
+-
+ /*
+  * Regulator handling code.
+  *
+@@ -303,61 +302,23 @@ static int simplefb_regulators_init(struct simplefb_par *par,
+ 	struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct property *prop;
+-	struct regulator *regulator;
+-	const char *p;
+-	int count = 0, i = 0, ret;
++	int ret;
+ 
+ 	if (dev_get_platdata(&pdev->dev) || !np)
+ 		return 0;
+ 
+-	/* Count the number of regulator supplies */
+-	for_each_property_of_node(np, prop) {
+-		p = strstr(prop->name, SUPPLY_SUFFIX);
+-		if (p && p != prop->name)
+-			count++;
+-	}
+-
+-	if (!count)
++	ret = devm_of_regulator_all_get(&pdev->dev, &par->regulator_count, &par->regulators);
++	if (ret)
++		return ret;
++	else if (!par->regulator_count)
+ 		return 0;
+ 
+-	par->regulators = devm_kcalloc(&pdev->dev, count,
+-				       sizeof(struct regulator *), GFP_KERNEL);
+-	if (!par->regulators)
+-		return -ENOMEM;
+-
+-	/* Get all the regulators */
+-	for_each_property_of_node(np, prop) {
+-		char name[32]; /* 32 is max size of property name */
+-
+-		p = strstr(prop->name, SUPPLY_SUFFIX);
+-		if (!p || p == prop->name)
+-			continue;
+-
+-		strlcpy(name, prop->name,
+-			strlen(prop->name) - strlen(SUPPLY_SUFFIX) + 1);
+-		regulator = devm_regulator_get_optional(&pdev->dev, name);
+-		if (IS_ERR(regulator)) {
+-			if (PTR_ERR(regulator) == -EPROBE_DEFER)
+-				return -EPROBE_DEFER;
+-			dev_err(&pdev->dev, "regulator %s not found: %ld\n",
+-				name, PTR_ERR(regulator));
+-			continue;
+-		}
+-		par->regulators[i++] = regulator;
+-	}
+-	par->regulator_count = i;
+-
+ 	/* Enable all the regulators */
+-	for (i = 0; i < par->regulator_count; i++) {
+-		ret = regulator_enable(par->regulators[i]);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"failed to enable regulator %d: %d\n",
+-				i, ret);
+-			devm_regulator_put(par->regulators[i]);
+-			par->regulators[i] = NULL;
+-		}
++	ret = regulator_bulk_enable(par->regulator_count, par->regulators);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"failed to enable regulators: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	return 0;
+@@ -365,14 +326,10 @@ static int simplefb_regulators_init(struct simplefb_par *par,
+ 
+ static void simplefb_regulators_destroy(struct simplefb_par *par)
+ {
+-	int i;
+-
+ 	if (!par->regulators)
+ 		return;
+ 
+-	for (i = 0; i < par->regulator_count; i++)
+-		if (par->regulators[i])
+-			regulator_disable(par->regulators[i]);
++	regulator_bulk_disable(par->regulator_count, par->regulators);
+ }
+ #else
+ static int simplefb_regulators_init(struct simplefb_par *par,
+-- 
+1.9.1
