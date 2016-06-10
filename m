@@ -1,53 +1,44 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [RFC PATCH 05/15] tty: serial: samsung: fixup accessors for
- endian
-Date: Fri, 10 Jun 2016 11:13:00 +0100
-Message-ID: <71328b3d-dc2f-3eb9-b664-4d621db23131@codethink.co.uk>
-References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-6-matthew@mattleach.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag
+ and
+Date: Fri, 10 Jun 2016 12:29:15 +0200
+Message-ID: <575A967B.9080209@samsung.com>
+References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160608183110.13851-6-matthew@mattleach.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44855 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751630AbcFJK3j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jun 2016 06:29:39 -0400
+In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 08/06/16 19:31, Matthew Leach wrote:
-> Fix the serial access code to deal with kernels built for big endian
-> operation.
+On 06/10/2016 06:56 AM, Chanwoo Choi wrote:
+> This patch-set add the CLK_IGNORE_UNUSED flag to the specific clocks because
+> the specific clocks should remain the enable state. This patch-set support the
+> PCIE (PCI Express), serial3(AUD Uart) device and fix the hang issue for
+> suspend-to-ram.
 > 
-> Signed-off-by: Matthew Leach <matthew@mattleach.net>
-> ---
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Jiri Slaby <jslaby@suse.com>
-> CC: linux-serial@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  drivers/tty/serial/samsung.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Beomho Seo (1):
+>   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for AUD Uart
 > 
-> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
-> index fc5deaa..8818bdd 100644
-> --- a/drivers/tty/serial/samsung.h
-> +++ b/drivers/tty/serial/samsung.h
-> @@ -118,9 +118,9 @@ struct s3c24xx_uart_port {
->  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
->  
->  #define rd_regb(port, reg) (__raw_readb(portaddr(port, reg)))
-> -#define rd_regl(port, reg) (__raw_readl(portaddr(port, reg)))
-> +#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
+> Jaehoon Chung (1):
+>   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to PCIE device
+> 
+> Jonghwa Lee (1):
+>   clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks occurring hang at sleep
 
-For completeness we should have changed __raw_readb to readb_relaxed
-
->  #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
-> -#define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
-> +#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
-
-Acked-by: Ben Dooks <ben.dooks@codethink.co.uk>
+I applied these patches, after slightly editing the descriptions.
+I also tested with the audio subsystem patches on top of 4.7-rc1 tree
+and with AUD UART enabled. Everything seems to be working fine, there
+was no any "external abort" exceptions.
 
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+Thanks,
+Sylwester
