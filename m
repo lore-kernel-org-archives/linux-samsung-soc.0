@@ -1,89 +1,104 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to
- PCIE device
-Date: Fri, 10 Jun 2016 13:56:32 +0900
-Message-ID: <1465534592-18860-4-git-send-email-cw00.choi@samsung.com>
-References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: Fix broken architected timer
+ interrupt trigger
+Date: Fri, 10 Jun 2016 08:23:24 +0100
+Message-ID: <20160610082324.2a0967b0@arm.com>
+References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
+	<1465235791-7064-3-git-send-email-marc.zyngier@arm.com>
+	<5759B143.9070503@caviumnetworks.com>
+	<5759DA3A.4070905@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+In-Reply-To: <5759DA3A.4070905@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: David Daney <ddaney.cavm@gmail.com>
+Cc: David Daney <ddaney@caviumnetworks.com>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, W
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
+On Thu, 09 Jun 2016 14:06:02 -0700
+David Daney <ddaney.cavm@gmail.com> wrote:
 
-This patch adds the CLK_IGNORE_UNUSED flag for PCI Express's clocks
-which need the on state and the 'pcie' gate clock.
+> I spoke too soon...
+> 
+> On 06/09/2016 11:11 AM, David Daney wrote:
+> > On 06/06/2016 10:56 AM, Marc Zyngier wrote:
+> >> The ARM architected timer specification mandates that the interrupt
+> >> associated with each timer is level triggered (which corresponds to
+> >> the "counter >= comparator" condition).
+> >>
+> >> A number of DTs are being remarkably creative, declaring the interrupt
+> >> to be edge triggered. A quick look at the TRM for the corresponding ARM
+> >> CPUs clearly shows that this is wrong, and I've corrected those.
+> >> For non-ARM designs (and in the absence of a publicly available TRM),
+> >> I've made them active low as well, which can't be completely wrong
+> >> as the GIC cannot disinguish between level low and level high.
+> >>
+> >> The respective maintainers are of course welcome to prove me wrong.
+> >>
+> >> While I was at it, I took the liberty to fix a couple of related issue,
+> >> such as some spurious affinity bits on ThunderX, and their complete
+> >> absence on ls1043a (both of which seem to be related to copy-pasting
+> >> from other DTs).
+> >>
+> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> >> ---
+> >>   arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
+> >>   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
+> >>   arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
+> >>   arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
+> >>   arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
+> >>   arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
+> >>   arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
+> >>   arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
+> >>   arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
+> >>   arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
+> >>   10 files changed, 40 insertions(+), 40 deletions(-)
+> >>
+> > [...]
+> >> diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >> b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >> index 2eb9b22..382d86f 100644
+> >> --- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >> +++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >> @@ -354,10 +354,10 @@
+> >>
+> >>       timer {
+> >>           compatible = "arm,armv8-timer";
+> >> -        interrupts = <1 13 0xff01>,
+> >> -                     <1 14 0xff01>,
+> >> -                     <1 11 0xff01>,
+> >> -                     <1 10 0xff01>;
+> >> +        interrupts = <1 13 8>,
+> >> +                     <1 14 8>,
+> >> +                     <1 11 8>,
+> >> +                     <1 10 8>;
+> 
+> 
+> NAK!
+> 
+> According to arm,gic-v3.txt the trigger value must be either 1 or 4:
+> 
+>    The 3rd cell is the flags, encoded as follows:
+>          bits[3:0] trigger type and level flags.
+>                  1 = edge triggered
+>                  4 = level triggered
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c   | 11 ++++++-----
- include/dt-bindings/clock/exynos5433.h |  3 ++-
- 2 files changed, 8 insertions(+), 6 deletions(-)
+Which is a bug in the binding description. PPIs can be any trigger
+(just look at the TRM for CPUs that have devices connected to a PPI to
+be convinced - most of them are level low).
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 852ac6a7607e..e3cc9359fb20 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -639,7 +639,7 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 
- 	/* ENABLE_SCLK_TOP_FSYS */
- 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
--			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
-+			ENABLE_SCLK_TOP_FSYS, 7, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_MMC2_FSYS, "sclk_mmc2_fsys", "div_sclk_mmc2_b",
- 			ENABLE_SCLK_TOP_FSYS, 6, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_MMC1_FSYS, "sclk_mmc1_fsys", "div_sclk_mmc1_b",
-@@ -2146,7 +2146,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_SMMU_PDMA1, "aclk_smmu_pdma1", "mout_aclk_fsys_200_user",
- 			ENABLE_ACLK_FSYS1, 25, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_BTS_PCIE, "aclk_bts_pcie", "mout_aclk_fsys_200_user",
--			ENABLE_ACLK_FSYS1, 24, 0, 0),
-+			ENABLE_ACLK_FSYS1, 24, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_AXIUS_PDMA1, "aclk_axius_pdma1",
- 			"mout_aclk_fsys_200_user", ENABLE_ACLK_FSYS1,
- 			22, CLK_IGNORE_UNUSED, 0),
-@@ -2193,13 +2193,13 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 
- 	/* ENABLE_PCLK_FSYS */
- 	GATE(CLK_PCLK_PCIE_CTRL, "pclk_pcie_ctrl", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 17, 0, 0),
-+			ENABLE_PCLK_FSYS, 17, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_SMMU_PDMA1, "pclk_smmu_pdma1", "mout_aclk_fsys_200_user",
- 			ENABLE_PCLK_FSYS, 16, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_PCIE_PHY, "pclk_pcie_phy", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 14, 0, 0),
-+			ENABLE_PCLK_FSYS, 14, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_BTS_PCIE, "pclk_bts_pcie", "mout_aclk_fsys_200_user",
--			ENABLE_PCLK_FSYS, 13, 0, 0),
-+			ENABLE_PCLK_FSYS, 13, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_SMMU_PDMA0, "pclk_smmu_pdma0", "mout_aclk_fsys_200_user",
- 			ENABLE_PCLK_FSYS, 8, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_BTS_UFS, "pclk_bts_ufs", "mout_aclk_fsys_200_user",
-@@ -2278,6 +2278,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
- 			ENABLE_SCLK_FSYS, 0, 0, 0),
- 
- 	/* ENABLE_IP_FSYS0 */
-+	GATE(CLK_PCIE, "pcie", "sclk_pcie_100", ENABLE_IP_FSYS0, 17, 0, 0),
- 	GATE(CLK_PDMA1, "pdma1", "aclk_pdma1", ENABLE_IP_FSYS0, 15, 0, 0),
- 	GATE(CLK_PDMA0, "pdma0", "aclk_pdma0", ENABLE_IP_FSYS0, 0, 0, 0),
- };
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 8e024fea26e7..4fa6bb2136e3 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -622,8 +622,9 @@
- #define CLK_SCLK_UFSUNIPRO		112
- #define CLK_SCLK_USBHOST30		113
- #define CLK_SCLK_USBDRD30		114
-+#define CLK_PCIE			115
- 
--#define FSYS_NR_CLK			115
-+#define FSYS_NR_CLK			116
- 
- /* CMU_G2D */
- #define CLK_MUX_ACLK_G2D_266_USER	1
+This doesn't mean that you can distinguish level-high from level-low
+in a programmatic way. But the HW definitely can handle it.
+
+I'll update the GICv3 binding to reflect this.
+
+Now, coming back to your NAK: is level-low the right or wrong trigger
+for your implementation of the architected timers?
+
+Thanks,
+
+	M.
 -- 
-1.9.1
+Jazz is not dead. It just smells funny.
