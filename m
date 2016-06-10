@@ -1,83 +1,33 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 1/2] clocksource/arm_arch_timer: Force per-CPU
- interrupt to be level-triggered
-Date: Fri, 10 Jun 2016 08:29:52 +0100
-Message-ID: <20160610082952.4f20d732@arm.com>
-References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
-	<1465235791-7064-2-git-send-email-marc.zyngier@arm.com>
-	<5759DB58.5070906@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC PATCH 01/15] clock: exynos: fixup endian in pll clk
+Date: Fri, 10 Jun 2016 11:51:16 +0200
+Message-ID: <575A8D94.80709@samsung.com>
+References: <20160608183110.13851-1-matthew@mattleach.net>
+ <20160608183110.13851-2-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5759DB58.5070906@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Hou Zhiqiang <B48286@freescale.com>, Michal Simek <michal.simek@xilinx.com>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, linux-samsung-soc@vger.kernel.org, Yuan Yao <yao.yuan@nxp.com>, Wenbin Song <Wenbin.Song@freescale.com>, Jan Glauber <jglauber@cavium>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:11501 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbcFJJvk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jun 2016 05:51:40 -0400
+In-reply-to: <20160608183110.13851-2-matthew@mattleach.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
 
-On Thu, 09 Jun 2016 14:10:48 -0700
-David Daney <ddaney.cavm@gmail.com> wrote:
-
-> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
-> > The ARM architected timer produces level-triggered interrupts (this
-> > is mandated by the architecture). Unfortunately, most device-trees
-> > get this wrong, and expose an edge-triggered interrupt.
-> >
-> > Until now, this wasn't too much an issue, as the programming of the
-> > trigger would fail (the corresponding PPI cannot be reconfigured),
-> > and the kernel would be happy with this. But we're about to change
-> > this, and trust DT a lot if the driver doesn't provide its own
-> > trigger information. In that context, the timer breaks badly.
-> >
-> > While we do need to fix the DTs, there is also some userspace out
-> > there (kvmtool) that generates the same kind of broken DT on the
-> > fly, and that will completely break with newer kernels.
-> >
-> > As a safety measure, and to keep buggy software alive as well as
-> > buying us some time to fix DTs all over the place, let's check
-> > what trigger configuration has been given us by the firmware.
-> > If this is not a level configuration, then we know that the
-> > DT/ACPI configuration is bust, and we pick some defaults which
-> > won't be worse than the existing setup.
-> >
-> > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+On 06/08/2016 08:30 PM, Matthew Leach wrote:
+> Fix the clk endian access code to deal with kernels built for big endian
+> operation.
 > 
-> 
-> I tried to test this patch, but there is a problem somewhere that I have 
-> not yet tracked down.  On Cavium Thunder (gic-v3 based) I have tested 
-> with the device tree interrupt type of both 4 and 8 and get the same result:
-> 
-> 
-> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ2, 
-> assuming level low
-> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
-> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ3, 
-> assuming level low
-> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
-> [    0.000000] arm_arch_timer: Architected cp15 timer(s) running at 
-> 100.00MHz (phys).
-> [    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff 
-> max_cycles: 0x171024e7e0, max_idle_ns: 440795205315 ns
-> [    0.000002] sched_clock: 56 bits at 100MHz, resolution 10ns, wraps 
-> every 4398046511100ns
-> 
-> It could be that the gic-v3 irq mapping code is broken.  I will try to 
-> look into it, but there may be other fixes needed before we would 
-> consider this patch to be an improvement.
+> Signed-off-by: Matthew Leach <matthew@mattleach.net>
 
-That's because the core kernel has other bugs which are going to be
-addressed in 4.8. So far, we cannot set the trigger of a per-cpu
-interrupt from the device tree, and we end-up with whatever is the
-default (edge). You can put whatever you want in the DT, it will be
-ignored.
+We should have gotten rid of those __raw_{readl, writel} calls earlier
+for other reasons too. Thanks for the fix, patch applied!
 
-This series in preparation of these fixes landing in 4.8, where we'll
-be able to do the right thing, and will start noticing stupid things
-coming from the DT.
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny.
+Regards,
+Sylwester
