@@ -1,67 +1,45 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: remove superfluous inclusions of fbdev header
-Date: Fri, 10 Jun 2016 17:26:53 +0200
-Message-ID: <575ADC3D.5050600@math.uni-bielefeld.de>
-References: <1464179741-10341-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <575A929D.90401@math.uni-bielefeld.de>
- <20160610141148.GY3363@phenom.ffwll.local>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 06/20] drm: i915: Rely on the default
+ ->best_encoder() behavior where appropriate
+Date: Fri, 10 Jun 2016 18:41:52 +0200
+Message-ID: <20160610164152.GO3363@phenom.ffwll.local>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
+ <20160610152412.GL3363@phenom.ffwll.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160610141148.GY3363@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20160610152412.GL3363@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@snte>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gRGFuaWVsLAoKRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBGcmksIEp1biAxMCwgMjAx
-NiBhdCAxMjoxMjo0NVBNICswMjAwLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBQaW5nIQo+IAo+
-IGV4eW5vcyBtYWludGFpbmVyIElua2kgaXNuJ3Qgb24gY2MsIHNvIGdvb2QgY2hhbmNlcyBoZSds
-bCBtaXNzIHRoaXMuCkJvdGggdGhlIGluaXRpYWwgbWFpbCBhbmQgbXkgcGluZyBoYXZlIElua2kg
-aW4gdGhlIENjLgoKLSBUb2JpYXMKCgo+IC1EYW5pZWwKPiAKPj4KPj4gLSBUb2JpYXMKPj4KPj4g
-VG9iaWFzIEpha29iaSB3cm90ZToKPj4+IE5laXRoZXIgb2YgdGhlc2UgZmlsZXMgaXNzdWUgYW55
-IGZiZGV2IHJlbGF0ZWQgY2FsbHMuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29i
-aSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+PiAtLS0KPj4+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgfCAxIC0KPj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jICAgfCAxIC0KPj4+ICBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgfCAxIC0KPj4+ICAzIGZpbGVzIGNoYW5nZWQsIDMg
-ZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1f
-ZGVjb24uYwo+Pj4gaW5kZXggZGExYmQ4NC4uZDliMmQ3NyAxMDA2NDQKPj4+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+Pj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4+PiBAQCAtMzEsNyArMzEsNiBAQAo+
-Pj4gICNpbmNsdWRlICJleHlub3NfZHJtX3BsYW5lLmgiCj4+PiAgI2luY2x1ZGUgImV4eW5vc19k
-cm1fZHJ2LmgiCj4+PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKPj4+IC0jaW5jbHVkZSAi
-ZXh5bm9zX2RybV9mYmRldi5oIgo+Pj4gICNpbmNsdWRlICJleHlub3NfZHJtX2lvbW11LmgiCj4+
-PiAgCj4+PiAgLyoKPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYwo+
-Pj4gaW5kZXggMDExMjExZS4uZWRiZDk4ZiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jb3JlLmMKPj4+IEBAIC0xNSw3ICsxNSw2IEBACj4+PiAgI2luY2x1ZGUg
-PGRybS9kcm1QLmg+Cj4+PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4+PiAgI2luY2x1
-ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgo+Pj4gLSNpbmNsdWRlICJleHlub3NfZHJtX2ZiZGV2Lmgi
-Cj4+PiAgCj4+PiAgc3RhdGljIExJU1RfSEVBRChleHlub3NfZHJtX3N1YmRydl9saXN0KTsKPj4+
-ICAKPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
-ZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4gaW5kZXgg
-ZTIwYTE5NC4uYmMxNzVkNiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9maW1kLmMKPj4+IEBAIC0zMCw3ICszMCw2IEBACj4+PiAgCj4+PiAgI2luY2x1ZGUgImV4
-eW5vc19kcm1fZHJ2LmgiCj4+PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKPj4+IC0jaW5j
-bHVkZSAiZXh5bm9zX2RybV9mYmRldi5oIgo+Pj4gICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMu
-aCIKPj4+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9wbGFuZS5oIgo+Pj4gICNpbmNsdWRlICJleHlu
-b3NfZHJtX2lvbW11LmgiCj4+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+T24gRnJpLCBKdW4gMTAsIDIwMTYgYXQgMDU6MjQ6MTJQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBUdWUsIEp1biAwNywgMjAxNiBhdCAwMTo0ODowMVBNICswMjAwLCBCb3JpcyBC
+cmV6aWxsb24gd3JvdGU6Cj4gPiBGb3IgYWxsIG91dHB1dHMgZXhjZXB0IGRwX21zdCwgd2UgaGF2
+ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2Vlbgo+ID4gY29ubmVjdG9ycyBhbmQgZW5jb2RlcnMg
+YW5kIHRoZSBkcml2ZXIgaXMgcmVseWluZyBvbiB0aGUgYXRvbWljIGhlbHBlcnM6Cj4gPiB3ZSBj
+YW4gZHJvcCB0aGUgY3VzdG9tIC0+YmVzdF9lbmNvZGVyKCkgaW1wbGVtZW50YXRpb24gYW5kIGxl
+dCB0aGUgY29yZQo+ID4gY2FsbCBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBmb3Ig
+dXMuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemls
+bG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KPiAKPiBZb3UgY2FuIGFsc28gZHJvcCB0aGUgYmVzdF9l
+bmNvZGVyIGZyb20gaW50ZWxfZHBfbXN0LCB3ZSBvbmx5IG5lZWQgdGhlCj4gYXRvbWljX2Jlc3Rf
+ZW5jb2Rlci4gVGhlIGJlc3RfZW5jb2RlciB0aGVyZSB3YXMgbmVlZGVkIHRvIGhlbHAgb3V0IHRo
+ZQo+IGZiZGV2IGVtdWxhdGlvbi4gQ2FyZSB0byByZXNwaW4/CgpCb3JpcyBwb2ludGVkIG91dCBv
+biBpcmMgdGhhdCB0aGlzIHdvbid0IHdvcmsgZm9yIHRoZSBmYmRldiBzdHVmZiBzaW5jZQp0aGF0
+IGhhcyBhIFdBUk5fT04gaWYgdGhlcmVzIG1vcmUgdGhhbiAxIHBvc3NpYmxlIGVuY29kZXIuIEFw
+cGxpZWQgdGhpcwpvbmUgaGVyZSBpbnN0ZWFkLgoKVGhhbmtzLCBEYW5pZWwKLS0gCkRhbmllbCBW
+ZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZm
+d2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCklu
+dGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
