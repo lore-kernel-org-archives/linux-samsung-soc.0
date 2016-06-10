@@ -1,105 +1,61 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC PATCH 04/15] irqchip: exynos_combiner: fixup reg access on be
-Date: Fri, 10 Jun 2016 13:44:40 +0200
-Message-ID: <575AA828.3070805@samsung.com>
+Subject: Re: [RFC PATCH 05/15] tty: serial: samsung: fixup accessors for endian
+Date: Fri, 10 Jun 2016 13:47:43 +0200
+Message-ID: <575AA8DF.9020701@samsung.com>
 References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-5-matthew@mattleach.net>
+ <20160608183110.13851-6-matthew@mattleach.net>
+ <71328b3d-dc2f-3eb9-b664-4d621db23131@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51697 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751419AbcFJLop (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20965 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752741AbcFJLrr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 07:44:45 -0400
-In-reply-to: <20160608183110.13851-5-matthew@mattleach.net>
+	Fri, 10 Jun 2016 07:47:47 -0400
+In-reply-to: <71328b3d-dc2f-3eb9-b664-4d621db23131@codethink.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matthew Leach <matthew@mattleach.net>, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, Matthew Leach <matthew@mattleach.net>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
 
-On 06/08/2016 08:30 PM, Matthew Leach wrote:
-> Use the byte-order aware big endian accessors, allowing for kernels
-> running under big-endian.
+On 06/10/2016 12:13 PM, Ben Dooks wrote:
+> On 08/06/16 19:31, Matthew Leach wrote:
+>> Fix the serial access code to deal with kernels built for big endian
+>> operation.
+>>
+>> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+>> ---
+>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> CC: Jiri Slaby <jslaby@suse.com>
+>> CC: linux-serial@vger.kernel.org
+>> CC: linux-kernel@vger.kernel.org
+>> ---
+>>  drivers/tty/serial/samsung.h | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+>> index fc5deaa..8818bdd 100644
+>> --- a/drivers/tty/serial/samsung.h
+>> +++ b/drivers/tty/serial/samsung.h
+>> @@ -118,9 +118,9 @@ struct s3c24xx_uart_port {
+>>  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
+>>  
+>>  #define rd_regb(port, reg) (__raw_readb(portaddr(port, reg)))
+>> -#define rd_regl(port, reg) (__raw_readl(portaddr(port, reg)))
+>> +#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
 > 
-> Signed-off-by: Matthew Leach <matthew@mattleach.net>
-> ---
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Jason Cooper <jason@lakedaemon.net>
-> CC: Marc Zyngier <marc.zyngier@arm.com>
-> CC: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/irqchip/exynos-combiner.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> For completeness we should have changed __raw_readb to readb_relaxed
 > 
-> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-> index ead15be..b78a169 100644
-> --- a/drivers/irqchip/exynos-combiner.c
-> +++ b/drivers/irqchip/exynos-combiner.c
-> @@ -55,14 +55,14 @@ static void combiner_mask_irq(struct irq_data *data)
->  {
->  	u32 mask = 1 << (data->hwirq % 32);
->  
-> -	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
-> +	writel_relaxed(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
->  }
->  
->  static void combiner_unmask_irq(struct irq_data *data)
->  {
->  	u32 mask = 1 << (data->hwirq % 32);
->  
-> -	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
-> +	writel_relaxed(mask, combiner_base(data) + COMBINER_ENABLE_SET);
->  }
->  
->  static void combiner_handle_cascade_irq(struct irq_desc *desc)
-> @@ -75,7 +75,7 @@ static void combiner_handle_cascade_irq(struct irq_desc *desc)
->  	chained_irq_enter(chip, desc);
->  
->  	spin_lock(&irq_controller_lock);
-> -	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
-> +	status = readl_relaxed(chip_data->base + COMBINER_INT_STATUS);
->  	spin_unlock(&irq_controller_lock);
->  	status &= chip_data->irq_mask;
->  
-> @@ -135,7 +135,7 @@ static void __init combiner_init_one(struct combiner_chip_data *combiner_data,
->  	combiner_data->parent_irq = irq;
->  
->  	/* Disable all interrupts */
-> -	__raw_writel(combiner_data->irq_mask, base + COMBINER_ENABLE_CLEAR);
-> +	writel_relaxed(combiner_data->irq_mask, base + COMBINER_ENABLE_CLEAR);
->  }
->  
->  static int combiner_irq_domain_xlate(struct irq_domain *d,
-> @@ -218,7 +218,7 @@ static int combiner_suspend(void)
->  
->  	for (i = 0; i < max_nr; i++)
->  		combiner_data[i].pm_save =
-> -			__raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
-> +			readl_relaxed(combiner_data[i].base + COMBINER_ENABLE_SET);
->  
->  	return 0;
->  }
-> @@ -235,9 +235,9 @@ static void combiner_resume(void)
->  	int i;
->  
->  	for (i = 0; i < max_nr; i++) {
-> -		__raw_writel(combiner_data[i].irq_mask,
-> +		writel_relaxed(combiner_data[i].irq_mask,
->  			     combiner_data[i].base + COMBINER_ENABLE_CLEAR);
-> -		__raw_writel(combiner_data[i].pm_save,
-> +		writel_relaxed(combiner_data[i].pm_save,
->  			     combiner_data[i].base + COMBINER_ENABLE_SET);
+>>  #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
+>> -#define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
+>> +#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
+> 
+> Acked-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Indentation of arguments is broken. I think it was aligned before.
 
-Beside that:
-
+With the readb_relaced change:
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
