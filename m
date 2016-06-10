@@ -1,81 +1,55 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
 Subject: Re: [PATCH] drm/exynos: don't use HW trigger for Exynos5420/5422/5800
-Date: Fri, 10 Jun 2016 07:35:30 +0900
-Message-ID: <5759EF32.5040302@samsung.com>
+Date: Thu, 9 Jun 2016 20:24:44 -0400
+Message-ID: <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
 References: <CGME20160602142058epcas1p4f26bc6ab2acd0012962f90bb2c6c4141@epcas1p4.samsung.com>
- <1464877210-27207-1-git-send-email-javier@osg.samsung.com>
- <5758A58D.7050106@samsung.com>
- <6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
+	<1464877210-27207-1-git-send-email-javier@osg.samsung.com>
+	<5758A58D.7050106@samsung.com>
+	<6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
+	<5759EF32.5040302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33054 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751119AbcFJAYp convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 20:24:45 -0400
+Received: by mail-it0-f66.google.com with SMTP id i6so382694ith.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2016 17:24:45 -0700 (PDT)
+In-Reply-To: <5759EF32.5040302@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-SGkgSmF2aWVyLAoKMjAxNuuFhCAwNuyblCAwOeydvCAwOToxN+yXkCBKYXZpZXIgTWFydGluZXog
-Q2FuaWxsYXMg7J20KOqwgCkg7JO0IOq4gDoKPiBIZWxsbyBJbmtpLAo+IAo+IFRoYW5rcyBmb3Ig
-eW91ciBmZWVkYmFjay4KPiAKPiBPbiAwNi8wOC8yMDE2IDA3OjA5IFBNLCBJbmtpIERhZSB3cm90
-ZToKPj4gSGkgSmF2aWVyLAo+Pgo+PiAyMDE264WEIDA27JuUIDAy7J28IDIzOjIw7JeQIEphdmll
-ciBNYXJ0aW5leiBDYW5pbGxhcyDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4gQ29tbWl0IGE2Zjc1YWEx
-NjFjNSAoImRybS9leHlub3M6IGZpbWQ6IGFkZCBIVyB0cmlnZ2VyIHN1cHBvcnQiKSBhZGRlZAo+
-Pj4gaGFyZHdhcmUgdHJpZ2dlciBzdXBwb3J0IHRvIHRoZSBGSU1EIGNvbnRyb2xsZXIgZHJpdmVy
-LiBCdXQgdGhpcyBicm9rZQo+Pj4gdGhlIGRpc3BsYXkgaW4gYXQgbGVhc3QgdGhlIEV4eW5vczU4
-MDAgUGVhY2ggUGkgQ2hyb21lYm9vay4KPj4+Cj4+PiBTbyB1bnRpbCB0aGUgaXNzdWUgaXMgZml4
-ZWQsIGF2b2lkIHVzaW5nIEhXIHRyaWdnZXIgZm9yIHRoZSBFeHlub3M1NDIwCj4+PiBiYXNlZCBi
-b2FyZHMgYW5kIHVzZSBTVyB0cmlnZ2VyIGFzIGl0IHdhcyBiZWZvcmUgdGhlIG1lbnRpb25lZCBj
-b21taXQuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIDxq
-YXZpZXJAb3NnLnNhbXN1bmcuY29tPgo+Pj4KPj4+IC0tLQo+Pj4KPj4+IEhlbGxvIElua2ksCj4+
-Pgo+Pj4gU2luY2UgY29tbWl0IGE2Zjc1YWExNjFjNSBsYW5kZWQgaW4gdjQuNy1yYzEsIEkgdGhp
-bmsgJFNVQkpFQ1Qgc2hvdWxkIGJlCj4+PiBwaWNrZWQgdG8gbWFrZSBzdXJlIHRoYXQgdjQuNyBp
-cyByZWxlYXNlZCB3aXRoIHRoZSBkaXNwbGF5IHdvcmtpbmcgZm9yCj4+PiB0aGUgRXh5bm9zNTQy
-MCBiYXNlZCBDaHJvbWVib29rcy4KPj4+Cj4+PiBXZSBjYW4gdGhlbiBmaWd1cmUgb3V0IHdoYXQn
-cyB3cm9uZyB3aXRoIHRoZSBIVyB0cmlnZ2VyIHN1cHBvcnQgYW5kIGZpeAo+Pj4gaXQgZm9yIHY0
-LjguCj4+Cj4+IEFncmVlLiBBbmQgYmVsb3cgaXMgYSB0cml2aWFsIGNvbW1lbnQuCj4+Cj4gCj4g
-SSdtIGdsYWQgdGhhdCB5b3UgYWdyZWUuCj4gCj4+Pgo+Pj4gQmVzdCByZWdhcmRzLAo+Pj4gSmF2
-aWVyCj4+Pgo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAz
-IC0tLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4gaW5kZXggMWMyM2E4ZmY1ZTgzLi5m
-MTAwMzBmZjAwZTYgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZmltZC5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jCj4+PiBAQCAtMTcwLDE0ICsxNzAsMTEgQEAgc3RhdGljIHN0cnVjdCBmaW1kX2RyaXZl
-cl9kYXRhIGV4eW5vczU0MjBfZmltZF9kcml2ZXJfZGF0YSA9IHsKPj4+ICAJLmxjZGJsa192dF9z
-aGlmdCA9IDI0LAo+Pj4gIAkubGNkYmxrX2J5cGFzc19zaGlmdCA9IDE1LAo+Pj4gIAkubGNkYmxr
-X21pY19ieXBhc3Nfc2hpZnQgPSAxMSwKPj4+IC0JLnRyZ190eXBlID0gSTgwX0hXX1RSRywKPj4+
-ICAJLmhhc19zaGFkb3djb24gPSAxLAo+Pj4gIAkuaGFzX3ZpZG91dGNvbiA9IDEsCj4+PiAgCS5o
-YXNfdnRzZWwgPSAxLAo+Pj4gIAkuaGFzX21pY19ieXBhc3MgPSAxLAo+Pj4gIAkuaGFzX2RwX2Ns
-ayA9IDEsCj4+PiAtCS5oYXNfaHdfdHJpZ2dlciA9IDEsCj4+PiAtCS5oYXNfdHJpZ2dlcl9wZXJf
-dGUgPSAxLAo+Pgo+PiBXZSBkb24ndCBuZWVkIHRvIHJlbW92ZSBhYm92ZSB0d28gbGluZXMuIEl0
-IHdvdWxkIGJlIGVub3VnaCB0byByZW1vdmUgJ3RyZ190eXBlID0gSTgwX0hXX1RSRycsIHdoaWNo
-IG1ha2VzIEZJTUQgdG8gYmUgd29ya2VkIHdpdGggU1cgdHJpZ2dlciBpbiBkZWZhdWx0Lgo+Pgo+
-IAo+IEkga25vdyB0aGF0IHJlbW92aW5nIC50cmdfdHlwZSBpcyBlbm91Z2ggYnV0IEkgYWxzbyBy
-ZW1vdmVkIHRob3NlIGxpbmVzCj4gYmVjYXVzZSB0aGUgZmllbGRzIGFyZSBub3QgdXNlZCBpZiAu
-dHJnX3R5cGUgIT0gSTgwX0hXX1RSRy4gU28gdGhlcmUgaXMKPiBubyBwb2ludCB0byBsZWF2ZSBh
-IHNldCBmb3IgdW51c2VkIGZpZWxkcy4KPiAKPiBXZSBjYW4gbGF0dGVyIGFkZCB0aG9zZSBvbmUg
-SFcgdHJpZ2dlciBzdXBwb3J0IGlzIGZpeGVkIGZvciBFeHlub3M1NDIwLgo+IAoKQXMgb2Ygbm93
-LCBJIGNhbiBtZXJnZSBpdCBidXQgSSB0aGluayBpdCB3b3VsZCBiZSBub3QgcmVhc29uYWJsZSBz
-b2x1dGlvbiBiZWNhdXNlIHBvdGVudGlhbCBwcm9ibGVtIHN0aWxsIGV4aXN0cyBldmVuIHdlIHVz
-ZSBTVyB0cmlnZ2VyIG1vZGUgaW4gZGVmYXVsdCAtIGllLiwgaW4gY2FzZSBvZiB1c2luZyBIVyB0
-cmlnZ2VyIG1vZGUgYXQgYm9vdGxvYWRlciwgc2FtZSBwcm9ibGVtIHdvdWxkIGhhcHBlbiBhcyBs
-b25nIGFzIHdlIGRvbid0IHN1cHBvcnQgUFNSIG1vZGUgc3VwcG9ydC4KClRoYW5rcywKSW5raSBE
-YWUKCj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPj4KPj4+ICB9Owo+Pj4gIAo+Pj4gIHN0cnVjdCBm
-aW1kX2NvbnRleHQgewo+Pj4KPj4gLS0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6
-IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+PiB0aGUg
-Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+PiBNb3JlIG1h
-am9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0
-bWwKPj4KPiAKPiBCZXN0IHJlZ2FyZHMsCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+Hello Inki,
+
+On Thu, Jun 9, 2016 at 6:35 PM, Inki Dae <inki.dae@samsung.com> wrote:
+
+[snip]
+
+>> I know that removing .trg_type is enough but I also removed those lines
+>> because the fields are not used if .trg_type != I80_HW_TRG. So there is
+>> no point to leave a set for unused fields.
+>>
+>> We can latter add those one HW trigger support is fixed for Exynos5420.
+>>
+>
+> As of now, I can merge it but I think it would be not reasonable solution because potential problem still exists even we use SW trigger mode in default - ie., in case of using HW trigger mode at bootloader, same problem would happen as long as we don't support PSR mode support.
+>
+
+Yes, I understand that the problem will show again if the bootloader
+uses HW trigger mode and that we need proper Panel Self Refresh
+support but I think that's a separate issue. That's why I said that
+those can be addressed for v4.8 but revert to SW trigger for v4.7 as a
+short term fix for the regression.
+
+In other words, enabling HW trigger mode breaks the display for the
+Exynos5420 and Exynos5800 Peach Pi Chromebooks with the shipped
+bootloaders (which are probably the most popular Exynos5 devices with
+display and mainline support so is likely to affect users).
+
+Best regards,
+Javier
