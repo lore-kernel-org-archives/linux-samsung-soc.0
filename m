@@ -1,45 +1,114 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 06/20] drm: i915: Rely on the default
- ->best_encoder() behavior where appropriate
-Date: Fri, 10 Jun 2016 18:41:52 +0200
-Message-ID: <20160610164152.GO3363@phenom.ffwll.local>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
- <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
- <20160610152412.GL3363@phenom.ffwll.local>
+From: David Daney <ddaney.cavm@gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: Fix broken architected timer interrupt
+ trigger
+Date: Fri, 10 Jun 2016 09:50:08 -0700
+Message-ID: <575AEFC0.1070304@gmail.com>
+References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com> <1465235791-7064-3-git-send-email-marc.zyngier@arm.com> <5759B143.9070503@caviumnetworks.com> <5759DA3A.4070905@gmail.com> <20160610082324.2a0967b0@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160610152412.GL3363@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@snte>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:33061 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951AbcFJQuN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jun 2016 12:50:13 -0400
+In-Reply-To: <20160610082324.2a0967b0@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: David Daney <ddaney@caviumnetworks.com>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, =?ISO-8859-1?Q?S=F6ren_Brinkman?= =?ISO-8859-1?Q?n?= <soren.brinkmann@xilinx.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>Yuan Yao <y>
 
-T24gRnJpLCBKdW4gMTAsIDIwMTYgYXQgMDU6MjQ6MTJQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBUdWUsIEp1biAwNywgMjAxNiBhdCAwMTo0ODowMVBNICswMjAwLCBCb3JpcyBC
-cmV6aWxsb24gd3JvdGU6Cj4gPiBGb3IgYWxsIG91dHB1dHMgZXhjZXB0IGRwX21zdCwgd2UgaGF2
-ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2Vlbgo+ID4gY29ubmVjdG9ycyBhbmQgZW5jb2RlcnMg
-YW5kIHRoZSBkcml2ZXIgaXMgcmVseWluZyBvbiB0aGUgYXRvbWljIGhlbHBlcnM6Cj4gPiB3ZSBj
-YW4gZHJvcCB0aGUgY3VzdG9tIC0+YmVzdF9lbmNvZGVyKCkgaW1wbGVtZW50YXRpb24gYW5kIGxl
-dCB0aGUgY29yZQo+ID4gY2FsbCBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBmb3Ig
-dXMuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemls
-bG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KPiAKPiBZb3UgY2FuIGFsc28gZHJvcCB0aGUgYmVzdF9l
-bmNvZGVyIGZyb20gaW50ZWxfZHBfbXN0LCB3ZSBvbmx5IG5lZWQgdGhlCj4gYXRvbWljX2Jlc3Rf
-ZW5jb2Rlci4gVGhlIGJlc3RfZW5jb2RlciB0aGVyZSB3YXMgbmVlZGVkIHRvIGhlbHAgb3V0IHRo
-ZQo+IGZiZGV2IGVtdWxhdGlvbi4gQ2FyZSB0byByZXNwaW4/CgpCb3JpcyBwb2ludGVkIG91dCBv
-biBpcmMgdGhhdCB0aGlzIHdvbid0IHdvcmsgZm9yIHRoZSBmYmRldiBzdHVmZiBzaW5jZQp0aGF0
-IGhhcyBhIFdBUk5fT04gaWYgdGhlcmVzIG1vcmUgdGhhbiAxIHBvc3NpYmxlIGVuY29kZXIuIEFw
-cGxpZWQgdGhpcwpvbmUgaGVyZSBpbnN0ZWFkLgoKVGhhbmtzLCBEYW5pZWwKLS0gCkRhbmllbCBW
-ZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZm
-d2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCklu
-dGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+On 06/10/2016 12:23 AM, Marc Zyngier wrote:
+> On Thu, 09 Jun 2016 14:06:02 -0700
+> David Daney <ddaney.cavm@gmail.com> wrote:
+>
+>> I spoke too soon...
+>>
+>> On 06/09/2016 11:11 AM, David Daney wrote:
+>>> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
+>>>> The ARM architected timer specification mandates that the interrupt
+>>>> associated with each timer is level triggered (which corresponds to
+>>>> the "counter >= comparator" condition).
+>>>>
+>>>> A number of DTs are being remarkably creative, declaring the interrupt
+>>>> to be edge triggered. A quick look at the TRM for the corresponding ARM
+>>>> CPUs clearly shows that this is wrong, and I've corrected those.
+>>>> For non-ARM designs (and in the absence of a publicly available TRM),
+>>>> I've made them active low as well, which can't be completely wrong
+>>>> as the GIC cannot disinguish between level low and level high.
+>>>>
+>>>> The respective maintainers are of course welcome to prove me wrong.
+>>>>
+>>>> While I was at it, I took the liberty to fix a couple of related issue,
+>>>> such as some spurious affinity bits on ThunderX, and their complete
+>>>> absence on ls1043a (both of which seem to be related to copy-pasting
+>>>> from other DTs).
+>>>>
+>>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
+>>>>    arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
+>>>>    arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
+>>>>    arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
+>>>>    arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
+>>>>    arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
+>>>>    arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
+>>>>    arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
+>>>>    arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
+>>>>    arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
+>>>>    10 files changed, 40 insertions(+), 40 deletions(-)
+>>>>
+>>> [...]
+>>>> diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+>>>> b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+>>>> index 2eb9b22..382d86f 100644
+>>>> --- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+>>>> +++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+>>>> @@ -354,10 +354,10 @@
+>>>>
+>>>>        timer {
+>>>>            compatible = "arm,armv8-timer";
+>>>> -        interrupts = <1 13 0xff01>,
+>>>> -                     <1 14 0xff01>,
+>>>> -                     <1 11 0xff01>,
+>>>> -                     <1 10 0xff01>;
+>>>> +        interrupts = <1 13 8>,
+>>>> +                     <1 14 8>,
+>>>> +                     <1 11 8>,
+>>>> +                     <1 10 8>;
+>>
+>>
+>> NAK!
+>>
+>> According to arm,gic-v3.txt the trigger value must be either 1 or 4:
+>>
+>>     The 3rd cell is the flags, encoded as follows:
+>>           bits[3:0] trigger type and level flags.
+>>                   1 = edge triggered
+>>                   4 = level triggered
+>
+> Which is a bug in the binding description. PPIs can be any trigger
+> (just look at the TRM for CPUs that have devices connected to a PPI to
+> be convinced - most of them are level low).
+>
+> This doesn't mean that you can distinguish level-high from level-low
+> in a programmatic way. But the HW definitely can handle it.
+>
+> I'll update the GICv3 binding to reflect this.
+>
+> Now, coming back to your NAK: is level-low the right or wrong trigger
+> for your implementation of the architected timers?
+>
+
+For the Cavium Thunder implementation of GIC-v3, there is no concept of 
+high and low.  All we have is asserted and not-asserted, we have chosen 
+to map the concept of an asserted level-triggered source to 
+IRQ_TYPE_LEVEL_HIGH, and the transition from not-asserted to asserted on 
+an edge triggered source to IRQ_TYPE_EDGE_RISING.
+
+Looking and the code and specifications, I don't see in irq-gic-v3.c or 
+PRD03-GENC-010745-35 any indication that the concepts of "high" and 
+"low" exist either, although I certainly could have missed something.
+
+David Daney
