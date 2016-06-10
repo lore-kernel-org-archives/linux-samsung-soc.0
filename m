@@ -1,99 +1,77 @@
-From: David Daney <ddaney.cavm@gmail.com>
-Subject: Re: [PATCH v3 1/2] clocksource/arm_arch_timer: Force per-CPU interrupt
- to be level-triggered
-Date: Fri, 10 Jun 2016 10:39:22 -0700
-Message-ID: <575AFB4A.3030508@gmail.com>
-References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
- <1465235791-7064-2-git-send-email-marc.zyngier@arm.com>
- <5759DB58.5070906@gmail.com> <20160610082952.4f20d732@arm.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RFC v4 01/14] regulator: of: Add helper for getting all supplies
+Date: Fri, 10 Jun 2016 20:49:26 +0200
+Message-ID: <4549765.J0ap1g2jZL@diego>
+References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com> <5759560A.70107@samsung.com> <20160610173056.GA16503@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160610082952.4f20d732@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, =?ISO-8859-1?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, Wenbin Song <Wenbin.Song@freescale.com>, Jan
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20160610173056.GA16503@rob-hp-laptop>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, hzpeterchen@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/10/2016 12:29 AM, Marc Zyngier wrote:
-> On Thu, 09 Jun 2016 14:10:48 -0700
-> David Daney <ddaney.cavm@gmail.com> wrote:
->
->> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
->>> The ARM architected timer produces level-triggered interrupts (this
->>> is mandated by the architecture). Unfortunately, most device-trees
->>> get this wrong, and expose an edge-triggered interrupt.
->>>
->>> Until now, this wasn't too much an issue, as the programming of the
->>> trigger would fail (the corresponding PPI cannot be reconfigured),
->>> and the kernel would be happy with this. But we're about to change
->>> this, and trust DT a lot if the driver doesn't provide its own
->>> trigger information. In that context, the timer breaks badly.
->>>
->>> While we do need to fix the DTs, there is also some userspace out
->>> there (kvmtool) that generates the same kind of broken DT on the
->>> fly, and that will completely break with newer kernels.
->>>
->>> As a safety measure, and to keep buggy software alive as well as
->>> buying us some time to fix DTs all over the place, let's check
->>> what trigger configuration has been given us by the firmware.
->>> If this is not a level configuration, then we know that the
->>> DT/ACPI configuration is bust, and we pick some defaults which
->>> won't be worse than the existing setup.
->>>
->>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>
->>
->> I tried to test this patch, but there is a problem somewhere that I have
->> not yet tracked down.  On Cavium Thunder (gic-v3 based) I have tested
->> with the device tree interrupt type of both 4 and 8 and get the same result:
->>
->>
->> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ2,
->> assuming level low
->> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
->> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ3,
->> assuming level low
->> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
->> [    0.000000] arm_arch_timer: Architected cp15 timer(s) running at
->> 100.00MHz (phys).
->> [    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
->> max_cycles: 0x171024e7e0, max_idle_ns: 440795205315 ns
->> [    0.000002] sched_clock: 56 bits at 100MHz, resolution 10ns, wraps
->> every 4398046511100ns
->>
->> It could be that the gic-v3 irq mapping code is broken.  I will try to
->> look into it, but there may be other fixes needed before we would
->> consider this patch to be an improvement.
->
-> That's because the core kernel has other bugs which are going to be
-> addressed in 4.8. So far, we cannot set the trigger of a per-cpu
-> interrupt from the device tree, and we end-up with whatever is the
-> default (edge). You can put whatever you want in the DT, it will be
-> ignored.
+Am Freitag, 10. Juni 2016, 12:30:56 schrieb Rob Herring:
+> On Thu, Jun 09, 2016 at 01:42:02PM +0200, Krzysztof Kozlowski wrote:
+> > On 06/09/2016 12:29 PM, Mark Brown wrote:
+> > > On Thu, Jun 09, 2016 at 11:44:18AM +0200, Krzysztof Kozlowski wrote:
+> > >> Few drivers have a need of getting regulator supplies without knowing
+> > >> their names:
+> > >> 1. The Simple Framebuffer driver works on setup provided by bootloader
+> > >> 
+> > >>    (outside of scope of kernel);
+> > >> 
+> > >> 2. Generic power sequence driver may be attached to any device node.
+> > >> 
+> > >> Add a Device Tree helper for parsing "-supply" properties and returning
+> > >> allocated bulk regulator consumers.
+> > > 
+> > > I'm still very concerned that this is just an invitation to people to
+> > > write half baked regulator consumers and half baked DTs to go along with
+> > > it, making it a standard API that doesn't have big red flags on it that
+> > > will flag up when "normal" drivers use it is not good.  Right now this
+> > > just looks like a standard API and people are going to just start using
+> > > it.  If we are going to do this perhaps we need a separate header or
+> > > something to help flag this up.
+> > 
+> > No problem, I can move it to a special header.  Actually, if you dislike
+> > this as an API, it does not have to be in header at all.  I can just
+> > duplicate the simplefb code.
+> > 
+> > > In the case of power sequences I'd expect the sequences to perform
+> > > operations on named supplies - the core shouldn't know what the supplies
+> > > are but the thing specifying the sequence should.
+> > 
+> > Hm, so maybe passing names like:
+> > 
+> > usb3503@08 {
+> > 
+> > 	reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
+> > 	initial-mode = <1>;
+> > 	vdd-supply = <&buck8_reg>;
+> > 	foo-supply = <&buck9_reg>;
+> > 	
+> >         power-sequence;
+> > 	
+> > 	power-sequence-supplies = "vdd", "foo";
+> 
+> This alone would be fine as it is just one property, but then what's
+> next? power-sequence-delay, power-sequence-clocks, etc. What if you
+> need to express ordering relationship of supplies, clocks, gpios? We end
+> up with a scripting language in DT and we don't want to have that.
 
-Yes, after looking into it, I see what you mean.
+Also, at least from the simple blocks I've seen so far (usb-hub chips, usb-
+sata bridges), a power-supply feels more like it should be a regular phy-
+supply of the usbphy connected the the host-controller.
 
->
-> This series in preparation of these fixes landing in 4.8, where we'll
-> be able to do the right thing, and will start noticing stupid things
-> coming from the DT.
->
+It's similar for mmc-controllers where vmmc-supply on the controller handles 
+the power-supply of the connected card and thus the current mmc power-
+sequences do not handle regulators.
 
-I don't object to the patch, but would suggest a couple of things:
+Reset-gpios and clock inputs are clearly properties of the actual device, but 
+the supply control should probably lay with the host controller, especially as 
+it is the one deciding when to power on/off things.
 
-o We need to test it *after* the irq configuration issues are corrected.
 
-o The merging order be such that we never get the WARNING messages.
-
-Thanks,
-David.
