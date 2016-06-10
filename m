@@ -1,56 +1,67 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [RFC PATCH 07/15] ARM: exynos: fixup debug macros for big-endian
-Date: Fri, 10 Jun 2016 14:02:33 +0100
-Message-ID: <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
+Date: Fri, 10 Jun 2016 15:04:52 +0200
+Message-ID: <575ABAF4.3030809@samsung.com>
 References: <20160608183110.13851-1-matthew@mattleach.net>
  <20160608183110.13851-8-matthew@mattleach.net>
  <ab51fcde-dfee-a70c-53c4-09485bfa7669@codethink.co.uk>
  <575AA193.7040907@samsung.com>
+ <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:58229 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932124AbcFJNCl (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25672 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932106AbcFJNE5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:02:41 -0400
-In-Reply-To: <575AA193.7040907@samsung.com>
+	Fri, 10 Jun 2016 09:04:57 -0400
+In-reply-to: <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Matthew Leach <matthew@mattleach.net>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, Matthew Leach <matthew@mattleach.net>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 10/06/16 12:16, Krzysztof Kozlowski wrote:
-> On 06/10/2016 01:12 PM, Ben Dooks wrote:
->> On 08/06/16 19:31, Matthew Leach wrote:
->>> From: Ben Dooks <ben.dooks@codethink.co.uk>
+On 06/10/2016 03:02 PM, Ben Dooks wrote:
+> On 10/06/16 12:16, Krzysztof Kozlowski wrote:
+>> On 06/10/2016 01:12 PM, Ben Dooks wrote:
+>>> On 08/06/16 19:31, Matthew Leach wrote:
+>>>> From: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>
+>>>> The exynos low-level debug macros need to be fixed if the system is being
+>>>> built big endian. Add the necessary endian swaps for accessing the registers
+>>>> to get output working again
+>>>>
+>>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>> ---
+>>>>  arch/arm/include/debug/samsung.S | 8 ++++++++
+>>>>  1 file changed, 8 insertions(+)
 >>>
->>> The exynos low-level debug macros need to be fixed if the system is being
->>> built big endian. Add the necessary endian swaps for accessing the registers
->>> to get output working again
+>>> Should this go via the maintainer or to RMK?
 >>>
->>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>> ---
->>>  arch/arm/include/debug/samsung.S | 8 ++++++++
->>>  1 file changed, 8 insertions(+)
+>>> If to RMK, then shall I get it submitted (and does anyone else
+>>> want to ack?)
 >>
->> Should this go via the maintainer or to RMK?
+>> If there are no objections, I can take it through samsung-soc with other
+>> arch/arm/mach-exynos* patches.
 >>
->> If to RMK, then shall I get it submitted (and does anyone else
->> want to ack?)
+>> What I am missing here, is Matthew's Signed-off-by.
+>>
+>> Matthew, you touched and sent the patch so could you add the Sob?
 > 
-> If there are no objections, I can take it through samsung-soc with other
-> arch/arm/mach-exynos* patches.
-> 
-> What I am missing here, is Matthew's Signed-off-by.
-> 
-> Matthew, you touched and sent the patch so could you add the Sob?
+> I've asked Matthew to re-send the core patches with the signed-off
+> sorted out.
 
-I've asked Matthew to re-send the core patches with the signed-off
-sorted out. He can also put them on a public facing git server if
-that would be helpful.
+Thanks.
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+> He can also put them on a public facing git server if
+> that would be helpful.
+
+No need. I think it will go through separate trees anyway. Except the
+change adding ARCH_SUPPORTS_BIG_ENDIAN, I don't see any dependencies.
+
+As for the ARCH_SUPPORTS_BIG_ENDIAN, I think it should be applied when
+all necessary drivers are fixed.
+
+Best regards,
+Krzysztof
