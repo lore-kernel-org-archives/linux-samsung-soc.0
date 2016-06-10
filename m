@@ -1,55 +1,40 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] drm/exynos: don't use HW trigger for Exynos5420/5422/5800
-Date: Thu, 9 Jun 2016 20:24:44 -0400
-Message-ID: <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
-References: <CGME20160602142058epcas1p4f26bc6ab2acd0012962f90bb2c6c4141@epcas1p4.samsung.com>
-	<1464877210-27207-1-git-send-email-javier@osg.samsung.com>
-	<5758A58D.7050106@samsung.com>
-	<6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
-	<5759EF32.5040302@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33054 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751119AbcFJAYp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 20:24:45 -0400
-Received: by mail-it0-f66.google.com with SMTP id i6so382694ith.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2016 17:24:45 -0700 (PDT)
-In-Reply-To: <5759EF32.5040302@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/3] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag for
+ AUD Uart
+Date: Fri, 10 Jun 2016 13:56:30 +0900
+Message-ID: <1465534592-18860-2-git-send-email-cw00.choi@samsung.com>
+References: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1465534592-18860-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, jh80.chung@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Inki,
+From: Beomho Seo <beomho.seo@samsung.com>
 
-On Thu, Jun 9, 2016 at 6:35 PM, Inki Dae <inki.dae@samsung.com> wrote:
+This patch adds the CLK_IGNORE_UNUSED flag for sclk_aud_uart gate clock
+for uart3 opeation.
 
-[snip]
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> I know that removing .trg_type is enough but I also removed those lines
->> because the fields are not used if .trg_type != I80_HW_TRG. So there is
->> no point to leave a set for unused fields.
->>
->> We can latter add those one HW trigger support is fixed for Exynos5420.
->>
->
-> As of now, I can merge it but I think it would be not reasonable solution because potential problem still exists even we use SW trigger mode in default - ie., in case of using HW trigger mode at bootloader, same problem would happen as long as we don't support PSR mode support.
->
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 128527b8fbeb..e1a9c24079a4 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -2976,7 +2976,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+ 			ENABLE_SCLK_AUD1, 4, 0, 0),
+ 	GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+-			ENABLE_SCLK_AUD1, 3, 0, 0),
++			ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+ 			ENABLE_SCLK_AUD1, 2, 0, 0),
+ 	GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+-- 
+1.9.1
 
-Yes, I understand that the problem will show again if the bootloader
-uses HW trigger mode and that we need proper Panel Self Refresh
-support but I think that's a separate issue. That's why I said that
-those can be addressed for v4.8 but revert to SW trigger for v4.7 as a
-short term fix for the regression.
-
-In other words, enabling HW trigger mode breaks the display for the
-Exynos5420 and Exynos5800 Peach Pi Chromebooks with the shipped
-bootloaders (which are probably the most popular Exynos5 devices with
-display and mainline support so is likely to affect users).
-
-Best regards,
-Javier
