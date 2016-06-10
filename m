@@ -1,61 +1,53 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: g2d: drop the _REG postfix from the stride
- defines
-Date: Fri, 10 Jun 2016 12:12:57 +0200
-Message-ID: <575A92A9.4010109@math.uni-bielefeld.de>
-References: <1464180176-10463-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [RFC PATCH 05/15] tty: serial: samsung: fixup accessors for
+ endian
+Date: Fri, 10 Jun 2016 11:13:00 +0100
+Message-ID: <71328b3d-dc2f-3eb9-b664-4d621db23131@codethink.co.uk>
+References: <20160608183110.13851-1-matthew@mattleach.net>
+ <20160608183110.13851-6-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1464180176-10463-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160608183110.13851-6-matthew@mattleach.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UGluZyEKCi0gVG9iaWFzCgpUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IFRoaXMgbWFrZXMgdGhlIGRl
-ZmluZXMgY29uc2lzdGVudCB3aXRoIHRoZSByZXN0Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRvYmlh
-cyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgfCAxMiArKysrKystLS0tLS0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gaW5kZXggMDFiNzJiOS4uMDkzNGQzOCAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKPiBAQCAtNDgsMTMg
-KzQ4LDEzIEBACj4gIAo+ICAvKiByZWdpc3RlcnMgZm9yIGJhc2UgYWRkcmVzcyAqLwo+ICAjZGVm
-aW5lIEcyRF9TUkNfQkFTRV9BRERSCQkweDAzMDQKPiAtI2RlZmluZSBHMkRfU1JDX1NUUklERV9S
-RUcJCTB4MDMwOAo+ICsjZGVmaW5lIEcyRF9TUkNfU1RSSURFCQkJMHgwMzA4Cj4gICNkZWZpbmUg
-RzJEX1NSQ19DT0xPUl9NT0RFCQkweDAzMEMKPiAgI2RlZmluZSBHMkRfU1JDX0xFRlRfVE9QCQkw
-eDAzMTAKPiAgI2RlZmluZSBHMkRfU1JDX1JJR0hUX0JPVFRPTQkJMHgwMzE0Cj4gICNkZWZpbmUg
-RzJEX1NSQ19QTEFORTJfQkFTRV9BRERSCTB4MDMxOAo+ICAjZGVmaW5lIEcyRF9EU1RfQkFTRV9B
-RERSCQkweDA0MDQKPiAtI2RlZmluZSBHMkRfRFNUX1NUUklERV9SRUcJCTB4MDQwOAo+ICsjZGVm
-aW5lIEcyRF9EU1RfU1RSSURFCQkJMHgwNDA4Cj4gICNkZWZpbmUgRzJEX0RTVF9DT0xPUl9NT0RF
-CQkweDA0MEMKPiAgI2RlZmluZSBHMkRfRFNUX0xFRlRfVE9QCQkweDA0MTAKPiAgI2RlZmluZSBH
-MkRfRFNUX1JJR0hUX0JPVFRPTQkJMHgwNDE0Cj4gQEAgLTU2MCw3ICs1NjAsNyBAQCBzdGF0aWMg
-ZW51bSBnMmRfcmVnX3R5cGUgZzJkX2dldF9yZWdfdHlwZShpbnQgcmVnX29mZnNldCkKPiAgCj4g
-IAlzd2l0Y2ggKHJlZ19vZmZzZXQpIHsKPiAgCWNhc2UgRzJEX1NSQ19CQVNFX0FERFI6Cj4gLQlj
-YXNlIEcyRF9TUkNfU1RSSURFX1JFRzoKPiArCWNhc2UgRzJEX1NSQ19TVFJJREU6Cj4gIAljYXNl
-IEcyRF9TUkNfQ09MT1JfTU9ERToKPiAgCWNhc2UgRzJEX1NSQ19MRUZUX1RPUDoKPiAgCWNhc2Ug
-RzJEX1NSQ19SSUdIVF9CT1RUT006Cj4gQEAgLTU3MCw3ICs1NzAsNyBAQCBzdGF0aWMgZW51bSBn
-MmRfcmVnX3R5cGUgZzJkX2dldF9yZWdfdHlwZShpbnQgcmVnX29mZnNldCkKPiAgCQlyZWdfdHlw
-ZSA9IFJFR19UWVBFX1NSQ19QTEFORTI7Cj4gIAkJYnJlYWs7Cj4gIAljYXNlIEcyRF9EU1RfQkFT
-RV9BRERSOgo+IC0JY2FzZSBHMkRfRFNUX1NUUklERV9SRUc6Cj4gKwljYXNlIEcyRF9EU1RfU1RS
-SURFOgo+ICAJY2FzZSBHMkRfRFNUX0NPTE9SX01PREU6Cj4gIAljYXNlIEcyRF9EU1RfTEVGVF9U
-T1A6Cj4gIAljYXNlIEcyRF9EU1RfUklHSFRfQk9UVE9NOgo+IEBAIC05NjEsOCArOTYxLDggQEAg
-c3RhdGljIGludCBnMmRfY2hlY2tfcmVnX29mZnNldChzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gIAkJ
-CX0gZWxzZQo+ICAJCQkJYnVmX2luZm8tPnR5cGVzW3JlZ190eXBlXSA9IEJVRl9UWVBFX0dFTTsK
-PiAgCQkJYnJlYWs7Cj4gLQkJY2FzZSBHMkRfU1JDX1NUUklERV9SRUc6Cj4gLQkJY2FzZSBHMkRf
-RFNUX1NUUklERV9SRUc6Cj4gKwkJY2FzZSBHMkRfU1JDX1NUUklERToKPiArCQljYXNlIEcyRF9E
-U1RfU1RSSURFOgo+ICAJCQlpZiAoZm9yX2FkZHIpCj4gIAkJCQlnb3RvIGVycjsKPiAgCj4gCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 08/06/16 19:31, Matthew Leach wrote:
+> Fix the serial access code to deal with kernels built for big endian
+> operation.
+> 
+> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+> ---
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> CC: Jiri Slaby <jslaby@suse.com>
+> CC: linux-serial@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/tty/serial/samsung.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+> index fc5deaa..8818bdd 100644
+> --- a/drivers/tty/serial/samsung.h
+> +++ b/drivers/tty/serial/samsung.h
+> @@ -118,9 +118,9 @@ struct s3c24xx_uart_port {
+>  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
+>  
+>  #define rd_regb(port, reg) (__raw_readb(portaddr(port, reg)))
+> -#define rd_regl(port, reg) (__raw_readl(portaddr(port, reg)))
+> +#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
+
+For completeness we should have changed __raw_readb to readb_relaxed
+
+>  #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
+> -#define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
+> +#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
+
+Acked-by: Ben Dooks <ben.dooks@codethink.co.uk>
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
