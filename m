@@ -1,7 +1,7 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
 Subject: Re: [RFC PATCH 07/15] ARM: exynos: fixup debug macros for big-endian
-Date: Fri, 10 Jun 2016 13:44:54 +0100
-Message-ID: <f789b996-2679-b28a-0d12-fb747bc750cd@codethink.co.uk>
+Date: Fri, 10 Jun 2016 14:02:33 +0100
+Message-ID: <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
 References: <20160608183110.13851-1-matthew@mattleach.net>
  <20160608183110.13851-8-matthew@mattleach.net>
  <ab51fcde-dfee-a70c-53c4-09485bfa7669@codethink.co.uk>
@@ -10,11 +10,11 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:57540 "EHLO
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:58229 "EHLO
 	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752520AbcFJMo7 (ORCPT
+	with ESMTP id S932124AbcFJNCl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 08:44:59 -0400
+	Fri, 10 Jun 2016 09:02:41 -0400
 In-Reply-To: <575AA193.7040907@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -47,7 +47,9 @@ On 10/06/16 12:16, Krzysztof Kozlowski wrote:
 > 
 > Matthew, you touched and sent the patch so could you add the Sob?
 
-Either that or I could just send it from my tree directly.
+I've asked Matthew to re-send the core patches with the signed-off
+sorted out. He can also put them on a public facing git server if
+that would be helpful.
 
 -- 
 Ben Dooks				http://www.codethink.co.uk/
