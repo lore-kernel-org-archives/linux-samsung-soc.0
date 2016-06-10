@@ -1,67 +1,106 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC PATCH 07/15] ARM: exynos: fixup debug macros for big-endian
-Date: Fri, 10 Jun 2016 15:04:52 +0200
-Message-ID: <575ABAF4.3030809@samsung.com>
-References: <20160608183110.13851-1-matthew@mattleach.net>
- <20160608183110.13851-8-matthew@mattleach.net>
- <ab51fcde-dfee-a70c-53c4-09485bfa7669@codethink.co.uk>
- <575AA193.7040907@samsung.com>
- <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC v4 1/7] Documentation: extcon: usb-gpio: update usb-gpio
+ binding description
+Date: Fri, 10 Jun 2016 09:00:00 -0500
+Message-ID: <20160610140000.GA26791@rob-hp-laptop>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <1465393686-16644-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:25672 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932106AbcFJNE5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:04:57 -0400
-In-reply-to: <17ac39d6-d451-ed43-1aa6-f2af462a61e0@codethink.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1465393686-16644-2-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rogerq-l0cyMroinI0@public.gmane.org, Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>, Matthew Leach <matthew@mattleach.net>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 06/10/2016 03:02 PM, Ben Dooks wrote:
-> On 10/06/16 12:16, Krzysztof Kozlowski wrote:
->> On 06/10/2016 01:12 PM, Ben Dooks wrote:
->>> On 08/06/16 19:31, Matthew Leach wrote:
->>>> From: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>
->>>> The exynos low-level debug macros need to be fixed if the system is being
->>>> built big endian. Add the necessary endian swaps for accessing the registers
->>>> to get output working again
->>>>
->>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>> ---
->>>>  arch/arm/include/debug/samsung.S | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>
->>> Should this go via the maintainer or to RMK?
->>>
->>> If to RMK, then shall I get it submitted (and does anyone else
->>> want to ack?)
->>
->> If there are no objections, I can take it through samsung-soc with other
->> arch/arm/mach-exynos* patches.
->>
->> What I am missing here, is Matthew's Signed-off-by.
->>
->> Matthew, you touched and sent the patch so could you add the Sob?
+On Wed, Jun 08, 2016 at 03:48:00PM +0200, Krzysztof Kozlowski wrote:
+> From: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > 
-> I've asked Matthew to re-send the core patches with the signed-off
-> sorted out.
+> Add information about VBUS pin detection support, 'debounce' property
+> and some other details.
 
-Thanks.
+The extcon bindings are a complete mess if you've seen my recent 
+comments. I'm inclined to NAK anything that amends broken bindings. This 
+one is headed in the right direction though...
 
-> He can also put them on a public facing git server if
-> that would be helpful.
 
-No need. I think it will go through separate trees anyway. Except the
-change adding ARCH_SUPPORTS_BIG_ENDIAN, I don't see any dependencies.
+> Signed-off-by: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/extcon/extcon-usb-gpio.txt | 28 ++++++++++++++++++++--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt b/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+> index af0b903de293..7096f399b771 100644
+> --- a/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+> +++ b/Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+> @@ -1,16 +1,40 @@
+>  USB GPIO Extcon device
+>  
+> -This is a virtual device used to generate USB cable states from the USB ID pin
+> -connected to a GPIO pin.
+> +This is a virtual device used to generate USB cable states from the USB
+> +ID and VBUS signals connected to GPIO pins.
 
-As for the ARCH_SUPPORTS_BIG_ENDIAN, I think it should be applied when
-all necessary drivers are fixed.
+It is not a virtual device, but a connector and connector states.
 
-Best regards,
-Krzysztof
+> +
+> +The extcon cable states USB and USB_HOST are actually VBUS and !ID
+> +pin states and do not indicate what mode the USB needs to operate in.
+> +That decision is done by the USB stack.
+> +
+> +Some devices have only one of these GPIO pins, so we support cases when
+> +only one of them is present. Hence properties 'id-gpio' and 'vbus-gpio'
+> +are described as optional, but at least one of them has to be present
+> +in extcon-usb-gpio node.
+> +
+> +In general we have three cases:
+> +1. If VBUS and ID gpios are present we pass them as is
+> +	USB-HOST = !ID, USB = VBUS
+> +2. If only VBUS gpio is present we assume that ID pin is always High.
+> +	USB-HOST = false, USB = VBUS.
+> +3. If only ID pin is available we infer the VBUS pin states based on ID.
+> +	USB-HOST = !ID, USB = ID
+
+USB and USB-HOST look like driver details. Shouldn't this just be in 
+terms of host and device?
+
+>  
+>  Required properties:
+>  - compatible: Should be "linux,extcon-usb-gpio"
+
+I'd prefer to see this deprecated in favor of a string that defines the 
+type of connector (usb-a-connector, usb-microab-connector, etc.)
+
+> +
+> +Optional properties
+>  - id-gpio: gpio for USB ID pin. See gpio binding.
+> +- vbus-gpio: gpio for USB VBUS pin. See gpio binding.
+
+vbus-gpios
+
+> +- debounce: gpio debounce time in milliseconds (u32).
+
+debounce of which gpio? Needs a unit suffix.
+
+> +
+>  
+>  Example: Examples of extcon-usb-gpio node in dra7-evm.dts as listed below:
+>  	extcon_usb1 {
+>  		compatible = "linux,extcon-usb-gpio";
+>  		id-gpio = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+> +		vbus-gpio = <&gpio6 2 GPIO_ACTIVE_HIGH>;
+> +		debounce = <25>;
+>  	}
+>  
+>  	&omap_dwc3_1 {
+> -- 
+> 1.9.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
