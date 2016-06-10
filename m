@@ -1,124 +1,63 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: Fix broken architected timer interrupt
- trigger
-Date: Fri, 10 Jun 2016 17:56:39 +0100
-Message-ID: <575AF147.40503@arm.com>
-References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
- <1465235791-7064-3-git-send-email-marc.zyngier@arm.com>
- <5759B143.9070503@caviumnetworks.com> <5759DA3A.4070905@gmail.com>
- <20160610082324.2a0967b0@arm.com> <575AEFC0.1070304@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC v4 01/14] regulator: of: Add helper for getting all supplies
+Date: Fri, 10 Jun 2016 12:30:56 -0500
+Message-ID: <20160610173056.GA16503@rob-hp-laptop>
+References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com>
+ <1465465471-28740-2-git-send-email-k.kozlowski@samsung.com>
+ <20160609102925.GS7510@sirena.org.uk>
+ <5759560A.70107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:39709 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750888AbcFJQ4r (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 12:56:47 -0400
-In-Reply-To: <575AEFC0.1070304@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5759560A.70107@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, hzpeterchen@gmail.com, Bartlomiej
 List-Id: linux-samsung-soc@vger.kernel.org
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: David Daney <ddaney@caviumnetworks.com>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, Wen
 
-On 10/06/16 17:50, David Daney wrote:
-> On 06/10/2016 12:23 AM, Marc Zyngier wrote:
->> On Thu, 09 Jun 2016 14:06:02 -0700
->> David Daney <ddaney.cavm@gmail.com> wrote:
->>
->>> I spoke too soon...
->>>
->>> On 06/09/2016 11:11 AM, David Daney wrote:
->>>> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
->>>>> The ARM architected timer specification mandates that the interrupt
->>>>> associated with each timer is level triggered (which corresponds to
->>>>> the "counter >= comparator" condition).
->>>>>
->>>>> A number of DTs are being remarkably creative, declaring the interrupt
->>>>> to be edge triggered. A quick look at the TRM for the corresponding ARM
->>>>> CPUs clearly shows that this is wrong, and I've corrected those.
->>>>> For non-ARM designs (and in the absence of a publicly available TRM),
->>>>> I've made them active low as well, which can't be completely wrong
->>>>> as the GIC cannot disinguish between level low and level high.
->>>>>
->>>>> The respective maintainers are of course welcome to prove me wrong.
->>>>>
->>>>> While I was at it, I took the liberty to fix a couple of related issue,
->>>>> such as some spurious affinity bits on ThunderX, and their complete
->>>>> absence on ls1043a (both of which seem to be related to copy-pasting
->>>>> from other DTs).
->>>>>
->>>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>>>> ---
->>>>>    arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
->>>>>    arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
->>>>>    arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
->>>>>    arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
->>>>>    arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
->>>>>    arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
->>>>>    arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
->>>>>    arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
->>>>>    arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
->>>>>    arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
->>>>>    10 files changed, 40 insertions(+), 40 deletions(-)
->>>>>
->>>> [...]
->>>>> diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
->>>>> b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
->>>>> index 2eb9b22..382d86f 100644
->>>>> --- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
->>>>> +++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
->>>>> @@ -354,10 +354,10 @@
->>>>>
->>>>>        timer {
->>>>>            compatible = "arm,armv8-timer";
->>>>> -        interrupts = <1 13 0xff01>,
->>>>> -                     <1 14 0xff01>,
->>>>> -                     <1 11 0xff01>,
->>>>> -                     <1 10 0xff01>;
->>>>> +        interrupts = <1 13 8>,
->>>>> +                     <1 14 8>,
->>>>> +                     <1 11 8>,
->>>>> +                     <1 10 8>;
->>>
->>>
->>> NAK!
->>>
->>> According to arm,gic-v3.txt the trigger value must be either 1 or 4:
->>>
->>>     The 3rd cell is the flags, encoded as follows:
->>>           bits[3:0] trigger type and level flags.
->>>                   1 = edge triggered
->>>                   4 = level triggered
->>
->> Which is a bug in the binding description. PPIs can be any trigger
->> (just look at the TRM for CPUs that have devices connected to a PPI to
->> be convinced - most of them are level low).
->>
->> This doesn't mean that you can distinguish level-high from level-low
->> in a programmatic way. But the HW definitely can handle it.
->>
->> I'll update the GICv3 binding to reflect this.
->>
->> Now, coming back to your NAK: is level-low the right or wrong trigger
->> for your implementation of the architected timers?
->>
+On Thu, Jun 09, 2016 at 01:42:02PM +0200, Krzysztof Kozlowski wrote:
+> On 06/09/2016 12:29 PM, Mark Brown wrote:
+> > On Thu, Jun 09, 2016 at 11:44:18AM +0200, Krzysztof Kozlowski wrote:
+> >> Few drivers have a need of getting regulator supplies without knowing
+> >> their names:
+> >> 1. The Simple Framebuffer driver works on setup provided by bootloader
+> >>    (outside of scope of kernel);
+> >> 2. Generic power sequence driver may be attached to any device node.
+> >>
+> >> Add a Device Tree helper for parsing "-supply" properties and returning
+> >> allocated bulk regulator consumers.
+> > 
+> > I'm still very concerned that this is just an invitation to people to
+> > write half baked regulator consumers and half baked DTs to go along with
+> > it, making it a standard API that doesn't have big red flags on it that
+> > will flag up when "normal" drivers use it is not good.  Right now this
+> > just looks like a standard API and people are going to just start using
+> > it.  If we are going to do this perhaps we need a separate header or
+> > something to help flag this up.
 > 
-> For the Cavium Thunder implementation of GIC-v3, there is no concept of 
-> high and low.  All we have is asserted and not-asserted, we have chosen 
-> to map the concept of an asserted level-triggered source to 
-> IRQ_TYPE_LEVEL_HIGH, and the transition from not-asserted to asserted on 
-> an edge triggered source to IRQ_TYPE_EDGE_RISING.
+> No problem, I can move it to a special header.  Actually, if you dislike
+> this as an API, it does not have to be in header at all.  I can just
+> duplicate the simplefb code.
+> 
+> > In the case of power sequences I'd expect the sequences to perform
+> > operations on named supplies - the core shouldn't know what the supplies
+> > are but the thing specifying the sequence should.
+> 
+> Hm, so maybe passing names like:
+> 
+> usb3503@08 {
+> 	reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
+> 	initial-mode = <1>;
+> 	vdd-supply = <&buck8_reg>;
+> 	foo-supply = <&buck9_reg>;
+> 
+>         power-sequence;
+> 	power-sequence-supplies = "vdd", "foo";
 
-The GIC, no matter if it is from Cavium or not, doesn't have a notion of
-high or low indeed *from a programming interface point of view*. What
-matters here is the *device*, and how it is connected to the interrupt
-controller. And I'm pretty sure your timers are *physically* one or the
-other (unless they are simply floating? ;-)
+This alone would be fine as it is just one property, but then what's 
+next? power-sequence-delay, power-sequence-clocks, etc. What if you 
+need to express ordering relationship of supplies, clocks, gpios? We end 
+up with a scripting language in DT and we don't want to have that.
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Rob
