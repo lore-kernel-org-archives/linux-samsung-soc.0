@@ -1,66 +1,178 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: remove superfluous inclusions of fbdev header
-Date: Fri, 10 Jun 2016 16:11:48 +0200
-Message-ID: <20160610141148.GY3363@phenom.ffwll.local>
-References: <1464179741-10341-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <575A929D.90401@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 06/20] drm: i915: Rely on the default ->best_encoder()
+ behavior where appropriate
+Date: Fri, 10 Jun 2016 17:24:12 +0200
+Message-ID: <20160610152412.GL3363@phenom.ffwll.local>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <575A929D.90401@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKdW4gMTAsIDIwMTYgYXQgMTI6MTI6NDVQTSArMDIwMCwgVG9iaWFzIEpha29iaSB3
-cm90ZToKPiBQaW5nIQoKZXh5bm9zIG1haW50YWluZXIgSW5raSBpc24ndCBvbiBjYywgc28gZ29v
-ZCBjaGFuY2VzIGhlJ2xsIG1pc3MgdGhpcy4KLURhbmllbAoKPiAKPiAtIFRvYmlhcwo+IAo+IFRv
-YmlhcyBKYWtvYmkgd3JvdGU6Cj4gPiBOZWl0aGVyIG9mIHRoZXNlIGZpbGVzIGlzc3VlIGFueSBm
-YmRldiByZWxhdGVkIGNhbGxzLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2Jp
-IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyB8IDEgLQo+ID4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMgICB8IDEgLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDEgLQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMyBk
-ZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1f
-ZGVjb24uYwo+ID4gaW5kZXggZGExYmQ4NC4uZDliMmQ3NyAxMDA2NDQKPiA+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+ID4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4gPiBAQCAtMzEsNyArMzEsNiBAQAo+
-ID4gICNpbmNsdWRlICJleHlub3NfZHJtX3BsYW5lLmgiCj4gPiAgI2luY2x1ZGUgImV4eW5vc19k
-cm1fZHJ2LmgiCj4gPiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKPiA+IC0jaW5jbHVkZSAi
-ZXh5bm9zX2RybV9mYmRldi5oIgo+ID4gICNpbmNsdWRlICJleHlub3NfZHJtX2lvbW11LmgiCj4g
-PiAgCj4gPiAgLyoKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NvcmUuYwo+
-ID4gaW5kZXggMDExMjExZS4uZWRiZDk4ZiAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jb3JlLmMKPiA+IEBAIC0xNSw3ICsxNSw2IEBACj4gPiAgI2luY2x1ZGUg
-PGRybS9kcm1QLmg+Cj4gPiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4gPiAgI2luY2x1
-ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgo+ID4gLSNpbmNsdWRlICJleHlub3NfZHJtX2ZiZGV2Lmgi
-Cj4gPiAgCj4gPiAgc3RhdGljIExJU1RfSEVBRChleHlub3NfZHJtX3N1YmRydl9saXN0KTsKPiA+
-ICAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
-ZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ID4gaW5kZXgg
-ZTIwYTE5NC4uYmMxNzVkNiAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9maW1kLmMKPiA+IEBAIC0zMCw3ICszMCw2IEBACj4gPiAgCj4gPiAgI2luY2x1ZGUgImV4
-eW5vc19kcm1fZHJ2LmgiCj4gPiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZmIuaCIKPiA+IC0jaW5j
-bHVkZSAiZXh5bm9zX2RybV9mYmRldi5oIgo+ID4gICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMu
-aCIKPiA+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9wbGFuZS5oIgo+ID4gICNpbmNsdWRlICJleHlu
-b3NfZHJtX2lvbW11LmgiCj4gPiAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVy
-LCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Tue, Jun 07, 2016 at 01:48:01PM +0200, Boris Brezillon wrote:
+> For all outputs except dp_mst, we have a 1:1 relationship between
+> connectors and encoders and the driver is relying on the atomic helpers:
+> we can drop the custom ->best_encoder() implementation and let the core
+> call drm_atomic_helper_best_encoder() for us.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+You can also drop the best_encoder from intel_dp_mst, we only need the
+atomic_best_encoder. The best_encoder there was needed to help out the
+fbdev emulation. Care to respin?
+-Daniel
+
+> ---
+>  drivers/gpu/drm/i915/intel_crt.c     | 1 -
+>  drivers/gpu/drm/i915/intel_display.c | 8 --------
+>  drivers/gpu/drm/i915/intel_dp.c      | 1 -
+>  drivers/gpu/drm/i915/intel_drv.h     | 1 -
+>  drivers/gpu/drm/i915/intel_dsi.c     | 1 -
+>  drivers/gpu/drm/i915/intel_dvo.c     | 1 -
+>  drivers/gpu/drm/i915/intel_hdmi.c    | 1 -
+>  drivers/gpu/drm/i915/intel_lvds.c    | 1 -
+>  drivers/gpu/drm/i915/intel_sdvo.c    | 1 -
+>  drivers/gpu/drm/i915/intel_tv.c      | 1 -
+>  10 files changed, 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_crt.c b/drivers/gpu/drm/i915/intel_crt.c
+> index 3fbb6fc..bd0cd68 100644
+> --- a/drivers/gpu/drm/i915/intel_crt.c
+> +++ b/drivers/gpu/drm/i915/intel_crt.c
+> @@ -753,7 +753,6 @@ static const struct drm_connector_funcs intel_crt_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_crt_connector_helper_funcs = {
+>  	.mode_valid = intel_crt_mode_valid,
+>  	.get_modes = intel_crt_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_crt_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+> index 2113f40..77026ce 100644
+> --- a/drivers/gpu/drm/i915/intel_display.c
+> +++ b/drivers/gpu/drm/i915/intel_display.c
+> @@ -16113,14 +16113,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
+>  	intel_teardown_gmbus(dev);
+>  }
+>  
+> -/*
+> - * Return which encoder is currently attached for connector.
+> - */
+> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector)
+> -{
+> -	return &intel_attached_encoder(connector)->base;
+> -}
+> -
+>  void intel_connector_attach_encoder(struct intel_connector *connector,
+>  				    struct intel_encoder *encoder)
+>  {
+> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+> index f192f58..21b2833 100644
+> --- a/drivers/gpu/drm/i915/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/intel_dp.c
+> @@ -4935,7 +4935,6 @@ static const struct drm_connector_funcs intel_dp_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dp_connector_helper_funcs = {
+>  	.get_modes = intel_dp_get_modes,
+>  	.mode_valid = intel_dp_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_dp_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index a28b4aa..79a4d6b 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -1128,7 +1128,6 @@ struct intel_connector *intel_connector_alloc(void);
+>  bool intel_connector_get_hw_state(struct intel_connector *connector);
+>  void intel_connector_attach_encoder(struct intel_connector *connector,
+>  				    struct intel_encoder *encoder);
+> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector);
+>  struct drm_display_mode *intel_crtc_mode_get(struct drm_device *dev,
+>  					     struct drm_crtc *crtc);
+>  enum pipe intel_get_pipe_from_connector(struct intel_connector *connector);
+> diff --git a/drivers/gpu/drm/i915/intel_dsi.c b/drivers/gpu/drm/i915/intel_dsi.c
+> index 366ad6c..ec51952 100644
+> --- a/drivers/gpu/drm/i915/intel_dsi.c
+> +++ b/drivers/gpu/drm/i915/intel_dsi.c
+> @@ -1378,7 +1378,6 @@ static const struct drm_encoder_funcs intel_dsi_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dsi_connector_helper_funcs = {
+>  	.get_modes = intel_dsi_get_modes,
+>  	.mode_valid = intel_dsi_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_connector_funcs intel_dsi_connector_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
+> index 286baec..34b7e3f 100644
+> --- a/drivers/gpu/drm/i915/intel_dvo.c
+> +++ b/drivers/gpu/drm/i915/intel_dvo.c
+> @@ -351,7 +351,6 @@ static const struct drm_connector_funcs intel_dvo_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dvo_connector_helper_funcs = {
+>  	.mode_valid = intel_dvo_mode_valid,
+>  	.get_modes = intel_dvo_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static void intel_dvo_enc_destroy(struct drm_encoder *encoder)
+> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+> index 2c3bd9c..aef4bc8 100644
+> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+> @@ -2114,7 +2114,6 @@ static const struct drm_connector_funcs intel_hdmi_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_hdmi_connector_helper_funcs = {
+>  	.get_modes = intel_hdmi_get_modes,
+>  	.mode_valid = intel_hdmi_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_hdmi_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_lvds.c b/drivers/gpu/drm/i915/intel_lvds.c
+> index bc53c0d..d4faa5a 100644
+> --- a/drivers/gpu/drm/i915/intel_lvds.c
+> +++ b/drivers/gpu/drm/i915/intel_lvds.c
+> @@ -547,7 +547,6 @@ static int intel_lvds_set_property(struct drm_connector *connector,
+>  static const struct drm_connector_helper_funcs intel_lvds_connector_helper_funcs = {
+>  	.get_modes = intel_lvds_get_modes,
+>  	.mode_valid = intel_lvds_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_connector_funcs intel_lvds_connector_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
+> index 2128fae..5cd48ff 100644
+> --- a/drivers/gpu/drm/i915/intel_sdvo.c
+> +++ b/drivers/gpu/drm/i915/intel_sdvo.c
+> @@ -2191,7 +2191,6 @@ static const struct drm_connector_funcs intel_sdvo_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_sdvo_connector_helper_funcs = {
+>  	.get_modes = intel_sdvo_get_modes,
+>  	.mode_valid = intel_sdvo_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
+> diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
+> index 223129d..47fe241 100644
+> --- a/drivers/gpu/drm/i915/intel_tv.c
+> +++ b/drivers/gpu/drm/i915/intel_tv.c
+> @@ -1512,7 +1512,6 @@ static const struct drm_connector_funcs intel_tv_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_tv_connector_helper_funcs = {
+>  	.mode_valid = intel_tv_mode_valid,
+>  	.get_modes = intel_tv_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_tv_enc_funcs = {
+> -- 
+> 2.7.4
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
