@@ -1,77 +1,265 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC v4 01/14] regulator: of: Add helper for getting all supplies
-Date: Fri, 10 Jun 2016 20:49:26 +0200
-Message-ID: <4549765.J0ap1g2jZL@diego>
-References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com> <5759560A.70107@samsung.com> <20160610173056.GA16503@rob-hp-laptop>
+From: Duc Dang <dhdang@apm.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: Fix broken architected timer interrupt
+ trigger
+Date: Fri, 10 Jun 2016 14:48:05 -0700
+Message-ID: <CADaLNDn_k2eDoBhmDu9Ub5D0XF7PTN-sW9kNDTuFSUybgT59jQ@mail.gmail.com>
+References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
+ <1465235791-7064-3-git-send-email-marc.zyngier@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20160610173056.GA16503@rob-hp-laptop>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, hzpeterchen@gmail.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1465235791-7064-3-git-send-email-marc.zyngier@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, Wenbin Song <Wenbin.Song@freescale.com>, Jan Glauber <jglauber@>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Freitag, 10. Juni 2016, 12:30:56 schrieb Rob Herring:
-> On Thu, Jun 09, 2016 at 01:42:02PM +0200, Krzysztof Kozlowski wrote:
-> > On 06/09/2016 12:29 PM, Mark Brown wrote:
-> > > On Thu, Jun 09, 2016 at 11:44:18AM +0200, Krzysztof Kozlowski wrote:
-> > >> Few drivers have a need of getting regulator supplies without knowing
-> > >> their names:
-> > >> 1. The Simple Framebuffer driver works on setup provided by bootloader
-> > >> 
-> > >>    (outside of scope of kernel);
-> > >> 
-> > >> 2. Generic power sequence driver may be attached to any device node.
-> > >> 
-> > >> Add a Device Tree helper for parsing "-supply" properties and returning
-> > >> allocated bulk regulator consumers.
-> > > 
-> > > I'm still very concerned that this is just an invitation to people to
-> > > write half baked regulator consumers and half baked DTs to go along with
-> > > it, making it a standard API that doesn't have big red flags on it that
-> > > will flag up when "normal" drivers use it is not good.  Right now this
-> > > just looks like a standard API and people are going to just start using
-> > > it.  If we are going to do this perhaps we need a separate header or
-> > > something to help flag this up.
-> > 
-> > No problem, I can move it to a special header.  Actually, if you dislike
-> > this as an API, it does not have to be in header at all.  I can just
-> > duplicate the simplefb code.
-> > 
-> > > In the case of power sequences I'd expect the sequences to perform
-> > > operations on named supplies - the core shouldn't know what the supplies
-> > > are but the thing specifying the sequence should.
-> > 
-> > Hm, so maybe passing names like:
-> > 
-> > usb3503@08 {
-> > 
-> > 	reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
-> > 	initial-mode = <1>;
-> > 	vdd-supply = <&buck8_reg>;
-> > 	foo-supply = <&buck9_reg>;
-> > 	
-> >         power-sequence;
-> > 	
-> > 	power-sequence-supplies = "vdd", "foo";
-> 
-> This alone would be fine as it is just one property, but then what's
-> next? power-sequence-delay, power-sequence-clocks, etc. What if you
-> need to express ordering relationship of supplies, clocks, gpios? We end
-> up with a scripting language in DT and we don't want to have that.
+On Mon, Jun 6, 2016 at 10:56 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> The ARM architected timer specification mandates that the interrupt
+> associated with each timer is level triggered (which corresponds to
+> the "counter >= comparator" condition).
+>
+> A number of DTs are being remarkably creative, declaring the interrupt
+> to be edge triggered. A quick look at the TRM for the corresponding ARM
+> CPUs clearly shows that this is wrong, and I've corrected those.
+> For non-ARM designs (and in the absence of a publicly available TRM),
+> I've made them active low as well, which can't be completely wrong
+> as the GIC cannot disinguish between level low and level high.
+>
+> The respective maintainers are of course welcome to prove me wrong.
+>
+> While I was at it, I took the liberty to fix a couple of related issue,
+> such as some spurious affinity bits on ThunderX, and their complete
+> absence on ls1043a (both of which seem to be related to copy-pasting
+> from other DTs).
+>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
+>  arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
+>  arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
+>  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
+>  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
+>  arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
+>  10 files changed, 40 insertions(+), 40 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+> index 445aa67..c2b9bcb 100644
+> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+> @@ -255,10 +255,10 @@
+>                 /* Local timer */
+>                 timer {
+>                         compatible = "arm,armv8-timer";
+> -                       interrupts = <1 13 0xf01>,
+> -                                    <1 14 0xf01>,
+> -                                    <1 11 0xf01>,
+> -                                    <1 10 0xf01>;
+> +                       interrupts = <1 13 0xf08>,
+> +                                    <1 14 0xf08>,
+> +                                    <1 11 0xf08>,
+> +                                    <1 10 0xf08>;
+>                 };
+>
+>                 timer0: timer0@ffc03000 {
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 832815d..4d9d144 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -100,13 +100,13 @@
+>         timer {
+>                 compatible = "arm,armv8-timer";
+>                 interrupts = <GIC_PPI 13
+> -                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
+> +                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 14
+> -                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
+> +                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 11
+> -                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
+> +                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 10
+> -                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>;
+> +                       (GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
+>         };
+>
+>         xtal: xtal-clk {
+> diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> index 5147d76..1c4193f 100644
+> --- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> +++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> @@ -110,10 +110,10 @@
+>
+>         timer {
+>                 compatible = "arm,armv8-timer";
+> -               interrupts = <1 0 0xff01>,      /* Secure Phys IRQ */
+> -                            <1 13 0xff01>,     /* Non-secure Phys IRQ */
+> -                            <1 14 0xff01>,     /* Virt IRQ */
+> -                            <1 15 0xff01>;     /* Hyp IRQ */
+> +               interrupts = <1 0 0xff08>,      /* Secure Phys IRQ */
+> +                            <1 13 0xff08>,     /* Non-secure Phys IRQ */
+> +                            <1 14 0xff08>,     /* Virt IRQ */
+> +                            <1 15 0xff08>;     /* Hyp IRQ */
+>                 clock-frequency = <50000000>;
+>         };
 
-Also, at least from the simple blocks I've seen so far (usb-hub chips, usb-
-sata bridges), a power-supply feels more like it should be a regular phy-
-supply of the usbphy connected the the host-controller.
+For above changes on apm-storm.dtsi for APM X-Gene 1:
 
-It's similar for mmc-controllers where vmmc-supply on the controller handles 
-the power-supply of the connected card and thus the current mmc power-
-sequences do not handle regulators.
+Acked-by: Duc Dang <dhdang@apm.com>
 
-Reset-gpios and clock inputs are clearly properties of the actual device, but 
-the supply control should probably lay with the host controller, especially as 
-it is the one deciding when to power on/off things.
+Thanks,
+Duc Dang.
 
-
+>
+> diff --git a/arch/arm64/boot/dts/broadcom/ns2.dtsi b/arch/arm64/boot/dts/broadcom/ns2.dtsi
+> index ec68ec1..9c2d8a7 100644
+> --- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
+> @@ -88,13 +88,13 @@
+>         timer {
+>                 compatible = "arm,armv8-timer";
+>                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_RAW(0xff) |
+> -                             IRQ_TYPE_EDGE_RISING)>,
+> +                             IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 14 (GIC_CPU_MASK_RAW(0xff) |
+> -                             IRQ_TYPE_EDGE_RISING)>,
+> +                             IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 11 (GIC_CPU_MASK_RAW(0xff) |
+> -                             IRQ_TYPE_EDGE_RISING)>,
+> +                             IRQ_TYPE_LEVEL_LOW)>,
+>                              <GIC_PPI 10 (GIC_CPU_MASK_RAW(0xff) |
+> -                             IRQ_TYPE_EDGE_RISING)>;
+> +                             IRQ_TYPE_LEVEL_LOW)>;
+>         };
+>
+>         pmu {
+> diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> index 2eb9b22..382d86f 100644
+> --- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> +++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> @@ -354,10 +354,10 @@
+>
+>         timer {
+>                 compatible = "arm,armv8-timer";
+> -               interrupts = <1 13 0xff01>,
+> -                            <1 14 0xff01>,
+> -                            <1 11 0xff01>,
+> -                            <1 10 0xff01>;
+> +               interrupts = <1 13 8>,
+> +                            <1 14 8>,
+> +                            <1 11 8>,
+> +                            <1 10 8>;
+>         };
+>
+>         pmu {
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index ca663df..1628315 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -473,10 +473,10 @@
+>
+>                 timer {
+>                         compatible = "arm,armv8-timer";
+> -                       interrupts = <1 13 0xff01>,
+> -                                    <1 14 0xff01>,
+> -                                    <1 11 0xff01>,
+> -                                    <1 10 0xff01>;
+> +                       interrupts = <1 13 0xff08>,
+> +                                    <1 14 0xff08>,
+> +                                    <1 11 0xff08>,
+> +                                    <1 10 0xff08>;
+>                 };
+>
+>                 pmu_system_controller: system-controller@105c0000 {
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+> index c277ba6..b92543d 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+> @@ -111,10 +111,10 @@
+>
+>         timer {
+>                 compatible = "arm,armv8-timer";
+> -               interrupts = <1 13 0x1>, /* Physical Secure PPI */
+> -                            <1 14 0x1>, /* Physical Non-Secure PPI */
+> -                            <1 11 0x1>, /* Virtual PPI */
+> -                            <1 10 0x1>; /* Hypervisor PPI */
+> +               interrupts = <1 13 0xf08>, /* Physical Secure PPI */
+> +                            <1 14 0xf08>, /* Physical Non-Secure PPI */
+> +                            <1 11 0xf08>, /* Virtual PPI */
+> +                            <1 10 0xf08>; /* Hypervisor PPI */
+>                 fsl,erratum-a008585;
+>         };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> index 20d256b..b1d6bb8 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -122,10 +122,10 @@
+>
+>                         timer {
+>                                 compatible = "arm,armv8-timer";
+> -                               interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
+> -                                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
+> -                                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
+> -                                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
+> +                               interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>                         };
+>
+>                         odmi: odmi@300000 {
+> diff --git a/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
+> index 9532880..5a8e0f4 100644
+> --- a/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
+> +++ b/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
+> @@ -127,10 +127,10 @@
+>
+>         timer {
+>                 compatible = "arm,armv8-timer";
+> -               interrupts = <1 13 0xf01>,
+> -                            <1 14 0xf01>,
+> -                            <1 11 0xf01>,
+> -                            <1 10 0xf01>;
+> +               interrupts = <1 13 0xf08>,
+> +                            <1 14 0xf08>,
+> +                            <1 11 0xf08>,
+> +                            <1 10 0xf08>;
+>         };
+>
+>         soc {
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> index e595f22..3e2e51f 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> @@ -65,10 +65,10 @@
+>         timer {
+>                 compatible = "arm,armv8-timer";
+>                 interrupt-parent = <&gic>;
+> -               interrupts = <1 13 0xf01>,
+> -                            <1 14 0xf01>,
+> -                            <1 11 0xf01>,
+> -                            <1 10 0xf01>;
+> +               interrupts = <1 13 0xf08>,
+> +                            <1 14 0xf08>,
+> +                            <1 11 0xf08>,
+> +                            <1 10 0xf08>;
+>         };
+>
+>         amba_apu {
+> --
+> 2.1.4
+>
