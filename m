@@ -1,100 +1,158 @@
 From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 1/2] clocksource/arm_arch_timer: Force per-CPU
- interrupt to be level-triggered
-Date: Sat, 11 Jun 2016 10:41:00 +0100
-Message-ID: <20160611104100.7475689e@arm.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: Fix broken architected timer
+ interrupt trigger
+Date: Sat, 11 Jun 2016 11:04:23 +0100
+Message-ID: <20160611110423.0c782f47@arm.com>
 References: <1465235791-7064-1-git-send-email-marc.zyngier@arm.com>
-	<1465235791-7064-2-git-send-email-marc.zyngier@arm.com>
-	<5759DB58.5070906@gmail.com>
-	<20160610082952.4f20d732@arm.com>
-	<575AFB4A.3030508@gmail.com>
+	<1465235791-7064-3-git-send-email-marc.zyngier@arm.com>
+	<5759B143.9070503@caviumnetworks.com>
+	<5759DA3A.4070905@gmail.com>
+	<20160610082324.2a0967b0@arm.com>
+	<575AEFC0.1070304@gmail.com>
+	<575AF147.40503@arm.com>
+	<575AF9A8.5020406@caviumnetworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <575AFB4A.3030508@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Hou Zhiqiang <B48286@freescale.com>, Michal Simek <michal.simek@xilinx.com>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, linux-samsung-soc@vger.kernel.org, Yuan Yao <yao.yuan@nxp.com>, Wenbin Song <Wenbin.Song@freescale.com>, Jan Glauber <jglauber@cavium>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:44257 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751070AbcFKKEf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 11 Jun 2016 06:04:35 -0400
+In-Reply-To: <575AF9A8.5020406@caviumnetworks.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: David Daney <ddaney.cavm@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Rob Herring <robh+dt@kernel.org>, Yuan Yao <yao.yuan@nxp.co>
 
-On Fri, 10 Jun 2016 10:39:22 -0700
-David Daney <ddaney.cavm@gmail.com> wrote:
+On Fri, 10 Jun 2016 10:32:24 -0700
+David Daney <ddaney@caviumnetworks.com> wrote:
 
-> On 06/10/2016 12:29 AM, Marc Zyngier wrote:
-> > On Thu, 09 Jun 2016 14:10:48 -0700
-> > David Daney <ddaney.cavm@gmail.com> wrote:
-> >
-> >> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
-> >>> The ARM architected timer produces level-triggered interrupts (this
-> >>> is mandated by the architecture). Unfortunately, most device-trees
-> >>> get this wrong, and expose an edge-triggered interrupt.
+> On 06/10/2016 09:56 AM, Marc Zyngier wrote:
+> > On 10/06/16 17:50, David Daney wrote:
+> >> On 06/10/2016 12:23 AM, Marc Zyngier wrote:
+> >>> On Thu, 09 Jun 2016 14:06:02 -0700
+> >>> David Daney <ddaney.cavm@gmail.com> wrote:
 > >>>
-> >>> Until now, this wasn't too much an issue, as the programming of the
-> >>> trigger would fail (the corresponding PPI cannot be reconfigured),
-> >>> and the kernel would be happy with this. But we're about to change
-> >>> this, and trust DT a lot if the driver doesn't provide its own
-> >>> trigger information. In that context, the timer breaks badly.
+> >>>> I spoke too soon...
+> >>>>
+> >>>> On 06/09/2016 11:11 AM, David Daney wrote:
+> >>>>> On 06/06/2016 10:56 AM, Marc Zyngier wrote:
+> >>>>>> The ARM architected timer specification mandates that the interrupt
+> >>>>>> associated with each timer is level triggered (which corresponds to
+> >>>>>> the "counter >= comparator" condition).
+> >>>>>>
+> >>>>>> A number of DTs are being remarkably creative, declaring the interrupt
+> >>>>>> to be edge triggered. A quick look at the TRM for the corresponding ARM
+> >>>>>> CPUs clearly shows that this is wrong, and I've corrected those.
+> >>>>>> For non-ARM designs (and in the absence of a publicly available TRM),
+> >>>>>> I've made them active low as well, which can't be completely wrong
+> >>>>>> as the GIC cannot disinguish between level low and level high.
+> >>>>>>
+> >>>>>> The respective maintainers are of course welcome to prove me wrong.
+> >>>>>>
+> >>>>>> While I was at it, I took the liberty to fix a couple of related issue,
+> >>>>>> such as some spurious affinity bits on ThunderX, and their complete
+> >>>>>> absence on ls1043a (both of which seem to be related to copy-pasting
+> >>>>>> from other DTs).
+> >>>>>>
+> >>>>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> >>>>>> ---
+> >>>>>>     arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
+> >>>>>>     arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
+> >>>>>>     10 files changed, 40 insertions(+), 40 deletions(-)
+> >>>>>>
+> >>>>> [...]
+> >>>>>> diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >>>>>> b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >>>>>> index 2eb9b22..382d86f 100644
+> >>>>>> --- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >>>>>> +++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
+> >>>>>> @@ -354,10 +354,10 @@
+> >>>>>>
+> >>>>>>         timer {
+> >>>>>>             compatible = "arm,armv8-timer";
+> >>>>>> -        interrupts = <1 13 0xff01>,
+> >>>>>> -                     <1 14 0xff01>,
+> >>>>>> -                     <1 11 0xff01>,
+> >>>>>> -                     <1 10 0xff01>;
+> >>>>>> +        interrupts = <1 13 8>,
+> >>>>>> +                     <1 14 8>,
+> >>>>>> +                     <1 11 8>,
+> >>>>>> +                     <1 10 8>;
+> >>>>
+> >>>>
+> >>>> NAK!
+> >>>>
+> >>>> According to arm,gic-v3.txt the trigger value must be either 1 or 4:
+> >>>>
+> >>>>      The 3rd cell is the flags, encoded as follows:
+> >>>>            bits[3:0] trigger type and level flags.
+> >>>>                    1 = edge triggered
+> >>>>                    4 = level triggered
 > >>>
-> >>> While we do need to fix the DTs, there is also some userspace out
-> >>> there (kvmtool) that generates the same kind of broken DT on the
-> >>> fly, and that will completely break with newer kernels.
+> >>> Which is a bug in the binding description. PPIs can be any trigger
+> >>> (just look at the TRM for CPUs that have devices connected to a PPI to
+> >>> be convinced - most of them are level low).
 > >>>
-> >>> As a safety measure, and to keep buggy software alive as well as
-> >>> buying us some time to fix DTs all over the place, let's check
-> >>> what trigger configuration has been given us by the firmware.
-> >>> If this is not a level configuration, then we know that the
-> >>> DT/ACPI configuration is bust, and we pick some defaults which
-> >>> won't be worse than the existing setup.
+> >>> This doesn't mean that you can distinguish level-high from level-low
+> >>> in a programmatic way. But the HW definitely can handle it.
 > >>>
-> >>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> >>> I'll update the GICv3 binding to reflect this.
+> >>>
+> >>> Now, coming back to your NAK: is level-low the right or wrong trigger
+> >>> for your implementation of the architected timers?
+> >>>
 > >>
-> >>
-> >> I tried to test this patch, but there is a problem somewhere that I have
-> >> not yet tracked down.  On Cavium Thunder (gic-v3 based) I have tested
-> >> with the device tree interrupt type of both 4 and 8 and get the same result:
-> >>
-> >>
-> >> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ2,
-> >> assuming level low
-> >> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
-> >> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ3,
-> >> assuming level low
-> >> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
-> >> [    0.000000] arm_arch_timer: Architected cp15 timer(s) running at
-> >> 100.00MHz (phys).
-> >> [    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
-> >> max_cycles: 0x171024e7e0, max_idle_ns: 440795205315 ns
-> >> [    0.000002] sched_clock: 56 bits at 100MHz, resolution 10ns, wraps
-> >> every 4398046511100ns
-> >>
-> >> It could be that the gic-v3 irq mapping code is broken.  I will try to
-> >> look into it, but there may be other fixes needed before we would
-> >> consider this patch to be an improvement.
+> >> For the Cavium Thunder implementation of GIC-v3, there is no concept of
+> >> high and low.  All we have is asserted and not-asserted, we have chosen
+> >> to map the concept of an asserted level-triggered source to
+> >> IRQ_TYPE_LEVEL_HIGH, and the transition from not-asserted to asserted on
+> >> an edge triggered source to IRQ_TYPE_EDGE_RISING.
 > >
-> > That's because the core kernel has other bugs which are going to be
-> > addressed in 4.8. So far, we cannot set the trigger of a per-cpu
-> > interrupt from the device tree, and we end-up with whatever is the
-> > default (edge). You can put whatever you want in the DT, it will be
-> > ignored.
-> 
-> Yes, after looking into it, I see what you mean.
-> 
-> >
-> > This series in preparation of these fixes landing in 4.8, where we'll
-> > be able to do the right thing, and will start noticing stupid things
-> > coming from the DT.
+> > The GIC, no matter if it is from Cavium or not, doesn't have a notion of
+> > high or low indeed *from a programming interface point of view*. What
+> > matters here is the *device*, and how it is connected to the interrupt
+> > controller. And I'm pretty sure your timers are *physically* one or the
+> > other (unless they are simply floating? ;-)
 > >
 > 
-> I don't object to the patch, but would suggest a couple of things:
-> 
-> o We need to test it *after* the irq configuration issues are corrected.
-> 
-> o The merging order be such that we never get the WARNING messages.
+> There is no wire.  So the concept of measuring the voltage doesn't 
+> exist.  Everything is message based (with either architecturally defined 
+> or implementation defined protocols).
 
-What do you prefer? A benign warning message? or a broken system? You
-sound more afraid of the former than the later (and yes, things *are*
-broken at the moment).
+That's your implementation, which cannot be generalized. PPIs can
+perfectly be wired (and definitely *are* wires in ARM implementations)
+from the device all the way to the redistributor, where it effectively
+becomes message-based in an architecturally defined way.
+
+> Let's turn the question around.
+> 
+> What bits in the GIC-v3 registers and data structures do we need to 
+> program differently to account for the difference between 
+> IRQ_TYPE_LEVEL_HIGH and IRQ_TYPE_LEVEL_LOW?
+> 
+> If the answer is that there are none, then allowing both to be 
+> specified, falsely implies that there is a difference and causes mental 
+> effort to be expended trying to decide which to use.
+
+They do exist at the physical level, at least in a number of non-Cavium
+implementations.
+
+> 
+> Unless you can tell me that there is a bit in the GIC-v3 that depends on 
+> HIGH vs. LOW, I remain strongly opposed to changing the binding document.
+
+That's fine by me. I'll drop the ThunderX changes from this patch.
 
 Thanks,
 
