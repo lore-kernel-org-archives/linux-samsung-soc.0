@@ -1,103 +1,72 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 07/10] drm/bridge: analogix_dp: passing the connector
- as an argument in .get_modes()
-Date: Tue, 14 Jun 2016 18:28:49 +0200
-Message-ID: <20160614162849.GB1338@phenom.ffwll.local>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904789-1021-1-git-send-email-ykk@rock-chips.com>
- <20160614162656.GA1338@phenom.ffwll.local>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 7/8] ARM: dts: exynos: Topic branch with Odroid XU for
+ v4.8
+Date: Mon, 13 Jun 2016 14:53:39 -0700
+Message-ID: <20160613215339.GE20845@localhost>
+References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
+ <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:36813 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751727AbcFNQxZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 Jun 2016 12:53:25 -0400
+Received: by mail-pa0-f66.google.com with SMTP id fg1so12981954pad.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jun 2016 09:53:25 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20160614162656.GA1338@phenom.ffwll.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>, Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Tomasz Figa <tomasz.figa@chromium.com>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+In-Reply-To: <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-On Tue, Jun 14, 2016 at 06:26:56PM +0200, Daniel Vetter wrote:
-> On Tue, Jun 14, 2016 at 07:46:29PM +0800, Yakir Yang wrote:
-> > It's better to pass the connector to platform driver in .get_modes()
-> > callback, just like what the .get_modes() helper function designed.
-> > 
-> > Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+On Mon, Jun 06, 2016 at 02:25:32PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> Also please drop the analogix prefix from the subject, this is for all
-> drm_bridge drivers.
-
-Ok, strike all my comments, I was blind and didn't realize that this was a
-private interface for only rockchip/exynos.
--Daniel
-
-> -Daniel
+> This topic branch pulls external clk dependency (provided by Sylwester
+> Nawrocki).
 > 
-> > ---
-> > Changes in v3:
-> > - Avoid to change any internal driver state in .mode_valid interface. (Tomasz, reviewed at Google Gerrit)
-> >     [https://chromium-review.googlesource.com/#/c/346318/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@113]
-> > 
-> > Changes in v2: None
-> > 
-> >  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
-> >  drivers/gpu/drm/exynos/exynos_dp.c                 | 4 ++--
-> >  include/drm/bridge/analogix_dp.h                   | 3 ++-
-> >  3 files changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> > index 4a1b3b8..1a890fa 100644
-> > --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> > +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> > @@ -938,7 +938,7 @@ int analogix_dp_get_modes(struct drm_connector *connector)
-> >  		num_modes += drm_panel_get_modes(dp->plat_data->panel);
-> >  
-> >  	if (dp->plat_data->get_modes)
-> > -		num_modes += dp->plat_data->get_modes(dp->plat_data);
-> > +		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
-> >  
-> >  	return num_modes;
-> >  }
-> > diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-> > index 468498e..8a555ed 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_dp.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-> > @@ -67,10 +67,10 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
-> >  	return exynos_dp_crtc_clock_enable(plat_data, false);
-> >  }
-> >  
-> > -static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data)
-> > +static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
-> > +			       struct drm_connector *connector)
-> >  {
-> >  	struct exynos_dp_device *dp = to_dp(plat_data);
-> > -	struct drm_connector *connector = &dp->connector;
-> >  	struct drm_display_mode *mode;
-> >  	int num_modes = 0;
-> >  
-> > diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-> > index 82b8135..181db09 100644
-> > --- a/include/drm/bridge/analogix_dp.h
-> > +++ b/include/drm/bridge/analogix_dp.h
-> > @@ -34,7 +34,8 @@ struct analogix_dp_plat_data {
-> >  	int (*power_off)(struct analogix_dp_plat_data *);
-> >  	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
-> >  		      struct drm_connector *);
-> > -	int (*get_modes)(struct analogix_dp_plat_data *);
-> > +	int (*get_modes)(struct analogix_dp_plat_data *,
-> > +			 struct drm_connector *);
-> >  };
-> >  
-> >  int analogix_dp_resume(struct device *dev);
-> > -- 
-> > 1.9.1
-> > 
-> > 
+> Expected annoying conflict with DT changes here (please see the email 0/8).
 > 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> 
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-odroid-xu-4.8
+> 
+> for you to fetch changes up to b8bd7e23bb0be762c39510497c931066dc62e62f:
+> 
+>   ARM: dts: exynos: Add watchdog and Security SubSystem to Exynos5410 (2016-06-06 13:20:57 +0200)
+> 
+> ----------------------------------------------------------------
+> Topic branch for adding Exynos 5410 Odroid XU board for v4.8.
+> 
+> This brings support for Hardkernel's Odroid XU board.  It was the first
+> design with big.LITTLE SoC from Samsung: Exynos5410.  The board is not
+> very popular.  Newer XU3 and XU4 got more attention.
+> 
+> Board details:
+> 1. Exynos5410 octa-core (A15+A7, however as of now only one cluster is
+>    enabled),
+> 2. 2 GB DDR3 RAM,
+> 3. PowerVR SGX544MP3 GPU (not enabled in DTS),
+> 4. USB 3.0 Host x 1, USB 3.0 OTG x 1, USB 2.0 Host x 4,
+> 5. HDMI 1.4a, MIPI DSI and Display Port (Display Port not on all of
+>    revisions though),
+> 6. eMMC 4.5 and microSD slots.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Merged. Please double-check conflict resolution but it seemed trivial
+(reapplied "ARM: dts: exynos: Add async-bridge clock to MFC power domain
+for Exynos5420" to the new context).
+
+
+-Olof
