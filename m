@@ -1,111 +1,77 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: g2d: drop the _REG postfix from the stride
- defines
-Date: Mon, 13 Jun 2016 10:34:38 +0900
-Message-ID: <575E0DAE.8010603@samsung.com>
-References: <1464180176-10463-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CGME20160610102412epcas1p32081b590cf576a9e5e2ecb9375597d22@epcas1p3.samsung.com>
- <575A92A9.4010109@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: don't use HW trigger for Exynos5420/5422/5800
+Date: Mon, 13 Jun 2016 10:38:17 +0900
+Message-ID: <575E0E89.40400@samsung.com>
+References: <CGME20160602142058epcas1p4f26bc6ab2acd0012962f90bb2c6c4141@epcas1p4.samsung.com>
+ <1464877210-27207-1-git-send-email-javier@osg.samsung.com>
+ <5758A58D.7050106@samsung.com>
+ <6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
+ <5759EF32.5040302@samsung.com>
+ <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47881 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933059AbcFMBem (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:55640 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933059AbcFMBiU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Jun 2016 21:34:42 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0O8O000AESDRZY20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 13 Jun 2016 10:34:39 +0900 (KST)
-In-reply-to: <575A92A9.4010109@math.uni-bielefeld.de>
+	Sun, 12 Jun 2016 21:38:20 -0400
+In-reply-to: <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Picked it up.
+
+
+2016=EB=85=84 06=EC=9B=94 10=EC=9D=BC 09:24=EC=97=90 Javier Martinez Ca=
+nillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> Hello Inki,
+>=20
+> On Thu, Jun 9, 2016 at 6:35 PM, Inki Dae <inki.dae@samsung.com> wrote=
+:
+>=20
+> [snip]
+>=20
+>>> I know that removing .trg_type is enough but I also removed those l=
+ines
+>>> because the fields are not used if .trg_type !=3D I80_HW_TRG. So th=
+ere is
+>>> no point to leave a set for unused fields.
+>>>
+>>> We can latter add those one HW trigger support is fixed for Exynos5=
+420.
+>>>
+>>
+>> As of now, I can merge it but I think it would be not reasonable sol=
+ution because potential problem still exists even we use SW trigger mod=
+e in default - ie., in case of using HW trigger mode at bootloader, sam=
+e problem would happen as long as we don't support PSR mode support.
+>>
+>=20
+> Yes, I understand that the problem will show again if the bootloader
+> uses HW trigger mode and that we need proper Panel Self Refresh
+> support but I think that's a separate issue. That's why I said that
+> those can be addressed for v4.8 but revert to SW trigger for v4.7 as =
+a
+> short term fix for the regression.
+>=20
+> In other words, enabling HW trigger mode breaks the display for the
+> Exynos5420 and Exynos5800 Peach Pi Chromebooks with the shipped
+> bootloaders (which are probably the most popular Exynos5 devices with
+> display and mainline support so is likely to affect users).
+
+I thought to add PSR support somehow but put me other things to trouble=
+=2E
+Anyway, we could support it later so picked it up.
 
 Thanks,
 Inki Dae
 
-2016=EB=85=84 06=EC=9B=94 10=EC=9D=BC 19:12=EC=97=90 Tobias Jakobi =EC=9D=
-=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> Ping!
 >=20
-> - Tobias
->=20
-> Tobias Jakobi wrote:
->> This makes the defines consistent with the rest.
->>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_g2d.c
->> index 01b72b9..0934d38 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
->> @@ -48,13 +48,13 @@
->> =20
->>  /* registers for base address */
->>  #define G2D_SRC_BASE_ADDR		0x0304
->> -#define G2D_SRC_STRIDE_REG		0x0308
->> +#define G2D_SRC_STRIDE			0x0308
->>  #define G2D_SRC_COLOR_MODE		0x030C
->>  #define G2D_SRC_LEFT_TOP		0x0310
->>  #define G2D_SRC_RIGHT_BOTTOM		0x0314
->>  #define G2D_SRC_PLANE2_BASE_ADDR	0x0318
->>  #define G2D_DST_BASE_ADDR		0x0404
->> -#define G2D_DST_STRIDE_REG		0x0408
->> +#define G2D_DST_STRIDE			0x0408
->>  #define G2D_DST_COLOR_MODE		0x040C
->>  #define G2D_DST_LEFT_TOP		0x0410
->>  #define G2D_DST_RIGHT_BOTTOM		0x0414
->> @@ -560,7 +560,7 @@ static enum g2d_reg_type g2d_get_reg_type(int re=
-g_offset)
->> =20
->>  	switch (reg_offset) {
->>  	case G2D_SRC_BASE_ADDR:
->> -	case G2D_SRC_STRIDE_REG:
->> +	case G2D_SRC_STRIDE:
->>  	case G2D_SRC_COLOR_MODE:
->>  	case G2D_SRC_LEFT_TOP:
->>  	case G2D_SRC_RIGHT_BOTTOM:
->> @@ -570,7 +570,7 @@ static enum g2d_reg_type g2d_get_reg_type(int re=
-g_offset)
->>  		reg_type =3D REG_TYPE_SRC_PLANE2;
->>  		break;
->>  	case G2D_DST_BASE_ADDR:
->> -	case G2D_DST_STRIDE_REG:
->> +	case G2D_DST_STRIDE:
->>  	case G2D_DST_COLOR_MODE:
->>  	case G2D_DST_LEFT_TOP:
->>  	case G2D_DST_RIGHT_BOTTOM:
->> @@ -961,8 +961,8 @@ static int g2d_check_reg_offset(struct device *d=
-ev,
->>  			} else
->>  				buf_info->types[reg_type] =3D BUF_TYPE_GEM;
->>  			break;
->> -		case G2D_SRC_STRIDE_REG:
->> -		case G2D_DST_STRIDE_REG:
->> +		case G2D_SRC_STRIDE:
->> +		case G2D_DST_STRIDE:
->>  			if (for_addr)
->>  				goto err;
->> =20
->>
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Best regards,
+> Javier
 >=20
 >=20
 >=20
