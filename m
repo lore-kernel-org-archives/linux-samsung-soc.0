@@ -1,39 +1,20 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 7/8] ARM: dts: exynos: Topic branch with Odroid XU for
- v4.8
-Date: Mon, 13 Jun 2016 14:53:39 -0700
-Message-ID: <20160613215339.GE20845@localhost>
+Subject: Re: [GIT PULL 5/8] ARM: dts: exynos: DTS for v4.8
+Date: Mon, 13 Jun 2016 14:48:31 -0700
+Message-ID: <20160613214831.GC20845@localhost>
 References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
- <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
+ <1465215933-22709-6-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:36813 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751727AbcFNQxZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 12:53:25 -0400
-Received: by mail-pa0-f66.google.com with SMTP id fg1so12981954pad.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jun 2016 09:53:25 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1465215933-22709-6-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 06, 2016 at 02:25:32PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> This topic branch pulls external clk dependency (provided by Sylwester
-> Nawrocki).
-> 
-> Expected annoying conflict with DT changes here (please see the email 0/8).
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+On Mon, Jun 06, 2016 at 02:25:30PM +0200, Krzysztof Kozlowski wrote:
 > 
 > The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 > 
@@ -41,32 +22,42 @@ On Mon, Jun 06, 2016 at 02:25:32PM +0200, Krzysztof Kozlowski wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-odroid-xu-4.8
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.8
 > 
-> for you to fetch changes up to b8bd7e23bb0be762c39510497c931066dc62e62f:
+> for you to fetch changes up to cb0df00040d593e3f56eaafdede568121f962c06:
 > 
->   ARM: dts: exynos: Add watchdog and Security SubSystem to Exynos5410 (2016-06-06 13:20:57 +0200)
+>   ARM: dts: exynos: No need to enable TMU nodes on Odroid XU3 family (2016-06-06 13:21:39 +0200)
 > 
 > ----------------------------------------------------------------
-> Topic branch for adding Exynos 5410 Odroid XU board for v4.8.
+> Samsung DeviceTree update for v4.8:
+> 1. Add missing async bridge for MFC power domain on Exynos5420.
+>    This fixes imprecise abort on s5p-mfc re-bind.
+> 2. Define regulator supplies for MMC nodes on Exynos4412 Odroid boards
+>    and for TMU on Exynos542x Peach boards.
+> 3. Thermal cleanups on Odroid XU3-family (Exynos5422).
+> 4. Enable AX88760 USB hub on Origen board (Exynos4412).
+> 5. Minor cleanups.
 > 
-> This brings support for Hardkernel's Odroid XU board.  It was the first
-> design with big.LITTLE SoC from Samsung: Exynos5410.  The board is not
-> very popular.  Newer XU3 and XU4 got more attention.
+> ----------------------------------------------------------------
+> Javier Martinez Canillas (3):
+>       ARM: dts: exynos: Add async-bridge clock to MFC power domain for Exynos5420
+>       ARM: dts: exynos: Remove unneded always-on for regulators on Peach boards
+>       ARM: dts: exynos: Add TMU nodes regulator supply for Peach boards
 > 
-> Board details:
-> 1. Exynos5410 octa-core (A15+A7, however as of now only one cluster is
->    enabled),
-> 2. 2 GB DDR3 RAM,
-> 3. PowerVR SGX544MP3 GPU (not enabled in DTS),
-> 4. USB 3.0 Host x 1, USB 3.0 OTG x 1, USB 2.0 Host x 4,
-> 5. HDMI 1.4a, MIPI DSI and Display Port (Display Port not on all of
->    revisions though),
-> 6. eMMC 4.5 and microSD slots.
+> Krzysztof Kozlowski (5):
+>       ARM: dts: exynos: Define vqmmc for SD card and allow disabling regulators on Odroid X/X2/U3
+>       ARM: dts: exynos: Define vqmmc for eMMC card on Odroid X/X2/U3
+>       ARM: dts: exynos: Lower SD card interface voltage to 2.8 V on Odroid X/X2/U3
+>       ARM: dts: exynos: Only Odroid XU3-family boards use DTSI with CPU thermal nodes
+>       ARM: dts: exynos: No need to enable TMU nodes on Odroid XU3 family
+> 
+> Matthew Leach (1):
+>       ARM: dts: exynos: Enable AX88760 USB hub on Origen board
+> 
+> Naveen Krishna Chatradhi (1):
+>       ARM: dts: exynos: Use new compatible string for thermistors in Trats2
 
-Merged. Please double-check conflict resolution but it seemed trivial
-(reapplied "ARM: dts: exynos: Add async-bridge clock to MFC power domain
-for Exynos5420" to the new context).
+Merged, thanks.
 
 
 -Olof
