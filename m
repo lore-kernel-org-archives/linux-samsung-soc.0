@@ -1,77 +1,100 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: don't use HW trigger for Exynos5420/5422/5800
-Date: Mon, 13 Jun 2016 10:38:17 +0900
-Message-ID: <575E0E89.40400@samsung.com>
-References: <CGME20160602142058epcas1p4f26bc6ab2acd0012962f90bb2c6c4141@epcas1p4.samsung.com>
- <1464877210-27207-1-git-send-email-javier@osg.samsung.com>
- <5758A58D.7050106@samsung.com>
- <6e24059d-16f3-210a-8dd2-f8dcb89213a1@osg.samsung.com>
- <5759EF32.5040302@samsung.com>
- <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
+From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC v4 01/14] regulator: of: Add helper for getting all supplies
+Date: Mon, 13 Jun 2016 11:44:16 +0800
+Message-ID: <20160613034416.GD32615@shlinux2>
+References: <1465465471-28740-1-git-send-email-k.kozlowski@samsung.com>
+ <1465465471-28740-2-git-send-email-k.kozlowski@samsung.com>
+ <20160609102925.GS7510@sirena.org.uk>
+ <5759560A.70107@samsung.com>
+ <20160610173056.GA16503@rob-hp-laptop>
+ <20160612072901.GD22054@shlinux2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55640 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933059AbcFMBiU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Jun 2016 21:38:20 -0400
-In-reply-to: <CABxcv=nuw7ZUF0bDC1PZfP0WVQhRY3HSoO5LdwT8_FvNi9N+aQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160612072901.GD22054@shlinux2>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-fy+rA21nqHI@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On Sun, Jun 12, 2016 at 03:29:01PM +0800, Peter Chen wrote:
+> On Fri, Jun 10, 2016 at 12:30:56PM -0500, Rob Herring wrote:
+> > On Thu, Jun 09, 2016 at 01:42:02PM +0200, Krzysztof Kozlowski wrote:
+> > > On 06/09/2016 12:29 PM, Mark Brown wrote:
+> > > > On Thu, Jun 09, 2016 at 11:44:18AM +0200, Krzysztof Kozlowski wrote:
+> > > >> Few drivers have a need of getting regulator supplies without knowing
+> > > >> their names:
+> > > >> 1. The Simple Framebuffer driver works on setup provided by bootloader
+> > > >>    (outside of scope of kernel);
+> > > >> 2. Generic power sequence driver may be attached to any device node.
+> > > >>
+> > > >> Add a Device Tree helper for parsing "-supply" properties and returning
+> > > >> allocated bulk regulator consumers.
+> > > > 
+> > > > I'm still very concerned that this is just an invitation to people to
+> > > > write half baked regulator consumers and half baked DTs to go along with
+> > > > it, making it a standard API that doesn't have big red flags on it that
+> > > > will flag up when "normal" drivers use it is not good.  Right now this
+> > > > just looks like a standard API and people are going to just start using
+> > > > it.  If we are going to do this perhaps we need a separate header or
+> > > > something to help flag this up.
+> > > 
+> > > No problem, I can move it to a special header.  Actually, if you dislike
+> > > this as an API, it does not have to be in header at all.  I can just
+> > > duplicate the simplefb code.
+> > > 
+> > > > In the case of power sequences I'd expect the sequences to perform
+> > > > operations on named supplies - the core shouldn't know what the supplies
+> > > > are but the thing specifying the sequence should.
+> > > 
+> > > Hm, so maybe passing names like:
+> > > 
+> > > usb3503@08 {
+> > > 	reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
+> > > 	initial-mode = <1>;
+> > > 	vdd-supply = <&buck8_reg>;
+> > > 	foo-supply = <&buck9_reg>;
+> > > 
+> > >         power-sequence;
+> > > 	power-sequence-supplies = "vdd", "foo";
+> > 
+> > This alone would be fine as it is just one property, but then what's 
+> > next? power-sequence-delay, power-sequence-clocks, etc. What if you 
+> > need to express ordering relationship of supplies, clocks, gpios? We end 
+> > up with a scripting language in DT and we don't want to have that.
+> > 
+> 
+> Can we do things like below:
+> 
+> - DT describes hardware elements (clock, gpios, etc) for power sequence, and we
+> need a node for power sequence.
+> - Power sequence framework handles getting hardware elements.
 
+Framework may do few things, since hardware elements are also different
+for devices.
 
-2016=EB=85=84 06=EC=9B=94 10=EC=9D=BC 09:24=EC=97=90 Javier Martinez Ca=
-nillas =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> Hello Inki,
->=20
-> On Thu, Jun 9, 2016 at 6:35 PM, Inki Dae <inki.dae@samsung.com> wrote=
-:
->=20
-> [snip]
->=20
->>> I know that removing .trg_type is enough but I also removed those l=
-ines
->>> because the fields are not used if .trg_type !=3D I80_HW_TRG. So th=
-ere is
->>> no point to leave a set for unused fields.
->>>
->>> We can latter add those one HW trigger support is fixed for Exynos5=
-420.
->>>
->>
->> As of now, I can merge it but I think it would be not reasonable sol=
-ution because potential problem still exists even we use SW trigger mod=
-e in default - ie., in case of using HW trigger mode at bootloader, sam=
-e problem would happen as long as we don't support PSR mode support.
->>
->=20
-> Yes, I understand that the problem will show again if the bootloader
-> uses HW trigger mode and that we need proper Panel Self Refresh
-> support but I think that's a separate issue. That's why I said that
-> those can be addressed for v4.8 but revert to SW trigger for v4.7 as =
-a
-> short term fix for the regression.
->=20
-> In other words, enabling HW trigger mode breaks the display for the
-> Exynos5420 and Exynos5800 Peach Pi Chromebooks with the shipped
-> bootloaders (which are probably the most popular Exynos5 devices with
-> display and mainline support so is likely to affect users).
+> - Power sequence platform driver handles special sequence for devices,
+> and we can create some generic drivers for generic devices.
+> 
 
-I thought to add PSR support somehow but put me other things to trouble=
-=2E
-Anyway, we could support it later so picked it up.
+So, my suggestion is do like mmc does (like this patch set does). The
+reasons like belows:
 
-Thanks,
-Inki Dae
+- This piece of power sequence code needs to work like device driver, not
+library, it is easy to manage resources using device driver.
+- The device on the bus has still not been found, so this piece of code
+can't be in device driver on each subsystem.
+- We need to have a place for these power sequences drivers
 
->=20
-> Best regards,
-> Javier
->=20
->=20
->=20
+Ideally, I hope it can work like regulator class, but it seems hard to
+compatible with current mmc-pwrseq DT node.
+
+-- 
+
+Best Regards,
+Peter Chen
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
