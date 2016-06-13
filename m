@@ -1,85 +1,68 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: use logical AND in exynos_drm_plane_check_size()
-Date: Mon, 13 Jun 2016 08:34:36 +0200
-Message-ID: <CAKMK7uFuAcyY3s7VN=V8=tARgWqv43J=5aJj9VDkE-EYjniMWg@mail.gmail.com>
-References: <1464179407-9004-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CGME20160610102416epcas1p42e4f3f3de00104a37b7c1e4caf503af9@epcas1p4.samsung.com>
- <575A9291.6020906@math.uni-bielefeld.de> <575E0DA0.3000204@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v4 0/4]  Generic zpos property
+Date: Mon, 13 Jun 2016 11:21:22 +0200
+Message-ID: <1465809686-22507-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36786 "EHLO
-	mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964783AbcFMGei convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jun 2016 02:34:38 -0400
-Received: by mail-oi0-f65.google.com with SMTP id d132so23101493oig.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jun 2016 23:34:38 -0700 (PDT)
-In-Reply-To: <575E0DA0.3000204@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, fabien.dessenne@st.com, linaro-mm-sig@lists.linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, vincent.abriou@st.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, Jun 13, 2016 at 3:34 AM, Inki Dae <inki.dae@samsung.com> wrote:
-> Picked it up.
-
-=46yi it's already in drm-misc too.
--Daniel
-
->
-> Thanks,
-> Inki Dae
->
-> 2016=EB=85=84 06=EC=9B=94 10=EC=9D=BC 19:12=EC=97=90 Tobias Jakobi =EC=
-=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> Ping!
->>
->> - Tobias
->>
->> Tobias Jakobi wrote:
->>> The current bitwise AND should result in the same assembler
->>> but this is what the code is actually supposed to do.
->>>
->>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_plane.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gp=
-u/drm/exynos/exynos_drm_plane.c
->>> index b3f3c2c..e4a1a63 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> @@ -226,7 +226,7 @@ exynos_drm_plane_check_size(const struct exynos=
-_drm_plane_config *config,
->>>          state->v_ratio =3D=3D (1 << 15))
->>>              height_ok =3D true;
->>>
->>> -    if (width_ok & height_ok)
->>> +    if (width_ok && height_ok)
->>>              return 0;
->>>
->>>      DRM_DEBUG_KMS("scaling mode is not supported");
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+dmVyc2lvbiA0OgptYWtlIHN1cmUgdGhhdCBub3JtYWxpemVkIHpwb3MgdmFsdWUgaXMgc3RheSBp
+biB0aGUgZGVmaW5lZCBwcm9wZXJ0eSAKcmFuZ2UgYW5kIHdhcm4gdXNlciBpZiBub3QuCkZpeCBO
+VUxMIHBvaW50ZXIgYnVnIGluIHJjYXItZHUgd2hpbGUgc2V0dGluZyB6cG9zIHZhbHVlLgpObyBj
+aGFuZ2VzIGluIHRoZSBvdGhlciBkcml2ZXJzLgoKdmVyc2lvbiAzOgp1c2Uga21hbGxvY19hcnJh
+eSBpbnN0ZWFkIG9mIGttYWxsb2MuCkNvcnJlY3Qgbm9ybWFsaXplX3pwb3MgY29tcHV0YXRpb24g
+KGNvbWViYWNrIHRvIE1hcmVjayBvcmlnaW5hbCBjb2RlKQoKdmVyc2lvbiAyOgphZGQgYSB6cG9z
+IHByb3BlcnR5IGludG8gZHJtX3BsYW5lIHN0cnVjdHVyZSB0byBzaW1wbGlmeSBjb2RlLgpUaGlz
+IGFsbG93IHRvIGdldC9zZXQgenBvcyB2YWx1ZSBpbiBjb3JlIGFuZCBub3QgaW4gZHJpdmVycyBj
+b2RlLgpGaXggdmFyaW91cyByZW1hcmtzLgoKdmVyc2lvbiAxOgpyZWZhY3RvciBNYXJlaydzIHBh
+dGNoZXMgdG8gaGF2ZSBwZXIgcGxhbmUgenBvcyBwcm9wZXJ0eSBpbnN0ZWFkIG9mIG9ubHkKb25l
+IGluIGNvcmUuCgpCZW5qYW1pbiBHYWlnbmFyZCAoMyk6CiAgZHJtOiBhZGQgZ2VuZXJpYyB6cG9z
+IHByb3BlcnR5CiAgZHJtOiBzdGk6IHVzZSBnZW5lcmljIHpwb3MgZm9yIHBsYW5lCiAgZHJtOiBy
+Y2FyOiB1c2UgZ2VuZXJpYyBjb2RlIGZvciBtYW5hZ2luZyB6cG9zIHBsYW5lIHByb3BlcnR5CgpN
+YXJlayBTenlwcm93c2tpICgxKToKICBkcm0vZXh5bm9zOiB1c2UgZ2VuZXJpYyBjb2RlIGZvciBt
+YW5hZ2luZyB6cG9zIHBsYW5lIHByb3BlcnR5CgogRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50
+bXBsICAgICAgICAgICAgfCAgMTAgKysKIGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAg
+ICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICAg
+ICAgICB8ICAgNCArCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyAgICAgICB8
+ICAgNiArCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgICAgICAgICAgICAgICB8IDIzMCAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19p
+bnRlcm5hbC5oICAgICAgIHwgICAzICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuaCAgIHwgICAyIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
+ZS5jIHwgIDY3ICsrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
+YyAgICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfY3J0Yy5jICAg
+IHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAgICB8ICAg
+MSAtCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jICAgICB8ICAgNSAtCiBk
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMgICB8ICAgOSArLQogZHJpdmVy
+cy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oICAgfCAgIDIgLQogZHJpdmVycy9ncHUv
+ZHJtL3N0aS9zdGlfbWl4ZXIuYyAgICAgICAgICAgfCAgIDkgKy0KIGRyaXZlcnMvZ3B1L2RybS9z
+dGkvc3RpX3BsYW5lLmMgICAgICAgICAgIHwgIDgwICsrKystLS0tLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vc3RpL3N0aV9wbGFuZS5oICAgICAgICAgICB8ICAgMiAtCiBpbmNsdWRlL2RybS9kcm1fY3J0
+Yy5oICAgICAgICAgICAgICAgICAgICB8ICAzMCArKysrCiAxOCBmaWxlcyBjaGFuZ2VkLCAzMzEg
+aW5zZXJ0aW9ucygrKSwgMTM5IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvZ3B1L2RybS9kcm1fYmxlbmQuYwoKQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNv
+bT4KQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4KQ2M6IFZpbGxlIFN5cmphbGEg
+PHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgpDYzogSm9vbnlvdW5nIFNoaW0gPGp5MDky
+Mi5zaGltQHNhbXN1bmcuY29tPgpDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5n
+LmNvbT4KQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CkNjOiBLcnp5c3p0
+b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KQ2M6IEJhcnRsb21pZWogWm9s
+bmllcmtpZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4KQ2M6IFRvYmlhcyBKYWtvYmkg
+PHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgpDYzogR3VzdGF2byBQYWRvdmFuIDxndXN0
+YXZvQHBhZG92YW4ub3JnPgpDYzogdmluY2VudC5hYnJpb3VAc3QuY29tCkNjOiBmYWJpZW4uZGVz
+c2VubmVAc3QuY29tCkNjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFz
+b25ib2FyZC5jb20+Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
