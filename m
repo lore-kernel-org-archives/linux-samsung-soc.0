@@ -1,77 +1,78 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [GIT PULL 8/8] ARM: defconfig: exynos: Defconfig for v4.8
-Date: Tue, 14 Jun 2016 14:03:40 -0400
-Message-ID: <a1239955-19cb-92f1-30c8-d354bacc34de@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL 7/8] ARM: dts: exynos: Topic branch with Odroid XU for
+ v4.8
+Date: Tue, 14 Jun 2016 21:44:04 +0200
+Message-ID: <20160614194404.GA5581@kozik-lap>
 References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
- <1465215933-22709-9-git-send-email-k.kozlowski@samsung.com>
- <20160613222423.GA29879@localhost>
+ <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
+ <20160613215339.GE20845@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:51437 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752365AbcFNSDz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 14:03:55 -0400
-In-Reply-To: <20160613222423.GA29879@localhost>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20160613215339.GE20845@localhost>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Hello Olof,
-
-On 06/13/2016 06:24 PM, Olof Johansson wrote:
-> On Mon, Jun 06, 2016 at 02:25:33PM +0200, Krzysztof Kozlowski wrote:
->>
->> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
->>
->>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.8
->>
->> for you to fetch changes up to 4b388071a2235ed8f05d05d069f5a5a29782a8c5:
->>
->>   ARM: exynos_defconfig: Save defconfig on current linux-next (2016-06-06 08:36:55 +0200)
->>
->> ----------------------------------------------------------------
->> Samsung defconfig update for v4.8:
->> 1. Disable big.LITTLE switcher so the cpufreq-dt could be enabled.
->> 2. Enable Samsung media platform drivers.
->> 3. Enable some board-specific drivers for boards: Trats2, Universal C210.
->> 4. Few more minor additions.
+On Mon, Jun 13, 2016 at 02:53:39PM -0700, Olof Johansson wrote:
+> On Mon, Jun 06, 2016 at 02:25:32PM +0200, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > This topic branch pulls external clk dependency (provided by Sylwester
+> > Nawrocki).
+> > 
+> > Expected annoying conflict with DT changes here (please see the email 0/8).
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> > 
+> > The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> > 
+> >   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-odroid-xu-4.8
+> > 
+> > for you to fetch changes up to b8bd7e23bb0be762c39510497c931066dc62e62f:
+> > 
+> >   ARM: dts: exynos: Add watchdog and Security SubSystem to Exynos5410 (2016-06-06 13:20:57 +0200)
+> > 
+> > ----------------------------------------------------------------
+> > Topic branch for adding Exynos 5410 Odroid XU board for v4.8.
+> > 
+> > This brings support for Hardkernel's Odroid XU board.  It was the first
+> > design with big.LITTLE SoC from Samsung: Exynos5410.  The board is not
+> > very popular.  Newer XU3 and XU4 got more attention.
+> > 
+> > Board details:
+> > 1. Exynos5410 octa-core (A15+A7, however as of now only one cluster is
+> >    enabled),
+> > 2. 2 GB DDR3 RAM,
+> > 3. PowerVR SGX544MP3 GPU (not enabled in DTS),
+> > 4. USB 3.0 Host x 1, USB 3.0 OTG x 1, USB 2.0 Host x 4,
+> > 5. HDMI 1.4a, MIPI DSI and Display Port (Display Port not on all of
+> >    revisions though),
+> > 6. eMMC 4.5 and microSD slots.
 > 
-> Hmm. So this made me wonder what's used on the 5420/5800 chromebooks, but it
+> Merged. Please double-check conflict resolution but it seemed trivial
+> (reapplied "ARM: dts: exynos: Add async-bridge clock to MFC power domain
+> for Exynos5420" to the new context).
 
-You mean as CPUFreq driver? It's used cpufreq-dt as well but the compatible
-strings for exynos5420/5800 are not registered when the switcher is enabled.
-
-> looks like they don't even boot with SMP, at least not the way I boot them
-> (with u-boot as a chainloaded kernel).
->
-
-All 8 cores for the Exynos5420/5800 Chromebooks have been brought up via MCPM
-for a long time in mainline, look for example at Kevin's Peach Pi boot log [0].
-
-This is also true when chainloading u-boot (that's my setup as well), but I see
-that only one CPU is powered up on your boot farm indeed [1].
-
-I'm using the latest ChromeOS u-boot and chain loading u-boot version 2016.01.
- 
-> Branch merged.
-> 
-> 
-> -Olof
-> 
-
-[0]: https://storage.kernelci.org/next/next-20160614/arm-exynos_defconfig/lab-baylibre-seattle/boot-exynos5800-peach-pi.html
-[1]: http://arm-soc.lixom.net/bootlogs/next/next-20160614/pi-arm-exynos_defconfig.html 
+Looks correct, thanks!
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
