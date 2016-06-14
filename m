@@ -1,75 +1,77 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/8] ARM: exynos: Topic branch with driver changes for
- v4.8
-Date: Mon, 13 Jun 2016 14:47:06 -0700
-Message-ID: <20160613214706.GB20845@localhost>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [GIT PULL 8/8] ARM: defconfig: exynos: Defconfig for v4.8
+Date: Tue, 14 Jun 2016 14:03:40 -0400
+Message-ID: <a1239955-19cb-92f1-30c8-d354bacc34de@osg.samsung.com>
 References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
- <1465215933-22709-5-git-send-email-k.kozlowski@samsung.com>
+ <1465215933-22709-9-git-send-email-k.kozlowski@samsung.com>
+ <20160613222423.GA29879@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34304 "EHLO
-	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751345AbcFNQxR (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:51437 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752365AbcFNSDz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 12:53:17 -0400
-Received: by mail-pf0-f194.google.com with SMTP id 66so11399455pfy.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jun 2016 09:53:17 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1465215933-22709-5-git-send-email-k.kozlowski@samsung.com>
+	Tue, 14 Jun 2016 14:03:55 -0400
+In-Reply-To: <20160613222423.GA29879@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, mchehab@osg.samsung.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-On Mon, Jun 06, 2016 at 02:25:29PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> A topic branch for MultiFormat Codec driver. This pulls in
-> an external dependency from media tree (Sylwester Nawrocki).
-> 
-> Below you will find two pull-request-changelogs
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> ################################################################
-> Samsung tree only changes:
-> ################################################################
-> 
-> The following changes since commit 04f776734c4e03e33111d3d5a994b589870df623:
-> 
->   media: s5p-mfc: add iommu support (2016-06-03 11:13:45 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos-mfc-4.8
-> 
-> for you to fetch changes up to 96167bd37dd604cbba0aed341765dda8556405b2:
-> 
->   ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards (2016-06-06 09:30:43 +0200)
-> 
-> ----------------------------------------------------------------
-> Topic branch for Exynos MFC changes for v4.8:
-> Pull s5p-mfc changes from media tree so the arm/mach-exynos code
-> could be removed. The bindings are converted to generic reserved memory
-> bindings.
+Hello Olof,
 
-Hi,
+On 06/13/2016 06:24 PM, Olof Johansson wrote:
+> On Mon, Jun 06, 2016 at 02:25:33PM +0200, Krzysztof Kozlowski wrote:
+>>
+>> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+>>
+>>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.8
+>>
+>> for you to fetch changes up to 4b388071a2235ed8f05d05d069f5a5a29782a8c5:
+>>
+>>   ARM: exynos_defconfig: Save defconfig on current linux-next (2016-06-06 08:36:55 +0200)
+>>
+>> ----------------------------------------------------------------
+>> Samsung defconfig update for v4.8:
+>> 1. Disable big.LITTLE switcher so the cpufreq-dt could be enabled.
+>> 2. Enable Samsung media platform drivers.
+>> 3. Enable some board-specific drivers for boards: Trats2, Universal C210.
+>> 4. Few more minor additions.
+> 
+> Hmm. So this made me wonder what's used on the 5420/5800 chromebooks, but it
 
-Tis branch contains an external dependency but I don't see the toplevel
-maintainer cc:d on the pull request. Just to avoid any confusion, I'd like to
-double check and make sure this branch is expected to be stable.
+You mean as CPUFreq driver? It's used cpufreq-dt as well but the compatible
+strings for exynos5420/5800 are not registered when the switcher is enabled.
 
-Mauro, is that the case? The branch is:
-Merge branch 'for-v4.8/media/exynos-mfc' of git://linuxtv.org/snawrocki/samsung into for-v4.8/exynos-mfc
+> looks like they don't even boot with SMP, at least not the way I boot them
+> (with u-boot as a chainloaded kernel).
+>
 
-I see it in -next, so I just want to make sure it's on a stable branch that
-won't be rewritten. 
+All 8 cores for the Exynos5420/5800 Chromebooks have been brought up via MCPM
+for a long time in mainline, look for example at Kevin's Peach Pi boot log [0].
 
+This is also true when chainloading u-boot (that's my setup as well), but I see
+that only one CPU is powered up on your boot farm indeed [1].
 
-Thanks!
+I'm using the latest ChromeOS u-boot and chain loading u-boot version 2016.01.
+ 
+> Branch merged.
+> 
+> 
+> -Olof
+> 
 
--Olof
+[0]: https://storage.kernelci.org/next/next-20160614/arm-exynos_defconfig/lab-baylibre-seattle/boot-exynos5800-peach-pi.html
+[1]: http://arm-soc.lixom.net/bootlogs/next/next-20160614/pi-arm-exynos_defconfig.html 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
