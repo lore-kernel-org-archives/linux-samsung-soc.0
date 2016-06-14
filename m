@@ -1,95 +1,62 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 04/10] drm/bridge: analogix_dp: some rockchip chips need to
- flip REF_CLK bit setting
-Date: Tue, 14 Jun 2016 19:46:16 +0800
-Message-ID: <1465904776-891-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v3 03/10] drm/bridge: analogix_dp: correct the register bit
+ define error in ANALOGIX_DP_PLL_REG_1
+Date: Tue, 14 Jun 2016 19:46:12 +0800
+Message-ID: <1465904772-848-1-git-send-email-ykk@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1465904718-663-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, daniel.vetter-/w4YWyX8dFk@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QXMgdmVuZG9yIGRvY3VtZW50IGluZGljYXRlLCB3aGVuIFJFRl9DTEsgYml0IHNldCAwLCB0aGVu
-IERQCnBoeSdzIFJFRl9DTEsgc2hvdWxkIHN3aXRjaCB0byAyNE0gc291cmNlIGNsb2NrLgoKQnV0
-IGR1ZSB0byBJQyBQSFkgbGF5b3V0IG1pc3Rha2VuLCBzb21lIGNoaXBzIG5lZWQgdG8gZmxpcCB0
-aGlzCmJpdChsaWtlIFJLMzI4OCksIGFuZCB1bmZvcnR1bmF0ZWx5IHRoZXkgZGlkbid0IGluZGlj
-YXRlIGluIHRoZQpEUCB2ZXJzaW9uIHJlZ2lzdGVyLiBUaGF0J3Mgd2h5IHdlIGhhdmUgdG8gbWFr
-ZSB0aGlzIGxpdHRsZSBoYWNrLgoKU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2st
-Y2hpcHMuY29tPgpUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9z
-Zy5zYW1zdW5nLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjM6Ci0gTWFrZSB0aGlzIGhhY2sgY29kZSBt
-b3JlIGNsZWFyIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCiAgcmVnID0gfnJl
-ZyAmIFJFRl9DTEtfTUFTSzsgIC0tLT4gIHJlZyBePSBSRUZfQ0xLX01BU0s7CiAgICBbaHR0cHM6
-Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2ODUyLzcvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuY0A4MF0KLSBBZGQgdGVzdGVk
-IGZsYWcgZnJvbSBKYXZpZXIKCkNoYW5nZXMgaW4gdjI6Ci0gbmV3IHBhdGNoIGluIHYyCgogZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyB8IDYgKysrKyst
-CiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oIHwgMSAr
-CiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgIHwgMyAr
-KysKIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgfCA1
-ICsrKysrCiA0IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2Rw
-X3JlZy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcu
-YwppbmRleCA5MzFhNzZjLi45N2NlZDZiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKQEAgLTc1LDcgKzc1LDExIEBAIHZvaWQgYW5h
-bG9naXhfZHBfaW5pdF9hbmFsb2dfcGFyYW0oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
-CiAJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQU5BTE9HX0NUTF8yKTsK
-IAogCWlmIChkcC0+cGxhdF9kYXRhICYmIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBST0NL
-Q0hJUF9EUCkpIHsKLQkJd3JpdGVsKFJFRl9DTEtfMjRNLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJ
-WF9EUF9QTExfUkVHXzEpOworCQlyZWcgPSBSRUZfQ0xLXzI0TTsKKwkJaWYgKGRwLT5wbGF0X2Rh
-dGEtPnN1YmRldl90eXBlID09IFJLMzI4OF9EUCkKKwkJCXJlZyBePSBSRUZfQ0xLX01BU0s7CisK
-KwkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR18xKTsKIAkJ
-d3JpdGVsKDB4OTUsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMik7CiAJCXdy
-aXRlbCgweDQwLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExfUkVHXzMpOwogCQl3cml0
-ZWwoMHg1OCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR180KTsKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmggYi9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oCmluZGV4IDg4
-ZDU2YWQuLmNkY2M2YzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfcmVnLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
-eC9hbmFsb2dpeF9kcF9yZWcuaApAQCAtMTY1LDYgKzE2NSw3IEBACiAvKiBBTkFMT0dJWF9EUF9Q
-TExfUkVHXzEgKi8KICNkZWZpbmUgUkVGX0NMS18yNE0JCQkJKDB4MSA8PCAwKQogI2RlZmluZSBS
-RUZfQ0xLXzI3TQkJCQkoMHgwIDw8IDApCisjZGVmaW5lIFJFRl9DTEtfTUFTSwkJCQkoMHgxIDw8
-IDApCiAKIC8qIEFOQUxPR0lYX0RQX0xBTkVfTUFQICovCiAjZGVmaW5lIExBTkUzX01BUF9MT0dJ
-Q19MQU5FXzAJCQkoMHgwIDw8IDYpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
-aXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFs
-b2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4IDM4NTVmNDYuLjMxNWViYmEgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCkBAIC00Niw2ICs0Niw3
-IEBAIHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgewogCXUzMglsY2RzZWxfZ3JmX3JlZzsK
-IAl1MzIJbGNkc2VsX2JpZzsKIAl1MzIJbGNkc2VsX2xpdDsKKwl1MzIJY2hpcF90eXBlOwogfTsK
-IAogc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7CkBAIC0yODYsNiArMjg3LDcgQEAgc3RhdGlj
-IGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAq
-bWFzdGVyLAogCWRwLT5wbGF0X2RhdGEuZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsKIAogCWRwLT5w
-bGF0X2RhdGEuZGV2X3R5cGUgPSBST0NLQ0hJUF9EUDsKKwlkcC0+cGxhdF9kYXRhLnN1YmRldl90
-eXBlID0gZHBfZGF0YS0+Y2hpcF90eXBlOwogCWRwLT5wbGF0X2RhdGEucG93ZXJfb24gPSByb2Nr
-Y2hpcF9kcF9wb3dlcm9uOwogCWRwLT5wbGF0X2RhdGEucG93ZXJfb2ZmID0gcm9ja2NoaXBfZHBf
-cG93ZXJkb3duOwogCkBAIC0zODQsNiArMzg2LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByb2Nr
-Y2hpcF9kcF9jaGlwX2RhdGEgcmszMjg4X2RwID0gewogCS5sY2RzZWxfZ3JmX3JlZyA9IDB4MDI1
-YywKIAkubGNkc2VsX2JpZyA9IDAgfCBCSVQoMjEpLAogCS5sY2RzZWxfbGl0ID0gQklUKDUpIHwg
-QklUKDIxKSwKKwkuY2hpcF90eXBlID0gUkszMjg4X0RQLAogfTsKIAogc3RhdGljIGNvbnN0IHN0
-cnVjdCBvZl9kZXZpY2VfaWQgcm9ja2NoaXBfZHBfZHRfaWRzW10gPSB7CmRpZmYgLS1naXQgYS9p
-bmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFs
-b2dpeF9kcC5oCmluZGV4IDllNWQwMTMuLjA2YzAyNTAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvZHJt
-L2JyaWRnZS9hbmFsb2dpeF9kcC5oCisrKyBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9k
-cC5oCkBAIC0xOCw4ICsxOCwxMyBAQCBlbnVtIGFuYWxvZ2l4X2RwX2RldnR5cGUgewogCVJPQ0tD
-SElQX0RQLAogfTsKIAorZW51bSBhbmFsb2dpeF9kcF9zdWJfZGV2dHlwZSB7CisJUkszMjg4X0RQ
-LAorfTsKKwogc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSB7CiAJZW51bSBhbmFsb2dpeF9k
-cF9kZXZ0eXBlIGRldl90eXBlOworCWVudW0gYW5hbG9naXhfZHBfc3ViX2RldnR5cGUgc3ViZGV2
-X3R5cGU7CiAJc3RydWN0IGRybV9wYW5lbCAqcGFuZWw7CiAJc3RydWN0IGRybV9lbmNvZGVyICpl
-bmNvZGVyOwogCXN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3I7Ci0tIAoxLjkuMQoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+There're an register define error in ANALOGIX_DP_PLL_REG_1 which introduced
+by commit bcec20fd5ad6 ("drm: bridge: analogix/dp: add some rk3288 special
+registers setting").
+
+The PHY PLL input clock source is selected by ANALOGIX_DP_PLL_REG_1
+BIT 0, not BIT 1.
+
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Reviewed-by: Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+---
+Changes in v3:
+- Add reviewed flag from Tomasz.
+    [https://chromium-review.googlesource.com/#/c/346315/15]
+- Add tested flag from Javier
+
+Changes in v2: None
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 337912b..88d56ad 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -163,8 +163,8 @@
+ #define HSYNC_POLARITY_CFG			(0x1 << 0)
+ 
+ /* ANALOGIX_DP_PLL_REG_1 */
+-#define REF_CLK_24M				(0x1 << 1)
+-#define REF_CLK_27M				(0x0 << 1)
++#define REF_CLK_24M				(0x1 << 0)
++#define REF_CLK_27M				(0x0 << 0)
+ 
+ /* ANALOGIX_DP_LANE_MAP */
+ #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
+-- 
+1.9.1
