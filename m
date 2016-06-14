@@ -1,12 +1,12 @@
 From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v3 03/10] drm/bridge: analogix_dp: correct the register bit
- define error in ANALOGIX_DP_PLL_REG_1
-Date: Tue, 14 Jun 2016 19:46:12 +0800
-Message-ID: <1465904772-848-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v3 01/10] drm/bridge: analogix_dp: rename RK3288_DP to
+ ROCKCHIP_DP
+Date: Tue, 14 Jun 2016 19:46:04 +0800
+Message-ID: <1465904764-762-1-git-send-email-ykk@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 In-Reply-To: <1465904718-663-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
@@ -22,41 +22,76 @@ To: Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-S
 Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, daniel.vetter-/w4YWyX8dFk@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There're an register define error in ANALOGIX_DP_PLL_REG_1 which introduced
-by commit bcec20fd5ad6 ("drm: bridge: analogix/dp: add some rk3288 special
-registers setting").
-
-The PHY PLL input clock source is selected by ANALOGIX_DP_PLL_REG_1
-BIT 0, not BIT 1.
-
-Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Reviewed-by: Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>
-Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
----
-Changes in v3:
-- Add reviewed flag from Tomasz.
-    [https://chromium-review.googlesource.com/#/c/346315/15]
-- Add tested flag from Javier
-
-Changes in v2: None
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-index 337912b..88d56ad 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-@@ -163,8 +163,8 @@
- #define HSYNC_POLARITY_CFG			(0x1 << 0)
- 
- /* ANALOGIX_DP_PLL_REG_1 */
--#define REF_CLK_24M				(0x1 << 1)
--#define REF_CLK_27M				(0x0 << 1)
-+#define REF_CLK_24M				(0x1 << 0)
-+#define REF_CLK_27M				(0x0 << 0)
- 
- /* ANALOGIX_DP_LANE_MAP */
- #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
--- 
-1.9.1
+UmVuYW1lIFJLMzI4OF9EUCBtYWNyb3MgdG8gUk9DS0NISVBfRFAsIHByZXBhcmUgdG8gYWRkIGVE
+UApzdXBwb3J0IGZvciBtb3JlIFJvY2tjaGlwIGNoaXBzLgoKClNpZ25lZC1vZmYtYnk6IFlha2ly
+IFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KUmV2aWV3ZWQtYnk6IFN0w6lwaGFuZSBNYXJjaGVz
+aW4gPG1hcmNoZXVAY2hyb21pdW0ub3JnPgpUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5p
+bGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjM6Ci0gQ29ycmVj
+dCB0aGUgbWlzc3BlbGwgb2YgIm1hcmNvcyIgaW4gY29tbWl0IG1lc3NhZ2UgKERvbWluaWssIHJl
+dmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29v
+Z2xlc291cmNlLmNvbS8jL2MvMzQ2MzEyLzkvL0NPTU1JVF9NU0dAOV0KLSBBZGQgcmV2aWV3ZWQg
+ZmxhZyBmcm9tIFN0w6lwaGFuZS4KICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVz
+b3VyY2UuY29tLyMvYy8zNDYzMTIvMTZdCi0gQWRkIHRlc3RlZCBmbGFnIGZyb20gSmF2aWVyLgoK
+Q2hhbmdlcyBpbiB2MjogTm9uZQoKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
+bG9naXhfZHBfY29yZS5jIHwgNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX3JlZy5jICB8IDYgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
+YW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDIgKy0KIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFs
+b2dpeF9kcC5oICAgICAgICAgICAgICAgICAgIHwgMiArLQogNCBmaWxlcyBjaGFuZ2VkLCA3IGlu
+c2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwppbmRleCA3Njk5NTk3Li40YTFiM2I4IDEw
+MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2Nv
+cmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2Nv
+cmUuYwpAQCAtMTIwNyw5ICsxMjA3LDkgQEAgc3RhdGljIGludCBhbmFsb2dpeF9kcF9kdF9wYXJz
+ZV9wZGF0YShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAlzdHJ1Y3QgdmlkZW9faW5m
+byAqdmlkZW9faW5mbyA9ICZkcC0+dmlkZW9faW5mbzsKIAogCXN3aXRjaCAoZHAtPnBsYXRfZGF0
+YS0+ZGV2X3R5cGUpIHsKLQljYXNlIFJLMzI4OF9EUDoKKwljYXNlIFJPQ0tDSElQX0RQOgogCQkv
+KgotCQkgKiBMaWtlIFJrMzI4OCBEaXNwbGF5UG9ydCBUUk0gaW5kaWNhdGUgdGhhdCAiTWFpbiBs
+aW5rCisJCSAqIExpa2UgUm9ja2NoaXAgRGlzcGxheVBvcnQgVFJNIGluZGljYXRlIHRoYXQgIk1h
+aW4gbGluawogCQkgKiBjb250YWluaW5nIDQgcGh5c2ljYWwgbGFuZXMgb2YgMi43LzEuNjIgR2Jw
+cy9sYW5lIi4KIAkJICovCiAJCXZpZGVvX2luZm8tPm1heF9saW5rX3JhdGUgPSAweDBBOwpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKaW5k
+ZXggNDkyMDVlZi4uOTMxYTc2YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
+bmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
+YWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCkBAIC03NCw3ICs3NCw3IEBAIHZvaWQgYW5hbG9naXhf
+ZHBfaW5pdF9hbmFsb2dfcGFyYW0oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCiAJcmVn
+ID0gU0VMXzI0TSB8IFRYX0RWRERfQklUXzFfMDYyNVY7CiAJd3JpdGVsKHJlZywgZHAtPnJlZ19i
+YXNlICsgQU5BTE9HSVhfRFBfQU5BTE9HX0NUTF8yKTsKIAotCWlmIChkcC0+cGxhdF9kYXRhICYm
+IChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKSB7CisJaWYgKGRwLT5wbGF0
+X2RhdGEgJiYgKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlID09IFJPQ0tDSElQX0RQKSkgewogCQl3
+cml0ZWwoUkVGX0NMS18yNE0sIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMSk7
+CiAJCXdyaXRlbCgweDk1LCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExfUkVHXzIpOwog
+CQl3cml0ZWwoMHg0MCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR18zKTsKQEAg
+LTI0NCw3ICsyNDQsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2dfcG93ZXJfZG93bihz
+dHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKIAl1MzIgcmVnOwogCXUzMiBwaHlfcGRfYWRk
+ciA9IEFOQUxPR0lYX0RQX1BIWV9QRDsKIAotCWlmIChkcC0+cGxhdF9kYXRhICYmIChkcC0+cGxh
+dF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKQorCWlmIChkcC0+cGxhdF9kYXRhICYmIChk
+cC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBST0NLQ0hJUF9EUCkpCiAJCXBoeV9wZF9hZGRyID0g
+QU5BTE9HSVhfRFBfUEQ7CiAKIAlzd2l0Y2ggKGJsb2NrKSB7CkBAIC00NDgsNyArNDQ4LDcgQEAg
+dm9pZCBhbmFsb2dpeF9kcF9pbml0X2F1eChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkK
+IAlhbmFsb2dpeF9kcF9yZXNldF9hdXgoZHApOwogCiAJLyogRGlzYWJsZSBBVVggdHJhbnNhY3Rp
+b24gSC9XIHJldHJ5ICovCi0JaWYgKGRwLT5wbGF0X2RhdGEgJiYgKGRwLT5wbGF0X2RhdGEtPmRl
+dl90eXBlID09IFJLMzI4OF9EUCkpCisJaWYgKGRwLT5wbGF0X2RhdGEgJiYgKGRwLT5wbGF0X2Rh
+dGEtPmRldl90eXBlID09IFJPQ0tDSElQX0RQKSkKIAkJcmVnID0gQVVYX0JJVF9QRVJJT0RfRVhQ
+RUNURURfREVMQVkoMCkgfAogCQkgICAgICBBVVhfSFdfUkVUUllfQ09VTlRfU0VMKDMpIHwKIAkJ
+ICAgICAgQVVYX0hXX1JFVFJZX0lOVEVSVkFMXzYwMF9NSUNST1NFQ09ORFM7CmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4IDdmNmE1NWMu
+LjJiYzhhN2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9k
+cC1yb2NrY2hpcC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1y
+b2NrY2hpcC5jCkBAIC0yNzAsNyArMjcwLDcgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5k
+KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCiAJZHAtPnBsYXRf
+ZGF0YS5lbmNvZGVyID0gJmRwLT5lbmNvZGVyOwogCi0JZHAtPnBsYXRfZGF0YS5kZXZfdHlwZSA9
+IFJLMzI4OF9EUDsKKwlkcC0+cGxhdF9kYXRhLmRldl90eXBlID0gUk9DS0NISVBfRFA7CiAJZHAt
+PnBsYXRfZGF0YS5wb3dlcl9vbiA9IHJvY2tjaGlwX2RwX3Bvd2Vyb247CiAJZHAtPnBsYXRfZGF0
+YS5wb3dlcl9vZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247CiAKZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oIGIvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+X2RwLmgKaW5kZXggMjVhZmIzMS4uOWU1ZDAxMyAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4X2RwLmgKKysrIGIvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmgK
+QEAgLTE1LDcgKzE1LDcgQEAKIAogZW51bSBhbmFsb2dpeF9kcF9kZXZ0eXBlIHsKIAlFWFlOT1Nf
+RFAsCi0JUkszMjg4X0RQLAorCVJPQ0tDSElQX0RQLAogfTsKIAogc3RydWN0IGFuYWxvZ2l4X2Rw
+X3BsYXRfZGF0YSB7Ci0tIAoxLjkuMQoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGludXgtcm9ja2No
+aXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
