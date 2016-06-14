@@ -1,136 +1,95 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 02/10] drm/rockchip: analogix_dp: split the lcdc select setting into device data
-Date: Tue, 14 Jun 2016 19:46:08 +0800
-Message-ID: <1465904768-805-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v3 04/10] drm/bridge: analogix_dp: some rockchip chips need to
+ flip REF_CLK bit setting
+Date: Tue, 14 Jun 2016 19:46:16 +0800
+Message-ID: <1465904776-891-1-git-send-email-ykk@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tomasz.figa@chromium.com>, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-eDP controller need to declare which vop provide the video source,
-and it's defined in GRF registers.
-
-But different chips have different GRF register address, so we need to
-create a device data to declare the GRF messages for each chips.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Acked-by: Mark Yao <mark.yao@rock-chips.com>
----
-Changes in v3:
-- Write a kerneldoc-style comment explaining the chips data fields (Tomasz, reviewed at Google Gerrit)
-    [https://chromium-review.googlesource.com/#/c/346313/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@39]
-- Drop the '.lcdcsel_mask' number in chips data field (Tomasz, reviewed at Google Gerrit)
-    [https://chromium-review.googlesource.com/#/c/346313/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@382]
-- Add acked flag from Mark.
-
-Changes in v2: None
-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 39 +++++++++++++++++++------
- 1 file changed, 30 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 2bc8a7e..3855f46 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -14,6 +14,7 @@
- 
- #include <linux/component.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/of_device.h>
- #include <linux/of_graph.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-@@ -35,11 +36,17 @@
- 
- #define to_dp(nm)	container_of(nm, struct rockchip_dp_device, nm)
- 
--/* dp grf register offset */
--#define GRF_SOC_CON6                            0x025c
--#define GRF_EDP_LCD_SEL_MASK                    BIT(5)
--#define GRF_EDP_SEL_VOP_LIT                     BIT(5)
--#define GRF_EDP_SEL_VOP_BIG                     0
-+/**
-+ * struct rockchip_dp_chip_data - splite the grf setting of kind of chips
-+ * @lcdsel_grf_reg: grf register offset of lcdc select
-+ * @lcdsel_big: reg value of selecting vop big for eDP
-+ * @lcdsel_lit: reg value of selecting vop little for eDP
-+ */
-+struct rockchip_dp_chip_data {
-+	u32	lcdsel_grf_reg;
-+	u32	lcdsel_big;
-+	u32	lcdsel_lit;
-+};
- 
- struct rockchip_dp_device {
- 	struct drm_device        *drm_dev;
-@@ -51,6 +58,8 @@ struct rockchip_dp_device {
- 	struct regmap            *grf;
- 	struct reset_control     *rst;
- 
-+	const struct rockchip_dp_chip_data *data;
-+
- 	struct analogix_dp_plat_data plat_data;
- };
- 
-@@ -119,13 +128,13 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder)
- 		return;
- 
- 	if (ret)
--		val = GRF_EDP_SEL_VOP_LIT | (GRF_EDP_LCD_SEL_MASK << 16);
-+		val = dp->data->lcdsel_lit;
- 	else
--		val = GRF_EDP_SEL_VOP_BIG | (GRF_EDP_LCD_SEL_MASK << 16);
-+		val = dp->data->lcdsel_big;
- 
- 	dev_dbg(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
- 
--	ret = regmap_write(dp->grf, GRF_SOC_CON6, val);
-+	ret = regmap_write(dp->grf, dp->data->lcdsel_grf_reg, val);
- 	if (ret != 0) {
- 		dev_err(dp->dev, "Could not write to GRF: %d\n", ret);
- 		return;
-@@ -246,6 +255,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 			    void *data)
- {
- 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
-+	const struct rockchip_dp_chip_data *dp_data;
- 	struct drm_device *drm_dev = data;
- 	int ret;
- 
-@@ -256,10 +266,15 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	 */
- 	dev_set_drvdata(dev, NULL);
- 
-+	dp_data = of_device_get_match_data(dev);
-+	if (!dp_data)
-+		return -ENODEV;
-+
- 	ret = rockchip_dp_init(dp);
- 	if (ret < 0)
- 		return ret;
- 
-+	dp->data = dp_data;
- 	dp->drm_dev = drm_dev;
- 
- 	ret = rockchip_dp_drm_create_encoder(dp);
-@@ -365,8 +380,14 @@ static const struct dev_pm_ops rockchip_dp_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(rockchip_dp_suspend, rockchip_dp_resume)
- };
- 
-+static const struct rockchip_dp_chip_data rk3288_dp = {
-+	.lcdsel_grf_reg = 0x025c,
-+	.lcdsel_big = 0 | BIT(21),
-+	.lcdsel_lit = BIT(5) | BIT(21),
-+};
-+
- static const struct of_device_id rockchip_dp_dt_ids[] = {
--	{.compatible = "rockchip,rk3288-dp",},
-+	{.compatible = "rockchip,rk3288-dp", .data = &rk3288_dp },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
--- 
-1.9.1
+QXMgdmVuZG9yIGRvY3VtZW50IGluZGljYXRlLCB3aGVuIFJFRl9DTEsgYml0IHNldCAwLCB0aGVu
+IERQCnBoeSdzIFJFRl9DTEsgc2hvdWxkIHN3aXRjaCB0byAyNE0gc291cmNlIGNsb2NrLgoKQnV0
+IGR1ZSB0byBJQyBQSFkgbGF5b3V0IG1pc3Rha2VuLCBzb21lIGNoaXBzIG5lZWQgdG8gZmxpcCB0
+aGlzCmJpdChsaWtlIFJLMzI4OCksIGFuZCB1bmZvcnR1bmF0ZWx5IHRoZXkgZGlkbid0IGluZGlj
+YXRlIGluIHRoZQpEUCB2ZXJzaW9uIHJlZ2lzdGVyLiBUaGF0J3Mgd2h5IHdlIGhhdmUgdG8gbWFr
+ZSB0aGlzIGxpdHRsZSBoYWNrLgoKU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2st
+Y2hpcHMuY29tPgpUZXN0ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9z
+Zy5zYW1zdW5nLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjM6Ci0gTWFrZSB0aGlzIGhhY2sgY29kZSBt
+b3JlIGNsZWFyIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCiAgcmVnID0gfnJl
+ZyAmIFJFRl9DTEtfTUFTSzsgIC0tLT4gIHJlZyBePSBSRUZfQ0xLX01BU0s7CiAgICBbaHR0cHM6
+Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2ODUyLzcvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuY0A4MF0KLSBBZGQgdGVzdGVk
+IGZsYWcgZnJvbSBKYXZpZXIKCkNoYW5nZXMgaW4gdjI6Ci0gbmV3IHBhdGNoIGluIHYyCgogZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyB8IDYgKysrKyst
+CiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oIHwgMSAr
+CiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgIHwgMyAr
+KysKIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgfCA1
+ICsrKysrCiA0IGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2Rw
+X3JlZy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcu
+YwppbmRleCA5MzFhNzZjLi45N2NlZDZiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKQEAgLTc1LDcgKzc1LDExIEBAIHZvaWQgYW5h
+bG9naXhfZHBfaW5pdF9hbmFsb2dfcGFyYW0oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
+CiAJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQU5BTE9HX0NUTF8yKTsK
+IAogCWlmIChkcC0+cGxhdF9kYXRhICYmIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBST0NL
+Q0hJUF9EUCkpIHsKLQkJd3JpdGVsKFJFRl9DTEtfMjRNLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJ
+WF9EUF9QTExfUkVHXzEpOworCQlyZWcgPSBSRUZfQ0xLXzI0TTsKKwkJaWYgKGRwLT5wbGF0X2Rh
+dGEtPnN1YmRldl90eXBlID09IFJLMzI4OF9EUCkKKwkJCXJlZyBePSBSRUZfQ0xLX01BU0s7CisK
+KwkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR18xKTsKIAkJ
+d3JpdGVsKDB4OTUsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMik7CiAJCXdy
+aXRlbCgweDQwLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExfUkVHXzMpOwogCQl3cml0
+ZWwoMHg1OCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUExMX1JFR180KTsKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmggYi9k
+cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oCmluZGV4IDg4
+ZDU2YWQuLmNkY2M2YzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfcmVnLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
+eC9hbmFsb2dpeF9kcF9yZWcuaApAQCAtMTY1LDYgKzE2NSw3IEBACiAvKiBBTkFMT0dJWF9EUF9Q
+TExfUkVHXzEgKi8KICNkZWZpbmUgUkVGX0NMS18yNE0JCQkJKDB4MSA8PCAwKQogI2RlZmluZSBS
+RUZfQ0xLXzI3TQkJCQkoMHgwIDw8IDApCisjZGVmaW5lIFJFRl9DTEtfTUFTSwkJCQkoMHgxIDw8
+IDApCiAKIC8qIEFOQUxPR0lYX0RQX0xBTkVfTUFQICovCiAjZGVmaW5lIExBTkUzX01BUF9MT0dJ
+Q19MQU5FXzAJCQkoMHgwIDw8IDYpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFs
+b2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4IDM4NTVmNDYuLjMxNWViYmEgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCkBAIC00Niw2ICs0Niw3
+IEBAIHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgewogCXUzMglsY2RzZWxfZ3JmX3JlZzsK
+IAl1MzIJbGNkc2VsX2JpZzsKIAl1MzIJbGNkc2VsX2xpdDsKKwl1MzIJY2hpcF90eXBlOwogfTsK
+IAogc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7CkBAIC0yODYsNiArMjg3LDcgQEAgc3RhdGlj
+IGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAq
+bWFzdGVyLAogCWRwLT5wbGF0X2RhdGEuZW5jb2RlciA9ICZkcC0+ZW5jb2RlcjsKIAogCWRwLT5w
+bGF0X2RhdGEuZGV2X3R5cGUgPSBST0NLQ0hJUF9EUDsKKwlkcC0+cGxhdF9kYXRhLnN1YmRldl90
+eXBlID0gZHBfZGF0YS0+Y2hpcF90eXBlOwogCWRwLT5wbGF0X2RhdGEucG93ZXJfb24gPSByb2Nr
+Y2hpcF9kcF9wb3dlcm9uOwogCWRwLT5wbGF0X2RhdGEucG93ZXJfb2ZmID0gcm9ja2NoaXBfZHBf
+cG93ZXJkb3duOwogCkBAIC0zODQsNiArMzg2LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByb2Nr
+Y2hpcF9kcF9jaGlwX2RhdGEgcmszMjg4X2RwID0gewogCS5sY2RzZWxfZ3JmX3JlZyA9IDB4MDI1
+YywKIAkubGNkc2VsX2JpZyA9IDAgfCBCSVQoMjEpLAogCS5sY2RzZWxfbGl0ID0gQklUKDUpIHwg
+QklUKDIxKSwKKwkuY2hpcF90eXBlID0gUkszMjg4X0RQLAogfTsKIAogc3RhdGljIGNvbnN0IHN0
+cnVjdCBvZl9kZXZpY2VfaWQgcm9ja2NoaXBfZHBfZHRfaWRzW10gPSB7CmRpZmYgLS1naXQgYS9p
+bmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFs
+b2dpeF9kcC5oCmluZGV4IDllNWQwMTMuLjA2YzAyNTAgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvZHJt
+L2JyaWRnZS9hbmFsb2dpeF9kcC5oCisrKyBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9k
+cC5oCkBAIC0xOCw4ICsxOCwxMyBAQCBlbnVtIGFuYWxvZ2l4X2RwX2RldnR5cGUgewogCVJPQ0tD
+SElQX0RQLAogfTsKIAorZW51bSBhbmFsb2dpeF9kcF9zdWJfZGV2dHlwZSB7CisJUkszMjg4X0RQ
+LAorfTsKKwogc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSB7CiAJZW51bSBhbmFsb2dpeF9k
+cF9kZXZ0eXBlIGRldl90eXBlOworCWVudW0gYW5hbG9naXhfZHBfc3ViX2RldnR5cGUgc3ViZGV2
+X3R5cGU7CiAJc3RydWN0IGRybV9wYW5lbCAqcGFuZWw7CiAJc3RydWN0IGRybV9lbmNvZGVyICpl
+bmNvZGVyOwogCXN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3I7Ci0tIAoxLjkuMQoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
