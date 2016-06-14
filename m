@@ -1,78 +1,35 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 7/8] ARM: dts: exynos: Topic branch with Odroid XU for
- v4.8
-Date: Tue, 14 Jun 2016 21:44:04 +0200
-Message-ID: <20160614194404.GA5581@kozik-lap>
-References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
- <1465215933-22709-8-git-send-email-k.kozlowski@samsung.com>
- <20160613215339.GE20845@localhost>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH RFC 2/6] ASoC: samsung: Add DT bindings documentation for
+ LPASS
+Date: Tue, 14 Jun 2016 18:28:56 -0500
+Message-ID: <20160614232856.GA3240@rob-hp-laptop>
+References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
+ <1465815160-28504-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35293 "EHLO
+	mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752181AbcFNX26 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 Jun 2016 19:28:58 -0400
 Content-Disposition: inline
-In-Reply-To: <20160613215339.GE20845@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1465815160-28504-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com
 
-On Mon, Jun 13, 2016 at 02:53:39PM -0700, Olof Johansson wrote:
-> On Mon, Jun 06, 2016 at 02:25:32PM +0200, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > This topic branch pulls external clk dependency (provided by Sylwester
-> > Nawrocki).
-> > 
-> > Expected annoying conflict with DT changes here (please see the email 0/8).
-> > 
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
-> > 
-> > The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-> > 
-> >   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-odroid-xu-4.8
-> > 
-> > for you to fetch changes up to b8bd7e23bb0be762c39510497c931066dc62e62f:
-> > 
-> >   ARM: dts: exynos: Add watchdog and Security SubSystem to Exynos5410 (2016-06-06 13:20:57 +0200)
-> > 
-> > ----------------------------------------------------------------
-> > Topic branch for adding Exynos 5410 Odroid XU board for v4.8.
-> > 
-> > This brings support for Hardkernel's Odroid XU board.  It was the first
-> > design with big.LITTLE SoC from Samsung: Exynos5410.  The board is not
-> > very popular.  Newer XU3 and XU4 got more attention.
-> > 
-> > Board details:
-> > 1. Exynos5410 octa-core (A15+A7, however as of now only one cluster is
-> >    enabled),
-> > 2. 2 GB DDR3 RAM,
-> > 3. PowerVR SGX544MP3 GPU (not enabled in DTS),
-> > 4. USB 3.0 Host x 1, USB 3.0 OTG x 1, USB 2.0 Host x 4,
-> > 5. HDMI 1.4a, MIPI DSI and Display Port (Display Port not on all of
-> >    revisions though),
-> > 6. eMMC 4.5 and microSD slots.
+On Mon, Jun 13, 2016 at 12:52:36PM +0200, Sylwester Nawrocki wrote:
+> This patch add documentation of the DT bindings for the Samsung
+> Exynos SoC Low Power Audio Subsystem.
 > 
-> Merged. Please double-check conflict resolution but it seemed trivial
-> (reapplied "ARM: dts: exynos: Add async-bridge clock to MFC power domain
-> for Exynos5420" to the new context).
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/sound/samsung,exynos5433-lpass.txt        | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,exynos5433-lpass.txt
 
-Looks correct, thanks!
+Seems kind of incomplete, but for what's here:
 
-Best regards,
-Krzysztof
+Acked-by: Rob Herring <robh@kernel.org>
