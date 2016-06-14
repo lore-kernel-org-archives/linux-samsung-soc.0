@@ -1,59 +1,97 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC 4/6] ASoC: Add DT bindings documentation for max98504
- amplifier
-Date: Mon, 13 Jun 2016 16:32:27 +0100
-Message-ID: <20160613153227.GJ2282@sirena.org.uk>
-References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
- <1465815160-28504-5-git-send-email-s.nawrocki@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v3 0/10]
+Date: Tue, 14 Jun 2016 19:45:18 +0800
+Message-ID: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="O2lvLMQR9k8T/RyB"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34610 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422987AbcFMPcn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jun 2016 11:32:43 -0400
-Content-Disposition: inline
-In-Reply-To: <1465815160-28504-5-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, robh@kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com
 
-
---O2lvLMQR9k8T/RyB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 13, 2016 at 12:52:38PM +0200, Sylwester Nawrocki wrote:
-
-> + - maxim,rx-path : indicates speaker source interface:
-> +    0 - PCM monomix output,
-> +    1 - Analog input,
-> +    2 - left PDM channel (CH0),
-> +    3 - right PDM channel (CH1)
-
-This should be a DAPM control.
-
-> + - maxim,rx-channel-mask : a bitmask indicating active PCM Rx channels,
-> +   bits b7...b0 correspond to channels CH7...CH0
-
-This should be done using the TDM API.
-
---O2lvLMQR9k8T/RyB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXXtIKAAoJECTWi3JdVIfQQ3wH/iGC1/NmXWiVC4SkBbMZcuX2
-0GjDIjA9FYq7wGRoeAtnCppIm5PP5knmuw+i3GjgGuxtO/PQFEuH1cg+7RLAM7ZO
-8e+8D+GdfEqK4ouHHJ6aKi3bNqilJEBKH8wXw1KzdY1p5nNAukKZaDTnkwJ9M/NK
-PoFQxBpBf5gTOJjWzW9+y2n95ZWGU4GxU38EYi81UeSEJtdFAPQWuj3W00iAb1zN
-odYbq7R/ozR7OD6uJ/wKDgGEwDWv4QQSlflY+d+ceygbC7p6M0b6p4WydXqqcRAc
-kqYo8LqxtXBqe6ngTCZn4tk2cnIK9cnbkPqC1MQ+y5Q7GpDOiVfG7FD1FEHxKA8=
-=WwkU
------END PGP SIGNATURE-----
-
---O2lvLMQR9k8T/RyB--
+UkszMzk5IGFuZCBSSzMyODggc2hhcmVkIHRoZSBzYW1lIGVEUCBJUCBjb250cm9sbGVyLCBvbmx5
+IHNvbWUgbGlnaHQKZGlmZmVyZW5jZSB3aXRoIFZPUCBjb25maWd1cmUgYW5kIEdSRiBjb25maWd1
+cmUuCgpBbHNvIHNhbWUgbWlzYyBmaXggdG8gYW5hbG9naXhfZHAgZHJpdmVyOgotIEhvdHBsdWcg
+aW52YWxpZCB3aGljaCByZXBvcnQgYnkgRGFuIENhcnBlbnRlcgotIE1ha2UgcGFuZWwgZGV0ZWN0
+IHRvIGFuIG9wdGlvbmFsIGFjdGlvbgotIGNvcnJlY3QgdGhlIHJlZ2lzdGVyIGJpdCBkZWZpbmUg
+ZXJyb3IgaW4gQU5BTE9HSVhfRFBfUExMX1JFR18xCgoKQ2hhbmdlcyBpbiB2MzoKLSBDb3JyZWN0
+IHRoZSBtaXNzcGVsbCBvZiAibWFyY29zIiBpbiBjb21taXQgbWVzc2FnZSAoRG9taW5paywgcmV2
+aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29n
+bGVzb3VyY2UuY29tLyMvYy8zNDYzMTIvOS8vQ09NTUlUX01TR0A5XQotIEFkZCByZXZpZXdlZCBm
+bGFnIGZyb20gU3TDqXBoYW5lLgogICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNv
+dXJjZS5jb20vIy9jLzM0NjMxMi8xNl0KLSBBZGQgdGVzdGVkIGZsYWcgZnJvbSBKYXZpZXIuCi0g
+V3JpdGUgYSBrZXJuZWxkb2Mtc3R5bGUgY29tbWVudCBleHBsYWluaW5nIHRoZSBjaGlwcyBkYXRh
+IGZpZWxkcyAoVG9tYXN6LCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQogICAgW2h0dHBzOi8v
+Y2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMy8xMC9kcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuY0AzOV0KLSBEcm9wIHRoZSAnLmxj
+ZGNzZWxfbWFzaycgbnVtYmVyIGluIGNoaXBzIGRhdGEgZmllbGQgKFRvbWFzeiwgcmV2aWV3ZWQg
+YXQgR29vZ2xlIEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3Vy
+Y2UuY29tLyMvYy8zNDYzMTMvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2Rw
+LXJvY2tjaGlwLmNAMzgyXQotIEFkZCBhY2tlZCBmbGFnIGZyb20gTWFyay4KLSBBZGQgcmV2aWV3
+ZWQgZmxhZyBmcm9tIFRvbWFzei4KICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVz
+b3VyY2UuY29tLyMvYy8zNDYzMTUvMTVdCi0gQWRkIHRlc3RlZCBmbGFnIGZyb20gSmF2aWVyCi0g
+TWFrZSB0aGlzIGhhY2sgY29kZSBtb3JlIGNsZWFyIChUb21hc3osIHJldmlld2VkIGF0IEdvb2ds
+ZSBHZXJyaXQpCiAgcmVnID0gfnJlZyAmIFJFRl9DTEtfTUFTSzsgIC0tLT4gIHJlZyBePSBSRUZf
+Q0xLX01BU0s7CiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8j
+L2MvMzQ2ODUyLzcvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9y
+ZWcuY0A4MF0KLSBBZGQgdGVzdGVkIGZsYWcgZnJvbSBKYXZpZXIKLSBHaXZlIHRoZSAicmszMzk5
+LWVkcCIgYSBzZXBhcmF0ZSBsaW5lIGZvciBjbGFyaXR5IGluIGRvY3VtZW50IChUb21hc3osIHJl
+dmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29v
+Z2xlc291cmNlLmNvbS8jL2MvMzQ2MzE0LzEwL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dEA1XQotIE1vdmUg
+J291dHB1dF90eXBlJyBzZXR0aW5nIGJlZm9yZSB0aGUgcmV0dXJuIHN0YXRlbWVudCAoVG9tYXN6
+LCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQogICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3
+Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNC8xMC9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
+YW5hbG9naXhfZHAtcm9ja2NoaXAuY0AxNTRdCi0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFy
+ay4KLSBBZGQgdGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgotIEF2b2lkIHRvIGNoYW5nZSBhbnkg
+aW50ZXJuYWwgZHJpdmVyIHN0YXRlIGluIC5tb2RlX3ZhbGlkIGludGVyZmFjZS4gKFRvbWFzeiwg
+cmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5n
+b29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTgvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2Fu
+YWxvZ2l4X2RwLXJvY2tjaGlwLmNAMTEzXQotIEhvb2sgdGhlIGNvbm5lY3RvcidzIGNvbG9yX2Zv
+cm1hdHMgaW4gLmdldF9tb2RlcyBkaXJlY3RseS4gKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xl
+IEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMv
+Yy8zNDYzMTcvMTVdCi0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4KLSBBZGQgdGhlIHJl
+dmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29v
+Z2xlc291cmNlLmNvbS8jL2MvMzQ2ODUzLzEyXQotIEFkZCB0aGUgYWNrZWQgZmxhZyBmcm9tIE1h
+cmsuCi0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBTdMOpcGhhbmUuCiAgICBbaHR0cHM6Ly9jaHJv
+bWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2MzE5LzE1XQotIEFkZCB0ZXN0ZWQg
+ZmxhZyBmcm9tIEphdmllcgoKQ2hhbmdlcyBpbiB2MjoKLSBuZXcgcGF0Y2ggaW4gdjIKLSByZWJh
+c2Ugd2l0aCBkcm0tbmV4dCwgZml4IHNvbWUgY29uZmxpY3RzCi0gbmV3IHBhdGNoIGluIHYyCgpZ
+YWtpciBZYW5nICgxMCk6CiAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IHJlbmFtZSBSSzMyODhf
+RFAgdG8gUk9DS0NISVBfRFAKICBkcm0vcm9ja2NoaXA6IGFuYWxvZ2l4X2RwOiBzcGxpdCB0aGUg
+bGNkYyBzZWxlY3Qgc2V0dGluZyBpbnRvIGRldmljZQogICAgZGF0YQogIGRybS9icmlkZ2U6IGFu
+YWxvZ2l4X2RwOiBjb3JyZWN0IHRoZSByZWdpc3RlciBiaXQgZGVmaW5lIGVycm9yIGluCiAgICBB
+TkFMT0dJWF9EUF9QTExfUkVHXzEKICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogc29tZSByb2Nr
+Y2hpcCBjaGlwcyBuZWVkIHRvIGZsaXAgUkVGX0NMSyBiaXQKICAgIHNldHRpbmcKICBkcm0vcm9j
+a2NoaXA6IGFuYWxvZ2l4X2RwOiBhZGQgcmszMzk5IGVEUCBzdXBwb3J0CiAgZHJtL3JvY2tjaGlw
+OiBhbmFsb2dpeF9kcDogbWFrZSBwYW5lbCBkZXRlY3QgdG8gYW4gb3B0aW9uYWwgYWN0aW9uCiAg
+ZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IHBhc3NpbmcgdGhlIGNvbm5lY3RvciBhcyBhbiBhcmd1
+bWVudCBpbgogICAgLmdldF9tb2RlcygpCiAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogY29y
+cmVjdCB0aGUgY29ubmVjdG9yIGRpc3BsYXkgY29sb3IgZm9ybWF0CiAgICBhbmQgYnBjCiAgZHJt
+L3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogdXBkYXRlIHRoZSBjb21tZW50cyBhYm91dCB3aHkgbmVl
+ZCB0bwogICAgaGFyZGNvZGUgVk9QIG91dHB1dCBtb2RlCiAgZHJtL2JyaWRnZTogYW5hbG9naXhf
+ZHA6IGZpeCBubyBkcm0gaHBkIGV2ZW50IHdoZW4gcGFuZWwgcGx1ZyBpbgoKIC4uLi9iaW5kaW5n
+cy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9kcC50eHQgICAgICAgIHwgICAxICsKIC4uLi9kaXNw
+bGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dCAgICAgIHwgICAzICstCiBkcml2
+ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8ICAgNiArLQog
+ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmggfCAgIDgg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgIHwg
+IDEyICstCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5o
+ICB8ICAgNSArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYyAgICAgICAgICAg
+ICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2Nr
+Y2hpcC5jICAgIHwgMTU4ICsrKysrKysrKysrKysrLS0tLS0tLQogaW5jbHVkZS9kcm0vYnJpZGdl
+L2FuYWxvZ2l4X2RwLmggICAgICAgICAgICAgICAgICAgfCAgIDkgKy0KIDkgZmlsZXMgY2hhbmdl
+ZCwgMTQxIGluc2VydGlvbnMoKyksIDY1IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4xCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
