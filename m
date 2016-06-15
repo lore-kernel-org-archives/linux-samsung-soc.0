@@ -1,90 +1,84 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH RFC 6/6] ASoC: samsung: Add DT bindings documentation for
- TM2 sound subsystem
-Date: Tue, 14 Jun 2016 18:32:24 -0500
-Message-ID: <20160614233224.GA4477@rob-hp-laptop>
-References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
- <1465815160-28504-7-git-send-email-s.nawrocki@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v3 05/10] drm/rockchip: analogix_dp: add rk3399 eDP support
+Date: Wed, 15 Jun 2016 09:56:14 +0800
+Message-ID: <5760B5BE.8020908@rock-chips.com>
+References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
+ <1465904780-935-1-git-send-email-ykk@rock-chips.com>
+ <CAD=FV=VcFLdxSFp99kFc6nHAOHxcrt49A5Hn6M6LHPEgVhFELw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36175 "EHLO
-	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751332AbcFNXc0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 19:32:26 -0400
-Content-Disposition: inline
-In-Reply-To: <1465815160-28504-7-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAD=FV=VcFLdxSFp99kFc6nHAOHxcrt49A5Hn6M6LHPEgVhFELw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com
 
-On Mon, Jun 13, 2016 at 12:52:40PM +0200, Sylwester Nawrocki wrote:
-> This patch adds DT binding documentation for Exnos5433 based TM2
-> and TM2E boards sound subsystem.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../bindings/sound/samsung,tm2-wm5110.txt          | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-wm5110.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-wm5110.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-wm5110.txt
-> new file mode 100644
-> index 0000000..32f69fcc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-wm5110.txt
-> @@ -0,0 +1,39 @@
-> +Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
-> +
-> +Required properties:
-> +
-> + - compatible : "samsung,tm2-audio"
-
-SoC specific compatible string please.
-
-> + - samsung,model : the user-visible name of this sound complex
-
-I think we have a standard property for this.
-
-> + - clocks : must contain an entry for each entry in clock-names,
-> +   see ../clocks/clock-bindings.txt for details
-> + - clock-names : must include the following entries:
-> +   "mclk1", "mclk2"
-
-> + - samsung,i2s-controller : the phandle of the I2S controller
-> + - samsung,speaker-amplifier : the phandle of the MAX98504 amplifier
-
-We should have standard properties for these. 2nd ones I've seen today.
-
-> + - samsung,audio-routing : a list of the connections between audio
-> +   components;  each entry is a pair of strings, the first being the
-> +   connection's sink, the second being the connection's source;
-> +   valid names for sources and sinks are the WM5110's and MAX98504's
-> +   pins and the jacks on the board:
-> +   HP, SPK, Main Mic, Sub Mic, Third Mic, Headset Mic.
-> + - mic-bias-gpios : GPIO pin that enables the Main Mic bias regulator
-> +
-> +Example:
-> +
-> +sound {
-> +	compatible = "samsung,tm2-audio";
-> +	clocks = <&pmu_system_controller 0>, <&s2mps13_osc 2>;
-> +	clock-names = "mclk1", "mclk2";
-> +	samsung,i2s-controller = <&i2s0>;
-> +	samsung,speaker-amplifier = <&max98504>;
-> +	samsung,model = "wm5110";
-> +	mic-bias-gpios = <&gpr3 2 0>;
-> +	samsung,audio-routing =
-> +		"HP", "HPOUT1L",
-> +		"HP", "HPOUT1R",
-> +		"SPK", "SPKOUT",
-> +		"SPKOUT", "HPOUT2L",
-> +		"SPKOUT", "HPOUT2R",
-> +		"Main Mic", "MICBIAS2",
-> +		"IN1R", "Main Mic";
-> +};
-> -- 
-> 1.9.1
-> 
+RG91ZywKCk9uIDA2LzE0LzIwMTYgMTE6MjQgUE0sIERvdWcgQW5kZXJzb24gd3JvdGU6Cj4gWWFr
+aXIsCj4KPiBPbiBUdWUsIEp1biAxNCwgMjAxNiBhdCA0OjQ2IEFNLCBZYWtpciBZYW5nIDx5a2tA
+cm9jay1jaGlwcy5jb20+IHdyb3RlOgo+PiBSSzMzOTkgYW5kIFJLMzI4OCBzaGFyZWQgdGhlIHNh
+bWUgZURQIElQIGNvbnRyb2xsZXIsIG9ubHkgc29tZSBsaWdodAo+PiBkaWZmZXJlbmNlIHdpdGgg
+Vk9QIGNvbmZpZ3VyZSBhbmQgR1JGIGNvbmZpZ3VyZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWWFr
+aXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+PiBBY2tlZC1ieTogTWFyayBZYW8gPG1hcmsu
+eWFvQHJvY2stY2hpcHMuY29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2MzoKPj4gLSBHaXZlIHRo
+ZSAicmszMzk5LWVkcCIgYSBzZXBhcmF0ZSBsaW5lIGZvciBjbGFyaXR5IGluIGRvY3VtZW50IChU
+b21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4+ICAgICAgW2h0dHBzOi8vY2hyb21p
+dW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNC8xMC9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50
+eHRANV0KPj4gLSBNb3ZlICdvdXRwdXRfdHlwZScgc2V0dGluZyBiZWZvcmUgdGhlIHJldHVybiBz
+dGF0ZW1lbnQgKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4gICAgICBbaHR0
+cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2MzE0LzEwL2RyaXZl
+cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDE1NF0KPj4gLSBBZGQg
+dGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+Pgo+PiBDaGFuZ2VzIGluIHYyOgo+PiAtIHJlYmFz
+ZSB3aXRoIGRybS1uZXh0LCBmaXggc29tZSBjb25mbGljdHMKPj4KPj4gICAuLi4vYmluZGluZ3Mv
+ZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0ICAgICAgICB8ICAxICsKPj4gICAuLi4vZGlz
+cGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQgICAgICB8ICAzICstCj4+ICAg
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgICAgfCAzMyAr
+KysrKysrKysrKysrKysrKysrKystCj4+ICAgaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2Rw
+LmggICAgICAgICAgICAgICAgICAgfCAgMSArCj4+ICAgNCBmaWxlcyBjaGFuZ2VkLCAzNiBpbnNl
+cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9k
+cC50eHQKPj4gaW5kZXggNGYyYmE4Yy4uNGEwZjRmNyAxMDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dAo+
+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uv
+YW5hbG9naXhfZHAudHh0Cj4+IEBAIC01LDYgKzUsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZv
+ciBkcC1jb250cm9sbGVyOgo+PiAgICAgICAgICAgICAgICAgIHBsYXRmb3JtIHNwZWNpZmljIHN1
+Y2ggYXM6Cj4+ICAgICAgICAgICAgICAgICAgICogInNhbXN1bmcsZXh5bm9zNS1kcCIKPj4gICAg
+ICAgICAgICAgICAgICAgKiAicm9ja2NoaXAscmszMjg4LWRwIgo+PiArICAgICAgICAgICAgICAg
+ICogInJvY2tjaGlwLHJrMzM5OS1lZHAiCj4+ICAgICAgICAgIC1yZWc6Cj4+ICAgICAgICAgICAg
+ICAgICAgcGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRoZSBjb250cm9sbGVyIGFuZCBsZW5ndGgK
+Pj4gICAgICAgICAgICAgICAgICBvZiBtZW1vcnkgbWFwcGVkIHJlZ2lvbi4KPj4gZGlmZiAtLWdp
+dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlwL2Fu
+YWxvZ2l4X2RwLXJvY2tjaGlwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dAo+PiBpbmRleCBlODMy
+ZmY5Li43MjZjOTQ1IDEwMDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPj4gKysrIGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9n
+aXhfZHAtcm9ja2NoaXAudHh0Cj4+IEBAIC0yLDcgKzIsOCBAQCBSb2NrY2hpcCBSSzMyODggc3Bl
+Y2lmaWMgZXh0ZW5zaW9ucyB0byB0aGUgQW5hbG9naXggRGlzcGxheSBQb3J0Cj4+ICAgPT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT0KPj4KPj4gICBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+
+PiAtLSBjb21wYXRpYmxlOiAicm9ja2NoaXAscmszMjg4LWVkcCI7Cj4+ICstIGNvbXBhdGlibGU6
+ICJyb2NrY2hpcCxyazMyODgtZWRwIiwKPj4gKyAgICAgICAgICAgICAicm9ja2NoaXAscmszMzk5
+LWVkcCI7Cj4gQXMgY29tbWVudGVkIGJ5IFRvbWFzeiBvbiBnZXJyaXQsIHRoZXJlIGlzIGEgcHJl
+LWV4aXN0aW5nIHR5cG8gaGVyZS4KPiBTcGVjaWZpY2FsbHkgInJvY2tjaGlwLHJrMzI4OC1lZHAi
+IHNob3VsZCBiZSAicm9ja2NoaXAscmszMjg4LWRwIi4KPgo+IFRoZSB0eXBvIGlzIHByZS1leGlz
+dGluZyBzbyBJJ20gbm90IHN1cmUgeW91IHdvdWxkIG5lZWQgdG8gc3BpbiB0aGlzCj4gc2VyaWVz
+IHRvIGZpeCBpdCwgYnV0IGlmIHlvdSB3ZXJlIHNwaW5uaW5nIGl0IGFueXdheSBpdCB3b3VsZG4n
+dCBodXJ0Cj4gdG8gZml4LiAgQ291bGQgYWxzbyBqdXN0IHNlbmQgb3V0IGEgZm9sbG93b24gcGF0
+Y2ggdG8gZml4IHRoaXMgYWZ0ZXIKPiB0aGUgc2VyaWVzIGxhbmRzLi4uCgpNeSBiYWQsIGZvcmdl
+dCB0byBmaXggdGhhdCA6KAppdCB3b3VsZCBiZSBiZXR0ZXIgdG8gbWVyZ2UgdGhhdCBmaXggaW50
+byB0aGlzIHNlcmllcywgd291bGQgc2VuZCBhIApmb2xsb3cgcGF0Y2ggc29vbi4KClRoYW5rcyBm
+b3IgcmVtaW5kaW5nLAotIFlha2lyCgo+IC1Eb3VnCj4KPgo+CgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
