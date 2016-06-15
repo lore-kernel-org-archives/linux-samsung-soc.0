@@ -1,59 +1,64 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [RESEND RFT PATCH 0/2] mfd: max14577: Allow the driver to be
- built as a module
-Date: Wed, 15 Jun 2016 10:03:00 -0400
-Message-ID: <c48bf11e-8a39-6cbf-2016-284d91f3dfb6@osg.samsung.com>
-References: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/5] clk: Combine MAX77686 and MAX77802 driver and extend for MAX77620
+Date: Wed, 15 Jun 2016 19:43:33 +0530
+Message-ID: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:60196 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753390AbcFOODL (ORCPT
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18254 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932683AbcFOO1C (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 10:03:11 -0400
-In-Reply-To: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+	Wed, 15 Jun 2016 10:27:02 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
+To: k.kozlowski@samsung.com, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-Hello,
+The clock IP used on the Maxim PMICs max77686 and max77802 are
+same. The configuration of clock register is also same except
+the number of clocks.
+    
+Part of common code utilisation, there is 3 files for these chips
+clock driver, one for common and two files for driver registration.
+    
+Combine both drivers into single file and move common code into
+same common file reduces the 2 files and make max77686 and max77802
+clock driver in single fine. This driver does not depends on the
+parent driver structure. The regmap handle is acquired through
+regmap APIs for the register access.
 
-On 05/26/2016 12:32 PM, Javier Martinez Canillas wrote:
-> 
-> This series is similar to [0] and allows the max14577 PMIC MFD driver to
-> be built as a module. Currently the Kconfig symbol for the driver is a
-> boolean but there isn't really a reason for this restriction.
-> 
-> Chanwoo Choi tried to test the original post but found a build issue [1].
-> The fix for that issue landed in v4.6 so I'm resending this series now
-> that there are no in-flight dependencies anymore.
-> 
-> The patches have been just built tested because I don't have any of the
-> boards using this driver, so testing will be highly appreciated.
-> 
-> [0]: https://lkml.org/lkml/2016/2/11/857
-> [1]: https://lkml.org/lkml/2016/3/17/546
-> 
-> Best regards,
-> Javier
-> 
-> 
-> Javier Martinez Canillas (2):
->   mfd: max14577: Use module_init() instead of subsys_initcall()
->   mfd: max14577: Allow driver to be built as a module
-> 
->  drivers/mfd/Kconfig    | 4 ++--
->  drivers/mfd/max14577.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
+After comining the driver and DT files, extend the support to MAX77620.
 
-Any comments about these patches?
 
-Best regards,
+This series is based on discussion from the series
+	clk: max77620: Add clock driver for MAX77620/MAX20024
+On this series, it is proposed to combine all files together.
+
+
+Laxman Dewangan (5):
+  clk: max77686: Combine Maxim max77686 and max77802 driver
+  clk: Combine DT binding doc for max77686 and max77802
+  clk: max77686: Add DT binding details for PMIC MAX77620
+  clk: max77686: Add support for MAX77620 clocks
+  ARM: config: Get rid of config COMMON_CLK_MAX77802
+
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 108 +++++++--
+ .../devicetree/bindings/clock/maxim,max77802.txt   |  44 ----
+ arch/arm/configs/exynos_defconfig                  |   1 -
+ arch/arm/configs/multi_v7_defconfig                |   1 -
+ drivers/clk/Kconfig                                |  18 +-
+ drivers/clk/Makefile                               |   2 -
+ drivers/clk/clk-max-gen.c                          | 194 ----------------
+ drivers/clk/clk-max-gen.h                          |  32 ---
+ drivers/clk/clk-max77686.c                         | 257 +++++++++++++++++++--
+ drivers/clk/clk-max77802.c                         |  96 --------
+ include/dt-bindings/mfd/max77620.h                 |   4 +
+ 11 files changed, 335 insertions(+), 422 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ delete mode 100644 drivers/clk/clk-max-gen.c
+ delete mode 100644 drivers/clk/clk-max-gen.h
+ delete mode 100644 drivers/clk/clk-max77802.c
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.1.4
