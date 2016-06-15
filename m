@@ -1,67 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC 6/6] ASoC: samsung: Add DT bindings documentation for
- TM2 sound subsystem
-Date: Wed, 15 Jun 2016 10:47:30 +0100
-Message-ID: <20160615094730.GX2282@sirena.org.uk>
-References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
- <1465815160-28504-7-git-send-email-s.nawrocki@samsung.com>
- <20160614233224.GA4477@rob-hp-laptop>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH 0/3] Exynos IOMMU: improve clock management
+Date: Wed, 15 Jun 2016 14:00:36 +0200
+Message-ID: <20160615120035.GH26566@8bytes.org>
+References: <1463995809-26862-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NEtstXYywuKat6/o"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39204 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882AbcFOJrr (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:35085 "EHLO theia.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753241AbcFOMCg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 05:47:47 -0400
+	Wed, 15 Jun 2016 08:02:36 -0400
 Content-Disposition: inline
-In-Reply-To: <20160614233224.GA4477@rob-hp-laptop>
+In-Reply-To: <1463995809-26862-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+On Mon, May 23, 2016 at 11:30:06AM +0200, Marek Szyprowski wrote:
+> Hello,
+> 
+> This patch series improves clock management in Exynos IOMMU driver, so
+> the driver will be ready for potential deferred probe caused by
+> not-yet-available clocks. Such case doesn't happen with current kernel,
+> but it may happen with the planned rework on clocks and power domain
+> code.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Marek Szyprowski (3):
+>   iommu/exynos: Return proper errors from getting clocks
+>   iommu/exynos: Fix master clock management for inactive SYSMMU
+>   iommu/exynos: Prepare clocks when needed, not in driver probe
+> 
+>  drivers/iommu/exynos-iommu.c | 95 ++++++++++++++++++++------------------------
+>  1 file changed, 42 insertions(+), 53 deletions(-)
 
---NEtstXYywuKat6/o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jun 14, 2016 at 06:32:24PM -0500, Rob Herring wrote:
-> On Mon, Jun 13, 2016 at 12:52:40PM +0200, Sylwester Nawrocki wrote:
-
-> > +Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
-
-> > +Required properties:
-
-> > + - compatible : "samsung,tm2-audio"
-
-> SoC specific compatible string please.
-
-No, this isn't a SoC IP - this is a binding for a board called TM2(E)
-which has a bunch of chips on it including this.
-
-> > + - samsung,i2s-controller : the phandle of the I2S controller
-> > + - samsung,speaker-amplifier : the phandle of the MAX98504 amplifier
-
-> We should have standard properties for these. 2nd ones I've seen today.
-
-No, these aren't fixed roles in a system, you couldn't have standard
-handling for them.
-
---NEtstXYywuKat6/o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXYSQxAAoJECTWi3JdVIfQVxwH/2y1qnvMW30RYprHLpVWteWf
-FRl+svFiDf++PWjYhNHNmdCIzJWHvQ54hQUSF6OQD718ii8QNb1JNsEuPtI1s0AM
-ua9Zhxr0hAUKkUwQg1l3NZL1kJCBChEWEIDMKY/8OOfBMSnBAlNMv/LSIRtazvYC
-Cb7dMWKCUD6KFYPF1DbtWknAWHAaGBKw7hBs9eLF3NF5z0MWVC3u0UQvIRPzCIBs
-ZFi1FPD0VfDR1Oyl22QOiloD1GCQ004q3CNsIvXB6tkhY1nSgk14Hywnk/VagHfh
-wtk5ud/5la/VvoFe20EtMyUkireYYNhhQop6B5dk+m5p9h4BO6+QtDQzkQiQV/Q=
-=6s1h
------END PGP SIGNATURE-----
-
---NEtstXYywuKat6/o--
+Applied all, thanks.
