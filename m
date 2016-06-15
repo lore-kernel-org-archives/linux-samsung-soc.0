@@ -1,63 +1,39 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
-Date: Wed, 15 Jun 2016 11:27:47 -0400
-Message-ID: <ba35a3a4-91f9-a9d8-16c9-0cdd409da48d@osg.samsung.com>
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
+ driver
+Date: Wed, 15 Jun 2016 23:35:18 +0800
+Message-ID: <201606152336.8yLdCgO4%fengguang.wu@intel.com>
+References: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1466000018-16784-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:57981 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932432AbcFOPgC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 15 Jun 2016 11:36:02 -0400
+Content-Disposition: inline
+In-Reply-To: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+Cc: kbuild-all@01.org, k.kozlowski@samsung.com, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-Hello Laxman,
+Hi,
 
-On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
-> Maxim Max77620 has one 32KHz clock output and the clock HW
-> IP used on this PMIC is same as what it is there in the MAX77686.
-> 
-> Add clock driver support for MAX77620 on the MAX77686 driver.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> CC: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> CC: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-> ---
->  drivers/clk/Kconfig        |  7 ++++---
->  drivers/clk/clk-max77686.c | 16 ++++++++++++++++
->  2 files changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6afad74..d75f4c5 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
->  source "drivers/clk/versatile/Kconfig"
->  
->  config COMMON_CLK_MAX77686
-> -	tristate "Clock driver for Maxim 77686/77802 MFD"
-> -	depends on MFD_MAX77686
-> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-> +	depends on MFD_MAX77686 || MFD_MAX77620
->  	---help---
-> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
+[auto build test WARNING on next-20160615]
+[also build test WARNING on v4.7-rc3]
+[cannot apply to clk/clk-next robh/for-next v4.7-rc3 v4.7-rc2 v4.7-rc1]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-s/MAX77620/77620
+url:    https://github.com/0day-ci/linux/commits/Laxman-Dewangan/clk-Combine-MAX77686-and-MAX77802-driver-and-extend-for-MAX77620/20160615-223243
 
-Besides this minor nit, the patch looks good to me:
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+coccinelle warnings: (new ones prefixed by >>)
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> drivers/clk/clk-max77686.c:177:2-3: Unneeded semicolon
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
