@@ -1,53 +1,103 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-Date: Wed, 15 Jun 2016 19:43:38 +0530
-Message-ID: <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
+ driver
+Date: Wed, 15 Jun 2016 11:12:57 -0400
+Message-ID: <4ba85edd-203f-c27f-f11c-5b64f972acc0@osg.samsung.com>
 References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The clock driver used by Maxim PMIC MAX77802 is clk-max77686
-which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
+Hello Laxman,
 
-Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
+> 
+> Part of common code utilisation, there is 3 files for these chips
+> clock driver, one for common and two files for driver registration.
+> 
+> Combine both drivers into single file and move common code into
+> same common file reduces the 2 files and make max77686 and max77802
+> clock driver in single fine. This driver does not depends on the
+> parent driver structure. The regmap handle is acquired through
+> regmap APIs for the register access.
+> 
+> This combination of driver helps on adding clock driver for different
+> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> ---
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
----
- arch/arm/configs/exynos_defconfig   | 1 -
- arch/arm/configs/multi_v7_defconfig | 1 -
- 2 files changed, 2 deletions(-)
+[snip]
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index daf9762..cfd75c7 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -216,7 +216,6 @@ CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
- CONFIG_CROS_EC_CHARDEV=y
- CONFIG_COMMON_CLK_MAX77686=y
--CONFIG_COMMON_CLK_MAX77802=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index ee7c884..7cbf389 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -787,7 +787,6 @@ CONFIG_CHROME_PLATFORMS=y
- CONFIG_STAGING_BOARD=y
- CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_MAX77686=y
--CONFIG_COMMON_CLK_MAX77802=m
- CONFIG_COMMON_CLK_RK808=m
- CONFIG_COMMON_CLK_S2MPS11=m
- CONFIG_APQ_MMCC_8084=y
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index 9b6f277..31ba726 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * clk-max77686.c - Clock driver for Maxim 77686
+> + * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+>   *
+>   * Copyright (C) 2012 Samsung Electornics
+>   * Jonghwa Lee <jonghwa3.lee@samsung.com>
+> @@ -13,13 +13,7 @@
+>   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> - *
+>   */
+> -
+
+I think removing this part of the header is correct but it should be a
+separate patch.
+
+[snip]
+
+> +
+> +struct max_gen_hw_clk_data {
+> +	const char *name;
+> +	u32 reg;
+> +	u32 mask;
+> +	u32 flags;
+> +};
+> +
+> +struct max_gen_clk_data {
+> +	struct regmap *regmap;
+> +	struct clk_init_data clk_idata;
+> +	struct clk_hw hw;
+> +	u32 reg;
+> +	u32 mask;
+> +};
+> +
+
+Probably now makes more sense to rename all the "max_gen_foo" structs and
+functions to just "max77686_foo" since now are all defined in the max77686
+so that naming is more consistent.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+I also tested on an Exynos5800 Peach Pi Chromebook that has a max77802 IP:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-2.1.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
