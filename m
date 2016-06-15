@@ -1,106 +1,65 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 07/10] drm/bridge: analogix_dp: passing the connector
- as an argument in .get_modes()
-Date: Wed, 15 Jun 2016 09:58:32 +0800
-Message-ID: <5760B648.7090709@rock-chips.com>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904789-1021-1-git-send-email-ykk@rock-chips.com>
- <20160614162656.GA1338@phenom.ffwll.local>
- <20160614162849.GB1338@phenom.ffwll.local>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH RFC 3/6] ASoC: max98504: Add max98504 speaker amplifier
+ driver
+Date: Wed, 15 Jun 2016 10:25:27 +0100
+Message-ID: <20160615092527.GU2282@sirena.org.uk>
+References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
+ <1465815160-28504-4-git-send-email-s.nawrocki@samsung.com>
+ <20160613151429.GI2282@sirena.org.uk>
+ <57601A1F.5030906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YSDgblk1kzV93dSz"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:59012 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752776AbcFOB6p (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39102 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751889AbcFOJZt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 21:58:45 -0400
-In-Reply-To: <20160614162849.GB1338@phenom.ffwll.local>
+	Wed, 15 Jun 2016 05:25:49 -0400
+Content-Disposition: inline
+In-Reply-To: <57601A1F.5030906@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: daniel@ffwll.ch
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tomasz.figa@chromium.com>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, robh@kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com
 
-On 06/15/2016 12:28 AM, Daniel Vetter wrote:
-> On Tue, Jun 14, 2016 at 06:26:56PM +0200, Daniel Vetter wrote:
->> On Tue, Jun 14, 2016 at 07:46:29PM +0800, Yakir Yang wrote:
->>> It's better to pass the connector to platform driver in .get_modes()
->>> callback, just like what the .get_modes() helper function designed.
->>>
->>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> Also please drop the analogix prefix from the subject, this is for all
->> drm_bridge drivers.
-> Ok, strike all my comments, I was blind and didn't realize that this was a
-> private interface for only rockchip/exynos.
 
-:)
+--YSDgblk1kzV93dSz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -Daniel
->
->> -Daniel
->>
->>> ---
->>> Changes in v3:
->>> - Avoid to change any internal driver state in .mode_valid interface. (Tomasz, reviewed at Google Gerrit)
->>>      [https://chromium-review.googlesource.com/#/c/346318/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@113]
->>>
->>> Changes in v2: None
->>>
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
->>>   drivers/gpu/drm/exynos/exynos_dp.c                 | 4 ++--
->>>   include/drm/bridge/analogix_dp.h                   | 3 ++-
->>>   3 files changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index 4a1b3b8..1a890fa 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -938,7 +938,7 @@ int analogix_dp_get_modes(struct drm_connector *connector)
->>>   		num_modes += drm_panel_get_modes(dp->plat_data->panel);
->>>   
->>>   	if (dp->plat_data->get_modes)
->>> -		num_modes += dp->plat_data->get_modes(dp->plat_data);
->>> +		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
->>>   
->>>   	return num_modes;
->>>   }
->>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
->>> index 468498e..8a555ed 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->>> @@ -67,10 +67,10 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
->>>   	return exynos_dp_crtc_clock_enable(plat_data, false);
->>>   }
->>>   
->>> -static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data)
->>> +static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
->>> +			       struct drm_connector *connector)
->>>   {
->>>   	struct exynos_dp_device *dp = to_dp(plat_data);
->>> -	struct drm_connector *connector = &dp->connector;
->>>   	struct drm_display_mode *mode;
->>>   	int num_modes = 0;
->>>   
->>> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
->>> index 82b8135..181db09 100644
->>> --- a/include/drm/bridge/analogix_dp.h
->>> +++ b/include/drm/bridge/analogix_dp.h
->>> @@ -34,7 +34,8 @@ struct analogix_dp_plat_data {
->>>   	int (*power_off)(struct analogix_dp_plat_data *);
->>>   	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
->>>   		      struct drm_connector *);
->>> -	int (*get_modes)(struct analogix_dp_plat_data *);
->>> +	int (*get_modes)(struct analogix_dp_plat_data *,
->>> +			 struct drm_connector *);
->>>   };
->>>   
->>>   int analogix_dp_resume(struct device *dev);
->>> -- 
->>> 1.9.1
->>>
->>>
->> -- 
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> http://blog.ffwll.ch
+On Tue, Jun 14, 2016 at 04:52:15PM +0200, Sylwester Nawrocki wrote:
+> On 06/13/2016 05:14 PM, Mark Brown wrote:
+
+> > Removed the regulator handling code?  Why?
+
+> Because it was effectively a dead code (disabled by a DT flag property)
+> and didn't make any sense on our test board. It was setting regulator's
+> load and voltage on a shared fixed voltage regulator. Even if calls like
+> regulator_set_optimum_mode() were added that wouldn't make any difference,
+> since the corresponding PMIC driver ops were not implemented.
+> I started more or less with something like this [1].
+
+The mode and voltage setting code there are just obviously broken but
+having the get and enable is useful, even if it doesn't do anything on
+your board it's nice to have them there already to avoid any transition
+issues adding them later and help get more complete and accurate DTs in
+=66rom the get go.
+
+--YSDgblk1kzV93dSz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXYR8CAAoJECTWi3JdVIfQmcoH/3YTqRsICteSut7PYwP+DhAA
+THwqBbWe+CRRW4Ikn1SlrYvw9DDGJgZNJ1MBHIaiLVBP2TqCeFqRydJv9iwtjYpt
+Y0KBKOSVHO3hXiSmgo6lWuhlAKugY5ho8tLOCaHRmccq//Ty9ppdfcU6cFDJ21B6
+yi2p67KROT7YufcJlVX1cJjiNfv65QgaK5xgauGdwJ6dh8eCv/eGvc55UAvPjVrm
+7DqnFyySPDHQsFxKdzLMlyiU7UoY0oyITMHegb/J0Mxu7fI1Q3AvkkpFlQ/fSWS1
+PpcmnsPzYgL+FhlXT2H85NG7g79Q/4J8nAU4FTH/vcyJrsxmGYKPpTOMDAIWgOA=
+=48VA
+-----END PGP SIGNATURE-----
+
+--YSDgblk1kzV93dSz--
