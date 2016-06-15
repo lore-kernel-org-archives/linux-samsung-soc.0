@@ -1,84 +1,106 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 05/10] drm/rockchip: analogix_dp: add rk3399 eDP support
-Date: Wed, 15 Jun 2016 09:56:14 +0800
-Message-ID: <5760B5BE.8020908@rock-chips.com>
+Subject: Re: [PATCH v3 07/10] drm/bridge: analogix_dp: passing the connector
+ as an argument in .get_modes()
+Date: Wed, 15 Jun 2016 09:58:32 +0800
+Message-ID: <5760B648.7090709@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904780-935-1-git-send-email-ykk@rock-chips.com>
- <CAD=FV=VcFLdxSFp99kFc6nHAOHxcrt49A5Hn6M6LHPEgVhFELw@mail.gmail.com>
+ <1465904789-1021-1-git-send-email-ykk@rock-chips.com>
+ <20160614162656.GA1338@phenom.ffwll.local>
+ <20160614162849.GB1338@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAD=FV=VcFLdxSFp99kFc6nHAOHxcrt49A5Hn6M6LHPEgVhFELw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.134]:59012 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752776AbcFOB6p (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 Jun 2016 21:58:45 -0400
+In-Reply-To: <20160614162849.GB1338@phenom.ffwll.local>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: daniel@ffwll.ch
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tomasz.figa@chromium.com>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 
-RG91ZywKCk9uIDA2LzE0LzIwMTYgMTE6MjQgUE0sIERvdWcgQW5kZXJzb24gd3JvdGU6Cj4gWWFr
-aXIsCj4KPiBPbiBUdWUsIEp1biAxNCwgMjAxNiBhdCA0OjQ2IEFNLCBZYWtpciBZYW5nIDx5a2tA
-cm9jay1jaGlwcy5jb20+IHdyb3RlOgo+PiBSSzMzOTkgYW5kIFJLMzI4OCBzaGFyZWQgdGhlIHNh
-bWUgZURQIElQIGNvbnRyb2xsZXIsIG9ubHkgc29tZSBsaWdodAo+PiBkaWZmZXJlbmNlIHdpdGgg
-Vk9QIGNvbmZpZ3VyZSBhbmQgR1JGIGNvbmZpZ3VyZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWWFr
-aXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+PiBBY2tlZC1ieTogTWFyayBZYW8gPG1hcmsu
-eWFvQHJvY2stY2hpcHMuY29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2MzoKPj4gLSBHaXZlIHRo
-ZSAicmszMzk5LWVkcCIgYSBzZXBhcmF0ZSBsaW5lIGZvciBjbGFyaXR5IGluIGRvY3VtZW50IChU
-b21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4+ICAgICAgW2h0dHBzOi8vY2hyb21p
-dW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNC8xMC9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50
-eHRANV0KPj4gLSBNb3ZlICdvdXRwdXRfdHlwZScgc2V0dGluZyBiZWZvcmUgdGhlIHJldHVybiBz
-dGF0ZW1lbnQgKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4gICAgICBbaHR0
-cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2MzE0LzEwL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDE1NF0KPj4gLSBBZGQg
-dGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+Pgo+PiBDaGFuZ2VzIGluIHYyOgo+PiAtIHJlYmFz
-ZSB3aXRoIGRybS1uZXh0LCBmaXggc29tZSBjb25mbGljdHMKPj4KPj4gICAuLi4vYmluZGluZ3Mv
-ZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0ICAgICAgICB8ICAxICsKPj4gICAuLi4vZGlz
-cGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQgICAgICB8ICAzICstCj4+ICAg
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgICAgfCAzMyAr
-KysrKysrKysrKysrKysrKysrKystCj4+ICAgaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2Rw
-LmggICAgICAgICAgICAgICAgICAgfCAgMSArCj4+ICAgNCBmaWxlcyBjaGFuZ2VkLCAzNiBpbnNl
-cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2JyaWRnZS9hbmFsb2dpeF9k
-cC50eHQKPj4gaW5kZXggNGYyYmE4Yy4uNGEwZjRmNyAxMDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dAo+
-PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uv
-YW5hbG9naXhfZHAudHh0Cj4+IEBAIC01LDYgKzUsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzIGZv
-ciBkcC1jb250cm9sbGVyOgo+PiAgICAgICAgICAgICAgICAgIHBsYXRmb3JtIHNwZWNpZmljIHN1
-Y2ggYXM6Cj4+ICAgICAgICAgICAgICAgICAgICogInNhbXN1bmcsZXh5bm9zNS1kcCIKPj4gICAg
-ICAgICAgICAgICAgICAgKiAicm9ja2NoaXAscmszMjg4LWRwIgo+PiArICAgICAgICAgICAgICAg
-ICogInJvY2tjaGlwLHJrMzM5OS1lZHAiCj4+ICAgICAgICAgIC1yZWc6Cj4+ICAgICAgICAgICAg
-ICAgICAgcGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRoZSBjb250cm9sbGVyIGFuZCBsZW5ndGgK
-Pj4gICAgICAgICAgICAgICAgICBvZiBtZW1vcnkgbWFwcGVkIHJlZ2lvbi4KPj4gZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlwL2Fu
-YWxvZ2l4X2RwLXJvY2tjaGlwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9kaXNwbGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dAo+PiBpbmRleCBlODMy
-ZmY5Li43MjZjOTQ1IDEwMDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPj4gKysrIGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9n
-aXhfZHAtcm9ja2NoaXAudHh0Cj4+IEBAIC0yLDcgKzIsOCBAQCBSb2NrY2hpcCBSSzMyODggc3Bl
-Y2lmaWMgZXh0ZW5zaW9ucyB0byB0aGUgQW5hbG9naXggRGlzcGxheSBQb3J0Cj4+ICAgPT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT0KPj4KPj4gICBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+
-PiAtLSBjb21wYXRpYmxlOiAicm9ja2NoaXAscmszMjg4LWVkcCI7Cj4+ICstIGNvbXBhdGlibGU6
-ICJyb2NrY2hpcCxyazMyODgtZWRwIiwKPj4gKyAgICAgICAgICAgICAicm9ja2NoaXAscmszMzk5
-LWVkcCI7Cj4gQXMgY29tbWVudGVkIGJ5IFRvbWFzeiBvbiBnZXJyaXQsIHRoZXJlIGlzIGEgcHJl
-LWV4aXN0aW5nIHR5cG8gaGVyZS4KPiBTcGVjaWZpY2FsbHkgInJvY2tjaGlwLHJrMzI4OC1lZHAi
-IHNob3VsZCBiZSAicm9ja2NoaXAscmszMjg4LWRwIi4KPgo+IFRoZSB0eXBvIGlzIHByZS1leGlz
-dGluZyBzbyBJJ20gbm90IHN1cmUgeW91IHdvdWxkIG5lZWQgdG8gc3BpbiB0aGlzCj4gc2VyaWVz
-IHRvIGZpeCBpdCwgYnV0IGlmIHlvdSB3ZXJlIHNwaW5uaW5nIGl0IGFueXdheSBpdCB3b3VsZG4n
-dCBodXJ0Cj4gdG8gZml4LiAgQ291bGQgYWxzbyBqdXN0IHNlbmQgb3V0IGEgZm9sbG93b24gcGF0
-Y2ggdG8gZml4IHRoaXMgYWZ0ZXIKPiB0aGUgc2VyaWVzIGxhbmRzLi4uCgpNeSBiYWQsIGZvcmdl
-dCB0byBmaXggdGhhdCA6KAppdCB3b3VsZCBiZSBiZXR0ZXIgdG8gbWVyZ2UgdGhhdCBmaXggaW50
-byB0aGlzIHNlcmllcywgd291bGQgc2VuZCBhIApmb2xsb3cgcGF0Y2ggc29vbi4KClRoYW5rcyBm
-b3IgcmVtaW5kaW5nLAotIFlha2lyCgo+IC1Eb3VnCj4KPgo+CgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 06/15/2016 12:28 AM, Daniel Vetter wrote:
+> On Tue, Jun 14, 2016 at 06:26:56PM +0200, Daniel Vetter wrote:
+>> On Tue, Jun 14, 2016 at 07:46:29PM +0800, Yakir Yang wrote:
+>>> It's better to pass the connector to platform driver in .get_modes()
+>>> callback, just like what the .get_modes() helper function designed.
+>>>
+>>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> Also please drop the analogix prefix from the subject, this is for all
+>> drm_bridge drivers.
+> Ok, strike all my comments, I was blind and didn't realize that this was a
+> private interface for only rockchip/exynos.
+
+:)
+
+> -Daniel
+>
+>> -Daniel
+>>
+>>> ---
+>>> Changes in v3:
+>>> - Avoid to change any internal driver state in .mode_valid interface. (Tomasz, reviewed at Google Gerrit)
+>>>      [https://chromium-review.googlesource.com/#/c/346318/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@113]
+>>>
+>>> Changes in v2: None
+>>>
+>>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+>>>   drivers/gpu/drm/exynos/exynos_dp.c                 | 4 ++--
+>>>   include/drm/bridge/analogix_dp.h                   | 3 ++-
+>>>   3 files changed, 5 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> index 4a1b3b8..1a890fa 100644
+>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> @@ -938,7 +938,7 @@ int analogix_dp_get_modes(struct drm_connector *connector)
+>>>   		num_modes += drm_panel_get_modes(dp->plat_data->panel);
+>>>   
+>>>   	if (dp->plat_data->get_modes)
+>>> -		num_modes += dp->plat_data->get_modes(dp->plat_data);
+>>> +		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
+>>>   
+>>>   	return num_modes;
+>>>   }
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+>>> index 468498e..8a555ed 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>>> @@ -67,10 +67,10 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+>>>   	return exynos_dp_crtc_clock_enable(plat_data, false);
+>>>   }
+>>>   
+>>> -static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data)
+>>> +static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+>>> +			       struct drm_connector *connector)
+>>>   {
+>>>   	struct exynos_dp_device *dp = to_dp(plat_data);
+>>> -	struct drm_connector *connector = &dp->connector;
+>>>   	struct drm_display_mode *mode;
+>>>   	int num_modes = 0;
+>>>   
+>>> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+>>> index 82b8135..181db09 100644
+>>> --- a/include/drm/bridge/analogix_dp.h
+>>> +++ b/include/drm/bridge/analogix_dp.h
+>>> @@ -34,7 +34,8 @@ struct analogix_dp_plat_data {
+>>>   	int (*power_off)(struct analogix_dp_plat_data *);
+>>>   	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
+>>>   		      struct drm_connector *);
+>>> -	int (*get_modes)(struct analogix_dp_plat_data *);
+>>> +	int (*get_modes)(struct analogix_dp_plat_data *,
+>>> +			 struct drm_connector *);
+>>>   };
+>>>   
+>>>   int analogix_dp_resume(struct device *dev);
+>>> -- 
+>>> 1.9.1
+>>>
+>>>
+>> -- 
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> http://blog.ffwll.ch
