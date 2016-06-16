@@ -1,43 +1,44 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH V2 2/4] clk: Combine DT binding doc for max77686 and
- max77802
-Date: Thu, 16 Jun 2016 09:57:00 -0400
-Message-ID: <915cfaa2-074c-c0b4-5b5a-81857e329693@osg.samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH V2 3/4] clk: max77686: Add DT binding details for PMIC
+ MAX77620
+Date: Thu, 16 Jun 2016 10:02:18 -0400
+Message-ID: <4973c738-f270-e7d1-9ac1-ab0d6eaece88@osg.samsung.com>
 References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
+ <1466083407-28793-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466083407-28793-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466083407-28793-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Laxman,
 
 On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
-> The clock IP used on the Maxim PMICs max77686 and max77802 are
-> same. The configuration of clock register is also same except
-> the number of clocks.
+> Maxim has used the same clock IP on multiple PMICs like MAX77686,
+> MAX77802, MAX77620. Only differences are the number of clocks
+> from these PMICs like MAX77686 has 3 clocks output, MAX776802 have
+> two clock output and MAX77620 has one clock output.
 > 
-> Define the common DT binding file for the clocks of Maxim PMICs
-> MAX77686 and MAX77802. For this, remove the separate DT binding
-> document file for maxim,max77802 and move all information to
-> maxim,max77686 DT binding document.
+> Add clock binding details and DT example for the MAX77620.
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> CC: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> CC: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 > 
+> ---
 
-Looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
