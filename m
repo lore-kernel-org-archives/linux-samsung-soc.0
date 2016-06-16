@@ -1,62 +1,59 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 4/5] clk: max77686: Add support for MAX77620 clocks
-Date: Thu, 16 Jun 2016 12:11:24 +0200
-Message-ID: <57627B4C.7060609@samsung.com>
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-5-git-send-email-ldewangan@nvidia.com>
- <57627757.50101@samsung.com> <576276E5.5040500@nvidia.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND RFT PATCH 2/2] mfd: max14577: Allow driver to be built
+ as a module
+Date: Thu, 16 Jun 2016 11:40:48 +0100
+Message-ID: <20160616104048.GU4948@dell>
+References: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+ <1464280340-13228-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <576276E5.5040500@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1464280340-13228-3-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/16/2016 11:52 AM, Laxman Dewangan wrote:
-> Hi Krzysztof/Javier,
-> Thanks for review of the series.
-> 
-> I will post the V2 after taking care of all comment.
-> 
-> One query about the comment.
-> 
-> Thanks,
-> Laxman
-> 
-> On Thursday 16 June 2016 03:24 PM, Krzysztof Kozlowski wrote:
->> On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
->>>   enum chip_name {
->>>       CHIP_MAX77686,
->>>       CHIP_MAX77802,
->>> +    CHIP_MAX77620,
->> Now it is more obvious why it is here. However I don't like the
->> duplication of device IDs, under different names and different values:
->> 1. include/linux/mfd/max77686-private.h
->> 2. include/linux/mfd/max77620.h
->> 3. here
->>
->> I was thinking about way of combining it... but these headers are
->> different. Unless there will be one header for all three devices.
->>
->> Anyway, please add the max77686 prefix to the enum.
-> 
-> so will it be:
-> 
-> enum max77686_chip_name {
->     CHIP_MAX77686,
->     CHIP_MAX77802,
->     CHIP_MAX77620,
-> };
-> 
-> 
-> Will it be fine here?
+On Thu, 26 May 2016, Javier Martinez Canillas wrote:
 
-Yes, looks fine to me.
+> The driver's Kconfig symbol is a boolean but nothing prevents the dri=
+ver
+> to be built as a module instead of built-in. It is true that most sys=
+tem
+> integrators will choose the latter but the config should not restrict=
+ it.
 
-Best regards,
-Krzysztof
+Does the driver have all of the module related code?
 
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>=20
+> ---
+>=20
+>  drivers/mfd/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index a49565cc1a6b..33d112f390fe 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -514,8 +514,8 @@ config MFD_88PM860X
+>  	  battery-charger under the corresponding menus.
+> =20
+>  config MFD_MAX14577
+> -	bool "Maxim Semiconductor MAX14577/77836 MUIC + Charger Support"
+> -	depends on I2C=3Dy
+> +	tristate "Maxim Semiconductor MAX14577/77836 MUIC + Charger Support=
+"
+> +	depends on I2C
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
