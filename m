@@ -1,118 +1,44 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
-Date: Thu, 16 Jun 2016 18:53:27 +0530
-Message-ID: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [RESEND RFT PATCH 2/2] mfd: max14577: Allow driver to be built as
+ a module
+Date: Thu, 16 Jun 2016 09:48:44 -0400
+Message-ID: <315537c3-a65e-d0bd-c09c-3372880396d7@osg.samsung.com>
+References: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+ <1464280340-13228-3-git-send-email-javier@osg.samsung.com>
+ <20160616104048.GU4948@dell>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:37973 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752587AbcFPNsw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 09:48:52 -0400
+In-Reply-To: <20160616104048.GU4948@dell>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Maxim Max77620 has one 32KHz clock output and the clock HW
-IP used on this PMIC is same as what it is there in the MAX77686.
+Hello Lee,
 
-Add clock driver support for MAX77620 on the MAX77686 driver.
+On 06/16/2016 06:40 AM, Lee Jones wrote:
+> On Thu, 26 May 2016, Javier Martinez Canillas wrote:
+> 
+>> The driver's Kconfig symbol is a boolean but nothing prevents the driver
+>> to be built as a module instead of built-in. It is true that most system
+>> integrators will choose the latter but the config should not restrict it.
+> 
+> Does the driver have all of the module related code?
+>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
----
-Changes from V1:
-- Updated based on changes done in first patch.
----
- drivers/clk/Kconfig        |  7 ++++---
- drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6afad74..d75f4c5 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
- source "drivers/clk/versatile/Kconfig"
+Yes, it always did (even has a MODULE_DEVICE_TABLE so autoload should work)
+but is just that the Kconfig symbol was bool instead of tristate since most
+system integrators will choose to have it built-in.
  
- config COMMON_CLK_MAX77686
--	tristate "Clock driver for Maxim 77686/77802 MFD"
--	depends on MFD_MAX77686
-+	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-+	depends on MFD_MAX77686 || MFD_MAX77620
- 	---help---
--	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-+	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
-+	  clock.
- 
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK808"
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 9aba3a8..19f6208 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -25,6 +25,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/mfd/max77620.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
- #include <linux/clk-provider.h>
-@@ -35,12 +36,14 @@
- 
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/clock/maxim,max77620.h>
- 
- #define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
- 
- enum max77686_chip_name {
- 	CHIP_MAX77686,
- 	CHIP_MAX77802,
-+	CHIP_MAX77620,
- };
- 
- struct max77686_hw_clk_info {
-@@ -97,6 +100,15 @@ max77686_hw_clk_info max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
- 	},
- };
- 
-+static const struct
-+max77686_hw_clk_info max77620_hw_clks_info[MAX77620_CLKS_NUM] = {
-+	[MAX77620_CLK_32K_OUT0] = {
-+		.name = "32khz_out0",
-+		.clk_reg = MAX77620_REG_CNFG1_32K,
-+		.clk_enable_mask = MAX77620_CNFG1_32K_OUT0_EN,
-+	},
-+};
-+
- static struct max77686_clk_init_data *to_max77686_clk_init_data(
- 				struct clk_hw *hw)
- {
-@@ -181,6 +193,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 		hw_clks = max77802_hw_clks_info;
- 		break;
- 
-+	case CHIP_MAX77620:
-+		num_clks = MAX77620_CLKS_NUM;
-+		hw_clks = max77620_hw_clks_info;
-+		break;
-+
- 	default:
- 		dev_err(dev, "Unknown Chip ID\n");
- 		return -EINVAL;
-@@ -284,6 +301,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
- static const struct platform_device_id max77686_clk_id[] = {
- 	{ "max77686-clk", .driver_data = CHIP_MAX77686, },
- 	{ "max77802-clk", .driver_data = CHIP_MAX77802, },
-+	{ "max77620-clock", .driver_data = CHIP_MAX77620, },
- 	{},
- };
- MODULE_DEVICE_TABLE(platform, max77686_clk_id);
+Best regards,
 -- 
-2.1.4
-
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
