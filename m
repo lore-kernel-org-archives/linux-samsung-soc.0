@@ -1,44 +1,655 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-Date: Wed, 15 Jun 2016 11:39:00 -0400
-Message-ID: <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
+ driver
+Date: Thu, 16 Jun 2016 11:31:07 +0200
+Message-ID: <576271DB.7040400@samsung.com>
 References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
- <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466000018-16784-6-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50368 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136AbcFPJbN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 05:31:13 -0400
+In-reply-to: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
 
-Hello Laxman,
+Hi,
 
-On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
-> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
-> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
+First, thank for the work. Looks promising! Few comments below.
+
+On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
 > 
-> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
+> Part of common code utilisation, there is 3 files for these chips
+> clock driver, one for common and two files for driver registration.
+> 
+> Combine both drivers into single file and move common code into
+> same common file reduces the 2 files and make max77686 and max77802
+> clock driver in single fine. This driver does not depends on the
+> parent driver structure. The regmap handle is acquired through
+> regmap APIs for the register access.
+> 
+> This combination of driver helps on adding clock driver for different
+> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
 > 
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 > CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > CC: Javier Martinez Canillas <javier@dowhile0.org>
 > ---
->  arch/arm/configs/exynos_defconfig   | 1 -
->  arch/arm/configs/multi_v7_defconfig | 1 -
+>  drivers/clk/Kconfig        |  15 +--
+>  drivers/clk/Makefile       |   2 -
+>  drivers/clk/clk-max-gen.c  | 194 ------------------------------------
+>  drivers/clk/clk-max-gen.h  |  32 ------
+>  drivers/clk/clk-max77686.c | 241 +++++++++++++++++++++++++++++++++++++++++----
+>  drivers/clk/clk-max77802.c |  96 ------------------
+>  6 files changed, 225 insertions(+), 355 deletions(-)
+>  delete mode 100644 drivers/clk/clk-max-gen.c
+>  delete mode 100644 drivers/clk/clk-max-gen.h
+>  delete mode 100644 drivers/clk/clk-max77802.c
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 98efbfc..6afad74 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -31,22 +31,11 @@ config COMMON_CLK_WM831X
+>  
+>  source "drivers/clk/versatile/Kconfig"
+>  
+> -config COMMON_CLK_MAX_GEN
+> -        bool
+> -
+>  config COMMON_CLK_MAX77686
+> -	tristate "Clock driver for Maxim 77686 MFD"
+> -	depends on MFD_MAX77686
+> -	select COMMON_CLK_MAX_GEN
+> -	---help---
+> -	  This driver supports Maxim 77686 crystal oscillator clock. 
+> -
+> -config COMMON_CLK_MAX77802
+> -	tristate "Clock driver for Maxim 77802 PMIC"
+> +	tristate "Clock driver for Maxim 77686/77802 MFD"
+>  	depends on MFD_MAX77686
+> -	select COMMON_CLK_MAX_GEN
+>  	---help---
+> -	  This driver supports Maxim 77802 crystal oscillator clock.
+> +	  This driver supports Maxim 77686/77802 crystal oscillator clock.
+>  
+>  config COMMON_CLK_RK808
+>  	tristate "Clock driver for RK808"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index dcc5e69..0a3a91b 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -26,9 +26,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+>  obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+>  obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+>  obj-$(CONFIG_MACH_LOONGSON32)		+= clk-ls1x.o
+> -obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+>  obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+> -obj-$(CONFIG_COMMON_CLK_MAX77802)	+= clk-max77802.o
+>  obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+>  obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+>  obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+> diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+> deleted file mode 100644
+> index 35af9cb..0000000
+> --- a/drivers/clk/clk-max-gen.c
+> +++ /dev/null
+> @@ -1,194 +0,0 @@
+> -/*
+> - * clk-max-gen.c - Generic clock driver for Maxim PMICs clocks
+> - *
+> - * Copyright (C) 2014 Google, Inc
+> - *
+> - * Copyright (C) 2012 Samsung Electornics
+> - * Jonghwa Lee <jonghwa3.lee@samsung.com>
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * This driver is based on clk-max77686.c
+> - *
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/slab.h>
+> -#include <linux/err.h>
+> -#include <linux/regmap.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/clk-provider.h>
+> -#include <linux/mutex.h>
+> -#include <linux/clkdev.h>
+> -#include <linux/of.h>
+> -#include <linux/export.h>
+> -
+> -#include "clk-max-gen.h"
+> -
+> -struct max_gen_clk {
+> -	struct regmap *regmap;
+> -	u32 mask;
+> -	u32 reg;
+> -	struct clk_hw hw;
+> -};
+> -
+> -static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
+> -{
+> -	return container_of(hw, struct max_gen_clk, hw);
+> -}
+> -
+> -static int max_gen_clk_prepare(struct clk_hw *hw)
+> -{
+> -	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+> -
+> -	return regmap_update_bits(max_gen->regmap, max_gen->reg,
+> -				  max_gen->mask, max_gen->mask);
+> -}
+> -
+> -static void max_gen_clk_unprepare(struct clk_hw *hw)
+> -{
+> -	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+> -
+> -	regmap_update_bits(max_gen->regmap, max_gen->reg,
+> -			   max_gen->mask, ~max_gen->mask);
+> -}
+> -
+> -static int max_gen_clk_is_prepared(struct clk_hw *hw)
+> -{
+> -	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+> -	int ret;
+> -	u32 val;
+> -
+> -	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
+> -
+> -	if (ret < 0)
+> -		return -EINVAL;
+> -
+> -	return val & max_gen->mask;
+> -}
+> -
+> -static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+> -					 unsigned long parent_rate)
+> -{
+> -	return 32768;
+> -}
+> -
+> -struct clk_ops max_gen_clk_ops = {
+> -	.prepare	= max_gen_clk_prepare,
+> -	.unprepare	= max_gen_clk_unprepare,
+> -	.is_prepared	= max_gen_clk_is_prepared,
+> -	.recalc_rate	= max_gen_recalc_rate,
+> -};
+> -EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+> -
+> -static struct clk *max_gen_clk_register(struct device *dev,
+> -					struct max_gen_clk *max_gen)
+> -{
+> -	struct clk *clk;
+> -	struct clk_hw *hw = &max_gen->hw;
+> -	int ret;
+> -
+> -	clk = devm_clk_register(dev, hw);
+> -	if (IS_ERR(clk))
+> -		return clk;
+> -
+> -	ret = clk_register_clkdev(clk, hw->init->name, NULL);
+> -
+> -	if (ret)
+> -		return ERR_PTR(ret);
+> -
+> -	return clk;
+> -}
+> -
+> -int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+> -		      u32 reg, struct clk_init_data *clks_init, int num_init)
+> -{
+> -	int i, ret;
+> -	struct max_gen_clk *max_gen_clks;
+> -	struct clk **clocks;
+> -	struct device *dev = pdev->dev.parent;
+> -	const char *clk_name;
+> -	struct clk_init_data *init;
+> -
+> -	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
+> -	if (!clocks)
+> -		return -ENOMEM;
+> -
+> -	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
+> -				    * num_init, GFP_KERNEL);
+> -	if (!max_gen_clks)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < num_init; i++) {
+> -		max_gen_clks[i].regmap = regmap;
+> -		max_gen_clks[i].mask = 1 << i;
+> -		max_gen_clks[i].reg = reg;
+> -
+> -		init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
+> -		if (!init)
+> -			return -ENOMEM;
+> -
+> -		if (dev->of_node &&
+> -		    !of_property_read_string_index(dev->of_node,
+> -						   "clock-output-names",
+> -						   i, &clk_name))
+> -			init->name = clk_name;
+> -		else
+> -			init->name = clks_init[i].name;
+> -
+> -		init->ops = clks_init[i].ops;
+> -		init->flags = clks_init[i].flags;
+> -
+> -		max_gen_clks[i].hw.init = init;
+> -
+> -		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
+> -		if (IS_ERR(clocks[i])) {
+> -			ret = PTR_ERR(clocks[i]);
+> -			dev_err(dev, "failed to register %s\n",
+> -				max_gen_clks[i].hw.init->name);
+> -			return ret;
+> -		}
+> -	}
+> -
+> -	platform_set_drvdata(pdev, clocks);
+> -
+> -	if (dev->of_node) {
+> -		struct clk_onecell_data *of_data;
+> -
+> -		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
+> -		if (!of_data)
+> -			return -ENOMEM;
+> -
+> -		of_data->clks = clocks;
+> -		of_data->clk_num = num_init;
+> -		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+> -					  of_data);
+> -
+> -		if (ret) {
+> -			dev_err(dev, "failed to register OF clock provider\n");
+> -			return ret;
+> -		}
+> -	}
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(max_gen_clk_probe);
+> -
+> -int max_gen_clk_remove(struct platform_device *pdev, int num_init)
+> -{
+> -	struct device *dev = pdev->dev.parent;
+> -
+> -	if (dev->of_node)
+> -		of_clk_del_provider(dev->of_node);
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(max_gen_clk_remove);
+> diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
+> deleted file mode 100644
+> index 997e86f..0000000
+> --- a/drivers/clk/clk-max-gen.h
+> +++ /dev/null
+> @@ -1,32 +0,0 @@
+> -/*
+> - * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
+> - *
+> - * Copyright (C) 2014 Google, Inc
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - */
+> -
+> -#ifndef __CLK_MAX_GEN_H__
+> -#define __CLK_MAX_GEN_H__
+> -
+> -#include <linux/types.h>
+> -#include <linux/device.h>
+> -#include <linux/clkdev.h>
+> -#include <linux/regmap.h>
+> -#include <linux/platform_device.h>
+> -
+> -int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+> -		      u32 reg, struct clk_init_data *clks_init, int num_init);
+> -int max_gen_clk_remove(struct platform_device *pdev, int num_init);
+> -extern struct clk_ops max_gen_clk_ops;
+> -
+> -#endif /* __CLK_MAX_GEN_H__ */
+> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> index 9b6f277..31ba726 100644
+> --- a/drivers/clk/clk-max77686.c
+> +++ b/drivers/clk/clk-max77686.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * clk-max77686.c - Clock driver for Maxim 77686
+> + * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+>   *
+>   * Copyright (C) 2012 Samsung Electornics
+>   * Jonghwa Lee <jonghwa3.lee@samsung.com>
+> @@ -13,13 +13,7 @@
+>   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> - *
+>   */
+> -
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+> @@ -30,41 +24,252 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/mutex.h>
+>  #include <linux/clkdev.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mutex.h>
+>  
+>  #include <dt-bindings/clock/maxim,max77686.h>
+> -#include "clk-max-gen.h"
+> +#include <dt-bindings/clock/maxim,max77802.h>
+>  
+> -static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
+> +#define MAX77802_CLOCK_LOW_JITTER_SHIFT 0x3
+> +
+> +enum chip_name {
+> +	CHIP_MAX77686,
+> +	CHIP_MAX77802,
+> +};
 
-Please split these two changes in separate patches, there are just
-cleanups needed after 1/5 and they can be picked separately.
+No need for these. Just use existing enum max77686_types.
 
-The change looks good to me though so feel free to add:
+> +
+> +struct max_gen_hw_clk_data {
+> +	const char *name;
+> +	u32 reg;
+> +	u32 mask;
+> +	u32 flags;
+> +};
+> +
+> +struct max_gen_clk_data {
+> +	struct regmap *regmap;
+> +	struct clk_init_data clk_idata;
+> +	struct clk_hw hw;
+> +	u32 reg;
+> +	u32 mask;
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Why do you need reg and mask here? This looks overcomplicated. Both the
+names are too similar and the structures duplicate some fields.
+
+For the names, how about:
+ - max77686_gen_init_data
+ - max77686_clk
+?
+
+
+> +};
+> +
+> +struct max_gen_clk_driver_info {
+> +	enum chip_name chip;
+> +	struct clk **clks;
+> +	struct max_gen_clk_data *max_clk_data;
+> +	struct clk_onecell_data of_data;
+> +};
+> +
+> +static struct max_gen_hw_clk_data max77686_hw_clks_info[MAX77686_CLKS_NUM] = {
+
+This looks const.
+
+>  	[MAX77686_CLK_AP] = {
+>  		.name = "32khz_ap",
+> -		.ops = &max_gen_clk_ops,
+> +		.reg = MAX77686_REG_32KHZ,
+> +		.mask = BIT(MAX77686_CLK_AP),
+>  	},
+>  	[MAX77686_CLK_CP] = {
+>  		.name = "32khz_cp",
+> -		.ops = &max_gen_clk_ops,
+> +		.reg = MAX77686_REG_32KHZ,
+> +		.mask = BIT(MAX77686_CLK_CP),
+>  	},
+>  	[MAX77686_CLK_PMIC] = {
+>  		.name = "32khz_pmic",
+> -		.ops = &max_gen_clk_ops,
+> +		.reg = MAX77686_REG_32KHZ,
+> +		.mask = BIT(MAX77686_CLK_PMIC),
+> +	},
+> +};
+> +
+> +static struct max_gen_hw_clk_data max77802_hw_clks_info[MAX77802_CLKS_NUM] = {
+> +	[MAX77802_CLK_32K_AP] = {
+> +		.name = "32khz_ap",
+> +		.reg = MAX77802_REG_32KHZ,
+> +		.mask = BIT(MAX77802_CLK_32K_AP),
+> +	},
+> +	[MAX77802_CLK_32K_CP] = {
+> +		.name = "32khz_cp",
+> +		.reg = MAX77802_REG_32KHZ,
+> +		.mask = BIT(MAX77802_CLK_32K_CP),
+>  	},
+>  };
+>  
+> +static struct max_gen_clk_data *to_max_gen_clk_data(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct max_gen_clk_data, hw);
+> +}
+> +
+> +static int max_gen_clk_prepare(struct clk_hw *hw)
+> +{
+> +	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
+> +
+> +	return regmap_update_bits(max_gen->regmap, max_gen->reg,
+> +				  max_gen->mask, max_gen->mask);
+> +}
+> +
+> +static void max_gen_clk_unprepare(struct clk_hw *hw)
+> +{
+> +	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
+> +
+> +	regmap_update_bits(max_gen->regmap, max_gen->reg,
+> +			   max_gen->mask, ~max_gen->mask);
+> +}
+> +
+> +static int max_gen_clk_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct max_gen_clk_data *max_gen = to_max_gen_clk_data(hw);
+> +	int ret;
+> +	u32 val;
+> +
+> +	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
+> +
+> +	if (ret < 0)
+> +		return -EINVAL;
+> +
+> +	return val & max_gen->mask;
+> +}
+> +
+> +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+> +					 unsigned long parent_rate)
+> +{
+> +	return 32768;
+> +}
+> +
+> +static struct clk_ops max_gen_clk_ops = {
+> +	.prepare	= max_gen_clk_prepare,
+> +	.unprepare	= max_gen_clk_unprepare,
+> +	.is_prepared	= max_gen_clk_is_prepared,
+> +	.recalc_rate	= max_gen_recalc_rate,
+> +};
+> +
+>  static int max77686_clk_probe(struct platform_device *pdev)
+>  {
+> -	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+> +	struct device *parent = pdev->dev.parent;
+
+parent = dev->parent;
+
+> +	struct device *dev = &pdev->dev;
+> +	const struct platform_device_id *id = platform_get_device_id(pdev);
+> +	struct max_gen_clk_driver_info *drv_info;
+> +	struct max_gen_clk_data *max_clk_data;
+
+This looks local to for loop, so place it there.
+
+> +	const struct max_gen_hw_clk_data *hw_clks;
+> +	struct regmap *regmap;
+> +	int i, ret, num_clks;
+> +
+> +	drv_info = devm_kzalloc(dev, sizeof(*drv_info), GFP_KERNEL);
+> +	if (!drv_info)
+> +		return -ENOMEM;
+> +
+> +	regmap = dev_get_regmap(parent, NULL);
+> +	if (!regmap) {
+> +		dev_err(dev, "Failed to get rtc regmap\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	drv_info->chip = id->driver_data;
+> +
+> +	switch (drv_info->chip) {
+> +	case CHIP_MAX77686:
+> +		num_clks = MAX77686_CLKS_NUM;
+> +		hw_clks = max77686_hw_clks_info;
+> +		break;
+> +	case CHIP_MAX77802:
+> +		num_clks = MAX77802_CLKS_NUM;
+> +		hw_clks = max77802_hw_clks_info;
+> +		break;
+> +	default:
+> +		dev_err(dev, "Unknown Chip ID\n");
+> +		return -EINVAL;
+> +	};
+>  
+> -	return max_gen_clk_probe(pdev, iodev->regmap, MAX77686_REG_32KHZ,
+> -				 max77686_clks_init, MAX77686_CLKS_NUM);
+> +	drv_info->max_clk_data = devm_kcalloc(dev, num_clks,
+> +					      sizeof(*drv_info->max_clk_data),
+> +					      GFP_KERNEL);
+> +	if (!drv_info->max_clk_data)
+> +		return -ENOMEM;
+> +
+> +	drv_info->clks = devm_kcalloc(dev, num_clks,
+> +				      sizeof(*drv_info->clks), GFP_KERNEL);
+> +	if (!drv_info->clks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_clks; i++) {
+> +		struct clk *clk;
+> +		const char *clk_name;
+> +
+> +		max_clk_data = &drv_info->max_clk_data[i];
+> +
+> +		max_clk_data->regmap = regmap;
+> +		max_clk_data->mask = hw_clks[i].mask;
+> +		max_clk_data->reg = hw_clks[i].reg;
+> +		max_clk_data->clk_idata.flags = hw_clks[i].flags;
+> +		max_clk_data->clk_idata.ops = &max_gen_clk_ops;
+> +
+> +		if (parent->of_node &&
+> +		    !of_property_read_string_index(parent->of_node,
+> +						   "clock-output-names",
+> +						   i, &clk_name))
+> +			max_clk_data->clk_idata.name = clk_name;
+> +		else
+> +			max_clk_data->clk_idata.name = hw_clks[i].name;
+> +
+> +		max_clk_data->hw.init = &max_clk_data->clk_idata;
+> +
+> +		clk = devm_clk_register(dev, &max_clk_data->hw);
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			dev_err(dev, "Failed to clock register: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		ret = clk_register_clkdev(clk, max_clk_data->clk_idata.name,
+> +					  NULL);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to clkdev register: %d\n", ret);
+> +			return ret;
+> +		}
+> +		drv_info->clks[i] = clk;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, drv_info);
+> +
+> +	if (parent->of_node) {
+> +		drv_info->of_data.clks = drv_info->clks;
+> +		drv_info->of_data.clk_num = num_clks;
+> +		ret = of_clk_add_provider(parent->of_node,
+> +					  of_clk_src_onecell_get,
+> +					  &drv_info->of_data);
+> +
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to register OF clock provider: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* MAX77802: Enable low-jitter mode on the 32khz clocks. */
+> +	if (drv_info->chip == CHIP_MAX77802) {
+> +		ret = regmap_update_bits(regmap, MAX77802_REG_32KHZ,
+> +					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT,
+> +					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to set low-jitter mode: %d\n",
+> +				ret);
+
+Need a cleanup path:
+	of_clk_del_provider(parent->of_node);
+
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int max77686_clk_remove(struct platform_device *pdev)
+>  {
+> -	return max_gen_clk_remove(pdev, MAX77686_CLKS_NUM);
+> +	struct device *parent = pdev->dev.parent;
+> +
+> +	if (parent->of_node)
+> +		of_clk_del_provider(parent->of_node);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct platform_device_id max77686_clk_id[] = {
+> -	{ "max77686-clk", 0},
+> -	{ },
+> +	{ "max77686-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77686, },
+> +	{ "max77802-clk", .driver_data = (kernel_ulong_t)CHIP_MAX77802, },
+
+You don't need the cast.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
