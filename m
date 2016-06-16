@@ -1,67 +1,66 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH V2 4/4] clk: max77686: Add support for MAX77620 clocks
-Date: Thu, 16 Jun 2016 10:07:52 -0400
-Message-ID: <77dde1c3-c4da-faa6-ecd4-ba318abf5ed4@osg.samsung.com>
-References: <1466083407-28793-1-git-send-email-ldewangan@nvidia.com>
- <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND RFT PATCH 2/2] mfd: max14577: Allow driver to be built
+ as a module
+Date: Thu, 16 Jun 2016 15:22:22 +0100
+Message-ID: <20160616142222.GW4948@dell>
+References: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
+ <1464280340-13228-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466083407-28793-5-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, k.kozlowski@samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:36644 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753970AbcFPOVl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 10:21:41 -0400
+Received: by mail-wm0-f45.google.com with SMTP id f126so53112640wma.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jun 2016 07:21:40 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1464280340-13228-3-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Laxman,
+On Thu, 26 May 2016, Javier Martinez Canillas wrote:
 
-On 06/16/2016 09:23 AM, Laxman Dewangan wrote:
-> Maxim Max77620 has one 32KHz clock output and the clock HW
-> IP used on this PMIC is same as what it is there in the MAX77686.
-> 
-> Add clock driver support for MAX77620 on the MAX77686 driver.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> CC: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-
-I already gave you my Reviewed-by for v1 but it seems you missed:
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
- 
+> The driver's Kconfig symbol is a boolean but nothing prevents the dri=
+ver
+> to be built as a module instead of built-in. It is true that most sys=
+tem
+> integrators will choose the latter but the config should not restrict=
+ it.
+>=20
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>=20
 > ---
-> Changes from V1:
-> - Updated based on changes done in first patch.
-> ---
->  drivers/clk/Kconfig        |  7 ++++---
->  drivers/clk/clk-max77686.c | 18 ++++++++++++++++++
->  2 files changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6afad74..d75f4c5 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -32,10 +32,11 @@ config COMMON_CLK_WM831X
->  source "drivers/clk/versatile/Kconfig"
->  
->  config COMMON_CLK_MAX77686
-> -	tristate "Clock driver for Maxim 77686/77802 MFD"
-> -	depends on MFD_MAX77686
-> +	tristate "Clock driver for Maxim 77686/77802/MAX77620 MFD"
-> +	depends on MFD_MAX77686 || MFD_MAX77620
->  	---help---
-> -	  This driver supports Maxim 77686/77802 crystal oscillator clock.
-> +	  This driver supports Maxim 77686/77802/MAX77620 crystal oscillator
+>=20
+>  drivers/mfd/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-And it seems you also missed the minor nit I mentioned in v1 about using
-77620 instead of MAX77620 here for naming consistency with the other IP.
+Applied, thanks.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index a49565cc1a6b..33d112f390fe 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -514,8 +514,8 @@ config MFD_88PM860X
+>  	  battery-charger under the corresponding menus.
+> =20
+>  config MFD_MAX14577
+> -	bool "Maxim Semiconductor MAX14577/77836 MUIC + Charger Support"
+> -	depends on I2C=3Dy
+> +	tristate "Maxim Semiconductor MAX14577/77836 MUIC + Charger Support=
+"
+> +	depends on I2C
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
