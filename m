@@ -1,75 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND RFT PATCH 1/2] mfd: max14577: Use module_init() instead
- of subsys_initcall()
-Date: Thu, 16 Jun 2016 11:41:32 +0100
-Message-ID: <20160616104132.GV4948@dell>
-References: <1464280340-13228-1-git-send-email-javier@osg.samsung.com>
- <1464280340-13228-2-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RFC 1/6] ASoC: samsung: Add Samsung Low Power Audio
+ Subsystem driver
+Date: Thu, 16 Jun 2016 13:28:49 +0200
+Message-ID: <57628D71.2070407@samsung.com>
+References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
+ <1465815160-28504-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36062 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753994AbcFPKkv (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28363 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754031AbcFPL2y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 06:40:51 -0400
-Received: by mail-wm0-f54.google.com with SMTP id f126so45232303wma.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jun 2016 03:40:50 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1464280340-13228-2-git-send-email-javier@osg.samsung.com>
+	Thu, 16 Jun 2016 07:28:54 -0400
+In-reply-to: <1465815160-28504-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, broonie@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
+Cc: robh@kernel.org, linux-samsung-soc@vger.kernel.org, ideal.song@samsung.com, beomho.seo@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com
 
-On Thu, 26 May 2016, Javier Martinez Canillas wrote:
-
-> The driver's init function is called at subsys init call level but th=
-e
-> dependencies provided by the driver are looked up by drivers that hav=
-e
-> probe deferral support, so manual ordering of init calls isn't needed=
-=2E
->=20
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->=20
+On 06/13/2016 12:52 PM, Sylwester Nawrocki wrote:
+> From: Inha Song <ideal.song@samsung.com>
+> 
+> This patch adds LPASS driver. The LPASS (Low Power Audio Subsystem)
+> is a special subsystem that supports audio playback with low power
+> consumption. This is a minimal driver which prepares resources for
+> IP blocks like I2S, audio DMA and UART.
+> Also system power ops are added to ensure the Audio Subsystem is
+> operational after system suspend/resume cycle.
+> 
+> Signed-off-by: Inha Song <ideal.song@samsung.com>
+> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> Hello,
->=20
-> I checked an the only users in mainline for this driver are the Exyno=
-s3250
-> Monk and Rinato boards. In both, only two regulators are used (safeou=
-t_reg
-> and motor_reg) and these are looked up by the drivers phy-samsung-usb=
-2 and
-> regulator-haptic respectively, and both support probe deferral.
->=20
-> Best regards,
-> Javier
->=20
->  drivers/mfd/max14577.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  sound/soc/samsung/Makefile |   2 +
+>  sound/soc/samsung/lpass.c  | 162 +++++++++++++++++++++++++++++++++++++++++++++
+>  sound/soc/samsung/lpass.h  |  47 +++++++++++++
+>  3 files changed, 211 insertions(+)
+>  create mode 100644 sound/soc/samsung/lpass.c
+>  create mode 100644 sound/soc/samsung/lpass.h
 
-Applied, thanks.
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
-> index 2280b3fdcf68..6c245128ab2e 100644
-> --- a/drivers/mfd/max14577.c
-> +++ b/drivers/mfd/max14577.c
-> @@ -561,7 +561,7 @@ static int __init max14577_i2c_init(void)
-> =20
->  	return i2c_add_driver(&max14577_i2c_driver);
->  }
-> -subsys_initcall(max14577_i2c_init);
-> +module_init(max14577_i2c_init);
-> =20
->  static void __exit max14577_i2c_exit(void)
->  {
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Best regards,
+Krzysztof
