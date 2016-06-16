@@ -1,80 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL 4/8] ARM: exynos: Topic branch with driver changes for
- v4.8
-Date: Thu, 16 Jun 2016 15:00:44 +0200
-Message-ID: <5762A2FC.3040208@samsung.com>
-References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
- <1465215933-22709-5-git-send-email-k.kozlowski@samsung.com>
- <20160613214706.GB20845@localhost> <5762988F.7050108@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/5] clk: max77686: Combine Maxim max77686 and max77802
+ driver
+Date: Thu, 16 Jun 2016 15:02:02 +0200
+Message-ID: <5762A34A.3060309@samsung.com>
+References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com>
+ <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:33826 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753796AbcFPNBN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 09:01:13 -0400
-In-reply-to: <5762988F.7050108@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1466000018-16784-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, javier@osg.samsung.com, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, mchehab@osg.samsung.com
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-On 06/16/2016 02:16 PM, Krzysztof Kozlowski wrote:
-> On 06/13/2016 11:47 PM, Olof Johansson wrote:
->> > On Mon, Jun 06, 2016 at 02:25:29PM +0200, Krzysztof Kozlowski wrote:
->>> >> Hi,
->>> >>
->>> >> A topic branch for MultiFormat Codec driver. This pulls in
->>> >> an external dependency from media tree (Sylwester Nawrocki).
->>> >>
->>> >> Below you will find two pull-request-changelogs
->>> >>
->>> >>
->>> >> Best regards,
->>> >> Krzysztof
->>> >>
->>> >>
->>> >> ################################################################
->>> >> Samsung tree only changes:
->>> >> ################################################################
->>> >>
->>> >> The following changes since commit 04f776734c4e03e33111d3d5a994b589870df623:
->>> >>
->>> >>   media: s5p-mfc: add iommu support (2016-06-03 11:13:45 +0200)
->>> >>
->>> >> are available in the git repository at:
->>> >>
->>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos-mfc-4.8
->>> >>
->>> >> for you to fetch changes up to 96167bd37dd604cbba0aed341765dda8556405b2:
->>> >>
->>> >>   ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards (2016-06-06 09:30:43 +0200)
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> Topic branch for Exynos MFC changes for v4.8:
->>> >> Pull s5p-mfc changes from media tree so the arm/mach-exynos code
->>> >> could be removed. The bindings are converted to generic reserved memory
->>> >> bindings.
->> > 
->> > Hi,
->> > 
->> > Tis branch contains an external dependency but I don't see the toplevel
->> > maintainer cc:d on the pull request. Just to avoid any confusion, I'd like to
->> > double check and make sure this branch is expected to be stable.
->> > 
->> > Mauro, is that the case? The branch is:
->> > Merge branch 'for-v4.8/media/exynos-mfc' of git://linuxtv.org/snawrocki/samsung into for-v4.8/exynos-mfc
->> > 
->> > I see it in -next, so I just want to make sure it's on a stable branch that
->> > won't be rewritten. 
->
-> Good question. Mauro, could you confirm?
+On 06/15/2016 04:13 PM, Laxman Dewangan wrote:
+> The clock IP used on the Maxim PMICs max77686 and max77802 are
+> same. The configuration of clock register is also same except
+> the number of clocks.
+> 
+> Part of common code utilisation, there is 3 files for these chips
+> clock driver, one for common and two files for driver registration.
+> 
+> Combine both drivers into single file and move common code into
+> same common file reduces the 2 files and make max77686 and max77802
+> clock driver in single fine. This driver does not depends on the
+> parent driver structure. The regmap handle is acquired through
+> regmap APIs for the register access.
+> 
+> This combination of driver helps on adding clock driver for different
+> Maxim PMICs which has similar clock IP like MAX77620 and MAX20024.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: Javier Martinez Canillas <javier@dowhile0.org>
+> ---
+>  drivers/clk/Kconfig        |  15 +--
+>  drivers/clk/Makefile       |   2 -
+>  drivers/clk/clk-max-gen.c  | 194 ------------------------------------
+>  drivers/clk/clk-max-gen.h  |  32 ------
+>  drivers/clk/clk-max77686.c | 241 +++++++++++++++++++++++++++++++++++++++++----
+>  drivers/clk/clk-max77802.c |  96 ------------------
+>  6 files changed, 225 insertions(+), 355 deletions(-)
+>  delete mode 100644 drivers/clk/clk-max-gen.c
+>  delete mode 100644 drivers/clk/clk-max-gen.h
+>  delete mode 100644 drivers/clk/clk-max77802.c
 
-The above branch is stable and won't be changed, it's already merged
-to the media tree.
+Tested on max77686 and max77802:
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-Thanks,
-Sylwester
+Best regards,
+Krzysztof
