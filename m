@@ -1,41 +1,60 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 0/6] [media] Fixes and improvements for VIDIOC_QUERYCAP in Samsung media drivers
-Date: Thu, 16 Jun 2016 17:40:29 -0400
-Message-ID: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 6/6] [media] gsc-m2m: improve v4l2_capability driver and card fields
+Date: Thu, 16 Jun 2016 17:40:35 -0400
+Message-ID: <1466113235-25909-7-git-send-email-javier@osg.samsung.com>
+References: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+According to the V4L2 documentation the driver and card fields should be
+used to identify the driver and the device but the gsc-m2m driver fills
+those field using the platform device name, which in turn is the name of
+the device DT node.
 
-This series contains some fixes and improvements for the VIDIOC_QUERYCAP ioctl
-handler in different media platform drivers for IP blocks found in Exynos SoCs.
+So not only the filled information isn't correct but also the same values
+are used in the driver, card and bus_info fields.
 
-Some of the issues were reported by the v4l2-compliance tool while others are
-things I noticed while looking at the Driver name, Card type and Bus info.
+Before this patch:
 
-Best regards,
-Javier
+Driver Info (not using libv4l2):
+        Driver name   : 13e00000.video-
+        Card type     : 13e00000.video-scaler
+        Bus info      : platform:13e00000.video-scaler
+        Driver version: 4.7.0
 
+After this patch:
 
-Javier Martinez Canillas (6):
-  [media] s5p-mfc: set capablity bus_info as required by VIDIOC_QUERYCAP
-  [media] s5p-mfc: improve v4l2_capability driver and card fields
-  [media] s5p-jpeg: set capablity bus_info as required by
-    VIDIOC_QUERYCAP
-  [media] s5p-jpeg: only fill driver's name in capabilities driver field
-  [media] gsc-m2m: add device name sufix to bus_info capatiliby field
-  [media] gsc-m2m: improve v4l2_capability driver and card fields
+Driver Info (not using libv4l2):
+        Driver name   : exynos-gsc
+        Card type     : exynos-gsc gscaler
+        Bus info      : platform:13e00000.video-scaler
+        Driver version: 4.7.0
 
- drivers/media/platform/exynos-gsc/gsc-m2m.c     | 7 ++++---
- drivers/media/platform/s5p-jpeg/jpeg-core.c     | 7 ++++---
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 1 -
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 2 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c    | 7 ++++---
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    | 7 ++++---
- 6 files changed, 18 insertions(+), 13 deletions(-)
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
+---
+
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index af81383086b8..274861c27367 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -279,8 +279,8 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+ 	struct gsc_ctx *ctx = fh_to_ctx(fh);
+ 	struct gsc_dev *gsc = ctx->gsc_dev;
+ 
+-	strlcpy(cap->driver, gsc->pdev->name, sizeof(cap->driver));
+-	strlcpy(cap->card, gsc->pdev->name, sizeof(cap->card));
++	strlcpy(cap->driver, GSC_MODULE_NAME, sizeof(cap->driver));
++	strlcpy(cap->card, GSC_MODULE_NAME " gscaler", sizeof(cap->card));
+ 	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
+ 		 dev_name(&gsc->pdev->dev));
+ 	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE |
 -- 
 2.5.5
