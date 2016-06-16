@@ -1,58 +1,59 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH RFC 6/6] ASoC: samsung: Add DT bindings
- documentation for TM2 sound subsystem
-Date: Thu, 16 Jun 2016 18:45:46 +0200
-Message-ID: <5762D7BA.7050400@metafoo.de>
-References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
- <1465815160-28504-7-git-send-email-s.nawrocki@samsung.com>
- <57612295.7070203@metafoo.de> <5762D652.5030507@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [PATCHv16 05/13] cec/TODO: add TODO file so we know why this is
+ still in staging
+Date: Thu, 16 Jun 2016 16:53:34 -0300
+Message-ID: <20160616165334.05e94cf0@recife.lan>
+References: <1461937948-22936-1-git-send-email-hverkuil@xs4all.nl>
+	<1461937948-22936-6-git-send-email-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <5762D652.5030507@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, broonie@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
-Cc: robh@kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, inki.dae@samsung.com, beomho.seo@samsung.com, ideal.song@samsung.com
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1461937948-22936-6-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-input-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/16/2016 06:39 PM, Sylwester Nawrocki wrote:
-> On 06/15/2016 11:40 AM, Lars-Peter Clausen wrote:
->> On 06/13/2016 12:52 PM, Sylwester Nawrocki wrote:
->> [...]
->>>> + - compatible : "samsung,tm2-audio"
->>>> + - samsung,model : the user-visible name of this sound complex
->>>> + - clocks : must contain an entry for each entry in clock-names,
->>>> +   see ../clocks/clock-bindings.txt for details
->>>> + - clock-names : must include the following entries:
->>>> +   "mclk1", "mclk2"
->>
->> If these are the MCLKs that go to the CODEC they should be properties of the
->> CODEC node.
+Em Fri, 29 Apr 2016 15:52:20 +0200
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+
+> From: Hans Verkuil <hans.verkuil@cisco.com>
 > 
-> Yes, these are both CODEC clocks. I couldn't find any related clk code in
-> the wm5110 arizona codec driver and indeed the clocks stay disabled when
-> I specify them in the wm5110 DT node. AFAICS from other thread in this
-> mailing list it is going to take some time until the CODEC drivers are
-> updated. How about minimizing the requirement of those clocks, making them
-> optional and then when the CODEC driver gets updated specifying the clocks
-> in the codec node instead of the sound card one?
-> The MCLK1 rate could be just hard coded instead of using clk_get_rate(),
-> but without clk enable calls nothing works.
+> Explain why cec.c is still in staging.
 
-You can still handle the clocks in the machine driver, but they should be
-specified in the node of the CODEC to accurately represent the hardware.
+Hmm... as this is for staging, even having pointed several things to
+be improved, I may end merging this series. Will decide after finishing
+the patch review.
 
-The simple-card driver e.g. does this, requests the clock of the CODEC and
-uses it to configure the CODEC input frequency based on it with
-snd_soc_dai_set_sysclk().
+> 
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/staging/media/cec/TODO | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 drivers/staging/media/cec/TODO
+> 
+> diff --git a/drivers/staging/media/cec/TODO b/drivers/staging/media/cec/TODO
+> new file mode 100644
+> index 0000000..c0751ef
+> --- /dev/null
+> +++ b/drivers/staging/media/cec/TODO
+> @@ -0,0 +1,13 @@
+> +The reason why cec.c is still in staging is that I would like
+> +to have a bit more confidence in the uABI. The kABI is fine,
+> +no problem there, but I would like to let the public API mature
+> +a bit.
+> +
+> +Once I'm confident that I didn't miss anything then the cec.c source
+> +can move to drivers/media and the linux/cec.h and linux/cec-funcs.h
+> +headers can move to uapi/linux and added to uapi/linux/Kbuild to make
+> +them public.
+> +
+> +Hopefully this will happen later in 2016.
+> +
+> +Hans Verkuil <hans.verkuil@cisco.com>
 
-- Lars
+
+
+Thanks,
+Mauro
