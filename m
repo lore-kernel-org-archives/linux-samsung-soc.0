@@ -1,50 +1,50 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 5/5] ARM: config: Get rid of config COMMON_CLK_MAX77802
-Date: Thu, 16 Jun 2016 18:38:14 +0530
-Message-ID: <5762A4BE.3010408@nvidia.com>
-References: <1466000018-16784-1-git-send-email-ldewangan@nvidia.com> <1466000018-16784-6-git-send-email-ldewangan@nvidia.com> <3fa0a098-3b28-9baa-8950-a944cce86b65@osg.samsung.com> <57629AB9.2090506@samsung.com> <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC PATCH 02/15] clocksource: samsung_pwm_timer: fix endian
+ accessors
+Date: Thu, 16 Jun 2016 15:23:40 +0200
+Message-ID: <5762A85C.6040700@linaro.org>
+References: <20160608183110.13851-1-matthew@mattleach.net>
+ <20160608183110.13851-3-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ef0359c5-ecf2-cd31-4dd8-ed4f169c22be@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, mturquette@baylibre.com, robh+dt@kernel.org, linux@armlinux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:37657 "EHLO
+	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752339AbcFPNXn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 09:23:43 -0400
+Received: by mail-wm0-f44.google.com with SMTP id a66so57940206wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jun 2016 06:23:43 -0700 (PDT)
+In-Reply-To: <20160608183110.13851-3-matthew@mattleach.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-
-On Thursday 16 June 2016 06:36 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On 06/08/2016 08:30 PM, Matthew Leach wrote:
+> Fix the Samsung pwm timer access code to deal with kernels built for =
+big
+> endian operation.
 >
-> On 06/16/2016 08:25 AM, Krzysztof Kozlowski wrote:
->> On 06/15/2016 05:39 PM, Javier Martinez Canillas wrote:
->>> Hello Laxman,
->>>
->>> On 06/15/2016 10:13 AM, Laxman Dewangan wrote:
->>>> The clock driver used by Maxim PMIC MAX77802 is clk-max77686
->>>> which can be enabled with config CONFIG_COMMON_CLK_MAX77686.
->>>>
->>>> Hence the config CONFIG_COMMON_CLK_MAX77802 is not required.
->>>>
->>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>>> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> CC: Javier Martinez Canillas <javier@dowhile0.org>
->>>> ---
->>>>   arch/arm/configs/exynos_defconfig   | 1 -
->>>>   arch/arm/configs/multi_v7_defconfig | 1 -
->>> Please split these two changes in separate patches, there are just
->>> cleanups needed after 1/5 and they can be picked separately.
->> Not entirely separately. If we do not want to loose max77802 clocks on
->> defconfigs, then it should go with the same tree or after driver get
->> merged. I prefer the latter, similar case to 1898994229f8 ("ARM:
->> multi_v7_defconfig: Switch max77693 to module").
->>
-> Agreed. Your latter example is what I tried to say (that can be picked
-> as cleanups separately once 1/5 hits mainline). I just didn't express
-> clearly.
->   
->
+> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+> ---
+> CC: Daniel Lezcano <daniel.lezcano@linaro.org>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: linux-kernel@vger.kernel.org
+> ---
 
-OK, I will drop this from series when will send V2.
-The changes can be done later on once clock changes get merged.
+I will pick this patch in my tree.
+
+Thanks.
+
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
