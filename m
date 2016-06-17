@@ -1,234 +1,80 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCHv16 08/13] DocBook/media: add CEC documentation
-Date: Fri, 17 Jun 2016 08:37:38 -0300
-Message-ID: <20160617083738.491c01ae@recife.lan>
-References: <1461937948-22936-1-git-send-email-hverkuil@xs4all.nl>
-	<1461937948-22936-9-git-send-email-hverkuil@xs4all.nl>
-	<20160616180958.03b9d759@recife.lan>
-	<5763ADBD.3050502@xs4all.nl>
-	<20160617065028.7410ae46@recife.lan>
-	<5763DA56.20402@xs4all.nl>
+From: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] driver core: Functional dependencies tracking
+	support
+Date: Fri, 17 Jun 2016 14:54:56 +0200
+Message-ID: <CAJZ5v0h71xxvzex2D6s9W8Qvq3+BqOQnTJRKy32gMu=tuQLxDA@mail.gmail.com>
+References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
+	<1466144820-6286-3-git-send-email-m.szyprowski@samsung.com>
+	<20160617103620.GA1626@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:45260
-	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753506AbcFQLhp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 07:37:45 -0400
-In-Reply-To: <5763DA56.20402@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20160617103620.GA1626-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:AMD IOMMU (AMD-VI)" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andreas Noever <andreas.noever-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, lars@opdenkamp.eu, linux@arm.linux.org.uk, Hans Verkuil <hansverk@cisco.com>, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hans.verkuil@cisco.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Em Fri, 17 Jun 2016 13:09:10 +0200
-Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+On Fri, Jun 17, 2016 at 12:36 PM, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org> wrote:
+> Hi Marek,
+>
+> On Fri, Jun 17, 2016 at 08:26:52AM +0200, Marek Szyprowski wrote:
+>> From: "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+>>
+>> Currently, there is a problem with handling cases where functional
+>> dependencies between devices are involved.
+>>
+>> What I mean by a "functional dependency" is when the driver of device
+>> B needs both device A and its driver to be present and functional to
+>> be able to work.  This implies that the driver of A needs to be
+>> working for B to be probed successfully and it cannot be unbound from
+>> the device before the B's driver.  This also has certain consequences
+>> for power management of these devices (suspend/resume and runtime PM
+>> ordering).
+>>
+>> Add support for representing those functional dependencies between
+>> devices to allow the driver core to track them and act on them in
+>> certain cases where they matter.
+>
+> Rafael has indicated that he intends to respin this series:
+> https://lkml.org/lkml/2016/6/8/1061
 
-> On 06/17/2016 11:50 AM, Mauro Carvalho Chehab wrote:
-> >>>> +	  <row>
-> >>>> +	    <entry><constant>CEC_MODE_MONITOR</constant></entry>
-> >>>> +	    <entry>0xe0</entry>
-> >>>> +	    <entry>Put the file descriptor into monitor mode. Can only be used in combination
-> >>>> +	    with <constant>CEC_MODE_NO_INITIATOR</constant>, otherwise &EINVAL; will be
-> >>>> +	    returned. In monitor mode all messages this CEC device transmits and all messages
-> >>>> +	    it receives (both broadcast messages and directed messages for one its logical
-> >>>> +	    addresses) will be reported. This is very useful for debugging.</entry>
-> >>>> +	  </row>
-> >>>> +	  <row>
-> >>>> +	    <entry><constant>CEC_MODE_MONITOR_ALL</constant></entry>
-> >>>> +	    <entry>0xf0</entry>
-> >>>> +	    <entry>Put the file descriptor into 'monitor all' mode. Can only be used in combination
-> >>>> +            with <constant>CEC_MODE_NO_INITIATOR</constant>, otherwise &EINVAL; will be
-> >>>> +            returned. In 'monitor all' mode all messages this CEC device transmits and all messages
-> >>>> +            it receives, including directed messages for other CEC devices will be reported. This
-> >>>> +	    is very useful for debugging, but not all devices support this. This mode requires that
-> >>>> +	    the <constant>CEC_CAP_MONITOR_ALL</constant> capability is set, and depending on the
-> >>>> +	    hardware, you may have to be root to select this mode.</entry>  
-> >>>
-> >>> Please mention the error codes when it fails.  
-> >>
-> >> Ack.
-> >>
-> >>> "and depending on the hardware, you may have to be root to select this mode."
-> >>>
-> >>> No. We should define if CAP_SYS_ADMIN (or maybe CAP_NET_ADMIN, with
-> >>> is required to set promiscuous mode for network) will be required or
-> >>> not and enforce it for all hardware.  
-> >>
-> >> Ack for CAP_SYS_ADMIN (or possible NET_ADMIN, I'll look into that).
-> > 
-> > Thanks.
-> > 
-> >>> IMHO, putting the device into monitor mode should require it.  
-> >>
-> >> No. The CEC 2.0 spec explicitly recommends that the CEC adapter should be able to
-> >> monitor all messages.
-> > 
-> > What the hardware should or should not do is one thing. The other
-> > thing is what permissions are needed in order to use such
-> > feature.
-> > 
-> > I don't doubt that a similar requirement exists on 802.x, or on some
-> > industry standard document requiring that all Ethernet hardware should 
-> > support promiscuous mode. Yet, for security reasons, enabling such feature 
-> > requires special caps on Linux.
-> > 
-> >> The problem is that 1) not all hardware supports this, and 2)
-> >> hardware that does support this tends to mention that it is for testing only and
-> >> it shouldn't be used otherwise.
-> >>
-> >> If the hardware is fine with allowing monitoring of all messages, then anyone
-> >> should be able to do that. 
-> > 
-> > Why?
-> 
-> The spec recommends that this is supported in order for applications to take advantage
-> of seeing such traffic to optimize their performance (i.e. by sniffing traffic you can see which
-> devices are there so you don't have to discover them). The underlying reason is that
-> the CEC bus is so hopelessly slow, so any mechanism that helps avoids having to use
-> the bus is good.
-> 
-> From the HDMI 2.0 spec (section 11.4):
-> 
-> "Polling can and should be skipped if other CEC traffic shows that a device is present.
->  Hence, a device should not poll a certain Logical Address within at least one Minimum
->  Polling Period after the following CEC events occur between the device that is polling
->  and the device whose Logical Address is to be polled:
-> 
->  - A directly addressed message, sent to that Logical Address, was acknowledged.
->  - A directly addressed message has been sent from that Logical Address.
->  - A broadcast message has been sent from that Logical Address.
-> 
->  It is recommended that, if the device is capable of monitoring CEC traffic directed to
->  other devices, then this capability should also be used to further reduce the need for polling.
->  In this case, such a device should not poll a certain Logical Address for at least one
->  Minimum Polling Period after it detects that that Logical Address acknowledged a directed
->  message initiated from any Logical Address, or any message was sent from that Logical Address."
-> 
-> I wouldn't have required CAP_*_ADMIN at all if it wasn't for the scary language in some of the
-> hardware specs that I have seen.
-> 
-> (see below before replying to this :-) )
-> 
-> > 
-> >> But if it comes with all these 'for testing only' caveats,
-> >> then I think it should should be protected against 'casual' use. Unfortunately they
-> >> never tell you why it should be used for testing only (overly cautious or could
-> >> something actually fail when in this mode?).
-> >>
-> >> The reality is that being able to monitor the CEC bus is extremely useful when debugging.
-> > 
-> > Well, it can be debugged as root. That's not an issue. The issue
-> > here is if sniffing the traffic by a normal user could leak
-> > something that should not usually be seen by a normal user, like
-> > a Netflix password, that was typed via the RC, for example.
-> 
-> Interesting example. I hadn't thought of that.
-> 
-> OK, so I'm going to change the code so CAP_SYS/NET_ADMIN is required for the
-> monitoring mode. It can always be relaxed later, but this password sniffing
-> example is quite convincing actually.
-> 
-> The HDMI 2.0 polling recommendation can still be met since this would be handled
-> in the CEC framework (not implemented today, but it is planned since it is fairly
-> easy to do so). Since that's all inside the kernel nothing is leaked to non-root
-> applications.
+That's OK.
 
-Ok, makes sense to me.
+> We also have such a functional dependency for Thunderbolt on Macs:
+> On resume from system sleep, the PCIe hotplug ports may not resume
+> before the thunderbolt driver has reestablished the PCI tunnels.
+> Currently this is enforced by quirk_apple_wait_for_thunderbolt()
+> in drivers/pci/quirks.c. It would be good if we could represent
+> this dependency using something like Rafael's approach instead of
+> open coding it, however one detail in Rafael's patches is problematic:
+>
+>> New links are added by calling device_link_add() which may happen
+>> either before the consumer device is probed or when probing it, in
+>> which case the caller needs to ensure that the driver of the
+>> supplier device is present and functional and the DEVICE_LINK_PROBE_TIME
+>> flag should be passed to device_link_add() to reflect that.
+>
+> The thunderbolt driver cannot call device_link_add() before the
+> PCIe hotplug ports are bound to a driver unless we amend portdrv
+> to return -EPROBE_DEFER for Thunderbolt hotplug ports on Macs
+> if the thunderbolt driver isn't loaded.
+>
+> It would therefore be beneficial if device_link_add() can be
+> called even *after* the consumer is bound.
 
-> One area where I am uncertain is when remote control messages are received and
-> passed on by the framework to the RC input device.
-> 
-> Suppose the application is the one receiving a password, then that password appears
-> both in the input device and the cec device. What I think will be useful is if the
-> application can prevent the use of an input device to pass on remote control messages.
-> 
-> CEC_ADAP_S_LOG_ADDRS has a flags field that I intended for just that purpose.
-> 
-> Note that RC messages are always passed on to CEC followers even if there is an
-> input device since some RC messages have additional arguments that the rc subsystem
-> can't handle. Also I think that it is often easier to handle all messages from the
-> same CEC device instead of having to read from two devices (cec and input). I
-> actually considered removing the input support, but it turned out to be useful in
-> existing video streaming apps since they don't need to add special cec support to
-> handle remote control presses.
-> 
-> Question: is there a way for applications to get exclusive access to an input device?
-> Or can anyone always read from it?
+I don't quite follow.
 
-That's a very good question. I did a quick test to check how this is
-currently protected, by running:
-
-$ strace ir-keytable -t
-...
-open("/dev/input/event12", O_RDONLY)    = -1 EACCES (Permission denied)
-...
-
-It turns that the input device was created by udev with those
-permissions:
-
-crw-rw---- 1 root input 13, 76 Jun 17 08:26 /dev/input/event12
-
-Changing access to 666 allowed to run ir-keytable -t without the
-need of being root.
-
-Yet, maybe there's a way to get exclusive access to input/event
-device, but I never needed to go that deep at the input subsystem.
-Maybe Dmitry could shed some light on that. Adding him in the loop.
-
-> So I am thinking that I add a flag to inhibit the use of the input device if set.
-
-There are two different situations here:
-
-1) if the code is originated by the machine (e. g. what LIRC calls
-TX mode), I don't see any reason to inhibit it by a normal user that
-has permission to use the device node;
-
-2) if the Linux machine is receiving RC events via CEC (the "RX"
-mode - with is what the RC event devices implement nowadays), then
-the user needs to have permission to read from the evdev. Yeah,
-we need to have a way to protect passwords typed on IR. So, some
-sort of way to inhibit it is needed.
-
-> This would be in a follow-on patch and it's added to the TODO file in the initial
-> patch series.
-
-Ok.
-
-> Comments?
-> 
-> >> The simple MONITOR mode is different in that it requires no special hardware configuration.
-> >> But it won't be able to see directed messages between CEC devices other than us.
-> >>
-> >> On a related note: if an application tries to become initiator or follower and someone
-> >> else has already exclusive access, then EBUSY is returned. I based this on what happens
-> >> in V4L2 with the S_PRIORITY ioctl.
-> >>
-> >> However, I think EACCES is a much better error code. It's probably what S_PRIO should
-> >> have used as well.
-> >>
-> >> Do you agree?
-> > 
-> > Not really. EACCES sounds more like a permanent problem, while EBUSY
-> > is always a temporary issue.
-> > 
-> > The problem with EACESS is that the user may think that the file
-> > permissions at the /dev/cec? are wrong.
-> 
-> Hmm, OK. I'm not entirely convinced, but I don't think it is a big deal either.
-> 
-> Besides, now I don't need to change anything :-)
-
-OK.
-
-> 
-> Regards,
-> 
-> 	Hans
-
-
+Who's the provider and who's the consumer here?
 
 Thanks,
-Mauro
+Rafael
