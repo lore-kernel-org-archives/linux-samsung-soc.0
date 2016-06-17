@@ -1,34 +1,49 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 5/6] [media] gsc-m2m: add device name sufix to bus_info
- capatiliby field
-Date: Fri, 17 Jun 2016 09:13:29 +0200
-Message-ID: <5763A319.6020504@xs4all.nl>
+Subject: Re: [PATCH 6/6] [media] gsc-m2m: improve v4l2_capability driver and
+ card fields
+Date: Fri, 17 Jun 2016 09:13:48 +0200
+Message-ID: <5763A32C.2000307@xs4all.nl>
 References: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
- <1466113235-25909-6-git-send-email-javier@osg.samsung.com>
+ <1466113235-25909-7-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:54353 "EHLO
-	lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750899AbcFQHNg (ORCPT
+Received: from lb3-smtp-cloud3.xs4all.net ([194.109.24.30]:38795 "EHLO
+	lb3-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752080AbcFQHNy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 03:13:36 -0400
-In-Reply-To: <1466113235-25909-6-git-send-email-javier@osg.samsung.com>
+	Fri, 17 Jun 2016 03:13:54 -0400
+In-Reply-To: <1466113235-25909-7-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc: Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
 On 06/16/2016 11:40 PM, Javier Martinez Canillas wrote:
-> The driver doesn't set the device in the struct v4l2_capability bus_info
-> field so v4l2-compliance reports the following error for VIDIOC_QUERYCAP:
+> According to the V4L2 documentation the driver and card fields should be
+> used to identify the driver and the device but the gsc-m2m driver fills
+> those field using the platform device name, which in turn is the name of
+> the device DT node.
 > 
-> Required ioctls:
->                 fail: v4l2-compliance.cpp(537): missing bus_info prefix ('platform')
->         test VIDIOC_QUERYCAP: FAIL
+> So not only the filled information isn't correct but also the same values
+> are used in the driver, card and bus_info fields.
 > 
-> This patch fixes this by filling also the device besides the bus.
+> Before this patch:
+> 
+> Driver Info (not using libv4l2):
+>         Driver name   : 13e00000.video-
+>         Card type     : 13e00000.video-scaler
+>         Bus info      : platform:13e00000.video-scaler
+>         Driver version: 4.7.0
+> 
+> After this patch:
+> 
+> Driver Info (not using libv4l2):
+>         Driver name   : exynos-gsc
+>         Card type     : exynos-gsc gscaler
+>         Bus info      : platform:13e00000.video-scaler
+>         Driver version: 4.7.0
 > 
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
@@ -38,23 +53,25 @@ Thanks!
 
 Hans
 
+> 
 > ---
 > 
->  drivers/media/platform/exynos-gsc/gsc-m2m.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> index a600e32e2543..af81383086b8 100644
+> index af81383086b8..274861c27367 100644
 > --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
 > +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> @@ -281,7 +281,8 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+> @@ -279,8 +279,8 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+>  	struct gsc_ctx *ctx = fh_to_ctx(fh);
+>  	struct gsc_dev *gsc = ctx->gsc_dev;
 >  
->  	strlcpy(cap->driver, gsc->pdev->name, sizeof(cap->driver));
->  	strlcpy(cap->card, gsc->pdev->name, sizeof(cap->card));
-> -	strlcpy(cap->bus_info, "platform", sizeof(cap->bus_info));
-> +	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
-> +		 dev_name(&gsc->pdev->dev));
+> -	strlcpy(cap->driver, gsc->pdev->name, sizeof(cap->driver));
+> -	strlcpy(cap->card, gsc->pdev->name, sizeof(cap->card));
+> +	strlcpy(cap->driver, GSC_MODULE_NAME, sizeof(cap->driver));
+> +	strlcpy(cap->card, GSC_MODULE_NAME " gscaler", sizeof(cap->card));
+>  	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
+>  		 dev_name(&gsc->pdev->dev));
 >  	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE |
->  		V4L2_CAP_VIDEO_CAPTURE_MPLANE |	V4L2_CAP_VIDEO_OUTPUT_MPLANE;
->  
 > 
