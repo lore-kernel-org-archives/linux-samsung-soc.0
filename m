@@ -1,102 +1,104 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 5/6] memory: samsung/exynos-srom: make it explicitly non-modular
-Date: Thu, 16 Jun 2016 20:37:47 -0400
-Message-ID: <20160617003748.12188-6-paul.gortmaker@windriver.com>
-References: <20160617003748.12188-1-paul.gortmaker@windriver.com>
+Subject: [PATCH 0/6] memory: remove modular usage from non-modular drivers
+Date: Thu, 16 Jun 2016 20:37:42 -0400
+Message-ID: <20160617003748.12188-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160617003748.12188-1-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Roger Quadros <rogerq@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+It seems that drivers/memory/ doesn't have a single maintainer, so please
+feel free to pick up just one or two patches from this as appropriate.
 
-memory/samsung/Kconfig:config EXYNOS_SROM
-memory/samsung/Kconfig: bool "Exynos SROM controller driver" if COMPILE_TEST
+For anyone new to the underlying goal of this cleanup, we are trying to
+not use module support for code that can never be built as a module since:
 
-...meaning that it currently is not being built as a module by anyone.
+ (1) it is easy to accidentally write unused module_exit and remove code
+ (2) it can be misleading when reading the source, thinking it can be
+     modular when the Makefile and/or Kconfig prohibit it
+ (3) it requires the include of the module.h header file which in turn
+     includes nearly everything else, thus adding to CPP overhead.
+ (4) it gets copied/replicated into other code and spreads like weeds.
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+Changes seen here cover the following categories:
 
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
+  -just replacement of modular macros with their non-modular
+   equivalents that CPP would have inserted anyway
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+  -the removal of including module.h ; replaced with init.h
+   as required based on whether the file already had it.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+  -the removal of any/all unused/orphaned __exit functions
+   that would never be called/exercised.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+  -the removal of any ".remove" functions that were hooked into
+   the driver struct.   This ".remove" function would of
+   course not be called from the __exit function since that was
+   never run.  However in theory, someone could have triggered it
+   via sysfs unbind, even though there isn't a sensible use case
+   for doing so.  So to cover that possibility, we've also disabled
+   sysfs unbind in these drivers.
 
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+There are no initcall level changes here; everything continues to
+use the level of initcall it had before.  So no risk of regressions
+from that exists here.
+
+Build tested for several different key arch on a recent linux-next
+tree to ensure no silly typos crept in.
+
+ FAQ: Why not make it tristate?
+ ------------------------------
+Upon detecting a non-modular driver making modular references, I don't
+immediately convert them to tristate, since it increases functionality
+that I can't readily test, and it may not have a sensible use case (e.g.
+in the case of core arch support relating to timer ticks or similar.)
+So instead the modular references are removed w/o changing the existing
+functionality by default.
+
+However there is no reason the original author or an interested user
+with the capability to test can't nominate a driver to be tristate
+either as the original intent, or as a functional and tested use case.
+
+Paul.
 ---
- drivers/memory/samsung/exynos-srom.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-index 96756fb4d6bd..b8904e33d3dd 100644
---- a/drivers/memory/samsung/exynos-srom.c
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -11,7 +11,7 @@
-  */
- 
- #include <linux/io.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -159,16 +159,6 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 	return of_platform_populate(np, NULL, NULL, dev);
- }
- 
--static int exynos_srom_remove(struct platform_device *pdev)
--{
--	struct exynos_srom *srom = platform_get_drvdata(pdev);
--
--	kfree(srom->reg_offset);
--	iounmap(srom->reg_base);
--
--	return 0;
--}
--
- #ifdef CONFIG_PM_SLEEP
- static void exynos_srom_save(void __iomem *base,
- 				    struct exynos_srom_reg_dump *rd,
-@@ -211,21 +201,16 @@ static const struct of_device_id of_exynos_srom_ids[] = {
- 	},
- 	{},
- };
--MODULE_DEVICE_TABLE(of, of_exynos_srom_ids);
- 
- static SIMPLE_DEV_PM_OPS(exynos_srom_pm_ops, exynos_srom_suspend, exynos_srom_resume);
- 
- static struct platform_driver exynos_srom_driver = {
- 	.probe = exynos_srom_probe,
--	.remove = exynos_srom_remove,
- 	.driver = {
- 		.name = "exynos-srom",
- 		.of_match_table = of_exynos_srom_ids,
- 		.pm = &exynos_srom_pm_ops,
-+		.suppress_bind_attrs = true,
- 	},
- };
--module_platform_driver(exynos_srom_driver);
--
--MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
--MODULE_DESCRIPTION("Exynos SROM Controller Driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(exynos_srom_driver);
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Roger Quadros <rogerq@ti.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+
+Paul Gortmaker (6):
+  memory: atmel-sdramc: make it explicitly non-modular
+  memory: mvebu-devbus: make it explicitly non-modular
+  memory: omap-gpmc: make it explicitly non-modular
+  memory: tegra20-mc: make it explicitly non-modular
+  memory: samsung/exynos-srom: make it explicitly non-modular
+  memory: atmel-ebi: make it explicitly non-modular
+
+ drivers/memory/atmel-ebi.c           |  9 ++-------
+ drivers/memory/atmel-sdramc.c        | 11 ++++-------
+ drivers/memory/mvebu-devbus.c        | 11 ++++-------
+ drivers/memory/omap-gpmc.c           | 10 ----------
+ drivers/memory/samsung/exynos-srom.c | 21 +++------------------
+ drivers/memory/tegra20-mc.c          | 11 ++++-------
+ 6 files changed, 17 insertions(+), 56 deletions(-)
+
 -- 
 2.8.4
