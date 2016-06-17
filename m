@@ -1,49 +1,60 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 07/10] driver core: Add support for links to already probed
-	drivers
-Date: Fri, 17 Jun 2016 08:26:57 +0200
-Message-ID: <1466144820-6286-8-git-send-email-m.szyprowski@samsung.com>
-References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 5/6] [media] gsc-m2m: add device name sufix to bus_info
+ capatiliby field
+Date: Fri, 17 Jun 2016 09:13:29 +0200
+Message-ID: <5763A319.6020504@xs4all.nl>
+References: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
+ <1466113235-25909-6-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1466144820-6286-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:54353 "EHLO
+	lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750899AbcFQHNg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 Jun 2016 03:13:36 -0400
+In-Reply-To: <1466113235-25909-6-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Set proper link state if link is created between already probed supplier
-device and to be probed consumer device.
+On 06/16/2016 11:40 PM, Javier Martinez Canillas wrote:
+> The driver doesn't set the device in the struct v4l2_capability bus_info
+> field so v4l2-compliance reports the following error for VIDIOC_QUERYCAP:
+> 
+> Required ioctls:
+>                 fail: v4l2-compliance.cpp(537): missing bus_info prefix ('platform')
+>         test VIDIOC_QUERYCAP: FAIL
+> 
+> This patch fixes this by filling also the device besides the bus.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/base/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 4e778539b750..d9c5c5542a6b 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -125,7 +125,9 @@ struct devlink *device_link_add(struct device *consumer,
- 
- 	link->flags = flags;
- 	link->status = (flags & DEVICE_LINK_PROBE_TIME) ?
--			DEVICE_LINK_CONSUMER_PROBE : DEVICE_LINK_DORMANT;
-+			DEVICE_LINK_CONSUMER_PROBE :
-+			(supplier->driver ? DEVICE_LINK_AVAILABLE :
-+			 DEVICE_LINK_DORMANT);
- 	spin_lock_init(&link->lock);
- 
- 	/*
--- 
-1.9.1
+Thanks!
+
+Hans
+
+> ---
+> 
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> index a600e32e2543..af81383086b8 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> @@ -281,7 +281,8 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+>  
+>  	strlcpy(cap->driver, gsc->pdev->name, sizeof(cap->driver));
+>  	strlcpy(cap->card, gsc->pdev->name, sizeof(cap->card));
+> -	strlcpy(cap->bus_info, "platform", sizeof(cap->bus_info));
+> +	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
+> +		 dev_name(&gsc->pdev->dev));
+>  	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE |
+>  		V4L2_CAP_VIDEO_CAPTURE_MPLANE |	V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>  
+> 
