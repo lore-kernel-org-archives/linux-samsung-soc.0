@@ -1,43 +1,102 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 5/6] [media] gsc-m2m: add device name sufix to bus_info capatiliby field
-Date: Thu, 16 Jun 2016 17:40:34 -0400
-Message-ID: <1466113235-25909-6-git-send-email-javier@osg.samsung.com>
-References: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 5/6] memory: samsung/exynos-srom: make it explicitly non-modular
+Date: Thu, 16 Jun 2016 20:37:47 -0400
+Message-ID: <20160617003748.12188-6-paul.gortmaker@windriver.com>
+References: <20160617003748.12188-1-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466113235-25909-1-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <20160617003748.12188-1-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver doesn't set the device in the struct v4l2_capability bus_info
-field so v4l2-compliance reports the following error for VIDIOC_QUERYCAP:
+The Kconfig currently controlling compilation of this code is:
 
-Required ioctls:
-                fail: v4l2-compliance.cpp(537): missing bus_info prefix ('platform')
-        test VIDIOC_QUERYCAP: FAIL
+memory/samsung/Kconfig:config EXYNOS_SROM
+memory/samsung/Kconfig: bool "Exynos SROM controller driver" if COMPILE_TEST
 
-This patch fixes this by filling also the device besides the bus.
+...meaning that it currently is not being built as a module by anyone.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
+
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
+ drivers/memory/samsung/exynos-srom.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
- drivers/media/platform/exynos-gsc/gsc-m2m.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index a600e32e2543..af81383086b8 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -281,7 +281,8 @@ static int gsc_m2m_querycap(struct file *file, void *fh,
+diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
+index 96756fb4d6bd..b8904e33d3dd 100644
+--- a/drivers/memory/samsung/exynos-srom.c
++++ b/drivers/memory/samsung/exynos-srom.c
+@@ -11,7 +11,7 @@
+  */
  
- 	strlcpy(cap->driver, gsc->pdev->name, sizeof(cap->driver));
- 	strlcpy(cap->card, gsc->pdev->name, sizeof(cap->card));
--	strlcpy(cap->bus_info, "platform", sizeof(cap->bus_info));
-+	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
-+		 dev_name(&gsc->pdev->dev));
- 	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE |
- 		V4L2_CAP_VIDEO_CAPTURE_MPLANE |	V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+ #include <linux/io.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+@@ -159,16 +159,6 @@ static int exynos_srom_probe(struct platform_device *pdev)
+ 	return of_platform_populate(np, NULL, NULL, dev);
+ }
  
+-static int exynos_srom_remove(struct platform_device *pdev)
+-{
+-	struct exynos_srom *srom = platform_get_drvdata(pdev);
+-
+-	kfree(srom->reg_offset);
+-	iounmap(srom->reg_base);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static void exynos_srom_save(void __iomem *base,
+ 				    struct exynos_srom_reg_dump *rd,
+@@ -211,21 +201,16 @@ static const struct of_device_id of_exynos_srom_ids[] = {
+ 	},
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, of_exynos_srom_ids);
+ 
+ static SIMPLE_DEV_PM_OPS(exynos_srom_pm_ops, exynos_srom_suspend, exynos_srom_resume);
+ 
+ static struct platform_driver exynos_srom_driver = {
+ 	.probe = exynos_srom_probe,
+-	.remove = exynos_srom_remove,
+ 	.driver = {
+ 		.name = "exynos-srom",
+ 		.of_match_table = of_exynos_srom_ids,
+ 		.pm = &exynos_srom_pm_ops,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+-module_platform_driver(exynos_srom_driver);
+-
+-MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
+-MODULE_DESCRIPTION("Exynos SROM Controller Driver");
+-MODULE_LICENSE("GPL");
++builtin_platform_driver(exynos_srom_driver);
 -- 
-2.5.5
+2.8.4
