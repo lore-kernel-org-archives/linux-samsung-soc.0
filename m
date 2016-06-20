@@ -1,34 +1,69 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag
- for SPI3 related clocks
-Date: Sun, 19 Jun 2016 22:44:20 +0900
-Message-ID: <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
-References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
- <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com> <20160619055921.GA424@jack.zhora.eu>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH -next] PM / devfreq: event: Fix return value check in
+ exynos_nocp_parse_dt()
+Date: Mon, 20 Jun 2016 09:54:02 +0900
+Message-ID: <57673EAA.2020506@samsung.com>
+References: <CGME20160617181052epcas1p34d888fccc7f58186cd2b0e2b1fed3e39@epcas1p3.samsung.com>
+ <1466187003-19823-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160619055921.GA424@jack.zhora.eu>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andi Shyti <andi@etezian.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1466187003-19823-1-git-send-email-weiyj_lk@163.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: weiyj_lk@163.com, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-06-19 14:59 GMT+09:00 Andi Shyti <andi@etezian.org>:
-> Hi Tomasz,
->
->> > The SPI 3 bus uses two clocks, a bus clock and an input clock.
->> > Do not disable the clocks when unused in order to allow access to
->> > the SPI 3 device.
->>
->> If unused, why would access to SPI 3 device needed?
->
-> because next I will submit a small driver which uses the SPI3.
-> Actually in the exynos5433 boards all the SPI are used but not all
-> the drivers are ported to mainline.
+Hi Wei,
 
-Then shouldn't the driver request the clocks and enable them? Or I'm
-missing something obvious? :)
+On 2016=EB=85=84 06=EC=9B=94 18=EC=9D=BC 03:10, weiyj_lk@163.com wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>=20
+> In case of error, the function platform_get_resource() returns NULL
+> pointer not ERR_PTR(). Remove unneeded error handling on the result
+> of a call to platform_get_resource() since the value is passed to
+> devm_ioremap_resource().
 
-Best regards,
-Tomasz
+This same patch was already merged to devfreq git[1].
+
+[1] https://git.kernel.org/cgit/linux/kernel/git/mzx/devfreq.git/commit=
+/?h=3Dfixes&id=3D482c27865b9784831dad45b31c2b0a5c42376802
+
+Thanks,
+Chanwoo Choi
+
+>=20
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> ---
+>  drivers/devfreq/event/exynos-nocp.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>=20
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/ev=
+ent/exynos-nocp.c
+> index 6b6a5f3..a584140 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -220,9 +220,6 @@ static int exynos_nocp_parse_dt(struct platform_d=
+evice *pdev,
+> =20
+>  	/* Maps the memory mapped IO to control nocp register */
+>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (IS_ERR(res))
+> -		return PTR_ERR(res);
+> -
+>  	base =3D devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>=20
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+>=20
+
