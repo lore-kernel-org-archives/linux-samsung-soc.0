@@ -1,59 +1,90 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag for
- SPI3 related clocks
-Date: Mon, 20 Jun 2016 14:41:57 +0900
-Message-ID: <20160620054157.GA6498@samsunx.samsung>
-References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
- <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com>
- <20160619055921.GA424@jack.zhora.eu>
- <CGME20160619134424epcas1p31493dfce45a8c817bc353702a07fa4bb@epcas1p3.samsung.com>
- <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 4/8] ARM: exynos: Topic branch with driver changes for
+ v4.8
+Date: Sun, 19 Jun 2016 22:40:42 -0700
+Message-ID: <20160620054042.GC2329@localhost>
+References: <1465215933-22709-1-git-send-email-k.kozlowski@samsung.com>
+ <1465215933-22709-5-git-send-email-k.kozlowski@samsung.com>
+ <20160613214706.GB20845@localhost>
+ <5762988F.7050108@samsung.com>
+ <5762A2FC.3040208@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34083 "EHLO
+	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752168AbcFTGKP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Jun 2016 02:10:15 -0400
+Received: by mail-pf0-f196.google.com with SMTP id 66so10860119pfy.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 Jun 2016 23:10:12 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5762A2FC.3040208@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, mchehab@osg.samsung.com, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Hi Tomasz,
-
-> >> > The SPI 3 bus uses two clocks, a bus clock and an input clock.
-> >> > Do not disable the clocks when unused in order to allow access to
-> >> > the SPI 3 device.
-> >>
-> >> If unused, why would access to SPI 3 device needed?
+On Thu, Jun 16, 2016 at 03:00:44PM +0200, Sylwester Nawrocki wrote:
+> On 06/16/2016 02:16 PM, Krzysztof Kozlowski wrote:
+> > On 06/13/2016 11:47 PM, Olof Johansson wrote:
+> >> > On Mon, Jun 06, 2016 at 02:25:29PM +0200, Krzysztof Kozlowski wrote:
+> >>> >> Hi,
+> >>> >>
+> >>> >> A topic branch for MultiFormat Codec driver. This pulls in
+> >>> >> an external dependency from media tree (Sylwester Nawrocki).
+> >>> >>
+> >>> >> Below you will find two pull-request-changelogs
+> >>> >>
+> >>> >>
+> >>> >> Best regards,
+> >>> >> Krzysztof
+> >>> >>
+> >>> >>
+> >>> >> ################################################################
+> >>> >> Samsung tree only changes:
+> >>> >> ################################################################
+> >>> >>
+> >>> >> The following changes since commit 04f776734c4e03e33111d3d5a994b589870df623:
+> >>> >>
+> >>> >>   media: s5p-mfc: add iommu support (2016-06-03 11:13:45 +0200)
+> >>> >>
+> >>> >> are available in the git repository at:
+> >>> >>
+> >>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-exynos-mfc-4.8
+> >>> >>
+> >>> >> for you to fetch changes up to 96167bd37dd604cbba0aed341765dda8556405b2:
+> >>> >>
+> >>> >>   ARM: dts: exynos: Enable MFC device on Exynos4412 Odroid boards (2016-06-06 09:30:43 +0200)
+> >>> >>
+> >>> >> ----------------------------------------------------------------
+> >>> >> Topic branch for Exynos MFC changes for v4.8:
+> >>> >> Pull s5p-mfc changes from media tree so the arm/mach-exynos code
+> >>> >> could be removed. The bindings are converted to generic reserved memory
+> >>> >> bindings.
+> >> > 
+> >> > Hi,
+> >> > 
+> >> > Tis branch contains an external dependency but I don't see the toplevel
+> >> > maintainer cc:d on the pull request. Just to avoid any confusion, I'd like to
+> >> > double check and make sure this branch is expected to be stable.
+> >> > 
+> >> > Mauro, is that the case? The branch is:
+> >> > Merge branch 'for-v4.8/media/exynos-mfc' of git://linuxtv.org/snawrocki/samsung into for-v4.8/exynos-mfc
+> >> > 
+> >> > I see it in -next, so I just want to make sure it's on a stable branch that
+> >> > won't be rewritten. 
 > >
-> > because next I will submit a small driver which uses the SPI3.
-> > Actually in the exynos5433 boards all the SPI are used but not all
-> > the drivers are ported to mainline.
+> > Good question. Mauro, could you confirm?
 > 
-> Then shouldn't the driver request the clocks and enable them? Or I'm
-> missing something obvious? :)
+> The above branch is stable and won't be changed, it's already merged
+> to the media tree.
 
-the reason is that...
+I'd be happier with a reply from Mauro, given that the tree it's merged into
+is his, but I'll take your work for it.
 
-[ from the patch ]
+Merged.
 
->         GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
-> -                       ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 20,
-> +                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
 
-... the sclk_ioclk_spi3 is new in exynos5433 and there is no
-implementation for enabling/disabling that particular clock...
 
->         GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
-> -                       18, CLK_SET_RATE_PARENT, 0),
-> +                       18, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-
-... while in this case your question makes sense, but it depends
-on which clock the device (s3c64xx) is requesting (from the DTS).
-In any case, I kept it consistent with the SPI1, which falls in
-the same case, as in mainline we don't have any DTS for
-exynos5433 (yet!).
-
-Thanks,
-Andi
+-Olof
