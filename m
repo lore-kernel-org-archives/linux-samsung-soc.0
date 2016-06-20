@@ -1,46 +1,53 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/3] clk: samsung: exynos5433: prepare for adding CPU clocks
-Date: Mon, 20 Jun 2016 15:35:47 +0200
-Message-ID: <1687314.R0ikIvAotG@amdc1976>
+Subject: Re: [PATCH 2/3] clk: samsung: cpu: prepare for adding Exynos5433 CPU
+ clocks
+Date: Mon, 20 Jun 2016 15:54:53 +0200
+Message-ID: <5297672.nIMnaEh2jc@amdc1976>
 References: <1464095957-25851-1-git-send-email-b.zolnierkie@samsung.com>
- <1464095957-25851-2-git-send-email-b.zolnierkie@samsung.com>
- <CA+Ln22GmeuHaNwpHOMxP0SA9-KaJp4D4sM5aF3bVRWm5Xb72fA@mail.gmail.com>
+ <1464095957-25851-3-git-send-email-b.zolnierkie@samsung.com>
+ <CA+Ln22FwQ_e5OHg_8WHEWGER=X8g_Yq+NpVLONgb0ZAShJLjzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34141 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754395AbcFTNgE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 09:36:04 -0400
-In-reply-to: <CA+Ln22GmeuHaNwpHOMxP0SA9-KaJp4D4sM5aF3bVRWm5Xb72fA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CA+Ln22FwQ_e5OHg_8WHEWGER=X8g_Yq+NpVLONgb0ZAShJLjzA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
-Hi Tomasz,
+On Saturday, June 18, 2016 11:53:36 PM Tomasz Figa wrote:
+> Hi Bart,
 
-On Saturday, June 18, 2016 11:40:05 PM Tomasz Figa wrote:
-> Hi Bartlomiej,
-> 
+Hi Tomek,
+
 > 2016-05-24 22:19 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
-> > Open-code samsung_cmu_register_one() calls for CMU_APOLLO and
-> > CMU_ATLAS setup code as a preparation for adding CPU clocks
-> > support for Exynos5433.
+> > Exynos5433 uses different register layout for CPU clock registers
+> > than earlier SoCs so add new code for handling this layout.  Also
+> > add new CLK_CPU_HAS_E5433_REGS_LAYOUT flag to request using it.
 > 
-> Why do we need to open code it? Even if it's really necessary, it
+> Have you considered abstracting this? Comparing existing code with
 
-We want to register CPU clock before calling samsung_clk_sleep_init()
-and samsung_clk_of_add_provider() (just as we do it on other Exynos
-SoCs) so we cannot use samsung_cmu_register_one() helper.
+Yes, I have considered abstracting this but I've decided that there is
+sufficient number of differences to justify adding new code.
 
-> would make sense to state it in the commit description for lazy
-> readers reviewing the patches in order. :)
+> newly added one, the differences don't really seem to be that huge and
+> it looks like there is more common code than different, except maybe
+> some numeric constants that could be put into a struct.
 
-Right, sorry about that.
+It is not only that, HPM clock sourcing checking would also need to be
+abstracted somehow.  Anyway there is not a lot of new code and it so
+much easier to follow by not being shared that I would prefer to keep
+it that way.
 
 Best regards,
 --
