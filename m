@@ -1,55 +1,54 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Mon, 20 Jun 2016 09:43:21 +0200
-Message-ID: <57679E99.6090607@st.com>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 5/6] memory: samsung/exynos-srom: make it explicitly
+ non-modular
+Date: Mon, 20 Jun 2016 09:50:03 +0200
+Message-ID: <5767A02B.4070401@samsung.com>
+References: <20160617003748.12188-1-paul.gortmaker@windriver.com>
+ <20160617003748.12188-6-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.co>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20160617003748.12188-6-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 06/17/2016 02:37 AM, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> memory/samsung/Kconfig:config EXYNOS_SROM
+> memory/samsung/Kconfig: bool "Exynos SROM controller driver" if COMPILE_TEST
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> 
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>  drivers/memory/samsung/exynos-srom.c | 21 +++------------------
+>  1 file changed, 3 insertions(+), 18 deletions(-)
 
+Thanks, applied for v4.8.
 
-On 06/16/2016 11:27 PM, Daniel Lezcano wrote:
-> All the clocksource drivers's init function are now converted to return
-> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
-> clksrc-of table.
->
-> Let's convert back the names:
->   - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
->   - clksrc-of-ret              => clksrc-of
->
->
->   drivers/clocksource/clksrc_st_lpc.c       |  2 +-
-> diff --git a/drivers/clocksource/clksrc_st_lpc.c b/drivers/clocksource/clksrc_st_lpc.c
-> index c9022a9..03cc492 100644
-> --- a/drivers/clocksource/clksrc_st_lpc.c
-> +++ b/drivers/clocksource/clksrc_st_lpc.c
-> @@ -132,4 +132,4 @@ static int __init st_clksrc_of_register(struct device_node *np)
->   
->   	return ret;
->   }
-> -CLOCKSOURCE_OF_DECLARE_RET(ddata, "st,stih407-lpc", st_clksrc_of_register);
-> +CLOCKSOURCE_OF_DECLARE(ddata, "st,stih407-lpc", st_clksrc_of_register);
->
-
-
-For STi :
-
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-
-Thanks
+Best regards,
+Krzysztof
