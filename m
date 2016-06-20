@@ -1,121 +1,42 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Mon, 20 Jun 2016 11:19:21 +0200
-Message-ID: <5767B519.5010501@baylibre.com>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: use clock_ignore_unused flag for
+ SPI3 related clocks
+Date: Mon, 20 Jun 2016 19:13:05 +0900
+Message-ID: <20160620101305.GA6783@samsunx.samsung>
+References: <1466151362-2881-1-git-send-email-andi.shyti@samsung.com>
+ <CA+Ln22F9eskcpnFkrnVFc3dJqCJcJ5O-STfXC-8Om5MK-THwNg@mail.gmail.com>
+ <20160619055921.GA424@jack.zhora.eu>
+ <CGME20160619134424epcas1p31493dfce45a8c817bc353702a07fa4bb@epcas1p3.samsung.com>
+ <CA+Ln22HHNnPuEq1WVs+iiEEbAhdvkADhVkj99pqgR0qJODFUXw@mail.gmail.com>
+ <20160620054157.GA6498@samsunx.samsung>
+ <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-disposition: inline
+In-reply-to: <CA+Ln22FcKQTq4XhHQPd=Y-B_cUMzFd51ZPkgwrtP_KsqUVxnJA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi@etezian.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/16/2016 11:27 PM, Daniel Lezcano wrote:
-> All the clocksource drivers's init function are now converted to return
-> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
-> clksrc-of table.
-> 
-> Let's convert back the names:
->  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
->  - clksrc-of-ret              => clksrc-of
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arc/kernel/time.c                    |  6 +++---
->  arch/arm/kernel/smp_twd.c                 |  6 +++---
->  arch/microblaze/kernel/timer.c            |  2 +-
->  arch/mips/ralink/cevt-rt3352.c            |  2 +-
->  arch/nios2/kernel/time.c                  |  2 +-
->  drivers/clocksource/arm_arch_timer.c      |  6 +++---
->  drivers/clocksource/arm_global_timer.c    |  2 +-
->  drivers/clocksource/armv7m_systick.c      |  2 +-
->  drivers/clocksource/asm9260_timer.c       |  2 +-
->  drivers/clocksource/bcm2835_timer.c       |  2 +-
->  drivers/clocksource/bcm_kona_timer.c      |  4 ++--
->  drivers/clocksource/cadence_ttc_timer.c   |  2 +-
->  drivers/clocksource/clksrc-dbx500-prcmu.c |  2 +-
->  drivers/clocksource/clksrc-probe.c        | 14 --------------
->  drivers/clocksource/clksrc_st_lpc.c       |  2 +-
->  drivers/clocksource/clps711x-timer.c      |  2 +-
->  drivers/clocksource/dw_apb_timer_of.c     |  8 ++++----
->  drivers/clocksource/exynos_mct.c          |  4 ++--
->  drivers/clocksource/fsl_ftm_timer.c       |  2 +-
->  drivers/clocksource/h8300_timer16.c       |  2 +-
->  drivers/clocksource/h8300_timer8.c        |  2 +-
->  drivers/clocksource/h8300_tpu.c           |  2 +-
->  drivers/clocksource/meson6_timer.c        |  2 +-
->  drivers/clocksource/mips-gic-timer.c      |  2 +-
->  drivers/clocksource/moxart_timer.c        |  2 +-
->  drivers/clocksource/mps2-timer.c          |  2 +-
->  drivers/clocksource/mtk_timer.c           |  2 +-
->  drivers/clocksource/mxs_timer.c           |  2 +-
->  drivers/clocksource/nomadik-mtu.c         |  2 +-
->  drivers/clocksource/pxa_timer.c           |  2 +-
->  drivers/clocksource/qcom-timer.c          |  4 ++--
->  drivers/clocksource/rockchip_timer.c      |  8 ++++----
->  drivers/clocksource/samsung_pwm_timer.c   |  8 ++++----
->  drivers/clocksource/sun4i_timer.c         |  2 +-
->  drivers/clocksource/tango_xtal.c          |  2 +-
->  drivers/clocksource/tegra20_timer.c       |  4 ++--
->  drivers/clocksource/time-armada-370-xp.c  |  6 +++---
->  drivers/clocksource/time-efm32.c          |  4 ++--
->  drivers/clocksource/time-lpc32xx.c        |  2 +-
->  drivers/clocksource/time-orion.c          |  2 +-
->  drivers/clocksource/time-pistachio.c      |  2 +-
->  drivers/clocksource/timer-atlas7.c        |  2 +-
->  drivers/clocksource/timer-atmel-pit.c     |  2 +-
->  drivers/clocksource/timer-atmel-st.c      |  2 +-
->  drivers/clocksource/timer-digicolor.c     |  2 +-
->  drivers/clocksource/timer-imx-gpt.c       | 24 ++++++++++++------------
->  drivers/clocksource/timer-integrator-ap.c |  2 +-
->  drivers/clocksource/timer-keystone.c      |  2 +-
->  drivers/clocksource/timer-nps.c           |  4 ++--
->  drivers/clocksource/timer-oxnas-rps.c     |  4 ++--
->  drivers/clocksource/timer-prima2.c        |  2 +-
->  drivers/clocksource/timer-sp804.c         |  4 ++--
->  drivers/clocksource/timer-stm32.c         |  2 +-
->  drivers/clocksource/timer-sun5i.c         |  4 ++--
->  drivers/clocksource/timer-ti-32k.c        |  2 +-
->  drivers/clocksource/timer-u300.c          |  2 +-
->  drivers/clocksource/versatile.c           |  4 ++--
->  drivers/clocksource/vf_pit_timer.c        |  2 +-
->  drivers/clocksource/vt8500_timer.c        |  2 +-
->  drivers/clocksource/zevio-timer.c         |  2 +-
->  include/asm-generic/vmlinux.lds.h         |  2 --
->  include/linux/clocksource.h               |  5 +----
->  62 files changed, 98 insertions(+), 117 deletions(-)
-> 
+> Unfortunately I have to NAK this patch. Please add proper support for
+> them to the SPI driver.
 
-[...]
+I agree, this is quite a lazy solution.
 
-> diff --git a/drivers/clocksource/timer-oxnas-rps.c b/drivers/clocksource/timer-oxnas-rps.c
-> index 0d99f40..bd887e2 100644
-> --- a/drivers/clocksource/timer-oxnas-rps.c
-> +++ b/drivers/clocksource/timer-oxnas-rps.c
-> @@ -293,5 +293,5 @@ err_alloc:
->  	return ret;
->  }
->  
-> -CLOCKSOURCE_OF_DECLARE_RET(ox810se_rps,
-> -			   "oxsemi,ox810se-rps-timer", oxnas_rps_timer_init);
-> +CLOCKSOURCE_OF_DECLARE(ox810se_rps,
-> +		       "oxsemi,ox810se-rps-timer", oxnas_rps_timer_init);
+But your comment is giving me more work than what I was willing
+to have, also because in this driver the SPI1 is aslo using
+CLK_IGNORE_UNUSED :)
 
-For the OXNAS part :
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-Thanks,
-Neil
+Thanks for your review,
+Andi
