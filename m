@@ -1,14 +1,15 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [[PATCH v2] 04/11] ARM: EXYNOS: fixup endian in pm/pmu
-Date: Tue, 21 Jun 2016 13:16:45 +0200
-Message-ID: <5769221D.4060906@samsung.com>
+Subject: Re: [[PATCH v2] 05/11] ARM: EXYNOS: Enable ARCH_SUPPORTS_BIG_ENDIAN
+ explicitly
+Date: Tue, 21 Jun 2016 13:17:18 +0200
+Message-ID: <5769223E.4020309@samsung.com>
 References: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
- <1466504432-24187-5-git-send-email-ben.dooks@codethink.co.uk>
+ <1466504432-24187-6-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1466504432-24187-5-git-send-email-ben.dooks@codethink.co.uk>
+In-reply-to: <1466504432-24187-6-git-send-email-ben.dooks@codethink.co.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,18 +24,28 @@ Cc: linux-kernel@lists.codethink.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 06/21/2016 12:20 PM, Ben Dooks wrote:
-> Fix the PMU code endian access code to deal with kernels built for big endian
-> operation.
+> Now the initial fixes have the big-endian code working on EXYNOS, make sure
+> we explicitly mark our arch as being big endian capable.
 > 
 > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 > ---
->  arch/arm/mach-exynos/common.h     | 4 ++--
->  arch/arm/mach-exynos/pm.c         | 4 ++--
->  arch/arm/mach-exynos/pm_domains.c | 6 +++---
->  3 files changed, 7 insertions(+), 7 deletions(-)
+>  arch/arm/mach-exynos/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index e65aa7d..14906bf 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -13,6 +13,7 @@ menuconfig ARCH_EXYNOS
+>  	select ARCH_HAS_BANDGAP
+>  	select ARCH_HAS_HOLES_MEMORYMODEL
+>  	select ARCH_REQUIRE_GPIOLIB
+> +	select ARCH_SUPPORTS_BIG_ENDIAN
+>  	select ARM_AMBA
+>  	select ARM_GIC
+>  	select COMMON_CLK_SAMSUNG
 
-
-Thanks, applied for v4.8.
+I'll wait with this one till other patches get in.
 
 Best regards,
 Krzysztof
