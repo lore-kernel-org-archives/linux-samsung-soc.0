@@ -1,15 +1,14 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [[PATCH v2] 02/11] ARM: Samsung: fixup endian issues in cpu
- detection
-Date: Tue, 21 Jun 2016 13:16:09 +0200
-Message-ID: <576921F9.6050807@samsung.com>
+Subject: Re: [[PATCH v2] 04/11] ARM: EXYNOS: fixup endian in pm/pmu
+Date: Tue, 21 Jun 2016 13:16:45 +0200
+Message-ID: <5769221D.4060906@samsung.com>
 References: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
- <1466504432-24187-3-git-send-email-ben.dooks@codethink.co.uk>
+ <1466504432-24187-5-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1466504432-24187-3-git-send-email-ben.dooks@codethink.co.uk>
+In-reply-to: <1466504432-24187-5-git-send-email-ben.dooks@codethink.co.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,14 +23,15 @@ Cc: linux-kernel@lists.codethink.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 06/21/2016 12:20 PM, Ben Dooks wrote:
-> If the system is built for big endian, then the cpu identificaiton register
-> will be read in the wrong order. Fix this by using readl_relaxed() on the
-> register.
+> Fix the PMU code endian access code to deal with kernels built for big endian
+> operation.
 > 
 > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 > ---
->  arch/arm/plat-samsung/cpu.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  arch/arm/mach-exynos/common.h     | 4 ++--
+>  arch/arm/mach-exynos/pm.c         | 4 ++--
+>  arch/arm/mach-exynos/pm_domains.c | 6 +++---
+>  3 files changed, 7 insertions(+), 7 deletions(-)
 
 
 Thanks, applied for v4.8.
