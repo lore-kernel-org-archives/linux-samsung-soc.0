@@ -1,47 +1,47 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 15/15] iommu/exynos: update to use iommu big-endian
-Date: Tue, 21 Jun 2016 11:59:44 +0200
-Message-ID: <20160621095944.GF28248@8bytes.org>
-References: <20160608183110.13851-1-matthew@mattleach.net>
-	<20160608183110.13851-16-matthew@mattleach.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160608183110.13851-16-matthew-vFKDGoARCE+LZ21kGMrzwg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Matthew Leach <matthew-vFKDGoARCE+LZ21kGMrzwg@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [[PATCH v2] 11/11] hwrng: exynos - fixup IO accesors
+Date: Tue, 21 Jun 2016 11:20:32 +0100
+Message-ID: <1466504432-24187-12-git-send-email-ben.dooks@codethink.co.uk>
+References: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
+Sender: linux-crypto-owner@vger.kernel.org
+To: matthew.leach@codethink.co.uk, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>, Matt Mackall <mpm@selenic.com>, linux-crypto@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 08, 2016 at 07:31:10PM +0100, Matthew Leach wrote:
-> From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-> 
-> Add initial support for big endian by always writing the pte
-> in le32. Note, revisit if hardware capable of doing big endian
-> fetches.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-> ---
-> Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (open list)
-> ---
->  drivers/iommu/exynos-iommu.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+The __raw IO functions are not endian safe, so use the readl_relaxed
+and writel_relaxed versions of these.
 
-Applied, thanks.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+CC: Matt Mackall <mpm@selenic.com>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: linux-crypto@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-samsung-soc@vger.kernel.org
+---
+ drivers/char/hw_random/exynos-rng.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
+index ed44561..23d3585 100644
+--- a/drivers/char/hw_random/exynos-rng.c
++++ b/drivers/char/hw_random/exynos-rng.c
+@@ -45,12 +45,12 @@ struct exynos_rng {
+ 
+ static u32 exynos_rng_readl(struct exynos_rng *rng, u32 offset)
+ {
+-	return	__raw_readl(rng->mem + offset);
++	return	readl_relaxed(rng->mem + offset);
+ }
+ 
+ static void exynos_rng_writel(struct exynos_rng *rng, u32 val, u32 offset)
+ {
+-	__raw_writel(val, rng->mem + offset);
++	writel_relaxed(val, rng->mem + offset);
+ }
+ 
+ static int exynos_rng_configure(struct exynos_rng *exynos_rng)
+-- 
+2.8.1
