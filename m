@@ -1,50 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 6/6] ASoC: samsung: Add DT bindings documentation for
- TM2 sound subsystem
-Date: Tue, 21 Jun 2016 11:48:11 +0200
-Message-ID: <57690D5B.2020504@samsung.com>
-References: <1465815160-28504-1-git-send-email-s.nawrocki@samsung.com>
- <1465815160-28504-7-git-send-email-s.nawrocki@samsung.com>
- <20160614233224.GA4477@rob-hp-laptop> <20160615094730.GX2282@sirena.org.uk>
- <CAL_Jsq+=EGo+6PkwjCSUavm+DyvjuXDx2XzteY6xXSP+0u+Z+g@mail.gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 15/15] iommu/exynos: update to use iommu big-endian
+Date: Tue, 21 Jun 2016 11:59:44 +0200
+Message-ID: <20160621095944.GF28248@8bytes.org>
+References: <20160608183110.13851-1-matthew@mattleach.net>
+	<20160608183110.13851-16-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:25329 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751624AbcFUJsQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 05:48:16 -0400
-In-reply-to: <CAL_Jsq+=EGo+6PkwjCSUavm+DyvjuXDx2XzteY6xXSP+0u+Z+g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160608183110.13851-16-matthew-vFKDGoARCE+LZ21kGMrzwg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Matthew Leach <matthew-vFKDGoARCE+LZ21kGMrzwg@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Inha Song <ideal.song@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, InKi Dae <inki.dae@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=c5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 06/20/2016 07:49 PM, Rob Herring wrote:
->>>> + - samsung,i2s-controller : the phandle of the I2S controller
->>>> + - samsung,speaker-amplifier : the phandle of the MAX98504 amplifier
+On Wed, Jun 08, 2016 at 07:31:10PM +0100, Matthew Leach wrote:
+> From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+> 
+> Add initial support for big endian by always writing the pte
+> in le32. Note, revisit if hardware capable of doing big endian
+> fetches.
+> 
+> Signed-off-by: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+> ---
+> Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (open list)
+> ---
+>  drivers/iommu/exynos-iommu.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-I'm considering changing this to a more generic (samsung,?)audio-amplifier
-in next iteration. Or maybe just listing MAX98504 as second entry of the
-(samsung,)audio-codec(s) property value, since capabilities and functionality 
-of the device in the system is not limited to just simple audio power 
-amplification. It accepts analogue audio signal on its input and is 
-transmitting digital audio data stream in the feedback path to the WM5110 
-codec's DSP.
-
->>> >> We should have standard properties for these. 2nd ones I've seen today.
->> >
->> > No, these aren't fixed roles in a system, you couldn't have standard
->> > handling for them.
->
-> What do you mean? It is silly for us to put vendor prefixes on all of
-> these. There are dozens of examples in the binding docs of
-> <vendor>,i2s-controller and <vendor>,audio-codec. Yes, dropping just
-> the vendor prefix doesn't buy much (maybe some string space), but it
-> certainly adds nothing.
-
-It also looked unnecessary to me to at first sight to be adding
-vendor prefixes to those properties. We could look at the compatible
-string in the pointed node for handling any differences.
+Applied, thanks.
