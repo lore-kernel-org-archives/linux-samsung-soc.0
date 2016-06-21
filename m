@@ -1,79 +1,127 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/5] PM / devfreq: make exynos-bus explicitly non-modular
-Date: Tue, 21 Jun 2016 01:14:59 -0400
-Message-ID: <20160621051501.18396-4-paul.gortmaker@windriver.com>
-References: <20160621051501.18396-1-paul.gortmaker@windriver.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
+Date: Mon, 20 Jun 2016 23:00:22 -0700
+Message-ID: <35869d12-1686-98d3-185c-cedacbc7eed1@broadcom.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+ <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20160621051501.18396-1-paul.gortmaker@windriver.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+Hi Daniel,
 
-devfreq/Kconfig:config ARM_EXYNOS_BUS_DEVFREQ
-devfreq/Kconfig:        bool "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
+On 6/16/2016 2:27 PM, Daniel Lezcano wrote:
+> All the clocksource drivers's init function are now converted to return
+> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
+> clksrc-of table.
+>
+> Let's convert back the names:
+>  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
+>  - clksrc-of-ret              => clksrc-of
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arc/kernel/time.c                    |  6 +++---
+>  arch/arm/kernel/smp_twd.c                 |  6 +++---
+>  arch/microblaze/kernel/timer.c            |  2 +-
+>  arch/mips/ralink/cevt-rt3352.c            |  2 +-
+>  arch/nios2/kernel/time.c                  |  2 +-
+>  drivers/clocksource/arm_arch_timer.c      |  6 +++---
+>  drivers/clocksource/arm_global_timer.c    |  2 +-
+>  drivers/clocksource/armv7m_systick.c      |  2 +-
+>  drivers/clocksource/asm9260_timer.c       |  2 +-
+>  drivers/clocksource/bcm2835_timer.c       |  2 +-
+>  drivers/clocksource/bcm_kona_timer.c      |  4 ++--
+>  drivers/clocksource/cadence_ttc_timer.c   |  2 +-
+>  drivers/clocksource/clksrc-dbx500-prcmu.c |  2 +-
+>  drivers/clocksource/clksrc-probe.c        | 14 --------------
+>  drivers/clocksource/clksrc_st_lpc.c       |  2 +-
+>  drivers/clocksource/clps711x-timer.c      |  2 +-
+>  drivers/clocksource/dw_apb_timer_of.c     |  8 ++++----
+>  drivers/clocksource/exynos_mct.c          |  4 ++--
+>  drivers/clocksource/fsl_ftm_timer.c       |  2 +-
+>  drivers/clocksource/h8300_timer16.c       |  2 +-
+>  drivers/clocksource/h8300_timer8.c        |  2 +-
+>  drivers/clocksource/h8300_tpu.c           |  2 +-
+>  drivers/clocksource/meson6_timer.c        |  2 +-
+>  drivers/clocksource/mips-gic-timer.c      |  2 +-
+>  drivers/clocksource/moxart_timer.c        |  2 +-
+>  drivers/clocksource/mps2-timer.c          |  2 +-
+>  drivers/clocksource/mtk_timer.c           |  2 +-
+>  drivers/clocksource/mxs_timer.c           |  2 +-
+>  drivers/clocksource/nomadik-mtu.c         |  2 +-
+>  drivers/clocksource/pxa_timer.c           |  2 +-
+>  drivers/clocksource/qcom-timer.c          |  4 ++--
+>  drivers/clocksource/rockchip_timer.c      |  8 ++++----
+>  drivers/clocksource/samsung_pwm_timer.c   |  8 ++++----
+>  drivers/clocksource/sun4i_timer.c         |  2 +-
+>  drivers/clocksource/tango_xtal.c          |  2 +-
+>  drivers/clocksource/tegra20_timer.c       |  4 ++--
+>  drivers/clocksource/time-armada-370-xp.c  |  6 +++---
+>  drivers/clocksource/time-efm32.c          |  4 ++--
+>  drivers/clocksource/time-lpc32xx.c        |  2 +-
+>  drivers/clocksource/time-orion.c          |  2 +-
+>  drivers/clocksource/time-pistachio.c      |  2 +-
+>  drivers/clocksource/timer-atlas7.c        |  2 +-
+>  drivers/clocksource/timer-atmel-pit.c     |  2 +-
+>  drivers/clocksource/timer-atmel-st.c      |  2 +-
+>  drivers/clocksource/timer-digicolor.c     |  2 +-
+>  drivers/clocksource/timer-imx-gpt.c       | 24 ++++++++++++------------
+>  drivers/clocksource/timer-integrator-ap.c |  2 +-
+>  drivers/clocksource/timer-keystone.c      |  2 +-
+>  drivers/clocksource/timer-nps.c           |  4 ++--
+>  drivers/clocksource/timer-oxnas-rps.c     |  4 ++--
+>  drivers/clocksource/timer-prima2.c        |  2 +-
+>  drivers/clocksource/timer-sp804.c         |  4 ++--
+>  drivers/clocksource/timer-stm32.c         |  2 +-
+>  drivers/clocksource/timer-sun5i.c         |  4 ++--
+>  drivers/clocksource/timer-ti-32k.c        |  2 +-
+>  drivers/clocksource/timer-u300.c          |  2 +-
+>  drivers/clocksource/versatile.c           |  4 ++--
+>  drivers/clocksource/vf_pit_timer.c        |  2 +-
+>  drivers/clocksource/vt8500_timer.c        |  2 +-
+>  drivers/clocksource/zevio-timer.c         |  2 +-
+>  include/asm-generic/vmlinux.lds.h         |  2 --
+>  include/linux/clocksource.h               |  5 +----
+>  62 files changed, 98 insertions(+), 117 deletions(-)
 
-...meaning that it currently is not being built as a module by anyone.
+[..]
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+> diff --git a/drivers/clocksource/bcm_kona_timer.c b/drivers/clocksource/bcm_kona_timer.c
+> index 98bc2a2..ee07e7e3 100644
+> --- a/drivers/clocksource/bcm_kona_timer.c
+> +++ b/drivers/clocksource/bcm_kona_timer.c
+> @@ -200,9 +200,9 @@ static int __init kona_timer_init(struct device_node *node)
+>  	return 0;
+>  }
+>
+> -CLOCKSOURCE_OF_DECLARE_RET(brcm_kona, "brcm,kona-timer", kona_timer_init);
+> +CLOCKSOURCE_OF_DECLARE(brcm_kona, "brcm,kona-timer", kona_timer_init);
+>  /*
+>   * bcm,kona-timer is deprecated by brcm,kona-timer
+>   * being kept here for driver compatibility
+>   */
+> -CLOCKSOURCE_OF_DECLARE_RET(bcm_kona, "bcm,kona-timer", kona_timer_init);
+> +CLOCKSOURCE_OF_DECLARE(bcm_kona, "bcm,kona-timer", kona_timer_init);
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+For Broadcom Kona timer change:
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Acked-by: Ray Jui <ray.jui@broadcom.com>
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+Thanks!
 
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/devfreq/exynos-bus.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 2363d0a189b7..2e018d80e0f7 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -17,7 +17,7 @@
- #include <linux/devfreq-event.h>
- #include <linux/device.h>
- #include <linux/export.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/pm_opp.h>
- #include <linux/platform_device.h>
-@@ -553,7 +553,6 @@ static const struct of_device_id exynos_bus_of_match[] = {
- 	{ .compatible = "samsung,exynos-bus", },
- 	{ /* sentinel */ },
- };
--MODULE_DEVICE_TABLE(of, exynos_bus_of_match);
- 
- static struct platform_driver exynos_bus_platdrv = {
- 	.probe		= exynos_bus_probe,
-@@ -563,8 +562,4 @@ static struct platform_driver exynos_bus_platdrv = {
- 		.of_match_table = of_match_ptr(exynos_bus_of_match),
- 	},
- };
--module_platform_driver(exynos_bus_platdrv);
--
--MODULE_DESCRIPTION("Generic Exynos Bus frequency driver");
--MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
--MODULE_LICENSE("GPL v2");
-+builtin_platform_driver(exynos_bus_platdrv);
--- 
-2.8.4
-
+Ray
