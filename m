@@ -1,92 +1,68 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [[PATCH v2] 04/11] ARM: EXYNOS: fixup endian in pm/pmu
-Date: Tue, 21 Jun 2016 11:20:25 +0100
-Message-ID: <1466504432-24187-5-git-send-email-ben.dooks@codethink.co.uk>
+Subject: [[PATCH v2] 07/11] ARM: EXYNOS: fixup for __raw operations in suspend.c
+Date: Tue, 21 Jun 2016 11:20:28 +0100
+Message-ID: <1466504432-24187-8-git-send-email-ben.dooks@codethink.co.uk>
 References: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:49236 "EHLO
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:49242 "EHLO
 	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751623AbcFUKUf (ORCPT
+	by vger.kernel.org with ESMTP id S1751690AbcFUKUl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 06:20:35 -0400
+	Tue, 21 Jun 2016 06:20:41 -0400
 In-Reply-To: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: matthew.leach@codethink.co.uk, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@lists.codethink.co.uk, Ben Dooks <ben.dooks@codethink.co.uk>
 
-Fix the PMU code endian access code to deal with kernels built for big endian
-operation.
+Fix the PMU code endian access code to deal with kernels built for
+big endian operation by changing the __raw IO accessors to the
+_relaxed variants.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- arch/arm/mach-exynos/common.h     | 4 ++--
- arch/arm/mach-exynos/pm.c         | 4 ++--
- arch/arm/mach-exynos/pm_domains.c | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+---
+ arch/arm/mach-exynos/suspend.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 5365bf1..19e9d25 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -174,12 +174,12 @@ extern int exynos_get_boot_addr(u32 core_id, unsigned long *boot_addr);
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f216909..3750575 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -301,7 +301,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
+ 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+ 	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
  
- static inline void pmu_raw_writel(u32 val, u32 offset)
- {
--	__raw_writel(val, pmu_base_addr + offset);
-+	writel_relaxed(val, pmu_base_addr + offset);
- }
+-	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
++	writel_relaxed(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
  
- static inline u32 pmu_raw_readl(u32 offset)
- {
--	return __raw_readl(pmu_base_addr + offset);
-+	return readl_relaxed(pmu_base_addr + offset);
- }
+ 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM)) {
+ 		mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
+@@ -373,8 +373,8 @@ static void exynos5420_pm_prepare(void)
+ 	 * needs to restore it back in case, the primary cpu fails to
+ 	 * suspend for any reason.
+ 	 */
+-	exynos5420_cpu_state = __raw_readl(sysram_base_addr +
+-						EXYNOS5420_CPU_STATE);
++	exynos5420_cpu_state = readl_relaxed(sysram_base_addr +
++					     EXYNOS5420_CPU_STATE);
  
- #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c43b776..52d78eb 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -132,9 +132,9 @@ static void exynos_set_wakeupmask(long mask)
+ 	exynos_pm_enter_sleep_mode();
  
- static void exynos_cpu_set_boot_vector(long flags)
- {
--	__raw_writel(virt_to_phys(exynos_cpu_resume),
-+	writel_relaxed(virt_to_phys(exynos_cpu_resume),
- 		     exynos_boot_vector_addr());
--	__raw_writel(flags, exynos_boot_vector_flag());
-+	writel_relaxed(flags, exynos_boot_vector_flag());
- }
+@@ -504,11 +504,11 @@ static void exynos5420_pm_resume(void)
+ 	/* Restore the CPU0 low power state register */
+ 	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+ 	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+-		EXYNOS5_ARM_CORE0_SYS_PWR_REG);
++		       EXYNOS5_ARM_CORE0_SYS_PWR_REG);
  
- static int exynos_aftr_finisher(unsigned long flags)
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 875a2ba..0e075d9 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -70,12 +70,12 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	}
+ 	/* Restore the sysram cpu state register */
+-	__raw_writel(exynos5420_cpu_state,
+-		sysram_base_addr + EXYNOS5420_CPU_STATE);
++	writel_relaxed(exynos5420_cpu_state,
++		       sysram_base_addr + EXYNOS5420_CPU_STATE);
  
- 	pwr = power_on ? INT_LOCAL_PWR_EN : 0;
--	__raw_writel(pwr, base);
-+	writel_relaxed(pwr, base);
- 
- 	/* Wait max 1ms */
- 	timeout = 10;
- 
--	while ((__raw_readl(base + 0x4) & INT_LOCAL_PWR_EN) != pwr) {
-+	while ((readl_relaxed(base + 0x4) & INT_LOCAL_PWR_EN) != pwr) {
- 		if (!timeout) {
- 			op = (power_on) ? "enable" : "disable";
- 			pr_err("Power domain %s %s failed\n", domain->name, op);
-@@ -185,7 +185,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
- 
- no_clk:
--		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
-+		on = readl_relaxed(pd->base + 0x4) & INT_LOCAL_PWR_EN;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 		of_genpd_add_provider_simple(np, &pd->pd);
+ 	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
+ 			S5P_CENTRAL_SEQ_OPTION);
 -- 
 2.8.1
