@@ -1,61 +1,60 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3.1 1/2] drm/rockchip: analogix_dp: introduce the pclk for grf
-Date: Wed, 22 Jun 2016 10:31:18 +0800
-Message-ID: <1466562678-11094-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v3.1 2/2] dt-bindings: analogix_dp: rockchip: correct the
+ wrong compatible name
+Date: Wed, 22 Jun 2016 10:31:29 +0800
+Message-ID: <1466562689-11168-1-git-send-email-ykk@rock-chips.com>
 References: <1465904802-1164-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1465904802-1164-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.com>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1465904802-1164-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, daniel.vetter-/w4YWyX8dFk@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rm9yIFJLMzM5OSdzIEdSRiBtb2R1bGUsIGlmIHdlIHdhbnQgdG8gb3BlcmF0ZSB0aGUgZ3JhcGhp
-YyByZWxhdGVkIGdyZgpyZWdpc3RlcnMsIHdlIG5lZWQgdG8gZW5hYmxlIHRoZSBwY2xrX3Zpb19n
-cmYgd2hpY2ggc3VwcGx5IHBvd2VyIGZvciBWSU8KR1JGIElPcywgc28gaXQncyBiZXR0ZXIgdG8g
-aW50cm9kdWNlIGFuIG9wdGlvbmFsIGdyZiBjbG9jayBpbiBkcml2ZXIuCgpTaWduZWQtb2ZmLWJ5
-OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Ci0tLQpIaSBhbGwsCgpUaGlzIGlzIGFu
-IGV4dGVybmFsIHBhdGNoIGZvciBhbmFsb2dpeF9kcCBtaXNjIGNsZWFudXAgdGhyZWFkIFswXQpb
-MF06IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTE3NTYxMy8KCkJSLAotIFlh
-a2lyCgogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgfCAy
-MCArKysrKysrKysrKysrKysrKy0tLQogMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyks
-IDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2Fu
-YWxvZ2l4X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhf
-ZHAtcm9ja2NoaXAuYwppbmRleCA3ODdkYzUxLi42YTgzZjFhIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYworKysgYi9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwpAQCAtNTYsNiArNTYsNyBAQCBz
-dHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlIHsKIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAgbW9k
-ZTsKIAogCXN0cnVjdCBjbGsgICAgICAgICAgICAgICAqcGNsazsKKwlzdHJ1Y3QgY2xrICAgICAg
-ICAgICAgICAgKmdyZmNsazsKIAlzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdyZjsKIAlzdHJ1
-Y3QgcmVzZXRfY29udHJvbCAgICAgKnJzdDsKIApAQCAtMTUxLDExICsxNTIsMjAgQEAgc3RhdGlj
-IHZvaWQgcm9ja2NoaXBfZHBfZHJtX2VuY29kZXJfZW5hYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAq
-ZW5jb2RlcikKIAogCWRldl9kYmcoZHAtPmRldiwgInZvcCAlcyBvdXRwdXQgdG8gZHBcbiIsIChy
-ZXQpID8gIkxJVCIgOiAiQklHIik7CiAKKwlpZiAoZHAtPmdyZmNsaykgeworCQlyZXQgPSBjbGtf
-cHJlcGFyZV9lbmFibGUoZHAtPmdyZmNsayk7CisJCWlmIChyZXQgPCAwKSB7CisJCQlkZXZfZXJy
-KGRwLT5kZXYsICJmYWlsZWQgdG8gZW5hYmxlIGdyZmNsayAlZFxuIiwgcmV0KTsKKwkJCXJldHVy
-bjsKKwkJfQorCX0KKwogCXJldCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBkcC0+ZGF0YS0+bGNk
-c2VsX2dyZl9yZWcsIHZhbCk7Ci0JaWYgKHJldCAhPSAwKSB7CisJaWYgKHJldCAhPSAwKQogCQlk
-ZXZfZXJyKGRwLT5kZXYsICJDb3VsZCBub3Qgd3JpdGUgdG8gR1JGOiAlZFxuIiwgcmV0KTsKLQkJ
-cmV0dXJuOwotCX0KKworCWlmIChkcC0+Z3JmY2xrKQorCQljbGtfZGlzYWJsZV91bnByZXBhcmUo
-ZHAtPmdyZmNsayk7CiB9CiAKIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX25v
-cChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCkBAIC0yMzUsNiArMjQ1LDEwIEBAIHN0YXRp
-YyBpbnQgcm9ja2NoaXBfZHBfaW5pdChzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCkKIAkJ
-cmV0dXJuIFBUUl9FUlIoZHAtPmdyZik7CiAJfQogCisJZHAtPmdyZmNsayA9IGRldm1fY2xrX2dl
-dChkZXYsICJncmYiKTsKKwlpZiAoSVNfRVJSKGRwLT5ncmZjbGspKQorCQlkcC0+Z3JmY2xrID0g
-TlVMTDsKKwogCWRwLT5wY2xrID0gZGV2bV9jbGtfZ2V0KGRldiwgInBjbGsiKTsKIAlpZiAoSVNf
-RVJSKGRwLT5wY2xrKSkgewogCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQgcGNsayBwcm9w
-ZXJ0eVxuIik7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+The document about rockchip platform make a mistaken in available
+compatible name of "rk3288-edp", we should correct it to "rk3288-dp"
+which correspond to the compatible name in driver.
+
+This mistaken was introduced in commit be91c36247089 ("dt-bindings:
+add document for rockchip variant of analogix_dp").
+
+Reported-by: Tomasz Figa <tfiga-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+---
+Hi all,
+
+This is an external patch for analogix_dp misc cleanup thread [0]
+[0]: https://patchwork.kernel.org/patch/9175613/
+
+BR,
+- Yakir
+
+ .../devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+index 726c945..827cc36 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
++++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
+@@ -2,7 +2,7 @@ Rockchip RK3288 specific extensions to the Analogix Display Port
+ ================================
+ 
+ Required properties:
+-- compatible: "rockchip,rk3288-edp",
++- compatible: "rockchip,rk3288-dp",
+ 	      "rockchip,rk3399-edp";
+ 
+ - reg: physical base address of the controller and length
+-- 
+1.9.1
