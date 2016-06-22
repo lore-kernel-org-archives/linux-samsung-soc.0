@@ -1,39 +1,61 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [[PATCH v2] 11/11] hwrng: exynos - fixup IO accesors
-Date: Wed, 22 Jun 2016 12:53:33 +0100
-Message-ID: <82412f2a-bd8b-6ff4-9887-901d248398a4@codethink.co.uk>
-References: <20160622103705.GA30967@gondor.apana.org.au>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] cpufreq: exynos: use relaxed IO accesors
+Date: Wed, 22 Jun 2016 13:59:13 +0200
+Message-ID: <CAJKOXPf--C=PXmMthaLy8MVL8BBFe9gWaFv9sMh6Xzft4k6U8g@mail.gmail.com>
+References: <1466587984-14105-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160622103705.GA30967@gondor.apana.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-kernel@lists.codethink.co.uk, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, matthew.leach@codethink.co.uk, linux-crypto@vger.kernel.org, mpm@selenic.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35462 "EHLO
+	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751453AbcFVL77 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2016 07:59:59 -0400
+In-Reply-To: <1466587984-14105-1-git-send-email-ben.dooks@codethink.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org
 
-On 22/06/16 11:37, Herbert Xu wrote:
-> Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->> The __raw IO functions are not endian safe, so use the readl_relaxed
->> and writel_relaxed versions of these.
->>
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> 
-> This patch has already been merged.
-> 
-> Cheers,
+On Wed, Jun 22, 2016 at 11:33 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> The use of __raw IO accesors is not endian safe and should be used
+> sparingly. The relaxed variants should be as lightweight and also
+> are endian safe.
+>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/cpufreq/exynos5440-cpufreq.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+> index c0f3373..7a5707f 100644
+> --- a/drivers/cpufreq/exynos5440-cpufreq.c
+> +++ b/drivers/cpufreq/exynos5440-cpufreq.c
+> @@ -155,7 +155,7 @@ static int init_div_table(void)
+>                 tmp = (clk_div | ema_div | (volt_id << P0_7_VDD_SHIFT)
+>                         | ((freq / FREQ_UNIT) << P0_7_FREQ_SHIFT));
+>
+> -               __raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 *
+> +               writel_relaxed(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 *
+>                                                 (pos - freq_tbl));
+>         }
+>
+> @@ -169,17 +169,17 @@ static void exynos_enable_dvfs(unsigned int cur_frequency)
+>         struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
+>         struct cpufreq_frequency_table *pos;
+>         /* Disable DVFS */
+> -       __raw_writel(0, dvfs_info->base + XMU_DVFS_CTRL);
+> +       writel_relaxed(0,       dvfs_info->base + XMU_DVFS_CTRL);
 
-Apologies, only meant to repost the core patches.
+Please fix the whitespace.
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+Rest looks good but this patch appeared twice. I suspect they are the same?
+
+Best regards,
+Krzysztof
