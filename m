@@ -1,54 +1,36 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/2] cpufreq: exynos: use relaxed IO accesors
-Date: Wed, 22 Jun 2016 16:07:52 +0530
-Message-ID: <20160622103752.GG5458@vireshk-i7>
-References: <1466587984-14105-1-git-send-email-ben.dooks@codethink.co.uk>
- <3668897.kYSEflAvDO@wuerfel>
- <CAJKOXPfFaAq4te5Jp2sXkK7MfS-NxmWnx931dDojFfBW34ofeQ@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [[PATCH v2] 11/11] hwrng: exynos - fixup IO accesors
+Date: Wed, 22 Jun 2016 18:37:05 +0800
+Message-ID: <20160622103705.GA30967@gondor.apana.org.au>
+References: <1466504432-24187-12-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:34394 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752156AbcFVKh4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2016 06:37:56 -0400
-Received: by mail-pa0-f43.google.com with SMTP id bz2so15887131pad.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jun 2016 03:37:56 -0700 (PDT)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPfFaAq4te5Jp2sXkK7MfS-NxmWnx931dDojFfBW34ofeQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1466504432-24187-12-git-send-email-ben.dooks@codethink.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-kernel@lists.codethink.co.uk, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, matthew.leach@codethink.co.uk, ben.dooks@codethink.co.uk, linux-crypto@vger.kernel.org, mpm@selenic.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@lists.codethink.co.uk, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ben Dooks <ben.dooks@codethink.co.uk>
 
-On 22-06-16, 12:36, Krzysztof Kozlowski wrote:
-> On Wed, Jun 22, 2016 at 11:53 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wednesday, June 22, 2016 10:33:03 AM CEST Ben Dooks wrote:
-> >> The use of __raw IO accesors is not endian safe and should be used
-> >> sparingly. The relaxed variants should be as lightweight and also
-> >> are endian safe.
-> >>
-> >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> >>
-> >
-> > Why not use the normal readl/writel() here instead of the relaxed version?
-> >
-> > Either one should work here, but in general I'd recommend using the
-> > non-relaxed version unless code is particularly performance sensitive.
-> >
-> > The main argument for that is to not let people get used to using
-> > _relaxed() all the time because it causes some very hard to debug
-> > problems in the cases where you actually need the barriers.
+Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> The __raw IO functions are not endian safe, so use the readl_relaxed
+> and writel_relaxed versions of these.
 > 
-> I think that would be actually different patch, not endian related.
-> The concurrent operations here are excluded by mutexes so this looks
-> safe.
-> 
-> Viresh,
-> I saw your ack. Do you prefer me to take the set through samsung-soc?
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Sure.
+This patch has already been merged.
 
+Cheers,
 -- 
-viresh
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
