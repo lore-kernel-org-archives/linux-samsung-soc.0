@@ -1,165 +1,220 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 1/4] drm: add generic zpos property
-Date: Wed, 22 Jun 2016 02:45:14 +0300
-Message-ID: <1657973.jZUlbaFHBr@avalon>
-References: <1465809686-22507-1-git-send-email-benjamin.gaignard@linaro.org>
- <1465809686-22507-2-git-send-email-benjamin.gaignard@linaro.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] [media] v4l: vsp1: Split pad operations between rpf and wpf
+Date: Wed, 22 Jun 2016 02:19:24 +0200
+Message-ID: <20160622001925.30077-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160622001925.30077-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1465809686-22507-2-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, fabien.dessenne@st.com, vincent.abriou@st.com, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20160622001925.30077-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, mchehab@kernel.org, hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com
+Cc: linux-samsung-soc@vger.kernel.org, mjpeg-users@lists.sourceforge.net, devel@driverdev.osuosl.org, lars@metafoo.de, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQmVuamFtaW4sCgpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4KCkNvdWxkIHlvdSBwbGVhc2Ug
-cmVwbHkgdG8gVmlsbGUncyBjb21tZW50IHRvIHYxIG9mIHRoaXMgcGF0Y2ggKHBvc3RlZCBvbiBB
-cHJpbCAKdGhlIDI1dGgpID8KClBsZWFzZSBhbHNvIHNlZSBiZWxvdyBmb3IgYWRkaXRpb25hbCBj
-b21tZW50cy4KCk9uIE1vbmRheSAxMyBKdW4gMjAxNiAxMToyMToyMyBCZW5qYW1pbiBHYWlnbmFy
-ZCB3cm90ZToKPiB2ZXJzaW9uIDQ6Cj4gLSBtYWtlIHN1cmUgdGhhdCBub3JtYWxpemVkIHpwb3Mg
-dmFsdWUgaXMgc3RheQo+ICAgaW4gdGhlIGRlZmluZWQgcHJvcGVydHkgcmFuZ2UgYW5kIHdhcm4g
-dXNlciBpZiBub3QKPiAKPiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgZ2VuZXJpYyBwbGFu
-ZSdzIHpwb3MgcHJvcGVydHkgcHJvcGVydHkgd2l0aAo+IHdlbGwtZGVmaW5lZCBzZW1hbnRpY3M6
-Cj4gLSBhZGRlZCB6cG9zIHByb3BlcnRpZXMgdG8gcGxhbmUgYW5kIHBsYW5lIHN0YXRlIHN0cnVj
-dHVyZXMKPiAtIGFkZGVkIGhlbHBlcnMgZm9yIG5vcm1hbGl6aW5nIHpwb3MgcHJvcGVydGllcyBv
-ZiBnaXZlbiBzZXQgb2YgcGxhbmVzCj4gLSB3ZWxsIGRlZmluZWQgc2VtYW50aWNzOiBwbGFuZXMg
-YXJlIHNvcnRlZCBieSB6cG9zIHZhbHVlcyBhbmQgdGhlbiBwbGFuZQo+ICAgaWQgdmFsdWUgaWYg
-enBvcyBlcXVhbHMKPiAKPiBOb3JtYWxpemVkIHpwb3MgdmFsdWVzIGFyZSBjYWxjdWxhdGVkIGF1
-dG9tYXRpY2FsbHkgd2hlbiBnZW5lcmljCj4gbXV0dGFibGUgenBvcyBwcm9wZXJ0eSBoYXMgYmVl
-biBpbml0aWFsaXplZC4gRHJpdmVycyBjYW4gc2ltcGx5IHVzZQo+IHBsYW5lX3N0YXRlLT5ub3Jt
-YWxpemVkX3pwb3MgaW4gdGhlaXIgYXRvbWljX2NoZWNrIGFuZC9vciBwbGFuZV91cGRhdGUKPiBj
-YWxsYmFja3Mgd2l0aG91dCBhbnkgYWRkaXRpb25hbCBjYWxscyB0byBEUk0gY29yZS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+
-Cj4gCj4gQ29tcGFyZSB0byBNYXJlaydzIG9yaWdpbmFsIHBhdGNoIHpwb3MgcHJvcGVydHkgaXMg
-bm93IHNwZWNpZmljIHRvIGVhY2gKPiBwbGFuZSBhbmQgbm8gbW9yZSB0byB0aGUgY29yZS4KPiBO
-b3JtYWxpemUgZnVuY3Rpb24gdGFrZSBjYXJlIG9mIHRoZSByYW5nZSBvZiBwZXIgcGxhbmUgZGVm
-aW5lZCByYW5nZQo+IGJlZm9yZSBzZXQgbm9ybWFsaXplZF96cG9zLgo+IAo+IFNpZ25lZC1vZmYt
-Ynk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnPgo+IAo+
-IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gQ2M6IERhbmllbCBWZXR0ZXIg
-PGRhbmllbEBmZndsbC5jaD4KPiBDYzogVmlsbGUgU3lyamFsYSA8dmlsbGUuc3lyamFsYUBsaW51
-eC5pbnRlbC5jb20+Cj4gQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNv
-bT4KPiBDYzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPiBDYzogQW5k
-cnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiBDYzogS3J6eXN6dG9mIEtvemxvd3Nr
-aSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4gQ2M6IEJhcnRsb21pZWogWm9sbmllcmtpZXdp
-Y3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4KPiBDYzogVG9iaWFzIEpha29iaSA8dGpha29i
-aUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gQ2M6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2b0Bw
-YWRvdmFuLm9yZz4KPiBDYzogdmluY2VudC5hYnJpb3VAc3QuY29tCj4gQ2M6IGZhYmllbi5kZXNz
-ZW5uZUBzdC5jb20KPiBDYzogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVh
-c29uYm9hcmQuY29tPgo+IC0tLQo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svZ3B1LnRtcGwgICAg
-ICB8ICAxMCArKwo+ICBkcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUgICAgICAgICAgICB8ICAgMiAr
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICB8ICAgNCArCj4gIGRyaXZl
-cnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIHwgICA2ICsKPiAgZHJpdmVycy9ncHUvZHJt
-L2RybV9ibGVuZC5jICAgICAgICAgfCAyMzAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oIHwgICAzICsKPiAgaW5j
-bHVkZS9kcm0vZHJtX2NydGMuaCAgICAgICAgICAgICAgfCAgMzAgKysrKysKPiAgNyBmaWxlcyBj
-aGFuZ2VkLCAyODQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgZHJpdmVycy9ncHUvZHJtL2RybV9ibGVuZC5jCgpbc25pcF0KCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQu
-Ywo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMC4uOWE1MzYxYQo+IC0tLSAv
-ZGV2L251bGwKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMKPiBAQCAtMCwwICsx
-LDIzMCBAQAoKW3NuaXBdCgo+ICsvKioKPiArICogZHJtX2F0b21pY19oZWxwZXJfY3J0Y19ub3Jt
-YWxpemVfenBvcyAtIGNhbGN1bGF0ZSBub3JtYWxpemVkIHpwb3MgdmFsdWVzCj4gKyAqIEBjcnRj
-OiBjcnRjIHdpdGggcGxhbmVzLCB3aGljaCBoYXZlIHRvIGJlIGNvbnNpZGVyZWQgZm9yIG5vcm1h
-bGl6YXRpb24KPiArICogQGNydGNfc3RhdGU6IG5ldyBhdG9taWMgc3RhdGUgdG8gYXBwbHkKPiAr
-ICoKPiArICogVGhpcyBmdW5jdGlvbiBjaGVja3MgbmV3IHN0YXRlcyBvZiBhbGwgcGxhbmVzIGFz
-c2lnbmVkIHRvIGdpdmVuIGNydGMgYW5kCj4gKyAqIGNhbGN1bGF0ZXMgbm9ybWFsaXplZCB6cG9z
-IHZhbHVlIGZvciB0aGVtLiBQbGFuZXMgYXJlIGNvbXBhcmVkIGZpcnN0IGJ5Cj4gdGhlaXIKPiAr
-ICogenBvcyB2YWx1ZXMsIHRoZW4gYnkgcGxhbmUgaWQgKGlmIHpwb3MgZXF1YWxzKS4gUGxhbmUg
-d2l0aCBsb3dlc3QgenBvcwo+IHZhbHVlCj4gKyAqIGlzIGF0IHRoZSBib3R0b20uIFRoZSBwbGFu
-ZV9zdGF0ZS0+bm9ybWFsaXplZF96cG9zIGlzIHRoZW4gZmlsbGVkIHdpdGgKPiB1bmlxdWUKPiAr
-ICogdmFsdWVzIGZyb20gMCB0byBudW1iZXIgb2YgYWN0aXZlIHBsYW5lcyBpbiBjcnRjIG1pbnVz
-IG9uZS4KPiArICoKPiArICogUkVUVVJOUwo+ICsgKiBaZXJvIGZvciBzdWNjZXNzIG9yIC1lcnJu
-bwo+ICsgKi8KPiAraW50IGRybV9hdG9taWNfaGVscGVyX2NydGNfbm9ybWFsaXplX3pwb3Moc3Ry
-dWN0IGRybV9jcnRjICpjcnRjLAo+ICsJCQkJCSAgc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRj
-X3N0YXRlKQo+ICt7Cj4gKwlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUgPSBjcnRjX3N0
-YXRlLT5zdGF0ZTsKPiArCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRjLT5kZXY7Cj4gKwlp
-bnQgdG90YWxfcGxhbmVzID0gZGV2LT5tb2RlX2NvbmZpZy5udW1fdG90YWxfcGxhbmU7Cj4gKwlz
-dHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICoqc3RhdGVzOwo+ICsJc3RydWN0IGRybV9wbGFuZSAqcGxh
-bmU7Cj4gKwlpbnQgaSwgenBvcywgbiA9IDA7Cj4gKwlpbnQgcmV0ID0gMDsKPiArCj4gKwlEUk1f
-REVCVUdfQVRPTUlDKCJbQ1JUQzolZDolc10gY2FsY3VsYXRpbmcgbm9ybWFsaXplZCB6cG9zIHZh
-bHVlc1xuIiwKPiArCQkJIGNydGMtPmJhc2UuaWQsIGNydGMtPm5hbWUpOwo+ICsKPiArCXN0YXRl
-cyA9IGttYWxsb2NfYXJyYXkodG90YWxfcGxhbmVzLCBzaXplb2YoKnN0YXRlcyksIEdGUF9URU1Q
-T1JBUlkpOwo+ICsJaWYgKCFzdGF0ZXMpCj4gKwkJcmV0dXJuIC1FTk9NRU07Cj4gKwo+ICsJLyoK
-PiArCSAqIE5vcm1hbGl6YXRpb24gcHJvY2VzcyBtaWdodCBjcmVhdGUgbmV3IHN0YXRlcyBmb3Ig
-cGxhbmVzIHdoaWNoCj4gKwkgKiBub3JtYWxpemVkX3pwb3MgaGFzIHRvIGJlIHJlY2FsY3VsYXRl
-ZC4KPiArCSAqLwo+ICsJZHJtX2Zvcl9lYWNoX3BsYW5lX21hc2socGxhbmUsIGRldiwgY3J0Y19z
-dGF0ZS0+cGxhbmVfbWFzaykgewo+ICsJCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0
-YXRlID0KPiArCQkJZHJtX2F0b21pY19nZXRfcGxhbmVfc3RhdGUoc3RhdGUsIHBsYW5lKTsKPiAr
-CQlpZiAoSVNfRVJSKHBsYW5lX3N0YXRlKSkgewo+ICsJCQlyZXQgPSBQVFJfRVJSKHBsYW5lX3N0
-YXRlKTsKPiArCQkJZ290byBkb25lOwo+ICsJCX0KPiArCQlzdGF0ZXNbbisrXSA9IHBsYW5lX3N0
-YXRlOwo+ICsJCURSTV9ERUJVR19BVE9NSUMoIltQTEFORTolZDolc10gcHJvY2Vzc2luZyB6cG9z
-IHZhbHVlICVkXG4iLAo+ICsJCQkJIHBsYW5lLT5iYXNlLmlkLCBwbGFuZS0+bmFtZSwKPiArCQkJ
-CSBwbGFuZV9zdGF0ZS0+enBvcyk7Cj4gKwl9Cj4gKwo+ICsJc29ydChzdGF0ZXMsIG4sIHNpemVv
-Zigqc3RhdGVzKSwgZHJtX2F0b21pY19zdGF0ZV96cG9zX2NtcCwgTlVMTCk7Cj4gKwo+ICsJZm9y
-IChpID0gMCwgenBvcyA9IDA7IGkgPCBuOyBpKyssIHpwb3MrKykgewo+ICsJCXBsYW5lID0gc3Rh
-dGVzW2ldLT5wbGFuZTsKPiArCj4gKwkJenBvcyA9IG1heF90KGludCwgenBvcywgc3RhdGVzW2ld
-LT56cG9zKTsKPiArCj4gKwkJV0FSTl9PTih6cG9zID4gcGxhbmUtPnpwb3NfcHJvcGVydHktPnZh
-bHVlc1sxXSk7CgpUaGlzIGNyYXNoZXMgaWYgdGhlIHBsYW5lIGRvZXNuJ3QgaGF2ZSBhIHpwb3Mg
-cHJvcGVydHkuIFRoZSBzaW1wbGVzdCBmaXggaXMgdG8gCndyaXRlIHRoZSBjaGVjayBhcwoKCQlX
-QVJOX09OKHBsYW5lLT56cG9zX3Byb3BlcnR5ICYmCgkJCXpwb3MgPiBwbGFuZS0+enBvc19wcm9w
-ZXJ0eS0+dmFsdWVzWzFdKTsKCmJ1dCBJIHdvbmRlciBob3cgd2Ugc2hvdWxkIGhhbmRsZSBkcml2
-ZXJzIHRoYXQgaW5zdGFudGlhdGUgYSB6cG9zIHByb3BlcnR5IGZvciAKYSBzdWJkZXYgb2YgdGhl
-IHBsYW5lcyBvbmx5LiBGb3IgZHJpdmVycyB0aGF0IGRvbid0IHVzZSB6cG9zIGF0IGFsbCB5b3Ug
-Y291bGQgCm1heWJlIGF2b2lkIGNhbGxpbmcgdGhpcyBmdW5jdGlvbi4KCkFkZGl0aW9uYWxseSwg
-dGhpcyBjaGVjayBpcyB0cmlnZ2VyZWQgd2l0aCB0aGUgcmNhci1kdS1kcm0gZHJpdmVyIHdoZW4g
-CnBlcmZvcm1pbmcgdGhlIGZvbGxvd2luZyBvcGVyYXRpb25zOgoKLSBQZXJmb3JtIGEgbW9kZSBz
-ZXQgd2l0aCB0aGUgQ1JUQyBwcmltYXJ5IHBsYW5lIG9ubHkgKHRoYXQgcGxhbmUgZG9lc24ndCBo
-YXZlIAphIHpwb3MgcHJvcGVydHkpCgotIEFkZCA3IG92ZXJsYXkgcGxhbmVzIHdpdGggenBvcyB2
-YWx1ZXMgMSB0byA3ICh0aGVpciB6cG9zIHByb3BlcnR5IHJhbmdlIGlzIAoxLTcpCgotIE1vZGlm
-eSB0aGUgenBvcyB2YWx1ZSBvZiBhbGwgb3ZlcmxheSBwbGFuZXMgb25lIGJ5IG9uZSB0byA3IHRv
-IDEgKHNldHRpbmcgCnpwb3MgNyBmb3IgcGxhbmUgMSBmaXJzdCwgdGhlbiB6cG9zIDYgZm9yIHBs
-YW5lIDIsIC4uLikKCkkgZ2V0IG5vcm1hbGl6ZWQgenBvcyB2YWx1ZXMgc3VjaCBhcwoKWyAgIDg0
-Ljg5MjkyN10gW1BMQU5FOjM5OnBsYW5lLThdIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZSA5ClsgICA4
-NS44OTkyODRdIFtQTEFORToyNTpwbGFuZS0wXSBub3JtYWxpemVkIHpwb3MgdmFsdWUgMApbICAg
-ODUuOTA0NDg4XSBbUExBTkU6Mzc6cGxhbmUtN10gbm9ybWFsaXplZCB6cG9zIHZhbHVlIDIKWyAg
-IDg1LjkwOTYzM10gW1BMQU5FOjM1OnBsYW5lLTZdIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZSAzClsg
-ICA4NS45MTQ3OTNdIFtQTEFORTozMzpwbGFuZS01XSBub3JtYWxpemVkIHpwb3MgdmFsdWUgNApb
-ICAgODUuOTE5OTM2XSBbUExBTkU6MzE6cGxhbmUtNF0gbm9ybWFsaXplZCB6cG9zIHZhbHVlIDUK
-WyAgIDg1LjkyNTEwMF0gW1BMQU5FOjI5OnBsYW5lLTNdIG5vcm1hbGl6ZWQgenBvcyB2YWx1ZSA2
-ClsgICA4NS45MzAyNDVdIFtQTEFORToyNzpwbGFuZS0yXSBub3JtYWxpemVkIHpwb3MgdmFsdWUg
-NwoKKHBsYW5lIDI1IGlzIHRoZSBwcmltYXJ5IHBsYW5lLCBhbGwgb3RoZXIgcGxhbmVzIGFyZSB0
-aGUgb3ZlcmxheSBwbGFuZXMsIGFkZGVkIAppbiB0aGUgb3JkZXIgMjcsIDI5LCAzMSwgMzMsIDM1
-LCAzNywgMzcgaW4gdGhlIHNlcXVlbmNlIGFib3ZlKQoKPiArCQlzdGF0ZXNbaV0tPm5vcm1hbGl6
-ZWRfenBvcyA9IHpwb3M7Cj4gKwkJRFJNX0RFQlVHX0FUT01JQygiW1BMQU5FOiVkOiVzXSBub3Jt
-YWxpemVkIHpwb3MgdmFsdWUgJWRcbiIsCj4gKwkJCQkgcGxhbmUtPmJhc2UuaWQsIHBsYW5lLT5u
-YW1lLCB6cG9zKTsKPiArCX0KPiArCWNydGNfc3RhdGUtPnpwb3NfY2hhbmdlZCA9IHRydWU7Cj4g
-Kwo+ICtkb25lOgo+ICsJa2ZyZWUoc3RhdGVzKTsKPiArCXJldHVybiByZXQ7Cj4gK30KPiArRVhQ
-T1JUX1NZTUJPTChkcm1fYXRvbWljX2hlbHBlcl9jcnRjX25vcm1hbGl6ZV96cG9zKTsKPiArCj4g
-Ky8qKgo+ICsgKiBkcm1fYXRvbWljX2hlbHBlcl9ub3JtYWxpemVfenBvcyAtIGNhbGN1bGF0ZSBu
-b3JtYWxpemVkIHpwb3MgdmFsdWVzIGZvcgo+IGFsbCArICoJCQkJICAgICAgY3J0Y3MKPiArICog
-QGRldjogRFJNIGRldmljZQo+ICsgKiBAc3RhdGU6IGF0b21pYyBzdGF0ZSBvZiBEUk0gZGV2aWNl
-Cj4gKyAqCj4gKyAqIFRoaXMgZnVuY3Rpb24gY2FsY3VsYXRlcyBub3JtYWxpemVkIHpwb3MgdmFs
-dWUgZm9yIGFsbCBtb2RpZmllZCBwbGFuZXMKPiBpbiArICogdGhlIHByb3ZpZGVkIGF0b21pYyBz
-dGF0ZSBvZiBEUk0gZGV2aWNlLiBGb3IgbW9yZSBpbmZvcm1hdGlvbiwgc2VlICsKPiAqIGRybV9h
-dG9taWNfaGVscGVyX2NydGNfbm9ybWFsaXplX3pwb3MoKSBmdW5jdGlvbi4KPiArICoKPiArICog
-UkVUVVJOUwo+ICsgKiBaZXJvIGZvciBzdWNjZXNzIG9yIC1lcnJubwo+ICsgKi8KPiAraW50IGRy
-bV9hdG9taWNfaGVscGVyX25vcm1hbGl6ZV96cG9zKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4g
-KwkJCQkgICAgIHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKPiArewo+ICsJc3RydWN0
-IGRybV9jcnRjICpjcnRjOwo+ICsJc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlOwo+
-ICsJc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4gKwlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpw
-bGFuZV9zdGF0ZTsKPiArCWludCBpLCByZXQgPSAwOwo+ICsKPiArCWZvcl9lYWNoX3BsYW5lX2lu
-X3N0YXRlKHN0YXRlLCBwbGFuZSwgcGxhbmVfc3RhdGUsIGkpIHsKPiArCQljcnRjID0gcGxhbmVf
-c3RhdGUtPmNydGM7Cj4gKwkJaWYgKCFjcnRjKQo+ICsJCQljb250aW51ZTsKPiArCQlpZiAocGxh
-bmUtPnN0YXRlLT56cG9zICE9IHBsYW5lX3N0YXRlLT56cG9zKSB7Cj4gKwkJCWNydGNfc3RhdGUg
-PQo+ICsJCQkJZHJtX2F0b21pY19nZXRfZXhpc3RpbmdfY3J0Y19zdGF0ZShzdGF0ZSwgCmNydGMp
-Owo+ICsJCQljcnRjX3N0YXRlLT56cG9zX2NoYW5nZWQgPSB0cnVlOwo+ICsJCX0KPiArCX0KPiAr
-Cj4gKwlmb3JfZWFjaF9jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBjcnRjX3N0YXRlLCBpKSB7
-Cj4gKwkJaWYgKGNydGNfc3RhdGUtPnBsYW5lX21hc2sgIT0gY3J0Yy0+c3RhdGUtPnBsYW5lX21h
-c2sgfHwKPiArCQkgICAgY3J0Y19zdGF0ZS0+enBvc19jaGFuZ2VkKSB7Cj4gKwkJCXJldCA9IGRy
-bV9hdG9taWNfaGVscGVyX2NydGNfbm9ybWFsaXplX3pwb3MoY3J0YywKPiArCQkJCQkJCQkgICAg
-CmNydGNfc3RhdGUpOwo+ICsJCQlpZiAocmV0KQo+ICsJCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4g
-Kwl9Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICtFWFBPUlRfU1lNQk9MKGRybV9hdG9taWNfaGVscGVy
-X25vcm1hbGl6ZV96cG9zKTsKCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This is done in preparation to move s_stream from v4l2_subdev_video_ops
+to v4l2_subdev_pad_ops. Only wpf implements s_stream so it will no
+longer be possible to share the v4l2_subdev_pad_ops once s_stream is
+moved.
+
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
+h.se>
+---
+ drivers/media/platform/vsp1/vsp1_rpf.c  | 12 +++++++++-
+ drivers/media/platform/vsp1/vsp1_rwpf.c | 40 +++++++++++++------------=
+--------
+ drivers/media/platform/vsp1/vsp1_rwpf.h | 20 +++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_wpf.c  | 12 +++++++++-
+ 4 files changed, 57 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/pla=
+tform/vsp1/vsp1_rpf.c
+index 49168db..fabe8b2 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -38,8 +38,18 @@ static inline void vsp1_rpf_write(struct vsp1_rwpf *=
+rpf,
+  * V4L2 Subdevice Operations
+  */
+=20
++const struct v4l2_subdev_pad_ops vsp1_rpf_pad_ops =3D {
++	.init_cfg =3D vsp1_entity_init_cfg,
++	.enum_mbus_code =3D vsp1_rwpf_enum_mbus_code,
++	.enum_frame_size =3D vsp1_rwpf_enum_frame_size,
++	.get_fmt =3D vsp1_subdev_get_pad_format,
++	.set_fmt =3D vsp1_rwpf_set_format,
++	.get_selection =3D vsp1_rwpf_get_selection,
++	.set_selection =3D vsp1_rwpf_set_selection,
++};
++
+ static struct v4l2_subdev_ops rpf_ops =3D {
+-	.pad    =3D &vsp1_rwpf_pad_ops,
++	.pad    =3D &vsp1_rpf_pad_ops,
+ };
+=20
+ /* -------------------------------------------------------------------=
+----------
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/pl=
+atform/vsp1/vsp1_rwpf.c
+index 3b6e032..ff03b9c 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.c
+@@ -31,9 +31,9 @@ struct v4l2_rect *vsp1_rwpf_get_crop(struct vsp1_rwpf=
+ *rwpf,
+  * V4L2 Subdevice Pad Operations
+  */
+=20
+-static int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
+-				    struct v4l2_subdev_pad_config *cfg,
+-				    struct v4l2_subdev_mbus_code_enum *code)
++int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
++			     struct v4l2_subdev_pad_config *cfg,
++			     struct v4l2_subdev_mbus_code_enum *code)
+ {
+ 	static const unsigned int codes[] =3D {
+ 		MEDIA_BUS_FMT_ARGB8888_1X32,
+@@ -48,9 +48,9 @@ static int vsp1_rwpf_enum_mbus_code(struct v4l2_subde=
+v *subdev,
+ 	return 0;
+ }
+=20
+-static int vsp1_rwpf_enum_frame_size(struct v4l2_subdev *subdev,
+-				     struct v4l2_subdev_pad_config *cfg,
+-				     struct v4l2_subdev_frame_size_enum *fse)
++int vsp1_rwpf_enum_frame_size(struct v4l2_subdev *subdev,
++			      struct v4l2_subdev_pad_config *cfg,
++			      struct v4l2_subdev_frame_size_enum *fse)
+ {
+ 	struct vsp1_rwpf *rwpf =3D to_rwpf(subdev);
+=20
+@@ -59,9 +59,9 @@ static int vsp1_rwpf_enum_frame_size(struct v4l2_subd=
+ev *subdev,
+ 					   rwpf->max_height);
+ }
+=20
+-static int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
+-				struct v4l2_subdev_pad_config *cfg,
+-				struct v4l2_subdev_format *fmt)
++int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
++			 struct v4l2_subdev_pad_config *cfg,
++			 struct v4l2_subdev_format *fmt)
+ {
+ 	struct vsp1_rwpf *rwpf =3D to_rwpf(subdev);
+ 	struct v4l2_subdev_pad_config *config;
+@@ -113,9 +113,9 @@ static int vsp1_rwpf_set_format(struct v4l2_subdev =
+*subdev,
+ 	return 0;
+ }
+=20
+-static int vsp1_rwpf_get_selection(struct v4l2_subdev *subdev,
+-				   struct v4l2_subdev_pad_config *cfg,
+-				   struct v4l2_subdev_selection *sel)
++int vsp1_rwpf_get_selection(struct v4l2_subdev *subdev,
++			    struct v4l2_subdev_pad_config *cfg,
++			    struct v4l2_subdev_selection *sel)
+ {
+ 	struct vsp1_rwpf *rwpf =3D to_rwpf(subdev);
+ 	struct v4l2_subdev_pad_config *config;
+@@ -150,9 +150,9 @@ static int vsp1_rwpf_get_selection(struct v4l2_subd=
+ev *subdev,
+ 	return 0;
+ }
+=20
+-static int vsp1_rwpf_set_selection(struct v4l2_subdev *subdev,
+-				   struct v4l2_subdev_pad_config *cfg,
+-				   struct v4l2_subdev_selection *sel)
++int vsp1_rwpf_set_selection(struct v4l2_subdev *subdev,
++			    struct v4l2_subdev_pad_config *cfg,
++			    struct v4l2_subdev_selection *sel)
+ {
+ 	struct vsp1_rwpf *rwpf =3D to_rwpf(subdev);
+ 	struct v4l2_subdev_pad_config *config;
+@@ -209,16 +209,6 @@ static int vsp1_rwpf_set_selection(struct v4l2_sub=
+dev *subdev,
+ 	return 0;
+ }
+=20
+-const struct v4l2_subdev_pad_ops vsp1_rwpf_pad_ops =3D {
+-	.init_cfg =3D vsp1_entity_init_cfg,
+-	.enum_mbus_code =3D vsp1_rwpf_enum_mbus_code,
+-	.enum_frame_size =3D vsp1_rwpf_enum_frame_size,
+-	.get_fmt =3D vsp1_subdev_get_pad_format,
+-	.set_fmt =3D vsp1_rwpf_set_format,
+-	.get_selection =3D vsp1_rwpf_get_selection,
+-	.set_selection =3D vsp1_rwpf_set_selection,
+-};
+-
+ /* -------------------------------------------------------------------=
+----------
+  * Controls
+  */
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/pl=
+atform/vsp1/vsp1_rwpf.h
+index 9ff7c78..5ed4be5 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.h
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+@@ -74,6 +74,26 @@ extern const struct v4l2_subdev_pad_ops vsp1_rwpf_pa=
+d_ops;
+=20
+ struct v4l2_rect *vsp1_rwpf_get_crop(struct vsp1_rwpf *rwpf,
+ 				     struct v4l2_subdev_pad_config *config);
++
++int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
++			     struct v4l2_subdev_pad_config *cfg,
++			     struct v4l2_subdev_mbus_code_enum *code);
++
++int vsp1_rwpf_enum_frame_size(struct v4l2_subdev *subdev,
++			      struct v4l2_subdev_pad_config *cfg,
++			      struct v4l2_subdev_frame_size_enum *fse);
++
++int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
++			 struct v4l2_subdev_pad_config *cfg,
++			 struct v4l2_subdev_format *fmt);
++
++int vsp1_rwpf_get_selection(struct v4l2_subdev *subdev,
++			    struct v4l2_subdev_pad_config *cfg,
++			    struct v4l2_subdev_selection *sel);
++
++int vsp1_rwpf_set_selection(struct v4l2_subdev *subdev,
++			    struct v4l2_subdev_pad_config *cfg,
++			    struct v4l2_subdev_selection *sel);
+ /**
+  * vsp1_rwpf_set_memory - Configure DMA addresses for a [RW]PF
+  * @rwpf: the [RW]PF instance
+diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/pla=
+tform/vsp1/vsp1_wpf.c
+index 6c91eaa..75fe7de 100644
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -62,13 +62,23 @@ static int wpf_s_stream(struct v4l2_subdev *subdev,=
+ int enable)
+  * V4L2 Subdevice Operations
+  */
+=20
++const struct v4l2_subdev_pad_ops vsp1_wpf_pad_ops =3D {
++	.init_cfg =3D vsp1_entity_init_cfg,
++	.enum_mbus_code =3D vsp1_rwpf_enum_mbus_code,
++	.enum_frame_size =3D vsp1_rwpf_enum_frame_size,
++	.get_fmt =3D vsp1_subdev_get_pad_format,
++	.set_fmt =3D vsp1_rwpf_set_format,
++	.get_selection =3D vsp1_rwpf_get_selection,
++	.set_selection =3D vsp1_rwpf_set_selection,
++};
++
+ static struct v4l2_subdev_video_ops wpf_video_ops =3D {
+ 	.s_stream =3D wpf_s_stream,
+ };
+=20
+ static struct v4l2_subdev_ops wpf_ops =3D {
+ 	.video	=3D &wpf_video_ops,
+-	.pad    =3D &vsp1_rwpf_pad_ops,
++	.pad    =3D &vsp1_wpf_pad_ops,
+ };
+=20
+ /* -------------------------------------------------------------------=
+----------
+--=20
+2.8.3
