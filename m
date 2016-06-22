@@ -1,116 +1,45 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v3 0/10]
-Date: Wed, 22 Jun 2016 08:53:57 +0530
-Message-ID: <576A04CD.8070800@codeaurora.org>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <5769453B.5070208@codeaurora.org> <5769F6DF.4050507@rock-chips.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: exynos: fix UART address selection for DEBUG_LL
+Date: Wed, 22 Jun 2016 08:24:12 +0200
+Message-ID: <CAJKOXPeH_OU1NcHQpXXrnVL+_+RiG5win_k+a0JfWp2Mb3Xh0A@mail.gmail.com>
+References: <1411728234-29705-1-git-send-email-jy0922.shim@samsung.com>
+ <54BCAA73.5080404@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5769F6DF.4050507@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>, Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <54BCAA73.5080404@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgpPbiA2LzIyLzIwMTYgNzo1NCBBTSwgWWFraXIgWWFuZyB3cm90ZToKPiBBcmNoaXQsCj4KPiBP
-biAwNi8yMS8yMDE2IDA5OjQ2IFBNLCBBcmNoaXQgVGFuZWphIHdyb3RlOgo+Pgo+Pgo+PiBPbiA2
-LzE0LzIwMTYgNToxNSBQTSwgWWFraXIgWWFuZyB3cm90ZToKPj4+IFJLMzM5OSBhbmQgUkszMjg4
-IHNoYXJlZCB0aGUgc2FtZSBlRFAgSVAgY29udHJvbGxlciwgb25seSBzb21lIGxpZ2h0Cj4+PiBk
-aWZmZXJlbmNlIHdpdGggVk9QIGNvbmZpZ3VyZSBhbmQgR1JGIGNvbmZpZ3VyZS4KPj4+Cj4+PiBB
-bHNvIHNhbWUgbWlzYyBmaXggdG8gYW5hbG9naXhfZHAgZHJpdmVyOgo+Pj4gLSBIb3RwbHVnIGlu
-dmFsaWQgd2hpY2ggcmVwb3J0IGJ5IERhbiBDYXJwZW50ZXIKPj4+IC0gTWFrZSBwYW5lbCBkZXRl
-Y3QgdG8gYW4gb3B0aW9uYWwgYWN0aW9uCj4+PiAtIGNvcnJlY3QgdGhlIHJlZ2lzdGVyIGJpdCBk
-ZWZpbmUgZXJyb3IgaW4gQU5BTE9HSVhfRFBfUExMX1JFR18xCj4+Pgo+Pj4KPj4+IENoYW5nZXMg
-aW4gdjM6Cj4+PiAtIENvcnJlY3QgdGhlIG1pc3NwZWxsIG9mICJtYXJjb3MiIGluIGNvbW1pdCBt
-ZXNzYWdlIChEb21pbmlrLAo+Pj4gcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4+IFtodHRw
-czovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTIvOS8vQ09NTUlU
-X01TR0A5XQo+Pj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFN0w6lwaGFuZS4KPj4+ICAgICAg
-W2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMi8xNl0K
-Pj4+IC0gQWRkIHRlc3RlZCBmbGFnIGZyb20gSmF2aWVyLgo+Pj4gLSBXcml0ZSBhIGtlcm5lbGRv
-Yy1zdHlsZSBjb21tZW50IGV4cGxhaW5pbmcgdGhlIGNoaXBzIGRhdGEgZmllbGRzCj4+PiAoVG9t
-YXN6LCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQo+Pj4gW2h0dHBzOi8vY2hyb21pdW0tcmV2
-aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMy8xMC9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
-aXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuY0AzOV0KPj4+Cj4+PiAtIERyb3AgdGhlICcubGNkY3Nl
-bF9tYXNrJyBudW1iZXIgaW4gY2hpcHMgZGF0YSBmaWVsZCAoVG9tYXN6LAo+Pj4gcmV2aWV3ZWQg
-YXQgR29vZ2xlIEdlcnJpdCkKPj4+IFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3Vy
-Y2UuY29tLyMvYy8zNDYzMTMvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2Rw
-LXJvY2tjaGlwLmNAMzgyXQo+Pj4KPj4+IC0gQWRkIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+Pj4g
-LSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPj4+ICAgICAgW2h0dHBzOi8vY2hyb21p
-dW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNS8xNV0KPj4+IC0gQWRkIHRlc3Rl
-ZCBmbGFnIGZyb20gSmF2aWVyCj4+PiAtIE1ha2UgdGhpcyBoYWNrIGNvZGUgbW9yZSBjbGVhciAo
-VG9tYXN6LCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQo+Pj4gICAgcmVnID0gfnJlZyAmIFJF
-Rl9DTEtfTUFTSzsgIC0tLT4gIHJlZyBePSBSRUZfQ0xLX01BU0s7Cj4+PiBbaHR0cHM6Ly9jaHJv
-bWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2ODUyLzcvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuY0A4MF0KPj4+Cj4+PiAtIEFkZCB0ZXN0
-ZWQgZmxhZyBmcm9tIEphdmllcgo+Pj4gLSBHaXZlIHRoZSAicmszMzk5LWVkcCIgYSBzZXBhcmF0
-ZSBsaW5lIGZvciBjbGFyaXR5IGluIGRvY3VtZW50Cj4+PiAoVG9tYXN6LCByZXZpZXdlZCBhdCBH
-b29nbGUgR2Vycml0KQo+Pj4gW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5j
-b20vIy9jLzM0NjMxNC8xMC9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxh
-eS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHRANV0KPj4+Cj4+PiAtIE1vdmUgJ291
-dHB1dF90eXBlJyBzZXR0aW5nIGJlZm9yZSB0aGUgcmV0dXJuIHN0YXRlbWVudCAoVG9tYXN6LAo+
-Pj4gcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4+IFtodHRwczovL2Nocm9taXVtLXJldmll
-dy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTQvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
-L2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmNAMTU0XQo+Pj4KPj4+IC0gQWRkIHRoZSBhY2tlZCBmbGFn
-IGZyb20gTWFyay4KPj4+IC0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4KPj4+IC0gQXZv
-aWQgdG8gY2hhbmdlIGFueSBpbnRlcm5hbCBkcml2ZXIgc3RhdGUgaW4gLm1vZGVfdmFsaWQgaW50
-ZXJmYWNlLgo+Pj4gKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4+IFtodHRw
-czovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTgvMTAvZHJpdmVy
-cy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmNAMTEzXQo+Pj4KPj4+IC0g
-SG9vayB0aGUgY29ubmVjdG9yJ3MgY29sb3JfZm9ybWF0cyBpbiAuZ2V0X21vZGVzIGRpcmVjdGx5
-LiAoVG9tYXN6LAo+Pj4gcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPj4+ICAgICAgW2h0dHBz
-Oi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNy8xNV0KPj4+IC0g
-QWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4KPj4+IC0gQWRkIHRoZSByZXZpZXdlZCBmbGFn
-IGZyb20gVG9tYXN6Lgo+Pj4gICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291
-cmNlLmNvbS8jL2MvMzQ2ODUzLzEyXQo+Pj4gLSBBZGQgdGhlIGFja2VkIGZsYWcgZnJvbSBNYXJr
-Lgo+Pj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFN0w6lwaGFuZS4KPj4+ICAgICAgW2h0dHBz
-Oi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxOS8xNV0KPj4+IC0g
-QWRkIHRlc3RlZCBmbGFnIGZyb20gSmF2aWVyCj4+Pgo+Pj4gQ2hhbmdlcyBpbiB2MjoKPj4+IC0g
-bmV3IHBhdGNoIGluIHYyCj4+PiAtIHJlYmFzZSB3aXRoIGRybS1uZXh0LCBmaXggc29tZSBjb25m
-bGljdHMKPj4+IC0gbmV3IHBhdGNoIGluIHYyCj4+Pgo+Pj4gWWFraXIgWWFuZyAoMTApOgo+Pj4g
-ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IHJlbmFtZSBSSzMyODhfRFAgdG8gUk9DS0NISVBf
-RFAKPj4+ICAgIGRybS9yb2NrY2hpcDogYW5hbG9naXhfZHA6IHNwbGl0IHRoZSBsY2RjIHNlbGVj
-dCBzZXR0aW5nIGludG8gZGV2aWNlCj4+PiAgICAgIGRhdGEKPj4+ICAgIGRybS9icmlkZ2U6IGFu
-YWxvZ2l4X2RwOiBjb3JyZWN0IHRoZSByZWdpc3RlciBiaXQgZGVmaW5lIGVycm9yIGluCj4+PiAg
-ICAgIEFOQUxPR0lYX0RQX1BMTF9SRUdfMQo+Pj4gICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6
-IHNvbWUgcm9ja2NoaXAgY2hpcHMgbmVlZCB0byBmbGlwIFJFRl9DTEsgYml0Cj4+PiAgICAgIHNl
-dHRpbmcKPj4+ICAgIGRybS9yb2NrY2hpcDogYW5hbG9naXhfZHA6IGFkZCByazMzOTkgZURQIHN1
-cHBvcnQKPj4+ICAgIGRybS9yb2NrY2hpcDogYW5hbG9naXhfZHA6IG1ha2UgcGFuZWwgZGV0ZWN0
-IHRvIGFuIG9wdGlvbmFsIGFjdGlvbgo+Pj4gICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IHBh
-c3NpbmcgdGhlIGNvbm5lY3RvciBhcyBhbiBhcmd1bWVudCBpbgo+Pj4gICAgICAuZ2V0X21vZGVz
-KCkKPj4+ICAgIGRybS9yb2NrY2hpcDogYW5hbG9naXhfZHA6IGNvcnJlY3QgdGhlIGNvbm5lY3Rv
-ciBkaXNwbGF5IGNvbG9yIGZvcm1hdAo+Pj4gICAgICBhbmQgYnBjCj4+PiAgICBkcm0vcm9ja2No
-aXA6IGFuYWxvZ2l4X2RwOiB1cGRhdGUgdGhlIGNvbW1lbnRzIGFib3V0IHdoeSBuZWVkIHRvCj4+
-PiAgICAgIGhhcmRjb2RlIFZPUCBvdXRwdXQgbW9kZQo+Pj4gICAgZHJtL2JyaWRnZTogYW5hbG9n
-aXhfZHA6IGZpeCBubyBkcm0gaHBkIGV2ZW50IHdoZW4gcGFuZWwgcGx1ZyBpbgo+Pgo+PiBJcyB0
-aGUgcGxhbiB0byB0YWtlIGFsbCB0aGUgYnJpZGdlK3JvY2tjaGlwIHN0dWZmIHZpYSB0aGUgcm9j
-a2NoaXAgcHVsbAo+PiByZXF1ZXN0Pwo+Pgo+Cj4gWWVwLCBtb3N0IG9mIHRob3NlIHBhdGNoIG5l
-ZWQgdG8gcmVseSBvbiBvdGhlcnMsIHNvIGl0J3MgYmV0dGVyIHRvCj4gY29sbGVjdCBhbGwgb2Yg
-dGhlbSBpbnRvIG9uZSBwdWxsIHJlcXVlc3QgOykKCkNvb2wuIFNvdW5kcyBnb29kLgoKQXJjaGl0
-Cgo+Cj4gVGhhbmtzLAo+IC0gWWFraXIKPgo+PiBUaGFua3MsCj4+IEFyY2hpdAo+Pgo+Pj4KPj4+
-ICAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCAgICAgICAgfCAg
-IDEgKwo+Pj4gICAuLi4vZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQg
-ICAgICB8ICAgMyArLQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
-Z2l4X2RwX2NvcmUuYyB8ICAgNiArLQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICAgOCArLQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8ICAxMiArLQo+Pj4gICBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oICB8ICAgNSArLQo+Pj4gICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAgNCAr
-LQo+Pj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAg
-ICB8IDE1OAo+Pj4gKysrKysrKysrKysrKystLS0tLS0tCj4+PiAgIGluY2x1ZGUvZHJtL2JyaWRn
-ZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgIHwgICA5ICstCj4+PiAgIDkgZmlsZXMg
-Y2hhbmdlZCwgMTQxIGluc2VydGlvbnMoKyksIDY1IGRlbGV0aW9ucygtKQo+Pj4KPj4KPgo+Cgot
-LSAKUXVhbGNvbW0gSW5ub3ZhdGlvbiBDZW50ZXIsIEluYy4gaXMgYSBtZW1iZXIgb2YgQ29kZSBB
-dXJvcmEgRm9ydW0sCmEgTGludXggRm91bmRhdGlvbiBDb2xsYWJvcmF0aXZlIFByb2plY3QKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, Jan 19, 2015 at 7:55 AM, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
+> Hi kukjin,
+>
+> On 09/26/2014 07:43 PM, Joonyoung Shim wrote:
+>> The exynos5 SoCs using A15+A7 can boot to A15 or A7. If it boots using
+>> A7, it can't detect right UART physical address only the part number of
+>> CP15. It's possible to solve as checking Cluster ID additionally.
+>>
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> ---
+>>  arch/arm/include/debug/exynos.S | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+
+This is an old patch... but still valid and needed on Odroid XU
+family. Tested by Marek Szyprowski.
+
+Applied, thanks!
+
+BR,
+Krzysztof
