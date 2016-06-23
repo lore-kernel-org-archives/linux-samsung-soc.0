@@ -1,72 +1,119 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 10/10] drm/bridge: analogix_dp: fix no drm hpd event
- when panel plug in
-Date: Thu, 23 Jun 2016 10:24:00 -0400
-Message-ID: <CAOw6vbJwWCBcj9CsxXnu4S4W94r8TioTf1p-poYH8Tac8hYO0Q@mail.gmail.com>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com> <1465904802-1164-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v3 02/10] drm/rockchip: analogix_dp: split the lcdc select
+ setting into device data
+Date: Thu, 23 Jun 2016 10:32:53 -0400
+Message-ID: <CAOw6vbLovzM_9W1wkBgXD4aDWGJF2YdGTn6TXEhU6UYokUgG9g@mail.gmail.com>
+References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
+ <1465904768-805-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1465904802-1164-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1465904768-805-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 14, 2016 at 7:46 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> The enum value of DP_IRQ_TYPE_HP_CABLE_IN is zero, but driver only
-> send drm hp event when the irq_type and the enum value is true.
->
-> if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN || ...)
->         drm_helper_hpd_irq_event(dp->drm_dev);
->
-> So there would no drm hpd event when cable plug in, to fix that
-> just need to assign all hotplug enum with no-zero values.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Reviewed-by: St=C3=A9phane Marchesin <marcheu@chromium.org>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> ---
-> Changes in v3:
-> - Add reviewed flag from St=C3=A9phane.
->     [https://chromium-review.googlesource.com/#/c/346319/15]
-> - Add tested flag from Javier
->
-> Changes in v2: None
->
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/dri=
-vers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> index f09275d..b456380 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> @@ -127,10 +127,10 @@ enum analog_power_block {
->  };
->
->  enum dp_irq_type {
-> -       DP_IRQ_TYPE_HP_CABLE_IN,
-> -       DP_IRQ_TYPE_HP_CABLE_OUT,
-> -       DP_IRQ_TYPE_HP_CHANGE,
-> -       DP_IRQ_TYPE_UNKNOWN,
-> +       DP_IRQ_TYPE_HP_CABLE_IN  =3D BIT(0),
-> +       DP_IRQ_TYPE_HP_CABLE_OUT =3D BIT(1),
-> +       DP_IRQ_TYPE_HP_CHANGE    =3D BIT(2),
-> +       DP_IRQ_TYPE_UNKNOWN      =3D BIT(3),
->  };
->
->  struct video_info {
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+T24gVHVlLCBKdW4gMTQsIDIwMTYgYXQgNzo0NiBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
+cHMuY29tPiB3cm90ZToKPiBlRFAgY29udHJvbGxlciBuZWVkIHRvIGRlY2xhcmUgd2hpY2ggdm9w
+IHByb3ZpZGUgdGhlIHZpZGVvIHNvdXJjZSwKPiBhbmQgaXQncyBkZWZpbmVkIGluIEdSRiByZWdp
+c3RlcnMuCj4KPiBCdXQgZGlmZmVyZW50IGNoaXBzIGhhdmUgZGlmZmVyZW50IEdSRiByZWdpc3Rl
+ciBhZGRyZXNzLCBzbyB3ZSBuZWVkIHRvCj4gY3JlYXRlIGEgZGV2aWNlIGRhdGEgdG8gZGVjbGFy
+ZSB0aGUgR1JGIG1lc3NhZ2VzIGZvciBlYWNoIGNoaXBzLgo+Cj4gU2lnbmVkLW9mZi1ieTogWWFr
+aXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+IEFja2VkLWJ5OiBNYXJrIFlhbyA8bWFyay55
+YW9Acm9jay1jaGlwcy5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBpbiB2MzoKPiAtIFdyaXRlIGEga2Vy
+bmVsZG9jLXN0eWxlIGNvbW1lbnQgZXhwbGFpbmluZyB0aGUgY2hpcHMgZGF0YSBmaWVsZHMgKFRv
+bWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0t
+cmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMy8xMC9kcml2ZXJzL2dwdS9kcm0vcm9j
+a2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuY0AzOV0KPiAtIERyb3AgdGhlICcubGNkY3NlbF9t
+YXNrJyBudW1iZXIgaW4gY2hpcHMgZGF0YSBmaWVsZCAoVG9tYXN6LCByZXZpZXdlZCBhdCBHb29n
+bGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNv
+bS8jL2MvMzQ2MzEzLzEwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2Nr
+Y2hpcC5jQDM4Ml0KPiAtIEFkZCBhY2tlZCBmbGFnIGZyb20gTWFyay4KPgo+IENoYW5nZXMgaW4g
+djI6IE5vbmUKPgo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2No
+aXAuYyB8IDM5ICsrKysrKysrKysrKysrKysrKystLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMw
+IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+IGluZGV4IDJiYzhhN2UuLjM4NTVmNDYg
+MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tj
+aGlwLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2No
+aXAuYwo+IEBAIC0xNCw2ICsxNCw3IEBACj4KPiAgI2luY2x1ZGUgPGxpbnV4L2NvbXBvbmVudC5o
+Pgo+ICAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgo+ICsjaW5jbHVkZSA8bGludXgvb2Zf
+ZGV2aWNlLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9vZl9ncmFwaC5oPgo+ICAjaW5jbHVkZSA8bGlu
+dXgvcmVnbWFwLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9yZXNldC5oPgo+IEBAIC0zNSwxMSArMzYs
+MTcgQEAKPgo+ICAjZGVmaW5lIHRvX2RwKG5tKSAgICAgIGNvbnRhaW5lcl9vZihubSwgc3RydWN0
+IHJvY2tjaGlwX2RwX2RldmljZSwgbm0pCj4KPiAtLyogZHAgZ3JmIHJlZ2lzdGVyIG9mZnNldCAq
+Lwo+IC0jZGVmaW5lIEdSRl9TT0NfQ09ONiAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDAy
+NWMKPiAtI2RlZmluZSBHUkZfRURQX0xDRF9TRUxfTUFTSyAgICAgICAgICAgICAgICAgICAgQklU
+KDUpCj4gLSNkZWZpbmUgR1JGX0VEUF9TRUxfVk9QX0xJVCAgICAgICAgICAgICAgICAgICAgIEJJ
+VCg1KQo+IC0jZGVmaW5lIEdSRl9FRFBfU0VMX1ZPUF9CSUcgICAgICAgICAgICAgICAgICAgICAw
+Cj4gKy8qKgo+ICsgKiBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhIC0gc3BsaXRlIHRoZSBn
+cmYgc2V0dGluZyBvZiBraW5kIG9mIGNoaXBzCj4gKyAqIEBsY2RzZWxfZ3JmX3JlZzogZ3JmIHJl
+Z2lzdGVyIG9mZnNldCBvZiBsY2RjIHNlbGVjdAo+ICsgKiBAbGNkc2VsX2JpZzogcmVnIHZhbHVl
+IG9mIHNlbGVjdGluZyB2b3AgYmlnIGZvciBlRFAKPiArICogQGxjZHNlbF9saXQ6IHJlZyB2YWx1
+ZSBvZiBzZWxlY3Rpbmcgdm9wIGxpdHRsZSBmb3IgZURQCj4gKyAqLwo+ICtzdHJ1Y3Qgcm9ja2No
+aXBfZHBfY2hpcF9kYXRhIHsKPiArICAgICAgIHUzMiAgICAgbGNkc2VsX2dyZl9yZWc7Cj4gKyAg
+ICAgICB1MzIgICAgIGxjZHNlbF9iaWc7Cj4gKyAgICAgICB1MzIgICAgIGxjZHNlbF9saXQ7Cj4g
+K307Cj4KPiAgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7Cj4gICAgICAgICBzdHJ1Y3QgZHJt
+X2RldmljZSAgICAgICAgKmRybV9kZXY7Cj4gQEAgLTUxLDYgKzU4LDggQEAgc3RydWN0IHJvY2tj
+aGlwX2RwX2RldmljZSB7Cj4gICAgICAgICBzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdyZjsK
+PiAgICAgICAgIHN0cnVjdCByZXNldF9jb250cm9sICAgICAqcnN0Owo+Cj4gKyAgICAgICBjb25z
+dCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhICpkYXRhOwo+ICsKPiAgICAgICAgIHN0cnVj
+dCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgcGxhdF9kYXRhOwo+ICB9Owo+Cj4gQEAgLTExOSwxMyAr
+MTI4LDEzIEBAIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX2VuYWJsZShzdHJ1
+Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCj4gICAgICAgICAgICAgICAgIHJldHVybjsKPgo+ICAg
+ICAgICAgaWYgKHJldCkKPiAtICAgICAgICAgICAgICAgdmFsID0gR1JGX0VEUF9TRUxfVk9QX0xJ
+VCB8IChHUkZfRURQX0xDRF9TRUxfTUFTSyA8PCAxNik7Cj4gKyAgICAgICAgICAgICAgIHZhbCA9
+IGRwLT5kYXRhLT5sY2RzZWxfbGl0Owo+ICAgICAgICAgZWxzZQo+IC0gICAgICAgICAgICAgICB2
+YWwgPSBHUkZfRURQX1NFTF9WT1BfQklHIHwgKEdSRl9FRFBfTENEX1NFTF9NQVNLIDw8IDE2KTsK
+PiArICAgICAgICAgICAgICAgdmFsID0gZHAtPmRhdGEtPmxjZHNlbF9iaWc7Cj4KPiAgICAgICAg
+IGRldl9kYmcoZHAtPmRldiwgInZvcCAlcyBvdXRwdXQgdG8gZHBcbiIsIChyZXQpID8gIkxJVCIg
+OiAiQklHIik7Cj4KPiAtICAgICAgIHJldCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBHUkZfU09D
+X0NPTjYsIHZhbCk7Cj4gKyAgICAgICByZXQgPSByZWdtYXBfd3JpdGUoZHAtPmdyZiwgZHAtPmRh
+dGEtPmxjZHNlbF9ncmZfcmVnLCB2YWwpOwo+ICAgICAgICAgaWYgKHJldCAhPSAwKSB7Cj4gICAg
+ICAgICAgICAgICAgIGRldl9lcnIoZHAtPmRldiwgIkNvdWxkIG5vdCB3cml0ZSB0byBHUkY6ICVk
+XG4iLCByZXQpOwo+ICAgICAgICAgICAgICAgICByZXR1cm47Cj4gQEAgLTI0Niw2ICsyNTUsNyBA
+QCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
+ZGV2aWNlICptYXN0ZXIsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZvaWQgKmRhdGEp
+Cj4gIHsKPiAgICAgICAgIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gZGV2X2dldF9k
+cnZkYXRhKGRldik7Cj4gKyAgICAgICBjb25zdCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRh
+ICpkcF9kYXRhOwo+ICAgICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+
+ICAgICAgICAgaW50IHJldDsKPgo+IEBAIC0yNTYsMTAgKzI2NiwxNSBAQCBzdGF0aWMgaW50IHJv
+Y2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIs
+Cj4gICAgICAgICAgKi8KPiAgICAgICAgIGRldl9zZXRfZHJ2ZGF0YShkZXYsIE5VTEwpOwo+Cj4g
+KyAgICAgICBkcF9kYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7Cj4gKyAgICAg
+ICBpZiAoIWRwX2RhdGEpCj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOwo+ICsKPiAg
+ICAgICAgIHJldCA9IHJvY2tjaGlwX2RwX2luaXQoZHApOwo+ICAgICAgICAgaWYgKHJldCA8IDAp
+Cj4gICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4KPiArICAgICAgIGRwLT5kYXRhID0gZHBf
+ZGF0YTsKPiAgICAgICAgIGRwLT5kcm1fZGV2ID0gZHJtX2RldjsKPgo+ICAgICAgICAgcmV0ID0g
+cm9ja2NoaXBfZHBfZHJtX2NyZWF0ZV9lbmNvZGVyKGRwKTsKPiBAQCAtMzY1LDggKzM4MCwxNCBA
+QCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgcm9ja2NoaXBfZHBfcG1fb3BzID0gewo+
+ICAgICAgICAgU0VUX1NZU1RFTV9TTEVFUF9QTV9PUFMocm9ja2NoaXBfZHBfc3VzcGVuZCwgcm9j
+a2NoaXBfZHBfcmVzdW1lKQo+ICB9Owo+Cj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgcm9ja2NoaXBf
+ZHBfY2hpcF9kYXRhIHJrMzI4OF9kcCA9IHsKPiArICAgICAgIC5sY2RzZWxfZ3JmX3JlZyA9IDB4
+MDI1YywKPiArICAgICAgIC5sY2RzZWxfYmlnID0gMCB8IEJJVCgyMSksCj4gKyAgICAgICAubGNk
+c2VsX2xpdCA9IEJJVCg1KSB8IEJJVCgyMSksCgpJJ20gbm90IHN1cmUgd2hhdCBjb252ZW50aW9u
+IGlzIGluIG90aGVyIGRyaXZlcnMsIGJ1dCB0aGlzIHNlZW1zIGxlc3MKcmVhZGFibGUgdG8gbWUu
+CgpJJ2QgcHJlZmVyIHRoYXQgdGhlIG1hZ2ljIG51bWJlcnMgd2VyZSBhc3NpZ25lZCB0byBhICNk
+ZWZpbmUgdGhhdApjb3JyZXNwb25kcyB0byBhIFRSTSBuYW1lIGluIHNvbWUgaGVhZGVyLiBUaGVu
+IHlvdSBoYXZlIG5hbWVzIGluIHRoZQphc3NpZ25tZW50IGluc3RlYWQgb2YgbWVhbmluZ2xlc3Mg
+bnVtYmVycy4KClNlYW4KCj4gK307Cj4gKwo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
+ZV9pZCByb2NrY2hpcF9kcF9kdF9pZHNbXSA9IHsKPiAtICAgICAgIHsuY29tcGF0aWJsZSA9ICJy
+b2NrY2hpcCxyazMyODgtZHAiLH0sCj4gKyAgICAgICB7LmNvbXBhdGlibGUgPSAicm9ja2NoaXAs
+cmszMjg4LWRwIiwgLmRhdGEgPSAmcmszMjg4X2RwIH0sCj4gICAgICAgICB7fQo+ICB9Owo+ICBN
+T0RVTEVfREVWSUNFX1RBQkxFKG9mLCByb2NrY2hpcF9kcF9kdF9pZHMpOwo+IC0tCj4gMS45LjEK
+Pgo+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+
+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
