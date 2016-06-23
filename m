@@ -1,57 +1,93 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v4 2/2] dt-bindings: analogix_dp: rockchip: correct the wrong compatible name
-Date: Thu, 23 Jun 2016 09:47:04 +0800
-Message-ID: <1466646424-10583-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v4.1 1/2] drm/rockchip: analogix_dp: introduce the pclk for grf
+Date: Thu, 23 Jun 2016 09:58:07 +0800
+Message-ID: <1466647087-22207-1-git-send-email-ykk@rock-chips.com>
 References: <1466562678-11094-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:36613 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751709AbcFWBrT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2016 21:47:19 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1466562678-11094-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.com>, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.com>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The document about rockchip platform make a mistaken in available
-compatible name of "rk3288-edp", we should correct it to "rk3288-dp"
-which correspond to the compatible name in driver.
-
-This mistaken was introduced in commit be91c36247089 ("dt-bindings:
-add document for rockchip variant of analogix_dp").
-
-Reported-by: Tomasz Figa <tfiga@chromium.com>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
-Hi all,
-
-This is an external patch for analogix_dp misc cleanup thread [0]
-[0]: https://patchwork.kernel.org/patch/9175613/
-
-BR,
-- Yakir
-
-Changes in v4: None
-Changes in v3:
-- Add this patch in v3
-
- .../devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt       | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-index 0b39256..01cced1 100644
---- a/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-+++ b/Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
-@@ -2,7 +2,7 @@ Rockchip RK3288 specific extensions to the Analogix Display Port
- ================================
- 
- Required properties:
--- compatible: "rockchip,rk3288-edp",
-+- compatible: "rockchip,rk3288-dp",
- 	      "rockchip,rk3399-edp";
- 
- - reg: physical base address of the controller and length
--- 
-1.9.1
+Rm9yIFJLMzM5OSdzIEdSRiBtb2R1bGUsIGlmIHdlIHdhbnQgdG8gb3BlcmF0ZSB0aGUgZ3JhcGhp
+YyByZWxhdGVkIGdyZgpyZWdpc3RlcnMsIHdlIG5lZWQgdG8gZW5hYmxlIHRoZSBwY2xrX3Zpb19n
+cmYgd2hpY2ggc3VwcGx5IHBvd2VyIGZvciBWSU8KR1JGIElPcywgc28gaXQncyBiZXR0ZXIgdG8g
+aW50cm9kdWNlIGFuIG9wdGlvbmFsIGdyZiBjbG9jayBpbiBkcml2ZXIuCgpTaWduZWQtb2ZmLWJ5
+OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Ci0tLQpIaSBhbGwsCgpUaGlzIGlzIGFu
+IGV4dGVybmFsIHBhdGNoIGZvciBhbmFsb2dpeF9kcCBtaXNjIGNsZWFudXAgdGhyZWFkIFswXQpb
+MF06IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTE3NTYxMy8KCkJSLAotIFlh
+a2lyCgpDaGFuZ2VzIGluIHY0LjE6Ci0gRml4IGNvbXBpbGVkIGVycm9yLCBzb3JyeS4KICAiZHAt
+PmNnZmNsayIgIC0tPiAgJ2RwLT5ncmZjbGsnCgpDaGFuZ2VzIGluIHY0OgotIENoZWNrIHRoZSB0
+aGUgZXJyb3IgY29kZSBwcm9wZXJseSwgJ0VQUk9CRV9ERUZFUicgc2hvdWxkIGJlIHJldHVybmVk
+LAogICdFTk9FTlQnIHNob3VsZCBhc3NpZ24gYSBOVUxMIHBvaW50IHRvIGdyZmNsaywgb3RoZXIg
+ZXJyb3JzIHNob3VsZCBiZQogIHJlZ2FyZGVkIGFzIGZhaWxlZC4gKFRvbWFzeiwgRG91ZywgcmV2
+aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29n
+bGVzb3VyY2UuY29tLyMvYy8zNTE4MjEvMjAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxv
+Z2l4X2RwLXJvY2tjaGlwLmNAMjQ5XQotIEFkZCB0aGUgZG9jdW1lbnQgYWJvdXQgb3B0aW9uYWwg
+J2dyZicgY2xvY2sgKFRvbWFzeiwgRG91ZywgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKICAg
+IFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNTE4MjEvXQoK
+Q2hhbmdlcyBpbiB2MzoKLSBBZGQgdGhpcyBwYXRjaCBpbiB2MwoKIC4uLi9kaXNwbGF5L3JvY2tj
+aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dCAgICAgIHwgIDYgKysrKysrCiBkcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDIzICsrKysrKysrKysr
+KysrKysrKystLS0KIDIgZmlsZXMgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlv
+bnMoLSkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50
+eHQKaW5kZXggNzI2Yzk0NS4uMGIzOTI1NiAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0
+CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3JvY2tjaGlw
+L2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dApAQCAtMjgsNiArMjgsMTIgQEAgUmVxdWlyZWQgcHJv
+cGVydGllczoKICAgICBQb3J0IDA6IGNvbnRhaW5lZCAyIGVuZHBvaW50cywgY29ubmVjdGluZyB0
+byB0aGUgb3V0cHV0IG9mIHZvcC4KICAgICBQb3J0IDE6IGNvbnRhaW5lZCAxIGVuZHBvaW50LCBj
+b25uZWN0aW5nIHRvIHRoZSBpbnB1dCBvZiBwYW5lbC4KIAorT3B0aW9uYWwgcHJvcGVydHkgZm9y
+IGRpZmZlcmVudCBjaGlwczoKKy0gY2xvY2tzOiBmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOiBo
+YW5kbGUgdG8gZ3JmX3ZpbyBjbG9jay4KKworLSBjbG9jay1uYW1lczogZnJvbSBjb21tb24gY2xv
+Y2sgYmluZGluZzoKKwkgICAgICAgUmVxdWlyZWQgZWxlbWVudHM6ICJncmYiCisKIEZvciB0aGUg
+YmVsb3cgcHJvcGVydGllcywgcGxlYXNlIHJlZmVyIHRvIEFuYWxvZ2l4IERQIGJpbmRpbmcgZG9j
+dW1lbnQ6CiAgKiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZHJtL2JyaWRnZS9h
+bmFsb2dpeF9kcC50eHQKIC0gcGh5cyAocmVxdWlyZWQpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9y
+b2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4IDc4N2RjNTEuLjg2NGVmOTIgMTAw
+NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5j
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCkBA
+IC01Niw2ICs1Niw3IEBAIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgewogCXN0cnVjdCBkcm1f
+ZGlzcGxheV9tb2RlICBtb2RlOwogCiAJc3RydWN0IGNsayAgICAgICAgICAgICAgICpwY2xrOwor
+CXN0cnVjdCBjbGsgICAgICAgICAgICAgICAqZ3JmY2xrOwogCXN0cnVjdCByZWdtYXAgICAgICAg
+ICAgICAqZ3JmOwogCXN0cnVjdCByZXNldF9jb250cm9sICAgICAqcnN0OwogCkBAIC0xNTEsMTEg
+KzE1MiwxNyBAQCBzdGF0aWMgdm9pZCByb2NrY2hpcF9kcF9kcm1fZW5jb2Rlcl9lbmFibGUoc3Ry
+dWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQogCiAJZGV2X2RiZyhkcC0+ZGV2LCAidm9wICVzIG91
+dHB1dCB0byBkcFxuIiwgKHJldCkgPyAiTElUIiA6ICJCSUciKTsKIAotCXJldCA9IHJlZ21hcF93
+cml0ZShkcC0+Z3JmLCBkcC0+ZGF0YS0+bGNkc2VsX2dyZl9yZWcsIHZhbCk7Ci0JaWYgKHJldCAh
+PSAwKSB7Ci0JCWRldl9lcnIoZHAtPmRldiwgIkNvdWxkIG5vdCB3cml0ZSB0byBHUkY6ICVkXG4i
+LCByZXQpOworCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShkcC0+Z3JmY2xrKTsKKwlpZiAocmV0
+IDwgMCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJmYWlsZWQgdG8gZW5hYmxlIGdyZmNsayAlZFxu
+IiwgcmV0KTsKIAkJcmV0dXJuOwogCX0KKworCXJldCA9IHJlZ21hcF93cml0ZShkcC0+Z3JmLCBk
+cC0+ZGF0YS0+bGNkc2VsX2dyZl9yZWcsIHZhbCk7CisJaWYgKHJldCAhPSAwKQorCQlkZXZfZXJy
+KGRwLT5kZXYsICJDb3VsZCBub3Qgd3JpdGUgdG8gR1JGOiAlZFxuIiwgcmV0KTsKKworCWNsa19k
+aXNhYmxlX3VucHJlcGFyZShkcC0+Z3JmY2xrKTsKIH0KIAogc3RhdGljIHZvaWQgcm9ja2NoaXBf
+ZHBfZHJtX2VuY29kZXJfbm9wKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKQEAgLTIzNSw2
+ICsyNDIsMTYgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9pbml0KHN0cnVjdCByb2NrY2hpcF9k
+cF9kZXZpY2UgKmRwKQogCQlyZXR1cm4gUFRSX0VSUihkcC0+Z3JmKTsKIAl9CiAKKwlkcC0+Z3Jm
+Y2xrID0gZGV2bV9jbGtfZ2V0KGRldiwgImdyZiIpOworCWlmIChQVFJfRVJSKGRwLT5ncmZjbGsp
+ID09IC1FTk9FTlQpIHsKKwkJZHAtPmdyZmNsayA9IE5VTEw7CisJfSBlbHNlIGlmIChQVFJfRVJS
+KGRwLT5ncmZjbGspID09IC1FUFJPQkVfREVGRVIpIHsKKwkJcmV0dXJuIC1FUFJPQkVfREVGRVI7
+CisJfSBlbHNlIGlmIChJU19FUlIoZHAtPmdyZmNsaykpIHsKKwkJZGV2X2VycihkZXYsICJmYWls
+ZWQgdG8gZ2V0IGdyZiBjbG9ja1xuIik7CisJCXJldHVybiBQVFJfRVJSKGRwLT5ncmZjbGspOwor
+CX0KKwogCWRwLT5wY2xrID0gZGV2bV9jbGtfZ2V0KGRldiwgInBjbGsiKTsKIAlpZiAoSVNfRVJS
+KGRwLT5wY2xrKSkgewogCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQgcGNsayBwcm9wZXJ0
+eVxuIik7Ci0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
