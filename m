@@ -1,132 +1,110 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v3 02/10] drm/rockchip: analogix_dp: split the lcdc select
- setting into device data
-Date: Thu, 23 Jun 2016 18:16:27 +0200
-Message-ID: <3037785.TlDqtLoRAD@phil>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904768-805-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbLovzM_9W1wkBgXD4aDWGJF2YdGTn6TXEhU6UYokUgG9g@mail.gmail.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v2 1/3] irqchip: exynos_combiner: fixup reg access on be
+Date: Thu, 23 Jun 2016 18:25:22 +0000
+Message-ID: <20160623182522.GI9922@io.lakedaemon.net>
+References: <20160622165703.7775-1-matthew@mattleach.net>
+ <20160622165703.7775-2-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAOw6vbLovzM_9W1wkBgXD4aDWGJF2YdGTn6TXEhU6UYokUgG9g@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Tomasz Figa <tomasz.figa@chromium.com>, =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160622165703.7775-2-matthew@mattleach.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gRG9ubmVyc3RhZywgMjMuIEp1bmkgMjAxNiwgMTA6MzI6NTMgc2NocmllYiBTZWFuIFBhdWw6
-Cj4gT24gVHVlLCBKdW4gMTQsIDIwMTYgYXQgNzo0NiBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2st
-Y2hpcHMuY29tPiB3cm90ZToKPiA+IGVEUCBjb250cm9sbGVyIG5lZWQgdG8gZGVjbGFyZSB3aGlj
-aCB2b3AgcHJvdmlkZSB0aGUgdmlkZW8gc291cmNlLAo+ID4gYW5kIGl0J3MgZGVmaW5lZCBpbiBH
-UkYgcmVnaXN0ZXJzLgo+ID4gCj4gPiBCdXQgZGlmZmVyZW50IGNoaXBzIGhhdmUgZGlmZmVyZW50
-IEdSRiByZWdpc3RlciBhZGRyZXNzLCBzbyB3ZSBuZWVkIHRvCj4gPiBjcmVhdGUgYSBkZXZpY2Ug
-ZGF0YSB0byBkZWNsYXJlIHRoZSBHUkYgbWVzc2FnZXMgZm9yIGVhY2ggY2hpcHMuCj4gPiAKPiA+
-IFNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KPiA+IEFja2Vk
-LWJ5OiBNYXJrIFlhbyA8bWFyay55YW9Acm9jay1jaGlwcy5jb20+Cj4gPiAtLS0KPiA+IENoYW5n
-ZXMgaW4gdjM6Cj4gPiAtIFdyaXRlIGEga2VybmVsZG9jLXN0eWxlIGNvbW1lbnQgZXhwbGFpbmlu
-ZyB0aGUgY2hpcHMgZGF0YSBmaWVsZHMKPiA+IChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBH
-ZXJyaXQpPiAKPiA+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNv
-bS8jL2MvMzQ2MzEzLzEwL2RyaXZlcnMvZ3B1Lwo+ID4gICAgIGRybS9yb2NrY2hpcC9hbmFsb2dp
-eF9kcC1yb2NrY2hpcC5jQDM5XT4gCj4gPiAtIERyb3AgdGhlICcubGNkY3NlbF9tYXNrJyBudW1i
-ZXIgaW4gY2hpcHMgZGF0YSBmaWVsZCAoVG9tYXN6LCByZXZpZXdlZAo+ID4gYXQgR29vZ2xlIEdl
-cnJpdCk+IAo+ID4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29t
-LyMvYy8zNDYzMTMvMTAvZHJpdmVycy9ncHUvCj4gPiAgICAgZHJtL3JvY2tjaGlwL2FuYWxvZ2l4
-X2RwLXJvY2tjaGlwLmNAMzgyXT4gCj4gPiAtIEFkZCBhY2tlZCBmbGFnIGZyb20gTWFyay4KPiA+
-IAo+ID4gQ2hhbmdlcyBpbiB2MjogTm9uZQo+ID4gCj4gPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgfCAzOQo+ID4gICsrKysrKysrKysrKysrKysrKyst
-LS0tLS0gMSBmaWxlIGNoYW5nZWQsIDMwIGluc2VydGlvbnMoKyksIDkKPiA+ICBkZWxldGlvbnMo
-LSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
-eF9kcC1yb2NrY2hpcC5jCj4gPiBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9k
-cC1yb2NrY2hpcC5jIGluZGV4Cj4gPiAyYmM4YTdlLi4zODU1ZjQ2IDEwMDY0NAo+ID4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiA+ICsrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gPiBAQCAt
-MTQsNiArMTQsNyBAQAo+ID4gCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2NvbXBvbmVudC5oPgo+ID4g
-ICNpbmNsdWRlIDxsaW51eC9tZmQvc3lzY29uLmg+Cj4gPiAKPiA+ICsjaW5jbHVkZSA8bGludXgv
-b2ZfZGV2aWNlLmg+Cj4gPiAKPiA+ICAjaW5jbHVkZSA8bGludXgvb2ZfZ3JhcGguaD4KPiA+ICAj
-aW5jbHVkZSA8bGludXgvcmVnbWFwLmg+Cj4gPiAgI2luY2x1ZGUgPGxpbnV4L3Jlc2V0Lmg+Cj4g
-PiAKPiA+IEBAIC0zNSwxMSArMzYsMTcgQEAKPiA+IAo+ID4gICNkZWZpbmUgdG9fZHAobm0pICAg
-ICAgY29udGFpbmVyX29mKG5tLCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlLCBubSkKPiA+IAo+
-ID4gLS8qIGRwIGdyZiByZWdpc3RlciBvZmZzZXQgKi8KPiA+IC0jZGVmaW5lIEdSRl9TT0NfQ09O
-NiAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDAyNWMKPiA+IC0jZGVmaW5lIEdSRl9FRFBf
-TENEX1NFTF9NQVNLICAgICAgICAgICAgICAgICAgICBCSVQoNSkKPiA+IC0jZGVmaW5lIEdSRl9F
-RFBfU0VMX1ZPUF9MSVQgICAgICAgICAgICAgICAgICAgICBCSVQoNSkKPiA+IC0jZGVmaW5lIEdS
-Rl9FRFBfU0VMX1ZPUF9CSUcgICAgICAgICAgICAgICAgICAgICAwCj4gPiArLyoqCj4gPiArICog
-c3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSAtIHNwbGl0ZSB0aGUgZ3JmIHNldHRpbmcgb2Yg
-a2luZCBvZgo+ID4gY2hpcHMgKyAqIEBsY2RzZWxfZ3JmX3JlZzogZ3JmIHJlZ2lzdGVyIG9mZnNl
-dCBvZiBsY2RjIHNlbGVjdAo+ID4gKyAqIEBsY2RzZWxfYmlnOiByZWcgdmFsdWUgb2Ygc2VsZWN0
-aW5nIHZvcCBiaWcgZm9yIGVEUAo+ID4gKyAqIEBsY2RzZWxfbGl0OiByZWcgdmFsdWUgb2Ygc2Vs
-ZWN0aW5nIHZvcCBsaXR0bGUgZm9yIGVEUAo+ID4gKyAqLwo+ID4gK3N0cnVjdCByb2NrY2hpcF9k
-cF9jaGlwX2RhdGEgewo+ID4gKyAgICAgICB1MzIgICAgIGxjZHNlbF9ncmZfcmVnOwo+ID4gKyAg
-ICAgICB1MzIgICAgIGxjZHNlbF9iaWc7Cj4gPiArICAgICAgIHUzMiAgICAgbGNkc2VsX2xpdDsK
-PiA+ICt9Owo+ID4gCj4gPiAgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7Cj4gPiAgCj4gPiAg
-ICAgICAgIHN0cnVjdCBkcm1fZGV2aWNlICAgICAgICAqZHJtX2RldjsKPiA+IAo+ID4gQEAgLTUx
-LDYgKzU4LDggQEAgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7Cj4gPiAKPiA+ICAgICAgICAg
-c3RydWN0IHJlZ21hcCAgICAgICAgICAgICpncmY7Cj4gPiAgICAgICAgIHN0cnVjdCByZXNldF9j
-b250cm9sICAgICAqcnN0Owo+ID4gCj4gPiArICAgICAgIGNvbnN0IHN0cnVjdCByb2NrY2hpcF9k
-cF9jaGlwX2RhdGEgKmRhdGE7Cj4gPiArCj4gPiAKPiA+ICAgICAgICAgc3RydWN0IGFuYWxvZ2l4
-X2RwX3BsYXRfZGF0YSBwbGF0X2RhdGE7Cj4gPiAgCj4gPiAgfTsKPiA+IAo+ID4gQEAgLTExOSwx
-MyArMTI4LDEzIEBAIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX2VuYWJsZShz
-dHJ1Y3QKPiA+IGRybV9lbmNvZGVyICplbmNvZGVyKT4gCj4gPiAgICAgICAgICAgICAgICAgcmV0
-dXJuOwo+ID4gICAgICAgICAKPiA+ICAgICAgICAgaWYgKHJldCkKPiA+IAo+ID4gLSAgICAgICAg
-ICAgICAgIHZhbCA9IEdSRl9FRFBfU0VMX1ZPUF9MSVQgfCAoR1JGX0VEUF9MQ0RfU0VMX01BU0sg
-PDwKPiA+IDE2KTsKPiA+ICsgICAgICAgICAgICAgICB2YWwgPSBkcC0+ZGF0YS0+bGNkc2VsX2xp
-dDsKPiA+IAo+ID4gICAgICAgICBlbHNlCj4gPiAKPiA+IC0gICAgICAgICAgICAgICB2YWwgPSBH
-UkZfRURQX1NFTF9WT1BfQklHIHwgKEdSRl9FRFBfTENEX1NFTF9NQVNLIDw8Cj4gPiAxNik7Cj4g
-PiArICAgICAgICAgICAgICAgdmFsID0gZHAtPmRhdGEtPmxjZHNlbF9iaWc7Cj4gPiAKPiA+ICAg
-ICAgICAgZGV2X2RiZyhkcC0+ZGV2LCAidm9wICVzIG91dHB1dCB0byBkcFxuIiwgKHJldCkgPyAi
-TElUIiA6Cj4gPiAgICAgICAgICJCSUciKTsKPiA+IAo+ID4gLSAgICAgICByZXQgPSByZWdtYXBf
-d3JpdGUoZHAtPmdyZiwgR1JGX1NPQ19DT042LCB2YWwpOwo+ID4gKyAgICAgICByZXQgPSByZWdt
-YXBfd3JpdGUoZHAtPmdyZiwgZHAtPmRhdGEtPmxjZHNlbF9ncmZfcmVnLCB2YWwpOwo+ID4gCj4g
-PiAgICAgICAgIGlmIChyZXQgIT0gMCkgewo+ID4gICAgICAgICAKPiA+ICAgICAgICAgICAgICAg
-ICBkZXZfZXJyKGRwLT5kZXYsICJDb3VsZCBub3Qgd3JpdGUgdG8gR1JGOiAlZFxuIiwgcmV0KTsK
-PiA+ICAgICAgICAgICAgICAgICByZXR1cm47Cj4gPiAKPiA+IEBAIC0yNDYsNiArMjU1LDcgQEAg
-c3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwKPiA+IHN0cnVj
-dCBkZXZpY2UgKm1hc3Rlciw+IAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZvaWQg
-KmRhdGEpCj4gPiAgCj4gPiAgewo+ID4gIAo+ID4gICAgICAgICBzdHJ1Y3Qgcm9ja2NoaXBfZHBf
-ZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ID4gCj4gPiArICAgICAgIGNvbnN0
-IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgKmRwX2RhdGE7Cj4gPiAKPiA+ICAgICAgICAg
-c3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+ID4gICAgICAgICBpbnQgcmV0Owo+
-ID4gCj4gPiBAQCAtMjU2LDEwICsyNjYsMTUgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5k
-KHN0cnVjdCBkZXZpY2UgKmRldiwKPiA+IHN0cnVjdCBkZXZpY2UgKm1hc3Rlciw+IAo+ID4gICAg
-ICAgICAgKi8KPiA+ICAgICAgICAgCj4gPiAgICAgICAgIGRldl9zZXRfZHJ2ZGF0YShkZXYsIE5V
-TEwpOwo+ID4gCj4gPiArICAgICAgIGRwX2RhdGEgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEo
-ZGV2KTsKPiA+ICsgICAgICAgaWYgKCFkcF9kYXRhKQo+ID4gKyAgICAgICAgICAgICAgIHJldHVy
-biAtRU5PREVWOwo+ID4gKwo+ID4gCj4gPiAgICAgICAgIHJldCA9IHJvY2tjaGlwX2RwX2luaXQo
-ZHApOwo+ID4gICAgICAgICBpZiAocmV0IDwgMCkKPiA+ICAgICAgICAgCj4gPiAgICAgICAgICAg
-ICAgICAgcmV0dXJuIHJldDsKPiA+IAo+ID4gKyAgICAgICBkcC0+ZGF0YSA9IGRwX2RhdGE7Cj4g
-PiAKPiA+ICAgICAgICAgZHAtPmRybV9kZXYgPSBkcm1fZGV2Owo+ID4gICAgICAgICAKPiA+ICAg
-ICAgICAgcmV0ID0gcm9ja2NoaXBfZHBfZHJtX2NyZWF0ZV9lbmNvZGVyKGRwKTsKPiA+IAo+ID4g
-QEAgLTM2NSw4ICszODAsMTQgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIHJvY2tj
-aGlwX2RwX3BtX29wcyA9Cj4gPiB7PiAKPiA+ICAgICAgICAgU0VUX1NZU1RFTV9TTEVFUF9QTV9P
-UFMocm9ja2NoaXBfZHBfc3VzcGVuZCwgcm9ja2NoaXBfZHBfcmVzdW1lKQo+ID4gIAo+ID4gIH07
-Cj4gPiAKPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSByazMy
-ODhfZHAgPSB7Cj4gPiArICAgICAgIC5sY2RzZWxfZ3JmX3JlZyA9IDB4MDI1YywKPiA+ICsgICAg
-ICAgLmxjZHNlbF9iaWcgPSAwIHwgQklUKDIxKSwKPiA+ICsgICAgICAgLmxjZHNlbF9saXQgPSBC
-SVQoNSkgfCBCSVQoMjEpLAo+IAo+IEknbSBub3Qgc3VyZSB3aGF0IGNvbnZlbnRpb24gaXMgaW4g
-b3RoZXIgZHJpdmVycywgYnV0IHRoaXMgc2VlbXMgbGVzcwo+IHJlYWRhYmxlIHRvIG1lLgo+IAo+
-IEknZCBwcmVmZXIgdGhhdCB0aGUgbWFnaWMgbnVtYmVycyB3ZXJlIGFzc2lnbmVkIHRvIGEgI2Rl
-ZmluZSB0aGF0Cj4gY29ycmVzcG9uZHMgdG8gYSBUUk0gbmFtZSBpbiBzb21lIGhlYWRlci4gVGhl
-biB5b3UgaGF2ZSBuYW1lcyBpbiB0aGUKPiBhc3NpZ25tZW50IGluc3RlYWQgb2YgbWVhbmluZ2xl
-c3MgbnVtYmVycy4KCkkgZ3Vlc3Mgd2hhdCBpcmtzIG1lIHBlcnNvbmFsbHkgbW9yZSBpcyB0aGF0
-IGl0IGhpZGVzIHRoZSB3cml0ZS1tYXNrIGFzIHdlbGwKClNvIEkgZ3Vlc3Mgc29tZXRoaW5nIGxp
-a2UgdGhlIGZvbGxvd2luZyB3b3VsZCBhbHNvIGRlZmluZSBpdCBzb21ld2hhdCBmdXR1cmUtCnBy
-b29mCgojZGVmaW5lIFJLMzI4OF9HUkZfU09DX0NPTjYJMHgyNWMKI2RlZmluZSBSSzMyODhfRURQ
-X0xDRENfU0VMCQlCSVQoNSkKCiNkZWZpbmUgSElXT1JEX1VQREFURSh2YWwsIG1hc2spIFwKCQko
-dmFsIHwgKG1hc2spIDw8IDE2KQoKc3RhdGljIGNvbnN0IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlw
-X2RhdGEgcmszMjg4X2RwID0gewoJLmxjZHNlbF9ncmZfcmVnID0gUkszMjg4X0dSRl9TT0NfQ09O
-NiwKCS5sY2RzZWxfYmlnID0gSElXT1JEX1VQREFURSgwLCBSSzMyODhfRURQX0xDRENfU0VMKSwK
-CS5sY2RzZWxfbGl0ID0gSElXT1JEX1VQREFURShSSzMyODhfRURQX0xDRENfU0VMLCBSSzMyODhf
-RURQX0xDRENfU0VMKSwKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Matt, Ben,
+
+Both of you submitted similar patches for the same driver, same purpose.
+Since Ben's hit my inbox first, I'll take his.
+
+thx,
+
+Jason.
+
+On Wed, Jun 22, 2016 at 05:57:01PM +0100, Matthew Leach wrote:
+> Use the byte-order aware big endian accessors, allowing for kernels
+> running under big-endian.
+> 
+> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Jason Cooper <jason@lakedaemon.net>
+> CC: Marc Zyngier <marc.zyngier@arm.com>
+> CC: Kukjin Kim <kgene@kernel.org>
+> CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-samsung-soc@vger.kernel.org
+> ---
+>  drivers/irqchip/exynos-combiner.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+> index ead15be..97ae34c 100644
+> --- a/drivers/irqchip/exynos-combiner.c
+> +++ b/drivers/irqchip/exynos-combiner.c
+> @@ -55,14 +55,14 @@ static void combiner_mask_irq(struct irq_data *data)
+>  {
+>  	u32 mask = 1 << (data->hwirq % 32);
+>  
+> -	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
+> +	writel_relaxed(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
+>  }
+>  
+>  static void combiner_unmask_irq(struct irq_data *data)
+>  {
+>  	u32 mask = 1 << (data->hwirq % 32);
+>  
+> -	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
+> +	writel_relaxed(mask, combiner_base(data) + COMBINER_ENABLE_SET);
+>  }
+>  
+>  static void combiner_handle_cascade_irq(struct irq_desc *desc)
+> @@ -75,7 +75,7 @@ static void combiner_handle_cascade_irq(struct irq_desc *desc)
+>  	chained_irq_enter(chip, desc);
+>  
+>  	spin_lock(&irq_controller_lock);
+> -	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
+> +	status = readl_relaxed(chip_data->base + COMBINER_INT_STATUS);
+>  	spin_unlock(&irq_controller_lock);
+>  	status &= chip_data->irq_mask;
+>  
+> @@ -135,7 +135,7 @@ static void __init combiner_init_one(struct combiner_chip_data *combiner_data,
+>  	combiner_data->parent_irq = irq;
+>  
+>  	/* Disable all interrupts */
+> -	__raw_writel(combiner_data->irq_mask, base + COMBINER_ENABLE_CLEAR);
+> +	writel_relaxed(combiner_data->irq_mask, base + COMBINER_ENABLE_CLEAR);
+>  }
+>  
+>  static int combiner_irq_domain_xlate(struct irq_domain *d,
+> @@ -218,7 +218,7 @@ static int combiner_suspend(void)
+>  
+>  	for (i = 0; i < max_nr; i++)
+>  		combiner_data[i].pm_save =
+> -			__raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
+> +			readl_relaxed(combiner_data[i].base + COMBINER_ENABLE_SET);
+>  
+>  	return 0;
+>  }
+> @@ -235,10 +235,10 @@ static void combiner_resume(void)
+>  	int i;
+>  
+>  	for (i = 0; i < max_nr; i++) {
+> -		__raw_writel(combiner_data[i].irq_mask,
+> -			     combiner_data[i].base + COMBINER_ENABLE_CLEAR);
+> -		__raw_writel(combiner_data[i].pm_save,
+> -			     combiner_data[i].base + COMBINER_ENABLE_SET);
+> +		writel_relaxed(combiner_data[i].irq_mask,
+> +			       combiner_data[i].base + COMBINER_ENABLE_CLEAR);
+> +		writel_relaxed(combiner_data[i].pm_save,
+> +			       combiner_data[i].base + COMBINER_ENABLE_SET);
+>  	}
+>  }
+>  
+> -- 
+> 2.8.3
+> 
