@@ -1,47 +1,36 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [[PATCH v2] 08/11] irqchip: exynos: fix usage of __raw IO
-Date: Thu, 23 Jun 2016 18:53:37 +0000
-Message-ID: <20160623185337.GJ9922@io.lakedaemon.net>
-References: <1466504432-24187-1-git-send-email-ben.dooks@codethink.co.uk>
- <1466504432-24187-9-git-send-email-ben.dooks@codethink.co.uk>
+From: Matthew Leach <matthew@mattleach.net>
+Subject: Re: [PATCH v2 1/3] irqchip: exynos_combiner: fixup reg access on be
+Date: Thu, 23 Jun 2016 20:35:29 +0100
+Message-ID: <871t3nwvem.fsf@mattleach.net>
+References: <20160622165703.7775-1-matthew@mattleach.net>
+	<20160622165703.7775-2-matthew@mattleach.net>
+	<20160623182522.GI9922@io.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1466504432-24187-9-git-send-email-ben.dooks@codethink.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, Marc Zyngier w <marc.zyngier@arm.com>, matthew.leach@codethink.co.uk, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0.mattleach.net ([176.58.118.143]:40558 "EHLO
+	mx0.mattleach.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751014AbcFWTfe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jun 2016 15:35:34 -0400
+In-Reply-To: <20160623182522.GI9922@io.lakedaemon.net> (Jason Cooper's message
+	of "Thu, 23 Jun 2016 18:25:22 +0000")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>
 
-Ben,
+Jason Cooper <jason@lakedaemon.net> writes:
 
-On Tue, Jun 21, 2016 at 11:20:29AM +0100, Ben Dooks wrote:
-> Fix the use of __raw IO accesors when the readl/writel_relaxed
-> are better. This should fix issues if the kernel is running as
-> big endian.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Jason Cooper <jason@lakedaemon.net>
-> CC: Marc Zyngier <marc.zyngier@arm.com>w
-> ---
->  drivers/irqchip/exynos-combiner.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Matt, Ben,
 
-Applied patches 8 and 9 of this series to irqchip/misc with minor
-subject line reformatting (watch double square brackets).
+Hi Jason,
 
-thx,
+> Both of you submitted similar patches for the same driver, same
+> purpose.  Since Ben's hit my inbox first, I'll take his.
 
-Jason.
+Apologies.  I missed Ben sending in that patch.
+
+Thanks,
+-- 
+Matt
