@@ -1,79 +1,88 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 08/10] drm/rockchip: analogix_dp: correct the connector
- display color format and bpc
-Date: Thu, 23 Jun 2016 10:19:53 -0400
-Message-ID: <CAOw6vb+bPGSkNMF+4VWOu3FtTws2EH0fQcRQwyv29rRh4VjQjg@mail.gmail.com>
-References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904793-1071-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v3 09/10] drm/rockchip: analogix_dp: update the comments
+ about why need to hardcode VOP output mode
+Date: Thu, 23 Jun 2016 10:22:58 -0400
+Message-ID: <CAOw6vb+z8JpFd--ZUy7CnURoJmgRnV7Yma1k-QUhbs+xNGuvjQ@mail.gmail.com>
+References: <1465904718-663-1-git-send-email-ykk@rock-chips.com> <1465904797-1117-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1465904793-1071-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f48.google.com ([209.85.213.48]:33212 "EHLO
+	mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751244AbcFWOXW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jun 2016 10:23:22 -0400
+Received: by mail-vk0-f48.google.com with SMTP id d185so108267294vkg.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2016 07:23:21 -0700 (PDT)
+Received: from mail-vk0-f48.google.com (mail-vk0-f48.google.com. [209.85.213.48])
+        by smtp.gmail.com with ESMTPSA id n143sm125820vkf.23.2016.06.23.07.23.19
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Jun 2016 07:23:19 -0700 (PDT)
+Received: by mail-vk0-f48.google.com with SMTP id c2so77960548vkg.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2016 07:23:19 -0700 (PDT)
+In-Reply-To: <1465904797-1117-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-T24gVHVlLCBKdW4gMTQsIDIwMTYgYXQgNzo0NiBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
-cHMuY29tPiB3cm90ZToKPiBSb2NrY2hpcCBWT1AgY291bGRuJ3Qgb3V0cHV0IFlVViB2aWRlbyBm
-b3JtYXQgZm9yIGVEUCBjb250cm9sbGVyLCBzbwo+IHdoZW4gZHJpdmVyIGRldGVjdCBjb25uZWN0
-b3Igc3VwcG9ydCBZVVYgdmlkZW8gZm9ybWF0LCB3ZSBuZWVkIHRvIGhhY2sKPiBpdCBkb3duIHRv
-IFJHQjg4OC4KPgo+IFNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNv
-bT4KPiBBY2tlZC1ieTogTWFyayBZYW8gPG1hcmsueWFvQHJvY2stY2hpcHMuY29tPgo+IC0tLQo+
-IENoYW5nZXMgaW4gdjM6Cj4gLSBIb29rIHRoZSBjb25uZWN0b3IncyBjb2xvcl9mb3JtYXRzIGlu
-IC5nZXRfbW9kZXMgZGlyZWN0bHkuIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQp
-Cj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYz
-MTcvMTVdCj4gLSBBZGQgdGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+Cj4gQ2hhbmdlcyBpbiB2
-MjogTm9uZQo+Cj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hp
-cC5jIHwgMTcgKysrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlv
-bnMoKykKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhf
-ZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2Nr
-Y2hpcC5jCj4gaW5kZXggZGEyZTg0NC4uOTVhNmY2MCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gQEAgLTEwMiw2ICsxMDIsMjIg
-QEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9wb3dlcmRvd24oc3RydWN0IGFuYWxvZ2l4X2RwX3Bs
-YXRfZGF0YSAqcGxhdF9kYXRhKQo+ICAgICAgICAgcmV0dXJuIDA7Cj4gIH0KPgo+ICtzdGF0aWMg
-aW50IHJvY2tjaGlwX2RwX2dldF9tb2RlcyhzdHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhICpw
-bGF0X2RhdGEsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRybV9j
-b25uZWN0b3IgKmNvbm5lY3RvcikKPiArewo+ICsgICAgICAgc3RydWN0IGRybV9kaXNwbGF5X2lu
-Zm8gKmRpID0gJmNvbm5lY3Rvci0+ZGlzcGxheV9pbmZvOwo+ICsKPiArICAgICAgIGlmIChkaS0+
-Y29sb3JfZm9ybWF0cyAmIERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0NDQgfHwKPiArICAgICAgICAg
-ICBkaS0+Y29sb3JfZm9ybWF0cyAmIERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0MjIpIHsKPiArICAg
-ICAgICAgICAgICAgZGktPmNvbG9yX2Zvcm1hdHMgJj0gfihEUk1fQ09MT1JfRk9STUFUX1lDUkNC
-NDIyIHwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fQ09MT1Jf
-Rk9STUFUX1lDUkNCNDQ0KTsKPiArICAgICAgICAgICAgICAgZGktPmNvbG9yX2Zvcm1hdHMgfD0g
-RFJNX0NPTE9SX0ZPUk1BVF9SR0I0NDQ7Cj4gKyAgICAgICAgICAgICAgIGRpLT5icGMgPSA4OwoK
-UHJvYmFibHkgYSBzdHVwaWQgcXVlc3Rpb24sIGJ1dCBhcmUgeW91IGd1YXJhbnRlZWQgdGhhdCB0
-aGUgcGFuZWwgd2lsbApzdXBwb3J0IHRoaXMgY29sb3IgZm9ybWF0PwoKPiArICAgICAgIH0KPiAr
-CgpJIHRoaW5rIHRoaXMgY2FuIGJlIHNpbXBsaWZpZWQgYXMgZm9sbG93czoKCi8qIEEgY29tbWVu
-dCBoZXJlIGFib3V0IHdoeSB3ZSdyZSBkb2luZyB0aGlzICovCnUzMiBtYXNrID0gRFJNX0NPTE9S
-X0ZPUk1BVF9ZQ1JDQjQ0NCB8IERSTV9DT0xPUl9GT1JNQVRfWUNSQ0I0MjI7CmlmICgoZGktPmNv
-bG9yX2Zvcm1hdHMgJiBtYXNrKSkgewogICAgRFJNX0RFQlVHX0tNUygiU3dhcHBpbmcgZGlzcGxh
-eSBjb2xvciBmb3JtYXQgZnJvbSBZVVYgdG8gUkdCXG4iKTsKICAgIGRpLT5jb2xvcl9mb3JtYXRz
-ICY9IH5tYXNrOwogICAgZGktPmNvbG9yX2Zvcm1hdHMgfD0gRFJNX0NPTE9SX0ZPUk1BVF9SR0I0
-NDQ7CiAgICBkaS0+YnBjID0gODsKfQoKPiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4gKwo+ICBz
-dGF0aWMgYm9vbAo+ICByb2NrY2hpcF9kcF9kcm1fZW5jb2Rlcl9tb2RlX2ZpeHVwKHN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlciwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+IEBAIC0zMTMsNiArMzI5LDcg
-QEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0
-IGRldmljZSAqbWFzdGVyLAo+ICAgICAgICAgZHAtPnBsYXRfZGF0YS5zdWJkZXZfdHlwZSA9IGRw
-X2RhdGEtPmNoaXBfdHlwZTsKPiAgICAgICAgIGRwLT5wbGF0X2RhdGEucG93ZXJfb24gPSByb2Nr
-Y2hpcF9kcF9wb3dlcm9uOwo+ICAgICAgICAgZHAtPnBsYXRfZGF0YS5wb3dlcl9vZmYgPSByb2Nr
-Y2hpcF9kcF9wb3dlcmRvd247Cj4gKyAgICAgICBkcC0+cGxhdF9kYXRhLmdldF9tb2RlcyA9IHJv
-Y2tjaGlwX2RwX2dldF9tb2RlczsKPgo+ICAgICAgICAgcmV0dXJuIGFuYWxvZ2l4X2RwX2JpbmQo
-ZGV2LCBkcC0+ZHJtX2RldiwgJmRwLT5wbGF0X2RhdGEpOwo+ICB9Cj4gLS0KPiAxLjkuMQo+Cj4K
-PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Jun 14, 2016 at 7:46 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+> The hardware IC designed that VOP must output the RGB10 video format to
+> eDP contoller, and if eDP panel only support RGB8, then eDP contoller
+> should cut down the video data, not via VOP contoller, that's why we need
+> to hardcode the VOP output mode to RGA10 here.
+>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Acked-by: Mark Yao <mark.yao@rock-chips.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
+> ---
+> Changes in v3:
+> - Add the reviewed flag from Tomasz.
+>     [https://chromium-review.googlesource.com/#/c/346853/12]
+> - Add the acked flag from Mark.
+>
+> Changes in v2:
+> - new patch in v2
+>
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 95a6f60..2ceb3f9 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -173,17 +173,11 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
+>         int ret;
+>
+>         /*
+> -        * FIXME(Yakir): driver should configure the CRTC output video
+> -        * mode with the display information which indicated the monitor
+> -        * support colorimetry.
+> -        *
+> -        * But don't know why the CRTC driver seems could only output the
+> -        * RGBaaa rightly. For example, if connect the "innolux,n116bge"
+> -        * eDP screen, EDID would indicated that screen only accepted the
+> -        * 6bpc mode. But if I configure CRTC to RGB666 output, then eDP
+> -        * screen would show a blue picture (RGB888 show a green picture).
+> -        * But if I configure CTRC to RGBaaa, and eDP driver still keep
+> -        * RGB666 input video mode, then screen would works prefect.
+> +        * The hardware IC designed that VOP must output the RGB10 video
+> +        * format to eDP contoller, and if eDP panel only support RGB8,
+> +        * then eDP contoller should cut down the video data, not via VOP
+> +        * contoller, that's why we need to hardcode the VOP output mode
+> +        * to RGA10 here.
+
+s/contoller/controller/
+
+>          */
+>
+>         ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
