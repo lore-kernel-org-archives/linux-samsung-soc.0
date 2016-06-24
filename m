@@ -1,50 +1,82 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable vivid driver as a module
-Date: Fri, 24 Jun 2016 09:10:13 -0400
-Message-ID: <1466773813-14647-2-git-send-email-javier@osg.samsung.com>
-References: <1466773813-14647-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:41557 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751763AbcFXNL1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jun 2016 09:11:27 -0400
-In-Reply-To: <1466773813-14647-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 02/19] exynos4-is: remove some unused vars
+Date: Fri, 24 Jun 2016 12:31:43 -0300
+Message-ID: <21ed20340a789f893d410bd961c206445a333040.1466782238.git.mchehab@s-opensource.com>
+References: <cover.1466782238.git.mchehab@s-opensource.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1466782238.git.mchehab@s-opensource.com>
+In-Reply-To: <cover.1466782238.git.mchehab@s-opensource.com>
+References: <cover.1466782238.git.mchehab@s-opensource.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuahkh@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The Virtual Video Test Driver can be used to emulate video capture and
-output devices so it's very useful for testing. Since is not necessary
-to boot, can be enabled as module to avoid increasing the kernel size.
+Gcc 6.1 warns about some unused vars and functions. Remove them:
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+drivers/media/platform/exynos4-is/mipi-csis.c:665:46: warning: 's5pcsis_sd_internal_ops' defined but not used [-Wunused-const-variable=]
+ static const struct v4l2_subdev_internal_ops s5pcsis_sd_internal_ops = {
+                                              ^~~~~~~~~~~~~~~~~~~~~~~
 
+drivers/media/platform/exynos4-is/mipi-csis.c:652:12: warning: 's5pcsis_open' defined but not used [-Wunused-function]
+ static int s5pcsis_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+            ^~~~~~~~~~~~
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 ---
+ drivers/media/platform/exynos4-is/mipi-csis.c | 17 -----------------
+ drivers/media/radio/radio-aztech.c            |  1 -
+ 2 files changed, 18 deletions(-)
 
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e78469216378..45265ff3cdcb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -555,6 +555,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
- CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_RENESAS_JPU=m
- CONFIG_VIDEO_RENESAS_VSP1=m
-+CONFIG_V4L_TEST_DRIVERS=y
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- CONFIG_VIDEO_ADV7180=m
- CONFIG_VIDEO_ML86V7667=m
-@@ -906,6 +907,7 @@ CONFIG_CRYPTO_GHASH_ARM_CE=m
- CONFIG_CRYPTO_DEV_ATMEL_AES=m
- CONFIG_CRYPTO_DEV_ATMEL_TDES=m
- CONFIG_CRYPTO_DEV_ATMEL_SHA=m
-+CONFIG_VIDEO_VIVID=m
- CONFIG_VIRTIO=y
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_PCI_LEGACY=y
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
+index bf954424e7be..86e681daa89d 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -649,23 +649,6 @@ static int s5pcsis_log_status(struct v4l2_subdev *sd)
+ 	return 0;
+ }
+ 
+-static int s5pcsis_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+-{
+-	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(sd, fh->pad, 0);
+-
+-	format->colorspace = V4L2_COLORSPACE_JPEG;
+-	format->code = s5pcsis_formats[0].code;
+-	format->width = S5PCSIS_DEF_PIX_WIDTH;
+-	format->height = S5PCSIS_DEF_PIX_HEIGHT;
+-	format->field = V4L2_FIELD_NONE;
+-
+-	return 0;
+-}
+-
+-static const struct v4l2_subdev_internal_ops s5pcsis_sd_internal_ops = {
+-	.open = s5pcsis_open,
+-};
+-
+ static struct v4l2_subdev_core_ops s5pcsis_core_ops = {
+ 	.s_power = s5pcsis_s_power,
+ 	.log_status = s5pcsis_log_status,
+diff --git a/drivers/media/radio/radio-aztech.c b/drivers/media/radio/radio-aztech.c
+index 705dd6f9162c..f445327f282d 100644
+--- a/drivers/media/radio/radio-aztech.c
++++ b/drivers/media/radio/radio-aztech.c
+@@ -43,7 +43,6 @@ MODULE_VERSION("1.0.0");
+ static int io[AZTECH_MAX] = { [0] = CONFIG_RADIO_AZTECH_PORT,
+ 			      [1 ... (AZTECH_MAX - 1)] = -1 };
+ static int radio_nr[AZTECH_MAX]	= { [0 ... (AZTECH_MAX - 1)] = -1 };
+-static const int radio_wait_time = 1000;
+ 
+ module_param_array(io, int, NULL, 0444);
+ MODULE_PARM_DESC(io, "I/O addresses of the Aztech card (0x350 or 0x358)");
 -- 
-2.5.5
+2.7.4
