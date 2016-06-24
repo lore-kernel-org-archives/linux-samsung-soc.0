@@ -1,36 +1,38 @@
-From: Matthew Leach <matthew@mattleach.net>
-Subject: Re: [PATCH v2 1/3] irqchip: exynos_combiner: fixup reg access on be
-Date: Thu, 23 Jun 2016 20:35:29 +0100
-Message-ID: <871t3nwvem.fsf@mattleach.net>
-References: <20160622165703.7775-1-matthew@mattleach.net>
-	<20160622165703.7775-2-matthew@mattleach.net>
-	<20160623182522.GI9922@io.lakedaemon.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
+Date: Fri, 24 Jun 2016 15:13:20 +0800
+Message-ID: <CAGb2v64Qk822h2Mqp1Moc1yV7uXSEQBGiurkyFLSZdJ6NOO3Vg@mail.gmail.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org> <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0.mattleach.net ([176.58.118.143]:40558 "EHLO
-	mx0.mattleach.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751014AbcFWTfe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2016 15:35:34 -0400
-In-Reply-To: <20160623182522.GI9922@io.lakedaemon.net> (Jason Cooper's message
-	of "Thu, 23 Jun 2016 18:25:22 +0000")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Kukjin Kim <kgene@kernel.org>
 
-Jason Cooper <jason@lakedaemon.net> writes:
+On Fri, Jun 17, 2016 at 5:27 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> All the clocksource drivers's init function are now converted to return
+> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
+> clksrc-of table.
+>
+> Let's convert back the names:
+>  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
+>  - clksrc-of-ret              => clksrc-of
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/clocksource/sun4i_timer.c         |  2 +-
+>  drivers/clocksource/timer-sun5i.c         |  4 ++--
 
-> Matt, Ben,
-
-Hi Jason,
-
-> Both of you submitted similar patches for the same driver, same
-> purpose.  Since Ben's hit my inbox first, I'll take his.
-
-Apologies.  I missed Ben sending in that patch.
-
-Thanks,
--- 
-Matt
+Acked-by: Chen-Yu Tsai <wens@csie.org>
