@@ -1,40 +1,44 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH] drm/exynos: make fbdev support really optional
-Date: Fri, 24 Jun 2016 13:52:48 +0200
-Message-ID: <1466769168-31602-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/2] ARM: exynos_defconfig: Enable vivid driver as a module
+Date: Fri, 24 Jun 2016 09:10:12 -0400
+Message-ID: <1466773813-14647-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:41542 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751317AbcFXNLT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 24 Jun 2016 09:11:19 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuahkh@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Q3VycmVudGx5IGVuYWJsaW5nIEV4eW5vcyBEUk0gc3VwcG9ydCBhdXRvbWF0aWNhbGx5IHB1bGxz
-IGluCmxvdHMgb2YgZmJkZXYgZGVwZW5kZW5jaWVzLiBIb3dldmVyIHRoZXNlIGRlcHMgYXJlCnVu
-bmVjZXNzYXJ5IHNpbmNlIERSTSBjb3JlIGFscmVhZHkgZW5hYmxlcyB0aGVtIHdoZW4KbmVlZGVk
-LgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
-bGQuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnIHwgNCAtLS0tCiAxIGZp
-bGUgY2hhbmdlZCwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKaW5kZXggYmFk
-ZGYzMy4uNTkwNTU5YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmln
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwpAQCAtMiwxMCArMiw2IEBAIGNv
-bmZpZyBEUk1fRVhZTk9TCiAJdHJpc3RhdGUgIkRSTSBTdXBwb3J0IGZvciBTYW1zdW5nIFNvQyBF
-WFlOT1MgU2VyaWVzIgogCWRlcGVuZHMgb24gT0YgJiYgRFJNICYmIChBUkNIX1MzQzY0WFggfHwg
-QVJDSF9FWFlOT1MgfHwgQVJDSF9NVUxUSVBMQVRGT1JNKQogCXNlbGVjdCBEUk1fS01TX0hFTFBF
-UgotCXNlbGVjdCBEUk1fS01TX0ZCX0hFTFBFUgotCXNlbGVjdCBGQl9DRkJfRklMTFJFQ1QKLQlz
-ZWxlY3QgRkJfQ0ZCX0NPUFlBUkVBCi0Jc2VsZWN0IEZCX0NGQl9JTUFHRUJMSVQKIAlzZWxlY3Qg
-VklERU9NT0RFX0hFTFBFUlMKIAloZWxwCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IGhh
-dmUgYSBTYW1zdW5nIFNvQyBFWFlOT1MgY2hpcHNldC4KLS0gCjIuNy4zCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The Virtual Video Test Driver can be used to emulate video capture and
+output devices so it's very useful for testing. Since is not necessary
+to boot, can be enabled as module to avoid increasing the kernel size.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+
+ arch/arm/configs/exynos_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index daf9762ec794..a5aa44c56bfe 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -152,6 +152,7 @@ CONFIG_VIDEO_EXYNOS4_FIMC_IS=m
+ CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
+ CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
++CONFIG_V4L_TEST_DRIVERS=y
+ CONFIG_DRM=y
+ CONFIG_DRM_EXYNOS=y
+ CONFIG_DRM_EXYNOS_FIMD=y
+@@ -263,3 +264,4 @@ CONFIG_CRYPTO_AES_ARM_BS=m
+ CONFIG_CRC_CCITT=y
+ CONFIG_FONTS=y
+ CONFIG_FONT_7x14=y
++CONFIG_VIDEO_VIVID=m
+-- 
+2.5.5
