@@ -1,59 +1,76 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 4/5] PM / devfreq: make event/exynos-nocp DEVFREQ_EVENT_EXYNOS_NOCP tristate
-Date: Sat, 25 Jun 2016 14:43:50 -0400
-Message-ID: <20160625184351.5045-5-paul.gortmaker@windriver.com>
-References: <20160625184351.5045-1-paul.gortmaker@windriver.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
+Date: Sun, 26 Jun 2016 18:39:05 +0200
+Message-ID: <57700529.7090707@math.uni-bielefeld.de>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:61888 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751604AbcFYSoS (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45111 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751536AbcFZQjS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 25 Jun 2016 14:44:18 -0400
-In-Reply-To: <20160625184351.5045-1-paul.gortmaker@windriver.com>
+	Sun, 26 Jun 2016 12:39:18 -0400
+In-Reply-To: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The Kconfig currently controlling compilation of this code is:
+Hello Krzysztof,
 
-event/Kconfig:config DEVFREQ_EVENT_EXYNOS_NOCP
-event/Kconfig:  bool "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+just wanted to ask on which kernel branch the patchset is based on. At
+least for me the set doesn't apply cleanly to 4.7-rc4.
 
-...meaning that it currently is not being built as a module by anyone.
+With best wishes,
+Tobias
 
-Rather than rip out the existing modular code, Chanwoo indicated
-that he'd rather see the driver offered as tristate.
 
-I don't have the hardware for runtime validation, so this change
-is only validated for compile and modpost.
-
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/devfreq/event/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-index 1e8b4f469f38..96ea29d1ede5 100644
---- a/drivers/devfreq/event/Kconfig
-+++ b/drivers/devfreq/event/Kconfig
-@@ -14,7 +14,7 @@ menuconfig PM_DEVFREQ_EVENT
- if PM_DEVFREQ_EVENT
- 
- config DEVFREQ_EVENT_EXYNOS_NOCP
--	bool "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
-+	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
- 	depends on ARCH_EXYNOS
- 	select PM_OPP
- 	help
--- 
-2.8.4
+Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> 
+> Some time ago, Robert tried to add VBUS detection to extcon-usb-gpio
+> driver [1].  There was a discussion about patch #2 ("extcon: usb-gpio:
+> add support for VBUS detection").
+> 
+> The final conclusion was that Chanwoo will add VBUS/ID notifiers [2].
+> That unfortunately never happened so this patchset is a follow up.
+> 
+> 1. Add VBUS/ID cable state notifiers to extcon, so USB controllers
+>    could use it.
+> 2. Add VBUS detection to extcon-usb-gpio driver.
+> 
+> Some parts are based on old Robert's work, some are new, some are
+> reworked.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> [1] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1923193
+> [2] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1941152
+> 
+> 
+> Krzysztof Kozlowski (5):
+>   Revert "extcon: usb-gpio: switch to use pm wakeirq apis"
+>   extcon: Add raw VBUS and ID cable states
+>   extcon: usb-gpio: Add support for VBUS detection
+>   ARM: exynos_defconfig: Enable EXTCON_USB_GPIO for Odroid XU3 USB OTG
+>   ARM: dts: exynos: Add extcon-usb-gpio node for Odroid XU3
+> 
+> Robert Baldyga (2):
+>   Documentation: extcon: usb-gpio: update usb-gpio binding description
+>   extcon: usb-gpio: make debounce value configurable in devicetree
+> 
+>  .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  28 ++++-
+>  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  21 ++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  21 ++++
+>  arch/arm/configs/exynos_defconfig                  |   1 +
+>  drivers/extcon/extcon-usb-gpio.c                   | 138 +++++++++++++++++----
+>  drivers/extcon/extcon.c                            |   3 +
+>  include/linux/extcon.h                             |   8 +-
+>  7 files changed, 190 insertions(+), 30 deletions(-)
+> 
