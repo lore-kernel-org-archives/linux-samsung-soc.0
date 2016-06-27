@@ -1,57 +1,52 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] video: s3c2410fb: Register cpufreq notifier only on S3C24xx
-Date: Mon, 27 Jun 2016 14:52:25 +0200
-Message-ID: <1467031945-10486-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:24185 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751601AbcF0Mwf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jun 2016 08:52:35 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
+Date: Mon, 27 Jun 2016 22:03:14 +0900
+Message-ID: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
+References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The driver registered for CPU frequency transitions to recalculate its
-clock when ARM clock frequency changes (ratio between frequencies of
-ARM's parent clock (fclk) and clock for peripherals remains fixed).
+enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
+There is no device which is supposed to enable this clock when
+needed, therefore, the only way to use the SPI bus is to enable
+it in boot time.
 
-This is needed only on S3C24xx platform when cpufreq driver is enabled
-so limit the ifdef to respective cpufreq Kconfig.
-
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- drivers/video/fbdev/s3c2410fb.c | 2 +-
- drivers/video/fbdev/s3c2410fb.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
-index 0dd86be36afb..a67e4567e656 100644
---- a/drivers/video/fbdev/s3c2410fb.c
-+++ b/drivers/video/fbdev/s3c2410fb.c
-@@ -767,7 +767,7 @@ static irqreturn_t s3c2410fb_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--#ifdef CONFIG_CPU_FREQ
-+#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
- 
- static int s3c2410fb_cpufreq_transition(struct notifier_block *nb,
- 					unsigned long val, void *data)
-diff --git a/drivers/video/fbdev/s3c2410fb.h b/drivers/video/fbdev/s3c2410fb.h
-index 47a17bd23011..cdd11e2f8859 100644
---- a/drivers/video/fbdev/s3c2410fb.h
-+++ b/drivers/video/fbdev/s3c2410fb.h
-@@ -32,7 +32,7 @@ struct s3c2410fb_info {
- 	unsigned long		clk_rate;
- 	unsigned int		palette_ready;
- 
--#ifdef CONFIG_CPU_FREQ
-+#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
- 	struct notifier_block	freq_transition;
- #endif
- 
+Hi,
+
+V1 -> V2
+
+- the "sclk_spi3" doesn't need to be enabled in boot time as it
+  is handled by the spi driver itself.
+
+- use the CLK_IS_CRITICAL flag for the ioclk
+
+Andi
+
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index dcb4391..c33150e 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
+ 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
+-			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 20,
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+ 			19, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
 -- 
-1.9.1
+2.8.1
