@@ -1,76 +1,33 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
-Date: Sun, 26 Jun 2016 18:39:05 +0200
-Message-ID: <57700529.7090707@math.uni-bielefeld.de>
-References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Enable vivid driver as a
+ module
+Date: Mon, 27 Jun 2016 08:20:05 +0200
+Message-ID: <5770C595.3030202@samsung.com>
+References: <1466773813-14647-1-git-send-email-javier@osg.samsung.com>
+ <1466773813-14647-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45111 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751536AbcFZQjS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Jun 2016 12:39:18 -0400
-In-Reply-To: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1466773813-14647-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuahkh@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Krzysztof,
+On 06/24/2016 03:10 PM, Javier Martinez Canillas wrote:
+> The Virtual Video Test Driver can be used to emulate video capture and
+> output devices so it's very useful for testing. Since is not necessary
+> to boot, can be enabled as module to avoid increasing the kernel size.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  arch/arm/configs/multi_v7_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 
-just wanted to ask on which kernel branch the patchset is based on. At
-least for me the set doesn't apply cleanly to 4.7-rc4.
+Thanks, applied both for v4.8.
 
-With best wishes,
-Tobias
-
-
-Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> Some time ago, Robert tried to add VBUS detection to extcon-usb-gpio
-> driver [1].  There was a discussion about patch #2 ("extcon: usb-gpio:
-> add support for VBUS detection").
-> 
-> The final conclusion was that Chanwoo will add VBUS/ID notifiers [2].
-> That unfortunately never happened so this patchset is a follow up.
-> 
-> 1. Add VBUS/ID cable state notifiers to extcon, so USB controllers
->    could use it.
-> 2. Add VBUS detection to extcon-usb-gpio driver.
-> 
-> Some parts are based on old Robert's work, some are new, some are
-> reworked.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> [1] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1923193
-> [2] http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1941152
-> 
-> 
-> Krzysztof Kozlowski (5):
->   Revert "extcon: usb-gpio: switch to use pm wakeirq apis"
->   extcon: Add raw VBUS and ID cable states
->   extcon: usb-gpio: Add support for VBUS detection
->   ARM: exynos_defconfig: Enable EXTCON_USB_GPIO for Odroid XU3 USB OTG
->   ARM: dts: exynos: Add extcon-usb-gpio node for Odroid XU3
-> 
-> Robert Baldyga (2):
->   Documentation: extcon: usb-gpio: update usb-gpio binding description
->   extcon: usb-gpio: make debounce value configurable in devicetree
-> 
->  .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  28 ++++-
->  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |  21 ++++
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts         |  21 ++++
->  arch/arm/configs/exynos_defconfig                  |   1 +
->  drivers/extcon/extcon-usb-gpio.c                   | 138 +++++++++++++++++----
->  drivers/extcon/extcon.c                            |   3 +
->  include/linux/extcon.h                             |   8 +-
->  7 files changed, 190 insertions(+), 30 deletions(-)
-> 
+Best regards,
+Krzysztof
