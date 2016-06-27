@@ -1,68 +1,28 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 4/5] PM / devfreq: make event/exynos-nocp
- DEVFREQ_EVENT_EXYNOS_NOCP tristate
-Date: Mon, 27 Jun 2016 11:29:14 +0900
-Message-ID: <57708F7A.70707@samsung.com>
-References: <20160625184351.5045-1-paul.gortmaker@windriver.com>
- <CGME20160625184526epcas1p19ff89d95186db96de6a9b38eee44c0d2@epcas1p1.samsung.com>
- <20160625184351.5045-5-paul.gortmaker@windriver.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
+Date: Mon, 27 Jun 2016 07:22:19 +0200
+Message-ID: <5770B80B.3020304@samsung.com>
+References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <57700529.7090707@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160625184351.5045-5-paul.gortmaker@windriver.com>
+In-reply-to: <57700529.7090707@math.uni-bielefeld.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+On 06/26/2016 06:39 PM, Tobias Jakobi wrote:
+> Hello Krzysztof,
+> 
+> just wanted to ask on which kernel branch the patchset is based on. At
+> least for me the set doesn't apply cleanly to 4.7-rc4.
 
-On 2016=EB=85=84 06=EC=9B=94 26=EC=9D=BC 03:43, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
->=20
-> event/Kconfig:config DEVFREQ_EVENT_EXYNOS_NOCP
-> event/Kconfig:  bool "EXYNOS NoC (Network On Chip) Probe DEVFREQ even=
-t Driver"
->=20
-> ...meaning that it currently is not being built as a module by anyone=
-=2E
->=20
-> Rather than rip out the existing modular code, Chanwoo indicated
-> that he'd rather see the driver offered as tristate.
->=20
-> I don't have the hardware for runtime validation, so this change
-> is only validated for compile and modpost.
->=20
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/devfreq/event/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kc=
-onfig
-> index 1e8b4f469f38..96ea29d1ede5 100644
-> --- a/drivers/devfreq/event/Kconfig
-> +++ b/drivers/devfreq/event/Kconfig
-> @@ -14,7 +14,7 @@ menuconfig PM_DEVFREQ_EVENT
->  if PM_DEVFREQ_EVENT
-> =20
->  config DEVFREQ_EVENT_EXYNOS_NOCP
-> -	bool "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
-> +	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
->  	depends on ARCH_EXYNOS
->  	select PM_OPP
->  	help
->=20
+Hi,
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+It was based on next-20160608.
 
-Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
