@@ -1,28 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
-Date: Mon, 27 Jun 2016 07:22:19 +0200
-Message-ID: <5770B80B.3020304@samsung.com>
-References: <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
- <57700529.7090707@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <57700529.7090707@math.uni-bielefeld.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rogerq@ti.com, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, balbi@ti.com, kishon@ti.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: s3c64xx: avoid warning about 'struct device_node'
+Date: Mon, 27 Jun 2016 13:02:50 +0200
+Message-ID: <20160627110303.3391769-1-arnd@arndb.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([217.72.192.75]:52223 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751870AbcF0LBQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jun 2016 07:01:16 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/26/2016 06:39 PM, Tobias Jakobi wrote:
-> Hello Krzysztof,
-> 
-> just wanted to ask on which kernel branch the patchset is based on. At
-> least for me the set doesn't apply cleanly to 4.7-rc4.
+The change to simplify of_platform_populate() had an unintended
+side-effect of introducing a build warning on s3c64xx:
 
-Hi,
+In file included from arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:18:0:
+arch/arm/mach-s3c64xx/common.h:27:30: error: 'struct device_node' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
 
-It was based on next-20160608.
+This adds a forward-declaration for the structure name in the
+header to avoid the warning.
 
-Best regards,
-Krzysztof
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
+---
+Rob, can you apply this on top of the devicetree git so we don't
+have to coordinate the merges?
+---
+ arch/arm/mach-s3c64xx/common.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-s3c64xx/common.h b/arch/arm/mach-s3c64xx/common.h
+index 9eb864412911..4f204668f00e 100644
+--- a/arch/arm/mach-s3c64xx/common.h
++++ b/arch/arm/mach-s3c64xx/common.h
+@@ -24,6 +24,7 @@ void s3c64xx_init_io(struct map_desc *mach_desc, int size);
+ 
+ void s3c64xx_restart(enum reboot_mode mode, const char *cmd);
+ 
++struct device_node;
+ void s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 	unsigned long xusbxti_f, bool is_s3c6400, void __iomem *reg_base);
+ void s3c64xx_set_xtal_freq(unsigned long freq);
+-- 
+2.9.0
