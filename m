@@ -1,100 +1,138 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v2 2/5] spi: s3c64xx: consider the case when the CS line is not
- connected
-Date: Tue, 28 Jun 2016 11:41:12 +0900
-Message-ID: <1467081676-8442-3-git-send-email-andi.shyti@samsung.com>
-References: <1467081676-8442-1-git-send-email-andi.shyti@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1467081676-8442-1-git-send-email-andi.shyti@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, linux-spi@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Andi Shyti <andi@etezian.org>, linux-arm-kernel@lists.infradead.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 15/92] clocksource/drivers/exynos_mct: Convert init function to return error
+Date: Tue, 28 Jun 2016 12:30:34 +0200
+Message-ID: <1467109911-11060-15-git-send-email-daniel.lezcano@linaro.org>
+References: <577251A4.7030508@linaro.org>
+ <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When the CS line is not connected, it is not needed to enable or
-disable the chip selection functionality from the s3c64xx
-devices in order to perform a transfer.
-Set the CS controller logically always enabled already during
-initialization (by writing '0' in the S3C64XX_SPI_SLAVE_SEL
-register) and never disable it.
+The init functions do not return any error. They behave as the following:
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+ - panic, thus leading to a kernel crash while another timer may work and
+   make the system boot up correctly
+
+ or
+
+ - print an error and let the caller unaware if the state of the system
+
+Change that by converting the init functions to return an error conforming
+to the CLOCKSOURCE_OF_RET prototype.
+
+Proper error handling (rollback, errno value) will be changed later case
+by case, thus this change just return back an error or success in the init
+function.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 +++
- drivers/spi/spi-s3c64xx.c                             | 9 ++++++++-
- include/linux/platform_data/spi-s3c64xx.h             | 1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 6dbdeb3..930bc73 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -40,6 +40,9 @@ Optional Board Specific Properties:
- 
- - cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
- 
-+- no-cs-readback: the CS line is disconnected, therefore the device should not
-+  operate based on CS signalling.
-+
- SPI Controller specific data in SPI slave nodes:
- 
- - The spi slave nodes should provide the following information which is required
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 972367d..14269b0 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -315,6 +315,9 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- 	struct s3c64xx_spi_driver_data *sdd =
- 					spi_master_get_devdata(spi->master);
- 
-+	if (sdd->cntrlr_info->no_cs)
-+		return;
-+
- 	if (enable) {
- 		if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO)) {
- 			writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-@@ -960,7 +963,9 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
- 
- 	sdd->cur_speed = 0;
- 
--	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+	if (sci->no_cs)
-+		writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	else if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
- 		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	/* Disable Interrupts - we use Polling if not DMA mode */
-@@ -1015,6 +1020,8 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- 		sci->num_cs = temp;
- 	}
- 
-+	sci->no_cs = of_property_read_bool(dev->of_node, "broken-cs");
-+
- 	return sci;
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index be09bc0..f6caed0 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -232,7 +232,7 @@ static cycles_t exynos4_read_current_timer(void)
+ 	return exynos4_read_count_32();
  }
- #else
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index fb5625b..5c1e21c 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -38,6 +38,7 @@ struct s3c64xx_spi_csinfo {
- struct s3c64xx_spi_info {
- 	int src_clk_nr;
- 	int num_cs;
-+	bool no_cs;
- 	int (*cfg_gpio)(void);
- 	dma_filter_fn filter;
- 	void *dma_tx;
+ 
+-static void __init exynos4_clocksource_init(void)
++static int __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start();
+ 
+@@ -244,6 +244,8 @@ static void __init exynos4_clocksource_init(void)
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
+ 
+ 	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
++
++	return 0;
+ }
+ 
+ static void exynos4_mct_comp0_stop(void)
+@@ -335,12 +337,14 @@ static struct irqaction mct_comp_event_irq = {
+ 	.dev_id		= &mct_comp_device,
+ };
+ 
+-static void exynos4_clockevent_init(void)
++static int exynos4_clockevent_init(void)
+ {
+ 	mct_comp_device.cpumask = cpumask_of(0);
+ 	clockevents_config_and_register(&mct_comp_device, clk_rate,
+ 					0xf, 0xffffffff);
+ 	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
++
++	return 0;
+ }
+ 
+ static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
+@@ -516,7 +520,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
+ 	.notifier_call = exynos4_mct_cpu_notify,
+ };
+ 
+-static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
++static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
+ {
+ 	int err, cpu;
+ 	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
+@@ -572,15 +576,17 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+ 
+ 	/* Immediately configure the timer on the boot CPU */
+ 	exynos4_local_timer_setup(mevt);
+-	return;
++	return 0;
+ 
+ out_irq:
+ 	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
++	return err;
+ }
+ 
+-static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
++static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
+ 	u32 nr_irqs, i;
++	int ret;
+ 
+ 	mct_int_type = int_type;
+ 
+@@ -600,20 +606,26 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+ 		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 
+-	exynos4_timer_resources(np, of_iomap(np, 0));
+-	exynos4_clocksource_init();
+-	exynos4_clockevent_init();
++	ret = exynos4_timer_resources(np, of_iomap(np, 0));
++	if (ret)
++		return ret;
++
++	ret = exynos4_clocksource_init();
++	if (ret)
++		return ret;
++
++	return exynos4_clockevent_init();
+ }
+ 
+ 
+-static void __init mct_init_spi(struct device_node *np)
++static int __init mct_init_spi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_SPI);
+ }
+ 
+-static void __init mct_init_ppi(struct device_node *np)
++static int __init mct_init_ppi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_PPI);
+ }
+-CLOCKSOURCE_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+-CLOCKSOURCE_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
++CLOCKSOURCE_OF_DECLARE_RET(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
++CLOCKSOURCE_OF_DECLARE_RET(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
 -- 
-2.8.1
+1.9.1
