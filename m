@@ -1,141 +1,111 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v5 11/44] drm/exynos: dma-mapping: Use unsigned long for
- dma_attrs
-Date: Thu, 30 Jun 2016 10:25:38 +0200
-Message-ID: <1467275171-6298-11-git-send-email-k.kozlowski@samsung.com>
-References: <1467275019-30789-1-git-send-email-k.kozlowski@samsung.com>
- <1467275171-6298-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1467275171-6298-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, hch@infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: Add DT bindings documentation for max98504 amplifier" to the asoc tree
+Date: Wed, 29 Jun 2016 20:23:18 +0100
+Message-ID: <E1bIL4w-00085G-0O@finisterre>
+References: <1467199599-6892-4-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58540 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858AbcF3MPr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 08:15:47 -0400
+In-Reply-To: <1467199599-6892-4-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, robh@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, inki.dae@samsung.com, devicetree@vger.kernel.org, ideal.song@samsung.com
 
-U3BsaXQgb3V0IHN1YnN5c3RlbSBzcGVjaWZpYyBjaGFuZ2VzIGZvciBlYXNpZXIgcmV2aWV3cy4g
-VGhpcyB3aWxsIGJlCnNxdWFzaGVkIHdpdGggbWFpbiBjb21taXQuCgpTaWduZWQtb2ZmLWJ5OiBL
-cnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyB8ICAyICstCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgICB8IDEyICsrKysrLS0tLS0tLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jICAgfCAyMCArKysrKysrKysrLS0tLS0tLS0t
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oICAgfCAgMiArLQogNCBm
-aWxlcyBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jCmluZGV4IDY3ZGNkNjgzMTI5MS4uZGQw
-OTExNzVmYzJkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmJkZXYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYwpA
-QCAtNTIsNyArNTIsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fZmJfbW1hcChzdHJ1Y3QgZmJf
-aW5mbyAqaW5mbywKIAogCXJldCA9IGRtYV9tbWFwX2F0dHJzKHRvX2RtYV9kZXYoaGVscGVyLT5k
-ZXYpLCB2bWEsIGV4eW5vc19nZW0tPmNvb2tpZSwKIAkJCSAgICAgZXh5bm9zX2dlbS0+ZG1hX2Fk
-ZHIsIGV4eW5vc19nZW0tPnNpemUsCi0JCQkgICAgICZleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwor
-CQkJICAgICBleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwogCWlmIChyZXQgPCAwKSB7CiAJCURSTV9F
-UlJPUigiZmFpbGVkIHRvIG1tYXAuXG4iKTsKIAkJcmV0dXJuIHJldDsKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCA4NTY0YzNkYTBkMjIuLjRiZjAwZjU3ZmZlOCAx
-MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwpAQCAtMTcsNyArMTcsNiBA
-QAogI2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4KICNpbmNsdWRlIDxsaW51eC93b3JrcXVldWUuaD4K
-ICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPgotI2luY2x1ZGUgPGxpbnV4L2RtYS1hdHRy
-cy5oPgogI2luY2x1ZGUgPGxpbnV4L29mLmg+CiAKICNpbmNsdWRlIDxkcm0vZHJtUC5oPgpAQCAt
-MjM1LDcgKzIzNCw3IEBAIHN0cnVjdCBnMmRfZGF0YSB7CiAJc3RydWN0IG11dGV4CQkJY21kbGlz
-dF9tdXRleDsKIAlkbWFfYWRkcl90CQkJY21kbGlzdF9wb29sOwogCXZvaWQJCQkJKmNtZGxpc3Rf
-cG9vbF92aXJ0OwotCXN0cnVjdCBkbWFfYXR0cnMJCWNtZGxpc3RfZG1hX2F0dHJzOworCXVuc2ln
-bmVkIGxvbmcJCQljbWRsaXN0X2RtYV9hdHRyczsKIAogCS8qIHJ1bnF1ZXVlKi8KIAlzdHJ1Y3Qg
-ZzJkX3J1bnF1ZXVlX25vZGUJKnJ1bnF1ZXVlX25vZGU7CkBAIC0yNTYsMTMgKzI1NSwxMiBAQCBz
-dGF0aWMgaW50IGcyZF9pbml0X2NtZGxpc3Qoc3RydWN0IGcyZF9kYXRhICpnMmQpCiAJaW50IHJl
-dDsKIAlzdHJ1Y3QgZzJkX2J1Zl9pbmZvICpidWZfaW5mbzsKIAotCWluaXRfZG1hX2F0dHJzKCZn
-MmQtPmNtZGxpc3RfZG1hX2F0dHJzKTsKLQlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfV1JJVEVfQ09N
-QklORSwgJmcyZC0+Y21kbGlzdF9kbWFfYXR0cnMpOworCWcyZC0+Y21kbGlzdF9kbWFfYXR0cnMg
-PSBETUFfQVRUUl9XUklURV9DT01CSU5FOwogCiAJZzJkLT5jbWRsaXN0X3Bvb2xfdmlydCA9IGRt
-YV9hbGxvY19hdHRycyh0b19kbWFfZGV2KHN1YmRydi0+ZHJtX2RldiksCiAJCQkJCQlHMkRfQ01E
-TElTVF9QT09MX1NJWkUsCiAJCQkJCQkmZzJkLT5jbWRsaXN0X3Bvb2wsIEdGUF9LRVJORUwsCi0J
-CQkJCQkmZzJkLT5jbWRsaXN0X2RtYV9hdHRycyk7CisJCQkJCQlnMmQtPmNtZGxpc3RfZG1hX2F0
-dHJzKTsKIAlpZiAoIWcyZC0+Y21kbGlzdF9wb29sX3ZpcnQpIHsKIAkJZGV2X2VycihkZXYsICJm
-YWlsZWQgdG8gYWxsb2NhdGUgZG1hIG1lbW9yeVxuIik7CiAJCXJldHVybiAtRU5PTUVNOwpAQCAt
-Mjk1LDcgKzI5Myw3IEBAIHN0YXRpYyBpbnQgZzJkX2luaXRfY21kbGlzdChzdHJ1Y3QgZzJkX2Rh
-dGEgKmcyZCkKIGVycjoKIAlkbWFfZnJlZV9hdHRycyh0b19kbWFfZGV2KHN1YmRydi0+ZHJtX2Rl
-diksIEcyRF9DTURMSVNUX1BPT0xfU0laRSwKIAkJCWcyZC0+Y21kbGlzdF9wb29sX3ZpcnQsCi0J
-CQlnMmQtPmNtZGxpc3RfcG9vbCwgJmcyZC0+Y21kbGlzdF9kbWFfYXR0cnMpOworCQkJZzJkLT5j
-bWRsaXN0X3Bvb2wsIGcyZC0+Y21kbGlzdF9kbWFfYXR0cnMpOwogCXJldHVybiByZXQ7CiB9CiAK
-QEAgLTMwOSw3ICszMDcsNyBAQCBzdGF0aWMgdm9pZCBnMmRfZmluaV9jbWRsaXN0KHN0cnVjdCBn
-MmRfZGF0YSAqZzJkKQogCQlkbWFfZnJlZV9hdHRycyh0b19kbWFfZGV2KHN1YmRydi0+ZHJtX2Rl
-diksCiAJCQkJRzJEX0NNRExJU1RfUE9PTF9TSVpFLAogCQkJCWcyZC0+Y21kbGlzdF9wb29sX3Zp
-cnQsCi0JCQkJZzJkLT5jbWRsaXN0X3Bvb2wsICZnMmQtPmNtZGxpc3RfZG1hX2F0dHJzKTsKKwkJ
-CQlnMmQtPmNtZGxpc3RfcG9vbCwgZzJkLT5jbWRsaXN0X2RtYV9hdHRycyk7CiAJfQogfQogCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKaW5kZXggY2RmOWYxYWY0MzQ3Li5m
-MmFlNzJiYTdkNWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9nZW0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKQEAg
-LTI0LDcgKzI0LDcgQEAKIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9hbGxvY19idWYoc3RydWN0IGV4
-eW5vc19kcm1fZ2VtICpleHlub3NfZ2VtKQogewogCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBl
-eHlub3NfZ2VtLT5iYXNlLmRldjsKLQllbnVtIGRtYV9hdHRyIGF0dHI7CisJdW5zaWduZWQgbG9u
-ZyBhdHRyOwogCXVuc2lnbmVkIGludCBucl9wYWdlczsKIAlzdHJ1Y3Qgc2dfdGFibGUgc2d0Owog
-CWludCByZXQgPSAtRU5PTUVNOwpAQCAtMzQsNyArMzQsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19k
-cm1fYWxsb2NfYnVmKHN0cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2dlbSkKIAkJcmV0dXJu
-IDA7CiAJfQogCi0JaW5pdF9kbWFfYXR0cnMoJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7CisJZXh5
-bm9zX2dlbS0+ZG1hX2F0dHJzID0gMDsKIAogCS8qCiAJICogaWYgRVhZTk9TX0JPX0NPTlRJRywg
-ZnVsbHkgcGh5c2ljYWxseSBjb250aWd1b3VzIG1lbW9yeQpAQCAtNDIsNyArNDIsNyBAQCBzdGF0
-aWMgaW50IGV4eW5vc19kcm1fYWxsb2NfYnVmKHN0cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9z
-X2dlbSkKIAkgKiBhcyBwb3NzaWJsZS4KIAkgKi8KIAlpZiAoIShleHlub3NfZ2VtLT5mbGFncyAm
-IEVYWU5PU19CT19OT05DT05USUcpKQotCQlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfRk9SQ0VfQ09O
-VElHVU9VUywgJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7CisJCWV4eW5vc19nZW0tPmRtYV9hdHRy
-cyB8PSBETUFfQVRUUl9GT1JDRV9DT05USUdVT1VTOwogCiAJLyoKIAkgKiBpZiBFWFlOT1NfQk9f
-V0Mgb3IgRVhZTk9TX0JPX05PTkNBQ0hBQkxFLCB3cml0ZWNvbWJpbmUgbWFwcGluZwpAQCAtNTQs
-OCArNTQsOCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fYWxsb2NfYnVmKHN0cnVjdCBleHlub3Nf
-ZHJtX2dlbSAqZXh5bm9zX2dlbSkKIAllbHNlCiAJCWF0dHIgPSBETUFfQVRUUl9OT05fQ09OU0lT
-VEVOVDsKIAotCWRtYV9zZXRfYXR0cihhdHRyLCAmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKLQlk
-bWFfc2V0X2F0dHIoRE1BX0FUVFJfTk9fS0VSTkVMX01BUFBJTkcsICZleHlub3NfZ2VtLT5kbWFf
-YXR0cnMpOworCWV4eW5vc19nZW0tPmRtYV9hdHRycyB8PSBhdHRyOworCWV4eW5vc19nZW0tPmRt
-YV9hdHRycyB8PSBETUFfQVRUUl9OT19LRVJORUxfTUFQUElORzsKIAogCW5yX3BhZ2VzID0gZXh5
-bm9zX2dlbS0+c2l6ZSA+PiBQQUdFX1NISUZUOwogCkBAIC02Nyw3ICs2Nyw3IEBAIHN0YXRpYyBp
-bnQgZXh5bm9zX2RybV9hbGxvY19idWYoc3RydWN0IGV4eW5vc19kcm1fZ2VtICpleHlub3NfZ2Vt
-KQogCiAJZXh5bm9zX2dlbS0+Y29va2llID0gZG1hX2FsbG9jX2F0dHJzKHRvX2RtYV9kZXYoZGV2
-KSwgZXh5bm9zX2dlbS0+c2l6ZSwKIAkJCQkJICAgICAmZXh5bm9zX2dlbS0+ZG1hX2FkZHIsIEdG
-UF9LRVJORUwsCi0JCQkJCSAgICAgJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7CisJCQkJCSAgICAg
-ZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKIAlpZiAoIWV4eW5vc19nZW0tPmNvb2tpZSkgewogCQlE
-Uk1fRVJST1IoImZhaWxlZCB0byBhbGxvY2F0ZSBidWZmZXIuXG4iKTsKIAkJZ290byBlcnJfZnJl
-ZTsKQEAgLTc1LDcgKzc1LDcgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2FsbG9jX2J1ZihzdHJ1
-Y3QgZXh5bm9zX2RybV9nZW0gKmV4eW5vc19nZW0pCiAKIAlyZXQgPSBkbWFfZ2V0X3NndGFibGVf
-YXR0cnModG9fZG1hX2RldihkZXYpLCAmc2d0LCBleHlub3NfZ2VtLT5jb29raWUsCiAJCQkJICAg
-IGV4eW5vc19nZW0tPmRtYV9hZGRyLCBleHlub3NfZ2VtLT5zaXplLAotCQkJCSAgICAmZXh5bm9z
-X2dlbS0+ZG1hX2F0dHJzKTsKKwkJCQkgICAgZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKIAlpZiAo
-cmV0IDwgMCkgewogCQlEUk1fRVJST1IoImZhaWxlZCB0byBnZXQgc2d0YWJsZS5cbiIpOwogCQln
-b3RvIGVycl9kbWFfZnJlZTsKQEAgLTk5LDcgKzk5LDcgQEAgZXJyX3NndF9mcmVlOgogCXNnX2Zy
-ZWVfdGFibGUoJnNndCk7CiBlcnJfZG1hX2ZyZWU6CiAJZG1hX2ZyZWVfYXR0cnModG9fZG1hX2Rl
-dihkZXYpLCBleHlub3NfZ2VtLT5zaXplLCBleHlub3NfZ2VtLT5jb29raWUsCi0JCSAgICAgICBl
-eHlub3NfZ2VtLT5kbWFfYWRkciwgJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7CisJCSAgICAgICBl
-eHlub3NfZ2VtLT5kbWFfYWRkciwgZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKIGVycl9mcmVlOgog
-CWRybV9mcmVlX2xhcmdlKGV4eW5vc19nZW0tPnBhZ2VzKTsKIApAQCAtMTIwLDcgKzEyMCw3IEBA
-IHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fZnJlZV9idWYoc3RydWN0IGV4eW5vc19kcm1fZ2VtICpl
-eHlub3NfZ2VtKQogCiAJZG1hX2ZyZWVfYXR0cnModG9fZG1hX2RldihkZXYpLCBleHlub3NfZ2Vt
-LT5zaXplLCBleHlub3NfZ2VtLT5jb29raWUsCiAJCQkoZG1hX2FkZHJfdClleHlub3NfZ2VtLT5k
-bWFfYWRkciwKLQkJCSZleHlub3NfZ2VtLT5kbWFfYXR0cnMpOworCQkJZXh5bm9zX2dlbS0+ZG1h
-X2F0dHJzKTsKIAogCWRybV9mcmVlX2xhcmdlKGV4eW5vc19nZW0tPnBhZ2VzKTsKIH0KQEAgLTM0
-Niw3ICszNDYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fZ2VtX21tYXBfYnVmZmVyKHN0cnVj
-dCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2dlbSwKIAogCXJldCA9IGRtYV9tbWFwX2F0dHJzKHRv
-X2RtYV9kZXYoZHJtX2RldiksIHZtYSwgZXh5bm9zX2dlbS0+Y29va2llLAogCQkJICAgICBleHlu
-b3NfZ2VtLT5kbWFfYWRkciwgZXh5bm9zX2dlbS0+c2l6ZSwKLQkJCSAgICAgJmV4eW5vc19nZW0t
-PmRtYV9hdHRycyk7CisJCQkgICAgIGV4eW5vc19nZW0tPmRtYV9hdHRycyk7CiAJaWYgKHJldCA8
-IDApIHsKIAkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gbW1hcC5cbiIpOwogCQlyZXR1cm4gcmV0Owpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oCmluZGV4IDc4MTAwNzQyMjgxZC4u
-ZGY3YzU0M2Q2NTU4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZ2VtLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oCkBA
-IC01MCw3ICs1MCw3IEBAIHN0cnVjdCBleHlub3NfZHJtX2dlbSB7CiAJdm9pZAkJCSpjb29raWU7
-CiAJdm9pZCBfX2lvbWVtCQkqa3ZhZGRyOwogCWRtYV9hZGRyX3QJCWRtYV9hZGRyOwotCXN0cnVj
-dCBkbWFfYXR0cnMJZG1hX2F0dHJzOworCXVuc2lnbmVkIGxvbmcJCWRtYV9hdHRyczsKIAlzdHJ1
-Y3QgcGFnZQkJKipwYWdlczsKIAlzdHJ1Y3Qgc2dfdGFibGUJCSpzZ3Q7CiB9OwotLSAKMS45LjEK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The patch
+
+   ASoC: Add DT bindings documentation for max98504 amplifier
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 51ded0fbc18c5c05782c1c7eba30264b524added Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 29 Jun 2016 13:26:36 +0200
+Subject: [PATCH] ASoC: Add DT bindings documentation for max98504 amplifier
+
+This patch adds DT bindings documentation for Maxim MAX98504
+speaker amplifier.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/sound/max98504.txt         | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/max98504.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/max98504.txt b/Documentation/devicetree/bindings/sound/max98504.txt
+new file mode 100644
+index 000000000000..583ed5fdfb28
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/max98504.txt
+@@ -0,0 +1,44 @@
++Maxim MAX98504 class D mono speaker amplifier
++
++This device supports I2C control interface and an IRQ output signal. It features
++a PCM and PDM digital audio interface (DAI) and a differential analog input.
++
++Required properties:
++
++ - compatible : "maxim,max98504"
++ - reg : should contain the I2C slave device address
++ - DVDD-supply, DIOVDD-supply, PVDD-supply: power supplies for the device,
++   as covered in ../regulator/regulator.txt
++ - interrupts : should specify the interrupt line the device is connected to,
++   as described in ../interrupt-controller/interrupts.txt
++
++Optional properties:
++
++ - maxim,brownout-threshold - the PVDD brownout threshold, the value must be
++   from 0, 1...21 range, corresponding to 2.6V, 2.65V...3.65V voltage range
++ - maxim,brownout-attenuation - the brownout attenuation to the speaker gain
++   applied during the "attack hold" and "timed hold" phase, the value must be
++   from 0...6 (dB) range
++ - maxim,brownout-attack-hold-ms - the brownout attack hold phase time in ms,
++   0...255 (VBATBROWN_ATTK_HOLD, register 0x0018)
++ - maxim,brownout-timed-hold-ms - the brownout timed hold phase time in ms,
++   0...255 (VBATBROWN_TIME_HOLD, register 0x0019)
++ - maxim,brownout-release-rate-ms - the brownout release phase step time in ms,
++   0...255 (VBATBROWN_RELEASE, register 0x001A)
++
++The default value when the above properties are not specified is 0,
++the maxim,brownout-threshold property must be specified to actually enable
++the PVDD brownout protection.
++
++Example:
++
++ max98504@31 {
++	compatible = "maxim,max98504";
++	reg = <0x31>;
++	interrupt-parent = <&gpio_bank_0>;
++	interrupts = <2 0>;
++
++	DVDD-supply = <&regulator>;
++	DIOVDD-supply = <&regulator>;
++	PVDD-supply = <&regulator>;
++};
+-- 
+2.8.1
