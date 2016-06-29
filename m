@@ -1,81 +1,674 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 5/6] ASoC: samsung: Add DT bindings documentation for TM2
- sound subsystem
-Date: Wed, 29 Jun 2016 13:26:38 +0200
-Message-ID: <1467199599-6892-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 6/6] ASoC: samsung: Add machine driver for Exynos5433 based
+ TM2 board
+Date: Wed, 29 Jun 2016 13:26:39 +0200
+Message-ID: <1467199599-6892-7-git-send-email-s.nawrocki@samsung.com>
 References: <1467199599-6892-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44446 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751716AbcF2L31 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33957 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751706AbcF2L3j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 07:29:27 -0400
+	Wed, 29 Jun 2016 07:29:39 -0400
 In-reply-to: <1467199599-6892-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
-Cc: robh@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, ideal.song@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: robh@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, ideal.song@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This patch adds DT binding documentation for Exnos5433 based TM2
-and TM2E boards sound subsystem.
+This patch adds the sound machine driver for TM2 and TM2E board.
+Speaker and headphone playback, Main Mic capture, Bluetooth,
+Voice call and external accessory are supported.
 
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+[k.kozlowski: rebased on 4.1]
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+[s.nawrocki: rebased to 4.7, adjustment to the ASoC core changes,
+ removed unused ops and direct calls to the max98504 function,
+ added parsing of "audio-amplifier" and "audio-codec"
+ properties, added TDM API calls, switched to gpiod API]
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
 Changes since v2:
- - none.
-Changes since initial version:
- - dropped clocks, clock-names properties, instead properties from
-   the CODEC node will be used,
- - property renames: 'samsung,model' -> 'model', 'samsung,i2s-controller'
-   -> 'i2s-controller', 'samsung,speaker-amplifier' -> 'audio-amplifier',
- - added 'audio-codec' property.
----
- .../bindings/sound/samsung,tm2-audio.txt           | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+ - added missing Kconfig dependencies.
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+Changes since initial version:
+ - added PDM Tx channels setup through TDM API
+ - adaptation to renamed 'samsung,model', 'samsung,i2s-controller',
+   'samsung,speaker-amplifier' properties,
+ - removed some dev_dbg() calls,
+ - cleaned up mic-bias GPIO handling and switched to gpiod API,
+ - added parsing of 'audio-codec' property,
+ - initialized codec_of_node of dai_link instead of codec_name,
+ - switched to using clock, clock-names properties from the wm5110
+   codec node,
+ - fixed error paths in probe() (of_node reference counting).
+---
+ sound/soc/samsung/Kconfig      |  10 +
+ sound/soc/samsung/Makefile     |   2 +
+ sound/soc/samsung/tm2_wm5110.c | 579 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 591 insertions(+)
+ create mode 100644 sound/soc/samsung/tm2_wm5110.c
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index f8f23f2..e8e0944 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -232,3 +232,13 @@ config SND_SOC_ARNDALE_RT5631_ALC5631
+         depends on SND_SOC_SAMSUNG && I2C
+         select SND_SAMSUNG_I2S
+         select SND_SOC_RT5631
++
++config SND_SOC_SAMSUNG_TM2_WM5110
++	tristate "SoC I2S Audio support for WM5110 on TM2 board"
++	depends on SND_SOC_SAMSUNG && MFD_ARIZONA && I2C && SPI_MASTER
++	select SND_SOC_MAX98504
++	select SND_SOC_WM5110
++	select SND_SAMSUNG_I2S
++	select SND_SAMSUNG_AUDSS
++	help
++	  Say Y if you want to add support for SoC audio on the TM2 board.
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 2b919d5..9332991 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -46,6 +46,7 @@ snd-soc-lowland-objs := lowland.o
+ snd-soc-littlemill-objs := littlemill.o
+ snd-soc-bells-objs := bells.o
+ snd-soc-arndale-rt5631-objs := arndale_rt5631.o
++snd-soc-tm2-wm5110-objs := tm2_wm5110.o
+ 
+ obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
+@@ -71,3 +72,4 @@ obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
+ obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
+ obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
+ obj-$(CONFIG_SND_SOC_ARNDALE_RT5631_ALC5631) += snd-soc-arndale-rt5631.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_TM2_WM5110) += snd-soc-tm2-wm5110.o
+diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
 new file mode 100644
-index 0000000..3ae56f3
+index 0000000..9728b3c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-@@ -0,0 +1,36 @@
-+Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
++++ b/sound/soc/samsung/tm2_wm5110.c
+@@ -0,0 +1,579 @@
++/*
++ * Copyright (C) 2015 - 2016 Samsung Electronics Co., Ltd.
++ *
++ * Authors: Inha Song <ideal.song@samsung.com>
++ *          Sylwester Nawrocki <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
 +
-+Required properties:
++#include <linux/clk.h>
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
 +
-+ - compatible : "samsung,tm2-audio"
-+ - model : the user-visible name of this sound complex
-+ - audio-codec: the phandle of the wm5110 audio codec node,
-+   as described in Documentation/devicetree/bindings/mfd/arizona.txt
-+ - i2s-controller : the phandle of the I2S controller
-+ - audio-amplifier : the phandle of the MAX98504 amplifier
-+ - samsung,audio-routing : a list of the connections between audio
-+   components;  each entry is a pair of strings, the first being the
-+   connection's sink, the second being the connection's source;
-+   valid names for sources and sinks are the WM5110's and MAX98504's
-+   pins and the jacks on the board:
-+   HP, SPK, Main Mic, Sub Mic, Third Mic, Headset Mic.
-+ - mic-bias-gpios : GPIO pin that enables the Main Mic bias regulator
++#include "i2s.h"
++#include "../codecs/wm5110.h"
 +
-+Example:
++struct tm2_machine_priv {
++	struct snd_soc_codec *codec;
++	struct clk *codec_mclk1;
++	struct clk *codec_mclk2;
 +
-+sound {
-+	compatible = "samsung,tm2-audio";
-+	audio-codec = <&wm5110>;
-+	i2s-controller = <&i2s0>;
-+	audio-amplifier = <&max98504>;
-+	mic-bias-gpios = <&gpr3 2 0>;
-+	model = "wm5110";
-+	samsung,audio-routing =
-+		"HP", "HPOUT1L",
-+		"HP", "HPOUT1R",
-+		"SPK", "SPKOUT",
-+		"SPKOUT", "HPOUT2L",
-+		"SPKOUT", "HPOUT2R",
-+		"Main Mic", "MICBIAS2",
-+		"IN1R", "Main Mic";
++	unsigned int sysclk_rate;
++
++	struct gpio_desc *gpio_mic_bias;
 +};
++
++static int tm2_start_sysclk(struct snd_soc_card *card)
++{
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++	struct snd_soc_codec *codec = priv->codec;
++	unsigned long mclk_rate = clk_get_rate(priv->codec_mclk1);
++	int ret;
++
++	ret = clk_prepare_enable(priv->codec_mclk1);
++	if (ret < 0) {
++		dev_err(card->dev, "Failed to enable mclk: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_pll(codec, WM5110_FLL1,
++				    ARIZONA_FLL_SRC_MCLK1,
++				    mclk_rate,
++				    priv->sysclk_rate);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to start FLL: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_pll(codec, WM5110_FLL1_REFCLK,
++				    ARIZONA_FLL_SRC_MCLK1,
++				    mclk_rate,
++				    priv->sysclk_rate);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to set FLL1 Source: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_sysclk(codec, ARIZONA_CLK_SYSCLK,
++				       ARIZONA_CLK_SRC_FLL1,
++				       priv->sysclk_rate,
++				       SND_SOC_CLOCK_IN);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to set SYSCLK Source: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int tm2_stop_sysclk(struct snd_soc_card *card)
++{
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++	struct snd_soc_codec *codec = priv->codec;
++	int ret;
++
++	ret = snd_soc_codec_set_pll(codec, WM5110_FLL1, 0, 0, 0);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to stop FLL: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_sysclk(codec, ARIZONA_CLK_SYSCLK,
++				       ARIZONA_CLK_SRC_FLL1, 0, 0);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to stop SYSCLK: %d\n", ret);
++		return ret;
++	}
++
++	clk_disable_unprepare(priv->codec_mclk1);
++
++	return 0;
++}
++
++static int tm2_aif1_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct snd_soc_codec *codec = rtd->codec;
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++	int ret;
++
++	switch (params_rate(params)) {
++	case 4000:
++	case 8000:
++	case 12000:
++	case 16000:
++	case 24000:
++	case 32000:
++	case 48000:
++	case 96000:
++	case 192000:
++		/* Highest possible SYSCLK frequency: 147.456MHz */
++		priv->sysclk_rate = 147456000U;
++		break;
++	case 11025:
++	case 22050:
++	case 44100:
++	case 88200:
++	case 176400:
++		/* Highest possible SYSCLK frequency: 135.4752 MHz */
++		priv->sysclk_rate = 135475200U;
++		break;
++	default:
++		dev_err(codec->dev, "Not supported sample rate: %d\n",
++			params_rate(params));
++		return -EINVAL;
++	}
++
++	ret = snd_soc_dai_set_sysclk(codec_dai, ARIZONA_CLK_SYSCLK, 0, 0);
++	if (ret < 0) {
++		dev_err(codec_dai->dev, "Failed to set SYSCLK: %d\n", ret);
++		return ret;
++	}
++
++	return tm2_start_sysclk(rtd->card);
++}
++
++static struct snd_soc_ops tm2_aif1_ops = {
++	.hw_params = tm2_aif1_hw_params,
++};
++
++static int tm2_aif2_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct snd_soc_codec *codec = rtd->codec;
++	struct tm2_machine_priv *priv =	snd_soc_card_get_drvdata(rtd->card);
++	unsigned long mclk_rate = clk_get_rate(priv->codec_mclk1);
++	unsigned int asyncclk_rate;
++	int ret;
++
++	switch (params_rate(params)) {
++	case 8000:
++	case 12000:
++	case 16000:
++		/* Highest possible ASYNCCLK frequency: 49.152MHz */
++		asyncclk_rate = 49152000U;
++		break;
++	case 11025:
++		/* Highest possible ASYNCCLK frequency: 45.1584 MHz */
++		asyncclk_rate = 45158400U;
++		break;
++	default:
++		dev_err(codec->dev, "Not supported sample rate: %d\n",
++			params_rate(params));
++		return -EINVAL;
++	}
++
++	ret = snd_soc_codec_set_pll(codec, WM5110_FLL2,
++				    ARIZONA_FLL_SRC_MCLK1,
++				    mclk_rate,
++				    asyncclk_rate);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to start FLL: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_pll(codec, WM5110_FLL2_REFCLK,
++				    ARIZONA_FLL_SRC_MCLK1,
++				    mclk_rate,
++				    asyncclk_rate);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to set FLL1 Source: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_dai_set_sysclk(codec_dai, ARIZONA_CLK_ASYNCCLK, 0, 0);
++
++	if (ret < 0) {
++		dev_err(codec_dai->dev, "Failed to set ASYNCCLK: %d\n", ret);
++		return ret;
++	}
++
++	ret = snd_soc_codec_set_sysclk(codec, ARIZONA_CLK_ASYNCCLK,
++				       ARIZONA_CLK_SRC_FLL2,
++				       asyncclk_rate,
++				       SND_SOC_CLOCK_IN);
++	if (ret < 0) {
++		dev_err(codec->dev, "Failed to set ASYNCCLK Source: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static struct snd_soc_ops tm2_aif2_ops = {
++	.hw_params = tm2_aif2_hw_params,
++};
++
++static int tm2_mic_bias(struct snd_soc_dapm_widget *w,
++				struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_card *card = w->dapm->card;
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		gpiod_set_value_cansleep(priv->gpio_mic_bias,  1);
++		break;
++	case SND_SOC_DAPM_POST_PMD:
++		gpiod_set_value_cansleep(priv->gpio_mic_bias,  0);
++		break;
++	}
++
++	return 0;
++}
++
++static int tm2_set_bias_level(struct snd_soc_card *card,
++				struct snd_soc_dapm_context *dapm,
++				enum snd_soc_bias_level level)
++{
++	struct snd_soc_pcm_runtime *rtd;
++
++	rtd = snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
++
++	if (dapm->dev != rtd->codec_dai->dev)
++		return 0;
++
++	switch (level) {
++	case SND_SOC_BIAS_STANDBY:
++		if (card->dapm.bias_level == SND_SOC_BIAS_OFF)
++			tm2_start_sysclk(card);
++		break;
++	case SND_SOC_BIAS_OFF:
++		tm2_stop_sysclk(card);
++		break;
++	case SND_SOC_BIAS_PREPARE:
++		break;
++	default:
++		break;
++	}
++
++	card->dapm.bias_level = level;
++
++	return 0;
++}
++
++static struct snd_soc_aux_dev tm2_speaker_amp_dev;
++
++static int tm2_late_probe(struct snd_soc_card *card)
++{
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++	struct snd_soc_dai_link_component dlc = { 0 };
++	struct snd_soc_dai *amp_pdm_dai;
++	struct snd_soc_pcm_runtime *rtd;
++	unsigned int ch_map[] = { 0, 1 };
++	int ret;
++
++	rtd = snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
++	priv->codec = rtd->codec;
++
++	/* 32 kHz must be enabled for jack detection */
++	if (!IS_ERR(priv->codec_mclk2))
++		clk_prepare_enable(priv->codec_mclk2);
++
++	dlc.of_node = tm2_speaker_amp_dev.codec_of_node;
++	amp_pdm_dai = snd_soc_find_dai(&dlc);
++	if (!amp_pdm_dai)
++		return -ENODEV;
++
++	/* Set the MAX98504 V/I sense PDM Tx DAI channel mapping */
++	ret = snd_soc_dai_set_channel_map(amp_pdm_dai, ARRAY_SIZE(ch_map),
++					  ch_map, 0, NULL);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_soc_dai_set_tdm_slot(amp_pdm_dai, 0x3, 0x0, 2, 16);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int tm2_suspend_post(struct snd_soc_card *card)
++{
++	return tm2_stop_sysclk(card);
++}
++
++static int tm2_resume_pre(struct snd_soc_card *card)
++{
++	return tm2_start_sysclk(card);
++}
++
++static const struct snd_kcontrol_new tm2_controls[] = {
++	SOC_DAPM_PIN_SWITCH("HP"),
++	SOC_DAPM_PIN_SWITCH("SPK"),
++	SOC_DAPM_PIN_SWITCH("RCV"),
++	SOC_DAPM_PIN_SWITCH("VPS"),
++	SOC_DAPM_PIN_SWITCH("HDMI"),
++
++	SOC_DAPM_PIN_SWITCH("Main Mic"),
++	SOC_DAPM_PIN_SWITCH("Sub Mic"),
++	SOC_DAPM_PIN_SWITCH("Third Mic"),
++
++	SOC_DAPM_PIN_SWITCH("Headset Mic"),
++};
++
++const struct snd_soc_dapm_widget tm2_dapm_widgets[] = {
++	SND_SOC_DAPM_HP("HP", NULL),
++	SND_SOC_DAPM_SPK("SPK", NULL),
++	SND_SOC_DAPM_SPK("RCV", NULL),
++	SND_SOC_DAPM_LINE("VPS", NULL),
++	SND_SOC_DAPM_LINE("HDMI", NULL),
++
++	SND_SOC_DAPM_MIC("Main Mic", tm2_mic_bias),
++	SND_SOC_DAPM_MIC("Sub Mic", NULL),
++	SND_SOC_DAPM_MIC("Third Mic", NULL),
++
++	SND_SOC_DAPM_MIC("Headset Mic", NULL),
++};
++
++static const struct snd_soc_component_driver tm2_component = {
++	.name	= "tm2-audio",
++};
++
++static struct snd_soc_dai_driver tm2_ext_dai[] = {
++	{
++		.name = "Voice call",
++		.playback = {
++			.channels_min = 1,
++			.channels_max = 4,
++			.rate_min = 8000,
++			.rate_max = 48000,
++			.rates = (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
++					SNDRV_PCM_RATE_48000),
++			.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		},
++		.capture = {
++			.channels_min = 1,
++			.channels_max = 4,
++			.rate_min = 8000,
++			.rate_max = 48000,
++			.rates = (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
++					SNDRV_PCM_RATE_48000),
++			.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		},
++	},
++	{
++		.name = "Bluetooth",
++		.playback = {
++			.channels_min = 1,
++			.channels_max = 4,
++			.rate_min = 8000,
++			.rate_max = 16000,
++			.rates = (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000),
++			.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		},
++		.capture = {
++			.channels_min = 1,
++			.channels_max = 2,
++			.rate_min = 8000,
++			.rate_max = 16000,
++			.rates = (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000),
++			.formats = SNDRV_PCM_FMTBIT_S16_LE,
++		},
++	},
++};
++
++static struct snd_soc_dai_link tm2_dai_links[] = {
++	{
++		.name		= "WM5110 AIF1",
++		.stream_name	= "HiFi Primary",
++		.codec_dai_name = "wm5110-aif1",
++		.ops		= &tm2_aif1_ops,
++		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
++				  SND_SOC_DAIFMT_CBM_CFM,
++	}, {
++		.name		= "WM5110 Voice",
++		.stream_name	= "Voice call",
++		.codec_dai_name = "wm5110-aif2",
++		.ops		= &tm2_aif2_ops,
++		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
++				  SND_SOC_DAIFMT_CBM_CFM,
++		.ignore_suspend = 1,
++	}, {
++		.name		= "WM5110 BT",
++		.stream_name	= "Bluetooth",
++		.codec_dai_name = "wm5110-aif3",
++		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
++				  SND_SOC_DAIFMT_CBM_CFM,
++		.ignore_suspend = 1,
++	}
++};
++
++static struct snd_soc_card tm2_card = {
++	.owner			= THIS_MODULE,
++
++	.dai_link		= tm2_dai_links,
++	.num_links		= ARRAY_SIZE(tm2_dai_links),
++	.controls		= tm2_controls,
++	.num_controls		= ARRAY_SIZE(tm2_controls),
++	.dapm_widgets		= tm2_dapm_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(tm2_dapm_widgets),
++
++	.aux_dev		= &tm2_speaker_amp_dev,
++	.num_aux_devs		= 1,
++
++	.late_probe		= tm2_late_probe,
++
++	.set_bias_level		= tm2_set_bias_level,
++
++	.suspend_post		= tm2_suspend_post,
++	.resume_pre		= tm2_resume_pre,
++};
++
++static int tm2_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct snd_soc_card *card = &tm2_card;
++	struct tm2_machine_priv *priv;
++	struct device_node *cpu_dai_node, *codec_dai_node;
++	int ret, i;
++
++	if (!dev->of_node) {
++		dev_err(dev, "DT node is missing\n");
++		return -ENODEV;
++	}
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	snd_soc_card_set_drvdata(card, priv);
++	card->dev = dev;
++
++	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
++						GPIOF_OUT_INIT_LOW);
++	if (IS_ERR(priv->gpio_mic_bias)) {
++		dev_err(dev, "Failed to get mic bias gpio\n");
++		return PTR_ERR(priv->gpio_mic_bias);
++	}
++
++	ret = snd_soc_of_parse_card_name(card, "model");
++	if (ret < 0) {
++		dev_err(dev, "Card name is not specified\n");
++		return ret;
++	}
++
++	ret = snd_soc_of_parse_audio_routing(card, "samsung,audio-routing");
++	if (ret < 0) {
++		dev_err(dev, "Audio routing is not specified or invalid\n");
++		return ret;
++	}
++
++	card->aux_dev[0].codec_of_node = of_parse_phandle(dev->of_node,
++							"audio-amplifier", 0);
++	if (!card->aux_dev[0].codec_of_node) {
++		dev_err(dev, "audio-amplifier property invalid or missing\n");
++		return -EINVAL;
++	}
++
++	cpu_dai_node = of_parse_phandle(dev->of_node, "i2s-controller", 0);
++	if (!cpu_dai_node) {
++		dev_err(dev, "i2s-controllers property invalid or missing\n");
++		ret = -EINVAL;
++		goto err_put_amp;
++	}
++
++	codec_dai_node = of_parse_phandle(dev->of_node, "audio-codec", 0);
++	if (!codec_dai_node) {
++		dev_err(dev, "audio-codec property invalid or missing\n");
++		ret = -EINVAL;
++		goto err_put_cpu_dai;
++	}
++
++	for (i = 0; i < card->num_links; i++) {
++		card->dai_link[i].cpu_dai_name = NULL;
++		card->dai_link[i].cpu_name = NULL;
++		card->dai_link[i].platform_name = NULL;
++		card->dai_link[i].codec_of_node = codec_dai_node;
++		card->dai_link[i].cpu_of_node = cpu_dai_node;
++		card->dai_link[i].platform_of_node = cpu_dai_node;
++	}
++
++	priv->codec_mclk1 = of_clk_get_by_name(codec_dai_node, "mclk1");
++	if (IS_ERR(priv->codec_mclk1)) {
++		dev_err(dev, "Failed to get mclk1 clock\n");
++		ret = PTR_ERR(priv->codec_mclk1);
++		goto err_put_codec_dai;
++	}
++
++	/* mclk2 is optional */
++	priv->codec_mclk2 = of_clk_get_by_name(codec_dai_node, "mclk2");
++	if (IS_ERR(priv->codec_mclk2))
++		dev_info(dev, "Not using mclk2 clock\n");
++
++	ret = devm_snd_soc_register_component(dev, &tm2_component,
++				tm2_ext_dai, ARRAY_SIZE(tm2_ext_dai));
++	if (ret < 0) {
++		dev_err(dev, "Failed to register component: %d\n", ret);
++		goto err_put_mclk;
++	}
++
++	ret = devm_snd_soc_register_card(dev, card);
++	if (ret < 0) {
++		dev_err(dev, "Failed to register card: %d\n", ret);
++		goto err_put_mclk;
++	}
++
++	return 0;
++
++err_put_mclk:
++	clk_put(priv->codec_mclk1);
++	if (!IS_ERR(priv->codec_mclk2))
++		clk_put(priv->codec_mclk2);
++err_put_codec_dai:
++	of_node_put(codec_dai_node);
++err_put_cpu_dai:
++	of_node_put(cpu_dai_node);
++err_put_amp:
++	of_node_put(card->aux_dev[0].codec_of_node);
++	return ret;
++}
++
++static int tm2_remove(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = &tm2_card;
++	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++
++	clk_put(priv->codec_mclk1);
++	if (!IS_ERR(priv->codec_mclk2))
++		clk_put(priv->codec_mclk2);
++
++	of_node_put(card->dai_link[0].codec_of_node);
++	of_node_put(card->dai_link[0].cpu_of_node);
++	of_node_put(card->aux_dev[0].codec_of_node);
++
++	return 0;
++}
++
++static const struct of_device_id tm2_of_match[] = {
++	{ .compatible = "samsung,tm2-audio" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tm2_of_match);
++
++static struct platform_driver tm2_driver = {
++	.driver = {
++		.name		= "tm2-audio",
++		.pm		= &snd_soc_pm_ops,
++		.of_match_table	= tm2_of_match,
++	},
++	.probe	= tm2_probe,
++	.remove	= tm2_remove,
++};
++
++module_platform_driver(tm2_driver);
++
++MODULE_AUTHOR("Inha Song <ideal.song@samsung.com>");
++MODULE_DESCRIPTION("ALSA SoC Exynos TM2 Audio Support");
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.1
