@@ -1,69 +1,57 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
-Date: Tue, 28 Jun 2016 22:12:16 +0900
-Message-ID: <CAGTfZH0jv0C0VTjDr8ZWEaokyapTHHsHEUeRUSyeHgdBT_dW3Q@mail.gmail.com>
-References: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com> <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
-Reply-To: cw00.choi@samsung.com
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: analogix_dp: rockchip: correct the
+ wrong compatible name
+Date: Wed, 29 Jun 2016 11:32:52 +0800
+Message-ID: <57734164.6000908@rock-chips.com>
+References: <1466562678-11094-1-git-send-email-ykk@rock-chips.com>
+ <1466646424-10583-1-git-send-email-ykk@rock-chips.com>
+ <CAD=FV=UfbAUbDJfox4zMZSHyQ6uxhG2=n_Z=8WdCKGKvW+ehTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35160 "EHLO
-	mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752346AbcF1NMS (ORCPT
+Received: from lucky1.263xmail.com ([211.157.147.130]:58035 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752495AbcF2DdJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 09:12:18 -0400
-In-Reply-To: <1467032594-7643-2-git-send-email-andi.shyti@samsung.com>
+	Tue, 28 Jun 2016 23:33:09 -0400
+In-Reply-To: <CAD=FV=UfbAUbDJfox4zMZSHyQ6uxhG2=n_Z=8WdCKGKvW+ehTQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi@etezian.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 
-Hi Andi,
+Doug,
 
-2016-06-27 22:03 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
-> enable SPI3 iosclk by using the CLK_IS_CRITICAL flag.
-
-s/iosclk/ioclk
-
-> There is no device which is supposed to enable this clock when
-> needed, therefore, the only way to use the SPI bus is to enable
-> it in boot time.
->
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
->
+On 06/23/2016 01:17 PM, Doug Anderson wrote:
 > Hi,
 >
-> V1 -> V2
+> On Wed, Jun 22, 2016 at 6:47 PM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> The document about rockchip platform make a mistaken in available
+>> compatible name of "rk3288-edp", we should correct it to "rk3288-dp"
+>> which correspond to the compatible name in driver.
+>>
+>> This mistaken was introduced in commit be91c36247089 ("dt-bindings:
+>> add document for rockchip variant of analogix_dp").
+>>
+>> Reported-by: Tomasz Figa <tfiga@chromium.com>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> ---
+>> Hi all,
+>>
+>> This is an external patch for analogix_dp misc cleanup thread [0]
+>> [0]: https://patchwork.kernel.org/patch/9175613/
+>>
+>> BR,
+>> - Yakir
+>>
+>> Changes in v4: None
+>> Changes in v3:
+>> - Add this patch in v3
+>>
+>>   .../devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt       | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thanks ;)
 >
-> - the "sclk_spi3" doesn't need to be enabled in boot time as it
->   is handled by the spi driver itself.
 >
-> - use the CLK_IS_CRITICAL flag for the ioclk
->
-> Andi
->
->  drivers/clk/samsung/clk-exynos5433.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index dcb4391..c33150e 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1641,7 +1641,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->         GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
->                         ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
-> -                       ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 20,
-> +                       CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
->                         19, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
