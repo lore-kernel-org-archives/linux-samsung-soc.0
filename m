@@ -1,96 +1,64 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v4 05/11] drm/rockchip: analogix_dp: make panel detect to an optional action
-Date: Wed, 29 Jun 2016 17:15:30 +0800
-Message-ID: <1467191730-17308-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v4 02/11] drm/bridge: analogix_dp: correct the register bit
+ define error in ANALOGIX_DP_PLL_REG_1
+Date: Wed, 29 Jun 2016 17:15:05 +0800
+Message-ID: <1467191705-17177-1-git-send-email-ykk@rock-chips.com>
 References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1467191657-16941-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, daniel.vetter-/w4YWyX8dFk@public.gmane.org, emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some boards don't need to declare a panel device node, like the
-display interface is DP monitors, so it's necessary to make the
-panel detect to an optional action.
+There're an register define error in ANALOGIX_DP_PLL_REG_1 which introduced
+by commit bcec20fd5ad6 ("drm: bridge: analogix/dp: add some rk3288 special
+registers setting").
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Acked-by: Mark Yao <mark.yao@rock-chips.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
+The PHY PLL input clock source is selected by ANALOGIX_DP_PLL_REG_1
+BIT 0, not BIT 1.
+
+Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Reviewed-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 ---
 Changes in v4:
-- Move of_node_put(panel_node) directly below of_drm_find_panel (Sean)
-- Add reviewed flag from Tomasz
+- Add reviewed flag from Sean
 
 Changes in v3:
-- Add the acked flag from Mark.
+- Add reviewed flag from Tomasz.
+    [https://chromium-review.googlesource.com/#/c/346315/15]
+- Add tested flag from Javier
 
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 47 +++++++++++--------------
- 1 file changed, 21 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 8557a08..0755573 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -329,38 +329,33 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *panel_node, *port, *endpoint;
-+	struct drm_panel *panel = NULL;
- 	struct rockchip_dp_device *dp;
--	struct drm_panel *panel;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 337912b..88d56ad 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -163,8 +163,8 @@
+ #define HSYNC_POLARITY_CFG			(0x1 << 0)
  
- 	port = of_graph_get_port_by_id(dev->of_node, 1);
--	if (!port) {
--		dev_err(dev, "can't find output port\n");
--		return -EINVAL;
--	}
--
--	endpoint = of_get_child_by_name(port, "endpoint");
--	of_node_put(port);
--	if (!endpoint) {
--		dev_err(dev, "no output endpoint found\n");
--		return -EINVAL;
--	}
--
--	panel_node = of_graph_get_remote_port_parent(endpoint);
--	of_node_put(endpoint);
--	if (!panel_node) {
--		dev_err(dev, "no output node found\n");
--		return -EINVAL;
--	}
--
--	panel = of_drm_find_panel(panel_node);
--	if (!panel) {
--		DRM_ERROR("failed to find panel\n");
-+	if (port) {
-+		endpoint = of_get_child_by_name(port, "endpoint");
-+		of_node_put(port);
-+		if (!endpoint) {
-+			dev_err(dev, "no output endpoint found\n");
-+			return -EINVAL;
-+		}
-+
-+		panel_node = of_graph_get_remote_port_parent(endpoint);
-+		of_node_put(endpoint);
-+		if (!panel_node) {
-+			dev_err(dev, "no output node found\n");
-+			return -EINVAL;
-+		}
-+
-+		panel = of_drm_find_panel(panel_node);
- 		of_node_put(panel_node);
--		return -EPROBE_DEFER;
-+		if (!panel) {
-+			DRM_ERROR("failed to find panel\n");
-+			return -EPROBE_DEFER;
-+		}
- 	}
+ /* ANALOGIX_DP_PLL_REG_1 */
+-#define REF_CLK_24M				(0x1 << 1)
+-#define REF_CLK_27M				(0x0 << 1)
++#define REF_CLK_24M				(0x1 << 0)
++#define REF_CLK_27M				(0x0 << 0)
  
--	of_node_put(panel_node);
--
- 	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
- 	if (!dp)
- 		return -ENOMEM;
+ /* ANALOGIX_DP_LANE_MAP */
+ #define LANE3_MAP_LOGIC_LANE_0			(0x0 << 6)
 -- 
 1.9.1
