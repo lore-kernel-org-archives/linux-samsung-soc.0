@@ -1,85 +1,132 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v4 08/11] drm/rockchip: analogix_dp: update the comments
- about why need to hardcode VOP output mode
-Date: Wed, 29 Jun 2016 09:58:43 -0400
-Message-ID: <CAOw6vbLBuK6bRs1DQjrpSaCiy1xtmS==xCW9n25vCM8yHUu_NQ@mail.gmail.com>
-References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com> <1467191744-17437-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v4 0/11] Misc fixup and add RK3399 eDP support to Analogix
+ DP driver
+Date: Wed, 29 Jun 2016 10:01:17 -0400
+Message-ID: <CAOw6vbLWJJP=5Erkrz0chTJEyzsF2dfG_naJk2UFG6NO9i20eg@mail.gmail.com>
+References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f50.google.com ([209.85.213.50]:34347 "EHLO
-	mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752536AbcF2N7H (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 09:59:07 -0400
-Received: by mail-vk0-f50.google.com with SMTP id c2so67057012vkg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2016 06:59:06 -0700 (PDT)
-Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com. [209.85.213.51])
-        by smtp.gmail.com with ESMTPSA id 65sm570513uas.22.2016.06.29.06.59.03
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Jun 2016 06:59:04 -0700 (PDT)
-Received: by mail-vk0-f51.google.com with SMTP id c2so67054812vkg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2016 06:59:03 -0700 (PDT)
-In-Reply-To: <1467191744-17437-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Douglas Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 29, 2016 at 5:15 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> The hardware IC designed that VOP must output the RGB10 video format to
-> eDP contoller, and if eDP panel only support RGB8, then eDP contoller
-> should cut down the video data, not via VOP contoller, that's why we need
-> to hardcode the VOP output mode to RGA10 here.
->
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Acked-by: Mark Yao <mark.yao@rock-chips.com>
-> Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
-
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> ---
-> Changes in v4:
-> - Correct the misspell of 'contoller'. (Sean)
->
-> Changes in v3:
-> - Add the reviewed flag from Tomasz.
->     [https://chromium-review.googlesource.com/#/c/346853/12]
-> - Add the acked flag from Mark.
->
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> index 0a0fb3a..850edc4 100644
-> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> @@ -182,17 +182,11 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
->         int ret;
->
->         /*
-> -        * FIXME(Yakir): driver should configure the CRTC output video
-> -        * mode with the display information which indicated the monitor
-> -        * support colorimetry.
-> -        *
-> -        * But don't know why the CRTC driver seems could only output the
-> -        * RGBaaa rightly. For example, if connect the "innolux,n116bge"
-> -        * eDP screen, EDID would indicated that screen only accepted the
-> -        * 6bpc mode. But if I configure CRTC to RGB666 output, then eDP
-> -        * screen would show a blue picture (RGB888 show a green picture).
-> -        * But if I configure CTRC to RGBaaa, and eDP driver still keep
-> -        * RGB666 input video mode, then screen would works prefect.
-> +        * The hardware IC designed that VOP must output the RGB10 video
-> +        * format to eDP controller, and if eDP panel only support RGB8,
-> +        * then eDP controller should cut down the video data, not via VOP
-> +        * controller, that's why we need to hardcode the VOP output mode
-> +        * to RGA10 here.
->          */
->
->         s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
-> --
-> 1.9.1
->
->
+T24gV2VkLCBKdW4gMjksIDIwMTYgYXQgNToxNCBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
+cHMuY29tPiB3cm90ZToKPgo+IFJLMzM5OSBhbmQgUkszMjg4IHNoYXJlZCB0aGUgc2FtZSBlRFAg
+SVAgY29udHJvbGxlciwgb25seSBzb21lIGxpZ2h0Cj4gZGlmZmVyZW5jZSB3aXRoIFZPUCBjb25m
+aWd1cmUgYW5kIEdSRiBjb25maWd1cmUuCj4KClRoZSB3aG9sZSBzZXQgbG9va3MgZ29vZCB0byBt
+ZS4gQWxsIHBhdGNoZXMgc2hvdWxkIGhhdmUgbXkgUi1iIG5vdywKdGhhbmtzIGZvciB0aGUgdXBk
+YXRlLgoKU2VhbgoKCgo+IEFsc28gc2FtZSBtaXNjIGZpeCB0byBhbmFsb2dpeF9kcCBkcml2ZXI6
+Cj4gLSBIb3RwbHVnIGludmFsaWQgd2hpY2ggcmVwb3J0IGJ5IERhbiBDYXJwZW50ZXIKPiAtIE1h
+a2UgcGFuZWwgZGV0ZWN0IHRvIGFuIG9wdGlvbmFsIGFjdGlvbgo+IC0gY29ycmVjdCB0aGUgcmVn
+aXN0ZXIgYml0IGRlZmluZSBlcnJvciBpbiBBTkFMT0dJWF9EUF9QTExfUkVHXzEKPgo+IENoYW5n
+ZXMgaW4gdjQ6Cj4gLSBBc3NpZ25lZCB0aGUgR1JGIHNldHRpbmcgbWFnaWMgbnVtYmVycyB0byBh
+ICNkZWZpbmUgdGhhdCBjb3JyZXNwb25kcyB0bwo+ICAgYSBUUk0gbmFtZS4gKFNlYW4gJiBIZWlr
+bykKPiAtIFBhc3MgdGhlIGNoaXAgdHlwZSB0byBkZXZpY2UgdHlwZSBkaXJlY3RseS4gKFNlYW4p
+Cj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPiAtIEFkZCByZXZpZXdlZCBmbGFn
+IGZyb20gU2Vhbgo+IC0gUmVtb3ZlIHN1YmRldl90eXBlIG51bWJlciwgYW5kIGFkZCAnaXNfcm9j
+a2NoaXAodHlwZSknIGhlbHBlciBmdW5jdGlvbiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFn
+IGZyb20gVG9tYXN6Lgo+IC0gSW1wcm92ZWQgdGhlIG92ZXJseSBjb21wbGljYXRlZCAuYXRvbWlj
+X2NoZWNrIGZ1bmN0aW9uLiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9tYXN6
+Cj4gLSBNb3ZlIG9mX25vZGVfcHV0KHBhbmVsX25vZGUpIGRpcmVjdGx5IGJlbG93IG9mX2RybV9m
+aW5kX3BhbmVsIChTZWFuKQo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3oKPiAtIEFk
+ZCByZXZpZXdlZCBmbGFnIGZyb20gU2Vhbi4KPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9t
+YXN6Lgo+IC0gVXNpbmcgbWFzayB2YXJpYWJsZSB0byBjb2xsZWN0IHRoZSBZVVYgdmlkZW8gZm9y
+bWF0LiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9tYXN6Lgo+IC0gQ29ycmVj
+dCB0aGUgbWlzc3BlbGwgb2YgJ2NvbnRvbGxlcicuIChTZWFuKQo+IC0gQWRkIHJldmlld2VkIGZs
+YWcgZnJvbSBTZWFuLgo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCj4gLSBBZGQg
+cmV2aWV3ZWQgZmxhZyBmcm9tIERvdWcuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFz
+ei4KPiAtIEZpeCBjb21waWxlZCBlcnJvciwgc29ycnkuCj4gICAiZHAtPmNnZmNsayIgIC0tPiAg
+J2RwLT5ncmZjbGsnCj4gLSBDaGVjayB0aGUgdGhlIGVycm9yIGNvZGUgcHJvcGVybHksICdFUFJP
+QkVfREVGRVInIHNob3VsZCBiZSByZXR1cm5lZCwKPiAgICdFTk9FTlQnIHNob3VsZCBhc3NpZ24g
+YSBOVUxMIHBvaW50IHRvIGdyZmNsaywgb3RoZXIgZXJyb3JzIHNob3VsZCBiZQo+ICAgcmVnYXJk
+ZWQgYXMgZmFpbGVkLiAoVG9tYXN6LCBEb3VnLCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQo+
+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzUxODIx
+LzIwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDI0OV0K
+PiAtIEFkZCB0aGUgZG9jdW1lbnQgYWJvdXQgb3B0aW9uYWwgJ2dyZicgY2xvY2sgKFRvbWFzeiwg
+RG91ZywgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0t
+cmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM1MTgyMS9dCj4gLSBBZGQgcmV2aWV3ZWQgZmxh
+ZyBmcm9tIERvdWcuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPgo+IENoYW5n
+ZXMgaW4gdjM6Cj4gLSBXcml0ZSBhIGtlcm5lbGRvYy1zdHlsZSBjb21tZW50IGV4cGxhaW5pbmcg
+dGhlIGNoaXBzIGRhdGEgZmllbGRzIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQp
+Cj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYz
+MTMvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmNAMzld
+Cj4gLSBEcm9wIHRoZSAnLmxjZGNzZWxfbWFzaycgbnVtYmVyIGluIGNoaXBzIGRhdGEgZmllbGQg
+KFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21p
+dW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMy8xMC9kcml2ZXJzL2dwdS9kcm0v
+cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuY0AzODJdCj4gLSBBZGQgYWNrZWQgZmxhZyBm
+cm9tIE1hcmsuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPiAgICAgW2h0dHBz
+Oi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNS8xNV0KPiAtIEFk
+ZCB0ZXN0ZWQgZmxhZyBmcm9tIEphdmllcgo+IC0gTWFrZSB0aGlzIGhhY2sgY29kZSBtb3JlIGNs
+ZWFyIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4gICByZWcgPSB+cmVnICYg
+UkVGX0NMS19NQVNLOyAgLS0tPiAgcmVnIF49IFJFRl9DTEtfTUFTSzsKPiAgICAgW2h0dHBzOi8v
+Y2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0Njg1Mi83L2RyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmNAODBdCj4gLSBBZGQgdGVzdGVk
+IGZsYWcgZnJvbSBKYXZpZXIKPiAtIEdpdmUgdGhlICJyazMzOTktZWRwIiBhIHNlcGFyYXRlIGxp
+bmUgZm9yIGNsYXJpdHkgaW4gZG9jdW1lbnQgKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdl
+cnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9j
+LzM0NjMxNC8xMC9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2Nr
+Y2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHRANV0KPiAtIE1vdmUgJ291dHB1dF90eXBlJyBz
+ZXR0aW5nIGJlZm9yZSB0aGUgcmV0dXJuIHN0YXRlbWVudCAoVG9tYXN6LCByZXZpZXdlZCBhdCBH
+b29nbGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNl
+LmNvbS8jL2MvMzQ2MzE0LzEwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1y
+b2NrY2hpcC5jQDE1NF0KPiAtIEFkZCB0aGUgYWNrZWQgZmxhZyBmcm9tIE1hcmsuCj4gLSBBZGQg
+dGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+IC0gQXZvaWQgdG8gY2hhbmdlIGFueSBpbnRlcm5h
+bCBkcml2ZXIgc3RhdGUgaW4gLm1vZGVfdmFsaWQgaW50ZXJmYWNlLiAoVG9tYXN6LCByZXZpZXdl
+ZCBhdCBHb29nbGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xl
+c291cmNlLmNvbS8jL2MvMzQ2MzE4LzEwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
+eF9kcC1yb2NrY2hpcC5jQDExM10KPiAtIEhvb2sgdGhlIGNvbm5lY3RvcidzIGNvbG9yX2Zvcm1h
+dHMgaW4gLmdldF9tb2RlcyBkaXJlY3RseS4gKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdl
+cnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9j
+LzM0NjMxNy8xNV0KPiAtIEFkZCB0aGUgYWNrZWQgZmxhZyBmcm9tIE1hcmsuCj4gLSBBZGQgdGhl
+IHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmll
+dy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDY4NTMvMTJdCj4gLSBBZGQgdGhlIGFja2VkIGZsYWcg
+ZnJvbSBNYXJrLgo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBTdMOpcGhhbmUuCj4gICAgIFto
+dHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTkvMTVdCj4g
+LSBBZGQgdGVzdGVkIGZsYWcgZnJvbSBKYXZpZXIKPiAtIEFkZCB0aGlzIHBhdGNoIGluIHYzCj4g
+LSBBZGQgdGhpcyBwYXRjaCBpbiB2Mwo+Cj4gWWFraXIgWWFuZyAoMTEpOgo+ICAgZHJtL3JvY2tj
+aGlwOiBhbmFsb2dpeF9kcDogc3BsaXQgdGhlIGxjZGMgc2VsZWN0IHNldHRpbmcgaW50byBkZXZp
+Y2UKPiAgICAgZGF0YQo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IGNvcnJlY3QgdGhlIHJl
+Z2lzdGVyIGJpdCBkZWZpbmUgZXJyb3IgaW4KPiAgICAgQU5BTE9HSVhfRFBfUExMX1JFR18xCj4g
+ICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogc29tZSByb2NrY2hpcCBjaGlwcyBuZWVkIHRvIGZs
+aXAgUkVGX0NMSyBiaXQKPiAgICAgc2V0dGluZwo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9k
+cDogYWRkIHJrMzM5OSBlRFAgc3VwcG9ydAo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDog
+bWFrZSBwYW5lbCBkZXRlY3QgdG8gYW4gb3B0aW9uYWwgYWN0aW9uCj4gICBkcm0vYnJpZGdlOiBh
+bmFsb2dpeF9kcDogcGFzc2luZyB0aGUgY29ubmVjdG9yIGFzIGFuIGFyZ3VtZW50IGluCj4gICAg
+IC5nZXRfbW9kZXMoKQo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogY29ycmVjdCB0aGUg
+Y29ubmVjdG9yIGRpc3BsYXkgY29sb3IgZm9ybWF0Cj4gICAgIGFuZCBicGMKPiAgIGRybS9yb2Nr
+Y2hpcDogYW5hbG9naXhfZHA6IHVwZGF0ZSB0aGUgY29tbWVudHMgYWJvdXQgd2h5IG5lZWQgdG8K
+PiAgICAgaGFyZGNvZGUgVk9QIG91dHB1dCBtb2RlCj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9k
+cDogZml4IG5vIGRybSBocGQgZXZlbnQgd2hlbiBwYW5lbCBwbHVnIGluCj4gICBkcm0vcm9ja2No
+aXA6IGFuYWxvZ2l4X2RwOiBpbnRyb2R1Y2UgdGhlIHBjbGsgZm9yIGdyZgo+ICAgZHQtYmluZGlu
+Z3M6IGFuYWxvZ2l4X2RwOiByb2NrY2hpcDogY29ycmVjdCB0aGUgd3JvbmcgY29tcGF0aWJsZSBu
+YW1lCj4KPiAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCAgICAg
+ICAgfCAgIDEgKwo+ICAuLi4vZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50
+eHQgICAgICB8ICAgOSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX2NvcmUuYyB8ICAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICAgOCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
+YWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8ICAxMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oICB8ICAgNSArLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAgNCArLQo+ICBkcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDE3NCArKysrKysr
+KysrKysrKystLS0tLS0KPiAgaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmggICAgICAg
+ICAgICAgICAgICAgfCAgIDkgKy0KPiAgOSBmaWxlcyBjaGFuZ2VkLCAxNjAgaW5zZXJ0aW9ucygr
+KSwgNjQgZGVsZXRpb25zKC0pCj4KPiAtLQo+IDEuOS4xCj4KPgo+IC0tCj4gVG8gdW5zdWJzY3Jp
+YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1
+bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
+ZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9t
+YWpvcmRvbW8taW5mby5odG1sCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
