@@ -1,64 +1,65 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v4 07/11] drm/rockchip: analogix_dp: correct the connector
- display color format and bpc
-Date: Wed, 29 Jun 2016 17:15:39 +0800
-Message-ID: <1467191739-17394-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v4 09/11] drm/bridge: analogix_dp: fix no drm hpd event when panel plug in
+Date: Wed, 29 Jun 2016 17:15:47 +0800
+Message-ID: <1467191747-17480-1-git-send-email-ykk@rock-chips.com>
 References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Um9ja2NoaXAgVk9QIGNvdWxkbid0IG91dHB1dCBZVVYgdmlkZW8gZm9ybWF0IGZvciBlRFAgY29u
-dHJvbGxlciwgc28Kd2hlbiBkcml2ZXIgZGV0ZWN0IGNvbm5lY3RvciBzdXBwb3J0IFlVViB2aWRl
-byBmb3JtYXQsIHdlIG5lZWQgdG8gaGFjawppdCBkb3duIHRvIFJHQjg4OC4KClNpZ25lZC1vZmYt
-Ynk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KQWNrZWQtYnk6IE1hcmsgWWFvIDxt
-YXJrLnlhb0Byb2NrLWNoaXBzLmNvbT4KUmV2aWV3ZWQtYnk6IFRvbWFzeiBGaWdhIDx0b21hc3ou
-ZmlnYUBjaHJvbWl1bS5jb20+Ci0tLQpDaGFuZ2VzIGluIHY0OgotIFVzaW5nIG1hc2sgdmFyaWFi
-bGUgdG8gY29sbGVjdCB0aGUgWVVWIHZpZGVvIGZvcm1hdC4gKFNlYW4pCi0gQWRkIHJldmlld2Vk
-IGZsYWcgZnJvbSBUb21hc3ouCgpDaGFuZ2VzIGluIHYzOgotIEhvb2sgdGhlIGNvbm5lY3Rvcidz
-IGNvbG9yX2Zvcm1hdHMgaW4gLmdldF9tb2RlcyBkaXJlY3RseS4gKFRvbWFzeiwgcmV2aWV3ZWQg
-YXQgR29vZ2xlIEdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3Vy
-Y2UuY29tLyMvYy8zNDYzMTcvMTVdCi0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4KCiBk
-cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyB8IDE4ICsrKysr
-KysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKykKCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCmluZGV4IDA3NTU1
-NzMuLjBhMGZiM2EgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
-eF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9k
-cC1yb2NrY2hpcC5jCkBAIC0xMTAsNiArMTEwLDIzIEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBf
-cG93ZXJkb3duKHN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgKnBsYXRfZGF0YSkKIAlyZXR1
-cm4gMDsKIH0KIAorc3RhdGljIGludCByb2NrY2hpcF9kcF9nZXRfbW9kZXMoc3RydWN0IGFuYWxv
-Z2l4X2RwX3BsYXRfZGF0YSAqcGxhdF9kYXRhLAorCQkJCSBzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAq
-Y29ubmVjdG9yKQoreworCXN0cnVjdCBkcm1fZGlzcGxheV9pbmZvICpkaSA9ICZjb25uZWN0b3It
-PmRpc3BsYXlfaW5mbzsKKwkvKiBWT1AgY291bGRuJ3Qgb3V0cHV0IFlVViB2aWRlbyBmb3JtYXQg
-Zm9yIGVEUCByaWdodGx5ICovCisJdTMyIG1hc2sgPSBEUk1fQ09MT1JfRk9STUFUX1lDUkNCNDQ0
-IHwgRFJNX0NPTE9SX0ZPUk1BVF9ZQ1JDQjQyMjsKKworCWlmICgoZGktPmNvbG9yX2Zvcm1hdHMg
-JiBtYXNrKSkgeworCQlEUk1fREVCVUdfS01TKCJTd2FwcGluZyBkaXNwbGF5IGNvbG9yIGZvcm1h
-dCBmcm9tIFlVViB0byBSR0JcbiIpOworCQlkaS0+Y29sb3JfZm9ybWF0cyAmPSB+bWFzazsKKwkJ
-ZGktPmNvbG9yX2Zvcm1hdHMgfD0gRFJNX0NPTE9SX0ZPUk1BVF9SR0I0NDQ7CisJCWRpLT5icGMg
-PSA4OworCX0KKworCXJldHVybiAwOworfQorCiBzdGF0aWMgYm9vbAogcm9ja2NoaXBfZHBfZHJt
-X2VuY29kZXJfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCiAJCQkJICAg
-Y29uc3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUsCkBAIC0zMTAsNiArMzI3LDcgQEAg
-c3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRl
-dmljZSAqbWFzdGVyLAogCWRwLT5wbGF0X2RhdGEuZGV2X3R5cGUgPSBkcC0+ZGF0YS0+Y2hpcF90
-eXBlOwogCWRwLT5wbGF0X2RhdGEucG93ZXJfb24gPSByb2NrY2hpcF9kcF9wb3dlcm9uOwogCWRw
-LT5wbGF0X2RhdGEucG93ZXJfb2ZmID0gcm9ja2NoaXBfZHBfcG93ZXJkb3duOworCWRwLT5wbGF0
-X2RhdGEuZ2V0X21vZGVzID0gcm9ja2NoaXBfZHBfZ2V0X21vZGVzOwogCiAJcmV0dXJuIGFuYWxv
-Z2l4X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2RldiwgJmRwLT5wbGF0X2RhdGEpOwogfQotLSAKMS45
-LjEKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The enum value of DP_IRQ_TYPE_HP_CABLE_IN is zero, but driver only
+send drm hp event when the irq_type and the enum value is true.
+
+if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN || ...)
+	drm_helper_hpd_irq_event(dp->drm_dev);
+
+So there would no drm hpd event when cable plug in, to fix that
+just need to assign all hotplug enum with no-zero values.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: St=C3=A9phane Marchesin <marcheu@chromium.org>
+Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+Changes in v4:
+- Add reviewed flag from Sean.
+- Add reviewed flag from Tomasz.
+
+Changes in v3:
+- Add reviewed flag from St=C3=A9phane.
+    [https://chromium-review.googlesource.com/#/c/346319/15]
+- Add tested flag from Javier
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drive=
+rs/gpu/drm/bridge/analogix/analogix_dp_core.h
+index f09275d..b456380 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -127,10 +127,10 @@ enum analog_power_block {
+ };
+=20
+ enum dp_irq_type {
+-	DP_IRQ_TYPE_HP_CABLE_IN,
+-	DP_IRQ_TYPE_HP_CABLE_OUT,
+-	DP_IRQ_TYPE_HP_CHANGE,
+-	DP_IRQ_TYPE_UNKNOWN,
++	DP_IRQ_TYPE_HP_CABLE_IN  =3D BIT(0),
++	DP_IRQ_TYPE_HP_CABLE_OUT =3D BIT(1),
++	DP_IRQ_TYPE_HP_CHANGE    =3D BIT(2),
++	DP_IRQ_TYPE_UNKNOWN      =3D BIT(3),
+ };
+=20
+ struct video_info {
+--=20
+1.9.1
