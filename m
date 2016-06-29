@@ -1,21 +1,21 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 08/10] drm/rockchip: analogix_dp: correct the connector
- display color format and bpc
-Date: Wed, 29 Jun 2016 14:41:41 +0800
-Message-ID: <57736DA5.5020005@rock-chips.com>
+Subject: Re: [PATCH v3 09/10] drm/rockchip: analogix_dp: update the comments
+ about why need to hardcode VOP output mode
+Date: Wed, 29 Jun 2016 14:42:09 +0800
+Message-ID: <57736DC1.1090703@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904793-1071-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vb+bPGSkNMF+4VWOu3FtTws2EH0fQcRQwyv29rRh4VjQjg@mail.gmail.com>
+ <1465904797-1117-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vb+z8JpFd--ZUy7CnURoJmgRnV7Yma1k-QUhbs+xNGuvjQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:53029 "EHLO
+Received: from lucky1.263xmail.com ([211.157.147.134]:53253 "EHLO
 	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751328AbcF2Gly (ORCPT
+	with ESMTP id S1751328AbcF2GmR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 02:41:54 -0400
-In-Reply-To: <CAOw6vb+bPGSkNMF+4VWOu3FtTws2EH0fQcRQwyv29rRh4VjQjg@mail.gmail.com>
+	Wed, 29 Jun 2016 02:42:17 -0400
+In-Reply-To: <CAOw6vb+z8JpFd--ZUy7CnURoJmgRnV7Yma1k-QUhbs+xNGuvjQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sean Paul <seanpaul@chromium.org>
@@ -23,83 +23,60 @@ Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <
 
 Sean,
 
-On 06/23/2016 10:19 PM, Sean Paul wrote:
+On 06/23/2016 10:22 PM, Sean Paul wrote:
 > On Tue, Jun 14, 2016 at 7:46 AM, Yakir Yang <ykk@rock-chips.com> wrote:
->> Rockchip VOP couldn't output YUV video format for eDP controller, so
->> when driver detect connector support YUV video format, we need to hack
->> it down to RGB888.
+>> The hardware IC designed that VOP must output the RGB10 video format to
+>> eDP contoller, and if eDP panel only support RGB8, then eDP contoller
+>> should cut down the video data, not via VOP contoller, that's why we need
+>> to hardcode the VOP output mode to RGA10 here.
 >>
 >> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 >> Acked-by: Mark Yao <mark.yao@rock-chips.com>
+>> Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
 >> ---
 >> Changes in v3:
->> - Hook the connector's color_formats in .get_modes directly. (Tomasz, reviewed at Google Gerrit)
->>      [https://chromium-review.googlesource.com/#/c/346317/15]
+>> - Add the reviewed flag from Tomasz.
+>>      [https://chromium-review.googlesource.com/#/c/346853/12]
 >> - Add the acked flag from Mark.
 >>
->> Changes in v2: None
+>> Changes in v2:
+>> - new patch in v2
 >>
->>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
+>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 16 +++++-----------
+>>   1 file changed, 5 insertions(+), 11 deletions(-)
 >>
 >> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> index da2e844..95a6f60 100644
+>> index 95a6f60..2ceb3f9 100644
 >> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
 >> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> @@ -102,6 +102,22 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
->>          return 0;
->>   }
+>> @@ -173,17 +173,11 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
+>>          int ret;
 >>
->> +static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
->> +                                struct drm_connector *connector)
->> +{
->> +       struct drm_display_info *di = &connector->display_info;
->> +
->> +       if (di->color_formats & DRM_COLOR_FORMAT_YCRCB444 ||
->> +           di->color_formats & DRM_COLOR_FORMAT_YCRCB422) {
->> +               di->color_formats &= ~(DRM_COLOR_FORMAT_YCRCB422 |
->> +                                      DRM_COLOR_FORMAT_YCRCB444);
->> +               di->color_formats |= DRM_COLOR_FORMAT_RGB444;
->> +               di->bpc = 8;
-> Probably a stupid question, but are you guaranteed that the panel will
-> support this color format?
-
-Hmm... I'm not sure, but it works on my several panels. I guess RGB is 
-more common then YUV, so if panel support YUV format, it should support 
-RGB888 too.
-
->> +       }
->> +
-> I think this can be simplified as follows:
+>>          /*
+>> -        * FIXME(Yakir): driver should configure the CRTC output video
+>> -        * mode with the display information which indicated the monitor
+>> -        * support colorimetry.
+>> -        *
+>> -        * But don't know why the CRTC driver seems could only output the
+>> -        * RGBaaa rightly. For example, if connect the "innolux,n116bge"
+>> -        * eDP screen, EDID would indicated that screen only accepted the
+>> -        * 6bpc mode. But if I configure CRTC to RGB666 output, then eDP
+>> -        * screen would show a blue picture (RGB888 show a green picture).
+>> -        * But if I configure CTRC to RGBaaa, and eDP driver still keep
+>> -        * RGB666 input video mode, then screen would works prefect.
+>> +        * The hardware IC designed that VOP must output the RGB10 video
+>> +        * format to eDP contoller, and if eDP panel only support RGB8,
+>> +        * then eDP contoller should cut down the video data, not via VOP
+>> +        * contoller, that's why we need to hardcode the VOP output mode
+>> +        * to RGA10 here.
+> s/contoller/controller/
 >
-> /* A comment here about why we're doing this */
-> u32 mask = DRM_COLOR_FORMAT_YCRCB444 | DRM_COLOR_FORMAT_YCRCB422;
-> if ((di->color_formats & mask)) {
->      DRM_DEBUG_KMS("Swapping display color format from YUV to RGB\n");
->      di->color_formats &= ~mask;
->      di->color_formats |= DRM_COLOR_FORMAT_RGB444;
->      di->bpc = 8;
-> }
 
-Done, good idea.
+Done,
 
-Thanks,
-- Yakir
-
->> +       return 0;
->> +}
->> +
->>   static bool
->>   rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
->>                                     const struct drm_display_mode *mode,
->> @@ -313,6 +329,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->>          dp->plat_data.subdev_type = dp_data->chip_type;
->>          dp->plat_data.power_on = rockchip_dp_poweron;
->>          dp->plat_data.power_off = rockchip_dp_powerdown;
->> +       dp->plat_data.get_modes = rockchip_dp_get_modes;
+>>           */
 >>
->>          return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
->>   }
+>>          ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
 >> --
 >> 1.9.1
 >>
