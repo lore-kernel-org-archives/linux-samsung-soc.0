@@ -1,77 +1,122 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 03/10] drm/bridge: analogix_dp: correct the register
- bit define error in ANALOGIX_DP_PLL_REG_1
-Date: Wed, 29 Jun 2016 15:11:38 +0800
-Message-ID: <577374AA.6080807@rock-chips.com>
+Subject: Re: [PATCH v3 04/10] drm/bridge: analogix_dp: some rockchip chips
+ need to flip REF_CLK bit setting
+Date: Wed, 29 Jun 2016 15:13:29 +0800
+Message-ID: <57737519.3040202@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904772-848-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbLFYiE0vdvyznJD=rm5tV2BZazM83shQpC9ThhrEM=XHA@mail.gmail.com>
+ <1465904776-891-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbKr68PMMNyptZas18Z0JPLyqnX+t+EvQSCy=i5tsbQKRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:38785 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750756AbcF2HLr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 03:11:47 -0400
-In-Reply-To: <CAOw6vbLFYiE0vdvyznJD=rm5tV2BZazM83shQpC9ThhrEM=XHA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOw6vbKr68PMMNyptZas18Z0JPLyqnX+t+EvQSCy=i5tsbQKRA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Sean Paul <seanpaul@chromium.org>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Sean,
-
-On 06/23/2016 10:33 PM, Sean Paul wrote:
-> On Tue, Jun 14, 2016 at 7:46 AM, Yakir Yang <ykk@rock-chips.com> wrote:
->> There're an register define error in ANALOGIX_DP_PLL_REG_1 which introduced
->> by commit bcec20fd5ad6 ("drm: bridge: analogix/dp: add some rk3288 special
->> registers setting").
->>
->> The PHY PLL input clock source is selected by ANALOGIX_DP_PLL_REG_1
->> BIT 0, not BIT 1.
->>
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
->> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-Thanks
-
->> ---
->> Changes in v3:
->> - Add reviewed flag from Tomasz.
->>      [https://chromium-review.googlesource.com/#/c/346315/15]
->> - Add tested flag from Javier
->>
->> Changes in v2: None
->>
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> index 337912b..88d56ad 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> @@ -163,8 +163,8 @@
->>   #define HSYNC_POLARITY_CFG                     (0x1 << 0)
->>
->>   /* ANALOGIX_DP_PLL_REG_1 */
->> -#define REF_CLK_24M                            (0x1 << 1)
->> -#define REF_CLK_27M                            (0x0 << 1)
->> +#define REF_CLK_24M                            (0x1 << 0)
->> +#define REF_CLK_27M                            (0x0 << 0)
->>
->>   /* ANALOGIX_DP_LANE_MAP */
->>   #define LANE3_MAP_LOGIC_LANE_0                 (0x0 << 6)
->> --
->> 1.9.1
->>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
+U2VhbiwKCk9uIDA2LzIzLzIwMTYgMDk6MjcgUE0sIFNlYW4gUGF1bCB3cm90ZToKPiBPbiBUdWUs
+IEp1biAxNCwgMjAxNiBhdCA3OjQ2IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+
+IHdyb3RlOgo+PiBBcyB2ZW5kb3IgZG9jdW1lbnQgaW5kaWNhdGUsIHdoZW4gUkVGX0NMSyBiaXQg
+c2V0IDAsIHRoZW4gRFAKPj4gcGh5J3MgUkVGX0NMSyBzaG91bGQgc3dpdGNoIHRvIDI0TSBzb3Vy
+Y2UgY2xvY2suCj4+Cj4+IEJ1dCBkdWUgdG8gSUMgUEhZIGxheW91dCBtaXN0YWtlbiwgc29tZSBj
+aGlwcyBuZWVkIHRvIGZsaXAgdGhpcwo+PiBiaXQobGlrZSBSSzMyODgpLCBhbmQgdW5mb3J0dW5h
+dGVseSB0aGV5IGRpZG4ndCBpbmRpY2F0ZSBpbiB0aGUKPj4gRFAgdmVyc2lvbiByZWdpc3Rlci4g
+VGhhdCdzIHdoeSB3ZSBoYXZlIHRvIG1ha2UgdGhpcyBsaXR0bGUgaGFjay4KPj4KPj4gU2lnbmVk
+LW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgo+PiBUZXN0ZWQtYnk6IEph
+dmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4KPj4gLS0tCj4+
+IENoYW5nZXMgaW4gdjM6Cj4+IC0gTWFrZSB0aGlzIGhhY2sgY29kZSBtb3JlIGNsZWFyIChUb21h
+c3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4+ICAgIHJlZyA9IH5yZWcgJiBSRUZfQ0xL
+X01BU0s7ICAtLS0+ICByZWcgXj0gUkVGX0NMS19NQVNLOwo+PiAgICAgIFtodHRwczovL2Nocm9t
+aXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDY4NTIvNy9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jQDgwXQo+PiAtIEFkZCB0ZXN0ZWQgZmxh
+ZyBmcm9tIEphdmllcgo+Pgo+PiBDaGFuZ2VzIGluIHYyOgo+PiAtIG5ldyBwYXRjaCBpbiB2Mgo+
+Pgo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMg
+fCA2ICsrKysrLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfcmVnLmggfCAxICsKPj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAt
+cm9ja2NoaXAuYyAgIHwgMyArKysKPj4gICBpbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAu
+aCAgICAgICAgICAgICAgICAgIHwgNSArKysrKwo+PiAgIDQgZmlsZXMgY2hhbmdlZCwgMTQgaW5z
+ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyBiL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gaW5kZXggOTMxYTc2Yy4uOTdjZWQ2
+YiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
+eF9kcF9yZWcuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX3JlZy5jCj4+IEBAIC03NSw3ICs3NSwxMSBAQCB2b2lkIGFuYWxvZ2l4X2RwX2luaXRf
+YW5hbG9nX3BhcmFtKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+PiAgICAgICAgICB3
+cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9BTkFMT0dfQ1RMXzIpOwo+Pgo+
+PiAgICAgICAgICBpZiAoZHAtPnBsYXRfZGF0YSAmJiAoZHAtPnBsYXRfZGF0YS0+ZGV2X3R5cGUg
+PT0gUk9DS0NISVBfRFApKSB7Cj4+IC0gICAgICAgICAgICAgICB3cml0ZWwoUkVGX0NMS18yNE0s
+IGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMSk7Cj4+ICsgICAgICAgICAgICAg
+ICByZWcgPSBSRUZfQ0xLXzI0TTsKPj4gKyAgICAgICAgICAgICAgIGlmIChkcC0+cGxhdF9kYXRh
+LT5zdWJkZXZfdHlwZSA9PSBSSzMyODhfRFApCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJl
+ZyBePSBSRUZfQ0xLX01BU0s7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIHdyaXRlbChyZWcsIGRw
+LT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMSk7Cj4+ICAgICAgICAgICAgICAgICAg
+d3JpdGVsKDB4OTUsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BMTF9SRUdfMik7Cj4+ICAg
+ICAgICAgICAgICAgICAgd3JpdGVsKDB4NDAsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BM
+TF9SRUdfMyk7Cj4+ICAgICAgICAgICAgICAgICAgd3JpdGVsKDB4NTgsIGRwLT5yZWdfYmFzZSAr
+IEFOQUxPR0lYX0RQX1BMTF9SRUdfNCk7Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRn
+ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaAo+PiBpbmRleCA4OGQ1NmFkLi5jZGNjNmM1IDEw
+MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2Rw
+X3JlZy5oCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfcmVnLmgKPj4gQEAgLTE2NSw2ICsxNjUsNyBAQAo+PiAgIC8qIEFOQUxPR0lYX0RQX1BMTF9S
+RUdfMSAqLwo+PiAgICNkZWZpbmUgUkVGX0NMS18yNE0gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgKDB4MSA8PCAwKQo+PiAgICNkZWZpbmUgUkVGX0NMS18yN00gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgKDB4MCA8PCAwKQo+PiArI2RlZmluZSBSRUZfQ0xLX01BU0sgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAoMHgxIDw8IDApCj4+Cj4+ICAgLyogQU5BTE9HSVhfRFBfTEFORV9NQVAg
+Ki8KPj4gICAjZGVmaW5lIExBTkUzX01BUF9MT0dJQ19MQU5FXzAgICAgICAgICAgICAgICAgICgw
+eDAgPDwgNikKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
+eF9kcC1yb2NrY2hpcC5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJv
+Y2tjaGlwLmMKPj4gaW5kZXggMzg1NWY0Ni4uMzE1ZWJiYSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPj4gQEAgLTQ2LDYgKzQ2
+LDcgQEAgc3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSB7Cj4+ICAgICAgICAgIHUzMiAgICAg
+bGNkc2VsX2dyZl9yZWc7Cj4+ICAgICAgICAgIHUzMiAgICAgbGNkc2VsX2JpZzsKPj4gICAgICAg
+ICAgdTMyICAgICBsY2RzZWxfbGl0Owo+PiArICAgICAgIHUzMiAgICAgY2hpcF90eXBlOwo+PiAg
+IH07Cj4+Cj4+ICAgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7Cj4+IEBAIC0yODYsNiArMjg3
+LDcgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3Ry
+dWN0IGRldmljZSAqbWFzdGVyLAo+PiAgICAgICAgICBkcC0+cGxhdF9kYXRhLmVuY29kZXIgPSAm
+ZHAtPmVuY29kZXI7Cj4+Cj4+ICAgICAgICAgIGRwLT5wbGF0X2RhdGEuZGV2X3R5cGUgPSBST0NL
+Q0hJUF9EUDsKPj4gKyAgICAgICBkcC0+cGxhdF9kYXRhLnN1YmRldl90eXBlID0gZHBfZGF0YS0+
+Y2hpcF90eXBlOwo+PiAgICAgICAgICBkcC0+cGxhdF9kYXRhLnBvd2VyX29uID0gcm9ja2NoaXBf
+ZHBfcG93ZXJvbjsKPj4gICAgICAgICAgZHAtPnBsYXRfZGF0YS5wb3dlcl9vZmYgPSByb2NrY2hp
+cF9kcF9wb3dlcmRvd247Cj4+Cj4+IEBAIC0zODQsNiArMzg2LDcgQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgcmszMjg4X2RwID0gewo+PiAgICAgICAgICAubGNk
+c2VsX2dyZl9yZWcgPSAweDAyNWMsCj4+ICAgICAgICAgIC5sY2RzZWxfYmlnID0gMCB8IEJJVCgy
+MSksCj4+ICAgICAgICAgIC5sY2RzZWxfbGl0ID0gQklUKDUpIHwgQklUKDIxKSwKPj4gKyAgICAg
+ICAuY2hpcF90eXBlID0gUkszMjg4X0RQLAo+PiAgIH07Cj4+Cj4+ICAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBvZl9kZXZpY2VfaWQgcm9ja2NoaXBfZHBfZHRfaWRzW10gPSB7Cj4+IGRpZmYgLS1naXQg
+YS9pbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJtL2JyaWRnZS9h
+bmFsb2dpeF9kcC5oCj4+IGluZGV4IDllNWQwMTMuLjA2YzAyNTAgMTAwNjQ0Cj4+IC0tLSBhL2lu
+Y2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4+ICsrKyBiL2luY2x1ZGUvZHJtL2JyaWRn
+ZS9hbmFsb2dpeF9kcC5oCj4+IEBAIC0xOCw4ICsxOCwxMyBAQCBlbnVtIGFuYWxvZ2l4X2RwX2Rl
+dnR5cGUgewo+PiAgICAgICAgICBST0NLQ0hJUF9EUCwKPj4gICB9Owo+Pgo+PiArZW51bSBhbmFs
+b2dpeF9kcF9zdWJfZGV2dHlwZSB7Cj4+ICsgICAgICAgUkszMjg4X0RQLAo+PiArfTsKPj4gKwo+
+PiAgIHN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgewo+PiAgICAgICAgICBlbnVtIGFuYWxv
+Z2l4X2RwX2RldnR5cGUgZGV2X3R5cGU7Cj4+ICsgICAgICAgZW51bSBhbmFsb2dpeF9kcF9zdWJf
+ZGV2dHlwZSBzdWJkZXZfdHlwZTsKPgo+IFNvIHRoaXMgaXMgd2hhdCBJIHdhcyB0YWxraW5nIGFi
+b3V0IGluIG15IHJldmlldyBvZiB0aGUgZmlyc3QgcGF0Y2ggb2YKPiB0aGUgc2VyaWVzLgo+Cj4g
+SSBkb24ndCBwZXJzb25hbGx5IHRoaW5rIHRoZSBkZXYgYW5kIHN1YmRldiB0eXBlcyBhZGQgYW55
+IGNsYXJpdHkKPiBoZXJlLCBqdXN0IG1vcmUgc3RhdGUuIEknZCBwcmVmZXIgdGhhdCB5b3UgcHV0
+IHRoZSBwcm9kdWN0IG51bWJlciBpbgo+IHRoZSB0b3AgbGV2ZWwgZGV2dHlwZSwgYW5kIGFkZCBh
+IGhlbHBlciBmdW5jdGlvbiBsaWtlOgo+Cj4gc3RhdGljIGJvb2wgaXNfcm9ja2NoaXAoZW51bSBh
+bmFsb2dpeF9kcF9kZXZ0eXBlIHR5cGUpIHsKPiAgICByZXR1cm4gdHlwZSA9PSAuLi4gfHwgdHlw
+ZSA9PSAuLi4KPiB9CgpHb29kIGlkZWEsIGRvbmUuCgpUaGFua3MsCi0gWWFraXIKCj4gU2Vhbgo+
+Cj4+ICAgICAgICAgIHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsOwo+PiAgICAgICAgICBzdHJ1Y3Qg
+ZHJtX2VuY29kZXIgKmVuY29kZXI7Cj4+ICAgICAgICAgIHN0cnVjdCBkcm1fY29ubmVjdG9yICpj
+b25uZWN0b3I7Cj4+IC0tCj4+IDEuOS4xCj4+Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Cj4KCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
