@@ -1,169 +1,133 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v4 01/11] drm/rockchip: analogix_dp: split the lcdc select
- setting into device data
-Date: Wed, 29 Jun 2016 09:44:54 -0400
-Message-ID: <CAOw6vb+gkT8v0DrOw77gz7vw9vF_2Tjf+-dx09+OoOiy70ghEw@mail.gmail.com>
-References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com> <1467191701-17134-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v4 04/11] drm/rockchip: analogix_dp: add rk3399 eDP support
+Date: Wed, 29 Jun 2016 09:52:11 -0400
+Message-ID: <CAOw6vbJexAWHsOD1OHHJU5XFn455yrTLfEfSxs=pgs6W0a_Fhw@mail.gmail.com>
+References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
+ <1467191726-17264-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467191701-17134-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1467191726-17264-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Douglas Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 29, 2016 at 5:15 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> eDP controller need to declare which vop provide the video source,
-> and it's defined in GRF registers.
->
-> But different chips have different GRF register address, so we need to
-> create a device data to declare the GRF messages for each chips.
->
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Acked-by: Mark Yao <mark.yao@rock-chips.com>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> ---
-> Changes in v4:
-> - Assigned the GRF setting magic numbers to a #define that corresponds to
->   a TRM name. (Sean & Heiko)
-> - Pass the chip type to device type directly. (Sean)
-> - Add reviewed flag from Tomasz.
->
-> Changes in v3:
-> - Write a kerneldoc-style comment explaining the chips data fields (Tomasz, reviewed at Google Gerrit)
->     [https://chromium-review.googlesource.com/#/c/346313/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@39]
-> - Drop the '.lcdcsel_mask' number in chips data field (Tomasz, reviewed at Google Gerrit)
->     [https://chromium-review.googlesource.com/#/c/346313/10/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c@382]
-> - Add acked flag from Mark.
->
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 49 ++++++++++++++++++++-----
->  1 file changed, 39 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> index c120172..0a30931 100644
-> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> @@ -14,6 +14,7 @@
->
->  #include <linux/component.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_graph.h>
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
-> @@ -33,13 +34,26 @@
->  #include "rockchip_drm_drv.h"
->  #include "rockchip_drm_vop.h"
->
-> +#define RK3288_GRF_SOC_CON6            0x25c
-> +#define RK3288_EDP_LCDC_SEL            BIT(5)
-> +
-> +#define HIWORD_UPDATE(val, mask)       (val | (mask) << 16)
-> +
->  #define to_dp(nm)      container_of(nm, struct rockchip_dp_device, nm)
->
-> -/* dp grf register offset */
-> -#define GRF_SOC_CON6                            0x025c
-> -#define GRF_EDP_LCD_SEL_MASK                    BIT(5)
-> -#define GRF_EDP_SEL_VOP_LIT                     BIT(5)
-> -#define GRF_EDP_SEL_VOP_BIG                     0
-> +/**
-> + * struct rockchip_dp_chip_data - splite the grf setting of kind of chips
-> + * @lcdsel_grf_reg: grf register offset of lcdc select
-> + * @lcdsel_big: reg value of selecting vop big for eDP
-> + * @lcdsel_lit: reg value of selecting vop little for eDP
-> + * @chip_type: specific chip type
-> + */
-> +struct rockchip_dp_chip_data {
-> +       u32     lcdsel_grf_reg;
-> +       u32     lcdsel_big;
-> +       u32     lcdsel_lit;
-> +       u32     chip_type;
-> +};
->
->  struct rockchip_dp_device {
->         struct drm_device        *drm_dev;
-> @@ -51,6 +65,8 @@ struct rockchip_dp_device {
->         struct regmap            *grf;
->         struct reset_control     *rst;
->
-> +       const struct rockchip_dp_chip_data *data;
-> +
->         struct analogix_dp_plat_data plat_data;
->  };
->
-> @@ -119,13 +135,13 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder)
->                 return;
->
->         if (ret)
-> -               val = GRF_EDP_SEL_VOP_LIT | (GRF_EDP_LCD_SEL_MASK << 16);
-> +               val = dp->data->lcdsel_lit;
->         else
-> -               val = GRF_EDP_SEL_VOP_BIG | (GRF_EDP_LCD_SEL_MASK << 16);
-> +               val = dp->data->lcdsel_big;
->
->         dev_dbg(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
->
-> -       ret = regmap_write(dp->grf, GRF_SOC_CON6, val);
-> +       ret = regmap_write(dp->grf, dp->data->lcdsel_grf_reg, val);
->         if (ret != 0) {
->                 dev_err(dp->dev, "Could not write to GRF: %d\n", ret);
->                 return;
-> @@ -246,6 +262,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->                             void *data)
->  {
->         struct rockchip_dp_device *dp = dev_get_drvdata(dev);
-> +       const struct rockchip_dp_chip_data *dp_data;
->         struct drm_device *drm_dev = data;
->         int ret;
->
-> @@ -256,10 +273,15 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->          */
->         dev_set_drvdata(dev, NULL);
->
-> +       dp_data = of_device_get_match_data(dev);
-> +       if (!dp_data)
-> +               return -ENODEV;
-> +
->         ret = rockchip_dp_init(dp);
->         if (ret < 0)
->                 return ret;
->
-> +       dp->data = dp_data;
->         dp->drm_dev = drm_dev;
->
->         ret = rockchip_dp_drm_create_encoder(dp);
-> @@ -270,7 +292,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->
->         dp->plat_data.encoder = &dp->encoder;
->
-> -       dp->plat_data.dev_type = RK3288_DP;
-> +       dp->plat_data.dev_type = dp->data->chip_type;
->         dp->plat_data.power_on = rockchip_dp_poweron;
->         dp->plat_data.power_off = rockchip_dp_powerdown;
->
-> @@ -356,8 +378,15 @@ static const struct dev_pm_ops rockchip_dp_pm_ops = {
->  #endif
->  };
->
-> +static const struct rockchip_dp_chip_data rk3288_dp = {
-> +       .lcdsel_grf_reg = RK3288_GRF_SOC_CON6,
-> +       .lcdsel_big = HIWORD_UPDATE(0, RK3288_EDP_LCDC_SEL),
-> +       .lcdsel_lit = HIWORD_UPDATE(RK3288_EDP_LCDC_SEL, RK3288_EDP_LCDC_SEL),
-> +       .chip_type = RK3288_DP,
-> +};
-> +
->  static const struct of_device_id rockchip_dp_dt_ids[] = {
-> -       {.compatible = "rockchip,rk3288-dp",},
-> +       {.compatible = "rockchip,rk3288-dp", .data = &rk3288_dp },
->         {}
->  };
->  MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
-> --
-> 1.9.1
->
->
+T24gV2VkLCBKdW4gMjksIDIwMTYgYXQgNToxNSBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
+cHMuY29tPiB3cm90ZToKPiBSSzMzOTkgYW5kIFJLMzI4OCBzaGFyZWQgdGhlIHNhbWUgZURQIElQ
+IGNvbnRyb2xsZXIsIG9ubHkgc29tZSBsaWdodAo+IGRpZmZlcmVuY2Ugd2l0aCBWT1AgY29uZmln
+dXJlIGFuZCBHUkYgY29uZmlndXJlLgo+Cj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtr
+QHJvY2stY2hpcHMuY29tPgo+IEFja2VkLWJ5OiBNYXJrIFlhbyA8bWFyay55YW9Acm9jay1jaGlw
+cy5jb20+Cj4gUmV2aWV3ZWQtYnk6IFRvbWFzeiBGaWdhIDx0b21hc3ouZmlnYUBjaHJvbWl1bS5j
+b20+CgoKUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgoKPiAt
+LS0KPiBDaGFuZ2VzIGluIHY0Ogo+IC0gSW1wcm92ZWQgdGhlIG92ZXJseSBjb21wbGljYXRlZCAu
+YXRvbWljX2NoZWNrIGZ1bmN0aW9uLiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20g
+VG9tYXN6Cj4KPiBDaGFuZ2VzIGluIHYzOgo+IC0gR2l2ZSB0aGUgInJrMzM5OS1lZHAiIGEgc2Vw
+YXJhdGUgbGluZSBmb3IgY2xhcml0eSBpbiBkb2N1bWVudCAoVG9tYXN6LCByZXZpZXdlZCBhdCBH
+b29nbGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNl
+LmNvbS8jL2MvMzQ2MzE0LzEwL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNw
+bGF5L3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLnR4dEA1XQo+IC0gTW92ZSAnb3V0cHV0
+X3R5cGUnIHNldHRpbmcgYmVmb3JlIHRoZSByZXR1cm4gc3RhdGVtZW50IChUb21hc3osIHJldmll
+d2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29n
+bGVzb3VyY2UuY29tLyMvYy8zNDYzMTQvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxv
+Z2l4X2RwLXJvY2tjaGlwLmNAMTU0XQo+IC0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4K
+Pgo+ICAuLi4vYmluZGluZ3MvZGlzcGxheS9icmlkZ2UvYW5hbG9naXhfZHAudHh0ICAgICAgICB8
+ICAxICsKPiAgLi4uL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0ICAg
+ICAgfCAgMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tj
+aGlwLmMgICAgfCAyMyArKysrKysrKysrKysrKysrKysrKysrCj4gIGluY2x1ZGUvZHJtL2JyaWRn
+ZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgIHwgIDMgKystCj4gIDQgZmlsZXMgY2hh
+bmdlZCwgMjggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2UvYW5hbG9naXhf
+ZHAudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdl
+L2FuYWxvZ2l4X2RwLnR4dAo+IGluZGV4IDRmMmJhOGMuLjRhMGY0ZjcgMTAwNjQ0Cj4gLS0tIGEv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4
+X2RwLnR4dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
+L2JyaWRnZS9hbmFsb2dpeF9kcC50eHQKPiBAQCAtNSw2ICs1LDcgQEAgUmVxdWlyZWQgcHJvcGVy
+dGllcyBmb3IgZHAtY29udHJvbGxlcjoKPiAgICAgICAgICAgICAgICAgcGxhdGZvcm0gc3BlY2lm
+aWMgc3VjaCBhczoKPiAgICAgICAgICAgICAgICAgICogInNhbXN1bmcsZXh5bm9zNS1kcCIKPiAg
+ICAgICAgICAgICAgICAgICogInJvY2tjaGlwLHJrMzI4OC1kcCIKPiArICAgICAgICAgICAgICAg
+ICogInJvY2tjaGlwLHJrMzM5OS1lZHAiCj4gICAgICAgICAtcmVnOgo+ICAgICAgICAgICAgICAg
+ICBwaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhlIGNvbnRyb2xsZXIgYW5kIGxlbmd0aAo+ICAg
+ICAgICAgICAgICAgICBvZiBtZW1vcnkgbWFwcGVkIHJlZ2lvbi4KPiBkaWZmIC0tZ2l0IGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9ja2NoaXAvYW5hbG9naXhf
+ZHAtcm9ja2NoaXAudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
+YXkvcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAudHh0Cj4gaW5kZXggZTgzMmZmOS4uNzI2
+Yzk0NSAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHQKPiArKysgYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2Nr
+Y2hpcC50eHQKPiBAQCAtMiw3ICsyLDggQEAgUm9ja2NoaXAgUkszMjg4IHNwZWNpZmljIGV4dGVu
+c2lvbnMgdG8gdGhlIEFuYWxvZ2l4IERpc3BsYXkgUG9ydAo+ICA9PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PQo+Cj4gIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4gLS0gY29tcGF0aWJsZTog
+InJvY2tjaGlwLHJrMzI4OC1lZHAiOwo+ICstIGNvbXBhdGlibGU6ICJyb2NrY2hpcCxyazMyODgt
+ZWRwIiwKPiArICAgICAgICAgICAgICJyb2NrY2hpcCxyazMzOTktZWRwIjsKPgo+ICAtIHJlZzog
+cGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRoZSBjb250cm9sbGVyIGFuZCBsZW5ndGgKPgo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gaW5k
+ZXggMGEzMDkzMS4uODU1N2EwOCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gQEAgLTM2LDYgKzM2LDggQEAKPgo+ICAjZGVmaW5l
+IFJLMzI4OF9HUkZfU09DX0NPTjYgICAgICAgICAgICAweDI1Ywo+ICAjZGVmaW5lIFJLMzI4OF9F
+RFBfTENEQ19TRUwgICAgICAgICAgICBCSVQoNSkKPiArI2RlZmluZSBSSzMzOTlfR1JGX1NPQ19D
+T04yMCAgICAgICAgICAgMHg2MjUwCj4gKyNkZWZpbmUgUkszMzk5X0VEUF9MQ0RDX1NFTCAgICAg
+ICAgICAgIEJJVCg1KQo+Cj4gICNkZWZpbmUgSElXT1JEX1VQREFURSh2YWwsIG1hc2spICAgICAg
+ICh2YWwgfCAobWFzaykgPDwgMTYpCj4KPiBAQCAtMTU5LDYgKzE2MSw4IEBAIHJvY2tjaGlwX2Rw
+X2RybV9lbmNvZGVyX2F0b21pY19jaGVjayhzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2Nvbm5lY3Rv
+cl9zdGF0ZSAqY29ubl9zdGF0ZSkKPiAgewo+ICAgICAgICAgc3RydWN0IHJvY2tjaGlwX2NydGNf
+c3RhdGUgKnMgPSB0b19yb2NrY2hpcF9jcnRjX3N0YXRlKGNydGNfc3RhdGUpOwo+ICsgICAgICAg
+c3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSB0b19kcChlbmNvZGVyKTsKPiArICAgICAg
+IGludCByZXQ7Cj4KPiAgICAgICAgIC8qCj4gICAgICAgICAgKiBGSVhNRShZYWtpcik6IGRyaXZl
+ciBzaG91bGQgY29uZmlndXJlIHRoZSBDUlRDIG91dHB1dCB2aWRlbwo+IEBAIC0xNzMsOCArMTc3
+LDE5IEBAIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX2F0b21pY19jaGVjayhzdHJ1Y3QgZHJtX2Vu
+Y29kZXIgKmVuY29kZXIsCj4gICAgICAgICAgKiBCdXQgaWYgSSBjb25maWd1cmUgQ1RSQyB0byBS
+R0JhYWEsIGFuZCBlRFAgZHJpdmVyIHN0aWxsIGtlZXAKPiAgICAgICAgICAqIFJHQjY2NiBpbnB1
+dCB2aWRlbyBtb2RlLCB0aGVuIHNjcmVlbiB3b3VsZCB3b3JrcyBwcmVmZWN0Lgo+ICAgICAgICAg
+ICovCj4gKwo+ICAgICAgICAgcy0+b3V0cHV0X21vZGUgPSBST0NLQ0hJUF9PVVRfTU9ERV9BQUFB
+Owo+ICAgICAgICAgcy0+b3V0cHV0X3R5cGUgPSBEUk1fTU9ERV9DT05ORUNUT1JfZURQOwo+ICsg
+ICAgICAgaWYgKGRwLT5kYXRhLT5jaGlwX3R5cGUgPT0gUkszMzk5X0VEUCkgewo+ICsgICAgICAg
+ICAgICAgICAvKgo+ICsgICAgICAgICAgICAgICAgKiBGb3IgUkszMzk5LCBWT1AgTGl0IG11c3Qg
+Y29kZSB0aGUgb3V0IG1vZGUgdG8gUkdCODg4LAo+ICsgICAgICAgICAgICAgICAgKiBWT1AgQmln
+IG11c3QgY29kZSB0aGUgb3V0IG1vZGUgdG8gUkdCMTAuCj4gKyAgICAgICAgICAgICAgICAqLwo+
+ICsgICAgICAgICAgICAgICByZXQgPSBkcm1fb2ZfZW5jb2Rlcl9hY3RpdmVfZW5kcG9pbnRfaWQo
+ZHAtPmRldi0+b2Zfbm9kZSwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGVuY29kZXIpOwo+ICsgICAgICAgICAgICAgICBpZiAocmV0ID4g
+MCkKPiArICAgICAgICAgICAgICAgICAgICAgICBzLT5vdXRwdXRfbW9kZSA9IFJPQ0tDSElQX09V
+VF9NT0RFX1A4ODg7Cj4gKyAgICAgICB9Cj4KPiAgICAgICAgIHJldHVybiAwOwo+ICB9Cj4gQEAg
+LTM3OCw2ICszOTMsMTMgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIHJvY2tjaGlw
+X2RwX3BtX29wcyA9IHsKPiAgI2VuZGlmCj4gIH07Cj4KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBy
+b2NrY2hpcF9kcF9jaGlwX2RhdGEgcmszMzk5X2VkcCA9IHsKPiArICAgICAgIC5sY2RzZWxfZ3Jm
+X3JlZyA9IFJLMzM5OV9HUkZfU09DX0NPTjIwLAo+ICsgICAgICAgLmxjZHNlbF9iaWcgPSBISVdP
+UkRfVVBEQVRFKDAsIFJLMzM5OV9FRFBfTENEQ19TRUwpLAo+ICsgICAgICAgLmxjZHNlbF9saXQg
+PSBISVdPUkRfVVBEQVRFKFJLMzM5OV9FRFBfTENEQ19TRUwsIFJLMzM5OV9FRFBfTENEQ19TRUwp
+LAo+ICsgICAgICAgLmNoaXBfdHlwZSA9IFJLMzM5OV9FRFAsCj4gK307Cj4gKwo+ICBzdGF0aWMg
+Y29uc3Qgc3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSByazMyODhfZHAgPSB7Cj4gICAgICAg
+ICAubGNkc2VsX2dyZl9yZWcgPSBSSzMyODhfR1JGX1NPQ19DT042LAo+ICAgICAgICAgLmxjZHNl
+bF9iaWcgPSBISVdPUkRfVVBEQVRFKDAsIFJLMzI4OF9FRFBfTENEQ19TRUwpLAo+IEBAIC0zODcs
+NiArNDA5LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgcmsz
+Mjg4X2RwID0gewo+Cj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHJvY2tjaGlw
+X2RwX2R0X2lkc1tdID0gewo+ICAgICAgICAgey5jb21wYXRpYmxlID0gInJvY2tjaGlwLHJrMzI4
+OC1kcCIsIC5kYXRhID0gJnJrMzI4OF9kcCB9LAo+ICsgICAgICAgey5jb21wYXRpYmxlID0gInJv
+Y2tjaGlwLHJrMzM5OS1lZHAiLCAuZGF0YSA9ICZyazMzOTlfZWRwIH0sCj4gICAgICAgICB7fQo+
+ICB9Owo+ICBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCByb2NrY2hpcF9kcF9kdF9pZHMpOwo+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJt
+L2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4gaW5kZXggNzkwYWI1ZC4uZmM0YWVhMyAxMDA2NDQKPiAt
+LS0gYS9pbmNsdWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaAo+ICsrKyBiL2luY2x1ZGUvZHJt
+L2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4gQEAgLTE2LDExICsxNiwxMiBAQAo+ICBlbnVtIGFuYWxv
+Z2l4X2RwX2RldnR5cGUgewo+ICAgICAgICAgRVhZTk9TX0RQLAo+ICAgICAgICAgUkszMjg4X0RQ
+LAo+ICsgICAgICAgUkszMzk5X0VEUCwKPiAgfTsKPgo+ICBzdGF0aWMgaW5saW5lIGJvb2wgaXNf
+cm9ja2NoaXAoZW51bSBhbmFsb2dpeF9kcF9kZXZ0eXBlIHR5cGUpCj4gIHsKPiAtICAgICAgIHJl
+dHVybiB0eXBlID09IFJLMzI4OF9EUDsKPiArICAgICAgIHJldHVybiB0eXBlID09IFJLMzI4OF9E
+UCB8fCB0eXBlID09IFJLMzM5OV9FRFA7Cj4gIH0KPgo+ICBzdHJ1Y3QgYW5hbG9naXhfZHBfcGxh
+dF9kYXRhIHsKPiAtLQo+IDEuOS4xCj4KPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
