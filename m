@@ -1,93 +1,96 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v4 03/11] drm/bridge: analogix_dp: some rockchip chips need to
- flip REF_CLK bit setting
-Date: Wed, 29 Jun 2016 17:15:18 +0800
-Message-ID: <1467191718-17221-1-git-send-email-ykk@rock-chips.com>
+Subject: [PATCH v4 05/11] drm/rockchip: analogix_dp: make panel detect to an optional action
+Date: Wed, 29 Jun 2016 17:15:30 +0800
+Message-ID: <1467191730-17308-1-git-send-email-ykk@rock-chips.com>
 References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Thierry Reding <treding@nvidia.com>, dianders@chromium.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QXMgdmVuZG9yIGRvY3VtZW50IGluZGljYXRlLCB3aGVuIFJFRl9DTEsgYml0IHNldCAwLCB0aGVu
-IERQCnBoeSdzIFJFRl9DTEsgc2hvdWxkIHN3aXRjaCB0byAyNE0gc291cmNlIGNsb2NrLgoKQnV0
-IGR1ZSB0byBJQyBQSFkgbGF5b3V0IG1pc3Rha2VuLCBzb21lIGNoaXBzIG5lZWQgdG8gZmxpcCB0
-aGlzCmJpdChsaWtlIFJLMzI4OCksIGFuZCB1bmZvcnR1bmF0ZWx5IHRoZXkgZGlkbid0IGluZGlj
-YXRlIGluIHRoZQpEUCB2ZXJzaW9uIHJlZ2lzdGVyLiBUaGF0J3Mgd2h5IHdlIGhhdmUgdG8gbWFr
-ZSB0aGlzIGxpdHRsZSBoYWNrLgoKU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2st
-Y2hpcHMuY29tPgpSZXZpZXdlZC1ieTogVG9tYXN6IEZpZ2EgPHRvbWFzei5maWdhQGNocm9taXVt
-LmNvbT4KVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ft
-c3VuZy5jb20+Ci0tLQpDaGFuZ2VzIGluIHY0OgotIFJlbW92ZSBzdWJkZXZfdHlwZSBudW1iZXIs
-IGFuZCBhZGQgJ2lzX3JvY2tjaGlwKHR5cGUpJyBoZWxwZXIgZnVuY3Rpb24gKFNlYW4pCi0gQWRk
-IHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCgpDaGFuZ2VzIGluIHYzOgotIE1ha2UgdGhpcyBo
-YWNrIGNvZGUgbW9yZSBjbGVhciAoVG9tYXN6LCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQog
-IHJlZyA9IH5yZWcgJiBSRUZfQ0xLX01BU0s7ICAtLS0+ICByZWcgXj0gUkVGX0NMS19NQVNLOwog
-ICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0Njg1Mi83
-L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmNAODBdCi0g
-QWRkIHRlc3RlZCBmbGFnIGZyb20gSmF2aWVyCgogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
-b2dpeC9hbmFsb2dpeF9kcF9yZWcuYyB8IDEyICsrKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaCB8ICAxICsKIGluY2x1ZGUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeF9kcC5oICAgICAgICAgICAgICAgICAgfCAgNSArKysrKwogMyBmaWxlcyBj
-aGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCmluZGV4IDQ5MjA1ZWYu
-LjQ4MDMwZjAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
-bG9naXhfZHBfcmVnLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFs
-b2dpeF9kcF9yZWcuYwpAQCAtNzQsOCArNzQsMTIgQEAgdm9pZCBhbmFsb2dpeF9kcF9pbml0X2Fu
-YWxvZ19wYXJhbShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKIAlyZWcgPSBTRUxfMjRN
-IHwgVFhfRFZERF9CSVRfMV8wNjI1VjsKIAl3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFM
-T0dJWF9EUF9BTkFMT0dfQ1RMXzIpOwogCi0JaWYgKGRwLT5wbGF0X2RhdGEgJiYgKGRwLT5wbGF0
-X2RhdGEtPmRldl90eXBlID09IFJLMzI4OF9EUCkpIHsKLQkJd3JpdGVsKFJFRl9DTEtfMjRNLCBk
-cC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QTExfUkVHXzEpOworCWlmIChkcC0+cGxhdF9kYXRh
-ICYmIGlzX3JvY2tjaGlwKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlKSkgeworCQlyZWcgPSBSRUZf
-Q0xLXzI0TTsKKwkJaWYgKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlID09IFJLMzI4OF9EUCkKKwkJ
-CXJlZyBePSBSRUZfQ0xLX01BU0s7CisKKwkJd3JpdGVsKHJlZywgZHAtPnJlZ19iYXNlICsgQU5B
-TE9HSVhfRFBfUExMX1JFR18xKTsKIAkJd3JpdGVsKDB4OTUsIGRwLT5yZWdfYmFzZSArIEFOQUxP
-R0lYX0RQX1BMTF9SRUdfMik7CiAJCXdyaXRlbCgweDQwLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJ
-WF9EUF9QTExfUkVHXzMpOwogCQl3cml0ZWwoMHg1OCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhf
-RFBfUExMX1JFR180KTsKQEAgLTI0NCw3ICsyNDgsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9h
-bmFsb2dfcG93ZXJfZG93bihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKIAl1MzIgcmVn
-OwogCXUzMiBwaHlfcGRfYWRkciA9IEFOQUxPR0lYX0RQX1BIWV9QRDsKIAotCWlmIChkcC0+cGxh
-dF9kYXRhICYmIChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSA9PSBSSzMyODhfRFApKQorCWlmIChk
-cC0+cGxhdF9kYXRhICYmIGlzX3JvY2tjaGlwKGRwLT5wbGF0X2RhdGEtPmRldl90eXBlKSkKIAkJ
-cGh5X3BkX2FkZHIgPSBBTkFMT0dJWF9EUF9QRDsKIAogCXN3aXRjaCAoYmxvY2spIHsKQEAgLTQ0
-OCw3ICs0NTIsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX2luaXRfYXV4KHN0cnVjdCBhbmFsb2dpeF9k
-cF9kZXZpY2UgKmRwKQogCWFuYWxvZ2l4X2RwX3Jlc2V0X2F1eChkcCk7CiAKIAkvKiBEaXNhYmxl
-IEFVWCB0cmFuc2FjdGlvbiBIL1cgcmV0cnkgKi8KLQlpZiAoZHAtPnBsYXRfZGF0YSAmJiAoZHAt
-PnBsYXRfZGF0YS0+ZGV2X3R5cGUgPT0gUkszMjg4X0RQKSkKKwlpZiAoZHAtPnBsYXRfZGF0YSAm
-JiBpc19yb2NrY2hpcChkcC0+cGxhdF9kYXRhLT5kZXZfdHlwZSkpCiAJCXJlZyA9IEFVWF9CSVRf
-UEVSSU9EX0VYUEVDVEVEX0RFTEFZKDApIHwKIAkJICAgICAgQVVYX0hXX1JFVFJZX0NPVU5UX1NF
-TCgzKSB8CiAJCSAgICAgIEFVWF9IV19SRVRSWV9JTlRFUlZBTF82MDBfTUlDUk9TRUNPTkRTOwpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9y
-ZWcuaCBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmgK
-aW5kZXggODhkNTZhZC4uY2RjYzZjNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRn
-ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oCkBAIC0xNjUsNiArMTY1LDcgQEAKIC8qIEFOQUxP
-R0lYX0RQX1BMTF9SRUdfMSAqLwogI2RlZmluZSBSRUZfQ0xLXzI0TQkJCQkoMHgxIDw8IDApCiAj
-ZGVmaW5lIFJFRl9DTEtfMjdNCQkJCSgweDAgPDwgMCkKKyNkZWZpbmUgUkVGX0NMS19NQVNLCQkJ
-CSgweDEgPDwgMCkKIAogLyogQU5BTE9HSVhfRFBfTEFORV9NQVAgKi8KICNkZWZpbmUgTEFORTNf
-TUFQX0xPR0lDX0xBTkVfMAkJCSgweDAgPDwgNikKZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeF9kcC5oIGIvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmgKaW5k
-ZXggMjVhZmIzMS4uNzkwYWI1ZCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4X2RwLmgKKysrIGIvaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmgKQEAgLTE4LDYg
-KzE4LDExIEBAIGVudW0gYW5hbG9naXhfZHBfZGV2dHlwZSB7CiAJUkszMjg4X0RQLAogfTsKIAor
-c3RhdGljIGlubGluZSBib29sIGlzX3JvY2tjaGlwKGVudW0gYW5hbG9naXhfZHBfZGV2dHlwZSB0
-eXBlKQoreworCXJldHVybiB0eXBlID09IFJLMzI4OF9EUDsKK30KKwogc3RydWN0IGFuYWxvZ2l4
-X2RwX3BsYXRfZGF0YSB7CiAJZW51bSBhbmFsb2dpeF9kcF9kZXZ0eXBlIGRldl90eXBlOwogCXN0
-cnVjdCBkcm1fcGFuZWwgKnBhbmVsOwotLSAKMS45LjEKCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Some boards don't need to declare a panel device node, like the
+display interface is DP monitors, so it's necessary to make the
+panel detect to an optional action.
+
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Acked-by: Mark Yao <mark.yao@rock-chips.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@chromium.com>
+---
+Changes in v4:
+- Move of_node_put(panel_node) directly below of_drm_find_panel (Sean)
+- Add reviewed flag from Tomasz
+
+Changes in v3:
+- Add the acked flag from Mark.
+
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 47 +++++++++++--------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 8557a08..0755573 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -329,38 +329,33 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *panel_node, *port, *endpoint;
++	struct drm_panel *panel = NULL;
+ 	struct rockchip_dp_device *dp;
+-	struct drm_panel *panel;
+ 
+ 	port = of_graph_get_port_by_id(dev->of_node, 1);
+-	if (!port) {
+-		dev_err(dev, "can't find output port\n");
+-		return -EINVAL;
+-	}
+-
+-	endpoint = of_get_child_by_name(port, "endpoint");
+-	of_node_put(port);
+-	if (!endpoint) {
+-		dev_err(dev, "no output endpoint found\n");
+-		return -EINVAL;
+-	}
+-
+-	panel_node = of_graph_get_remote_port_parent(endpoint);
+-	of_node_put(endpoint);
+-	if (!panel_node) {
+-		dev_err(dev, "no output node found\n");
+-		return -EINVAL;
+-	}
+-
+-	panel = of_drm_find_panel(panel_node);
+-	if (!panel) {
+-		DRM_ERROR("failed to find panel\n");
++	if (port) {
++		endpoint = of_get_child_by_name(port, "endpoint");
++		of_node_put(port);
++		if (!endpoint) {
++			dev_err(dev, "no output endpoint found\n");
++			return -EINVAL;
++		}
++
++		panel_node = of_graph_get_remote_port_parent(endpoint);
++		of_node_put(endpoint);
++		if (!panel_node) {
++			dev_err(dev, "no output node found\n");
++			return -EINVAL;
++		}
++
++		panel = of_drm_find_panel(panel_node);
+ 		of_node_put(panel_node);
+-		return -EPROBE_DEFER;
++		if (!panel) {
++			DRM_ERROR("failed to find panel\n");
++			return -EPROBE_DEFER;
++		}
+ 	}
+ 
+-	of_node_put(panel_node);
+-
+ 	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
+ 	if (!dp)
+ 		return -ENOMEM;
+-- 
+1.9.1
