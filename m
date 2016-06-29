@@ -1,65 +1,112 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 10/10] drm/bridge: analogix_dp: fix no drm hpd event
- when panel plug in
-Date: Wed, 29 Jun 2016 11:35:57 +0800
-Message-ID: <5773421D.4070202@rock-chips.com>
+Subject: Re: [PATCH v3 08/10] drm/rockchip: analogix_dp: correct the connector
+ display color format and bpc
+Date: Wed, 29 Jun 2016 14:41:41 +0800
+Message-ID: <57736DA5.5020005@rock-chips.com>
 References: <1465904718-663-1-git-send-email-ykk@rock-chips.com>
- <1465904802-1164-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbJwWCBcj9CsxXnu4S4W94r8TioTf1p-poYH8Tac8hYO0Q@mail.gmail.com>
+ <1465904793-1071-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vb+bPGSkNMF+4VWOu3FtTws2EH0fQcRQwyv29rRh4VjQjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAOw6vbJwWCBcj9CsxXnu4S4W94r8TioTf1p-poYH8Tac8hYO0Q@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.134]:53029 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328AbcF2Gly (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Jun 2016 02:41:54 -0400
+In-Reply-To: <CAOw6vb+bPGSkNMF+4VWOu3FtTws2EH0fQcRQwyv29rRh4VjQjg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@chromium.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-U2VhbiwKCk9uIDA2LzIzLzIwMTYgMTA6MjQgUE0sIFNlYW4gUGF1bCB3cm90ZToKPiBPbiBUdWUs
-IEp1biAxNCwgMjAxNiBhdCA3OjQ2IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+
-IHdyb3RlOgo+PiBUaGUgZW51bSB2YWx1ZSBvZiBEUF9JUlFfVFlQRV9IUF9DQUJMRV9JTiBpcyB6
-ZXJvLCBidXQgZHJpdmVyIG9ubHkKPj4gc2VuZCBkcm0gaHAgZXZlbnQgd2hlbiB0aGUgaXJxX3R5
-cGUgYW5kIHRoZSBlbnVtIHZhbHVlIGlzIHRydWUuCj4+Cj4+IGlmIChpcnFfdHlwZSAmIERQX0lS
-UV9UWVBFX0hQX0NBQkxFX0lOIHx8IC4uLikKPj4gICAgICAgICAgZHJtX2hlbHBlcl9ocGRfaXJx
-X2V2ZW50KGRwLT5kcm1fZGV2KTsKPj4KPj4gU28gdGhlcmUgd291bGQgbm8gZHJtIGhwZCBldmVu
-dCB3aGVuIGNhYmxlIHBsdWcgaW4sIHRvIGZpeCB0aGF0Cj4+IGp1c3QgbmVlZCB0byBhc3NpZ24g
-YWxsIGhvdHBsdWcgZW51bSB3aXRoIG5vLXplcm8gdmFsdWVzLgo+Pgo+PiBSZXBvcnRlZC1ieTog
-RGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgo+PiBTaWduZWQtb2ZmLWJ5
-OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cj4+IFJldmlld2VkLWJ5OiBTdMOpcGhh
-bmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9taXVtLm9yZz4KPj4gVGVzdGVkLWJ5OiBKYXZpZXIg
-TWFydGluZXogQ2FuaWxsYXMgPGphdmllckBvc2cuc2Ftc3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6
-IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgo+CgpUaGFua3MgIDspCgo+PiAtLS0K
-Pj4gQ2hhbmdlcyBpbiB2MzoKPj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFN0w6lwaGFuZS4K
-Pj4gICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ2
-MzE5LzE1XQo+PiAtIEFkZCB0ZXN0ZWQgZmxhZyBmcm9tIEphdmllcgo+Pgo+PiBDaGFuZ2VzIGlu
-IHYyOiBOb25lCj4+Cj4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
-eF9kcF9jb3JlLmggfCA4ICsrKystLS0tCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9u
-cygrKSwgNCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRn
-ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gaW5kZXggZjA5Mjc1ZC4uYjQ1NjM4MCAx
-MDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
-cF9jb3JlLmgKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
-eF9kcF9jb3JlLmgKPj4gQEAgLTEyNywxMCArMTI3LDEwIEBAIGVudW0gYW5hbG9nX3Bvd2VyX2Js
-b2NrIHsKPj4gICB9Owo+Pgo+PiAgIGVudW0gZHBfaXJxX3R5cGUgewo+PiAtICAgICAgIERQX0lS
-UV9UWVBFX0hQX0NBQkxFX0lOLAo+PiAtICAgICAgIERQX0lSUV9UWVBFX0hQX0NBQkxFX09VVCwK
-Pj4gLSAgICAgICBEUF9JUlFfVFlQRV9IUF9DSEFOR0UsCj4+IC0gICAgICAgRFBfSVJRX1RZUEVf
-VU5LTk9XTiwKPj4gKyAgICAgICBEUF9JUlFfVFlQRV9IUF9DQUJMRV9JTiAgPSBCSVQoMCksCj4+
-ICsgICAgICAgRFBfSVJRX1RZUEVfSFBfQ0FCTEVfT1VUID0gQklUKDEpLAo+PiArICAgICAgIERQ
-X0lSUV9UWVBFX0hQX0NIQU5HRSAgICA9IEJJVCgyKSwKPj4gKyAgICAgICBEUF9JUlFfVFlQRV9V
-TktOT1dOICAgICAgPSBCSVQoMyksCj4+ICAgfTsKPj4KPj4gICBzdHJ1Y3QgdmlkZW9faW5mbyB7
-Cj4+IC0tCj4+IDEuOS4xCj4+Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+Sean,
+
+On 06/23/2016 10:19 PM, Sean Paul wrote:
+> On Tue, Jun 14, 2016 at 7:46 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Rockchip VOP couldn't output YUV video format for eDP controller, so
+>> when driver detect connector support YUV video format, we need to hack
+>> it down to RGB888.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> Acked-by: Mark Yao <mark.yao@rock-chips.com>
+>> ---
+>> Changes in v3:
+>> - Hook the connector's color_formats in .get_modes directly. (Tomasz, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346317/15]
+>> - Add the acked flag from Mark.
+>>
+>> Changes in v2: None
+>>
+>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 17 +++++++++++++++++
+>>   1 file changed, 17 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> index da2e844..95a6f60 100644
+>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> @@ -102,6 +102,22 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
+>>          return 0;
+>>   }
+>>
+>> +static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+>> +                                struct drm_connector *connector)
+>> +{
+>> +       struct drm_display_info *di = &connector->display_info;
+>> +
+>> +       if (di->color_formats & DRM_COLOR_FORMAT_YCRCB444 ||
+>> +           di->color_formats & DRM_COLOR_FORMAT_YCRCB422) {
+>> +               di->color_formats &= ~(DRM_COLOR_FORMAT_YCRCB422 |
+>> +                                      DRM_COLOR_FORMAT_YCRCB444);
+>> +               di->color_formats |= DRM_COLOR_FORMAT_RGB444;
+>> +               di->bpc = 8;
+> Probably a stupid question, but are you guaranteed that the panel will
+> support this color format?
+
+Hmm... I'm not sure, but it works on my several panels. I guess RGB is 
+more common then YUV, so if panel support YUV format, it should support 
+RGB888 too.
+
+>> +       }
+>> +
+> I think this can be simplified as follows:
+>
+> /* A comment here about why we're doing this */
+> u32 mask = DRM_COLOR_FORMAT_YCRCB444 | DRM_COLOR_FORMAT_YCRCB422;
+> if ((di->color_formats & mask)) {
+>      DRM_DEBUG_KMS("Swapping display color format from YUV to RGB\n");
+>      di->color_formats &= ~mask;
+>      di->color_formats |= DRM_COLOR_FORMAT_RGB444;
+>      di->bpc = 8;
+> }
+
+Done, good idea.
+
+Thanks,
+- Yakir
+
+>> +       return 0;
+>> +}
+>> +
+>>   static bool
+>>   rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+>>                                     const struct drm_display_mode *mode,
+>> @@ -313,6 +329,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+>>          dp->plat_data.subdev_type = dp_data->chip_type;
+>>          dp->plat_data.power_on = rockchip_dp_poweron;
+>>          dp->plat_data.power_off = rockchip_dp_powerdown;
+>> +       dp->plat_data.get_modes = rockchip_dp_get_modes;
+>>
+>>          return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+>>   }
+>> --
+>> 1.9.1
+>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
