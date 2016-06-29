@@ -1,84 +1,90 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v4 05/11] drm/rockchip: analogix_dp: make panel detect to
- an optional action
-Date: Wed, 29 Jun 2016 09:55:02 -0400
-Message-ID: <CAOw6vb+tZuZf6dT+2MVOXCcUzooX4BXo5NzdDg1iLe0wMzRggA@mail.gmail.com>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v4 07/11] drm/rockchip: analogix_dp: correct the connector
+ display color format and bpc
+Date: Wed, 29 Jun 2016 09:57:39 -0400
+Message-ID: <CAOw6vb+yEdgx+qxNh7xBjtwEi3cYckqKYqAp4ytb+qUwjdQY1w@mail.gmail.com>
 References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
- <1467191730-17308-1-git-send-email-ykk@rock-chips.com>
+ <1467191739-17394-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1467191730-17308-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1467191739-17394-1-git-send-email-ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBKdW4gMjksIDIwMTYgYXQgNToxNSBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
-cHMuY29tPiB3cm90ZToKPiBTb21lIGJvYXJkcyBkb24ndCBuZWVkIHRvIGRlY2xhcmUgYSBwYW5l
-bCBkZXZpY2Ugbm9kZSwgbGlrZSB0aGUKPiBkaXNwbGF5IGludGVyZmFjZSBpcyBEUCBtb25pdG9y
-cywgc28gaXQncyBuZWNlc3NhcnkgdG8gbWFrZSB0aGUKPiBwYW5lbCBkZXRlY3QgdG8gYW4gb3B0
-aW9uYWwgYWN0aW9uLgo+Cj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
-cHMuY29tPgo+IEFja2VkLWJ5OiBNYXJrIFlhbyA8bWFyay55YW9Acm9jay1jaGlwcy5jb20+Cj4g
-UmV2aWV3ZWQtYnk6IFRvbWFzeiBGaWdhIDx0b21hc3ouZmlnYUBjaHJvbWl1bS5jb20+CgoKUmV2
-aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgoKPiAtLS0KPiBDaGFu
-Z2VzIGluIHY0Ogo+IC0gTW92ZSBvZl9ub2RlX3B1dChwYW5lbF9ub2RlKSBkaXJlY3RseSBiZWxv
-dyBvZl9kcm1fZmluZF9wYW5lbCAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9t
-YXN6Cj4KPiBDaGFuZ2VzIGluIHYzOgo+IC0gQWRkIHRoZSBhY2tlZCBmbGFnIGZyb20gTWFyay4K
-Pgo+ICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyB8IDQ3
-ICsrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDIxIGluc2VydGlv
-bnMoKyksIDI2IGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
-L2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiBpbmRleCA4NTU3YTA4Li4wNzU1NTczIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPiBA
-QCAtMzI5LDM4ICszMjksMzMgQEAgc3RhdGljIGludCByb2NrY2hpcF9kcF9wcm9iZShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICB7Cj4gICAgICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYg
-PSAmcGRldi0+ZGV2Owo+ICAgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpwYW5lbF9ub2RlLCAq
-cG9ydCwgKmVuZHBvaW50Owo+ICsgICAgICAgc3RydWN0IGRybV9wYW5lbCAqcGFuZWwgPSBOVUxM
-Owo+ICAgICAgICAgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHA7Cj4gLSAgICAgICBzdHJ1
-Y3QgZHJtX3BhbmVsICpwYW5lbDsKPgo+ICAgICAgICAgcG9ydCA9IG9mX2dyYXBoX2dldF9wb3J0
-X2J5X2lkKGRldi0+b2Zfbm9kZSwgMSk7Cj4gLSAgICAgICBpZiAoIXBvcnQpIHsKPiAtICAgICAg
-ICAgICAgICAgZGV2X2VycihkZXYsICJjYW4ndCBmaW5kIG91dHB1dCBwb3J0XG4iKTsKPiAtICAg
-ICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4gLSAgICAgICB9Cj4gLQo+IC0gICAgICAgZW5k
-cG9pbnQgPSBvZl9nZXRfY2hpbGRfYnlfbmFtZShwb3J0LCAiZW5kcG9pbnQiKTsKPiAtICAgICAg
-IG9mX25vZGVfcHV0KHBvcnQpOwo+IC0gICAgICAgaWYgKCFlbmRwb2ludCkgewo+IC0gICAgICAg
-ICAgICAgICBkZXZfZXJyKGRldiwgIm5vIG91dHB1dCBlbmRwb2ludCBmb3VuZFxuIik7Cj4gLSAg
-ICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+IC0gICAgICAgfQo+IC0KPiAtICAgICAgIHBh
-bmVsX25vZGUgPSBvZl9ncmFwaF9nZXRfcmVtb3RlX3BvcnRfcGFyZW50KGVuZHBvaW50KTsKPiAt
-ICAgICAgIG9mX25vZGVfcHV0KGVuZHBvaW50KTsKPiAtICAgICAgIGlmICghcGFuZWxfbm9kZSkg
-ewo+IC0gICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgIm5vIG91dHB1dCBub2RlIGZvdW5kXG4i
-KTsKPiAtICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4gLSAgICAgICB9Cj4gLQo+IC0g
-ICAgICAgcGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChwYW5lbF9ub2RlKTsKPiAtICAgICAgIGlm
-ICghcGFuZWwpIHsKPiAtICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJmYWlsZWQgdG8gZmluZCBw
-YW5lbFxuIik7Cj4gKyAgICAgICBpZiAocG9ydCkgewo+ICsgICAgICAgICAgICAgICBlbmRwb2lu
-dCA9IG9mX2dldF9jaGlsZF9ieV9uYW1lKHBvcnQsICJlbmRwb2ludCIpOwo+ICsgICAgICAgICAg
-ICAgICBvZl9ub2RlX3B1dChwb3J0KTsKPiArICAgICAgICAgICAgICAgaWYgKCFlbmRwb2ludCkg
-ewo+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAibm8gb3V0cHV0IGVuZHBv
-aW50IGZvdW5kXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsK
-PiArICAgICAgICAgICAgICAgfQo+ICsKPiArICAgICAgICAgICAgICAgcGFuZWxfbm9kZSA9IG9m
-X2dyYXBoX2dldF9yZW1vdGVfcG9ydF9wYXJlbnQoZW5kcG9pbnQpOwo+ICsgICAgICAgICAgICAg
-ICBvZl9ub2RlX3B1dChlbmRwb2ludCk7Cj4gKyAgICAgICAgICAgICAgIGlmICghcGFuZWxfbm9k
-ZSkgewo+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAibm8gb3V0cHV0IG5v
-ZGUgZm91bmRcbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+
-ICsgICAgICAgICAgICAgICB9Cj4gKwo+ICsgICAgICAgICAgICAgICBwYW5lbCA9IG9mX2RybV9m
-aW5kX3BhbmVsKHBhbmVsX25vZGUpOwo+ICAgICAgICAgICAgICAgICBvZl9ub2RlX3B1dChwYW5l
-bF9ub2RlKTsKPiAtICAgICAgICAgICAgICAgcmV0dXJuIC1FUFJPQkVfREVGRVI7Cj4gKyAgICAg
-ICAgICAgICAgIGlmICghcGFuZWwpIHsKPiArICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJS
-T1IoImZhaWxlZCB0byBmaW5kIHBhbmVsXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICBy
-ZXR1cm4gLUVQUk9CRV9ERUZFUjsKPiArICAgICAgICAgICAgICAgfQo+ICAgICAgICAgfQo+Cj4g
-LSAgICAgICBvZl9ub2RlX3B1dChwYW5lbF9ub2RlKTsKPiAtCj4gICAgICAgICBkcCA9IGRldm1f
-a3phbGxvYyhkZXYsIHNpemVvZigqZHApLCBHRlBfS0VSTkVMKTsKPiAgICAgICAgIGlmICghZHAp
-Cj4gICAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOwo+IC0tCj4gMS45LjEKPgo+Cl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Jun 29, 2016 at 5:15 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+> Rockchip VOP couldn't output YUV video format for eDP controller, so
+> when driver detect connector support YUV video format, we need to hack
+> it down to RGB888.
+>
+> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Acked-by: Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Reviewed-by: Tomasz Figa <tomasz.figa-F7+t8E8rja9Wk0Htik3J/w@public.gmane.org>
+
+Reviewed-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
+
+> ---
+> Changes in v4:
+> - Using mask variable to collect the YUV video format. (Sean)
+> - Add reviewed flag from Tomasz.
+>
+> Changes in v3:
+> - Hook the connector's color_formats in .get_modes directly. (Tomasz, reviewed at Google Gerrit)
+>     [https://chromium-review.googlesource.com/#/c/346317/15]
+> - Add the acked flag from Mark.
+>
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 0755573..0a0fb3a 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -110,6 +110,23 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
+>         return 0;
+>  }
+>
+> +static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+> +                                struct drm_connector *connector)
+> +{
+> +       struct drm_display_info *di = &connector->display_info;
+> +       /* VOP couldn't output YUV video format for eDP rightly */
+> +       u32 mask = DRM_COLOR_FORMAT_YCRCB444 | DRM_COLOR_FORMAT_YCRCB422;
+> +
+> +       if ((di->color_formats & mask)) {
+> +               DRM_DEBUG_KMS("Swapping display color format from YUV to RGB\n");
+> +               di->color_formats &= ~mask;
+> +               di->color_formats |= DRM_COLOR_FORMAT_RGB444;
+> +               di->bpc = 8;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static bool
+>  rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+>                                    const struct drm_display_mode *mode,
+> @@ -310,6 +327,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+>         dp->plat_data.dev_type = dp->data->chip_type;
+>         dp->plat_data.power_on = rockchip_dp_poweron;
+>         dp->plat_data.power_off = rockchip_dp_powerdown;
+> +       dp->plat_data.get_modes = rockchip_dp_get_modes;
+>
+>         return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+>  }
+> --
+> 1.9.1
+>
+>
