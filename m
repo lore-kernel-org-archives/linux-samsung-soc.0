@@ -1,132 +1,179 @@
-From: Sean Paul <seanpaul@chromium.org>
+From: Yakir Yang <ykk@rock-chips.com>
 Subject: Re: [PATCH v4 0/11] Misc fixup and add RK3399 eDP support to Analogix
- DP driver
-Date: Wed, 29 Jun 2016 10:01:17 -0400
-Message-ID: <CAOw6vbLWJJP=5Erkrz0chTJEyzsF2dfG_naJk2UFG6NO9i20eg@mail.gmail.com>
+ DP driver[Involving remittance information, please pay attention to the
+ safety of property]
+Date: Thu, 30 Jun 2016 14:31:53 +0800
+Message-ID: <5774BCD9.7050700@rock-chips.com>
 References: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbLWJJP=5Erkrz0chTJEyzsF2dfG_naJk2UFG6NO9i20eg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1467191657-16941-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:48724 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052AbcF3Gc0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 02:32:26 -0400
+In-Reply-To: <CAOw6vbLWJJP=5Erkrz0chTJEyzsF2dfG_naJk2UFG6NO9i20eg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Douglas Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-T24gV2VkLCBKdW4gMjksIDIwMTYgYXQgNToxNCBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
-cHMuY29tPiB3cm90ZToKPgo+IFJLMzM5OSBhbmQgUkszMjg4IHNoYXJlZCB0aGUgc2FtZSBlRFAg
-SVAgY29udHJvbGxlciwgb25seSBzb21lIGxpZ2h0Cj4gZGlmZmVyZW5jZSB3aXRoIFZPUCBjb25m
-aWd1cmUgYW5kIEdSRiBjb25maWd1cmUuCj4KClRoZSB3aG9sZSBzZXQgbG9va3MgZ29vZCB0byBt
-ZS4gQWxsIHBhdGNoZXMgc2hvdWxkIGhhdmUgbXkgUi1iIG5vdywKdGhhbmtzIGZvciB0aGUgdXBk
-YXRlLgoKU2VhbgoKCgo+IEFsc28gc2FtZSBtaXNjIGZpeCB0byBhbmFsb2dpeF9kcCBkcml2ZXI6
-Cj4gLSBIb3RwbHVnIGludmFsaWQgd2hpY2ggcmVwb3J0IGJ5IERhbiBDYXJwZW50ZXIKPiAtIE1h
-a2UgcGFuZWwgZGV0ZWN0IHRvIGFuIG9wdGlvbmFsIGFjdGlvbgo+IC0gY29ycmVjdCB0aGUgcmVn
-aXN0ZXIgYml0IGRlZmluZSBlcnJvciBpbiBBTkFMT0dJWF9EUF9QTExfUkVHXzEKPgo+IENoYW5n
-ZXMgaW4gdjQ6Cj4gLSBBc3NpZ25lZCB0aGUgR1JGIHNldHRpbmcgbWFnaWMgbnVtYmVycyB0byBh
-ICNkZWZpbmUgdGhhdCBjb3JyZXNwb25kcyB0bwo+ICAgYSBUUk0gbmFtZS4gKFNlYW4gJiBIZWlr
-bykKPiAtIFBhc3MgdGhlIGNoaXAgdHlwZSB0byBkZXZpY2UgdHlwZSBkaXJlY3RseS4gKFNlYW4p
-Cj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPiAtIEFkZCByZXZpZXdlZCBmbGFn
-IGZyb20gU2Vhbgo+IC0gUmVtb3ZlIHN1YmRldl90eXBlIG51bWJlciwgYW5kIGFkZCAnaXNfcm9j
-a2NoaXAodHlwZSknIGhlbHBlciBmdW5jdGlvbiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFn
-IGZyb20gVG9tYXN6Lgo+IC0gSW1wcm92ZWQgdGhlIG92ZXJseSBjb21wbGljYXRlZCAuYXRvbWlj
-X2NoZWNrIGZ1bmN0aW9uLiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9tYXN6
-Cj4gLSBNb3ZlIG9mX25vZGVfcHV0KHBhbmVsX25vZGUpIGRpcmVjdGx5IGJlbG93IG9mX2RybV9m
-aW5kX3BhbmVsIChTZWFuKQo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3oKPiAtIEFk
-ZCByZXZpZXdlZCBmbGFnIGZyb20gU2Vhbi4KPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9t
-YXN6Lgo+IC0gVXNpbmcgbWFzayB2YXJpYWJsZSB0byBjb2xsZWN0IHRoZSBZVVYgdmlkZW8gZm9y
-bWF0LiAoU2VhbikKPiAtIEFkZCByZXZpZXdlZCBmbGFnIGZyb20gVG9tYXN6Lgo+IC0gQ29ycmVj
-dCB0aGUgbWlzc3BlbGwgb2YgJ2NvbnRvbGxlcicuIChTZWFuKQo+IC0gQWRkIHJldmlld2VkIGZs
-YWcgZnJvbSBTZWFuLgo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCj4gLSBBZGQg
-cmV2aWV3ZWQgZmxhZyBmcm9tIERvdWcuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFz
-ei4KPiAtIEZpeCBjb21waWxlZCBlcnJvciwgc29ycnkuCj4gICAiZHAtPmNnZmNsayIgIC0tPiAg
-J2RwLT5ncmZjbGsnCj4gLSBDaGVjayB0aGUgdGhlIGVycm9yIGNvZGUgcHJvcGVybHksICdFUFJP
-QkVfREVGRVInIHNob3VsZCBiZSByZXR1cm5lZCwKPiAgICdFTk9FTlQnIHNob3VsZCBhc3NpZ24g
-YSBOVUxMIHBvaW50IHRvIGdyZmNsaywgb3RoZXIgZXJyb3JzIHNob3VsZCBiZQo+ICAgcmVnYXJk
-ZWQgYXMgZmFpbGVkLiAoVG9tYXN6LCBEb3VnLCByZXZpZXdlZCBhdCBHb29nbGUgR2Vycml0KQo+
-ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzUxODIx
-LzIwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDI0OV0K
-PiAtIEFkZCB0aGUgZG9jdW1lbnQgYWJvdXQgb3B0aW9uYWwgJ2dyZicgY2xvY2sgKFRvbWFzeiwg
-RG91ZywgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0t
-cmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM1MTgyMS9dCj4gLSBBZGQgcmV2aWV3ZWQgZmxh
-ZyBmcm9tIERvdWcuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPgo+IENoYW5n
-ZXMgaW4gdjM6Cj4gLSBXcml0ZSBhIGtlcm5lbGRvYy1zdHlsZSBjb21tZW50IGV4cGxhaW5pbmcg
-dGhlIGNoaXBzIGRhdGEgZmllbGRzIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQp
-Cj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYz
-MTMvMTAvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmNAMzld
-Cj4gLSBEcm9wIHRoZSAnLmxjZGNzZWxfbWFzaycgbnVtYmVyIGluIGNoaXBzIGRhdGEgZmllbGQg
-KFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdlcnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21p
-dW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxMy8xMC9kcml2ZXJzL2dwdS9kcm0v
-cm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuY0AzODJdCj4gLSBBZGQgYWNrZWQgZmxhZyBm
-cm9tIE1hcmsuCj4gLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFRvbWFzei4KPiAgICAgW2h0dHBz
-Oi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0NjMxNS8xNV0KPiAtIEFk
-ZCB0ZXN0ZWQgZmxhZyBmcm9tIEphdmllcgo+IC0gTWFrZSB0aGlzIGhhY2sgY29kZSBtb3JlIGNs
-ZWFyIChUb21hc3osIHJldmlld2VkIGF0IEdvb2dsZSBHZXJyaXQpCj4gICByZWcgPSB+cmVnICYg
-UkVGX0NMS19NQVNLOyAgLS0tPiAgcmVnIF49IFJFRl9DTEtfTUFTSzsKPiAgICAgW2h0dHBzOi8v
-Y2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9jLzM0Njg1Mi83L2RyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmNAODBdCj4gLSBBZGQgdGVzdGVk
-IGZsYWcgZnJvbSBKYXZpZXIKPiAtIEdpdmUgdGhlICJyazMzOTktZWRwIiBhIHNlcGFyYXRlIGxp
-bmUgZm9yIGNsYXJpdHkgaW4gZG9jdW1lbnQgKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdl
-cnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9j
-LzM0NjMxNC8xMC9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9yb2Nr
-Y2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50eHRANV0KPiAtIE1vdmUgJ291dHB1dF90eXBlJyBz
-ZXR0aW5nIGJlZm9yZSB0aGUgcmV0dXJuIHN0YXRlbWVudCAoVG9tYXN6LCByZXZpZXdlZCBhdCBH
-b29nbGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNl
-LmNvbS8jL2MvMzQ2MzE0LzEwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1y
-b2NrY2hpcC5jQDE1NF0KPiAtIEFkZCB0aGUgYWNrZWQgZmxhZyBmcm9tIE1hcmsuCj4gLSBBZGQg
-dGhlIGFja2VkIGZsYWcgZnJvbSBNYXJrLgo+IC0gQXZvaWQgdG8gY2hhbmdlIGFueSBpbnRlcm5h
-bCBkcml2ZXIgc3RhdGUgaW4gLm1vZGVfdmFsaWQgaW50ZXJmYWNlLiAoVG9tYXN6LCByZXZpZXdl
-ZCBhdCBHb29nbGUgR2Vycml0KQo+ICAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xl
-c291cmNlLmNvbS8jL2MvMzQ2MzE4LzEwL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
-eF9kcC1yb2NrY2hpcC5jQDExM10KPiAtIEhvb2sgdGhlIGNvbm5lY3RvcidzIGNvbG9yX2Zvcm1h
-dHMgaW4gLmdldF9tb2RlcyBkaXJlY3RseS4gKFRvbWFzeiwgcmV2aWV3ZWQgYXQgR29vZ2xlIEdl
-cnJpdCkKPiAgICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vIy9j
-LzM0NjMxNy8xNV0KPiAtIEFkZCB0aGUgYWNrZWQgZmxhZyBmcm9tIE1hcmsuCj4gLSBBZGQgdGhl
-IHJldmlld2VkIGZsYWcgZnJvbSBUb21hc3ouCj4gICAgIFtodHRwczovL2Nocm9taXVtLXJldmll
-dy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDY4NTMvMTJdCj4gLSBBZGQgdGhlIGFja2VkIGZsYWcg
-ZnJvbSBNYXJrLgo+IC0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBTdMOpcGhhbmUuCj4gICAgIFto
-dHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDYzMTkvMTVdCj4g
-LSBBZGQgdGVzdGVkIGZsYWcgZnJvbSBKYXZpZXIKPiAtIEFkZCB0aGlzIHBhdGNoIGluIHYzCj4g
-LSBBZGQgdGhpcyBwYXRjaCBpbiB2Mwo+Cj4gWWFraXIgWWFuZyAoMTEpOgo+ICAgZHJtL3JvY2tj
-aGlwOiBhbmFsb2dpeF9kcDogc3BsaXQgdGhlIGxjZGMgc2VsZWN0IHNldHRpbmcgaW50byBkZXZp
-Y2UKPiAgICAgZGF0YQo+ICAgZHJtL2JyaWRnZTogYW5hbG9naXhfZHA6IGNvcnJlY3QgdGhlIHJl
-Z2lzdGVyIGJpdCBkZWZpbmUgZXJyb3IgaW4KPiAgICAgQU5BTE9HSVhfRFBfUExMX1JFR18xCj4g
-ICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9kcDogc29tZSByb2NrY2hpcCBjaGlwcyBuZWVkIHRvIGZs
-aXAgUkVGX0NMSyBiaXQKPiAgICAgc2V0dGluZwo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9k
-cDogYWRkIHJrMzM5OSBlRFAgc3VwcG9ydAo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDog
-bWFrZSBwYW5lbCBkZXRlY3QgdG8gYW4gb3B0aW9uYWwgYWN0aW9uCj4gICBkcm0vYnJpZGdlOiBh
-bmFsb2dpeF9kcDogcGFzc2luZyB0aGUgY29ubmVjdG9yIGFzIGFuIGFyZ3VtZW50IGluCj4gICAg
-IC5nZXRfbW9kZXMoKQo+ICAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogY29ycmVjdCB0aGUg
-Y29ubmVjdG9yIGRpc3BsYXkgY29sb3IgZm9ybWF0Cj4gICAgIGFuZCBicGMKPiAgIGRybS9yb2Nr
-Y2hpcDogYW5hbG9naXhfZHA6IHVwZGF0ZSB0aGUgY29tbWVudHMgYWJvdXQgd2h5IG5lZWQgdG8K
-PiAgICAgaGFyZGNvZGUgVk9QIG91dHB1dCBtb2RlCj4gICBkcm0vYnJpZGdlOiBhbmFsb2dpeF9k
-cDogZml4IG5vIGRybSBocGQgZXZlbnQgd2hlbiBwYW5lbCBwbHVnIGluCj4gICBkcm0vcm9ja2No
-aXA6IGFuYWxvZ2l4X2RwOiBpbnRyb2R1Y2UgdGhlIHBjbGsgZm9yIGdyZgo+ICAgZHQtYmluZGlu
-Z3M6IGFuYWxvZ2l4X2RwOiByb2NrY2hpcDogY29ycmVjdCB0aGUgd3JvbmcgY29tcGF0aWJsZSBu
-YW1lCj4KPiAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2FuYWxvZ2l4X2RwLnR4dCAgICAg
-ICAgfCAgIDEgKwo+ICAuLi4vZGlzcGxheS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC50
-eHQgICAgICB8ICAgOSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
-Z2l4X2RwX2NvcmUuYyB8ICAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
-L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICAgOCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8ICAxMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oICB8ICAgNSArLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAgICAgICAgICAgICB8ICAgNCArLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8IDE3NCArKysrKysr
-KysrKysrKystLS0tLS0KPiAgaW5jbHVkZS9kcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmggICAgICAg
-ICAgICAgICAgICAgfCAgIDkgKy0KPiAgOSBmaWxlcyBjaGFuZ2VkLCAxNjAgaW5zZXJ0aW9ucygr
-KSwgNjQgZGVsZXRpb25zKC0pCj4KPiAtLQo+IDEuOS4xCj4KPgo+IC0tCj4gVG8gdW5zdWJzY3Jp
-YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1
-bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9t
-YWpvcmRvbW8taW5mby5odG1sCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Sean,
+
+On 06/29/2016 10:01 PM, Sean Paul wrote:
+> On Wed, Jun 29, 2016 at 5:14 AM, Yakir Yang <ykk@rock-chips.com> wrot=
+e:
+>> RK3399 and RK3288 shared the same eDP IP controller, only some light
+>> difference with VOP configure and GRF configure.
+>>
+> The whole set looks good to me. All patches should have my R-b now,
+> thanks for the update.
+
+Thanks  :-D
+
+- Yakir
+
+> Sean
+>
+>
+>
+>> Also same misc fix to analogix_dp driver:
+>> - Hotplug invalid which report by Dan Carpenter
+>> - Make panel detect to an optional action
+>> - correct the register bit define error in ANALOGIX_DP_PLL_REG_1
+>>
+>> Changes in v4:
+>> - Assigned the GRF setting magic numbers to a #define that correspon=
+ds to
+>>    a TRM name. (Sean & Heiko)
+>> - Pass the chip type to device type directly. (Sean)
+>> - Add reviewed flag from Tomasz.
+>> - Add reviewed flag from Sean
+>> - Remove subdev_type number, and add 'is_rockchip(type)' helper func=
+tion (Sean)
+>> - Add reviewed flag from Tomasz.
+>> - Improved the overly complicated .atomic_check function. (Sean)
+>> - Add reviewed flag from Tomasz
+>> - Move of_node_put(panel_node) directly below of_drm_find_panel (Sea=
+n)
+>> - Add reviewed flag from Tomasz
+>> - Add reviewed flag from Sean.
+>> - Add reviewed flag from Tomasz.
+>> - Using mask variable to collect the YUV video format. (Sean)
+>> - Add reviewed flag from Tomasz.
+>> - Correct the misspell of 'contoller'. (Sean)
+>> - Add reviewed flag from Sean.
+>> - Add reviewed flag from Tomasz.
+>> - Add reviewed flag from Doug.
+>> - Add reviewed flag from Tomasz.
+>> - Fix compiled error, sorry.
+>>    "dp->cgfclk"  -->  'dp->grfclk'
+>> - Check the the error code properly, 'EPROBE_DEFER' should be return=
+ed,
+>>    'ENOENT' should assign a NULL point to grfclk, other errors shoul=
+d be
+>>    regarded as failed. (Tomasz, Doug, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/351821/20/drivers=
+/gpu/drm/rockchip/analogix_dp-rockchip.c@249]
+>> - Add the document about optional 'grf' clock (Tomasz, Doug, reviewe=
+d at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/351821/]
+>> - Add reviewed flag from Doug.
+>> - Add reviewed flag from Tomasz.
+>>
+>> Changes in v3:
+>> - Write a kerneldoc-style comment explaining the chips data fields (=
+Tomasz, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346313/10/drivers=
+/gpu/drm/rockchip/analogix_dp-rockchip.c@39]
+>> - Drop the '.lcdcsel_mask' number in chips data field (Tomasz, revie=
+wed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346313/10/drivers=
+/gpu/drm/rockchip/analogix_dp-rockchip.c@382]
+>> - Add acked flag from Mark.
+>> - Add reviewed flag from Tomasz.
+>>      [https://chromium-review.googlesource.com/#/c/346315/15]
+>> - Add tested flag from Javier
+>> - Make this hack code more clear (Tomasz, reviewed at Google Gerrit)
+>>    reg =3D ~reg & REF_CLK_MASK;  --->  reg ^=3D REF_CLK_MASK;
+>>      [https://chromium-review.googlesource.com/#/c/346852/7/drivers/=
+gpu/drm/bridge/analogix/analogix_dp_reg.c@80]
+>> - Add tested flag from Javier
+>> - Give the "rk3399-edp" a separate line for clarity in document (Tom=
+asz, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346314/10/Documen=
+tation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt@5]
+>> - Move 'output_type' setting before the return statement (Tomasz, re=
+viewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346314/10/drivers=
+/gpu/drm/rockchip/analogix_dp-rockchip.c@154]
+>> - Add the acked flag from Mark.
+>> - Add the acked flag from Mark.
+>> - Avoid to change any internal driver state in .mode_valid interface=
+=2E (Tomasz, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346318/10/drivers=
+/gpu/drm/rockchip/analogix_dp-rockchip.c@113]
+>> - Hook the connector's color_formats in .get_modes directly. (Tomasz=
+, reviewed at Google Gerrit)
+>>      [https://chromium-review.googlesource.com/#/c/346317/15]
+>> - Add the acked flag from Mark.
+>> - Add the reviewed flag from Tomasz.
+>>      [https://chromium-review.googlesource.com/#/c/346853/12]
+>> - Add the acked flag from Mark.
+>> - Add reviewed flag from St=C3=A9phane.
+>>      [https://chromium-review.googlesource.com/#/c/346319/15]
+>> - Add tested flag from Javier
+>> - Add this patch in v3
+>> - Add this patch in v3
+>>
+>> Yakir Yang (11):
+>>    drm/rockchip: analogix_dp: split the lcdc select setting into dev=
+ice
+>>      data
+>>    drm/bridge: analogix_dp: correct the register bit define error in
+>>      ANALOGIX_DP_PLL_REG_1
+>>    drm/bridge: analogix_dp: some rockchip chips need to flip REF_CLK=
+ bit
+>>      setting
+>>    drm/rockchip: analogix_dp: add rk3399 eDP support
+>>    drm/rockchip: analogix_dp: make panel detect to an optional actio=
+n
+>>    drm/bridge: analogix_dp: passing the connector as an argument in
+>>      .get_modes()
+>>    drm/rockchip: analogix_dp: correct the connector display color fo=
+rmat
+>>      and bpc
+>>    drm/rockchip: analogix_dp: update the comments about why need to
+>>      hardcode VOP output mode
+>>    drm/bridge: analogix_dp: fix no drm hpd event when panel plug in
+>>    drm/rockchip: analogix_dp: introduce the pclk for grf
+>>    dt-bindings: analogix_dp: rockchip: correct the wrong compatible =
+name
+>>
+>>   .../bindings/display/bridge/analogix_dp.txt        |   1 +
+>>   .../display/rockchip/analogix_dp-rockchip.txt      |   9 +-
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   2 +-
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   8 +-
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  12 +-
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   5 +-
+>>   drivers/gpu/drm/exynos/exynos_dp.c                 |   4 +-
+>>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 174 +++++++++=
+++++++------
+>>   include/drm/bridge/analogix_dp.h                   |   9 +-
+>>   9 files changed, 160 insertions(+), 64 deletions(-)
+>>
+>> --
+>> 1.9.1
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
