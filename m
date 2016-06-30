@@ -1,57 +1,37 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v3 2/2] clk: exynos5433: enable sclk_ioclk for SPI3
-Date: Thu, 30 Jun 2016 16:15:11 +0900
-Message-ID: <1467270911-10971-3-git-send-email-andi.shyti@samsung.com>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+Subject: Re: [PATCH v2 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Date: Thu, 30 Jun 2016 16:18:02 +0900
+Message-ID: <20160630071802.GB10787@samsunx.samsung>
+References: <CGME20160627130341epcas1p23c482f5fb9e637dcda579cb874701589@epcas1p2.samsung.com>
+ <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Andi Shyti <andi.shyti@samsung.com>, linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-enable SPI3 critical clocks by using the CLK_IS_CRITICAL flag.
-There is no device which is supposed to enable this clock when
-needed, therefore, the only way to use the SPI bus is to enable
-it in boot time.
+Hi,
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Mon, Jun 27, 2016 at 10:03:13PM +0900, Andi Shyti wrote:
+> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> Use the CLK_IS_CRITICAL flag instead, which enables the clock line
+> during boot time.
+> 
+> While none of the SCLK_SPI need to be alive all the time as that
+> clock is handled by the SPI driver as a busclk whenever needed.
+> 
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 1f7c4951..e769c80 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1648,11 +1648,12 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
- 			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
--			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 20,
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
- 			19, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
--			18, CLK_SET_RATE_PARENT, 0),
-+			18, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SCI, "sclk_sci", "div_sclk_sci", ENABLE_SCLK_PERIC,
- 			17, 0, 0),
- 	GATE(CLK_SCLK_SC_IN, "sclk_sc_in", "div_sclk_sc_in", ENABLE_SCLK_PERIC,
--- 
-2.8.1
+sorry for spamming, please ignore this patch, some more testing
+has shown that if the SCLK_SPI1 is not kept alive, the device not
+always works.
+
+Thanks and sorry again,
+Andi
