@@ -1,37 +1,26 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Date: Thu, 30 Jun 2016 16:18:02 +0900
-Message-ID: <20160630071802.GB10787@samsunx.samsung>
-References: <CGME20160627130341epcas1p23c482f5fb9e637dcda579cb874701589@epcas1p2.samsung.com>
- <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <1467032594-7643-1-git-send-email-andi.shyti@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL 0/4] ARM: exynos: Second round for v4.8
+Date: Thu, 30 Jun 2016 09:51:11 +0200
+Message-ID: <1467273075-13747-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:22014 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751722AbcF3Hvh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 03:51:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, krzk@kernel.org, k.kozlowski@samsung.com
 
 Hi,
 
-On Mon, Jun 27, 2016 at 10:03:13PM +0900, Andi Shyti wrote:
-> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-> Use the CLK_IS_CRITICAL flag instead, which enables the clock line
-> during boot time.
-> 
-> While none of the SCLK_SPI need to be alive all the time as that
-> clock is handled by the SPI driver as a busclk whenever needed.
-> 
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
 
-sorry for spamming, please ignore this patch, some more testing
-has shown that if the SCLK_SPI1 is not kept alive, the device not
-always works.
+Secound round for v4.8. No specific order of pulls.
+No external dependencies. Everything is based on previous work.
 
-Thanks and sorry again,
-Andi
+Expected one conflict, described in email with the conflict itself.
+
+
+Best regards,
+Krzysztof
