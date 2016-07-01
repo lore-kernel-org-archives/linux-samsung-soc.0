@@ -1,122 +1,72 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: s3c64xx: consider the case when the CS line is not connected" to the spi tree
-Date: Thu, 30 Jun 2016 13:15:53 +0100
-Message-ID: <E1bIasr-0001EN-6Z@finisterre>
-References: <1467081676-8442-3-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467081676-8442-3-git-send-email-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>Mark Brown <broonie@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v3 0/4] Add PSR function support for Analogix/Rockchip DP
+Date: Fri,  1 Jul 2016 17:18:04 +0800
+Message-ID: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, emil.l.velikov@gmail.com, Doug Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
-
-   spi: s3c64xx: consider the case when the CS line is not connected
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a92e7c3d82a1313ab1954e5cdfd8f04efdb4ca78 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Tue, 28 Jun 2016 11:41:12 +0900
-Subject: [PATCH] spi: s3c64xx: consider the case when the CS line is not
- connected
-
-When the CS line is not connected, it is not needed to enable or
-disable the chip selection functionality from the s3c64xx
-devices in order to perform a transfer.
-Set the CS controller logically always enabled already during
-initialization (by writing '0' in the S3C64XX_SPI_SLAVE_SEL
-register) and never disable it.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 +++
- drivers/spi/spi-s3c64xx.c                             | 9 ++++++++-
- include/linux/platform_data/spi-s3c64xx.h             | 1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 6dbdeb3c361a..930bc7349271 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -40,6 +40,9 @@ Optional Board Specific Properties:
- 
- - cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
- 
-+- no-cs-readback: the CS line is disconnected, therefore the device should not
-+  operate based on CS signalling.
-+
- SPI Controller specific data in SPI slave nodes:
- 
- - The spi slave nodes should provide the following information which is required
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 972367d5c7f2..14269b07804c 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -315,6 +315,9 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- 	struct s3c64xx_spi_driver_data *sdd =
- 					spi_master_get_devdata(spi->master);
- 
-+	if (sdd->cntrlr_info->no_cs)
-+		return;
-+
- 	if (enable) {
- 		if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO)) {
- 			writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-@@ -960,7 +963,9 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
- 
- 	sdd->cur_speed = 0;
- 
--	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+	if (sci->no_cs)
-+		writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	else if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
- 		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	/* Disable Interrupts - we use Polling if not DMA mode */
-@@ -1015,6 +1020,8 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- 		sci->num_cs = temp;
- 	}
- 
-+	sci->no_cs = of_property_read_bool(dev->of_node, "broken-cs");
-+
- 	return sci;
- }
- #else
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index fb5625bcca9a..5c1e21c87270 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -38,6 +38,7 @@ struct s3c64xx_spi_csinfo {
- struct s3c64xx_spi_info {
- 	int src_clk_nr;
- 	int num_cs;
-+	bool no_cs;
- 	int (*cfg_gpio)(void);
- 	dma_filter_fn filter;
- 	void *dma_tx;
--- 
-2.8.1
+SGkgYWxsLAoKVGhlIGZ1bGwgbmFtZSBvZiBQU1IgaXMgUGFuZWwgU2VsZiBSZWZyZXNoLCBwYW5l
+bCBkZXZpY2UgY291bGQgcmVmcmVzaAppdHNlbGYgd2l0aCB0aGUgaGFyZHdhcmUgZnJhbWVidWZm
+ZXIgaW4gcGFuZWwsIHRoaXMgd291bGQgbWFrZSBhIGxvdHMKb2Ygc2Vuc2UgdG8gc2F2ZSB0aGUg
+cG93ZXIgY29uc3VtcHRpb24uCgpUaGlzIHYzIHZlcnNpb24gaGF2ZSBzcGxpdGVkIGFuIGNvbW1v
+biBQU1IgZHJpdmVyIGZvciBSb2NrY2hpcCwgd2hpY2ggaXMKYmlnZ2VzdCBjaGFuZ2VzIGZyb20g
+djIuCgpUaGlzIHRocmVhZCBpcyBiYXNlZCBvbiBNYXJrJ3MgUkszMzk5IFZPUCB0aHJlYWRbMF0g
+YW5kIG15IFJLMzM5OSBlRFAKdGhyZWFkWzFdLgoKWzBdOiBodHRwczovL3BhdGNod29yay5rZXJu
+ZWwub3JnL3BhdGNoLzg4ODYwNDEvClsxXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
+YXRjaC85MjA0NDk3LwoKVGhhbmtzLAotIFlha2lyCgoKQ2hhbmdlcyBpbiB2MzoKLSBSZW1vdmUg
+dGhlIG5vdGlmeSBmb3Igd2FpdGluZyBsaW5lX2ZsYWcgZXZlbnQgKERhbmllbCkKLSBpbXBsZW1l
+bnQgdGhlICdmYi0+ZGlydHknIGNhbGxiYWNrIGZ1bmN0aW9uIChEYW5pZWwpCi0gYXZvaWQgdG8g
+dXNlIG5vdGlmeSB0byBhY3FpdXJlIGZvciB2YWN0IGV2ZW50IChEYW5pZWwpCi0gc3BsaXQgdGhl
+IHBzciBmbG93IGludG8gYW4gY29tbW9uIGFic3RyYWN0ZWQgUFNSIGRyaXZlcgotIEV4cG9ydCB0
+aGUgJ3JvY2tjaGlwX2RybV93YWl0X2xpbmVfZmxhZycgc3ltYm9sLCBhbmQgZG9jdW1lbnQgaXQu
+Ci0gQWRkICdsaW5lX2ZsYWdfbnVtXzAnIGZvciBSSzMyODgvUkszMDM2Ci0gcmVtb3ZlIHBzcl9h
+Y3RpdmUoKSBjYWxsYmFjayB3aGljaCBpbnRyb2R1Y2UgaW4gdjIKLSBzcGxpdCBhbmFsb2dpeF9k
+cF9lbmFibGVfcHNyKCksIG1ha2UgaXQgbW9yZSBjbGVhcmx5CiAgICBhbmFsb2dpeF9kcF9kZXRl
+Y3Rfc2lua19wc3IoKQogICAgYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNyKCkKLSByZW1vdmUg
+c29tZSBub3NpZSByZWdpc3RlciBzZXR0aW5nIGNvbW1lbnRzCi0gc3BsaXQgdGhlIGNvbW1vbiBw
+c3IgbG9naWMgaW50byBhIHNlcGVyYXRlIGRyaXZlciwgbWFrZSB0aGlzIHRvIGEKICBzaW1wbGUg
+c3ViLXBzciBkZXZpY2UgZHJpdmVyLgoKQ2hhbmdlcyBpbiB2MjoKLSBJbnRyb2R1Y2UgaW4gdjIs
+IHNwbGl0IFZPUCBsaW5lIGZsYWcgY2hhbmdlcyBvdXQKLSBpbnRyb2R1Y2UgaW4gdjIsIHNwbGl0
+ZSB0aGUgY29tbW9uIEFuYWxvZ2l4IERQIGNoYW5nZXMgb3V0Ci0gcmVtb3ZlIHZibGFuayBub3Rp
+Znkgb3V0IChEYW5pZWwpCi0gY3JlYXRlIGEgcHNyX2FjdGl2ZSgpIGNhbGxiYWNrIGluIHZvcCBk
+YXRhIHN0cnVjdC4KCllha2lyIFlhbmcgKDQpOgogIGRybS9yb2NrY2hpcDogdm9wOiBleHBvcnQg
+bGluZSBmbGFnIGZ1bmN0aW9uCiAgZHJtL3JvY2tjaGlwOiBhZGQgYW4gY29tbW9uIGFic3RyYWN0
+ZWQgUFNSIGRyaXZlcgogIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBhZGQgdGhlIFBTUiBmdW5j
+dGlvbiBzdXBwb3J0CiAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogaW1wbGVtZW50IFBTUiBm
+dW5jdGlvbgoKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29y
+ZS5jIHwgIDY0ICsrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
+aXhfZHBfY29yZS5oIHwgICA0ICsKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
+bG9naXhfZHBfcmVnLmMgIHwgIDU0ICsrKysrKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
+b2dpeC9hbmFsb2dpeF9kcF9yZWcuaCAgfCAgMjggKysrCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL3Jv
+Y2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgICAgfCAgNTIgKysrKysrCiBkcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5oICAgICAgICB8ICAgMyArCiBkcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2ZiLmMgICAgICAgICB8ICAxMiArKwogZHJp
+dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYyAgICAgICAgfCAyMDAgKysr
+KysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
+X3Bzci5oICAgICAgICB8ICAxMiArKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
+X2RybV92b3AuYyAgICAgICAgfCAxMjcgKysrKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3Jv
+Y2tjaGlwL3JvY2tjaGlwX2RybV92b3AuaCAgICAgICAgfCAgIDMgKwogZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyAgICAgICAgfCAgIDQgKwogaW5jbHVkZS9kcm0v
+YnJpZGdlL2FuYWxvZ2l4X2RwLmggICAgICAgICAgICAgICAgICAgfCAgIDMgKwogMTQgZmlsZXMg
+Y2hhbmdlZCwgNTY3IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5jCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuaAoK
+LS0gCjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
