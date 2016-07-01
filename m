@@ -1,13 +1,13 @@
 From: Peter Chen <peter.chen@nxp.com>
 Subject: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put after calling of_parse_phandle
 Date: Fri, 1 Jul 2016 17:41:57 +0800
-Message-ID: <1467366121-14120-4-git-send-email-peter.chen__19870.7299925902$1467367686$gmane$org@nxp.com>
+Message-ID: <1467366121-14120-4-git-send-email-peter.chen__26648.3931955465$1467367688$gmane$org@nxp.com>
 References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
-Sender: linux-pm-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Peter Chen <peter.chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -65,4 +65,3 @@ index 595b574..509643e 100644
  static int __init s365_board_probe(struct platform_device *pdev)
 -- 
 1.9.1
-
