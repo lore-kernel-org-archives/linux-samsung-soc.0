@@ -1,79 +1,53 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Fri,  1 Jul 2016 17:19:36 +0800
-Message-ID: <1467364776-21794-1-git-send-email-ykk@rock-chips.com>
-References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 1/7] extcon: add missing of_node_put after calling
+ of_parse_phandle
+Date: Fri, 1 Jul 2016 17:41:55 +0800
+Message-ID: <1467366121-14120-2-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, emil.l.velikov@gmail.com, Doug Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Peter Chen <peter.chen@nxp.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWx3YXkgZW5hYmxlIHRoZSBQU1IgZnVuY3Rpb24gZm9yIFJvY2tjaGlwIGFuYWxvZ2l4X2RwIGRy
-aXZlci4gSWYgcGFuZWwKZG9uJ3Qgc3VwcG9ydCBQU1IsIHRoZW4gdGhlIGNvcmUgYW5hbG9naXhf
-ZHAgd291bGQgaWdub3JlIHRoaXMgc2V0dGluZy4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcg
-PHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjM6Ci0gc3BsaXQgdGhlIGNvbW1v
-biBwc3IgbG9naWMgaW50byBhIHNlcGVyYXRlIGRyaXZlciwgbWFrZSB0aGlzIHRvIGEKICBzaW1w
-bGUgc3ViLXBzciBkZXZpY2UgZHJpdmVyLgoKQ2hhbmdlcyBpbiB2MjoKLSByZW1vdmUgdmJsYW5r
-IG5vdGlmeSBvdXQgKERhbmllbCkKLSBjcmVhdGUgYSBwc3JfYWN0aXZlKCkgY2FsbGJhY2sgaW4g
-dm9wIGRhdGEgc3RydWN0LgoKIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1y
-b2NrY2hpcC5jIHwgNTIgKysrKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQs
-IDUyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-YW5hbG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dp
-eF9kcC1yb2NrY2hpcC5jCmluZGV4IGU4MWUxOWEuLjgwYTYwYTYgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCkBAIC0zMiw2ICszMiw3IEBA
-CiAjaW5jbHVkZSA8ZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oPgogCiAjaW5jbHVkZSAicm9ja2No
-aXBfZHJtX2Rydi5oIgorI2luY2x1ZGUgInJvY2tjaGlwX2RybV9wc3IuaCIKICNpbmNsdWRlICJy
-b2NrY2hpcF9kcm1fdm9wLmgiCiAKICNkZWZpbmUgUkszMjg4X0dSRl9TT0NfQ09ONgkJMHgyNWMK
-QEAgLTY4LDExICs2OSw1MyBAQCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlIHsKIAlzdHJ1Y3Qg
-cmVnbWFwICAgICAgICAgICAgKmdyZjsKIAlzdHJ1Y3QgcmVzZXRfY29udHJvbCAgICAgKnJzdDsK
-IAorCXN0cnVjdCBkZWxheWVkX3dvcmsJIHBzcl93b3JrOworCXVuc2lnbmVkIGludAkJIHBzcl9z
-dGF0ZTsKKwogCWNvbnN0IHN0cnVjdCByb2NrY2hpcF9kcF9jaGlwX2RhdGEgKmRhdGE7CiAKIAlz
-dHJ1Y3QgYW5hbG9naXhfZHBfcGxhdF9kYXRhIHBsYXRfZGF0YTsKIH07CiAKK3N0YXRpYyBpbnQg
-YW5hbG9naXhfZHBfcHNyX3NldChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsIGJvb2wgZW5h
-YmxlZCkKK3sKKwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IHRvX2RwKGVuY29kZXIp
-OworCisJZGV2X2RiZyhkcC0+ZGV2LCAiJXMgUFNSLi4uXG4iLCBlbmFibGVkID8gIkVudHJ5IiA6
-ICJFeGl0Iik7CisKKwlpZiAoZW5hYmxlZCkKKwkJZHAtPnBzcl9zdGF0ZSA9IEVEUF9WU0NfUFNS
-X1NUQVRFX0FDVElWRTsKKwllbHNlCisJCWRwLT5wc3Jfc3RhdGUgPSB+RURQX1ZTQ19QU1JfU1RB
-VEVfQUNUSVZFOworCisJc2NoZWR1bGVfZGVsYXllZF93b3JrKCZkcC0+cHNyX3dvcmssIG1zZWNz
-X3RvX2ppZmZpZXMoMTApKTsKKworCXJldHVybiAwOworfQorCitzdGF0aWMgdm9pZCBhbmFsb2dp
-eF9kcF9wc3Jfd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCit7CisJc3RydWN0IHJvY2tj
-aGlwX2RwX2RldmljZSAqZHAgPQorCQkJCWNvbnRhaW5lcl9vZih3b3JrLCB0eXBlb2YoKmRwKSwg
-cHNyX3dvcmsud29yayk7CisJc3RydWN0IGRybV9jcnRjICpjcnRjID0gZHAtPmVuY29kZXIuY3J0
-YzsKKwlpbnQgcHNyX3N0YXRlID0gZHAtPnBzcl9zdGF0ZTsKKwlpbnQgdmFjdF9lbmQ7CisJaW50
-IHJldDsKKworCWlmICghY3J0YykKKwkJcmV0dXJuOworCisJdmFjdF9lbmQgPSBjcnRjLT5tb2Rl
-LnZ0b3RhbCAtIGNydGMtPm1vZGUudnN5bmNfc3RhcnQgKyBjcnRjLT5tb2RlLnZkaXNwbGF5Owor
-CisJcmV0ID0gcm9ja2NoaXBfZHJtX3dhaXRfbGluZV9mbGFnKGRwLT5lbmNvZGVyLmNydGMsIHZh
-Y3RfZW5kLCAxMDApOworCWlmIChyZXQgPT0gMCkgeworCQlpZiAocHNyX3N0YXRlID09IEVEUF9W
-U0NfUFNSX1NUQVRFX0FDVElWRSkKKwkJCWFuYWxvZ2l4X2RwX2FjdGl2ZV9wc3IoZHAtPmRldik7
-CisJCWVsc2UKKwkJCWFuYWxvZ2l4X2RwX2luYWN0aXZlX3BzcihkcC0+ZGV2KTsKKwl9Cit9CisK
-IHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfcHJlX2luaXQoc3RydWN0IHJvY2tjaGlwX2RwX2Rldmlj
-ZSAqZHApCiB7CiAJcmVzZXRfY29udHJvbF9hc3NlcnQoZHAtPnJzdCk7CkBAIC0zNDAsMTIgKzM4
-MywyMSBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBz
-dHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJZHAtPnBsYXRfZGF0YS5wb3dlcl9vZmYgPSByb2NrY2hp
-cF9kcF9wb3dlcmRvd247CiAJZHAtPnBsYXRfZGF0YS5nZXRfbW9kZXMgPSByb2NrY2hpcF9kcF9n
-ZXRfbW9kZXM7CiAKKwlkcC0+cHNyX3N0YXRlID0gfkVEUF9WU0NfUFNSX1NUQVRFX0FDVElWRTsK
-KwlJTklUX0RFTEFZRURfV09SSygmZHAtPnBzcl93b3JrLCBhbmFsb2dpeF9kcF9wc3Jfd29yayk7
-CisKKwlyb2NrY2hpcF9kcm1fcHNyX3JlZ2lzdGVyKCZkcC0+ZW5jb2RlciwgYW5hbG9naXhfZHBf
-cHNyX3NldCk7CisKIAlyZXR1cm4gYW5hbG9naXhfZHBfYmluZChkZXYsIGRwLT5kcm1fZGV2LCAm
-ZHAtPnBsYXRfZGF0YSk7CiB9CiAKIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX3VuYmluZChzdHJ1
-Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKIAkJCSAgICAgICB2b2lkICpk
-YXRhKQogeworCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gZGV2X2dldF9kcnZkYXRh
-KGRldik7CisKKwlyb2NrY2hpcF9kcm1fcHNyX3VucmVnaXN0ZXIoJmRwLT5lbmNvZGVyKTsKKwog
-CXJldHVybiBhbmFsb2dpeF9kcF91bmJpbmQoZGV2LCBtYXN0ZXIsIGRhdGEpOwogfQogCi0tIAox
-LjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
+
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ drivers/extcon/extcon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index 21a123c..86ea14d 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -1107,10 +1107,12 @@ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
+ 	list_for_each_entry(edev, &extcon_dev_list, entry) {
+ 		if (edev->dev.parent && edev->dev.parent->of_node == node) {
+ 			mutex_unlock(&extcon_dev_list_lock);
++			of_node_put(node);
+ 			return edev;
+ 		}
+ 	}
+ 	mutex_unlock(&extcon_dev_list_lock);
++	of_node_put(node);
+ 
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+-- 
+1.9.1
