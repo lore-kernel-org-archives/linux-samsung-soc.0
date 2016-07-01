@@ -1,16 +1,22 @@
 From: Peter Chen <peter.chen@nxp.com>
 Subject: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put after calling of_parse_phandle
 Date: Fri, 1 Jul 2016 17:41:57 +0800
-Message-ID: <1467366121-14120-4-git-send-email-peter.chen__26648.3931955465$1467367688$gmane$org@nxp.com>
+Message-ID: <1467366121-14120-4-git-send-email-peter.chen__29316.9396849864$1467367688$gmane$org@nxp.com>
 References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-by2nam03on0045.outbound.protection.outlook.com ([104.47.42.45]:61360
+	"EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752211AbcGAKHZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Jul 2016 06:07:25 -0400
 In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Peter Chen <peter.chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 of_node_put needs to be called when the device node which is got
 from of_parse_phandle has finished using.
