@@ -1,281 +1,422 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] drm/rockchip: vop: export line flag function
-Date: Fri, 1 Jul 2016 11:32:20 -0400
-Message-ID: <CAOw6vbKuy5wCb_J0ENP5OGf7B31ut-FDzBzE5NLiFzEY5sWqsg@mail.gmail.com>
-References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
- <1467364745-21621-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vb+vS3O+Db1_1RSGup7Y2tNjRkxyz7ah817R6nXceSHeFQ@mail.gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v3 2/4] drm/rockchip: add an common abstracted PSR driver
+Date: Fri, 1 Jul 2016 14:00:00 -0400
+Message-ID: <CAOw6vbKMWEEDEqw0_ba_FGO-2mOBg3uanQzk5nbnCtowWdLu9w@mail.gmail.com>
+References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com> <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAOw6vb+vS3O+Db1_1RSGup7Y2tNjRkxyz7ah817R6nXceSHeFQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Yao <yzq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 1, 2016 at 11:30 AM, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
->> VOP have integrated a hardware counter which indicate the exact display
->> line that vop is scanning. And if we're interested in a specific line,
->> we can set the line number to vop line_flag register, and then vop would
->> generate a line_flag interrupt for it.
->>
->> For example eDP PSR function is interested in the vertical blanking
->> period, then driver could set the line number to zero.
->>
->> This patch have exported a symbol that allow other driver to listen the
->> line flag event with given timeout limit:
->> -  rockchip_drm_wait_line_flag()
->>
->> Signed-off-by: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
->> ---
->> Changes in v3:
->> - Export the 'rockchip_drm_wait_line_flag' symbol, and document it.
->> - Add 'line_flag_num_0' for RK3288/RK3036
->> - Remove the notify for waiting line_flag event (Daniel)
->>
->> Changes in v2:
->> - Introduce in v2, split VOP line flag changes out
->>
->>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h |   3 +
->>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 103 ++++++++++++++++++++++++++++
->>  drivers/gpu/drm/rockchip/rockchip_drm_vop.h |   3 +
->>  drivers/gpu/drm/rockchip/rockchip_vop_reg.c |   4 ++
->>  4 files changed, 113 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
->> index ea39329..239b830 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
->> @@ -70,4 +70,7 @@ int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
->>                                    struct device *dev);
->>  void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
->>                                     struct device *dev);
->> +int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
->> +                               unsigned int mstimeout);
->> +
->>  #endif /* _ROCKCHIP_DRM_DRV_H_ */
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> index c8a62a8..cd3cac5 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> @@ -121,6 +121,8 @@ struct vop {
->>         /* protected by dev->event_lock */
->>         struct drm_pending_vblank_event *event;
->>
->> +       struct completion line_flag_completion;
->> +
->>         const struct vop_data *data;
->>
->>         uint32_t *regsbak;
->> @@ -431,6 +433,59 @@ static void vop_dsp_hold_valid_irq_disable(struct vop *vop)
->>         spin_unlock_irqrestore(&vop->irq_lock, flags);
->>  }
->>
->> +/*
->> + * (1) each frame starts at the start of the Vsync pulse which is signaled by
->> + *     the "FRAME_SYNC" interrupt.
->> + * (2) the active data region of each frame ends at dsp_vact_end
->> + * (3) we should program this same number (dsp_vact_end) into dsp_line_frag_num,
->> + *      to get "LINE_FLAG" interrupt at the end of the active on screen data.
->> + *
->> + * VOP_INTR_CTRL0.dsp_line_frag_num = VOP_DSP_VACT_ST_END.dsp_vact_end
->> + * Interrupts
->> + * LINE_FLAG -------------------------------+
->> + * FRAME_SYNC ----+                         |
->> + *                |                         |
->> + *                v                         v
->> + *                | Vsync | Vbp |  Vactive  | Vfp |
->> + *                        ^     ^           ^     ^
->> + *                        |     |           |     |
->> + *                        |     |           |     |
->> + * dsp_vs_end ------------+     |           |     |   VOP_DSP_VTOTAL_VS_END
->> + * dsp_vact_start --------------+           |     |   VOP_DSP_VACT_ST_END
->> + * dsp_vact_end ----------------------------+     |   VOP_DSP_VACT_ST_END
->> + * dsp_total -------------------------------------+   VOP_DSP_VTOTAL_VS_END
->> + */
->> +
->> +static void vop_line_flag_irq_enable(struct vop *vop, int line_num)
->> +{
->> +       unsigned long flags;
->> +
->> +       if (WARN_ON(!vop->is_enabled))
->> +               return;
->> +
->> +       spin_lock_irqsave(&vop->irq_lock, flags);
->> +
->> +       VOP_CTRL_SET(vop, line_flag_num_0, line_num);
->> +       VOP_INTR_SET_TYPE(vop, enable, LINE_FLAG_INTR, 1);
->> +       vop_cfg_done(vop);
->> +
->> +       spin_unlock_irqrestore(&vop->irq_lock, flags);
->> +}
->> +
->> +static void vop_line_flag_irq_disable(struct vop *vop)
->> +{
->> +       unsigned long flags;
->> +
->> +       if (WARN_ON(!vop->is_enabled))
->> +               return;
->> +
->> +       spin_lock_irqsave(&vop->irq_lock, flags);
->> +
->> +       VOP_INTR_SET_TYPE(vop, enable, LINE_FLAG_INTR, 0);
->> +
->> +       spin_unlock_irqrestore(&vop->irq_lock, flags);
->> +}
->> +
->>  static void vop_enable(struct drm_crtc *crtc)
->>  {
->>         struct vop *vop = to_vop(crtc);
->> @@ -1157,6 +1212,13 @@ static irqreturn_t vop_isr(int irq, void *data)
->>                 ret = IRQ_HANDLED;
->>         }
->>
->> +       if (active_irqs & LINE_FLAG_INTR) {
->> +               if (!completion_done(&vop->line_flag_completion))
->> +                       complete(&vop->line_flag_completion);
+On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+> The PSR driver have exported four symbols for specific device driver:
+> - rockchip_drm_psr_register()
+> - rockchip_drm_psr_unregister()
+> - rockchip_drm_psr_enable()
+> - rockchip_drm_psr_disable()
+> - rockchip_drm_psr_flush()
 >
-> I think there's potential to miss flags here if the timing is just
-> right because the completion_done and complete are not atomic wrt the
-> wait_line_flag function. I think you need some locking around the
-> completion operations to ensure they're properly sequenced.
+> Encoder driver should call the register/unregister interfaces to hook
+> itself into common PSR driver, encoder have implement the 'psr_set'
+> callback which use the set PSR state in hardware side.
 >
-> FWIW, if you're reinitializing the completion every time in
-> drm_wait_line_flag, you should be able to just call complete (or
-> complete_all) without checking if there are any waiters.
+> Crtc driver would call the enable/disable interfaces when vblank is
+> enable/disable, after that the common PSR driver would call the encoder
+> registered callback to set the PSR state.
 >
 
-I should add, if you just call complete/complete_all() here, you
-shouldn't need to add locking (assuming only one waiter).
+This feels overly complicated. It seems like you could cut out a bunch
+of code by just coding the psr functions into vop and
+analogix_dp-rockchip. I suppose the only reason to keep it abstracted
+would be if you plan on supporting psr in a different encoder or crtc
+in rockchip, or if you're planning on moving this into drm core.
 
+Perhaps others will disagree with this sentiment and this is the right
+thing to do.
+
+> Fb driver would call the flush interface in 'fb->dirty' callback, this
+> helper function would force all PSR enabled encoders to exit from PSR
+> for 3 seconds.
 >
->> +               active_irqs &= ~LINE_FLAG_INTR;
->> +               ret = IRQ_HANDLED;
->> +       }
->> +
->>         if (active_irqs & FS_INTR) {
->>                 drm_crtc_handle_vblank(crtc);
->>                 vop_handle_vblank(vop);
->> @@ -1255,6 +1317,7 @@ static int vop_create_crtc(struct vop *vop)
->>
->>         init_completion(&vop->dsp_hold_completion);
->>         init_completion(&vop->wait_update_complete);
->> +       init_completion(&vop->line_flag_completion);
->>         crtc->port = port;
->>         rockchip_register_crtc_funcs(crtc, &private_crtc_funcs);
->>
->> @@ -1411,6 +1474,46 @@ static void vop_win_init(struct vop *vop)
->>         }
->>  }
->>
->> +/**
->> + * rockchip_drm_wait_line_flag - acqiure the give line flag event
->> + * @crtc: CRTC to enable line flag
->> + * @line_num: interested line number
->> + * @mstimeout: millisecond for timeout
->> + *
->> + * Driver would hold here until the interested line flag interrupt have
->> + * happened or timeout to wait.
->> + *
->> + * Returns:
->> + * Zero on success, negative errno on failure.
->> + */
->> +int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
->> +                               unsigned int mstimeout)
->> +{
->> +       struct vop *vop = to_vop(crtc);
->> +       unsigned long jiffies_left;
->> +
->> +       if (!crtc || !vop->is_enabled)
->> +               return -ENODEV;
->> +
->> +       if (line_num > crtc->mode.vtotal || mstimeout <= 0)
->> +               return -EINVAL;
->> +
->> +       reinit_completion(&vop->line_flag_completion);
->> +       vop_line_flag_irq_enable(vop, line_num);
->> +
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
+> Changes in v3:
+> - split the psr flow into an common abstracted PSR driver
+> - implement the 'fb->dirty' callback function (Daniel)
+> - avoid to use notify to acqiure for vact event (Daniel)
+> - remove psr_active() callback which introduce in v2
 >
-> This will only work for one waiter per vop. Is it worth enforcing this
-> explicitly to avoid weird behavior when there are more than one?
+> Changes in v2: None
 >
->> +       jiffies_left = wait_for_completion_timeout(&vop->line_flag_completion,
->> +                                                  msecs_to_jiffies(mstimeout));
->> +       vop_line_flag_irq_disable(vop);
->> +
->> +       if (jiffies_left == 0) {
->> +               dev_err(vop->dev, "Timeout waiting for IRQ\n");
->> +               return -ETIMEDOUT;
->> +       }
->> +
->> +       return 0;
->> +}
->> +EXPORT_SYMBOL(rockchip_drm_wait_line_flag);
->> +
->>  static int vop_bind(struct device *dev, struct device *master, void *data)
->>  {
->>         struct platform_device *pdev = to_platform_device(dev);
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
->> index ff4f52e..34fcd03 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
->> @@ -61,6 +61,9 @@ struct vop_ctrl {
->>         struct vop_reg hpost_st_end;
->>         struct vop_reg vpost_st_end;
->>
->> +       struct vop_reg line_flag_num_0;
->> +       struct vop_reg line_flag_num_1;
->> +
+>  drivers/gpu/drm/rockchip/Makefile           |   2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  |  12 ++
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 200 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.h |  12 ++
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  24 ++++
+>  5 files changed, 249 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+>  create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_psr.h
 >
-> nit: you could make this an array:
+> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
+> index 05d0713..9746365 100644
+> --- a/drivers/gpu/drm/rockchip/Makefile
+> +++ b/drivers/gpu/drm/rockchip/Makefile
+> @@ -3,7 +3,7 @@
+>  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
 >
-> struct vop_reg line_flag_num[2];
+>  rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
+> -               rockchip_drm_gem.o rockchip_drm_vop.o
+> +               rockchip_drm_gem.o rockchip_drm_psr.o rockchip_drm_vop.o
+>  rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
+>
+>  obj-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> index 20f12bc..0fec18f 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> @@ -21,6 +21,7 @@
+>
+>  #include "rockchip_drm_drv.h"
+>  #include "rockchip_drm_gem.h"
+> +#include "rockchip_drm_psr.h"
+>
+>  #define to_rockchip_fb(x) container_of(x, struct rockchip_drm_fb, fb)
+>
+> @@ -66,9 +67,20 @@ static int rockchip_drm_fb_create_handle(struct drm_framebuffer *fb,
+>                                      rockchip_fb->obj[0], handle);
+>  }
+>
+> +static int rockchip_drm_fb_dirty(struct drm_framebuffer *fb,
+> +                                struct drm_file *file,
+> +                                unsigned int flags, unsigned int color,
+> +                                struct drm_clip_rect *clips,
+> +                                unsigned int num_clips)
+> +{
+> +       rockchip_drm_psr_flush();
+> +       return 0;
+> +}
+> +
+>  static const struct drm_framebuffer_funcs rockchip_drm_fb_funcs = {
+>         .destroy        = rockchip_drm_fb_destroy,
+>         .create_handle  = rockchip_drm_fb_create_handle,
+> +       .dirty          = rockchip_drm_fb_dirty,
+>  };
+>
+>  static struct rockchip_drm_fb *
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> new file mode 100644
+> index 0000000..c044443
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> @@ -0,0 +1,200 @@
+> +#include <drm/drm_crtc_helper.h>
+> +
+> +#include "rockchip_drm_psr.h"
+> +
+> +#define PSR_FLUSH_TIMEOUT      msecs_to_jiffies(3000) /* 3 seconds */
+> +
+> +static LIST_HEAD(psr_list);
+> +static DEFINE_MUTEX(psr_list_mutex);
+
+I'm not crazy about these globals. Perhaps you can initialize them
+with the rockchip driver and tuck them in a driver-level struct
+(rockchip_drm_private or something).
+
+
+> +
+> +enum psr_state {
+> +       PSR_FLUSH,
+> +       PSR_ENABLE,
+> +       PSR_DISABLE,
+> +};
+> +
+> +struct psr_drv {
+> +       struct list_head list;
+> +       enum psr_state state;
+> +       struct mutex state_mutex;
+> +
+> +       struct timer_list flush_timer;
+> +
+> +       struct drm_encoder *encoder;
+> +       int (*set)(struct drm_encoder *encoder, bool enable);
+> +};
+> +
+> +static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
+> +{
+> +       struct psr_drv *psr;
+> +
+> +       mutex_lock(&psr_list_mutex);
+> +       list_for_each_entry(psr, &psr_list, list) {
+> +               if (psr->encoder->crtc == crtc) {
+> +                       mutex_unlock(&psr_list_mutex);
+> +                       return psr;
+> +               }
+> +       }
+> +       mutex_unlock(&psr_list_mutex);
+> +
+> +       return ERR_PTR(-ENODEV);
+> +}
+> +
+> +static void psr_enable(struct psr_drv *psr)
+> +{
+> +       if (psr->state == PSR_ENABLE)
+> +               return;
+
+Should you be worried about races by accessing this outside of the state mutex?
+
+> +
+> +       mutex_lock(&psr->state_mutex);
+> +       psr->state = PSR_ENABLE;
+> +       psr->set(psr->encoder, true);
+> +       mutex_unlock(&psr->state_mutex);
+> +}
+> +
+> +static void psr_disable(struct psr_drv *psr)
+> +{
+> +       if (psr->state == PSR_DISABLE)
+> +               return;
+> +
+> +       mutex_lock(&psr->state_mutex);
+> +       psr->state = PSR_DISABLE;
+> +       psr->set(psr->encoder, false);
+> +       mutex_unlock(&psr->state_mutex);
+> +}
+> +
+> +static void psr_flush_handler(unsigned long data)
+> +{
+> +       struct psr_drv *psr = (struct psr_drv *)data;
+> +
+> +       if (!psr || psr->state != PSR_FLUSH)
+> +               return;
+> +
+> +       psr_enable(psr);
+> +}
+> +
+> +/**
+> + * rockchip_drm_psr_enable - enable the encoder PSR which bind to given CRTC
+> + * @crtc: CRTC to obtain the PSR encoder
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+> +int rockchip_drm_psr_enable(struct drm_crtc *crtc)
+> +{
+> +       struct psr_drv *psr = find_psr_by_crtc(crtc);
+> +
+> +       if (IS_ERR(psr))
+> +               return PTR_ERR(psr);
+> +
+> +       psr_enable(psr);
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_enable);
+> +
+> +/**
+> + * rockchip_drm_psr_disable - disable the encoder PSR which bind to given CRTC
+> + * @crtc: CRTC to obtain the PSR encoder
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+> +int rockchip_drm_psr_disable(struct drm_crtc *crtc)
+> +{
+> +       struct psr_drv *psr = find_psr_by_crtc(crtc);
+> +
+> +       if (IS_ERR(psr))
+> +               return PTR_ERR(psr);
+> +
+> +       psr_disable(psr);
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_disable);
+> +
+> +/**
+> + * rockchip_drm_psr_flush - force to flush all registered PSR encoders
+> + *
+> + * Disable the PSR function for all registered encoders, and then enable the
+> + * PSR function back after 5 second. If encoder PSR state have been changed
+
+s/5 second/PSR_FLUSH_TIMEOUT/
+
+> + * during flush time, then keep the state no change after flush timeout.
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+> +void rockchip_drm_psr_flush(void)
+> +{
+> +       struct psr_drv *psr;
+> +
+> +       mutex_lock(&psr_list_mutex);
+> +       list_for_each_entry(psr, &psr_list, list) {
+> +               if (psr->state == PSR_DISABLE)
+> +                       continue;
+> +
+> +               mod_timer(&psr->flush_timer,
+> +                         round_jiffies_up(jiffies + PSR_FLUSH_TIMEOUT));
+> +
+> +               psr_disable(psr);
+> +               psr->state = PSR_FLUSH;
+
+This is set outside of state_mutex, is that intentional?
+
+> +       }
+> +       mutex_unlock(&psr_list_mutex);
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_flush);
+> +
+> +/**
+> + * rockchip_drm_psr_register - register encoder to psr driver
+> + * @encoder: encoder that obtain the PSR function
+> + * @psr_set: call back to set PSR state
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+> +int rockchip_drm_psr_register(struct drm_encoder *encoder,
+> +                             int (*psr_set)(struct drm_encoder *, bool enable))
+> +{
+> +       struct psr_drv *psr;
+> +
+> +       if (!encoder || !psr_set)
+> +               return -EINVAL;
+> +
+> +       psr = kzalloc(sizeof(struct psr_drv), GFP_KERNEL);
+> +       if (!psr)
+> +               return -ENOMEM;
+> +
+> +       setup_timer(&psr->flush_timer, psr_flush_handler, (unsigned long)psr);
+> +
+> +       mutex_init(&psr->state_mutex);
+> +
+> +       psr->state = PSR_DISABLE;
+> +       psr->encoder = encoder;
+> +       psr->set = psr_set;
+> +
+> +       mutex_lock(&psr_list_mutex);
+> +       list_add_tail(&psr->list, &psr_list);
+> +       mutex_unlock(&psr_list_mutex);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_register);
+> +
+> +/**
+> + * rockchip_drm_psr_unregister - unregister encoder to psr driver
+> + * @encoder: encoder that obtain the PSR function
+> + * @psr_set: call back to set PSR state
+> + *
+> + * Returns:
+> + * Zero on success, negative errno on failure.
+> + */
+> +void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
+> +{
+> +       struct psr_drv *psr;
+> +
+> +       mutex_lock(&psr_list_mutex);
+> +       list_for_each_entry(psr, &psr_list, list) {
+> +               if (psr->encoder == encoder) {
+> +                       del_timer(&psr->flush_timer);
+> +                       list_del(&psr->list);
+> +                       kfree(psr);
+> +               }
+> +       }
+> +       mutex_unlock(&psr_list_mutex);
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_unregister);
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> new file mode 100644
+> index 0000000..622f605
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> @@ -0,0 +1,12 @@
+> +#ifndef __ROCKCHIP_DRM_PSR___
+> +#define __ROCKCHIP_DRM_PSR___
+> +
+> +void rockchip_drm_psr_flush(void);
+> +int rockchip_drm_psr_enable(struct drm_crtc *crtc);
+> +int rockchip_drm_psr_disable(struct drm_crtc *crtc);
+> +
+> +int rockchip_drm_psr_register(struct drm_encoder *encoder,
+> +                           int (*psr_set)(struct drm_encoder *, bool enable));
+> +void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
+> +
+> +#endif /* __ROCKCHIP_DRM_PSR__ */
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index cd3cac5..3c6dfc5 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -34,6 +34,7 @@
+>  #include "rockchip_drm_drv.h"
+>  #include "rockchip_drm_gem.h"
+>  #include "rockchip_drm_fb.h"
+> +#include "rockchip_drm_psr.h"
+>  #include "rockchip_drm_vop.h"
+>
+>  #define __REG_SET_RELAXED(x, off, mask, shift, v, write_mask) \
+> @@ -121,6 +122,9 @@ struct vop {
+>         /* protected by dev->event_lock */
+>         struct drm_pending_vblank_event *event;
+>
+> +       bool psr_enabled;
+> +       struct delayed_work psr_work;
+> +
+>         struct completion line_flag_completion;
+>
+>         const struct vop_data *data;
+> @@ -911,6 +915,16 @@ static const struct drm_plane_funcs vop_plane_funcs = {
+>         .atomic_destroy_state = vop_atomic_plane_destroy_state,
+>  };
+>
+> +static void vop_psr_work(struct work_struct *work)
+> +{
+> +       struct vop *vop = container_of(work, typeof(*vop), psr_work.work);
+> +
+> +       if (vop->psr_enabled)
+> +               rockchip_drm_psr_enable(&vop->crtc);
+> +       else
+> +               rockchip_drm_psr_disable(&vop->crtc);
+> +}
+> +
+>  static int vop_crtc_enable_vblank(struct drm_crtc *crtc)
+>  {
+>         struct vop *vop = to_vop(crtc);
+> @@ -925,6 +939,9 @@ static int vop_crtc_enable_vblank(struct drm_crtc *crtc)
+>
+>         spin_unlock_irqrestore(&vop->irq_lock, flags);
+>
+> +       vop->psr_enabled = false;
+> +       schedule_delayed_work(&vop->psr_work, msecs_to_jiffies(10));
+> +
+>         return 0;
+>  }
+>
+> @@ -941,6 +958,9 @@ static void vop_crtc_disable_vblank(struct drm_crtc *crtc)
+>         VOP_INTR_SET_TYPE(vop, enable, FS_INTR, 0);
+>
+>         spin_unlock_irqrestore(&vop->irq_lock, flags);
+> +
+> +       vop->psr_enabled = true;
+> +       schedule_delayed_work(&vop->psr_work, msecs_to_jiffies(10));
+>  }
+>
+>  static void vop_crtc_wait_for_update(struct drm_crtc *crtc)
+> @@ -1582,6 +1602,10 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+>                 return ret;
+>
+>         pm_runtime_enable(&pdev->dev);
+> +
+> +       vop->psr_enabled = false;
+> +       INIT_DELAYED_WORK(&vop->psr_work, vop_psr_work);
+> +
+>         return 0;
+>  }
+>
+> --
+> 1.9.1
 >
 >
->>         struct vop_reg cfg_done;
->>  };
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
->> index 6f42e56..e9211c9 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
->> @@ -122,6 +122,7 @@ static const struct vop_ctrl rk3036_ctrl_data = {
->>         .hact_st_end = VOP_REG(RK3036_DSP_HACT_ST_END, 0x1fff1fff, 0),
->>         .vtotal_pw = VOP_REG(RK3036_DSP_VTOTAL_VS_END, 0x1fff1fff, 0),
->>         .vact_st_end = VOP_REG(RK3036_DSP_VACT_ST_END, 0x1fff1fff, 0),
->> +       .line_flag_num_0 = VOP_REG(RK3036_INT_STATUS, 0xfff, 12),
->>         .cfg_done = VOP_REG(RK3036_REG_CFG_DONE, 0x1, 0),
->>  };
->>
->> @@ -221,6 +222,7 @@ static const struct vop_ctrl rk3288_ctrl_data = {
->>         .vact_st_end = VOP_REG(RK3288_DSP_VACT_ST_END, 0x1fff1fff, 0),
->>         .hpost_st_end = VOP_REG(RK3288_POST_DSP_HACT_INFO, 0x1fff1fff, 0),
->>         .vpost_st_end = VOP_REG(RK3288_POST_DSP_VACT_INFO, 0x1fff1fff, 0),
->> +       .line_flag_num_0 = VOP_REG(RK3288_INTR_CTRL0, 0x1fff, 12),
->>         .cfg_done = VOP_REG(RK3288_REG_CFG_DONE, 0x1, 0),
->>  };
->>
->> @@ -299,6 +301,8 @@ static const struct vop_ctrl rk3399_ctrl_data = {
->>         .vact_st_end = VOP_REG(RK3399_DSP_VACT_ST_END, 0x1fff1fff, 0),
->>         .hpost_st_end = VOP_REG(RK3399_POST_DSP_HACT_INFO, 0x1fff1fff, 0),
->>         .vpost_st_end = VOP_REG(RK3399_POST_DSP_VACT_INFO, 0x1fff1fff, 0),
->> +       .line_flag_num_0 = VOP_REG(RK3399_LINE_FLAG, 0xffff, 0),
->> +       .line_flag_num_1 = VOP_REG(RK3399_LINE_FLAG, 0xffff, 16),
->>         .cfg_done = VOP_REG_MASK(RK3399_REG_CFG_DONE, 0x1, 0),
->>  };
->>
->> --
->> 1.9.1
->>
->>
