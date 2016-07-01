@@ -1,52 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/7] arm: mach-shmobile: pm-rmobile: add missing
- of_node_put after calling of_parse_phandle
-Date: Fri, 1 Jul 2016 14:31:58 +0200
-Message-ID: <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 0/7] add missing of_node_put after calling of_parse_phandle (1st)
+Date: Fri, 1 Jul 2016 17:41:54 +0800
+Message-ID: <1467366121-14120-1-git-send-email-peter.chen__16863.1589542658$1467379520$gmane$org@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Peter Chen <peter.chen@nxp.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Peter,
+Hi all,
 
-On Fri, Jul 1, 2016 at 11:41 AM, Peter Chen <peter.chen@nxp.com> wrote:
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using, but there are many codes
+do not follow that, this patch set fixes some of them.
 
-NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Peter Chen (7):
+  extcon: add missing of_node_put after calling of_parse_phandle
+  arm: mach-shmobile: pm-rmobile: add missing of_node_put after calling
+    of_parse_phandle
+  arm: mach-u300: regulator: add missing of_node_put after calling
+    of_parse_phandle
+  bus: arm-cci: add missing of_node_put after calling of_parse_phandle
+  bus: vexpress-config: add missing of_node_put after calling
+    of_parse_phandle
+  devfreq: add missing of_node_put after calling of_parse_phandle
+  devfreq: exynos-bus: add missing of_node_put after calling
+    of_parse_phandle
 
-> --- a/arch/arm/mach-shmobile/pm-rmobile.c
-> +++ b/arch/arm/mach-shmobile/pm-rmobile.c
-> @@ -209,6 +209,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
->         special_pds[num_special_pds].pd = pd;
+ arch/arm/mach-shmobile/pm-rmobile.c |  1 +
+ arch/arm/mach-u300/regulator.c      | 12 +++++++++---
+ drivers/bus/arm-cci.c               |  5 ++++-
+ drivers/bus/vexpress-config.c       |  1 +
+ drivers/devfreq/devfreq.c           |  2 ++
+ drivers/devfreq/exynos-bus.c        |  9 ++++++---
+ drivers/extcon/extcon.c             |  2 ++
+ 7 files changed, 25 insertions(+), 7 deletions(-)
 
-The pd pointer is stored in the line above, and released later in
-put_special_pds().
-
->         special_pds[num_special_pds].type = type;
->         num_special_pds++;
-> +       of_node_put(pd);
-
-Hence it must not be released here, as that would cause a double release
-when put_special_pds() is executed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
