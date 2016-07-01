@@ -1,422 +1,232 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 2/4] drm/rockchip: add an common abstracted PSR driver
-Date: Fri, 1 Jul 2016 14:00:00 -0400
-Message-ID: <CAOw6vbKMWEEDEqw0_ba_FGO-2mOBg3uanQzk5nbnCtowWdLu9w@mail.gmail.com>
-References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com> <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v3 3/4] drm/bridge: analogix_dp: add the PSR function
+ support
+Date: Fri, 1 Jul 2016 15:46:09 -0400
+Message-ID: <CAOw6vbJ4H9xzeaA-2OKsG+pGwdvehS91TZDPfUyq8R-=e70bPQ@mail.gmail.com>
+References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
+ <1467364768-21741-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1467364768-21741-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Doug Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> The PSR driver have exported four symbols for specific device driver:
-> - rockchip_drm_psr_register()
-> - rockchip_drm_psr_unregister()
-> - rockchip_drm_psr_enable()
-> - rockchip_drm_psr_disable()
-> - rockchip_drm_psr_flush()
->
-> Encoder driver should call the register/unregister interfaces to hook
-> itself into common PSR driver, encoder have implement the 'psr_set'
-> callback which use the set PSR state in hardware side.
->
-> Crtc driver would call the enable/disable interfaces when vblank is
-> enable/disable, after that the common PSR driver would call the encoder
-> registered callback to set the PSR state.
->
-
-This feels overly complicated. It seems like you could cut out a bunch
-of code by just coding the psr functions into vop and
-analogix_dp-rockchip. I suppose the only reason to keep it abstracted
-would be if you plan on supporting psr in a different encoder or crtc
-in rockchip, or if you're planning on moving this into drm core.
-
-Perhaps others will disagree with this sentiment and this is the right
-thing to do.
-
-> Fb driver would call the flush interface in 'fb->dirty' callback, this
-> helper function would force all PSR enabled encoders to exit from PSR
-> for 3 seconds.
->
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> ---
-> Changes in v3:
-> - split the psr flow into an common abstracted PSR driver
-> - implement the 'fb->dirty' callback function (Daniel)
-> - avoid to use notify to acqiure for vact event (Daniel)
-> - remove psr_active() callback which introduce in v2
->
-> Changes in v2: None
->
->  drivers/gpu/drm/rockchip/Makefile           |   2 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  |  12 ++
->  drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 200 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_psr.h |  12 ++
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  24 ++++
->  5 files changed, 249 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_psr.c
->  create mode 100644 drivers/gpu/drm/rockchip/rockchip_drm_psr.h
->
-> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
-> index 05d0713..9746365 100644
-> --- a/drivers/gpu/drm/rockchip/Makefile
-> +++ b/drivers/gpu/drm/rockchip/Makefile
-> @@ -3,7 +3,7 @@
->  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
->
->  rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
-> -               rockchip_drm_gem.o rockchip_drm_vop.o
-> +               rockchip_drm_gem.o rockchip_drm_psr.o rockchip_drm_vop.o
->  rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
->
->  obj-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> index 20f12bc..0fec18f 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> @@ -21,6 +21,7 @@
->
->  #include "rockchip_drm_drv.h"
->  #include "rockchip_drm_gem.h"
-> +#include "rockchip_drm_psr.h"
->
->  #define to_rockchip_fb(x) container_of(x, struct rockchip_drm_fb, fb)
->
-> @@ -66,9 +67,20 @@ static int rockchip_drm_fb_create_handle(struct drm_framebuffer *fb,
->                                      rockchip_fb->obj[0], handle);
->  }
->
-> +static int rockchip_drm_fb_dirty(struct drm_framebuffer *fb,
-> +                                struct drm_file *file,
-> +                                unsigned int flags, unsigned int color,
-> +                                struct drm_clip_rect *clips,
-> +                                unsigned int num_clips)
-> +{
-> +       rockchip_drm_psr_flush();
-> +       return 0;
-> +}
-> +
->  static const struct drm_framebuffer_funcs rockchip_drm_fb_funcs = {
->         .destroy        = rockchip_drm_fb_destroy,
->         .create_handle  = rockchip_drm_fb_create_handle,
-> +       .dirty          = rockchip_drm_fb_dirty,
->  };
->
->  static struct rockchip_drm_fb *
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-> new file mode 100644
-> index 0000000..c044443
-> --- /dev/null
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-> @@ -0,0 +1,200 @@
-> +#include <drm/drm_crtc_helper.h>
-> +
-> +#include "rockchip_drm_psr.h"
-> +
-> +#define PSR_FLUSH_TIMEOUT      msecs_to_jiffies(3000) /* 3 seconds */
-> +
-> +static LIST_HEAD(psr_list);
-> +static DEFINE_MUTEX(psr_list_mutex);
-
-I'm not crazy about these globals. Perhaps you can initialize them
-with the rockchip driver and tuck them in a driver-level struct
-(rockchip_drm_private or something).
-
-
-> +
-> +enum psr_state {
-> +       PSR_FLUSH,
-> +       PSR_ENABLE,
-> +       PSR_DISABLE,
-> +};
-> +
-> +struct psr_drv {
-> +       struct list_head list;
-> +       enum psr_state state;
-> +       struct mutex state_mutex;
-> +
-> +       struct timer_list flush_timer;
-> +
-> +       struct drm_encoder *encoder;
-> +       int (*set)(struct drm_encoder *encoder, bool enable);
-> +};
-> +
-> +static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
-> +{
-> +       struct psr_drv *psr;
-> +
-> +       mutex_lock(&psr_list_mutex);
-> +       list_for_each_entry(psr, &psr_list, list) {
-> +               if (psr->encoder->crtc == crtc) {
-> +                       mutex_unlock(&psr_list_mutex);
-> +                       return psr;
-> +               }
-> +       }
-> +       mutex_unlock(&psr_list_mutex);
-> +
-> +       return ERR_PTR(-ENODEV);
-> +}
-> +
-> +static void psr_enable(struct psr_drv *psr)
-> +{
-> +       if (psr->state == PSR_ENABLE)
-> +               return;
-
-Should you be worried about races by accessing this outside of the state mutex?
-
-> +
-> +       mutex_lock(&psr->state_mutex);
-> +       psr->state = PSR_ENABLE;
-> +       psr->set(psr->encoder, true);
-> +       mutex_unlock(&psr->state_mutex);
-> +}
-> +
-> +static void psr_disable(struct psr_drv *psr)
-> +{
-> +       if (psr->state == PSR_DISABLE)
-> +               return;
-> +
-> +       mutex_lock(&psr->state_mutex);
-> +       psr->state = PSR_DISABLE;
-> +       psr->set(psr->encoder, false);
-> +       mutex_unlock(&psr->state_mutex);
-> +}
-> +
-> +static void psr_flush_handler(unsigned long data)
-> +{
-> +       struct psr_drv *psr = (struct psr_drv *)data;
-> +
-> +       if (!psr || psr->state != PSR_FLUSH)
-> +               return;
-> +
-> +       psr_enable(psr);
-> +}
-> +
-> +/**
-> + * rockchip_drm_psr_enable - enable the encoder PSR which bind to given CRTC
-> + * @crtc: CRTC to obtain the PSR encoder
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int rockchip_drm_psr_enable(struct drm_crtc *crtc)
-> +{
-> +       struct psr_drv *psr = find_psr_by_crtc(crtc);
-> +
-> +       if (IS_ERR(psr))
-> +               return PTR_ERR(psr);
-> +
-> +       psr_enable(psr);
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(rockchip_drm_psr_enable);
-> +
-> +/**
-> + * rockchip_drm_psr_disable - disable the encoder PSR which bind to given CRTC
-> + * @crtc: CRTC to obtain the PSR encoder
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int rockchip_drm_psr_disable(struct drm_crtc *crtc)
-> +{
-> +       struct psr_drv *psr = find_psr_by_crtc(crtc);
-> +
-> +       if (IS_ERR(psr))
-> +               return PTR_ERR(psr);
-> +
-> +       psr_disable(psr);
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(rockchip_drm_psr_disable);
-> +
-> +/**
-> + * rockchip_drm_psr_flush - force to flush all registered PSR encoders
-> + *
-> + * Disable the PSR function for all registered encoders, and then enable the
-> + * PSR function back after 5 second. If encoder PSR state have been changed
-
-s/5 second/PSR_FLUSH_TIMEOUT/
-
-> + * during flush time, then keep the state no change after flush timeout.
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +void rockchip_drm_psr_flush(void)
-> +{
-> +       struct psr_drv *psr;
-> +
-> +       mutex_lock(&psr_list_mutex);
-> +       list_for_each_entry(psr, &psr_list, list) {
-> +               if (psr->state == PSR_DISABLE)
-> +                       continue;
-> +
-> +               mod_timer(&psr->flush_timer,
-> +                         round_jiffies_up(jiffies + PSR_FLUSH_TIMEOUT));
-> +
-> +               psr_disable(psr);
-> +               psr->state = PSR_FLUSH;
-
-This is set outside of state_mutex, is that intentional?
-
-> +       }
-> +       mutex_unlock(&psr_list_mutex);
-> +}
-> +EXPORT_SYMBOL(rockchip_drm_psr_flush);
-> +
-> +/**
-> + * rockchip_drm_psr_register - register encoder to psr driver
-> + * @encoder: encoder that obtain the PSR function
-> + * @psr_set: call back to set PSR state
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +int rockchip_drm_psr_register(struct drm_encoder *encoder,
-> +                             int (*psr_set)(struct drm_encoder *, bool enable))
-> +{
-> +       struct psr_drv *psr;
-> +
-> +       if (!encoder || !psr_set)
-> +               return -EINVAL;
-> +
-> +       psr = kzalloc(sizeof(struct psr_drv), GFP_KERNEL);
-> +       if (!psr)
-> +               return -ENOMEM;
-> +
-> +       setup_timer(&psr->flush_timer, psr_flush_handler, (unsigned long)psr);
-> +
-> +       mutex_init(&psr->state_mutex);
-> +
-> +       psr->state = PSR_DISABLE;
-> +       psr->encoder = encoder;
-> +       psr->set = psr_set;
-> +
-> +       mutex_lock(&psr_list_mutex);
-> +       list_add_tail(&psr->list, &psr_list);
-> +       mutex_unlock(&psr_list_mutex);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(rockchip_drm_psr_register);
-> +
-> +/**
-> + * rockchip_drm_psr_unregister - unregister encoder to psr driver
-> + * @encoder: encoder that obtain the PSR function
-> + * @psr_set: call back to set PSR state
-> + *
-> + * Returns:
-> + * Zero on success, negative errno on failure.
-> + */
-> +void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
-> +{
-> +       struct psr_drv *psr;
-> +
-> +       mutex_lock(&psr_list_mutex);
-> +       list_for_each_entry(psr, &psr_list, list) {
-> +               if (psr->encoder == encoder) {
-> +                       del_timer(&psr->flush_timer);
-> +                       list_del(&psr->list);
-> +                       kfree(psr);
-> +               }
-> +       }
-> +       mutex_unlock(&psr_list_mutex);
-> +}
-> +EXPORT_SYMBOL(rockchip_drm_psr_unregister);
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-> new file mode 100644
-> index 0000000..622f605
-> --- /dev/null
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-> @@ -0,0 +1,12 @@
-> +#ifndef __ROCKCHIP_DRM_PSR___
-> +#define __ROCKCHIP_DRM_PSR___
-> +
-> +void rockchip_drm_psr_flush(void);
-> +int rockchip_drm_psr_enable(struct drm_crtc *crtc);
-> +int rockchip_drm_psr_disable(struct drm_crtc *crtc);
-> +
-> +int rockchip_drm_psr_register(struct drm_encoder *encoder,
-> +                           int (*psr_set)(struct drm_encoder *, bool enable));
-> +void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
-> +
-> +#endif /* __ROCKCHIP_DRM_PSR__ */
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index cd3cac5..3c6dfc5 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -34,6 +34,7 @@
->  #include "rockchip_drm_drv.h"
->  #include "rockchip_drm_gem.h"
->  #include "rockchip_drm_fb.h"
-> +#include "rockchip_drm_psr.h"
->  #include "rockchip_drm_vop.h"
->
->  #define __REG_SET_RELAXED(x, off, mask, shift, v, write_mask) \
-> @@ -121,6 +122,9 @@ struct vop {
->         /* protected by dev->event_lock */
->         struct drm_pending_vblank_event *event;
->
-> +       bool psr_enabled;
-> +       struct delayed_work psr_work;
-> +
->         struct completion line_flag_completion;
->
->         const struct vop_data *data;
-> @@ -911,6 +915,16 @@ static const struct drm_plane_funcs vop_plane_funcs = {
->         .atomic_destroy_state = vop_atomic_plane_destroy_state,
->  };
->
-> +static void vop_psr_work(struct work_struct *work)
-> +{
-> +       struct vop *vop = container_of(work, typeof(*vop), psr_work.work);
-> +
-> +       if (vop->psr_enabled)
-> +               rockchip_drm_psr_enable(&vop->crtc);
-> +       else
-> +               rockchip_drm_psr_disable(&vop->crtc);
-> +}
-> +
->  static int vop_crtc_enable_vblank(struct drm_crtc *crtc)
->  {
->         struct vop *vop = to_vop(crtc);
-> @@ -925,6 +939,9 @@ static int vop_crtc_enable_vblank(struct drm_crtc *crtc)
->
->         spin_unlock_irqrestore(&vop->irq_lock, flags);
->
-> +       vop->psr_enabled = false;
-> +       schedule_delayed_work(&vop->psr_work, msecs_to_jiffies(10));
-> +
->         return 0;
->  }
->
-> @@ -941,6 +958,9 @@ static void vop_crtc_disable_vblank(struct drm_crtc *crtc)
->         VOP_INTR_SET_TYPE(vop, enable, FS_INTR, 0);
->
->         spin_unlock_irqrestore(&vop->irq_lock, flags);
-> +
-> +       vop->psr_enabled = true;
-> +       schedule_delayed_work(&vop->psr_work, msecs_to_jiffies(10));
->  }
->
->  static void vop_crtc_wait_for_update(struct drm_crtc *crtc)
-> @@ -1582,6 +1602,10 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
->                 return ret;
->
->         pm_runtime_enable(&pdev->dev);
-> +
-> +       vop->psr_enabled = false;
-> +       INIT_DELAYED_WORK(&vop->psr_work, vop_psr_work);
-> +
->         return 0;
->  }
->
-> --
-> 1.9.1
->
->
+T24gRnJpLCBKdWwgMSwgMjAxNiBhdCA1OjE5IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlw
+cy5jb20+IHdyb3RlOgo+IFRoZSBmdWxsIG5hbWUgb2YgUFNSIGlzIFBhbmVsIFNlbGYgUmVmcmVz
+aCwgcGFuZWwgZGV2aWNlIGNvdWxkIHJlZnJlc2gKPiBpdHNlbGYgd2l0aCB0aGUgaGFyZHdhcmUg
+ZnJhbWVidWZmZXIgaW4gcGFuZWwsIHRoaXMgd291bGQgbWFrZSBsb3RzIG9mCj4gc2Vuc2UgdG8g
+c2F2ZSB0aGUgcG93ZXIgY29uc3VtcHRpb24uCj4KPiBUaGlzIHBhdGNoIGhhdmUgZXhwb3J0ZWQg
+dHdvIHN5bWJvbHMgZm9yIHBsYXRmb3JtIGRyaXZlciB0byBpbXBsZW1lbnQKPiB0aGUgUFNSIGZ1
+bmN0aW9uIGluIGhhcmR3YXJlIHNpZGU6Cj4gLSBhbmFsb2dpeF9kcF9hY3RpdmVfcHNyKCkKPiAt
+IGFuYWxvZ2l4X2RwX2luYWN0aXZlX3BzcigpCj4KPiBTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5n
+IDx5a2tAcm9jay1jaGlwcy5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBpbiB2MzoKPiAtIHNwbGl0IGFu
+YWxvZ2l4X2RwX2VuYWJsZV9wc3IoKSwgbWFrZSBpdCBtb3JlIGNsZWFybHkKPiAgICAgYW5hbG9n
+aXhfZHBfZGV0ZWN0X3NpbmtfcHNyKCkKPiAgICAgYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNy
+KCkKPiAtIHJlbW92ZSBzb21lIG5vc2llIHJlZ2lzdGVyIHNldHRpbmcgY29tbWVudHMKPgo+IENo
+YW5nZXMgaW4gdjI6Cj4gLSBpbnRyb2R1Y2UgaW4gdjIsIHNwbGl0ZSB0aGUgY29tbW9uIEFuYWxv
+Z2l4IERQIGNoYW5nZXMgb3V0Cj4KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9h
+bmFsb2dpeF9kcF9jb3JlLmMgfCA2NCArKysrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIHwgIDQgKysKPiAgZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyAgfCA1NCArKysr
+KysrKysrKysrKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
+eF9kcF9yZWcuaCAgfCAyOCArKysrKysrKysrCj4gIGluY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dp
+eF9kcC5oICAgICAgICAgICAgICAgICAgIHwgIDMgKwo+ICA1IGZpbGVzIGNoYW5nZWQsIDE1MyBp
+bnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
+b2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX2NvcmUuYwo+IGluZGV4IDMyNzE1ZGEuLmI1NTcwOTcgMTAwNjQ0Cj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+
+IEBAIC05Nyw2ICs5Nyw2NiBAQCBzdGF0aWMgaW50IGFuYWxvZ2l4X2RwX2RldGVjdF9ocGQoc3Ry
+dWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4gICAgICAgICByZXR1cm4gMDsKPiAgfQo+Cj4g
+K2ludCBhbmFsb2dpeF9kcF9hY3RpdmVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKPiArewo+ICsg
+ICAgICAgc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEoZGV2
+KTsKPiArCj4gKyAgICAgICBpZiAoIWRwLT5wc3Jfc3VwcG9ydCkKPiArICAgICAgICAgICAgICAg
+cmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsgICAgICAgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3BkKGRw
+LCBFRFBfVlNDX1BTUl9TVEFURV9BQ1RJVkUgfAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIEVEUF9WU0NfUFNSX0NSQ19WQUxVRVNfVkFMSUQpOwo+ICsgICAgICAgcmV0dXJuIDA7
+Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwoYW5hbG9naXhfZHBfYWN0aXZlX3Bzcik7Cj4gKwo+
+ICtpbnQgYW5hbG9naXhfZHBfaW5hY3RpdmVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKPiArewo+
+ICsgICAgICAgc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2RydmRhdGEo
+ZGV2KTsKPiArCj4gKyAgICAgICBpZiAoIWRwLT5wc3Jfc3VwcG9ydCkKPiArICAgICAgICAgICAg
+ICAgcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsgICAgICAgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3Bk
+KGRwLCAwKTsKPiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0xfR1BMKGFu
+YWxvZ2l4X2RwX2luYWN0aXZlX3Bzcik7Cj4gKwo+ICtzdGF0aWMgYm9vbCBhbmFsb2dpeF9kcF9k
+ZXRlY3Rfc2lua19wc3Ioc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4gK3sKPiArICAg
+ICAgIHVuc2lnbmVkIGNoYXIgcHNyX3ZlcnNpb247Cj4gKwo+ICsgICAgICAgYW5hbG9naXhfZHBf
+cmVhZF9ieXRlX2Zyb21fZHBjZChkcCwgRFBfUFNSX1NVUFBPUlQsICZwc3JfdmVyc2lvbik7Cj4g
+KyAgICAgICBkZXZfaW5mbyhkcC0+ZGV2LCAiUGFuZWwgUFNSIHZlcnNpb24gOiAleFxuIiwgcHNy
+X3ZlcnNpb24pOwo+ICsKClRoaXMgaW5mbyBtZXNzYWdlIGlzIGxpa2VseSB0byBiZSBzcGFtbXkg
+c2luY2UgaXQncyBwcmludGVkIGV2ZXJ5dGltZQp0aGUgcGFuZWwgdG9nZ2xlIG9uLiBQZXJoYXBz
+IGRvd25ncmFkZSB0byBkZWJ1ZyBsZXZlbC4KCj4gKyAgICAgICByZXR1cm4gKHBzcl92ZXJzaW9u
+ICYgRFBfUFNSX0lTX1NVUFBPUlRFRCkgPyB0cnVlIDogZmFsc2U7Cj4gK30KPiArCj4gK3N0YXRp
+YyBpbnQgYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNyKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZp
+Y2UgKmRwKQoKUmV0dXJuIHR5cGUgaXMgaW50LCBidXQgdGhlIGZ1bmN0aW9uIG5ldmVyIGZhaWxz
+IGFuZCB5b3UgZG9uJ3QgY2hlY2sKdGhlIHJldHVybiB2YWx1ZSB3aGVuIGNhbGxpbmcgaXQuIFNl
+ZW1zIGxpa2UgdGhpcyBzaG91bGQgYmUgdm9pZC4KCj4gK3sKPiArICAgICAgIHVuc2lnbmVkIGNo
+YXIgcHNyX2VuOwo+ICsKPiArICAgICAgIC8qIERpc2FibGUgcHNyIGZ1bmN0aW9uICovCj4gKyAg
+ICAgICBhbmFsb2dpeF9kcF9yZWFkX2J5dGVfZnJvbV9kcGNkKGRwLCBEUF9QU1JfRU5fQ0ZHLCAm
+cHNyX2VuKTsKPiArICAgICAgIHBzcl9lbiAmPSB+RFBfUFNSX0VOQUJMRTsKPiArICAgICAgIGFu
+YWxvZ2l4X2RwX3dyaXRlX2J5dGVfdG9fZHBjZChkcCwgRFBfUFNSX0VOX0NGRywgcHNyX2VuKTsK
+PiArCj4gKyAgICAgICAvKiBNYWluLUxpbmsgdHJhbnNtaXR0ZXIgcmVtYWlucyBhY3RpdmUgZHVy
+aW5nIFBTUiBhY3RpdmUgc3RhdGVzICovCj4gKyAgICAgICBhbmFsb2dpeF9kcF9yZWFkX2J5dGVf
+ZnJvbV9kcGNkKGRwLCBEUF9QU1JfRU5fQ0ZHLCAmcHNyX2VuKTsKPiArICAgICAgIHBzcl9lbiA9
+IERQX1BTUl9NQUlOX0xJTktfQUNUSVZFIHwgRFBfUFNSX0NSQ19WRVJJRklDQVRJT047CgpXaHkg
+cmVhZCBwc3JfZW4gaWYgeW91J3JlIGp1c3QgZ29pbmcgdG8gb3ZlcndyaXRlIGl0PyBQZXJoYXBz
+IHlvdSBtZWFudCB8PSBoZXJlLgoKPiArICAgICAgIGFuYWxvZ2l4X2RwX3dyaXRlX2J5dGVfdG9f
+ZHBjZChkcCwgRFBfUFNSX0VOX0NGRywgcHNyX2VuKTsKPiArCj4gKyAgICAgICAvKiBFbmFibGUg
+cHNyIGZ1bmN0aW9uICovCj4gKyAgICAgICBhbmFsb2dpeF9kcF9yZWFkX2J5dGVfZnJvbV9kcGNk
+KGRwLCBEUF9QU1JfRU5fQ0ZHLCAmcHNyX2VuKTsKPiArICAgICAgIHBzcl9lbiA9IERQX1BTUl9F
+TkFCTEUgfCBEUF9QU1JfTUFJTl9MSU5LX0FDVElWRSB8Cj4gKyAgICAgICAgICAgICAgICBEUF9Q
+U1JfQ1JDX1ZFUklGSUNBVElPTjsKCkFnYWluLCBubyBuZWVkIHRvIHJlYWQgaWYgeW91J3JlIGp1
+c3Qgb3ZlcndyaXRpbmcuCgo+ICsgICAgICAgYW5hbG9naXhfZHBfd3JpdGVfYnl0ZV90b19kcGNk
+KGRwLCBEUF9QU1JfRU5fQ0ZHLCBwc3JfZW4pOwo+ICsKPiArICAgICAgIGFuYWxvZ2l4X2RwX2Vu
+YWJsZV9wc3JfY3JjKGRwKTsKPiArCj4gKyAgICAgICByZXR1cm4gMDsKPiArfQo+ICsKPiAgc3Rh
+dGljIHVuc2lnbmVkIGNoYXIgYW5hbG9naXhfZHBfY2FsY19lZGlkX2NoZWNrX3N1bSh1bnNpZ25l
+ZCBjaGFyICplZGlkX2RhdGEpCj4gIHsKPiAgICAgICAgIGludCBpOwo+IEBAIC05MjEsNiArOTgx
+LDEwIEBAIHN0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2NvbW1pdChzdHJ1Y3QgYW5hbG9naXhfZHBf
+ZGV2aWNlICpkcCkKPgo+ICAgICAgICAgLyogRW5hYmxlIHZpZGVvICovCj4gICAgICAgICBhbmFs
+b2dpeF9kcF9zdGFydF92aWRlbyhkcCk7Cj4gKwo+ICsgICAgICAgZHAtPnBzcl9zdXBwb3J0ID0g
+YW5hbG9naXhfZHBfZGV0ZWN0X3NpbmtfcHNyKGRwKTsKPiArICAgICAgIGlmIChkcC0+cHNyX3N1
+cHBvcnQpCj4gKyAgICAgICAgICAgICAgIGFuYWxvZ2l4X2RwX2VuYWJsZV9zaW5rX3BzcihkcCk7
+Cj4gIH0KPgo+ICBpbnQgYW5hbG9naXhfZHBfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3IpCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfY29yZS5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9h
+bmFsb2dpeF9kcF9jb3JlLmgKPiBpbmRleCBiNDU2MzgwLi42Y2E1ZGRlIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPiBA
+QCAtMTc3LDYgKzE3Nyw3IEBAIHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2Ugewo+ICAgICAgICAg
+aW50ICAgICAgICAgICAgICAgICAgICAgaHBkX2dwaW87Cj4gICAgICAgICBib29sICAgICAgICAg
+ICAgICAgICAgICBmb3JjZV9ocGQ7Cj4gICAgICAgICB1bnNpZ25lZCBjaGFyICAgICAgICAgICBl
+ZGlkW0VESURfQkxPQ0tfTEVOR1RIICogMl07Cj4gKyAgICAgICBib29sICAgICAgICAgICAgICAg
+ICAgICBwc3Jfc3VwcG9ydDsKPgo+ICAgICAgICAgc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0
+YSAqcGxhdF9kYXRhOwo+ICB9Owo+IEBAIC0yNzgsNCArMjc5LDcgQEAgaW50IGFuYWxvZ2l4X2Rw
+X2lzX3ZpZGVvX3N0cmVhbV9vbihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4gIHZv
+aWQgYW5hbG9naXhfZHBfY29uZmlnX3ZpZGVvX3NsYXZlX21vZGUoc3RydWN0IGFuYWxvZ2l4X2Rw
+X2RldmljZSAqZHApOwo+ICB2b2lkIGFuYWxvZ2l4X2RwX2VuYWJsZV9zY3JhbWJsaW5nKHN0cnVj
+dCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKTsKPiAgdm9pZCBhbmFsb2dpeF9kcF9kaXNhYmxlX3Nj
+cmFtYmxpbmcoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwo+ICt2b2lkIGFuYWxvZ2l4
+X2RwX2VuYWJsZV9wc3JfY3JjKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKTsKPiArdm9p
+ZCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAs
+IGludCBkYjEpOwo+ICsKPiAgI2VuZGlmIC8qIF9BTkFMT0dJWF9EUF9DT1JFX0ggKi8KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiBp
+bmRleCA0ODAzMGYwLi5lODM3MmM3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4gQEAgLTEzMjIsMyArMTMyMiw1NyBAQCB2
+b2lkIGFuYWxvZ2l4X2RwX2Rpc2FibGVfc2NyYW1ibGluZyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
+aWNlICpkcCkKPiAgICAgICAgIHJlZyB8PSBTQ1JBTUJMSU5HX0RJU0FCTEU7Cj4gICAgICAgICB3
+cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9UUkFJTklOR19QVE5fU0VUKTsK
+PiAgfQo+ICsKPiArdm9pZCBhbmFsb2dpeF9kcF9lbmFibGVfcHNyX2NyYyhzdHJ1Y3QgYW5hbG9n
+aXhfZHBfZGV2aWNlICpkcCkKPiArewo+ICsgICAgICAgd3JpdGVsKFBTUl9WSURfQ1JDX0ZMVVNI
+IHwgUFNSX1ZJRF9DUkNfRU5BQkxFLAo+ICsgICAgICAgICAgICAgIGRwLT5yZWdfYmFzZSArIEFO
+QUxPR0lYX0RQX0NSQ19DT04pOwo+ICsKPiArICAgICAgIHVzbGVlcF9yYW5nZSgxMCwgMjApOwoK
+SXMgdGhpcyBzbGVlcCBhcmJpdHJhcnksIG9yIGRvY3VtZW50ZWQgc29tZXdoZXJlPyBDb3VsZCB5
+b3UgYWRkIGEKY29tbWVudCBleHBsYWluaW5nIGhvdyB0aGlzIHdhcyBhcnJpdmVkIGF0PwoKPiAr
+Cj4gKyAgICAgICB3cml0ZWwoUFNSX1ZJRF9DUkNfRU5BQkxFLCBkcC0+cmVnX2Jhc2UgKyBBTkFM
+T0dJWF9EUF9DUkNfQ09OKTsKPiArfQo+ICsKPiArdm9pZCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9z
+cGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsIGludCBkYjEpCj4gK3sKPiArICAgICAg
+IHVuc2lnbmVkIGludCB2YWw7Cj4gKwo+ICsgICAgICAgLyogZG9uJ3Qgc2VuZCBpbmZvIGZyYW1l
+ICovCj4gKyAgICAgICB2YWwgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QS1Rf
+U0VORF9DVEwpOwo+ICsgICAgICAgdmFsICY9IH5JRl9FTjsKPiArICAgICAgIHdyaXRlbCh2YWws
+IGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NUTCk7Cj4gKwo+ICsgICAgICAg
+LyogY29uZmlndXJlIHNpbmdsZSBmcmFtZSB1cGRhdGUgbW9kZSAqLwo+ICsgICAgICAgd3JpdGVs
+KDB4MywgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUFNSX0ZSQU1FX1VQREFURV9DVFJMKTsK
+PiArCj4gKyAgICAgICAvKiBjb25maWd1cmUgVlNDIEhCMCB+IEhCMyAqLwo+ICsgICAgICAgd3Jp
+dGVsKDB4MDAsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1NQRF9IQjApOwo+ICsgICAgICAg
+d3JpdGVsKDB4MDcsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1NQRF9IQjEpOwo+ICsgICAg
+ICAgd3JpdGVsKDB4MDIsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1NQRF9IQjIpOwo+ICsg
+ICAgICAgd3JpdGVsKDB4MDgsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1NQRF9IQjMpOwo+
+ICsKPiArICAgICAgIC8qIGNvbmZpZ3VyZSBWU0MgSEIwIH4gSEIzICovCj4gKyAgICAgICB3cml0
+ZWwoMHgwMCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfU1BEX1BCMCk7Cj4gKyAgICAgICB3
+cml0ZWwoMHgxNiwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfU1BEX1BCMSk7Cj4gKyAgICAg
+ICB3cml0ZWwoMHhDRSwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfU1BEX1BCMik7Cj4gKyAg
+ICAgICB3cml0ZWwoMHg1RCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfU1BEX1BCMyk7Cj4g
+Kwo+ICsgICAgICAgLyogY29uZmlndXJlIERCMCAvIERCMSB2YWx1ZXMgKi8KPiArICAgICAgIHdy
+aXRlbCgweDAwLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9WU0NfU0hBRE9XX0RCMCk7CgpM
+b3RzIG9mIGhhcmRjb2RlZCB2YWx1ZXMgaGVyZS4gSSB0aGluayB0aGlzIGNvdWxkIGJlIGNsZWFu
+ZWQgdXAuCgo+ICsgICAgICAgd3JpdGVsKGRiMSwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBf
+VlNDX1NIQURPV19EQjEpOwo+ICsKPiArICAgICAgIC8qIHNldCByZXVzZSBzcGQgaW5mb3JmcmFt
+ZSAqLwo+ICsgICAgICAgdmFsID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfVklE
+RU9fQ1RMXzMpOwo+ICsgICAgICAgdmFsIHw9IFJFVVNFX1NQRF9FTjsKPiArICAgICAgIHdyaXRl
+bCh2YWwsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1ZJREVPX0NUTF8zKTsKPiArCj4gKyAg
+ICAgICAvKiBtYXJrIGluZm8gZnJhbWUgdXBkYXRlICovCj4gKyAgICAgICB2YWwgPSByZWFkbChk
+cC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QS1RfU0VORF9DVEwpOwo+ICsgICAgICAgdmFsID0g
+KHZhbCB8IElGX1VQKSAmIH5JRl9FTjsKPiArICAgICAgIHdyaXRlbCh2YWwsIGRwLT5yZWdfYmFz
+ZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NUTCk7Cj4gKwo+ICsgICAgICAgLyogc2VuZCBpbmZv
+IGZyYW1lICovCj4gKyAgICAgICB2YWwgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9E
+UF9QS1RfU0VORF9DVEwpOwo+ICsgICAgICAgdmFsIHw9IElGX0VOOwo+ICsgICAgICAgd3JpdGVs
+KHZhbCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUEtUX1NFTkRfQ1RMKTsKPiArfQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3Jl
+Zy5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaAo+
+IGluZGV4IGNkY2M2YzUuLmEyNjk4ZTQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Jy
+aWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmgKPiBAQCAtMjIsNiArMjIsOCBAQAo+ICAj
+ZGVmaW5lIEFOQUxPR0lYX0RQX1ZJREVPX0NUTF84ICAgICAgICAgICAgICAgICAgICAgICAgMHgz
+Qwo+ICAjZGVmaW5lIEFOQUxPR0lYX0RQX1ZJREVPX0NUTF8xMCAgICAgICAgICAgICAgIDB4NDQK
+Pgo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX1NQRElGX0FVRElPX0NUTF8wICAgICAgICAgIDB4RDgK
+PiArCj4gICNkZWZpbmUgQU5BTE9HSVhfRFBfUExMX1JFR18xICAgICAgICAgICAgICAgICAgMHhm
+Ywo+ICAjZGVmaW5lIEFOQUxPR0lYX0RQX1BMTF9SRUdfMiAgICAgICAgICAgICAgICAgIDB4OWU0
+Cj4gICNkZWZpbmUgQU5BTE9HSVhfRFBfUExMX1JFR18zICAgICAgICAgICAgICAgICAgMHg5ZTgK
+PiBAQCAtMzAsNiArMzIsMjEgQEAKPgo+ICAjZGVmaW5lIEFOQUxPR0lYX0RQX1BEICAgICAgICAg
+ICAgICAgICAgICAgICAgIDB4MTJjCj4KPiArI2RlZmluZSBBTkFMT0dJWF9EUF9JRl9UWVBFICAg
+ICAgICAgICAgICAgICAgICAweDI0NAo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX0lGX1BLVF9EQjEg
+ICAgICAgICAgICAgICAgIDB4MjU0Cj4gKyNkZWZpbmUgQU5BTE9HSVhfRFBfSUZfUEtUX0RCMiAg
+ICAgICAgICAgICAgICAgMHgyNTgKPiArI2RlZmluZSBBTkFMT0dJWF9EUF9TUERfSEIwICAgICAg
+ICAgICAgICAgICAgICAweDJGOAo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX1NQRF9IQjEgICAgICAg
+ICAgICAgICAgICAgIDB4MkZDCj4gKyNkZWZpbmUgQU5BTE9HSVhfRFBfU1BEX0hCMiAgICAgICAg
+ICAgICAgICAgICAgMHgzMDAKPiArI2RlZmluZSBBTkFMT0dJWF9EUF9TUERfSEIzICAgICAgICAg
+ICAgICAgICAgICAweDMwNAo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX1NQRF9QQjAgICAgICAgICAg
+ICAgICAgICAgIDB4MzA4Cj4gKyNkZWZpbmUgQU5BTE9HSVhfRFBfU1BEX1BCMSAgICAgICAgICAg
+ICAgICAgICAgMHgzMEMKPiArI2RlZmluZSBBTkFMT0dJWF9EUF9TUERfUEIyICAgICAgICAgICAg
+ICAgICAgICAweDMxMAo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX1NQRF9QQjMgICAgICAgICAgICAg
+ICAgICAgIDB4MzE0Cj4gKyNkZWZpbmUgQU5BTE9HSVhfRFBfUFNSX0ZSQU1FX1VQREFURV9DVFJM
+ICAgICAgMHgzMTgKPiArI2RlZmluZSBBTkFMT0dJWF9EUF9WU0NfU0hBRE9XX0RCMCAgICAgICAg
+ICAgICAweDMxQwo+ICsjZGVmaW5lIEFOQUxPR0lYX0RQX1ZTQ19TSEFET1dfREIxICAgICAgICAg
+ICAgIDB4MzIwCj4gKwo+ICAjZGVmaW5lIEFOQUxPR0lYX0RQX0xBTkVfTUFQICAgICAgICAgICAg
+ICAgICAgIDB4MzVDCj4KPiAgI2RlZmluZSBBTkFMT0dJWF9EUF9BTkFMT0dfQ1RMXzEgICAgICAg
+ICAgICAgICAweDM3MAo+IEBAIC0xMDMsNiArMTIwLDggQEAKPgo+ICAjZGVmaW5lIEFOQUxPR0lY
+X0RQX1NPQ19HRU5FUkFMX0NUTCAgICAgICAgICAgIDB4ODAwCj4KPiArI2RlZmluZSBBTkFMT0dJ
+WF9EUF9DUkNfQ09OICAgICAgICAgICAgICAgICAgICAweDg5MAo+ICsKPiAgLyogQU5BTE9HSVhf
+RFBfVFhfU1dfUkVTRVQgKi8KPiAgI2RlZmluZSBSRVNFVF9EUF9UWCAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAoMHgxIDw8IDApCj4KPiBAQCAtMTUxLDYgKzE3MCw3IEBACj4gICNkZWZpbmUg
+VklEX0NIS19VUERBVEVfVFlQRV9TSElGVCAgICAgICAgICAgICAgKDQpCj4gICNkZWZpbmUgVklE
+X0NIS19VUERBVEVfVFlQRV8xICAgICAgICAgICAgICAgICAgKDB4MSA8PCA0KQo+ICAjZGVmaW5l
+IFZJRF9DSEtfVVBEQVRFX1RZUEVfMCAgICAgICAgICAgICAgICAgICgweDAgPDwgNCkKPiArI2Rl
+ZmluZSBSRVVTRV9TUERfRU4gICAgICAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8IDMpCj4K
+PiAgLyogQU5BTE9HSVhfRFBfVklERU9fQ1RMXzggKi8KPiAgI2RlZmluZSBWSURfSFJFU19USCh4
+KSAgICAgICAgICAgICAgICAgICAgICAgICAoKCh4KSAmIDB4ZikgPDwgNCkKPiBAQCAtMzc2LDQg
+KzM5NiwxMiBAQAo+ICAjZGVmaW5lIFZJREVPX01PREVfU0xBVkVfTU9ERSAgICAgICAgICAgICAg
+ICAgICgweDEgPDwgMCkKPiAgI2RlZmluZSBWSURFT19NT0RFX01BU1RFUl9NT0RFICAgICAgICAg
+ICAgICAgICAoMHgwIDw8IDApCj4KPiArLyogQU5BTE9HSVhfRFBfUEtUX1NFTkRfQ1RMICovCj4g
+KyNkZWZpbmUgSUZfVVAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDB4MSA8PCA0
+KQo+ICsjZGVmaW5lIElGX0VOICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgweDEg
+PDwgMCkKPiArCj4gKy8qIEFOQUxPR0lYX0RQX0NSQ19DT04gKi8KPiArI2RlZmluZSBQU1JfVklE
+X0NSQ19GTFVTSCAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8IDIpCj4gKyNkZWZpbmUgUFNS
+X1ZJRF9DUkNfRU5BQkxFICAgICAgICAgICAgICAgICAgICAgKDB4MSA8PCAwKQo+ICsKPiAgI2Vu
+ZGlmIC8qIF9BTkFMT0dJWF9EUF9SRUdfSCAqLwo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9i
+cmlkZ2UvYW5hbG9naXhfZHAuaCBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4g
+aW5kZXggMjYxYjg2ZC4uMTgzYTMzNiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9icmlkZ2Uv
+YW5hbG9naXhfZHAuaAo+ICsrKyBiL2luY2x1ZGUvZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oCj4g
+QEAgLTM4LDYgKzM4LDkgQEAgc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSB7Cj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fY29ubmVjdG9yICopOwo+ICB9Owo+Cj4gK2lu
+dCBhbmFsb2dpeF9kcF9hY3RpdmVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldik7Cj4gK2ludCBhbmFs
+b2dpeF9kcF9pbmFjdGl2ZV9wc3Ioc3RydWN0IGRldmljZSAqZGV2KTsKCldoeSBhY3RpdmUvaW5h
+Y3RpdmUgaW5zdGVhZCBvZiBlbmFibGUvZGlzYWJsZSwgd2hpY2ggaXMgdXNlZCBldmVyeXdoZXJl
+IGVsc2U/Cgo+ICsKPiAgaW50IGFuYWxvZ2l4X2RwX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYp
+Owo+ICBpbnQgYW5hbG9naXhfZHBfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpOwo+Cj4gLS0K
+PiAxLjkuMQo+Cj4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
