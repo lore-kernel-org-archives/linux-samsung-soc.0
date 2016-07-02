@@ -1,141 +1,69 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Fri, 1 Jul 2016 16:05:52 -0400
-Message-ID: <CAOw6vbL=GsAL+XDive6g4ettZrdrW6BZ-OkVbPp54E5gxn_HsQ@mail.gmail.com>
-References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com> <1467364776-21794-1-git-send-email-ykk@rock-chips.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 1/7] extcon: add missing of_node_put after calling
+ of_parse_phandle
+Date: Sat, 2 Jul 2016 13:46:20 +0900
+Message-ID: <CAGTfZH0vSSNSJQHaNFjzd_ciPAcRG8bST-W5bacA2mi4T7sQTg@mail.gmail.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <1467366121-14120-2-git-send-email-peter.chen@nxp.com>
+Reply-To: chanwoo@kernel.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467364776-21794-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1467366121-14120-2-git-send-email-peter.chen@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter Chen <peter.chen@nxp.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> Alway enable the PSR function for Rockchip analogix_dp driver. If panel
-> don't support PSR, then the core analogix_dp would ignore this setting.
+Hi Peter,
+
+Applied it.
+
+Regards,
+Chanwoo Choi
+
+2016-07-01 18:41 GMT+09:00 Peter Chen <peter.chen@nxp.com>:
+> of_node_put needs to be called when the device node which is got
+> from of_parse_phandle has finished using.
 >
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
 > ---
-> Changes in v3:
-> - split the common psr logic into a seperate driver, make this to a
->   simple sub-psr device driver.
+>  drivers/extcon/extcon.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> Changes in v2:
-> - remove vblank notify out (Daniel)
-> - create a psr_active() callback in vop data struct.
+> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+> index 21a123c..86ea14d 100644
+> --- a/drivers/extcon/extcon.c
+> +++ b/drivers/extcon/extcon.c
+> @@ -1107,10 +1107,12 @@ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
+>         list_for_each_entry(edev, &extcon_dev_list, entry) {
+>                 if (edev->dev.parent && edev->dev.parent->of_node == node) {
+>                         mutex_unlock(&extcon_dev_list_lock);
+> +                       of_node_put(node);
+>                         return edev;
+>                 }
+>         }
+>         mutex_unlock(&extcon_dev_list_lock);
+> +       of_node_put(node);
 >
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 52 +++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
->
-> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> index e81e19a..80a60a6 100644
-> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-> @@ -32,6 +32,7 @@
->  #include <drm/bridge/analogix_dp.h>
->
->  #include "rockchip_drm_drv.h"
-> +#include "rockchip_drm_psr.h"
->  #include "rockchip_drm_vop.h"
->
->  #define RK3288_GRF_SOC_CON6            0x25c
-> @@ -68,11 +69,53 @@ struct rockchip_dp_device {
->         struct regmap            *grf;
->         struct reset_control     *rst;
->
-> +       struct delayed_work      psr_work;
-> +       unsigned int             psr_state;
-> +
->         const struct rockchip_dp_chip_data *data;
->
->         struct analogix_dp_plat_data plat_data;
->  };
->
-> +static int analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
-
-Again, this function doesn't fail, but its return type is int.
-Fortunately you don't check the return in rockchip_drm_psr.c, so this
-also seems like a good void candidate.
-
-> +{
-> +       struct rockchip_dp_device *dp = to_dp(encoder);
-> +
-> +       dev_dbg(dp->dev, "%s PSR...\n", enabled ? "Entry" : "Exit");
-> +
-> +       if (enabled)
-> +               dp->psr_state = EDP_VSC_PSR_STATE_ACTIVE;
-> +       else
-> +               dp->psr_state = ~EDP_VSC_PSR_STATE_ACTIVE;
-> +
-> +       schedule_delayed_work(&dp->psr_work, msecs_to_jiffies(10));
-
-Pull 10 out into a #define
-
-> +
-> +       return 0;
-> +}
-> +
-> +static void analogix_dp_psr_work(struct work_struct *work)
-> +{
-> +       struct rockchip_dp_device *dp =
-> +                               container_of(work, typeof(*dp), psr_work.work);
-> +       struct drm_crtc *crtc = dp->encoder.crtc;
-> +       int psr_state = dp->psr_state;
-> +       int vact_end;
-> +       int ret;
-> +
-> +       if (!crtc)
-> +               return;
-> +
-> +       vact_end = crtc->mode.vtotal - crtc->mode.vsync_start + crtc->mode.vdisplay;
-> +
-> +       ret = rockchip_drm_wait_line_flag(dp->encoder.crtc, vact_end, 100);
-
-
-Pull 100 out into a #define
-
-> +       if (ret == 0) {
-
-if (ret) {
-    dev_err(... "line flag interrupt did not arrive");
-    return;
-}
-
-> +               if (psr_state == EDP_VSC_PSR_STATE_ACTIVE)
-> +                       analogix_dp_active_psr(dp->dev);
-> +               else
-> +                       analogix_dp_inactive_psr(dp->dev);
-> +       }
-> +}
-> +
->  static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
->  {
->         reset_control_assert(dp->rst);
-> @@ -340,12 +383,21 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
->         dp->plat_data.power_off = rockchip_dp_powerdown;
->         dp->plat_data.get_modes = rockchip_dp_get_modes;
->
-> +       dp->psr_state = ~EDP_VSC_PSR_STATE_ACTIVE;
-> +       INIT_DELAYED_WORK(&dp->psr_work, analogix_dp_psr_work);
-> +
-> +       rockchip_drm_psr_register(&dp->encoder, analogix_dp_psr_set);
-> +
->         return analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+>         return ERR_PTR(-EPROBE_DEFER);
 >  }
->
->  static void rockchip_dp_unbind(struct device *dev, struct device *master,
->                                void *data)
->  {
-> +       struct rockchip_dp_device *dp = dev_get_drvdata(dev);
-> +
-> +       rockchip_drm_psr_unregister(&dp->encoder);
-> +
->         return analogix_dp_unbind(dev, master, data);
->  }
->
 > --
 > 1.9.1
 >
 >
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
