@@ -1,48 +1,38 @@
-From: Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 1/1] gpu: drm: exynos_hdmi: add missing of_node_put after calling of_parse_phandle
-Date: Mon, 4 Jul 2016 15:15:55 +0800
-Message-ID: <1467616555-7916-1-git-send-email-peter.chen@nxp.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] spi: s3c64xx: indent an if statement
+Date: Mon, 4 Jul 2016 10:47:48 +0300
+Message-ID: <20160704074748.GB4849@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-co1nam03on0071.outbound.protection.outlook.com ([104.47.40.71]:52048
-	"EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752592AbcGDHXJ (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:28011 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753122AbcGDHsD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 03:23:09 -0400
+	Mon, 4 Jul 2016 03:48:03 -0400
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: inki.dae@samsung.com, kyungmin.park@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@nxp.com>
+To: Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-of_node_put needs to be called when the device node which is got
-from of_parse_phandle has finished using.
+It generates a static checker warning if an if statement isn't indented.
+I think the code is fine except for the white space issue.
 
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 2 ++
- 1 file changed, 2 insertions(+)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 58de5a4..e9591c7 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1828,6 +1828,7 @@ static int hdmi_probe(struct platform_device *pdev)
- 		DRM_ERROR("Failed to find ddc node in device tree\n");
- 		return -ENODEV;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6d8486f..9f0119f 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -330,8 +330,8 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ 		}
+ 	} else {
+ 		if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
+-		writel(S3C64XX_SPI_SLAVE_SIG_INACT,
+-		sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++			writel(S3C64XX_SPI_SLAVE_SIG_INACT,
++			       sdd->regs + S3C64XX_SPI_SLAVE_SEL);
  	}
-+	of_node_put(dev->of_node);
+ }
  
- out_get_ddc_adpt:
- 	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
-@@ -1846,6 +1847,7 @@ out_get_ddc_adpt:
- 		ret = -ENODEV;
- 		goto err_ddc;
- 	}
-+	of_node_put(dev->of_node);
- 
- out_get_phy_port:
- 	if (hdata->drv_data->is_apb_phy) {
--- 
-1.9.1
