@@ -1,78 +1,48 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 0/2] mark spi clocks as critical and enable spi3 clocks
-Date: Mon, 4 Jul 2016 13:55:37 +0900
-Message-ID: <CA+Ln22HKo2kP8XXdBNve8aX8d9A1rZg7A78x+-S255Xi4k-nxg@mail.gmail.com>
-References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
- <CGME20160704040000epcas1p3aeb0a1337a7e8e7274090bd932f556e3@epcas1p3.samsung.com>
- <CA+Ln22HuCdDr=g06ynK7mqjDfUVrQgG-NRkfTP_zE6h-wZk6Gw@mail.gmail.com> <20160704042003.GB23620@samsunx.samsung>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 1/1] gpu: drm: exynos_hdmi: add missing of_node_put after calling of_parse_phandle
+Date: Mon, 4 Jul 2016 15:15:55 +0800
+Message-ID: <1467616555-7916-1-git-send-email-peter.chen@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160704042003.GB23620@samsunx.samsung>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-co1nam03on0071.outbound.protection.outlook.com ([104.47.40.71]:52048
+	"EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752592AbcGDHXJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 Jul 2016 03:23:09 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: inki.dae@samsung.com, kyungmin.park@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@nxp.com>
 
-2016-07-04 13:20 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
-> Hi Tomasz,
->
->> > This patchset enables spi3 clocks by marking critical clocks as
->> > CLK_IS_CRITICAL and in the meantime replaces the use of
->> > CLK_IGNORE_UNUSED for spi1 clocks.
->> >
->> > The sclk needs to be considered critical as well.
->> >
->> > The SPI3 in the tm2/tm2e boards will control an irled for remote
->> > controlling.
->> >
->> > Changelog:
->> >
->> > V1 -> V2
->> >  - the "sclk_spi3" doesn't need to be enabled in boot time as it
->> >   is handled by the spi driver itself.
->> >
->> >  - use the CLK_IS_CRITICAL flag for the ioclk
->> >
->> > V2 -> V3
->> >  - some more tests has confirmed taht "sclk_spi1,3" need to be
->> >    enabled as critical!
->>
->> This sounds like a DTS and/or SPI and/or clock driver bug then. I'm
->> pretty much convinced that it might also cause other problems and this
->> workaround will only mask them making things even more difficult to
->> debug in the future. Let's not introduce more technical debt.
->
-> In principle I agree, but, the upcoming TM2/TM2e boards will have
-> the audio codec connected on SPI1 and the ir remote controller on
-> the SPI3 (others SPI slots are used as well, but we don't have
-> the drivers ready for them).
->
-> I followed for SPI3 the same approach as it was done for SPI1, so
-> that I see two choices here:
->
->  * reject this patches and cleanup the SPI1 from the "technical
->    debt" and not have anything working on spi.
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
 
->
-> or
->
->  * do for SPI3 the same as it has been done for SPI1 (and as it
->    is now) with its "technical debt".
->
-> I did quite an extensive testing on these lines and I don't see
-> any other alternative.
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The SPI driver is supposed to enable the SPI bus clock whenever
-necessary, if it's given the clock correctly and the clock driver has
-the clock hierarchy correctly defined. So I see third choice here:
-
- * Debug why the SPI driver doesn't properly enable the clock, fix the
-cause (fixing both SPI1 and SPI3 sclk at the same time) and then
-remove the CLK_IGNORE_UNUSED flag from sclk_spi1.
-
-Of course the above doesn't apply to sclk_ioclk clocks, as we already
-agreed that they need CLK_IS_CRITICAL due to their nature.
-
-Best regards,
-Tomasz
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 58de5a4..e9591c7 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1828,6 +1828,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		DRM_ERROR("Failed to find ddc node in device tree\n");
+ 		return -ENODEV;
+ 	}
++	of_node_put(dev->of_node);
+ 
+ out_get_ddc_adpt:
+ 	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
+@@ -1846,6 +1847,7 @@ out_get_ddc_adpt:
+ 		ret = -ENODEV;
+ 		goto err_ddc;
+ 	}
++	of_node_put(dev->of_node);
+ 
+ out_get_phy_port:
+ 	if (hdata->drv_data->is_apb_phy) {
+-- 
+1.9.1
