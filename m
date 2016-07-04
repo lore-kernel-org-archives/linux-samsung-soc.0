@@ -1,71 +1,59 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 7/7] devfreq: exynos-bus: add missing of_node_put after
- calling of_parse_phandle
-Date: Sat, 2 Jul 2016 13:53:39 +0900
-Message-ID: <CAGTfZH2HmmEbbmvm9pqMKv_chzPfZvrRvk+g-fkYPQ7pDfGa0Q@mail.gmail.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
-Reply-To: chanwoo@kernel.org
+From: Peter Chen <peter.chen@nxp.com>
+Subject: RE: [PATCH 2/7] arm: mach-shmobile: pm-rmobile: add missing
+ of_node_put after calling of_parse_phandle
+Date: Mon, 4 Jul 2016 02:10:04 +0000
+Message-ID: <HE1PR04MB14504D0A5905A777452DC57D8B380@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
+ <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:36518 "EHLO
-	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750766AbcGBExl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Jul 2016 00:53:41 -0400
-In-Reply-To: <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Peter Chen <peter.chen@nxp.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Hi Peter,
+ 
+>On Fri, Jul 1, 2016 at 11:41 AM, Peter Chen <peter.chen@nxp.com> wrote:
+>> of_node_put needs to be called when the device node which is got from
+>> of_parse_phandle has finished using.
+>>
+>> Cc: Simon Horman <horms@verge.net.au>
+>> Cc: Magnus Damm <magnus.damm@gmail.com>
+>> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+>
+>NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> --- a/arch/arm/mach-shmobile/pm-rmobile.c
+>> +++ b/arch/arm/mach-shmobile/pm-rmobile.c
+>> @@ -209,6 +209,7 @@ static void __init add_special_pd(struct device_node *np,
+>enum pd_types type)
+>>         special_pds[num_special_pds].pd = pd;
+>
+>The pd pointer is stored in the line above, and released later in put_special_pds().
+>
+>>         special_pds[num_special_pds].type = type;
+>>         num_special_pds++;
+>> +       of_node_put(pd);
+>
+>Hence it must not be released here, as that would cause a double release when
+>put_special_pds() is executed.
+>
 
-2016-07-01 18:42 GMT+09:00 Peter Chen <peter.chen@nxp.com>:
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 2363d0a..a38b5ec 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -383,7 +383,7 @@ err_clk:
->  static int exynos_bus_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
-> +       struct device_node *np = dev->of_node, node;
->         struct devfreq_dev_profile *profile;
->         struct devfreq_simple_ondemand_data *ondemand_data;
->         struct devfreq_passive_data *passive_data;
-> @@ -415,10 +415,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
->                 goto err;
->         }
->
-> -       if (of_parse_phandle(dev->of_node, "devfreq", 0))
-> +       node = of_parse_phandle(dev->of_node, "devfreq", 0);
-> +       if (node) {
-> +               of_node_put(node);
->                 goto passive;
-> -       else
-> +       } else {
->                 ret = exynos_bus_parent_parse_of(np, bus);
-> +       }
->
->         if (ret < 0)
->                 goto err;
+Thanks, Geert, it is my careless.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Please forget this patch.
 
-Regards,
-Chanwoo Choi
+Peter
