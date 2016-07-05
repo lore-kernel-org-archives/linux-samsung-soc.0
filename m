@@ -1,38 +1,38 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] arm64: dts: exynos: Modify the voltage range for BUCK2 for exynos7
-Date: Wed,  6 Jul 2016 01:58:57 +0530
-Message-ID: <1467750537-13911-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:33054 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752103AbcGEQVg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 12:21:36 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v3 0/2] Add CPU clock support for Exynos7
+Date: Wed,  6 Jul 2016 01:59:19 +0530
+Message-ID: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: kgene.kim@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org
 
-Change the BUCK2 (vdd_atlas) voltage range to '500 - 1200mv' since
-CPU DVFS requires it.
+This patch set adds the atlas clock hierarchy on Exynos7. It also
+modifies the existing cpu clock infrastructure to handle exynos7
+differences. These patches are a pre-requisite for enabling CPUFreq
+on Exynos7. This patchset has been tested on next-20160704. The
+opp device tree changes, cpufreq-dt platform addition and defconfig
+enablement will be sent separately.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Previous version of this patchset can be found here:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/322499.html
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index d8767b0..299f3ce 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -249,7 +249,7 @@
- 
- 			buck2_reg: BUCK2 {
- 				regulator-name = "vdd_atlas";
--				regulator-min-microvolt = <1200000>;
-+				regulator-min-microvolt = <500000>;
- 				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
+Changes since v2:
+	- All the dependencies have been merged
+	- Code is now based on exynos5433 cpu clock support
+
+Abhilash Kesavan (2):
+  clk: samsung: cpu: Prepare for addition for Exynos7 CPU clocks
+  clk: samsung: exynos7: Add clocks for atlas block
+
+ .../devicetree/bindings/clock/exynos7-clock.txt    |   6 +
+ drivers/clk/samsung/clk-cpu.c                      |  10 +-
+ drivers/clk/samsung/clk-cpu.h                      |   2 +
+ drivers/clk/samsung/clk-exynos7.c                  | 183 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h            |  21 ++-
+ 5 files changed, 219 insertions(+), 3 deletions(-)
+
 -- 
 1.9.1
+
