@@ -1,47 +1,39 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] arm64: defconfig: Enable s2mps11 regulator clk and s3c rtc
- driver
-Date: Tue, 05 Jul 2016 15:36:51 +0530
-Message-ID: <1467713211-16014-1-git-send-email-alim.akhtar@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular
+Date: Tue, 5 Jul 2016 13:02:06 +0200
+Message-ID: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com> <20160704211220.5685-7-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40255 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754590AbcGEKHa (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33711 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbcGELCH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 06:07:30 -0400
+	Tue, 5 Jul 2016 07:02:07 -0400
+In-Reply-To: <20160704211220.5685-7-paul.gortmaker@windriver.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.kozlowski@samsung.com, pankaj.dubey@samsung.com, alim.akhtar@samsung.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 
-The s3c rtc controller on exynos7 platform uses rtc source clock
-from s2mps11 pmic. This patch enables the required bits to make
-rtc work on exynos7-espresso board.
+Hi Paul,
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/configs/defconfig |    2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> We also delete the MODULE_LICENSE tags etc. since all that information
+> is already contained at the top of the file in the comments.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index fd2d74d..c05b8ba 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -268,6 +268,7 @@ CONFIG_RTC_DRV_EFI=y
- CONFIG_RTC_DRV_PL031=y
- CONFIG_RTC_DRV_SUN6I=y
- CONFIG_RTC_DRV_XGENE=y
-+CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
- CONFIG_TEGRA20_APB_DMA=y
-@@ -282,6 +283,7 @@ CONFIG_XEN_GNTDEV=y
- CONFIG_XEN_GRANT_DEV_ALLOC=y
- CONFIG_COMMON_CLK_SCPI=y
- CONFIG_COMMON_CLK_CS2000_CP=y
-+CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_MSM_GCC_8916=y
--- 
-1.7.10.4
+But the unstructured information at the top of the file is much more difficult
+to grep for...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
