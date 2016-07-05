@@ -1,47 +1,32 @@
-From: Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] spi: s3c64xx: use unsigned type for fifo handling
- variables
-Date: Wed, 6 Jul 2016 00:01:21 +0900
-Message-ID: <20160705150121.GF1257@jack.zhora.eu>
-References: <1467081676-8442-1-git-send-email-andi.shyti@samsung.com>
- <1467081676-8442-6-git-send-email-andi.shyti@samsung.com>
- <20160705145556.GD6247@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160705145556.GD6247-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH 0/2] Add PMU support for Exynos7
+Date: Wed,  6 Jul 2016 01:58:25 +0530
+Message-ID: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:32925 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754964AbcGEQVH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Jul 2016 12:21:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
+Cc: linux-kernel@vger.kernel.org
 
-Hi Mark,
+Add support for the Power Management Unit on Exynos7. These patches
+have been tested on an Exynos7 espresso board (next-20160704).
 
-> > The 'quirks' variable cannot ever be negative, therefore use u8
-> > instead of int. The 8 bit size is given from the fact that
-> > currently the quirks variable has very few statuses.
-> > 
-> > The rx_lvl_offset and tx_st_done store shift values, so that u8
-> > is a proper size.
-> > 
-> > fifo_lvl_mask stores a series of masks, to be in we will keep the
-> > 32 bit size.
-> 
-> What's the advantage of these changes?  This feels like microptimisation
-> of something that shouldn't be a big performance issue and it's not
-> always the case that the compiler does something more sensible with
-> smaller or unsigned types.  I'm not saying don't do it, I'm just saying
-> that it's not clear to me what the win is.
+Abhilash Kesavan (2):
+  soc: samsung: Change type of PMU configuration register value to u32
+  soc: samsung: Add support for Exynos7 PMU
 
-not much indeed. Just something that was a little bothering me
-while I was reading through.
+ drivers/soc/samsung/Makefile                |   3 +-
+ drivers/soc/samsung/exynos-pmu.c            |   3 +
+ drivers/soc/samsung/exynos-pmu.h            |   4 +-
+ drivers/soc/samsung/exynos7-pmu.c           | 367 ++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h | 259 ++++++++++++++++++++
+ 5 files changed, 634 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/soc/samsung/exynos7-pmu.c
 
-Please, feel free to drop it.
-
-Thanks,
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.9.1
