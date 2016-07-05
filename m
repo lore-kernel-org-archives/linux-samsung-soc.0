@@ -1,43 +1,61 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] arm64: defconfig: Enable s2mps11 regulator clk and s3c
- rtc driver
-Date: Tue, 5 Jul 2016 10:01:27 -0400
-Message-ID: <20dda870-4196-6160-59cf-ea6f9a5016c8@osg.samsung.com>
-References: <1467713211-16014-1-git-send-email-alim.akhtar@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] spi: s3c64xx: use unsigned type for fifo handling
+ variables
+Date: Tue, 5 Jul 2016 16:55:56 +0200
+Message-ID: <20160705145556.GD6247@sirena.org.uk>
+References: <1467081676-8442-1-git-send-email-andi.shyti@samsung.com>
+ <1467081676-8442-6-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1467713211-16014-1-git-send-email-alim.akhtar@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, pankaj.dubey@samsung.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2W4Na7kn/Mq3HLmY"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1467081676-8442-6-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Alim,
 
-On 07/05/2016 06:06 AM, Alim Akhtar wrote:
-> The s3c rtc controller on exynos7 platform uses rtc source clock
-> from s2mps11 pmic. This patch enables the required bits to make
-> rtc work on exynos7-espresso board.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
+--2W4Na7kn/Mq3HLmY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me.
+On Tue, Jun 28, 2016 at 11:41:15AM +0900, Andi Shyti wrote:
+> The 'quirks' variable cannot ever be negative, therefore use u8
+> instead of int. The 8 bit size is given from the fact that
+> currently the quirks variable has very few statuses.
+>=20
+> The rx_lvl_offset and tx_st_done store shift values, so that u8
+> is a proper size.
+>=20
+> fifo_lvl_mask stores a series of masks, to be in we will keep the
+> 32 bit size.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+What's the advantage of these changes?  This feels like microptimisation
+of something that shouldn't be a big performance issue and it's not
+always the case that the compiler does something more sensible with
+smaller or unsigned types.  I'm not saying don't do it, I'm just saying
+that it's not clear to me what the win is.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--2W4Na7kn/Mq3HLmY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXe8p7AAoJECTWi3JdVIfQUQMH/2i/+wOC+tAv38rAt4MWdG6E
+oD7dzOgD64VKpejv3yuNWDyLZhMiTeN8S8SBIDYYB7wfydMDhKtYgR2OWSyBvPJh
+cf8cHzIMlTx/EEEMYrMRJZi6sm+ZwQ4g4cF2i5tkVT8X+zfhQ6Cq+HYbM83MYT7n
+wCPNzfB8cSgzNOEw4O8yY4HMIgGB5DNIzINQ5w8SlazAB68wQgrSjoc3smWHl7lS
+fwLR4FNiec3AVqC/70jDWCvI/PGaJEi7rtZx+IboAm5CST05IESPkYowHA6kIP+L
+BvcVf65amIBXl5UtWxWa6EWP9OmC6TnVtS44DyU7pvTGlp8SxDWDW6M+Cwpei9A=
+=xArA
+-----END PGP SIGNATURE-----
+
+--2W4Na7kn/Mq3HLmY--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
