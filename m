@@ -1,39 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular
-Date: Tue, 5 Jul 2016 13:02:06 +0200
-Message-ID: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com> <20160704211220.5685-7-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH] memory: samsung: exynos-srom: fix wrong count of registers
+Date: Tue, 05 Jul 2016 20:40:17 +0900
+Message-ID: <1467718817-19239-1-git-send-email-sw0312.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:33711 "EHLO
-	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751427AbcGELCH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:54220 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754779AbcGELkS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 07:02:07 -0400
-In-Reply-To: <20160704211220.5685-7-paul.gortmaker@windriver.com>
+	Tue, 5 Jul 2016 07:40:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org
+Cc: cw00.choi@samsung.com, sw0312.kim@samsung.com
 
-Hi Paul,
+This patch fixes wrong count of array for srom registers from probe
+function.
 
-On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> We also delete the MODULE_LICENSE tags etc. since all that information
-> is already contained at the top of the file in the comments.
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+ drivers/memory/samsung/exynos-srom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But the unstructured information at the top of the file is much more difficult
-to grep for...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
+index 96756fb..c66d2bd 100644
+--- a/drivers/memory/samsung/exynos-srom.c
++++ b/drivers/memory/samsung/exynos-srom.c
+@@ -134,7 +134,7 @@ static int exynos_srom_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, srom);
+ 
+ 	srom->reg_offset = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
+-			sizeof(exynos_srom_offsets));
++			ARRAY_SIZE(exynos_srom_offsets));
+ 	if (!srom->reg_offset) {
+ 		iounmap(srom->reg_base);
+ 		return -ENOMEM;
+-- 
+1.7.9.5
