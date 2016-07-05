@@ -1,38 +1,60 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] memory: samsung: exynos-srom: fix wrong count of registers
-Date: Tue, 05 Jul 2016 20:40:17 +0900
-Message-ID: <1467718817-19239-1-git-send-email-sw0312.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54220 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754779AbcGELkS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 07:40:18 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] arm64: dts: Fix rtc by providing rtc_src clock
+Date: Tue, 5 Jul 2016 09:03:02 -0400
+Message-ID: <caea8f78-be5e-233f-c475-41c2973761ae@osg.samsung.com>
+References: <1467713107-15932-1-git-send-email-alim.akhtar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467713107-15932-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.kozlowski@samsung.com, pankaj.dubey@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org
-Cc: cw00.choi@samsung.com, sw0312.kim@samsung.com
 
-This patch fixes wrong count of array for srom registers from probe
-function.
+Hello Alim,
 
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/memory/samsung/exynos-srom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 07/05/2016 06:05 AM, Alim Akhtar wrote:
+> Add rtc source clock as exynos7 needs source (32.768KHz) clock
+> for rtc block. Without this currently rtc driver probe is broken
+> on this SoC, thats because rtc-s3c driver expect rtc_src clock to
+> be provided for _s3c6410-rtc_ type rtc controllers.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> index 03f9cf6..7f48cf0 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -12,6 +12,7 @@
+>  /dts-v1/;
+>  #include "exynos7.dtsi"
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/clock/samsung,s2mps11.h>
+>  
+>  / {
+>  	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+> @@ -44,6 +45,8 @@
+>  
+>  &rtc {
+>  	status = "okay";
+> +	clocks = <&clock_ccore PCLK_RTC>, <&s2mps15_osc S2MPS11_CLK_AP>;
+> +	clock-names = "rtc", "rtc_src";
+>  };
+>  
+>  &watchdog {
+> 
 
-diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
-index 96756fb..c66d2bd 100644
---- a/drivers/memory/samsung/exynos-srom.c
-+++ b/drivers/memory/samsung/exynos-srom.c
-@@ -134,7 +134,7 @@ static int exynos_srom_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, srom);
- 
- 	srom->reg_offset = exynos_srom_alloc_reg_dump(exynos_srom_offsets,
--			sizeof(exynos_srom_offsets));
-+			ARRAY_SIZE(exynos_srom_offsets));
- 	if (!srom->reg_offset) {
- 		iounmap(srom->reg_base);
- 		return -ENOMEM;
+Looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-1.7.9.5
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
