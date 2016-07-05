@@ -1,40 +1,38 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 1/2] soc: samsung: Change type of PMU configuration register value to u32
-Date: Wed,  6 Jul 2016 01:58:26 +0530
-Message-ID: <1467750507-13853-2-git-send-email-a.kesavan@samsung.com>
-References: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH] arm64: dts: exynos: Modify the voltage range for BUCK2 for exynos7
+Date: Wed,  6 Jul 2016 01:58:57 +0530
+Message-ID: <1467750537-13911-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:36711 "EHLO
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:33054 "EHLO
 	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755361AbcGEQVI (ORCPT
+	with ESMTP id S1752103AbcGEQVg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 12:21:08 -0400
-In-Reply-To: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
+	Tue, 5 Jul 2016 12:21:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
-Cc: linux-kernel@vger.kernel.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org
 
-Exynos7 has certain PMU registers that needs to be configured with
-u32 values.
+Change the BUCK2 (vdd_atlas) voltage range to '500 - 1200mv' since
+CPU DVFS requires it.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
- drivers/soc/samsung/exynos-pmu.h | 2 +-
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-index a469e36..1bdc506 100644
---- a/drivers/soc/samsung/exynos-pmu.h
-+++ b/drivers/soc/samsung/exynos-pmu.h
-@@ -18,7 +18,7 @@
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index d8767b0..299f3ce 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -249,7 +249,7 @@
  
- struct exynos_pmu_conf {
- 	unsigned int offset;
--	u8 val[NUM_SYS_POWERDOWN];
-+	unsigned int val[NUM_SYS_POWERDOWN];
- };
- 
- struct exynos_pmu_data {
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "vdd_atlas";
+-				regulator-min-microvolt = <1200000>;
++				regulator-min-microvolt = <500000>;
+ 				regulator-max-microvolt = <1200000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
 -- 
 1.9.1
