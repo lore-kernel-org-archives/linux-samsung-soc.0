@@ -1,43 +1,48 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] arm64: dts: exynos: add atlas clock controller node
-Date: Wed,  6 Jul 2016 01:59:59 +0530
-Message-ID: <1467750599-14008-1-git-send-email-a.kesavan@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v4 0/4] ASoC: samsung: Sound support for Exynos5433 TM2(E)
+ boards
+Date: Tue, 05 Jul 2016 19:12:14 +0200
+Message-ID: <1467738734-31362-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:33297 "EHLO
-	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933102AbcGEQWj (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:32871 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752413AbcGERMr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 12:22:39 -0400
+	Tue, 5 Jul 2016 13:12:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, k.kozlowski@samsung.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org
+To: broonie@kernel.org, lee.jones@linaro.org
+Cc: robh@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, ideal.song@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-The atlas CMU generates all the necessary clocks for the Cortex-A57.
+This patch series adds a MFD driver for Samsung Exynos5433 SoC Low Power
+Audio Subsystem and an ASoC machine driver for Exynos5433 based TM2/TM2E
+boards.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The changes since v3 are listed in individual patches, the main change
+was rewriting LPASS driver as a MFD driver. It seems much better now
+as the dependencies between LPASS Top block and its IP sub-blocks are
+properly taken care of.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 8d7ce97..fd008e9 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -158,6 +158,14 @@
- 				      "dout_sclk_mfc_pll";
- 		};
- 
-+		clock_atlas: clock-controller@11800000 {
-+			compatible = "samsung,exynos7-clock-atlas";
-+			reg = <0x11800000 0x1100>;
-+			#clock-cells = <1>;
-+			clocks = <&fin_pll>, <&clock_topc SCLK_BUS0_PLL_ATLAS>;
-+			clock-names = "fin_pll", "sclk_bus0_pll_atlas";
-+		};
-+
- 		clock_ccore: clock-controller@105b0000 {
- 			compatible = "samsung,exynos7-clock-ccore";
- 			reg = <0x105b0000 0xd00>;
--- 
+Sylwester Nawrocki (4):
+  mfd: Add DT bindings documentation for Samsung Exynos LPASS
+  mfd: Add Samsung Exynos Low Power Audio Subsystem driver
+  ASoC: samsung: Add DT bindings documentation for TM2 sound subsystem
+  ASoC: samsung: Add machine driver for Exynos5433 based TM2 board
+
+ .../bindings/mfd/samsung,exynos5433-lpass.txt      |  21 +
+ .../bindings/sound/samsung,tm2-audio.txt           |  36 ++
+ drivers/mfd/Kconfig                                |   8 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/exynos-lpass.c                         | 185 +++++++
+ include/linux/mfd/syscon/exynos5-pmu.h             |   4 +-
+ sound/soc/samsung/Kconfig                          |   9 +
+ sound/soc/samsung/Makefile                         |   2 +
+ sound/soc/samsung/tm2_wm5110.c                     | 579 +++++++++++++++++++++
+ 9 files changed, 844 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+ create mode 100644 drivers/mfd/exynos-lpass.c
+ create mode 100644 sound/soc/samsung/tm2_wm5110.c
+
+--
 1.9.1
