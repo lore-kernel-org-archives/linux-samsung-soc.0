@@ -1,60 +1,48 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] arm64: dts: Fix rtc by providing rtc_src clock
-Date: Tue, 5 Jul 2016 09:03:02 -0400
-Message-ID: <caea8f78-be5e-233f-c475-41c2973761ae@osg.samsung.com>
-References: <1467713107-15932-1-git-send-email-alim.akhtar@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
+ non-modular
+Date: Tue, 5 Jul 2016 09:17:37 -0400
+Message-ID: <20160705131737.GB26134@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-7-paul.gortmaker@windriver.com>
+ <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467713107-15932-1-git-send-email-alim.akhtar@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX_KDxOttbuG3=RrQU5Tbp4CuNmdofOtGvOXCtr1wxyag@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.kozlowski@samsung.com, pankaj.dubey@samsung.com
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Alim,
+[Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular] On 05/07/2016 (Tue 13:02) Geert Uytterhoeven wrote:
 
-On 07/05/2016 06:05 AM, Alim Akhtar wrote:
-> Add rtc source clock as exynos7 needs source (32.768KHz) clock
-> for rtc block. Without this currently rtc driver probe is broken
-> on this SoC, thats because rtc-s3c driver expect rtc_src clock to
-> be provided for _s3c6410-rtc_ type rtc controllers.
+> Hi Paul,
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |    3 +++
->  1 file changed, 3 insertions(+)
+> On Mon, Jul 4, 2016 at 11:12 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > We also delete the MODULE_LICENSE tags etc. since all that information
+> > is already contained at the top of the file in the comments.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index 03f9cf6..7f48cf0 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -12,6 +12,7 @@
->  /dts-v1/;
->  #include "exynos7.dtsi"
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
->  
->  / {
->  	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
-> @@ -44,6 +45,8 @@
->  
->  &rtc {
->  	status = "okay";
-> +	clocks = <&clock_ccore PCLK_RTC>, <&s2mps15_osc S2MPS11_CLK_AP>;
-> +	clock-names = "rtc", "rtc_src";
->  };
->  
->  &watchdog {
+> But the unstructured information at the top of the file is much more difficult
+> to grep for...
+
+...which IMHO is largely a moot point, since the MODULE_<xyz> tags
+aren't universally deployed and largely don't exist at all once you are
+outside of the driver space.
+
+Paul.
+--
+
 > 
-
-Looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
