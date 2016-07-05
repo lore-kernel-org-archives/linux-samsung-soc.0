@@ -1,58 +1,46 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
- non-modular
-Date: Tue, 5 Jul 2016 09:32:16 -0400
-Message-ID: <20160705133216.GC26134@windriver.com>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-7-paul.gortmaker@windriver.com>
- <577B782E.9090203@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <577B782E.9090203@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Constify iomem address passed to s5p_init_cpu
+Date: Tue, 05 Jul 2016 15:56:54 +0200
+Message-ID: <1467727014-14684-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly non-modular] On 05/07/2016 (Tue 11:04) Krzysztof Kozlowski wrote:
+The iomem passed to s5p_init_cpu is used as read-only.
 
-> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
-> > The Kconfig currently controlling compilation of this code is:
-> > 
-> > arch/arm/mach-exynos/Kconfig:menuconfig ARCH_EXYNOS
-> > arch/arm/mach-exynos/Kconfig:   bool "Samsung EXYNOS" if ARCH_MULTI_V7
-> > 
-> > ...meaning that it currently is not being built as a module by anyone.
-> > 
-> > Lets remove the couple traces of modularity so that when reading the
-> > driver there is no doubt it is builtin-only.
-> > 
-> > Lets remove the modular code that is essentially orphaned, so that
-> > when reading the driver there is no doubt it is builtin-only.
-> > 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/plat-samsung/cpu.c              | 2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-[...]
-
-> > -MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
-> > -MODULE_LICENSE("GPL v2");
-> > -MODULE_ALIAS("platform:exynos-audss-clk");
-> 
-> Why not removing .remove() callback as well?
-> 
-> I don't find sysfs unbind hook useful except testing the exit paths...
-> which in that case do not exist anymore (there is no "modprobe -r" for
-> it anyway).
-
-Yes, I normally delete the .remove callbacks as indicated in the 0/10,
-but somehow I overlooked this one.   Thanks for spotting it.  I'll
-delete it and disable the sysfs bind in v2.
-
-Paul.
---
-
-> 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/arch/arm/plat-samsung/cpu.c b/arch/arm/plat-samsung/cpu.c
+index bd12a55401e0..a107b3a0b095 100644
+--- a/arch/arm/plat-samsung/cpu.c
++++ b/arch/arm/plat-samsung/cpu.c
+@@ -44,7 +44,7 @@ void __init s3c64xx_init_cpu(void)
+ 	pr_info("Samsung CPU ID: 0x%08lx\n", samsung_cpu_id);
+ }
+ 
+-void __init s5p_init_cpu(void __iomem *cpuid_addr)
++void __init s5p_init_cpu(const void __iomem *cpuid_addr)
+ {
+ 	samsung_cpu_id = readl_relaxed(cpuid_addr);
+ 	samsung_cpu_rev = samsung_cpu_id & 0xFF;
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 4f8a6221dc6d..b7b702a72cac 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -113,7 +113,7 @@ extern void s3c_init_cpu(unsigned long idcode,
+ extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
+ 
+ extern void s3c64xx_init_cpu(void);
+-extern void s5p_init_cpu(void __iomem *cpuid_addr);
++extern void s5p_init_cpu(const void __iomem *cpuid_addr);
+ 
+ extern unsigned int samsung_rev(void);
+ 
+-- 
+1.9.1
