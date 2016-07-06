@@ -1,33 +1,71 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: exynos: Modify the voltage range for BUCK2
- for exynos7
-Date: Wed, 6 Jul 2016 09:44:11 +0200
-Message-ID: <CAJKOXPfWanrkNvSRz384UNga1QUWuVS8rHvYbda9_io06RkeQA@mail.gmail.com>
-References: <1467750537-13911-1-git-send-email-a.kesavan@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Date: Wed, 06 Jul 2016 12:40:58 +0200
+Message-ID: <577CE03A.3090603@samsung.com>
+References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+ <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
+ <577A2EFF.2010306@samsung.com> <20160704102614.GD1257@jack.zhora.eu>
+ <CGME20160704151537epcas1p42a74c53ebb4227da9a30c25e250f0c5a@epcas1p4.samsung.com>
+ <577A7D8D.8070004@samsung.com> <20160706045108.GD23620@samsunx.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467750537-13911-1-git-send-email-a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50909 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326AbcGFKlD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Jul 2016 06:41:03 -0400
+In-reply-to: <20160706045108.GD23620@samsunx.samsung>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>
 
-On Tue, Jul 5, 2016 at 10:28 PM, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Change the BUCK2 (vdd_atlas) voltage range to '500 - 1200mv' since
-> CPU DVFS requires it.
->
-> Signed-off-by: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+On 07/06/2016 06:51 AM, Andi Shyti wrote:
+> 
+> I don't see anything wrong on the above. We could make it as:
 
-Thanks, applied.
+> @@ -640,13 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+>  
+>         writel(val, regs + S3C64XX_SPI_MODE_CFG);
+>  
+> -       if (sdd->port_conf->clk_from_cmu) {
+> -               /* Configure Clock */
+> -               /* There is half-multiplier before the SPI */
+> -               clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+> -               /* Enable Clock */
+> -               clk_prepare_enable(sdd->src_clk);
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+clk_set_rate() call needs to stay, we can only remove clk_prepare_enable().
+
+> -       } else {
+> +       if (!sdd->port_conf->clk_from_cmu) {
+>                 /* Configure Clock */
+>                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
+>                 val &= ~S3C64XX_SPI_PSR_MASK;
+> 
+>> I meant we could amend which clocks are specified at the SPI bus device
+>> DT nodes and change handling of clocks in the spi-s3c64xx driver to model
+>> everything properly and get it all working.
+> 
+> I think that if the clock comes from the cmu it's not necessary
+> to disable it. I would like to avoid adding DTS properties
+> because we have the clock disabling inherited from old code which
+> it might not be required at all (in our tests, indeed it works).
+
+OK, anyway we already need to amend exynos5433.dtsi file to change
+the "spi_busclk0" clock specifier.
+
+I agree we can get rid of the clock gating in s3c64xx_spi_config() 
+function, it should not do any harm and will help in getting rid 
+of the bus access exceptions.
+
+In general PCLK should be enough for accessing register of the controller,
+one hypothesis is that automatic clock gating may be disabling PCLK
+when it sees SCLK inactive.
+
+I tested on exynos4412 trats2 board a large firmware file upload over 
+SPI and didn't notice any bad side effects with above 
+clk_disable_unprepare()/clk_prepare_enable() calls commented out.
