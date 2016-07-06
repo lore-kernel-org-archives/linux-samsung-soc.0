@@ -1,61 +1,94 @@
-From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
-Subject: =?UTF-8?B?UkU6IFtQQVRDSCA3LzddIGRldmZyZXE6IGV4eW5vcy1idXM6?=
- =?UTF-8?B?IGFkZCBtaXNzaW5nIG9mX25vZGVfcHV0IGFmdGVyIGNhbGxp?=
- =?UTF-8?B?bmcgb2ZfcGFyc2VfcGhhbmRsZQ==?=
-Date: Wed, 06 Jul 2016 02:47:45 +0000
-Message-ID: <2060150880.435118.1467773265031.JavaMail.weblogic@ep2ml104d>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
- <CGME20160701094927epcas1p43f956ee3465f96e2f9c99b44c0f5b49d@epcas1p4.samsung.com>
-Reply-To: myungjoo.ham@samsung.com
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Date: Wed, 06 Jul 2016 13:51:09 +0900
+Message-ID: <20160706045108.GD23620@samsunx.samsung>
+References: <1467270911-10971-1-git-send-email-andi.shyti@samsung.com>
+ <1467270911-10971-2-git-send-email-andi.shyti@samsung.com>
+ <577A2EFF.2010306@samsung.com> <20160704102614.GD1257@jack.zhora.eu>
+ <CGME20160704151537epcas1p42a74c53ebb4227da9a30c25e250f0c5a@epcas1p4.samsung.com>
+ <577A7D8D.8070004@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/related;
- boundary="----=_Part_435117_1020135783.1467773265031"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59876 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752124AbcGFCrt (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43203 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750864AbcGFEvM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 22:47:49 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0O9V02EYIH3LN740@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2016 11:47:45 +0900 (KST)
+	Wed, 6 Jul 2016 00:51:12 -0400
+Content-disposition: inline
+In-reply-to: <577A7D8D.8070004@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?UGV0ZXIgQ2hlbg==?= <peter.chen@nxp.com>, =?UTF-8?B?bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3Jn?= <linux-renesas-soc@vger.kernel.org>, =?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?= <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?= <linux-kernel@vger.kernel.org>, =?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?= <linux-pm@vger.kernel.org>, =?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?= <linux-samsung-soc@vger.kernel.org>
-Cc: =?UTF-8?B?Q2hhbndvbyBDaG9p?= <cw00.choi@samsung.com>, =?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>, =?UTF-8?B?S3VramluIEtpbQ==?= <kgene@kernel.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvemxvd3NraQ==?= <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andi Shyti <andi@etezian.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>
 
-------=_Part_435117_1020135783.1467773265031
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"
+Hi Sylwester,
 
-PiANCj4gLS0tLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLS0tDQo+IFNlbmRlciA6IFBl
-dGVyIENoZW4gPHBldGVyLmNoZW5AbnhwLmNvbT4NCj4gRGF0ZSAgIDogMjAxNi0wNy0wMSAxODo0
-OSAoR01UKzkpDQo+IFRpdGxlICA6IFtQQVRDSCA3LzddIGRldmZyZXE6IGV4eW5vcy1idXM6IGFk
-ZCBtaXNzaW5nIG9mX25vZGVfcHV0IGFmdGVyIGNhbGxpbmcgb2ZfcGFyc2VfcGhhbmRsZQ0KPiAg
-DQo+IG9mX25vZGVfcHV0IG5lZWRzIHRvIGJlIGNhbGxlZCB3aGVuIHRoZSBkZXZpY2Ugbm9kZSB3
-aGljaCBpcyBnb3QNCj4gZnJvbSBvZl9wYXJzZV9waGFuZGxlIGhhcyBmaW5pc2hlZCB1c2luZy4N
-Cj4gIA0KPiBDYzogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IENjOiBN
-eXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBh
-cmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQo+IENjOiBLdWtqaW4gS2ltIDxrZ2VuZUBr
-ZXJuZWwub3JnPg0KPiBDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3Vu
-Zy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFBldGVyIENoZW4gPHBldGVyLmNoZW5AbnhwLmNvbT4N
-Cg0KV2l0aCB0aGUgY2hhbmdlIChidWlsZCBlcnJvciBmaXgpIG9mIHRoZSBmb2xsb3dpbmcgYWRk
-ZWQsIChJJ2xsIHVwZGF0ZSkNClNpZ25lZC1vZmYtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28u
-aGFtQHNhbXN1bmcuY29tPg0KDQoNCkNoZWVycywNCk15dW5nSm9vDQoNCj4gLS0tDQo+ICBkcml2
-ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOSArKysrKystLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ICANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMgYi9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5j
-DQo+IGluZGV4IDIzNjNkMGEuLmEzOGI1ZWMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2ZnJl
-cS9leHlub3MtYnVzLmMNCj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYw0KPiBA
-QCAtMzgzLDcgKzM4Myw3IEBAIGVycl9jbGs6DQo+ICBzdGF0aWMgaW50IGV4eW5vc19idXNfcHJv
-YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIHsNCj4gICAgICAgICAgc3RydWN0
-IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsNCj4gLSAgICAgICAgc3RydWN0IGRldmljZV9ub2Rl
-ICpucCA9IGRldi0+b2Zfbm9kZTsNCj4gKyAgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9
-IGRldi0+b2Zfbm9kZSwgbm9kZTsNCg0KKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2LT5v
-Zl9ub2RlLCAqbm9kZTsNCg0KPiAgICAgICAgICBzdHJ1Y3QgZGV2ZnJlcV9kZXZfcHJvZmlsZSAq
-cHJvZmlsZTsNCj4gICAgICAgICAgc3RydWN0IGRldmZyZXFfc2ltcGxlX29uZGVtYW5kX2RhdGEg
-Km9uZGVtYW5kX2RhdGE7DQo+ICAgICAgICAgIHN0cnVjdCBkZXZmcmVxX3Bhc3NpdmVfZGF0YSAq
-cGFzc2l2ZV9kYXRhOw0KLi4uDQo=
-------=_Part_435117_1020135783.1467773265031--
+> +#if 0
+>                         clocks = <&cmu_peric CLK_PCLK_SPI1>,
+>                                  <&cmu_top CLK_SCLK_SPI1_PERIC>;
+> +#else
+> +                       clocks = <&cmu_peric CLK_PCLK_SPI1>,
+> +                                <&cmu_peric CLK_SCLK_SPI1>;
+> +#endif
+
+Yes, that's how it should be, indeed.
+
+>         /* Disable Clock */
+>         if (sdd->port_conf->clk_from_cmu) {
+> -               clk_disable_unprepare(sdd->src_clk);
+> +               /* clk_disable_unprepare(sdd->src_clk); */
+>         } else {
+>                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
+>                 val &= ~S3C64XX_SPI_ENCLK_ENABLE;
+> @@ -626,7 +626,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+>                 /* There is half-multiplier before the SPI */
+>                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>                 /* Enable Clock */
+> -               clk_prepare_enable(sdd->src_clk);
+> +               /* clk_prepare_enable(sdd->src_clk); */
+>         } else {
+>                 /* Configure Clock */
+>                 val = readl(regs + S3C64XX_SPI_CLK_CFG);
+
+I don't see anything wrong on the above. We could make it as:
+
+@@ -596,9 +597,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+        u32 val;
+ 
+        /* Disable Clock */
+-       if (sdd->port_conf->clk_from_cmu) {
+-               clk_disable_unprepare(sdd->src_clk);
+-       } else {
++       if (!sdd->port_conf->clk_from_cmu) {
+                val = readl(regs + S3C64XX_SPI_CLK_CFG);
+                val &= ~S3C64XX_SPI_ENCLK_ENABLE;
+                writel(val, regs + S3C64XX_SPI_CLK_CFG);
+@@ -640,13 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 
+        writel(val, regs + S3C64XX_SPI_MODE_CFG);
+ 
+-       if (sdd->port_conf->clk_from_cmu) {
+-               /* Configure Clock */
+-               /* There is half-multiplier before the SPI */
+-               clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+-               /* Enable Clock */
+-               clk_prepare_enable(sdd->src_clk);
+-       } else {
++       if (!sdd->port_conf->clk_from_cmu) {
+                /* Configure Clock */
+                val = readl(regs + S3C64XX_SPI_CLK_CFG);
+                val &= ~S3C64XX_SPI_PSR_MASK;
+
+> I meant we could amend which clocks are specified at the SPI bus device
+> DT nodes and change handling of clocks in the spi-s3c64xx driver to model
+> everything properly and get it all working.
+
+I think that if the clock comes from the cmu it's not necessary
+to disable it. I would like to avoid adding DTS properties
+because we have the clock disabling inherited from old code which
+it might not be required at all (in our tests, indeed it works).
+
+Thanks,
+Andi
