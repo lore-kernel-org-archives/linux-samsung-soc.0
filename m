@@ -1,29 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 0/2] mark spi clocks as critical and enable spi3 clocks
-Date: Thu, 07 Jul 2016 17:26:13 +0200
-Message-ID: <577E7495.2010904@samsung.com>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Date: Fri, 8 Jul 2016 00:39:07 +0900
+Message-ID: <20160707153907.GB1256@jack.zhora.eu>
 References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
- <577E56A6.6010301@samsung.com>
+ <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+ <CGME20160707124623epcas1p2452001bf48f03cb47c7f7db437130e6d@epcas1p2.samsung.com>
+ <577E4F1C.8070004@samsung.com>
+ <20160707132738.GI23620@samsunx.samsung>
+ <577E7343.9090002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <577E56A6.6010301@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <577E7343.9090002@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/07/2016 03:18 PM, Sylwester Nawrocki wrote:
-> On 07/07/2016 02:13 PM, Andi Shyti wrote:
->> > Andi Shyti (2):
->> >   clk: exynos5433: do not use CLK_IGNORE_UNUSED for SPI clocks
->> >   clk: exynos5433: enable sclk_ioclk for SPI3
->
-> Applied both patches, thanks.
+Hi Sylwester,
 
-Apologies for the confusion, I had to drop these patches for reasons
-explained in the other thread. We just need to simply drop
-CLK_IGNORE_UNUSED flags and get the driver controlling clocks which
-belong to the peripheral IP block.
+> >>> > > The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> >>> > > Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
+> >>> > > which enables the clock line during boot time.
+> >> > 
+> >> > I don't agree. Both flags should be avoided. Clk is critical does not
+> >> > solve the problem. It is just a better workaround for lack of proper
+> >> > clock consumers.
+> >> > 
+> >> > The IOCLK is not a critical clock. It can be disabled (e.g. when SoC
+> >> >  is used on a board without any SPI device connected).
+> >
+> > As we discussed offline there is no driver which is requesting
+> > this clock. We cannot ask to the spi driver to handle three
+> > clocks because the exynos5433 has its own peculiarities.
+> > 
+> > If we want this on the spi driver's side, we need to add a new
+> > compatible and check it everytime. To me it looks uglier than
+> > just keep it alive.
+> 
+> I took a closer look at what those IOCLK clocks exactly are and
+> unfortunately I must agree with Krzysztof.  These clock gates are
+> closely related to the IP blocks and to me proper approach is to
+> have them listed in DT and controlled by the SPI bus driver.
+> 
+> I checked and there is similar pattern for other IPs like I2S and
+> other SoCs, e.g. exynos7420.
+> Additionally parents of those IOCLK_SPI?_CLK clocks are currently
+> wrongly modelled as fixed rate clocks.  These clocks really don't
+> have a parent until some clock is fed externally to the SoC's I/O
+> pin.  But this issue could be addressed later.
 
+yes, it's a weird design :/
+
+> I think it is not a big deal to add "samsung-exynos5433-spi"
+> compatible to the SPI driver along with a new variant data and
+> a flag like "has_cmu_ioclk" to indicate whether a third clock
+> should be handled or not. Presumably for now the ioclk clock can
+> just simply be enabled in probe(), this way it will be enabled
+> only for SPI controllers actually in use.
+
+OK, I will work on s3c64xx driver side, then.
+
+Thanks,
+Andi
