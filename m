@@ -1,57 +1,88 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Date: Thu, 07 Jul 2016 17:20:35 +0200
-Message-ID: <577E7343.9090002@samsung.com>
-References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
- <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
- <CGME20160707124623epcas1p2452001bf48f03cb47c7f7db437130e6d@epcas1p2.samsung.com>
- <577E4F1C.8070004@samsung.com> <20160707132738.GI23620@samsunx.samsung>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: [PATCH v5 0/4] Generic zpos property
+Date: Thu, 7 Jul 2016 17:21:05 +0200
+Message-ID: <CA+M3ks4TQ4ER543rght3XxKY8No4z_n4M9S3V9YNyP0FvPBHoQ@mail.gmail.com>
+References: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
+ <577E609F.3000300@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20160707132738.GI23620@samsunx.samsung>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <577E609F.3000300@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Fabien Dessenne <fabien.dessenne@st.com>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/07/2016 03:27 PM, Andi Shyti wrote:
->>> > > The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
->>> > > Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
->>> > > which enables the clock line during boot time.
->> > 
->> > I don't agree. Both flags should be avoided. Clk is critical does not
->> > solve the problem. It is just a better workaround for lack of proper
->> > clock consumers.
->> > 
->> > The IOCLK is not a critical clock. It can be disabled (e.g. when SoC
->> >  is used on a board without any SPI device connected).
->
-> As we discussed offline there is no driver which is requesting
-> this clock. We cannot ask to the spi driver to handle three
-> clocks because the exynos5433 has its own peculiarities.
-> 
-> If we want this on the spi driver's side, we need to add a new
-> compatible and check it everytime. To me it looks uglier than
-> just keep it alive.
-
-I took a closer look at what those IOCLK clocks exactly are and
-unfortunately I must agree with Krzysztof.  These clock gates are
-closely related to the IP blocks and to me proper approach is to
-have them listed in DT and controlled by the SPI bus driver.
-
-I checked and there is similar pattern for other IPs like I2S and
-other SoCs, e.g. exynos7420.
-Additionally parents of those IOCLK_SPI?_CLK clocks are currently
-wrongly modelled as fixed rate clocks.  These clocks really don't
-have a parent until some clock is fed externally to the SoC's I/O
-pin.  But this issue could be addressed later.
-
-I think it is not a big deal to add "samsung-exynos5433-spi"
-compatible to the SPI driver along with a new variant data and
-a flag like "has_cmu_ioclk" to indicate whether a third clock
-should be handled or not. Presumably for now the ioclk clock can
-just simply be enabled in probe(), this way it will be enabled
-only for SPI controllers actually in use.
+enBvcyBuZXcgZmllbGRzIGFyZSBjb3JyZWN0bHkgZG9jdW1lbnRlZCBpbiBkcm0ta21zLmh0bWwg
+YWZ0ZXIgcnVubmluZwptYWtlIGh0bWxkb2NzLgoKQmVuamFtaW4KCjIwMTYtMDctMDcgMTY6MDEg
+R01UKzAyOjAwIFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPjoK
+PiBIZWxsbyBCZW5qYW1pbiwKPgo+Cj4gQmVuamFtaW4gR2FpZ25hcmQgd3JvdGU6Cj4+IHZlcnNp
+b24gNToKPj4gcmViYXNlZCBvbiBkcm0tbmV4dCB3aGVyZSBEb2N1bWVudGF0aW9uL0RvY0Jvb2sv
+Z3B1LnRtcGwgZG9lc24ndAo+PiBleGlzdCBhbnltb3JlLgo+IEkgdGhpbmsgdGhlIGRvY3VtZW50
+YXRpb24gaGFzIGp1c3QgbW92ZWQgdG8gRG9jdW1lbnRhdGlvbi9ncHUsIHNvIHRoZQo+IHpwb3Mg
+cHJvcGVydHkgc2hvdWxkIGJlIGRvY3VtZW50ZWQgdGhlcmUgdGhlbi4KPgo+Cj4gV2l0aCBiZXN0
+IHdpc2hlcywKPiBUb2JpYXMKPgo+Cj4+IHJld29yayBzdGkgcGF0Y2ggYmVjYXVzZSBzb21lIHBs
+YW5lIGZ1bmN0aW9ucyBoYXZlIGNoYW5nZWQgc2luY2UgdjQKPj4KPj4gdmVyc2lvbiA0Ogo+PiBt
+YWtlIHN1cmUgdGhhdCBub3JtYWxpemVkIHpwb3MgdmFsdWUgaXMgc3RheSBpbiB0aGUgZGVmaW5l
+ZCBwcm9wZXJ0eQo+PiByYW5nZSBhbmQgd2FybiB1c2VyIGlmIG5vdC4KPj4gRml4IE5VTEwgcG9p
+bnRlciBidWcgaW4gcmNhci1kdSB3aGlsZSBzZXR0aW5nIHpwb3MgdmFsdWUuCj4+IE5vIGNoYW5n
+ZXMgaW4gdGhlIG90aGVyIGRyaXZlcnMuCj4+Cj4+IHZlcnNpb24gMzoKPj4gdXNlIGttYWxsb2Nf
+YXJyYXkgaW5zdGVhZCBvZiBrbWFsbG9jLgo+PiBDb3JyZWN0IG5vcm1hbGl6ZV96cG9zIGNvbXB1
+dGF0aW9uIChjb21lYmFjayB0byBNYXJlY2sgb3JpZ2luYWwgY29kZSkKPj4KPj4gdmVyc2lvbiAy
+Ogo+PiBhZGQgYSB6cG9zIHByb3BlcnR5IGludG8gZHJtX3BsYW5lIHN0cnVjdHVyZSB0byBzaW1w
+bGlmeSBjb2RlLgo+PiBUaGlzIGFsbG93IHRvIGdldC9zZXQgenBvcyB2YWx1ZSBpbiBjb3JlIGFu
+ZCBub3QgaW4gZHJpdmVycyBjb2RlLgo+PiBGaXggdmFyaW91cyByZW1hcmtzLgo+Pgo+PiB2ZXJz
+aW9uIDE6Cj4+IHJlZmFjdG9yIE1hcmVrJ3MgcGF0Y2hlcyB0byBoYXZlIHBlciBwbGFuZSB6cG9z
+IHByb3BlcnR5IGluc3RlYWQgb2Ygb25seQo+PiBvbmUgaW4gY29yZS4KPj4KPj4gQmVuamFtaW4g
+R2FpZ25hcmQgKDIpOgo+PiAgIGRybTogc3RpOiB1c2UgZ2VuZXJpYyB6cG9zIGZvciBwbGFuZQo+
+PiAgIGRybTogcmNhcjogdXNlIGdlbmVyaWMgY29kZSBmb3IgbWFuYWdpbmcgenBvcyBwbGFuZSBw
+cm9wZXJ0eQo+Pgo+PiBNYXJlayBTenlwcm93c2tpICgyKToKPj4gICBkcm06IGFkZCBnZW5lcmlj
+IHpwb3MgcHJvcGVydHkKPj4gICBkcm0vZXh5bm9zOiB1c2UgZ2VuZXJpYyBjb2RlIGZvciBtYW5h
+Z2luZyB6cG9zIHBsYW5lIHByb3BlcnR5Cj4+Cj4+ICBkcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUg
+ICAgICAgICAgICAgICAgICB8ICAgMiArLQo+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMu
+YyAgICAgICAgICAgICAgfCAgIDQgKwo+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVs
+cGVyLmMgICAgICAgfCAgIDYgKwo+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9ibGVuZC5jICAgICAg
+ICAgICAgICAgfCAyMjcgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+ICBkcml2ZXJz
+L2dwdS9kcm0vZHJtX2NydGNfaW50ZXJuYWwuaCAgICAgICB8ICAgNCArCj4+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAgMiAtCj4+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8ICA2NyArKy0tLS0tLS0KPj4gIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgIHwgICA2ICstCj4+ICBkcml2ZXJzL2dw
+dS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYyAgICB8ICAgMiArLQo+PiAgZHJpdmVycy9ncHUv
+ZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuaCAgICAgfCAgIDEgLQo+PiAgZHJpdmVycy9ncHUvZHJt
+L3JjYXItZHUvcmNhcl9kdV9rbXMuYyAgICAgfCAgIDUgLQo+PiAgZHJpdmVycy9ncHUvZHJtL3Jj
+YXItZHUvcmNhcl9kdV9wbGFuZS5jICAgfCAgIDkgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9yY2Fy
+LWR1L3JjYXJfZHVfcGxhbmUuaCAgIHwgICAyIC0KPj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
+X2N1cnNvci5jICAgICAgICAgIHwgICA0ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9n
+ZHAuYyAgICAgICAgICAgICB8ICAgNCArLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaHF2
+ZHAuYyAgICAgICAgICAgfCAgIDQgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX21peGVy
+LmMgICAgICAgICAgIHwgICA5ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9wbGFuZS5j
+ICAgICAgICAgICB8ICA3NiArKysrLS0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9w
+bGFuZS5oICAgICAgICAgICB8ICAgNyArLQo+PiAgaW5jbHVkZS9kcm0vZHJtX2NydGMuaCAgICAg
+ICAgICAgICAgICAgICAgfCAgMzAgKysrKwo+PiAgMjAgZmlsZXMgY2hhbmdlZCwgMzI0IGluc2Vy
+dGlvbnMoKyksIDE0NyBkZWxldGlvbnMoLSkKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
+L2dwdS9kcm0vZHJtX2JsZW5kLmMKPj4KPj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5n
+LmNvbT4KPj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4KPj4gQ2M6IFZpbGxl
+IFN5cmphbGEgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgo+PiBDYzogSm9vbnlvdW5n
+IFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+PiBDYzogU2V1bmctV29vIEtpbSA8c3cw
+MzEyLmtpbUBzYW1zdW5nLmNvbT4KPj4gQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3Vu
+Zy5jb20+Cj4+IENjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNv
+bT4KPj4gQ2M6IEJhcnRsb21pZWogWm9sbmllcmtpZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5n
+LmNvbT4KPj4gQ2M6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
+Pgo+PiBDYzogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPgo+PiBDYzogdmlu
+Y2VudC5hYnJpb3VAc3QuY29tCj4+IENjOiBmYWJpZW4uZGVzc2VubmVAc3QuY29tCj4+IENjOiBM
+YXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4+Cj4K
+CgoKLS0gCkJlbmphbWluIEdhaWduYXJkCgpHcmFwaGljIFdvcmtpbmcgR3JvdXAKCkxpbmFyby5v
+cmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzog
+RmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
