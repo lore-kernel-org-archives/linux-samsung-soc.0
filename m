@@ -1,105 +1,53 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v5 4/4] drm: rcar: use generic code for managing zpos plane
- property
-Date: Thu,  7 Jul 2016 15:01:24 +0200
-Message-ID: <1467896484-5132-5-git-send-email-benjamin.gaignard@linaro.org>
-References: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 06/10] clk: samsung make clk-exynos-audss explicitly
+ non-modular
+Date: Thu, 07 Jul 2016 15:12:30 +0200
+Message-ID: <577E553E.5020801@samsung.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-7-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org
-Cc: linaro-mm-sig@lists.linaro.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20160704211220.5685-7-paul.gortmaker@windriver.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-dmVyc2lvbiA0OgpmaXggbnVsbCBwb2ludGVyIGlzc3VlIHdoaWxlIHNldHRpbmcgenBvcyBpbiBw
-bGFuZSByZXNldCBmdW5jdGlvbgoKVGhpcyBwYXRjaCByZXBsYWNlcyB6cG9zIHByb3BlcnR5IGhh
-bmRsaW5nIGN1c3RvbSBjb2RlIGluIHJjYXIgRFJNCmRyaXZlciB3aXRoIGNhbGxzIHRvIGdlbmVy
-aWMgRFJNIGNvZGUuCgpTaWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4u
-Z2FpZ25hcmRAbGluYXJvLm9yZz4KCkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+
-CkNjOiBWaWxsZSBTeXJqYWxhIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KQ2M6IExh
-dXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KQ2M6IE1h
-cmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dw
-dS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYyAgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vcmNh
-ci1kdS9yY2FyX2R1X2Rydi5oICAgfCAxIC0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJf
-ZHVfa21zLmMgICB8IDUgLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxh
-bmUuYyB8IDkgKystLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5l
-LmggfCAyIC0tCiA1IGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwppbmRleCAwZDhiZGRhLi4y
-OGQyY2I2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2NydGMuYwpAQCAtMTk2LDcg
-KzE5Niw3IEBAIHZvaWQgcmNhcl9kdV9jcnRjX3JvdXRlX291dHB1dChzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMsCiAKIHN0YXRpYyB1bnNpZ25lZCBpbnQgcGxhbmVfenBvcyhzdHJ1Y3QgcmNhcl9kdV9w
-bGFuZSAqcGxhbmUpCiB7Ci0JcmV0dXJuIHRvX3JjYXJfcGxhbmVfc3RhdGUocGxhbmUtPnBsYW5l
-LnN0YXRlKS0+enBvczsKKwlyZXR1cm4gcGxhbmUtPnBsYW5lLnN0YXRlLT5ub3JtYWxpemVkX3pw
-b3M7CiB9CiAKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9kdV9mb3JtYXRfaW5mbyAqCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oIGIvZHJpdmVycy9n
-cHUvZHJtL3JjYXItZHUvcmNhcl9kdV9kcnYuaAppbmRleCBlZDM1NDY3Li5jODQzYzMxIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfZHJ2LmgKQEAgLTkyLDcgKzkyLDYgQEAgc3RydWN0
-IHJjYXJfZHVfZGV2aWNlIHsKIAlzdHJ1Y3QgewogCQlzdHJ1Y3QgZHJtX3Byb3BlcnR5ICphbHBo
-YTsKIAkJc3RydWN0IGRybV9wcm9wZXJ0eSAqY29sb3JrZXk7Ci0JCXN0cnVjdCBkcm1fcHJvcGVy
-dHkgKnpwb3M7CiAJfSBwcm9wczsKIAogCXVuc2lnbmVkIGludCBkcGFkMF9zb3VyY2U7CmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jIGIvZHJpdmVycy9n
-cHUvZHJtL3JjYXItZHUvcmNhcl9kdV9rbXMuYwppbmRleCA2YmIwMzJkLi5mMDNlYjU1IDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfa21zLmMKQEAgLTUyNywxMSArNTI3LDYgQEAgc3Rh
-dGljIGludCByY2FyX2R1X3Byb3BlcnRpZXNfaW5pdChzdHJ1Y3QgcmNhcl9kdV9kZXZpY2UgKnJj
-ZHUpCiAJaWYgKHJjZHUtPnByb3BzLmNvbG9ya2V5ID09IE5VTEwpCiAJCXJldHVybiAtRU5PTUVN
-OwogCi0JcmNkdS0+cHJvcHMuenBvcyA9Ci0JCWRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UocmNk
-dS0+ZGRldiwgMCwgInpwb3MiLCAxLCA3KTsKLQlpZiAocmNkdS0+cHJvcHMuenBvcyA9PSBOVUxM
-KQotCQlyZXR1cm4gLUVOT01FTTsKLQogCXJldHVybiAwOwogfQogCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmNh
-ci1kdS9yY2FyX2R1X3BsYW5lLmMKaW5kZXggYmZlMzFjYS4uZGM5YmI5NiAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYwpAQCAtNjUyLDcgKzY1Miw3IEBAIHN0YXRpYyB2
-b2lkIHJjYXJfZHVfcGxhbmVfcmVzZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAJc3RhdGUt
-PnNvdXJjZSA9IFJDQVJfRFVfUExBTkVfTUVNT1JZOwogCXN0YXRlLT5hbHBoYSA9IDI1NTsKIAlz
-dGF0ZS0+Y29sb3JrZXkgPSBSQ0FSX0RVX0NPTE9SS0VZX05PTkU7Ci0Jc3RhdGUtPnpwb3MgPSBw
-bGFuZS0+dHlwZSA9PSBEUk1fUExBTkVfVFlQRV9QUklNQVJZID8gMCA6IDE7CisJc3RhdGUtPnN0
-YXRlLnpwb3MgPSBwbGFuZS0+dHlwZSA9PSBEUk1fUExBTkVfVFlQRV9QUklNQVJZID8gMCA6IDE7
-CiAKIAlwbGFuZS0+c3RhdGUgPSAmc3RhdGUtPnN0YXRlOwogCXBsYW5lLT5zdGF0ZS0+cGxhbmUg
-PSBwbGFuZTsKQEAgLTY3MCw4ICs2NzAsNiBAQCBzdGF0aWMgaW50IHJjYXJfZHVfcGxhbmVfYXRv
-bWljX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIAkJcnN0YXRlLT5hbHBo
-YSA9IHZhbDsKIAllbHNlIGlmIChwcm9wZXJ0eSA9PSByY2R1LT5wcm9wcy5jb2xvcmtleSkKIAkJ
-cnN0YXRlLT5jb2xvcmtleSA9IHZhbDsKLQllbHNlIGlmIChwcm9wZXJ0eSA9PSByY2R1LT5wcm9w
-cy56cG9zKQotCQlyc3RhdGUtPnpwb3MgPSB2YWw7CiAJZWxzZQogCQlyZXR1cm4gLUVJTlZBTDsK
-IApAQCAtNjkwLDggKzY4OCw2IEBAIHN0YXRpYyBpbnQgcmNhcl9kdV9wbGFuZV9hdG9taWNfZ2V0
-X3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogCQkqdmFsID0gcnN0YXRlLT5hbHBo
-YTsKIAllbHNlIGlmIChwcm9wZXJ0eSA9PSByY2R1LT5wcm9wcy5jb2xvcmtleSkKIAkJKnZhbCA9
-IHJzdGF0ZS0+Y29sb3JrZXk7Ci0JZWxzZSBpZiAocHJvcGVydHkgPT0gcmNkdS0+cHJvcHMuenBv
-cykKLQkJKnZhbCA9IHJzdGF0ZS0+enBvczsKIAllbHNlCiAJCXJldHVybiAtRUlOVkFMOwogCkBA
-IC03NjMsOCArNzU5LDcgQEAgaW50IHJjYXJfZHVfcGxhbmVzX2luaXQoc3RydWN0IHJjYXJfZHVf
-Z3JvdXAgKnJncnApCiAJCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+cGxhbmUu
-YmFzZSwKIAkJCQkJICAgcmNkdS0+cHJvcHMuY29sb3JrZXksCiAJCQkJCSAgIFJDQVJfRFVfQ09M
-T1JLRVlfTk9ORSk7Ci0JCWRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZwbGFuZS0+cGxhbmUu
-YmFzZSwKLQkJCQkJICAgcmNkdS0+cHJvcHMuenBvcywgMSk7CisJCWRybV9wbGFuZV9jcmVhdGVf
-enBvc19wcm9wZXJ0eSgmcGxhbmUtPnBsYW5lLCAxLCA3KTsKIAl9CiAKIAlyZXR1cm4gMDsKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuaCBiL2RyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuaAppbmRleCBiMThiN2IyLi44YjkxZGQz
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmgKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oCkBAIC01MSw3ICs1MSw2
-IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IHJjYXJfZHVfcGxhbmUgKnRvX3JjYXJfcGxhbmUoc3Ry
-dWN0IGRybV9wbGFuZSAqcGxhbmUpCiAgKiBAaHdpbmRleDogMC1iYXNlZCBoYXJkd2FyZSBwbGFu
-ZSBpbmRleCwgLTEgbWVhbnMgdW51c2VkCiAgKiBAYWxwaGE6IHZhbHVlIG9mIHRoZSBwbGFuZSBh
-bHBoYSBwcm9wZXJ0eQogICogQGNvbG9ya2V5OiB2YWx1ZSBvZiB0aGUgcGxhbmUgY29sb3JrZXkg
-cHJvcGVydHkKLSAqIEB6cG9zOiB2YWx1ZSBvZiB0aGUgcGxhbmUgenBvcyBwcm9wZXJ0eQogICov
-CiBzdHJ1Y3QgcmNhcl9kdV9wbGFuZV9zdGF0ZSB7CiAJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSBz
-dGF0ZTsKQEAgLTYyLDcgKzYxLDYgQEAgc3RydWN0IHJjYXJfZHVfcGxhbmVfc3RhdGUgewogCiAJ
-dW5zaWduZWQgaW50IGFscGhhOwogCXVuc2lnbmVkIGludCBjb2xvcmtleTsKLQl1bnNpZ25lZCBp
-bnQgenBvczsKIH07CiAKIHN0YXRpYyBpbmxpbmUgc3RydWN0IHJjYXJfZHVfcGxhbmVfc3RhdGUg
-KgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> arch/arm/mach-exynos/Kconfig:menuconfig ARCH_EXYNOS
+> arch/arm/mach-exynos/Kconfig:   bool "Samsung EXYNOS" if ARCH_MULTI_V7
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the couple traces of modularity so that when reading the
+> driver there is no doubt it is builtin-only.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init was already not used by this code, the init ordering
+> remains unchanged with this commit.
+> 
+> We also delete the MODULE_LICENSE tags etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+
+>  #include <dt-bindings/clock/exynos-audss-clk.h>
+> @@ -278,14 +278,3 @@ static int __init exynos_audss_clk_init(void)
+>  	return platform_driver_register(&exynos_audss_clk_driver);
+>  }
+>  core_initcall(exynos_audss_clk_init);
+
+Thanks for the patch.  I will try to get rid of the above initcall 
+instead of removing module support.  Any clock dependencies should 
+now be handled properly with deferred probing.  And the module support 
+will be useful since the audss clock controller is present only 
+on selected Exynos SoC variants.
+
+
