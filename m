@@ -1,67 +1,72 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
- SPI clocks
-Date: Thu, 07 Jul 2016 14:46:20 +0200
-Message-ID: <577E4F1C.8070004@samsung.com>
-References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
- <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v5 0/4] Generic zpos property
+Date: Thu,  7 Jul 2016 15:01:20 +0200
+Message-ID: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36592 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752202AbcGGMqr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 08:46:47 -0400
-In-reply-to: <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linaro-mm-sig@lists.linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On 07/07/2016 02:13 PM, Andi Shyti wrote:
-> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
-> Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
-> which enables the clock line during boot time.
-
-I don't agree. Both flags should be avoided. Clk is critical does not
-solve the problem. It is just a better workaround for lack of proper
-clock consumers.
-
-The IOCLK is not a critical clock. It can be disabled (e.g. when SoC is
-used on a board without any SPI device connected).
-
-Best regards,
-Krzysztof
-
-> 
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index c3a5318..337387b 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1662,7 +1662,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->  			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
->  			ENABLE_SCLK_PERIC, 12,
-> -			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
->  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-> @@ -1677,7 +1677,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->  	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
->  			5, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
-> -			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +			4, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
->  			3, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
-> 
+dmVyc2lvbiA1OgpyZWJhc2VkIG9uIGRybS1uZXh0IHdoZXJlIERvY3VtZW50YXRpb24vRG9jQm9v
+ay9ncHUudG1wbCBkb2Vzbid0CmV4aXN0IGFueW1vcmUuCnJld29yayBzdGkgcGF0Y2ggYmVjYXVz
+ZSBzb21lIHBsYW5lIGZ1bmN0aW9ucyBoYXZlIGNoYW5nZWQgc2luY2UgdjQKCnZlcnNpb24gNDoK
+bWFrZSBzdXJlIHRoYXQgbm9ybWFsaXplZCB6cG9zIHZhbHVlIGlzIHN0YXkgaW4gdGhlIGRlZmlu
+ZWQgcHJvcGVydHkgCnJhbmdlIGFuZCB3YXJuIHVzZXIgaWYgbm90LgpGaXggTlVMTCBwb2ludGVy
+IGJ1ZyBpbiByY2FyLWR1IHdoaWxlIHNldHRpbmcgenBvcyB2YWx1ZS4KTm8gY2hhbmdlcyBpbiB0
+aGUgb3RoZXIgZHJpdmVycy4KCnZlcnNpb24gMzoKdXNlIGttYWxsb2NfYXJyYXkgaW5zdGVhZCBv
+ZiBrbWFsbG9jLgpDb3JyZWN0IG5vcm1hbGl6ZV96cG9zIGNvbXB1dGF0aW9uIChjb21lYmFjayB0
+byBNYXJlY2sgb3JpZ2luYWwgY29kZSkKCnZlcnNpb24gMjoKYWRkIGEgenBvcyBwcm9wZXJ0eSBp
+bnRvIGRybV9wbGFuZSBzdHJ1Y3R1cmUgdG8gc2ltcGxpZnkgY29kZS4KVGhpcyBhbGxvdyB0byBn
+ZXQvc2V0IHpwb3MgdmFsdWUgaW4gY29yZSBhbmQgbm90IGluIGRyaXZlcnMgY29kZS4KRml4IHZh
+cmlvdXMgcmVtYXJrcy4KCnZlcnNpb24gMToKcmVmYWN0b3IgTWFyZWsncyBwYXRjaGVzIHRvIGhh
+dmUgcGVyIHBsYW5lIHpwb3MgcHJvcGVydHkgaW5zdGVhZCBvZiBvbmx5Cm9uZSBpbiBjb3JlLgoK
+QmVuamFtaW4gR2FpZ25hcmQgKDIpOgogIGRybTogc3RpOiB1c2UgZ2VuZXJpYyB6cG9zIGZvciBw
+bGFuZQogIGRybTogcmNhcjogdXNlIGdlbmVyaWMgY29kZSBmb3IgbWFuYWdpbmcgenBvcyBwbGFu
+ZSBwcm9wZXJ0eQoKTWFyZWsgU3p5cHJvd3NraSAoMik6CiAgZHJtOiBhZGQgZ2VuZXJpYyB6cG9z
+IHByb3BlcnR5CiAgZHJtL2V4eW5vczogdXNlIGdlbmVyaWMgY29kZSBmb3IgbWFuYWdpbmcgenBv
+cyBwbGFuZSBwcm9wZXJ0eQoKIGRyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgICAg
+ICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICAgICAgICB8
+ICAgNCArCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyAgICAgICB8ICAgNiAr
+CiBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgICAgICAgICAgICAgICB8IDIyNyArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5h
+bC5oICAgICAgIHwgICA0ICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+aCAgIHwgICAyIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwg
+IDY3ICsrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAg
+fCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfY3J0Yy5jICAgIHwgICAy
+ICstCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAgICB8ICAgMSAtCiBk
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2ttcy5jICAgICB8ICAgNSAtCiBkcml2ZXJz
+L2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X3BsYW5lLmMgICB8ICAgOSArLQogZHJpdmVycy9ncHUv
+ZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oICAgfCAgIDIgLQogZHJpdmVycy9ncHUvZHJtL3N0
+aS9zdGlfY3Vyc29yLmMgICAgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3Rp
+X2dkcC5jICAgICAgICAgICAgIHwgICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9ocXZk
+cC5jICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfbWl4ZXIuYyAg
+ICAgICAgICAgfCAgIDkgKy0KIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmMgICAgICAg
+ICAgIHwgIDc2ICsrKystLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmggICAg
+ICAgICAgIHwgICA3ICstCiBpbmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICAgICAg
+ICB8ICAzMCArKysrCiAyMCBmaWxlcyBjaGFuZ2VkLCAzMjQgaW5zZXJ0aW9ucygrKSwgMTQ3IGRl
+bGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQu
+YwoKQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KQ2M6IERhbmllbCBWZXR0ZXIg
+PGRhbmllbEBmZndsbC5jaD4KQ2M6IFZpbGxlIFN5cmphbGEgPHZpbGxlLnN5cmphbGFAbGludXgu
+aW50ZWwuY29tPgpDYzogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgpD
+YzogU2V1bmctV29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KQ2M6IEFuZHJ6ZWogSGFq
+ZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxv
+d3NraUBzYW1zdW5nLmNvbT4KQ2M6IEJhcnRsb21pZWogWm9sbmllcmtpZXdpY3ogPGIuem9sbmll
+cmtpZUBzYW1zdW5nLmNvbT4KQ2M6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
+bGVmZWxkLmRlPgpDYzogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPgpDYzog
+dmluY2VudC5hYnJpb3VAc3QuY29tCkNjOiBmYWJpZW4uZGVzc2VubmVAc3QuY29tCkNjOiBMYXVy
+ZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Ci0tIAoxLjku
+MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
