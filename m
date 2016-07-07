@@ -1,73 +1,81 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH -next v2] iommu/exynos: Fix return value check in
- exynos_iommu_of_setup()
-Date: Thu, 07 Jul 2016 13:25:08 +0900
-Message-ID: <20160707042508.GG23620@samsunx.samsung>
-References: <1467807354-26503-1-git-send-email-weiyj_lk@163.com>
- <CGME20160707030024epcas1p1454a6e40f68fbdcf0a103ce56d24ca22@epcas1p1.samsung.com>
- <1467860372-6940-1-git-send-email-weiyj_lk@163.com>
+Subject: [PATCH] spi: s3c64xx: do not disable the clock while configuring the
+ spi
+Date: Thu, 07 Jul 2016 16:23:57 +0900
+Message-ID: <1467876237-12183-1-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54317 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbcGGEZM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 00:25:12 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0O9X02KLDG9XPM80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Jul 2016 13:25:09 +0900 (KST)
-Content-disposition: inline
-In-reply-to: <1467860372-6940-1-git-send-email-weiyj_lk@163.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, linux-spi@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Wei,
+When the clock is coming from the cmu it is not required to be
+disabled and then re-enabled in order to change the rate.
 
-On Thu, Jul 07, 2016 at 02:59:32AM +0000, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-> 
-> In case of error, the function of_platform_device_create() returns
-> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Besides, some exynos chipsets (e.g. exynos5433) do not deliver
+any to the SFR if one from the pclk ("spi" in this case) or sclk
+("busclk") is disabled.
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+Remove the clock disabling/enabling to avoid falling into this
+situation.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+
+Hi,
+
+This patch has been tested by me and Sylwester on Trats2
+(exynos4412) and tm2(e) (exynos5433) boards, for big data
+(which use dma transfer) and small data.
+
+It also fixes in exynos5433 a synchronus abort caused by the fact
+that the pclk (spi) doesn't get delivered if the sclk is disabled
+(busclk)
 
 Thanks,
 Andi
 
-> ---
-> v1 -> v2: chenge the error code to -ENODEV
-> ---
->  drivers/iommu/exynos-iommu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 33dcc29..9b23059 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1345,8 +1345,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
->  		exynos_iommu_init();
->  
->  	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
-> -	if (IS_ERR(pdev))
-> -		return PTR_ERR(pdev);
-> +	if (!pdev)
-> +		return -ENODEV;
->  
->  	/*
->  	 * use the first registered sysmmu device for performing
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+ drivers/spi/spi-s3c64xx.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 048c900..c719e73 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -577,9 +577,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	u32 val;
+ 
+ 	/* Disable Clock */
+-	if (sdd->port_conf->clk_from_cmu) {
+-		clk_disable_unprepare(sdd->src_clk);
+-	} else {
++	if (!sdd->port_conf->clk_from_cmu) {
+ 		val = readl(regs + S3C64XX_SPI_CLK_CFG);
+ 		val &= ~S3C64XX_SPI_ENCLK_ENABLE;
+ 		writel(val, regs + S3C64XX_SPI_CLK_CFG);
+@@ -622,11 +620,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+ 
+ 	if (sdd->port_conf->clk_from_cmu) {
+-		/* Configure Clock */
+-		/* There is half-multiplier before the SPI */
+ 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+-		/* Enable Clock */
+-		clk_prepare_enable(sdd->src_clk);
+ 	} else {
+ 		/* Configure Clock */
+ 		val = readl(regs + S3C64XX_SPI_CLK_CFG);
+-- 
+2.8.1
