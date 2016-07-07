@@ -1,57 +1,48 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7
- CPU clocks
-Date: Thu, 07 Jul 2016 13:17:40 +0200
-Message-ID: <2318982.ZLuIVQzhgE@amdc1976>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <1467750561-13957-2-git-send-email-a.kesavan@samsung.com>
- <577E32E5.4010902@samsung.com>
+From: Wei Yongjun <weiyj_lk@163.com>
+Subject: Re: [PATCH -next v2] iommu/exynos: Fix return value check in
+ exynos_iommu_of_setup()
+Date: Thu, 7 Jul 2016 20:09:38 +0800
+Message-ID: <fe43720e-52ff-72c9-36a7-0d3410e6d86d@163.com>
+References: <1467807354-26503-1-git-send-email-weiyj_lk@163.com>
+ <1467860372-6940-1-git-send-email-weiyj_lk@163.com>
+ <577E2442.4000002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <577E32E5.4010902@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com, kgene.kim@samsung.com, k.kozlowski@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <577E2442.4000002@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 07/07/2016 05:43 PM, Krzysztof Kozlowski wrote:
+> On 07/07/2016 04:59 AM, weiyj_lk@163.com wrote:
+>> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>>
+>> In case of error, the function of_platform_device_create() returns
+>> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
+>> check should be replaced with NULL test.
+>>
+>> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>> ---
+>> v1 -> v2: chenge the error code to -ENODEV
+>> ---
+>>   drivers/iommu/exynos-iommu.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+> Why you didn't include mine and Dennis reviews? Why you ignored my
+> comments - you don't agree with them?
+>
+Sorry, I missed your last mail. I will change patch as your advise.
 
-Hi
-
-On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
-> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
-> > Exynos7 has the same CPU clock registers layout as that present
-
-Please precise for which Exynos7 SoC this change is needed
-(all three of them?).
-
-> > in Exynos5433 except for the bits in the MUX_STAT* registers.
-> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
-> 
-> > --- a/drivers/clk/samsung/clk-cpu.h
-> > +++ b/drivers/clk/samsung/clk-cpu.h
-> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
-> >  /* The CPU clock registers have Exynos5433-compatible layout */
-> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
-> 
-> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
-> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT	(1 << 3)
-> 
-> It's getting a bit messy, what if there comes another SoC version
-> which has some other modification of exynos5433 registers structure?
-> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
-> could easily get lost while trying to determine which modification
-> is which. How about indicating explicitly it's an exynos7 bits
-> layout and renaming the flag to something like
-> 
-> #define CLK_CPU_HAS_E7_MUX_STAT	(1 << 16) ?
-
-ditto
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Regards,
+Yongjun Wei
