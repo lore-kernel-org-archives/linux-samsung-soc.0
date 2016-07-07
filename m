@@ -1,58 +1,53 @@
-From: weiyj_lk-9Onoh4P/yGk@public.gmane.org
-Subject: [PATCH -next v3] iommu/exynos: Fix return value check in
-	exynos_iommu_of_setup()
-Date: Thu,  7 Jul 2016 12:17:33 +0000
-Message-ID: <1467893853-21403-1-git-send-email-weiyj_lk@163.com>
-References: <1467860372-6940-1-git-send-email-weiyj_lk@163.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: do not disable the clock while configuring
+ the spi
+Date: Thu, 7 Jul 2016 14:24:41 +0200
+Message-ID: <20160707122441.GP6247@sirena.org.uk>
+References: <CGME20160707072419epcas1p3ba881fb9b3270eb8cde87380aea7bcf9@epcas1p3.samsung.com>
+ <1467876237-12183-1-git-send-email-andi.shyti@samsung.com>
+ <20160707095840.GH23620@samsunx.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1467860372-6940-1-git-send-email-weiyj_lk-9Onoh4P/yGk@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dennis Chen <dennis.chen-5wv7dgnIgG8@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YQQMu+1WUtOZ6W1X"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160707095840.GH23620-4M0o0xkwKdT35fTxX1Dczw@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-In case of error, the function of_platform_device_create() returns
-NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+--YQQMu+1WUtOZ6W1X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 8ed55c812fa8 ("iommu/exynos: Init from dt-specific callback
-instead of initcall")
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Dennis Chen <dennis.chen-5wv7dgnIgG8@public.gmane.org>
----
-v2 -> v3: added fixes and Reviewed-by.
----
- drivers/iommu/exynos-iommu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, Jul 07, 2016 at 06:58:41PM +0900, Andi Shyti wrote:
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 33dcc29..9b23059 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1345,8 +1345,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
- 		exynos_iommu_init();
- 
- 	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
--	if (IS_ERR(pdev))
--		return PTR_ERR(pdev);
-+	if (!pdev)
-+		return -ENODEV;
- 
- 	/*
- 	 * use the first registered sysmmu device for performing
+> sorry, I will re-send it because I should not remove the comments
+> above.... in the future someone might wonder why it's multiplied
+> by 2.
+
+I already applied and published this, can you please send an incremental
+patch fixing the issue?
+
+--YQQMu+1WUtOZ6W1X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXfkoIAAoJECTWi3JdVIfQxSgH/2DbRl77bFbweobnnQkjFl29
++yVtM5aKB6pWPZcVPSM1mXlYWAelzSHqLxugSV9IO9fYFMhFIgq76lmRT+yDuUHn
+djkcg4ZEjuzhQlR1gxdujB1nCb+nqNqymjnHxSTLaO/47EuQh/oIZWrX53d5xyJw
+4zWgWGGOQCt9w/7eiyhz/epNB5JSxovvBMd5K0E5onixkor9vzNFcqUgfZqeXvaJ
+QO7263nriiwNCp5CJQDLnvqZS7XWO4hakVHn578KbMCVhFgCOyhoCjlfNA0QwIcL
+qUyp/mSoXHjtWUKa0g5u7IvwJQGvkl9OYsT8MYF+txpXcQsCIkRoMQMq8FFRy3E=
+=Lg31
+-----END PGP SIGNATURE-----
+
+--YQQMu+1WUtOZ6W1X--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
