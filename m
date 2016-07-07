@@ -1,35 +1,67 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL 1/4] ARM: exynos: Mach updates for v4.8, part 2
-Date: Thu, 07 Jul 2016 14:32:13 +0200
-Message-ID: <577E4BCD.8090004@samsung.com>
-References: <1467273075-13747-1-git-send-email-k.kozlowski@samsung.com>
- <1467273075-13747-2-git-send-email-k.kozlowski@samsung.com>
- <6627020.9k7quHCRve@wuerfel>
+Subject: Re: [PATCH v4 1/2] clk: exynos5433: do not use CLK_IGNORE_UNUSED for
+ SPI clocks
+Date: Thu, 07 Jul 2016 14:46:20 +0200
+Message-ID: <577E4F1C.8070004@samsung.com>
+References: <1467893637-12573-1-git-send-email-andi.shyti@samsung.com>
+ <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17635 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899AbcGGMcS (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36592 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752202AbcGGMqr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 08:32:18 -0400
-In-reply-to: <6627020.9k7quHCRve@wuerfel>
+	Thu, 7 Jul 2016 08:46:47 -0400
+In-reply-to: <1467893637-12573-2-git-send-email-andi.shyti@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, Kukjin Kim <kgene@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On 07/07/2016 02:31 PM, Arnd Bergmann wrote:
-> On Thursday, June 30, 2016 9:51:12 AM CEST Krzysztof Kozlowski wrote:
->> Samsung mach/soc update for v4.8, part 2:
->> 1. Endian-friendly fixes.
->> 2. Maintainers update.
-> 
-> I noticed that Olof had not sent out an email about this branch,
-> but I verified that it's actually merged into next/soc.
+On 07/07/2016 02:13 PM, Andi Shyti wrote:
+> The CLK_IGNORE_UNUSED flag has to be avoided whenever possible.
+> Use the CLK_IS_CRITICAL flag instead for critical SPI1 clocks,
+> which enables the clock line during boot time.
 
-Yes, I checked it as well. Thanks for confirmation.
+I don't agree. Both flags should be avoided. Clk is critical does not
+solve the problem. It is just a better workaround for lack of proper
+clock consumers.
+
+The IOCLK is not a critical clock. It can be disabled (e.g. when SoC is
+used on a board without any SPI device connected).
 
 Best regards,
 Krzysztof
+
+> 
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index c3a5318..337387b 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1662,7 +1662,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>  			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+>  			ENABLE_SCLK_PERIC, 12,
+> -			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+>  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+> @@ -1677,7 +1677,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>  	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+>  			5, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+> -			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +			4, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+>  			3, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+> 
