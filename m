@@ -1,37 +1,105 @@
-From: Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
-Date: Sat, 9 Jul 2016 01:35:09 +0900
-Message-ID: <20160708163509.GE1256@jack.zhora.eu>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
- <146799464881.73491.7507792367941552864@resonance>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: samsung: Allow modular build of the Audio Subsystem CLKCON
+ driver
+Date: Fri, 08 Jul 2016 09:56:46 -0700
+Message-ID: <146799700614.73491.6564650478987470074@resonance>
+References: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <146799464881.73491.7507792367941552864@resonance>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:35651 "EHLO
+	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755911AbcGHQ4t convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Jul 2016 12:56:49 -0400
+Received: by mail-pf0-f175.google.com with SMTP id c2so14273798pfa.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Jul 2016 09:56:49 -0700 (PDT)
+In-Reply-To: <1467987300-31450-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Mike,
-
-> >         if (sdd->port_conf->clk_from_cmu) {
-> > +               /* There is half-multiplier before the SPI */
-> >                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+Quoting Sylwester Nawrocki (2016-07-08 07:15:00)
+> Any clock dependencies can be properly handled with deferred probing
+> so we can remove core_initcall and switch to a proper loadable platform
+> driver module.
+> This change has been tested on Exynos4412 Odroid U3 based board.
 > 
-> Just a small comment, but if the fixed-factor divide-by-two clock was
-> modeled in Linux, then this driver could call clk_set_rate on that clock
-> with the "correct" rate.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+Looks good to me.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/samsung/Kconfig            |  9 +++++++++
+>  drivers/clk/samsung/Makefile           |  2 +-
+>  drivers/clk/samsung/clk-exynos-audss.c | 12 +-----------
+>  3 files changed, 11 insertions(+), 12 deletions(-)
 > 
-> I guess that this driver would be the provider of that clock?
-
-Makes sense, I will check it.
-
-Thanks again,
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 20c5fe9..addc652 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -9,6 +9,15 @@ config EXYNOS_ARM64_COMMON_CLK
+>         bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
+>         depends on COMMON_CLK_SAMSUNG
+>  
+> +config EXYNOS_AUDSS_CLK_CON
+> +       tristate "Samsung Exynos AUDSS clock controller support"
+> +       depends on COMMON_CLK_SAMSUNG
+> +       default y if ARCH_EXYNOS
+> +       help
+> +         Support for the Audio Subsystem CLKCON clock controller present
+> +         on some Exynos SoC variants. Choose M or Y here if you want to
+> +         use audio devices such as I2S, PCM, etc.
+> +
+>  # For S3C24XX platforms, select following symbols:
+>  config S3C2410_COMMON_CLK
+>         bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index fc367d4..57f4dc6 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -12,7 +12,7 @@ obj-$(CONFIG_SOC_EXYNOS5410)  += clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)   += clk-exynos5420.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  += clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
+> -obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
+> +obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-clkout.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)  += clk-exynos7.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index 4e9584d..bdf8b97 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -273,17 +273,7 @@ static struct platform_driver exynos_audss_clk_driver = {
+>         .remove = exynos_audss_clk_remove,
+>  };
+>  
+> -static int __init exynos_audss_clk_init(void)
+> -{
+> -       return platform_driver_register(&exynos_audss_clk_driver);
+> -}
+> -core_initcall(exynos_audss_clk_init);
+> -
+> -static void __exit exynos_audss_clk_exit(void)
+> -{
+> -       platform_driver_unregister(&exynos_audss_clk_driver);
+> -}
+> -module_exit(exynos_audss_clk_exit);
+> +module_platform_driver(exynos_audss_clk_driver);
+>  
+>  MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
+>  MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
