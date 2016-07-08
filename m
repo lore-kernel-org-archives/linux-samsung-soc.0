@@ -1,56 +1,54 @@
 From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2 5/7] spi: s3c64xx: add exynos5433 compatible for ioclk handling
-Date: Fri, 08 Jul 2016 09:13:32 -0700
-Message-ID: <146799441227.73491.13833003558807352160@resonance>
+Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
+Date: Fri, 08 Jul 2016 09:17:28 -0700
+Message-ID: <146799464881.73491.7507792367941552864@resonance>
 References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-6-git-send-email-andi.shyti@samsung.com>
+ <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467989201-14661-6-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1467989201-14661-7-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Andi Shyti (2016-07-08 07:46:39)
-> @@ -1147,6 +1150,21 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->                 goto err_disable_clk;
->         }
+Quoting Andi Shyti (2016-07-08 07:46:40)
+> Patch a9e93e8 has erroneously removed some comments which are
+> important to understand why the bus frequency is multiplied by
+> two during the spi transfer.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/spi/spi-s3c64xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 6da663f..32b66f0 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+>         writel(val, regs + S3C64XX_SPI_MODE_CFG);
 >  
-> +       if (sdd->port_conf->clk_ioclk) {
-> +               sdd->ioclk = devm_clk_get(&pdev->dev, "spi_ioclk");
-> +               if (IS_ERR(sdd->ioclk)) {
-> +                       dev_err(&pdev->dev, "Unable to acquire 'ioclk'\n");
-> +                       ret = PTR_ERR(sdd->ioclk);
-> +                       goto err_disable_src_clk;
-> +               }
-> +
-> +               ret = clk_prepare_enable(sdd->ioclk);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "Couldn't enable clock 'ioclk'\n");
-> +                       goto err_disable_src_clk;
-> +               }
-> +       }
-> +
->         pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
->         pm_runtime_use_autosuspend(&pdev->dev);
->         pm_runtime_set_active(&pdev->dev);
-> @@ -1193,6 +1211,8 @@ err_pm_put:
->         pm_runtime_disable(&pdev->dev);
->         pm_runtime_set_suspended(&pdev->dev);
->  
-> +       clk_disable_unprepare(sdd->ioclk);
-> +err_disable_src_clk:
->         clk_disable_unprepare(sdd->src_clk);
->  err_disable_clk:
->         clk_disable_unprepare(sdd->clk);
+>         if (sdd->port_conf->clk_from_cmu) {
+> +               /* There is half-multiplier before the SPI */
+>                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
 
-Why aren't these clocks enabled/disabled by calls to pm_runtime_get/put?
+Just a small comment, but if the fixed-factor divide-by-two clock was
+modeled in Linux, then this driver could call clk_set_rate on that clock
+with the "correct" rate.
+
+I guess that this driver would be the provider of that clock?
 
 Regards,
 Mike
+
+>         } else {
+>                 /* Configure Clock */
+> -- 
+> 2.8.1
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-spi" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
