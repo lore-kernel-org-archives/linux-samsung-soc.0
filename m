@@ -1,347 +1,219 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 3/4] drm/bridge: analogix_dp: add the PSR function
- support
-Date: Fri, 8 Jul 2016 10:26:27 +0800
-Message-ID: <577F0F53.9060404@rock-chips.com>
+Subject: Re: [PATCH v3 1/4] drm/rockchip: vop: export line flag function
+Date: Fri, 8 Jul 2016 10:30:10 +0800
+Message-ID: <577F1032.5040908@rock-chips.com>
 References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
- <1467364768-21741-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbJ4H9xzeaA-2OKsG+pGwdvehS91TZDPfUyq8R-=e70bPQ@mail.gmail.com>
+ <1467364745-21621-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vb+vS3O+Db1_1RSGup7Y2tNjRkxyz7ah817R6nXceSHeFQ@mail.gmail.com>
+ <CAOw6vbKuy5wCb_J0ENP5OGf7B31ut-FDzBzE5NLiFzEY5sWqsg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:50324 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753538AbcGHC0h (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 22:26:37 -0400
-In-Reply-To: <CAOw6vbJ4H9xzeaA-2OKsG+pGwdvehS91TZDPfUyq8R-=e70bPQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOw6vbKuy5wCb_J0ENP5OGf7B31ut-FDzBzE5NLiFzEY5sWqsg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Sean Paul <seanpaul@chromium.org>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Mark Yao <yzq@rock-chips.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Emil Velikov <emil.l.velikov@gmail.com>, Doug Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Sean,
-
-Thanks for your review.
-
-On 07/02/2016 03:46 AM, Sean Paul wrote:
-> On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
->> The full name of PSR is Panel Self Refresh, panel device could refresh
->> itself with the hardware framebuffer in panel, this would make lots of
->> sense to save the power consumption.
->>
->> This patch have exported two symbols for platform driver to implement
->> the PSR function in hardware side:
->> - analogix_dp_active_psr()
->> - analogix_dp_inactive_psr()
->>
->> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->> ---
->> Changes in v3:
->> - split analogix_dp_enable_psr(), make it more clearly
->>      analogix_dp_detect_sink_psr()
->>      analogix_dp_enable_sink_psr()
->> - remove some nosie register setting comments
->>
->> Changes in v2:
->> - introduce in v2, splite the common Analogix DP changes out
->>
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 64 ++++++++++++++++++++++
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  4 ++
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 54 ++++++++++++++++++
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  | 28 ++++++++++
->>   include/drm/bridge/analogix_dp.h                   |  3 +
->>   5 files changed, 153 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 32715da..b557097 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -97,6 +97,66 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
->>          return 0;
->>   }
->>
->> +int analogix_dp_active_psr(struct device *dev)
->> +{
->> +       struct analogix_dp_device *dp = dev_get_drvdata(dev);
->> +
->> +       if (!dp->psr_support)
->> +               return -EINVAL;
->> +
->> +       analogix_dp_send_psr_spd(dp, EDP_VSC_PSR_STATE_ACTIVE |
->> +                                EDP_VSC_PSR_CRC_VALUES_VALID);
->> +       return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(analogix_dp_active_psr);
->> +
->> +int analogix_dp_inactive_psr(struct device *dev)
->> +{
->> +       struct analogix_dp_device *dp = dev_get_drvdata(dev);
->> +
->> +       if (!dp->psr_support)
->> +               return -EINVAL;
->> +
->> +       analogix_dp_send_psr_spd(dp, 0);
->> +       return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(analogix_dp_inactive_psr);
->> +
->> +static bool analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
->> +{
->> +       unsigned char psr_version;
->> +
->> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_SUPPORT, &psr_version);
->> +       dev_info(dp->dev, "Panel PSR version : %x\n", psr_version);
->> +
-> This info message is likely to be spammy since it's printed everytime
-> the panel toggle on. Perhaps downgrade to debug level.
-
-Okay, done.
-
->> +       return (psr_version & DP_PSR_IS_SUPPORTED) ? true : false;
->> +}
->> +
->> +static int analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
-> Return type is int, but the function never fails and you don't check
-> the return value when calling it. Seems like this should be void.
-
-Done.
-
->> +{
->> +       unsigned char psr_en;
->> +
->> +       /* Disable psr function */
->> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->> +       psr_en &= ~DP_PSR_ENABLE;
->> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->> +
->> +       /* Main-Link transmitter remains active during PSR active states */
->> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->> +       psr_en = DP_PSR_MAIN_LINK_ACTIVE | DP_PSR_CRC_VERIFICATION;
-> Why read psr_en if you're just going to overwrite it? Perhaps you meant |= here.
->
-
-Yes, it's my mistaken, no need to read the DP_PSR_EN_CFG, just configure 
-it directly is enough.
-
->> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->> +
->> +       /* Enable psr function */
->> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->> +       psr_en = DP_PSR_ENABLE | DP_PSR_MAIN_LINK_ACTIVE |
->> +                DP_PSR_CRC_VERIFICATION;
-> Again, no need to read if you're just overwriting.
-
-Yes, ditto
-
->> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->> +
->> +       analogix_dp_enable_psr_crc(dp);
->> +
->> +       return 0;
->> +}
->> +
->>   static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
->>   {
->>          int i;
->> @@ -921,6 +981,10 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
->>
->>          /* Enable video */
->>          analogix_dp_start_video(dp);
->> +
->> +       dp->psr_support = analogix_dp_detect_sink_psr(dp);
->> +       if (dp->psr_support)
->> +               analogix_dp_enable_sink_psr(dp);
->>   }
->>
->>   int analogix_dp_get_modes(struct drm_connector *connector)
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> index b456380..6ca5dde 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> @@ -177,6 +177,7 @@ struct analogix_dp_device {
->>          int                     hpd_gpio;
->>          bool                    force_hpd;
->>          unsigned char           edid[EDID_BLOCK_LENGTH * 2];
->> +       bool                    psr_support;
->>
->>          struct analogix_dp_plat_data *plat_data;
->>   };
->> @@ -278,4 +279,7 @@ int analogix_dp_is_video_stream_on(struct analogix_dp_device *dp);
->>   void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
->>   void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
->>   void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
->> +void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
->> +void analogix_dp_send_psr_spd(struct analogix_dp_device *dp, int db1);
->> +
->>   #endif /* _ANALOGIX_DP_CORE_H */
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> index 48030f0..e8372c7 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> @@ -1322,3 +1322,57 @@ void analogix_dp_disable_scrambling(struct analogix_dp_device *dp)
->>          reg |= SCRAMBLING_DISABLE;
->>          writel(reg, dp->reg_base + ANALOGIX_DP_TRAINING_PTN_SET);
->>   }
->> +
->> +void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
->> +{
->> +       writel(PSR_VID_CRC_FLUSH | PSR_VID_CRC_ENABLE,
->> +              dp->reg_base + ANALOGIX_DP_CRC_CON);
->> +
->> +       usleep_range(10, 20);
-> Is this sleep arbitrary, or documented somewhere? Could you add a
-> comment explaining how this was arrived at?
->
-
-Yes, this sleep is arbitrary, there is no document about the
-
->> +
->> +       writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
->> +}
->> +
->> +void analogix_dp_send_psr_spd(struct analogix_dp_device *dp, int db1)
->> +{
->> +       unsigned int val;
->> +
->> +       /* don't send info frame */
->> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +       val &= ~IF_EN;
->> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +
->> +       /* configure single frame update mode */
->> +       writel(0x3, dp->reg_base + ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL);
->> +
->> +       /* configure VSC HB0 ~ HB3 */
->> +       writel(0x00, dp->reg_base + ANALOGIX_DP_SPD_HB0);
->> +       writel(0x07, dp->reg_base + ANALOGIX_DP_SPD_HB1);
->> +       writel(0x02, dp->reg_base + ANALOGIX_DP_SPD_HB2);
->> +       writel(0x08, dp->reg_base + ANALOGIX_DP_SPD_HB3);
->> +
->> +       /* configure VSC HB0 ~ HB3 */
->> +       writel(0x00, dp->reg_base + ANALOGIX_DP_SPD_PB0);
->> +       writel(0x16, dp->reg_base + ANALOGIX_DP_SPD_PB1);
->> +       writel(0xCE, dp->reg_base + ANALOGIX_DP_SPD_PB2);
->> +       writel(0x5D, dp->reg_base + ANALOGIX_DP_SPD_PB3);
->> +
->> +       /* configure DB0 / DB1 values */
->> +       writel(0x00, dp->reg_base + ANALOGIX_DP_VSC_SHADOW_DB0);
-> Lots of hardcoded values here. I think this could be cleaned up.
-
-For "HB0~HB3", "PB0~PB3" and "DB1", I don't understand very well. Those 
-seems to be a kind of head number, I got those magic values from our IC 
-side. So I think those should be okay to keep the hardcode values here :-D
-
-But for the "0x3" in "ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL", I would fix it 
-with suitable macro.
-
->> +       writel(db1, dp->reg_base + ANALOGIX_DP_VSC_SHADOW_DB1);
->> +
->> +       /* set reuse spd inforframe */
->> +       val = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_3);
->> +       val |= REUSE_SPD_EN;
->> +       writel(val, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_3);
->> +
->> +       /* mark info frame update */
->> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +       val = (val | IF_UP) & ~IF_EN;
->> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +
->> +       /* send info frame */
->> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +       val |= IF_EN;
->> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->> +}
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> index cdcc6c5..a2698e4 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->> @@ -22,6 +22,8 @@
->>   #define ANALOGIX_DP_VIDEO_CTL_8                        0x3C
->>   #define ANALOGIX_DP_VIDEO_CTL_10               0x44
->>
->> +#define ANALOGIX_DP_SPDIF_AUDIO_CTL_0          0xD8
->> +
->>   #define ANALOGIX_DP_PLL_REG_1                  0xfc
->>   #define ANALOGIX_DP_PLL_REG_2                  0x9e4
->>   #define ANALOGIX_DP_PLL_REG_3                  0x9e8
->> @@ -30,6 +32,21 @@
->>
->>   #define ANALOGIX_DP_PD                         0x12c
->>
->> +#define ANALOGIX_DP_IF_TYPE                    0x244
->> +#define ANALOGIX_DP_IF_PKT_DB1                 0x254
->> +#define ANALOGIX_DP_IF_PKT_DB2                 0x258
->> +#define ANALOGIX_DP_SPD_HB0                    0x2F8
->> +#define ANALOGIX_DP_SPD_HB1                    0x2FC
->> +#define ANALOGIX_DP_SPD_HB2                    0x300
->> +#define ANALOGIX_DP_SPD_HB3                    0x304
->> +#define ANALOGIX_DP_SPD_PB0                    0x308
->> +#define ANALOGIX_DP_SPD_PB1                    0x30C
->> +#define ANALOGIX_DP_SPD_PB2                    0x310
->> +#define ANALOGIX_DP_SPD_PB3                    0x314
->> +#define ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL      0x318
->> +#define ANALOGIX_DP_VSC_SHADOW_DB0             0x31C
->> +#define ANALOGIX_DP_VSC_SHADOW_DB1             0x320
->> +
->>   #define ANALOGIX_DP_LANE_MAP                   0x35C
->>
->>   #define ANALOGIX_DP_ANALOG_CTL_1               0x370
->> @@ -103,6 +120,8 @@
->>
->>   #define ANALOGIX_DP_SOC_GENERAL_CTL            0x800
->>
->> +#define ANALOGIX_DP_CRC_CON                    0x890
->> +
->>   /* ANALOGIX_DP_TX_SW_RESET */
->>   #define RESET_DP_TX                            (0x1 << 0)
->>
->> @@ -151,6 +170,7 @@
->>   #define VID_CHK_UPDATE_TYPE_SHIFT              (4)
->>   #define VID_CHK_UPDATE_TYPE_1                  (0x1 << 4)
->>   #define VID_CHK_UPDATE_TYPE_0                  (0x0 << 4)
->> +#define REUSE_SPD_EN                           (0x1 << 3)
->>
->>   /* ANALOGIX_DP_VIDEO_CTL_8 */
->>   #define VID_HRES_TH(x)                         (((x) & 0xf) << 4)
->> @@ -376,4 +396,12 @@
->>   #define VIDEO_MODE_SLAVE_MODE                  (0x1 << 0)
->>   #define VIDEO_MODE_MASTER_MODE                 (0x0 << 0)
->>
->> +/* ANALOGIX_DP_PKT_SEND_CTL */
->> +#define IF_UP                                  (0x1 << 4)
->> +#define IF_EN                                  (0x1 << 0)
->> +
->> +/* ANALOGIX_DP_CRC_CON */
->> +#define PSR_VID_CRC_FLUSH                      (0x1 << 2)
->> +#define PSR_VID_CRC_ENABLE                     (0x1 << 0)
->> +
->>   #endif /* _ANALOGIX_DP_REG_H */
->> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
->> index 261b86d..183a336 100644
->> --- a/include/drm/bridge/analogix_dp.h
->> +++ b/include/drm/bridge/analogix_dp.h
->> @@ -38,6 +38,9 @@ struct analogix_dp_plat_data {
->>                           struct drm_connector *);
->>   };
->>
->> +int analogix_dp_active_psr(struct device *dev);
->> +int analogix_dp_inactive_psr(struct device *dev);
-> Why active/inactive instead of enable/disable, which is used everywhere else?
-
-Done
-
-Thanks,
-- Yakir
-
->> +
->>   int analogix_dp_resume(struct device *dev);
->>   int analogix_dp_suspend(struct device *dev);
->>
->> --
->> 1.9.1
->>
->>
->
->
+U2VhbiwKCk9uIDA3LzAxLzIwMTYgMTE6MzIgUE0sIFNlYW4gUGF1bCB3cm90ZToKPiBPbiBGcmks
+IEp1bCAxLCAyMDE2IGF0IDExOjMwIEFNLCBTZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9y
+Zz4gd3JvdGU6Cj4+IE9uIEZyaSwgSnVsIDEsIDIwMTYgYXQgNToxOSBBTSwgWWFraXIgWWFuZyA8
+eWtrQHJvY2stY2hpcHMuY29tPiB3cm90ZToKPj4+IFZPUCBoYXZlIGludGVncmF0ZWQgYSBoYXJk
+d2FyZSBjb3VudGVyIHdoaWNoIGluZGljYXRlIHRoZSBleGFjdCBkaXNwbGF5Cj4+PiBsaW5lIHRo
+YXQgdm9wIGlzIHNjYW5uaW5nLiBBbmQgaWYgd2UncmUgaW50ZXJlc3RlZCBpbiBhIHNwZWNpZmlj
+IGxpbmUsCj4+PiB3ZSBjYW4gc2V0IHRoZSBsaW5lIG51bWJlciB0byB2b3AgbGluZV9mbGFnIHJl
+Z2lzdGVyLCBhbmQgdGhlbiB2b3Agd291bGQKPj4+IGdlbmVyYXRlIGEgbGluZV9mbGFnIGludGVy
+cnVwdCBmb3IgaXQuCj4+Pgo+Pj4gRm9yIGV4YW1wbGUgZURQIFBTUiBmdW5jdGlvbiBpcyBpbnRl
+cmVzdGVkIGluIHRoZSB2ZXJ0aWNhbCBibGFua2luZwo+Pj4gcGVyaW9kLCB0aGVuIGRyaXZlciBj
+b3VsZCBzZXQgdGhlIGxpbmUgbnVtYmVyIHRvIHplcm8uCj4+Pgo+Pj4gVGhpcyBwYXRjaCBoYXZl
+IGV4cG9ydGVkIGEgc3ltYm9sIHRoYXQgYWxsb3cgb3RoZXIgZHJpdmVyIHRvIGxpc3RlbiB0aGUK
+Pj4+IGxpbmUgZmxhZyBldmVudCB3aXRoIGdpdmVuIHRpbWVvdXQgbGltaXQ6Cj4+PiAtICByb2Nr
+Y2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcoKQo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFlha2lyIFlh
+bmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KPj4+IC0tLQo+Pj4gQ2hhbmdlcyBpbiB2MzoKPj4+IC0g
+RXhwb3J0IHRoZSAncm9ja2NoaXBfZHJtX3dhaXRfbGluZV9mbGFnJyBzeW1ib2wsIGFuZCBkb2N1
+bWVudCBpdC4KPj4+IC0gQWRkICdsaW5lX2ZsYWdfbnVtXzAnIGZvciBSSzMyODgvUkszMDM2Cj4+
+PiAtIFJlbW92ZSB0aGUgbm90aWZ5IGZvciB3YWl0aW5nIGxpbmVfZmxhZyBldmVudCAoRGFuaWVs
+KQo+Pj4KPj4+IENoYW5nZXMgaW4gdjI6Cj4+PiAtIEludHJvZHVjZSBpbiB2Miwgc3BsaXQgVk9Q
+IGxpbmUgZmxhZyBjaGFuZ2VzIG91dAo+Pj4KPj4+ICAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
+L3JvY2tjaGlwX2RybV9kcnYuaCB8ICAgMyArCj4+PiAgIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9yb2NrY2hpcF9kcm1fdm9wLmMgfCAxMDMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+
+Pj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5oIHwgICAzICsK
+Pj4+ICAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyB8ICAgNCAr
+Kwo+Pj4gICA0IGZpbGVzIGNoYW5nZWQsIDExMyBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmggYi9kcml2
+ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5oCj4+PiBpbmRleCBlYTM5MzI5
+Li4yMzliODMwIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
+aGlwX2RybV9kcnYuaAo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
+X2RybV9kcnYuaAo+Pj4gQEAgLTcwLDQgKzcwLDcgQEAgaW50IHJvY2tjaGlwX2RybV9kbWFfYXR0
+YWNoX2RldmljZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPj4+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldik7Cj4+PiAgIHZvaWQgcm9j
+a2NoaXBfZHJtX2RtYV9kZXRhY2hfZGV2aWNlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+
+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZpY2UgKmRl
+dik7Cj4+PiAraW50IHJvY2tjaGlwX2RybV93YWl0X2xpbmVfZmxhZyhzdHJ1Y3QgZHJtX2NydGMg
+KmNydGMsIHVuc2lnbmVkIGludCBsaW5lX251bSwKPj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgdW5zaWduZWQgaW50IG1zdGltZW91dCk7Cj4+PiArCj4+PiAgICNlbmRpZiAvKiBf
+Uk9DS0NISVBfRFJNX0RSVl9IXyAqLwo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9y
+b2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
+a2NoaXBfZHJtX3ZvcC5jCj4+PiBpbmRleCBjOGE2MmE4Li5jZDNjYWM1IDEwMDY0NAo+Pj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYwo+Pj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuYwo+Pj4gQEAgLTEyMSw2
+ICsxMjEsOCBAQCBzdHJ1Y3Qgdm9wIHsKPj4+ICAgICAgICAgIC8qIHByb3RlY3RlZCBieSBkZXYt
+PmV2ZW50X2xvY2sgKi8KPj4+ICAgICAgICAgIHN0cnVjdCBkcm1fcGVuZGluZ192YmxhbmtfZXZl
+bnQgKmV2ZW50Owo+Pj4KPj4+ICsgICAgICAgc3RydWN0IGNvbXBsZXRpb24gbGluZV9mbGFnX2Nv
+bXBsZXRpb247Cj4+PiArCj4+PiAgICAgICAgICBjb25zdCBzdHJ1Y3Qgdm9wX2RhdGEgKmRhdGE7
+Cj4+Pgo+Pj4gICAgICAgICAgdWludDMyX3QgKnJlZ3NiYWs7Cj4+PiBAQCAtNDMxLDYgKzQzMyw1
+OSBAQCBzdGF0aWMgdm9pZCB2b3BfZHNwX2hvbGRfdmFsaWRfaXJxX2Rpc2FibGUoc3RydWN0IHZv
+cCAqdm9wKQo+Pj4gICAgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmdm9wLT5pcnFfbG9j
+aywgZmxhZ3MpOwo+Pj4gICB9Cj4+Pgo+Pj4gKy8qCj4+PiArICogKDEpIGVhY2ggZnJhbWUgc3Rh
+cnRzIGF0IHRoZSBzdGFydCBvZiB0aGUgVnN5bmMgcHVsc2Ugd2hpY2ggaXMgc2lnbmFsZWQgYnkK
+Pj4+ICsgKiAgICAgdGhlICJGUkFNRV9TWU5DIiBpbnRlcnJ1cHQuCj4+PiArICogKDIpIHRoZSBh
+Y3RpdmUgZGF0YSByZWdpb24gb2YgZWFjaCBmcmFtZSBlbmRzIGF0IGRzcF92YWN0X2VuZAo+Pj4g
+KyAqICgzKSB3ZSBzaG91bGQgcHJvZ3JhbSB0aGlzIHNhbWUgbnVtYmVyIChkc3BfdmFjdF9lbmQp
+IGludG8gZHNwX2xpbmVfZnJhZ19udW0sCj4+PiArICogICAgICB0byBnZXQgIkxJTkVfRkxBRyIg
+aW50ZXJydXB0IGF0IHRoZSBlbmQgb2YgdGhlIGFjdGl2ZSBvbiBzY3JlZW4gZGF0YS4KPj4+ICsg
+Kgo+Pj4gKyAqIFZPUF9JTlRSX0NUUkwwLmRzcF9saW5lX2ZyYWdfbnVtID0gVk9QX0RTUF9WQUNU
+X1NUX0VORC5kc3BfdmFjdF9lbmQKPj4+ICsgKiBJbnRlcnJ1cHRzCj4+PiArICogTElORV9GTEFH
+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rCj4+PiArICogRlJBTUVfU1lOQyAtLS0t
+KyAgICAgICAgICAgICAgICAgICAgICAgICB8Cj4+PiArICogICAgICAgICAgICAgICAgfCAgICAg
+ICAgICAgICAgICAgICAgICAgICB8Cj4+PiArICogICAgICAgICAgICAgICAgdiAgICAgICAgICAg
+ICAgICAgICAgICAgICB2Cj4+PiArICogICAgICAgICAgICAgICAgfCBWc3luYyB8IFZicCB8ICBW
+YWN0aXZlICB8IFZmcCB8Cj4+PiArICogICAgICAgICAgICAgICAgICAgICAgICBeICAgICBeICAg
+ICAgICAgICBeICAgICBeCj4+PiArICogICAgICAgICAgICAgICAgICAgICAgICB8ICAgICB8ICAg
+ICAgICAgICB8ICAgICB8Cj4+PiArICogICAgICAgICAgICAgICAgICAgICAgICB8ICAgICB8ICAg
+ICAgICAgICB8ICAgICB8Cj4+PiArICogZHNwX3ZzX2VuZCAtLS0tLS0tLS0tLS0rICAgICB8ICAg
+ICAgICAgICB8ICAgICB8ICAgVk9QX0RTUF9WVE9UQUxfVlNfRU5ECj4+PiArICogZHNwX3ZhY3Rf
+c3RhcnQgLS0tLS0tLS0tLS0tLS0rICAgICAgICAgICB8ICAgICB8ICAgVk9QX0RTUF9WQUNUX1NU
+X0VORAo+Pj4gKyAqIGRzcF92YWN0X2VuZCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKyAg
+ICAgfCAgIFZPUF9EU1BfVkFDVF9TVF9FTkQKPj4+ICsgKiBkc3BfdG90YWwgLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsgICBWT1BfRFNQX1ZUT1RBTF9WU19FTkQKPj4+ICsg
+Ki8KPj4+ICsKPj4+ICtzdGF0aWMgdm9pZCB2b3BfbGluZV9mbGFnX2lycV9lbmFibGUoc3RydWN0
+IHZvcCAqdm9wLCBpbnQgbGluZV9udW0pCj4+PiArewo+Pj4gKyAgICAgICB1bnNpZ25lZCBsb25n
+IGZsYWdzOwo+Pj4gKwo+Pj4gKyAgICAgICBpZiAoV0FSTl9PTighdm9wLT5pc19lbmFibGVkKSkK
+Pj4+ICsgICAgICAgICAgICAgICByZXR1cm47Cj4+PiArCj4+PiArICAgICAgIHNwaW5fbG9ja19p
+cnFzYXZlKCZ2b3AtPmlycV9sb2NrLCBmbGFncyk7Cj4+PiArCj4+PiArICAgICAgIFZPUF9DVFJM
+X1NFVCh2b3AsIGxpbmVfZmxhZ19udW1fMCwgbGluZV9udW0pOwo+Pj4gKyAgICAgICBWT1BfSU5U
+Ul9TRVRfVFlQRSh2b3AsIGVuYWJsZSwgTElORV9GTEFHX0lOVFIsIDEpOwo+Pj4gKyAgICAgICB2
+b3BfY2ZnX2RvbmUodm9wKTsKPj4+ICsKPj4+ICsgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9y
+ZSgmdm9wLT5pcnFfbG9jaywgZmxhZ3MpOwo+Pj4gK30KPj4+ICsKPj4+ICtzdGF0aWMgdm9pZCB2
+b3BfbGluZV9mbGFnX2lycV9kaXNhYmxlKHN0cnVjdCB2b3AgKnZvcCkKPj4+ICt7Cj4+PiArICAg
+ICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+PiArCj4+PiArICAgICAgIGlmIChXQVJOX09OKCF2
+b3AtPmlzX2VuYWJsZWQpKQo+Pj4gKyAgICAgICAgICAgICAgIHJldHVybjsKPj4+ICsKPj4+ICsg
+ICAgICAgc3Bpbl9sb2NrX2lycXNhdmUoJnZvcC0+aXJxX2xvY2ssIGZsYWdzKTsKPj4+ICsKPj4+
+ICsgICAgICAgVk9QX0lOVFJfU0VUX1RZUEUodm9wLCBlbmFibGUsIExJTkVfRkxBR19JTlRSLCAw
+KTsKPj4+ICsKPj4+ICsgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmdm9wLT5pcnFfbG9j
+aywgZmxhZ3MpOwo+Pj4gK30KPj4+ICsKPj4+ICAgc3RhdGljIHZvaWQgdm9wX2VuYWJsZShzdHJ1
+Y3QgZHJtX2NydGMgKmNydGMpCj4+PiAgIHsKPj4+ICAgICAgICAgIHN0cnVjdCB2b3AgKnZvcCA9
+IHRvX3ZvcChjcnRjKTsKPj4+IEBAIC0xMTU3LDYgKzEyMTIsMTMgQEAgc3RhdGljIGlycXJldHVy
+bl90IHZvcF9pc3IoaW50IGlycSwgdm9pZCAqZGF0YSkKPj4+ICAgICAgICAgICAgICAgICAgcmV0
+ID0gSVJRX0hBTkRMRUQ7Cj4+PiAgICAgICAgICB9Cj4+Pgo+Pj4gKyAgICAgICBpZiAoYWN0aXZl
+X2lycXMgJiBMSU5FX0ZMQUdfSU5UUikgewo+Pj4gKyAgICAgICAgICAgICAgIGlmICghY29tcGxl
+dGlvbl9kb25lKCZ2b3AtPmxpbmVfZmxhZ19jb21wbGV0aW9uKSkKPj4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgIGNvbXBsZXRlKCZ2b3AtPmxpbmVfZmxhZ19jb21wbGV0aW9uKTsKPj4gSSB0aGlu
+ayB0aGVyZSdzIHBvdGVudGlhbCB0byBtaXNzIGZsYWdzIGhlcmUgaWYgdGhlIHRpbWluZyBpcyBq
+dXN0Cj4+IHJpZ2h0IGJlY2F1c2UgdGhlIGNvbXBsZXRpb25fZG9uZSBhbmQgY29tcGxldGUgYXJl
+IG5vdCBhdG9taWMgd3J0IHRoZQo+PiB3YWl0X2xpbmVfZmxhZyBmdW5jdGlvbi4gSSB0aGluayB5
+b3UgbmVlZCBzb21lIGxvY2tpbmcgYXJvdW5kIHRoZQo+PiBjb21wbGV0aW9uIG9wZXJhdGlvbnMg
+dG8gZW5zdXJlIHRoZXkncmUgcHJvcGVybHkgc2VxdWVuY2VkLgo+Pgo+PiBGV0lXLCBpZiB5b3Un
+cmUgcmVpbml0aWFsaXppbmcgdGhlIGNvbXBsZXRpb24gZXZlcnkgdGltZSBpbgo+PiBkcm1fd2Fp
+dF9saW5lX2ZsYWcsIHlvdSBzaG91bGQgYmUgYWJsZSB0byBqdXN0IGNhbGwgY29tcGxldGUgKG9y
+Cj4+IGNvbXBsZXRlX2FsbCkgd2l0aG91dCBjaGVja2luZyBpZiB0aGVyZSBhcmUgYW55IHdhaXRl
+cnMuCj4+Cj4gSSBzaG91bGQgYWRkLCBpZiB5b3UganVzdCBjYWxsIGNvbXBsZXRlL2NvbXBsZXRl
+X2FsbCgpIGhlcmUsIHlvdQo+IHNob3VsZG4ndCBuZWVkIHRvIGFkZCBsb2NraW5nIChhc3N1bWlu
+ZyBvbmx5IG9uZSB3YWl0ZXIpLgoKWWVzLCBvbmx5IG9uZSB3YWl0ZXIuCgo+Pj4gKyAgICAgICAg
+ICAgICAgIGFjdGl2ZV9pcnFzICY9IH5MSU5FX0ZMQUdfSU5UUjsKPj4+ICsgICAgICAgICAgICAg
+ICByZXQgPSBJUlFfSEFORExFRDsKPj4+ICsgICAgICAgfQo+Pj4gKwo+Pj4gICAgICAgICAgaWYg
+KGFjdGl2ZV9pcnFzICYgRlNfSU5UUikgewo+Pj4gICAgICAgICAgICAgICAgICBkcm1fY3J0Y19o
+YW5kbGVfdmJsYW5rKGNydGMpOwo+Pj4gICAgICAgICAgICAgICAgICB2b3BfaGFuZGxlX3ZibGFu
+ayh2b3ApOwo+Pj4gQEAgLTEyNTUsNiArMTMxNyw3IEBAIHN0YXRpYyBpbnQgdm9wX2NyZWF0ZV9j
+cnRjKHN0cnVjdCB2b3AgKnZvcCkKPj4+Cj4+PiAgICAgICAgICBpbml0X2NvbXBsZXRpb24oJnZv
+cC0+ZHNwX2hvbGRfY29tcGxldGlvbik7Cj4+PiAgICAgICAgICBpbml0X2NvbXBsZXRpb24oJnZv
+cC0+d2FpdF91cGRhdGVfY29tcGxldGUpOwo+Pj4gKyAgICAgICBpbml0X2NvbXBsZXRpb24oJnZv
+cC0+bGluZV9mbGFnX2NvbXBsZXRpb24pOwo+Pj4gICAgICAgICAgY3J0Yy0+cG9ydCA9IHBvcnQ7
+Cj4+PiAgICAgICAgICByb2NrY2hpcF9yZWdpc3Rlcl9jcnRjX2Z1bmNzKGNydGMsICZwcml2YXRl
+X2NydGNfZnVuY3MpOwo+Pj4KPj4+IEBAIC0xNDExLDYgKzE0NzQsNDYgQEAgc3RhdGljIHZvaWQg
+dm9wX3dpbl9pbml0KHN0cnVjdCB2b3AgKnZvcCkKPj4+ICAgICAgICAgIH0KPj4+ICAgfQo+Pj4K
+Pj4+ICsvKioKPj4+ICsgKiByb2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcgLSBhY3FpdXJlIHRo
+ZSBnaXZlIGxpbmUgZmxhZyBldmVudAo+Pj4gKyAqIEBjcnRjOiBDUlRDIHRvIGVuYWJsZSBsaW5l
+IGZsYWcKPj4+ICsgKiBAbGluZV9udW06IGludGVyZXN0ZWQgbGluZSBudW1iZXIKPj4+ICsgKiBA
+bXN0aW1lb3V0OiBtaWxsaXNlY29uZCBmb3IgdGltZW91dAo+Pj4gKyAqCj4+PiArICogRHJpdmVy
+IHdvdWxkIGhvbGQgaGVyZSB1bnRpbCB0aGUgaW50ZXJlc3RlZCBsaW5lIGZsYWcgaW50ZXJydXB0
+IGhhdmUKPj4+ICsgKiBoYXBwZW5lZCBvciB0aW1lb3V0IHRvIHdhaXQuCj4+PiArICoKPj4+ICsg
+KiBSZXR1cm5zOgo+Pj4gKyAqIFplcm8gb24gc3VjY2VzcywgbmVnYXRpdmUgZXJybm8gb24gZmFp
+bHVyZS4KPj4+ICsgKi8KPj4+ICtpbnQgcm9ja2NoaXBfZHJtX3dhaXRfbGluZV9mbGFnKHN0cnVj
+dCBkcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IGxpbmVfbnVtLAo+Pj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgbXN0aW1lb3V0KQo+Pj4gK3sKPj4+ICsg
+ICAgICAgc3RydWN0IHZvcCAqdm9wID0gdG9fdm9wKGNydGMpOwo+Pj4gKyAgICAgICB1bnNpZ25l
+ZCBsb25nIGppZmZpZXNfbGVmdDsKPj4+ICsKPj4+ICsgICAgICAgaWYgKCFjcnRjIHx8ICF2b3At
+PmlzX2VuYWJsZWQpCj4+PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7Cj4+PiArCj4+
+PiArICAgICAgIGlmIChsaW5lX251bSA+IGNydGMtPm1vZGUudnRvdGFsIHx8IG1zdGltZW91dCA8
+PSAwKQo+Pj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+Pj4gKwo+Pj4gKyAgICAg
+ICByZWluaXRfY29tcGxldGlvbigmdm9wLT5saW5lX2ZsYWdfY29tcGxldGlvbik7Cj4+PiArICAg
+ICAgIHZvcF9saW5lX2ZsYWdfaXJxX2VuYWJsZSh2b3AsIGxpbmVfbnVtKTsKPj4+ICsKPj4gVGhp
+cyB3aWxsIG9ubHkgd29yayBmb3Igb25lIHdhaXRlciBwZXIgdm9wLiBJcyBpdCB3b3J0aCBlbmZv
+cmNpbmcgdGhpcwo+PiBleHBsaWNpdGx5IHRvIGF2b2lkIHdlaXJkIGJlaGF2aW9yIHdoZW4gdGhl
+cmUgYXJlIG1vcmUgdGhhbiBvbmU/CgpZZXMsIHlvdSdyZSByaWdodCwgbmVlZCB0byBhdm9pZCB0
+aGUgd2VpcmQgYmVoYXZpb3IgaGVyZS4KCj4+Cj4+PiArICAgICAgIGppZmZpZXNfbGVmdCA9IHdh
+aXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCgmdm9wLT5saW5lX2ZsYWdfY29tcGxldGlvbiwKPj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1zZWNz
+X3RvX2ppZmZpZXMobXN0aW1lb3V0KSk7Cj4+PiArICAgICAgIHZvcF9saW5lX2ZsYWdfaXJxX2Rp
+c2FibGUodm9wKTsKPj4+ICsKPj4+ICsgICAgICAgaWYgKGppZmZpZXNfbGVmdCA9PSAwKSB7Cj4+
+PiArICAgICAgICAgICAgICAgZGV2X2Vycih2b3AtPmRldiwgIlRpbWVvdXQgd2FpdGluZyBmb3Ig
+SVJRXG4iKTsKPj4+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVUSU1FRE9VVDsKPj4+ICsgICAg
+ICAgfQo+Pj4gKwo+Pj4gKyAgICAgICByZXR1cm4gMDsKPj4+ICt9Cj4+PiArRVhQT1JUX1NZTUJP
+TChyb2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcpOwo+Pj4gKwo+Pj4gICBzdGF0aWMgaW50IHZv
+cF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpk
+YXRhKQo+Pj4gICB7Cj4+PiAgICAgICAgICBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2ID0g
+dG9fcGxhdGZvcm1fZGV2aWNlKGRldik7Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AuaCBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
+b2NrY2hpcF9kcm1fdm9wLmgKPj4+IGluZGV4IGZmNGY1MmUuLjM0ZmNkMDMgMTAwNjQ0Cj4+PiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5oCj4+PiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5oCj4+PiBAQCAtNjEs
+NiArNjEsOSBAQCBzdHJ1Y3Qgdm9wX2N0cmwgewo+Pj4gICAgICAgICAgc3RydWN0IHZvcF9yZWcg
+aHBvc3Rfc3RfZW5kOwo+Pj4gICAgICAgICAgc3RydWN0IHZvcF9yZWcgdnBvc3Rfc3RfZW5kOwo+
+Pj4KPj4+ICsgICAgICAgc3RydWN0IHZvcF9yZWcgbGluZV9mbGFnX251bV8wOwo+Pj4gKyAgICAg
+ICBzdHJ1Y3Qgdm9wX3JlZyBsaW5lX2ZsYWdfbnVtXzE7Cj4+PiArCj4+IG5pdDogeW91IGNvdWxk
+IG1ha2UgdGhpcyBhbiBhcnJheToKPj4KPj4gc3RydWN0IHZvcF9yZWcgbGluZV9mbGFnX251bVsy
+XTsKCkRvbmUsCgo+Pgo+Pj4gICAgICAgICAgc3RydWN0IHZvcF9yZWcgY2ZnX2RvbmU7Cj4+PiAg
+IH07Cj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hp
+cF92b3BfcmVnLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfdm9wX3JlZy5j
+Cj4+PiBpbmRleCA2ZjQyZTU2Li5lOTIxMWM5IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYwo+Pj4gQEAgLTEyMiw2ICsxMjIsNyBAQCBzdGF0
+aWMgY29uc3Qgc3RydWN0IHZvcF9jdHJsIHJrMzAzNl9jdHJsX2RhdGEgPSB7Cj4+PiAgICAgICAg
+ICAuaGFjdF9zdF9lbmQgPSBWT1BfUkVHKFJLMzAzNl9EU1BfSEFDVF9TVF9FTkQsIDB4MWZmZjFm
+ZmYsIDApLAo+Pj4gICAgICAgICAgLnZ0b3RhbF9wdyA9IFZPUF9SRUcoUkszMDM2X0RTUF9WVE9U
+QUxfVlNfRU5ELCAweDFmZmYxZmZmLCAwKSwKPj4+ICAgICAgICAgIC52YWN0X3N0X2VuZCA9IFZP
+UF9SRUcoUkszMDM2X0RTUF9WQUNUX1NUX0VORCwgMHgxZmZmMWZmZiwgMCksCj4+PiArICAgICAg
+IC5saW5lX2ZsYWdfbnVtXzAgPSBWT1BfUkVHKFJLMzAzNl9JTlRfU1RBVFVTLCAweGZmZiwgMTIp
+LAo+Pj4gICAgICAgICAgLmNmZ19kb25lID0gVk9QX1JFRyhSSzMwMzZfUkVHX0NGR19ET05FLCAw
+eDEsIDApLAo+Pj4gICB9Owo+Pj4KPj4+IEBAIC0yMjEsNiArMjIyLDcgQEAgc3RhdGljIGNvbnN0
+IHN0cnVjdCB2b3BfY3RybCByazMyODhfY3RybF9kYXRhID0gewo+Pj4gICAgICAgICAgLnZhY3Rf
+c3RfZW5kID0gVk9QX1JFRyhSSzMyODhfRFNQX1ZBQ1RfU1RfRU5ELCAweDFmZmYxZmZmLCAwKSwK
+Pj4+ICAgICAgICAgIC5ocG9zdF9zdF9lbmQgPSBWT1BfUkVHKFJLMzI4OF9QT1NUX0RTUF9IQUNU
+X0lORk8sIDB4MWZmZjFmZmYsIDApLAo+Pj4gICAgICAgICAgLnZwb3N0X3N0X2VuZCA9IFZPUF9S
+RUcoUkszMjg4X1BPU1RfRFNQX1ZBQ1RfSU5GTywgMHgxZmZmMWZmZiwgMCksCj4+PiArICAgICAg
+IC5saW5lX2ZsYWdfbnVtXzAgPSBWT1BfUkVHKFJLMzI4OF9JTlRSX0NUUkwwLCAweDFmZmYsIDEy
+KSwKPj4+ICAgICAgICAgIC5jZmdfZG9uZSA9IFZPUF9SRUcoUkszMjg4X1JFR19DRkdfRE9ORSwg
+MHgxLCAwKSwKPj4+ICAgfTsKPj4+Cj4+PiBAQCAtMjk5LDYgKzMwMSw4IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3Qgdm9wX2N0cmwgcmszMzk5X2N0cmxfZGF0YSA9IHsKPj4+ICAgICAgICAgIC52YWN0
+X3N0X2VuZCA9IFZPUF9SRUcoUkszMzk5X0RTUF9WQUNUX1NUX0VORCwgMHgxZmZmMWZmZiwgMCks
+Cj4+PiAgICAgICAgICAuaHBvc3Rfc3RfZW5kID0gVk9QX1JFRyhSSzMzOTlfUE9TVF9EU1BfSEFD
+VF9JTkZPLCAweDFmZmYxZmZmLCAwKSwKPj4+ICAgICAgICAgIC52cG9zdF9zdF9lbmQgPSBWT1Bf
+UkVHKFJLMzM5OV9QT1NUX0RTUF9WQUNUX0lORk8sIDB4MWZmZjFmZmYsIDApLAo+Pj4gKyAgICAg
+ICAubGluZV9mbGFnX251bV8wID0gVk9QX1JFRyhSSzMzOTlfTElORV9GTEFHLCAweGZmZmYsIDAp
+LAo+Pj4gKyAgICAgICAubGluZV9mbGFnX251bV8xID0gVk9QX1JFRyhSSzMzOTlfTElORV9GTEFH
+LCAweGZmZmYsIDE2KSwKPj4+ICAgICAgICAgIC5jZmdfZG9uZSA9IFZPUF9SRUdfTUFTSyhSSzMz
+OTlfUkVHX0NGR19ET05FLCAweDEsIDApLAo+Pj4gICB9Owo+Pj4KPj4+IC0tCj4+PiAxLjkuMQo+
+Pj4KPj4+Cj4KPgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
