@@ -1,74 +1,50 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/5] drm/exynos: iommu: move dma_params configuration
- code to separate functions
-Date: Fri, 08 Jul 2016 17:15:22 +0900
-Message-ID: <577F611A.6070500@samsung.com>
-References: <1466150067-8065-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20160617075443epcas1p2b394c6769a324971442f2394fc329d67@epcas1p2.samsung.com>
- <1466150067-8065-2-git-send-email-m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable s2mps11 regulator clk and s3c rtc
+ driver
+Date: Fri, 08 Jul 2016 16:59:29 +0530
+Message-ID: <577F8E99.80301@samsung.com>
+References: <1467713211-16014-1-git-send-email-alim.akhtar@samsung.com>
+ <577C9F2C.4040509@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1466150067-8065-2-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45247 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754344AbcGHL3z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Jul 2016 07:29:55 -0400
+In-reply-to: <577C9F2C.4040509@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com
 
-SGkgTWFyZWssCgoyMDE264WEIDA27JuUIDE37J28IDE2OjU07JeQIE1hcmVrIFN6eXByb3dza2kg
-7J20KOqwgCkg7JO0IOq4gDoKPiBNb3ZlIGNvZGUgZm9yIG1hbmFnaW5nIERNQSBtYXggc2VnbWVu
-dCBzaXplIHBhcmFtZXRlciB0byBzZXBhcmF0ZQo+IGZ1bmN0aW9ucy4gVGhpcyBwYXRjaCBhbHNv
-IHJlcGxhY2VzIGRldm1fa3phbGxvYygpIHdpdGgga3phbGxvYygpIGFuZAo+IGFkZHMgcHJvcGVy
-IGtmcmVlIGNhbGwuIGRldm1fa3phbGxvYygpIGNhbm5vdCBiZSB1c2VkIGZvciBkbWFfcGFyYW1z
-Cj4gc3RydWN0dXJlLCBiZWNhdXNlIGl0IHdpbGwgYmUgZnJlZWQgb24gZHJpdmVyIHJlbW92ZSBu
-b3Qgb24gZGV2aWNlCj4gcmVsZWFzZS4gVGhpcyBtZWFucyBpbiBjYXNlIG9mIEV4eW5vcyBEUk0g
-YmVpbmcgY29tcGlsZWQgYXMgbW9kdWxlIGFuZAo+IGxvYWRlZCAyIHRpbWVzLCBhIHVzZXItYWZ0
-ZXItZnJlZSBpc3N1ZSB3aWxsIGhhcHBlbi4KClBpY2tlZCB0aGlzIHBhdGNoIHNlcmllcyB1cC4K
-ClRoYW5rcywKSW5raSBEYWUKCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1faW9tbXUuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysrKystLS0tLS0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKPiBpbmRleCA3Y2EwOWVlMTk2
-NTYuLjFlODI1MjllMGM0MSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1faW9tbXUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9pb21tdS5jCj4gQEAgLTIxLDYgKzIxLDIzIEBACj4gICNpbmNsdWRlICJleHlub3NfZHJtX2Ry
-di5oIgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9pb21tdS5oIgo+ICAKPiArc3RhdGljIGlubGlu
-ZSBpbnQgY29uZmlndXJlX2RtYV9tYXhfc2VnX3NpemUoc3RydWN0IGRldmljZSAqZGV2KQo+ICt7
-Cj4gKwlpZiAoIWRldi0+ZG1hX3Bhcm1zKQo+ICsJCWRldi0+ZG1hX3Bhcm1zID0ga3phbGxvYyhz
-aXplb2YoKmRldi0+ZG1hX3Bhcm1zKSwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIWRldi0+ZG1hX3Bh
-cm1zKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsKPiArCWRtYV9zZXRfbWF4X3NlZ19zaXplKGRl
-diwgRE1BX0JJVF9NQVNLKDMyKSk7Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGljIGlu
-bGluZSB2b2lkIGNsZWFyX2RtYV9tYXhfc2VnX3NpemUoc3RydWN0IGRldmljZSAqZGV2KQo+ICt7
-Cj4gKwlrZnJlZShkZXYtPmRtYV9wYXJtcyk7Cj4gKwlkZXYtPmRtYV9wYXJtcyA9IE5VTEw7Cj4g
-K30KPiArCj4gIC8qCj4gICAqIGRybV9jcmVhdGVfaW9tbXVfbWFwcGluZyAtIGNyZWF0ZSBhIG1h
-cHBpbmcgc3RydWN0dXJlCj4gICAqCj4gQEAgLTgwLDEzICs5NywxMCBAQCBpbnQgZHJtX2lvbW11
-X2F0dGFjaF9kZXZpY2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAlpZiAoIXByaXYt
-Pm1hcHBpbmcpCj4gIAkJcmV0dXJuIDA7Cj4gIAo+IC0Jc3ViZHJ2X2Rldi0+ZG1hX3Bhcm1zID0g
-ZGV2bV9remFsbG9jKHN1YmRydl9kZXYsCj4gLQkJCQkJc2l6ZW9mKCpzdWJkcnZfZGV2LT5kbWFf
-cGFybXMpLAo+IC0JCQkJCUdGUF9LRVJORUwpOwo+IC0JaWYgKCFzdWJkcnZfZGV2LT5kbWFfcGFy
-bXMpCj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JZG1hX3NldF9tYXhfc2VnX3NpemUoc3Vi
-ZHJ2X2RldiwgMHhmZmZmZmZmZnUpOwo+ICsJcmV0ID0gY29uZmlndXJlX2RtYV9tYXhfc2VnX3Np
-emUoc3ViZHJ2X2Rldik7Cj4gKwlpZiAocmV0KQo+ICsJCXJldHVybiByZXQ7Cj4gIAo+ICAJaWYg
-KHN1YmRydl9kZXYtPmFyY2hkYXRhLm1hcHBpbmcpCj4gIAkJYXJtX2lvbW11X2RldGFjaF9kZXZp
-Y2Uoc3ViZHJ2X2Rldik7Cj4gQEAgLTk0LDYgKzEwOCw3IEBAIGludCBkcm1faW9tbXVfYXR0YWNo
-X2RldmljZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiAgCXJldCA9IGFybV9pb21tdV9h
-dHRhY2hfZGV2aWNlKHN1YmRydl9kZXYsIHByaXYtPm1hcHBpbmcpOwo+ICAJaWYgKHJldCA8IDAp
-IHsKPiAgCQlEUk1fREVCVUdfS01TKCJmYWlsZWQgaW9tbXUgYXR0YWNoLlxuIik7Cj4gKwkJY2xl
-YXJfZG1hX21heF9zZWdfc2l6ZShzdWJkcnZfZGV2KTsKPiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+
-ICAKPiBAQCAtMTE5LDQgKzEzNCw1IEBAIHZvaWQgZHJtX2lvbW11X2RldGFjaF9kZXZpY2Uoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAkJcmV0dXJuOwo+ICAKPiAgCWFybV9pb21tdV9k
-ZXRhY2hfZGV2aWNlKHN1YmRydl9kZXYpOwo+ICsJY2xlYXJfZG1hX21heF9zZWdfc2l6ZShzdWJk
-cnZfZGV2KTsKPiAgfQo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+
+
+On 07/06/2016 11:33 AM, Krzysztof Kozlowski wrote:
+> On 07/05/2016 12:06 PM, Alim Akhtar wrote:
+>> The s3c rtc controller on exynos7 platform uses rtc source clock
+>> from s2mps11 pmic. This patch enables the required bits to make
+>> rtc work on exynos7-espresso board.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>   arch/arm64/configs/defconfig |    2 ++
+>>   1 file changed, 2 insertions(+)
+>
+> Thanks, applied, with changed commit title and message. Any more arm64
+> defconfig changes coming soon?
+>
+Thanks Krzysztof,
+May be we should enable CONFIG_S3C2410_WATCHDOG as well.
+All the bits to enable this is there, even in exynos7 dts watchdog is 
+enabled.
+Let me know if you want me to send a patch or you can add in my last 
+patch related with config changes, if this is not very difficult for you 
+to handle.
+
+> Best regards,
+> Krzysztof
+>
+>
