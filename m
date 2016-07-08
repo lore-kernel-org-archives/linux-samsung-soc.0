@@ -1,211 +1,74 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH v5 4/4] drm: rcar: use generic code for managing zpos
- plane property
-Date: Fri, 8 Jul 2016 09:44:09 +0200
-Message-ID: <CA+M3ks6Hr629P4GOWp9zVX7eJaijkwE_GNscUs+tusK0t0zJ_Q@mail.gmail.com>
-References: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
- <1467896484-5132-5-git-send-email-benjamin.gaignard@linaro.org> <5986168.pJCDFu2kxL@avalon>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/5] drm/exynos: iommu: move dma_params configuration
+ code to separate functions
+Date: Fri, 08 Jul 2016 17:15:22 +0900
+Message-ID: <577F611A.6070500@samsung.com>
+References: <1466150067-8065-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20160617075443epcas1p2b394c6769a324971442f2394fc329d67@epcas1p2.samsung.com>
+ <1466150067-8065-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:35646 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751016AbcGHHoK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Jul 2016 03:44:10 -0400
-Received: by mail-oi0-f52.google.com with SMTP id r2so53865717oih.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Jul 2016 00:44:10 -0700 (PDT)
-In-Reply-To: <5986168.pJCDFu2kxL@avalon>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1466150067-8065-2-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Laurent,
-
-May I suggest to merge only zpos core files (i.e the first patch of
-this series) and sti patches ?
-Like that we can progress and we can resend your patch for rcar when
-media_tree vsp1 branch
-will be merged into drm-next?
-
-Dave, Daniel: is it possible to do like this ?
-
-Regards,
-Benjamin
-
-
-2016-07-07 17:53 GMT+02:00 Laurent Pinchart <laurent.pinchart@ideasonbo=
-ard.com>:
-> Hi Benjamin,
->
-> Thank you for the patch.
->
-> The git://linuxtv.org/media_tree.git vsp1 branch will be merged in v4=
-=2E8 and
-> will conflict with this series. If you target v4.8 you should rebase =
-the
-> patches on top of that branch.
->
-> For your convenience I've pushed a branch in which I've resolved the =
-conflicts
-> for v4 of your patches series to
->
-> git://linuxtv.org/pinchartl/media.git drm/du/zorder
->
-> On Thursday 07 Jul 2016 15:01:24 Benjamin Gaignard wrote:
->> version 4:
->> fix null pointer issue while setting zpos in plane reset function
->>
->> This patch replaces zpos property handling custom code in rcar DRM
->> driver with calls to generic DRM code.
->>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->>
->> Cc: Daniel Vetter <daniel@ffwll.ch>
->> Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
->> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 2 +-
->>  drivers/gpu/drm/rcar-du/rcar_du_drv.h   | 1 -
->>  drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 5 -----
->>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 9 ++-------
->>  drivers/gpu/drm/rcar-du/rcar_du_plane.h | 2 --
->>  5 files changed, 3 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
->> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 0d8bdda..28d2cb6 1006=
-44
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
->> @@ -196,7 +196,7 @@ void rcar_du_crtc_route_output(struct drm_crtc *=
-crtc,
->>
->>  static unsigned int plane_zpos(struct rcar_du_plane *plane)
->>  {
->> -     return to_rcar_plane_state(plane->plane.state)->zpos;
->> +     return plane->plane.state->normalized_zpos;
->>  }
->>
->>  static const struct rcar_du_format_info *
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
->> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index ed35467..c843c31 10064=
-4
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
->> @@ -92,7 +92,6 @@ struct rcar_du_device {
->>       struct {
->>               struct drm_property *alpha;
->>               struct drm_property *colorkey;
->> -             struct drm_property *zpos;
->>       } props;
->>
->>       unsigned int dpad0_source;
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
->> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 6bb032d..f03eb55 10064=
-4
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
->> @@ -527,11 +527,6 @@ static int rcar_du_properties_init(struct
->> rcar_du_device *rcdu) if (rcdu->props.colorkey =3D=3D NULL)
->>               return -ENOMEM;
->>
->> -     rcdu->props.zpos =3D
->> -             drm_property_create_range(rcdu->ddev, 0, "zpos", 1, 7)=
-;
->> -     if (rcdu->props.zpos =3D=3D NULL)
->> -             return -ENOMEM;
->> -
->>       return 0;
->>  }
->>
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index bfe31ca..dc9bb96 100=
-644
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->> @@ -652,7 +652,7 @@ static void rcar_du_plane_reset(struct drm_plane=
- *plane)
->> state->source =3D RCAR_DU_PLANE_MEMORY;
->>       state->alpha =3D 255;
->>       state->colorkey =3D RCAR_DU_COLORKEY_NONE;
->> -     state->zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY ? 0 =
-: 1;
->> +     state->state.zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMAR=
-Y ? 0 : 1;
->>
->>       plane->state =3D &state->state;
->>       plane->state->plane =3D plane;
->> @@ -670,8 +670,6 @@ static int rcar_du_plane_atomic_set_property(str=
-uct
->> drm_plane *plane, rstate->alpha =3D val;
->>       else if (property =3D=3D rcdu->props.colorkey)
->>               rstate->colorkey =3D val;
->> -     else if (property =3D=3D rcdu->props.zpos)
->> -             rstate->zpos =3D val;
->>       else
->>               return -EINVAL;
->>
->> @@ -690,8 +688,6 @@ static int rcar_du_plane_atomic_get_property(str=
-uct
->> drm_plane *plane, *val =3D rstate->alpha;
->>       else if (property =3D=3D rcdu->props.colorkey)
->>               *val =3D rstate->colorkey;
->> -     else if (property =3D=3D rcdu->props.zpos)
->> -             *val =3D rstate->zpos;
->>       else
->>               return -EINVAL;
->>
->> @@ -763,8 +759,7 @@ int rcar_du_planes_init(struct rcar_du_group *rg=
-rp)
->>               drm_object_attach_property(&plane->plane.base,
->>                                          rcdu->props.colorkey,
->>                                          RCAR_DU_COLORKEY_NONE);
->> -             drm_object_attach_property(&plane->plane.base,
->> -                                        rcdu->props.zpos, 1);
->> +             drm_plane_create_zpos_property(&plane->plane, 1, 7);
->>       }
->>
->>       return 0;
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
->> b/drivers/gpu/drm/rcar-du/rcar_du_plane.h index b18b7b2..8b91dd3 100=
-644
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
->> @@ -51,7 +51,6 @@ static inline struct rcar_du_plane *to_rcar_plane(=
-struct
->> drm_plane *plane) * @hwindex: 0-based hardware plane index, -1 means=
- unused
->>   * @alpha: value of the plane alpha property
->>   * @colorkey: value of the plane colorkey property
->> - * @zpos: value of the plane zpos property
->>   */
->>  struct rcar_du_plane_state {
->>       struct drm_plane_state state;
->> @@ -62,7 +61,6 @@ struct rcar_du_plane_state {
->>
->>       unsigned int alpha;
->>       unsigned int colorkey;
->> -     unsigned int zpos;
->>  };
->>
->>  static inline struct rcar_du_plane_state *
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
-
-
-
---=20
-Benjamin Gaignard
-
-Graphic Working Group
-
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-
-=46ollow Linaro: Facebook | Twitter | Blog
+SGkgTWFyZWssCgoyMDE264WEIDA27JuUIDE37J28IDE2OjU07JeQIE1hcmVrIFN6eXByb3dza2kg
+7J20KOqwgCkg7JO0IOq4gDoKPiBNb3ZlIGNvZGUgZm9yIG1hbmFnaW5nIERNQSBtYXggc2VnbWVu
+dCBzaXplIHBhcmFtZXRlciB0byBzZXBhcmF0ZQo+IGZ1bmN0aW9ucy4gVGhpcyBwYXRjaCBhbHNv
+IHJlcGxhY2VzIGRldm1fa3phbGxvYygpIHdpdGgga3phbGxvYygpIGFuZAo+IGFkZHMgcHJvcGVy
+IGtmcmVlIGNhbGwuIGRldm1fa3phbGxvYygpIGNhbm5vdCBiZSB1c2VkIGZvciBkbWFfcGFyYW1z
+Cj4gc3RydWN0dXJlLCBiZWNhdXNlIGl0IHdpbGwgYmUgZnJlZWQgb24gZHJpdmVyIHJlbW92ZSBu
+b3Qgb24gZGV2aWNlCj4gcmVsZWFzZS4gVGhpcyBtZWFucyBpbiBjYXNlIG9mIEV4eW5vcyBEUk0g
+YmVpbmcgY29tcGlsZWQgYXMgbW9kdWxlIGFuZAo+IGxvYWRlZCAyIHRpbWVzLCBhIHVzZXItYWZ0
+ZXItZnJlZSBpc3N1ZSB3aWxsIGhhcHBlbi4KClBpY2tlZCB0aGlzIHBhdGNoIHNlcmllcyB1cC4K
+ClRoYW5rcywKSW5raSBEYWUKCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
+bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1faW9tbXUuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysrKystLS0tLS0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKPiBpbmRleCA3Y2EwOWVlMTk2
+NTYuLjFlODI1MjllMGM0MSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1faW9tbXUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9pb21tdS5jCj4gQEAgLTIxLDYgKzIxLDIzIEBACj4gICNpbmNsdWRlICJleHlub3NfZHJtX2Ry
+di5oIgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9pb21tdS5oIgo+ICAKPiArc3RhdGljIGlubGlu
+ZSBpbnQgY29uZmlndXJlX2RtYV9tYXhfc2VnX3NpemUoc3RydWN0IGRldmljZSAqZGV2KQo+ICt7
+Cj4gKwlpZiAoIWRldi0+ZG1hX3Bhcm1zKQo+ICsJCWRldi0+ZG1hX3Bhcm1zID0ga3phbGxvYyhz
+aXplb2YoKmRldi0+ZG1hX3Bhcm1zKSwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIWRldi0+ZG1hX3Bh
+cm1zKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsKPiArCWRtYV9zZXRfbWF4X3NlZ19zaXplKGRl
+diwgRE1BX0JJVF9NQVNLKDMyKSk7Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGljIGlu
+bGluZSB2b2lkIGNsZWFyX2RtYV9tYXhfc2VnX3NpemUoc3RydWN0IGRldmljZSAqZGV2KQo+ICt7
+Cj4gKwlrZnJlZShkZXYtPmRtYV9wYXJtcyk7Cj4gKwlkZXYtPmRtYV9wYXJtcyA9IE5VTEw7Cj4g
+K30KPiArCj4gIC8qCj4gICAqIGRybV9jcmVhdGVfaW9tbXVfbWFwcGluZyAtIGNyZWF0ZSBhIG1h
+cHBpbmcgc3RydWN0dXJlCj4gICAqCj4gQEAgLTgwLDEzICs5NywxMCBAQCBpbnQgZHJtX2lvbW11
+X2F0dGFjaF9kZXZpY2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAlpZiAoIXByaXYt
+Pm1hcHBpbmcpCj4gIAkJcmV0dXJuIDA7Cj4gIAo+IC0Jc3ViZHJ2X2Rldi0+ZG1hX3Bhcm1zID0g
+ZGV2bV9remFsbG9jKHN1YmRydl9kZXYsCj4gLQkJCQkJc2l6ZW9mKCpzdWJkcnZfZGV2LT5kbWFf
+cGFybXMpLAo+IC0JCQkJCUdGUF9LRVJORUwpOwo+IC0JaWYgKCFzdWJkcnZfZGV2LT5kbWFfcGFy
+bXMpCj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JZG1hX3NldF9tYXhfc2VnX3NpemUoc3Vi
+ZHJ2X2RldiwgMHhmZmZmZmZmZnUpOwo+ICsJcmV0ID0gY29uZmlndXJlX2RtYV9tYXhfc2VnX3Np
+emUoc3ViZHJ2X2Rldik7Cj4gKwlpZiAocmV0KQo+ICsJCXJldHVybiByZXQ7Cj4gIAo+ICAJaWYg
+KHN1YmRydl9kZXYtPmFyY2hkYXRhLm1hcHBpbmcpCj4gIAkJYXJtX2lvbW11X2RldGFjaF9kZXZp
+Y2Uoc3ViZHJ2X2Rldik7Cj4gQEAgLTk0LDYgKzEwOCw3IEBAIGludCBkcm1faW9tbXVfYXR0YWNo
+X2RldmljZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiAgCXJldCA9IGFybV9pb21tdV9h
+dHRhY2hfZGV2aWNlKHN1YmRydl9kZXYsIHByaXYtPm1hcHBpbmcpOwo+ICAJaWYgKHJldCA8IDAp
+IHsKPiAgCQlEUk1fREVCVUdfS01TKCJmYWlsZWQgaW9tbXUgYXR0YWNoLlxuIik7Cj4gKwkJY2xl
+YXJfZG1hX21heF9zZWdfc2l6ZShzdWJkcnZfZGV2KTsKPiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+
+ICAKPiBAQCAtMTE5LDQgKzEzNCw1IEBAIHZvaWQgZHJtX2lvbW11X2RldGFjaF9kZXZpY2Uoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAkJcmV0dXJuOwo+ICAKPiAgCWFybV9pb21tdV9k
+ZXRhY2hfZGV2aWNlKHN1YmRydl9kZXYpOwo+ICsJY2xlYXJfZG1hX21heF9zZWdfc2l6ZShzdWJk
+cnZfZGV2KTsKPiAgfQo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
