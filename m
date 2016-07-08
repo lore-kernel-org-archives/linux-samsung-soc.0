@@ -1,69 +1,59 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH v5] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Fri, 08 Jul 2016 21:47:38 +0900
-Message-ID: <1467982058-14339-1-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/4] bindings: spi-samsung: add exynos5433 spi compatible
+Date: Fri, 08 Jul 2016 14:51:23 +0200
+Message-ID: <577FA1CB.30805@samsung.com>
+References: <1467980304-14093-1-git-send-email-andi.shyti@samsung.com>
+ <1467980304-14093-3-git-send-email-andi.shyti@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1467980304-14093-3-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit b82ec4e and a9e93e8 have added support in the spi device
-driver for the three clock lines required by the SPI controller
-and handles the dependency between the three (by not disabling
-any after resume).
+On 07/08/2016 02:18 PM, Andi Shyti wrote:
+> The samsung,exynos5433-spi has some peculiarities that bring the
+> need of creating a new compatible in the binding.
 
-This way none of the SPI clocks require any criticality: remove,
-then the CLK_IGNORE_UNUSED flag for the SPI related clocks.
+That is not accurate. This for both: exynos5433 and exynos7.
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
+> 
+> One of those is the 3-clocks controller management where the spi
+> is fed with three clocks: "spi", "busclkN" and "ioclk".
+> 
+> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-samsung.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 6dbdeb3..d4294c7 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -10,6 +10,7 @@ Required SoC Specific Properties:
+>      - samsung,s3c6410-spi: for s3c6410 platforms
+>      - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
+>      - samsung,exynos7-spi: for exynos7 platforms
+> +    - samsung,exynos5433-spi: for exynos5433 compatible controllers
 
-Hi,
+As I wrote offline, proper order (alpha-numerical), so 5 before 7.
 
-With this, I hope to have reached the end of this patch series :)
+>  
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
+> 
 
-After some discussions with Tomasz first and Sylwester later, we
-agreed to move all the clock management to the spi driver, here
-are the patches that do that:
+Thanks for the patch, nice work. I see that you ignored parts of my
+offline comments so I guess you leave that work to others (describe
+required clock properties, deprecate exynos7-spi). I'll send the follow
+up then.
 
-  http://marc.info/?l=linux-kernel&m=146787645626318&w=2
-  http://marc.info/?l=linux-kernel&m=146798033221943&w=2
-
-With the above modifications to the spi driver we don't need any
-of the SPI related clocks to be marked either as critical or as
-ignore unused.
-
-Thanks,
-Andi
-
- drivers/clk/samsung/clk-exynos5433.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index c3a5318..fb19525 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
- 			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
--			ENABLE_SCLK_PERIC, 12,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
- 			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-@@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
--			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
- 			3, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
--- 
-2.8.1
-
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
