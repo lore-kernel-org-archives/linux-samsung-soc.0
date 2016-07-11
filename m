@@ -1,47 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 3/4] arm64: dts: exynos: Minor fix for v4.8, last round
-Date: Mon, 11 Jul 2016 18:41:17 +0200
-Message-ID: <1468255278-32162-3-git-send-email-k.kozlowski@samsung.com>
-References: <1468255278-32162-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39730 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933769AbcGKQlf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jul 2016 12:41:35 -0400
-In-Reply-To: <1468255278-32162-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm: exynos: avoid unused function warning
+Date: Mon, 11 Jul 2016 23:51:54 +0200
+Message-ID: <20160711215258.2725710-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Hi,
-
-Last round of commits for v4.8.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.8-2
-
-for you to fetch changes up to a1924466b784fbb64f10eeb213d335e3d1728b8b:
-
-  arm64: dts: exynos: Modify the voltage range for BUCK2 for exynos7 (2016-07-06 09:43:42 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree changes for ARM64 for v4.8:
-1. Adjust the voltage of CPU buck regulator so scaling could work.
-
-----------------------------------------------------------------
-Abhilash Kesavan (1):
-      arm64: dts: exynos: Modify the voltage range for BUCK2 for exynos7
-
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V2hlbiBDT05GSUdfUE0gaXMgbm90IHNldCwgd2UgZ2V0IGEgd2FybmluZyBhYm91dCBhbiB1bnVz
+ZWQgZnVuY3Rpb246Cgpkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmM6MTIx
+OToxMjogZXJyb3I6ICdnc2NfY2xrX2N0cmwnIGRlZmluZWQgYnV0IG5vdCB1c2VkIFstV2Vycm9y
+PXVudXNlZC1mdW5jdGlvbl0KIHN0YXRpYyBpbnQgZ3NjX2Nsa19jdHJsKHN0cnVjdCBnc2NfY29u
+dGV4dCAqY3R4LCBib29sIGVuYWJsZSkKICAgICAgICAgICAgXn5+fn5+fn5+fn5+CgpUaGlzIHJl
+bW92ZXMgdGhlIHR3byAjaWZkZWYgY2hlY2tzIGluIHRoaXMgZmlsZSBhbmQgaW5zdGVhZCBtYXJr
+cyB0aGUKZnVuY3Rpb25zIGFzIF9fbWF5YmVfdW51c2VkLCB3aGljaCBpcyBhIG1vcmUgcmVsaWFi
+bGUgd2F5IG9mIGRvaW5nIHRoZQpzYW1lLCBhbGxvd2luZyBiZXR0ZXIgYnVpbGQgY292ZXJhZ2Ug
+YW5kIGF2b2lkaW5nIHRoZSB3YXJuaW5nIGFib3ZlLgoKU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
+bWFubiA8YXJuZEBhcm5kYi5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZ3NjLmMgfCAxMiArKysrLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMo
+KyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2dzYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5j
+CmluZGV4IDVkMjBkYThmOTU3ZS4uYjBhNzczNzkwZjg1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2dzYy5jCkBAIC0xNzYwLDggKzE3NjAsNyBAQCBzdGF0aWMgaW50IGdzY19y
+ZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlyZXR1cm4gMDsKIH0KIAotI2lm
+ZGVmIENPTkZJR19QTV9TTEVFUAotc3RhdGljIGludCBnc2Nfc3VzcGVuZChzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGdzY19zdXNwZW5kKHN0cnVjdCBkZXZp
+Y2UgKmRldikKIHsKIAlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChk
+ZXYpOwogCkBAIC0xNzczLDcgKzE3NzIsNyBAQCBzdGF0aWMgaW50IGdzY19zdXNwZW5kKHN0cnVj
+dCBkZXZpY2UgKmRldikKIAlyZXR1cm4gZ3NjX2Nsa19jdHJsKGN0eCwgZmFsc2UpOwogfQogCi1z
+dGF0aWMgaW50IGdzY19yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21h
+eWJlX3VudXNlZCBnc2NfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlzdHJ1Y3QgZ3Nj
+X2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwogCkBAIC0xNzg0LDEwICsxNzgz
+LDggQEAgc3RhdGljIGludCBnc2NfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIAogCXJldHVy
+biAwOwogfQotI2VuZGlmCiAKLSNpZmRlZiBDT05GSUdfUE0KLXN0YXRpYyBpbnQgZ3NjX3J1bnRp
+bWVfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2Vk
+IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQogewogCXN0cnVjdCBnc2Nf
+Y29udGV4dCAqY3R4ID0gZ2V0X2dzY19jb250ZXh0KGRldik7CiAKQEAgLTE3OTYsNyArMTc5Myw3
+IEBAIHN0YXRpYyBpbnQgZ3NjX3J1bnRpbWVfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJ
+cmV0dXJuICBnc2NfY2xrX2N0cmwoY3R4LCBmYWxzZSk7CiB9CiAKLXN0YXRpYyBpbnQgZ3NjX3J1
+bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKK3N0YXRpYyBpbnQgX19tYXliZV91bnVz
+ZWQgZ3NjX3J1bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKIAlzdHJ1Y3QgZ3Nj
+X2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYpOwogCkBAIC0xODA0LDcgKzE4MDEs
+NiBAQCBzdGF0aWMgaW50IGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiAK
+IAlyZXR1cm4gIGdzY19jbGtfY3RybChjdHgsIHRydWUpOwogfQotI2VuZGlmCiAKIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBnc2NfcG1fb3BzID0gewogCVNFVF9TWVNURU1fU0xFRVBf
+UE1fT1BTKGdzY19zdXNwZW5kLCBnc2NfcmVzdW1lKQotLSAKMi45LjAKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
