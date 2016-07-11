@@ -1,35 +1,46 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from
- SPI clocks
-Date: Mon, 11 Jul 2016 12:58:28 +0200
-Message-ID: <57837BD4.5030602@samsung.com>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: s3c64xx: avoid warning about 'struct device_node'
+Date: Mon, 11 Jul 2016 13:15:11 +0200
+Message-ID: <1807726.lxvlsY5ymW@wuerfel>
+References: <20160627110303.3391769-1-arnd@arndb.de> <57710F1F.8090304@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1467989201-14661-8-git-send-email-andi.shyti@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:55380 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751203AbcGKLM3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Jul 2016 07:12:29 -0400
+In-Reply-To: <57710F1F.8090304@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/08/2016 04:46 PM, Andi Shyti wrote:
-> Because the Exynos5433 SPI driver supports the ioclk handling and
-> the following patch:
+On Monday, June 27, 2016 1:33:51 PM CEST Krzysztof Kozlowski wrote:
+> On 06/27/2016 01:02 PM, Arnd Bergmann wrote:
+> > The change to simplify of_platform_populate() had an unintended
+> > side-effect of introducing a build warning on s3c64xx:
+> > 
+> > In file included from arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:18:0:
+> > arch/arm/mach-s3c64xx/common.h:27:30: error: 'struct device_node' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+> > 
+> > This adds a forward-declaration for the structure name in the
+> > header to avoid the warning.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Fixes: 850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
+> > ---
+> > Rob, can you apply this on top of the devicetree git so we don't
+> > have to coordinate the merges?
 > 
->   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
-> 
-> fixes a synchronus abort issue, none of the SPI clocks require
-s/synchronus/synchronous
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> for the SPI related clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi Rob,
 
-In case this goes through the spi tree:
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+I still get the warning in every linux-next build, do you plan to pick
+up the fix for the commit you merged, or should I try to work around it
+in arm-soc and leave this as a bisection problem?
 
+	Arnd
