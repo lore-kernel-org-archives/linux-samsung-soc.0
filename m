@@ -1,45 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] ARM: s3c64xx: smartq: Avoid sparse warnings
-Date: Mon, 11 Jul 2016 10:48:36 +0200
-Message-ID: <20160711084836.12835-1-thierry.reding@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34435 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752838AbcGKIsj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jul 2016 04:48:39 -0400
-Received: by mail-wm0-f66.google.com with SMTP id w75so14900497wmd.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2016 01:48:39 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Liviu Dudau <liviu.dudau@arm.com>
+Subject: Re: [PATCH 5/7] bus: vexpress-config: add missing of_node_put after
+ calling of_parse_phandle
+Date: Mon, 11 Jul 2016 10:02:23 +0100
+Message-ID: <20160711090223.GJ8609@e106497-lin.cambridge.arm.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <1467366121-14120-6-git-send-email-peter.chen@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1467366121-14120-6-git-send-email-peter.chen@nxp.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Peter Chen <peter.chen@nxp.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sudeep Holla <sudeep.holla@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, Jul 01, 2016 at 05:41:59PM +0800, Peter Chen wrote:
+> of_node_put needs to be called when the device node which is got
+> from of_parse_phandle has finished using.
+>=20
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
 
-The smartq_map_io() and smartq_machine_init() functions are used by both
-SmartQ 5 and SmartQ 7 machines and exported via the mach-smartq.h header
-file. However that header file is not included by the mach-smartq.c file
-that implements them, causing sparse warnings.
+Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-Include mach-smartq.h from mach-smartq.c to fix these warnings.
+> ---
+>  drivers/bus/vexpress-config.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-con=
+fig.c
+> index c3cb76b..9efdf1d 100644
+> --- a/drivers/bus/vexpress-config.c
+> +++ b/drivers/bus/vexpress-config.c
+> @@ -178,6 +178,7 @@ static int vexpress_config_populate(struct device=
+_node *node)
+> =20
+>  	parent =3D class_find_device(vexpress_config_class, NULL, bridge,
+>  			vexpress_config_node_match);
+> +	of_node_put(bridge);
+>  	if (WARN_ON(!parent))
+>  		return -ENODEV;
+> =20
+> --=20
+> 1.9.1
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/mach-s3c64xx/mach-smartq.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index 936a63fc68d5..e0e1a729ef98 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -43,6 +43,7 @@
- #include <plat/samsung-time.h>
- 
- #include "common.h"
-+#include "mach-smartq.h"
- #include "regs-modem.h"
- 
- #define UCON S3C2410_UCON_DEFAULT
--- 
-2.8.3
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    =C2=AF\_(=E3=83=84)_/=C2=AF
