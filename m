@@ -1,50 +1,71 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [RESEND PATCH] drm/exynos: Use VIDEO_SAMSUNG_EXYNOS_GSC=n as GSC Kconfig dependency
-Date: Mon, 11 Jul 2016 12:11:40 -0400
-Message-ID: <1468253500-27335-1-git-send-email-javier@osg.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/2] soc: samsung: Add support for Exynos7 PMU
+Date: Mon, 11 Jul 2016 18:38:10 +0200
+Message-ID: <5783CB72.6030501@samsung.com>
+References: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
+ <1467750507-13853-3-git-send-email-a.kesavan@samsung.com>
+ <CAJKOXPc=RZEe_zQvnmxXRttppJfGJwyjmkF0XxAnV0YnGxvcyA@mail.gmail.com>
+ <CAM4voanpvkQJ5GcKeXoLcpmTMXkh7f8aznQHDS-0O5YeaVpeuw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:46287
-	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755286AbcGKQMD (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38575 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030609AbcGKQiS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jul 2016 12:12:03 -0400
+	Mon, 11 Jul 2016 12:38:18 -0400
+In-reply-to: <CAM4voanpvkQJ5GcKeXoLcpmTMXkh7f8aznQHDS-0O5YeaVpeuw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Commit aeefb36832e5 ("drm/exynos: gsc: add device tree support and remove
-usage of static mappings") made the DRM_EXYNOS_GSC Kconfig symbol to only
-be selectable if the exynos-gsc V4L2 driver isn't enabled, since both use
-the same HW IP block.
+On 07/11/2016 04:44 PM, Abhilash Kesavan wrote:
+>>> +       /*
+>>> >> +        * Set clock freeze cycle count to 0 before and after arm clamp or
+>>> >> +        * reset signal transition
+>>> >> +        */
+>>> >> +       node = of_find_compatible_node(NULL, NULL,
+>>> >> +                               "samsung,exynos7-clock-atlas");
+>>> >> +       if (node) {
+>>> >> +               atlas_cmu_base = of_iomap(node, 0);
+>>> >> +               if (!atlas_cmu_base)
+>>> >> +                       return;
+>>> >> +
+>>> >> +               __raw_writel(0x0,
+>>> >> +                               atlas_cmu_base + EXYNOS7_CORE_ARMCLK_STOPCTRL);
+>>> >> +               iounmap(atlas_cmu_base);
+>> >
+>> > Missing:
+>> > of_node_put(node);
+>> >
+>> > ...but I think this creates unnecessary dependency on different
+>> > compatible. I understand that disabling the EXTENDED_CLKSTOP is needed
+>> > after configuring the PMU so this code belongs here. However
+>> > everything you need is just a mapping of CMU address. The PMU driver
+>> > should receive in bindings everything it needs to do its work. Either
+>> > it is a phandle to something or an address for iomap. In this case the
+>> > PMU should probably get two addresses: PMU and optionally CMU (part of
+>> > CMU for example). Of course bindings would have to be updated.
+>
+> I will add an optional CMU phandle to the PMU bindings.
 
-But added the dependency as depends on !VIDEO_SAMSUNG_EXYNOS_GSC which is
-not correct since Kconfig expressions are not boolean but tristate. So it
-will only evaluate to 'n' if VIDEO_SAMSUNG_EXYNOS_GSC=y but will evaluate
-to 'm' if VIDEO_SAMSUNG_S5P_G2D=m.
+We could additionally split the CMU_ATLAS region into 2 regions in DT
+(derived from exynos7420 documentation):
 
-This means that both the V4L2 and DRM drivers can be enabled if the former
-is enabled as a module, which is not what we want.
+reg = <0x11800000 0xF08>, // offsets 0x0000...0x0F04
+      <0x11801000 0x8C>,  // offsets 0x1000...0x1088
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+so that the first can be mapped by the clk driver and the second by 
+the PMU driver? It seems the first region is strictly clock functionality
+related, while the second contains power control related and other 
+registers.
 
----
+However I'm not sure it is a good idea, for consistency this would need 
+to be done also for CMU_APOLLO, CMU_MIF{0...3}.  All these CMUs don't have 
+DT bindings defined yet though and there is no corresponding dts entries.
 
- drivers/gpu/drm/exynos/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index d814b3048ee5..ec2dcc5e4962 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -119,7 +119,7 @@ config DRM_EXYNOS_ROTATOR
- 
- config DRM_EXYNOS_GSC
- 	bool "GScaler"
--	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && !VIDEO_SAMSUNG_EXYNOS_GSC
-+	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && VIDEO_SAMSUNG_EXYNOS_GSC=n
- 	help
- 	  Choose this option if you want to use Exynos GSC for DRM.
- 
 -- 
-2.5.5
+Thanks,
+Sylwester
