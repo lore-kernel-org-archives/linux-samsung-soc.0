@@ -1,56 +1,42 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 1/2] soc: samsung: Change type of PMU configuration
- register value to u32
-Date: Mon, 11 Jul 2016 16:44:12 +0200
-Message-ID: <CAM4voan0X5ejdCAWwbRa-RtBsgpWHAFFex1soh153Zy8PdngRw@mail.gmail.com>
-References: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
- <1467750507-13853-2-git-send-email-a.kesavan@samsung.com> <CAJKOXPdPa7vCqetd5EUb3ebz7rB741ua=9wbdx-MkFh+G-=CJA@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH] ARM: s3c64xx: smartq: Avoid sparse warnings
+Date: Mon, 11 Jul 2016 17:47:19 +0200
+Message-ID: <20160711154719.GA7702@kozik-lap>
+References: <20160711084836.12835-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdPa7vCqetd5EUb3ebz7rB741ua=9wbdx-MkFh+G-=CJA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36708 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753613AbcGKPrY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Jul 2016 11:47:24 -0400
+Received: by mail-lf0-f51.google.com with SMTP id q132so76700120lfe.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2016 08:47:23 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20160711084836.12835-1-thierry.reding@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Wed, Jul 6, 2016 at 8:47 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On Tue, Jul 5, 2016 at 10:28 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
->> Exynos7 has certain PMU registers that needs to be configured with
->> u32 values.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> ---
->>  drivers/soc/samsung/exynos-pmu.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
->> index a469e36..1bdc506 100644
->> --- a/drivers/soc/samsung/exynos-pmu.h
->> +++ b/drivers/soc/samsung/exynos-pmu.h
->> @@ -18,7 +18,7 @@
->>
->>  struct exynos_pmu_conf {
->>         unsigned int offset;
->> -       u8 val[NUM_SYS_POWERDOWN];
->> +       unsigned int val[NUM_SYS_POWERDOWN];
+On Mon, Jul 11, 2016 at 10:48:36AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The smartq_map_io() and smartq_machine_init() functions are used by both
+> SmartQ 5 and SmartQ 7 machines and exported via the mach-smartq.h header
+> file. However that header file is not included by the mach-smartq.c file
+> that implements them, causing sparse warnings.
+> 
+> Include mach-smartq.h from mach-smartq.c to fix these warnings.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm/mach-s3c64xx/mach-smartq.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> You mentioned u32 but I see unsigned int here. This should be u32.
-Will change.
->
-> BTW, none of your emails reached my samsung inbox. I got them only
-> from the lists. Please investigate why this couldn't be delivered to
-> samsung.com address.
 
-Not quite sure why that happened even after I added you as a
-recipient. I'll be posting some patches soon, let's see if the same
-occurs again or if it was a one-off case.
+Thanks, applied.
 
-Regards,
-Abhilash
->
-> Best regards,
-> Krzysztof
+Best regards,
+Krzysztof
