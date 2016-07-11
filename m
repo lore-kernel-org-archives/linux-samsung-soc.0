@@ -1,42 +1,50 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH] ARM: s3c64xx: smartq: Avoid sparse warnings
-Date: Mon, 11 Jul 2016 17:47:19 +0200
-Message-ID: <20160711154719.GA7702@kozik-lap>
-References: <20160711084836.12835-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [RESEND PATCH] drm/exynos: Use VIDEO_SAMSUNG_EXYNOS_GSC=n as GSC Kconfig dependency
+Date: Mon, 11 Jul 2016 12:11:40 -0400
+Message-ID: <1468253500-27335-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:36708 "EHLO
-	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753613AbcGKPrY (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:46287
+	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755286AbcGKQMD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jul 2016 11:47:24 -0400
-Received: by mail-lf0-f51.google.com with SMTP id q132so76700120lfe.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2016 08:47:23 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20160711084836.12835-1-thierry.reding@gmail.com>
+	Mon, 11 Jul 2016 12:12:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jul 11, 2016 at 10:48:36AM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The smartq_map_io() and smartq_machine_init() functions are used by both
-> SmartQ 5 and SmartQ 7 machines and exported via the mach-smartq.h header
-> file. However that header file is not included by the mach-smartq.c file
-> that implements them, causing sparse warnings.
-> 
-> Include mach-smartq.h from mach-smartq.c to fix these warnings.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm/mach-s3c64xx/mach-smartq.c | 1 +
->  1 file changed, 1 insertion(+)
->
+Commit aeefb36832e5 ("drm/exynos: gsc: add device tree support and remove
+usage of static mappings") made the DRM_EXYNOS_GSC Kconfig symbol to only
+be selectable if the exynos-gsc V4L2 driver isn't enabled, since both use
+the same HW IP block.
 
-Thanks, applied.
+But added the dependency as depends on !VIDEO_SAMSUNG_EXYNOS_GSC which is
+not correct since Kconfig expressions are not boolean but tristate. So it
+will only evaluate to 'n' if VIDEO_SAMSUNG_EXYNOS_GSC=y but will evaluate
+to 'm' if VIDEO_SAMSUNG_S5P_G2D=m.
 
-Best regards,
-Krzysztof
+This means that both the V4L2 and DRM drivers can be enabled if the former
+is enabled as a module, which is not what we want.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ drivers/gpu/drm/exynos/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index d814b3048ee5..ec2dcc5e4962 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -119,7 +119,7 @@ config DRM_EXYNOS_ROTATOR
+ 
+ config DRM_EXYNOS_GSC
+ 	bool "GScaler"
+-	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && !VIDEO_SAMSUNG_EXYNOS_GSC
++	depends on DRM_EXYNOS_IPP && ARCH_EXYNOS5 && VIDEO_SAMSUNG_EXYNOS_GSC=n
+ 	help
+ 	  Choose this option if you want to use Exynos GSC for DRM.
+ 
+-- 
+2.5.5
