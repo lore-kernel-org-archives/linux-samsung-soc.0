@@ -1,73 +1,44 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: make fbdev support really optional
-Date: Tue, 12 Jul 2016 12:57:42 +0200
-Message-ID: <20160712105742.GG23520@phenom.ffwll.local>
-References: <1466769168-31602-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <577D0CD9.9020607@math.uni-bielefeld.de>
+From: weiyj_lk-9Onoh4P/yGk@public.gmane.org
+Subject: [PATCH -next] spi: s3c64xx: fix reference leak to master in s3c64xx_spi_remove()
+Date: Tue, 12 Jul 2016 11:08:42 +0000
+Message-ID: <1468321722-16568-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35747 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200AbcGLK5q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 06:57:46 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i5so1677139wmg.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2016 03:57:45 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <577D0CD9.9020607@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Wed, Jul 06, 2016 at 03:51:21PM +0200, Tobias Jakobi wrote:
-> Ping!
+From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-Applied to drm-misc, thanks for the patch. Aside: I think there's other
-drivers which get this wrong, with the generic support to make fbdev
-optional in the drm core none of this should be needed anywhere. Can I
-volunteer you to double check other Kconfig files in drm for the same
-mistake?
+Once a spi_master_get() call succeeds, we need an additional
+spi_master_put() call to free the memory, otherwise we will
+leak a reference to master. Fix by removing the unnecessary
+spi_master_get() call.
 
-Thanks, Daniel
-> 
-> - Tobias
-> 
-> Tobias Jakobi wrote:
-> > Currently enabling Exynos DRM support automatically pulls in
-> > lots of fbdev dependencies. However these deps are
-> > unnecessary since DRM core already enables them when
-> > needed.
-> > 
-> > Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> > ---
-> >  drivers/gpu/drm/exynos/Kconfig | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> > index baddf33..590559c 100644
-> > --- a/drivers/gpu/drm/exynos/Kconfig
-> > +++ b/drivers/gpu/drm/exynos/Kconfig
-> > @@ -2,10 +2,6 @@ config DRM_EXYNOS
-> >  	tristate "DRM Support for Samsung SoC EXYNOS Series"
-> >  	depends on OF && DRM && (ARCH_S3C64XX || ARCH_EXYNOS || ARCH_MULTIPLATFORM)
-> >  	select DRM_KMS_HELPER
-> > -	select DRM_KMS_FB_HELPER
-> > -	select FB_CFB_FILLRECT
-> > -	select FB_CFB_COPYAREA
-> > -	select FB_CFB_IMAGEBLIT
-> >  	select VIDEOMODE_HELPERS
-> >  	help
-> >  	  Choose this option if you have a Samsung SoC EXYNOS chipset.
-> > 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+---
+ drivers/spi/spi-s3c64xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index df88fa1..001c9eb 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1211,7 +1211,7 @@ err0:
+ 
+ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ {
+-	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
++	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
