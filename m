@@ -1,79 +1,63 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 2/4] drm/rockchip: add an common abstracted PSR driver
-Date: Tue, 12 Jul 2016 18:10:26 +0200
-Message-ID: <20160712161026.GV23520@phenom.ffwll.local>
-References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
- <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbKMWEEDEqw0_ba_FGO-2mOBg3uanQzk5nbnCtowWdLu9w@mail.gmail.com>
- <20160712123826.GU23520@phenom.ffwll.local>
- <CAAFQd5CrT_bM+VLpzqZqu7p=32YYkTrNZw75FkPwx-LteUCBGw@mail.gmail.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Date: Tue, 12 Jul 2016 11:07:53 -0700
+Message-ID: <146834687302.73491.6686338412638288829@resonance>
+References: <57837606.8050906@samsung.com>
+ <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAAFQd5CrT_bM+VLpzqZqu7p=32YYkTrNZw75FkPwx-LteUCBGw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Doug Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBKdWwgMTMsIDIwMTYgYXQgMTI6MTA6MTNBTSArMDkwMCwgVG9tYXN6IEZpZ2Egd3Jv
-dGU6Cj4gT24gVHVlLCBKdWwgMTIsIDIwMTYgYXQgOTozOCBQTSwgRGFuaWVsIFZldHRlciA8ZGFu
-aWVsQGZmd2xsLmNoPiB3cm90ZToKPiA+IE9uIEZyaSwgSnVsIDAxLCAyMDE2IGF0IDAyOjAwOjAw
-UE0gLTA0MDAsIFNlYW4gUGF1bCB3cm90ZToKPiA+PiBPbiBGcmksIEp1bCAxLCAyMDE2IGF0IDU6
-MTkgQU0sIFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4gd3JvdGU6Cj4gPj4gPiBUaGUg
-UFNSIGRyaXZlciBoYXZlIGV4cG9ydGVkIGZvdXIgc3ltYm9scyBmb3Igc3BlY2lmaWMgZGV2aWNl
-IGRyaXZlcjoKPiA+PiA+IC0gcm9ja2NoaXBfZHJtX3Bzcl9yZWdpc3RlcigpCj4gPj4gPiAtIHJv
-Y2tjaGlwX2RybV9wc3JfdW5yZWdpc3RlcigpCj4gPj4gPiAtIHJvY2tjaGlwX2RybV9wc3JfZW5h
-YmxlKCkKPiA+PiA+IC0gcm9ja2NoaXBfZHJtX3Bzcl9kaXNhYmxlKCkKPiA+PiA+IC0gcm9ja2No
-aXBfZHJtX3Bzcl9mbHVzaCgpCj4gPj4gPgo+ID4+ID4gRW5jb2RlciBkcml2ZXIgc2hvdWxkIGNh
-bGwgdGhlIHJlZ2lzdGVyL3VucmVnaXN0ZXIgaW50ZXJmYWNlcyB0byBob29rCj4gPj4gPiBpdHNl
-bGYgaW50byBjb21tb24gUFNSIGRyaXZlciwgZW5jb2RlciBoYXZlIGltcGxlbWVudCB0aGUgJ3Bz
-cl9zZXQnCj4gPj4gPiBjYWxsYmFjayB3aGljaCB1c2UgdGhlIHNldCBQU1Igc3RhdGUgaW4gaGFy
-ZHdhcmUgc2lkZS4KPiA+PiA+Cj4gPj4gPiBDcnRjIGRyaXZlciB3b3VsZCBjYWxsIHRoZSBlbmFi
-bGUvZGlzYWJsZSBpbnRlcmZhY2VzIHdoZW4gdmJsYW5rIGlzCj4gPj4gPiBlbmFibGUvZGlzYWJs
-ZSwgYWZ0ZXIgdGhhdCB0aGUgY29tbW9uIFBTUiBkcml2ZXIgd291bGQgY2FsbCB0aGUgZW5jb2Rl
-cgo+ID4+ID4gcmVnaXN0ZXJlZCBjYWxsYmFjayB0byBzZXQgdGhlIFBTUiBzdGF0ZS4KPiA+PiA+
-Cj4gPj4KPiA+PiBUaGlzIGZlZWxzIG92ZXJseSBjb21wbGljYXRlZC4gSXQgc2VlbXMgbGlrZSB5
-b3UgY291bGQgY3V0IG91dCBhIGJ1bmNoCj4gPj4gb2YgY29kZSBieSBqdXN0IGNvZGluZyB0aGUg
-cHNyIGZ1bmN0aW9ucyBpbnRvIHZvcCBhbmQKPiA+PiBhbmFsb2dpeF9kcC1yb2NrY2hpcC4gSSBz
-dXBwb3NlIHRoZSBvbmx5IHJlYXNvbiB0byBrZWVwIGl0IGFic3RyYWN0ZWQKPiA+PiB3b3VsZCBi
-ZSBpZiB5b3UgcGxhbiBvbiBzdXBwb3J0aW5nIHBzciBpbiBhIGRpZmZlcmVudCBlbmNvZGVyIG9y
-IGNydGMKPiA+PiBpbiByb2NrY2hpcCwgb3IgaWYgeW91J3JlIHBsYW5uaW5nIG9uIG1vdmluZyB0
-aGlzIGludG8gZHJtIGNvcmUuCj4gPgo+ID4gQWdyZWVkIG9uIHRoZSBsYXllcnMgb2YgaW5kaXJl
-Y3Rpb24uIEFsc28sIHlvdSBlbmQgdXAgd2l0aCAzIGRlbGF5ZWQKPiA+IHRpbWVycyBpbiB0b3Rh
-bDoKPiA+IC0gZGVmaW8gdGltZXIgZnJvbSBmYmRldiBlbXVsYXRpb24KPiA+IC0gdGltZXIgaW4g
-dGhpcyBhYnN0cmFjdGlvbgo+ID4gLSBkZWxheWVkIHdvcmsgaW4gdGhlIHBzciBiYWNrZW5kIGRy
-aXZlcgo+IAo+IE1heWJlIEknbSBtaXNzaW5nIHNvbWV0aGluZyBvYnZpb3VzIChkb24ndCBrbm93
-IGhvdyB0aGUgUFNSIGlzCj4gaW1wbGVtZW50ZWQgaW4gaGFyZHdhcmUgb3IgaW4gb3RoZXIgZHJp
-dmVycyksIGJ1dCB3aHkgZG8gd2UgbmVlZCBhbGwKPiB0aGVzZSB0aW1lcnM/IENvdWxkbid0IHdl
-IGp1c3QgdHJpZ2dlciBhIGZha2UgcGFnZSBmbGlwIG9uIGZiIGRpcnR5Cj4gY2FsbD8KClBhZ2Ug
-ZmxpcHMgYXJlIHJhdGVsaW1pdGVkIHRvIHZyZWZyZXNoLCBhbmQgbm90IGFsbCBkcml2ZXJzIHN1
-cHBvcnQgaXQuClRoZSBvdGhlciBpc3N1ZSBpcyB0aGF0IGRpcnR5IGlvY3RsIHN1cHBvcnRzIGRp
-cnR5IHJlY3RhbmdsZXMsIGJ1dCBwYWdlCmZsaXAgaXMgc3RpbGwgYSBmdWxsLXNjcmVlbiB1cGxv
-YWQuIFdlIGRpc2N1c3NlZCBhZGRpbmcgYSBkaXJ0eSByZWN0YW5nbGUKdG8gdGhlIGttcyBwcm9w
-ZXJ0aWVzIHRvIGZpeCB0aGlzIGdhcCwgYnV0IHVudGlsIHRoYXQncyBkb25lIEkgZG9uJ3QgdGhp
-bmsKaXQgbWFrZXMgbXVjaCBzZW5zZSB0byByZW1hcCBkaXJ0eSB0byBhbiAoYXRvbWljKSBwYWdl
-IGZsaXAuIE9uZSBzbWFsbAp0ZWNobmljYWxpdHkgaXMgdGhhdCBkaXJ0eSB3b3JrcyBvbiBmcmFt
-ZWJ1ZmZlcnMsIGJ1dCBwYWdlIGZsaXBzCihlc3BlY2lhbGx5IGF0b21pYyBvbmVzKSB3b3JrIG9u
-IGNydGNzLiBUaGF0IG1ha2VzIHRoZSByZW1hcHBpbmcgYSBub3RjaAptb3JlIHRyaWNreS4KCkJ1
-dCBpbiBwcmluY2lwbGUsIGZ1bGx5IGFncmVlZC4gQW5kIG9uY2Ugd2UgaGF2ZSBhdG9taWMgZGly
-dHkgcmVjdGFuZ2xlcwp3ZSBjb3VsZCB0eXBlIHVwIGEgc21hbGwgaGVscGVyIHRoYXQgZHJpdmVy
-cyBjYW4gcGx1ZyBpbnRvIHRoZSBkaXJ0eQppb2N0bC4gU2luY2UgbmV3IHByb3BlcnRpZXMgcmVx
-dWlyZXMgbmV3IHVzZXJzcGFjZSB3ZSBjb3VsZCBqdXN0IHRyYWNrIHRoZQpkaXJ0eSByZWN0YW5n
-bGUgaW50ZXJuYWxseSB0byBnZXQgdGhpcyBoZWxwZXIgbGFuZGVkLCBpZiB0aGVyZSdzCmludGVy
-ZXN0ZWQgZm9yIHRoYXQuIEknbGwgY2VydGFpbmx5IGJlIGhhcHB5IHRvIHJldmlldyBwYXRjaGVz
-LgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jw
-b3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+Quoting Andi Shyti (2016-07-11 23:54:04)
+> Patch a9e93e8 has erroneously removed some comments which are
+> important to understand why the bus frequency is multiplied by
+> two during the spi transfer.
+> 
+> Reword the previous comment to a more appropriate message.
+> 
+> Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> ---
+> Hi,
+> 
+> despite Mike's comments I'm sending the patch as it was
+> originally meant. I think that fixing the exact clk where to set
+> the rate should anyway go in a different patch.
+
+That sounds fair.
+
+Regards,
+Mike
+
+> 
+> V2->V3
+> The comment has been reworded as Sylwester recommended.
+> 
+> Thanks,
+> Andi
+> 
+>  drivers/spi/spi-s3c64xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 6da663f..5bedafc 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+>         writel(val, regs + S3C64XX_SPI_MODE_CFG);
+>  
+>         if (sdd->port_conf->clk_from_cmu) {
+> +               /* The src_clk clock is divided internally by 2 */
+>                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>         } else {
+>                 /* Configure Clock */
+> -- 
+> 2.8.1
+> 
