@@ -1,179 +1,131 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH v5 0/4] Generic zpos property
-Date: Tue, 12 Jul 2016 16:47:15 +0200
-Message-ID: <CA+M3ks6JkY9JyFWcmdF3j63X=vk49PLxjd_p+a5y7Maz-7KSOg@mail.gmail.com>
+Date: Tue, 12 Jul 2016 16:57:44 +0200
+Message-ID: <20160712145744.GT23520@phenom.ffwll.local>
 References: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
- <577E609F.3000300@math.uni-bielefeld.de> <CA+M3ks4TQ4ER543rght3XxKY8No4z_n4M9S3V9YNyP0FvPBHoQ@mail.gmail.com>
- <577E7EA4.7010501@math.uni-bielefeld.de> <CA+M3ks789+7uqX8nWHV9-+nZdyvNYWsb0YmxKNyBcO1eyXYJVg@mail.gmail.com>
+ <577E609F.3000300@math.uni-bielefeld.de>
+ <CA+M3ks4TQ4ER543rght3XxKY8No4z_n4M9S3V9YNyP0FvPBHoQ@mail.gmail.com>
+ <577E7EA4.7010501@math.uni-bielefeld.de>
+ <CA+M3ks789+7uqX8nWHV9-+nZdyvNYWsb0YmxKNyBcO1eyXYJVg@mail.gmail.com>
  <20160712140158.GK23520@phenom.ffwll.local>
+ <CA+M3ks6JkY9JyFWcmdF3j63X=vk49PLxjd_p+a5y7Maz-7KSOg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:33398 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752769AbcGLOrR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 10:47:17 -0400
-Received: by mail-oi0-f42.google.com with SMTP id j185so19325759oih.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2016 07:47:16 -0700 (PDT)
-In-Reply-To: <20160712140158.GK23520@phenom.ffwll.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CA+M3ks6JkY9JyFWcmdF3j63X=vk49PLxjd_p+a5y7Maz-7KSOg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Inki Dae <inki.dae@samsung.com>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-What is the required tool to edit this .csv file ?
-
-2016-07-12 16:01 GMT+02:00 Daniel Vetter <daniel@ffwll.ch>:
-> On Fri, Jul 08, 2016 at 09:06:18AM +0200, Benjamin Gaignard wrote:
->> htmldocs get information directly from the comments in .h and .c fil=
-es
->
-> You're both correct: There's another table which is supposed to list =
-_all_
-> properties. It's a bit a mess, and should be split up/cleaned up, but
-> that's a longer-term thing. Please add zpos there too.
->
-> See Documentation/gpu/kms-properties.csv
->
-> Cheers, Daniel
->>
->> 2016-07-07 18:09 GMT+02:00 Tobias Jakobi <tjakobi@math.uni-bielefeld=
-=2Ede>:
->> > Benjamin Gaignard wrote:
->> >> zpos new fields are correctly documented in drm-kms.html after ru=
-nning
->> >> make htmldocs.
->> > I'm not sure I understand. Where does htmldocs get the information=
- from
->> > then?
->> >
->> > - Tobias
->> >
->> >
->> >> Benjamin
->> >>
->> >> 2016-07-07 16:01 GMT+02:00 Tobias Jakobi <tjakobi@math.uni-bielef=
-eld.de>:
->> >>> Hello Benjamin,
->> >>>
->> >>>
->> >>> Benjamin Gaignard wrote:
->> >>>> version 5:
->> >>>> rebased on drm-next where Documentation/DocBook/gpu.tmpl doesn'=
-t
->> >>>> exist anymore.
->> >>> I think the documentation has just moved to Documentation/gpu, s=
-o the
->> >>> zpos property should be documented there then.
->> >>>
->> >>>
->> >>> With best wishes,
->> >>> Tobias
->> >>>
->> >>>
->> >>>> rework sti patch because some plane functions have changed sinc=
-e v4
->> >>>>
->> >>>> version 4:
->> >>>> make sure that normalized zpos value is stay in the defined pro=
-perty
->> >>>> range and warn user if not.
->> >>>> Fix NULL pointer bug in rcar-du while setting zpos value.
->> >>>> No changes in the other drivers.
->> >>>>
->> >>>> version 3:
->> >>>> use kmalloc_array instead of kmalloc.
->> >>>> Correct normalize_zpos computation (comeback to Mareck original=
- code)
->> >>>>
->> >>>> version 2:
->> >>>> add a zpos property into drm_plane structure to simplify code.
->> >>>> This allow to get/set zpos value in core and not in drivers cod=
-e.
->> >>>> Fix various remarks.
->> >>>>
->> >>>> version 1:
->> >>>> refactor Marek's patches to have per plane zpos property instea=
-d of only
->> >>>> one in core.
->> >>>>
->> >>>> Benjamin Gaignard (2):
->> >>>>   drm: sti: use generic zpos for plane
->> >>>>   drm: rcar: use generic code for managing zpos plane property
->> >>>>
->> >>>> Marek Szyprowski (2):
->> >>>>   drm: add generic zpos property
->> >>>>   drm/exynos: use generic code for managing zpos plane property
->> >>>>
->> >>>>  drivers/gpu/drm/Makefile                  |   2 +-
->> >>>>  drivers/gpu/drm/drm_atomic.c              |   4 +
->> >>>>  drivers/gpu/drm/drm_atomic_helper.c       |   6 +
->> >>>>  drivers/gpu/drm/drm_blend.c               | 227 ++++++++++++++=
-++++++++++++++++
->> >>>>  drivers/gpu/drm/drm_crtc_internal.h       |   4 +
->> >>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h   |   2 -
->> >>>>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  67 ++-------
->> >>>>  drivers/gpu/drm/exynos/exynos_mixer.c     |   6 +-
->> >>>>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |   2 +-
->> >>>>  drivers/gpu/drm/rcar-du/rcar_du_drv.h     |   1 -
->> >>>>  drivers/gpu/drm/rcar-du/rcar_du_kms.c     |   5 -
->> >>>>  drivers/gpu/drm/rcar-du/rcar_du_plane.c   |   9 +-
->> >>>>  drivers/gpu/drm/rcar-du/rcar_du_plane.h   |   2 -
->> >>>>  drivers/gpu/drm/sti/sti_cursor.c          |   4 +-
->> >>>>  drivers/gpu/drm/sti/sti_gdp.c             |   4 +-
->> >>>>  drivers/gpu/drm/sti/sti_hqvdp.c           |   4 +-
->> >>>>  drivers/gpu/drm/sti/sti_mixer.c           |   9 +-
->> >>>>  drivers/gpu/drm/sti/sti_plane.c           |  76 ++++------
->> >>>>  drivers/gpu/drm/sti/sti_plane.h           |   7 +-
->> >>>>  include/drm/drm_crtc.h                    |  30 ++++
->> >>>>  20 files changed, 324 insertions(+), 147 deletions(-)
->> >>>>  create mode 100644 drivers/gpu/drm/drm_blend.c
->> >>>>
->> >>>> Cc: Inki Dae <inki.dae@samsung.com>
->> >>>> Cc: Daniel Vetter <daniel@ffwll.ch>
->> >>>> Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
->> >>>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
->> >>>> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
->> >>>> Cc: Andrzej Hajda <a.hajda@samsung.com>
->> >>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> >>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> >>>> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> >>>> Cc: Gustavo Padovan <gustavo@padovan.org>
->> >>>> Cc: vincent.abriou@st.com
->> >>>> Cc: fabien.dessenne@st.com
->> >>>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> >>>>
->> >>>
->> >>
->> >>
->> >>
->> >
->>
->>
->>
->> --
->> Benjamin Gaignard
->>
->> Graphic Working Group
->>
->> Linaro.org =E2=94=82 Open source software for ARM SoCs
->>
->> Follow Linaro: Facebook | Twitter | Blog
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
-
-
---=20
-Benjamin Gaignard
-
-Graphic Working Group
-
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-
-=46ollow Linaro: Facebook | Twitter | Blog
+T24gVHVlLCBKdWwgMTIsIDIwMTYgYXQgMDQ6NDc6MTVQTSArMDIwMCwgQmVuamFtaW4gR2FpZ25h
+cmQgd3JvdGU6Cj4gV2hhdCBpcyB0aGUgcmVxdWlyZWQgdG9vbCB0byBlZGl0IHRoaXMgLmNzdiBm
+aWxlID8KCllvdSdyZSBmYXZvdXJpdGUgdGV4dCBlZGl0b3IsIGl0J3MgYSBjc3YgKD0gY29tbWFu
+IHNlcGFyYXRlZCB2YWx1ZXMpLiBKdXN0CnBscyBjaGVjayB0aGUgZW5kIHJlc3VsdCBpbiB0aGUg
+Z2VuZXJhdGVkIGRvY3Mgd2l0aAoKJCBtYWtlIGh0bWxkb2NzCgpUaGUgbWFrZWZpbGVzIHNob3Vs
+ZCBjb21wbGFpbiBpZiB5b3UgZG9uJ3QgaGF2ZSBhbGwgdGhlIHNwaGlueCBiaXRzIG5lZWRlZApp
+bnN0YWxsZWQuCi1EYW5pZWwKCj4gCj4gMjAxNi0wNy0xMiAxNjowMSBHTVQrMDI6MDAgRGFuaWVs
+IFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPjoKPiA+IE9uIEZyaSwgSnVsIDA4LCAyMDE2IGF0IDA5
+OjA2OjE4QU0gKzAyMDAsIEJlbmphbWluIEdhaWduYXJkIHdyb3RlOgo+ID4+IGh0bWxkb2NzIGdl
+dCBpbmZvcm1hdGlvbiBkaXJlY3RseSBmcm9tIHRoZSBjb21tZW50cyBpbiAuaCBhbmQgLmMgZmls
+ZXMKPiA+Cj4gPiBZb3UncmUgYm90aCBjb3JyZWN0OiBUaGVyZSdzIGFub3RoZXIgdGFibGUgd2hp
+Y2ggaXMgc3VwcG9zZWQgdG8gbGlzdCBfYWxsXwo+ID4gcHJvcGVydGllcy4gSXQncyBhIGJpdCBh
+IG1lc3MsIGFuZCBzaG91bGQgYmUgc3BsaXQgdXAvY2xlYW5lZCB1cCwgYnV0Cj4gPiB0aGF0J3Mg
+YSBsb25nZXItdGVybSB0aGluZy4gUGxlYXNlIGFkZCB6cG9zIHRoZXJlIHRvby4KPiA+Cj4gPiBT
+ZWUgRG9jdW1lbnRhdGlvbi9ncHUva21zLXByb3BlcnRpZXMuY3N2Cj4gPgo+ID4gQ2hlZXJzLCBE
+YW5pZWwKPiA+Pgo+ID4+IDIwMTYtMDctMDcgMTg6MDkgR01UKzAyOjAwIFRvYmlhcyBKYWtvYmkg
+PHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPjoKPiA+PiA+IEJlbmphbWluIEdhaWduYXJk
+IHdyb3RlOgo+ID4+ID4+IHpwb3MgbmV3IGZpZWxkcyBhcmUgY29ycmVjdGx5IGRvY3VtZW50ZWQg
+aW4gZHJtLWttcy5odG1sIGFmdGVyIHJ1bm5pbmcKPiA+PiA+PiBtYWtlIGh0bWxkb2NzLgo+ID4+
+ID4gSSdtIG5vdCBzdXJlIEkgdW5kZXJzdGFuZC4gV2hlcmUgZG9lcyBodG1sZG9jcyBnZXQgdGhl
+IGluZm9ybWF0aW9uIGZyb20KPiA+PiA+IHRoZW4/Cj4gPj4gPgo+ID4+ID4gLSBUb2JpYXMKPiA+
+PiA+Cj4gPj4gPgo+ID4+ID4+IEJlbmphbWluCj4gPj4gPj4KPiA+PiA+PiAyMDE2LTA3LTA3IDE2
+OjAxIEdNVCswMjowMCBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5k
+ZT46Cj4gPj4gPj4+IEhlbGxvIEJlbmphbWluLAo+ID4+ID4+Pgo+ID4+ID4+Pgo+ID4+ID4+PiBC
+ZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToKPiA+PiA+Pj4+IHZlcnNpb24gNToKPiA+PiA+Pj4+IHJl
+YmFzZWQgb24gZHJtLW5leHQgd2hlcmUgRG9jdW1lbnRhdGlvbi9Eb2NCb29rL2dwdS50bXBsIGRv
+ZXNuJ3QKPiA+PiA+Pj4+IGV4aXN0IGFueW1vcmUuCj4gPj4gPj4+IEkgdGhpbmsgdGhlIGRvY3Vt
+ZW50YXRpb24gaGFzIGp1c3QgbW92ZWQgdG8gRG9jdW1lbnRhdGlvbi9ncHUsIHNvIHRoZQo+ID4+
+ID4+PiB6cG9zIHByb3BlcnR5IHNob3VsZCBiZSBkb2N1bWVudGVkIHRoZXJlIHRoZW4uCj4gPj4g
+Pj4+Cj4gPj4gPj4+Cj4gPj4gPj4+IFdpdGggYmVzdCB3aXNoZXMsCj4gPj4gPj4+IFRvYmlhcwo+
+ID4+ID4+Pgo+ID4+ID4+Pgo+ID4+ID4+Pj4gcmV3b3JrIHN0aSBwYXRjaCBiZWNhdXNlIHNvbWUg
+cGxhbmUgZnVuY3Rpb25zIGhhdmUgY2hhbmdlZCBzaW5jZSB2NAo+ID4+ID4+Pj4KPiA+PiA+Pj4+
+IHZlcnNpb24gNDoKPiA+PiA+Pj4+IG1ha2Ugc3VyZSB0aGF0IG5vcm1hbGl6ZWQgenBvcyB2YWx1
+ZSBpcyBzdGF5IGluIHRoZSBkZWZpbmVkIHByb3BlcnR5Cj4gPj4gPj4+PiByYW5nZSBhbmQgd2Fy
+biB1c2VyIGlmIG5vdC4KPiA+PiA+Pj4+IEZpeCBOVUxMIHBvaW50ZXIgYnVnIGluIHJjYXItZHUg
+d2hpbGUgc2V0dGluZyB6cG9zIHZhbHVlLgo+ID4+ID4+Pj4gTm8gY2hhbmdlcyBpbiB0aGUgb3Ro
+ZXIgZHJpdmVycy4KPiA+PiA+Pj4+Cj4gPj4gPj4+PiB2ZXJzaW9uIDM6Cj4gPj4gPj4+PiB1c2Ug
+a21hbGxvY19hcnJheSBpbnN0ZWFkIG9mIGttYWxsb2MuCj4gPj4gPj4+PiBDb3JyZWN0IG5vcm1h
+bGl6ZV96cG9zIGNvbXB1dGF0aW9uIChjb21lYmFjayB0byBNYXJlY2sgb3JpZ2luYWwgY29kZSkK
+PiA+PiA+Pj4+Cj4gPj4gPj4+PiB2ZXJzaW9uIDI6Cj4gPj4gPj4+PiBhZGQgYSB6cG9zIHByb3Bl
+cnR5IGludG8gZHJtX3BsYW5lIHN0cnVjdHVyZSB0byBzaW1wbGlmeSBjb2RlLgo+ID4+ID4+Pj4g
+VGhpcyBhbGxvdyB0byBnZXQvc2V0IHpwb3MgdmFsdWUgaW4gY29yZSBhbmQgbm90IGluIGRyaXZl
+cnMgY29kZS4KPiA+PiA+Pj4+IEZpeCB2YXJpb3VzIHJlbWFya3MuCj4gPj4gPj4+Pgo+ID4+ID4+
+Pj4gdmVyc2lvbiAxOgo+ID4+ID4+Pj4gcmVmYWN0b3IgTWFyZWsncyBwYXRjaGVzIHRvIGhhdmUg
+cGVyIHBsYW5lIHpwb3MgcHJvcGVydHkgaW5zdGVhZCBvZiBvbmx5Cj4gPj4gPj4+PiBvbmUgaW4g
+Y29yZS4KPiA+PiA+Pj4+Cj4gPj4gPj4+PiBCZW5qYW1pbiBHYWlnbmFyZCAoMik6Cj4gPj4gPj4+
+PiAgIGRybTogc3RpOiB1c2UgZ2VuZXJpYyB6cG9zIGZvciBwbGFuZQo+ID4+ID4+Pj4gICBkcm06
+IHJjYXI6IHVzZSBnZW5lcmljIGNvZGUgZm9yIG1hbmFnaW5nIHpwb3MgcGxhbmUgcHJvcGVydHkK
+PiA+PiA+Pj4+Cj4gPj4gPj4+PiBNYXJlayBTenlwcm93c2tpICgyKToKPiA+PiA+Pj4+ICAgZHJt
+OiBhZGQgZ2VuZXJpYyB6cG9zIHByb3BlcnR5Cj4gPj4gPj4+PiAgIGRybS9leHlub3M6IHVzZSBn
+ZW5lcmljIGNvZGUgZm9yIG1hbmFnaW5nIHpwb3MgcGxhbmUgcHJvcGVydHkKPiA+PiA+Pj4+Cj4g
+Pj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL01ha2VmaWxlICAgICAgICAgICAgICAgICAgfCAgIDIg
+Ky0KPiA+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICAgICAgICB8
+ICAgNCArCj4gPj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgICAg
+ICAgfCAgIDYgKwo+ID4+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYyAgICAgICAg
+ICAgICAgIHwgMjI3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4+ID4+Pj4gIGRy
+aXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oICAgICAgIHwgICA0ICsKPiA+PiA+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8ICAgMiAtCj4gPj4g
+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCAgNjcgKyst
+LS0tLS0tCj4gPj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAg
+ICAgfCAgIDYgKy0KPiA+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2Ny
+dGMuYyAgICB8ICAgMiArLQo+ID4+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJf
+ZHVfZHJ2LmggICAgIHwgICAxIC0KPiA+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9y
+Y2FyX2R1X2ttcy5jICAgICB8ICAgNSAtCj4gPj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL3JjYXIt
+ZHUvcmNhcl9kdV9wbGFuZS5jICAgfCAgIDkgKy0KPiA+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0v
+cmNhci1kdS9yY2FyX2R1X3BsYW5lLmggICB8ICAgMiAtCj4gPj4gPj4+PiAgZHJpdmVycy9ncHUv
+ZHJtL3N0aS9zdGlfY3Vyc29yLmMgICAgICAgICAgfCAgIDQgKy0KPiA+PiA+Pj4+ICBkcml2ZXJz
+L2dwdS9kcm0vc3RpL3N0aV9nZHAuYyAgICAgICAgICAgICB8ICAgNCArLQo+ID4+ID4+Pj4gIGRy
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hxdmRwLmMgICAgICAgICAgIHwgICA0ICstCj4gPj4gPj4+
+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfbWl4ZXIuYyAgICAgICAgICAgfCAgIDkgKy0KPiA+
+PiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9wbGFuZS5jICAgICAgICAgICB8ICA3NiAr
+KysrLS0tLS0tCj4gPj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfcGxhbmUuaCAgICAg
+ICAgICAgfCAgIDcgKy0KPiA+PiA+Pj4+ICBpbmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAg
+ICAgICAgICAgICB8ICAzMCArKysrCj4gPj4gPj4+PiAgMjAgZmlsZXMgY2hhbmdlZCwgMzI0IGlu
+c2VydGlvbnMoKyksIDE0NyBkZWxldGlvbnMoLSkKPiA+PiA+Pj4+ICBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9ncHUvZHJtL2RybV9ibGVuZC5jCj4gPj4gPj4+Pgo+ID4+ID4+Pj4gQ2M6IElu
+a2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiA+PiA+Pj4+IENjOiBEYW5pZWwgVmV0dGVy
+IDxkYW5pZWxAZmZ3bGwuY2g+Cj4gPj4gPj4+PiBDYzogVmlsbGUgU3lyamFsYSA8dmlsbGUuc3ly
+amFsYUBsaW51eC5pbnRlbC5jb20+Cj4gPj4gPj4+PiBDYzogSm9vbnlvdW5nIFNoaW0gPGp5MDky
+Mi5zaGltQHNhbXN1bmcuY29tPgo+ID4+ID4+Pj4gQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5r
+aW1Ac2Ftc3VuZy5jb20+Cj4gPj4gPj4+PiBDYzogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1z
+dW5nLmNvbT4KPiA+PiA+Pj4+IENjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBz
+YW1zdW5nLmNvbT4KPiA+PiA+Pj4+IENjOiBCYXJ0bG9taWVqIFpvbG5pZXJraWV3aWN6IDxiLnpv
+bG5pZXJraWVAc2Ftc3VuZy5jb20+Cj4gPj4gPj4+PiBDYzogVG9iaWFzIEpha29iaSA8dGpha29i
+aUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gPj4gPj4+PiBDYzogR3VzdGF2byBQYWRvdmFuIDxn
+dXN0YXZvQHBhZG92YW4ub3JnPgo+ID4+ID4+Pj4gQ2M6IHZpbmNlbnQuYWJyaW91QHN0LmNvbQo+
+ID4+ID4+Pj4gQ2M6IGZhYmllbi5kZXNzZW5uZUBzdC5jb20KPiA+PiA+Pj4+IENjOiBMYXVyZW50
+IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4gPj4gPj4+Pgo+
+ID4+ID4+Pgo+ID4+ID4+Cj4gPj4gPj4KPiA+PiA+Pgo+ID4+ID4KPiA+Pgo+ID4+Cj4gPj4KPiA+
+PiAtLQo+ID4+IEJlbmphbWluIEdhaWduYXJkCj4gPj4KPiA+PiBHcmFwaGljIFdvcmtpbmcgR3Jv
+dXAKPiA+Pgo+ID4+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0g
+U29Dcwo+ID4+Cj4gPj4gRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwo+
+ID4KPiA+IC0tCj4gPiBEYW5pZWwgVmV0dGVyCj4gPiBTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwg
+Q29ycG9yYXRpb24KPiA+IGh0dHA6Ly9ibG9nLmZmd2xsLmNoCj4gCj4gCj4gCj4gLS0gCj4gQmVu
+amFtaW4gR2FpZ25hcmQKPiAKPiBHcmFwaGljIFdvcmtpbmcgR3JvdXAKPiAKPiBMaW5hcm8ub3Jn
+IOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKPiAKPiBGb2xsb3cgTGluYXJv
+OiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBF
+bmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
