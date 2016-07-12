@@ -1,404 +1,79 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 3/4] drm/bridge: analogix_dp: add the PSR function support
-Date: Tue, 12 Jul 2016 08:29:38 -0700
-Message-ID: <CAOw6vbJWdrzHwa9cEintihco8=UYC+irPXOomAbjWeruwUW9Nw@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 2/4] drm/rockchip: add an common abstracted PSR driver
+Date: Tue, 12 Jul 2016 18:10:26 +0200
+Message-ID: <20160712161026.GV23520@phenom.ffwll.local>
 References: <1467364685-21390-1-git-send-email-ykk@rock-chips.com>
- <1467364768-21741-1-git-send-email-ykk@rock-chips.com> <CAOw6vbJ4H9xzeaA-2OKsG+pGwdvehS91TZDPfUyq8R-=e70bPQ@mail.gmail.com>
- <577F0F53.9060404@rock-chips.com>
+ <1467364754-21674-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbKMWEEDEqw0_ba_FGO-2mOBg3uanQzk5nbnCtowWdLu9w@mail.gmail.com>
+ <20160712123826.GU23520@phenom.ffwll.local>
+ <CAAFQd5CrT_bM+VLpzqZqu7p=32YYkTrNZw75FkPwx-LteUCBGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f174.google.com ([209.85.161.174]:33412 "EHLO
-	mail-yw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755182AbcGLPaB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 11:30:01 -0400
-Received: by mail-yw0-f174.google.com with SMTP id j17so17176243ywg.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2016 08:30:01 -0700 (PDT)
-Received: from mail-yw0-f177.google.com (mail-yw0-f177.google.com. [209.85.161.177])
-        by smtp.gmail.com with ESMTPSA id t2sm19365319ywb.51.2016.07.12.08.29.59
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jul 2016 08:29:59 -0700 (PDT)
-Received: by mail-yw0-f177.google.com with SMTP id l125so16923849ywb.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2016 08:29:59 -0700 (PDT)
-In-Reply-To: <577F0F53.9060404@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAAFQd5CrT_bM+VLpzqZqu7p=32YYkTrNZw75FkPwx-LteUCBGw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Doug Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-On Thu, Jul 7, 2016 at 7:26 PM, Yakir Yang <ykk@rock-chips.com> wrote:
-> Sean,
->
-> Thanks for your review.
->
->
-> On 07/02/2016 03:46 AM, Sean Paul wrote:
->>
->> On Fri, Jul 1, 2016 at 5:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
->>>
->>> The full name of PSR is Panel Self Refresh, panel device could refresh
->>> itself with the hardware framebuffer in panel, this would make lots of
->>> sense to save the power consumption.
->>>
->>> This patch have exported two symbols for platform driver to implement
->>> the PSR function in hardware side:
->>> - analogix_dp_active_psr()
->>> - analogix_dp_inactive_psr()
->>>
->>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->>> ---
->>> Changes in v3:
->>> - split analogix_dp_enable_psr(), make it more clearly
->>>      analogix_dp_detect_sink_psr()
->>>      analogix_dp_enable_sink_psr()
->>> - remove some nosie register setting comments
->>>
->>> Changes in v2:
->>> - introduce in v2, splite the common Analogix DP changes out
->>>
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 64
->>> ++++++++++++++++++++++
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  4 ++
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 54
->>> ++++++++++++++++++
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  | 28 ++++++++++
->>>   include/drm/bridge/analogix_dp.h                   |  3 +
->>>   5 files changed, 153 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index 32715da..b557097 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -97,6 +97,66 @@ static int analogix_dp_detect_hpd(struct
->>> analogix_dp_device *dp)
->>>          return 0;
->>>   }
->>>
->>> +int analogix_dp_active_psr(struct device *dev)
->>> +{
->>> +       struct analogix_dp_device *dp = dev_get_drvdata(dev);
->>> +
->>> +       if (!dp->psr_support)
->>> +               return -EINVAL;
->>> +
->>> +       analogix_dp_send_psr_spd(dp, EDP_VSC_PSR_STATE_ACTIVE |
->>> +                                EDP_VSC_PSR_CRC_VALUES_VALID);
->>> +       return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(analogix_dp_active_psr);
->>> +
->>> +int analogix_dp_inactive_psr(struct device *dev)
->>> +{
->>> +       struct analogix_dp_device *dp = dev_get_drvdata(dev);
->>> +
->>> +       if (!dp->psr_support)
->>> +               return -EINVAL;
->>> +
->>> +       analogix_dp_send_psr_spd(dp, 0);
->>> +       return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(analogix_dp_inactive_psr);
->>> +
->>> +static bool analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
->>> +{
->>> +       unsigned char psr_version;
->>> +
->>> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_SUPPORT,
->>> &psr_version);
->>> +       dev_info(dp->dev, "Panel PSR version : %x\n", psr_version);
->>> +
->>
->> This info message is likely to be spammy since it's printed everytime
->> the panel toggle on. Perhaps downgrade to debug level.
->
->
-> Okay, done.
->
->>> +       return (psr_version & DP_PSR_IS_SUPPORTED) ? true : false;
->>> +}
->>> +
->>> +static int analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
->>
->> Return type is int, but the function never fails and you don't check
->> the return value when calling it. Seems like this should be void.
->
->
-> Done.
->
->>> +{
->>> +       unsigned char psr_en;
->>> +
->>> +       /* Disable psr function */
->>> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->>> +       psr_en &= ~DP_PSR_ENABLE;
->>> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->>> +
->>> +       /* Main-Link transmitter remains active during PSR active states
->>> */
->>> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->>> +       psr_en = DP_PSR_MAIN_LINK_ACTIVE | DP_PSR_CRC_VERIFICATION;
->>
->> Why read psr_en if you're just going to overwrite it? Perhaps you meant |=
->> here.
->>
->
-> Yes, it's my mistaken, no need to read the DP_PSR_EN_CFG, just configure it
-> directly is enough.
->
->>> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->>> +
->>> +       /* Enable psr function */
->>> +       analogix_dp_read_byte_from_dpcd(dp, DP_PSR_EN_CFG, &psr_en);
->>> +       psr_en = DP_PSR_ENABLE | DP_PSR_MAIN_LINK_ACTIVE |
->>> +                DP_PSR_CRC_VERIFICATION;
->>
->> Again, no need to read if you're just overwriting.
->
->
-> Yes, ditto
->
->
->>> +       analogix_dp_write_byte_to_dpcd(dp, DP_PSR_EN_CFG, psr_en);
->>> +
->>> +       analogix_dp_enable_psr_crc(dp);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>>   static unsigned char analogix_dp_calc_edid_check_sum(unsigned char
->>> *edid_data)
->>>   {
->>>          int i;
->>> @@ -921,6 +981,10 @@ static void analogix_dp_commit(struct
->>> analogix_dp_device *dp)
->>>
->>>          /* Enable video */
->>>          analogix_dp_start_video(dp);
->>> +
->>> +       dp->psr_support = analogix_dp_detect_sink_psr(dp);
->>> +       if (dp->psr_support)
->>> +               analogix_dp_enable_sink_psr(dp);
->>>   }
->>>
->>>   int analogix_dp_get_modes(struct drm_connector *connector)
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->>> index b456380..6ca5dde 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->>> @@ -177,6 +177,7 @@ struct analogix_dp_device {
->>>          int                     hpd_gpio;
->>>          bool                    force_hpd;
->>>          unsigned char           edid[EDID_BLOCK_LENGTH * 2];
->>> +       bool                    psr_support;
->>>
->>>          struct analogix_dp_plat_data *plat_data;
->>>   };
->>> @@ -278,4 +279,7 @@ int analogix_dp_is_video_stream_on(struct
->>> analogix_dp_device *dp);
->>>   void analogix_dp_config_video_slave_mode(struct analogix_dp_device
->>> *dp);
->>>   void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
->>>   void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
->>> +void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
->>> +void analogix_dp_send_psr_spd(struct analogix_dp_device *dp, int db1);
->>> +
->>>   #endif /* _ANALOGIX_DP_CORE_H */
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->>> index 48030f0..e8372c7 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->>> @@ -1322,3 +1322,57 @@ void analogix_dp_disable_scrambling(struct
->>> analogix_dp_device *dp)
->>>          reg |= SCRAMBLING_DISABLE;
->>>          writel(reg, dp->reg_base + ANALOGIX_DP_TRAINING_PTN_SET);
->>>   }
->>> +
->>> +void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
->>> +{
->>> +       writel(PSR_VID_CRC_FLUSH | PSR_VID_CRC_ENABLE,
->>> +              dp->reg_base + ANALOGIX_DP_CRC_CON);
->>> +
->>> +       usleep_range(10, 20);
->>
->> Is this sleep arbitrary, or documented somewhere? Could you add a
->> comment explaining how this was arrived at?
->>
->
-> Yes, this sleep is arbitrary, there is no document about the
->
-
-Ok, so I assume we actually need the delay for things to work? If not,
-delete the delay. If we need it, please add a comment saying the wait
-is required and the value was chosen via trial and error.
-
->
->>> +
->>> +       writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
->>> +}
->>> +
->>> +void analogix_dp_send_psr_spd(struct analogix_dp_device *dp, int db1)
->>> +{
->>> +       unsigned int val;
->>> +
->>> +       /* don't send info frame */
->>> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +       val &= ~IF_EN;
->>> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +
->>> +       /* configure single frame update mode */
->>> +       writel(0x3, dp->reg_base + ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL);
->>> +
->>> +       /* configure VSC HB0 ~ HB3 */
->>> +       writel(0x00, dp->reg_base + ANALOGIX_DP_SPD_HB0);
->>> +       writel(0x07, dp->reg_base + ANALOGIX_DP_SPD_HB1);
->>> +       writel(0x02, dp->reg_base + ANALOGIX_DP_SPD_HB2);
->>> +       writel(0x08, dp->reg_base + ANALOGIX_DP_SPD_HB3);
->>> +
->>> +       /* configure VSC HB0 ~ HB3 */
->>> +       writel(0x00, dp->reg_base + ANALOGIX_DP_SPD_PB0);
->>> +       writel(0x16, dp->reg_base + ANALOGIX_DP_SPD_PB1);
->>> +       writel(0xCE, dp->reg_base + ANALOGIX_DP_SPD_PB2);
->>> +       writel(0x5D, dp->reg_base + ANALOGIX_DP_SPD_PB3);
->>> +
->>> +       /* configure DB0 / DB1 values */
->>> +       writel(0x00, dp->reg_base + ANALOGIX_DP_VSC_SHADOW_DB0);
->>
->> Lots of hardcoded values here. I think this could be cleaned up.
->
->
-> For "HB0~HB3", "PB0~PB3" and "DB1", I don't understand very well. Those
-> seems to be a kind of head number, I got those magic values from our IC
-> side. So I think those should be okay to keep the hardcode values here :-D
->
-
-Hmm. Well, I'd probably pull them out into some HBX_MAGIC_VALUE
-define, but I suppose it's fine to keep them as-is. Please at least
-add a comment above explaining that they're magic values provided by
-your IC team.
-
-> But for the "0x3" in "ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL", I would fix it
-> with suitable macro.
->
->
->>> +       writel(db1, dp->reg_base + ANALOGIX_DP_VSC_SHADOW_DB1);
->>> +
->>> +       /* set reuse spd inforframe */
->>> +       val = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_3);
->>> +       val |= REUSE_SPD_EN;
->>> +       writel(val, dp->reg_base + ANALOGIX_DP_VIDEO_CTL_3);
->>> +
->>> +       /* mark info frame update */
->>> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +       val = (val | IF_UP) & ~IF_EN;
->>> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +
->>> +       /* send info frame */
->>> +       val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +       val |= IF_EN;
->>> +       writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->>> +}
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->>> index cdcc6c5..a2698e4 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
->>> @@ -22,6 +22,8 @@
->>>   #define ANALOGIX_DP_VIDEO_CTL_8                        0x3C
->>>   #define ANALOGIX_DP_VIDEO_CTL_10               0x44
->>>
->>> +#define ANALOGIX_DP_SPDIF_AUDIO_CTL_0          0xD8
->>> +
->>>   #define ANALOGIX_DP_PLL_REG_1                  0xfc
->>>   #define ANALOGIX_DP_PLL_REG_2                  0x9e4
->>>   #define ANALOGIX_DP_PLL_REG_3                  0x9e8
->>> @@ -30,6 +32,21 @@
->>>
->>>   #define ANALOGIX_DP_PD                         0x12c
->>>
->>> +#define ANALOGIX_DP_IF_TYPE                    0x244
->>> +#define ANALOGIX_DP_IF_PKT_DB1                 0x254
->>> +#define ANALOGIX_DP_IF_PKT_DB2                 0x258
->>> +#define ANALOGIX_DP_SPD_HB0                    0x2F8
->>> +#define ANALOGIX_DP_SPD_HB1                    0x2FC
->>> +#define ANALOGIX_DP_SPD_HB2                    0x300
->>> +#define ANALOGIX_DP_SPD_HB3                    0x304
->>> +#define ANALOGIX_DP_SPD_PB0                    0x308
->>> +#define ANALOGIX_DP_SPD_PB1                    0x30C
->>> +#define ANALOGIX_DP_SPD_PB2                    0x310
->>> +#define ANALOGIX_DP_SPD_PB3                    0x314
->>> +#define ANALOGIX_DP_PSR_FRAME_UPDATE_CTRL      0x318
->>> +#define ANALOGIX_DP_VSC_SHADOW_DB0             0x31C
->>> +#define ANALOGIX_DP_VSC_SHADOW_DB1             0x320
->>> +
->>>   #define ANALOGIX_DP_LANE_MAP                   0x35C
->>>
->>>   #define ANALOGIX_DP_ANALOG_CTL_1               0x370
->>> @@ -103,6 +120,8 @@
->>>
->>>   #define ANALOGIX_DP_SOC_GENERAL_CTL            0x800
->>>
->>> +#define ANALOGIX_DP_CRC_CON                    0x890
->>> +
->>>   /* ANALOGIX_DP_TX_SW_RESET */
->>>   #define RESET_DP_TX                            (0x1 << 0)
->>>
->>> @@ -151,6 +170,7 @@
->>>   #define VID_CHK_UPDATE_TYPE_SHIFT              (4)
->>>   #define VID_CHK_UPDATE_TYPE_1                  (0x1 << 4)
->>>   #define VID_CHK_UPDATE_TYPE_0                  (0x0 << 4)
->>> +#define REUSE_SPD_EN                           (0x1 << 3)
->>>
->>>   /* ANALOGIX_DP_VIDEO_CTL_8 */
->>>   #define VID_HRES_TH(x)                         (((x) & 0xf) << 4)
->>> @@ -376,4 +396,12 @@
->>>   #define VIDEO_MODE_SLAVE_MODE                  (0x1 << 0)
->>>   #define VIDEO_MODE_MASTER_MODE                 (0x0 << 0)
->>>
->>> +/* ANALOGIX_DP_PKT_SEND_CTL */
->>> +#define IF_UP                                  (0x1 << 4)
->>> +#define IF_EN                                  (0x1 << 0)
->>> +
->>> +/* ANALOGIX_DP_CRC_CON */
->>> +#define PSR_VID_CRC_FLUSH                      (0x1 << 2)
->>> +#define PSR_VID_CRC_ENABLE                     (0x1 << 0)
->>> +
->>>   #endif /* _ANALOGIX_DP_REG_H */
->>> diff --git a/include/drm/bridge/analogix_dp.h
->>> b/include/drm/bridge/analogix_dp.h
->>> index 261b86d..183a336 100644
->>> --- a/include/drm/bridge/analogix_dp.h
->>> +++ b/include/drm/bridge/analogix_dp.h
->>> @@ -38,6 +38,9 @@ struct analogix_dp_plat_data {
->>>                           struct drm_connector *);
->>>   };
->>>
->>> +int analogix_dp_active_psr(struct device *dev);
->>> +int analogix_dp_inactive_psr(struct device *dev);
->>
->> Why active/inactive instead of enable/disable, which is used everywhere
->> else?
->
->
-> Done
->
-> Thanks,
-> - Yakir
->
->
->>> +
->>>   int analogix_dp_resume(struct device *dev);
->>>   int analogix_dp_suspend(struct device *dev);
->>>
->>> --
->>> 1.9.1
->>>
->>>
->>
->>
->
->
+T24gV2VkLCBKdWwgMTMsIDIwMTYgYXQgMTI6MTA6MTNBTSArMDkwMCwgVG9tYXN6IEZpZ2Egd3Jv
+dGU6Cj4gT24gVHVlLCBKdWwgMTIsIDIwMTYgYXQgOTozOCBQTSwgRGFuaWVsIFZldHRlciA8ZGFu
+aWVsQGZmd2xsLmNoPiB3cm90ZToKPiA+IE9uIEZyaSwgSnVsIDAxLCAyMDE2IGF0IDAyOjAwOjAw
+UE0gLTA0MDAsIFNlYW4gUGF1bCB3cm90ZToKPiA+PiBPbiBGcmksIEp1bCAxLCAyMDE2IGF0IDU6
+MTkgQU0sIFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4gd3JvdGU6Cj4gPj4gPiBUaGUg
+UFNSIGRyaXZlciBoYXZlIGV4cG9ydGVkIGZvdXIgc3ltYm9scyBmb3Igc3BlY2lmaWMgZGV2aWNl
+IGRyaXZlcjoKPiA+PiA+IC0gcm9ja2NoaXBfZHJtX3Bzcl9yZWdpc3RlcigpCj4gPj4gPiAtIHJv
+Y2tjaGlwX2RybV9wc3JfdW5yZWdpc3RlcigpCj4gPj4gPiAtIHJvY2tjaGlwX2RybV9wc3JfZW5h
+YmxlKCkKPiA+PiA+IC0gcm9ja2NoaXBfZHJtX3Bzcl9kaXNhYmxlKCkKPiA+PiA+IC0gcm9ja2No
+aXBfZHJtX3Bzcl9mbHVzaCgpCj4gPj4gPgo+ID4+ID4gRW5jb2RlciBkcml2ZXIgc2hvdWxkIGNh
+bGwgdGhlIHJlZ2lzdGVyL3VucmVnaXN0ZXIgaW50ZXJmYWNlcyB0byBob29rCj4gPj4gPiBpdHNl
+bGYgaW50byBjb21tb24gUFNSIGRyaXZlciwgZW5jb2RlciBoYXZlIGltcGxlbWVudCB0aGUgJ3Bz
+cl9zZXQnCj4gPj4gPiBjYWxsYmFjayB3aGljaCB1c2UgdGhlIHNldCBQU1Igc3RhdGUgaW4gaGFy
+ZHdhcmUgc2lkZS4KPiA+PiA+Cj4gPj4gPiBDcnRjIGRyaXZlciB3b3VsZCBjYWxsIHRoZSBlbmFi
+bGUvZGlzYWJsZSBpbnRlcmZhY2VzIHdoZW4gdmJsYW5rIGlzCj4gPj4gPiBlbmFibGUvZGlzYWJs
+ZSwgYWZ0ZXIgdGhhdCB0aGUgY29tbW9uIFBTUiBkcml2ZXIgd291bGQgY2FsbCB0aGUgZW5jb2Rl
+cgo+ID4+ID4gcmVnaXN0ZXJlZCBjYWxsYmFjayB0byBzZXQgdGhlIFBTUiBzdGF0ZS4KPiA+PiA+
+Cj4gPj4KPiA+PiBUaGlzIGZlZWxzIG92ZXJseSBjb21wbGljYXRlZC4gSXQgc2VlbXMgbGlrZSB5
+b3UgY291bGQgY3V0IG91dCBhIGJ1bmNoCj4gPj4gb2YgY29kZSBieSBqdXN0IGNvZGluZyB0aGUg
+cHNyIGZ1bmN0aW9ucyBpbnRvIHZvcCBhbmQKPiA+PiBhbmFsb2dpeF9kcC1yb2NrY2hpcC4gSSBz
+dXBwb3NlIHRoZSBvbmx5IHJlYXNvbiB0byBrZWVwIGl0IGFic3RyYWN0ZWQKPiA+PiB3b3VsZCBi
+ZSBpZiB5b3UgcGxhbiBvbiBzdXBwb3J0aW5nIHBzciBpbiBhIGRpZmZlcmVudCBlbmNvZGVyIG9y
+IGNydGMKPiA+PiBpbiByb2NrY2hpcCwgb3IgaWYgeW91J3JlIHBsYW5uaW5nIG9uIG1vdmluZyB0
+aGlzIGludG8gZHJtIGNvcmUuCj4gPgo+ID4gQWdyZWVkIG9uIHRoZSBsYXllcnMgb2YgaW5kaXJl
+Y3Rpb24uIEFsc28sIHlvdSBlbmQgdXAgd2l0aCAzIGRlbGF5ZWQKPiA+IHRpbWVycyBpbiB0b3Rh
+bDoKPiA+IC0gZGVmaW8gdGltZXIgZnJvbSBmYmRldiBlbXVsYXRpb24KPiA+IC0gdGltZXIgaW4g
+dGhpcyBhYnN0cmFjdGlvbgo+ID4gLSBkZWxheWVkIHdvcmsgaW4gdGhlIHBzciBiYWNrZW5kIGRy
+aXZlcgo+IAo+IE1heWJlIEknbSBtaXNzaW5nIHNvbWV0aGluZyBvYnZpb3VzIChkb24ndCBrbm93
+IGhvdyB0aGUgUFNSIGlzCj4gaW1wbGVtZW50ZWQgaW4gaGFyZHdhcmUgb3IgaW4gb3RoZXIgZHJp
+dmVycyksIGJ1dCB3aHkgZG8gd2UgbmVlZCBhbGwKPiB0aGVzZSB0aW1lcnM/IENvdWxkbid0IHdl
+IGp1c3QgdHJpZ2dlciBhIGZha2UgcGFnZSBmbGlwIG9uIGZiIGRpcnR5Cj4gY2FsbD8KClBhZ2Ug
+ZmxpcHMgYXJlIHJhdGVsaW1pdGVkIHRvIHZyZWZyZXNoLCBhbmQgbm90IGFsbCBkcml2ZXJzIHN1
+cHBvcnQgaXQuClRoZSBvdGhlciBpc3N1ZSBpcyB0aGF0IGRpcnR5IGlvY3RsIHN1cHBvcnRzIGRp
+cnR5IHJlY3RhbmdsZXMsIGJ1dCBwYWdlCmZsaXAgaXMgc3RpbGwgYSBmdWxsLXNjcmVlbiB1cGxv
+YWQuIFdlIGRpc2N1c3NlZCBhZGRpbmcgYSBkaXJ0eSByZWN0YW5nbGUKdG8gdGhlIGttcyBwcm9w
+ZXJ0aWVzIHRvIGZpeCB0aGlzIGdhcCwgYnV0IHVudGlsIHRoYXQncyBkb25lIEkgZG9uJ3QgdGhp
+bmsKaXQgbWFrZXMgbXVjaCBzZW5zZSB0byByZW1hcCBkaXJ0eSB0byBhbiAoYXRvbWljKSBwYWdl
+IGZsaXAuIE9uZSBzbWFsbAp0ZWNobmljYWxpdHkgaXMgdGhhdCBkaXJ0eSB3b3JrcyBvbiBmcmFt
+ZWJ1ZmZlcnMsIGJ1dCBwYWdlIGZsaXBzCihlc3BlY2lhbGx5IGF0b21pYyBvbmVzKSB3b3JrIG9u
+IGNydGNzLiBUaGF0IG1ha2VzIHRoZSByZW1hcHBpbmcgYSBub3RjaAptb3JlIHRyaWNreS4KCkJ1
+dCBpbiBwcmluY2lwbGUsIGZ1bGx5IGFncmVlZC4gQW5kIG9uY2Ugd2UgaGF2ZSBhdG9taWMgZGly
+dHkgcmVjdGFuZ2xlcwp3ZSBjb3VsZCB0eXBlIHVwIGEgc21hbGwgaGVscGVyIHRoYXQgZHJpdmVy
+cyBjYW4gcGx1ZyBpbnRvIHRoZSBkaXJ0eQppb2N0bC4gU2luY2UgbmV3IHByb3BlcnRpZXMgcmVx
+dWlyZXMgbmV3IHVzZXJzcGFjZSB3ZSBjb3VsZCBqdXN0IHRyYWNrIHRoZQpkaXJ0eSByZWN0YW5n
+bGUgaW50ZXJuYWxseSB0byBnZXQgdGhpcyBoZWxwZXIgbGFuZGVkLCBpZiB0aGVyZSdzCmludGVy
+ZXN0ZWQgZm9yIHRoYXQuIEknbGwgY2VydGFpbmx5IGJlIGhhcHB5IHRvIHJldmlldyBwYXRjaGVz
+LgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jw
+b3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
