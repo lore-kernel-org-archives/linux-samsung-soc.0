@@ -1,86 +1,111 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 1/2] clk: samsung: cpu: Prepare for addition for Exynos7
- CPU clocks
-Date: Tue, 12 Jul 2016 15:44:03 +0200
-Message-ID: <1893441.PNypKdntnt@amdc1976>
-References: <1467750561-13957-1-git-send-email-a.kesavan@samsung.com>
- <2318982.ZLuIVQzhgE@amdc1976>
- <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v5 0/4] Generic zpos property
+Date: Tue, 12 Jul 2016 16:01:58 +0200
+Message-ID: <20160712140158.GK23520@phenom.ffwll.local>
+References: <1467896484-5132-1-git-send-email-benjamin.gaignard@linaro.org>
+ <577E609F.3000300@math.uni-bielefeld.de>
+ <CA+M3ks4TQ4ER543rght3XxKY8No4z_n4M9S3V9YNyP0FvPBHoQ@mail.gmail.com>
+ <577E7EA4.7010501@math.uni-bielefeld.de>
+ <CA+M3ks789+7uqX8nWHV9-+nZdyvNYWsb0YmxKNyBcO1eyXYJVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34632 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbcGLNpH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 09:45:07 -0400
-In-reply-to: <CAM4voamm5-upxvwYG0b-WpgO3OpJR+ZswVzjwRO89fjQqovFbw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CA+M3ks789+7uqX8nWHV9-+nZdyvNYWsb0YmxKNyBcO1eyXYJVg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Fabien Dessenne <fabien.dessenne@st.com>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Krzysztof =?utf-8?B?S296xYJvd3NraQ==?= <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Monday, July 11, 2016 04:44:30 PM Abhilash Kesavan wrote:
-> Hi Bartlomiej,
-
-Hi Abhilash,
-
-> Thanks for the comments.
-> 
-> On Thu, Jul 7, 2016 at 1:17 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> >
-> > Hi
-> >
-> > On Thursday, July 07, 2016 12:45:57 PM Sylwester Nawrocki wrote:
-> >> On 07/05/2016 10:29 PM, Abhilash Kesavan wrote:
-> >> > Exynos7 has the same CPU clock registers layout as that present
-> >
-> > Please precise for which Exynos7 SoC this change is needed
-> > (all three of them?).
-> 
-> As mentioned in my recently posted PMU series, the exynos7 is a quad
-> core A57 based SoC and not meant to be a SoC family.
-
-I suppose that it will get some more meaningful name once released
-officially (I couldn't find anything about this SoC on the net).
-
-> I have reviewed various exynos7xxx UMs in terms of the CPU CMU. Both
-> exynos7580 and exynos7420 have a similar CMU register layout along
-> with the same mux stat bits as exynos7. Exynos7870 on the other hand
-> is quite different.
-> 
-> Please let me know what naming convention you would prefer that I use
-> E7/E7420/E7580 ?
-
-I would prefer using E7420 naming.
- 
-> >> > in Exynos5433 except for the bits in the MUX_STAT* registers.
-> >> > Add a new CLK_CPU_HAS_MODIFIED_MUX_STAT flag to handle this change.
-> >>
-> >> > --- a/drivers/clk/samsung/clk-cpu.h
-> >> > +++ b/drivers/clk/samsung/clk-cpu.h
-> >> > @@ -63,6 +63,8 @@ struct exynos_cpuclk {
-> >> >  /* The CPU clock registers have Exynos5433-compatible layout */
-> >> >  #define CLK_CPU_HAS_E5433_REGS_LAYOUT      (1 << 2)
-> >>
-> >> > +/* Exynos5433-compatible layout with different MUX_STAT register bits */
-> >> > +#define CLK_CPU_HAS_MODIFIED_MUX_STAT      (1 << 3)
-> >>
-> >> It's getting a bit messy, what if there comes another SoC version
-> >> which has some other modification of exynos5433 registers structure?
-> >> We would need another variant of HAS_MODIFIED_MUX_STAT flag and we
-> >> could easily get lost while trying to determine which modification
-> >> is which. How about indicating explicitly it's an exynos7 bits
-> >> layout and renaming the flag to something like
-> >>
-> >> #define CLK_CPU_HAS_E7_MUX_STAT       (1 << 16) ?
-> >
-> > ditto
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+T24gRnJpLCBKdWwgMDgsIDIwMTYgYXQgMDk6MDY6MThBTSArMDIwMCwgQmVuamFtaW4gR2FpZ25h
+cmQgd3JvdGU6Cj4gaHRtbGRvY3MgZ2V0IGluZm9ybWF0aW9uIGRpcmVjdGx5IGZyb20gdGhlIGNv
+bW1lbnRzIGluIC5oIGFuZCAuYyBmaWxlcwoKWW91J3JlIGJvdGggY29ycmVjdDogVGhlcmUncyBh
+bm90aGVyIHRhYmxlIHdoaWNoIGlzIHN1cHBvc2VkIHRvIGxpc3QgX2FsbF8KcHJvcGVydGllcy4g
+SXQncyBhIGJpdCBhIG1lc3MsIGFuZCBzaG91bGQgYmUgc3BsaXQgdXAvY2xlYW5lZCB1cCwgYnV0
+CnRoYXQncyBhIGxvbmdlci10ZXJtIHRoaW5nLiBQbGVhc2UgYWRkIHpwb3MgdGhlcmUgdG9vLgoK
+U2VlIERvY3VtZW50YXRpb24vZ3B1L2ttcy1wcm9wZXJ0aWVzLmNzdgoKQ2hlZXJzLCBEYW5pZWwK
+PiAKPiAyMDE2LTA3LTA3IDE4OjA5IEdNVCswMjowMCBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1h
+dGgudW5pLWJpZWxlZmVsZC5kZT46Cj4gPiBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToKPiA+PiB6
+cG9zIG5ldyBmaWVsZHMgYXJlIGNvcnJlY3RseSBkb2N1bWVudGVkIGluIGRybS1rbXMuaHRtbCBh
+ZnRlciBydW5uaW5nCj4gPj4gbWFrZSBodG1sZG9jcy4KPiA+IEknbSBub3Qgc3VyZSBJIHVuZGVy
+c3RhbmQuIFdoZXJlIGRvZXMgaHRtbGRvY3MgZ2V0IHRoZSBpbmZvcm1hdGlvbiBmcm9tCj4gPiB0
+aGVuPwo+ID4KPiA+IC0gVG9iaWFzCj4gPgo+ID4KPiA+PiBCZW5qYW1pbgo+ID4+Cj4gPj4gMjAx
+Ni0wNy0wNyAxNjowMSBHTVQrMDI6MDAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1i
+aWVsZWZlbGQuZGU+Ogo+ID4+PiBIZWxsbyBCZW5qYW1pbiwKPiA+Pj4KPiA+Pj4KPiA+Pj4gQmVu
+amFtaW4gR2FpZ25hcmQgd3JvdGU6Cj4gPj4+PiB2ZXJzaW9uIDU6Cj4gPj4+PiByZWJhc2VkIG9u
+IGRybS1uZXh0IHdoZXJlIERvY3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbCBkb2Vzbid0Cj4g
+Pj4+PiBleGlzdCBhbnltb3JlLgo+ID4+PiBJIHRoaW5rIHRoZSBkb2N1bWVudGF0aW9uIGhhcyBq
+dXN0IG1vdmVkIHRvIERvY3VtZW50YXRpb24vZ3B1LCBzbyB0aGUKPiA+Pj4genBvcyBwcm9wZXJ0
+eSBzaG91bGQgYmUgZG9jdW1lbnRlZCB0aGVyZSB0aGVuLgo+ID4+Pgo+ID4+Pgo+ID4+PiBXaXRo
+IGJlc3Qgd2lzaGVzLAo+ID4+PiBUb2JpYXMKPiA+Pj4KPiA+Pj4KPiA+Pj4+IHJld29yayBzdGkg
+cGF0Y2ggYmVjYXVzZSBzb21lIHBsYW5lIGZ1bmN0aW9ucyBoYXZlIGNoYW5nZWQgc2luY2UgdjQK
+PiA+Pj4+Cj4gPj4+PiB2ZXJzaW9uIDQ6Cj4gPj4+PiBtYWtlIHN1cmUgdGhhdCBub3JtYWxpemVk
+IHpwb3MgdmFsdWUgaXMgc3RheSBpbiB0aGUgZGVmaW5lZCBwcm9wZXJ0eQo+ID4+Pj4gcmFuZ2Ug
+YW5kIHdhcm4gdXNlciBpZiBub3QuCj4gPj4+PiBGaXggTlVMTCBwb2ludGVyIGJ1ZyBpbiByY2Fy
+LWR1IHdoaWxlIHNldHRpbmcgenBvcyB2YWx1ZS4KPiA+Pj4+IE5vIGNoYW5nZXMgaW4gdGhlIG90
+aGVyIGRyaXZlcnMuCj4gPj4+Pgo+ID4+Pj4gdmVyc2lvbiAzOgo+ID4+Pj4gdXNlIGttYWxsb2Nf
+YXJyYXkgaW5zdGVhZCBvZiBrbWFsbG9jLgo+ID4+Pj4gQ29ycmVjdCBub3JtYWxpemVfenBvcyBj
+b21wdXRhdGlvbiAoY29tZWJhY2sgdG8gTWFyZWNrIG9yaWdpbmFsIGNvZGUpCj4gPj4+Pgo+ID4+
+Pj4gdmVyc2lvbiAyOgo+ID4+Pj4gYWRkIGEgenBvcyBwcm9wZXJ0eSBpbnRvIGRybV9wbGFuZSBz
+dHJ1Y3R1cmUgdG8gc2ltcGxpZnkgY29kZS4KPiA+Pj4+IFRoaXMgYWxsb3cgdG8gZ2V0L3NldCB6
+cG9zIHZhbHVlIGluIGNvcmUgYW5kIG5vdCBpbiBkcml2ZXJzIGNvZGUuCj4gPj4+PiBGaXggdmFy
+aW91cyByZW1hcmtzLgo+ID4+Pj4KPiA+Pj4+IHZlcnNpb24gMToKPiA+Pj4+IHJlZmFjdG9yIE1h
+cmVrJ3MgcGF0Y2hlcyB0byBoYXZlIHBlciBwbGFuZSB6cG9zIHByb3BlcnR5IGluc3RlYWQgb2Yg
+b25seQo+ID4+Pj4gb25lIGluIGNvcmUuCj4gPj4+Pgo+ID4+Pj4gQmVuamFtaW4gR2FpZ25hcmQg
+KDIpOgo+ID4+Pj4gICBkcm06IHN0aTogdXNlIGdlbmVyaWMgenBvcyBmb3IgcGxhbmUKPiA+Pj4+
+ICAgZHJtOiByY2FyOiB1c2UgZ2VuZXJpYyBjb2RlIGZvciBtYW5hZ2luZyB6cG9zIHBsYW5lIHBy
+b3BlcnR5Cj4gPj4+Pgo+ID4+Pj4gTWFyZWsgU3p5cHJvd3NraSAoMik6Cj4gPj4+PiAgIGRybTog
+YWRkIGdlbmVyaWMgenBvcyBwcm9wZXJ0eQo+ID4+Pj4gICBkcm0vZXh5bm9zOiB1c2UgZ2VuZXJp
+YyBjb2RlIGZvciBtYW5hZ2luZyB6cG9zIHBsYW5lIHByb3BlcnR5Cj4gPj4+Pgo+ID4+Pj4gIGRy
+aXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgIHwgICAyICstCj4gPj4+PiAg
+ZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWMuYyAgICAgICAgICAgICAgfCAgIDQgKwo+ID4+Pj4g
+IGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jICAgICAgIHwgICA2ICsKPiA+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JsZW5kLmMgICAgICAgICAgICAgICB8IDIyNyArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysKPiA+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2NydGNf
+aW50ZXJuYWwuaCAgICAgICB8ICAgNCArCj4gPj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5oICAgfCAgIDIgLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9wbGFuZS5jIHwgIDY3ICsrLS0tLS0tLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgIHwgICA2ICstCj4gPj4+PiAgZHJpdmVycy9ncHUv
+ZHJtL3JjYXItZHUvcmNhcl9kdV9jcnRjLmMgICAgfCAgIDIgKy0KPiA+Pj4+ICBkcml2ZXJzL2dw
+dS9kcm0vcmNhci1kdS9yY2FyX2R1X2Rydi5oICAgICB8ICAgMSAtCj4gPj4+PiAgZHJpdmVycy9n
+cHUvZHJtL3JjYXItZHUvcmNhcl9kdV9rbXMuYyAgICAgfCAgIDUgLQo+ID4+Pj4gIGRyaXZlcnMv
+Z3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfcGxhbmUuYyAgIHwgICA5ICstCj4gPj4+PiAgZHJpdmVy
+cy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9wbGFuZS5oICAgfCAgIDIgLQo+ID4+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS9zdGkvc3RpX2N1cnNvci5jICAgICAgICAgIHwgICA0ICstCj4gPj4+PiAgZHJp
+dmVycy9ncHUvZHJtL3N0aS9zdGlfZ2RwLmMgICAgICAgICAgICAgfCAgIDQgKy0KPiA+Pj4+ICBk
+cml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9ocXZkcC5jICAgICAgICAgICB8ICAgNCArLQo+ID4+Pj4g
+IGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX21peGVyLmMgICAgICAgICAgIHwgICA5ICstCj4gPj4+
+PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfcGxhbmUuYyAgICAgICAgICAgfCAgNzYgKysrKy0t
+LS0tLQo+ID4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmggICAgICAgICAgIHwg
+ICA3ICstCj4gPj4+PiAgaW5jbHVkZS9kcm0vZHJtX2NydGMuaCAgICAgICAgICAgICAgICAgICAg
+fCAgMzAgKysrKwo+ID4+Pj4gIDIwIGZpbGVzIGNoYW5nZWQsIDMyNCBpbnNlcnRpb25zKCspLCAx
+NDcgZGVsZXRpb25zKC0pCj4gPj4+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2Ry
+bS9kcm1fYmxlbmQuYwo+ID4+Pj4KPiA+Pj4+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
+Zy5jb20+Cj4gPj4+PiBDYzogRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPgo+ID4+Pj4g
+Q2M6IFZpbGxlIFN5cmphbGEgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgo+ID4+Pj4g
+Q2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiA+Pj4+IENjOiBT
+ZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPgo+ID4+Pj4gQ2M6IEFuZHJ6ZWog
+SGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gPj4+PiBDYzogS3J6eXN6dG9mIEtvemxvd3Nr
+aSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4gPj4+PiBDYzogQmFydGxvbWllaiBab2xuaWVy
+a2lld2ljeiA8Yi56b2xuaWVya2llQHNhbXN1bmcuY29tPgo+ID4+Pj4gQ2M6IFRvYmlhcyBKYWtv
+YmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+ID4+Pj4gQ2M6IEd1c3Rhdm8gUGFk
+b3ZhbiA8Z3VzdGF2b0BwYWRvdmFuLm9yZz4KPiA+Pj4+IENjOiB2aW5jZW50LmFicmlvdUBzdC5j
+b20KPiA+Pj4+IENjOiBmYWJpZW4uZGVzc2VubmVAc3QuY29tCj4gPj4+PiBDYzogTGF1cmVudCBQ
+aW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+ID4+Pj4KPiA+Pj4K
+PiA+Pgo+ID4+Cj4gPj4KPiA+Cj4gCj4gCj4gCj4gLS0gCj4gQmVuamFtaW4gR2FpZ25hcmQKPiAK
+PiBHcmFwaGljIFdvcmtpbmcgR3JvdXAKPiAKPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBz
+b2Z0d2FyZSBmb3IgQVJNIFNvQ3MKPiAKPiBGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0
+ZXIgfCBCbG9nCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29y
+cG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
