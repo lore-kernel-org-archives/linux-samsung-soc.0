@@ -1,77 +1,57 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] soc: samsung: Add support for Exynos7 PMU
-Date: Tue, 12 Jul 2016 10:58:29 +0200
-Message-ID: <5784B135.2060209@samsung.com>
-References: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
- <1467750507-13853-3-git-send-email-a.kesavan@samsung.com>
- <CAJKOXPc=RZEe_zQvnmxXRttppJfGJwyjmkF0XxAnV0YnGxvcyA@mail.gmail.com>
- <CAM4voanpvkQJ5GcKeXoLcpmTMXkh7f8aznQHDS-0O5YeaVpeuw@mail.gmail.com>
- <5783CB72.6030501@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Date: Tue, 12 Jul 2016 10:00:14 +0100
+Message-ID: <20160712090014.GE9976@sirena.org.uk>
+References: <57837606.8050906@samsung.com>
+ <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+ <CGME20160712082324epcas1p483daf92a019d69f6e96d43e2c55d31cf@epcas1p4.samsung.com>
+ <20160712082256.GD9976@sirena.org.uk>
+ <20160712082545.GG18237@samsunx.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="orO6xySwJI16pVnm"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:27750 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778AbcGLI6e (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38908 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752456AbcGLJAc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 04:58:34 -0400
-In-reply-to: <5783CB72.6030501@samsung.com>
+	Tue, 12 Jul 2016 05:00:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20160712082545.GG18237@samsunx.samsung>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On 07/11/2016 06:38 PM, Sylwester Nawrocki wrote:
-> On 07/11/2016 04:44 PM, Abhilash Kesavan wrote:
->>>> +       /*
->>>>>> +        * Set clock freeze cycle count to 0 before and after arm clamp or
->>>>>> +        * reset signal transition
->>>>>> +        */
->>>>>> +       node = of_find_compatible_node(NULL, NULL,
->>>>>> +                               "samsung,exynos7-clock-atlas");
->>>>>> +       if (node) {
->>>>>> +               atlas_cmu_base = of_iomap(node, 0);
->>>>>> +               if (!atlas_cmu_base)
->>>>>> +                       return;
->>>>>> +
->>>>>> +               __raw_writel(0x0,
->>>>>> +                               atlas_cmu_base + EXYNOS7_CORE_ARMCLK_STOPCTRL);
->>>>>> +               iounmap(atlas_cmu_base);
->>>>
->>>> Missing:
->>>> of_node_put(node);
->>>>
->>>> ...but I think this creates unnecessary dependency on different
->>>> compatible. I understand that disabling the EXTENDED_CLKSTOP is needed
->>>> after configuring the PMU so this code belongs here. However
->>>> everything you need is just a mapping of CMU address. The PMU driver
->>>> should receive in bindings everything it needs to do its work. Either
->>>> it is a phandle to something or an address for iomap. In this case the
->>>> PMU should probably get two addresses: PMU and optionally CMU (part of
->>>> CMU for example). Of course bindings would have to be updated.
->>
->> I will add an optional CMU phandle to the PMU bindings.
-> 
-> We could additionally split the CMU_ATLAS region into 2 regions in DT
-> (derived from exynos7420 documentation):
-> 
-> reg = <0x11800000 0xF08>, // offsets 0x0000...0x0F04
->       <0x11801000 0x8C>,  // offsets 0x1000...0x1088
-> 
-> so that the first can be mapped by the clk driver and the second by 
-> the PMU driver? It seems the first region is strictly clock functionality
-> related, while the second contains power control related and other 
-> registers.
 
-Do the clk-exynos7 driver really needs the second region? If not then it
-would be sufficient just to reduce the mapping range for CMU_ATLAS.
+--orO6xySwJI16pVnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Tue, Jul 12, 2016 at 05:25:46PM +0900, Andi Shyti wrote:
 
-> 
-> However I'm not sure it is a good idea, for consistency this would need 
-> to be done also for CMU_APOLLO, CMU_MIF{0...3}.  All these CMUs don't have 
-> DT bindings defined yet though and there is no corresponding dts entries.
-> 
+> > Please don't bury patches in the middle of old threads, it makes it very
+> > confusing trying to figure out what's going on especially when you do
+> > this one patch at a time in a series.  Submit new patches as a complete
+> > series, ideally not threaded in with anything else (at least for me).
+
+> OK, sorry, do you want me to send everything again?
+
+Yes, please.
+
+--orO6xySwJI16pVnm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXhLGdAAoJECTWi3JdVIfQZCQH/373cwkVFC/nt46h0X8aqv+h
+616+5mggmNKjZlnZrhK/bLy2R122lxKiQc90DPLveCS4jtOrsOYWOlaJeRPxjryj
+RRaVhV8A7sVZR7MnN7BtySXgndDv8PUTAAT9YCU4O2X8Lrpd5/4itXKatfbV7oP0
++cXFbQOQsAIwkcLjlXa23VYy2cc7AAOzmNDsQQz1dGz5b42Ht2j8f07gMSwhnIF9
+U5wKxKyhxwOJ8YYsF2GpP3vrvR8iV6ELzKLY0CvDY084lx2D3LX3dS4Xmw8gT8dg
+wxWyt19zYNNfs4mKC2DJm+pgtgAZ32WOWUtIlcF5pUzBnLG4XNIA8Jl+OAR8C+4=
+=u2/w
+-----END PGP SIGNATURE-----
+
+--orO6xySwJI16pVnm--
