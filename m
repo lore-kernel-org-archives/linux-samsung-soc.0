@@ -1,56 +1,52 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] regulator: s2mps11: Fix the voltage linear range for s2mps15
-Date: Tue, 12 Jul 2016 11:26:43 +0530
-Message-ID: <1468303003-10775-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33510 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751887AbcGLF5Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 01:57:24 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
+Date: Tue, 12 Jul 2016 15:54:04 +0900
+Message-ID: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+References: <57837606.8050906@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <57837606.8050906@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, broonie@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, a.kesavan@samsung.com, alim.akhtar@samsung.com, stable@vger.kernel.org
 
-This patch fixes some of the LDOs and BUCKs voltage range as per
-user manual of s2mps15 (REV0.4).
+Patch a9e93e8 has erroneously removed some comments which are
+important to understand why the bus frequency is multiplied by
+two during the spi transfer.
 
-Fixes: 51af20675800 ("regulator: s2mps11: Add support for S2MPS15 regulators")
+Reword the previous comment to a more appropriate message.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Michael Turquette <mturquette@baylibre.com>
 ---
- drivers/regulator/s2mps11.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 02fb6b4..d838e77 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -750,7 +750,7 @@ static const struct regulator_linear_range s2mps15_ldo_voltage_ranges3[] = {
+despite Mike's comments I'm sending the patch as it was
+originally meant. I think that fixing the exact clk where to set
+the rate should anyway go in a different patch.
+
+V2->V3
+The comment has been reworded as Sylwester recommended.
+
+Thanks,
+Andi
+
+ drivers/spi/spi-s3c64xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6da663f..5bedafc 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
  
- /* voltage range for s2mps15 LDO 7, 8, 9 and 10 */
- static const struct regulator_linear_range s2mps15_ldo_voltage_ranges4[] = {
--	REGULATOR_LINEAR_RANGE(700000, 0xc, 0x18, 25000),
-+	REGULATOR_LINEAR_RANGE(700000, 0x10, 0x20, 25000),
- };
- 
- /* voltage range for s2mps15 LDO 1 */
-@@ -760,12 +760,12 @@ static const struct regulator_linear_range s2mps15_ldo_voltage_ranges5[] = {
- 
- /* voltage range for s2mps15 BUCK 1, 2, 3, 4, 5, 6 and 7 */
- static const struct regulator_linear_range s2mps15_buck_voltage_ranges1[] = {
--	REGULATOR_LINEAR_RANGE(500000, 0x20, 0xb0, 6250),
-+	REGULATOR_LINEAR_RANGE(500000, 0x20, 0xc0, 6250),
- };
- 
- /* voltage range for s2mps15 BUCK 8, 9 and 10 */
- static const struct regulator_linear_range s2mps15_buck_voltage_ranges2[] = {
--	REGULATOR_LINEAR_RANGE(1000000, 0x20, 0xc0, 12500),
-+	REGULATOR_LINEAR_RANGE(1000000, 0x20, 0x78, 12500),
- };
- 
- static const struct regulator_desc s2mps15_regulators[] = {
+ 	if (sdd->port_conf->clk_from_cmu) {
++		/* The src_clk clock is divided internally by 2 */
+ 		clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+ 	} else {
+ 		/* Configure Clock */
 -- 
-1.7.10.4
+2.8.1
+
