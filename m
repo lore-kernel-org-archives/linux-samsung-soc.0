@@ -1,54 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 6/7] spi: s3c64xx: restore removed comments
-Date: Tue, 12 Jul 2016 14:16:40 +0200
-Message-ID: <5784DFA8.60606@samsung.com>
-References: <1467989201-14661-1-git-send-email-andi.shyti@samsung.com>
- <1467989201-14661-7-git-send-email-andi.shyti@samsung.com>
- <146799464881.73491.7507792367941552864@resonance>
- <57837606.8050906@samsung.com>
- <146827545163.73491.5083923656346798965@resonance>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 00/44] dma-mapping: Use unsigned long for dma_attrs
+Date: Tue, 12 Jul 2016 14:19:07 +0200
+Message-ID: <5784E03B.6060000@samsung.com>
+References: <1467275019-30789-1-git-send-email-k.kozlowski@samsung.com>
+ <20160712121625.GP23520@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39346 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753885AbcGLMQu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 08:16:50 -0400
-In-reply-to: <146827545163.73491.5083923656346798965@resonance>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-reply-to: <20160712121625.GP23520@phenom.ffwll.local>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, linux-mips@linux-mips.org, linux-ia64@vger.kernel.org, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-c6x-dev@linux-c6x.org, linux-rdma@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-sh@vger.kernel.org, hch@infradead.org, linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-snps-arc@lists.infradead.org, linux-media@vger.kernel.org, linux-xtensa@linux-xtensa.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-msm@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org, linux-metag@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On 07/12/2016 12:17 AM, Michael Turquette wrote:
-> Quoting Sylwester Nawrocki (2016-07-11 03:33:42)
->> On 07/08/2016 06:17 PM, Michael Turquette wrote:
-
-> Sure, but it's only a few lines of code to this, and there are examples
-> in the kernel already.
-> 
->> Additionally, the "There is half-multiplier before the SPI" comment
->> seems to be obfuscating how the hardware really looks like to me.
->> It talks about multiplier (which reminds me of PLLs with a divider
->> in the feedback loop) while there is a simple divider which should
->> be considered as an integral part of the controller IP block.
+On 07/12/2016 02:16 PM, Daniel Vetter wrote:
+> On Thu, Jun 30, 2016 at 10:23:39AM +0200, Krzysztof Kozlowski wrote:
+>> Hi,
 >>
->> While we are at it, I'd propose to change this comment to something
->> like:
 >>
->> /* The SCLK_SPI clock is divided internally by 2 */
+>> This is fifth approach for replacing struct dma_attrs with unsigned
+>> long.
+>>
+>> The main patch (1/44) doing the change is split into many subpatches
+>> for easier review (2-42).  They should be squashed together when
+>> applying.
 > 
-> It's your choice, but debug output would benefit from showing the real
-> clock frequency at some point.
+> For all the drm driver patches:
+> 
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> 
+> Should I pull these in through drm-misc, or do you prefer to merge them
+> through a special topic branch (with everything else) instead on your own?
+> -Daniel
 
-OK, it's indeed fairly easy to add a fixed rate divide-by-two clock,
-but for the older SoCs we would need to also model the internal mux, gate,
-and an 8-bit divider.  Then it becomes a bit bigger task. Anyway it might
-be worth to try it, this could let us deprecate the samsung,spi-src-clk
-property and for all the SoCs use assigned-clock-parents.
+Thanks. I saw today that Andrew Morton applied the patchset so I think
+he will handle it.
 
--- 
-Thanks,
-Sylwester
+Best regards,
+Krzysztof
