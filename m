@@ -1,63 +1,75 @@
 From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
-Date: Tue, 12 Jul 2016 11:07:53 -0700
-Message-ID: <146834687302.73491.6686338412638288829@resonance>
-References: <57837606.8050906@samsung.com>
- <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
+Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
+ clocks
+Date: Tue, 12 Jul 2016 15:17:27 -0700
+Message-ID: <146836184696.73491.9452469757415968654@resonance>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:34345 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750816AbcGLWRd convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Jul 2016 18:17:33 -0400
+Received: by mail-pa0-f41.google.com with SMTP id fi15so10643236pac.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2016 15:17:32 -0700 (PDT)
+In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Andi Shyti (2016-07-11 23:54:04)
-> Patch a9e93e8 has erroneously removed some comments which are
-> important to understand why the bus frequency is multiplied by
-> two during the spi transfer.
+Quoting Andi Shyti (2016-07-12 03:02:16)
+> Because the Exynos5433 SPI driver supports the ioclk handling and
+> the following patch:
 > 
-> Reword the previous comment to a more appropriate message.
+>   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
 > 
-> Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> fixes a synchronus abort issue, none of the SPI clocks require
+> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+> for the SPI related clocks.
+> 
 > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-> ---
-> Hi,
-> 
-> despite Mike's comments I'm sending the patch as it was
-> originally meant. I think that fixing the exact clk where to set
-> the rate should anyway go in a different patch.
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-That sounds fair.
+Do you want these patches to go through same tree? If not, I can take
+this patch into clk-next.
 
 Regards,
 Mike
 
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> V2->V3
-> The comment has been reworded as Sylwester recommended.
-> 
-> Thanks,
-> Andi
-> 
->  drivers/spi/spi-s3c64xx.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 6da663f..5bedafc 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -639,6 +639,7 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
->         writel(val, regs + S3C64XX_SPI_MODE_CFG);
->  
->         if (sdd->port_conf->clk_from_cmu) {
-> +               /* The src_clk clock is divided internally by 2 */
->                 clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
->         } else {
->                 /* Configure Clock */
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index c3a5318..fb19525 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
+>                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+> -                       ENABLE_SCLK_PERIC, 12,
+> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+>                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+>                         5, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       4, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+>                         3, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
 > -- 
 > 2.8.1
 > 
