@@ -1,34 +1,88 @@
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 6/7] spi: s3c64xx: restore removed comments
-Date: Tue, 12 Jul 2016 17:25:46 +0900
-Message-ID: <20160712082545.GG18237@samsunx.samsung>
-References: <57837606.8050906@samsung.com>
- <1468306444-18512-1-git-send-email-andi.shyti@samsung.com>
- <CGME20160712082324epcas1p483daf92a019d69f6e96d43e2c55d31cf@epcas1p4.samsung.com>
- <20160712082256.GD9976@sirena.org.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] soc: samsung: Add support for Exynos7 PMU
+Date: Tue, 12 Jul 2016 10:49:00 +0200
+Message-ID: <5784AEFC.7040406@samsung.com>
+References: <1467750507-13853-1-git-send-email-a.kesavan@samsung.com>
+ <1467750507-13853-3-git-send-email-a.kesavan@samsung.com>
+ <CAJKOXPc=RZEe_zQvnmxXRttppJfGJwyjmkF0XxAnV0YnGxvcyA@mail.gmail.com>
+ <CAM4voanpvkQJ5GcKeXoLcpmTMXkh7f8aznQHDS-0O5YeaVpeuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-disposition: inline
-In-reply-to: <20160712082256.GD9976-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAM4voanpvkQJ5GcKeXoLcpmTMXkh7f8aznQHDS-0O5YeaVpeuw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> > Patch a9e93e8 has erroneously removed some comments which are
-> > important to understand why the bus frequency is multiplied by
-> > two during the spi transfer.
+On 07/11/2016 04:44 PM, Abhilash Kesavan wrote:
+> Hi Krzysztof,
 > 
-> Please don't bury patches in the middle of old threads, it makes it very
-> confusing trying to figure out what's going on especially when you do
-> this one patch at a time in a series.  Submit new patches as a complete
-> series, ideally not threaded in with anything else (at least for me).
+> [...]
+>>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+>>> index 0acdfd8..7cda8fb 100644
+>>> --- a/drivers/soc/samsung/exynos-pmu.c
+>>> +++ b/drivers/soc/samsung/exynos-pmu.c
+>>> @@ -88,6 +88,9 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
+>>>         }, {
+>>>                 .compatible = "samsung,exynos5420-pmu",
+>>>                 .data = &exynos5420_pmu_data,
+>>> +       }, {
+>>> +               .compatible = "samsung,exynos7-pmu",
+>>> +               .data = &exynos7_pmu_data,
+>>
+>> Hi,
+>>
+>> Thanks for the patch. Few comments:
+> 
+> Thanks for the review.
+>>
+>> You set here compatible for Exynos7. However there are at least three
+>> publicly known Exynos7 chipsets (7420, 7580, 7870 -
+>> https://en.wikipedia.org/wiki/Exynos). My questions are:
+>> 1. Are all of these share the same PMU configuration?
+>> 2. New different Exynos7 may be released, right?
+> 
+> Exynos7 is a Quad Core A57 based SoC that pre-dates all the above
+> mentioned SoCs. It is the closest to the exynos7420 in terms of the
+> IPs present.
 
-OK, sorry, do you want me to send everything again?
+Hmm, okay... It is confusing because Samsung Semiconductors calls both
+7420 and 5433 as "Exynos 7 Octa":
+http://www.samsung.com/semiconductor/minisite/Exynos/w/solution/mobile_ap/7420/
+The marketing uses term "Exynos7" for a generation of SoCs.
 
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+However if there is really a design called Exynos7 and a board with it
+(Espresso), then I don't mind. Let it be Exynos7 but keeping in mind
+that this is a specific SoC, not a calls of products.
+
+> The PMU configuration between exynos7 and exynos7420 is
+> identical except for the extra A53 configuration required in case of
+> the 7420.
+
+That is additional argument in favor of "Exynos7" naming.
+
+> The PMU configuration for 7580 and 7870 differ from that of
+> eynos7 and 7420 in terms of  the registers offsets, number of
+> registers being configured and some extra configurations. So, while
+> sharing of some functions is possible across the SoCs, each SoC should
+> ideally have its own PMU file. The posted patch adds PMU support for
+> only the exynos7 SoC.
+
+Thanks for explanation.
+
+>>
+>> The exynos7 compatible is already spread all over DTS... but probably
+>> it is safer to use a specific SoC revision. Unless you are sure that
+>> all Exynos7 SoCs will be 100% compatible here and there won't be
+>> another exynos7xxx-pmu.
+> Please let me know if I can continue to use the exynos7 compatible
+> since it is a distinct SoC and not indicative of a series. However, if
+> you feel strongly about it then I can change the compatible to use
+> 7420 since they are quite similar.
+
+Exynos7 is fine. Thanks for the details!
+
+Best regards,
+Krzysztof
