@@ -1,58 +1,130 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Wed, 13 Jul 2016 23:30:42 +0900
-Message-ID: <1468420242-3836-1-git-send-email-inki.dae@samsung.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: [patch V2 63/67] clocksource/exynos_mct: Convert to hotplug state
+ machine
+Date: Wed, 13 Jul 2016 17:17:05 -0000
+Message-ID: <20160713153338.147940411@linutronix.de>
+References: <20160713153219.128052238@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline;
+ filename=0034-clocksource-exynos_mct-Convert-to-hotplug-state-mach.patch
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rt@linutronix.de, Richard Cochran <rcochran@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKICAgVGhpcyBwdWxsIHJlcXVlc3QgYWRkcyB0byB0aGUgcmV3b3JrIHBhdGNoIHNl
-cmllcyBmb3IgSU9NTVUKICAgaW50ZWdyYXRpb24gdG8gc3VwcG9ydCBBUk02NGJpdCBhcmNoaXRl
-Y3R1cmUgd2l0aCBETUEtSU9NTVUKICAgZ2x1ZSBjb2RlLgoKICAgV2l0aCB0aGlzIHBhdGNoIHNl
-cmllcywgRXh5bm9zIERSTSB3b3JrcyB3ZWxsIG9uIEV4eW5vczU0MzMgU29DCiAgIHdpdGggSU9N
-TVUgZW5hYmxlZC4KCiAgIFBzLiBjdXJyZW50IGltcGxlbWVudGF0aW9uIGhhcyBjb25kaXRpb25h
-bCBjb2RlcyBpbiBleHlub3NfZHJtX2lvbW11LmgKICAgICAgIGZvciBBUk0zMi82NCBzdXBwb3J0
-cyBiZWNhdXNlIHRoZXNlIHR3byBhcmNoaXRlY3R1cmVzIGFyZSBub3QgY29tcGF0aWJsZQogICAg
-ICAgeWV0IHNvIHRoZSBjb25kaXRpb25hbCBjb2RlcyB3aWxsIGJlIHJlbW92ZWQgbGF0ZXIgd2l0
-aCBhcmNoaXRlY3R1cmVzCiAgICAgICB1bmlmaWVkLgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUg
-a25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KCgpUaGFua3MsCklua2kgRGFlCgoKVGhlIGZv
-bGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA1ZGQwNzc1ZTUwMmIyNmI0NGU1YmNiNWY1MDRh
-OTc3YTU2NWYyZjNlOgoKICBNZXJnZSB0YWcgJ2Fzb2MtaGRtaS1jb2RlYy1wZGF0YScgb2YgZ2l0
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2Jyb29uaWUvc291bmQg
-aW50byBkcm0tbmV4dCAoMjAxNi0wNy0wNSAwOTo1NzoyMyArMTAwMCkKCmFyZSBhdmFpbGFibGUg
-aW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3Nj
-bS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcy5naXQgZXh5bm9zLWRybS1uZXh0
-Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMTk3YWRmMGI3ZTQxOTI0N2E2ZTU0ZDA1
-ZDBkMzM0ZTA3ZTllNGMzMzoKCiAgZHJtL2V4eW5vczogaW9tbXU6IGFkZCBzdXBwb3J0IGZvciBB
-Uk02NCBzcGVjaWZpYyBjb2RlIGZvciBJT01NVSBnbHVlICgyMDE2LTA3LTEzIDIzOjA2OjA3ICsw
-OTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLQpNYXJlayBTenlwcm93c2tpICg1KToKICAgICAgZHJtL2V4eW5vczogaW9t
-bXU6IG1vdmUgZG1hX3BhcmFtcyBjb25maWd1cmF0aW9uIGNvZGUgdG8gc2VwYXJhdGUgZnVuY3Rp
-b25zCiAgICAgIGRybS9leHlub3M6IGlvbW11OiBhZGQgYSBjaGVjayBpZiBhbGwgc3ViLWRldmlj
-ZXMgaGF2ZSBpb21tdSBjb250cm9sbGVyCiAgICAgIGRybS9leHlub3M6IGlvbW11OiByZW1vdmUg
-dW51c2VkIGVudHJpZXMgZnJvbSBleHlub3NfZHJtX3ByaXZhdGUgc3RyY3V0dXJlCiAgICAgIGRy
-bS9leHlub3M6IGlvbW11OiBtb3ZlIEFSTSBzcGVjaWZpYyBjb2RlIHRvIGV4eW5vc19kcm1faW9t
-bXUuaAogICAgICBkcm0vZXh5bm9zOiBpb21tdTogYWRkIHN1cHBvcnQgZm9yIEFSTTY0IHNwZWNp
-ZmljIGNvZGUgZm9yIElPTU1VIGdsdWUKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcg
-ICAgICAgICAgICB8ICAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYyAgIHwgICAgNyArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aCAgIHwgICAgMiAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuYyB8
-ICAgNzcgKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1faW9tbXUuaCB8ICAgOTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDUg
-ZmlsZXMgY2hhbmdlZCwgMTI2IGluc2VydGlvbnMoKyksIDUzIGRlbGV0aW9ucygtKQpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Richard Cochran <rcochran@linutronix.de>
+
+Install the callbacks via the state machine and let the core invoke
+the callbacks on the already online CPUs.
+
+Signed-off-by: Richard Cochran <rcochran@linutronix.de>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+---
+ drivers/clocksource/exynos_mct.c |   46 ++++++++++-----------------------------
+ include/linux/cpuhotplug.h       |    1 
+ 2 files changed, 13 insertions(+), 34 deletions(-)
+
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -443,10 +443,11 @@ static irqreturn_t exynos4_mct_tick_isr(
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
++static int exynos4_mct_starting_cpu(unsigned int cpu)
+ {
++	struct mct_clock_event_device *mevt =
++		per_cpu_ptr(&percpu_mct_tick, cpu);
+ 	struct clock_event_device *evt = &mevt->evt;
+-	unsigned int cpu = smp_processor_id();
+ 
+ 	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
+ 	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
+@@ -480,8 +481,10 @@ static int exynos4_local_timer_setup(str
+ 	return 0;
+ }
+ 
+-static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
++static int exynos4_mct_dying_cpu(unsigned int cpu)
+ {
++	struct mct_clock_event_device *mevt =
++		per_cpu_ptr(&percpu_mct_tick, cpu);
+ 	struct clock_event_device *evt = &mevt->evt;
+ 
+ 	evt->set_state_shutdown(evt);
+@@ -491,39 +494,12 @@ static void exynos4_local_timer_stop(str
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ 	}
++	return 0;
+ }
+ 
+-static int exynos4_mct_cpu_notify(struct notifier_block *self,
+-					   unsigned long action, void *hcpu)
+-{
+-	struct mct_clock_event_device *mevt;
+-
+-	/*
+-	 * Grab cpu pointer in each case to avoid spurious
+-	 * preemptible warnings
+-	 */
+-	switch (action & ~CPU_TASKS_FROZEN) {
+-	case CPU_STARTING:
+-		mevt = this_cpu_ptr(&percpu_mct_tick);
+-		exynos4_local_timer_setup(mevt);
+-		break;
+-	case CPU_DYING:
+-		mevt = this_cpu_ptr(&percpu_mct_tick);
+-		exynos4_local_timer_stop(mevt);
+-		break;
+-	}
+-
+-	return NOTIFY_OK;
+-}
+-
+-static struct notifier_block exynos4_mct_cpu_nb = {
+-	.notifier_call = exynos4_mct_cpu_notify,
+-};
+-
+ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
+ {
+ 	int err, cpu;
+-	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
+ 	struct clk *mct_clk, *tick_clk;
+ 
+ 	tick_clk = np ? of_clk_get_by_name(np, "fin_pll") :
+@@ -570,12 +546,14 @@ static int __init exynos4_timer_resource
+ 		}
+ 	}
+ 
+-	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
++	/* Install hotplug callbacks which configure the timer on this CPU */
++	err = cpuhp_setup_state(CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
++				"AP_EXYNOS4_MCT_TIMER_STARTING",
++				exynos4_mct_starting_cpu,
++				exynos4_mct_dying_cpu);
+ 	if (err)
+ 		goto out_irq;
+ 
+-	/* Immediately configure the timer on the boot CPU */
+-	exynos4_local_timer_setup(mevt);
+ 	return 0;
+ 
+ out_irq:
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -50,6 +50,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+ 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+ 	CPUHP_AP_DUMMY_TIMER_STARTING,
++	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_TWD_STARTING,
+ 	CPUHP_AP_METAG_TIMER_STARTING,
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
