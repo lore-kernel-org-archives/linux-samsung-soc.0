@@ -1,130 +1,74 @@
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [patch V2 63/67] clocksource/exynos_mct: Convert to hotplug state
- machine
-Date: Wed, 13 Jul 2016 17:17:05 -0000
-Message-ID: <20160713153338.147940411@linutronix.de>
-References: <20160713153219.128052238@linutronix.de>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
+ clocks
+Date: Wed, 13 Jul 2016 14:56:43 -0700
+Message-ID: <146844700397.73491.13145116929743702472@resonance>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline;
- filename=0034-clocksource-exynos_mct-Convert-to-hotplug-state-mach.patch
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rt@linutronix.de, Richard Cochran <rcochran@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:36219 "EHLO
+	mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751563AbcGMV4r convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jul 2016 17:56:47 -0400
+Received: by mail-pf0-f181.google.com with SMTP id t190so22445378pfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2016 14:56:46 -0700 (PDT)
+In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-From: Richard Cochran <rcochran@linutronix.de>
+Quoting Andi Shyti (2016-07-12 03:02:16)
+> Because the Exynos5433 SPI driver supports the ioclk handling and
+> the following patch:
+> 
+>   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+> 
+> fixes a synchronus abort issue, none of the SPI clocks require
+> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
+> for the SPI related clocks.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Install the callbacks via the state machine and let the core invoke
-the callbacks on the already online CPUs.
+Applied towards v4.8.
 
-Signed-off-by: Richard Cochran <rcochran@linutronix.de>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
----
- drivers/clocksource/exynos_mct.c |   46 ++++++++++-----------------------------
- include/linux/cpuhotplug.h       |    1 
- 2 files changed, 13 insertions(+), 34 deletions(-)
+Regards,
+Mike
 
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -443,10 +443,11 @@ static irqreturn_t exynos4_mct_tick_isr(
- 	return IRQ_HANDLED;
- }
- 
--static int exynos4_local_timer_setup(struct mct_clock_event_device *mevt)
-+static int exynos4_mct_starting_cpu(unsigned int cpu)
- {
-+	struct mct_clock_event_device *mevt =
-+		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
--	unsigned int cpu = smp_processor_id();
- 
- 	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
- 	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
-@@ -480,8 +481,10 @@ static int exynos4_local_timer_setup(str
- 	return 0;
- }
- 
--static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
-+static int exynos4_mct_dying_cpu(unsigned int cpu)
- {
-+	struct mct_clock_event_device *mevt =
-+		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
- 
- 	evt->set_state_shutdown(evt);
-@@ -491,39 +494,12 @@ static void exynos4_local_timer_stop(str
- 	} else {
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- 	}
-+	return 0;
- }
- 
--static int exynos4_mct_cpu_notify(struct notifier_block *self,
--					   unsigned long action, void *hcpu)
--{
--	struct mct_clock_event_device *mevt;
--
--	/*
--	 * Grab cpu pointer in each case to avoid spurious
--	 * preemptible warnings
--	 */
--	switch (action & ~CPU_TASKS_FROZEN) {
--	case CPU_STARTING:
--		mevt = this_cpu_ptr(&percpu_mct_tick);
--		exynos4_local_timer_setup(mevt);
--		break;
--	case CPU_DYING:
--		mevt = this_cpu_ptr(&percpu_mct_tick);
--		exynos4_local_timer_stop(mevt);
--		break;
--	}
--
--	return NOTIFY_OK;
--}
--
--static struct notifier_block exynos4_mct_cpu_nb = {
--	.notifier_call = exynos4_mct_cpu_notify,
--};
--
- static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
- {
- 	int err, cpu;
--	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
- 	struct clk *mct_clk, *tick_clk;
- 
- 	tick_clk = np ? of_clk_get_by_name(np, "fin_pll") :
-@@ -570,12 +546,14 @@ static int __init exynos4_timer_resource
- 		}
- 	}
- 
--	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
-+	/* Install hotplug callbacks which configure the timer on this CPU */
-+	err = cpuhp_setup_state(CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
-+				"AP_EXYNOS4_MCT_TIMER_STARTING",
-+				exynos4_mct_starting_cpu,
-+				exynos4_mct_dying_cpu);
- 	if (err)
- 		goto out_irq;
- 
--	/* Immediately configure the timer on the boot CPU */
--	exynos4_local_timer_setup(mevt);
- 	return 0;
- 
- out_irq:
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -50,6 +50,7 @@ enum cpuhp_state {
- 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
- 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
- 	CPUHP_AP_DUMMY_TIMER_STARTING,
-+	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_METAG_TIMER_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index c3a5318..fb19525 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
+>                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
+> -                       ENABLE_SCLK_PERIC, 12,
+> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
+>                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+>                         5, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+> +                       4, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+>                         3, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+> -- 
+> 2.8.1
+> 
