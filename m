@@ -1,88 +1,58 @@
-From: Nicolas Dufresne <nicolas.dufresne@gmail.com>
-Subject: Re: [PATCH 2/2] [media] s5p-g2d: Replace old driver with DRM version
-Date: Wed, 13 Jul 2016 09:46:28 -0400
-Message-ID: <1468417588.2867.6.camel@gmail.com>
-References: <1464096493-13378-1-git-send-email-k.kozlowski@samsung.com>
- <1464096493-13378-2-git-send-email-k.kozlowski@samsung.com>
- <20160712200202.7496445e@recife.lan>
-Reply-To: nicolas@ndufresne.ca
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Wed, 13 Jul 2016 23:30:42 +0900
+Message-ID: <1468420242-3836-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1179958497773191892=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160712200202.7496445e@recife.lan>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---===============1179958497773191892==
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-y01b2W7X6i6bCU4v/zIy"
-
-
---=-y01b2W7X6i6bCU4v/zIy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 12 juillet 2016 =C3=A0 20:02 -0300, Mauro Carvalho Chehab a =C3=A9=
-crit=C2=A0:
-> I suspect that you'll be applying this one via DRM tree, so:
->=20
-> Em Tue, 24 May 2016 15:28:13 +0200
-> Krzysztof Kozlowski <k.kozlowski@samsung.com> escreveu:
->=20
-> > Remove the old non-DRM driver because it is now entirely supported
-> by
-> > exynos_drm_g2d driver.
-> >=C2=A0
-> > Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> > Cc: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
-> Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
->=20
-> PS.: If you prefer to apply this one via my tree, I'm ok too. Just
-> let me know when the first patch gets merged upstream.
-
-Just a note that this is effectively an API break.
-
-cheers,
-Nicolas
---=-y01b2W7X6i6bCU4v/zIy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEABECAAYFAleGRjQACgkQcVMCLawGqBwL7QCePqdETcq62X5jzGbQvj7Bn135
-YjMAnR1g59OdM4GdoHaaWGKDrWq/T4v7
-=25bp
------END PGP SIGNATURE-----
-
---=-y01b2W7X6i6bCU4v/zIy--
-
-
-
---===============1179958497773191892==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1179958497773191892==--
+SGkgRGF2ZSwKICAgVGhpcyBwdWxsIHJlcXVlc3QgYWRkcyB0byB0aGUgcmV3b3JrIHBhdGNoIHNl
+cmllcyBmb3IgSU9NTVUKICAgaW50ZWdyYXRpb24gdG8gc3VwcG9ydCBBUk02NGJpdCBhcmNoaXRl
+Y3R1cmUgd2l0aCBETUEtSU9NTVUKICAgZ2x1ZSBjb2RlLgoKICAgV2l0aCB0aGlzIHBhdGNoIHNl
+cmllcywgRXh5bm9zIERSTSB3b3JrcyB3ZWxsIG9uIEV4eW5vczU0MzMgU29DCiAgIHdpdGggSU9N
+TVUgZW5hYmxlZC4KCiAgIFBzLiBjdXJyZW50IGltcGxlbWVudGF0aW9uIGhhcyBjb25kaXRpb25h
+bCBjb2RlcyBpbiBleHlub3NfZHJtX2lvbW11LmgKICAgICAgIGZvciBBUk0zMi82NCBzdXBwb3J0
+cyBiZWNhdXNlIHRoZXNlIHR3byBhcmNoaXRlY3R1cmVzIGFyZSBub3QgY29tcGF0aWJsZQogICAg
+ICAgeWV0IHNvIHRoZSBjb25kaXRpb25hbCBjb2RlcyB3aWxsIGJlIHJlbW92ZWQgbGF0ZXIgd2l0
+aCBhcmNoaXRlY3R1cmVzCiAgICAgICB1bmlmaWVkLgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUg
+a25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KCgpUaGFua3MsCklua2kgRGFlCgoKVGhlIGZv
+bGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA1ZGQwNzc1ZTUwMmIyNmI0NGU1YmNiNWY1MDRh
+OTc3YTU2NWYyZjNlOgoKICBNZXJnZSB0YWcgJ2Fzb2MtaGRtaS1jb2RlYy1wZGF0YScgb2YgZ2l0
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2Jyb29uaWUvc291bmQg
+aW50byBkcm0tbmV4dCAoMjAxNi0wNy0wNSAwOTo1NzoyMyArMTAwMCkKCmFyZSBhdmFpbGFibGUg
+aW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3Nj
+bS9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcy5naXQgZXh5bm9zLWRybS1uZXh0
+Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMTk3YWRmMGI3ZTQxOTI0N2E2ZTU0ZDA1
+ZDBkMzM0ZTA3ZTllNGMzMzoKCiAgZHJtL2V4eW5vczogaW9tbXU6IGFkZCBzdXBwb3J0IGZvciBB
+Uk02NCBzcGVjaWZpYyBjb2RlIGZvciBJT01NVSBnbHVlICgyMDE2LTA3LTEzIDIzOjA2OjA3ICsw
+OTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQpNYXJlayBTenlwcm93c2tpICg1KToKICAgICAgZHJtL2V4eW5vczogaW9t
+bXU6IG1vdmUgZG1hX3BhcmFtcyBjb25maWd1cmF0aW9uIGNvZGUgdG8gc2VwYXJhdGUgZnVuY3Rp
+b25zCiAgICAgIGRybS9leHlub3M6IGlvbW11OiBhZGQgYSBjaGVjayBpZiBhbGwgc3ViLWRldmlj
+ZXMgaGF2ZSBpb21tdSBjb250cm9sbGVyCiAgICAgIGRybS9leHlub3M6IGlvbW11OiByZW1vdmUg
+dW51c2VkIGVudHJpZXMgZnJvbSBleHlub3NfZHJtX3ByaXZhdGUgc3RyY3V0dXJlCiAgICAgIGRy
+bS9leHlub3M6IGlvbW11OiBtb3ZlIEFSTSBzcGVjaWZpYyBjb2RlIHRvIGV4eW5vc19kcm1faW9t
+bXUuaAogICAgICBkcm0vZXh5bm9zOiBpb21tdTogYWRkIHN1cHBvcnQgZm9yIEFSTTY0IHNwZWNp
+ZmljIGNvZGUgZm9yIElPTU1VIGdsdWUKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcg
+ICAgICAgICAgICB8ICAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+cnYuYyAgIHwgICAgNyArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+aCAgIHwgICAgMiAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuYyB8
+ICAgNzcgKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1faW9tbXUuaCB8ICAgOTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDUg
+ZmlsZXMgY2hhbmdlZCwgMTI2IGluc2VydGlvbnMoKyksIDUzIGRlbGV0aW9ucygtKQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
