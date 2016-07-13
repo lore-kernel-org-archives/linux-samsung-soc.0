@@ -1,152 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v6 12/46] drm/exynos: dma-mapping: Use unsigned long for
- dma_attrs
-Date: Wed, 13 Jul 2016 10:41:03 +0200
-Message-ID: <1468399300-5399-12-git-send-email-k.kozlowski@samsung.com>
-References: <1468399167-28083-1-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-1-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-2-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-3-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-4-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-5-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-6-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-7-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-8-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-9-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-10-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-11-git-send-email-k.kozlowski@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH -next] spi: s3c64xx: fix reference leak to master in
+ s3c64xx_spi_remove()
+Date: Wed, 13 Jul 2016 18:17:56 +0900
+Message-ID: <20160713091756.GL18237@samsunx.samsung>
+References: <CGME20160712110926epcas1p13bbc88f5867d41d09d9b8c1172a7150b@epcas1p1.samsung.com>
+ <1468321722-16568-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1468399300-5399-11-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, hch@infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:58479 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752893AbcGMJSd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Jul 2016 05:18:33 -0400
+Content-disposition: inline
+In-reply-to: <1468321722-16568-1-git-send-email-weiyj_lk@163.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: weiyj_lk@163.com
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-U3BsaXQgb3V0IHN1YnN5c3RlbSBzcGVjaWZpYyBjaGFuZ2VzIGZvciBlYXNpZXIgcmV2aWV3cy4g
-VGhpcyB3aWxsIGJlCnNxdWFzaGVkIHdpdGggbWFpbiBjb21taXQuCgpTaWduZWQtb2ZmLWJ5OiBL
-cnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KW2ZvciBkcm1dCkFj
-a2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgotLS0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jIHwgIDIgKy0KIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyAgIHwgMTIgKysrKystLS0tLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMgICB8IDIwICsrKysrKysrKystLS0tLS0t
-LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmggICB8ICAyICstCiA0
-IGZpbGVzIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDE5IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKaW5kZXggNjdkY2Q2ODMxMjkxLi5k
-ZDA5MTE3NWZjMmQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9mYmRldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5j
-CkBAIC01Miw3ICs1Miw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9mYl9tbWFwKHN0cnVjdCBm
-Yl9pbmZvICppbmZvLAogCiAJcmV0ID0gZG1hX21tYXBfYXR0cnModG9fZG1hX2RldihoZWxwZXIt
-PmRldiksIHZtYSwgZXh5bm9zX2dlbS0+Y29va2llLAogCQkJICAgICBleHlub3NfZ2VtLT5kbWFf
-YWRkciwgZXh5bm9zX2dlbS0+c2l6ZSwKLQkJCSAgICAgJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7
-CisJCQkgICAgIGV4eW5vc19nZW0tPmRtYV9hdHRycyk7CiAJaWYgKHJldCA8IDApIHsKIAkJRFJN
-X0VSUk9SKCJmYWlsZWQgdG8gbW1hcC5cbiIpOwogCQlyZXR1cm4gcmV0OwpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCmluZGV4IDg1NjRjM2RhMGQyMi4uNGJmMDBmNTdmZmU4
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCkBAIC0xNyw3ICsxNyw2
-IEBACiAjaW5jbHVkZSA8bGludXgvc2xhYi5oPgogI2luY2x1ZGUgPGxpbnV4L3dvcmtxdWV1ZS5o
-PgogI2luY2x1ZGUgPGxpbnV4L2RtYS1tYXBwaW5nLmg+Ci0jaW5jbHVkZSA8bGludXgvZG1hLWF0
-dHJzLmg+CiAjaW5jbHVkZSA8bGludXgvb2YuaD4KIAogI2luY2x1ZGUgPGRybS9kcm1QLmg+CkBA
-IC0yMzUsNyArMjM0LDcgQEAgc3RydWN0IGcyZF9kYXRhIHsKIAlzdHJ1Y3QgbXV0ZXgJCQljbWRs
-aXN0X211dGV4OwogCWRtYV9hZGRyX3QJCQljbWRsaXN0X3Bvb2w7CiAJdm9pZAkJCQkqY21kbGlz
-dF9wb29sX3ZpcnQ7Ci0Jc3RydWN0IGRtYV9hdHRycwkJY21kbGlzdF9kbWFfYXR0cnM7CisJdW5z
-aWduZWQgbG9uZwkJCWNtZGxpc3RfZG1hX2F0dHJzOwogCiAJLyogcnVucXVldWUqLwogCXN0cnVj
-dCBnMmRfcnVucXVldWVfbm9kZQkqcnVucXVldWVfbm9kZTsKQEAgLTI1NiwxMyArMjU1LDEyIEBA
-IHN0YXRpYyBpbnQgZzJkX2luaXRfY21kbGlzdChzdHJ1Y3QgZzJkX2RhdGEgKmcyZCkKIAlpbnQg
-cmV0OwogCXN0cnVjdCBnMmRfYnVmX2luZm8gKmJ1Zl9pbmZvOwogCi0JaW5pdF9kbWFfYXR0cnMo
-JmcyZC0+Y21kbGlzdF9kbWFfYXR0cnMpOwotCWRtYV9zZXRfYXR0cihETUFfQVRUUl9XUklURV9D
-T01CSU5FLCAmZzJkLT5jbWRsaXN0X2RtYV9hdHRycyk7CisJZzJkLT5jbWRsaXN0X2RtYV9hdHRy
-cyA9IERNQV9BVFRSX1dSSVRFX0NPTUJJTkU7CiAKIAlnMmQtPmNtZGxpc3RfcG9vbF92aXJ0ID0g
-ZG1hX2FsbG9jX2F0dHJzKHRvX2RtYV9kZXYoc3ViZHJ2LT5kcm1fZGV2KSwKIAkJCQkJCUcyRF9D
-TURMSVNUX1BPT0xfU0laRSwKIAkJCQkJCSZnMmQtPmNtZGxpc3RfcG9vbCwgR0ZQX0tFUk5FTCwK
-LQkJCQkJCSZnMmQtPmNtZGxpc3RfZG1hX2F0dHJzKTsKKwkJCQkJCWcyZC0+Y21kbGlzdF9kbWFf
-YXR0cnMpOwogCWlmICghZzJkLT5jbWRsaXN0X3Bvb2xfdmlydCkgewogCQlkZXZfZXJyKGRldiwg
-ImZhaWxlZCB0byBhbGxvY2F0ZSBkbWEgbWVtb3J5XG4iKTsKIAkJcmV0dXJuIC1FTk9NRU07CkBA
-IC0yOTUsNyArMjkzLDcgQEAgc3RhdGljIGludCBnMmRfaW5pdF9jbWRsaXN0KHN0cnVjdCBnMmRf
-ZGF0YSAqZzJkKQogZXJyOgogCWRtYV9mcmVlX2F0dHJzKHRvX2RtYV9kZXYoc3ViZHJ2LT5kcm1f
-ZGV2KSwgRzJEX0NNRExJU1RfUE9PTF9TSVpFLAogCQkJZzJkLT5jbWRsaXN0X3Bvb2xfdmlydCwK
-LQkJCWcyZC0+Y21kbGlzdF9wb29sLCAmZzJkLT5jbWRsaXN0X2RtYV9hdHRycyk7CisJCQlnMmQt
-PmNtZGxpc3RfcG9vbCwgZzJkLT5jbWRsaXN0X2RtYV9hdHRycyk7CiAJcmV0dXJuIHJldDsKIH0K
-IApAQCAtMzA5LDcgKzMwNyw3IEBAIHN0YXRpYyB2b2lkIGcyZF9maW5pX2NtZGxpc3Qoc3RydWN0
-IGcyZF9kYXRhICpnMmQpCiAJCWRtYV9mcmVlX2F0dHJzKHRvX2RtYV9kZXYoc3ViZHJ2LT5kcm1f
-ZGV2KSwKIAkJCQlHMkRfQ01ETElTVF9QT09MX1NJWkUsCiAJCQkJZzJkLT5jbWRsaXN0X3Bvb2xf
-dmlydCwKLQkJCQlnMmQtPmNtZGxpc3RfcG9vbCwgJmcyZC0+Y21kbGlzdF9kbWFfYXR0cnMpOwor
-CQkJCWcyZC0+Y21kbGlzdF9wb29sLCBnMmQtPmNtZGxpc3RfZG1hX2F0dHJzKTsKIAl9CiB9CiAK
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYwppbmRleCBjZGY5ZjFhZjQzNDcu
-LmYyYWU3MmJhN2Q1YSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2dlbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYwpA
-QCAtMjQsNyArMjQsNyBAQAogc3RhdGljIGludCBleHlub3NfZHJtX2FsbG9jX2J1ZihzdHJ1Y3Qg
-ZXh5bm9zX2RybV9nZW0gKmV4eW5vc19nZW0pCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9
-IGV4eW5vc19nZW0tPmJhc2UuZGV2OwotCWVudW0gZG1hX2F0dHIgYXR0cjsKKwl1bnNpZ25lZCBs
-b25nIGF0dHI7CiAJdW5zaWduZWQgaW50IG5yX3BhZ2VzOwogCXN0cnVjdCBzZ190YWJsZSBzZ3Q7
-CiAJaW50IHJldCA9IC1FTk9NRU07CkBAIC0zNCw3ICszNCw3IEBAIHN0YXRpYyBpbnQgZXh5bm9z
-X2RybV9hbGxvY19idWYoc3RydWN0IGV4eW5vc19kcm1fZ2VtICpleHlub3NfZ2VtKQogCQlyZXR1
-cm4gMDsKIAl9CiAKLQlpbml0X2RtYV9hdHRycygmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKKwll
-eHlub3NfZ2VtLT5kbWFfYXR0cnMgPSAwOwogCiAJLyoKIAkgKiBpZiBFWFlOT1NfQk9fQ09OVElH
-LCBmdWxseSBwaHlzaWNhbGx5IGNvbnRpZ3VvdXMgbWVtb3J5CkBAIC00Miw3ICs0Miw3IEBAIHN0
-YXRpYyBpbnQgZXh5bm9zX2RybV9hbGxvY19idWYoc3RydWN0IGV4eW5vc19kcm1fZ2VtICpleHlu
-b3NfZ2VtKQogCSAqIGFzIHBvc3NpYmxlLgogCSAqLwogCWlmICghKGV4eW5vc19nZW0tPmZsYWdz
-ICYgRVhZTk9TX0JPX05PTkNPTlRJRykpCi0JCWRtYV9zZXRfYXR0cihETUFfQVRUUl9GT1JDRV9D
-T05USUdVT1VTLCAmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKKwkJZXh5bm9zX2dlbS0+ZG1hX2F0
-dHJzIHw9IERNQV9BVFRSX0ZPUkNFX0NPTlRJR1VPVVM7CiAKIAkvKgogCSAqIGlmIEVYWU5PU19C
-T19XQyBvciBFWFlOT1NfQk9fTk9OQ0FDSEFCTEUsIHdyaXRlY29tYmluZSBtYXBwaW5nCkBAIC01
-NCw4ICs1NCw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9hbGxvY19idWYoc3RydWN0IGV4eW5v
-c19kcm1fZ2VtICpleHlub3NfZ2VtKQogCWVsc2UKIAkJYXR0ciA9IERNQV9BVFRSX05PTl9DT05T
-SVNURU5UOwogCi0JZG1hX3NldF9hdHRyKGF0dHIsICZleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwot
-CWRtYV9zZXRfYXR0cihETUFfQVRUUl9OT19LRVJORUxfTUFQUElORywgJmV4eW5vc19nZW0tPmRt
-YV9hdHRycyk7CisJZXh5bm9zX2dlbS0+ZG1hX2F0dHJzIHw9IGF0dHI7CisJZXh5bm9zX2dlbS0+
-ZG1hX2F0dHJzIHw9IERNQV9BVFRSX05PX0tFUk5FTF9NQVBQSU5HOwogCiAJbnJfcGFnZXMgPSBl
-eHlub3NfZ2VtLT5zaXplID4+IFBBR0VfU0hJRlQ7CiAKQEAgLTY3LDcgKzY3LDcgQEAgc3RhdGlj
-IGludCBleHlub3NfZHJtX2FsbG9jX2J1ZihzdHJ1Y3QgZXh5bm9zX2RybV9nZW0gKmV4eW5vc19n
-ZW0pCiAKIAlleHlub3NfZ2VtLT5jb29raWUgPSBkbWFfYWxsb2NfYXR0cnModG9fZG1hX2Rldihk
-ZXYpLCBleHlub3NfZ2VtLT5zaXplLAogCQkJCQkgICAgICZleHlub3NfZ2VtLT5kbWFfYWRkciwg
-R0ZQX0tFUk5FTCwKLQkJCQkJICAgICAmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKKwkJCQkJICAg
-ICBleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwogCWlmICghZXh5bm9zX2dlbS0+Y29va2llKSB7CiAJ
-CURSTV9FUlJPUigiZmFpbGVkIHRvIGFsbG9jYXRlIGJ1ZmZlci5cbiIpOwogCQlnb3RvIGVycl9m
-cmVlOwpAQCAtNzUsNyArNzUsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fYWxsb2NfYnVmKHN0
-cnVjdCBleHlub3NfZHJtX2dlbSAqZXh5bm9zX2dlbSkKIAogCXJldCA9IGRtYV9nZXRfc2d0YWJs
-ZV9hdHRycyh0b19kbWFfZGV2KGRldiksICZzZ3QsIGV4eW5vc19nZW0tPmNvb2tpZSwKIAkJCQkg
-ICAgZXh5bm9zX2dlbS0+ZG1hX2FkZHIsIGV4eW5vc19nZW0tPnNpemUsCi0JCQkJICAgICZleHlu
-b3NfZ2VtLT5kbWFfYXR0cnMpOworCQkJCSAgICBleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwogCWlm
-IChyZXQgPCAwKSB7CiAJCURSTV9FUlJPUigiZmFpbGVkIHRvIGdldCBzZ3RhYmxlLlxuIik7CiAJ
-CWdvdG8gZXJyX2RtYV9mcmVlOwpAQCAtOTksNyArOTksNyBAQCBlcnJfc2d0X2ZyZWU6CiAJc2df
-ZnJlZV90YWJsZSgmc2d0KTsKIGVycl9kbWFfZnJlZToKIAlkbWFfZnJlZV9hdHRycyh0b19kbWFf
-ZGV2KGRldiksIGV4eW5vc19nZW0tPnNpemUsIGV4eW5vc19nZW0tPmNvb2tpZSwKLQkJICAgICAg
-IGV4eW5vc19nZW0tPmRtYV9hZGRyLCAmZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKKwkJICAgICAg
-IGV4eW5vc19nZW0tPmRtYV9hZGRyLCBleHlub3NfZ2VtLT5kbWFfYXR0cnMpOwogZXJyX2ZyZWU6
-CiAJZHJtX2ZyZWVfbGFyZ2UoZXh5bm9zX2dlbS0+cGFnZXMpOwogCkBAIC0xMjAsNyArMTIwLDcg
-QEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9mcmVlX2J1ZihzdHJ1Y3QgZXh5bm9zX2RybV9nZW0g
-KmV4eW5vc19nZW0pCiAKIAlkbWFfZnJlZV9hdHRycyh0b19kbWFfZGV2KGRldiksIGV4eW5vc19n
-ZW0tPnNpemUsIGV4eW5vc19nZW0tPmNvb2tpZSwKIAkJCShkbWFfYWRkcl90KWV4eW5vc19nZW0t
-PmRtYV9hZGRyLAotCQkJJmV4eW5vc19nZW0tPmRtYV9hdHRycyk7CisJCQlleHlub3NfZ2VtLT5k
-bWFfYXR0cnMpOwogCiAJZHJtX2ZyZWVfbGFyZ2UoZXh5bm9zX2dlbS0+cGFnZXMpOwogfQpAQCAt
-MzQ2LDcgKzM0Niw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9nZW1fbW1hcF9idWZmZXIoc3Ry
-dWN0IGV4eW5vc19kcm1fZ2VtICpleHlub3NfZ2VtLAogCiAJcmV0ID0gZG1hX21tYXBfYXR0cnMo
-dG9fZG1hX2Rldihkcm1fZGV2KSwgdm1hLCBleHlub3NfZ2VtLT5jb29raWUsCiAJCQkgICAgIGV4
-eW5vc19nZW0tPmRtYV9hZGRyLCBleHlub3NfZ2VtLT5zaXplLAotCQkJICAgICAmZXh5bm9zX2dl
-bS0+ZG1hX2F0dHJzKTsKKwkJCSAgICAgZXh5bm9zX2dlbS0+ZG1hX2F0dHJzKTsKIAlpZiAocmV0
-IDwgMCkgewogCQlEUk1fRVJST1IoImZhaWxlZCB0byBtbWFwLlxuIik7CiAJCXJldHVybiByZXQ7
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmggYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmgKaW5kZXggNzgxMDA3NDIyODFk
-Li5kZjdjNTQzZDY1NTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9nZW0uaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmgK
-QEAgLTUwLDcgKzUwLDcgQEAgc3RydWN0IGV4eW5vc19kcm1fZ2VtIHsKIAl2b2lkCQkJKmNvb2tp
-ZTsKIAl2b2lkIF9faW9tZW0JCSprdmFkZHI7CiAJZG1hX2FkZHJfdAkJZG1hX2FkZHI7Ci0Jc3Ry
-dWN0IGRtYV9hdHRycwlkbWFfYXR0cnM7CisJdW5zaWduZWQgbG9uZwkJZG1hX2F0dHJzOwogCXN0
-cnVjdCBwYWdlCQkqKnBhZ2VzOwogCXN0cnVjdCBzZ190YWJsZQkJKnNndDsKIH07Ci0tIAoxLjku
-MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Jul 12, 2016 at 11:08:42AM +0000, weiyj_lk@163.com wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> 
+> Once a spi_master_get() call succeeds, we need an additional
+> spi_master_put() call to free the memory, otherwise we will
+> leak a reference to master. Fix by removing the unnecessary
+> spi_master_get() call.
+> 
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+
+After our discussion, I checked it again and feel free to add
+
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+
+Thanks,
+Andi
+
+> ---
+>  drivers/spi/spi-s3c64xx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index df88fa1..001c9eb 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1211,7 +1211,7 @@ err0:
+>  
+>  static int s3c64xx_spi_remove(struct platform_device *pdev)
+>  {
+> -	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+>  	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+>  
+>  	pm_runtime_get_sync(&pdev->dev);
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
