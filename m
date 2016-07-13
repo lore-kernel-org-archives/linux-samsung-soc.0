@@ -1,74 +1,59 @@
 From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3 7/7] clk: exynos5433: remove CLK_IGNORE_UNUSED flag from SPI
- clocks
-Date: Wed, 13 Jul 2016 14:56:43 -0700
-Message-ID: <146844700397.73491.13145116929743702472@resonance>
-References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
- <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
+Subject: Re: [PATCH 07/10] clk: samsung: make clk-s5pv210-audss explicitly non-modular
+Date: Wed, 13 Jul 2016 14:59:07 -0700
+Message-ID: <146844714723.73491.8115500341908237496@resonance>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-8-paul.gortmaker@windriver.com>
+ <578618CA.8090808@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:36219 "EHLO
-	mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563AbcGMV4r convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jul 2016 17:56:47 -0400
-Received: by mail-pf0-f181.google.com with SMTP id t190so22445378pfb.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2016 14:56:46 -0700 (PDT)
-In-Reply-To: <1468317736-18841-8-git-send-email-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <578618CA.8090808@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-Quoting Andi Shyti (2016-07-12 03:02:16)
-> Because the Exynos5433 SPI driver supports the ioclk handling and
-> the following patch:
+Quoting Sylwester Nawrocki (2016-07-13 03:32:42)
+> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
+> > The Kconfig currently controlling compilation of this code is:
+> > 
+> > arch/arm/mach-s5pv210/Kconfig:config ARCH_S5PV210
+> > arch/arm/mach-s5pv210/Kconfig:  bool "Samsung S5PV210/S5PC110" if ARCH_MULTI_V7
+> > 
+> > ...meaning that it currently is not being built as a module by anyone.
+> > 
+> > Lets remove the modular code that is essentially orphaned, so that
+> > when reading the driver there is no doubt it is builtin-only.
+> > 
+> > We explicitly disallow a driver unbind, since that doesn't have a
+> > sensible use case anyway, and it allows us to drop the ".remove"
+> > code for non-modular drivers.
+> > 
+> > Since this code is already not using module_init, case, the init
+> > ordering remains unchanged with this commit.
+> > 
+> > We also delete the MODULE_LICENSE tags etc. since all that information
+> > is already contained at the top of the file in the comments.
+> > 
+> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 > 
->   http://marc.info/?l=linux-kernel&m=146787645626318&w=2
+> In case this is going to be applied directly to current clk-next:
 > 
-> fixes a synchronus abort issue, none of the SPI clocks require
-> any critical handling: remove, then, the CLK_IGNORE_UNUSED flag
-> for the SPI related clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
 > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
 
-Applied towards v4.8.
+Applied to clk-next.
 
-Regards,
+I know that we normally take PRs for the samsung clk stuff, but this
+late in the cycle I'm OK to simply pick individual patches.
+
+Thanks,
 Mike
-
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index c3a5318..fb19525 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1661,8 +1661,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->         GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
->                         ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
-> -                       ENABLE_SCLK_PERIC, 12,
-> -                       CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_PERIC, 12, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
->                         ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
-> @@ -1677,7 +1676,7 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
->         GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
->                         5, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
-> -                       4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-> +                       4, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
->                         3, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
-> -- 
-> 2.8.1
-> 
