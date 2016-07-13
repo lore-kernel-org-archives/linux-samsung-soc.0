@@ -1,67 +1,42 @@
-From: weiyj  <weiyj_lk@163.com>
-Subject: Re:Re: [PATCH -next] spi: s3c64xx: fix reference leak to master in
- s3c64xx_spi_remove()
-Date: Wed, 13 Jul 2016 13:36:42 +0800 (CST)
-Message-ID: <481c6f26.751d.155e2c1d661.Coremail.weiyj_lk@163.com>
-References: <CGME20160712110926epcas1p13bbc88f5867d41d09d9b8c1172a7150b@epcas1p1.samsung.com>
- <1468321722-16568-1-git-send-email-weiyj_lk@163.com>
- <20160713045030.GI18237@samsunx.samsung>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] [media] s5p-g2d: Replace old driver with DRM version
+Date: Wed, 13 Jul 2016 09:59:06 +0200
+Message-ID: <5785F4CA.8070908@samsung.com>
+References: <1464096493-13378-1-git-send-email-k.kozlowski@samsung.com>
+ <1464096493-13378-2-git-send-email-k.kozlowski@samsung.com>
+ <20160712200202.7496445e@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160713045030.GI18237@samsunx.samsung>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20160712200202.7496445e@recife.lan>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andi,
-
-At 2016-07-13 12:50:30, "Andi Shyti" <andi.shyti@samsung.com> wrote:
->Hi Wei,
->
->> Once a spi_master_get() call succeeds, we need an additional
->> spi_master_put() call to free the memory, otherwise we will
->> leak a reference to master. Fix by removing the unnecessary
->> spi_master_get() call.
->> 
->> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->
->The patch doesn't have anything wrong, but what you write in the
->description is not what you are doing in the patch.
->
->There is no memory allocated in spi_master_get and nothing leaks.
->Besides master's resources are managed, so that there would
->not be any need to call spi_master_put().
->
->spi_master_put() has been, indeed, removed in this commit:
->91800f0e90050a4db4c77e940796f501e02af8be.
->
-
-master allocated in spi_alloc_master() need device reference count to zero
-to be freed.
-
-The call sequence spi_alloc_master/spi_register_master/spi_unregister_master
-is complete; it reduces the device reference count to zero, which results in
-device memory being freed.
-
-In commit 91800f0e90050a4db4c77e940796f501e02af8be, 
-devm_spi_register_master() equal to spi_register_master() and auto call
-spi_unregister_master() when remove. But  remove spi_master_put()
-will cause the device reference count left no zero, since spi_master_get()
-is callled at the begin of remove function already.
-
-So I think we should either remove the spi_master_get() or add spi_master_put()
-before return from remove function.
-
-Regards,
-Yongjun Wei
+T24gMDcvMTMvMjAxNiAwMTowMiBBTSwgTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIHdyb3RlOgo+IEkg
+c3VzcGVjdCB0aGF0IHlvdSdsbCBiZSBhcHBseWluZyB0aGlzIG9uZSB2aWEgRFJNIHRyZWUsIHNv
+Ogo+IAo+IEVtIFR1ZSwgMjQgTWF5IDIwMTYgMTU6Mjg6MTMgKzAyMDAKPiBLcnp5c3p0b2YgS296
+bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4gZXNjcmV2ZXU6Cj4gCj4+IFJlbW92ZSB0
+aGUgb2xkIG5vbi1EUk0gZHJpdmVyIGJlY2F1c2UgaXQgaXMgbm93IGVudGlyZWx5IHN1cHBvcnRl
+ZCBieQo+PiBleHlub3NfZHJtX2cyZCBkcml2ZXIuCj4+Cj4+IENjOiBLeXVuZ21pbiBQYXJrIDxr
+eXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgo+PiBDYzogS2FtaWwgRGVic2tpIDxrLmRlYnNraUBz
+YW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3ps
+b3dza2lAc2Ftc3VuZy5jb20+Cj4gCj4gQWNrZWQtYnk6IE1hdXJvIENhcnZhbGhvIENoZWhhYiA8
+bWNoZWhhYkBzLW9wZW5zb3VyY2UuY29tPgo+IAo+IFBTLjogSWYgeW91IHByZWZlciB0byBhcHBs
+eSB0aGlzIG9uZSB2aWEgbXkgdHJlZSwgSSdtIG9rIHRvby4gSnVzdAo+IGxldCBtZSBrbm93IHdo
+ZW4gdGhlIGZpcnN0IHBhdGNoIGdldHMgbWVyZ2VkIHVwc3RyZWFtLgoKVGhpcyBwYXRjaHNldCB3
+YXMgaW5zdWZmaWNpZW50IGFuZCBJIGRpZG4ndCBjYW1lIHVwIHdpdGggZm9sbG93IHVwLgpQbGVh
+c2UgaWdub3JlIGl0IGZvciBub3cuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
