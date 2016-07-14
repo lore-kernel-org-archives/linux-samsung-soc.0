@@ -1,104 +1,103 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v4 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Thu, 14 Jul 2016 11:26:41 -0400
-Message-ID: <20160714152640.GD13857@seanpaul0.roam.corp.google.com>
-References: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
- <1468469758-12722-1-git-send-email-ykk@rock-chips.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 00/10] Exynos IOMMU: proper runtime PM support (use
+ device dependencies)
+Date: Thu, 14 Jul 2016 17:41:36 +0200
+Message-ID: <5787B2B0.9020809@math.uni-bielefeld.de>
+References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1468469758-12722-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60180 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751113AbcGNPll (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Jul 2016 11:41:41 -0400
+In-Reply-To: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-T24gVGh1LCBKdWwgMTQsIDIwMTYgYXQgMTI6MTU6NThQTSArMDgwMCwgWWFraXIgWWFuZyB3cm90
-ZToKPiBBbHdheSBlbmFibGUgdGhlIFBTUiBmdW5jdGlvbiBmb3IgUm9ja2NoaXAgYW5hbG9naXhf
-ZHAgZHJpdmVyLiBJZiBwYW5lbAo+IGRvbid0IHN1cHBvcnQgUFNSLCB0aGVuIHRoZSBjb3JlIGFu
-YWxvZ2l4X2RwIHdvdWxkIGlnbm9yZSB0aGlzIHNldHRpbmcuCj4gCj4gU2lnbmVkLW9mZi1ieTog
-WWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPgoKUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8
-c2VhbnBhdWxAY2hyb21pdW0ub3JnPgoKPiAtLS0KPiBDaGFuZ2VzIGluIHY0Ogo+IC0gUmV0dXJu
-ICd2b2lkJyBpbnN0ZWFkIG9mICdpbnQnIGluIGFuYWxvZ2l4X2RwX3Bzcl9zZXQoKS4gKFNlYW4p
-Cj4gLSBQdWxsIHRoZSAxMG1zIGRlbGF5IHRpbWUgb3V0IGludG8gYSAjZGVmaW5lLiAoU2VhbikK
-PiAtIEltcHJvdmVkIHRoZSBjb2RlIG9mIGFuYWxvZ2l4X2RwX3Bzcl93b3JrKCkuIChTZWFuKQo+
-IC0gSW5kZW50ZWQgd2l0aCBzcGFjZXMgZm9yIG5ldyBudW1iZXJzIGluIHJvY2tjaGlwX2RwX2Rl
-dmljZSBzdHJ1Y3QuIChTdMOpcGhhbmUsIHJldmlld2VkIGF0IEdvb2dsZSBnZXJyaXQpCj4gICAg
-IFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDkwODUvMzMv
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmNAODNdCj4gCj4g
-Q2hhbmdlcyBpbiB2MzoKPiAtIHNwbGl0IHRoZSBjb21tb24gcHNyIGxvZ2ljIGludG8gYSBzZXBl
-cmF0ZSBkcml2ZXIsIG1ha2UgdGhpcyB0byBhCj4gICBzaW1wbGUgc3ViLXBzciBkZXZpY2UgZHJp
-dmVyLgo+IAo+IENoYW5nZXMgaW4gdjI6Cj4gLSByZW1vdmUgdmJsYW5rIG5vdGlmeSBvdXQgKERh
-bmllbCkKPiAtIGNyZWF0ZSBhIHBzcl9hY3RpdmUoKSBjYWxsYmFjayBpbiB2b3AgZGF0YSBzdHJ1
-Y3QuCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5j
-IHwgNTcgKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgNTcgaW5z
-ZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5h
-bG9naXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9k
-cC1yb2NrY2hpcC5jCj4gaW5kZXggZTgxZTE5YS4uYWE5MTZmNCAxMDA2NDQKPiAtLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYwo+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCj4gQEAgLTMyLDYgKzMy
-LDcgQEAKPiAgI2luY2x1ZGUgPGRybS9icmlkZ2UvYW5hbG9naXhfZHAuaD4KPiAgCj4gICNpbmNs
-dWRlICJyb2NrY2hpcF9kcm1fZHJ2LmgiCj4gKyNpbmNsdWRlICJyb2NrY2hpcF9kcm1fcHNyLmgi
-Cj4gICNpbmNsdWRlICJyb2NrY2hpcF9kcm1fdm9wLmgiCj4gIAo+ICAjZGVmaW5lIFJLMzI4OF9H
-UkZfU09DX0NPTjYJCTB4MjVjCj4gQEAgLTQxLDYgKzQyLDkgQEAKPiAgCj4gICNkZWZpbmUgSElX
-T1JEX1VQREFURSh2YWwsIG1hc2spCSh2YWwgfCAobWFzaykgPDwgMTYpCj4gIAo+ICsjZGVmaW5l
-IFBTUl9TRVRfREVMQVlfVElNRQkJbXNlY3NfdG9famlmZmllcygxMCkKPiArI2RlZmluZSBQU1Jf
-V0FJVF9MSU5FX0ZMQUdfVElNRU9VVF9NUwkxMDAKPiArCj4gICNkZWZpbmUgdG9fZHAobm0pCWNv
-bnRhaW5lcl9vZihubSwgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSwgbm0pCj4gIAo+ICAvKioK
-PiBAQCAtNjgsMTEgKzcyLDU1IEBAIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2Ugewo+ICAJc3Ry
-dWN0IHJlZ21hcCAgICAgICAgICAgICpncmY7Cj4gIAlzdHJ1Y3QgcmVzZXRfY29udHJvbCAgICAg
-KnJzdDsKPiAgCj4gKwlzdHJ1Y3QgZGVsYXllZF93b3JrICAgICAgcHNyX3dvcms7Cj4gKwl1bnNp
-Z25lZCBpbnQgICAgICAgICAgICAgcHNyX3N0YXRlOwo+ICsKPiAgCWNvbnN0IHN0cnVjdCByb2Nr
-Y2hpcF9kcF9jaGlwX2RhdGEgKmRhdGE7Cj4gIAo+ICAJc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRf
-ZGF0YSBwbGF0X2RhdGE7Cj4gIH07Cj4gIAo+ICtzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9wc3Jf
-c2V0KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwgYm9vbCBlbmFibGVkKQo+ICt7Cj4gKwlz
-dHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IHRvX2RwKGVuY29kZXIpOwo+ICsKPiArCWRl
-dl9kYmcoZHAtPmRldiwgIiVzIFBTUi4uLlxuIiwgZW5hYmxlZCA/ICJFbnRyeSIgOiAiRXhpdCIp
-Owo+ICsKPiArCWlmIChlbmFibGVkKQo+ICsJCWRwLT5wc3Jfc3RhdGUgPSBFRFBfVlNDX1BTUl9T
-VEFURV9BQ1RJVkU7Cj4gKwllbHNlCj4gKwkJZHAtPnBzcl9zdGF0ZSA9IH5FRFBfVlNDX1BTUl9T
-VEFURV9BQ1RJVkU7Cj4gKwo+ICsJc2NoZWR1bGVfZGVsYXllZF93b3JrKCZkcC0+cHNyX3dvcmss
-IFBTUl9TRVRfREVMQVlfVElNRSk7Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIGFuYWxvZ2l4X2Rw
-X3Bzcl93b3JrKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKPiArewo+ICsJc3RydWN0IHJvY2tj
-aGlwX2RwX2RldmljZSAqZHAgPQo+ICsJCQkJY29udGFpbmVyX29mKHdvcmssIHR5cGVvZigqZHAp
-LCBwc3Jfd29yay53b3JrKTsKPiArCXN0cnVjdCBkcm1fY3J0YyAqY3J0YyA9IGRwLT5lbmNvZGVy
-LmNydGM7Cj4gKwlpbnQgcHNyX3N0YXRlID0gZHAtPnBzcl9zdGF0ZTsKPiArCWludCB2YWN0X2Vu
-ZDsKPiArCWludCByZXQ7Cj4gKwo+ICsJaWYgKCFjcnRjKQo+ICsJCXJldHVybjsKPiArCj4gKwl2
-YWN0X2VuZCA9IGNydGMtPm1vZGUudnRvdGFsIC0gY3J0Yy0+bW9kZS52c3luY19zdGFydCArIGNy
-dGMtPm1vZGUudmRpc3BsYXk7Cj4gKwo+ICsJcmV0ID0gcm9ja2NoaXBfZHJtX3dhaXRfbGluZV9m
-bGFnKGRwLT5lbmNvZGVyLmNydGMsIHZhY3RfZW5kLAo+ICsJCQkJCSAgUFNSX1dBSVRfTElORV9G
-TEFHX1RJTUVPVVRfTVMpOwo+ICsJaWYgKHJldCkgewo+ICsJCWRldl9lcnIoZHAtPmRldiwgImxp
-bmUgZmxhZyBpbnRlcnJ1cHQgZGlkIG5vdCBhcnJpdmVcbiIpOwo+ICsJCXJldHVybjsKPiArCX0K
-PiArCj4gKwlpZiAocHNyX3N0YXRlID09IEVEUF9WU0NfUFNSX1NUQVRFX0FDVElWRSkKPiArCQlh
-bmFsb2dpeF9kcF9lbmFibGVfcHNyKGRwLT5kZXYpOwo+ICsJZWxzZQo+ICsJCWFuYWxvZ2l4X2Rw
-X2Rpc2FibGVfcHNyKGRwLT5kZXYpOwo+ICt9Cj4gKwo+ICBzdGF0aWMgaW50IHJvY2tjaGlwX2Rw
-X3ByZV9pbml0KHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwKQo+ICB7Cj4gIAlyZXNldF9j
-b250cm9sX2Fzc2VydChkcC0+cnN0KTsKPiBAQCAtMzQwLDEyICszODgsMjEgQEAgc3RhdGljIGlu
-dCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFz
-dGVyLAo+ICAJZHAtPnBsYXRfZGF0YS5wb3dlcl9vZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247
-Cj4gIAlkcC0+cGxhdF9kYXRhLmdldF9tb2RlcyA9IHJvY2tjaGlwX2RwX2dldF9tb2RlczsKPiAg
-Cj4gKwlkcC0+cHNyX3N0YXRlID0gfkVEUF9WU0NfUFNSX1NUQVRFX0FDVElWRTsKPiArCUlOSVRf
-REVMQVlFRF9XT1JLKCZkcC0+cHNyX3dvcmssIGFuYWxvZ2l4X2RwX3Bzcl93b3JrKTsKPiArCj4g
-Kwlyb2NrY2hpcF9kcm1fcHNyX3JlZ2lzdGVyKCZkcC0+ZW5jb2RlciwgYW5hbG9naXhfZHBfcHNy
-X3NldCk7Cj4gKwo+ICAJcmV0dXJuIGFuYWxvZ2l4X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2Rldiwg
-JmRwLT5wbGF0X2RhdGEpOwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCByb2NrY2hpcF9kcF91bmJp
-bmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCj4gIAkJCSAgICAg
-ICB2b2lkICpkYXRhKQo+ICB7Cj4gKwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IGRl
-dl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICsKPiArCXJvY2tjaGlwX2RybV9wc3JfdW5yZWdpc3Rlcigm
-ZHAtPmVuY29kZXIpOwo+ICsKPiAgCXJldHVybiBhbmFsb2dpeF9kcF91bmJpbmQoZGV2LCBtYXN0
-ZXIsIGRhdGEpOwo+ICB9Cj4gIAo+IC0tIAo+IDEuOS4xCj4gCj4gCj4gX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello Marek,
+
+I've tested the patchset on 4.7-rc7 and noticed that it breaks reboot on
+my ODROID-X2.
+
+Going to check where exactly things break.
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
+> Hello,
+> 
+> This patch series finally implements proper runtime PM support in Exynos
+> IOMMU driver. This has been achieved by using device links, which lets
+> SYSMMU controller's runtime PM to follow master's device runtime PM (the
+> device which actually performs DMA transaction). The main idea
+> behind this solution is an observation that any DMA activity from master
+> device can be done only when master device is active, thus when master
+> device is suspended SYSMMU controller device can also be suspended.
+> 
+> This patchset solves the situation that power domains are always enabled,
+> because all SYSMMU controllers (which belongs to those domains) are
+> permanently active (because existing driver was simplified and kept
+> SYSMMU device active all the time after initialization).
+> 
+> Patches 1-5 are resend of the "[RFC][PATCH 0/5] Functional dependencies
+> between devices" patchset:
+> http://thread.gmane.org/gmane.linux.power-management.general/67424/focus=2126379
+> I've included them here, because it is hard to find them all on mailing
+> list archives.
+> 
+> Patches 6-8 are fixes to device dependencies/links code, which were
+> required to use this solution for Exynos IOMMU driver. I'm not PM/runtime
+> PM code expert, so please double check if my changes are really correct.
+> 
+> This patchset requires my previous changes to Exynos IOMMU driver
+> submitted in the "Exynos IOMMU: improve clock management" thread:
+> http://www.spinics.net/lists/arm-kernel/msg505695.html
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Changelog:
+> v2:
+> - replaced PM notifiers with generic device dependencies/links developped
+>   by Rafael J. Wysocki
+> 
+> v1: http://www.spinics.net/lists/arm-kernel/msg509600.html
+> - initial version
+> 
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (5):
+>   driver core: Avoid endless recursion if device has more than one link
+>   driver core: Add support for links to already probed drivers
+>   PM core: Fix restoring devices with links during system PM transition
+>   iommu/exynos: Remove excessive, useless debug
+>   iommu/exynos: Add proper runtime pm support
+> 
+> Rafael J. Wysocki (5):
+>   driver core: Add a wrapper around __device_release_driver()
+>   driver core: Functional dependencies tracking support
+>   PM core: Make async suspend/resume of devices use device links
+>   PM core: Make runtime PM of devices use device links
+>   PM core: Optimize the use of device links for runtime PM
+> 
+>  drivers/base/base.h          |  13 ++
+>  drivers/base/core.c          | 410 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/base/dd.c            |  65 +++++--
+>  drivers/base/power/main.c    |  68 ++++++-
+>  drivers/base/power/runtime.c | 130 +++++++++++++-
+>  drivers/iommu/exynos-iommu.c | 221 +++++++++++------------
+>  include/linux/device.h       |  41 +++++
+>  include/linux/pm.h           |   1 +
+>  include/linux/pm_runtime.h   |   6 +
+>  9 files changed, 809 insertions(+), 146 deletions(-)
+> 
