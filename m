@@ -1,93 +1,30 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v4 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Thu, 14 Jul 2016 12:15:58 +0800
-Message-ID: <1468469758-12722-1-git-send-email-ykk@rock-chips.com>
-References: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] arm64: dts: Fix RTC by providing rtc_src clock
+Date: Thu, 14 Jul 2016 14:44:04 +0200
+Message-ID: <4469058.ECgkgrt5Se@wuerfel>
+References: <1468222458-4265-1-git-send-email-k.kozlowski@samsung.com> <1468222458-4265-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1468222458-4265-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, krzk@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWx3YXkgZW5hYmxlIHRoZSBQU1IgZnVuY3Rpb24gZm9yIFJvY2tjaGlwIGFuYWxvZ2l4X2RwIGRy
-aXZlci4gSWYgcGFuZWwKZG9uJ3Qgc3VwcG9ydCBQU1IsIHRoZW4gdGhlIGNvcmUgYW5hbG9naXhf
-ZHAgd291bGQgaWdub3JlIHRoaXMgc2V0dGluZy4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcg
-PHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCkNoYW5nZXMgaW4gdjQ6Ci0gUmV0dXJuICd2b2lkJyBp
-bnN0ZWFkIG9mICdpbnQnIGluIGFuYWxvZ2l4X2RwX3Bzcl9zZXQoKS4gKFNlYW4pCi0gUHVsbCB0
-aGUgMTBtcyBkZWxheSB0aW1lIG91dCBpbnRvIGEgI2RlZmluZS4gKFNlYW4pCi0gSW1wcm92ZWQg
-dGhlIGNvZGUgb2YgYW5hbG9naXhfZHBfcHNyX3dvcmsoKS4gKFNlYW4pCi0gSW5kZW50ZWQgd2l0
-aCBzcGFjZXMgZm9yIG5ldyBudW1iZXJzIGluIHJvY2tjaGlwX2RwX2RldmljZSBzdHJ1Y3QuIChT
-dMOpcGhhbmUsIHJldmlld2VkIGF0IEdvb2dsZSBnZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1
-bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ5MDg1LzMzL2RyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDgzXQoKQ2hhbmdlcyBpbiB2MzoKLSBzcGxp
-dCB0aGUgY29tbW9uIHBzciBsb2dpYyBpbnRvIGEgc2VwZXJhdGUgZHJpdmVyLCBtYWtlIHRoaXMg
-dG8gYQogIHNpbXBsZSBzdWItcHNyIGRldmljZSBkcml2ZXIuCgpDaGFuZ2VzIGluIHYyOgotIHJl
-bW92ZSB2Ymxhbmsgbm90aWZ5IG91dCAoRGFuaWVsKQotIGNyZWF0ZSBhIHBzcl9hY3RpdmUoKSBj
-YWxsYmFjayBpbiB2b3AgZGF0YSBzdHJ1Y3QuCgogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2Fu
-YWxvZ2l4X2RwLXJvY2tjaGlwLmMgfCA1NyArKysrKysrKysrKysrKysrKysrKysrKysrCiAxIGZp
-bGUgY2hhbmdlZCwgNTcgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKaW5kZXggZTgxZTE5YS4uYWE5MTZmNCAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKQEAgLTMy
-LDYgKzMyLDcgQEAKICNpbmNsdWRlIDxkcm0vYnJpZGdlL2FuYWxvZ2l4X2RwLmg+CiAKICNpbmNs
-dWRlICJyb2NrY2hpcF9kcm1fZHJ2LmgiCisjaW5jbHVkZSAicm9ja2NoaXBfZHJtX3Bzci5oIgog
-I2luY2x1ZGUgInJvY2tjaGlwX2RybV92b3AuaCIKIAogI2RlZmluZSBSSzMyODhfR1JGX1NPQ19D
-T042CQkweDI1YwpAQCAtNDEsNiArNDIsOSBAQAogCiAjZGVmaW5lIEhJV09SRF9VUERBVEUodmFs
-LCBtYXNrKQkodmFsIHwgKG1hc2spIDw8IDE2KQogCisjZGVmaW5lIFBTUl9TRVRfREVMQVlfVElN
-RQkJbXNlY3NfdG9famlmZmllcygxMCkKKyNkZWZpbmUgUFNSX1dBSVRfTElORV9GTEFHX1RJTUVP
-VVRfTVMJMTAwCisKICNkZWZpbmUgdG9fZHAobm0pCWNvbnRhaW5lcl9vZihubSwgc3RydWN0IHJv
-Y2tjaGlwX2RwX2RldmljZSwgbm0pCiAKIC8qKgpAQCAtNjgsMTEgKzcyLDU1IEBAIHN0cnVjdCBy
-b2NrY2hpcF9kcF9kZXZpY2UgewogCXN0cnVjdCByZWdtYXAgICAgICAgICAgICAqZ3JmOwogCXN0
-cnVjdCByZXNldF9jb250cm9sICAgICAqcnN0OwogCisJc3RydWN0IGRlbGF5ZWRfd29yayAgICAg
-IHBzcl93b3JrOworCXVuc2lnbmVkIGludCAgICAgICAgICAgICBwc3Jfc3RhdGU7CisKIAljb25z
-dCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfY2hpcF9kYXRhICpkYXRhOwogCiAJc3RydWN0IGFuYWxvZ2l4
-X2RwX3BsYXRfZGF0YSBwbGF0X2RhdGE7CiB9OwogCitzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9w
-c3Jfc2V0KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwgYm9vbCBlbmFibGVkKQoreworCXN0
-cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gdG9fZHAoZW5jb2Rlcik7CisKKwlkZXZfZGJn
-KGRwLT5kZXYsICIlcyBQU1IuLi5cbiIsIGVuYWJsZWQgPyAiRW50cnkiIDogIkV4aXQiKTsKKwor
-CWlmIChlbmFibGVkKQorCQlkcC0+cHNyX3N0YXRlID0gRURQX1ZTQ19QU1JfU1RBVEVfQUNUSVZF
-OworCWVsc2UKKwkJZHAtPnBzcl9zdGF0ZSA9IH5FRFBfVlNDX1BTUl9TVEFURV9BQ1RJVkU7CisK
-KwlzY2hlZHVsZV9kZWxheWVkX3dvcmsoJmRwLT5wc3Jfd29yaywgUFNSX1NFVF9ERUxBWV9USU1F
-KTsKK30KKworc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfcHNyX3dvcmsoc3RydWN0IHdvcmtfc3Ry
-dWN0ICp3b3JrKQoreworCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0KKwkJCQljb250
-YWluZXJfb2Yod29yaywgdHlwZW9mKCpkcCksIHBzcl93b3JrLndvcmspOworCXN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YyA9IGRwLT5lbmNvZGVyLmNydGM7CisJaW50IHBzcl9zdGF0ZSA9IGRwLT5wc3Jf
-c3RhdGU7CisJaW50IHZhY3RfZW5kOworCWludCByZXQ7CisKKwlpZiAoIWNydGMpCisJCXJldHVy
-bjsKKworCXZhY3RfZW5kID0gY3J0Yy0+bW9kZS52dG90YWwgLSBjcnRjLT5tb2RlLnZzeW5jX3N0
-YXJ0ICsgY3J0Yy0+bW9kZS52ZGlzcGxheTsKKworCXJldCA9IHJvY2tjaGlwX2RybV93YWl0X2xp
-bmVfZmxhZyhkcC0+ZW5jb2Rlci5jcnRjLCB2YWN0X2VuZCwKKwkJCQkJICBQU1JfV0FJVF9MSU5F
-X0ZMQUdfVElNRU9VVF9NUyk7CisJaWYgKHJldCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJsaW5l
-IGZsYWcgaW50ZXJydXB0IGRpZCBub3QgYXJyaXZlXG4iKTsKKwkJcmV0dXJuOworCX0KKworCWlm
-IChwc3Jfc3RhdGUgPT0gRURQX1ZTQ19QU1JfU1RBVEVfQUNUSVZFKQorCQlhbmFsb2dpeF9kcF9l
-bmFibGVfcHNyKGRwLT5kZXYpOworCWVsc2UKKwkJYW5hbG9naXhfZHBfZGlzYWJsZV9wc3IoZHAt
-PmRldik7Cit9CisKIHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfcHJlX2luaXQoc3RydWN0IHJvY2tj
-aGlwX2RwX2RldmljZSAqZHApCiB7CiAJcmVzZXRfY29udHJvbF9hc3NlcnQoZHAtPnJzdCk7CkBA
-IC0zNDAsMTIgKzM4OCwyMSBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2JpbmQoc3RydWN0IGRl
-dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJZHAtPnBsYXRfZGF0YS5wb3dlcl9v
-ZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247CiAJZHAtPnBsYXRfZGF0YS5nZXRfbW9kZXMgPSBy
-b2NrY2hpcF9kcF9nZXRfbW9kZXM7CiAKKwlkcC0+cHNyX3N0YXRlID0gfkVEUF9WU0NfUFNSX1NU
-QVRFX0FDVElWRTsKKwlJTklUX0RFTEFZRURfV09SSygmZHAtPnBzcl93b3JrLCBhbmFsb2dpeF9k
-cF9wc3Jfd29yayk7CisKKwlyb2NrY2hpcF9kcm1fcHNyX3JlZ2lzdGVyKCZkcC0+ZW5jb2Rlciwg
-YW5hbG9naXhfZHBfcHNyX3NldCk7CisKIAlyZXR1cm4gYW5hbG9naXhfZHBfYmluZChkZXYsIGRw
-LT5kcm1fZGV2LCAmZHAtPnBsYXRfZGF0YSk7CiB9CiAKIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2Rw
-X3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKIAkJCSAg
-ICAgICB2b2lkICpkYXRhKQogeworCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gZGV2
-X2dldF9kcnZkYXRhKGRldik7CisKKwlyb2NrY2hpcF9kcm1fcHNyX3VucmVnaXN0ZXIoJmRwLT5l
-bmNvZGVyKTsKKwogCXJldHVybiBhbmFsb2dpeF9kcF91bmJpbmQoZGV2LCBtYXN0ZXIsIGRhdGEp
-OwogfQogCi0tIAoxLjkuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+On Monday, July 11, 2016 9:34:18 AM CEST Krzysztof Kozlowski wrote:
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> 
+> Add RTC source clock as Exynos7 needs source (32.768KHz) clock
+> for RTC block. Without this currently S3C RTC driver probe is broken
+> on this SoC.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+
+Applied to fixes, thanks!
+
+	Arnd
