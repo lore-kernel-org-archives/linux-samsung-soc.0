@@ -1,168 +1,173 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "spi: s3c64xx: rename goto labels to meaningful names" to the spi tree
-Date: Thu, 14 Jul 2016 17:32:55 +0100
-Message-ID: <E1bNjZH-0001ni-TY@debutante>
-References: <1467989201-14661-4-git-send-email-andi.shyti@samsung.com>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467989201-14661-4-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
+Date: Thu, 14 Jul 2016 15:45:58 -0400
+Message-ID: <1468525558.4843.6.camel@ndufresne.ca>
+References: <1468525055.4843.4.camel@ndufresne.ca>
+Reply-To: nicolas@ndufresne.ca
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-6QN2VWLUAi0iO+l/6q2k"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43687 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292AbcGNTqJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Jul 2016 15:46:09 -0400
+In-Reply-To: <1468525055.4843.4.camel@ndufresne.ca>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The patch
 
-   spi: s3c64xx: rename goto labels to meaningful names
+--=-6QN2VWLUAi0iO+l/6q2k
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+Le jeudi 14 juillet 2016 =C3=A0 15:37 -0400, Nicolas Dufresne a =C3=A9crit=
+=C2=A0:
+> Hi,
+>=20
+> I'm using the Odroid U2 to test some features implemented in
+> GStreamer.
+> The parts I need mostly works in mainline kernel, my main annoyance
+> ist
+> that reboot hangs.
+>=20
+> Is this issue known ? I'm booting from SD card is that matters. Any
+> advise would be appreciated. I'm not list member, so please keep me
+> in
+> CC. I'm sharing my .config, in case that is my fault.
+>=20
+> regards,
+> Nicolas
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+If that helps:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+[root@odroidu2-nicolas nicolas]# echo 1 > /proc/sys/kernel/sysrq
+[root@odroidu2-nicolas nicolas]# echo b > /proc/sysrq-trigger
+[=C2=A0=C2=A0153.605514] sysrq: SysRq : Resetting
+[=C2=A0=C2=A0153.605665] CPU0: stopping
+[=C2=A0=C2=A0153.606194] CPU: 0 PID: 247 Comm: NetworkManager Not tainted 4=
+.7.0-rc7-00034-gb569927-dirty #9
+[=C2=A0=C2=A0153.614764] Hardware name: SAMSUNG EXYNOS (Flattened Device Tr=
+ee)
+[=C2=A0=C2=A0153.620922] [<c010e480>] (unwind_backtrace) from [<c010ad18>] =
+(show_stack+0x10/0x14)
+[=C2=A0=C2=A0153.628605] [<c010ad18>] (show_stack) from [<c032bf38>] (dump_=
+stack+0x78/0x8c)
+[=C2=A0=C2=A0153.635799] [<c032bf38>] (dump_stack) from [<c010d2a8>] (handl=
+e_IPI+0x198/0x1ac)
+[=C2=A0=C2=A0153.643171] [<c010d2a8>] (handle_IPI) from [<c010150c>] (gic_h=
+andle_irq+0x94/0x98)
+[=C2=A0=C2=A0153.650722] [<c010150c>] (gic_handle_irq) from [<c010b7d4>] (_=
+_irq_svc+0x54/0x90)
+[=C2=A0=C2=A0153.658168] Exception stack(0xec91dc78 to 0xec91dcc0)
+[=C2=A0=C2=A0153.663207] dc60:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ee4263b0 edc6e4=
+00
+[=C2=A0=C2=A0153.671383] dc80: 00000000 000021f0 ee4263b0 ffffe000 0010200d=
+ 00000000 ee4263b0 ee426268
+[=C2=A0=C2=A0153.679541] dca0: ee4261c0 ec91dd08 00000003 ec91dcc8 c06cfc30=
+ c0159f68 60000053 ffffffff
+[=C2=A0=C2=A0153.687711] [<c010b7d4>] (__irq_svc) from [<c0159f68>] (do_raw=
+_spin_unlock+0x7c/0x11c)
+[=C2=A0=C2=A0153.695608] [<c0159f68>] (do_raw_spin_unlock) from [<c06cfc30>=
+] (_raw_spin_unlock+0x8/0x3c)
+[=C2=A0=C2=A0153.703951] [<c06cfc30>] (_raw_spin_unlock) from [<c0210a34>] =
+(__find_get_block_slow+0xd4/0x1a0)
+[=C2=A0=C2=A0153.712710] [<c0210a34>] (__find_get_block_slow) from [<c0211d=
+04>] (__find_get_block+0x170/0x2dc)
+[=C2=A0=C2=A0153.721560] [<c0211d04>] (__find_get_block) from [<c02124ac>] =
+(__getblk_gfp+0x24/0x54)
+[=C2=A0=C2=A0153.729455] [<c02124ac>] (__getblk_gfp) from [<c0251b0c>] (ext=
+4_getblk+0x6c/0x174)
+[=C2=A0=C2=A0153.737000] [<c0251b0c>] (ext4_getblk) from [<c0251c20>] (ext4=
+_bread+0xc/0x98)
+[=C2=A0=C2=A0153.744210] [<c0251c20>] (ext4_bread) from [<c025a9d8>] (__ext=
+4_read_dirblock+0x2c/0x3b0)
+[=C2=A0=C2=A0153.752366] [<c025a9d8>] (__ext4_read_dirblock) from [<c025ad9=
+0>] (dx_probe+0x34/0x55c)
+[=C2=A0=C2=A0153.760350] [<c025ad90>] (dx_probe) from [<c025c828>] (ext4_fi=
+nd_entry+0x450/0x5f4)
+[=C2=A0=C2=A0153.767991] [<c025c828>] (ext4_find_entry) from [<c025fbcc>] (=
+ext4_unlink+0x20/0x258)
+[=C2=A0=C2=A0153.775815] [<c025fbcc>] (ext4_unlink) from [<c01ee210>] (vfs_=
+unlink+0xb8/0x190)
+[=C2=A0=C2=A0153.783188] [<c01ee210>] (vfs_unlink) from [<c01f186c>] (do_un=
+linkat+0x214/0x26c)
+[=C2=A0=C2=A0153.790655] [<c01f186c>] (do_unlinkat) from [<c01076c0>] (ret_=
+fast_syscall+0x0/0x3c)
+[=C2=A0=C2=A0153.798355] CPU2: stopping
+[=C2=A0=C2=A0153.801062] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.7.0-rc=
+7-00034-gb569927-dirty #9
+[=C2=A0=C2=A0153.809022] Hardware name: SAMSUNG EXYNOS (Flattened Device Tr=
+ee)
+[=C2=A0=C2=A0153.815156] [<c010e480>] (unwind_backtrace) from [<c010ad18>] =
+(show_stack+0x10/0x14)
+[=C2=A0=C2=A0153.822858] [<c010ad18>] (show_stack) from [<c032bf38>] (dump_=
+stack+0x78/0x8c)
+[=C2=A0=C2=A0153.830053] [<c032bf38>] (dump_stack) from [<c010d2a8>] (handl=
+e_IPI+0x198/0x1ac)
+[=C2=A0=C2=A0153.837429] [<c010d2a8>] (handle_IPI) from [<c010150c>] (gic_h=
+andle_irq+0x94/0x98)
+[=C2=A0=C2=A0153.844977] [<c010150c>] (gic_handle_irq) from [<c010b7d4>] (_=
+_irq_svc+0x54/0x90)
+[=C2=A0=C2=A0153.852425] Exception stack(0xee8b7f88 to 0xee8b7fd0)
+[=C2=A0=C2=A0153.857476] 7f80:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0000000=
+01 00000000 00000000 c01141c0 ee8b6000 c0b02454
+[=C2=A0=C2=A0153.865640] 7fa0: 00000000 00000000 c0a623f8 c0b024b8 c0b3ecdb=
+ c0b024c0 00003e4e ee8b7fd8
+[=C2=A0=C2=A0153.873787] 7fc0: c01081b0 c01081b4 600f0053 ffffffff
+[=C2=A0=C2=A0153.878840] [<c010b7d4>] (__irq_svc) from [<c01081b4>] (arch_c=
+pu_idle+0x38/0x3c)
+[=C2=A0=C2=A0153.886234] [<c01081b4>] (arch_cpu_idle) from [<c0153578>] (cp=
+u_startup_entry+0x1c0/0x238)
+[=C2=A0=C2=A0153.894463] [<c0153578>] (cpu_startup_entry) from [<401015ac>]=
+ (0x401015ac)
+[=C2=A0=C2=A0153.901384] CPU1: stopping
+[=C2=A0=C2=A0153.904089] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.7.0-rc=
+7-00034-gb569927-dirty #9
+[=C2=A0=C2=A0153.912054] Hardware name: SAMSUNG EXYNOS (Flattened Device Tr=
+ee)
+[=C2=A0=C2=A0153.918188] [<c010e480>] (unwind_backtrace) from [<c010ad18>] =
+(show_stack+0x10/0x14)
+[=C2=A0=C2=A0153.925889] [<c010ad18>] (show_stack) from [<c032bf38>] (dump_=
+stack+0x78/0x8c)
+[=C2=A0=C2=A0153.933086] [<c032bf38>] (dump_stack) from [<c010d2a8>] (handl=
+e_IPI+0x198/0x1ac)
+[=C2=A0=C2=A0153.940462] [<c010d2a8>] (handle_IPI) from [<c010150c>] (gic_h=
+andle_irq+0x94/0x98)
+[=C2=A0=C2=A0153.948010] [<c010150c>] (gic_handle_irq) from [<c010b7d4>] (_=
+_irq_svc+0x54/0x90)
+[=C2=A0=C2=A0153.955457] Exception stack(0xee8b5f88 to 0xee8b5fd0)
+[=C2=A0=C2=A0153.960508] 5f80:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0000000=
+01 00000000 00000000 c01141c0 ee8b4000 c0b02454
+[=C2=A0=C2=A0153.968672] 5fa0: 00000000 00000000 c0a623f8 c0b024b8 c0b3ecdb=
+ c0b024c0 00003e62 ee8b5fd8
+[=C2=A0=C2=A0153.976819] 5fc0: c01081b0 c01081b4 60070053 ffffffff
+[=C2=A0=C2=A0153.981869] [<c010b7d4>] (__irq_svc) from [<c01081b4>] (arch_c=
+pu_idle+0x38/0x3c)
+[=C2=A0=C2=A0153.989260] [<c01081b4>] (arch_cpu_idle) from [<c0153578>] (cp=
+u_startup_entry+0x1c0/0x238)
+[=C2=A0=C2=A0153.997490] [<#
+--=-6QN2VWLUAi0iO+l/6q2k
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iEYEABECAAYFAleH6/YACgkQcVMCLawGqBw9KACeP/OUFUkC4RamXr8alpycGL1O
+ofAAn2Mhm81kJaWALc74pKSo0s6iVgHa
+=U8wb
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
->From 60a9a964420912a4c4b66efd210d98006177695a Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Date: Tue, 12 Jul 2016 19:02:12 +0900
-Subject: [PATCH] spi: s3c64xx: rename goto labels to meaningful names
-
-The goto labels of the style of
-
-  err4:
-  err3:
-  err2:
-  err1:
-
-are complex to insert in between new errors without renaming all
-the goto statements. Replace the errX naming style to meaningful
-names in order to make it easier to insert new goto exit points.
-
-Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/spi/spi-s3c64xx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 001c9ebf884d..0a93eb98c2b6 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1078,7 +1078,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
- 				ret);
--			goto err0;
-+			goto err_deref_master;
- 		}
- 		sdd->port_id = ret;
- 	} else {
-@@ -1116,13 +1116,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(sdd->regs)) {
- 		ret = PTR_ERR(sdd->regs);
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	if (sci->cfg_gpio && sci->cfg_gpio()) {
- 		dev_err(&pdev->dev, "Unable to config gpio\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	/* Setup clocks */
-@@ -1130,13 +1130,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (IS_ERR(sdd->clk)) {
- 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
- 		ret = PTR_ERR(sdd->clk);
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	if (clk_prepare_enable(sdd->clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
- 		ret = -EBUSY;
--		goto err0;
-+		goto err_deref_master;
- 	}
- 
- 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-@@ -1145,13 +1145,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Unable to acquire clock '%s'\n", clk_name);
- 		ret = PTR_ERR(sdd->src_clk);
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	if (clk_prepare_enable(sdd->src_clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
- 		ret = -EBUSY;
--		goto err2;
-+		goto err_disable_clk;
- 	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
-@@ -1171,7 +1171,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
- 			irq, ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
-@@ -1181,7 +1181,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
--		goto err3;
-+		goto err_pm_put;
- 	}
- 
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
-@@ -1195,15 +1195,15 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--err3:
-+err_pm_put:
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	clk_disable_unprepare(sdd->src_clk);
--err2:
-+err_disable_clk:
- 	clk_disable_unprepare(sdd->clk);
--err0:
-+err_deref_master:
- 	spi_master_put(master);
- 
- 	return ret;
--- 
-2.8.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-6QN2VWLUAi0iO+l/6q2k--
