@@ -1,59 +1,106 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 07/10] clk: samsung: make clk-s5pv210-audss explicitly non-modular
-Date: Wed, 13 Jul 2016 14:59:07 -0700
-Message-ID: <146844714723.73491.8115500341908237496@resonance>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-8-paul.gortmaker@windriver.com>
- <578618CA.8090808@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v4 0/4] Add PSR function support for Analogix/Rockchip DP
+Date: Thu, 14 Jul 2016 12:15:04 +0800
+Message-ID: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <578618CA.8090808@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Dan Carpenter <dan.carpenter@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2016-07-13 03:32:42)
-> On 07/04/2016 11:12 PM, Paul Gortmaker wrote:
-> > The Kconfig currently controlling compilation of this code is:
-> > 
-> > arch/arm/mach-s5pv210/Kconfig:config ARCH_S5PV210
-> > arch/arm/mach-s5pv210/Kconfig:  bool "Samsung S5PV210/S5PC110" if ARCH_MULTI_V7
-> > 
-> > ...meaning that it currently is not being built as a module by anyone.
-> > 
-> > Lets remove the modular code that is essentially orphaned, so that
-> > when reading the driver there is no doubt it is builtin-only.
-> > 
-> > We explicitly disallow a driver unbind, since that doesn't have a
-> > sensible use case anyway, and it allows us to drop the ".remove"
-> > code for non-modular drivers.
-> > 
-> > Since this code is already not using module_init, case, the init
-> > ordering remains unchanged with this commit.
-> > 
-> > We also delete the MODULE_LICENSE tags etc. since all that information
-> > is already contained at the top of the file in the comments.
-> > 
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> 
-> In case this is going to be applied directly to current clk-next:
-> 
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-
-Applied to clk-next.
-
-I know that we normally take PRs for the samsung clk stuff, but this
-late in the cycle I'm OK to simply pick individual patches.
-
-Thanks,
-Mike
+ClRoZSBmdWxsIG5hbWUgb2YgUFNSIGlzIFBhbmVsIFNlbGYgUmVmcmVzaCwgcGFuZWwgZGV2aWNl
+IGNvdWxkIHJlZnJlc2gKaXRzZWxmIHdpdGggdGhlIGhhcmR3YXJlIGZyYW1lYnVmZmVyIGluIHBh
+bmVsLCB0aGlzIHdvdWxkIG1ha2UgYSBsb3RzCm9mIHNlbnNlIHRvIHNhdmUgdGhlIHBvd2VyIGNv
+bnN1bXB0aW9uLgoKVGhpcyB2MyB2ZXJzaW9uIGhhdmUgc3BsaXRlZCBhbiBjb21tb24gUFNSIGRy
+aXZlciBmb3IgUm9ja2NoaXAsIHdoaWNoIGlzCmJpZ2dlc3QgY2hhbmdlcyBmcm9tIHYyLgoKVGhp
+cyB0aHJlYWQgaXMgYmFzZWQgb24gTWFyaydzIFJLMzM5OSBWT1AgdGhyZWFkWzBdIGFuZCBteSBS
+SzMzOTkgZURQCnRocmVhZFsxXS4KClswXTogaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
+YXRjaC84ODg2MDQxLwpbMV06IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTIw
+NDQ5Ny8KCgpDaGFuZ2VzIGluIHY0OgotIEF2b2lkIHRoZSB3ZWlyZCBiZWhhdmlvciBpbiByb2Nr
+Y2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcoKS4gKFNlYW4pCi0gTWFrZSBsaW5lX2ZsYWdfbnVtX3gg
+dG8gYW4gYXJyYXkuIChTZWFuKQotIFJlbW92ZSB0aGUgdW51c2VkIHZvcF9jZmdfZG9uZSgpIGlu
+IHZvcF9saW5lX2ZsYWdfaXJxX2VuYWJsZSgpLiAoU3RlcGhhbmUsIHJldmlld2VkIGluIEdvb2ds
+ZSBnZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8j
+L2MvMzQ5MDg0LzMzL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wLmNA
+NDY2XQotIFR1Y2sgdGhlIGdsb2JhbCAicHNyX2xpc3QiICYgInBzcl9saXN0X211dGV4IiBpbiBz
+dHJ1Y3Qgcm9ja2NoaXBfZHJtX3ByaXZhdGUuIChTZWFuKQotIE1vdmUgdGhlIGFjY2VzcyBvZiAi
+cHNyLT5zdGF0ZSIgdW5kZXIgInBzci0+c3RhdGVfbXV0ZXgiJ3MgcHJvdGVjdC4gKFNlYW4pCi0g
+TGV0ICJwc3ItPnN0YXRlID0gUFNSX0ZMVVNIIiB1bmRlciAicHNyLT5zdGF0ZV9tdXRleCIncyBw
+cm90ZWN0LiAoU2VhbikKLSBDb2xsZWN0IHBzcl9lbmFibGUoKSBhbmQgcHNyX2Rpc2FibGUoKSBp
+bnRvIHBzcl9zZXRfc3RhdGUoKQotIHMvNVwgc2Vjb25kL1BTUl9GTFVTSF9USU1FT1VULyAoU2Vh
+bikKLSBGbHVzaCB0aGUgcHNyIGNhbGxiYWNrIGluIHZvcF9jcnRjX2Rpc2FibGUoKS4gKFN0w6lw
+aGFuZSwgcmV2aWV3ZWQgaW4gR29vZ2xlIGdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJl
+dmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDkwODQvNi9kcml2ZXJzL2dwdS9kcm0vcm9ja2No
+aXAvcm9ja2NoaXBfZHJtX3ZvcC5jQDQ3NV0KLSBBZGQgdGhlIG1pc3NpbmcgZmlsZSBoZWFkIHdp
+dGggbGljZW5zZS4gKFN0w6lwaGFuZSwgcmV2aWV3ZWQgaW4gR29vZ2xlIGdlcnJpdCkKICAgIFto
+dHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNTc1NjMvMS9kcml2
+ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5oQDNdCi0gRG93bmdyYWRlIHRo
+ZSBQU1IgdmVyc2lvbiBwcmludCBtZXNzYWdlIHRvIGRlYnVnIGxldmVsLiAoU2VhbikKLSBSZXR1
+cm4gJ3ZvaWQnIGluc3RlYWQgb2YgJ2ludCcgaW4gYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNy
+KCkuIChTZWFuKQotIERlbGV0ZSB0aGUgdW51c2VkIHJlYWQgZHBjZCBvcGVyYXRpb25zIGluIGFu
+YWxvZ2l4X2RwX2VuYWJsZV9zaW5rX3BzcigpLiAoU2VhbikKLSBEZWxldGUgdGhlIGFyYml0cmFy
+eSB1c2xlZXBfcmFuZ2UgaW4gYW5hbG9naXhfZHBfZW5hYmxlX3Bzcl9jcmMuIChTZWFuKS4KLSBD
+bGVhbiB1cCB0aGUgaGFyZGNvZGVkIHZhbHVlcyBpbiBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQo
+KS4gKFNlYW4pCi0gUmVuYW1lICJhY3RpdmUvaW5hY3RpdmUiIHRvICJlbmFibGUvZGlzYWJsZSIu
+IChTZWFuLCBEb21pbmlrKQotIEtlZXAgc2V0IHRoZSBQU1JfVklEX0NSQ19GTFVTSCBnYXRlIGlu
+IGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3JfY3JjKCkuCi0gUmV0dXJuICd2b2lkJyBpbnN0ZWFkIG9m
+ICdpbnQnIGluIGFuYWxvZ2l4X2RwX3Bzcl9zZXQoKS4gKFNlYW4pCi0gUHVsbCB0aGUgMTBtcyBk
+ZWxheSB0aW1lIG91dCBpbnRvIGEgI2RlZmluZS4gKFNlYW4pCi0gSW1wcm92ZWQgdGhlIGNvZGUg
+b2YgYW5hbG9naXhfZHBfcHNyX3dvcmsoKS4gKFNlYW4pCi0gSW5kZW50ZWQgd2l0aCBzcGFjZXMg
+Zm9yIG5ldyBudW1iZXJzIGluIHJvY2tjaGlwX2RwX2RldmljZSBzdHJ1Y3QuIChTdMOpcGhhbmUs
+IHJldmlld2VkIGF0IEdvb2dsZSBnZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcu
+Z29vZ2xlc291cmNlLmNvbS8jL2MvMzQ5MDg1LzMzL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9h
+bmFsb2dpeF9kcC1yb2NrY2hpcC5jQDgzXQoKQ2hhbmdlcyBpbiB2MzoKLSBFeHBvcnQgdGhlICdy
+b2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcnIHN5bWJvbCwgYW5kIGRvY3VtZW50IGl0LgotIEFk
+ZCAnbGluZV9mbGFnX251bV8wJyBmb3IgUkszMjg4L1JLMzAzNgotIFJlbW92ZSB0aGUgbm90aWZ5
+IGZvciB3YWl0aW5nIGxpbmVfZmxhZyBldmVudCAoRGFuaWVsKQotIHNwbGl0IHRoZSBwc3IgZmxv
+dyBpbnRvIGFuIGNvbW1vbiBhYnN0cmFjdGVkIFBTUiBkcml2ZXIKLSBpbXBsZW1lbnQgdGhlICdm
+Yi0+ZGlydHknIGNhbGxiYWNrIGZ1bmN0aW9uIChEYW5pZWwpCi0gYXZvaWQgdG8gdXNlIG5vdGlm
+eSB0byBhY3FpdXJlIGZvciB2YWN0IGV2ZW50IChEYW5pZWwpCi0gcmVtb3ZlIHBzcl9hY3RpdmUo
+KSBjYWxsYmFjayB3aGljaCBpbnRyb2R1Y2UgaW4gdjIKLSBzcGxpdCBhbmFsb2dpeF9kcF9lbmFi
+bGVfcHNyKCksIG1ha2UgaXQgbW9yZSBjbGVhcmx5CiAgICBhbmFsb2dpeF9kcF9kZXRlY3Rfc2lu
+a19wc3IoKQogICAgYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNyKCkKLSByZW1vdmUgc29tZSBu
+b3NpZSByZWdpc3RlciBzZXR0aW5nIGNvbW1lbnRzCi0gc3BsaXQgdGhlIGNvbW1vbiBwc3IgbG9n
+aWMgaW50byBhIHNlcGVyYXRlIGRyaXZlciwgbWFrZSB0aGlzIHRvIGEKICBzaW1wbGUgc3ViLXBz
+ciBkZXZpY2UgZHJpdmVyLgoKQ2hhbmdlcyBpbiB2MjoKLSBJbnRyb2R1Y2UgaW4gdjIsIHNwbGl0
+IFZPUCBsaW5lIGZsYWcgY2hhbmdlcyBvdXQKLSBpbnRyb2R1Y2UgaW4gdjIsIHNwbGl0ZSB0aGUg
+Y29tbW9uIEFuYWxvZ2l4IERQIGNoYW5nZXMgb3V0Ci0gcmVtb3ZlIHZibGFuayBub3RpZnkgb3V0
+IChEYW5pZWwpCi0gY3JlYXRlIGEgcHNyX2FjdGl2ZSgpIGNhbGxiYWNrIGluIHZvcCBkYXRhIHN0
+cnVjdC4KCllha2lyIFlhbmcgKDQpOgogIGRybS9yb2NrY2hpcDogdm9wOiBleHBvcnQgbGluZSBm
+bGFnIGZ1bmN0aW9uCiAgZHJtL3JvY2tjaGlwOiBhZGQgYW4gY29tbW9uIGFic3RyYWN0ZWQgUFNS
+IGRyaXZlcgogIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBhZGQgdGhlIFBTUiBmdW5jdGlvbiBz
+dXBwb3J0CiAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogaW1wbGVtZW50IFBTUiBmdW5jdGlv
+bgoKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwg
+IDYwICsrKysrKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
+b3JlLmggfCAgIDQgKwogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9yZWcuYyAgfCAgNDkgKysrKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5h
+bG9naXhfZHBfcmVnLmggIHwgIDI4ICsrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL01ha2Vm
+aWxlICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9h
+bmFsb2dpeF9kcC1yb2NrY2hpcC5jICAgIHwgIDU3ICsrKysrKwogZHJpdmVycy9ncHUvZHJtL3Jv
+Y2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyAgICAgICAgfCAgIDQgKwogZHJpdmVycy9ncHUvZHJt
+L3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuaCAgICAgICAgfCAgIDYgKwogZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5jICAgICAgICAgfCAgMTIgKysKIGRyaXZlcnMv
+Z3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fcHNyLmMgICAgICAgIHwgMjIzICsrKysrKysr
+KysrKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3Iu
+aCAgICAgICAgfCAgMjYgKysrCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
+X3ZvcC5jICAgICAgICB8IDE0NyArKysrKysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3JvY2tj
+aGlwL3JvY2tjaGlwX2RybV92b3AuaCAgICAgICAgfCAgIDIgKwogZHJpdmVycy9ncHUvZHJtL3Jv
+Y2tjaGlwL3JvY2tjaGlwX3ZvcF9yZWcuYyAgICAgICAgfCAgIDQgKwogaW5jbHVkZS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4X2RwLmggICAgICAgICAgICAgICAgICAgfCAgIDMgKwogMTUgZmlsZXMgY2hh
+bmdlZCwgNjI2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5jCiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuaAoKLS0g
+CjEuOS4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
