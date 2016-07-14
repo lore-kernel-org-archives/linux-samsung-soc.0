@@ -1,53 +1,50 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Properly select eMMC HighSpeed mode
-Date: Thu, 14 Jul 2016 14:47:38 +0200
-Message-ID: <1468500458-7142-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:24063 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750960AbcGNMsH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2016 08:48:07 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: s3c64xx: avoid warning about 'struct device_node'
+Date: Thu, 14 Jul 2016 14:47:31 +0200
+Message-ID: <12553444.SKUaCZubIO@wuerfel>
+References: <20160627110303.3391769-1-arnd@arndb.de> <1807726.lxvlsY5ymW@wuerfel> <4080443.gtvsF1A0TV@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4080443.gtvsF1A0TV@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Exynos5410 supports eMMC version 4.41 so HS200 is the top mode which
-should be configured.  This is reflected in usage of
-"samsung,exynos5250-dw-mshc" compatible.  However DTS contained also
-property "mmc-hs400-1_8v" which is parsed by MMC core therefore
-resulting in mixed configuration.  MMC core set HS400 but dwmmc_exynos
-driver did not configure the data strobe for HS400 DDR mode.
+On Monday, July 11, 2016 1:40:45 PM CEST Arnd Bergmann wrote:
+> On Monday, July 11, 2016 1:15:11 PM CEST Arnd Bergmann wrote:
+> > On Monday, June 27, 2016 1:33:51 PM CEST Krzysztof Kozlowski wrote:
+> > > On 06/27/2016 01:02 PM, Arnd Bergmann wrote:
+> > > > The change to simplify of_platform_populate() had an unintended
+> > > > side-effect of introducing a build warning on s3c64xx:
+> > > > 
+> > > > In file included from arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c:18:0:
+> > > > arch/arm/mach-s3c64xx/common.h:27:30: error: 'struct device_node' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+> > > > 
+> > > > This adds a forward-declaration for the structure name in the
+> > > > header to avoid the warning.
+> > > > 
+> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > Fixes: 850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
+> > > > ---
+> > > > Rob, can you apply this on top of the devicetree git so we don't
+> > > > have to coordinate the merges?
+> > > 
+> > > Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > 
+> > Hi Rob,
+> > 
+> > I still get the warning in every linux-next build, do you plan to pick
+> > up the fix for the commit you merged, or should I try to work around it
+> > in arm-soc and leave this as a bisection problem?
+> > 
+> 
+> Now with Rob back on Cc.
 
-Removal of HS400 properties fixes semi-random mmc errors during boot:
-  mmc_host mmc0: Bus speed (slot 0) = 400000000Hz (slot req 200000000Hz, actual 200000000HZ div = 1)
-  mmc0: mmc_select_hs400 failed, error -84
-  mmc0: error -84 whilst initialising MMC card
+I've applied it to arm-soc/next/cleanup now, so we can avoid the warning
+in linux-next and in 4.8, though it is still present in the devicetree
+git.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5410-odroidxu.dts | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index d9499310a301..7536164438ca 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -447,14 +447,12 @@
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
--	samsung,dw-mshc-hs400-timing = <0 2>;
- 	samsung,read-strobe-delay = <90>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
- 	mmc-hs200-1_8v;
--	mmc-hs400-1_8v;
- 	vmmc-supply = <&ldo20_reg>;
- 	vqmmc-supply = <&ldo11_reg>;
- };
--- 
-1.9.1
+	Arnd
