@@ -1,30 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] arm64: dts: Fix RTC by providing rtc_src clock
-Date: Thu, 14 Jul 2016 14:44:04 +0200
-Message-ID: <4469058.ECgkgrt5Se@wuerfel>
-References: <1468222458-4265-1-git-send-email-k.kozlowski@samsung.com> <1468222458-4265-2-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1468222458-4265-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, krzk@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Properly select eMMC HighSpeed mode
+Date: Thu, 14 Jul 2016 14:47:38 +0200
+Message-ID: <1468500458-7142-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:24063 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750960AbcGNMsH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Jul 2016 08:48:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Monday, July 11, 2016 9:34:18 AM CEST Krzysztof Kozlowski wrote:
-> From: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> Add RTC source clock as Exynos7 needs source (32.768KHz) clock
-> for RTC block. Without this currently S3C RTC driver probe is broken
-> on this SoC.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
+Exynos5410 supports eMMC version 4.41 so HS200 is the top mode which
+should be configured.  This is reflected in usage of
+"samsung,exynos5250-dw-mshc" compatible.  However DTS contained also
+property "mmc-hs400-1_8v" which is parsed by MMC core therefore
+resulting in mixed configuration.  MMC core set HS400 but dwmmc_exynos
+driver did not configure the data strobe for HS400 DDR mode.
 
-Applied to fixes, thanks!
+Removal of HS400 properties fixes semi-random mmc errors during boot:
+  mmc_host mmc0: Bus speed (slot 0) = 400000000Hz (slot req 200000000Hz, actual 200000000HZ div = 1)
+  mmc0: mmc_select_hs400 failed, error -84
+  mmc0: error -84 whilst initialising MMC card
 
-	Arnd
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5410-odroidxu.dts | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+index d9499310a301..7536164438ca 100644
+--- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -447,14 +447,12 @@
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+-	samsung,dw-mshc-hs400-timing = <0 2>;
+ 	samsung,read-strobe-delay = <90>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
+ 	mmc-hs200-1_8v;
+-	mmc-hs400-1_8v;
+ 	vmmc-supply = <&ldo20_reg>;
+ 	vqmmc-supply = <&ldo11_reg>;
+ };
+-- 
+1.9.1
