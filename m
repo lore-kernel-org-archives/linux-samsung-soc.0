@@ -1,81 +1,75 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: ARM: dts: exynos: Properly select eMMC HighSpeed mode
-Date: Fri, 15 Jul 2016 09:36:30 +0200
-Message-ID: <5788927E.2050803@samsung.com>
-References: <1468500458-7142-1-git-send-email-k.kozlowski@samsung.com>
- <578857FD.7030601@samsung.com>
+Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
+Date: Fri, 15 Jul 2016 09:55:07 +0200
+Message-ID: <578896DB.7060708@samsung.com>
+References: <1468525055.4843.4.camel@ndufresne.ca>
+ <1468525558.4843.6.camel@ndufresne.ca>
+ <5787EF8E.2010401@math.uni-bielefeld.de> <1468528408.4843.9.camel@ndufresne.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:8726 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:9800 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229AbcGOHge (ORCPT
+	with ESMTP id S1750865AbcGOHzL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2016 03:36:34 -0400
-In-reply-to: <578857FD.7030601@samsung.com>
+	Fri, 15 Jul 2016 03:55:11 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OAC00F9TJBX5410@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2016 08:55:09 +0100 (BST)
+In-reply-to: <1468528408.4843.9.camel@ndufresne.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: nicolas@ndufresne.ca, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 07/15/2016 05:26 AM, Alim Akhtar wrote:
-> Hi Krzysztof,
-> 
-> On 07/14/2016 06:17 PM, Krzysztof Kozlowski wrote:
->> Exynos5410 supports eMMC version 4.41 so HS200 is the top mode which
->> should be configured.  This is reflected in usage of
->> "samsung,exynos5250-dw-mshc" compatible.  However DTS contained also
->> property "mmc-hs400-1_8v" which is parsed by MMC core therefore
->> resulting in mixed configuration.  MMC core set HS400 but dwmmc_exynos
->> driver did not configure the data strobe for HS400 DDR mode.
+On 07/14/2016 10:33 PM, Nicolas Dufresne wrote:
+> Le jeudi 14 juillet 2016 =C3=A0 22:01 +0200, Tobias Jakobi a =C3=A9cr=
+it :
+>> Hi Nicolas,
 >>
->> Removal of HS400 properties fixes semi-random mmc errors during boot:
->>    mmc_host mmc0: Bus speed (slot 0) = 400000000Hz (slot req
->> 200000000Hz, actual 200000000HZ div = 1)
->>    mmc0: mmc_select_hs400 failed, error -84
->>    mmc0: error -84 whilst initialising MMC card
+>> do you have the reset and poweroff drivers activated?
 >>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos5410-odroidxu.dts | 2 --
->>   1 file changed, 2 deletions(-)
+>> CONFIG_POWER_RESET_SYSCON=3Dy
+>> CONFIG_POWER_RESET_SYSCON_POWEROFF=3Dy
+>=20
+> Yes, both.
+>=20
 >>
->> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts
->> b/arch/arm/boot/dts/exynos5410-odroidxu.dts
->> index d9499310a301..7536164438ca 100644
->> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
->> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
->> @@ -447,14 +447,12 @@
->>       samsung,dw-mshc-ciu-div = <3>;
->>       samsung,dw-mshc-sdr-timing = <0 4>;
->>       samsung,dw-mshc-ddr-timing = <0 2>;
->> -    samsung,dw-mshc-hs400-timing = <0 2>;
-> not sure but can we use /delete-property/ option for this removable?
-
-No need for this. This property is set only here - in Odroid XU DTS.
-
->>       samsung,read-strobe-delay = <90>;
-> this also need to be removed.
-
-Ah, right, thanks!
-
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8
->> &sd0_cd>;
->>       bus-width = <8>;
->>       cap-mmc-highspeed;
->>       mmc-hs200-1_8v;
->> -    mmc-hs400-1_8v;
-> same as above if possible use /delete-property/
-
-Same, no need because this does not come from other DTS/DTSI.
-
->>       vmmc-supply = <&ldo20_reg>;
->>       vqmmc-supply = <&ldo11_reg>;
->>   };
+>> With best wishes,
+>> Tobias
 >>
-> 
+>>
+>> Nicolas Dufresne wrote:
+>>> Le jeudi 14 juillet 2016 =C3=A0 15:37 -0400, Nicolas Dufresne a =C3=
+=A9crit :
+>>>> Hi,
+>>>>
+>>>> I'm using the Odroid U2 to test some features implemented in
+>>>> GStreamer.
+>>>> The parts I need mostly works in mainline kernel, my main
+>>>> annoyance
+>>>> ist
+>>>> that reboot hangs.
+>>>>
+>>>> Is this issue known ? I'm booting from SD card is that matters.
+>>>> Any
+>>>> advise would be appreciated. I'm not list member, so please keep
+>>>> me
+>>>> in
+>>>> CC. I'm sharing my .config, in case that is my fault.
+
+=46irst of all - use just command "reboot" to restart. It should work. =
+If
+it doesn't, please let us now.
+
+I was able to reproduce your issue - OOPS in emergency restart - also i=
+n
+my configuration (U3 + eMMC + network boot).
+
+It is weird... I'll take a look at it.
 
 Best regards,
-Krzysztof
+Krzysztog
