@@ -1,108 +1,52 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v4 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Fri, 15 Jul 2016 13:45:59 +0800
-Message-ID: <57887897.2090303@rock-chips.com>
-References: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
- <1468469758-12722-1-git-send-email-ykk@rock-chips.com>
- <20160714152640.GD13857@seanpaul0.roam.corp.google.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] media: Doc add missing documentation for
+ samsung,exynos4212-jpeg
+Date: Fri, 15 Jul 2016 08:25:10 +0200
+Message-ID: <578881C6.8040701@samsung.com>
+References: <1468526499-8840-1-git-send-email-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160714152640.GD13857@seanpaul0.roam.corp.google.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1468526499-8840-1-git-send-email-shuahkh@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, mchehab@osg.samsung.com, andrzej.p@samsung.com, hans.verkuil@cisco.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2VhbiwKCk9uIDA3LzE0LzIwMTYgMTE6MjYgUE0sIFNlYW4gUGF1bCB3cm90ZToKPiBPbiBUaHUs
-IEp1bCAxNCwgMjAxNiBhdCAxMjoxNTo1OFBNICswODAwLCBZYWtpciBZYW5nIHdyb3RlOgo+PiBB
-bHdheSBlbmFibGUgdGhlIFBTUiBmdW5jdGlvbiBmb3IgUm9ja2NoaXAgYW5hbG9naXhfZHAgZHJp
-dmVyLiBJZiBwYW5lbAo+PiBkb24ndCBzdXBwb3J0IFBTUiwgdGhlbiB0aGUgY29yZSBhbmFsb2dp
-eF9kcCB3b3VsZCBpZ25vcmUgdGhpcyBzZXR0aW5nLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBZYWtp
-ciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cj4gUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2Vh
-bnBhdWxAY2hyb21pdW0ub3JnPgoKVGhhbmtzIDotRAoKLSBZYWtpcgoKPj4gLS0tCj4+IENoYW5n
-ZXMgaW4gdjQ6Cj4+IC0gUmV0dXJuICd2b2lkJyBpbnN0ZWFkIG9mICdpbnQnIGluIGFuYWxvZ2l4
-X2RwX3Bzcl9zZXQoKS4gKFNlYW4pCj4+IC0gUHVsbCB0aGUgMTBtcyBkZWxheSB0aW1lIG91dCBp
-bnRvIGEgI2RlZmluZS4gKFNlYW4pCj4+IC0gSW1wcm92ZWQgdGhlIGNvZGUgb2YgYW5hbG9naXhf
-ZHBfcHNyX3dvcmsoKS4gKFNlYW4pCj4+IC0gSW5kZW50ZWQgd2l0aCBzcGFjZXMgZm9yIG5ldyBu
-dW1iZXJzIGluIHJvY2tjaGlwX2RwX2RldmljZSBzdHJ1Y3QuIChTdMOpcGhhbmUsIHJldmlld2Vk
-IGF0IEdvb2dsZSBnZXJyaXQpCj4+ICAgICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2ds
-ZXNvdXJjZS5jb20vIy9jLzM0OTA4NS8zMy9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9n
-aXhfZHAtcm9ja2NoaXAuY0A4M10KPj4KPj4gQ2hhbmdlcyBpbiB2MzoKPj4gLSBzcGxpdCB0aGUg
-Y29tbW9uIHBzciBsb2dpYyBpbnRvIGEgc2VwZXJhdGUgZHJpdmVyLCBtYWtlIHRoaXMgdG8gYQo+
-PiAgICBzaW1wbGUgc3ViLXBzciBkZXZpY2UgZHJpdmVyLgo+Pgo+PiBDaGFuZ2VzIGluIHYyOgo+
-PiAtIHJlbW92ZSB2Ymxhbmsgbm90aWZ5IG91dCAoRGFuaWVsKQo+PiAtIGNyZWF0ZSBhIHBzcl9h
-Y3RpdmUoKSBjYWxsYmFjayBpbiB2b3AgZGF0YSBzdHJ1Y3QuCj4+Cj4+ICAgZHJpdmVycy9ncHUv
-ZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgfCA1NyArKysrKysrKysrKysrKysr
-KysrKysrKysrCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDU3IGluc2VydGlvbnMoKykKPj4KPj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5j
-IGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPj4gaW5k
-ZXggZTgxZTE5YS4uYWE5MTZmNCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKPj4gQEAgLTMyLDYgKzMyLDcgQEAKPj4gICAjaW5j
-bHVkZSA8ZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oPgo+PiAgIAo+PiAgICNpbmNsdWRlICJyb2Nr
-Y2hpcF9kcm1fZHJ2LmgiCj4+ICsjaW5jbHVkZSAicm9ja2NoaXBfZHJtX3Bzci5oIgo+PiAgICNp
-bmNsdWRlICJyb2NrY2hpcF9kcm1fdm9wLmgiCj4+ICAgCj4+ICAgI2RlZmluZSBSSzMyODhfR1JG
-X1NPQ19DT042CQkweDI1Ywo+PiBAQCAtNDEsNiArNDIsOSBAQAo+PiAgIAo+PiAgICNkZWZpbmUg
-SElXT1JEX1VQREFURSh2YWwsIG1hc2spCSh2YWwgfCAobWFzaykgPDwgMTYpCj4+ICAgCj4+ICsj
-ZGVmaW5lIFBTUl9TRVRfREVMQVlfVElNRQkJbXNlY3NfdG9famlmZmllcygxMCkKPj4gKyNkZWZp
-bmUgUFNSX1dBSVRfTElORV9GTEFHX1RJTUVPVVRfTVMJMTAwCj4+ICsKPj4gICAjZGVmaW5lIHRv
-X2RwKG5tKQljb250YWluZXJfb2Yobm0sIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UsIG5tKQo+
-PiAgIAo+PiAgIC8qKgo+PiBAQCAtNjgsMTEgKzcyLDU1IEBAIHN0cnVjdCByb2NrY2hpcF9kcF9k
-ZXZpY2Ugewo+PiAgIAlzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdyZjsKPj4gICAJc3RydWN0
-IHJlc2V0X2NvbnRyb2wgICAgICpyc3Q7Cj4+ICAgCj4+ICsJc3RydWN0IGRlbGF5ZWRfd29yayAg
-ICAgIHBzcl93b3JrOwo+PiArCXVuc2lnbmVkIGludCAgICAgICAgICAgICBwc3Jfc3RhdGU7Cj4+
-ICsKPj4gICAJY29uc3Qgc3RydWN0IHJvY2tjaGlwX2RwX2NoaXBfZGF0YSAqZGF0YTsKPj4gICAK
-Pj4gICAJc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0YSBwbGF0X2RhdGE7Cj4+ICAgfTsKPj4g
-ICAKPj4gK3N0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX3Bzcl9zZXQoc3RydWN0IGRybV9lbmNvZGVy
-ICplbmNvZGVyLCBib29sIGVuYWJsZWQpCj4+ICt7Cj4+ICsJc3RydWN0IHJvY2tjaGlwX2RwX2Rl
-dmljZSAqZHAgPSB0b19kcChlbmNvZGVyKTsKPj4gKwo+PiArCWRldl9kYmcoZHAtPmRldiwgIiVz
-IFBTUi4uLlxuIiwgZW5hYmxlZCA/ICJFbnRyeSIgOiAiRXhpdCIpOwo+PiArCj4+ICsJaWYgKGVu
-YWJsZWQpCj4+ICsJCWRwLT5wc3Jfc3RhdGUgPSBFRFBfVlNDX1BTUl9TVEFURV9BQ1RJVkU7Cj4+
-ICsJZWxzZQo+PiArCQlkcC0+cHNyX3N0YXRlID0gfkVEUF9WU0NfUFNSX1NUQVRFX0FDVElWRTsK
-Pj4gKwo+PiArCXNjaGVkdWxlX2RlbGF5ZWRfd29yaygmZHAtPnBzcl93b3JrLCBQU1JfU0VUX0RF
-TEFZX1RJTUUpOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9wc3Jfd29y
-ayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCj4+ICt7Cj4+ICsJc3RydWN0IHJvY2tjaGlwX2Rw
-X2RldmljZSAqZHAgPQo+PiArCQkJCWNvbnRhaW5lcl9vZih3b3JrLCB0eXBlb2YoKmRwKSwgcHNy
-X3dvcmsud29yayk7Cj4+ICsJc3RydWN0IGRybV9jcnRjICpjcnRjID0gZHAtPmVuY29kZXIuY3J0
-YzsKPj4gKwlpbnQgcHNyX3N0YXRlID0gZHAtPnBzcl9zdGF0ZTsKPj4gKwlpbnQgdmFjdF9lbmQ7
-Cj4+ICsJaW50IHJldDsKPj4gKwo+PiArCWlmICghY3J0YykKPj4gKwkJcmV0dXJuOwo+PiArCj4+
-ICsJdmFjdF9lbmQgPSBjcnRjLT5tb2RlLnZ0b3RhbCAtIGNydGMtPm1vZGUudnN5bmNfc3RhcnQg
-KyBjcnRjLT5tb2RlLnZkaXNwbGF5Owo+PiArCj4+ICsJcmV0ID0gcm9ja2NoaXBfZHJtX3dhaXRf
-bGluZV9mbGFnKGRwLT5lbmNvZGVyLmNydGMsIHZhY3RfZW5kLAo+PiArCQkJCQkgIFBTUl9XQUlU
-X0xJTkVfRkxBR19USU1FT1VUX01TKTsKPj4gKwlpZiAocmV0KSB7Cj4+ICsJCWRldl9lcnIoZHAt
-PmRldiwgImxpbmUgZmxhZyBpbnRlcnJ1cHQgZGlkIG5vdCBhcnJpdmVcbiIpOwo+PiArCQlyZXR1
-cm47Cj4+ICsJfQo+PiArCj4+ICsJaWYgKHBzcl9zdGF0ZSA9PSBFRFBfVlNDX1BTUl9TVEFURV9B
-Q1RJVkUpCj4+ICsJCWFuYWxvZ2l4X2RwX2VuYWJsZV9wc3IoZHAtPmRldik7Cj4+ICsJZWxzZQo+
-PiArCQlhbmFsb2dpeF9kcF9kaXNhYmxlX3BzcihkcC0+ZGV2KTsKPj4gK30KPj4gKwo+PiAgIHN0
-YXRpYyBpbnQgcm9ja2NoaXBfZHBfcHJlX2luaXQoc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAq
-ZHApCj4+ICAgewo+PiAgIAlyZXNldF9jb250cm9sX2Fzc2VydChkcC0+cnN0KTsKPj4gQEAgLTM0
-MCwxMiArMzg4LDIxIEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfZHBfYmluZChzdHJ1Y3QgZGV2aWNl
-ICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPj4gICAJZHAtPnBsYXRfZGF0YS5wb3dlcl9v
-ZmYgPSByb2NrY2hpcF9kcF9wb3dlcmRvd247Cj4+ICAgCWRwLT5wbGF0X2RhdGEuZ2V0X21vZGVz
-ID0gcm9ja2NoaXBfZHBfZ2V0X21vZGVzOwo+PiAgIAo+PiArCWRwLT5wc3Jfc3RhdGUgPSB+RURQ
-X1ZTQ19QU1JfU1RBVEVfQUNUSVZFOwo+PiArCUlOSVRfREVMQVlFRF9XT1JLKCZkcC0+cHNyX3dv
-cmssIGFuYWxvZ2l4X2RwX3Bzcl93b3JrKTsKPj4gKwo+PiArCXJvY2tjaGlwX2RybV9wc3JfcmVn
-aXN0ZXIoJmRwLT5lbmNvZGVyLCBhbmFsb2dpeF9kcF9wc3Jfc2V0KTsKPj4gKwo+PiAgIAlyZXR1
-cm4gYW5hbG9naXhfZHBfYmluZChkZXYsIGRwLT5kcm1fZGV2LCAmZHAtPnBsYXRfZGF0YSk7Cj4+
-ICAgfQo+PiAgIAo+PiAgIHN0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX3VuYmluZChzdHJ1Y3QgZGV2
-aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKPj4gICAJCQkgICAgICAgdm9pZCAqZGF0
-YSkKPj4gICB7Cj4+ICsJc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAgPSBkZXZfZ2V0X2Ry
-dmRhdGEoZGV2KTsKPj4gKwo+PiArCXJvY2tjaGlwX2RybV9wc3JfdW5yZWdpc3RlcigmZHAtPmVu
-Y29kZXIpOwo+PiArCj4+ICAgCXJldHVybiBhbmFsb2dpeF9kcF91bmJpbmQoZGV2LCBtYXN0ZXIs
-IGRhdGEpOwo+PiAgIH0KPj4gICAKPj4gLS0gCj4+IDEuOS4xCj4+Cj4+Cj4+IF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKPj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Cj4KCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Shuah,
+
+On 07/14/2016 10:01 PM, Shuah Khan wrote:
+> Add add missing documentation for samsung,exynos4212-jpeg codec,
+> reorder entries to improve readability and make it easier to add
+> new entries.
+>
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>   Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> index 38941db..093614c 100644
+> --- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> +++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> @@ -3,9 +3,9 @@ Samsung S5P/EXYNOS SoC series JPEG codec
+>   Required properties:
+>
+>   - compatible	: should be one of:
+> -		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
+> -		  "samsung,exynos3250-jpeg", "samsung,exynos5420-jpeg",
+> -		  "samsung,exynos5433-jpeg";
+> +		  "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
+> +		  "samsung,exynos4210-jpeg", "samsung,exynos4212-jpeg",
+> +		  "samsung,exynos5420-jpeg", "samsung,exynos5433-jpeg";
+>   - reg		: address and length of the JPEG codec IP register set;
+>   - interrupts	: specifies the JPEG codec IP interrupt;
+>   - clock-names   : should contain:
+>
+
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
+-- 
+Best regards,
+Jacek Anaszewski
