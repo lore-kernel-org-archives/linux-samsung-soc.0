@@ -1,122 +1,112 @@
-From: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
-Subject: Re: [PATCH v2 00/10] Exynos IOMMU: proper runtime PM support (use
-	device dependencies)
-Date: Fri, 15 Jul 2016 15:21:22 +0200
-Message-ID: <5788E352.3040801@math.uni-bielefeld.de>
-References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
-	<5787B2B0.9020809@math.uni-bielefeld.de>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
+Date: Fri, 15 Jul 2016 15:23:23 +0200
+Message-ID: <5788E3CB.5080103@math.uni-bielefeld.de>
+References: <1468525055.4843.4.camel@ndufresne.ca>
+ <1468525558.4843.6.camel@ndufresne.ca>
+ <5787EF8E.2010401@math.uni-bielefeld.de>
+ <1468528408.4843.9.camel@ndufresne.ca> <578896DB.7060708@samsung.com>
+ <5788CA67.5090200@samsung.com> <5788E1EB.4030003@math.uni-bielefeld.de>
+ <5788E31D.6010606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <5787B2B0.9020809-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38917 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751540AbcGONXZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Jul 2016 09:23:25 -0400
+In-Reply-To: <5788E31D.6010606@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, nicolas@ndufresne.ca, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Tobias Jakobi wrote:
-> Hello Marek,
-> 
-> I've tested the patchset on 4.7-rc7 and noticed that it breaks reboot on
-> my ODROID-X2.
-> 
-> Going to check where exactly things break.
-Sadly it's the last patch where everything comes together:
-"iommu/exynos: Add proper runtime pm support"
+Krzysztof Kozlowski wrote:
+> On 07/15/2016 03:15 PM, Tobias Jakobi wrote:
+>> Hey,
+>>
+>> Krzysztof Kozlowski wrote:
+>>> On 07/15/2016 09:55 AM, Krzysztof Kozlowski wrote:
+>>>>>> Nicolas Dufresne wrote:
+>>>>>>> Le jeudi 14 juillet 2016 =C3=A0 15:37 -0400, Nicolas Dufresne a=
+ =C3=A9crit :
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> I'm using the Odroid U2 to test some features implemented in
+>>>>>>>> GStreamer.
+>>>>>>>> The parts I need mostly works in mainline kernel, my main
+>>>>>>>> annoyance
+>>>>>>>> ist
+>>>>>>>> that reboot hangs.
+>>>>>>>>
+>>>>>>>> Is this issue known ? I'm booting from SD card is that matters=
+=2E
+>>>>>>>> Any
+>>>>>>>> advise would be appreciated. I'm not list member, so please ke=
+ep
+>>>>>>>> me
+>>>>>>>> in
+>>>>>>>> CC. I'm sharing my .config, in case that is my fault.
+>>>>
+>>>> First of all - use just command "reboot" to restart. It should wor=
+k. If
+>>>> it doesn't, please let us now.
+>>>>
+>>>> I was able to reproduce your issue - OOPS in emergency restart - a=
+lso in
+>>>> my configuration (U3 + eMMC + network boot).
+>>>>
+>>>> It is weird... I'll take a look at it.
+>>>
+>>> Actually I did not encounter OOPS of yours. I was able to reproduce=
+ a
+>>> failure to reboot on U3. XU3 reboots fine. It might be related to p=
+wrseq...
+>> I'm not sure how much that helps, but I can't reproduce any of this =
+on
+>> my X2 (which is quite closely related to the U2/U3).
+>=20
+> You mean sysrq reboot works fine?
+No, I haven't checked that yet. But normal reboot and poweroff via init
+works properly.
 
-I still have to check if forcing runpm status to 'on' makes a
-difference. I suspect that the aggressive clock gating might be the reason?
+- Tobias
 
-With best wishes,
-Tobias
 
-> With best wishes,
-> Tobias
-> 
-> 
-> Marek Szyprowski wrote:
->> Hello,
->>
->> This patch series finally implements proper runtime PM support in Exynos
->> IOMMU driver. This has been achieved by using device links, which lets
->> SYSMMU controller's runtime PM to follow master's device runtime PM (the
->> device which actually performs DMA transaction). The main idea
->> behind this solution is an observation that any DMA activity from master
->> device can be done only when master device is active, thus when master
->> device is suspended SYSMMU controller device can also be suspended.
->>
->> This patchset solves the situation that power domains are always enabled,
->> because all SYSMMU controllers (which belongs to those domains) are
->> permanently active (because existing driver was simplified and kept
->> SYSMMU device active all the time after initialization).
->>
->> Patches 1-5 are resend of the "[RFC][PATCH 0/5] Functional dependencies
->> between devices" patchset:
->> http://thread.gmane.org/gmane.linux.power-management.general/67424/focus=2126379
->> I've included them here, because it is hard to find them all on mailing
->> list archives.
->>
->> Patches 6-8 are fixes to device dependencies/links code, which were
->> required to use this solution for Exynos IOMMU driver. I'm not PM/runtime
->> PM code expert, so please double check if my changes are really correct.
->>
->> This patchset requires my previous changes to Exynos IOMMU driver
->> submitted in the "Exynos IOMMU: improve clock management" thread:
->> http://www.spinics.net/lists/arm-kernel/msg505695.html
->>
->> Best regards
->> Marek Szyprowski
->> Samsung R&D Institute Poland
+> Best regards,
+> Krzysztof
+>=20
+>> I'm only encountering non-working reboot when applying Marek's lates=
+t
+>> IOMMU runpm patchset.
 >>
 >>
->> Changelog:
->> v2:
->> - replaced PM notifiers with generic device dependencies/links developped
->>   by Rafael J. Wysocki
->>
->> v1: http://www.spinics.net/lists/arm-kernel/msg509600.html
->> - initial version
+>>> The failure seems to be present for long time, at least since v4.2.=
+ I am
+>>> in progress of testing more releases.
+>> At least not for the X2, and I'm booting from a sdcard like Nicolas.
+>> IIRC then pwrseq only plays a role for booting from eMMC.
 >>
 >>
->> Patch summary:
+>>> ext4 backtrace present in your OOPs might be related to improper re=
+boot.
+>>> Even for emergency reboot you should first sync, then remount ro an=
+d
+>>> finally reboot (so sysrq: sub).
+>> I currently don't have access to my UART adapater, but I'll try to
+>> reproduce the Oops by issuing a reboot SysRq directly.
 >>
->> Marek Szyprowski (5):
->>   driver core: Avoid endless recursion if device has more than one link
->>   driver core: Add support for links to already probed drivers
->>   PM core: Fix restoring devices with links during system PM transition
->>   iommu/exynos: Remove excessive, useless debug
->>   iommu/exynos: Add proper runtime pm support
 >>
->> Rafael J. Wysocki (5):
->>   driver core: Add a wrapper around __device_release_driver()
->>   driver core: Functional dependencies tracking support
->>   PM core: Make async suspend/resume of devices use device links
->>   PM core: Make runtime PM of devices use device links
->>   PM core: Optimize the use of device links for runtime PM
+>> With best wishes,
+>> Tobias
 >>
->>  drivers/base/base.h          |  13 ++
->>  drivers/base/core.c          | 410 +++++++++++++++++++++++++++++++++++++++++++
->>  drivers/base/dd.c            |  65 +++++--
->>  drivers/base/power/main.c    |  68 ++++++-
->>  drivers/base/power/runtime.c | 130 +++++++++++++-
->>  drivers/iommu/exynos-iommu.c | 221 +++++++++++------------
->>  include/linux/device.h       |  41 +++++
->>  include/linux/pm.h           |   1 +
->>  include/linux/pm_runtime.h   |   6 +
->>  9 files changed, 809 insertions(+), 146 deletions(-)
 >>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>>> Best Regards,
+>>> Krzysztof
+>>>
+>>
+>>
+>>
+>=20
