@@ -1,51 +1,57 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2] media: Doc add missing documentation for samsung,exynos4212-jpeg
-Date: Fri, 15 Jul 2016 16:10:27 -0600
-Message-ID: <1468620627-9750-1-git-send-email-shuahkh@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from resqmta-po-10v.sys.comcast.net ([96.114.154.169]:44717 "EHLO
-	resqmta-po-10v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751683AbcGOWKd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2016 18:10:33 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH] media: Doc add missing documentation for
+ samsung,exynos4212-jpeg
+Date: Fri, 15 Jul 2016 16:09:26 -0600
+Message-ID: <57895F16.7010101@osg.samsung.com>
+References: <1468526499-8840-1-git-send-email-shuahkh@osg.samsung.com>
+ <578890BA.8040101@samsung.com> <57889B73.4090607@samsung.com>
+ <57889C23.3050106@samsung.com> <57889EAB.30502@samsung.com>
+ <57889FD5.9070302@samsung.com> <5788AA5E.3070301@samsung.com>
+ <5788AD39.1010108@samsung.com> <5788AEE4.8080606@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5788AEE4.8080606@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, mchehab@osg.samsung.com, andrzej.p@samsung.com, hans.verkuil@cisco.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, mchehab@osg.samsung.com, andrzej.p@samsung.com, j.anaszewski@samsung.com, hans.verkuil@cisco.com
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add add missing documentation for samsung,exynos4212-jpeg codec,
-reorder entries to improve readability and make it easier to add
-new entries.
+Hi Krzysztof and Jacek,
 
-samsung,exynos4212-jpeg and samsung,exynos4210-jpeg are identical,
-hence add samsung,exynos4212-jpeg as deprecated in the documentation.
+Thanks for the review.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
----
+On 07/15/2016 03:37 AM, Jacek Anaszewski wrote:
+> On 07/15/2016 11:30 AM, Krzysztof Kozlowski wrote:
+>> On 07/15/2016 11:18 AM, Jacek Anaszewski wrote:
+>>> On 07/15/2016 10:33 AM, Krzysztof Kozlowski wrote:
+>>>> On 07/15/2016 10:28 AM, Jacek Anaszewski wrote:
+>>>>> On 07/15/2016 10:17 AM, Krzysztof Kozlowski wrote:
+>>>>>> On 07/15/2016 10:14 AM, Jacek Anaszewski wrote:
+>>>>>>>> However if these compatibles are exactly equal then
+>>>>>>>> only one should be preferred. It makes everything easier. Second
+>>>>>>>> can be
+>>>>>>>> still documented e.g. as deprecated.
+>>>>>>>
+>>>>>>> Still, both of them are present in the driver. Shouldn't it be
+>>>>>>> reflected
+>>>>>>> in the documentation?
+>>>>>>
+>>>>>> Right, it is a good practice, so how about:
+>>>>>>
+>>>>>>      - compatible    : should be one of:
+>>>>>>              "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
+>>>>>>              "samsung,exynos4210-jpeg", "samsung,exynos5420-jpeg",
+>>>>>>              "samsung,exynos5433-jpeg";
+>>>>>>
+>>>>>>              Deprecated: "samsung,exynos4212-jpeg"
+>>>>>>
+>>>>>> (or any other formatting)
+>>>>>> plus update to DTS changing it to 4210?
 
-Changes since v1:
-- Added samsung,exynos4212-jpeg as deprecated
+I am sending the v2 doc patch that adds samsung,exynos4212-jpeg as
+deprecated to begin with.
 
- Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-index 38941db..c5399e7 100644
---- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-+++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-@@ -3,9 +3,11 @@ Samsung S5P/EXYNOS SoC series JPEG codec
- Required properties:
- 
- - compatible	: should be one of:
--		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
--		  "samsung,exynos3250-jpeg", "samsung,exynos5420-jpeg",
-+		  "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
-+		  "samsung,exynos4210-jpeg", "samsung,exynos5420-jpeg",
- 		  "samsung,exynos5433-jpeg";
-+
-+		  (Deprecated: "samsung,exynos4212-jpeg").
- - reg		: address and length of the JPEG codec IP register set;
- - interrupts	: specifies the JPEG codec IP interrupt;
- - clock-names   : should contain:
--- 
-2.7.4
+thanks,
+-- Shuah
