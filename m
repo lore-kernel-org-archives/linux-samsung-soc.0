@@ -1,49 +1,66 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] media: Doc add missing documentation for
- samsung,exynos4212-jpeg
-Date: Fri, 15 Jul 2016 10:33:25 +0200
-Message-ID: <57889FD5.9070302@samsung.com>
-References: <1468526499-8840-1-git-send-email-shuahkh@osg.samsung.com>
- <578890BA.8040101@samsung.com> <57889B73.4090607@samsung.com>
- <57889C23.3050106@samsung.com> <57889EAB.30502@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Properly select eMMC HighSpeed mode
+ on Odroid XU
+Date: Fri, 15 Jul 2016 14:31:00 +0530
+Message-ID: <5788A64C.4090901@samsung.com>
+References: <1468570369-14355-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <57889EAB.30502@samsung.com>
+In-reply-to: <1468570369-14355-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, mchehab@osg.samsung.com, andrzej.p@samsung.com, hans.verkuil@cisco.com, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/15/2016 10:28 AM, Jacek Anaszewski wrote:
-> On 07/15/2016 10:17 AM, Krzysztof Kozlowski wrote:
->> On 07/15/2016 10:14 AM, Jacek Anaszewski wrote:
->>>> However if these compatibles are exactly equal then
->>>> only one should be preferred. It makes everything easier. Second can be
->>>> still documented e.g. as deprecated.
->>>
->>> Still, both of them are present in the driver. Shouldn't it be reflected
->>> in the documentation?
->>
->> Right, it is a good practice, so how about:
->>
->>    - compatible    : should be one of:
->>            "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
->>            "samsung,exynos4210-jpeg", "samsung,exynos5420-jpeg",
->>            "samsung,exynos5433-jpeg";
->>
->>            Deprecated: "samsung,exynos4212-jpeg"
->>
->> (or any other formatting)
->> plus update to DTS changing it to 4210?
-> 
-> Why newer 4212 version should be made deprecated?
 
-I don't mind the other way. However it seems logical to me that newer
-chip is compatible with existing one so the existing one (older) is
-used. When adding support for new devices, for most of re-usable drivers
-we use old compatibles. But as I said, it doesn't really matter to me.
 
-BR,
-Krzysztof
+On 07/15/2016 01:42 PM, Krzysztof Kozlowski wrote:
+> Exynos5410 supports eMMC version 4.41 so HS200 is the top mode which
+> should be configured.  This is reflected in usage of
+> "samsung,exynos5250-dw-mshc" compatible.  However Odroid XU DTS
+> contained also property "mmc-hs400-1_8v" which is parsed by MMC core
+> therefore resulting in mixed configuration.  MMC core set HS400 but
+> dwmmc_exynos driver did not configure the data strobe for HS400 DDR
+> mode.
+>
+> Removal of HS400 properties fixes semi-random mmc errors during boot:
+>    mmc_host mmc0: Bus speed (slot 0) = 400000000Hz (slot req 200000000Hz, actual 200000000HZ div = 1)
+>    mmc0: mmc_select_hs400 failed, error -84
+>    mmc0: error -84 whilst initialising MMC card
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+Looks good, thanks.
+
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+> ---
+>
+> Changes since v1:
+> 1. Remove also samsung,read-strobe-delay, suggested by Alim Akhtar.
+> ---
+>   arch/arm/boot/dts/exynos5410-odroidxu.dts | 3 ---
+>   1 file changed, 3 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> index d9499310a301..f6d135245a4b 100644
+> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+> @@ -447,14 +447,11 @@
+>   	samsung,dw-mshc-ciu-div = <3>;
+>   	samsung,dw-mshc-sdr-timing = <0 4>;
+>   	samsung,dw-mshc-ddr-timing = <0 2>;
+> -	samsung,dw-mshc-hs400-timing = <0 2>;
+> -	samsung,read-strobe-delay = <90>;
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
+>   	bus-width = <8>;
+>   	cap-mmc-highspeed;
+>   	mmc-hs200-1_8v;
+> -	mmc-hs400-1_8v;
+>   	vmmc-supply = <&ldo20_reg>;
+>   	vqmmc-supply = <&ldo11_reg>;
+>   };
+>
