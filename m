@@ -1,85 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Nicolas Dufresne <nicolas.dufresne@gmail.com>
 Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
-Date: Fri, 15 Jul 2016 15:25:43 +0200
-Message-ID: <5788E457.6060202@samsung.com>
+Date: Fri, 15 Jul 2016 09:50:18 -0400
+Message-ID: <1468590618.4209.5.camel@gmail.com>
 References: <1468525055.4843.4.camel@ndufresne.ca>
  <1468525558.4843.6.camel@ndufresne.ca>
  <5787EF8E.2010401@math.uni-bielefeld.de>
- <1468528408.4843.9.camel@ndufresne.ca> <578896DB.7060708@samsung.com>
- <5788CA67.5090200@samsung.com> <5788E1EB.4030003@math.uni-bielefeld.de>
- <5788E31D.6010606@samsung.com> <5788E3CB.5080103@math.uni-bielefeld.de>
+	 <1468528408.4843.9.camel@ndufresne.ca> <578896DB.7060708@samsung.com>
+Reply-To: nicolas@ndufresne.ca
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-5wBKjGYg/2pTaOFosrX6"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:64042 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751935AbcGONZs (ORCPT
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:34136 "EHLO
+	mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758AbcGONuW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2016 09:25:48 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OAC00LGQYMWGP90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2016 14:25:44 +0100 (BST)
-In-reply-to: <5788E3CB.5080103@math.uni-bielefeld.de>
+	Fri, 15 Jul 2016 09:50:22 -0400
+Received: by mail-qk0-f169.google.com with SMTP id o67so101677871qke.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Jul 2016 06:50:22 -0700 (PDT)
+In-Reply-To: <578896DB.7060708@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, nicolas@ndufresne.ca, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 Cc: Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 07/15/2016 03:23 PM, Tobias Jakobi wrote:
-> Krzysztof Kozlowski wrote:
->> On 07/15/2016 03:15 PM, Tobias Jakobi wrote:
->>> Hey,
->>>
->>> Krzysztof Kozlowski wrote:
->>>> On 07/15/2016 09:55 AM, Krzysztof Kozlowski wrote:
->>>>>>> Nicolas Dufresne wrote:
->>>>>>>> Le jeudi 14 juillet 2016 =C3=A0 15:37 -0400, Nicolas Dufresne =
-a =C3=A9crit :
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> I'm using the Odroid U2 to test some features implemented in
->>>>>>>>> GStreamer.
->>>>>>>>> The parts I need mostly works in mainline kernel, my main
->>>>>>>>> annoyance
->>>>>>>>> ist
->>>>>>>>> that reboot hangs.
->>>>>>>>>
->>>>>>>>> Is this issue known ? I'm booting from SD card is that matter=
-s.
->>>>>>>>> Any
->>>>>>>>> advise would be appreciated. I'm not list member, so please k=
-eep
->>>>>>>>> me
->>>>>>>>> in
->>>>>>>>> CC. I'm sharing my .config, in case that is my fault.
->>>>>
->>>>> First of all - use just command "reboot" to restart. It should wo=
-rk. If
->>>>> it doesn't, please let us now.
->>>>>
->>>>> I was able to reproduce your issue - OOPS in emergency restart - =
-also in
->>>>> my configuration (U3 + eMMC + network boot).
->>>>>
->>>>> It is weird... I'll take a look at it.
->>>>
->>>> Actually I did not encounter OOPS of yours. I was able to reproduc=
-e a
->>>> failure to reboot on U3. XU3 reboots fine. It might be related to =
-pwrseq...
->>> I'm not sure how much that helps, but I can't reproduce any of this=
- on
->>> my X2 (which is quite closely related to the U2/U3).
->>
->> You mean sysrq reboot works fine?
-> No, I haven't checked that yet. But normal reboot and poweroff via in=
-it
-> works properly.
 
-Yeah, these work fine. It is all about emergency restart.
+--=-5wBKjGYg/2pTaOFosrX6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Le vendredi 15 juillet 2016 =C3=A0 09:55 +0200, Krzysztof Kozlowski a
+=C3=A9crit=C2=A0:
+>=20
+> First of all - use just command "reboot" to restart. It should work.
+> If
+> it doesn't, please let us now.
+
+It does not work with reboot either, though no OOPS, just hang. Is the
+trace at sysrq reboot really a OOPS? I believed it was just a dump of
+the 3 other CPU at the moment the request was made.
+
+>=20
+> I was able to reproduce your issue - OOPS in emergency restart - also
+> in
+> my configuration (U3 + eMMC + network boot).
+>=20
+> It is weird... I'll take a look at it.
+
+Btw, my configuration is U2 + SD boot. Any ways I can gather provide
+better informations ?
+
+Nicolas
+--=-5wBKjGYg/2pTaOFosrX6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEABECAAYFAleI6hoACgkQcVMCLawGqBzQmgCeOQWwpNlGdOonnCm1cl0a5Giu
+jEAAn0q0l4DKdbQntuu0y/ySWpcMx0OS
+=dayp
+-----END PGP SIGNATURE-----
+
+--=-5wBKjGYg/2pTaOFosrX6--
