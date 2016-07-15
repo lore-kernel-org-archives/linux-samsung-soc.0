@@ -1,75 +1,51 @@
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-Subject: Re: [RFT PATCH v2] [media] exynos4-is: Fix
- fimc_is_parse_sensor_config() nodes handling
-Date: Fri, 15 Jul 2016 13:05:25 -0400
-Message-ID: <1468602325.3819.6.camel@ndufresne.ca>
-References: <1458780100-8865-1-git-send-email-javier@osg.samsung.com>
-	 <5718D3DC.20004@osg.samsung.com> <1468601608.3819.4.camel@ndufresne.ca>
-Reply-To: nicolas@ndufresne.ca
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-ykrAIx091FSnLflAVduC"
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH v2] media: Doc add missing documentation for samsung,exynos4212-jpeg
+Date: Fri, 15 Jul 2016 16:10:27 -0600
+Message-ID: <1468620627-9750-1-git-send-email-shuahkh@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45234 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241AbcGORFb (ORCPT
+Received: from resqmta-po-10v.sys.comcast.net ([96.114.154.169]:44717 "EHLO
+	resqmta-po-10v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751683AbcGOWKd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2016 13:05:31 -0400
-In-Reply-To: <1468601608.3819.4.camel@ndufresne.ca>
+	Fri, 15 Jul 2016 18:10:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, linux-media@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, mchehab@osg.samsung.com, andrzej.p@samsung.com, j.anaszewski@samsung.com, hans.verkuil@cisco.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Add add missing documentation for samsung,exynos4212-jpeg codec,
+reorder entries to improve readability and make it easier to add
+new entries.
 
---=-ykrAIx091FSnLflAVduC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+samsung,exynos4212-jpeg and samsung,exynos4210-jpeg are identical,
+hence add samsung,exynos4212-jpeg as deprecated in the documentation.
 
-Le vendredi 15 juillet 2016 =C3=A0 12:53 -0400, Nicolas Dufresne a =C3=A9cr=
-it=C2=A0:
-> Le jeudi 21 avril 2016 =C3=A0 09:21 -0400, Javier Martinez Canillas a
-> =C3=A9crit=C2=A0:
-> > Hello Sylwester,
-> >=20
-> > On 03/23/2016 08:41 PM, Javier Martinez Canillas wrote:
-> > > The same struct device_node * is used for looking up the I2C
-> > > sensor, OF
-> > > graph endpoint and port. So the reference count is incremented
-> > > but
-> > > not
-> > > decremented for the endpoint and port nodes.
-> > >=20
-> > > Fix this by having separate pointers for each node looked up.
-> > >=20
-> > > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> > >=20
-> >=20
-> > Any comments about this patch?
->=20
-> Tested-by: Nicolas Dufresne <nicoas.dufresne@collabora.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
 
-There a typo here.
+Changes since v1:
+- Added samsung,exynos4212-jpeg as deprecated
 
-Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+ Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->=20
-> Note: I could not verify that leak is gone, but I could verify that
-> this driver is still working properly after the change.
->=20
-> >=20
-> > Best regards,
---=-ykrAIx091FSnLflAVduC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEABECAAYFAleJF9UACgkQcVMCLawGqBy+MgCg22w0W7Fa7MNuPkTaTmEU65r9
-sXEAoMorG212uIxsUwagbNdzQWPB7Bwo
-=DvkU
------END PGP SIGNATURE-----
-
---=-ykrAIx091FSnLflAVduC--
+diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+index 38941db..c5399e7 100644
+--- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
++++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+@@ -3,9 +3,11 @@ Samsung S5P/EXYNOS SoC series JPEG codec
+ Required properties:
+ 
+ - compatible	: should be one of:
+-		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
+-		  "samsung,exynos3250-jpeg", "samsung,exynos5420-jpeg",
++		  "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
++		  "samsung,exynos4210-jpeg", "samsung,exynos5420-jpeg",
+ 		  "samsung,exynos5433-jpeg";
++
++		  (Deprecated: "samsung,exynos4212-jpeg").
+ - reg		: address and length of the JPEG codec IP register set;
+ - interrupts	: specifies the JPEG codec IP interrupt;
+ - clock-names   : should contain:
+-- 
+2.7.4
