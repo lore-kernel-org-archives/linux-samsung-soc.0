@@ -1,64 +1,40 @@
-From: Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
-Date: Sat, 16 Jul 2016 13:53:52 +0000 (UTC)
-Message-ID: <loom.20160716T153429-759@post.gmane.org>
-References: <1468525055.4843.4.camel@ndufresne.ca>  <1468525558.4843.6.camel@ndufresne.ca> <1468527750.4843.7.camel@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/7] bindings: spi-samsung: add exynos5433 spi
+ compatible
+Date: Sat, 16 Jul 2016 15:26:32 -0500
+Message-ID: <20160716202632.GA12145@rob-hp-laptop>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-2-git-send-email-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:55474 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751379AbcGPOKK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jul 2016 10:10:10 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1bOQI8-0003oE-Gz
-	for linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2016 16:10:05 +0200
-Received: from CPE-58-160-173-207.unqy1.fli.bigpond.net.au ([58.160.173.207])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Jul 2016 16:10:04 +0200
-Received: from mihailescu2m by CPE-58-160-173-207.unqy1.fli.bigpond.net.au with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Jul 2016 16:10:04 +0200
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1468317736-18841-2-git-send-email-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-I can provide more information, i've been battling with this for a long time.
-Tried on U3 and U3+ with similar results:
+On Tue, Jul 12, 2016 at 07:02:10PM +0900, Andi Shyti wrote:
+> The samsung,exynos5433-spi has some peculiarities that bring the
+> need of creating a new compatible in the binding.
+> 
+> One of those is the 3-clocks controller management where the spi
+> is fed with three clocks: "spi", "busclkN" and "ioclk".
+> 
+> By adding the exynos5433-spi, we deprecate the exynos7 compatible
+> and discourage its use.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-1) samsung tizen 4.1 kernel reboots OK.
-
-2) i tried 4.4, 4.6, 4.7 (from Tobias's repository) all have the reboot issue.
-i've put some printk in the syscon reboot. it looks like it gets registered,
-but i never saw the printk put in the actual notifier function.
-
-3) the issue is the same for emmc and sd-card, i've tried both
-
-4) IT'S VERY RANDOM
-
-* i've got sysrq rebooting OK, i've got sysrq ending in a kernel crash
-(like Nicolas above)
-* I've got rebooting working ok sometimes, but only from tty1 console or
-sometimes ssh - NEVER from ttySAC1 serial console.
-rebooting from serial console always resulted in hang after systemd stops.
-* after switching from emmc to sd-card, there are always problems.
-i had sd-card rebooting ok (from tty1) for a few hours, then after i put in
-an emmc card => hell broke loose. putting sd-card back => still had issues,
-although sd was fine before.
-* many times, after reboot hang or switching from emmc to sd
-or the other way around => kernel would crash on boot for a few times.
-
-I reverted the SYSCON driver changes, and went back to the reboot code
-in the exynos pmu.c file like 4.1 kernel => got the same issues.
-
-I thought it's a systemd issue (after seeing echo b > /proc/sysrq-trigger
-working ok) and tried the kernel on a ubuntu 14.04 image (with upstart)
-=> got the same issues.
-
-I think it might be u-boot.
-
-PS: please keep me in the CC from here on as well.
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
