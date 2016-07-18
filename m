@@ -1,77 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH -next] iommu/exynos: Fix return value check in
- exynos_iommu_of_setup()
-Date: Mon, 18 Jul 2016 09:34:11 +0200
-Message-ID: <7d4c2517-5149-30d8-eeff-2bd7519dfdf3@samsung.com>
-References: <1467807354-26503-1-git-send-email-weiyj_lk@163.com>
- <577D0316.1050502@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 2/7] bindings: spi-samsung: document the clocks and the
+ clock-name property
+Date: Mon, 18 Jul 2016 12:30:07 +0200
+Message-ID: <578CAFAF.9060704@samsung.com>
+References: <1468317736-18841-1-git-send-email-andi.shyti@samsung.com>
+ <1468317736-18841-3-git-send-email-andi.shyti@samsung.com>
+ <20160716203044.GA13087@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:8714 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490AbcGRHeO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2016 03:34:14 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OAI005KR2D0E310@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2016 08:34:12 +0100 (BST)
-In-reply-to: <577D0316.1050502@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <20160716203044.GA13087@rob-hp-laptop>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, weiyj_lk@163.com, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-
-On 2016-07-06 15:09, Krzysztof Kozlowski wrote:
-> On 07/06/2016 02:15 PM, weiyj_lk@163.com wrote:
->> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->>
->> In case of error, the function of_platform_device_create() returns
->> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
->> check should be replaced with NULL test.
->>
->> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->> ---
->>   drivers/iommu/exynos-iommu.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->> index 33dcc29..9b23059 100644
->> --- a/drivers/iommu/exynos-iommu.c
->> +++ b/drivers/iommu/exynos-iommu.c
->> @@ -1345,8 +1345,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
->>   		exynos_iommu_init();
->>   
->>   	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
->> -	if (IS_ERR(pdev))
->> -		return PTR_ERR(pdev);
->> +	if (!pdev)
->> +		return -ENOMEM;
->>   
->>   	/*
->>   	 * use the first registered sysmmu device for performing
->>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 07/16/2016 10:30 PM, Rob Herring wrote:
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt 
+>> b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> > index 57d5539..f45c6eb 100644
+>> > --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> > +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> > @@ -24,6 +24,15 @@ Required SoC Specific Properties:
+>> >  - dma-names: Names for the dma channels. There must be at least one channel
+>> >    named "tx" for transmit and named "rx" for receive.
+>> >  
+>> > +- clocks: specifies the clock IDs provided to the SPI controller; they are
+>> > +  required for interacting with the controller itself, for synchronizing the bus
+>> > +  and as I/O clock (the latter is required by exynos5433 and exynos7).
+>> > +
+>> > +- clock-names: string names of the clocks in the 'clocks' property; for all the
+>> > +  the devices the names must be "spi", "spi_busclkN" (where N is determined by
+>> > +  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
 >
->
-> Which in case of first sysmmu device and of_platform_device_create()
-> failure will lead to NULL pointer exception, so I think it is
-> appropriate to:
-> Fixes: 8ed55c812fa8 ("iommu/exynos: Init from dt-specific callback
-> instead of initcall")
-> Cc: <stable@vger.kernel.org>
+> This sounds like you are describing the configuration of the clocks, not 
+> the connections. The binding here should list clocks for all possible 
+> vaules of N as those are all the input clocks to the block.
+> 
+>> > +  "spi_ioclk" for the I/O clock.
 
-Thanks for spotting this issue.
+I agree we should list all possible spi_busclkN, I must admit  I might
+have introduced some confusion by suggesting wording for clock-names 
+similar to the above while discussing those things internally.  Afterwards 
+I came to a similar conclusion all possible input clocks should be listed
+These will differ depending  on the compatible.  I checked in documentation 
+of most of related SoCs and for "samsung,s3c6410-spi" or older compatibles 
+possible N is 0..2 (PCLK, USBCLK, PLL clock), for "samsung,s5pv210-spi" 
+and newer possible N is 0 (SCLK_SPI).  
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+It's important to have all the input clocks listed so we have a list 
+of parent clocks to the SPI controller's internal clocks, should we 
+ever decide to model them with the clk API.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--
+Thanks, 
+Sylwester
