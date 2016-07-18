@@ -1,62 +1,77 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] media: Doc add missing documentation for
- samsung,exynos4212-jpeg
-Date: Sun, 17 Jul 2016 15:26:04 -0500
-Message-ID: <20160717202522.GA8777@rob-hp-laptop>
-References: <1468620627-9750-1-git-send-email-shuahkh@osg.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH -next] iommu/exynos: Fix return value check in
+ exynos_iommu_of_setup()
+Date: Mon, 18 Jul 2016 09:34:11 +0200
+Message-ID: <7d4c2517-5149-30d8-eeff-2bd7519dfdf3@samsung.com>
+References: <1467807354-26503-1-git-send-email-weiyj_lk@163.com>
+ <577D0316.1050502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1468620627-9750-1-git-send-email-shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:8714 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751490AbcGRHeO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Jul 2016 03:34:14 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OAI005KR2D0E310@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2016 08:34:12 +0100 (BST)
+In-reply-to: <577D0316.1050502@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, weiyj_lk@163.com, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 15, 2016 at 04:10:27PM -0600, Shuah Khan wrote:
-> Add add missing documentation for samsung,exynos4212-jpeg codec,
-> reorder entries to improve readability and make it easier to add
-> new entries.
-> 
-> samsung,exynos4212-jpeg and samsung,exynos4210-jpeg are identical,
-> hence add samsung,exynos4212-jpeg as deprecated in the documentation.
-> 
-> Signed-off-by: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-> ---
-> 
-> Changes since v1:
-> - Added samsung,exynos4212-jpeg as deprecated
-> 
->  Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> index 38941db..c5399e7 100644
-> --- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> +++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> @@ -3,9 +3,11 @@ Samsung S5P/EXYNOS SoC series JPEG codec
->  Required properties:
->  
->  - compatible	: should be one of:
-> -		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
-> -		  "samsung,exynos3250-jpeg", "samsung,exynos5420-jpeg",
-> +		  "samsung,s5pv210-jpeg", "samsung,exynos3250-jpeg",
-> +		  "samsung,exynos4210-jpeg", "samsung,exynos5420-jpeg",
->  		  "samsung,exynos5433-jpeg";
-> +
-> +		  (Deprecated: "samsung,exynos4212-jpeg").
+Hello,
 
-Since you are reformatting, one compatible per line (unless multiple 
-apply) is preferred.
 
->  - reg		: address and length of the JPEG codec IP register set;
->  - interrupts	: specifies the JPEG codec IP interrupt;
->  - clock-names   : should contain:
-> -- 
-> 2.7.4
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 2016-07-06 15:09, Krzysztof Kozlowski wrote:
+> On 07/06/2016 02:15 PM, weiyj_lk@163.com wrote:
+>> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>>
+>> In case of error, the function of_platform_device_create() returns
+>> NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
+>> check should be replaced with NULL test.
+>>
+>> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>> ---
+>>   drivers/iommu/exynos-iommu.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+>> index 33dcc29..9b23059 100644
+>> --- a/drivers/iommu/exynos-iommu.c
+>> +++ b/drivers/iommu/exynos-iommu.c
+>> @@ -1345,8 +1345,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
+>>   		exynos_iommu_init();
+>>   
+>>   	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
+>> -	if (IS_ERR(pdev))
+>> -		return PTR_ERR(pdev);
+>> +	if (!pdev)
+>> +		return -ENOMEM;
+>>   
+>>   	/*
+>>   	 * use the first registered sysmmu device for performing
+>>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+>
+> Which in case of first sysmmu device and of_platform_device_create()
+> failure will lead to NULL pointer exception, so I think it is
+> appropriate to:
+> Fixes: 8ed55c812fa8 ("iommu/exynos: Init from dt-specific callback
+> instead of initcall")
+> Cc: <stable@vger.kernel.org>
+
+Thanks for spotting this issue.
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
