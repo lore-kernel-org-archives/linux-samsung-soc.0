@@ -1,110 +1,48 @@
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-Subject: Re: Odroid U2 Kernel 4.7rc7+ Hang on reboot
-Date: Wed, 20 Jul 2016 08:53:04 -0400
-Message-ID: <1469019184.16008.6.camel@ndufresne.ca>
-References: <1468525055.4843.4.camel@ndufresne.ca>
- <1468525558.4843.6.camel@ndufresne.ca>
- <5787EF8E.2010401@math.uni-bielefeld.de>
- <1468528408.4843.9.camel@ndufresne.ca> <578896DB.7060708@samsung.com>
- <5788CA67.5090200@samsung.com> <5788E1EB.4030003@math.uni-bielefeld.de>
- <5788E31D.6010606@samsung.com> <5788E3CB.5080103@math.uni-bielefeld.de>
- <5788E457.6060202@samsung.com> <5788F449.6060202@math.uni-bielefeld.de>
- <1468598213.3819.2.camel@ndufresne.ca> <578E0F28.6010600@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable PM_DEBUG
+Date: Wed, 20 Jul 2016 22:58:40 +0900
+Message-ID: <578F8390.1030101@kernel.org>
+References: <1468926554-22204-1-git-send-email-k.kozlowski@samsung.com> <0b91df86-02c7-a4ba-4aba-7d3ed0bf28e9@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53959 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752789AbcGTMxJ (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:41588 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753577AbcGTN6q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2016 08:53:09 -0400
-In-Reply-To: <578E0F28.6010600@samsung.com>
+	Wed, 20 Jul 2016 09:58:46 -0400
+In-Reply-To: <0b91df86-02c7-a4ba-4aba-7d3ed0bf28e9@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi=C2=A0Krzysztof,
+On 07/19/16 23:49, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 07/19/2016 07:09 AM, Krzysztof Kozlowski wrote:
+>> PM_DEBUG and PM_ADVANCED_DEBUG bring some information useful for
+>> development and they should not cause any significant overhead.  Enable
+>> them in default configuration so debugging would be slightly easier.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+> 
+> I agree that it's good to have these enabled to make debugging easier.
+> 
+I'm back ;-)
 
-I'm leaving for a long vacation (6w) today and didn't find the time to
-test your patch. I'd like to thank you for looking into this issue. I
-will we able to test this patch at my return.
+I agreed...so,
+Acked-by: Kukjin Kim <kgene@kernel.org>
 
-I do understand now (and with the following mail), that this hardware
-have problematic constraints that are specific to the Hardkernel
-integration.
+BTW, I have not seen the kernel log with PM_ADVANCED_DEBUG. Can anyone
+show me the log?...to be honest I need to setup the dev. environment on
+my desk at this moment...
 
-regards,
-Nicolas
+Thanks,
+Kukjin
 
-Le mardi 19 juillet 2016 =C3=A0 13:29 +0200, Krzysztof Kozlowski a =C3=A9=
-crit=C2=A0:
-> On 07/15/2016 05:56 PM, Nicolas Dufresne wrote:
-> > Le vendredi 15 juillet 2016 =C3=A0 16:33 +0200, Tobias Jakobi a =C3=
-=A9crit :
-> > > I can confirm that this indeed doesn't work.
-> > >=20
-> > > chidori ~ # echo 1 > /proc/sys/kernel/sysrq
-> > > chidori ~ # echo s > /proc/sysrq-trigger
-> > > chidori ~ # echo u > /proc/sysrq-trigger
-> > > chidori ~ # echo b > /proc/sysrq-trigger
-> > > <board hangs, only red power LED on>
-> > >=20
-> > > I guess Nicolas is seeing a different or another problem here
-> > > though.
-> >=20
-> > Well for me both method hangs. On an extra note, reset inside Uboot
-> > works, but reboot in Linux hang. I tried adding a trace
-> > in syscon_restart_handle(), but the trace is never displayed. I'm
-> > wondering if that handler is ever called, or if it's just that the
-> > serial console was shut down already.
-> >=20
-> > Any idea what else should I trace ?
->=20
-> This is weird... reboot should work. Just to confirm it - can you
-> test
-> following patch in both scenarios (this should fix both of them... at
-> least on Odroid U3 but your board might have different SPL/BL1):
->=20
-> -- >8 --
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 58ad48e7b8f7..7d963d36e96d 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -423,7 +423,8 @@
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0buck2_reg: BUCK2 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-name =3D "=
-vdd_arm";
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-min-microvolt =3D=
- <900000>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0//regulator-min-microvolt =
-=3D <900000>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-min-microvolt =3D=
- <1000000>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-max-microv=
-olt =3D <1350000>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-always-on;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regulator-boot-on;
->=20
->=20
->=20
->=20
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> Best regards,
