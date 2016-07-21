@@ -1,143 +1,263 @@
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v6 4/4] drm: rcar: use generic code for managing zpos plane property
-Date: Thu, 21 Jul 2016 10:52:03 +0200
-Message-ID: <1469091123-4909-5-git-send-email-benjamin.gaignard@linaro.org>
+Subject: [PATCH v6 2/4] drm: sti: use generic zpos for plane
+Date: Thu, 21 Jul 2016 10:52:01 +0200
+Message-ID: <1469091123-4909-3-git-send-email-benjamin.gaignard@linaro.org>
 References: <1469091123-4909-1-git-send-email-benjamin.gaignard@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:34869 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751553AbcGUIw3 (ORCPT
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:38681 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751531AbcGUIwX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 04:52:29 -0400
-Received: by mail-wm0-f52.google.com with SMTP id f65so14366488wmi.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2016 01:52:28 -0700 (PDT)
+	Thu, 21 Jul 2016 04:52:23 -0400
+Received: by mail-wm0-f42.google.com with SMTP id o80so16333526wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2016 01:52:22 -0700 (PDT)
 In-Reply-To: <1469091123-4909-1-git-send-email-benjamin.gaignard@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org
-Cc: linaro-mm-sig@lists.linaro.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linaro-mm-sig@lists.linaro.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-version 4:
-fix null pointer issue while setting zpos in plane reset function
-
-This patch replaces zpos property handling custom code in rcar DRM
-driver with calls to generic DRM code.
+remove private zpos property and use instead the generic new.
+zpos range is now fixed per plane type and normalized before
+being using in mixer.
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
+Cc: Inki Dae <inki.dae@samsung.com>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: vincent.abriou@st.com
+Cc: fabien.dessenne@st.com
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 5 -----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 9 ++-------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h | 2 --
- 5 files changed, 3 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/sti/sti_cursor.c |  4 +--
+ drivers/gpu/drm/sti/sti_gdp.c    |  4 +--
+ drivers/gpu/drm/sti/sti_hqvdp.c  |  4 +--
+ drivers/gpu/drm/sti/sti_mixer.c  |  9 ++---
+ drivers/gpu/drm/sti/sti_plane.c  | 78 +++++++++++++++-------------------------
+ drivers/gpu/drm/sti/sti_plane.h  |  7 +---
+ 6 files changed, 38 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index e39fcef..7316fc7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -196,7 +196,7 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_cursor.c
+index a263bbb..3b53f7f 100644
+--- a/drivers/gpu/drm/sti/sti_cursor.c
++++ b/drivers/gpu/drm/sti/sti_cursor.c
+@@ -349,8 +349,8 @@ struct drm_plane_funcs sti_cursor_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+ 	.destroy = sti_cursor_destroy,
+-	.set_property = sti_plane_set_property,
+-	.reset = drm_atomic_helper_plane_reset,
++	.set_property = drm_atomic_helper_plane_set_property,
++	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ 	.late_register = sti_cursor_late_register,
+diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
+index bf63086..b8d942c 100644
+--- a/drivers/gpu/drm/sti/sti_gdp.c
++++ b/drivers/gpu/drm/sti/sti_gdp.c
+@@ -886,8 +886,8 @@ struct drm_plane_funcs sti_gdp_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+ 	.destroy = sti_gdp_destroy,
+-	.set_property = sti_plane_set_property,
+-	.reset = drm_atomic_helper_plane_reset,
++	.set_property = drm_atomic_helper_plane_set_property,
++	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ 	.late_register = sti_gdp_late_register,
+diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+index b032322..b5ee783 100644
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@ -1254,8 +1254,8 @@ struct drm_plane_funcs sti_hqvdp_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+ 	.destroy = sti_hqvdp_destroy,
+-	.set_property = sti_plane_set_property,
+-	.reset = drm_atomic_helper_plane_reset,
++	.set_property = drm_atomic_helper_plane_set_property,
++	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ 	.late_register = sti_hqvdp_late_register,
+diff --git a/drivers/gpu/drm/sti/sti_mixer.c b/drivers/gpu/drm/sti/sti_mixer.c
+index 1885c7a..7d9aea8 100644
+--- a/drivers/gpu/drm/sti/sti_mixer.c
++++ b/drivers/gpu/drm/sti/sti_mixer.c
+@@ -239,13 +239,10 @@ static void sti_mixer_set_background_area(struct sti_mixer *mixer,
  
- static unsigned int plane_zpos(struct rcar_du_plane *plane)
+ int sti_mixer_set_plane_depth(struct sti_mixer *mixer, struct sti_plane *plane)
  {
--	return to_rcar_plane_state(plane->plane.state)->zpos;
-+	return plane->plane.state->normalized_zpos;
- }
+-	int plane_id, depth = plane->zorder;
++	int plane_id, depth = plane->drm_plane.state->normalized_zpos;
+ 	unsigned int i;
+ 	u32 mask, val;
  
- static const struct rcar_du_format_info *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index ed35467..c843c31 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -92,7 +92,6 @@ struct rcar_du_device {
- 	struct {
- 		struct drm_property *alpha;
- 		struct drm_property *colorkey;
--		struct drm_property *zpos;
- 	} props;
- 
- 	unsigned int dpad0_source;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 6bb032d..f03eb55 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -527,11 +527,6 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	if (rcdu->props.colorkey == NULL)
- 		return -ENOMEM;
- 
--	rcdu->props.zpos =
--		drm_property_create_range(rcdu->ddev, 0, "zpos", 1, 7);
--	if (rcdu->props.zpos == NULL)
--		return -ENOMEM;
+-	if ((depth < 1) || (depth > GAM_MIXER_NB_DEPTH_LEVEL))
+-		return 1;
 -
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index bfe31ca..a74f8ed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -652,7 +652,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
- 	state->source = RCAR_DU_PLANE_MEMORY;
- 	state->alpha = 255;
- 	state->colorkey = RCAR_DU_COLORKEY_NONE;
--	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
-+	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -670,8 +670,6 @@ static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
- 		rstate->alpha = val;
- 	else if (property == rcdu->props.colorkey)
- 		rstate->colorkey = val;
--	else if (property == rcdu->props.zpos)
--		rstate->zpos = val;
- 	else
- 		return -EINVAL;
- 
-@@ -690,8 +688,6 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
- 		*val = rstate->alpha;
- 	else if (property == rcdu->props.colorkey)
- 		*val = rstate->colorkey;
--	else if (property == rcdu->props.zpos)
--		*val = rstate->zpos;
- 	else
- 		return -EINVAL;
- 
-@@ -763,8 +759,7 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.colorkey,
- 					   RCAR_DU_COLORKEY_NONE);
--		drm_object_attach_property(&plane->plane.base,
--					   rcdu->props.zpos, 1);
-+		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
+ 	switch (plane->desc) {
+ 	case STI_GDP_0:
+ 		plane_id = GAM_DEPTH_GDP0_ID;
+@@ -278,8 +275,8 @@ int sti_mixer_set_plane_depth(struct sti_mixer *mixer, struct sti_plane *plane)
+ 			break;
  	}
  
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index b18b7b2..8b91dd3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -51,7 +51,6 @@ static inline struct rcar_du_plane *to_rcar_plane(struct drm_plane *plane)
-  * @hwindex: 0-based hardware plane index, -1 means unused
-  * @alpha: value of the plane alpha property
-  * @colorkey: value of the plane colorkey property
-- * @zpos: value of the plane zpos property
-  */
- struct rcar_du_plane_state {
- 	struct drm_plane_state state;
-@@ -62,7 +61,6 @@ struct rcar_du_plane_state {
+-	mask |= GAM_DEPTH_MASK_ID << (3 * (depth - 1));
+-	plane_id = plane_id << (3 * (depth - 1));
++	mask |= GAM_DEPTH_MASK_ID << (3 * depth);
++	plane_id = plane_id << (3 * depth);
  
- 	unsigned int alpha;
- 	unsigned int colorkey;
--	unsigned int zpos;
+ 	DRM_DEBUG_DRIVER("%s %s depth=%d\n", sti_mixer_to_str(mixer),
+ 			 sti_plane_to_str(plane), depth);
+diff --git a/drivers/gpu/drm/sti/sti_plane.c b/drivers/gpu/drm/sti/sti_plane.c
+index 0cf3335..ca4b371 100644
+--- a/drivers/gpu/drm/sti/sti_plane.c
++++ b/drivers/gpu/drm/sti/sti_plane.c
+@@ -14,15 +14,6 @@
+ #include "sti_drv.h"
+ #include "sti_plane.h"
+ 
+-/* (Background) < GDP0 < GDP1 < HQVDP0 < GDP2 < GDP3 < (ForeGround) */
+-enum sti_plane_desc sti_plane_default_zorder[] = {
+-	STI_GDP_0,
+-	STI_GDP_1,
+-	STI_HQVDP_0,
+-	STI_GDP_2,
+-	STI_GDP_3,
+-};
+-
+ const char *sti_plane_to_str(struct sti_plane *plane)
+ {
+ 	switch (plane->desc) {
+@@ -96,59 +87,46 @@ void sti_plane_update_fps(struct sti_plane *plane,
+ 			 plane->fps_info.fips_str);
+ }
+ 
+-int sti_plane_set_property(struct drm_plane *drm_plane,
+-			   struct drm_property *property,
+-			   uint64_t val)
++static int sti_plane_get_default_zpos(enum drm_plane_type type)
+ {
+-	struct drm_device *dev = drm_plane->dev;
+-	struct sti_private *private = dev->dev_private;
+-	struct sti_plane *plane = to_sti_plane(drm_plane);
+-
+-	DRM_DEBUG_DRIVER("\n");
+-
+-	if (property == private->plane_zorder_property) {
+-		plane->zorder = val;
++	switch (type) {
++	case DRM_PLANE_TYPE_PRIMARY:
+ 		return 0;
++	case DRM_PLANE_TYPE_OVERLAY:
++		return 1;
++	case DRM_PLANE_TYPE_CURSOR:
++		return 7;
+ 	}
++	return 0;
++}
+ 
+-	return -EINVAL;
++void sti_plane_reset(struct drm_plane *plane)
++{
++	drm_atomic_helper_plane_reset(plane);
++	plane->state->zpos = sti_plane_get_default_zpos(plane->type);
+ }
+ 
+-static void sti_plane_attach_zorder_property(struct drm_plane *drm_plane)
++static void sti_plane_attach_zorder_property(struct drm_plane *drm_plane,
++					     enum drm_plane_type type)
+ {
+-	struct drm_device *dev = drm_plane->dev;
+-	struct sti_private *private = dev->dev_private;
+-	struct sti_plane *plane = to_sti_plane(drm_plane);
+-	struct drm_property *prop;
+-
+-	prop = private->plane_zorder_property;
+-	if (!prop) {
+-		prop = drm_property_create_range(dev, 0, "zpos", 1,
+-						 GAM_MIXER_NB_DEPTH_LEVEL);
+-		if (!prop)
+-			return;
+-
+-		private->plane_zorder_property = prop;
++	int zpos = sti_plane_get_default_zpos(type);
++
++	switch (type) {
++	case DRM_PLANE_TYPE_PRIMARY:
++	case DRM_PLANE_TYPE_OVERLAY:
++		drm_plane_create_zpos_property(drm_plane, zpos, 0, 6);
++		break;
++	case DRM_PLANE_TYPE_CURSOR:
++		drm_plane_create_zpos_immutable_property(drm_plane, zpos);
++		break;
+ 	}
+-
+-	drm_object_attach_property(&drm_plane->base, prop, plane->zorder);
+ }
+ 
+ void sti_plane_init_property(struct sti_plane *plane,
+ 			     enum drm_plane_type type)
+ {
+-	unsigned int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(sti_plane_default_zorder); i++)
+-		if (sti_plane_default_zorder[i] == plane->desc)
+-			break;
+-
+-	plane->zorder = i + 1;
+-
+-	if (type == DRM_PLANE_TYPE_OVERLAY)
+-		sti_plane_attach_zorder_property(&plane->drm_plane);
++	sti_plane_attach_zorder_property(&plane->drm_plane, type);
+ 
+-	DRM_DEBUG_DRIVER("drm plane:%d mapped to %s with zorder:%d\n",
+-			 plane->drm_plane.base.id,
+-			 sti_plane_to_str(plane), plane->zorder);
++	DRM_DEBUG_DRIVER("drm plane:%d mapped to %s\n",
++			 plane->drm_plane.base.id, sti_plane_to_str(plane));
+ }
+diff --git a/drivers/gpu/drm/sti/sti_plane.h b/drivers/gpu/drm/sti/sti_plane.h
+index e0ea1dd..ce3e8d6 100644
+--- a/drivers/gpu/drm/sti/sti_plane.h
++++ b/drivers/gpu/drm/sti/sti_plane.h
+@@ -66,14 +66,12 @@ struct sti_fps_info {
+  * @plane:              drm plane it is bound to (if any)
+  * @desc:               plane type & id
+  * @status:             to know the status of the plane
+- * @zorder:             plane z-order
+  * @fps_info:           frame per second info
+  */
+ struct sti_plane {
+ 	struct drm_plane drm_plane;
+ 	enum sti_plane_desc desc;
+ 	enum sti_plane_status status;
+-	int zorder;
+ 	struct sti_fps_info fps_info;
  };
  
- static inline struct rcar_du_plane_state *
+@@ -82,10 +80,7 @@ void sti_plane_update_fps(struct sti_plane *plane,
+ 			  bool new_frame,
+ 			  bool new_field);
+ 
+-int sti_plane_set_property(struct drm_plane *drm_plane,
+-			   struct drm_property *property,
+-			   uint64_t val);
+-
+ void sti_plane_init_property(struct sti_plane *plane,
+ 			     enum drm_plane_type type);
++void sti_plane_reset(struct drm_plane *plane);
+ #endif
 -- 
 1.9.1
