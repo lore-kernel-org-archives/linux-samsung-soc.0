@@ -1,52 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 2/4] mfd: Add Samsung Exynos Low Power Audio Subsystem
- driver
-Date: Thu, 21 Jul 2016 13:11:27 +0100
-Message-ID: <20160721121127.GD14925@dell>
-References: <1467738804-31460-1-git-send-email-s.nawrocki@samsung.com>
- <578F9495.9090502@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <578F9495.9090502@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, robh@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, ideal.song@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v1 1/2] drm/panel: simple-panel: add the delay timing for Sharp LQ123P1JX31
+Date: Thu, 21 Jul 2016 21:14:34 +0800
+Message-ID: <1469106874-4912-1-git-send-email-ykk@rock-chips.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:52503 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752430AbcGUNOq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2016 09:14:46 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, David Airlie <airlied@linux.ie>, daniel.vetter@ffwll.ch, Krzysztof Kozlowski <k.kozlowski@samsung.com>, emil.l.velikov@gmail.com, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 
-On Wed, 20 Jul 2016, Sylwester Nawrocki wrote:
+According to page 16 of Sharp LQ123P1JX31 datasheet, we need to add the
+missing delay timing. Panel prepare time should be t1 (0.5ms~10ms) plus
+t3 (0ms~100ms), and panel enable time should equal to t7 (0ms~50ms), and
+panel unprepare time should be t11 (1ms~50ms) plus t12 (500ms~).
 
-> On 07/05/2016 07:13 PM, Sylwester Nawrocki wrote:
-> > This patch adds common driver for the Top block of the Samsung Exyn=
-os
-> > SoC Low Power Audio Subsystem. This is a minimal driver which prepa=
-res
-> > resources for IP blocks like I2S, audio DMA and UART and exposes a =
-regmap
-> > for the Top block registers. Also system power ops are added to ens=
-ure
-> > the Audio Subsystem is operational after system suspend/resume cycl=
-e.
-> >=20
-> > Signed-off-by: Inha Song <ideal.song@samsung.com>
-> > Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > ---
->=20
-> Lee, is this patch good enough for your tree? Are you going to have
-> any review comments ?
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Please don't sent contentless pings.  If you think the patch has been
-dropped (it hasn't) then just send a [RESEND] patch.
-
-The merge window is about to open.  I will not be taking any patches
-for the next couple of weeks.  Your patch is marked as to-review in my
-Inbox, so please bear with me and I'll get around to it.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 85143d1..f178998 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1384,6 +1384,11 @@ static const struct panel_desc sharp_lq123p1jx31 = {
+ 		.width = 259,
+ 		.height = 173,
+ 	},
++	.delay = {
++		.prepare = 110,
++		.enable = 50,
++		.unprepare = 550,
++	},
+ };
+ 
+ static const struct drm_display_mode shelly_sca07010_bfn_lnn_mode = {
+-- 
+1.9.1
