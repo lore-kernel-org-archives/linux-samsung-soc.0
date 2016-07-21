@@ -1,63 +1,50 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v1 1/2] drm/panel: simple-panel: add the delay timing for
- Sharp LQ123P1JX31
-Date: Thu, 21 Jul 2016 10:30:13 -0400
-Message-ID: <CAOw6vbLVrJj9So7tJeDtnDnq_+W=ZunPNwRRidfQKmjaj=byUw@mail.gmail.com>
-References: <1469106874-4912-1-git-send-email-ykk@rock-chips.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 4/4] ASoC: samsung: Add machine driver
+ for Exynos5433 based TM2 board
+Date: Thu, 21 Jul 2016 17:12:16 +0200
+Message-ID: <5790E650.609@samsung.com>
+References: <CGME20160705171538epcas1p14f034567982b67aad091c50e5adcec9c@epcas1p1.samsung.com>
+ <1467738877-31555-1-git-send-email-s.nawrocki@samsung.com>
+ <5788721B.7010602@samsung.com> <578CB261.60507@samsung.com>
+ <5790A3D0.4070500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f174.google.com ([209.85.161.174]:35083 "EHLO
-	mail-yw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752838AbcGUOai (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 10:30:38 -0400
-Received: by mail-yw0-f174.google.com with SMTP id j12so68941560ywb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2016 07:30:37 -0700 (PDT)
-Received: from mail-yw0-f177.google.com (mail-yw0-f177.google.com. [209.85.161.177])
-        by smtp.gmail.com with ESMTPSA id 139sm3351468ywe.14.2016.07.21.07.30.34
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jul 2016 07:30:35 -0700 (PDT)
-Received: by mail-yw0-f177.google.com with SMTP id j12so68939941ywb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2016 07:30:34 -0700 (PDT)
-In-Reply-To: <1469106874-4912-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <5790A3D0.4070500@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: robh@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, inki.dae@samsung.com, devicetree@vger.kernel.org, broonie@kernel.org, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-On Thu, Jul 21, 2016 at 9:14 AM, Yakir Yang <ykk@rock-chips.com> wrote:
-> According to page 16 of Sharp LQ123P1JX31 datasheet, we need to add the
-> missing delay timing. Panel prepare time should be t1 (0.5ms~10ms) plus
-> t3 (0ms~100ms), and panel enable time should equal to t7 (0ms~50ms), and
-> panel unprepare time should be t11 (1ms~50ms) plus t12 (500ms~).
->
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+On 07/21/2016 12:28 PM, Chanwoo Choi wrote:
+> When I test it, I can get the clock pointer by devm_clk_get() as following:
+> 
+> diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
+> index 9728b3c5927f..5de4fc554aec 100644
+> --- a/sound/soc/samsung/tm2_wm5110.c
+> +++ b/sound/soc/samsung/tm2_wm5110.c
+> @@ -500,7 +500,7 @@ static int tm2_probe(struct platform_device *pdev)
+>                 card->dai_link[i].platform_of_node = cpu_dai_node;
+>         }
+> 
+> -       priv->codec_mclk1 = of_clk_get_by_name(codec_dai_node, "mclk1");
+> +       priv->codec_mclk1 = devm_clk_get(dev, "mclk1");
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
+I guess you have and old dts where clock/clock-names are in the sound
+node.  Instead the clock/clock-names properties should be specified
+in the CODEC's node, the related binding's documentation can be found
+in Documentation/devicetree/bindings/mfd/arizona.txt. Also please see
+patch 3/4, there is no clock properties in the sound card's DT binding.
 
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 85143d1..f178998 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1384,6 +1384,11 @@ static const struct panel_desc sharp_lq123p1jx31 = {
->                 .width = 259,
->                 .height = 173,
->         },
-> +       .delay = {
-> +               .prepare = 110,
-> +               .enable = 50,
-> +               .unprepare = 550,
-> +       },
->  };
->
->  static const struct drm_display_mode shelly_sca07010_bfn_lnn_mode = {
-> --
-> 1.9.1
->
->
+--
+Thanks,
+Sylwester
