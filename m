@@ -1,62 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] GPU-DRM-Exynos: Delete an unnecessary check before the
- function call "vunmap"
-Date: Thu, 21 Jul 2016 19:42:33 +0200
-Message-ID: <a5a79711-10a3-e304-a897-892ebdf2ff9f@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54D28870.3060400@users.sourceforge.net>
- <54D329D0.7050006@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54D329D0.7050006@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 0/2] ASoC: samsung: Deferred probing support fixes
+Date: Thu, 21 Jul 2016 20:03:48 +0200
+Message-ID: <1469124230-8583-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:51638 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750884AbcGUSEF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2016 14:04:05 -0400
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OAO00LG6FG4QU30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2016 03:04:02 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
-OiBUaHUsIDIxIEp1bCAyMDE2IDE5OjIzOjI1ICswMjAwCgpUaGUgdnVubWFwKCkgZnVuY3Rpb24g
-cGVyZm9ybXMgYWxzbyBpbnB1dCBwYXJhbWV0ZXIgdmFsaWRhdGlvbi4KVGh1cyB0aGUgdGVzdCBh
-cm91bmQgdGhlIGNhbGwgaXMgbm90IG5lZWRlZC4KClRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5
-IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLgoKU2lnbmVkLW9mZi1ieTogTWFya3VzIEVs
-ZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jIHwgMyArLS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9mYmRldi5jCmluZGV4IGRkMDkxMTcuLjRjZmIzOWQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9mYmRldi5jCkBAIC0yNjksOCArMjY5LDcgQEAgc3RhdGljIHZvaWQg
-ZXh5bm9zX2RybV9mYmRldl9kZXN0cm95KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJc3RydWN0
-IGV4eW5vc19kcm1fZ2VtICpleHlub3NfZ2VtID0gZXh5bm9zX2ZiZC0+ZXh5bm9zX2dlbTsKIAlz
-dHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYjsKIAotCWlmIChleHlub3NfZ2VtLT5rdmFkZHIpCi0J
-CXZ1bm1hcChleHlub3NfZ2VtLT5rdmFkZHIpOworCXZ1bm1hcChleHlub3NfZ2VtLT5rdmFkZHIp
-OwogCiAJLyogcmVsZWFzZSBkcm0gZnJhbWVidWZmZXIgYW5kIHJlYWwgYnVmZmVyICovCiAJaWYg
-KGZiX2hlbHBlci0+ZmIgJiYgZmJfaGVscGVyLT5mYi0+ZnVuY3MpIHsKLS0gCjIuOS4yCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This patch series is an attempt to fix sound card initialization isssues
+observed in Odroid XU3 board after conversion of the AUDSS clock controller
+driver to proper loadable module.  Related patch can be found here:
+https://patchwork.kernel.org/patch/9221051, it's also already in -next.
+
+It would be good to have these two patches merged in 4.8-rc cycle so as
+to avoid regressions on on boards using ADMA. The sound breakage happens
+only when ADMA is used, as ADMA gets apb_pclk clock from the AUDSS clock
+controller.  Previously the clock controller was initialized early in
+core_initcall which ensured the ADMA PL330 driver initialization before
+the I2S probe.
+
+Probably as a followup the SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME could
+be dropped and it's usage replaced with struct snd_dmaengine_pcm_config
+::dma_names, I didn't want to make too invasive changes for a bug fix patch
+and don't have the older s3c non-dt boards for testing.
+
+Sylwester Nawrocki (2):
+  ASoC: samsung: Fix error paths in the I2S driver's probe()
+  ASoC: samsung: Specify DMA channels through struct
+    snd_dmaengine_pcm_config
+
+ sound/soc/samsung/ac97.c        |  3 ++-
+ sound/soc/samsung/dma.h         |  9 ++++++---
+ sound/soc/samsung/dmaengine.c   | 31 ++++++++++++++++++++-----------
+ sound/soc/samsung/i2s.c         | 28 ++++++++++++++++++++++------
+ sound/soc/samsung/pcm.c         |  3 ++-
+ sound/soc/samsung/s3c2412-i2s.c |  3 ++-
+ sound/soc/samsung/s3c24xx-i2s.c |  3 ++-
+ sound/soc/samsung/spdif.c       |  3 ++-
+ 8 files changed, 58 insertions(+), 25 deletions(-)
+
+--
+1.9.1
