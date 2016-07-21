@@ -1,54 +1,83 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/2] ASoC: samsung: Deferred probing support fixes
-Date: Thu, 21 Jul 2016 20:03:48 +0200
-Message-ID: <1469124230-8583-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] ASoC: samsung: Fix error paths in the I2S driver's probe()
+Date: Thu, 21 Jul 2016 20:03:49 +0200
+Message-ID: <1469124230-8583-2-git-send-email-s.nawrocki@samsung.com>
+References: <1469124230-8583-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51638 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:42873 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750884AbcGUSEF (ORCPT
+	with ESMTP id S1750884AbcGUSEI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 14:04:05 -0400
+	Thu, 21 Jul 2016 14:04:08 -0400
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
  with ESMTP id <0OAO00LG6FG4QU30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2016 03:04:02 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2016 03:04:07 +0900 (KST)
+In-reply-to: <1469124230-8583-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch series is an attempt to fix sound card initialization isssues
-observed in Odroid XU3 board after conversion of the AUDSS clock controller
-driver to proper loadable module.  Related patch can be found here:
-https://patchwork.kernel.org/patch/9221051, it's also already in -next.
+Ensure they secondary DAI device is freed properly when asoc_dma_platform
+registration fails.  This change is needed for proper deferred probe support
+and will help preventing situations when the CPU DAI's initialization
+completes without required DMA resources.
 
-It would be good to have these two patches merged in 4.8-rc cycle so as
-to avoid regressions on on boards using ADMA. The sound breakage happens
-only when ADMA is used, as ADMA gets apb_pclk clock from the AUDSS clock
-controller.  Previously the clock controller was initialized early in
-core_initcall which ensured the ADMA PL330 driver initialization before
-the I2S probe.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/i2s.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-Probably as a followup the SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME could
-be dropped and it's usage replaced with struct snd_dmaengine_pcm_config
-::dma_names, I didn't want to make too invasive changes for a bug fix patch
-and don't have the older s3c non-dt boards for testing.
-
-Sylwester Nawrocki (2):
-  ASoC: samsung: Fix error paths in the I2S driver's probe()
-  ASoC: samsung: Specify DMA channels through struct
-    snd_dmaengine_pcm_config
-
- sound/soc/samsung/ac97.c        |  3 ++-
- sound/soc/samsung/dma.h         |  9 ++++++---
- sound/soc/samsung/dmaengine.c   | 31 ++++++++++++++++++++-----------
- sound/soc/samsung/i2s.c         | 28 ++++++++++++++++++++++------
- sound/soc/samsung/pcm.c         |  3 ++-
- sound/soc/samsung/s3c2412-i2s.c |  3 ++-
- sound/soc/samsung/s3c24xx-i2s.c |  3 ++-
- sound/soc/samsung/spdif.c       |  3 ++-
- 8 files changed, 58 insertions(+), 25 deletions(-)
-
---
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 27ca116..2bb3550 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1107,6 +1107,11 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+ 	return i2s;
+ }
+ 
++static void i2s_free_sec_dai(struct i2s_dai *i2s)
++{
++	platform_device_del(i2s->pdev);
++}
++
+ #ifdef CONFIG_PM
+ static int i2s_runtime_suspend(struct device *dev)
+ {
+@@ -1340,17 +1345,27 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	devm_snd_soc_register_component(&pri_dai->pdev->dev,
++	ret = devm_snd_soc_register_component(&pri_dai->pdev->dev,
+ 					&samsung_i2s_component,
+ 					&pri_dai->i2s_dai_drv, 1);
++	if (ret < 0)
++		goto err_free_dai;
++
++	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter);
++	if (ret < 0)
++		goto err_free_dai;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+-	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter);
+-	if (ret != 0)
+-		return ret;
++	ret = i2s_register_clock_provider(pdev);
++	if (!ret)
++		return 0;
+ 
+-	return i2s_register_clock_provider(pdev);
++	pm_runtime_disable(&pdev->dev);
++err_free_dai:
++	if (sec_dai)
++		i2s_free_sec_dai(sec_dai);
++	return ret;
+ }
+ 
+ static int samsung_i2s_remove(struct platform_device *pdev)
+-- 
 1.9.1
