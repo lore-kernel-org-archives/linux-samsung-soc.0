@@ -1,63 +1,76 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable bus frequency scaling with
- DEVFREQ/DEVFREQ-Event
-Date: Thu, 21 Jul 2016 17:34:03 +0900
-Message-ID: <579088FB.2000101@samsung.com>
-References: <CGME20160715013357epcas1p1f7e365ac861b48a56c029e67b9461d60@epcas1p1.samsung.com>
- <1468546426-4482-1-git-send-email-cw00.choi@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v6 0/4] Generic zpos property
+Date: Thu, 21 Jul 2016 10:51:59 +0200
+Message-ID: <1469091123-4909-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40901 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751204AbcGUIeH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 04:34:07 -0400
-In-reply-to: <1468546426-4482-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linaro-mm-sig@lists.linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: k.kozlowski@samsung.com
-Cc: linux@armlinux.org.uk, kgene@kernel.org, javier@osg.samsung.com, linux.amoon@gmail.com, treding@nvidia.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-Could you please pick this patch?
-
-Regards,
-Chanwoo Choi
-
-On 2016=EB=85=84 07=EC=9B=94 15=EC=9D=BC 10:33, Chanwoo Choi wrote:
-> This patch enables the bus frequency scaling driver with DEVFREQ and
-> DEVFREQ-Event framework. This patches already was merged for Odroid-U=
-3/XU3
-> ,Trats2 and Rinato/Monk boards.
->=20
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exy=
-nos_defconfig
-> index a5aa44c56bfe..37052b115a40 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -219,6 +219,16 @@ CONFIG_CROS_EC_CHARDEV=3Dy
->  CONFIG_COMMON_CLK_MAX77686=3Dy
->  CONFIG_COMMON_CLK_MAX77802=3Dy
->  CONFIG_COMMON_CLK_S2MPS11=3Dy
-> +CONFIG_PM_DEVFREQ=3Dy
-> +CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=3Dy
-> +CONFIG_DEVFREQ_GOV_PERFORMANCE=3Dy
-> +CONFIG_DEVFREQ_GOV_POWERSAVE=3Dy
-> +CONFIG_DEVFREQ_GOV_USERSPACE=3Dy
-> +CONFIG_DEVFREQ_GOV_PASSIVE=3Dy
-> +CONFIG_ARM_EXYNOS_BUS_DEVFREQ=3Dy
-> +CONFIG_PM_DEVFREQ_EVENT=3Dy
-> +CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=3Dy
-> +CONFIG_DEVFREQ_EVENT_EXYNOS_PPMU=3Dy
->  CONFIG_EXTCON=3Dy
->  CONFIG_EXTCON_MAX14577=3Dy
->  CONFIG_EXTCON_MAX77693=3Dy
->=20
+dmVyc2lvbiA2OgphZGQgenBvcyBpbiBEb2N1bWVudGF0aW9uL2dwdS9rbXMtcHJvcGVydGllcy5j
+c3YKbWVyZ2UgVmlsbGUncyBwYXRjaCAoc3BsaXR0ZWQgYmV0d2VlbiBhbGwgdGhlIGNvbW1pdHMp
+Cml0IHNpbXBsaWZ5IHRoZSBBUEkgYW5kIGZpeCBidWcuIFRoYW5rcwoKdmVyc2lvbiA1OgpyZWJh
+c2VkIG9uIGRybS1uZXh0IHdoZXJlIERvY3VtZW50YXRpb24vRG9jQm9vay9ncHUudG1wbCBkb2Vz
+bid0CmV4aXN0IGFueW1vcmUuCnJld29yayBzdGkgcGF0Y2ggYmVjYXVzZSBzb21lIHBsYW5lIGZ1
+bmN0aW9ucyBoYXZlIGNoYW5nZWQgc2luY2UgdjQKCnZlcnNpb24gNDoKbWFrZSBzdXJlIHRoYXQg
+bm9ybWFsaXplZCB6cG9zIHZhbHVlIGlzIHN0YXkgaW4gdGhlIGRlZmluZWQgcHJvcGVydHkgCnJh
+bmdlIGFuZCB3YXJuIHVzZXIgaWYgbm90LgpGaXggTlVMTCBwb2ludGVyIGJ1ZyBpbiByY2FyLWR1
+IHdoaWxlIHNldHRpbmcgenBvcyB2YWx1ZS4KTm8gY2hhbmdlcyBpbiB0aGUgb3RoZXIgZHJpdmVy
+cy4KCnZlcnNpb24gMzoKdXNlIGttYWxsb2NfYXJyYXkgaW5zdGVhZCBvZiBrbWFsbG9jLgpDb3Jy
+ZWN0IG5vcm1hbGl6ZV96cG9zIGNvbXB1dGF0aW9uIChjb21lYmFjayB0byBNYXJlY2sgb3JpZ2lu
+YWwgY29kZSkKCnZlcnNpb24gMjoKYWRkIGEgenBvcyBwcm9wZXJ0eSBpbnRvIGRybV9wbGFuZSBz
+dHJ1Y3R1cmUgdG8gc2ltcGxpZnkgY29kZS4KVGhpcyBhbGxvdyB0byBnZXQvc2V0IHpwb3MgdmFs
+dWUgaW4gY29yZSBhbmQgbm90IGluIGRyaXZlcnMgY29kZS4KRml4IHZhcmlvdXMgcmVtYXJrcy4K
+CnZlcnNpb24gMToKcmVmYWN0b3IgTWFyZWsncyBwYXRjaGVzIHRvIGhhdmUgcGVyIHBsYW5lIHpw
+b3MgcHJvcGVydHkgaW5zdGVhZCBvZiBvbmx5Cm9uZSBpbiBjb3JlLgoKQmVuamFtaW4gR2FpZ25h
+cmQgKDIpOgogIGRybTogc3RpOiB1c2UgZ2VuZXJpYyB6cG9zIGZvciBwbGFuZQogIGRybTogcmNh
+cjogdXNlIGdlbmVyaWMgY29kZSBmb3IgbWFuYWdpbmcgenBvcyBwbGFuZSBwcm9wZXJ0eQoKTWFy
+ZWsgU3p5cHJvd3NraSAoMik6CiAgZHJtOiBhZGQgZ2VuZXJpYyB6cG9zIHByb3BlcnR5CiAgZHJt
+L2V4eW5vczogdXNlIGdlbmVyaWMgY29kZSBmb3IgbWFuYWdpbmcgenBvcyBwbGFuZSBwcm9wZXJ0
+eQoKIERvY3VtZW50YXRpb24vZ3B1L2ttcy1wcm9wZXJ0aWVzLmNzdiAgICAgIHwgICAxICsKIGRy
+aXZlcnMvZ3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJz
+L2dwdS9kcm0vZHJtX2F0b21pYy5jICAgICAgICAgICAgICB8ICAgNCArCiBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2F0b21pY19oZWxwZXIuYyAgICAgICB8ICAgNyArCiBkcml2ZXJzL2dwdS9kcm0vZHJt
+X2JsZW5kLmMgICAgICAgICAgICAgICB8IDI0MCArKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysKIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Y19pbnRlcm5hbC5oICAgICAgIHwgICA0ICsKIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgICAyIC0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgIDY3ICsrLS0tLS0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1
+L2RybS9yY2FyLWR1L3JjYXJfZHVfY3J0Yy5jICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0v
+cmNhci1kdS9yY2FyX2R1X2Rydi5oICAgICB8ICAgMSAtCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1k
+dS9yY2FyX2R1X2ttcy5jICAgICB8ICAgNSAtCiBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2Fy
+X2R1X3BsYW5lLmMgICB8ICAgOSArLQogZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9w
+bGFuZS5oICAgfCAgIDIgLQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfY3Vyc29yLmMgICAgICAg
+ICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2dkcC5jICAgICAgICAgICAgIHwg
+ICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9ocXZkcC5jICAgICAgICAgICB8ICAgNCAr
+LQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfbWl4ZXIuYyAgICAgICAgICAgfCAgIDkgKy0KIGRy
+aXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmMgICAgICAgICAgIHwgIDc4ICsrKystLS0tLS0K
+IGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX3BsYW5lLmggICAgICAgICAgIHwgICA3ICstCiBpbmNs
+dWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICAgICAgICB8ICAzMCArKysrCiAyMSBmaWxl
+cyBjaGFuZ2VkLCAzNDEgaW5zZXJ0aW9ucygrKSwgMTQ3IGRlbGV0aW9ucygtKQogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9kcm1fYmxlbmQuYwoKQ2M6IElua2kgRGFlIDxpbmtp
+LmRhZUBzYW1zdW5nLmNvbT4KQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4KQ2M6
+IFZpbGxlIFN5cmphbGEgPHZpbGxlLnN5cmphbGFAbGludXguaW50ZWwuY29tPgpDYzogSm9vbnlv
+dW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgpDYzogU2V1bmctV29vIEtpbSA8c3cw
+MzEyLmtpbUBzYW1zdW5nLmNvbT4KQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5j
+b20+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KQ2M6
+IEJhcnRsb21pZWogWm9sbmllcmtpZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4KQ2M6
+IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgpDYzogR3VzdGF2
+byBQYWRvdmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPgpDYzogdmluY2VudC5hYnJpb3VAc3QuY29t
+CkNjOiBmYWJpZW4uZGVzc2VubmVAc3QuY29tCkNjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50
+LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
