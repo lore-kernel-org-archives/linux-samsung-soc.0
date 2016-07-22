@@ -1,181 +1,170 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v6 4/4] drm: rcar: use generic code for managing zpos plane property
-Date: Fri, 22 Jul 2016 14:28:27 +0200
-Message-ID: <1469190507-23799-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v1 2/2] drm/bridge: analogix_dp: turn off the panel when
+ eDP need to disable
+Date: Fri, 22 Jul 2016 11:03:57 -0400
+Message-ID: <CAOw6vbLXDuEW1egN3N8XxXdW8hdrY8W9T-v_d6hWDnRcRqZe_A@mail.gmail.com>
+References: <1469106874-4912-1-git-send-email-ykk@rock-chips.com>
+ <1469106886-4979-1-git-send-email-ykk@rock-chips.com> <CAOw6vbK7CnFwH_Tyrq6ab4DBxVLa8-JCYEM-Tu+mOYsKmNULtg@mail.gmail.com>
+ <57917011.6000108@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:38842 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753531AbcGVM2q (ORCPT
+Received: from mail-yw0-f182.google.com ([209.85.161.182]:34494 "EHLO
+	mail-yw0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751244AbcGVPET (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2016 08:28:46 -0400
-Received: by mail-wm0-f50.google.com with SMTP id o80so64357415wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2016 05:28:45 -0700 (PDT)
+	Fri, 22 Jul 2016 11:04:19 -0400
+Received: by mail-yw0-f182.google.com with SMTP id z8so83872490ywa.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2016 08:04:19 -0700 (PDT)
+Received: from mail-yw0-f178.google.com (mail-yw0-f178.google.com. [209.85.161.178])
+        by smtp.gmail.com with ESMTPSA id n18sm5553705ywn.36.2016.07.22.08.04.18
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jul 2016 08:04:18 -0700 (PDT)
+Received: by mail-yw0-f178.google.com with SMTP id r9so105895761ywg.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2016 08:04:18 -0700 (PDT)
+In-Reply-To: <57917011.6000108@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com
-Cc: linaro-mm-sig@lists.linaro.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-version 6:
-rebased patch on top rcar-du changes for zpos
+On Thu, Jul 21, 2016 at 9:00 PM, Yakir Yang <ykk@rock-chips.com> wrote:
+> Sean,
+>
+> Thanks for your fast respond :-)
+>
+> But this patch is not the latest one, I have upgraded this to "v1.1" version
+> to fix the eDP can't be disabled problem:
+>     [PATCH v1.1 2/2] drm/bridge: analogix_dp: turn off the panel when eDP
+> need to disable
+>         Changes in v1.1: - unprepare the panel at the end of
+> bridge->disable() function
+>
+> In spite of this, I would take your comments with my "v1.1" patch.
+>
+> On 07/21/2016 10:28 PM, Sean Paul wrote:
+>
+> On Thu, Jul 21, 2016 at 9:14 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+>
+> Some panels (like Sharp LQ123P1JX31) need to be turn off when eDP
+> controller stop to send valid video signal, otherwhise panel would
+> go burn in, and keep flicker and flicker.
+>
+> So it's better to turn off the panel when eDP need to disable, and
+> we need to turn on the panel in connector->detect() callback, so
+> that driver would detect panel status rightly.
+>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 32715da..ea059b3 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -961,6 +961,14 @@ analogix_dp_detect(struct drm_connector *connector,
+> bool force)
+>  {
+>         struct analogix_dp_device *dp = to_dp(connector);
+>
+> +       /*
+> +        * Panle would prepare for several times here, but don't worry it
+>
+> s/Panle/Panel/
+>
+>
+> Done
+>
+> +        * would only enable the hardware at the first prepare time.
+>
+> Errr, this shouldn't go in detect. How about putting this in
+> bridge_enable instead?
+>
+>
+> Nope, if we put this in bridge_enable, then eDP would never be enabled.
+> Here're the calling flow.
+>
+> --> analogix_dp_probe
+>   --> analogix_dp_bind  # we still haven't prepared the panel here, that
+> means panel have been powered up
+>     --> analogix_dp_detect  # Oops, losing panel valid hotplug signal, cause
+> panel have been powered up
+>     --> ** Keep detecting **
 
-version 4:
-fix null pointer issue while setting zpos in plane reset function
 
-This patch replaces zpos property handling custom code in rcar DRM
-driver with calls to generic DRM code.
+Yeah, after playing around with the patch yesterday I discovered this
+for myself. I still don't think detect() should be changing hardware
+state. Perhaps you could add a matching unprepare() after you attempt
+to detect the panel?
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Sean
 
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 5 -----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 9 ++-------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h | 2 --
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 5 ++++-
- 6 files changed, 7 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index e39fcef..7316fc7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -196,7 +196,7 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
- 
- static unsigned int plane_zpos(struct rcar_du_plane *plane)
- {
--	return to_rcar_plane_state(plane->plane.state)->zpos;
-+	return plane->plane.state->normalized_zpos;
- }
- 
- static const struct rcar_du_format_info *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index ed35467..c843c31 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -92,7 +92,6 @@ struct rcar_du_device {
- 	struct {
- 		struct drm_property *alpha;
- 		struct drm_property *colorkey;
--		struct drm_property *zpos;
- 	} props;
- 
- 	unsigned int dpad0_source;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 6bb032d..f03eb55 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -527,11 +527,6 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	if (rcdu->props.colorkey == NULL)
- 		return -ENOMEM;
- 
--	rcdu->props.zpos =
--		drm_property_create_range(rcdu->ddev, 0, "zpos", 1, 7);
--	if (rcdu->props.zpos == NULL)
--		return -ENOMEM;
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index bfe31ca..a74f8ed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -652,7 +652,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
- 	state->source = RCAR_DU_PLANE_MEMORY;
- 	state->alpha = 255;
- 	state->colorkey = RCAR_DU_COLORKEY_NONE;
--	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
-+	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -670,8 +670,6 @@ static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
- 		rstate->alpha = val;
- 	else if (property == rcdu->props.colorkey)
- 		rstate->colorkey = val;
--	else if (property == rcdu->props.zpos)
--		rstate->zpos = val;
- 	else
- 		return -EINVAL;
- 
-@@ -690,8 +688,6 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
- 		*val = rstate->alpha;
- 	else if (property == rcdu->props.colorkey)
- 		*val = rstate->colorkey;
--	else if (property == rcdu->props.zpos)
--		*val = rstate->zpos;
- 	else
- 		return -EINVAL;
- 
-@@ -763,8 +759,7 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.colorkey,
- 					   RCAR_DU_COLORKEY_NONE);
--		drm_object_attach_property(&plane->plane.base,
--					   rcdu->props.zpos, 1);
-+		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index b18b7b2..8b91dd3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -51,7 +51,6 @@ static inline struct rcar_du_plane *to_rcar_plane(struct drm_plane *plane)
-  * @hwindex: 0-based hardware plane index, -1 means unused
-  * @alpha: value of the plane alpha property
-  * @colorkey: value of the plane colorkey property
-- * @zpos: value of the plane zpos property
-  */
- struct rcar_du_plane_state {
- 	struct drm_plane_state state;
-@@ -62,7 +61,6 @@ struct rcar_du_plane_state {
- 
- 	unsigned int alpha;
- 	unsigned int colorkey;
--	unsigned int zpos;
- };
- 
- static inline struct rcar_du_plane_state *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index e671a7c..7e51afc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -43,12 +43,12 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
- 			.src_y = 0,
- 			.src_w = mode->hdisplay << 16,
- 			.src_h = mode->vdisplay << 16,
-+			.zpos = 0,
- 		},
- 		.format = rcar_du_format_info(DRM_FORMAT_ARGB8888),
- 		.source = RCAR_DU_PLANE_VSPD1,
- 		.alpha = 255,
- 		.colorkey = 0,
--		.zpos = 0,
- 	};
- 
- 	if (rcdu->info->gen >= 3)
-@@ -269,6 +269,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 		return;
- 
- 	state->alpha = 255;
-+	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -378,6 +379,8 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp)
- 
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.alpha, 255);
-+		drm_plane_create_zpos_property(&plane->plane, 1, 1,
-+					       vsp->num_planes - 1);
- 	}
- 
- 	return 0;
--- 
-1.9.1
+>
+> +        */
+> +       if (dp->plat_data->panel)
+> +               if (drm_panel_prepare(dp->plat_data->panel))
+>
+> Personally, I don't like doing work in a conditional since you're
+> throwing the return code away. Could you break this out into:
+>
+> ret = drm_panel_prepare(dp->plat_data->panel);
+> if (ret)
+>   DRM_ERROR("failed to setup the panel ret=%d\n", ret);
+>
+>
+> Okay
+>
+>
+> +                       DRM_ERROR("failed to setup the panel\n");
+> +
+>         if (analogix_dp_detect_hpd(dp))
+>                 return connector_status_disconnected;
+>
+> @@ -1063,7 +1071,8 @@ static void analogix_dp_bridge_disable(struct
+> drm_bridge *bridge)
+>                 return;
+>
+>         if (dp->plat_data->panel) {
+> -               if (drm_panel_disable(dp->plat_data->panel)) {
+> +               if (drm_panel_disable(dp->plat_data->panel) ||
+> +                   drm_panel_unprepare(dp->plat_data->panel)) {
+>
+> Same comment here, please break this out into separate statements for
+> better readability/logging.
+>
+>
+> Okay,
+>
+>
+> Thanks,
+> - Yakir
+>
+>
+>                         DRM_ERROR("failed to disable the panel\n");
+>                         return;
+>                 }
+> @@ -1333,13 +1342,6 @@ int analogix_dp_bind(struct device *dev, struct
+> drm_device *drm_dev,
+>
+>         phy_power_on(dp->phy);
+>
+> -       if (dp->plat_data->panel) {
+> -               if (drm_panel_prepare(dp->plat_data->panel)) {
+> -                       DRM_ERROR("failed to setup the panel\n");
+> -                       return -EBUSY;
+> -               }
+> -       }
+> -
+>         analogix_dp_init_dp(dp);
+>
+>         ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+> --
+> 1.9.1
+>
+>
+>
+>
+>
