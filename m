@@ -1,94 +1,80 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v5 4/4] drm/rockchip: analogix_dp: implement PSR function
-Date: Sun, 24 Jul 2016 14:57:52 +0800
-Message-ID: <1469343472-27810-1-git-send-email-ykk@rock-chips.com>
-References: <1469343437-27443-1-git-send-email-ykk@rock-chips.com>
+Subject: Re: [PATCH v4 2/4] drm/rockchip: add an common abstracted PSR driver
+Date: Sun, 24 Jul 2016 15:08:50 +0800
+Message-ID: <57946982.7050209@rock-chips.com>
+References: <1468469704-12440-1-git-send-email-ykk@rock-chips.com>
+ <1468469749-12636-1-git-send-email-ykk@rock-chips.com>
+ <CAD=FV=U-9WoyZTyj0weDxVkZjQ7ESc+pwJXX=19JuGrOCrsKcQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1469343437-27443-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, daniel.vetter@ffwll.ch, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:55510 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751562AbcGXHI5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 24 Jul 2016 03:08:57 -0400
+In-Reply-To: <CAD=FV=U-9WoyZTyj0weDxVkZjQ7ESc+pwJXX=19JuGrOCrsKcQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 
-QWx3YXkgZW5hYmxlIHRoZSBQU1IgZnVuY3Rpb24gZm9yIFJvY2tjaGlwIGFuYWxvZ2l4X2RwIGRy
-aXZlci4gSWYgcGFuZWwKZG9uJ3Qgc3VwcG9ydCBQU1IsIHRoZW4gdGhlIGNvcmUgYW5hbG9naXhf
-ZHAgd291bGQgaWdub3JlIHRoaXMgc2V0dGluZy4KClNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcg
-PHlra0Byb2NrLWNoaXBzLmNvbT4KUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hy
-b21pdW0ub3JnPgotLS0KQ2hhbmdlcyBpbiB2NToKLSBBZGQgcmV2aWV3ZWQgZmxhZyBmcm9tIFNl
-YW4uCgpDaGFuZ2VzIGluIHY0OgotIFJldHVybiAndm9pZCcgaW5zdGVhZCBvZiAnaW50JyBpbiBh
-bmFsb2dpeF9kcF9wc3Jfc2V0KCkuIChTZWFuKQotIFB1bGwgdGhlIDEwbXMgZGVsYXkgdGltZSBv
-dXQgaW50byBhICNkZWZpbmUuIChTZWFuKQotIEltcHJvdmVkIHRoZSBjb2RlIG9mIGFuYWxvZ2l4
-X2RwX3Bzcl93b3JrKCkuIChTZWFuKQotIEluZGVudGVkIHdpdGggc3BhY2VzIGZvciBuZXcgbnVt
-YmVycyBpbiByb2NrY2hpcF9kcF9kZXZpY2Ugc3RydWN0LiAoU3TDqXBoYW5lLCByZXZpZXdlZCBh
-dCBHb29nbGUgZ2Vycml0KQogICAgW2h0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJj
-ZS5jb20vIy9jLzM0OTA4NS8zMy9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAt
-cm9ja2NoaXAuY0A4M10KCkNoYW5nZXMgaW4gdjM6Ci0gc3BsaXQgdGhlIGNvbW1vbiBwc3IgbG9n
-aWMgaW50byBhIHNlcGVyYXRlIGRyaXZlciwgbWFrZSB0aGlzIHRvIGEKICBzaW1wbGUgc3ViLXBz
-ciBkZXZpY2UgZHJpdmVyLgoKQ2hhbmdlcyBpbiB2MjoKLSByZW1vdmUgdmJsYW5rIG5vdGlmeSBv
-dXQgKERhbmllbCkKLSBjcmVhdGUgYSBwc3JfYWN0aXZlKCkgY2FsbGJhY2sgaW4gdm9wIGRhdGEg
-c3RydWN0LgoKIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5j
-IHwgNTcgKysrKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDU3IGluc2Vy
-dGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhf
-ZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2Nr
-Y2hpcC5jCmluZGV4IGU4MWUxOWEuLmFhOTE2ZjQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jCkBAIC0zMiw2ICszMiw3IEBACiAjaW5jbHVk
-ZSA8ZHJtL2JyaWRnZS9hbmFsb2dpeF9kcC5oPgogCiAjaW5jbHVkZSAicm9ja2NoaXBfZHJtX2Ry
-di5oIgorI2luY2x1ZGUgInJvY2tjaGlwX2RybV9wc3IuaCIKICNpbmNsdWRlICJyb2NrY2hpcF9k
-cm1fdm9wLmgiCiAKICNkZWZpbmUgUkszMjg4X0dSRl9TT0NfQ09ONgkJMHgyNWMKQEAgLTQxLDYg
-KzQyLDkgQEAKIAogI2RlZmluZSBISVdPUkRfVVBEQVRFKHZhbCwgbWFzaykJKHZhbCB8IChtYXNr
-KSA8PCAxNikKIAorI2RlZmluZSBQU1JfU0VUX0RFTEFZX1RJTUUJCW1zZWNzX3RvX2ppZmZpZXMo
-MTApCisjZGVmaW5lIFBTUl9XQUlUX0xJTkVfRkxBR19USU1FT1VUX01TCTEwMAorCiAjZGVmaW5l
-IHRvX2RwKG5tKQljb250YWluZXJfb2Yobm0sIHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UsIG5t
-KQogCiAvKioKQEAgLTY4LDExICs3Miw1NSBAQCBzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlIHsK
-IAlzdHJ1Y3QgcmVnbWFwICAgICAgICAgICAgKmdyZjsKIAlzdHJ1Y3QgcmVzZXRfY29udHJvbCAg
-ICAgKnJzdDsKIAorCXN0cnVjdCBkZWxheWVkX3dvcmsgICAgICBwc3Jfd29yazsKKwl1bnNpZ25l
-ZCBpbnQgICAgICAgICAgICAgcHNyX3N0YXRlOworCiAJY29uc3Qgc3RydWN0IHJvY2tjaGlwX2Rw
-X2NoaXBfZGF0YSAqZGF0YTsKIAogCXN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgcGxhdF9k
-YXRhOwogfTsKIAorc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfcHNyX3NldChzdHJ1Y3QgZHJtX2Vu
-Y29kZXIgKmVuY29kZXIsIGJvb2wgZW5hYmxlZCkKK3sKKwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2
-aWNlICpkcCA9IHRvX2RwKGVuY29kZXIpOworCisJZGV2X2RiZyhkcC0+ZGV2LCAiJXMgUFNSLi4u
-XG4iLCBlbmFibGVkID8gIkVudHJ5IiA6ICJFeGl0Iik7CisKKwlpZiAoZW5hYmxlZCkKKwkJZHAt
-PnBzcl9zdGF0ZSA9IEVEUF9WU0NfUFNSX1NUQVRFX0FDVElWRTsKKwllbHNlCisJCWRwLT5wc3Jf
-c3RhdGUgPSB+RURQX1ZTQ19QU1JfU1RBVEVfQUNUSVZFOworCisJc2NoZWR1bGVfZGVsYXllZF93
-b3JrKCZkcC0+cHNyX3dvcmssIFBTUl9TRVRfREVMQVlfVElNRSk7Cit9CisKK3N0YXRpYyB2b2lk
-IGFuYWxvZ2l4X2RwX3Bzcl93b3JrKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKK3sKKwlzdHJ1
-Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9CisJCQkJY29udGFpbmVyX29mKHdvcmssIHR5cGVv
-ZigqZHApLCBwc3Jfd29yay53b3JrKTsKKwlzdHJ1Y3QgZHJtX2NydGMgKmNydGMgPSBkcC0+ZW5j
-b2Rlci5jcnRjOworCWludCBwc3Jfc3RhdGUgPSBkcC0+cHNyX3N0YXRlOworCWludCB2YWN0X2Vu
-ZDsKKwlpbnQgcmV0OworCisJaWYgKCFjcnRjKQorCQlyZXR1cm47CisKKwl2YWN0X2VuZCA9IGNy
-dGMtPm1vZGUudnRvdGFsIC0gY3J0Yy0+bW9kZS52c3luY19zdGFydCArIGNydGMtPm1vZGUudmRp
-c3BsYXk7CisKKwlyZXQgPSByb2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcoZHAtPmVuY29kZXIu
-Y3J0YywgdmFjdF9lbmQsCisJCQkJCSAgUFNSX1dBSVRfTElORV9GTEFHX1RJTUVPVVRfTVMpOwor
-CWlmIChyZXQpIHsKKwkJZGV2X2VycihkcC0+ZGV2LCAibGluZSBmbGFnIGludGVycnVwdCBkaWQg
-bm90IGFycml2ZVxuIik7CisJCXJldHVybjsKKwl9CisKKwlpZiAocHNyX3N0YXRlID09IEVEUF9W
-U0NfUFNSX1NUQVRFX0FDVElWRSkKKwkJYW5hbG9naXhfZHBfZW5hYmxlX3BzcihkcC0+ZGV2KTsK
-KwllbHNlCisJCWFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNyKGRwLT5kZXYpOworfQorCiBzdGF0aWMg
-aW50IHJvY2tjaGlwX2RwX3ByZV9pbml0KHN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwKQog
-ewogCXJlc2V0X2NvbnRyb2xfYXNzZXJ0KGRwLT5yc3QpOwpAQCAtMzQwLDEyICszODgsMjEgQEAg
-c3RhdGljIGludCByb2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRl
-dmljZSAqbWFzdGVyLAogCWRwLT5wbGF0X2RhdGEucG93ZXJfb2ZmID0gcm9ja2NoaXBfZHBfcG93
-ZXJkb3duOwogCWRwLT5wbGF0X2RhdGEuZ2V0X21vZGVzID0gcm9ja2NoaXBfZHBfZ2V0X21vZGVz
-OwogCisJZHAtPnBzcl9zdGF0ZSA9IH5FRFBfVlNDX1BTUl9TVEFURV9BQ1RJVkU7CisJSU5JVF9E
-RUxBWUVEX1dPUksoJmRwLT5wc3Jfd29yaywgYW5hbG9naXhfZHBfcHNyX3dvcmspOworCisJcm9j
-a2NoaXBfZHJtX3Bzcl9yZWdpc3RlcigmZHAtPmVuY29kZXIsIGFuYWxvZ2l4X2RwX3Bzcl9zZXQp
-OworCiAJcmV0dXJuIGFuYWxvZ2l4X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2RldiwgJmRwLT5wbGF0
-X2RhdGEpOwogfQogCiBzdGF0aWMgdm9pZCByb2NrY2hpcF9kcF91bmJpbmQoc3RydWN0IGRldmlj
-ZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsCiAJCQkgICAgICAgdm9pZCAqZGF0YSkKIHsK
-KwlzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwor
-CisJcm9ja2NoaXBfZHJtX3Bzcl91bnJlZ2lzdGVyKCZkcC0+ZW5jb2Rlcik7CisKIAlyZXR1cm4g
-YW5hbG9naXhfZHBfdW5iaW5kKGRldiwgbWFzdGVyLCBkYXRhKTsKIH0KIAotLSAKMS45LjEKCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Doug,
+
+On 07/23/2016 12:04 PM, Doug Anderson wrote:
+> Yakir,
+>
+> On Wed, Jul 13, 2016 at 9:15 PM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> +static void psr_set_state(struct psr_drv *psr, enum psr_state state)
+>> +{
+>> +       mutex_lock(&psr->state_mutex);
+>> +
+>> +       if (psr->state == state) {
+>> +               mutex_unlock(&psr->state_mutex);
+>> +               return;
+>> +       }
+>> +
+>> +       psr->state = state;
+>> +       switch (state) {
+>> +       case PSR_ENABLE:
+>> +               psr->set(psr->encoder, true);
+>> +               break;
+>> +
+>> +       case PSR_DISABLE:
+>> +       case PSR_FLUSH:
+>> +               psr->set(psr->encoder, false);
+>> +               break;
+>> +       };
+>> +
+>> +       mutex_unlock(&psr->state_mutex);
+>> +}
+>> +
+>> +static void psr_flush_handler(unsigned long data)
+>> +{
+>> +       struct psr_drv *psr = (struct psr_drv *)data;
+>> +
+>> +       if (!psr || psr->state != PSR_FLUSH)
+>> +               return;
+>> +
+>> +       psr_set_state(psr, PSR_ENABLE);
+> As mentioned in a separate thread, this is probably not OK.
+> psr_set_state() grabs a mutex and that might sleep.  ...but
+> psr_flush_handler() is a timer.  I'm nearly certain that timers can't
+> sleep.
+>
+> I believe this is the source of "sleeping function called from invalid
+> context" that I've seen at times.
+
+Thanks for your reported, i have wrote a patch[0] to fix this problem in 
+my v5. If you're happy to review, that would be great ;)
+
+[0]: https://patchwork.kernel.org/patch/9244805/
+
+- Yakir
+
+>
+> -Doug
+>
+>
+>
