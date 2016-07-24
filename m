@@ -1,66 +1,119 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v4 2/4] drm/rockchip: add an common abstracted PSR driver
-Date: Fri, 22 Jul 2016 21:04:41 -0700
-Message-ID: <CAD=FV=U-9WoyZTyj0weDxVkZjQ7ESc+pwJXX=19JuGrOCrsKcQ@mail.gmail.com>
-References: <1468469704-12440-1-git-send-email-ykk@rock-chips.com> <1468469749-12636-1-git-send-email-ykk@rock-chips.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH v5 0/4] Add PSR function support for Analogix/Rockchip DP
+Date: Sun, 24 Jul 2016 14:57:17 +0800
+Message-ID: <1469343437-27443-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f48.google.com ([209.85.213.48]:33581 "EHLO
-	mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708AbcGWEEn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 23 Jul 2016 00:04:43 -0400
-Received: by mail-vk0-f48.google.com with SMTP id x130so182115546vkc.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2016 21:04:43 -0700 (PDT)
-In-Reply-To: <1468469749-12636-1-git-send-email-ykk@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, daniel.vetter@ffwll.ch, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tfiga@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 
-Yakir,
-
-On Wed, Jul 13, 2016 at 9:15 PM, Yakir Yang <ykk@rock-chips.com> wrote:
-> +static void psr_set_state(struct psr_drv *psr, enum psr_state state)
-> +{
-> +       mutex_lock(&psr->state_mutex);
-> +
-> +       if (psr->state == state) {
-> +               mutex_unlock(&psr->state_mutex);
-> +               return;
-> +       }
-> +
-> +       psr->state = state;
-> +       switch (state) {
-> +       case PSR_ENABLE:
-> +               psr->set(psr->encoder, true);
-> +               break;
-> +
-> +       case PSR_DISABLE:
-> +       case PSR_FLUSH:
-> +               psr->set(psr->encoder, false);
-> +               break;
-> +       };
-> +
-> +       mutex_unlock(&psr->state_mutex);
-> +}
-> +
-> +static void psr_flush_handler(unsigned long data)
-> +{
-> +       struct psr_drv *psr = (struct psr_drv *)data;
-> +
-> +       if (!psr || psr->state != PSR_FLUSH)
-> +               return;
-> +
-> +       psr_set_state(psr, PSR_ENABLE);
-
-As mentioned in a separate thread, this is probably not OK.
-psr_set_state() grabs a mutex and that might sleep.  ...but
-psr_flush_handler() is a timer.  I'm nearly certain that timers can't
-sleep.
-
-I believe this is the source of "sleeping function called from invalid
-context" that I've seen at times.
-
--Doug
+ClRoZSBmdWxsIG5hbWUgb2YgUFNSIGlzIFBhbmVsIFNlbGYgUmVmcmVzaCwgcGFuZWwgZGV2aWNl
+IGNvdWxkIHJlZnJlc2gKaXRzZWxmIHdpdGggdGhlIGhhcmR3YXJlIGZyYW1lYnVmZmVyIGluIHBh
+bmVsLCB0aGlzIHdvdWxkIG1ha2UgYSBsb3RzCm9mIHNlbnNlIHRvIHNhdmUgdGhlIHBvd2VyIGNv
+bnN1bXB0aW9uLgoKVGhlIHY1IHZlcnNpb24gaGF2ZSBtYWRlIHRoZSBwc3Jfc2V0X3N0YXRlKCkg
+dG8gYSBkZWxheSB3b3JrLCB3aGljaCBpcwp0aGUgYmlnZ2VzdCBjaGFuZ2VzIGZyb20gdjQuCgpU
+aGUgdjMgdmVyc2lvbiBoYXZlIHNwbGl0ZWQgYW4gY29tbW9uIFBTUiBkcml2ZXIgZm9yIFJvY2tj
+aGlwLCB3aGljaCBpcwpiaWdnZXN0IGNoYW5nZXMgZnJvbSB2Mi4KClRoaXMgdGhyZWFkIGlzIGJh
+c2VkIG9uIE1hcmsncyBSSzMzOTkgVk9QIHRocmVhZFswXS4KClswXTogaHR0cHM6Ly9wYXRjaHdv
+cmsua2VybmVsLm9yZy9wYXRjaC84ODg2MDQxLwoKCkNoYW5nZXMgaW4gdjU6Ci0gQWRkIHJldmll
+d2VkIGZsYWcgZnJvbSBTZWFuLgotIE9ubHkga2VlcCAncHNyX2xpc3RfbXV0ZXgnIGF0IHJlZ2lz
+dGVyL3VucmVnaXN0ZXIgdGltZS4KLSBSZW1vdmUgdW51c2VkIGdsb2JhbCB2YXJpYWJsZXMuCi0g
+TWFrZSBsaXN0IHRyYXZlcnNhbCBzYWZlbHkgYXQgcm9ja2NoaXBfZHJtX3Bzcl91bnJlZ2lzdGVy
+KCkuCi0gTWFrZSBwc3Jfc2V0X3N0YXRlKCkgdG8gYSBkZWxheSB3b3JrLCBzYWZlIHRvIGNhbGwg
+ZXhwb3J0ZWQgc3ltYm9scyBhdAogIGludGVycnVwdCBjb250ZXh0LgotIFJlbW92ZSB0aGUgcmVw
+ZWF0ZWQgcHNyIGRlbGF5IHdvcmsgaW4gdm9wIGRyaXZlci4KLSBBZGQgcmV2aWV3ZWQgZmxhZyBm
+cm9tIFNlYW4uCi0gQWRkIHJldmlld2VkIGZsYWcgZnJvbSBTZWFuLgoKQ2hhbmdlcyBpbiB2NC4x
+OgotIFJlbW92ZSB0aGUgY29tcGxldGlvbl9kb25lKCkgY2hlY2sgaW4gaXJxIGhhbmRsZXIgKFNl
+YW4pCi0gVGFrZSB1c2Ugb2YgZXhpc3RpbmcgZWRwX3Bzcl92c2Mgc3RydWN0IHRvIHN3YXAgSEJ4
+IGFuZCBEQnggc2V0dGluZy4gKFNlYW4pCi0gUmVtb3ZlIFBTUl9WSURfQ1JDX0ZMVVNIIHNldHRp
+bmcgYW5hbG9naXhfZHBfZW5hYmxlX3Bzcl9jcmMoKS4KLSBBZGQgY29tbWVudCBhYm91dCBQQngg
+bWFnaWMgbnVtYmVycy4gKFNlYW4pCgpDaGFuZ2VzIGluIHY0OgotIEF2b2lkIHRoZSB3ZWlyZCBi
+ZWhhdmlvciBpbiByb2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcoKS4gKFNlYW4pCi0gTWFrZSBs
+aW5lX2ZsYWdfbnVtX3ggdG8gYW4gYXJyYXkuIChTZWFuKQotIFJlbW92ZSB0aGUgdW51c2VkIHZv
+cF9jZmdfZG9uZSgpIGluIHZvcF9saW5lX2ZsYWdfaXJxX2VuYWJsZSgpLiAoU3RlcGhhbmUsIHJl
+dmlld2VkIGluIEdvb2dsZSBnZXJyaXQpCiAgICBbaHR0cHM6Ly9jaHJvbWl1bS1yZXZpZXcuZ29v
+Z2xlc291cmNlLmNvbS8jL2MvMzQ5MDg0LzMzL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2Nr
+Y2hpcF9kcm1fdm9wLmNANDY2XQotIFR1Y2sgdGhlIGdsb2JhbCAicHNyX2xpc3QiICYgInBzcl9s
+aXN0X211dGV4IiBpbiBzdHJ1Y3Qgcm9ja2NoaXBfZHJtX3ByaXZhdGUuIChTZWFuKQotIE1vdmUg
+dGhlIGFjY2VzcyBvZiAicHNyLT5zdGF0ZSIgdW5kZXIgInBzci0+c3RhdGVfbXV0ZXgiJ3MgcHJv
+dGVjdC4gKFNlYW4pCi0gTGV0ICJwc3ItPnN0YXRlID0gUFNSX0ZMVVNIIiB1bmRlciAicHNyLT5z
+dGF0ZV9tdXRleCIncyBwcm90ZWN0LiAoU2VhbikKLSBDb2xsZWN0IHBzcl9lbmFibGUoKSBhbmQg
+cHNyX2Rpc2FibGUoKSBpbnRvIHBzcl9zZXRfc3RhdGUoKQotIHMvNVwgc2Vjb25kL1BTUl9GTFVT
+SF9USU1FT1VULyAoU2VhbikKLSBGbHVzaCB0aGUgcHNyIGNhbGxiYWNrIGluIHZvcF9jcnRjX2Rp
+c2FibGUoKS4gKFN0w6lwaGFuZSwgcmV2aWV3ZWQgaW4gR29vZ2xlIGdlcnJpdCkKICAgIFtodHRw
+czovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMvYy8zNDkwODQvNi9kcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5jQDQ3NV0KLSBBZGQgdGhlIG1pc3Np
+bmcgZmlsZSBoZWFkIHdpdGggbGljZW5zZS4gKFN0w6lwaGFuZSwgcmV2aWV3ZWQgaW4gR29vZ2xl
+IGdlcnJpdCkKICAgIFtodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tLyMv
+Yy8zNTc1NjMvMS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3Bzci5oQDNd
+Ci0gRG93bmdyYWRlIHRoZSBQU1IgdmVyc2lvbiBwcmludCBtZXNzYWdlIHRvIGRlYnVnIGxldmVs
+LiAoU2VhbikKLSBSZXR1cm4gJ3ZvaWQnIGluc3RlYWQgb2YgJ2ludCcgaW4gYW5hbG9naXhfZHBf
+ZW5hYmxlX3NpbmtfcHNyKCkuIChTZWFuKQotIERlbGV0ZSB0aGUgdW51c2VkIHJlYWQgZHBjZCBv
+cGVyYXRpb25zIGluIGFuYWxvZ2l4X2RwX2VuYWJsZV9zaW5rX3BzcigpLiAoU2VhbikKLSBEZWxl
+dGUgdGhlIGFyYml0cmFyeSB1c2xlZXBfcmFuZ2UgaW4gYW5hbG9naXhfZHBfZW5hYmxlX3Bzcl9j
+cmMuIChTZWFuKS4KLSBDbGVhbiB1cCB0aGUgaGFyZGNvZGVkIHZhbHVlcyBpbiBhbmFsb2dpeF9k
+cF9zZW5kX3Bzcl9zcGQoKS4gKFNlYW4pCi0gUmVuYW1lICJhY3RpdmUvaW5hY3RpdmUiIHRvICJl
+bmFibGUvZGlzYWJsZSIuIChTZWFuLCBEb21pbmlrKQotIEtlZXAgc2V0IHRoZSBQU1JfVklEX0NS
+Q19GTFVTSCBnYXRlIGluIGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3JfY3JjKCkuCi0gUmV0dXJuICd2
+b2lkJyBpbnN0ZWFkIG9mICdpbnQnIGluIGFuYWxvZ2l4X2RwX3Bzcl9zZXQoKS4gKFNlYW4pCi0g
+UHVsbCB0aGUgMTBtcyBkZWxheSB0aW1lIG91dCBpbnRvIGEgI2RlZmluZS4gKFNlYW4pCi0gSW1w
+cm92ZWQgdGhlIGNvZGUgb2YgYW5hbG9naXhfZHBfcHNyX3dvcmsoKS4gKFNlYW4pCi0gSW5kZW50
+ZWQgd2l0aCBzcGFjZXMgZm9yIG5ldyBudW1iZXJzIGluIHJvY2tjaGlwX2RwX2RldmljZSBzdHJ1
+Y3QuIChTdMOpcGhhbmUsIHJldmlld2VkIGF0IEdvb2dsZSBnZXJyaXQpCiAgICBbaHR0cHM6Ly9j
+aHJvbWl1bS1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvMzQ5MDg1LzMzL2RyaXZlcnMvZ3B1
+L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1yb2NrY2hpcC5jQDgzXQoKQ2hhbmdlcyBpbiB2MzoK
+LSBFeHBvcnQgdGhlICdyb2NrY2hpcF9kcm1fd2FpdF9saW5lX2ZsYWcnIHN5bWJvbCwgYW5kIGRv
+Y3VtZW50IGl0LgotIEFkZCAnbGluZV9mbGFnX251bV8wJyBmb3IgUkszMjg4L1JLMzAzNgotIFJl
+bW92ZSB0aGUgbm90aWZ5IGZvciB3YWl0aW5nIGxpbmVfZmxhZyBldmVudCAoRGFuaWVsKQotIHNw
+bGl0IHRoZSBwc3IgZmxvdyBpbnRvIGFuIGNvbW1vbiBhYnN0cmFjdGVkIFBTUiBkcml2ZXIKLSBp
+bXBsZW1lbnQgdGhlICdmYi0+ZGlydHknIGNhbGxiYWNrIGZ1bmN0aW9uIChEYW5pZWwpCi0gYXZv
+aWQgdG8gdXNlIG5vdGlmeSB0byBhY3FpdXJlIGZvciB2YWN0IGV2ZW50IChEYW5pZWwpCi0gcmVt
+b3ZlIHBzcl9hY3RpdmUoKSBjYWxsYmFjayB3aGljaCBpbnRyb2R1Y2UgaW4gdjIKLSBzcGxpdCBh
+bmFsb2dpeF9kcF9lbmFibGVfcHNyKCksIG1ha2UgaXQgbW9yZSBjbGVhcmx5CiAgICBhbmFsb2dp
+eF9kcF9kZXRlY3Rfc2lua19wc3IoKQogICAgYW5hbG9naXhfZHBfZW5hYmxlX3NpbmtfcHNyKCkK
+LSByZW1vdmUgc29tZSBub3NpZSByZWdpc3RlciBzZXR0aW5nIGNvbW1lbnRzCi0gc3BsaXQgdGhl
+IGNvbW1vbiBwc3IgbG9naWMgaW50byBhIHNlcGVyYXRlIGRyaXZlciwgbWFrZSB0aGlzIHRvIGEK
+ICBzaW1wbGUgc3ViLXBzciBkZXZpY2UgZHJpdmVyLgoKQ2hhbmdlcyBpbiB2MjoKLSBJbnRyb2R1
+Y2UgaW4gdjIsIHNwbGl0IFZPUCBsaW5lIGZsYWcgY2hhbmdlcyBvdXQKLSBpbnRyb2R1Y2UgaW4g
+djIsIHNwbGl0ZSB0aGUgY29tbW9uIEFuYWxvZ2l4IERQIGNoYW5nZXMgb3V0Ci0gcmVtb3ZlIHZi
+bGFuayBub3RpZnkgb3V0IChEYW5pZWwpCi0gY3JlYXRlIGEgcHNyX2FjdGl2ZSgpIGNhbGxiYWNr
+IGluIHZvcCBkYXRhIHN0cnVjdC4KCllha2lyIFlhbmcgKDQpOgogIGRybS9yb2NrY2hpcDogdm9w
+OiBleHBvcnQgbGluZSBmbGFnIGZ1bmN0aW9uCiAgZHJtL3JvY2tjaGlwOiBhZGQgYW4gY29tbW9u
+IGFic3RyYWN0ZWQgUFNSIGRyaXZlcgogIGRybS9icmlkZ2U6IGFuYWxvZ2l4X2RwOiBhZGQgdGhl
+IFBTUiBmdW5jdGlvbiBzdXBwb3J0CiAgZHJtL3JvY2tjaGlwOiBhbmFsb2dpeF9kcDogaW1wbGVt
+ZW50IFBTUiBmdW5jdGlvbgoKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
+aXhfZHBfY29yZS5jIHwgIDgxICsrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
+aXgvYW5hbG9naXhfZHBfY29yZS5oIHwgICA1ICsKIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
+bG9naXgvYW5hbG9naXhfZHBfcmVnLmMgIHwgIDUxICsrKysrCiBkcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5oICB8ICAzNCArKysKIGRyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9ja2NoaXAuYyAgICB8ICA1NyArKysrKwogZHJp
+dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyAgICAgICAgfCAgIDMgKwog
+ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuaCAgICAgICAgfCAgIDYg
+KwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9mYi5jICAgICAgICAgfCAg
+MTIgKwogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9wc3IuYyAgICAgICAg
+fCAyNDkgKysrKysrKysrKysrKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
+a2NoaXBfZHJtX3Bzci5oICAgICAgICB8ICAyNiArKysKIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
+cC9yb2NrY2hpcF9kcm1fdm9wLmMgICAgICAgIHwgMTI2ICsrKysrKysrKysrCiBkcml2ZXJzL2dw
+dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5oICAgICAgICB8ICAgMiArCiBkcml2ZXJz
+L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfdm9wX3JlZy5jICAgICAgICB8ICAgNCArCiBpbmNs
+dWRlL2RybS9icmlkZ2UvYW5hbG9naXhfZHAuaCAgICAgICAgICAgICAgICAgICB8ICAgMyArCiAx
+NSBmaWxlcyBjaGFuZ2VkLCA2NjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQogY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fcHNyLmMK
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
+X3Bzci5oCgotLSAKMS45LjEKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
