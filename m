@@ -1,140 +1,179 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2 02/10] driver core: Functional dependencies tracking
- support
-Date: Mon, 25 Jul 2016 00:48:32 +0200
-Message-ID: <20160724224832.GB9516@wunner.de>
-References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
- <1735644.0mfUjJQtul@vostro.rjw.lan>
- <20160720232553.GA8460@wunner.de>
- <4258432.JNKr9zJtMp@vostro.rjw.lan>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v4 4/4] ASoC: samsung: Add machine driver for
+ Exynos5433 based TM2 board
+Date: Mon, 25 Jul 2016 16:20:18 +0200
+Message-ID: <57962022.6020808@samsung.com>
+References: <1467738877-31555-1-git-send-email-s.nawrocki@samsung.com>
+ <20160722095115.GB8680@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.hostsharing.net ([83.223.90.233]:33589 "EHLO
-	mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752039AbcGXWsU (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:60291 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752449AbcGYOU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Jul 2016 18:48:20 -0400
-Content-Disposition: inline
-In-Reply-To: <4258432.JNKr9zJtMp@vostro.rjw.lan>
+	Mon, 25 Jul 2016 10:20:27 -0400
+In-reply-to: <20160722095115.GB8680@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Noever <andreas.noever@gmail.com>, linux-pci@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: robh@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, inki.dae@samsung.com, devicetree@vger.kernel.org, broonie@kernel.org, ideal.song@samsung.com
 
-On Thu, Jul 21, 2016 at 02:25:15AM +0200, Rafael J. Wysocki wrote:
-> On Thursday, July 21, 2016 01:25:53 AM Lukas Wunner wrote:
-> > On Thu, Jul 21, 2016 at 12:51:31AM +0200, Rafael J. Wysocki wrote:
-> > > On Wednesday, July 20, 2016 05:23:40 PM Lukas Wunner wrote:
-> > > > On Wed, Jul 20, 2016 at 02:52:42PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Wednesday, July 20, 2016 08:24:50 AM Lukas Wunner wrote:
-> > > > > > On Wed, Jul 20, 2016 at 02:33:18AM +0200, Rafael J. Wysocki wrote:
-> > > > > > > On Friday, June 17, 2016 04:07:38 PM Lukas Wunner wrote:
-> > > > > > > > On Fri, Jun 17, 2016 at 02:54:56PM +0200, Rafael J. Wysocki wrote:
-> > > > > > > > > On Fri, Jun 17, 2016 at 12:36 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > > > > > > > > > On Fri, Jun 17, 2016 at 08:26:52AM +0200, Marek Szyprowski wrote:
-> > > > > > > > > > > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> > > > > > > > > > We also have such a functional dependency for Thunderbolt on Macs:
-> > > > > > > > > > On resume from system sleep, the PCIe hotplug ports may not resume
-> > > > > > > > > > before the thunderbolt driver has reestablished the PCI tunnels.
-> > > > > > > > > > Currently this is enforced by quirk_apple_wait_for_thunderbolt()
-> > > > > > > > > > in drivers/pci/quirks.c. It would be good if we could represent
-> > > > > > > > > > this dependency using something like Rafael's approach instead of
-> > > > > > > > > > open coding it, however one detail in Rafael's patches is problematic:
-> > > > > > > > > >
-> > > > > > > > > > > New links are added by calling device_link_add() which may happen
-> > > > > > > > > > > either before the consumer device is probed or when probing it, in
-> > > > > > > > > > > which case the caller needs to ensure that the driver of the
-> > > > > > > > > > > supplier device is present and functional and the DEVICE_LINK_PROBE_TIME
-> > > > > > > > > > > flag should be passed to device_link_add() to reflect that.
-> > > > > > > > > >
-> > > > > > > > > > The thunderbolt driver cannot call device_link_add() before the
-> > > > > > > > > > PCIe hotplug ports are bound to a driver unless we amend portdrv
-> > > > > > > > > > to return -EPROBE_DEFER for Thunderbolt hotplug ports on Macs
-> > > > > > > > > > if the thunderbolt driver isn't loaded.
-> > > > > > > > > >
-> > > > > > > > > > It would therefore be beneficial if device_link_add() can be
-> > > > > > > > > > called even *after* the consumer is bound.
-> > > > > > > > > 
-> > > > > > > > > I don't quite follow.
-> > > > > > > > > 
-> > > > > > > > > Who's the provider and who's the consumer here?
-> > > > > > > > 
-> > > > > > > > thunderbolt.ko is the supplier.
-> > > > > > > 
-> > > > > > > But it binds to the children of the ports that are supposed to be its
-> > > > > > > consumers?
-> > > > > > > 
-> > > > > > > Why is that even expected to work?
-> > > > > > 
-> > > > > > No, the consumers are aunts (or uncles) of the supplier, if you will. :-)
-> > > > > > 
-> > > > > > The consumers are the hotplug ports (named "Downstream Bridge 1 / 2" in
-> > > > > > the drawing below). The supplier is the NHI:
-> > > > > > 
-> > > > > >       (Root Port) ---- Upstream Bridge --+-- Downstream Bridge 0 ---- NHI
-> > > > > >                                          +-- Downstream Bridge 1 --
-> > > > > >                                          +-- Downstream Bridge 2 --
-> > > > > >                                          ...
-> > > > > > 
-> > > > > > We're calling pci_power_up() and pci_restore_state() from
-> > > > > > pci_pm_resume_noirq(). And that will fail for devices below
-> > > > > > the hotplug ports if the PCI tunnels haven't been re-established
-> > > > > > yet by the NHI.
-> > > > > 
-> > > > > So the NHI is a PCIe device, right?
-> > > > > 
-> > > > > Does the Thunderbolt driver bind to that device?
-> > > > 
-> > > > The NHI is a PCI device but not a bridge. It has class 0x88000.
-> > > > Yes, thunderbolt.ko binds to the NHI.
-> > > > 
-> > > > And portdrv binds to the upstream bridge and downstream bridges.
-> > > > Those have class 0x60400.
-> > > 
-> > > OK, so why would there be a problem with creating links from the NHI
-> > > (producer) to the ports (consumers) before binding portdrv to them?
-> > 
-> > Because the ordering in which drivers bind isn't guaranteed. At least
-> > on my machine (Debian), portdrv always binds before thunderbolt.
+On 07/22/2016 11:51 AM, Charles Keepax wrote:
+> On Tue, Jul 05, 2016 at 07:14:37PM +0200, Sylwester Nawrocki wrote:
+>> This patch adds the sound machine driver for TM2 and TM2E board.
+>> Speaker and headphone playback, Main Mic capture, Bluetooth,
+>> Voice call and external accessory are supported.
+>>
+>> Signed-off-by: Inha Song <ideal.song@samsung.com>
+>> [k.kozlowski: rebased on 4.1]
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> [s.nawrocki: rebased to 4.7, adjustment to the ASoC core changes,
+>>  removed unused ops and direct calls to the max98504 function,
+>>  added parsing of "audio-amplifier" and "audio-codec"
+>>  properties, added TDM API calls, switched to gpiod API]
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
 > 
-> But what drivers have to do with that really?  Do you need drivers to
-> know that the dependency is there?
+> Apologies for my late response I had missed this.
+
+Thanks a lot for your comments, this missed the 4.8 merge window
+anyway.
+
+> <snip>
+>> +static int tm2_start_sysclk(struct snd_soc_card *card)
+>> +{
+>> +	struct tm2_machine_priv *priv = snd_soc_card_get_drvdata(card);
+>> +	struct snd_soc_codec *codec = priv->codec;
+>> +	unsigned long mclk_rate = clk_get_rate(priv->codec_mclk1);
+>> +	int ret;
+>> +
+>> +	ret = clk_prepare_enable(priv->codec_mclk1);
+>> +	if (ret < 0) {
+>> +		dev_err(card->dev, "Failed to enable mclk: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = snd_soc_codec_set_pll(codec, WM5110_FLL1,
+>> +				    ARIZONA_FLL_SRC_MCLK1,
+>> +				    mclk_rate,
+>> +				    priv->sysclk_rate);
+>> +	if (ret < 0) {
+>> +		dev_err(codec->dev, "Failed to start FLL: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = snd_soc_codec_set_pll(codec, WM5110_FLL1_REFCLK,
+>> +				    ARIZONA_FLL_SRC_MCLK1,
+>> +				    mclk_rate,
+>> +				    priv->sysclk_rate);
+>> +	if (ret < 0) {
+>> +		dev_err(codec->dev, "Failed to set FLL1 Source: %d\n", ret);
+>> +		return ret;
+>> +	}
 > 
-> Just add likns *before* even probing for drivers (yes, you can do that)
-> and the core will handle that for you.
+> It would be better to set the REFCLK first. Setting WM5110_FLL1
+> actually enables the FLL, where as setting WM5110_FLL1_REFCKL
+> doesn't. So doing it this way round the first time you bring
+> up the FLL it will enable it then reconfigure the reference
+> path. Doing it the other way round it will always enable first
+> time with the correct settings.
 
-Forgive me for being dense: How do you suggest to add links before
-probing drivers? Only way I could think of is with a PCI quirk.
-
-Which is what we're already doing right now (see drivers/pci/quirk.c:
-quirk_apple_wait_for_thunderbolt()). And it ain't pretty.
+OK, thanks for the hint, I will reorder this.
 
 
-> > I guess I could amend portdrv to return -EPROBE_DEFER on Macs if
-> > no driver is bound to the NHI. Doesn't feel pretty to me though.
-> > 
-> > Ultimately this seems to be the same issue as with calling
-> > dev_pm_domain_set() for a bound device. Perhaps device_link_add()
-> > can likewise be allowed if a runtime PM ref is held for the devices
-> > and the call happens under lock_system_sleep()?
+>> +static int tm2_aif1_hw_params(struct snd_pcm_substream *substream,
+>> +				struct snd_pcm_hw_params *params)
+>> +{
+
+>> +
+>> +	ret = snd_soc_dai_set_sysclk(codec_dai, ARIZONA_CLK_SYSCLK, 0, 0);
+>> +	if (ret < 0) {
+>> +		dev_err(codec_dai->dev, "Failed to set SYSCLK: %d\n", ret);
+>> +		return ret;
+>> +	}
 > 
-> No, the whole synchronization scheme in the links code would have had to be
-> changed for that to really work.
+> If there is no intention to change which clocking domain the DAI
+> is attached to I would put this in late probe, although it does
+> no harm here and if that might get added in the future then here
+> is better.
+
+If the clocking arrangement ever needs to be changed the call could
+be added here again, I will move it to late_probe.
+
+>> +	return tm2_start_sysclk(rtd->card);
+>> +}
+>> +
+>> +static struct snd_soc_ops tm2_aif1_ops = {
+>> +	.hw_params = tm2_aif1_hw_params,
+>> +};
+>> +
+>> +static int tm2_aif2_hw_params(struct snd_pcm_substream *substream,
+>> +				struct snd_pcm_hw_params *params)
+>> +{
+
+>> +	ret = snd_soc_codec_set_pll(codec, WM5110_FLL2,
+>> +				    ARIZONA_FLL_SRC_MCLK1,
+>> +				    mclk_rate,
+>> +				    asyncclk_rate);
+>> +	if (ret < 0) {
+>> +		dev_err(codec->dev, "Failed to start FLL: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = snd_soc_codec_set_pll(codec, WM5110_FLL2_REFCLK,
+>> +				    ARIZONA_FLL_SRC_MCLK1,
+>> +				    mclk_rate,
+>> +				    asyncclk_rate);
+>> +	if (ret < 0) {
+>> +		dev_err(codec->dev, "Failed to set FLL1 Source: %d\n", ret);
+>> +		return ret;
+>> +	}
 > 
-> And it really is about what is needed (at least in principle) to run your
-> device.  If you think you need device X with a driver to handle device Y
-> correctly, then either you need it all the time, from probe to remove, or
-> you just don't really need it at all.
+> Again as before I would set the REFCLK path first on the FLL.
+> 
+> Also nothing ever turns FLL2 off again here. I would either turn
+> it off again in set_bias level or add a free callback into
+> tm2_aif2_ops, probably adding a free callback matches the usage
+> of this clock better I would guess.
 
-Real life isn't as simple as that.
+hw_free sounds like a good option, I'll add it to ensure the WM5110_FLL2
+clock is disabled when not in use.
 
-In this case, we have consumers (hotplug ports) which are doing fine
-if the driver for the supplier (NHI) is not loaded. But once it loads,
-the links must be in place. Seems only logical to put the links in
-place when they're needed, i.e. at load time of the supplier's driver.
-Which the patch set doesn't allow right now.
+>> +static int tm2_set_bias_level(struct snd_soc_card *card,
+>> +				struct snd_soc_dapm_context *dapm,
+>> +				enum snd_soc_bias_level level)
+>> +{
 
-Best regards,
+>> +
+>> +	card->dapm.bias_level = level;
+> 
+> I believe the core does this for you these days.
 
-Lukas
+Indeed, I had missed that, I'll drop this assignment.
+
+>> +static int tm2_suspend_post(struct snd_soc_card *card)
+>> +{
+>> +	return tm2_stop_sysclk(card);
+> 
+> I think you can't really do this from these callbacks, the
+> trouble is suspend_post is called from snd_soc_suspend which is
+> set as the suspend callback in snd_soc_pm_ops. So when this is
+> called you don't actually know if the SPI has already suspended
+> or not, if it hasn't things will work but if the SPI has already
+> suspended then this falls over.
+> 
+> A better solution would be to define a local copy of
+> snd_soc_pm_ops with this functions set as the prepare and
+> complete callbacks the other callbacks set as snd_soc_pm_ops sets
+> them. These callback will run before anything is suspended and
+> after everything has been resumed.
+
+Agreed, dependency on the SPI controller seems to be not modelled and
+it looks like it is working by chance now.  I will try to use prepare/
+complete callback until better options are available.
+
+-- 
+Thanks,
+Sylwester
