@@ -1,78 +1,101 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH v7 1/4] drm: add generic zpos property
-Date: Thu, 28 Jul 2016 17:21:23 +0200
-Message-ID: <CA+M3ks6m0ekMUvCs4QbpYTXPyK3hw7oT4_5gms3qw+RryLRdCg@mail.gmail.com>
-References: <1469693270-24814-1-git-send-email-benjamin.gaignard@linaro.org>
- <1469693270-24814-2-git-send-email-benjamin.gaignard@linaro.org> <CACvgo52ksB-42B55gr4u7buFi2J=pDi=-VjUQad91F=ohebdqw@mail.gmail.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 02/10] driver core: Functional dependencies tracking
+ support
+Date: Thu, 28 Jul 2016 17:28:31 +0200
+Message-ID: <20160728152831.GA1929@wunner.de>
+References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
+ <4258432.JNKr9zJtMp@vostro.rjw.lan>
+ <20160724224832.GB9516@wunner.de>
+ <2841548.NIYVpJFBcH@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:34826 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932189AbcG1PVY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jul 2016 11:21:24 -0400
-Received: by mail-oi0-f49.google.com with SMTP id l72so67634310oig.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jul 2016 08:21:24 -0700 (PDT)
-In-Reply-To: <CACvgo52ksB-42B55gr4u7buFi2J=pDi=-VjUQad91F=ohebdqw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2841548.NIYVpJFBcH@vostro.rjw.lan>
+Sender: linux-pci-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Noever <andreas.noever@gmail.com>, linux-pci@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2016-07-28 14:55 GMT+02:00 Emil Velikov <emil.l.velikov@gmail.com>:
-> Hi Benjamin,
->
-> Just spotted a couple of small bits which, imho, should be fine with
-> squashing with follow up patch(es).
->
-> On 28 July 2016 at 09:07, Benjamin Gaignard
-> <benjamin.gaignard@linaro.org> wrote:
->
->> +EXPORT_SYMBOL(drm_atomic_helper_normalize_zpos);
-> The symbols is internal only thus the EXPORT_SYMBOL notation isn't ne=
-eded.
-> Rule of thumb - interfaces used by other modules are declared in
-> include/drm and the symbol(s) should be annotated with EXPORT_SYMBOL*
->
-drm_blend.c is linked into drm.o while
-drm_atomic_helper_normalize_zpos is used in
-drm_atomic_helper.c linked within drm_kms_helper.o
-so EXPORT_SYMBOL is need either I got linked error while compiling drm
-as a module
+On Thu, Jul 28, 2016 at 02:30:31AM +0200, Rafael J. Wysocki wrote:
+> On Monday, July 25, 2016 12:48:32 AM Lukas Wunner wrote:
+> > On Thu, Jul 21, 2016 at 02:25:15AM +0200, Rafael J. Wysocki wrote:
+> > > On Thursday, July 21, 2016 01:25:53 AM Lukas Wunner wrote:
+> > > > I guess I could amend portdrv to return -EPROBE_DEFER on Macs if
+> > > > no driver is bound to the NHI. Doesn't feel pretty to me though.
+> > > > 
+> > > > Ultimately this seems to be the same issue as with calling
+> > > > dev_pm_domain_set() for a bound device. Perhaps device_link_add()
+> > > > can likewise be allowed if a runtime PM ref is held for the devices
+> > > > and the call happens under lock_system_sleep()?
+> > > 
+> > > No, the whole synchronization scheme in the links code would have had to be
+> > > changed for that to really work.
+> > > 
+> > > And it really is about what is needed (at least in principle) to run your
+> > > device.  If you think you need device X with a driver to handle device Y
+> > > correctly, then either you need it all the time, from probe to remove, or
+> > > you just don't really need it at all.
+> > 
+> > Real life isn't as simple as that.
+> > 
+> > In this case, we have consumers (hotplug ports) which are doing fine
+> > if the driver for the supplier (NHI) is not loaded. But once it loads,
+> > the links must be in place.
+> 
+> Hmm.
+> 
+> What if it is not loaded and the system suspends.  Will everything work
+> as expected after the subsequent resume?
 
->> +
->> +int drm_plane_atomic_set_zpos_property(struct drm_plane *plane,
->> +                                      struct drm_plane_state *state=
-,
->> +                                      struct drm_property *property=
-,
->> +                                      uint64_t val);
->> +
->> +int drm_plane_atomic_get_zpos_property(struct drm_plane *plane,
->> +                                      const struct drm_plane_state =
-*state,
->> +                                      struct drm_property *property=
-,
->> +                                      uint64_t *val);
->> +
-> Dead code/declarations ?
->
+The short answer is yes.
 
-yes dead code, I will remove it.
+Long answer:
 
-> Cheers,
-> Emil
+With Thunderbolt, the switch fabric is told to set up PCI tunnels
+through the NHI (Native Host Interface). Once set up, the tunnels
+stay as they are and attached devices are reachable. However after
+a power cycle of the controller (suspend/resume), the tunnels are
+gone and need to be re-established.
+
+On Macs, there are two software components communicating with the
+NHI: The first one is an EFI driver which sets up tunnels to all
+devices present on boot and lights up all attached DP-over-Thunderbolt
+displays. Once ExitBootServices is called, the EFI driver is shut
+down but the configured tunnels stay as they are. The kernel is thus
+able to enumerate attached PCI devices.
+
+The second component is the OS driver, thunderbolt.ko. It is needed
+to set up tunnels to hot-plugged devices (i.e., not present at boot).
+It is also needed to re-establish tunnels after suspend/resume.
+
+The necessity of quirk_apple_wait_for_thunderbolt() arises because
+we walk the entire PCI hierarchy during ->resume_noirq and call
+pci_power_up() and pci_restore_state() for each device. Now remember,
+the PCI tunnels are gone after a power cycle, so the attached devices
+aren't reachable. Waking them and restoring their state will fail
+unless the thunderbolt driver reconfigures the switch fabric first.
+
+=> So if there are no devices attached and thunderbolt.ko isn't loaded,
+   everything is fine. No device link needed.
+
+=> If devices are attached and thunderbolt.ko is loaded, then the hotplug
+   ports need to wait for re-establishment of the PCI tunnels.
+   Device link is needed.
+
+=> If devices were attached on boot and thunderbolt.ko isn't loaded, they
+   will be unreachable after resume. Nothing we can do about that.
+   No device link needed.
+
+So this is a case of a "weak" device link, "weak" referring to the fact
+that it's only needed if the supplier is bound.
+
+All that said, I don't know if this case exists often enough that it's
+worth making allowances for it in the driver core.
+
+Sorry for the wall of text, just want to make sure we're on the same page
+and all possible use cases of device links are discussed and considered.
 
 Thanks,
-Benjamin
 
---=20
-Benjamin Gaignard
-
-Graphic Study Group
-
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-
-=46ollow Linaro: Facebook | Twitter | Blog
+Lukas
