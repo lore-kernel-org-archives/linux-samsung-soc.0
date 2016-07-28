@@ -1,143 +1,177 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 02/10] driver core: Functional dependencies tracking support
-Date: Thu, 28 Jul 2016 02:30:31 +0200
-Message-ID: <2841548.NIYVpJFBcH@vostro.rjw.lan>
-References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com> <4258432.JNKr9zJtMp@vostro.rjw.lan> <20160724224832.GB9516@wunner.de>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v1 2/2] drm/bridge: analogix_dp: turn off the panel when
+ eDP need to disable
+Date: Thu, 28 Jul 2016 11:28:45 +0800
+Message-ID: <57997BED.4050600@rock-chips.com>
+References: <1469106874-4912-1-git-send-email-ykk@rock-chips.com>
+ <1469106886-4979-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbK7CnFwH_Tyrq6ab4DBxVLa8-JCYEM-Tu+mOYsKmNULtg@mail.gmail.com>
+ <57917011.6000108@rock-chips.com>
+ <CAOw6vbLXDuEW1egN3N8XxXdW8hdrY8W9T-v_d6hWDnRcRqZe_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:51779 "HELO
-	cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1162468AbcG1AZ2 (ORCPT
+Received: from lucky1.263xmail.com ([211.157.147.130]:51122 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758525AbcG1D3A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 20:25:28 -0400
-In-Reply-To: <20160724224832.GB9516@wunner.de>
+	Wed, 27 Jul 2016 23:29:00 -0400
+In-Reply-To: <CAOw6vbLXDuEW1egN3N8XxXdW8hdrY8W9T-v_d6hWDnRcRqZe_A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Noever <andreas.noever@gmail.com>, linux-pci@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Mark Yao <yzq@rock-chips.com>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-On Monday, July 25, 2016 12:48:32 AM Lukas Wunner wrote:
-> On Thu, Jul 21, 2016 at 02:25:15AM +0200, Rafael J. Wysocki wrote:
-> > On Thursday, July 21, 2016 01:25:53 AM Lukas Wunner wrote:
-> > > On Thu, Jul 21, 2016 at 12:51:31AM +0200, Rafael J. Wysocki wrote:
-> > > > On Wednesday, July 20, 2016 05:23:40 PM Lukas Wunner wrote:
-> > > > > On Wed, Jul 20, 2016 at 02:52:42PM +0200, Rafael J. Wysocki wrote:
-> > > > > > On Wednesday, July 20, 2016 08:24:50 AM Lukas Wunner wrote:
-> > > > > > > On Wed, Jul 20, 2016 at 02:33:18AM +0200, Rafael J. Wysocki wrote:
-> > > > > > > > On Friday, June 17, 2016 04:07:38 PM Lukas Wunner wrote:
-> > > > > > > > > On Fri, Jun 17, 2016 at 02:54:56PM +0200, Rafael J. Wysocki wrote:
-> > > > > > > > > > On Fri, Jun 17, 2016 at 12:36 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > > > > > > > > > > On Fri, Jun 17, 2016 at 08:26:52AM +0200, Marek Szyprowski wrote:
-> > > > > > > > > > > > From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> > > > > > > > > > > We also have such a functional dependency for Thunderbolt on Macs:
-> > > > > > > > > > > On resume from system sleep, the PCIe hotplug ports may not resume
-> > > > > > > > > > > before the thunderbolt driver has reestablished the PCI tunnels.
-> > > > > > > > > > > Currently this is enforced by quirk_apple_wait_for_thunderbolt()
-> > > > > > > > > > > in drivers/pci/quirks.c. It would be good if we could represent
-> > > > > > > > > > > this dependency using something like Rafael's approach instead of
-> > > > > > > > > > > open coding it, however one detail in Rafael's patches is problematic:
-> > > > > > > > > > >
-> > > > > > > > > > > > New links are added by calling device_link_add() which may happen
-> > > > > > > > > > > > either before the consumer device is probed or when probing it, in
-> > > > > > > > > > > > which case the caller needs to ensure that the driver of the
-> > > > > > > > > > > > supplier device is present and functional and the DEVICE_LINK_PROBE_TIME
-> > > > > > > > > > > > flag should be passed to device_link_add() to reflect that.
-> > > > > > > > > > >
-> > > > > > > > > > > The thunderbolt driver cannot call device_link_add() before the
-> > > > > > > > > > > PCIe hotplug ports are bound to a driver unless we amend portdrv
-> > > > > > > > > > > to return -EPROBE_DEFER for Thunderbolt hotplug ports on Macs
-> > > > > > > > > > > if the thunderbolt driver isn't loaded.
-> > > > > > > > > > >
-> > > > > > > > > > > It would therefore be beneficial if device_link_add() can be
-> > > > > > > > > > > called even *after* the consumer is bound.
-> > > > > > > > > > 
-> > > > > > > > > > I don't quite follow.
-> > > > > > > > > > 
-> > > > > > > > > > Who's the provider and who's the consumer here?
-> > > > > > > > > 
-> > > > > > > > > thunderbolt.ko is the supplier.
-> > > > > > > > 
-> > > > > > > > But it binds to the children of the ports that are supposed to be its
-> > > > > > > > consumers?
-> > > > > > > > 
-> > > > > > > > Why is that even expected to work?
-> > > > > > > 
-> > > > > > > No, the consumers are aunts (or uncles) of the supplier, if you will. :-)
-> > > > > > > 
-> > > > > > > The consumers are the hotplug ports (named "Downstream Bridge 1 / 2" in
-> > > > > > > the drawing below). The supplier is the NHI:
-> > > > > > > 
-> > > > > > >       (Root Port) ---- Upstream Bridge --+-- Downstream Bridge 0 ---- NHI
-> > > > > > >                                          +-- Downstream Bridge 1 --
-> > > > > > >                                          +-- Downstream Bridge 2 --
-> > > > > > >                                          ...
-> > > > > > > 
-> > > > > > > We're calling pci_power_up() and pci_restore_state() from
-> > > > > > > pci_pm_resume_noirq(). And that will fail for devices below
-> > > > > > > the hotplug ports if the PCI tunnels haven't been re-established
-> > > > > > > yet by the NHI.
-> > > > > > 
-> > > > > > So the NHI is a PCIe device, right?
-> > > > > > 
-> > > > > > Does the Thunderbolt driver bind to that device?
-> > > > > 
-> > > > > The NHI is a PCI device but not a bridge. It has class 0x88000.
-> > > > > Yes, thunderbolt.ko binds to the NHI.
-> > > > > 
-> > > > > And portdrv binds to the upstream bridge and downstream bridges.
-> > > > > Those have class 0x60400.
-> > > > 
-> > > > OK, so why would there be a problem with creating links from the NHI
-> > > > (producer) to the ports (consumers) before binding portdrv to them?
-> > > 
-> > > Because the ordering in which drivers bind isn't guaranteed. At least
-> > > on my machine (Debian), portdrv always binds before thunderbolt.
-> > 
-> > But what drivers have to do with that really?  Do you need drivers to
-> > know that the dependency is there?
-> > 
-> > Just add likns *before* even probing for drivers (yes, you can do that)
-> > and the core will handle that for you.
-> 
-> Forgive me for being dense: How do you suggest to add links before
-> probing drivers? Only way I could think of is with a PCI quirk.
-> 
-> Which is what we're already doing right now (see drivers/pci/quirk.c:
-> quirk_apple_wait_for_thunderbolt()). And it ain't pretty.
+Sean,
 
-Well, maybe not, but doing it once during enumeration would be better than
-on every resume.
+Oops, sorry about miss your suggest :(
 
-Plus there is runtime PM to cover.
+On 07/22/2016 11:03 PM, Sean Paul wrote:
+> On Thu, Jul 21, 2016 at 9:00 PM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Sean,
+>>
+>> Thanks for your fast respond :-)
+>>
+>> But this patch is not the latest one, I have upgraded this to "v1.1" version
+>> to fix the eDP can't be disabled problem:
+>>      [PATCH v1.1 2/2] drm/bridge: analogix_dp: turn off the panel when eDP
+>> need to disable
+>>          Changes in v1.1: - unprepare the panel at the end of
+>> bridge->disable() function
+>>
+>> In spite of this, I would take your comments with my "v1.1" patch.
+>>
+>> On 07/21/2016 10:28 PM, Sean Paul wrote:
+>>
+>> On Thu, Jul 21, 2016 at 9:14 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+>>
+>> Some panels (like Sharp LQ123P1JX31) need to be turn off when eDP
+>> controller stop to send valid video signal, otherwhise panel would
+>> go burn in, and keep flicker and flicker.
+>>
+>> So it's better to turn off the panel when eDP need to disable, and
+>> we need to turn on the panel in connector->detect() callback, so
+>> that driver would detect panel status rightly.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 32715da..ea059b3 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -961,6 +961,14 @@ analogix_dp_detect(struct drm_connector *connector,
+>> bool force)
+>>   {
+>>          struct analogix_dp_device *dp = to_dp(connector);
+>>
+>> +       /*
+>> +        * Panle would prepare for several times here, but don't worry it
+>>
+>> s/Panle/Panel/
+>>
+>>
+>> Done
+>>
+>> +        * would only enable the hardware at the first prepare time.
+>>
+>> Errr, this shouldn't go in detect. How about putting this in
+>> bridge_enable instead?
+>>
+>>
+>> Nope, if we put this in bridge_enable, then eDP would never be enabled.
+>> Here're the calling flow.
+>>
+>> --> analogix_dp_probe
+>>    --> analogix_dp_bind  # we still haven't prepared the panel here, that
+>> means panel have been powered up
+>>      --> analogix_dp_detect  # Oops, losing panel valid hotplug signal, cause
+>> panel have been powered up
+>>      --> ** Keep detecting **
+>
+> Yeah, after playing around with the patch yesterday I discovered this
+> for myself. I still don't think detect() should be changing hardware
+> state. Perhaps you could add a matching unprepare() after you attempt
+> to detect the panel?
 
-> > > I guess I could amend portdrv to return -EPROBE_DEFER on Macs if
-> > > no driver is bound to the NHI. Doesn't feel pretty to me though.
-> > > 
-> > > Ultimately this seems to be the same issue as with calling
-> > > dev_pm_domain_set() for a bound device. Perhaps device_link_add()
-> > > can likewise be allowed if a runtime PM ref is held for the devices
-> > > and the call happens under lock_system_sleep()?
-> > 
-> > No, the whole synchronization scheme in the links code would have had to be
-> > changed for that to really work.
-> > 
-> > And it really is about what is needed (at least in principle) to run your
-> > device.  If you think you need device X with a driver to handle device Y
-> > correctly, then either you need it all the time, from probe to remove, or
-> > you just don't really need it at all.
-> 
-> Real life isn't as simple as that.
-> 
-> In this case, we have consumers (hotplug ports) which are doing fine
-> if the driver for the supplier (NHI) is not loaded. But once it loads,
-> the links must be in place.
+Hmm, I don't understand the meaning of "add a matching unprepare()".
 
-Hmm.
-
-What if it is not loaded and the system suspends.  Will everything work
-as expected after the subsequent resume?
+I didn't see there is an unprepare() callback in drm_crtc_helper.h, would
+you like to share some simple code :-D
 
 Thanks,
-Rafael
+- Yakir
+
+> Sean
+>
+>> +        */
+>> +       if (dp->plat_data->panel)
+>> +               if (drm_panel_prepare(dp->plat_data->panel))
+>>
+>> Personally, I don't like doing work in a conditional since you're
+>> throwing the return code away. Could you break this out into:
+>>
+>> ret = drm_panel_prepare(dp->plat_data->panel);
+>> if (ret)
+>>    DRM_ERROR("failed to setup the panel ret=%d\n", ret);
+>>
+>>
+>> Okay
+>>
+>>
+>> +                       DRM_ERROR("failed to setup the panel\n");
+>> +
+>>          if (analogix_dp_detect_hpd(dp))
+>>                  return connector_status_disconnected;
+>>
+>> @@ -1063,7 +1071,8 @@ static void analogix_dp_bridge_disable(struct
+>> drm_bridge *bridge)
+>>                  return;
+>>
+>>          if (dp->plat_data->panel) {
+>> -               if (drm_panel_disable(dp->plat_data->panel)) {
+>> +               if (drm_panel_disable(dp->plat_data->panel) ||
+>> +                   drm_panel_unprepare(dp->plat_data->panel)) {
+>>
+>> Same comment here, please break this out into separate statements for
+>> better readability/logging.
+>>
+>>
+>> Okay,
+>>
+>>
+>> Thanks,
+>> - Yakir
+>>
+>>
+>>                          DRM_ERROR("failed to disable the panel\n");
+>>                          return;
+>>                  }
+>> @@ -1333,13 +1342,6 @@ int analogix_dp_bind(struct device *dev, struct
+>> drm_device *drm_dev,
+>>
+>>          phy_power_on(dp->phy);
+>>
+>> -       if (dp->plat_data->panel) {
+>> -               if (drm_panel_prepare(dp->plat_data->panel)) {
+>> -                       DRM_ERROR("failed to setup the panel\n");
+>> -                       return -EBUSY;
+>> -               }
+>> -       }
+>> -
+>>          analogix_dp_init_dp(dp);
+>>
+>>          ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+>> --
+>> 1.9.1
+>>
+>>
+>>
+>>
+>>
+>
+>
