@@ -1,213 +1,49 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v7 4/4] drm: rcar: use generic code for managing zpos plane property
-Date: Thu, 28 Jul 2016 10:07:50 +0200
-Message-ID: <1469693270-24814-5-git-send-email-benjamin.gaignard@linaro.org>
-References: <1469693270-24814-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH v7 1/4] drm: add generic zpos property
+Date: Thu, 28 Jul 2016 13:55:02 +0100
+Message-ID: <CACvgo52ksB-42B55gr4u7buFi2J=pDi=-VjUQad91F=ohebdqw@mail.gmail.com>
+References: <1469693270-24814-1-git-send-email-benjamin.gaignard@linaro.org> <1469693270-24814-2-git-send-email-benjamin.gaignard@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37954 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752006AbcG1IJC (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35383 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757578AbcG1MzE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jul 2016 04:09:02 -0400
-Received: by mail-wm0-f50.google.com with SMTP id o80so95341196wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jul 2016 01:09:01 -0700 (PDT)
-In-Reply-To: <1469693270-24814-1-git-send-email-benjamin.gaignard@linaro.org>
+	Thu, 28 Jul 2016 08:55:04 -0400
+Received: by mail-wm0-f66.google.com with SMTP id i5so11025791wmg.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jul 2016 05:55:03 -0700 (PDT)
+In-Reply-To: <1469693270-24814-2-git-send-email-benjamin.gaignard@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org
-Cc: linaro-mm-sig@lists.linaro.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, Vincent Abriou <vincent.abriou@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linaro-mm-sig@lists.linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-version 6:
-rebased patch on top rcar-du changes for zpos
+Hi Benjamin,
 
-version 4:
-fix null pointer issue while setting zpos in plane reset function
+Just spotted a couple of small bits which, imho, should be fine with
+squashing with follow up patch(es).
 
-This patch replaces zpos property handling custom code in rcar DRM
-driver with calls to generic DRM code.
+On 28 July 2016 at 09:07, Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> +EXPORT_SYMBOL(drm_atomic_helper_normalize_zpos);
+The symbols is internal only thus the EXPORT_SYMBOL notation isn't needed.
+Rule of thumb - interfaces used by other modules are declared in
+include/drm and the symbol(s) should be annotated with EXPORT_SYMBOL*
 
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  1 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  5 -----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c |  9 ++-------
- drivers/gpu/drm/rcar-du/rcar_du_plane.h |  2 --
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 14 +++++---------
- 6 files changed, 8 insertions(+), 25 deletions(-)
+> +
+> +int drm_plane_atomic_set_zpos_property(struct drm_plane *plane,
+> +                                      struct drm_plane_state *state,
+> +                                      struct drm_property *property,
+> +                                      uint64_t val);
+> +
+> +int drm_plane_atomic_get_zpos_property(struct drm_plane *plane,
+> +                                      const struct drm_plane_state *state,
+> +                                      struct drm_property *property,
+> +                                      uint64_t *val);
+> +
+Dead code/declarations ?
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index e39fcef..7316fc7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -196,7 +196,7 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
- 
- static unsigned int plane_zpos(struct rcar_du_plane *plane)
- {
--	return to_rcar_plane_state(plane->plane.state)->zpos;
-+	return plane->plane.state->normalized_zpos;
- }
- 
- static const struct rcar_du_format_info *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index ed35467..c843c31 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -92,7 +92,6 @@ struct rcar_du_device {
- 	struct {
- 		struct drm_property *alpha;
- 		struct drm_property *colorkey;
--		struct drm_property *zpos;
- 	} props;
- 
- 	unsigned int dpad0_source;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 6bb032d..f03eb55 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -527,11 +527,6 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	if (rcdu->props.colorkey == NULL)
- 		return -ENOMEM;
- 
--	rcdu->props.zpos =
--		drm_property_create_range(rcdu->ddev, 0, "zpos", 1, 7);
--	if (rcdu->props.zpos == NULL)
--		return -ENOMEM;
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index bfe31ca..a74f8ed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -652,7 +652,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
- 	state->source = RCAR_DU_PLANE_MEMORY;
- 	state->alpha = 255;
- 	state->colorkey = RCAR_DU_COLORKEY_NONE;
--	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
-+	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -670,8 +670,6 @@ static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
- 		rstate->alpha = val;
- 	else if (property == rcdu->props.colorkey)
- 		rstate->colorkey = val;
--	else if (property == rcdu->props.zpos)
--		rstate->zpos = val;
- 	else
- 		return -EINVAL;
- 
-@@ -690,8 +688,6 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
- 		*val = rstate->alpha;
- 	else if (property == rcdu->props.colorkey)
- 		*val = rstate->colorkey;
--	else if (property == rcdu->props.zpos)
--		*val = rstate->zpos;
- 	else
- 		return -EINVAL;
- 
-@@ -763,8 +759,7 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.colorkey,
- 					   RCAR_DU_COLORKEY_NONE);
--		drm_object_attach_property(&plane->plane.base,
--					   rcdu->props.zpos, 1);
-+		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index b18b7b2..8b91dd3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -51,7 +51,6 @@ static inline struct rcar_du_plane *to_rcar_plane(struct drm_plane *plane)
-  * @hwindex: 0-based hardware plane index, -1 means unused
-  * @alpha: value of the plane alpha property
-  * @colorkey: value of the plane colorkey property
-- * @zpos: value of the plane zpos property
-  */
- struct rcar_du_plane_state {
- 	struct drm_plane_state state;
-@@ -62,7 +61,6 @@ struct rcar_du_plane_state {
- 
- 	unsigned int alpha;
- 	unsigned int colorkey;
--	unsigned int zpos;
- };
- 
- static inline struct rcar_du_plane_state *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 6ac717f..83ebd16 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -43,12 +43,12 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
- 			.src_y = 0,
- 			.src_w = mode->hdisplay << 16,
- 			.src_h = mode->vdisplay << 16,
-+			.zpos = 0,
- 		},
- 		.format = rcar_du_format_info(DRM_FORMAT_ARGB8888),
- 		.source = RCAR_DU_PLANE_VSPD1,
- 		.alpha = 255,
- 		.colorkey = 0,
--		.zpos = 0,
- 	};
- 
- 	if (rcdu->info->gen >= 3)
-@@ -152,7 +152,7 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 		.pixelformat = 0,
- 		.pitch = fb->pitches[0],
- 		.alpha = state->alpha,
--		.zpos = state->zpos,
-+		.zpos = state->state.zpos,
- 	};
- 	unsigned int i;
- 
-@@ -267,7 +267,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 		return;
- 
- 	state->alpha = 255;
--	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
-+	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -282,8 +282,6 @@ static int rcar_du_vsp_plane_atomic_set_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		rstate->alpha = val;
--	else if (property == rcdu->props.zpos)
--		rstate->zpos = val;
- 	else
- 		return -EINVAL;
- 
-@@ -300,8 +298,6 @@ static int rcar_du_vsp_plane_atomic_get_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		*val = rstate->alpha;
--	else if (property == rcdu->props.zpos)
--		*val = rstate->zpos;
- 	else
- 		return -EINVAL;
- 
-@@ -381,8 +377,8 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp)
- 
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.alpha, 255);
--		drm_object_attach_property(&plane->plane.base,
--					   rcdu->props.zpos, 1);
-+		drm_plane_create_zpos_property(&plane->plane, 1, 1,
-+					       vsp->num_planes - 1);
- 	}
- 
- 	return 0;
--- 
-1.9.1
+Cheers,
+Emil
