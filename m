@@ -1,26 +1,28 @@
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v8 2/4] drm: sti: use generic zpos for plane
-Date: Fri, 29 Jul 2016 10:55:37 +0200
-Message-ID: <1469782539-9698-3-git-send-email-benjamin.gaignard@linaro.org>
+Subject: [PATCH v8 3/4] drm/exynos: use generic code for managing zpos plane property
+Date: Fri, 29 Jul 2016 10:55:38 +0200
+Message-ID: <1469782539-9698-4-git-send-email-benjamin.gaignard@linaro.org>
 References: <1469782539-9698-1-git-send-email-benjamin.gaignard@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:35019 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752400AbcG2I4u (ORCPT
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:35301 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752156AbcG2I5M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jul 2016 04:56:50 -0400
-Received: by mail-wm0-f54.google.com with SMTP id f65so281538228wmi.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Jul 2016 01:56:49 -0700 (PDT)
+	Fri, 29 Jul 2016 04:57:12 -0400
+Received: by mail-wm0-f49.google.com with SMTP id f65so281550036wmi.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Jul 2016 01:57:11 -0700 (PDT)
 In-Reply-To: <1469782539-9698-1-git-send-email-benjamin.gaignard@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, vincent.abriou@st.com, fabien.dessenne@st.com, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com
-Cc: linaro-mm-sig@lists.linaro.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linaro-mm-sig@lists.linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Inki Dae <inki.dae@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo@padovan.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-remove private zpos property and use instead the generic new.
-zpos range is now fixed per plane type and normalized before
-being using in mixer.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
+This patch replaces zpos property handling custom code in Exynos DRM
+driver with calls to generic DRM code.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
 Cc: Inki Dae <inki.dae@samsung.com>
@@ -37,227 +39,184 @@ Cc: vincent.abriou@st.com
 Cc: fabien.dessenne@st.com
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/gpu/drm/sti/sti_cursor.c |  4 +--
- drivers/gpu/drm/sti/sti_gdp.c    |  4 +--
- drivers/gpu/drm/sti/sti_hqvdp.c  |  4 +--
- drivers/gpu/drm/sti/sti_mixer.c  |  9 ++---
- drivers/gpu/drm/sti/sti_plane.c  | 78 +++++++++++++++-------------------------
- drivers/gpu/drm/sti/sti_plane.h  |  7 +---
- 6 files changed, 38 insertions(+), 68 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 -
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 67 +++++--------------------------
+ drivers/gpu/drm/exynos/exynos_mixer.c     |  6 ++-
+ 3 files changed, 13 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_cursor.c
-index a263bbb..3b53f7f 100644
---- a/drivers/gpu/drm/sti/sti_cursor.c
-+++ b/drivers/gpu/drm/sti/sti_cursor.c
-@@ -349,8 +349,8 @@ struct drm_plane_funcs sti_cursor_plane_helpers_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
- 	.destroy = sti_cursor_destroy,
--	.set_property = sti_plane_set_property,
--	.reset = drm_atomic_helper_plane_reset,
-+	.set_property = drm_atomic_helper_plane_set_property,
-+	.reset = sti_plane_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
- 	.late_register = sti_cursor_late_register,
-diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-index bf63086..b8d942c 100644
---- a/drivers/gpu/drm/sti/sti_gdp.c
-+++ b/drivers/gpu/drm/sti/sti_gdp.c
-@@ -886,8 +886,8 @@ struct drm_plane_funcs sti_gdp_plane_helpers_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
- 	.destroy = sti_gdp_destroy,
--	.set_property = sti_plane_set_property,
--	.reset = drm_atomic_helper_plane_reset,
-+	.set_property = drm_atomic_helper_plane_set_property,
-+	.reset = sti_plane_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
- 	.late_register = sti_gdp_late_register,
-diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-index b032322..b5ee783 100644
---- a/drivers/gpu/drm/sti/sti_hqvdp.c
-+++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-@@ -1254,8 +1254,8 @@ struct drm_plane_funcs sti_hqvdp_plane_helpers_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
- 	.destroy = sti_hqvdp_destroy,
--	.set_property = sti_plane_set_property,
--	.reset = drm_atomic_helper_plane_reset,
-+	.set_property = drm_atomic_helper_plane_set_property,
-+	.reset = sti_plane_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
- 	.late_register = sti_hqvdp_late_register,
-diff --git a/drivers/gpu/drm/sti/sti_mixer.c b/drivers/gpu/drm/sti/sti_mixer.c
-index 1885c7a..7d9aea8 100644
---- a/drivers/gpu/drm/sti/sti_mixer.c
-+++ b/drivers/gpu/drm/sti/sti_mixer.c
-@@ -239,13 +239,10 @@ static void sti_mixer_set_background_area(struct sti_mixer *mixer,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index b39d521..7f1a49d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -64,7 +64,6 @@ struct exynos_drm_plane_state {
+ 	struct exynos_drm_rect src;
+ 	unsigned int h_ratio;
+ 	unsigned int v_ratio;
+-	unsigned int zpos;
+ };
  
- int sti_mixer_set_plane_depth(struct sti_mixer *mixer, struct sti_plane *plane)
- {
--	int plane_id, depth = plane->zorder;
-+	int plane_id, depth = plane->drm_plane.state->normalized_zpos;
- 	unsigned int i;
- 	u32 mask, val;
+ static inline struct exynos_drm_plane_state *
+@@ -221,7 +220,6 @@ struct exynos_drm_private {
+ 	 * this array is used to be aware of which crtc did it request vblank.
+ 	 */
+ 	struct drm_crtc *crtc[MAX_CRTC];
+-	struct drm_property *plane_zpos_property;
  
--	if ((depth < 1) || (depth > GAM_MIXER_NB_DEPTH_LEVEL))
--		return 1;
--
- 	switch (plane->desc) {
- 	case STI_GDP_0:
- 		plane_id = GAM_DEPTH_GDP0_ID;
-@@ -278,8 +275,8 @@ int sti_mixer_set_plane_depth(struct sti_mixer *mixer, struct sti_plane *plane)
- 			break;
+ 	struct device *dma_dev;
+ 	void *mapping;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 77f12c0..7f32419 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -139,9 +139,9 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
+ 
+ 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
+ 	if (exynos_state) {
+-		exynos_state->zpos = exynos_plane->config->zpos;
+ 		plane->state = &exynos_state->base;
+ 		plane->state->plane = plane;
++		plane->state->zpos = exynos_plane->config->zpos;
  	}
- 
--	mask |= GAM_DEPTH_MASK_ID << (3 * (depth - 1));
--	plane_id = plane_id << (3 * (depth - 1));
-+	mask |= GAM_DEPTH_MASK_ID << (3 * depth);
-+	plane_id = plane_id << (3 * depth);
- 
- 	DRM_DEBUG_DRIVER("%s %s depth=%d\n", sti_mixer_to_str(mixer),
- 			 sti_plane_to_str(plane), depth);
-diff --git a/drivers/gpu/drm/sti/sti_plane.c b/drivers/gpu/drm/sti/sti_plane.c
-index 0cf3335..ca4b371 100644
---- a/drivers/gpu/drm/sti/sti_plane.c
-+++ b/drivers/gpu/drm/sti/sti_plane.c
-@@ -14,15 +14,6 @@
- #include "sti_drv.h"
- #include "sti_plane.h"
- 
--/* (Background) < GDP0 < GDP1 < HQVDP0 < GDP2 < GDP3 < (ForeGround) */
--enum sti_plane_desc sti_plane_default_zorder[] = {
--	STI_GDP_0,
--	STI_GDP_1,
--	STI_HQVDP_0,
--	STI_GDP_2,
--	STI_GDP_3,
--};
--
- const char *sti_plane_to_str(struct sti_plane *plane)
- {
- 	switch (plane->desc) {
-@@ -96,59 +87,46 @@ void sti_plane_update_fps(struct sti_plane *plane,
- 			 plane->fps_info.fips_str);
  }
  
--int sti_plane_set_property(struct drm_plane *drm_plane,
--			   struct drm_property *property,
--			   uint64_t val)
-+static int sti_plane_get_default_zpos(enum drm_plane_type type)
- {
--	struct drm_device *dev = drm_plane->dev;
--	struct sti_private *private = dev->dev_private;
--	struct sti_plane *plane = to_sti_plane(drm_plane);
--
--	DRM_DEBUG_DRIVER("\n");
--
--	if (property == private->plane_zorder_property) {
--		plane->zorder = val;
-+	switch (type) {
-+	case DRM_PLANE_TYPE_PRIMARY:
- 		return 0;
-+	case DRM_PLANE_TYPE_OVERLAY:
-+		return 1;
-+	case DRM_PLANE_TYPE_CURSOR:
-+		return 7;
- 	}
-+	return 0;
-+}
+@@ -157,7 +157,6 @@ exynos_drm_plane_duplicate_state(struct drm_plane *plane)
+ 		return NULL;
  
--	return -EINVAL;
-+void sti_plane_reset(struct drm_plane *plane)
-+{
-+	drm_atomic_helper_plane_reset(plane);
-+	plane->state->zpos = sti_plane_get_default_zpos(plane->type);
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->base);
+-	copy->zpos = exynos_state->zpos;
+ 	return &copy->base;
  }
  
--static void sti_plane_attach_zorder_property(struct drm_plane *drm_plane)
-+static void sti_plane_attach_zorder_property(struct drm_plane *drm_plane,
-+					     enum drm_plane_type type)
+@@ -170,43 +169,6 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
+ 	kfree(old_exynos_state);
+ }
+ 
+-static int exynos_drm_plane_atomic_set_property(struct drm_plane *plane,
+-						struct drm_plane_state *state,
+-						struct drm_property *property,
+-						uint64_t val)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_plane_state *exynos_state =
+-					to_exynos_plane_state(state);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-	const struct exynos_drm_plane_config *config = exynos_plane->config;
+-
+-	if (property == dev_priv->plane_zpos_property &&
+-	    (config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS))
+-		exynos_state->zpos = val;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int exynos_drm_plane_atomic_get_property(struct drm_plane *plane,
+-					  const struct drm_plane_state *state,
+-					  struct drm_property *property,
+-					  uint64_t *val)
+-{
+-	const struct exynos_drm_plane_state *exynos_state =
+-		container_of(state, const struct exynos_drm_plane_state, base);
+-	struct exynos_drm_private *dev_priv = plane->dev->dev_private;
+-
+-	if (property == dev_priv->plane_zpos_property)
+-		*val = exynos_state->zpos;
+-	else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+@@ -215,8 +177,6 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.reset		= exynos_drm_plane_reset,
+ 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
+ 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
+-	.atomic_set_property = exynos_drm_plane_atomic_set_property,
+-	.atomic_get_property = exynos_drm_plane_atomic_get_property,
+ };
+ 
+ static int
+@@ -304,23 +264,13 @@ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+-					      unsigned int zpos)
++					      bool immutable)
  {
--	struct drm_device *dev = drm_plane->dev;
--	struct sti_private *private = dev->dev_private;
--	struct sti_plane *plane = to_sti_plane(drm_plane);
+-	struct drm_device *dev = plane->dev;
+-	struct exynos_drm_private *dev_priv = dev->dev_private;
 -	struct drm_property *prop;
 -
--	prop = private->plane_zorder_property;
+-	prop = dev_priv->plane_zpos_property;
 -	if (!prop) {
--		prop = drm_property_create_range(dev, 0, "zpos", 1,
--						 GAM_MIXER_NB_DEPTH_LEVEL);
+-		prop = drm_property_create_range(dev, 0, "zpos",
+-						 0, MAX_PLANE - 1);
 -		if (!prop)
 -			return;
 -
--		private->plane_zorder_property = prop;
-+	int zpos = sti_plane_get_default_zpos(type);
-+
-+	switch (type) {
-+	case DRM_PLANE_TYPE_PRIMARY:
-+	case DRM_PLANE_TYPE_OVERLAY:
-+		drm_plane_create_zpos_property(drm_plane, zpos, 0, 6);
-+		break;
-+	case DRM_PLANE_TYPE_CURSOR:
-+		drm_plane_create_zpos_immutable_property(drm_plane, zpos);
-+		break;
- 	}
+-		dev_priv->plane_zpos_property = prop;
+-	}
 -
--	drm_object_attach_property(&drm_plane->base, prop, plane->zorder);
+-	drm_object_attach_property(&plane->base, prop, zpos);
++	/* FIXME */
++	if (immutable)
++		drm_plane_create_zpos_immutable_property(plane, 0);
++	else
++		drm_plane_create_zpos_property(plane, 0, 0, MAX_PLANE - 1);
  }
  
- void sti_plane_init_property(struct sti_plane *plane,
- 			     enum drm_plane_type type)
- {
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(sti_plane_default_zorder); i++)
--		if (sti_plane_default_zorder[i] == plane->desc)
--			break;
--
--	plane->zorder = i + 1;
--
--	if (type == DRM_PLANE_TYPE_OVERLAY)
--		sti_plane_attach_zorder_property(&plane->drm_plane);
-+	sti_plane_attach_zorder_property(&plane->drm_plane, type);
+ int exynos_plane_init(struct drm_device *dev,
+@@ -346,7 +296,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 	exynos_plane->index = index;
+ 	exynos_plane->config = config;
  
--	DRM_DEBUG_DRIVER("drm plane:%d mapped to %s with zorder:%d\n",
--			 plane->drm_plane.base.id,
--			 sti_plane_to_str(plane), plane->zorder);
-+	DRM_DEBUG_DRIVER("drm plane:%d mapped to %s\n",
-+			 plane->drm_plane.base.id, sti_plane_to_str(plane));
+-	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos);
++	exynos_plane_attach_zpos_property(&exynos_plane->base,
++			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
+ 
+ 	return 0;
  }
-diff --git a/drivers/gpu/drm/sti/sti_plane.h b/drivers/gpu/drm/sti/sti_plane.h
-index e0ea1dd..ce3e8d6 100644
---- a/drivers/gpu/drm/sti/sti_plane.h
-+++ b/drivers/gpu/drm/sti/sti_plane.h
-@@ -66,14 +66,12 @@ struct sti_fps_info {
-  * @plane:              drm plane it is bound to (if any)
-  * @desc:               plane type & id
-  * @status:             to know the status of the plane
-- * @zorder:             plane z-order
-  * @fps_info:           frame per second info
-  */
- struct sti_plane {
- 	struct drm_plane drm_plane;
- 	enum sti_plane_desc desc;
- 	enum sti_plane_status status;
--	int zorder;
- 	struct sti_fps_info fps_info;
- };
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 74a4269..e1d47f9 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -477,6 +477,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	dma_addr_t luma_addr[2], chroma_addr[2];
+ 	bool tiled_mode = false;
+@@ -561,7 +562,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
  
-@@ -82,10 +80,7 @@ void sti_plane_update_fps(struct sti_plane *plane,
- 			  bool new_frame,
- 			  bool new_field);
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, plane->index, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, plane->index, priority, true);
+ 	mixer_cfg_vp_blend(ctx);
+ 	mixer_run(ctx);
  
--int sti_plane_set_property(struct drm_plane *drm_plane,
--			   struct drm_property *property,
--			   uint64_t val);
--
- void sti_plane_init_property(struct sti_plane *plane,
- 			     enum drm_plane_type type);
-+void sti_plane_reset(struct drm_plane *plane);
- #endif
+@@ -586,6 +587,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	struct drm_framebuffer *fb = state->base.fb;
++	unsigned int priority = state->base.normalized_zpos + 1;
+ 	unsigned long flags;
+ 	unsigned int win = plane->index;
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+@@ -677,7 +679,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 
+ 	mixer_cfg_scan(ctx, mode->vdisplay);
+ 	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
+-	mixer_cfg_layer(ctx, win, state->zpos + 1, true);
++	mixer_cfg_layer(ctx, win, priority, true);
+ 	mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
+ 
+ 	/* layer update mandatory for mixer 16.0.33.0 */
 -- 
 1.9.1
