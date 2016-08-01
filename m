@@ -1,8 +1,8 @@
 From: Yakir Yang <ykk@rock-chips.com>
 Subject: Re: [PATCH] drm/analogix_dp: Ensure the panel is properly
  prepared/unprepared
-Date: Mon, 1 Aug 2016 11:27:51 +0800
-Message-ID: <579EC1B7.60608@rock-chips.com>
+Date: Mon, 1 Aug 2016 11:28:15 +0800
+Message-ID: <579EC1CF.9000302@rock-chips.com>
 References: <CAOw6vbKbLzm4mPtp2LsG=7=KJkS_4Oe7rA4Of0uT5vM_Xoiphw@mail.gmail.com>
  <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
