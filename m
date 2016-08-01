@@ -1,267 +1,103 @@
 From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH v2 2/2] arm64: dts: Fix broken architected timer interrupt trigger
-Date: Mon,  1 Aug 2016 10:54:16 +0100
-Message-ID: <1470045256-9032-3-git-send-email-marc.zyngier@arm.com>
+Subject: [PATCH v2 1/2] clocksource/arm_arch_timer: Force per-CPU interrupt to
+ be level-triggered
+Date: Mon,  1 Aug 2016 10:54:15 +0100
+Message-ID: <1470045256-9032-2-git-send-email-marc.zyngier@arm.com>
 References: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, arm@kernel.org
-Cc: Duc Dang <dhdang@apm.com>, Carlo Caione <carlo@endlessm.com>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Mark Rutland <marc.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Kukjin Kim <kgene@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, soren.brinkmann@xilinx.com, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Jan Glauber <jglauber@cavium.com>, Hou Zhiqiang <B48286@freescale.com>, Wenbin Song <Wenbin.S>
+Cc: Andrew Lunn <andrew@lunn.ch>, Liu Gang <Gang.Liu@nxp.com>, Mark Rutland <marc.rutland@arm.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Hou Zhiqiang <B48286@freescale.com>, Michal Simek <michal.simek@xilinx.com>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>, linux-samsung-soc@vger.kernel.org, Yuan Yao <yao.yuan@nxp.com>, Wenbin Song <Wenbin.Song@freescale.com>, Jan Glauber <jglauber@cavium.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-amlogic@lists.infradead.org, Mingkai Hu <Mingkai.Hu@freescale.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The ARM architected timer specification mandates that the interrupt
-associated with each timer is level triggered (which corresponds to
-the "counter >= comparator" condition).
+The ARM architected timer produces level-triggered interrupts (this
+is mandated by the architecture). Unfortunately, a number of
+device-trees get this wrong, and expose an edge-triggered interrupt.
 
-A number of DTs are being remarkably creative, declaring the interrupt
-to be edge triggered. A quick look at the TRM for the corresponding ARM
-CPUs clearly shows that this is wrong, and I've corrected those.
-For non-ARM designs (and in the absence of a publicly available TRM),
-I've made them active low as well, which can't be completely wrong
-as the GIC cannot disinguish between level low and level high.
+Until now, this wasn't too much an issue, as the programming of the
+trigger would fail (the corresponding PPI cannot be reconfigured),
+and the kernel would be happy with this. But we're about to change
+this, and trust DT a lot if the driver doesn't provide its own
+trigger information. In that context, the timer breaks badly.
 
-The respective maintainers are of course welcome to prove me wrong.
+While we do need to fix the DTs, there is also some userspace out
+there (kvmtool) that generates the same kind of broken DT on the
+fly, and that will completely break with newer kernels.
 
-While I was at it, I took the liberty to fix a couple of related issue,
-such as some spurious affinity bits on ThunderX, and their complete
-absence on ls1043a (both of which seem to be related to copy-pasting
-from other DTs).
+As a safety measure, and to keep buggy software alive as well as
+buying us some time to fix DTs all over the place, let's check
+what trigger configuration has been given us by the firmware.
+If this is not a level configuration, then we know that the
+DT/ACPI configuration is bust, and we pick some defaults which
+won't be worse than the existing setup.
 
-Acked-by: Duc Dang <dhdang@apm.com>
-Acked-by: Carlo Caione <carlo@endlessm.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
- arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
- arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
- arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
- arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi       | 8 ++++----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
- arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 8 ++++----
- 11 files changed, 44 insertions(+), 44 deletions(-)
+ drivers/clocksource/arm_arch_timer.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index 445aa67..c2b9bcb 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -255,10 +255,10 @@
- 		/* Local timer */
- 		timer {
- 			compatible = "arm,armv8-timer";
--			interrupts = <1 13 0xf01>,
--				     <1 14 0xf01>,
--				     <1 11 0xf01>,
--				     <1 10 0xf01>;
-+			interrupts = <1 13 0xf08>,
-+				     <1 14 0xf08>,
-+				     <1 11 0xf08>,
-+				     <1 10 0xf08>;
- 		};
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 28bce3f..5770054 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -8,6 +8,9 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++
++#define pr_fmt(fmt)	"arm_arch_timer: " fmt
++
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+@@ -370,16 +373,33 @@ static bool arch_timer_has_nonsecure_ppi(void)
+ 		arch_timer_ppi[PHYS_NONSECURE_PPI]);
+ }
  
- 		timer0: timer0@ffc03000 {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 832815d..4d9d144 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -100,13 +100,13 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14
--			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11
--			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>,
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10
--			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_EDGE_RISING)>;
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
++static u32 check_ppi_trigger(int irq)
++{
++	u32 flags = irq_get_trigger_type(irq);
++
++	if (flags != IRQF_TRIGGER_HIGH && flags != IRQF_TRIGGER_LOW) {
++		pr_warn("WARNING: Invalid trigger for IRQ%d, assuming level low\n", irq);
++		pr_warn("WARNING: Please fix your firmware\n");
++		flags = IRQF_TRIGGER_LOW;
++	}
++
++	return flags;
++}
++
+ static int arch_timer_starting_cpu(unsigned int cpu)
+ {
+ 	struct clock_event_device *clk = this_cpu_ptr(arch_timer_evt);
++	u32 flags;
  
- 	xtal: xtal-clk {
-diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-index 6bf7cbe..010e961 100644
---- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-@@ -110,10 +110,10 @@
+ 	__arch_timer_setup(ARCH_CP15_TIMER, clk);
  
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <1 0 0xff01>,	/* Secure Phys IRQ */
--			     <1 13 0xff01>,	/* Non-secure Phys IRQ */
--			     <1 14 0xff01>,	/* Virt IRQ */
--			     <1 15 0xff01>;	/* Hyp IRQ */
-+		interrupts = <1 0 0xff08>,	/* Secure Phys IRQ */
-+			     <1 13 0xff08>,	/* Non-secure Phys IRQ */
-+			     <1 14 0xff08>,	/* Virt IRQ */
-+			     <1 15 0xff08>;	/* Hyp IRQ */
- 		clock-frequency = <50000000>;
- 	};
+-	enable_percpu_irq(arch_timer_ppi[arch_timer_uses_ppi], 0);
++	flags = check_ppi_trigger(arch_timer_ppi[arch_timer_uses_ppi]);
++	enable_percpu_irq(arch_timer_ppi[arch_timer_uses_ppi], flags);
  
-diff --git a/arch/arm64/boot/dts/broadcom/ns2.dtsi b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-index 46b78fa..01b4ee9 100644
---- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-@@ -88,13 +88,13 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_RAW(0xff) |
--			      IRQ_TYPE_EDGE_RISING)>,
-+			      IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14 (GIC_CPU_MASK_RAW(0xff) |
--			      IRQ_TYPE_EDGE_RISING)>,
-+			      IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11 (GIC_CPU_MASK_RAW(0xff) |
--			      IRQ_TYPE_EDGE_RISING)>,
-+			      IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10 (GIC_CPU_MASK_RAW(0xff) |
--			      IRQ_TYPE_EDGE_RISING)>;
-+			      IRQ_TYPE_LEVEL_LOW)>;
- 	};
+-	if (arch_timer_has_nonsecure_ppi())
+-		enable_percpu_irq(arch_timer_ppi[PHYS_NONSECURE_PPI], 0);
++	if (arch_timer_has_nonsecure_ppi()) {
++		flags = check_ppi_trigger(arch_timer_ppi[PHYS_NONSECURE_PPI]);
++		enable_percpu_irq(arch_timer_ppi[PHYS_NONSECURE_PPI], flags);
++	}
  
- 	pmu {
-diff --git a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
-index 2eb9b22..04dc8a8 100644
---- a/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
-+++ b/arch/arm64/boot/dts/cavium/thunder-88xx.dtsi
-@@ -354,10 +354,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <1 13 0xff01>,
--		             <1 14 0xff01>,
--		             <1 11 0xff01>,
--		             <1 10 0xff01>;
-+		interrupts = <1 13 4>,
-+		             <1 14 4>,
-+		             <1 11 4>,
-+		             <1 10 4>;
- 	};
- 
- 	pmu {
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index ca663df..1628315 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -473,10 +473,10 @@
- 
- 		timer {
- 			compatible = "arm,armv8-timer";
--			interrupts = <1 13 0xff01>,
--				     <1 14 0xff01>,
--				     <1 11 0xff01>,
--				     <1 10 0xff01>;
-+			interrupts = <1 13 0xff08>,
-+				     <1 14 0xff08>,
-+				     <1 11 0xff08>,
-+				     <1 10 0xff08>;
- 		};
- 
- 		pmu_system_controller: system-controller@105c0000 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 6bd46c1..59b7b76 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -111,10 +111,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <1 13 0x1>, /* Physical Secure PPI */
--			     <1 14 0x1>, /* Physical Non-Secure PPI */
--			     <1 11 0x1>, /* Virtual PPI */
--			     <1 10 0x1>; /* Hypervisor PPI */
-+		interrupts = <1 13 0xf08>, /* Physical Secure PPI */
-+			     <1 14 0xf08>, /* Physical Non-Secure PPI */
-+			     <1 11 0xf08>, /* Virtual PPI */
-+			     <1 10 0xf08>; /* Hypervisor PPI */
- 	};
- 
- 	pmu {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 3187c82..675c1ba 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -167,10 +167,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <1 13 0x8>, /* Physical Secure PPI, active-low */
--			     <1 14 0x8>, /* Physical Non-Secure PPI, active-low */
--			     <1 11 0x8>, /* Virtual PPI, active-low */
--			     <1 10 0x8>; /* Hypervisor PPI, active-low */
-+		interrupts = <1 13 4>, /* Physical Secure PPI, active-low */
-+			     <1 14 4>, /* Physical Non-Secure PPI, active-low */
-+			     <1 11 4>, /* Virtual PPI, active-low */
-+			     <1 10 4>; /* Hypervisor PPI, active-low */
- 	};
- 
- 	pmu {
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 20d256b..b1d6bb8 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -122,10 +122,10 @@
- 
- 			timer {
- 				compatible = "arm,armv8-timer";
--				interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
--					     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
--					     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>,
--					     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
-+				interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+					     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 			};
- 
- 			odmi: odmi@300000 {
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
-index 9532880..c6059aa 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi
-@@ -127,10 +127,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <1 13 0xf01>,
--			     <1 14 0xf01>,
--			     <1 11 0xf01>,
--			     <1 10 0xf01>;
-+		interrupts = <1 13 4>,
-+			     <1 14 4>,
-+			     <1 11 4>,
-+			     <1 10 4>;
- 	};
- 
- 	soc {
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-index e595f22..3e2e51f 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-@@ -65,10 +65,10 @@
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupt-parent = <&gic>;
--		interrupts = <1 13 0xf01>,
--			     <1 14 0xf01>,
--			     <1 11 0xf01>,
--			     <1 10 0xf01>;
-+		interrupts = <1 13 0xf08>,
-+			     <1 14 0xf08>,
-+			     <1 11 0xf08>,
-+			     <1 10 0xf08>;
- 	};
- 
- 	amba_apu {
+ 	arch_counter_set_user_access();
+ 	if (evtstrm_enable)
 -- 
 2.1.4
