@@ -1,370 +1,173 @@
-From: Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [PATCH v14 0/17] Add Analogix Core Display Port Driver
-Date: Mon, 1 Aug 2016 09:49:30 +0800
-Message-ID: <579EAAAA.200@rock-chips.com>
-References: <1455534485-1154-1-git-send-email-ykk@rock-chips.com>
- <20160331101535.GZ2510@phenom.ffwll.local> <57031D8E.1020903@rock-chips.com>
- <CAAObsKAkVd1KC5+MJ4=RyZVsEC1kwsz6V946T1wTkpr8sPeRhA@mail.gmail.com>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH] drm/analogix_dp: Ensure the panel is properly
+ prepared/unprepared
+Date: Mon, 1 Aug 2016 11:27:51 +0800
+Message-ID: <579EC1B7.60608@rock-chips.com>
+References: <CAOw6vbKbLzm4mPtp2LsG=7=KJkS_4Oe7rA4Of0uT5vM_Xoiphw@mail.gmail.com>
+ <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAAObsKAkVd1KC5+MJ4=RyZVsEC1kwsz6V946T1wTkpr8sPeRhA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2yhQFI55V6+gNQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, yzq@rock-chips.com, jingoohan1@gmail.com, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, tfiga@chromium.org, javier@osg.samsung.com, daniel.vetter@ffwll.ch, marcheu@chromium.org, treding@nvidia.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-On 07/29/2016 04:38 PM, Tomeu Vizoso wrote:
-> On 5 April 2016 at 04:06, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
->> Hi Daniel,
->>
->>
->> On 03/31/2016 06:15 PM, Daniel Vetter wrote:
->>> On Mon, Feb 15, 2016 at 07:08:05PM +0800, Yakir Yang wrote:
->>>> Hi all,
->>>>
->>>>     The Samsung Exynos eDP controller and Rockchip RK3288 eDP controller
->>>> share the same IP, so a lot of parts can be re-used. I split the common
->>>> code into bridge directory, then rk3288 and exynos only need to keep
->>>> some platform code. Cause I can't find the exact IP name of exynos dp
->>>> controller, so I decide to name dp core driver with "analogix" which I
->>>> find in rk3288 eDP TRM
->>>>
->>>> But there are still three light registers setting different between
->>>> exynos and rk3288.
->>>> 1. RK3288 have five special pll registers which not indicate in exynos
->>>>      dp controller.
->>>> 2. The address of DP_PHY_PD(dp phy power manager register) are different
->>>>      between rk3288 and exynos.
->>>> 3. Rk3288 and exynos have different setting with AUX_HW_RETRY_CTL(dp
->>>> debug
->>>>      register).
->>>>
->>>> Due to Mark Yao have introduced the ATOMIC support to Rockchip drm, so
->>>> it's
->>>> okay to use the ATOMIC helpers functions in connector_funcs. No need to
->>>> splict
->>>> the connector init to platform driver anymore, and this is the biggest
->>>> change
->>>> since version 11.
->>>>
->>>> This v14 didn't have lots of new changes which seems not the correct time
->>>> to
->>>> upgrade the version number, but I have changed ordering of patches
->>>> (adding 2
->>>> more, and removing 2 out). Especially to prevent confusing people, so I
->>>> updated
->>>> the whole series.
->>> So I'm jumping into this part way late, but just noticed (well Thierry
->>> pointed this out to me) that the exynos dp driver reinvents all the dp and
->>> dp-aux helpers we already. That's somewhat okish for a private driver (and
->>> exynos has a reputation for that kind of stuff), but imo not ok for a
->>> shared driver.
->>>
->>> Not saying this should block merging this patch, but it really needs to be
->>> addressed. All the dp aux and edid read code in the current
->>> exynos_dp_core/reg.c files needs to be replaced with dp helpers and the
->>> core i2c edid reading code.
->>>
->>> Who's going to sign up to do this?
->>
->> Volunteer to that, after finish this thread, I would send new series to
->> switch to take use of dp helper.
-> Hi Yakir,
->
-> do you have plans to do this work in the short term? If not, I can tackle it.
-
-Wow, that would be great if you like to tackle it  :-D
-
-I always keep this in my mind, but haven't found an chance
-to finish it. I would like to sit in your Cc list when you post
-them out  ;)
-
-Best Regards,
-- Yakir
-
-> Regards,
->
-> Tomeu
->
->> :-D
->> - Yakir
->>
->>
->>> -Daniel
->>>
->>>> Thanks,
->>>> - Yakir
->>>>
->>>>
->>>> Changes in v14:
->>>> - Rebase the new changes in imx-dp driver
->>>> - Split up this patch into 3 parts, make this easy to review (Heiko)
->>>> - Remove the Rockchip DP PHY to an separate thread (Heiko)
->>>>       https://patchwork.kernel.org/patch/8312701/
->>>>
->>>> Changes in v13:
->>>> - Use .enable instead of preprare/commit in encoder_helper_funcs (Heiko)
->>>> - Fix the missing parameters with drm_encoder_init() helper function.
->>>> (Heiko)
->>>>
->>>> Changes in v12:
->>>> - Move the connector init to analogix_dp driver, and using ATOMIC helper
->>>> (Heiko)
->>>> - Add the ack from Jingoo
->>>> - Remove the enum link_rate_type struct, using the marcos in
->>>> drm_dp_helper.h (Jingoo)
->>>>
->>>> Changes in v11:
->>>> - Uses tabs to fix the indentation issues in analogix_dp_core.h (Heiko)
->>>> - Rename the "analogix,need-force-hpd" to common 'force-hpd' (Rob)
->>>> - Add the ack from Rob Herring
->>>> - Revert parts of Gustavo Padovan's changes in commit:
->>>>          drm/exynos: do not start enabling DP at bind() phase
->>>>     Add dp phy poweron function in bind time.
->>>> - Move the panel prepare from get_modes time to bind time, and move
->>>>     the panel unprepare from bridge->disable to unbind time. (Heiko)
->>>>
->>>> Changes in v10:
->>>> - Add the ack from Rob Herring
->>>> - Correct the ROCKCHIP_ANALOGIX_DP indentation in Kconfig to tabs here
->>>> (Heiko)
->>>> - Add the ack from Rob Herring
->>>> - Remove the surplus "plat_data" check. (Heiko)
->>>> -       switch (dp->plat_data && dp->plat_data->dev_type) {
->>>> +       switch (dp->plat_data->dev_type) {
->>>>
->>>> Changes in v9:
->>>> - Document more details for 'ports' property.
->>>>
->>>> Changes in v8:
->>>> - Correct the right document path of display-timing.txt (Heiko)
->>>> - Correct the misspell of 'from' to 'frm'. (Heiko)
->>>> - Modify the commit subject name. (Heiko)
->>>>
->>>> Changes in v7:
->>>> - Back to use the of_property_read_bool() interfacs to provoid backward
->>>>     compatibility of "hsync-active-high" "vsync-active-high" "interlaced"
->>>>     to avoid -EOVERFLOW error (Krzysztof)
->>>>
->>>> Changes in v6:
->>>> - Fix the Kconfig recursive dependency (Javier)
->>>> - Fix Peach Pit hpd property name error:
->>>> -       hpd-gpio = <&gpx2 6 0>;
->>>> +       hpd-gpios = <&gpx2 6 0>;
->>>>
->>>> Changes in v5:
->>>> - Correct the check condition of gpio_is_valid when driver try to get
->>>>     the "hpd-gpios" DT propery. (Heiko)
->>>> - Move the platform attach callback in the front of core driver bridge
->>>>     attch function. Cause once platform failed at attach, core driver
->>>> should
->>>>     still failed, so no need to init connector before platform attached
->>>> (Krzysztof)
->>>> - Keep code style no changes with the previous exynos_dp_code.c in this
->>>>     patch, and update commit message about the new export symbol
->>>> (Krzysztof)
->>>> - Gather the device type patch (v4 11/16) into this one. (Krzysztof)
->>>> - leave out the connector registration to analogix platform driver.
->>>> (Thierry)
->>>> - Resequence this patch after analogix_dp driver have been split
->>>>     from exynos_dp code, and rephrase reasonable commit message, and
->>>>     remove some controversial style (Krzysztof)
->>>>       -          analogix_dp_write_byte_to_dpcd(
->>>>       -                          dp, DP_TEST_RESPONSE,
->>>>       +          analogix_dp_write_byte_to_dpcd(dp,
->>>>       +                          DP_TEST_RESPONSE,
->>>>                                  DP_TEST_EDID_CHECKSUM_WRITE);
->>>> - Switch video timing type to "u32", so driver could use
->>>> "of_property_read_u32"
->>>>     to get the backword timing values. Krzysztof suggest me that driver
->>>> could use
->>>>     the "of_property_read_bool" to get backword timing values, but that
->>>> interfacs
->>>>     would modify the original drm_display_mode timing directly (whether
->>>> those
->>>>     properties exists or not).
->>>> - Correct the misspell in commit message. (Krzysztof)
->>>> - Remove the empty line at the end of document, and correct the endpoint
->>>>     numbers in the example DT node, and remove the regulator iomux setting
->>>>     in driver code while using the pinctl in devicetree instead. (Heiko)
->>>> - Add device type declared, cause the previous "platform device type
->>>>     support (v4 11/16)" already merge into (v5 02/14).
->>>> - Implement connector registration code. (Thierry)
->>>> - Split binding doc's from driver changes. (Rob)
->>>> - Add eDP hotplug pinctrl property. (Heiko)
->>>>
->>>> Changes in v4:
->>>> - Update "analogix,hpd-gpios" to "hpd-gpios" DT propery. (Rob)
->>>> - Rename "analogix_dp-exynos.c" file name to "exynos_dp.c" (Jingoo)
->>>> - Create a separate folder for analogix code in bridge/ (Archit)
->>>> - Update commit message more readable. (Jingoo)
->>>> - Adjust the order from 05 to 04
->>>> - Provide backword compatibility with samsung. (Krzysztof)
->>>> - Split all DTS changes, and provide backward compatibility. Mark old
->>>>     properties as deprecated but still support them. (Krzysztof)
->>>> - Update "analogix,hpd-gpio" to "hpd-gpios" prop name. (Rob)
->>>> - Deprecated some properties which could parsed from Edid/Mode/DPCD.
->>>> (Thierry)
->>>>       "analogix,color-space" & "analogix,color-depth"   &
->>>>       "analogix,link-rate"   & "analogix,lane-count"    &
->>>>       "analogix,ycbcr-coeff" & "analogix,dynamic-range" &
->>>>       "vsync-active-high"    & "hsync-active-high"      & "interlaces"
->>>> - Separate all DTS changes to a separate patch. (Krzysztof)
->>>> - Remove some deprecated DT properties in rockchip dp document.
->>>> - Seprate the link-rate and lane-count limit out with the device_type
->>>>     flag. (Thierry)
->>>> - Take Jingoo suggest, add commit messages.
->>>> - Call drm_panel_prepare() in .get_modes function, ensure panel should
->>>>     power on before driver try to read edid message.
->>>>
->>>> Changes in v3:
->>>> - Move exynos's video_timing code to analogix_dp-exynos platform driver,
->>>>     add get_modes method to struct analogix_dp_plat_data. (Thierry)
->>>> - Rename some "samsung*" dts propery to "analogix*". (Heiko)
->>>> - The link_rate and lane_count shouldn't config to the DT property value
->>>>     directly, but we can take those as hardware limite. For example,
->>>> RK3288
->>>>     only support 4 physical lanes of 2.7/1.62 Gbps/lane, so DT property
->>>> would
->>>>     like "link-rate = 0x0a" "lane-count = 4". (Thierry)
->>>> - Dynamic parse video timing info from struct drm_display_mode and
->>>>     struct drm_display_info. (Thierry)
->>>> - Add devicetree binding documents. (Heiko)
->>>> - Remove sync pol & colorimetry properies from the new analogix dp driver
->>>>     devicetree binding. (Thierry)
->>>> - Update the exist exynos dtsi file with the latest DP DT properies.
->>>> - Leave "sclk_edp_24m" to rockchip dp phy driver which name to "24m",
->>>>     and leave "sclk_edp" to analogix dp core driver which name to "dp",
->>>>     and leave "pclk_edp" to rockchip dp platform driver which name to
->>>>     "pclk". (Thierry & Heiko)
->>>> - Add devicetree binding document. (Heiko)
->>>> - Remove "rockchip,panel" DT property, take use of remote point to get
->>>> panel
->>>>     node. (Heiko)
->>>> - Add the new function point dp_platdata->get_modes() init.
->>>> - Add "analogix,need-force-hpd" to indicate whether driver need foce
->>>>     hpd when hpd detect failed.
->>>> - move dp hpd detect to connector detect function.
->>>> - Add edid modes parse support
->>>>
->>>> Changes in v2:
->>>> - Remove new copyright (Jingoo)
->>>> - Fix compiled failed due to analogix_dp_device misspell
->>>> - Improved commit message more readable, and avoid using some
->>>>     uncommon style like bellow: (Joe Preches)
->>>>       -  retval = exynos_dp_read_bytes_from_i2c(...
->>>>                                    ...);
->>>>       +  retval =
->>>>       +  exynos_dp_read_bytes_from_i2c(......);
->>>> - Get panel node with remote-endpoint method, and create devicetree
->>>> binding
->>>>     for driver. (Heiko)
->>>> - Remove the clock enable/disbale with "sclk_edp" & "sclk_edp_24m",
->>>>     leave those clock to rockchip dp phy driver.
->>>> - Fix compile failed dut to phy_pd_addr variable misspell error
->>>>
->>>> Heiko Stuebner (2):
->>>>     drm/exynos: dp: rename implementation specific driver part
->>>>     drm: bridge: analogix/dp: rename register constants
->>>>
->>>> Yakir Yang (15):
->>>>     drm: bridge: analogix/dp: split exynos dp driver to bridge directory
->>>>     drm: bridge: analogix/dp: fix some obvious code style
->>>>     drm: bridge: analogix/dp: remove duplicate configuration of link rate
->>>>       and link count
->>>>     drm: bridge: analogix/dp: dynamic parse sync_pol & interlace &
->>>>       dynamic_range
->>>>     dt-bindings: add document for analogix display port driver
->>>>     ARM: dts: exynos/dp: remove some properties that deprecated by
->>>>       analogix_dp driver
->>>>     drm: rockchip: dp: add rockchip platform dp driver
->>>>     dt-bindings: add document for rockchip variant of analogix_dp
->>>>     drm: bridge: analogix/dp: add some rk3288 special registers setting
->>>>     drm: bridge: analogix/dp: add max link rate and lane count limit for
->>>>       RK3288
->>>>     drm: bridge: analogix/dp: try force hpd after plug in lookup failed
->>>>     drm: bridge: analogix/dp: move hpd detect to connector detect function
->>>>     drm: bridge: analogix/dp: add edid modes parse in get_modes method
->>>>     drm: bridge: analogix/dp: add panel prepare/unprepare in
->>>>       suspend/resume time
->>>>     drm: bridge: analogix/dp: Fix the possible dead lock in bridge disable
->>>>       time
->>>>
->>>>    .../bindings/display/bridge/analogix_dp.txt        |   52 +
->>>>    .../bindings/display/exynos/exynos_dp.txt          |   93 +-
->>>>    .../display/rockchip/analogix_dp-rockchip.txt      |   92 ++
->>>>    arch/arm/boot/dts/exynos5250-arndale.dts           |    2 -
->>>>    arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 -
->>>>    arch/arm/boot/dts/exynos5250-snow-common.dtsi      |    4 +-
->>>>    arch/arm/boot/dts/exynos5250-spring.dts            |    4 +-
->>>>    arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
->>>>    arch/arm/boot/dts/exynos5420-smdk5420.dts          |    2 -
->>>>    arch/arm/boot/dts/exynos5800-peach-pi.dts          |    2 -
->>>>    drivers/gpu/drm/bridge/Kconfig                     |    2 +
->>>>    drivers/gpu/drm/bridge/Makefile                    |    1 +
->>>>    drivers/gpu/drm/bridge/analogix/Kconfig            |    3 +
->>>>    drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
->>>>    drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1430
->>>> ++++++++++++++++++
->>>>    drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  281 ++++
->>>>    drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 1320
->>>> +++++++++++++++++
->>>>    .../analogix/analogix_dp_reg.h}                    |  270 ++--
->>>>    drivers/gpu/drm/exynos/Kconfig                     |    3 +-
->>>>    drivers/gpu/drm/exynos/Makefile                    |    2 +-
->>>>    drivers/gpu/drm/exynos/exynos_dp.c                 |  324 +++++
->>>>    drivers/gpu/drm/exynos/exynos_dp_core.c            | 1510
->>>> --------------------
->>>>    drivers/gpu/drm/exynos/exynos_dp_core.h            |  282 ----
->>>>    drivers/gpu/drm/exynos/exynos_dp_reg.c             | 1263
->>>> ----------------
->>>>    drivers/gpu/drm/rockchip/Kconfig                   |    9 +
->>>>    drivers/gpu/drm/rockchip/Makefile                  |    1 +
->>>>    drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  384 +++++
->>>>    include/drm/bridge/analogix_dp.h                   |   41 +
->>>>    28 files changed, 4115 insertions(+), 3269 deletions(-)
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/display/bridge/analogix_dp.txt
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/display/rockchip/analogix_dp-rockchip.txt
->>>>    create mode 100644 drivers/gpu/drm/bridge/analogix/Kconfig
->>>>    create mode 100644 drivers/gpu/drm/bridge/analogix/Makefile
->>>>    create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>>    create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->>>>    create mode 100644 drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->>>>    rename drivers/gpu/drm/{exynos/exynos_dp_reg.h =>
->>>> bridge/analogix/analogix_dp_reg.h} (62%)
->>>>    create mode 100644 drivers/gpu/drm/exynos/exynos_dp.c
->>>>    delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.c
->>>>    delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_core.h
->>>>    delete mode 100644 drivers/gpu/drm/exynos/exynos_dp_reg.c
->>>>    create mode 100644 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->>>>    create mode 100644 include/drm/bridge/analogix_dp.h
->>>>
->>>> --
->>>> 1.9.1
->>>>
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
+U2VhbiwKCk9uIDA3LzMwLzIwMTYgMDM6MTYgQU0sIFNlYW4gUGF1bCB3cm90ZToKPiBJbnN0ZWFk
+IG9mIGp1c3QgcHJlcGFyaW5nIHRoZSBwYW5lbCBvbiBiaW5kLCBhY3R1YWxseSBwcmVwYXJlL3Vu
+cHJlcGFyZQo+IGR1cmluZyBtb2Rlc2V0L2Rpc2FibGUuIFRoZSBwYW5lbCBtdXN0IGJlIHByZXBh
+cmVkIGluIG9yZGVyIHRvIHJlYWQgaHBkCj4gc3RhdHVzLCBzbyB3ZSBuZWVkIHRvIHJlZmNvdW50
+IHRoZSBwcmVwYXJlcyBpbiBvcmRlciB0byBlbnN1cmUgd2UgZG9uJ3QKPiBhY2NpZGVudGFsbHkg
+dHVybiB0aGUgcGFuZWwgb2ZmIGF0IHRoZSB3cm9uZyB0aW1lLgo+Cj4gU2lnbmVkLW9mZi1ieTog
+U2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+Cj4gLS0tCj4KPgo+IEhpIFlha2lyLAo+
+IFRoaXMgaXMgd2hhdCBJIHdhcyB0YWxraW5nIGFib3V0IHVwdGhyZWFkLiBJJ3ZlIHRlc3RlZCBp
+dCBhbmQgaXQgc2VlbXMgdG8gYmUgd29ya2luZy4KPgo+IFdoYXQgZG8geW91IHRoaW5rPwoKVGhh
+bmtzIGZvciB5b3VyIHBhdGNoLCBhbmQgaXQgd29ya3MuIEJ1dCBJIGhhdmUgaW50cm9kdWNlZCB0
+d28gCnF1ZXN0aW9ucywgYW5kIEkgaGF2ZW4ndCBmb3VuZCBhIHdheSB0byBmaXhlZCB0aGVtLgoK
+PiBTZWFuCj4KPgo+Cj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9jb3JlLmMgfCA0OCArKysrKysrKysrKysrKysrKy0tLS0tCj4gICAxIGZpbGUgY2hhbmdlZCwg
+MzcgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+IGluZGV4IDMyNzE1ZGEu
+LjdiNzY0YTQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9h
+bmFsb2dpeF9kcF9jb3JlLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4
+L2FuYWxvZ2l4X2RwX2NvcmUuYwo+IEBAIC05NjAsMTEgKzk2MCwyNyBAQCBlbnVtIGRybV9jb25u
+ZWN0b3Jfc3RhdHVzCj4gICBhbmFsb2dpeF9kcF9kZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3Ig
+KmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKPiAgIHsKPiAgIAlzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
+aWNlICpkcCA9IHRvX2RwKGNvbm5lY3Rvcik7Cj4gKwllbnVtIGRybV9jb25uZWN0b3Jfc3RhdHVz
+IHN0YXR1cyA9IGNvbm5lY3Rvcl9zdGF0dXNfZGlzY29ubmVjdGVkOwo+ICsJaW50IHJldDsKPiAg
+IAo+IC0JaWYgKGFuYWxvZ2l4X2RwX2RldGVjdF9ocGQoZHApKQo+IC0JCXJldHVybiBjb25uZWN0
+b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZDsKPiArCWlmIChkcC0+cGxhdF9kYXRhLT5wYW5lbCAmJiBk
+cC0+ZHBtc19tb2RlICE9IERSTV9NT0RFX0RQTVNfT04pIHsKPiArCQlyZXQgPSBkcm1fcGFuZWxf
+cHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCk7Cj4gKwkJaWYgKHJldCkgewo+ICsJCQlEUk1f
+RVJST1IoImZhaWxlZCB0byBzZXR1cCBwYW5lbCAoJWQpXG4iLCByZXQpOwo+ICsJCQlyZXR1cm4g
+Y29ubmVjdG9yX3N0YXR1c19kaXNjb25uZWN0ZWQ7Cj4gKwkJfQo+ICsJfQo+ICsKPiArCWlmICgh
+YW5hbG9naXhfZHBfZGV0ZWN0X2hwZChkcCkpCj4gKwkJc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1
+c19jb25uZWN0ZWQ7Cj4gKwo+ICsJaWYgKGRwLT5wbGF0X2RhdGEtPnBhbmVsICYmIGRwLT5kcG1z
+X21vZGUgIT0gRFJNX01PREVfRFBNU19PTikgewo+ICsJCXJldCA9IGRybV9wYW5lbF91bnByZXBh
+cmUoZHAtPnBsYXRfZGF0YS0+cGFuZWwpOwo+ICsJCWlmIChyZXQpCj4gKwkJCURSTV9FUlJPUigi
+ZmFpbGVkIHRvIHNldHVwIHRoZSBwYW5lbCByZXQgPSAlZFxuIiwgcmV0KTsKPiArCX0KPiAgIAo+
+IC0JcmV0dXJuIGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwo+ICsJcmV0dXJuIHN0YXR1czsK
+CjEuIFBhbmVsIHdvdWxkIGZsaWNrZXIgYXQgc3lzdGVtIGJvb3QgdGltZS4gWW91ciBwYXRjaCB3
+b3VsZCBmbGFzaCB0aGUgCnBhbmVsIHBvd2VyIGluIGNvbm5lY3Rvci0+ZGV0ZWN0KCkgZnVuY3Rp
+b24gd2hlbiBkcC0+ZHBtc19tb2RlIGlzbid0IApEUk1fTU9ERV9EUE1TX09GRi4gU28gd2hlbiB1
+c2Vyc3BhY2Uga2VlcCBkZXRlY3QgdGhlIGNvbm5lY3RvciBzdGF0dXMgaW4gCmJvb3QgdGltZSwg
+d2UgY291bGQgc2VlIHBhbmVsIHdvdWxkIGZsaWNrZXIgKGxpZ2h0IHVwIGZvciBhIHdoaWxlLCBh
+bmQgCnR1cm4gb2ZmIGFnYWluLCBhbmQga2VlcCBsb29wIGZvciBzZXZlcmFsIHRpbWUpLiBJIGhh
+dmUgY29waWVkIHNvbWUgCmtlcm5lbCBsb2dzOgoKClsgICAxMS4wNjUyNjddIFlLSyAtLS0tLS0t
+LS0gYW5hbG9naXhfZHBfZGV0ZWN0OjEwNTIKWyAgIDExLjcyOTU5Nl0gWUtLIC0tLS0tLS0tLSBh
+bmFsb2dpeF9kcF9nZXRfbW9kZXM6MTAxNgpbICAgMTEuNzM3NjA4XSByb2NrY2hpcC1kcCBmZjk3
+MDAwMC5lZHA6IAphbmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDogQXV4IFRyYW5zYWN0
+aW9uIGZhaWwhClsgICAxMS43NDkyMjldIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogCmFuYWxv
+Z2l4X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNkOiBBdXggVHJhbnNhY3Rpb24gZmFpbCEKWyAgIDEx
+Ljc2MDc5OV0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiAKYW5hbG9naXhfZHBfcmVhZF9ieXRl
+c19mcm9tX2RwY2Q6IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQpbICAgMTMuMzE1OTYyXSBZS0sgLS0t
+LS0tLS0tIGFuYWxvZ2l4X2RwX2RldGVjdDoxMDUyClsgICAxMy45ODQ3MDJdIFlLSyAtLS0tLS0t
+LS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKWyAgIDEzLjk5Mjk3N10gcm9ja2NoaXAtZHAg
+ZmY5NzAwMDAuZWRwOiAKYW5hbG9naXhfZHBfcmVhZF9ieXRlc19mcm9tX2RwY2Q6IEF1eCBUcmFu
+c2FjdGlvbiBmYWlsIQpbICAgMTQuMDA0NDE0XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IAph
+bmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDogQXV4IFRyYW5zYWN0aW9uIGZhaWwhClsg
+ICAxNC4wMTU4NDJdIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogCmFuYWxvZ2l4X2RwX3JlYWRf
+Ynl0ZXNfZnJvbV9kcGNkOiBBdXggVHJhbnNhY3Rpb24gZmFpbCEKWyAgIDE0LjE4MzEwOV0gWUtL
+IC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9icmlkZ2VfcHJlX2VuYWJsZToxMTQ3ClsgICAxNC4zMDYz
+MDFdIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogTGluayBUcmFpbmluZyBDbG9jayBSZWNvdmVy
+eSAKc3VjY2VzcwpbICAgMTQuMzE5MTMwXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IExpbmsg
+VHJhaW5pbmcgc3VjY2VzcyEKWyAgIDE0LjMyNjM4OF0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRw
+OiB3YWl0IFNZU19DVExfMi4KWyAgIDE0LjQzNzI0N10gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRw
+OiBUaW1lb3V0IG9mIHZpZGVvIHN0cmVhbWNsayBvawpbICAgMTQuNDQzNTg1XSByb2NrY2hpcC1k
+cCBmZjk3MDAwMC5lZHA6IHVuYWJsZSB0byBjb25maWcgdmlkZW8KCgo+ICAgfQo+ICAgCj4gICBz
+dGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9jb25uZWN0b3JfZGVzdHJveShzdHJ1Y3QgZHJtX2Nvbm5l
+Y3RvciAqY29ubmVjdG9yKQo+IEBAIC0xMDM1LDYgKzEwNTEsMTggQEAgc3RhdGljIGludCBhbmFs
+b2dpeF9kcF9icmlkZ2VfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCj4gICAJcmV0
+dXJuIDA7Cj4gICB9Cj4gICAKPiArc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX3ByZV9l
+bmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKPiArewo+ICsJc3RydWN0IGFuYWxvZ2l4
+X2RwX2RldmljZSAqZHAgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRlOwo+ICsJaW50IHJldDsKPiAr
+Cj4gKwlpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwpIHsKPiArCQlyZXQgPSBkcm1fcGFuZWxfcHJl
+cGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCk7Cj4gKwkJaWYgKHJldCkKPiArCQkJRFJNX0VSUk9S
+KCJmYWlsZWQgdG8gc2V0dXAgdGhlIHBhbmVsIHJldCA9ICVkXG4iLCByZXQpOwo+ICsJfQoKMi4g
+RHJpdmVyIHdvdWxkIGZhaWxlZCB0byByZWFkIEVESUQgaW4gc29tZSBjYXNlLiBQYW5lbCB3b3Vs
+ZCBvbmx5IGJlIApwb3dlcmVkIHVwIGluIGJyaWRnZS0+cHJlX2VuYWJsZSgpIGZ1bmN0aW9uIHdo
+aWNoIGxhdGVyIHRoYW4gCmNvbm5lY3Rvci0+Z2V0X21vZGVzKCkgZnVuY3Rpb24sIGFuZCB0aGlz
+IHdvdWxkIGNhdXNlZCBEUENEIHRyYW5zZmVyIApmYWlsZWQgaW4gYW5hbG9naXhfZHBfaGFuZGxl
+X2VkaWQoKS4gVGhpcyBzZWVtIHdvbid0IGNhdXNlZCB0b28gYmlnIAppc3N1ZSwgY2F1c2UgdXNl
+cnNwYWNlIHdvdWxkIHJlYWQgRURJRCBhZ2FpbiBhZnRlciBicmlkZ2UvZW5jb2RlciBpcyAKZW5h
+YmxlZC4gQnV0IGl0J3MgYmV0dGVyIHRvIGF2b2lkIHRoaXMgcG90ZW50aWFsIGJ1Zy4KCgpbICAg
+MTEuMDY1MjY3XSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4X2RwX2RldGVjdDoxMDUyClsgICAxMS43
+Mjk1OTZdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKWyAgIDExLjcz
+NzYwOF0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiAKYW5hbG9naXhfZHBfcmVhZF9ieXRlc19m
+cm9tX2RwY2Q6IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQpbICAgMTEuNzQ5MjI5XSByb2NrY2hpcC1k
+cCBmZjk3MDAwMC5lZHA6IAphbmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDogQXV4IFRy
+YW5zYWN0aW9uIGZhaWwhClsgICAxMS43NjA3OTldIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDog
+CmFuYWxvZ2l4X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNkOiBBdXggVHJhbnNhY3Rpb24gZmFpbCEK
+WyAgIDEzLjMxNTk2Ml0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1MgpbICAg
+MTMuOTg0NzAyXSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4X2RwX2dldF9tb2RlczoxMDE2ClsgICAx
+My45OTI5NzddIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogCmFuYWxvZ2l4X2RwX3JlYWRfYnl0
+ZXNfZnJvbV9kcGNkOiBBdXggVHJhbnNhY3Rpb24gZmFpbCEKWyAgIDE0LjAwNDQxNF0gcm9ja2No
+aXAtZHAgZmY5NzAwMDAuZWRwOiAKYW5hbG9naXhfZHBfcmVhZF9ieXRlc19mcm9tX2RwY2Q6IEF1
+eCBUcmFuc2FjdGlvbiBmYWlsIQpbICAgMTQuMDE1ODQyXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5l
+ZHA6IAphbmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDogQXV4IFRyYW5zYWN0aW9uIGZh
+aWwhClsgICAxNC4xODMxMDldIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfYnJpZGdlX3ByZV9l
+bmFibGU6MTE0NwpbICAgMTQuMzA2MzAxXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IExpbmsg
+VHJhaW5pbmcgQ2xvY2sgUmVjb3ZlcnkgCnN1Y2Nlc3MKWyAgIDE0LjMxOTEzMF0gcm9ja2NoaXAt
+ZHAgZmY5NzAwMDAuZWRwOiBMaW5rIFRyYWluaW5nIHN1Y2Nlc3MhClsgICAxNC4zMjYzODhdIHJv
+Y2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogd2FpdCBTWVNfQ1RMXzIuClsgICAxNC40MzcyNDddIHJv
+Y2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogVGltZW91dCBvZiB2aWRlbyBzdHJlYW1jbGsgb2sKWyAg
+IDE0LjQ0MzU4NV0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiB1bmFibGUgdG8gY29uZmlnIHZp
+ZGVvClsgICAxNC41MjA1NjVdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZGV0ZWN0OjEwNTIK
+WyAgIDE0LjUyNTMzOV0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9nZXRfbW9kZXM6MTAxNgpb
+ICAgMTQuNTMxMjMzXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVESUQgZGF0YSBkb2VzIG5v
+dCBpbmNsdWRlIGFueSAKZXh0ZW5zaW9ucy4KWyAgIDE1LjU5NTcyNF0gWUtLIC0tLS0tLS0tLSBh
+bmFsb2dpeF9kcF9kZXRlY3Q6MTA1MgpbICAgMTUuNjAwNDg4XSBZS0sgLS0tLS0tLS0tIGFuYWxv
+Z2l4X2RwX2dldF9tb2RlczoxMDE2ClsgICAxNS42MDY0NTFdIHJvY2tjaGlwLWRwIGZmOTcwMDAw
+LmVkcDogRURJRCBkYXRhIGRvZXMgbm90IGluY2x1ZGUgYW55IApleHRlbnNpb25zLgpbICAgMTcu
+MzI3MzU0XSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4X2RwX2RldGVjdDoxMDUyClsgICAxNy4zMzIx
+MDVdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKWyAgIDE3LjMzODE3
+MV0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiBFRElEIGRhdGEgZG9lcyBub3QgaW5jbHVkZSBh
+bnkgCmV4dGVuc2lvbnMuClsgICA1Ni4yMzYwMjRdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBf
+ZGV0ZWN0OjEwNTIKWyAgIDU2LjI0MDgyMF0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9nZXRf
+bW9kZXM6MTAxNgpbICAgNTYuMjQ2ODU1XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVESUQg
+ZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFueSAKZXh0ZW5zaW9ucy4KWyAgIDY0LjA5MjQ3N10gWUtL
+IC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1MgpbICAgNjQuNzYzNzEyXSBZS0sgLS0t
+LS0tLS0tIGFuYWxvZ2l4X2RwX2dldF9tb2RlczoxMDE2CgoKCkJSLAotIFlha2lyCgo+ICt9Cj4g
+Kwo+ICAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX2VuYWJsZShzdHJ1Y3QgZHJtX2Jy
+aWRnZSAqYnJpZGdlKQo+ICAgewo+ICAgCXN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwID0g
+YnJpZGdlLT5kcml2ZXJfcHJpdmF0ZTsKPiBAQCAtMTA1OCw2ICsxMDg2LDcgQEAgc3RhdGljIHZv
+aWQgYW5hbG9naXhfZHBfYnJpZGdlX2VuYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQo+
+ICAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoc3RydWN0IGRybV9icmlk
+Z2UgKmJyaWRnZSkKPiAgIHsKPiAgIAlzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9IGJy
+aWRnZS0+ZHJpdmVyX3ByaXZhdGU7Cj4gKwlpbnQgcmV0Owo+ICAgCj4gICAJaWYgKGRwLT5kcG1z
+X21vZGUgIT0gRFJNX01PREVfRFBNU19PTikKPiAgIAkJcmV0dXJuOwo+IEBAIC0xMDc3LDYgKzEx
+MDYsMTAgQEAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoc3RydWN0IGRy
+bV9icmlkZ2UgKmJyaWRnZSkKPiAgIAo+ICAgCXBtX3J1bnRpbWVfcHV0X3N5bmMoZHAtPmRldik7
+Cj4gICAKPiArCXJldCA9IGRybV9wYW5lbF91bnByZXBhcmUoZHAtPnBsYXRfZGF0YS0+cGFuZWwp
+Owo+ICsJaWYgKHJldCkKPiArCQlEUk1fRVJST1IoImZhaWxlZCB0byBzZXR1cCB0aGUgcGFuZWwg
+cmV0ID0gJWRcbiIsIHJldCk7Cj4gKwo+ICAgCWRwLT5kcG1zX21vZGUgPSBEUk1fTU9ERV9EUE1T
+X09GRjsKPiAgIH0KPiAgIAo+IEBAIC0xMTY1LDkgKzExOTgsOSBAQCBzdGF0aWMgdm9pZCBhbmFs
+b2dpeF9kcF9icmlkZ2Vfbm9wKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCj4gICB9Cj4gICAK
+PiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2JyaWRnZV9mdW5jcyBhbmFsb2dpeF9kcF9icmlk
+Z2VfZnVuY3MgPSB7Cj4gKwkucHJlX2VuYWJsZSA9IGFuYWxvZ2l4X2RwX2JyaWRnZV9wcmVfZW5h
+YmxlLAo+ICAgCS5lbmFibGUgPSBhbmFsb2dpeF9kcF9icmlkZ2VfZW5hYmxlLAo+ICAgCS5kaXNh
+YmxlID0gYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUsCj4gLQkucHJlX2VuYWJsZSA9IGFuYWxv
+Z2l4X2RwX2JyaWRnZV9ub3AsCj4gICAJLnBvc3RfZGlzYWJsZSA9IGFuYWxvZ2l4X2RwX2JyaWRn
+ZV9ub3AsCj4gICAJLm1vZGVfc2V0ID0gYW5hbG9naXhfZHBfYnJpZGdlX21vZGVfc2V0LAo+ICAg
+CS5hdHRhY2ggPSBhbmFsb2dpeF9kcF9icmlkZ2VfYXR0YWNoLAo+IEBAIC0xMzMzLDEzICsxMzY2
+LDYgQEAgaW50IGFuYWxvZ2l4X2RwX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZHJt
+X2RldmljZSAqZHJtX2RldiwKPiAgIAo+ICAgCXBoeV9wb3dlcl9vbihkcC0+cGh5KTsKPiAgIAo+
+IC0JaWYgKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSB7Cj4gLQkJaWYgKGRybV9wYW5lbF9wcmVwYXJl
+KGRwLT5wbGF0X2RhdGEtPnBhbmVsKSkgewo+IC0JCQlEUk1fRVJST1IoImZhaWxlZCB0byBzZXR1
+cCB0aGUgcGFuZWxcbiIpOwo+IC0JCQlyZXR1cm4gLUVCVVNZOwo+IC0JCX0KPiAtCX0KPiAtCj4g
+ICAJYW5hbG9naXhfZHBfaW5pdF9kcChkcCk7Cj4gICAKPiAgIAlyZXQgPSBkZXZtX3JlcXVlc3Rf
+dGhyZWFkZWRfaXJxKCZwZGV2LT5kZXYsIGRwLT5pcnEsCgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
