@@ -1,66 +1,61 @@
-From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH] iommu/exynos: Modify error handling
-Date: Mon, 1 Aug 2016 11:48:38 +0530
-Message-ID: <20160801061838.GA17805@amitoj-Inspiron-3542>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: joro@8bytes.org, kgene@kernel.org, k.kozlowski@samsung.com, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: julia.lawall@lip6.fr
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH v2 0/2] Fix arch timer trigger
+Date: Mon,  1 Aug 2016 10:54:14 +0100
+Message-ID: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, arm@kernel.org
+Cc: Mark Rutland <marc.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Duc Dang <dhdang@apm.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Kukjin Kim <kgene@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Simek <michal.simek@xilinx.com>, soren.brinkmann@xilinx.com, Tirumalesh Chalamarla <tchalamarla@cavium.com>, Jan Glauber <jglauber@cavium.com>, Hou Zhiqiang <B48286@freescale.com>, Wenbin Song <Wenbin.Song@freescale.com>, Yuan Yao <yao.yuan@nxp.com>, Liu Gang <Gang.Liu@nxp.com>, Ming
 List-Id: linux-samsung-soc@vger.kernel.org
 
-of_platform_device_create returns NULL on error so an IS_ERR test is
-incorrect here and a NULL check is required.
+Recent fixes in the IRQ layer (properly propagating the trigger
+settings in the interrupt controler instead of silently failing)
+uncovered a number of cases where DTs are describing the timer trigger
+wrong (edge, while the interrupt is definitely level).
 
-The Coccinelle semantic patch used to make this change is as follows:
-@@
-expression e;
-@@
+The result is a kernel that doesn't boot anymore (forever waiting for
+an interrupt that can't trigger) or behave erratically (missing
+interrupts).
 
-  e = of_platform_device_create(...);
-if(
--    IS_ERR(e)
-+    !e
-    )
-    {
-  <+...
-  return
-- PTR_ERR(e)
-+ -ENODEV
-  ;
-  ...+>
-  }
+This very small series addresses the issue in two ways:
+(1) enforcing level triggered in the driver and spitting out a nastygram
+so that the user can find out about the issue
+(2) fix the existing issue by repainting the broken device trees.
 
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
----
- drivers/iommu/exynos-iommu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+(1) makes sure that a new kernel can run with an old DT, and (2)
+addresses the issue properly.
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 97c41b8..2888bbf 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1242,8 +1242,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
- 		exynos_iommu_init();
- 
- 	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
--	if (IS_ERR(pdev))
--		return PTR_ERR(pdev);
-+	if (!pdev)
-+		return -ENODEV;
- 
- 	of_iommu_set_ops(np, &exynos_iommu_ops);
- 	return 0;
+Note that the two patches can be applied independently.
+
+Tested on APM Mustang, which is one of the broken platforms.
+
+Thanks,
+
+	M.
+
+* From v1:
+  - Make GICv3-based platforms use the level triggered setting even if
+  the HW actually precisly describes high or low settings.
+  - Rebased on top of linux/master as of today.
+
+Marc Zyngier (2):
+  clocksource/arm_arch_timer: Force per-CPU interrupt to be
+    level-triggered
+  arm64: dts: Fix broken architected timer interrupt trigger
+
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |  8 +++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  8 +++----
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             |  8 +++----
+ arch/arm64/boot/dts/broadcom/ns2.dtsi              |  8 +++----
+ arch/arm64/boot/dts/cavium/thunder-88xx.dtsi       |  8 +++----
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  8 +++----
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     |  8 +++----
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |  8 +++----
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi      |  8 +++----
+ .../boot/dts/socionext/uniphier-ph1-ld20.dtsi      |  8 +++----
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |  8 +++----
+ drivers/clocksource/arm_arch_timer.c               | 26 +++++++++++++++++++---
+ 12 files changed, 67 insertions(+), 47 deletions(-)
+
 -- 
-1.9.1
+2.1.4
