@@ -1,138 +1,114 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [RFT PATCH v2 3/3] ARM: select PCI_DOMAINS config from
- ARCH_MULTIPLATFORM
-Date: Mon, 1 Aug 2016 16:42:30 +0530
-Message-ID: <1470049950-4697-4-git-send-email-kishon@ti.com>
-References: <1470049950-4697-1-git-send-email-kishon@ti.com>
+From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
+Date: Mon, 1 Aug 2016 15:23:46 +0300
+Message-ID: <7ca666e4-545e-6057-bed3-db45997b255d@ti.com>
+References: <CGME20160608134820epcas1p4ee75a89888f2ae2adb733124a330bd2c@epcas1p4.samsung.com>
+ <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
+ <57592A40.9080608@samsung.com> <57592B4A.4000407@samsung.com>
+ <575937BA.1070609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1470049950-4697-1-git-send-email-kishon@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-pci@vger.kernel.org, nsekhar@ti.com, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, helgaas@kernel.org, Benoit Cousson <bcousson@baylibre.com>, Greg Ungerer <gerg@uclinux.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <575937BA.1070609-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kishon-l0cyMroinI0@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PCI_DOMAINS config should be selected for any SoCs
-having more than a single PCIe controller. Without PCI_DOMAINS
-config, only one PCIe controller gets registered.
+Hi,
 
-Select PCI_DOMAINS in ARCH_MULTIPLATFORM if PCI is selected, since
-it doesn't harm even if a platform has a single PCIe port.
-Also remove PCI_DOMAINS being selected from other platform
-specific configs.
+On 09/06/16 12:32, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 2016년 06월 09일 17:39, Krzysztof Kozlowski wrote:
+>>
+>> Hi,
+>>
+>>
+>> On 06/09/2016 10:35 AM, Chanwoo Choi wrote:
+>>> Hi,
+>>>
+>>> It is good to support USB_ID and USB_VBUS by extcon.
+>>>
+>>> But,
+>>> there is some issue about adding the new cable type for
+>>> both EXTCON_USB_ID and EXTCON_USB_VBUS
+>>>
+>>> I think that the ID and VBUS state are not cable type
+>>> Instead, ID and VBUS state are the property of USB cable.
+>>>
+>>> So, I'd like to add the following function to support
+>>> the property of each cable as following:
+>>> The client driver can get the state of property by using
+>>> the extcon_get_cable_property_state().
+>>>
+>>> - int extcon_get_cable_property_state(struct extcon_dev *edev,
+>>> 				unsigned int id,
+>>> 				enum extcon_property property);
+>>> - int extcon_set_cable_property_state(struct extcon_dev *edev,
+>>> 				unsigned int id,
+>>> 				enum extcon_property property,
+>>> 				unsigned int state);
+>>>
+>>> For example,
+>>> In extcon-usb-gpio.c, set state of property as follwoing:
+>>> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_ID, 1);
+>>> 	extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_VBUS, 1);
+>>>
+>>>
+>>> In the extcon client driver, get state of property as following:
+>>> 	id_state = extcon_get_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_ID);
+>>> 	vbus_state = extcon_get_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_VUBS);
+>>
+>> How one can receive notifications with this API?
+> 
+> I think that the extcon don't support the notification only for property.
+> When USB or USB_HOST cable state is changed, the client driver
+> call the extcon_get_cable_property_state() to read the state of property.
+> 
+> Namely, the property depend on the specific external connector.
+> 
+>>
+>> Last time you wrote, at the end of discussion:
+>> http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1923193
+>>> IMO, if some usb driver check both id and vbus pin at the same time,
+>>> the usb driver can know the both id and vbus pin state through only
+>> one notifier event.
+>>>
+>>> Also,
+>>> If some usb driver want to know the state of id pin except of vbus state,
+>>> when receiving following events, id pin is low.
+>>> 	#define EXTCON_USB_ID_L_VBUS_L0
+>>> 	#define EXTCON_USB_ID_L_VBUS_H1
+>>> when receiving following events, id pin is high.
+>>> 	#define EXTCON_USB_ID_H_VBUS_L2
+>>> 	#define EXTCON_USB_ID_H_VBUS_H3
+>>> Also, some usb driver would catch the vbus pin state with same method.
+>>>
+>>> But, it is just my opinion. We may use following notifier events for
+>> each pin.
+>>> We need to discuss it.
+>>> 	#define EXTCON_USB_ID_LOW
+>>> 	#define EXTCON_USB_ID_HIGH	
+>>> 	#define EXTCON_USB_VBUS_LOW
+>>> 	#define EXTCON_USB_VBUS_HIGH
+>>
+>> ... all other participants agreed on that conclusion. So why change of
+>> view point now?
+> 
+> Unitl now, the extcon framework only handle the state of external connector(cable).
+> - The state of external connector is either attached or detached.
+> 
+> I think that ID and VBUS are not external connector(cable).
+> The ID and VBUS are more appropriate as property than new type of external connector.
+> 
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm/Kconfig               |    1 +
- arch/arm/mach-axxia/Kconfig    |    1 -
- arch/arm/mach-cns3xxx/Kconfig  |    1 -
- arch/arm/mach-exynos/Kconfig   |    1 -
- arch/arm/mach-imx/Kconfig      |    2 --
- arch/arm/mach-keystone/Kconfig |    1 -
- arch/arm/mach-shmobile/Kconfig |    1 -
- 7 files changed, 1 insertion(+), 7 deletions(-)
+Was there any conclusion on how we can support raw ID and VBUS events with extcon?
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 538b032..730507a 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -336,6 +336,7 @@ config ARCH_MULTIPLATFORM
- 	select GENERIC_CLOCKEVENTS
- 	select MIGHT_HAVE_PCI
- 	select MULTI_IRQ_HANDLER
-+	select PCI_DOMAINS if PCI
- 	select SPARSE_IRQ
- 	select USE_OF
- 
-diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
-index ee2e131..fe627cb 100644
---- a/arch/arm/mach-axxia/Kconfig
-+++ b/arch/arm/mach-axxia/Kconfig
-@@ -7,7 +7,6 @@ config ARCH_AXXIA
- 	select ARM_TIMER_SP804
- 	select HAVE_ARM_ARCH_TIMER
- 	select MFD_SYSCON
--	select PCI_DOMAINS if PCI
- 	select ZONE_DMA
- 	help
- 	  This enables support for the LSI Axxia devices.
-diff --git a/arch/arm/mach-cns3xxx/Kconfig b/arch/arm/mach-cns3xxx/Kconfig
-index eb14a0f..5fd836b 100644
---- a/arch/arm/mach-cns3xxx/Kconfig
-+++ b/arch/arm/mach-cns3xxx/Kconfig
-@@ -2,7 +2,6 @@ menuconfig ARCH_CNS3XXX
- 	bool "Cavium Networks CNS3XXX family"
- 	depends on ARCH_MULTI_V6
- 	select ARM_GIC
--	select PCI_DOMAINS if PCI
- 	help
- 	  Support for Cavium Networks CNS3XXX platform.
- 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index a03daf5..fc0d319 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -125,7 +125,6 @@ config SOC_EXYNOS5440
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select HAVE_ARM_ARCH_TIMER
- 	select AUTO_ZRELADDR
--	select PCI_DOMAINS if PCI
- 	select PINCTRL_EXYNOS5440
- 	select PM_OPP
- 	help
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index dd905b9..c5d73b2 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -527,7 +527,6 @@ config SOC_IMX6Q
- 	select ARM_ERRATA_764369 if SMP
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD
--	select PCI_DOMAINS if PCI
- 	select PINCTRL_IMX6Q
- 	select SOC_IMX6
- 
-@@ -573,7 +572,6 @@ config SOC_LS1021A
- 	bool "Freescale LS1021A support"
- 	select ARM_GIC
- 	select HAVE_ARM_ARCH_TIMER
--	select PCI_DOMAINS if PCI
- 	select ZONE_DMA if ARM_LPAE
- 	help
- 	  This enables support for Freescale LS1021A processor.
-diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
-index 6bd14da..98a156a 100644
---- a/arch/arm/mach-keystone/Kconfig
-+++ b/arch/arm/mach-keystone/Kconfig
-@@ -9,7 +9,6 @@ config ARCH_KEYSTONE
- 	select COMMON_CLK_KEYSTONE
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ZONE_DMA if ARM_LPAE
--	select PCI_DOMAINS if PCI
- 	help
- 	  Support for boards based on the Texas Instruments Keystone family of
- 	  SoCs.
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index fe4ccb5..e82a624b 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -22,7 +22,6 @@ config ARCH_RCAR_GEN2
- 	select PM_GENERIC_DOMAINS
- 	select RENESAS_IRQC
- 	select SYS_SUPPORTS_SH_CMT
--	select PCI_DOMAINS if PCI
- 
- config ARCH_RMOBILE
- 	bool
--- 
-1.7.9.5
+cheers,
+-roger
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
