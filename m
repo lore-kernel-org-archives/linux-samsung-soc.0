@@ -1,125 +1,206 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [RFC v4 0/7] extcon: usb-gpio: fixes and improvements
-Date: Mon, 1 Aug 2016 21:57:37 +0900
-Message-ID: <CAGTfZH2QUgd___CdSG4+gxL4sbURZBBEH7TjQ=GsQX4X3gx9Nw@mail.gmail.com>
-References: <CGME20160608134820epcas1p4ee75a89888f2ae2adb733124a330bd2c@epcas1p4.samsung.com>
- <1465393686-16644-1-git-send-email-k.kozlowski@samsung.com>
- <57592A40.9080608@samsung.com> <57592B4A.4000407@samsung.com>
- <575937BA.1070609@samsung.com> <7ca666e4-545e-6057-bed3-db45997b255d@ti.com>
-Reply-To: chanwoo@kernel.org
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
+ selected redundantly
+Date: Mon, 1 Aug 2016 17:50:07 +0200
+Message-ID: <579F6FAF.7010001@atmel.com>
+References: <1470049950-4697-1-git-send-email-kishon@ti.com>
+ <1470049950-4697-3-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:35384 "EHLO
-	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753701AbcHAM55 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Aug 2016 08:57:57 -0400
-In-Reply-To: <7ca666e4-545e-6057-bed3-db45997b255d@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1470049950-4697-3-git-send-email-kishon@ti.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Tony Lindgren <tony@atomide.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: helgaas@kernel.org, Benoit Cousson <bcousson@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Fabio Estevam <fabio.estevam@nxp.com>, Greg Ungerer <gerg@uclinux.org>, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, nsekhar@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Roger Quadros <rogerq@ti.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Peter Chen <peter.chen@freescale.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Felipe Balbi <balbi@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Roger,
+Le 01/08/2016 13:12, Kishon Vijay Abraham I a �crit :
+> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
+> Fix it from getting redundantly selected in all
+> ARCH_MULTIPLATFORM based machines.
 
-2016-08-01 21:23 GMT+09:00 Roger Quadros <rogerq@ti.com>:
-> Hi,
->
-> On 09/06/16 12:32, Chanwoo Choi wrote:
->> Hi,
->>
->> On 2016년 06월 09일 17:39, Krzysztof Kozlowski wrote:
->>>
->>> Hi,
->>>
->>>
->>> On 06/09/2016 10:35 AM, Chanwoo Choi wrote:
->>>> Hi,
->>>>
->>>> It is good to support USB_ID and USB_VBUS by extcon.
->>>>
->>>> But,
->>>> there is some issue about adding the new cable type for
->>>> both EXTCON_USB_ID and EXTCON_USB_VBUS
->>>>
->>>> I think that the ID and VBUS state are not cable type
->>>> Instead, ID and VBUS state are the property of USB cable.
->>>>
->>>> So, I'd like to add the following function to support
->>>> the property of each cable as following:
->>>> The client driver can get the state of property by using
->>>> the extcon_get_cable_property_state().
->>>>
->>>> - int extcon_get_cable_property_state(struct extcon_dev *edev,
->>>>                             unsigned int id,
->>>>                             enum extcon_property property);
->>>> - int extcon_set_cable_property_state(struct extcon_dev *edev,
->>>>                             unsigned int id,
->>>>                             enum extcon_property property,
->>>>                             unsigned int state);
->>>>
->>>> For example,
->>>> In extcon-usb-gpio.c, set state of property as follwoing:
->>>>     extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_ID, 1);
->>>>     extcon_set_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_VBUS, 1);
->>>>
->>>>
->>>> In the extcon client driver, get state of property as following:
->>>>     id_state = extcon_get_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_ID);
->>>>     vbus_state = extcon_get_cable_property_state(edev, EXTCON_USB, EXTCON_USB_PROP_VUBS);
->>>
->>> How one can receive notifications with this API?
->>
->> I think that the extcon don't support the notification only for property.
->> When USB or USB_HOST cable state is changed, the client driver
->> call the extcon_get_cable_property_state() to read the state of property.
->>
->> Namely, the property depend on the specific external connector.
->>
->>>
->>> Last time you wrote, at the end of discussion:
->>> http://thread.gmane.org/gmane.linux.kernel/1923192/focus=1923193
->>>> IMO, if some usb driver check both id and vbus pin at the same time,
->>>> the usb driver can know the both id and vbus pin state through only
->>> one notifier event.
->>>>
->>>> Also,
->>>> If some usb driver want to know the state of id pin except of vbus state,
->>>> when receiving following events, id pin is low.
->>>>     #define EXTCON_USB_ID_L_VBUS_L0
->>>>     #define EXTCON_USB_ID_L_VBUS_H1
->>>> when receiving following events, id pin is high.
->>>>     #define EXTCON_USB_ID_H_VBUS_L2
->>>>     #define EXTCON_USB_ID_H_VBUS_H3
->>>> Also, some usb driver would catch the vbus pin state with same method.
->>>>
->>>> But, it is just my opinion. We may use following notifier events for
->>> each pin.
->>>> We need to discuss it.
->>>>     #define EXTCON_USB_ID_LOW
->>>>     #define EXTCON_USB_ID_HIGH
->>>>     #define EXTCON_USB_VBUS_LOW
->>>>     #define EXTCON_USB_VBUS_HIGH
->>>
->>> ... all other participants agreed on that conclusion. So why change of
->>> view point now?
->>
->> Unitl now, the extcon framework only handle the state of external connector(cable).
->> - The state of external connector is either attached or detached.
->>
->> I think that ID and VBUS are not external connector(cable).
->> The ID and VBUS are more appropriate as property than new type of external connector.
->>
->
-> Was there any conclusion on how we can support raw ID and VBUS events with extcon?
+And what happens if we select just one platform independently?
 
-The extcon will support the USB_ID and USB_VBUS as extcon property.
-I'm sending the patches[1] for extcon property.
+Bye,
 
-[1] https://lkml.org/lkml/2016/8/1/25
-: [PATCH v2 0/6] extcon: Add the support for extcon type and property
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  arch/arm/Kconfig                 |    2 --
+>  arch/arm/mach-at91/Kconfig       |    1 -
+>  arch/arm/mach-axxia/Kconfig      |    1 -
+>  arch/arm/mach-exynos/Kconfig     |    1 -
+>  arch/arm/mach-integrator/Kconfig |    1 -
+>  arch/arm/mach-keystone/Kconfig   |    1 -
+>  arch/arm/mach-ks8695/Kconfig     |    5 -----
+>  arch/arm/mach-pxa/Kconfig        |    1 -
+>  arch/arm/mach-spear/Kconfig      |    1 -
+>  arch/arm/mach-versatile/Kconfig  |    1 -
+>  10 files changed, 15 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 90542db..538b032 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -474,7 +474,6 @@ config ARCH_IXP4XX
+>  	select CPU_XSCALE
+>  	select DMABOUNCE if PCI
+>  	select GENERIC_CLOCKEVENTS
+> -	select MIGHT_HAVE_PCI
+>  	select NEED_MACH_IO_H
+>  	select USB_EHCI_BIG_ENDIAN_DESC
+>  	select USB_EHCI_BIG_ENDIAN_MMIO
+> @@ -486,7 +485,6 @@ config ARCH_DOVE
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select CPU_PJ4
+>  	select GENERIC_CLOCKEVENTS
+> -	select MIGHT_HAVE_PCI
+>  	select MULTI_IRQ_HANDLER
+>  	select MVEBU_MBUS
+>  	select PINCTRL
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index 08047af..4013427 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -55,7 +55,6 @@ config SOC_AT91RM9200
+>  	select ATMEL_ST
+>  	select CPU_ARM920T
+>  	select HAVE_AT91_USB_CLK
+> -	select MIGHT_HAVE_PCI
+>  	select PINCTRL_AT91
+>  	select SOC_SAM_V4_V5
+>  	select SRAM if PM
+> diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
+> index 6c6d5e7..ee2e131 100644
+> --- a/arch/arm/mach-axxia/Kconfig
+> +++ b/arch/arm/mach-axxia/Kconfig
+> @@ -7,7 +7,6 @@ config ARCH_AXXIA
+>  	select ARM_TIMER_SP804
+>  	select HAVE_ARM_ARCH_TIMER
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	select ZONE_DMA
+>  	help
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 20dcf6e..a03daf5 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -125,7 +125,6 @@ config SOC_EXYNOS5440
+>  	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+>  	select HAVE_ARM_ARCH_TIMER
+>  	select AUTO_ZRELADDR
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	select PINCTRL_EXYNOS5440
+>  	select PM_OPP
+> diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
+> index b2a85ba..4ed202c 100644
+> --- a/arch/arm/mach-integrator/Kconfig
+> +++ b/arch/arm/mach-integrator/Kconfig
+> @@ -21,7 +21,6 @@ if ARCH_INTEGRATOR
+>  config ARCH_INTEGRATOR_AP
+>  	bool "Support Integrator/AP and Integrator/PP2 platforms"
+>  	select CLKSRC_MMIO
+> -	select MIGHT_HAVE_PCI
+>  	select SERIAL_AMBA_PL010 if TTY
+>  	select SERIAL_AMBA_PL010_CONSOLE if TTY
+>  	select SOC_BUS
+> diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
+> index ea955f6db..6bd14da 100644
+> --- a/arch/arm/mach-keystone/Kconfig
+> +++ b/arch/arm/mach-keystone/Kconfig
+> @@ -9,7 +9,6 @@ config ARCH_KEYSTONE
+>  	select COMMON_CLK_KEYSTONE
+>  	select ARCH_SUPPORTS_BIG_ENDIAN
+>  	select ZONE_DMA if ARM_LPAE
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	help
+>  	  Support for boards based on the Texas Instruments Keystone family of
+> diff --git a/arch/arm/mach-ks8695/Kconfig b/arch/arm/mach-ks8695/Kconfig
+> index a545976..4ef06bc 100644
+> --- a/arch/arm/mach-ks8695/Kconfig
+> +++ b/arch/arm/mach-ks8695/Kconfig
+> @@ -4,7 +4,6 @@ menu "Kendin/Micrel KS8695 Implementations"
+>  
+>  config MACH_KS8695
+>  	bool "KS8695 development board"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to run on the original
+>  	  Kendin-Micrel KS8695 development board.
+> @@ -52,7 +51,6 @@ config MACH_CM4002
+>  
+>  config MACH_CM4008
+>  	bool "OpenGear CM4008"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  CM4008 Console Server. See http://www.opengear.com for more
+> @@ -60,7 +58,6 @@ config MACH_CM4008
+>  
+>  config MACH_CM41xx
+>  	bool "OpenGear CM41xx"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  CM4016 or CM4048 Console Servers. See http://www.opengear.com for
+> @@ -68,7 +65,6 @@ config MACH_CM41xx
+>  
+>  config MACH_IM4004
+>  	bool "OpenGear IM4004"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  IM4004 Secure Access Server. See http://www.opengear.com for
+> @@ -76,7 +72,6 @@ config MACH_IM4004
+>  
+>  config MACH_IM42xx
+>  	bool "OpenGear IM42xx"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  IM4216 or IM4248 Console Servers. See http://www.opengear.com for
+> diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+> index cd894d6..39f7755 100644
+> --- a/arch/arm/mach-pxa/Kconfig
+> +++ b/arch/arm/mach-pxa/Kconfig
+> @@ -113,7 +113,6 @@ config MACH_ARMCORE
+>  	bool "CompuLab CM-X255/CM-X270 modules"
+>  	select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+>  	select IWMMXT
+> -	select MIGHT_HAVE_PCI
+>  	select NEED_MACH_IO_H if PCI
+>  	select PXA25x
+>  	select PXA27x
+> diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
+> index ea9ea95..f8af720 100644
+> --- a/arch/arm/mach-spear/Kconfig
+> +++ b/arch/arm/mach-spear/Kconfig
+> @@ -20,7 +20,6 @@ config ARCH_SPEAR13XX
+>  	select HAVE_ARM_TWD if SMP
+>  	select PINCTRL
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Supports for ARM's SPEAR13XX family
+>  
+> diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
+> index b0cc262..c257d40 100644
+> --- a/arch/arm/mach-versatile/Kconfig
+> +++ b/arch/arm/mach-versatile/Kconfig
+> @@ -9,7 +9,6 @@ config ARCH_VERSATILE
+>  	select CPU_ARM926T
+>  	select ICST
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	select PLAT_VERSATILE
+>  	select POWER_RESET
+>  	select POWER_RESET_VERSATILE
+> 
 
-Thanks,
-Chanwoo Choi
+
+-- 
+Nicolas Ferre
