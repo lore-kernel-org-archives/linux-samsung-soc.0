@@ -1,200 +1,208 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH] drm/analogix_dp: Ensure the panel is properly
- prepared/unprepared
-Date: Mon, 1 Aug 2016 16:20:08 -0400
-Message-ID: <CAOw6vbJuV+PSFCDzDWRTkb1jPDJeBxBAfifV_vWP+Vt7=jKEJg@mail.gmail.com>
-References: <CAOw6vbKbLzm4mPtp2LsG=7=KJkS_4Oe7rA4Of0uT5vM_Xoiphw@mail.gmail.com>
- <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
- <579EC1B7.60608@rock-chips.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
+ selected redundantly
+Date: Mon, 1 Aug 2016 22:24:21 +0200
+Message-ID: <20160801202421.GA13682@piout.net>
+References: <1470049950-4697-1-git-send-email-kishon@ti.com>
+ <1470049950-4697-3-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <579EC1B7.60608@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, =?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, Emil Velikov <emil.l.velikov@gmail.com>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1470049950-4697-3-git-send-email-kishon@ti.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Arnd Bergmann <arnd@arndb.de>, helgaas@kernel.org, Benoit Cousson <bcousson@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Fabio Estevam <fabio.estevam@nxp.com>, Greg
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU3VuLCBKdWwgMzEsIDIwMTYgYXQgMTE6MjcgUE0sIFlha2lyIFlhbmcgPHlra0Byb2NrLWNo
-aXBzLmNvbT4gd3JvdGU6Cj4gU2VhbiwKPgo+IE9uIDA3LzMwLzIwMTYgMDM6MTYgQU0sIFNlYW4g
-UGF1bCB3cm90ZToKPj4KPj4gSW5zdGVhZCBvZiBqdXN0IHByZXBhcmluZyB0aGUgcGFuZWwgb24g
-YmluZCwgYWN0dWFsbHkgcHJlcGFyZS91bnByZXBhcmUKPj4gZHVyaW5nIG1vZGVzZXQvZGlzYWJs
-ZS4gVGhlIHBhbmVsIG11c3QgYmUgcHJlcGFyZWQgaW4gb3JkZXIgdG8gcmVhZCBocGQKPj4gc3Rh
-dHVzLCBzbyB3ZSBuZWVkIHRvIHJlZmNvdW50IHRoZSBwcmVwYXJlcyBpbiBvcmRlciB0byBlbnN1
-cmUgd2UgZG9uJ3QKPj4gYWNjaWRlbnRhbGx5IHR1cm4gdGhlIHBhbmVsIG9mZiBhdCB0aGUgd3Jv
-bmcgdGltZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1
-bS5vcmc+Cj4+IC0tLQo+Pgo+Pgo+PiBIaSBZYWtpciwKPj4gVGhpcyBpcyB3aGF0IEkgd2FzIHRh
-bGtpbmcgYWJvdXQgdXB0aHJlYWQuIEkndmUgdGVzdGVkIGl0IGFuZCBpdCBzZWVtcyB0bwo+PiBi
-ZSB3b3JraW5nLgo+Pgo+PiBXaGF0IGRvIHlvdSB0aGluaz8KPgo+Cj4gVGhhbmtzIGZvciB5b3Vy
-IHBhdGNoLCBhbmQgaXQgd29ya3MuIEJ1dCBJIGhhdmUgaW50cm9kdWNlZCB0d28gcXVlc3Rpb25z
-LAo+IGFuZCBJIGhhdmVuJ3QgZm91bmQgYSB3YXkgdG8gZml4ZWQgdGhlbS4KPgo+Cj4+IFNlYW4K
-Pj4KPj4KPj4KPj4gZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
-b3JlLmMgfCA0OAo+PiArKysrKysrKysrKysrKysrKy0tLS0tCj4+ICAgMSBmaWxlIGNoYW5nZWQs
-IDM3IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPj4gYi9kcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiBpbmRleCAz
-MjcxNWRhLi43Yjc2NGE0IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiBAQCAtOTYwLDExICs5NjAsMjcgQEAgZW51
-bSBkcm1fY29ubmVjdG9yX3N0YXR1cwo+PiAgIGFuYWxvZ2l4X2RwX2RldGVjdChzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvciAqY29ubmVjdG9yLCBib29sIGZvcmNlKQo+PiAgIHsKPj4gICAgICAgICBzdHJ1
-Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9IHRvX2RwKGNvbm5lY3Rvcik7Cj4+ICsgICAgICAg
-ZW51bSBkcm1fY29ubmVjdG9yX3N0YXR1cyBzdGF0dXMgPSBjb25uZWN0b3Jfc3RhdHVzX2Rpc2Nv
-bm5lY3RlZDsKPj4gKyAgICAgICBpbnQgcmV0Owo+PiAgIC0gICAgIGlmIChhbmFsb2dpeF9kcF9k
-ZXRlY3RfaHBkKGRwKSkKPj4gLSAgICAgICAgICAgICAgIHJldHVybiBjb25uZWN0b3Jfc3RhdHVz
-X2Rpc2Nvbm5lY3RlZDsKPj4gKyAgICAgICBpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwgJiYgZHAt
-PmRwbXNfbW9kZSAhPSBEUk1fTU9ERV9EUE1TX09OKSB7Cj4+ICsgICAgICAgICAgICAgICByZXQg
-PSBkcm1fcGFuZWxfcHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCk7Cj4+ICsgICAgICAgICAg
-ICAgICBpZiAocmV0KSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiZmFp
-bGVkIHRvIHNldHVwIHBhbmVsICglZClcbiIsIHJldCk7Cj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIHJldHVybiBjb25uZWN0b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZDsKPj4gKyAgICAgICAgICAg
-ICAgIH0KPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICBpZiAoIWFuYWxvZ2l4X2RwX2RldGVj
-dF9ocGQoZHApKQo+PiArICAgICAgICAgICAgICAgc3RhdHVzID0gY29ubmVjdG9yX3N0YXR1c19j
-b25uZWN0ZWQ7Cj4+ICsKPj4gKyAgICAgICBpZiAoZHAtPnBsYXRfZGF0YS0+cGFuZWwgJiYgZHAt
-PmRwbXNfbW9kZSAhPSBEUk1fTU9ERV9EUE1TX09OKSB7Cj4+ICsgICAgICAgICAgICAgICByZXQg
-PSBkcm1fcGFuZWxfdW5wcmVwYXJlKGRwLT5wbGF0X2RhdGEtPnBhbmVsKTsKPj4gKyAgICAgICAg
-ICAgICAgIGlmIChyZXQpCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiZmFp
-bGVkIHRvIHNldHVwIHRoZSBwYW5lbCByZXQgPSAlZFxuIiwKPj4gcmV0KTsKPj4gKyAgICAgICB9
-Cj4+ICAgLSAgICAgcmV0dXJuIGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkOwo+PiArICAgICAg
-IHJldHVybiBzdGF0dXM7Cj4KPgo+IDEuIFBhbmVsIHdvdWxkIGZsaWNrZXIgYXQgc3lzdGVtIGJv
-b3QgdGltZS4gWW91ciBwYXRjaCB3b3VsZCBmbGFzaCB0aGUgcGFuZWwKPiBwb3dlciBpbiBjb25u
-ZWN0b3ItPmRldGVjdCgpIGZ1bmN0aW9uIHdoZW4gZHAtPmRwbXNfbW9kZSBpc24ndAo+IERSTV9N
-T0RFX0RQTVNfT0ZGLiBTbyB3aGVuIHVzZXJzcGFjZSBrZWVwIGRldGVjdCB0aGUgY29ubmVjdG9y
-IHN0YXR1cyBpbgo+IGJvb3QgdGltZSwgd2UgY291bGQgc2VlIHBhbmVsIHdvdWxkIGZsaWNrZXIg
-KGxpZ2h0IHVwIGZvciBhIHdoaWxlLCBhbmQgdHVybgo+IG9mZiBhZ2FpbiwgYW5kIGtlZXAgbG9v
-cCBmb3Igc2V2ZXJhbCB0aW1lKS4gSSBoYXZlIGNvcGllZCBzb21lIGtlcm5lbCBsb2dzOgo+CgoK
-SG1tLCB5ZWFoLCB0aGUgYmFja2xpZ2h0IGRvZXMgc2VlbSB0byBmbGFzaC4gSXQgc2VlbXMgbGlr
-ZSBiYWNrbGlnaHQKc2hvdWxkbid0IGJlIG9uIGlmIHRoZSBwYW5lbCBpc24ndCBlbmFibGVkLiB0
-aGlzIHdvdWxkIGFsc28gZml4IHRoZQppc3N1ZSBiZWxvdyBzaW5jZSB5b3UgY291bGQgYWRkIHBh
-bmVsIHByZXBhcmUvdW5wcmVwYXJlIGluIGdldF9tb2Rlcy4KCkFsdGVybmF0aXZlbHksIGhhdmUg
-eW91IHBsYXllZCBhcm91bmQgd2l0aCBtb3ZpbmcgdGhpbmdzIGFyb3VuZCBpbgpwcmVwYXJlL3Vu
-cHJlcGFyZT8gUGVyaGFwcyBqdXN0IGVuYWJsaW5nIHRoZSBzdXBwbHkgcmVndWxhdG9yICh3aXRo
-b3V0CnRoZSBlbmFibGUgZ3BpbyBzZXQpIGlzIHN1ZmZpY2llbnQgdG8gcmVhZCBIUEQvRURJRCwg
-YnV0IHdpbGwgc3RpbGwKcHJldmVudCB0aGUgb3JpZ2luYWwgYmFja2xpZ2h0IGZsaWNrZXIvYnVy
-bi1pbiBpc3N1ZT8KClNlYW4KCgoKPgo+IFsgICAxMS4wNjUyNjddIFlLSyAtLS0tLS0tLS0gYW5h
-bG9naXhfZHBfZGV0ZWN0OjEwNTIKPiBbICAgMTEuNzI5NTk2XSBZS0sgLS0tLS0tLS0tIGFuYWxv
-Z2l4X2RwX2dldF9tb2RlczoxMDE2Cj4gWyAgIDExLjczNzYwOF0gcm9ja2NoaXAtZHAgZmY5NzAw
-MDAuZWRwOiBhbmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDoKPiBBdXggVHJhbnNhY3Rp
-b24gZmFpbCEKPiBbICAgMTEuNzQ5MjI5XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IGFuYWxv
-Z2l4X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNkOgo+IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQo+IFsg
-ICAxMS43NjA3OTldIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogYW5hbG9naXhfZHBfcmVhZF9i
-eXRlc19mcm9tX2RwY2Q6Cj4gQXV4IFRyYW5zYWN0aW9uIGZhaWwhCj4gWyAgIDEzLjMxNTk2Ml0g
-WUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1Mgo+IFsgICAxMy45ODQ3MDJdIFlL
-SyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKPiBbICAgMTMuOTkyOTc3XSBy
-b2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IGFuYWxvZ2l4X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNk
-Ogo+IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQo+IFsgICAxNC4wMDQ0MTRdIHJvY2tjaGlwLWRwIGZm
-OTcwMDAwLmVkcDogYW5hbG9naXhfZHBfcmVhZF9ieXRlc19mcm9tX2RwY2Q6Cj4gQXV4IFRyYW5z
-YWN0aW9uIGZhaWwhCj4gWyAgIDE0LjAxNTg0Ml0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiBh
-bmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDoKPiBBdXggVHJhbnNhY3Rpb24gZmFpbCEK
-PiBbICAgMTQuMTgzMTA5XSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4X2RwX2JyaWRnZV9wcmVfZW5h
-YmxlOjExNDcKPiBbICAgMTQuMzA2MzAxXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IExpbmsg
-VHJhaW5pbmcgQ2xvY2sgUmVjb3ZlcnkKPiBzdWNjZXNzCj4gWyAgIDE0LjMxOTEzMF0gcm9ja2No
-aXAtZHAgZmY5NzAwMDAuZWRwOiBMaW5rIFRyYWluaW5nIHN1Y2Nlc3MhCj4gWyAgIDE0LjMyNjM4
-OF0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiB3YWl0IFNZU19DVExfMi4KPiBbICAgMTQuNDM3
-MjQ3XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IFRpbWVvdXQgb2YgdmlkZW8gc3RyZWFtY2xr
-IG9rCj4gWyAgIDE0LjQ0MzU4NV0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiB1bmFibGUgdG8g
-Y29uZmlnIHZpZGVvCj4KPgo+PiAgIH0KPj4gICAgIHN0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2Nv
-bm5lY3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9yCj4+ICpjb25uZWN0b3IpCj4+IEBA
-IC0xMDM1LDYgKzEwNTEsMTggQEAgc3RhdGljIGludCBhbmFsb2dpeF9kcF9icmlkZ2VfYXR0YWNo
-KHN0cnVjdAo+PiBkcm1fYnJpZGdlICpicmlkZ2UpCj4+ICAgICAgICAgcmV0dXJuIDA7Cj4+ICAg
-fQo+PiAgICtzdGF0aWMgdm9pZCBhbmFsb2dpeF9kcF9icmlkZ2VfcHJlX2VuYWJsZShzdHJ1Y3Qg
-ZHJtX2JyaWRnZSAqYnJpZGdlKQo+PiArewo+PiArICAgICAgIHN0cnVjdCBhbmFsb2dpeF9kcF9k
-ZXZpY2UgKmRwID0gYnJpZGdlLT5kcml2ZXJfcHJpdmF0ZTsKPj4gKyAgICAgICBpbnQgcmV0Owo+
-PiArCj4+ICsgICAgICAgaWYgKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSB7Cj4+ICsgICAgICAgICAg
-ICAgICByZXQgPSBkcm1fcGFuZWxfcHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCk7Cj4+ICsg
-ICAgICAgICAgICAgICBpZiAocmV0KQo+PiArICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJS
-T1IoImZhaWxlZCB0byBzZXR1cCB0aGUgcGFuZWwgcmV0ID0gJWRcbiIsCj4+IHJldCk7Cj4+ICsg
-ICAgICAgfQo+Cj4KPiAyLiBEcml2ZXIgd291bGQgZmFpbGVkIHRvIHJlYWQgRURJRCBpbiBzb21l
-IGNhc2UuIFBhbmVsIHdvdWxkIG9ubHkgYmUKPiBwb3dlcmVkIHVwIGluIGJyaWRnZS0+cHJlX2Vu
-YWJsZSgpIGZ1bmN0aW9uIHdoaWNoIGxhdGVyIHRoYW4KPiBjb25uZWN0b3ItPmdldF9tb2Rlcygp
-IGZ1bmN0aW9uLCBhbmQgdGhpcyB3b3VsZCBjYXVzZWQgRFBDRCB0cmFuc2ZlciBmYWlsZWQKPiBp
-biBhbmFsb2dpeF9kcF9oYW5kbGVfZWRpZCgpLiBUaGlzIHNlZW0gd29uJ3QgY2F1c2VkIHRvbyBi
-aWcgaXNzdWUsIGNhdXNlCj4gdXNlcnNwYWNlIHdvdWxkIHJlYWQgRURJRCBhZ2FpbiBhZnRlciBi
-cmlkZ2UvZW5jb2RlciBpcyBlbmFibGVkLiBCdXQgaXQncwo+IGJldHRlciB0byBhdm9pZCB0aGlz
-IHBvdGVudGlhbCBidWcuCj4KPgo+IFsgICAxMS4wNjUyNjddIFlLSyAtLS0tLS0tLS0gYW5hbG9n
-aXhfZHBfZGV0ZWN0OjEwNTIKPiBbICAgMTEuNzI5NTk2XSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4
-X2RwX2dldF9tb2RlczoxMDE2Cj4gWyAgIDExLjczNzYwOF0gcm9ja2NoaXAtZHAgZmY5NzAwMDAu
-ZWRwOiBhbmFsb2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDoKPiBBdXggVHJhbnNhY3Rpb24g
-ZmFpbCEKPiBbICAgMTEuNzQ5MjI5XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IGFuYWxvZ2l4
-X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNkOgo+IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQo+IFsgICAx
-MS43NjA3OTldIHJvY2tjaGlwLWRwIGZmOTcwMDAwLmVkcDogYW5hbG9naXhfZHBfcmVhZF9ieXRl
-c19mcm9tX2RwY2Q6Cj4gQXV4IFRyYW5zYWN0aW9uIGZhaWwhCj4gWyAgIDEzLjMxNTk2Ml0gWUtL
-IC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1Mgo+IFsgICAxMy45ODQ3MDJdIFlLSyAt
-LS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKPiBbICAgMTMuOTkyOTc3XSByb2Nr
-Y2hpcC1kcCBmZjk3MDAwMC5lZHA6IGFuYWxvZ2l4X2RwX3JlYWRfYnl0ZXNfZnJvbV9kcGNkOgo+
-IEF1eCBUcmFuc2FjdGlvbiBmYWlsIQo+IFsgICAxNC4wMDQ0MTRdIHJvY2tjaGlwLWRwIGZmOTcw
-MDAwLmVkcDogYW5hbG9naXhfZHBfcmVhZF9ieXRlc19mcm9tX2RwY2Q6Cj4gQXV4IFRyYW5zYWN0
-aW9uIGZhaWwhCj4gWyAgIDE0LjAxNTg0Ml0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiBhbmFs
-b2dpeF9kcF9yZWFkX2J5dGVzX2Zyb21fZHBjZDoKPiBBdXggVHJhbnNhY3Rpb24gZmFpbCEKPiBb
-ICAgMTQuMTgzMTA5XSBZS0sgLS0tLS0tLS0tIGFuYWxvZ2l4X2RwX2JyaWRnZV9wcmVfZW5hYmxl
-OjExNDcKPiBbICAgMTQuMzA2MzAxXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IExpbmsgVHJh
-aW5pbmcgQ2xvY2sgUmVjb3ZlcnkKPiBzdWNjZXNzCj4gWyAgIDE0LjMxOTEzMF0gcm9ja2NoaXAt
-ZHAgZmY5NzAwMDAuZWRwOiBMaW5rIFRyYWluaW5nIHN1Y2Nlc3MhCj4gWyAgIDE0LjMyNjM4OF0g
-cm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiB3YWl0IFNZU19DVExfMi4KPiBbICAgMTQuNDM3MjQ3
-XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IFRpbWVvdXQgb2YgdmlkZW8gc3RyZWFtY2xrIG9r
-Cj4gWyAgIDE0LjQ0MzU4NV0gcm9ja2NoaXAtZHAgZmY5NzAwMDAuZWRwOiB1bmFibGUgdG8gY29u
-ZmlnIHZpZGVvCj4gWyAgIDE0LjUyMDU2NV0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRl
-Y3Q6MTA1Mgo+IFsgICAxNC41MjUzMzldIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21v
-ZGVzOjEwMTYKPiBbICAgMTQuNTMxMjMzXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVESUQg
-ZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFueQo+IGV4dGVuc2lvbnMuCj4gWyAgIDE1LjU5NTcyNF0g
-WUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1Mgo+IFsgICAxNS42MDA0ODhdIFlL
-SyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKPiBbICAgMTUuNjA2NDUxXSBy
-b2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVESUQgZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFueQo+
-IGV4dGVuc2lvbnMuCj4gWyAgIDE3LjMyNzM1NF0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9k
-ZXRlY3Q6MTA1Mgo+IFsgICAxNy4zMzIxMDVdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0
-X21vZGVzOjEwMTYKPiBbICAgMTcuMzM4MTcxXSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVE
-SUQgZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFueQo+IGV4dGVuc2lvbnMuCj4gWyAgIDU2LjIzNjAy
-NF0gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9kcF9kZXRlY3Q6MTA1Mgo+IFsgICA1Ni4yNDA4MjBd
-IFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBfZ2V0X21vZGVzOjEwMTYKPiBbICAgNTYuMjQ2ODU1
-XSByb2NrY2hpcC1kcCBmZjk3MDAwMC5lZHA6IEVESUQgZGF0YSBkb2VzIG5vdCBpbmNsdWRlIGFu
-eQo+IGV4dGVuc2lvbnMuCj4gWyAgIDY0LjA5MjQ3N10gWUtLIC0tLS0tLS0tLSBhbmFsb2dpeF9k
-cF9kZXRlY3Q6MTA1Mgo+IFsgICA2NC43NjM3MTJdIFlLSyAtLS0tLS0tLS0gYW5hbG9naXhfZHBf
-Z2V0X21vZGVzOjEwMTYKPgo+Cj4KPiBCUiwKPiAtIFlha2lyCj4KPgo+PiArfQo+PiArCj4+ICAg
-c3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX2VuYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAq
-YnJpZGdlKQo+PiAgIHsKPj4gICAgICAgICBzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCA9
-IGJyaWRnZS0+ZHJpdmVyX3ByaXZhdGU7Cj4+IEBAIC0xMDU4LDYgKzEwODYsNyBAQCBzdGF0aWMg
-dm9pZCBhbmFsb2dpeF9kcF9icmlkZ2VfZW5hYmxlKHN0cnVjdAo+PiBkcm1fYnJpZGdlICpicmlk
-Z2UpCj4+ICAgc3RhdGljIHZvaWQgYW5hbG9naXhfZHBfYnJpZGdlX2Rpc2FibGUoc3RydWN0IGRy
-bV9icmlkZ2UgKmJyaWRnZSkKPj4gICB7Cj4+ICAgICAgICAgc3RydWN0IGFuYWxvZ2l4X2RwX2Rl
-dmljZSAqZHAgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRlOwo+PiArICAgICAgIGludCByZXQ7Cj4+
-ICAgICAgICAgaWYgKGRwLT5kcG1zX21vZGUgIT0gRFJNX01PREVfRFBNU19PTikKPj4gICAgICAg
-ICAgICAgICAgIHJldHVybjsKPj4gQEAgLTEwNzcsNiArMTEwNiwxMCBAQCBzdGF0aWMgdm9pZCBh
-bmFsb2dpeF9kcF9icmlkZ2VfZGlzYWJsZShzdHJ1Y3QKPj4gZHJtX2JyaWRnZSAqYnJpZGdlKQo+
-PiAgICAgICAgIHBtX3J1bnRpbWVfcHV0X3N5bmMoZHAtPmRldik7Cj4+ICAgKyAgICAgcmV0ID0g
-ZHJtX3BhbmVsX3VucHJlcGFyZShkcC0+cGxhdF9kYXRhLT5wYW5lbCk7Cj4+ICsgICAgICAgaWYg
-KHJldCkKPj4gKyAgICAgICAgICAgICAgIERSTV9FUlJPUigiZmFpbGVkIHRvIHNldHVwIHRoZSBw
-YW5lbCByZXQgPSAlZFxuIiwgcmV0KTsKPj4gKwo+PiAgICAgICAgIGRwLT5kcG1zX21vZGUgPSBE
-Uk1fTU9ERV9EUE1TX09GRjsKPj4gICB9Cj4+ICAgQEAgLTExNjUsOSArMTE5OCw5IEBAIHN0YXRp
-YyB2b2lkIGFuYWxvZ2l4X2RwX2JyaWRnZV9ub3Aoc3RydWN0Cj4+IGRybV9icmlkZ2UgKmJyaWRn
-ZSkKPj4gICB9Cj4+ICAgICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9icmlkZ2VfZnVuY3MgYW5h
-bG9naXhfZHBfYnJpZGdlX2Z1bmNzID0gewo+PiArICAgICAgIC5wcmVfZW5hYmxlID0gYW5hbG9n
-aXhfZHBfYnJpZGdlX3ByZV9lbmFibGUsCj4+ICAgICAgICAgLmVuYWJsZSA9IGFuYWxvZ2l4X2Rw
-X2JyaWRnZV9lbmFibGUsCj4+ICAgICAgICAgLmRpc2FibGUgPSBhbmFsb2dpeF9kcF9icmlkZ2Vf
-ZGlzYWJsZSwKPj4gLSAgICAgICAucHJlX2VuYWJsZSA9IGFuYWxvZ2l4X2RwX2JyaWRnZV9ub3As
-Cj4+ICAgICAgICAgLnBvc3RfZGlzYWJsZSA9IGFuYWxvZ2l4X2RwX2JyaWRnZV9ub3AsCj4+ICAg
-ICAgICAgLm1vZGVfc2V0ID0gYW5hbG9naXhfZHBfYnJpZGdlX21vZGVfc2V0LAo+PiAgICAgICAg
-IC5hdHRhY2ggPSBhbmFsb2dpeF9kcF9icmlkZ2VfYXR0YWNoLAo+PiBAQCAtMTMzMywxMyArMTM2
-Niw2IEBAIGludCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0Cj4+
-IGRybV9kZXZpY2UgKmRybV9kZXYsCj4+ICAgICAgICAgcGh5X3Bvd2VyX29uKGRwLT5waHkpOwo+
-PiAgIC0gICAgIGlmIChkcC0+cGxhdF9kYXRhLT5wYW5lbCkgewo+PiAtICAgICAgICAgICAgICAg
-aWYgKGRybV9wYW5lbF9wcmVwYXJlKGRwLT5wbGF0X2RhdGEtPnBhbmVsKSkgewo+PiAtICAgICAg
-ICAgICAgICAgICAgICAgICBEUk1fRVJST1IoImZhaWxlZCB0byBzZXR1cCB0aGUgcGFuZWxcbiIp
-Owo+PiAtICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVCVVNZOwo+PiAtICAgICAgICAg
-ICAgICAgfQo+PiAtICAgICAgIH0KPj4gLQo+PiAgICAgICAgIGFuYWxvZ2l4X2RwX2luaXRfZHAo
-ZHApOwo+PiAgICAgICAgIHJldCA9IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoJnBkZXYtPmRl
-diwgZHAtPmlycSwKPgo+Cj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIKPiBpbgo+IHRoZSBi
-b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 01/08/2016 at 16:42:29 +0530, Kishon Vijay Abraham I wrote :
+> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
+> Fix it from getting redundantly selected in all
+> ARCH_MULTIPLATFORM based machines.
+> 
+
+For mach-at91:
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  arch/arm/Kconfig                 |    2 --
+>  arch/arm/mach-at91/Kconfig       |    1 -
+>  arch/arm/mach-axxia/Kconfig      |    1 -
+>  arch/arm/mach-exynos/Kconfig     |    1 -
+>  arch/arm/mach-integrator/Kconfig |    1 -
+>  arch/arm/mach-keystone/Kconfig   |    1 -
+>  arch/arm/mach-ks8695/Kconfig     |    5 -----
+>  arch/arm/mach-pxa/Kconfig        |    1 -
+>  arch/arm/mach-spear/Kconfig      |    1 -
+>  arch/arm/mach-versatile/Kconfig  |    1 -
+>  10 files changed, 15 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 90542db..538b032 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -474,7 +474,6 @@ config ARCH_IXP4XX
+>  	select CPU_XSCALE
+>  	select DMABOUNCE if PCI
+>  	select GENERIC_CLOCKEVENTS
+> -	select MIGHT_HAVE_PCI
+>  	select NEED_MACH_IO_H
+>  	select USB_EHCI_BIG_ENDIAN_DESC
+>  	select USB_EHCI_BIG_ENDIAN_MMIO
+> @@ -486,7 +485,6 @@ config ARCH_DOVE
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select CPU_PJ4
+>  	select GENERIC_CLOCKEVENTS
+> -	select MIGHT_HAVE_PCI
+>  	select MULTI_IRQ_HANDLER
+>  	select MVEBU_MBUS
+>  	select PINCTRL
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index 08047af..4013427 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -55,7 +55,6 @@ config SOC_AT91RM9200
+>  	select ATMEL_ST
+>  	select CPU_ARM920T
+>  	select HAVE_AT91_USB_CLK
+> -	select MIGHT_HAVE_PCI
+>  	select PINCTRL_AT91
+>  	select SOC_SAM_V4_V5
+>  	select SRAM if PM
+> diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
+> index 6c6d5e7..ee2e131 100644
+> --- a/arch/arm/mach-axxia/Kconfig
+> +++ b/arch/arm/mach-axxia/Kconfig
+> @@ -7,7 +7,6 @@ config ARCH_AXXIA
+>  	select ARM_TIMER_SP804
+>  	select HAVE_ARM_ARCH_TIMER
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	select ZONE_DMA
+>  	help
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 20dcf6e..a03daf5 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -125,7 +125,6 @@ config SOC_EXYNOS5440
+>  	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+>  	select HAVE_ARM_ARCH_TIMER
+>  	select AUTO_ZRELADDR
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	select PINCTRL_EXYNOS5440
+>  	select PM_OPP
+> diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
+> index b2a85ba..4ed202c 100644
+> --- a/arch/arm/mach-integrator/Kconfig
+> +++ b/arch/arm/mach-integrator/Kconfig
+> @@ -21,7 +21,6 @@ if ARCH_INTEGRATOR
+>  config ARCH_INTEGRATOR_AP
+>  	bool "Support Integrator/AP and Integrator/PP2 platforms"
+>  	select CLKSRC_MMIO
+> -	select MIGHT_HAVE_PCI
+>  	select SERIAL_AMBA_PL010 if TTY
+>  	select SERIAL_AMBA_PL010_CONSOLE if TTY
+>  	select SOC_BUS
+> diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
+> index ea955f6db..6bd14da 100644
+> --- a/arch/arm/mach-keystone/Kconfig
+> +++ b/arch/arm/mach-keystone/Kconfig
+> @@ -9,7 +9,6 @@ config ARCH_KEYSTONE
+>  	select COMMON_CLK_KEYSTONE
+>  	select ARCH_SUPPORTS_BIG_ENDIAN
+>  	select ZONE_DMA if ARM_LPAE
+> -	select MIGHT_HAVE_PCI
+>  	select PCI_DOMAINS if PCI
+>  	help
+>  	  Support for boards based on the Texas Instruments Keystone family of
+> diff --git a/arch/arm/mach-ks8695/Kconfig b/arch/arm/mach-ks8695/Kconfig
+> index a545976..4ef06bc 100644
+> --- a/arch/arm/mach-ks8695/Kconfig
+> +++ b/arch/arm/mach-ks8695/Kconfig
+> @@ -4,7 +4,6 @@ menu "Kendin/Micrel KS8695 Implementations"
+>  
+>  config MACH_KS8695
+>  	bool "KS8695 development board"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to run on the original
+>  	  Kendin-Micrel KS8695 development board.
+> @@ -52,7 +51,6 @@ config MACH_CM4002
+>  
+>  config MACH_CM4008
+>  	bool "OpenGear CM4008"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  CM4008 Console Server. See http://www.opengear.com for more
+> @@ -60,7 +58,6 @@ config MACH_CM4008
+>  
+>  config MACH_CM41xx
+>  	bool "OpenGear CM41xx"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  CM4016 or CM4048 Console Servers. See http://www.opengear.com for
+> @@ -68,7 +65,6 @@ config MACH_CM41xx
+>  
+>  config MACH_IM4004
+>  	bool "OpenGear IM4004"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  IM4004 Secure Access Server. See http://www.opengear.com for
+> @@ -76,7 +72,6 @@ config MACH_IM4004
+>  
+>  config MACH_IM42xx
+>  	bool "OpenGear IM42xx"
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Say 'Y' here if you want your kernel to support the OpenGear
+>  	  IM4216 or IM4248 Console Servers. See http://www.opengear.com for
+> diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+> index cd894d6..39f7755 100644
+> --- a/arch/arm/mach-pxa/Kconfig
+> +++ b/arch/arm/mach-pxa/Kconfig
+> @@ -113,7 +113,6 @@ config MACH_ARMCORE
+>  	bool "CompuLab CM-X255/CM-X270 modules"
+>  	select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+>  	select IWMMXT
+> -	select MIGHT_HAVE_PCI
+>  	select NEED_MACH_IO_H if PCI
+>  	select PXA25x
+>  	select PXA27x
+> diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
+> index ea9ea95..f8af720 100644
+> --- a/arch/arm/mach-spear/Kconfig
+> +++ b/arch/arm/mach-spear/Kconfig
+> @@ -20,7 +20,6 @@ config ARCH_SPEAR13XX
+>  	select HAVE_ARM_TWD if SMP
+>  	select PINCTRL
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	help
+>  	  Supports for ARM's SPEAR13XX family
+>  
+> diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
+> index b0cc262..c257d40 100644
+> --- a/arch/arm/mach-versatile/Kconfig
+> +++ b/arch/arm/mach-versatile/Kconfig
+> @@ -9,7 +9,6 @@ config ARCH_VERSATILE
+>  	select CPU_ARM926T
+>  	select ICST
+>  	select MFD_SYSCON
+> -	select MIGHT_HAVE_PCI
+>  	select PLAT_VERSATILE
+>  	select POWER_RESET
+>  	select POWER_RESET_VERSATILE
+> -- 
+> 1.7.9.5
+> 
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
