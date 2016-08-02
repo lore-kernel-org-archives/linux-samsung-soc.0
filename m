@@ -1,69 +1,63 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] pwm: samsung: fix to use lowest div for large enough
- modulation bits
-Date: Tue, 02 Aug 2016 19:16:46 +0900
-Message-ID: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, thierry.reding@gmail.com, linux-pwm@vger.kernel.org
-Cc: sw0312.kim@samsung.com, jy0922.shim@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] phy: exynos-mipi-video: simplify check for coupled phy status
+Date: Tue, 02 Aug 2016 12:17:34 +0200
+Message-ID: <1470133054-31957-1-git-send-email-m.szyprowski@samsung.com>
+References: <1470127956-22476-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:23877 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753089AbcHBK3j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Aug 2016 06:29:39 -0400
+In-reply-to: <1470127956-22476-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
->From pwm_samsung_calc_tin(), there is routine to find the lowest
-divider possible to generate lower frequency than requested one.
-But it is always possible to generate requested frequency with
-large enough modulation bits, so this patch fixes to use lowest
-div for the case. This patch removes following UBSAN warning:
+There is no need to access regmap of coupled phy to check its state - such
+information is already in the phy device itself, so use it directly. This
+let us to avoid possible access to registers of the device in the disabled
+power domain if the coupled phy is already disabled.
 
-   UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
-   shift exponent 32 is too large for 32-bit type 'long unsigned int'
-   [...]
-   [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shift_out_of_bounds+0xd8/0x120)
-   [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] (pwm_samsung_config+0x508/0x6a4)
-   [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state+0x174/0x40c)
-   [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8/0x488)
-   [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0x70/0x150)
-   [...]
-
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-The UBSAN warning from ARM is reported with the patch in following link:
-https://patchwork.kernel.org/patch/9189575/
----
- drivers/pwm/pwm-samsung.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/phy/phy-exynos-mipi-video.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index ada2d32..ff0def6 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -193,9 +193,13 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
- 	 * divider settings and choose the lowest divisor that can generate
- 	 * frequencies lower than requested.
- 	 */
--	for (div = variant->div_base; div < 4; ++div)
--		if ((rate >> (variant->bits + div)) < freq)
--			break;
-+	if (fls(rate) <= variant->bits) {
-+		div = variant->div_base;
-+	} else {
-+		for (div = variant->div_base; div < 4; ++div)
-+			if ((rate >> (variant->bits + div)) < freq)
-+				break;
-+	}
+diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
+index 8b851f7..6bee04c 100644
+--- a/drivers/phy/phy-exynos-mipi-video.c
++++ b/drivers/phy/phy-exynos-mipi-video.c
+@@ -229,19 +229,6 @@ struct exynos_mipi_video_phy {
+ 	spinlock_t slock;
+ };
  
- 	pwm_samsung_set_divisor(chip, chan, BIT(div));
+-static inline int __is_running(const struct exynos_mipi_phy_desc *data,
+-			struct exynos_mipi_video_phy *state)
+-{
+-	u32 val;
+-	int ret;
+-
+-	ret = regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
+-	if (ret)
+-		return 0;
+-
+-	return val & data->resetn_val;
+-}
+-
+ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+ 			   struct exynos_mipi_video_phy *state, unsigned int on)
+ {
+@@ -251,7 +238,7 @@ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
  
+ 	/* disable in PMU sysreg */
+ 	if (!on && data->coupled_phy_id >= 0 &&
+-	    !__is_running(state->phys[data->coupled_phy_id].data, state)) {
++	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
+ 		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
+ 			    &val);
+ 		val &= ~data->enable_val;
 -- 
-1.7.9.5
+1.9.1
