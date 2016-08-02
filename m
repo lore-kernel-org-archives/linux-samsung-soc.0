@@ -1,63 +1,48 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] phy: exynos-mipi-video: simplify check for coupled phy status
-Date: Tue, 02 Aug 2016 12:17:34 +0200
-Message-ID: <1470133054-31957-1-git-send-email-m.szyprowski@samsung.com>
-References: <1470127956-22476-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:23877 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753089AbcHBK3j (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 06:29:39 -0400
-In-reply-to: <1470127956-22476-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Baole Ni <baolex.ni@intel.com>
+Subject: [PATCH 0194/1285] Replace numeric parameter like 0444 with macro
+Date: Tue,  2 Aug 2016 18:48:31 +0800
+Message-ID: <20160802104831.26685-1-baolex.ni@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, dougthompson@xmission.com, bp@alien8.de
+Cc: architt@codeaurora.org, linux-samsung-soc@vger.kernel.org, tiwai@suse.de, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, baolex.ni@intel.com, chuansheng.liu@intel.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-There is no need to access regmap of coupled phy to check its state - such
-information is already in the phy device itself, so use it directly. This
-let us to avoid possible access to registers of the device in the disabled
-power domain if the coupled phy is already disabled.
+I find that the developers often just specified the numeric value
+when calling a macro which is defined with a parameter for access permission.
+As we know, these numeric value for access permission have had the corresponding macro,
+and that using macro can improve the robustness and readability of the code,
+thus, I suggest replacing the numeric parameter with the macro.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Signed-off-by: Baole Ni <baolex.ni@intel.com>
 ---
- drivers/phy/phy-exynos-mipi-video.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
-index 8b851f7..6bee04c 100644
---- a/drivers/phy/phy-exynos-mipi-video.c
-+++ b/drivers/phy/phy-exynos-mipi-video.c
-@@ -229,19 +229,6 @@ struct exynos_mipi_video_phy {
- 	spinlock_t slock;
- };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 608b0af..8f1bd21 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -269,7 +269,7 @@ static ssize_t vidi_store_connection(struct device *dev,
+ 	return len;
+ }
  
--static inline int __is_running(const struct exynos_mipi_phy_desc *data,
--			struct exynos_mipi_video_phy *state)
--{
--	u32 val;
--	int ret;
--
--	ret = regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
--	if (ret)
--		return 0;
--
--	return val & data->resetn_val;
--}
--
- static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
- 			   struct exynos_mipi_video_phy *state, unsigned int on)
- {
-@@ -251,7 +238,7 @@ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+-static DEVICE_ATTR(connection, 0644, vidi_show_connection,
++static DEVICE_ATTR(connection, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, vidi_show_connection,
+ 			vidi_store_connection);
  
- 	/* disable in PMU sysreg */
- 	if (!on && data->coupled_phy_id >= 0 &&
--	    !__is_running(state->phys[data->coupled_phy_id].data, state)) {
-+	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
- 		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
- 			    &val);
- 		val &= ~data->enable_val;
+ int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
 -- 
-1.9.1
+2.9.2
