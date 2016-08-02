@@ -1,7 +1,7 @@
 From: Baole Ni <baolex.ni@intel.com>
-Subject: [PATCH 0194/1285] Replace numeric parameter like 0444 with macro
-Date: Tue,  2 Aug 2016 18:48:31 +0800
-Message-ID: <20160802104831.26685-1-baolex.ni@intel.com>
+Subject: [PATCH 0524/1285] Replace numeric parameter like 0444 with macro
+Date: Tue,  2 Aug 2016 19:20:45 +0800
+Message-ID: <20160802112045.16892-1-baolex.ni@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -15,8 +15,8 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, dougthompson@xmission.com, bp@alien8.de
-Cc: architt@codeaurora.org, linux-samsung-soc@vger.kernel.org, tiwai@suse.de, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, baolex.ni@intel.com, chuansheng.liu@intel.com, linux-arm-kernel@lists.infradead.org
+To: mchehab@kernel.org, maurochehab@gmail.com, mchehab@infradead.org, mchehab@redhat.com, m.chehab@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, baolex.ni@intel.com, hdegoede@redhat.com, chuansheng.liu@intel.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 I find that the developers often just specified the numeric value
@@ -28,21 +28,21 @@ thus, I suggest replacing the numeric parameter with the macro.
 Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
 Signed-off-by: Baole Ni <baolex.ni@intel.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 608b0af..8f1bd21 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -269,7 +269,7 @@ static ssize_t vidi_store_connection(struct device *dev,
- 	return len;
- }
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index dc1b929..02fddb4 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -38,7 +38,7 @@
+ #include "fimc-lite-reg.h"
  
--static DEVICE_ATTR(connection, 0644, vidi_show_connection,
-+static DEVICE_ATTR(connection, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, vidi_show_connection,
- 			vidi_store_connection);
+ static int debug;
+-module_param(debug, int, 0644);
++module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
  
- int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
+ static const struct fimc_fmt fimc_lite_formats[] = {
+ 	{
 -- 
 2.9.2
