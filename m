@@ -1,51 +1,55 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
- selected redundantly
-Date: Tue, 2 Aug 2016 11:52:35 +0530
-Message-ID: <57A03C2B.2080407@ti.com>
-References: <1470049950-4697-1-git-send-email-kishon@ti.com>
- <1470049950-4697-3-git-send-email-kishon@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1470049950-4697-3-git-send-email-kishon@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, nsekhar@ti.com, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, helgaas@kernel.org, Benoit Cousson <bcousson@baylibre.com>, Greg Ungerer <gerg@uclinux.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] phy: exynos-mipi-video: simplify check for coupled phy status
+Date: Tue, 02 Aug 2016 10:52:36 +0200
+Message-ID: <1470127956-22476-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+There is no need to access regmap of coupled phy to check its state - such
+information is already in the phy device itself, so use it directly. This
+let us to avoid possible access to registers of the device in the disabled
+power domain if the coupled phy is already disabled.
 
-On Monday 01 August 2016 04:42 PM, Kishon Vijay Abraham I wrote:
-> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-> Fix it from getting redundantly selected in all
-> ARCH_MULTIPLATFORM based machines.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  arch/arm/Kconfig                 |    2 --
->  arch/arm/mach-at91/Kconfig       |    1 -
->  arch/arm/mach-axxia/Kconfig      |    1 -
->  arch/arm/mach-exynos/Kconfig     |    1 -
->  arch/arm/mach-integrator/Kconfig |    1 -
->  arch/arm/mach-keystone/Kconfig   |    1 -
->  arch/arm/mach-ks8695/Kconfig     |    5 -----
->  arch/arm/mach-pxa/Kconfig        |    1 -
->  arch/arm/mach-spear/Kconfig      |    1 -
->  arch/arm/mach-versatile/Kconfig  |    1 -
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/phy/phy-exynos-mipi-video.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-Thank you everyone for reviewing this patch.
-Looks like ARCH_IXP4XX, ARCH_DOVE, ARCH_KS8695, ARCH_PXA are not converted to
-multiplatform. I'll fix this patch accordingly and repost the series.
-
-Thanks
-Kishon
+diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
+index 8b851f7..e185234 100644
+--- a/drivers/phy/phy-exynos-mipi-video.c
++++ b/drivers/phy/phy-exynos-mipi-video.c
+@@ -229,19 +229,6 @@ struct exynos_mipi_video_phy {
+ 	spinlock_t slock;
+ };
+ 
+-static inline int __is_running(const struct exynos_mipi_phy_desc *data,
+-			struct exynos_mipi_video_phy *state)
+-{
+-	u32 val;
+-	int ret;
+-
+-	ret = regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
+-	if (ret)
+-		return 0;
+-
+-	return val & data->resetn_val;
+-}
+-
+ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+ 			   struct exynos_mipi_video_phy *state, unsigned int on)
+ {
+@@ -251,7 +238,7 @@ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+ 
+ 	/* disable in PMU sysreg */
+ 	if (!on && data->coupled_phy_id >= 0 &&
+-	    !__is_running(state->phys[data->coupled_phy_id].data, state)) {
++	    state->phys[data->coupled_id].phy->power_count == 0) {
+ 		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
+ 			    &val);
+ 		val &= ~data->enable_val;
+-- 
+1.9.1
