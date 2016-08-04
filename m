@@ -1,74 +1,51 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/8] ASoC: uda134x: Optionally initialize L3 ops to
- default GPIO ops
-Date: Thu, 4 Aug 2016 22:03:23 +0100
-Message-ID: <20160804210323.GK10383@sirena.org.uk>
+Subject: Re: [PATCH 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace
+ cleanup
+Date: Thu, 4 Aug 2016 22:05:54 +0100
+Message-ID: <20160804210554.GL10383@sirena.org.uk>
 References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
- <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
+ <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1292344180506869695=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, b.zolnierkie@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============1292344180506869695==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="W/D3X8sky0X3AmG5"
+	protocol="application/pgp-signature"; boundary="lZZ4ablUVnt2XgAh"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51048 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759011AbcHDVGD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Aug 2016 17:06:03 -0400
 Content-Disposition: inline
+In-Reply-To: <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
---W/D3X8sky0X3AmG5
+--lZZ4ablUVnt2XgAh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Aug 04, 2016 at 03:38:43PM +0200, Sylwester Nawrocki wrote:
+On Thu, Aug 04, 2016 at 03:38:47PM +0200, Sylwester Nawrocki wrote:
+> Switch from pr_* to dev_* macros and drop some debug traces.
 
-> The downside is that it will request GPIOs on behalf of the codec
-> device and thus allow only one user on the bus, but it desn't seem
-> to be a limitation with current code and usage of the GPIO ops is
-> optional anyway.
+This doesn't apply against current code and the previous patch had
+unknown SHA1s suggesting that you've got some other patches in your
+tree, please check and resend.
 
-Does L3 actually support multiple devices?
-
---W/D3X8sky0X3AmG5
+--lZZ4ablUVnt2XgAh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJXo62aAAoJECTWi3JdVIfQoFcH/iX1ofpNf+SlAj41FjXPFPwB
-S8idLGj6MnoqWTBwZTujh549Ao5Xt9+hEjMvu6bmpkNR01Dvz7WJYibWAtxxTja9
-rv2OG4iHiCqty6mo/wkdg+iHhbEN5UpiE+XwQdCDJ+DCDlt6FDhI93vXGnzZBKsy
-iSIQycxaFYuIqfIzctHWmLEyveXOreOWswAdZRqtb4v2clZKCcUFTwIw7RfnwwAQ
-n4bpiuZv5pGq0we3eLjdTYRyEIKdgNoj8w8OseOZcRFUkR4HS4+Cr3TEyq82rzHm
-FEmJnVDjjXwGVKu7jSR7TAb18gdjvDSxfPomoXHe7Gt5jgtCwYYHgX4nJMjirEw=
-=OiYj
+iQEcBAEBCAAGBQJXo64xAAoJECTWi3JdVIfQKr4H+wThnrb2xyAK/QuPbvuz9d6L
+CUCp03yihBnRO4v+lSdC2MfkpX5lybAyyj3EZyVoIsdr8J9l84zlwVx5rgtpUo6P
+mh7QG54+qH/RdHeLciIFFifJdK1Ie7L0X5/ny4EhXw+uVxXcC4XF4V37K8UmPeHd
+eaYmJwm9Uw558FlZB/jdrz/dLo/IOCu4HqJFl22fJn7uq9RjUUPTEoxwSvorMAKR
+Aug1EbYuEXsF7D0DG/2eO9Z33LtFf0fLQtv/P4tL283U2hTE6sN4oyIgZP/tMZU/
+40iyDoApIrimel4bm/KOdRk5Ln1LhxOcfwuu9PRZliRTHjP+Sx0DX3UKUp+5OUI=
+=gzeW
 -----END PGP SIGNATURE-----
 
---W/D3X8sky0X3AmG5--
-
-
---===============1292344180506869695==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1292344180506869695==--
+--lZZ4ablUVnt2XgAh--
