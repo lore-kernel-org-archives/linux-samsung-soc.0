@@ -1,68 +1,71 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/8] ARM: S3C24XX: Specify audio codec platform_data for
- mini2440 board
-Date: Thu, 04 Aug 2016 15:38:42 +0200
-Message-ID: <1470317928-25365-3-git-send-email-s.nawrocki@samsung.com>
-References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43534 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933618AbcHDNkV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 09:40:21 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBE013KD0GKDQE0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 22:39:23 +0900 (KST)
-In-reply-to: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/8] ASoC: s3c24xx_uda134x card fixes and cleanups
+Date: Thu, 04 Aug 2016 15:38:40 +0200
+Message-ID: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: broonie@kernel.org
-Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The L3 bus GPIOs are specified in the board file rather than through
-the sound card's device platform_data. This allows to ensure the codec
-driver doesn't get probed with uninitialized platform_data field of
-its corresponding platform device.
+This series might have a bit of an archaeological aspect, nevertheless
+my goal was to have sound working on one of the older S3C24XX SoC
+based boards for testing any patches touching the older Samsung
+SoC IP block related code.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/mach-s3c24xx/mach-mini2440.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Together with patches:
+  ASoC: samsung: Fix clock handling in S3C24XX_UDA134X card
+  ARM: S3C24XX: Add dma_mask assignments for DMA devices
+  ARM: S3C24XX: Add missing DMA device for Mini2440 board
 
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index a852168..13999c1 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -497,9 +497,28 @@ static struct i2c_board_info mini2440_i2c_devs[] __initdata = {
- 	},
- };
- 
-+static struct uda134x_platform_data s3c24xx_uda134x = {
-+	.l3 = {
-+		.gpio_clk = S3C2410_GPB(4),
-+		.gpio_data = S3C2410_GPB(3),
-+		.gpio_mode = S3C2410_GPB(2),
-+		.use_gpios = 1,
-+		.data_hold = 1,
-+		.data_setup = 1,
-+		.clock_high = 1,
-+		.mode_hold = 1,
-+		.mode = 1,
-+		.mode_setup = 1,
-+	},
-+	.model = UDA134X_UDA1341,
-+};
-+
- static struct platform_device uda1340_codec = {
- 		.name = "uda134x-codec",
- 		.id = -1,
-+		.dev = {
-+			.platform_data	= &s3c24xx_uda134x,
-+		},
- };
- 
- static struct platform_device *mini2440_devices[] __initdata = {
--- 
+this series fixes sound on Micro2440SDK/mini2440 board broken since
+the 3.12 kernel release.
+
+I'm not sure how it worked before but currently the uda134x codec
+always fails to probe due to uninitialized platform_data, which
+is supposed to be set by the ASoC machine driver.
+
+This series addresses the issue by moving all required codec
+platform_data to the board file and exposing optional GPIO bitbang
+L3 bus ops which are selected by the codec.
+
+ASoC dependency patches:
+  ASoC: samsung: Fix clock handling in S3C24XX_UDA134X card
+
+The patch
+"ARM: S3C24XX: Specify audio codec platform_data for mini2440 board"
+is for arm-soc but it would be good to merge whole series through one
+tree to avoid compilation breaks due to unmet dependencies.
+
+Sylwester Nawrocki (8):
+  ASoC: L3 bus: Add default gpio ops
+  ARM: S3C24XX: Specify audio codec platform_data for mini2440 board
+  ASoC: uda134x: Optionally initialize L3 ops to default GPIO ops
+  ASoC: s3c24xx_uda134x: Remove unused power() callback
+  ASoC: s3c24xx_uda134x: Drop initialization of codec's platform data
+  ASoC: samsung: Convert s3c24xx_uda134x to use
+    devm_snd_soc_register_card()
+  ASoC: samsung: s3c24xx_uda134x: debug/error trace cleanup
+  ASoC: s3c244_uda134x: Allocate private data dynamically
+
+ arch/arm/mach-s3c24xx/mach-mini2440.c |  19 ++++
+ include/sound/l3.h                    |  15 ++-
+ include/sound/s3c24xx_uda134x.h       |   1 -
+ sound/soc/codecs/l3.c                 |  71 ++++++++++--
+ sound/soc/codecs/uda134x.c            |   7 ++
+ sound/soc/samsung/s3c24xx_uda134x.c   | 205 ++++++++++------------------------
+ 6 files changed, 158 insertions(+), 160 deletions(-)
+
+--
 1.9.1
