@@ -1,178 +1,105 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 8/8] ASoC: s3c244_uda134x: Allocate private data dynamically
-Date: Thu, 04 Aug 2016 15:38:48 +0200
-Message-ID: <1470317928-25365-9-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 6/8] ASoC: samsung: Convert s3c24xx_uda134x to use
+ devm_snd_soc_register_card()
+Date: Thu, 04 Aug 2016 15:38:46 +0200
+Message-ID: <1470317928-25365-7-git-send-email-s.nawrocki@samsung.com>
 References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33480 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758564AbcHDNkS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43534 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933733AbcHDNkZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 09:40:18 -0400
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+	Thu, 4 Aug 2016 09:40:25 -0400
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBE00DYC0M43D00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 22:39:41 +0900 (KST)
+ with ESMTP id <0OBE013KD0GKDQE0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 22:39:35 +0900 (KST)
 In-reply-to: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Gather all driver's private variable in common data structure and allocate
-it dynamically.
+Suppreses a following kernel warning: "soc-audio soc-audio:
+ASoC: machine S3C24XX_UDA134X should use snd_soc_register_card()".
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/s3c24xx_uda134x.c | 79 ++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 36 deletions(-)
+ sound/soc/samsung/s3c24xx_uda134x.c | 34 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 27 deletions(-)
 
 diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 7853fbe..81a7894 100644
+index 794e30d..a8102a7 100644
 --- a/sound/soc/samsung/s3c24xx_uda134x.c
 +++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -19,9 +19,15 @@
- #include <sound/s3c24xx_uda134x.h>
+@@ -54,8 +54,6 @@ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
+ };
+ #endif
  
- #include "regs-iis.h"
+-static struct platform_device *s3c24xx_uda134x_snd_device;
 -
- #include "s3c24xx-i2s.h"
- 
-+struct s3c24xx_uda134x {
-+	struct clk *xtal;
-+	struct clk *pclk;
-+	struct mutex clk_lock;
-+	int clk_users;
-+};
-+
- /* #define ENFORCE_RATES 1 */
- /*
-   Unfortunately the S3C24XX in master mode has a limited capacity of
-@@ -36,15 +42,6 @@
-   possible an error will be returned.
- */
- 
--static struct clk *xtal;
--static struct clk *pclk;
--/* this is need because we don't have a place where to keep the
-- * pointers to the clocks in each substream. We get the clocks only
-- * when we are actually using them so we don't block stuff like
-- * frequency change or oscillator power-off */
--static int clk_users;
--static DEFINE_MUTEX(clk_lock);
--
- static unsigned int rates[33 * 2];
- #ifdef ENFORCE_RATES
- static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
-@@ -57,26 +54,24 @@ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
  static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
  {
  	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--#ifdef ENFORCE_RATES
--	struct snd_pcm_runtime *runtime = substream->runtime;
--#endif
- 	int ret = 0;
+@@ -68,7 +66,7 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ 	mutex_lock(&clk_lock);
+ 	pr_debug("%s %d\n", __func__, clk_users);
+ 	if (clk_users == 0) {
+-		xtal = clk_get(&s3c24xx_uda134x_snd_device->dev, "xtal");
++		xtal = clk_get(rtd->dev, "xtal");
+ 		if (IS_ERR(xtal)) {
+ 			printk(KERN_ERR "%s cannot get xtal\n", __func__);
+ 			ret = PTR_ERR(xtal);
+@@ -229,43 +227,25 @@ static struct snd_soc_card snd_soc_s3c24xx_uda134x = {
  
--	mutex_lock(&clk_lock);
-+	mutex_lock(&priv->clk_lock);
- 
--	if (clk_users == 0) {
--		xtal = clk_get(rtd->dev, "xtal");
--		if (IS_ERR(xtal)) {
-+	if (priv->clk_users == 0) {
-+		priv->xtal = clk_get(rtd->dev, "xtal");
-+		if (IS_ERR(priv->xtal)) {
- 			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
--			ret = PTR_ERR(xtal);
-+			ret = PTR_ERR(priv->xtal);
- 		} else {
--			pclk = clk_get(cpu_dai->dev, "iis");
--			if (IS_ERR(pclk)) {
-+			priv->pclk = clk_get(cpu_dai->dev, "iis");
-+			if (IS_ERR(priv->pclk)) {
- 				dev_err(rtd->dev, "%s cannot get pclk\n",
- 					__func__);
--				clk_put(xtal);
--				ret = PTR_ERR(pclk);
-+				clk_put(priv->xtal);
-+				ret = PTR_ERR(priv->pclk);
- 			}
- 		}
- 		if (!ret) {
-@@ -85,18 +80,19 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 			for (i = 0; i < 2; i++) {
- 				int fs = i ? 256 : 384;
- 
--				rates[i*33] = clk_get_rate(xtal) / fs;
-+				rates[i*33] = clk_get_rate(priv->xtal) / fs;
- 				for (j = 1; j < 33; j++)
--					rates[i*33 + j] = clk_get_rate(pclk) /
-+					rates[i*33 + j] = clk_get_rate(priv->pclk) /
- 						(j * fs);
- 			}
- 		}
- 	}
--	clk_users += 1;
--	mutex_unlock(&clk_lock);
-+	priv->clk_users += 1;
-+	mutex_unlock(&priv->clk_lock);
-+
- 	if (!ret) {
- #ifdef ENFORCE_RATES
--		ret = snd_pcm_hw_constraint_list(runtime, 0,
-+		ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
- 						 SNDRV_PCM_HW_PARAM_RATE,
- 						 &hw_constraints_rates);
- 		if (ret < 0)
-@@ -109,15 +105,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 
- static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
- {
--	mutex_lock(&clk_lock);
--	clk_users -= 1;
--	if (clk_users == 0) {
--		clk_put(xtal);
--		xtal = NULL;
--		clk_put(pclk);
--		pclk = NULL;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
-+
-+	mutex_lock(&priv->clk_lock);
-+	priv->clk_users -= 1;
-+	if (priv->clk_users == 0) {
-+		clk_put(priv->xtal);
-+		priv->xtal = NULL;
-+		clk_put(priv->pclk);
-+		priv->pclk = NULL;
- 	}
--	mutex_unlock(&clk_lock);
-+	mutex_unlock(&priv->clk_lock);
- }
- 
- static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
-@@ -228,10 +227,18 @@ static struct snd_soc_card snd_soc_s3c24xx_uda134x = {
  static int s3c24xx_uda134x_probe(struct platform_device *pdev)
  {
- 	struct snd_soc_card *card = &snd_soc_s3c24xx_uda134x;
-+	struct s3c24xx_uda134x *priv;
++	struct snd_soc_card *card = &snd_soc_s3c24xx_uda134x;
  	int ret;
  
--	platform_set_drvdata(pdev, card);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	mutex_init(&priv->clk_lock);
-+
- 	card->dev = &pdev->dev;
+-	printk(KERN_INFO "S3C24XX_UDA134X SoC Audio driver\n");
+-
+-	s3c24xx_uda134x_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!s3c24xx_uda134x_snd_device) {
+-		printk(KERN_ERR "S3C24XX_UDA134X SoC Audio: "
+-		       "Unable to register\n");
+-		return -ENOMEM;
+-	}
 +	platform_set_drvdata(pdev, card);
-+	snd_soc_card_set_drvdata(card, priv);
++	card->dev = &pdev->dev;
  
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
- 	if (ret)
+-	platform_set_drvdata(s3c24xx_uda134x_snd_device,
+-			     &snd_soc_s3c24xx_uda134x);
+-
+-	ret = platform_device_add(s3c24xx_uda134x_snd_device);
+-	if (ret) {
+-		printk(KERN_ERR "S3C24XX_UDA134X SoC Audio: Unable to add\n");
+-		platform_device_put(s3c24xx_uda134x_snd_device);
+-	}
++	ret = devm_snd_soc_register_card(&pdev->dev, card);
++	if (ret)
++		dev_err(&pdev->dev, "failed to register card: %d\n", ret);
+ 
+ 	return ret;
+ }
+ 
+-static int s3c24xx_uda134x_remove(struct platform_device *pdev)
+-{
+-	platform_device_unregister(s3c24xx_uda134x_snd_device);
+-	return 0;
+-}
+-
+ static struct platform_driver s3c24xx_uda134x_driver = {
+ 	.probe  = s3c24xx_uda134x_probe,
+-	.remove = s3c24xx_uda134x_remove,
+ 	.driver = {
+ 		.name = "s3c24xx_uda134x",
+ 	},
+ };
+-
+ module_platform_driver(s3c24xx_uda134x_driver);
+ 
+ MODULE_AUTHOR("Zoltan Devai, Christian Pellegrin <chripell@evolware.org>");
 -- 
 1.9.1
