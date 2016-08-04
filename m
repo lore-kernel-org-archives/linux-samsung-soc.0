@@ -1,13 +1,14 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace cleanup
-Date: Thu, 04 Aug 2016 15:38:47 +0200
-Message-ID: <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/8] ASoC: uda134x: Optionally initialize L3 ops to
+ default GPIO ops
+Date: Thu, 4 Aug 2016 22:03:23 +0100
+Message-ID: <20160804210323.GK10383@sirena.org.uk>
 References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
+ <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============1292344180506869695=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
+In-Reply-To: <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,89 +18,57 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Switch from pr_* to dev_* macros and drop some debug traces.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/s3c24xx_uda134x.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+--===============1292344180506869695==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="W/D3X8sky0X3AmG5"
+Content-Disposition: inline
 
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index a8102a7..7853fbe 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -64,17 +64,17 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 	int ret = 0;
- 
- 	mutex_lock(&clk_lock);
--	pr_debug("%s %d\n", __func__, clk_users);
-+
- 	if (clk_users == 0) {
- 		xtal = clk_get(rtd->dev, "xtal");
- 		if (IS_ERR(xtal)) {
--			printk(KERN_ERR "%s cannot get xtal\n", __func__);
-+			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
- 			ret = PTR_ERR(xtal);
- 		} else {
- 			pclk = clk_get(cpu_dai->dev, "iis");
- 			if (IS_ERR(pclk)) {
--				printk(KERN_ERR "%s cannot get pclk\n",
--				       __func__);
-+				dev_err(rtd->dev, "%s cannot get pclk\n",
-+					__func__);
- 				clk_put(xtal);
- 				ret = PTR_ERR(pclk);
- 			}
-@@ -100,8 +100,8 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 						 SNDRV_PCM_HW_PARAM_RATE,
- 						 &hw_constraints_rates);
- 		if (ret < 0)
--			printk(KERN_ERR "%s cannot set constraints\n",
--			       __func__);
-+			dev_err(rtd->dev, "%s cannot set constraints\n",
-+				__func__);
- #endif
- 	}
- 	return ret;
-@@ -110,7 +110,6 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
- {
- 	mutex_lock(&clk_lock);
--	pr_debug("%s %d\n", __func__, clk_users);
- 	clk_users -= 1;
- 	if (clk_users == 0) {
- 		clk_put(xtal);
-@@ -157,18 +156,19 @@ static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
- 		clk_source = S3C24XX_CLKSRC_PCLK;
- 		div = bi % 33;
- 	}
--	pr_debug("%s desired rate %lu, %d\n", __func__, rate, bi);
-+
-+	dev_dbg(rtd->dev, "%s desired rate %lu, %d\n", __func__, rate, bi);
- 
- 	clk = (fs_mode == S3C2410_IISMOD_384FS ? 384 : 256) * rate;
--	pr_debug("%s will use: %s %s %d sysclk %d err %ld\n", __func__,
--		 fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
--		 clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
--		 div, clk, err);
-+
-+	dev_dbg(rtd->dev, "%s will use: %s %s %d sysclk %d err %ld\n", __func__,
-+		fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
-+		clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
-+		div, clk, err);
- 
- 	if ((err * 100 / rate) > 5) {
--		printk(KERN_ERR "S3C24XX_UDA134X: effective frequency "
--		       "too different from desired (%ld%%)\n",
--		       err * 100 / rate);
-+		dev_err(rtd->dev, "effective frequency too different "
-+				  "from desired (%ld%%)\n", err * 100 / rate);
- 		return -EINVAL;
- 	}
- 
--- 
-1.9.1
+
+--W/D3X8sky0X3AmG5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Aug 04, 2016 at 03:38:43PM +0200, Sylwester Nawrocki wrote:
+
+> The downside is that it will request GPIOs on behalf of the codec
+> device and thus allow only one user on the bus, but it desn't seem
+> to be a limitation with current code and usage of the GPIO ops is
+> optional anyway.
+
+Does L3 actually support multiple devices?
+
+--W/D3X8sky0X3AmG5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXo62aAAoJECTWi3JdVIfQoFcH/iX1ofpNf+SlAj41FjXPFPwB
+S8idLGj6MnoqWTBwZTujh549Ao5Xt9+hEjMvu6bmpkNR01Dvz7WJYibWAtxxTja9
+rv2OG4iHiCqty6mo/wkdg+iHhbEN5UpiE+XwQdCDJ+DCDlt6FDhI93vXGnzZBKsy
+iSIQycxaFYuIqfIzctHWmLEyveXOreOWswAdZRqtb4v2clZKCcUFTwIw7RfnwwAQ
+n4bpiuZv5pGq0we3eLjdTYRyEIKdgNoj8w8OseOZcRFUkR4HS4+Cr3TEyq82rzHm
+FEmJnVDjjXwGVKu7jSR7TAb18gdjvDSxfPomoXHe7Gt5jgtCwYYHgX4nJMjirEw=
+=OiYj
+-----END PGP SIGNATURE-----
+
+--W/D3X8sky0X3AmG5--
+
+
+--===============1292344180506869695==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1292344180506869695==--
