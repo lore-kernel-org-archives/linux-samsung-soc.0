@@ -1,66 +1,108 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: Fix clock handling in S3C24XX_UDA134X card
-Date: Thu, 04 Aug 2016 11:51:25 +0200
-Message-ID: <1470304285-14831-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: S3C24XX: Add dma_mask assignments for DMA devices
+Date: Thu, 04 Aug 2016 11:56:12 +0200
+Message-ID: <1470304572-14937-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54972 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:51025 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753475AbcHDJv7 (ORCPT
+	with ESMTP id S1750894AbcHDJ45 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 05:51:59 -0400
+	Thu, 4 Aug 2016 05:56:57 -0400
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBD00XN5Q28W860@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:51:45 +0900 (KST)
+ with ESMTP id <0OBD00XYKQAEW860@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:56:39 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-There is no "pclk" alias in the s3c2440 clk driver for "soc-audio"
-device so related clk_get() fails, which prevents any operation
-of the S3C24XX_UDA134X sound card.
-Instead we get the clock on behalf of the I2S device, i.e. we use
-the I2S block gate clock which has PCLK is its parent clock.
+The dma_mask assignments seem to be missed during refactoring
+of arch/arm/mach-s3c24xx. Add them to avoid DMA allocation
+failures. Without this patch sound is broken on s3c24xx
+with errors reported like:
 
-Without this patch there is an error like:
-
-s3c24xx_uda134x_startup cannot get pclk
-ASoC: UDA134X startup failed: -2
+s3c24xx-dma s3c2410-dma.0: coherent DMA mask is unset
+ALSA pcmC0D0p,0:: cannot preallocate for size 524288
+s3c24xx-iis s3c24xx-iis: Failed to get DMA channel capabilities,
+falling back to period counting: -6
+s3c24xx-dma s3c2410-dma.0: coherent DMA mask is unset
+...
+ALSA pcmC0D0c,0:: cannot preallocate for size 524288
+s3c24xx-iis s3c24xx-iis: Failed to get DMA channel capabilities,
+falling back to period counting: -6
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/s3c24xx_uda134x.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/mach-s3c24xx/common.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 50849e1..92e88bc 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -58,10 +58,12 @@ static struct platform_device *s3c24xx_uda134x_snd_device;
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index bf50328..fe7485d 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -21,7 +21,7 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
  
- static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- {
--	int ret = 0;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- #ifdef ENFORCE_RATES
- 	struct snd_pcm_runtime *runtime = substream->runtime;
+-
++#include <linux/dma-mapping.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+@@ -304,6 +304,8 @@ struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
+ 	},
+ };
+ 
++#define s3c24xx_device_dma_mask (*((u64[]) { DMA_BIT_MASK(32) }))
++
+ #if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
+ 	defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2442)
+ static struct resource s3c2410_dma_resource[] = {
+@@ -354,7 +356,9 @@ struct platform_device s3c2410_device_dma = {
+ 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+-		.platform_data	= &s3c2410_dma_platdata,
++		.dma_mask = &s3c24xx_device_dma_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s3c2410_dma_platdata,
+ 	},
+ };
  #endif
-+	int ret = 0;
- 
- 	mutex_lock(&clk_lock);
- 	pr_debug("%s %d\n", __func__, clk_users);
-@@ -71,8 +73,7 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 			printk(KERN_ERR "%s cannot get xtal\n", __func__);
- 			ret = PTR_ERR(xtal);
- 		} else {
--			pclk = clk_get(&s3c24xx_uda134x_snd_device->dev,
--				       "pclk");
-+			pclk = clk_get(cpu_dai->dev, "iis");
- 			if (IS_ERR(pclk)) {
- 				printk(KERN_ERR "%s cannot get pclk\n",
- 				       __func__);
+@@ -395,7 +399,9 @@ struct platform_device s3c2412_device_dma = {
+ 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+-		.platform_data	= &s3c2412_dma_platdata,
++		.dma_mask = &s3c24xx_device_dma_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s3c2412_dma_platdata,
+ 	},
+ };
+ #endif
+@@ -451,7 +457,9 @@ struct platform_device s3c2440_device_dma = {
+ 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+-		.platform_data	= &s3c2440_dma_platdata,
++		.dma_mask = &s3c24xx_device_dma_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s3c2440_dma_platdata,
+ 	},
+ };
+ #endif
+@@ -503,7 +511,9 @@ struct platform_device s3c2443_device_dma = {
+ 	.num_resources	= ARRAY_SIZE(s3c2443_dma_resource),
+ 	.resource	= s3c2443_dma_resource,
+ 	.dev	= {
+-		.platform_data	= &s3c2443_dma_platdata,
++		.dma_mask = &s3c24xx_device_dma_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s3c2443_dma_platdata,
+ 	},
+ };
+ #endif
 -- 
 1.9.1
