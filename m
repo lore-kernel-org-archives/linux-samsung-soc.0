@@ -1,108 +1,45 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: S3C24XX: Add dma_mask assignments for DMA devices
-Date: Thu, 04 Aug 2016 11:56:12 +0200
-Message-ID: <1470304572-14937-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51025 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894AbcHDJ45 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 05:56:57 -0400
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBD00XYKQAEW860@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:56:39 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] ARM: S3C24XX: Add missing DMA device for Mini2440 board
+Date: Thu, 04 Aug 2016 12:08:11 +0200
+Message-ID: <1470305291-15054-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: krzk@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The dma_mask assignments seem to be missed during refactoring
-of arch/arm/mach-s3c24xx. Add them to avoid DMA allocation
-failures. Without this patch sound is broken on s3c24xx
-with errors reported like:
-
-s3c24xx-dma s3c2410-dma.0: coherent DMA mask is unset
-ALSA pcmC0D0p,0:: cannot preallocate for size 524288
-s3c24xx-iis s3c24xx-iis: Failed to get DMA channel capabilities,
-falling back to period counting: -6
-s3c24xx-dma s3c2410-dma.0: coherent DMA mask is unset
-...
-ALSA pcmC0D0c,0:: cannot preallocate for size 524288
-s3c24xx-iis s3c24xx-iis: Failed to get DMA channel capabilities,
-falling back to period counting: -6
+Addition of s3c2440_device_dma was missed during conversion
+from the Samsung legacy to the regular DMa API.
+Add it so any devices using DMA, e.g I2S controller can
+work properly.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/mach-s3c24xx/common.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index bf50328..fe7485d 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -21,7 +21,7 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
- 
--
-+#include <linux/dma-mapping.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/interrupt.h>
-@@ -304,6 +304,8 @@ struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
- 	},
- };
- 
-+#define s3c24xx_device_dma_mask (*((u64[]) { DMA_BIT_MASK(32) }))
-+
- #if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
- 	defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2442)
- static struct resource s3c2410_dma_resource[] = {
-@@ -354,7 +356,9 @@ struct platform_device s3c2410_device_dma = {
- 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
- 	.resource	= s3c2410_dma_resource,
- 	.dev	= {
--		.platform_data	= &s3c2410_dma_platdata,
-+		.dma_mask = &s3c24xx_device_dma_mask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
-+		.platform_data = &s3c2410_dma_platdata,
- 	},
- };
- #endif
-@@ -395,7 +399,9 @@ struct platform_device s3c2412_device_dma = {
- 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
- 	.resource	= s3c2410_dma_resource,
- 	.dev	= {
--		.platform_data	= &s3c2412_dma_platdata,
-+		.dma_mask = &s3c24xx_device_dma_mask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
-+		.platform_data = &s3c2412_dma_platdata,
- 	},
- };
- #endif
-@@ -451,7 +457,9 @@ struct platform_device s3c2440_device_dma = {
- 	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
- 	.resource	= s3c2410_dma_resource,
- 	.dev	= {
--		.platform_data	= &s3c2440_dma_platdata,
-+		.dma_mask = &s3c24xx_device_dma_mask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
-+		.platform_data = &s3c2440_dma_platdata,
- 	},
- };
- #endif
-@@ -503,7 +511,9 @@ struct platform_device s3c2443_device_dma = {
- 	.num_resources	= ARRAY_SIZE(s3c2443_dma_resource),
- 	.resource	= s3c2443_dma_resource,
- 	.dev	= {
--		.platform_data	= &s3c2443_dma_platdata,
-+		.dma_mask = &s3c24xx_device_dma_mask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
-+		.platform_data = &s3c2443_dma_platdata,
- 	},
- };
- #endif
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index a852168..bbf4132 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -516,6 +516,7 @@ static struct platform_device *mini2440_devices[] __initdata = {
+ 	&mini2440_button_device,
+ 	&s3c_device_nand,
+ 	&s3c_device_sdi,
++	&s3c2440_device_dma,
+ 	&s3c_device_iis,
+ 	&uda1340_codec,
+ 	&mini2440_audio,
 -- 
 1.9.1
