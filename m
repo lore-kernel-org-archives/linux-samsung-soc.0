@@ -1,188 +1,178 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/8] ASoC: L3 bus: Add default gpio ops
-Date: Thu, 04 Aug 2016 15:38:41 +0200
-Message-ID: <1470317928-25365-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 8/8] ASoC: s3c244_uda134x: Allocate private data dynamically
+Date: Thu, 04 Aug 2016 15:38:48 +0200
+Message-ID: <1470317928-25365-9-git-send-email-s.nawrocki@samsung.com>
 References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43534 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933713AbcHDNkT (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:33480 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758564AbcHDNkS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 09:40:19 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
+	Thu, 4 Aug 2016 09:40:18 -0400
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBE013KD0GKDQE0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 22:39:20 +0900 (KST)
+ with ESMTP id <0OBE00DYC0M43D00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 22:39:41 +0900 (KST)
 In-reply-to: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This adds aptional GPIO bit-bang based callback implementations
-for setting CLK, DATA and MODE L3 bus lines.  It is added here
-to avoid possible duplicate implementations across users of
-the bus.
+Gather all driver's private variable in common data structure and allocate
+it dynamically.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- include/sound/l3.h    | 15 ++++++++---
- sound/soc/codecs/l3.c | 71 ++++++++++++++++++++++++++++++++++++++++++---------
- 2 files changed, 71 insertions(+), 15 deletions(-)
+ sound/soc/samsung/s3c24xx_uda134x.c | 79 ++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 36 deletions(-)
 
-diff --git a/include/sound/l3.h b/include/sound/l3.h
-index 423a08f..1471da2 100644
---- a/include/sound/l3.h
-+++ b/include/sound/l3.h
-@@ -2,9 +2,15 @@
- #define _L3_H_ 1
+diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
+index 7853fbe..81a7894 100644
+--- a/sound/soc/samsung/s3c24xx_uda134x.c
++++ b/sound/soc/samsung/s3c24xx_uda134x.c
+@@ -19,9 +19,15 @@
+ #include <sound/s3c24xx_uda134x.h>
  
- struct l3_pins {
--	void (*setdat)(int);
--	void (*setclk)(int);
--	void (*setmode)(int);
-+	void (*setdat)(struct l3_pins *, int);
-+	void (*setclk)(struct l3_pins *, int);
-+	void (*setmode)(struct l3_pins *, int);
+ #include "regs-iis.h"
+-
+ #include "s3c24xx-i2s.h"
+ 
++struct s3c24xx_uda134x {
++	struct clk *xtal;
++	struct clk *pclk;
++	struct mutex clk_lock;
++	int clk_users;
++};
 +
-+	int gpio_data;
-+	int gpio_clk;
-+	int gpio_mode;
-+	int use_gpios;
-+
- 	int data_hold;
- 	int data_setup;
- 	int clock_high;
-@@ -13,6 +19,9 @@ struct l3_pins {
- 	int mode_setup;
- };
+ /* #define ENFORCE_RATES 1 */
+ /*
+   Unfortunately the S3C24XX in master mode has a limited capacity of
+@@ -36,15 +42,6 @@
+   possible an error will be returned.
+ */
  
-+struct device;
-+
- int l3_write(struct l3_pins *adap, u8 addr, u8 *data, int len);
-+int l3_set_gpio_ops(struct device *dev, struct l3_pins *adap);
- 
- #endif
-diff --git a/sound/soc/codecs/l3.c b/sound/soc/codecs/l3.c
-index 5353af5..a10ea3c 100644
---- a/sound/soc/codecs/l3.c
-+++ b/sound/soc/codecs/l3.c
-@@ -20,6 +20,8 @@
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/gpio.h>
- 
- #include <sound/l3.h>
- 
-@@ -32,11 +34,11 @@ static void sendbyte(struct l3_pins *adap, unsigned int byte)
- 	int i;
- 
- 	for (i = 0; i < 8; i++) {
--		adap->setclk(0);
-+		adap->setclk(adap, 0);
- 		udelay(adap->data_hold);
--		adap->setdat(byte & 1);
-+		adap->setdat(adap, byte & 1);
- 		udelay(adap->data_setup);
--		adap->setclk(1);
-+		adap->setclk(adap, 1);
- 		udelay(adap->clock_high);
- 		byte >>= 1;
- 	}
-@@ -55,10 +57,10 @@ static void sendbytes(struct l3_pins *adap, const u8 *buf,
- 	for (i = 0; i < len; i++) {
- 		if (i) {
- 			udelay(adap->mode_hold);
--			adap->setmode(0);
-+			adap->setmode(adap, 0);
- 			udelay(adap->mode);
- 		}
--		adap->setmode(1);
-+		adap->setmode(adap, 1);
- 		udelay(adap->mode_setup);
- 		sendbyte(adap, buf[i]);
- 	}
-@@ -66,26 +68,71 @@ static void sendbytes(struct l3_pins *adap, const u8 *buf,
- 
- int l3_write(struct l3_pins *adap, u8 addr, u8 *data, int len)
+-static struct clk *xtal;
+-static struct clk *pclk;
+-/* this is need because we don't have a place where to keep the
+- * pointers to the clocks in each substream. We get the clocks only
+- * when we are actually using them so we don't block stuff like
+- * frequency change or oscillator power-off */
+-static int clk_users;
+-static DEFINE_MUTEX(clk_lock);
+-
+ static unsigned int rates[33 * 2];
+ #ifdef ENFORCE_RATES
+ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
+@@ -57,26 +54,24 @@ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
+ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
  {
--	adap->setclk(1);
--	adap->setdat(1);
--	adap->setmode(1);
-+	adap->setclk(adap, 1);
-+	adap->setdat(adap, 1);
-+	adap->setmode(adap, 1);
- 	udelay(adap->mode);
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-#ifdef ENFORCE_RATES
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-#endif
+ 	int ret = 0;
  
--	adap->setmode(0);
-+	adap->setmode(adap, 0);
- 	udelay(adap->mode_setup);
- 	sendbyte(adap, addr);
- 	udelay(adap->mode_hold);
+-	mutex_lock(&clk_lock);
++	mutex_lock(&priv->clk_lock);
  
- 	sendbytes(adap, data, len);
+-	if (clk_users == 0) {
+-		xtal = clk_get(rtd->dev, "xtal");
+-		if (IS_ERR(xtal)) {
++	if (priv->clk_users == 0) {
++		priv->xtal = clk_get(rtd->dev, "xtal");
++		if (IS_ERR(priv->xtal)) {
+ 			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
+-			ret = PTR_ERR(xtal);
++			ret = PTR_ERR(priv->xtal);
+ 		} else {
+-			pclk = clk_get(cpu_dai->dev, "iis");
+-			if (IS_ERR(pclk)) {
++			priv->pclk = clk_get(cpu_dai->dev, "iis");
++			if (IS_ERR(priv->pclk)) {
+ 				dev_err(rtd->dev, "%s cannot get pclk\n",
+ 					__func__);
+-				clk_put(xtal);
+-				ret = PTR_ERR(pclk);
++				clk_put(priv->xtal);
++				ret = PTR_ERR(priv->pclk);
+ 			}
+ 		}
+ 		if (!ret) {
+@@ -85,18 +80,19 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ 			for (i = 0; i < 2; i++) {
+ 				int fs = i ? 256 : 384;
  
--	adap->setclk(1);
--	adap->setdat(1);
--	adap->setmode(0);
-+	adap->setclk(adap, 1);
-+	adap->setdat(adap, 1);
-+	adap->setmode(adap, 0);
+-				rates[i*33] = clk_get_rate(xtal) / fs;
++				rates[i*33] = clk_get_rate(priv->xtal) / fs;
+ 				for (j = 1; j < 33; j++)
+-					rates[i*33 + j] = clk_get_rate(pclk) /
++					rates[i*33 + j] = clk_get_rate(priv->pclk) /
+ 						(j * fs);
+ 			}
+ 		}
+ 	}
+-	clk_users += 1;
+-	mutex_unlock(&clk_lock);
++	priv->clk_users += 1;
++	mutex_unlock(&priv->clk_lock);
++
+ 	if (!ret) {
+ #ifdef ENFORCE_RATES
+-		ret = snd_pcm_hw_constraint_list(runtime, 0,
++		ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
+ 						 SNDRV_PCM_HW_PARAM_RATE,
+ 						 &hw_constraints_rates);
+ 		if (ret < 0)
+@@ -109,15 +105,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
  
- 	return len;
+ static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
+ {
+-	mutex_lock(&clk_lock);
+-	clk_users -= 1;
+-	if (clk_users == 0) {
+-		clk_put(xtal);
+-		xtal = NULL;
+-		clk_put(pclk);
+-		pclk = NULL;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
++
++	mutex_lock(&priv->clk_lock);
++	priv->clk_users -= 1;
++	if (priv->clk_users == 0) {
++		clk_put(priv->xtal);
++		priv->xtal = NULL;
++		clk_put(priv->pclk);
++		priv->pclk = NULL;
+ 	}
+-	mutex_unlock(&clk_lock);
++	mutex_unlock(&priv->clk_lock);
  }
- EXPORT_SYMBOL_GPL(l3_write);
  
+ static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
+@@ -228,10 +227,18 @@ static struct snd_soc_card snd_soc_s3c24xx_uda134x = {
+ static int s3c24xx_uda134x_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = &snd_soc_s3c24xx_uda134x;
++	struct s3c24xx_uda134x *priv;
+ 	int ret;
+ 
+-	platform_set_drvdata(pdev, card);
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
 +
-+static void l3_set_clk(struct l3_pins *adap, int val)
-+{
-+	gpio_set_value(adap->gpio_clk, val);
-+}
++	mutex_init(&priv->clk_lock);
 +
-+static void l3_set_data(struct l3_pins *adap, int val)
-+{
-+	gpio_set_value(adap->gpio_data, val);
-+}
-+
-+static void l3_set_mode(struct l3_pins *adap, int val)
-+{
-+	gpio_set_value(adap->gpio_mode, val);
-+}
-+
-+int l3_set_gpio_ops(struct device *dev, struct l3_pins *adap)
-+{
-+	int ret;
-+
-+	if (!adap->use_gpios)
-+		return -EINVAL;
-+
-+	ret = devm_gpio_request_one(dev, adap->gpio_data,
-+				GPIOF_OUT_INIT_LOW, "l3_data");
-+	if (ret < 0)
-+		return ret;
-+	adap->setdat = l3_set_data;
-+
-+	ret = devm_gpio_request_one(dev, adap->gpio_clk,
-+				GPIOF_OUT_INIT_LOW, "l3_clk");
-+	if (ret < 0)
-+		return ret;
-+	adap->setclk = l3_set_clk;
-+
-+	ret = devm_gpio_request_one(dev, adap->gpio_mode,
-+				GPIOF_OUT_INIT_LOW, "l3_mode");
-+	if (ret < 0)
-+		return ret;
-+	adap->setmode = l3_set_mode;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(l3_set_gpio_ops);
-+
- MODULE_DESCRIPTION("L3 bit-banging driver");
- MODULE_AUTHOR("Christian Pellegrin <chripell@evolware.org>");
- MODULE_LICENSE("GPL");
+ 	card->dev = &pdev->dev;
++	platform_set_drvdata(pdev, card);
++	snd_soc_card_set_drvdata(card, priv);
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+ 	if (ret)
 -- 
 1.9.1
