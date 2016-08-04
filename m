@@ -1,87 +1,66 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/7] ASoC: samsung: Drop usage of struct s3c_dma_params from
- s3c24xx-i2s.c
-Date: Thu, 04 Aug 2016 11:30:27 +0200
-Message-ID: <1470303032-14582-3-git-send-email-s.nawrocki@samsung.com>
-References: <1470303032-14582-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: samsung: Fix clock handling in S3C24XX_UDA134X card
+Date: Thu, 04 Aug 2016 11:51:25 +0200
+Message-ID: <1470304285-14831-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54978 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932532AbcHDJbe (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:54972 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753475AbcHDJv7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 05:31:34 -0400
+	Thu, 4 Aug 2016 05:51:59 -0400
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBD014VDP3FUR40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:30:56 +0900 (KST)
-In-reply-to: <1470303032-14582-1-git-send-email-s.nawrocki@samsung.com>
+ with ESMTP id <0OBD00XN5Q28W860@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:51:45 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-struct s3c_dma_params already includes struct snd_dmaengine_dai_dma_data,
-there is no need for such an indirection so switch to using struct
-snd_dmaengine_dai_dma_data instead of struct s3c_dma_params.  This also
-allows us to use snd_soc_dai_init_dma_data() function instead of the
-platform specific samsung_asoc_init_dma_data helper.
+There is no "pclk" alias in the s3c2440 clk driver for "soc-audio"
+device so related clk_get() fails, which prevents any operation
+of the S3C24XX_UDA134X sound card.
+Instead we get the clock on behalf of the I2S device, i.e. we use
+the I2S block gate clock which has PCLK is its parent clock.
+
+Without this patch there is an error like:
+
+s3c24xx_uda134x_startup cannot get pclk
+ASoC: UDA134X startup failed: -2
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/s3c24xx-i2s.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ sound/soc/samsung/s3c24xx_uda134x.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 3e76f2a..c78a936 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -32,14 +32,14 @@
+diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
+index 50849e1..92e88bc 100644
+--- a/sound/soc/samsung/s3c24xx_uda134x.c
++++ b/sound/soc/samsung/s3c24xx_uda134x.c
+@@ -58,10 +58,12 @@ static struct platform_device *s3c24xx_uda134x_snd_device;
  
- #include <linux/platform_data/asoc-s3c.h>
- 
--static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_out = {
--	.ch_name	= "tx",
--	.dma_size	= 2,
-+static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
-+	.chan_name	= "tx",
-+	.addr_width	= 2,
- };
- 
--static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_in = {
--	.ch_name	= "rx",
--	.dma_size	= 2,
-+static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
-+	.chan_name	= "rx",
-+	.addr_width	= 2,
- };
- 
- struct s3c24xx_i2s_info {
-@@ -360,8 +360,8 @@ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
+ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
  {
- 	pr_debug("Entered %s\n", __func__);
+-	int ret = 0;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ #ifdef ENFORCE_RATES
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ #endif
++	int ret = 0;
  
--	samsung_asoc_init_dma_data(dai, &s3c24xx_i2s_pcm_stereo_out,
--		&s3c24xx_i2s_pcm_stereo_in);
-+	snd_soc_dai_init_dma_data(dai, &s3c24xx_i2s_pcm_stereo_out,
-+					&s3c24xx_i2s_pcm_stereo_in);
- 
- 	s3c24xx_i2s.iis_clk = devm_clk_get(dai->dev, "iis");
- 	if (IS_ERR(s3c24xx_i2s.iis_clk)) {
-@@ -469,10 +469,10 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
- 	if (IS_ERR(s3c24xx_i2s.regs))
- 		return PTR_ERR(s3c24xx_i2s.regs);
- 
--	s3c24xx_i2s_pcm_stereo_out.dma_addr = res->start + S3C2410_IISFIFO;
--	s3c24xx_i2s_pcm_stereo_out.slave = pdata->dma_playback;
--	s3c24xx_i2s_pcm_stereo_in.dma_addr = res->start + S3C2410_IISFIFO;
--	s3c24xx_i2s_pcm_stereo_in.slave = pdata->dma_capture;
-+	s3c24xx_i2s_pcm_stereo_out.addr = res->start + S3C2410_IISFIFO;
-+	s3c24xx_i2s_pcm_stereo_out.filter_data = pdata->dma_playback;
-+	s3c24xx_i2s_pcm_stereo_in.addr = res->start + S3C2410_IISFIFO;
-+	s3c24xx_i2s_pcm_stereo_in.filter_data = pdata->dma_capture;
- 
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
+ 	mutex_lock(&clk_lock);
+ 	pr_debug("%s %d\n", __func__, clk_users);
+@@ -71,8 +73,7 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ 			printk(KERN_ERR "%s cannot get xtal\n", __func__);
+ 			ret = PTR_ERR(xtal);
+ 		} else {
+-			pclk = clk_get(&s3c24xx_uda134x_snd_device->dev,
+-				       "pclk");
++			pclk = clk_get(cpu_dai->dev, "iis");
+ 			if (IS_ERR(pclk)) {
+ 				printk(KERN_ERR "%s cannot get pclk\n",
+ 				       __func__);
 -- 
 1.9.1
