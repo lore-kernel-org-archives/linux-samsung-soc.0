@@ -1,91 +1,117 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: 4.7 kernel panic with EXYNOS_IOMMU
-Date: Wed, 03 Aug 2016 12:58:34 +0200
-Message-ID: <25d6a36d-819f-1d56-2322-4d3477db8f2c@samsung.com>
-References: <CAM3PiRxgKLsZJb4qZSZEvXVpeWB_Mqx2N-2VKqfocdTotB14LA@mail.gmail.com>
- <048b209b-dd6a-ec99-8894-3287a466e831@samsung.com>
- <CAM3PiRzP3PByt_QbgjpUYAZxDa8c-qQxj1rRk-DfzRCdBF7bJw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 3/7] ASoC: samsung: Drop usage of struct s3c_dma_params from
+ s3c2412-i2s.c
+Date: Thu, 04 Aug 2016 11:30:28 +0200
+Message-ID: <1470303032-14582-4-git-send-email-s.nawrocki@samsung.com>
+References: <1470303032-14582-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:12366 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752647AbcHCK6o (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:59617 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933208AbcHDJbb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Aug 2016 06:58:44 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+	Thu, 4 Aug 2016 05:31:31 -0400
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBB000CEYHNHSA0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 03 Aug 2016 11:58:35 +0100 (BST)
-In-reply-to: <CAM3PiRzP3PByt_QbgjpUYAZxDa8c-qQxj1rRk-DfzRCdBF7bJw@mail.gmail.com>
+ with ESMTP id <0OBD00V68P3HE550@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Aug 2016 18:30:59 +0900 (KST)
+In-reply-to: <1470303032-14582-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marian Mihailescu <marian.mihailescu@adelaide.edu.au>
-Cc: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Marian,
+struct s3c_dma_params already includes struct snd_dmaengine_dai_dma_data,
+there is no need for such an indirection so switch to using struct
+snd_dmaengine_dai_dma_data instead of struct s3c_dma_params.  This also
+allows us to use snd_soc_dai_init_dma_data() function instead of the
+platform specific samsung_asoc_init_dma_data helper.
 
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/s3c-i2s-v2.c  |  2 +-
+ sound/soc/samsung/s3c-i2s-v2.h  |  4 ++--
+ sound/soc/samsung/s3c2412-i2s.c | 24 ++++++++++++------------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-On 2016-08-03 12:00, Marian Mihailescu wrote:
-> Thanks for the reply, Marek.
-> Can you give me a repository where I can find the commits? I want to
-> try them on my kernel tree.
-
-Everything is already in linux-next repo:
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git
-
-All related patches have been merged in commit
-8fe9c8b750ca294882b163100817f97866990481.
-
-
-> On Wed, Aug 3, 2016 at 5:01 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Hi Marian,
->>
->> On 2016-08-03 08:40, Marian Mihailescu wrote:
->>
->>> http://paste.debian.net/786704
->>
->>> [   19.053848] exynos-sysmmu 11200000.sysmmu:: PAGE FAULT occurred at
->>> 0x51000000 (page table base: 0x6eb04000)
->>> [   19.053854] exynos-sysmmu 11200000.sysmmu::  Lv1 entry: 0x6e81b001
->>> [   19.053909] ------------[ cut here ]------------
->>> [   19.053915] kernel BUG at drivers/iommu/exynos-iommu.c:410!
->>> [   19.053920] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>> [   19.053951] Modules linked in: s5p_mfc exynos_gsc v4l2_mem2mem
->>> v4l2_common videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videodev
->>> videobuf2_core
->>> [   19.053959] CPU: 0 PID: 336 Comm: setfont Not tainted 4.7.0-1 #2
->>> [   19.053963] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->>> [   19.053968] task: c24e1900 ti: e3838000 task.ti: e3838000
->>> [   19.053980] PC is at exynos_sysmmu_irq+0x1f4/0x210
->>> [   19.053985] LR is at exynos_sysmmu_irq+0x100/0x210
->>> [   19.053990] pc : [<c03eaa38>]    lr : [<c03ea944>]    psr: 600e0193
->>> [   19.053990] sp : e3839a50  ip : ee870f80  fp : 00000510
->>> [   19.053994] r10: 00000000  r9 : 0000001c  r8 : ee86adb0
->>> [   19.053998] r7 : ee86ad90  r6 : 51000000  r5 : 00000000  r4 : c074a838
->>> [   19.054003] r3 : 6e81b001  r2 : 00000000  r1 : 6e81b001  r0 : 00000036
->>> [   19.054009] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
->>> Segment none
->>> [   19.054013] Control: 10c5387d  Table: 6d9a806a  DAC: 00000051
->>> [   19.054017] Process setfont (pid: 336, stack limit = 0xe3838210)
->>> the same config, but without EXYNOS_IOMMU boots fine.
->>
->> This is a known issue - a page fault from MFC driver, which needs special
->> handling
->> of IOMMU. It exists since adding DT support to Exynos IOMMU driver in v4.2
->> (earlier
->> Exynos IOMMU wasn't even initialized due to lack of DT support). This is one
->> of the
->> reasons, why Exynos IOMMU is not enabled yet in exynos_defconfig.
->>
->> Proper support for IOMMU in MFC driver will be available in v4.8-rc1
->> (patches are
->> already queued for merging).
-
-Best regards
+diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
+index bf8ae79..74a7f4b 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.c
++++ b/sound/soc/samsung/s3c-i2s-v2.c
+@@ -302,7 +302,7 @@ static int s3c_i2sv2_hw_params(struct snd_pcm_substream *substream,
+ 				 struct snd_soc_dai *dai)
+ {
+ 	struct s3c_i2sv2_info *i2s = to_info(dai);
+-	struct s3c_dma_params *dma_data;
++	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 iismod;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+diff --git a/sound/soc/samsung/s3c-i2s-v2.h b/sound/soc/samsung/s3c-i2s-v2.h
+index d068414..182d805 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.h
++++ b/sound/soc/samsung/s3c-i2s-v2.h
+@@ -60,8 +60,8 @@ struct s3c_i2sv2_info {
+ 
+ 	unsigned char	 master;
+ 
+-	struct s3c_dma_params	*dma_playback;
+-	struct s3c_dma_params	*dma_capture;
++	struct snd_dmaengine_dai_dma_data *dma_playback;
++	struct snd_dmaengine_dai_dma_data *dma_capture;
+ 
+ 	u32		 suspend_iismod;
+ 	u32		 suspend_iiscon;
+diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+index d45dffb..3e89fbc 100644
+--- a/sound/soc/samsung/s3c2412-i2s.c
++++ b/sound/soc/samsung/s3c2412-i2s.c
+@@ -34,14 +34,14 @@
+ 
+ #include <linux/platform_data/asoc-s3c.h>
+ 
+-static struct s3c_dma_params s3c2412_i2s_pcm_stereo_out = {
+-	.ch_name	= "tx",
+-	.dma_size	= 4,
++static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_out = {
++	.chan_name	= "tx",
++	.addr_width	= 4,
+ };
+ 
+-static struct s3c_dma_params s3c2412_i2s_pcm_stereo_in = {
+-	.ch_name	= "rx",
+-	.dma_size	= 4,
++static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_in = {
++	.chan_name	= "rx",
++	.addr_width	= 4,
+ };
+ 
+ static struct s3c_i2sv2_info s3c2412_i2s;
+@@ -52,8 +52,8 @@ static int s3c2412_i2s_probe(struct snd_soc_dai *dai)
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+-	samsung_asoc_init_dma_data(dai, &s3c2412_i2s_pcm_stereo_out,
+-		&s3c2412_i2s_pcm_stereo_in);
++	snd_soc_dai_init_dma_data(dai, &s3c2412_i2s_pcm_stereo_out,
++					&s3c2412_i2s_pcm_stereo_in);
+ 
+ 	ret = s3c_i2sv2_probe(dai, &s3c2412_i2s, S3C2410_PA_IIS);
+ 	if (ret)
+@@ -163,10 +163,10 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
+ 	if (IS_ERR(s3c2412_i2s.regs))
+ 		return PTR_ERR(s3c2412_i2s.regs);
+ 
+-	s3c2412_i2s_pcm_stereo_out.dma_addr = res->start + S3C2412_IISTXD;
+-	s3c2412_i2s_pcm_stereo_out.slave = pdata->dma_playback;
+-	s3c2412_i2s_pcm_stereo_in.dma_addr = res->start + S3C2412_IISRXD;
+-	s3c2412_i2s_pcm_stereo_in.slave = pdata->dma_capture;
++	s3c2412_i2s_pcm_stereo_out.addr = res->start + S3C2412_IISTXD;
++	s3c2412_i2s_pcm_stereo_out.filter_data = pdata->dma_playback;
++	s3c2412_i2s_pcm_stereo_in.addr = res->start + S3C2412_IISRXD;
++	s3c2412_i2s_pcm_stereo_in.filter_data = pdata->dma_capture;
+ 
+ 	ret = s3c_i2sv2_register_component(&pdev->dev, -1,
+ 					   &s3c2412_i2s_component,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
