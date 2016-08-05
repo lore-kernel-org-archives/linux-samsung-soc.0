@@ -1,107 +1,46 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RESEND 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace
+Subject: Re: [PATCH 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace
  cleanup
-Date: Fri, 05 Aug 2016 11:47:09 +0200
-Message-ID: <1470390429-30902-1-git-send-email-s.nawrocki@samsung.com>
+Date: Fri, 05 Aug 2016 11:52:06 +0200
+Message-ID: <dc98210f-b87f-443c-f54f-1123f31c7ad3@samsung.com>
+References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
+ <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
+ <20160804210554.GL10383@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:48227 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934875AbcHEJri (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:24977 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934722AbcHEJwT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 05:47:38 -0400
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
+	Fri, 5 Aug 2016 05:52:19 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBF00I10KJBMJ30@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 18:47:35 +0900 (KST)
+ with ESMTP id <0OBF006HOKR3KZ40@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 10:52:15 +0100 (BST)
+In-reply-to: <20160804210554.GL10383@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Switch from pr_* to dev_* macros and drop some debug traces.
+On 08/04/2016 11:05 PM, Mark Brown wrote:
+> On Thu, Aug 04, 2016 at 03:38:47PM +0200, Sylwester Nawrocki wrote:
+>> Switch from pr_* to dev_* macros and drop some debug traces.
+> 
+> This doesn't apply against current code and the previous patch had
+> unknown SHA1s suggesting that you've got some other patches in your
+> tree, please check and resend.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
+I suspect the cause is this patch missing:
+"ASoC: samsung: Fix clock handling in S3C24XX_UDA134X card"
+which I really should have sent as a first one together with
+this series. My apologies for the mess. 
 
-Rebased onto topic/samsung branch.
 
- sound/soc/samsung/s3c24xx_uda134x.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 13e52fb..1619e76 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -62,18 +62,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- #endif
-
- 	mutex_lock(&clk_lock);
--	pr_debug("%s %d\n", __func__, clk_users);
-+
- 	if (clk_users == 0) {
- 		xtal = clk_get(rtd->dev, "xtal");
- 		if (IS_ERR(xtal)) {
--			printk(KERN_ERR "%s cannot get xtal\n", __func__);
-+			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
- 			ret = PTR_ERR(xtal);
- 		} else {
- 			pclk = clk_get(&s3c24xx_uda134x_snd_device->dev,
- 				       "pclk");
- 			if (IS_ERR(pclk)) {
--				printk(KERN_ERR "%s cannot get pclk\n",
--				       __func__);
-+				dev_err(rtd->dev, "%s cannot get pclk\n",
-+					__func__);
- 				clk_put(xtal);
- 				ret = PTR_ERR(pclk);
- 			}
-@@ -99,8 +99,8 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 						 SNDRV_PCM_HW_PARAM_RATE,
- 						 &hw_constraints_rates);
- 		if (ret < 0)
--			printk(KERN_ERR "%s cannot set constraints\n",
--			       __func__);
-+			dev_err(rtd->dev, "%s cannot set constraints\n",
-+				__func__);
- #endif
- 	}
- 	return ret;
-@@ -109,7 +109,6 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
- {
- 	mutex_lock(&clk_lock);
--	pr_debug("%s %d\n", __func__, clk_users);
- 	clk_users -= 1;
- 	if (clk_users == 0) {
- 		clk_put(xtal);
-@@ -156,18 +155,19 @@ static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
- 		clk_source = S3C24XX_CLKSRC_PCLK;
- 		div = bi % 33;
- 	}
--	pr_debug("%s desired rate %lu, %d\n", __func__, rate, bi);
-+
-+	dev_dbg(rtd->dev, "%s desired rate %lu, %d\n", __func__, rate, bi);
-
- 	clk = (fs_mode == S3C2410_IISMOD_384FS ? 384 : 256) * rate;
--	pr_debug("%s will use: %s %s %d sysclk %d err %ld\n", __func__,
--		 fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
--		 clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
--		 div, clk, err);
-+
-+	dev_dbg(rtd->dev, "%s will use: %s %s %d sysclk %d err %ld\n", __func__,
-+		fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
-+		clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
-+		div, clk, err);
-
- 	if ((err * 100 / rate) > 5) {
--		printk(KERN_ERR "S3C24XX_UDA134X: effective frequency "
--		       "too different from desired (%ld%%)\n",
--		       err * 100 / rate);
-+		dev_err(rtd->dev, "effective frequency too different "
-+				  "from desired (%ld%%)\n", err * 100 / rate);
- 		return -EINVAL;
- 	}
-
---
-1.9.1
+I've resent $subject patch and will hold on for a moment with 
+PATCH 8/8 as there are large conflicts when I first rebase it 
+onto topic/samsung and then try to merge fix/samsung and 
+topic/samsung to the for-next branch.
