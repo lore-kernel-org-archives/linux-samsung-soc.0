@@ -1,51 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace
- cleanup
-Date: Thu, 4 Aug 2016 22:05:54 +0100
-Message-ID: <20160804210554.GL10383@sirena.org.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 3/8] ASoC: uda134x: Optionally initialize L3 ops to default
+ GPIO ops
+Date: Fri, 05 Aug 2016 10:48:19 +0200
+Message-ID: <e2dbe62b-8767-d0a5-a133-e927cfce98d4@samsung.com>
 References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
- <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
+ <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
+ <20160804210323.GK10383@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lZZ4ablUVnt2XgAh"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51048 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759011AbcHDVGD (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35918 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757779AbcHEIsb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 17:06:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1470317928-25365-8-git-send-email-s.nawrocki@samsung.com>
+	Fri, 5 Aug 2016 04:48:31 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OBF005SFHSRAD20@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 09:48:28 +0100 (BST)
+In-reply-to: <20160804210323.GK10383@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+On 08/04/2016 11:03 PM, Mark Brown wrote:
+> Does L3 actually support multiple devices?
 
---lZZ4ablUVnt2XgAh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>From the bus operation description in a few datasheets of the Philips'
+UDA13XX codecs I have checked I would say it's possible to have multiple
+devices working on same bus.  The slave devices are selectable by 6
+most significant bits of the address byte and the device addresses
+seem to be unique at first sight.
 
-On Thu, Aug 04, 2016 at 03:38:47PM +0200, Sylwester Nawrocki wrote:
-> Switch from pr_* to dev_* macros and drop some debug traces.
+"In the event that the UDA1341TS receives a different address, it will
+deselect its microcontroller interface logic." (ch. 7.19 [1])
 
-This doesn't apply against current code and the previous patch had
-unknown SHA1s suggesting that you've got some other patches in your
-tree, please check and resend.
+However I can't answer yes for sure, I've never seen multiple device
+operation mentioned explicitly in the datasheets nor such an hardware
+configuration.
 
---lZZ4ablUVnt2XgAh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXo64xAAoJECTWi3JdVIfQKr4H+wThnrb2xyAK/QuPbvuz9d6L
-CUCp03yihBnRO4v+lSdC2MfkpX5lybAyyj3EZyVoIsdr8J9l84zlwVx5rgtpUo6P
-mh7QG54+qH/RdHeLciIFFifJdK1Ie7L0X5/ny4EhXw+uVxXcC4XF4V37K8UmPeHd
-eaYmJwm9Uw558FlZB/jdrz/dLo/IOCu4HqJFl22fJn7uq9RjUUPTEoxwSvorMAKR
-Aug1EbYuEXsF7D0DG/2eO9Z33LtFf0fLQtv/P4tL283U2hTE6sN4oyIgZP/tMZU/
-40iyDoApIrimel4bm/KOdRk5Ln1LhxOcfwuu9PRZliRTHjP+Sx0DX3UKUp+5OUI=
-=gzeW
------END PGP SIGNATURE-----
-
---lZZ4ablUVnt2XgAh--
+[1] http://www.nxp.com/documents/data_sheet/UDA1341TS.pdf
