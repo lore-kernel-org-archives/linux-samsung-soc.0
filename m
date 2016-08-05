@@ -1,45 +1,107 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 3/8] ASoC: uda134x: Optionally initialize L3 ops to default
- GPIO ops
-Date: Fri, 05 Aug 2016 10:48:19 +0200
-Message-ID: <e2dbe62b-8767-d0a5-a133-e927cfce98d4@samsung.com>
-References: <1470317928-25365-1-git-send-email-s.nawrocki@samsung.com>
- <1470317928-25365-4-git-send-email-s.nawrocki@samsung.com>
- <20160804210323.GK10383@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH RESEND 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error trace
+ cleanup
+Date: Fri, 05 Aug 2016 11:47:09 +0200
+Message-ID: <1470390429-30902-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35918 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757779AbcHEIsb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48227 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934875AbcHEJri (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 04:48:31 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Fri, 5 Aug 2016 05:47:38 -0400
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OBF005SFHSRAD20@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 09:48:28 +0100 (BST)
-In-reply-to: <20160804210323.GK10383@sirena.org.uk>
+ with ESMTP id <0OBF00I10KJBMJ30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 18:47:35 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 08/04/2016 11:03 PM, Mark Brown wrote:
-> Does L3 actually support multiple devices?
+Switch from pr_* to dev_* macros and drop some debug traces.
 
->From the bus operation description in a few datasheets of the Philips'
-UDA13XX codecs I have checked I would say it's possible to have multiple
-devices working on same bus.  The slave devices are selectable by 6
-most significant bits of the address byte and the device addresses
-seem to be unique at first sight.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
 
-"In the event that the UDA1341TS receives a different address, it will
-deselect its microcontroller interface logic." (ch. 7.19 [1])
+Rebased onto topic/samsung branch.
 
-However I can't answer yes for sure, I've never seen multiple device
-operation mentioned explicitly in the datasheets nor such an hardware
-configuration.
+ sound/soc/samsung/s3c24xx_uda134x.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-[1] http://www.nxp.com/documents/data_sheet/UDA1341TS.pdf
+diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
+index 13e52fb..1619e76 100644
+--- a/sound/soc/samsung/s3c24xx_uda134x.c
++++ b/sound/soc/samsung/s3c24xx_uda134x.c
+@@ -62,18 +62,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ #endif
+
+ 	mutex_lock(&clk_lock);
+-	pr_debug("%s %d\n", __func__, clk_users);
++
+ 	if (clk_users == 0) {
+ 		xtal = clk_get(rtd->dev, "xtal");
+ 		if (IS_ERR(xtal)) {
+-			printk(KERN_ERR "%s cannot get xtal\n", __func__);
++			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
+ 			ret = PTR_ERR(xtal);
+ 		} else {
+ 			pclk = clk_get(&s3c24xx_uda134x_snd_device->dev,
+ 				       "pclk");
+ 			if (IS_ERR(pclk)) {
+-				printk(KERN_ERR "%s cannot get pclk\n",
+-				       __func__);
++				dev_err(rtd->dev, "%s cannot get pclk\n",
++					__func__);
+ 				clk_put(xtal);
+ 				ret = PTR_ERR(pclk);
+ 			}
+@@ -99,8 +99,8 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ 						 SNDRV_PCM_HW_PARAM_RATE,
+ 						 &hw_constraints_rates);
+ 		if (ret < 0)
+-			printk(KERN_ERR "%s cannot set constraints\n",
+-			       __func__);
++			dev_err(rtd->dev, "%s cannot set constraints\n",
++				__func__);
+ #endif
+ 	}
+ 	return ret;
+@@ -109,7 +109,6 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
+ {
+ 	mutex_lock(&clk_lock);
+-	pr_debug("%s %d\n", __func__, clk_users);
+ 	clk_users -= 1;
+ 	if (clk_users == 0) {
+ 		clk_put(xtal);
+@@ -156,18 +155,19 @@ static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
+ 		clk_source = S3C24XX_CLKSRC_PCLK;
+ 		div = bi % 33;
+ 	}
+-	pr_debug("%s desired rate %lu, %d\n", __func__, rate, bi);
++
++	dev_dbg(rtd->dev, "%s desired rate %lu, %d\n", __func__, rate, bi);
+
+ 	clk = (fs_mode == S3C2410_IISMOD_384FS ? 384 : 256) * rate;
+-	pr_debug("%s will use: %s %s %d sysclk %d err %ld\n", __func__,
+-		 fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
+-		 clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
+-		 div, clk, err);
++
++	dev_dbg(rtd->dev, "%s will use: %s %s %d sysclk %d err %ld\n", __func__,
++		fs_mode == S3C2410_IISMOD_384FS ? "384FS" : "256FS",
++		clk_source == S3C24XX_CLKSRC_MPLL ? "MPLLin" : "PCLK",
++		div, clk, err);
+
+ 	if ((err * 100 / rate) > 5) {
+-		printk(KERN_ERR "S3C24XX_UDA134X: effective frequency "
+-		       "too different from desired (%ld%%)\n",
+-		       err * 100 / rate);
++		dev_err(rtd->dev, "effective frequency too different "
++				  "from desired (%ld%%)\n", err * 100 / rate);
+ 		return -EINVAL;
+ 	}
+
+--
+1.9.1
