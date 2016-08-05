@@ -1,95 +1,96 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: dwc: Drop DMA channel names assignment" to the asoc tree
-Date: Fri, 05 Aug 2016 13:09:04 +0100
-Message-ID: <E1bVdw0-0002dt-JY@debutante>
-References: <1470306152-15441-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56702 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161217AbcHEMJO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 08:09:14 -0400
-In-Reply-To: <1470306152-15441-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/4] mfd: Add DT bindings documentation for Samsung
+ Exynos LPASS
+Date: Fri, 5 Aug 2016 14:36:28 +0100
+Message-ID: <20160805133628.GG5243@dell>
+References: <1467738785-31410-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1467738785-31410-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, Jose.Abreu@synopsys.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Andrew.Jackson@arm.com, rajeevk-dlh.kumar@st.com
+Cc: broonie@kernel.org, robh@kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, ideal.song@samsung.com, inki.dae@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+On Tue, 05 Jul 2016, Sylwester Nawrocki wrote:
 
-   ASoC: dwc: Drop DMA channel names assignment
+> This patch adds documentation of the DT bindings for the Samsung
+> Exynos SoC Low Power Audio Subsystem.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> 
+> There were few rather significant additions since v3 and I had to drop tags:
+>  Acked-by: Rob Herring <robh@kernel.org>
+>  Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Changes since v3:
+>  - moved to Documentation/devicetree/bindings/mfd,
+>  - added #address-cells, #size-cells, ranges as required
+>    properties,
+>  - added description of the IP block subnodes and links
+>    to their binding's documentation.
+> 
+> Changes since v2:
+>  - none.
+> ---
+>  .../bindings/mfd/samsung,exynos5433-lpass.txt       | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+> new file mode 100644
+> index 0000000..7e97c0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+> @@ -0,0 +1,21 @@
+> +
 
-has been applied to the asoc tree at
+Nit: This line is superfluous.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> +Samsung Exynos SoC Low Power Audio Subsystem (LPASS)
+> +
+> +Required properties:
+> +
+> + - compatible : "samsung,exynos5433-lpass"
+> + - reg : should contain the LPASS top SFR region location and size
+> + - samsung,pmu-syscon : the phandle to the Power Management Unit node
+> + - #address-cells: should be 1
+> + - #size-cells: should be 1
+> + - ranges: must be present
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+These look so much better like:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+- compatible  	   	  : "samsung,exynos5433-lpass"
+- reg		   	  : should contain the LPASS top SFR region location and size
+- samsung,pmu-syscon 	  : the phandle to the Power Management Unit node
+- #address-cells	  : should be 1
+- #size-cells		  : should be 1
+- ranges		  : must be present
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> +Each IP block of the Low Power Audio Subsystem should be specified
+> +as an optional sub-node. For "samsung,exynos5433-lpass" compatible
+> +this includes: UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, WDT 0...1
+> +devices.
+> +
+> +Bindings of the sub-nodes are described in:
+> + Documentation/devicetree/bindings/serial/samsung_uart.txt
+> + Documentation/devicetree/bindings/sound/samsung-i2s.txt
+> + Documentation/devicetree/bindings/dma/arm-pl330.txt
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Use relative path names:
 
-Thanks,
-Mark
+../serial/samsung_uart.txt
+../sound/samsung-i2s.txt
+../dma/arm-pl330.txt
 
->From 8bb9d4991657fc79874076b89f96601e6b32319a Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 4 Aug 2016 12:22:32 +0200
-Subject: [PATCH] ASoC: dwc: Drop DMA channel names assignment
+Missing example?
 
-The dw_configure_dai_by_dt() function and further dev->{play,capture}
-_dma_data.dt data structures seem to be used in this driver only in case
-of a system using devicetree, thus chan_name assignments have no effect
-since they will be ignored in dmaengine_pcm_request_chan_of() call and
-will be substituted with values taken form dmaengine_pcm_dma_channel_names[]
-table ("tx", "rx").
-
-Also there is no any "TX", "RX" dma-names entries in arch/arm/boot/dts,
-only lower case "tx", "rx" seem to be used.
-
-Lastly, this driver doesn't set SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME
-flag when registering a dmaengine PCM to indicate the chan_name should be
-used.
-
-My intention is to eventually remove the struct snd_dmaengine_dai_dma_data
-chan_name field as there is also a chan_names[] field in struct
-snd_dmaengine_pcm_config which can be used for same purpose.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/dwc/designware_i2s.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/sound/soc/dwc/designware_i2s.c b/sound/soc/dwc/designware_i2s.c
-index dc97f4349e66..2998954a1c74 100644
---- a/sound/soc/dwc/designware_i2s.c
-+++ b/sound/soc/dwc/designware_i2s.c
-@@ -577,7 +577,6 @@ static int dw_configure_dai_by_dt(struct dw_i2s_dev *dev,
- 		dev->capability |= DWC_I2S_PLAY;
- 		dev->play_dma_data.dt.addr = res->start + I2S_TXDMA;
- 		dev->play_dma_data.dt.addr_width = bus_widths[idx];
--		dev->play_dma_data.dt.chan_name = "TX";
- 		dev->play_dma_data.dt.fifo_size = fifo_depth *
- 			(fifo_width[idx2]) >> 8;
- 		dev->play_dma_data.dt.maxburst = 16;
-@@ -588,7 +587,6 @@ static int dw_configure_dai_by_dt(struct dw_i2s_dev *dev,
- 		dev->capability |= DWC_I2S_RECORD;
- 		dev->capture_dma_data.dt.addr = res->start + I2S_RXDMA;
- 		dev->capture_dma_data.dt.addr_width = bus_widths[idx];
--		dev->capture_dma_data.dt.chan_name = "RX";
- 		dev->capture_dma_data.dt.fifo_size = fifo_depth *
- 			(fifo_width[idx2] >> 8);
- 		dev->capture_dma_data.dt.maxburst = 16;
 -- 
-2.8.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
