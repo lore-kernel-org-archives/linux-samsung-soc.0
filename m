@@ -1,48 +1,37 @@
-From: Mark Brown <broonie@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [PATCH RESEND 7/8] ASoC: samsung: s3c24xx_uda134x: debug/error
  trace cleanup
-Date: Fri, 5 Aug 2016 11:03:43 +0100
-Message-ID: <20160805100343.GO10383@sirena.org.uk>
+Date: Fri, 05 Aug 2016 12:20:58 +0200
+Message-ID: <3fcce0ec-0cbc-20f0-adc2-30ea53f83106@samsung.com>
 References: <1470390429-30902-1-git-send-email-s.nawrocki@samsung.com>
+ <20160805100343.GO10383@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5FetH82qe0Z6y/zI"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54796 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751799AbcHEKD5 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42084 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759483AbcHEKWH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 06:03:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1470390429-30902-1-git-send-email-s.nawrocki@samsung.com>
+	Fri, 5 Aug 2016 06:22:07 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OBF005BXM37AB50@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Aug 2016 11:21:07 +0100 (BST)
+In-reply-to: <20160805100343.GO10383@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
 
+On 08/05/2016 12:03 PM, Mark Brown wrote:
+> On Fri, Aug 05, 2016 at 11:47:09AM +0200, Sylwester Nawrocki wrote:
+>> > Switch from pr_* to dev_* macros and drop some debug traces.
+>
+> I've only got patch 7 here, what's the story with the other patches?
 
---5FetH82qe0Z6y/zI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 05, 2016 at 11:47:09AM +0200, Sylwester Nawrocki wrote:
-> Switch from pr_* to dev_* macros and drop some debug traces.
-
-I've only got patch 7 here, what's the story with the other patches?
-
---5FetH82qe0Z6y/zI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXpGR4AAoJECTWi3JdVIfQ79UH/iTaFVb3O99hDHo43s6Yo2dQ
-8On9rrQOW1RfAmnPj/95qywJnuYrS1lgpqL5f0FWlPX4bTLF7UtvNRon3tZ7RJft
-DiAiJlqtCJIJQsuhDanvQe7YwtTtrTi0gI843hBgYrgT/2GcQzL6onupNkCw0fHV
-1zvqQ1Q30MMoHk6GoqIYCfhwrfcLvrS5mEIXkxBUz2tAUYWO5PqFP0egxUAalibI
-UGU1dHpUDHjtGVx7IOit3a8OWM2XRC7W8foSDnS5+M/IoogN0NOi+l7LiziaV17N
-2MOYfccfUyKn1KZIgB9FuOgj+PznV4iqT5DTryz60HIGBvahYkDXoH1SCpjFWYM=
-=cum7
------END PGP SIGNATURE-----
-
---5FetH82qe0Z6y/zI--
+I didn't resend them since I got notification they are already applied
+(1/8...6/8). Should I resend all patches as in this branch:
+https://git.linuxtv.org/snawrocki/samsung.git/log/?h=for-v4.9/asoc/s3c24xx_uda134x
+?
