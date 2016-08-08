@@ -1,67 +1,42 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] exynos-drm: Fix unsupported GEM memory type error message
- to be clear
-Date: Mon, 8 Aug 2016 15:30:08 -0600
-Message-ID: <57A8F9E0.5000804@osg.samsung.com>
-References: <1470448206-16538-1-git-send-email-shuahkh@osg.samsung.com>
- <20160808165657.GB5959@kozik-book>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:33032
-	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752345AbcHHVaU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 17:30:20 -0400
-In-Reply-To: <20160808165657.GB5959@kozik-book>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v2] exynos-drm: Fix unsupported GEM memory type error message to be clear
+Date: Mon,  8 Aug 2016 17:48:20 -0600
+Message-ID: <1470700100-13306-1-git-send-email-shuahkh@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 08/08/2016 10:56 AM, Krzysztof Kozlowski wrote:
-> On Fri, Aug 05, 2016 at 07:50:06PM -0600, Shuah Khan wrote:
->> Fix unsupported GEM memory type error message to include the memory type
->> information.
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_fb.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
->> index e016640..c9315df 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
->> @@ -55,11 +55,11 @@ static int check_fb_gem_memory_type(struct drm_device *drm_dev,
->>  	flags = exynos_gem->flags;
->>  
->>  	/*
->> -	 * without iommu support, not support physically non-continuous memory
->> +	 * without iommu support, not support physically non-contiguous memory
-> 
-> While at it, how about changing entire sentence to something in English? :)
+Fix unsupported GEM memory type error message to include the memory type
+information.
 
-Yes I can do that. Will send v2 :)
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
+Changes since v1:
+-- Comment changed to read clearly
 
-> 
-> Best regards,
-> Krzysztof
-> 
->>  	 * for framebuffer.
->>  	 */
->>  	if (IS_NONCONTIG_BUFFER(flags)) {
->> -		DRM_ERROR("cannot use this gem memory type for fb.\n");
->> +		DRM_ERROR("Non-continguous GEM memory is not supported.\n");
->>  		return -EINVAL;
->>  	}
->>  
->> -- 
->> 2.7.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ drivers/gpu/drm/exynos/exynos_drm_fb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index e016640..40ce841 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -55,11 +55,11 @@ static int check_fb_gem_memory_type(struct drm_device *drm_dev,
+ 	flags = exynos_gem->flags;
+ 
+ 	/*
+-	 * without iommu support, not support physically non-continuous memory
+-	 * for framebuffer.
++	 * Physically non-contiguous memory type for framebuffer is not
++	 * supported without IOMMU.
+ 	 */
+ 	if (IS_NONCONTIG_BUFFER(flags)) {
+-		DRM_ERROR("cannot use this gem memory type for fb.\n");
++		DRM_ERROR("Non-contiguous GEM memory is not supported.\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.7.4
