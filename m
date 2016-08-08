@@ -1,228 +1,67 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH v2] drm/bridge: analogix_dp: Ensure the panel is properly prepared/unprepared
-Date: Mon,  8 Aug 2016 14:53:18 -0400
-Message-ID: <1470682398-18982-1-git-send-email-seanpaul@chromium.org>
-References: <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] exynos-drm: Fix unsupported GEM memory type error message
+ to be clear
+Date: Mon, 8 Aug 2016 15:30:08 -0600
+Message-ID: <57A8F9E0.5000804@osg.samsung.com>
+References: <1470448206-16538-1-git-send-email-shuahkh@osg.samsung.com>
+ <20160808165657.GB5959@kozik-book>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:35441 "EHLO
-	mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752268AbcHHSxa (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:33032
+	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752345AbcHHVaU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 14:53:30 -0400
-Received: by mail-qt0-f178.google.com with SMTP id x25so208212830qtx.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2016 11:53:29 -0700 (PDT)
-In-Reply-To: <1469819791-31860-1-git-send-email-seanpaul@chromium.org>
+	Mon, 8 Aug 2016 17:30:20 -0400
+In-Reply-To: <20160808165657.GB5959@kozik-book>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ykk@rock-chips.com
-Cc: yzq@rock-chips.com, inki.dae@samsung.com, treding@nvidia.com, heiko@sntech.de, jingoohan1@gmail.com, javier@osg.samsung.com, marcheu@chromium.org, tfiga@chromium.org, dianders@chromium.org, airlied@linux.ie, daniel.vetter@ffwll.ch, k.kozlowski@samsung.com, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Sean Paul <seanpaul@chromium.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-Instead of just preparing the panel on bind, actually prepare/unprepare
-during modeset/disable. The panel must be prepared in order to read hpd
-status and edid, so we need to keep state around the prepares in order
-to ensure we don't accidentally turn the panel off at the wrong time.
+On 08/08/2016 10:56 AM, Krzysztof Kozlowski wrote:
+> On Fri, Aug 05, 2016 at 07:50:06PM -0600, Shuah Khan wrote:
+>> Fix unsupported GEM memory type error message to include the memory type
+>> information.
+>>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fb.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+>> index e016640..c9315df 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+>> @@ -55,11 +55,11 @@ static int check_fb_gem_memory_type(struct drm_device *drm_dev,
+>>  	flags = exynos_gem->flags;
+>>  
+>>  	/*
+>> -	 * without iommu support, not support physically non-continuous memory
+>> +	 * without iommu support, not support physically non-contiguous memory
+> 
+> While at it, how about changing entire sentence to something in English? :)
 
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
----
+Yes I can do that. Will send v2 :)
 
-Changes in v2:
- - Added panel_is_modeset state/lock to avoid racing detect with modeset (marcheu)
- - Added prepare/unprepare in .get_modes (yakir)
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 101 ++++++++++++++++++---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   3 +
- 2 files changed, 93 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 32715da..47c449a 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -923,11 +923,63 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 	analogix_dp_start_video(dp);
- }
- 
-+/*
-+ * This function is a bit of a catch-all for panel preparation, hopefully
-+ * simplifying the logic of functions that need to prepare/unprepare the panel
-+ * below.
-+ *
-+ * If @prepare is true, this function will prepare the panel. Conversely, if it
-+ * is false, the panel will be unprepared.
-+ *
-+ * If @is_modeset_prepare is true, the function will disregard the current state
-+ * of the panel and either prepare/unprepare the panel based on @prepare. Once
-+ * it finishes, it will update dp->panel_is_modeset to reflect the current state
-+ * of the panel.
-+ */
-+static int analogix_dp_prepare_panel(struct analogix_dp_device *dp,
-+				     bool prepare, bool is_modeset_prepare)
-+{
-+	int ret = 0;
-+
-+	if (!dp->plat_data->panel)
-+		return 0;
-+
-+	mutex_lock(&dp->panel_lock);
-+
-+	/*
-+	 * Exit early if this is a temporary prepare/unprepare and we're already
-+	 * modeset (since we neither want to prepare twice or unprepare early).
-+	 */
-+	if (dp->panel_is_modeset && !is_modeset_prepare)
-+		goto out;
-+
-+	if (prepare)
-+		ret = drm_panel_prepare(dp->plat_data->panel);
-+	else
-+		ret = drm_panel_unprepare(dp->plat_data->panel);
-+
-+	if (ret)
-+		goto out;
-+
-+	if (is_modeset_prepare)
-+		dp->panel_is_modeset = prepare;
-+
-+out:
-+	mutex_unlock(&dp->panel_lock);
-+	return ret;
-+}
-+
- int analogix_dp_get_modes(struct drm_connector *connector)
- {
- 	struct analogix_dp_device *dp = to_dp(connector);
- 	struct edid *edid = (struct edid *)dp->edid;
--	int num_modes = 0;
-+	int ret, num_modes = 0;
-+
-+	ret = analogix_dp_prepare_panel(dp, true, false);
-+	if (ret) {
-+		DRM_ERROR("Failed to prepare panel (%d)\n", ret);
-+		return 0;
-+	}
- 
- 	if (analogix_dp_handle_edid(dp) == 0) {
- 		drm_mode_connector_update_edid_property(&dp->connector, edid);
-@@ -940,6 +992,10 @@ int analogix_dp_get_modes(struct drm_connector *connector)
- 	if (dp->plat_data->get_modes)
- 		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
- 
-+	ret = analogix_dp_prepare_panel(dp, false, false);
-+	if (ret)
-+		DRM_ERROR("Failed to unprepare panel (%d)\n", ret);
-+
- 	return num_modes;
- }
- 
-@@ -960,11 +1016,23 @@ enum drm_connector_status
- analogix_dp_detect(struct drm_connector *connector, bool force)
- {
- 	struct analogix_dp_device *dp = to_dp(connector);
-+	enum drm_connector_status status = connector_status_disconnected;
-+	int ret;
- 
--	if (analogix_dp_detect_hpd(dp))
-+	ret = analogix_dp_prepare_panel(dp, true, false);
-+	if (ret) {
-+		DRM_ERROR("Failed to prepare panel (%d)\n", ret);
- 		return connector_status_disconnected;
-+	}
-+
-+	if (!analogix_dp_detect_hpd(dp))
-+		status = connector_status_connected;
- 
--	return connector_status_connected;
-+	ret = analogix_dp_prepare_panel(dp, false, false);
-+	if (ret)
-+		DRM_ERROR("Failed to unprepare panel (%d)\n", ret);
-+
-+	return status;
- }
- 
- static void analogix_dp_connector_destroy(struct drm_connector *connector)
-@@ -1035,6 +1103,16 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge)
- 	return 0;
- }
- 
-+static void analogix_dp_bridge_pre_enable(struct drm_bridge *bridge)
-+{
-+	struct analogix_dp_device *dp = bridge->driver_private;
-+	int ret;
-+
-+	ret = analogix_dp_prepare_panel(dp, true, true);
-+	if (ret)
-+		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
-+}
-+
- static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
- {
- 	struct analogix_dp_device *dp = bridge->driver_private;
-@@ -1058,6 +1136,7 @@ static void analogix_dp_bridge_enable(struct drm_bridge *bridge)
- static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- {
- 	struct analogix_dp_device *dp = bridge->driver_private;
-+	int ret;
- 
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
-@@ -1077,6 +1156,10 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 
- 	pm_runtime_put_sync(dp->dev);
- 
-+	ret = analogix_dp_prepare_panel(dp, false, true);
-+	if (ret)
-+		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
-+
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- }
- 
-@@ -1165,9 +1248,9 @@ static void analogix_dp_bridge_nop(struct drm_bridge *bridge)
- }
- 
- static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
-+	.pre_enable = analogix_dp_bridge_pre_enable,
- 	.enable = analogix_dp_bridge_enable,
- 	.disable = analogix_dp_bridge_disable,
--	.pre_enable = analogix_dp_bridge_nop,
- 	.post_disable = analogix_dp_bridge_nop,
- 	.mode_set = analogix_dp_bridge_mode_set,
- 	.attach = analogix_dp_bridge_attach,
-@@ -1254,6 +1337,9 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 	dp->dev = &pdev->dev;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- 
-+	mutex_init(&dp->panel_lock);
-+	dp->panel_is_modeset = false;
-+
- 	/*
- 	 * platform dp driver need containor_of the plat_data to get
- 	 * the driver private data, so we need to store the point of
-@@ -1333,13 +1419,6 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 
- 	phy_power_on(dp->phy);
- 
--	if (dp->plat_data->panel) {
--		if (drm_panel_prepare(dp->plat_data->panel)) {
--			DRM_ERROR("failed to setup the panel\n");
--			return -EBUSY;
--		}
--	}
--
- 	analogix_dp_init_dp(dp);
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index b456380..43108d7 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -178,6 +178,9 @@ struct analogix_dp_device {
- 	bool                    force_hpd;
- 	unsigned char           edid[EDID_BLOCK_LENGTH * 2];
- 
-+	struct mutex		panel_lock;
-+	bool			panel_is_modeset;
-+
- 	struct analogix_dp_plat_data *plat_data;
- };
- 
--- 
-2.8.0.rc3.226.g39d4020
+> 
+> Best regards,
+> Krzysztof
+> 
+>>  	 * for framebuffer.
+>>  	 */
+>>  	if (IS_NONCONTIG_BUFFER(flags)) {
+>> -		DRM_ERROR("cannot use this gem memory type for fb.\n");
+>> +		DRM_ERROR("Non-continguous GEM memory is not supported.\n");
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> -- 
+>> 2.7.4
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
