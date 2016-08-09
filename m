@@ -1,32 +1,37 @@
 From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 2/4] mfd: Add Samsung Exynos Low Power Audio Subsystem
+Subject: Re: [PATCH v5 2/2] mfd: Add Samsung Exynos Low Power Audio Subsystem
  driver
-Date: Tue, 9 Aug 2016 16:05:02 +0100
-Message-ID: <20160809150502.GQ5243@dell>
-References: <1467738804-31460-1-git-send-email-s.nawrocki@samsung.com>
+Date: Tue, 9 Aug 2016 16:29:21 +0100
+Message-ID: <20160809152921.GT5243@dell>
+References: <1470749875-9006-1-git-send-email-s.nawrocki@samsung.com>
+ <1470749875-9006-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1467738804-31460-1-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1470749875-9006-2-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 05 Jul 2016, Sylwester Nawrocki wrote:
+On Tue, 09 Aug 2016, Sylwester Nawrocki wrote:
 
-> This patch adds common driver for the Top block of the Samsung Exynos
-> SoC Low Power Audio Subsystem. This is a minimal driver which prepares
-> resources for IP blocks like I2S, audio DMA and UART and exposes a regmap
-> for the Top block registers. Also system power ops are added to ensure
-> the Audio Subsystem is operational after system suspend/resume cycle.
+> This patch adds common driver for the Top block of the Samsung Exynos SoC
+> Low Power Audio Subsystem. This is a minimal driver which prepares resources
+> for IP blocks like I2S, audio DMA and UART and exposes a regmap for the Top
+> block registers. Also system power ops are added to ensure the Audio Subsystem
+> is operational after system suspend/resume cycle.
 > 
 > Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > Signed-off-by: Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
+> 
+> Changes since v4:
+
+I only just reviewed v4.
 > 
 > Changes since v3:
 >  - moved from sound/soc/samsung and rewritten as a MFD driver,
@@ -46,10 +51,10 @@ On Tue, 05 Jul 2016, Sylwester Nawrocki wrote:
 >  create mode 100644 drivers/mfd/exynos-lpass.c
 > 
 > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 1bcf601..fc2dffb 100644
+> index 2d1fb64..a7ec890 100644
 > --- a/drivers/mfd/Kconfig
 > +++ b/drivers/mfd/Kconfig
-> @@ -270,6 +270,14 @@ config MFD_DLN2
+> @@ -281,6 +281,14 @@ config MFD_DLN2
 >  	  etc. must be enabled in order to use the functionality of
 >  	  the device.
 > 
@@ -65,7 +70,7 @@ On Tue, 05 Jul 2016, Sylwester Nawrocki wrote:
 >  	tristate
 >  	depends on (SPI_MASTER || I2C)
 > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 42a66e1..5c4be31 100644
+> index 2ba3ba3..41510bb 100644
 > --- a/drivers/mfd/Makefile
 > +++ b/drivers/mfd/Makefile
 > @@ -13,6 +13,7 @@ obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
@@ -133,16 +138,12 @@ On Tue, 05 Jul 2016, Sylwester Nawrocki wrote:
 > +#define  LPASS_INTR_SLIMBUS		(1 << 2)
 > +#define  LPASS_INTR_UART		(1 << 1)
 > +#define  LPASS_INTR_SFR			(1 << 0)
-
-Use BIT() for all the '1 <<' stuff.
-
+> +
 > +struct exynos_lpass {
 > +	struct regmap *pmu;
 > +	struct regmap *top;
 > +};
-
-Add some kerneldoc to identify these.
-
+> +
 > +static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
 > +{
 > +	unsigned int val = 0;
@@ -203,18 +204,13 @@ Add some kerneldoc to identify these.
 > +
 > +	if (!dev->of_node)
 > +		return -ENODEV;
-
-This can't happen.
-
+> +
 > +	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
 > +	if (!lpass)
 > +		return -ENOMEM;
 > +
 > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 > +
-
-Superfluous '\n'.
-
 > +	base_top = devm_ioremap_resource(dev, res);
 > +	if (IS_ERR(base_top))
 > +		return PTR_ERR(base_top);
@@ -244,9 +240,6 @@ Superfluous '\n'.
 > +	struct exynos_lpass *lpass = dev_get_drvdata(dev);
 > +
 > +	exynos_lpass_disable(lpass);
-
-'\n' here.
-
 > +	return 0;
 > +}
 > +
@@ -255,26 +248,18 @@ Superfluous '\n'.
 > +	struct exynos_lpass *lpass = dev_get_drvdata(dev);
 > +
 > +	exynos_lpass_enable(lpass);
-
-'\n' here.
-
 > +	return 0;
 > +}
 > +
 > +static const struct of_device_id exynos_lpass_of_match[] = {
 > +	{ .compatible	= "samsung,exynos5433-lpass" },
-
-Too many ' 's.
-
 > +	{ },
 > +};
 > +MODULE_DEVICE_TABLE(of, exynos_lpass_of_match);
 > +
 > +static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
 > +					exynos_lpass_resume);
-
-Put this up by the PM functions.
-
+> +
 > +static struct platform_driver exynos_lpass_driver = {
 > +	.driver = {
 > +		.name		= "exynos-lpass",
