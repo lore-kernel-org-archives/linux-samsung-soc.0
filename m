@@ -1,288 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v5 2/2] mfd: Add Samsung Exynos Low Power Audio Subsystem driver
-Date: Tue, 09 Aug 2016 15:37:55 +0200
-Message-ID: <1470749875-9006-2-git-send-email-s.nawrocki@samsung.com>
-References: <1470749875-9006-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56518 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932720AbcHINiX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 09:38:23 -0400
-In-reply-to: <1470749875-9006-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
+Date: Tue, 9 Aug 2016 15:59:52 +0200
+Message-ID: <20160809135952.GA1666@katana>
+References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
+ <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
+ <20160809115740.GA5528@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160809115740.GA5528@pengutronix.de>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Ludovic Desroches <ludovic.desroches@atmel.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, Sonic Zhang <sonic.zhang@analog.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Jochen Friedrich <jochen@scram.de>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <kernel@pengutronix.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seth
 List-Id: linux-samsung-soc@vger.kernel.org
-To: lee.jones@linaro.org
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org, robh@kernel.org, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Inha Song <ideal.song@samsung.com>, Beomho Seo <beomho.seo@samsung.com>
 
-This patch adds common driver for the Top block of the Samsung Exynos SoC
-Low Power Audio Subsystem. This is a minimal driver which prepares resources
-for IP blocks like I2S, audio DMA and UART and exposes a regmap for the Top
-block registers. Also system power ops are added to ensure the Audio Subsystem
-is operational after system suspend/resume cycle.
 
-Signed-off-by: Inha Song <ideal.song@samsung.com>
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v4:
- - none.
+On Tue, Aug 09, 2016 at 01:57:40PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Wolfram,
+>=20
+> On Tue, Aug 09, 2016 at 01:36:17PM +0200, Wolfram Sang wrote:
+> > The core will do this for us now.
+>=20
+> Would be nice to point out the relevant commit that changed the core in
+> the commit log.
 
-Changes since v3:
- - moved from sound/soc/samsung and rewritten as a MFD driver,
- - PMU register definitions moved to include/linux/mfd/syscon/exynos5-pmu.h,
- - added regmap for LPASS Top SFR region,
- - cleaned up register bit field defintions.
+I agree, but it was a series of commits[1] so I skipped that idea.
 
-Changes since v2:
- - move misplaced SND_SAMSUNG_AUDSS Kconfig symbol addition
-   to this patch.
----
- drivers/mfd/Kconfig                    |   8 ++
- drivers/mfd/Makefile                   |   1 +
- drivers/mfd/exynos-lpass.c             | 185 +++++++++++++++++++++++++++++++++
- include/linux/mfd/syscon/exynos5-pmu.h |   4 +-
- 4 files changed, 197 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mfd/exynos-lpass.c
+[1] http://www.spinics.net/lists/linux-i2c/msg25496.html
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 2d1fb64..a7ec890 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -281,6 +281,14 @@ config MFD_DLN2
- 	  etc. must be enabled in order to use the functionality of
- 	  the device.
 
-+config MFD_EXYNOS_LPASS
-+	tristate "Samsung Exynos SoC Low Power Audio Subsystem"
-+	select MFD_CORE
-+	select REGMAP_MMIO
-+	help
-+	  Select this option to enable support for Samsung Exynos Low Power
-+	  Audio Subsystem.
-+
- config MFD_MC13XXX
- 	tristate
- 	depends on (SPI_MASTER || I2C)
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 2ba3ba3..41510bb 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
- obj-$(CONFIG_MFD_CROS_EC)	+= cros_ec.o
- obj-$(CONFIG_MFD_CROS_EC_I2C)	+= cros_ec_i2c.o
- obj-$(CONFIG_MFD_CROS_EC_SPI)	+= cros_ec_spi.o
-+obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
 
- rtsx_pci-objs			:= rtsx_pcr.o rts5209.o rts5229.o rtl8411.o rts5227.o rts5249.o
- obj-$(CONFIG_MFD_RTSX_PCI)	+= rtsx_pci.o
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-new file mode 100644
-index 0000000..956ce1f
---- /dev/null
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -0,0 +1,185 @@
-+/*
-+ * Copyright (C) 2015 - 2016 Samsung Electronics Co., Ltd.
-+ *
-+ * Authors: Inha Song <ideal.song@samsung.com>
-+ *          Sylwester Nawrocki <s.nawrocki@samsung.com>
-+ *
-+ * Samsung Exynos SoC series Low Power Audio Subsystem driver.
-+ *
-+ * This module provides regmap for the Top SFR region and instantiates
-+ * devices for IP blocks like DMAC, I2S, UART.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/exynos5-pmu.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+/* LPASS Top register definitions */
-+#define SFR_LPASS_CORE_SW_RESET		(0x08)
-+#define  LPASS_SB_SW_RESET		(1 << 11)
-+#define  LPASS_UART_SW_RESET		(1 << 10)
-+#define  LPASS_PCM_SW_RESET		(1 << 9)
-+#define  LPASS_I2S_SW_RESET		(1 << 8)
-+#define  LPASS_WDT1_SW_RESET		(1 << 4)
-+#define  LPASS_WDT0_SW_RESET		(1 << 3)
-+#define  LPASS_TIMER_SW_RESET		(1 << 2)
-+#define  LPASS_MEM_SW_RESET		(1 << 1)
-+#define  LPASS_DMA_SW_RESET		(1 << 0)
-+
-+#define SFR_LPASS_INTR_CA5_MASK		(0x48)
-+#define SFR_LPASS_INTR_CPU_MASK		(0x58)
-+#define  LPASS_INTR_APM			(1 << 9)
-+#define  LPASS_INTR_MIF			(1 << 8)
-+#define  LPASS_INTR_TIMER		(1 << 7)
-+#define  LPASS_INTR_DMA			(1 << 6)
-+#define  LPASS_INTR_GPIO		(1 << 5)
-+#define  LPASS_INTR_I2S			(1 << 4)
-+#define  LPASS_INTR_PCM			(1 << 3)
-+#define  LPASS_INTR_SLIMBUS		(1 << 2)
-+#define  LPASS_INTR_UART		(1 << 1)
-+#define  LPASS_INTR_SFR			(1 << 0)
-+
-+struct exynos_lpass {
-+	struct regmap *pmu;
-+	struct regmap *top;
-+};
-+
-+static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
-+{
-+	unsigned int val = 0;
-+
-+	regmap_read(lpass->top, SFR_LPASS_CORE_SW_RESET, &val);
-+
-+	val &= ~mask;
-+	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
-+
-+	usleep_range(100, 150);
-+
-+	val |= mask;
-+	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
-+}
-+
-+static void exynos_lpass_enable(struct exynos_lpass *lpass)
-+{
-+	/* Unmask SFR, DMA and I2S interrupt */
-+	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
-+		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
-+
-+	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK,
-+		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
-+
-+	/* Activate related PADs from retention state */
-+	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
-+		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
-+
-+	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
-+	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
-+	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
-+}
-+
-+static void exynos_lpass_disable(struct exynos_lpass *lpass)
-+{
-+	/* Mask any unmasked IP interrupt sources */
-+	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK, 0);
-+	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK, 0);
-+
-+	/* Deactivate related PADs from retention state */
-+	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION, 0);
-+}
-+
-+static const struct regmap_config exynos_lpass_reg_conf = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xfc,
-+	.fast_io	= true,
-+};
-+
-+static int exynos_lpass_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct exynos_lpass *lpass;
-+	void __iomem *base_top;
-+	struct resource *res;
-+
-+	if (!dev->of_node)
-+		return -ENODEV;
-+
-+	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
-+	if (!lpass)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+
-+	base_top = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base_top))
-+		return PTR_ERR(base_top);
-+
-+	lpass->top = regmap_init_mmio(dev, base_top,
-+					&exynos_lpass_reg_conf);
-+	if (IS_ERR(lpass->top)) {
-+		dev_err(dev, "LPASS top regmap initialization failed\n");
-+		return PTR_ERR(lpass->top);
-+	}
-+
-+	lpass->pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						"samsung,pmu-syscon");
-+	if (IS_ERR(lpass->pmu)) {
-+		dev_err(dev, "Failed to lookup PMU regmap\n");
-+		return PTR_ERR(lpass->pmu);
-+	}
-+
-+	platform_set_drvdata(pdev, lpass);
-+	exynos_lpass_enable(lpass);
-+
-+	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+}
-+
-+static int exynos_lpass_suspend(struct device *dev)
-+{
-+	struct exynos_lpass *lpass = dev_get_drvdata(dev);
-+
-+	exynos_lpass_disable(lpass);
-+	return 0;
-+}
-+
-+static int exynos_lpass_resume(struct device *dev)
-+{
-+	struct exynos_lpass *lpass = dev_get_drvdata(dev);
-+
-+	exynos_lpass_enable(lpass);
-+	return 0;
-+}
-+
-+static const struct of_device_id exynos_lpass_of_match[] = {
-+	{ .compatible	= "samsung,exynos5433-lpass" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, exynos_lpass_of_match);
-+
-+static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
-+					exynos_lpass_resume);
-+
-+static struct platform_driver exynos_lpass_driver = {
-+	.driver = {
-+		.name		= "exynos-lpass",
-+		.pm		= &lpass_pm_ops,
-+		.of_match_table	= exynos_lpass_of_match,
-+	},
-+	.probe	= exynos_lpass_probe,
-+};
-+module_platform_driver(exynos_lpass_driver);
-+
-+MODULE_DESCRIPTION("Samsung Low Power Audio Subsystem driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-index 76f30f9..c28ff21 100644
---- a/include/linux/mfd/syscon/exynos5-pmu.h
-+++ b/include/linux/mfd/syscon/exynos5-pmu.h
-@@ -43,8 +43,10 @@
- #define EXYNOS5433_MIPI_PHY2_CONTROL		(0x718)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
- #define EXYNOS5_PHY_ENABLE			BIT(0)
--
- #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
- #define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
+iQIcBAEBAgAGBQJXqeHYAAoJEBQN5MwUoCm2NckQAJyW/JvI0urSd/AbV7A333of
+X12IGIzG1Uw3qrR5t5D5v5/V1XRSY8Bv8EbxcRHDhQwtIG7llvZrN0Lu8dFW8KLc
+b0NiNapsFPkv7tgyOcDKvcB2f6YeTWuznWTcfCO4emNAKOt4W581rYp+NHidDNkd
+WvauJi7ZRXof0JXh6PyyjN3OBGeQZ7uBVKtxsHMi7VkLxnBjIHIqs4Qfy3UJ8t2w
+Mc0Q5oFU2XjhE57SkZYxdtOu+LSolckROvKtsCVMi1s3Nec1M1P9RD5HIIrlvah3
+H86mjmZRs+3pWwEPuhgwChmFzGdYMMO0YewET5UeZLWIxag3vl6mdii62GKLA12L
+txu2xrIWYzAk8L8ID/u40kjOe7ToNauzeqFjUHSQHctzxafjmy0nIEq5huMlFCWI
+LOlienxQBDwcEwBNJLNyxAJCfM1U8rM2qj8NOWITqySCBh7a7ETPGNe4p34s+/kD
+sdSks0LjcnSMQaVLKfKYrv7c31d6Edc2pu31SzF5R+gyeDajVXs05Zwh3/nbeMCM
+kliHCZ3S79VNBs3lKQJRCt2lI/6oorJH4cvYx8gsu1E744R4PZ9siueAvmJB1zKT
+ABziT6BTjt+PGNinBwtR/5zQ8klSTqcEPa0Kw+I1b8KXE8392yqDy3UVE7dIdWhW
+dFPYJIiAo2AgTDmSbAHT
+=kjW1
+-----END PGP SIGNATURE-----
 
-+#define EXYNOS5433_PAD_RETENTION_AUD_OPTION		(0x3028)
-+#define EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR	BIT(28)
-+
- #endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
---
-1.9.1
+--KsGdsel6WgEHnImy--
