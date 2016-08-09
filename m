@@ -1,41 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] exynos-drm: Fix unsupported GEM memory type error
- message to be clear
-Date: Tue, 9 Aug 2016 20:27:11 +0200
-Message-ID: <20160809182711.GA27335@kozik-lap>
-References: <1470700100-13306-1-git-send-email-shuahkh@osg.samsung.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] mfd: Add Samsung Exynos Low Power Audio Subsystem
+ driver
+Date: Tue, 9 Aug 2016 21:50:31 +0100
+Message-ID: <20160809205031.GD1581@dell>
+References: <1467738804-31460-1-git-send-email-s.nawrocki@samsung.com>
+ <20160809150502.GQ5243@dell>
+ <61d700f7-ef66-8278-54ea-8e6e2f1a029e@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33198 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751919AbcHIS1P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 14:27:15 -0400
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1470700100-13306-1-git-send-email-shuahkh@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <61d700f7-ef66-8278-54ea-8e6e2f1a029e-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 08, 2016 at 05:48:20PM -0600, Shuah Khan wrote:
-> Fix unsupported GEM memory type error message to include the memory type
-> information.
+On Tue, 09 Aug 2016, Sylwester Nawrocki wrote:
+
+> On 08/09/2016 05:05 PM, Lee Jones wrote:
+> >> +static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
+> >> > +					exynos_lpass_resume);
+> > Put this up by the PM functions.
 > 
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> ---
-> Changes since v1:
-> -- Comment changed to read clearly
-> 
->  drivers/gpu/drm/exynos/exynos_drm_fb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
+> Sorry, I don't understand this comment, which PM functions do you
+> mean exactly?
 
+*_suspend and *_resume.  PM == Power Management.
 
-Hi,
+You also need to place the functions in side some CONFIG_PM_SLEEP
+guards.  Grep around, you'll see what I mean.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
