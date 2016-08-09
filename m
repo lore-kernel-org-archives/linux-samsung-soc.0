@@ -1,84 +1,59 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] dm9000: Fix irq trigger type setup on non-dt platforms
-Date: Tue, 09 Aug 2016 18:00:08 +0200
-Message-ID: <1470758408-14248-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35090 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051AbcHIQAg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 12:00:36 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 2/2] ASoC: samsung: Add machine driver for Exynos5433
+ based TM2 board
+Date: Tue, 9 Aug 2016 17:02:09 +0100
+Message-ID: <20160809160209.GB9347@sirena.org.uk>
+References: <1470752514-11409-1-git-send-email-s.nawrocki@samsung.com>
+ <1470752514-11409-2-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1470752514-11409-2-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: davem@davemloft.net
-Cc: netdev@vger.kernel.org, robert.jarzmik@free.fr, linus.walleij@linaro.org, tglx@linutronix.de, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Commit b5a099c67a1c36b "net: ethernet: davicom: fix devicetree irq
-resource" causes an interrupt storm after the ethernet interface
-is activated on S3C24XX platform (ARM non-dt), due to the interrupt
-trigger type not being set properly.
 
-It seems, after adding parsing of IRQ flags in commit 7085a7401ba54e92b
-"drivers: platform: parse IRQ flags from resources", there is no path
-for non-dt platforms where irq_set_type callback could be invoked when
-we don't pass the trigger type flags to the request_irq() call.
+--gj572EiMnwbLXET9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In case of a board where the regression is seen the interrupt trigger
-type flags are passed through a platform device's resource and it is
-not currently handled properly without passing the irq trigger type
-flags to the request_irq() call.  In case of OF an of_irq_get() call
-within platform_get_irq() function seems to be ensuring required irq_chip
-setup, but there is no equivalent code for non OF/ACPI platforms.
+On Tue, Aug 09, 2016 at 04:21:54PM +0200, Sylwester Nawrocki wrote:
 
-This patch mostly restores irq trigger type setting code which has been
-removed in commit ("net: ethernet: davicom: fix devicetree irq resource").
+> +		card->dai_link[i].codec_of_node = codec_dai_node;
+> +		card->dai_link[i].cpu_of_node = cpu_dai_node;
+> +		card->dai_link[i].platform_of_node = cpu_dai_node;
+> +	}
+> +
+> +	priv->codec_mclk1 = of_clk_get_by_name(codec_dai_node, "mclk1");
+> +	if (IS_ERR(priv->codec_mclk1)) {
 
-Fixes: b5a099c67a1c36b913 ("net: ethernet: davicom: fix devicetree irq resource")
+So, all this of_clk_get_by_name() stuff is messy and is going to need to
+be duplicated for any cards using this CODEC which isn't excellent.  It
+would be a lot nicer if we just did some regular clk_get() calls in the
+MFD and then provided an interface for other drivers to get at those
+clocks (or just had the CODEC driver DTRT internally).
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
+--gj572EiMnwbLXET9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Perhaps instead the core could be configuring the irqchip automatically as it
-is done for OF/ACPI cases. I had doubts though if trying to make such changes
-for a bug fix patch was the right thing to do.
----
- drivers/net/ethernet/davicom/dm9000.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
-index 1471e16..f45385f 100644
---- a/drivers/net/ethernet/davicom/dm9000.c
-+++ b/drivers/net/ethernet/davicom/dm9000.c
-@@ -1299,6 +1299,7 @@ static int
- dm9000_open(struct net_device *dev)
- {
- 	struct board_info *db = netdev_priv(dev);
-+	unsigned int irq_flags = irq_get_trigger_type(dev->irq);
- 
- 	if (netif_msg_ifup(db))
- 		dev_dbg(db->dev, "enabling %s\n", dev->name);
-@@ -1306,9 +1307,11 @@ dm9000_open(struct net_device *dev)
- 	/* If there is no IRQ type specified, tell the user that this is a
- 	 * problem
- 	 */
--	if (irq_get_trigger_type(dev->irq) == IRQF_TRIGGER_NONE)
-+	if (irq_flags == IRQF_TRIGGER_NONE)
- 		dev_warn(db->dev, "WARNING: no IRQ resource flags set.\n");
- 
-+	irq_flags |= IRQF_SHARED;
-+
- 	/* GPIO0 on pre-activate PHY, Reg 1F is not set by reset */
- 	iow(db, DM9000_GPR, 0);	/* REG_1F bit0 activate phyxcer */
- 	mdelay(1); /* delay needs by DM9000B */
-@@ -1316,8 +1319,7 @@ dm9000_open(struct net_device *dev)
- 	/* Initialize DM9000 board */
- 	dm9000_init_dm9000(dev);
- 
--	if (request_irq(dev->irq, dm9000_interrupt, IRQF_SHARED,
--			dev->name, dev))
-+	if (request_irq(dev->irq, dm9000_interrupt, irq_flags, dev->name, dev))
- 		return -EAGAIN;
- 	/* Now that we have an interrupt handler hooked up we can unmask
- 	 * our interrupts
--- 
-1.9.1
+iQEcBAEBCAAGBQJXqf6AAAoJECTWi3JdVIfQK/MH/0v5XN/TZNh0pMlbnveM6sWZ
+uy1ZBAR64pgqYFHLtLsM7VCniWccX3qwEbNI1MFZHzDjyMRcGZkaLwIquT/VDLKX
+mYae6sgotAjjaNNvnStwQUf5ksfw2tfJV+0z1Zr9yVnT6stZDASEGVY3J20k7iB4
+TOyR2+nRAu3GEEXoy8jERNkfX77nEFYv4EDeOzITORAK2FmfqFdTAZGO1Qf+ba3s
+djUWeKZEvkmDp5Ob83778N+n3uMPNYQ+Ln8Cpg1yRgMu4mxMQwdPcz2BYsU9BgaM
+4WY0J+Lir64CkL7xemErF0jIF+1foK/hf0aUQNuO5rznnkZb5IdEmxj0vHm4hEU=
+=aCgc
+-----END PGP SIGNATURE-----
+
+--gj572EiMnwbLXET9--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
