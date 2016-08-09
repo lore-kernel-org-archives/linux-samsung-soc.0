@@ -1,50 +1,32 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] iommu/exynos: Modify error handling
-Date: Tue, 9 Aug 2016 17:29:02 +0200
-Message-ID: <20160809152902.GC29650@8bytes.org>
-References: <20160801061838.GA17805@amitoj-Inspiron-3542>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] mfd: Add Samsung Exynos Low Power Audio Subsystem
+ driver
+Date: Tue, 09 Aug 2016 17:36:38 +0200
+Message-ID: <61d700f7-ef66-8278-54ea-8e6e2f1a029e@samsung.com>
+References: <1467738804-31460-1-git-send-email-s.nawrocki@samsung.com>
+ <20160809150502.GQ5243@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:43167 "EHLO theia.8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751605AbcHIP26 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 11:28:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20160801061838.GA17805@amitoj-Inspiron-3542>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20160809150502.GQ5243@dell>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Cc: kgene@kernel.org, k.kozlowski@samsung.com, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr
 
-On Mon, Aug 01, 2016 at 11:48:38AM +0530, Amitoj Kaur Chawla wrote:
-> of_platform_device_create returns NULL on error so an IS_ERR test is
-> incorrect here and a NULL check is required.
-> 
-> The Coccinelle semantic patch used to make this change is as follows:
-> @@
-> expression e;
-> @@
-> 
->   e = of_platform_device_create(...);
-> if(
-> -    IS_ERR(e)
-> +    !e
->     )
->     {
->   <+...
->   return
-> - PTR_ERR(e)
-> + -ENODEV
->   ;
->   ...+>
->   }
-> 
-> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 08/09/2016 05:05 PM, Lee Jones wrote:
+>> +static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
+>> > +					exynos_lpass_resume);
+> Put this up by the PM functions.
 
-Patch didn't apply cleanly against v4.8-rc1, but I fixed it up and it is
-now in my tree, thanks.
+Sorry, I don't understand this comment, which PM functions do you
+mean exactly?
+
+-- 
+Thanks,
+Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
