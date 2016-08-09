@@ -1,35 +1,106 @@
-From: Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
-Date: Tue, 9 Aug 2016 18:45:54 +0200
-Message-ID: <CAGhQ9VwJk1WZ2cB6Ag3HXfWEwe1GC-G9L2TWem+Lf5moLDx9uQ@mail.gmail.com>
-References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH] dm9000: Fix irq trigger type setup on non-dt platforms
+Date: Tue, 09 Aug 2016 19:20:44 +0200
+Message-ID: <878tw5x3ir.fsf@belgarion.home>
+References: <1470758408-14248-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1470742581-12971-1-git-send-email-wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-omap <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1470758408-14248-1-git-send-email-s.nawrocki@samsung.com>
+	(Sylwester Nawrocki's message of "Tue, 09 Aug 2016 18:00:08 +0200")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linus.walleij@linaro.org, tglx@linutronix.de, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 9 August 2016 at 13:36, Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org> wrote:
-> Since v4.8-rc1, the I2C core will print detailed information when adding an I2C
-> adapter fails. So, drivers can skip this now.
+Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
+
+> Commit b5a099c67a1c36b "net: ethernet: davicom: fix devicetree irq
+> resource" causes an interrupt storm after the ethernet interface
+> is activated on S3C24XX platform (ARM non-dt), due to the interrupt
+> trigger type not being set properly.
 >
-> I am still undecided if I apply this as a single patch or break it out. But for
-> reviewing, avoiding the patch bomb is probably a good thing.
+> It seems, after adding parsing of IRQ flags in commit 7085a7401ba54e92b
+> "drivers: platform: parse IRQ flags from resources", there is no path
+> for non-dt platforms where irq_set_type callback could be invoked when
+> we don't pass the trigger type flags to the request_irq() call.
 >
-> Should go via subsystem tree, I'd think.
+> In case of a board where the regression is seen the interrupt trigger
+> type flags are passed through a platform device's resource and it is
+> not currently handled properly without passing the irq trigger type
+> flags to the request_irq() call.  In case of OF an of_irq_get() call
+> within platform_get_irq() function seems to be ensuring required irq_chip
+> setup, but there is no equivalent code for non OF/ACPI platforms.
 >
-> Wolfram Sang (1):
->   i2c: don't print error when adding adapter fails
+> This patch mostly restores irq trigger type setting code which has been
+> removed in commit ("net: ethernet: davicom: fix devicetree irq resource").
+>
+> Fixes: b5a099c67a1c36b913 ("net: ethernet: davicom: fix devicetree irq resource")
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>
+> Perhaps instead the core could be configuring the irqchip automatically as it
+> is done for OF/ACPI cases. I had doubts though if trying to make such changes
+> for a bug fix patch was the right thing to do.
+Hi Sylvester,
 
+You're right, and I came to the same conclusion a bit earlier, in [1], but I
+didn't notice my FAI didn't actually send the mail. Your analysis of the core in
+non-OF/ACPI case is the reason I didn't post a patch for dm9000 ... I was
+overconfident in finding a reason in irq core code within a couple of days.
 
-For
->  drivers/i2c/busses/i2c-lpc2k.c          | 4 +---
+Therefore:
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Acked-by: Joachim Eastwood <manabian-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+And I can make a test for you on my cm-x300 board, even if your patch is very
+alike the draft I had in my internal tree since then.
 
+Cheers.
 
-regards,
-Joachim Eastwood
+--
+Robert
+
+[1] Non-delivered mail, shame on me
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org "David S. Miller" <davem@davemloft.net>
+Subject: platform_get_irq and trigger types
+X-URL: http://belgarath.falguerolles.org/
+Date: Sat, 21 May 2016 11:16:09 +0200
+Message-ID: <87y473hiue.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+
+Hi Linus,
+
+I was bitten again by the rising/falling flags of interrupt flags.
+
+The commit which triggered this "regression" (the wording regression is rather
+incorrect so please don't take this as an incentive to revert) is :
+   b5a099c67a1c ("net: ethernet: davicom: fix devicetree irq resource")
+
+The exact context is that for platform type builds, the irq rising edge flag is
+not activated in the irqchip, ie. in the gpio-pxa.c pxa_gpio_irq_type() is not
+called. The board used for this test is arch/arm/mach-pxa/cm-x300.c (line 200).
+
+Now I've started to add printks here and there, and from a first glance :
+ - platform_get_irq() is correctly calling irqd_set_trigger_type()
+ - but upon the request_irq() in drivers/net/ethernet/davicom/dm9000.c:1319,
+   these flags are not taken into account
+   => this is where commit b5a099c67a1c comes into play
+   => re-adding irq_get_trigger_type(dev->irq) to the passed flags does solve the
+      issue
+
+I tried to ponder whether my commit was wrong, or if it's the gpio-pxa.c which
+is wrong, or something else. My inner feeling is that dm9000.c code is now
+correct, and that something else is happening that I don't understand.
+
+I'm bringing this to your attention if you have an idea before I begin to dig
+deeper, add printk() and go down to the problem.
+
+Cheers.
+
+-- 
+Robert
