@@ -1,15 +1,15 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT RESEND PATCH v3 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from
- being selected redundantly
-Date: Wed, 10 Aug 2016 15:08:05 +0200
-Message-ID: <e2e7e471-190d-a685-e496-1ab3e1d3a333@samsung.com>
+Subject: Re: [RFT RESEND PATCH v3 3/3] ARM: select PCI_DOMAINS config from
+ ARCH_MULTIPLATFORM
+Date: Wed, 10 Aug 2016 15:23:43 +0200
+Message-ID: <cf4a7376-1cd4-aeb4-cbf0-7dbbc3575137@samsung.com>
 References: <1470832400-11929-1-git-send-email-kishon@ti.com>
- <1470832400-11929-3-git-send-email-kishon@ti.com>
+ <1470832400-11929-4-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1470832400-11929-3-git-send-email-kishon@ti.com>
+In-reply-to: <1470832400-11929-4-git-send-email-kishon@ti.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,14 +24,28 @@ Cc: Mark Rutland <mark.rutland@arm.com>, Magnus Damm <magnus.damm@gmail.com>, Si
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 08/10/2016 02:33 PM, Kishon Vijay Abraham I wrote:
-> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-> Fix it from getting redundantly selected in all
+> PCI_DOMAINS config should be selected for any SoCs
+> having more than a single PCIe controller. Without PCI_DOMAINS
+> config, only one PCIe controller gets registered.
+> 
+> Select PCI_DOMAINS in ARCH_MULTIPLATFORM if PCI is selected, since
+> it doesn't harm even if a platform has a single PCIe port.
+> Also remove PCI_DOMAINS being selected from other platform
+> specific configs.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  arch/arm/Kconfig               |    1 +
+>  arch/arm/mach-axxia/Kconfig    |    1 -
+>  arch/arm/mach-cns3xxx/Kconfig  |    1 -
+>  arch/arm/mach-exynos/Kconfig   |    1 -
+>  arch/arm/mach-imx/Kconfig      |    2 --
+>  arch/arm/mach-keystone/Kconfig |    1 -
+>  arch/arm/mach-shmobile/Kconfig |    1 -
+>  7 files changed, 1 insertion(+), 7 deletions(-)
 
-I don't like the "fix" here and in subject. There is no error, no
-warning, no issue to be fixed. Fix might be a candidate to backport
-(stable, vendor etc) but this just removes something which is not needed.
+For Exynos5440 output is equal and we do not use PCI on other SoCs, so:
 
-With the change in subject, for exynos:
 Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
