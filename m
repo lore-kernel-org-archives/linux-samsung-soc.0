@@ -1,70 +1,64 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 2/4] mfd: Add Samsung Exynos Low Power
- Audio Subsystem driver
-Date: Wed, 10 Aug 2016 12:19:18 +0100
-Message-ID: <20160810111918.GS1581@dell>
-References: <1467738804-31460-1-git-send-email-s.nawrocki@samsung.com>
- <20160809150502.GQ5243@dell>
- <61d700f7-ef66-8278-54ea-8e6e2f1a029e@samsung.com>
- <20160809205031.GD1581@dell>
- <a66ab86f-d5da-0462-81c9-48469721d229@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v3 0/3] ARM: cleanup PCI specific configs
+Date: Wed, 10 Aug 2016 17:59:54 +0530
+Message-ID: <1470832197-11767-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <a66ab86f-d5da-0462-81c9-48469721d229@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: robh@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, inki.dae@samsung.com, broonie@kernel.org, Beomho Seo <beomho.seo@samsung.com>, ideal.song@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@armlinux.org.uk>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawnguo@kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, nsekhar@ti.com, kishon@ti.com, Rob Herring <robh+dt@kernel.org>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Viresh Kumar <vireshk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCAxMCBBdWcgMjAxNiwgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgoKPiBPbiAwOC8w
-OS8yMDE2IDEwOjUwIFBNLCBMZWUgSm9uZXMgd3JvdGU6Cj4gPiBPbiBUdWUsIDA5IEF1ZyAyMDE2
-LCBTeWx3ZXN0ZXIgTmF3cm9ja2kgd3JvdGU6Cj4gPiAKPiA+PiA+IE9uIDA4LzA5LzIwMTYgMDU6
-MDUgUE0sIExlZSBKb25lcyB3cm90ZToKPiA+Pj4+ID4gPj4gK3N0YXRpYyBTSU1QTEVfREVWX1BN
-X09QUyhscGFzc19wbV9vcHMsIGV4eW5vc19scGFzc19zdXNwZW5kLAo+ID4+Pj4+ID4gPj4gPiAr
-CQkJCQlleHlub3NfbHBhc3NfcmVzdW1lKTsKPiA+Pj4gPiA+IFB1dCB0aGlzIHVwIGJ5IHRoZSBQ
-TSBmdW5jdGlvbnMuCj4gPj4gPiAKPiA+PiA+IFNvcnJ5LCBJIGRvbid0IHVuZGVyc3RhbmQgdGhp
-cyBjb21tZW50LCB3aGljaCBQTSBmdW5jdGlvbnMgZG8geW91Cj4gPj4gPiBtZWFuIGV4YWN0bHk/
-Cj4gPiAqX3N1c3BlbmQgYW5kICpfcmVzdW1lLiAgUE0gPT0gUG93ZXIgTWFuYWdlbWVudC4KPiA+
-IAo+ID4gWW91IGFsc28gbmVlZCB0byBwbGFjZSB0aGUgZnVuY3Rpb25zIGluIHNpZGUgc29tZSBD
-T05GSUdfUE1fU0xFRVAKPiA+IGd1YXJkcy4gIEdyZXAgYXJvdW5kLCB5b3UnbGwgc2VlIHdoYXQg
-SSBtZWFuLgo+IAo+IE9LLCBidXQgY291bGRuJ3Qgd2UganVzdCBsZWF2ZSBpdCB3aXRoIHRoYXQg
-U0lNUExFX0RFVl9QTV9PUFMoKQo+IG1hY3JvPyAgSXQgc2F2ZXMgdXMgYW4gI2lmZGVmIHVnbGlu
-ZXNzIGFuZCBpZiBJIGFjdHVhbGx5IGdyZXAKPiBkcml2ZXJzL21mZCBtb3N0IG9mIHRoZSBkcml2
-ZXJzIHVzZSBlaXRoZXIgU0lNUExFX0RFVl9QTV9PUFMoKSBvcgo+IFNFVF9TWVNURU1fU0xFRVBf
-UE1fT1BTLiBBcmUgeW91IGFza2luZyBtZSB0byBjaGFuZ2UgdGhlIGFib3ZlIHRvOgo+IAo+IHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBleHlub3NfbHBhc3NfcG1fb3BzID0gewo+ICNp
-ZmRlZiBDT05GSUdfUE1fU0xFRVAKPiAJLnN1c3BlbmQgPSBleHlub3NfbHBhc3Nfc3VzcGVuZCwK
-PiAJLnJlc3VtZSA9IGV4eW5vc19scGFzc19yZXN1bWUsCj4gCS5mcmVlemUgPSBleHlub3NfbHBh
-c3Nfc3VzcGVuZCwKPiAJLnRoYXcgPSBleHlub3NfbHBhc3NfcmVzdW1lLAo+IAkucG93ZXJvZmYg
-PSBleHlub3NfbHBhc3Nfc3VzcGVuZCwKPiAJLnJlc3RvcmUgPSBleHlub3NfbHBhc3NfcmVzdW1l
-LAo+ICNlbmRpZgo+IH0KPiAKPiBvciBwZXJoYXBzCj4gCj4gc3RhdGljIGNvbnN0IHN0cnVjdCBk
-ZXZfcG1fb3BzIGV4eW5vc19scGFzc19wbV9vcHMgPSB7Cj4gCVNFVF9TWVNURU1fU0xFRVBfUE1f
-T1BTKGV4eW5vc19scGFzc19zdXNwZW5kLCBleHlub3NfbHBhc3NfcmVzdW1lKQo+IH0KPiAKPiA/
-CgpOb3QgbGlrZSB0aGF0LiAgR3JlcCAnZHJpdmVycy9tZmQnIGZvciAiQ09ORklHX1BNX1NMRUVQ
-IiBhcwpzdWdnZXN0ZWQuICBZb3Ugd2lsbCBmaW5kIHRoYXQgdGhlIGFjdHVhbCAqX3N1c3BlbmQg
-YW5kICpfcmVzdW1lCmZ1bmN0aW9ucyBhcmUgZ3VhcmRlZCBpbiBvcmRlciB0byBzYXZlIHNwYWNl
-LgoKPiBJIGFncmVlIGFib3V0IHRoZSBDT05GSUdfUE1fU0xFRVAgZ3VhcmRzLiAgVGhlcmUgaXMg
-dmVyeSBsaXR0bGUKPiBjaGFuY2UgdGhvdWdoIHRoZSBMUEFTUyBkcml2ZXIgd2lsbCBldmVyIGJl
-IHVzZWQgd2l0aAo+IENPTkZJR19QTV9TTEVFUCBkaXNhYmxlZC4gSG93IGFib3V0IGFkZGluZyBf
-X21heWJlX3VudXNlZCBhdHRyaWJ1dGUKPiB0byB0aGUgKl9zdXNwZW5kLypfcmVzdW1lIGZ1bmN0
-aW9ucyB0aGVuPyAgSSBjYW4gc2VlIHRoaXMgcGF0dGVybgo+IHVzZWQgYWxyZWFkeSBpbiBkcml2
-ZXJzL21mZC4KCkl0J3MgbW9yZSBjb21tb24gcHJhY3RpY2UgdG8gdXNlIENPTkZJR19QTV9TTEVF
-UDoKCiQgZ2l0IGdyZXAgX19tYXliZV91bnVzZWQgLS0gZHJpdmVycy9tZmQvIHwgd2MgLWwKNwok
-IGdpdCBncmVwIENPTkZJR19QTV9TTEVFUCAtLSBkcml2ZXJzL21mZC8gfCB3YyAtbAozMQoKLS0g
-CkxlZSBKb25lcwpMaW5hcm8gU1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxp
-bmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGlu
-YXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxA
-YWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4v
-bGlzdGluZm8vYWxzYS1kZXZlbAo=
+This series was initially sent to add support for two PCIe
+ports in dra7. This included selecting PCI_DOMAINS config
+in SOC_DRA7XX.
+
+However from the review, PCI_DOMAINS can instead be selected
+from ARCH_MULTIPLATFORM. This is fixed in this series along
+with removing PCI_DOMAINS from other configs.
+
+Since this series was initially sent to add support for
+two PCIe ports in dra7, it has been tested to see if there
+are regressions with 1 PCIe port. Though testing of 2 PCIe ports
+is not done while sending this patch series, it has been verified
+before in few of the customer boards.
+
+Changes from v2:
+*) v2 removed MIGHT_HAVE_PCI from platforms that are not
+   ARCH_MULTIPLATFORM. Fixed it in this version
+
+Changes from v1:
+*) select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+*) Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+
+Kishon Vijay Abraham I (3):
+  ARM: dts: DRA7: Add "linux,pci-domain" property for pci dt nodes
+  ARM: Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+  ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+
+ arch/arm/Kconfig                 |    1 +
+ arch/arm/boot/dts/dra7.dtsi      |    2 ++
+ arch/arm/mach-at91/Kconfig       |    1 -
+ arch/arm/mach-axxia/Kconfig      |    2 --
+ arch/arm/mach-cns3xxx/Kconfig    |    1 -
+ arch/arm/mach-exynos/Kconfig     |    2 --
+ arch/arm/mach-imx/Kconfig        |    2 --
+ arch/arm/mach-integrator/Kconfig |    1 -
+ arch/arm/mach-keystone/Kconfig   |    2 --
+ arch/arm/mach-shmobile/Kconfig   |    1 -
+ arch/arm/mach-spear/Kconfig      |    1 -
+ arch/arm/mach-versatile/Kconfig  |    1 -
+ 12 files changed, 3 insertions(+), 14 deletions(-)
+
+-- 
+1.7.9.5
