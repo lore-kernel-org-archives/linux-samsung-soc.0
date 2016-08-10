@@ -1,64 +1,46 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 Subject: Re: [PATCH] exynos-drm: Fix display manager failing to start without
  IOMMU problem
-Date: Thu, 11 Aug 2016 07:59:57 +0900
-Message-ID: <57ABB1ED.1080301@samsung.com>
+Date: Wed, 10 Aug 2016 17:05:02 -0600
+Message-ID: <57ABB31E.1070802@osg.samsung.com>
 References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
  <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
+ <57ABB1ED.1080301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57ABB1ED.1080301@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2h1YWgsCgoyMDE264WEIDA47JuUIDEx7J28IDAyOjMw7JeQIFNodWFoIEtoYW4g7J20KOqw
-gCkg7JO0IOq4gDoKPiBGaXggZXh5bm9zX2RybV9nZW1fY3JlYXRlX2lvY3RsKCkgYXR0ZW1wdHMg
-dG8gYWxsb2NhdGUgbm9uLWNvbnRpZ3VvdXMgR0VNCj4gbWVtb3J5IHdpdGhvdXQgSU9NTVUuIElu
-IHRoaXMgY2FzZSwgdGhlcmUgaXMgbm8gcG9pbnQgaW4gYXR0ZW1wdGluZyB0bwoKRFJNIGdlbSBj
-YW4gYmUgdXNlZCBmb3IgTm9uLURSTSBkcml2ZXJzIHN1Y2ggYXMgR1BVLCBWNEwyIGJhc2VkIE11
-bHRpbWVkaWEgZGV2aWNlIGFuZCBvdGhlciBETUEgZGV2aWNlcy4KRXZlbiB0aG91Z2ggSU9NTVUg
-c3VwcG9ydCBpcyBkaXNhYmxlZCwgb3RoZXIgZnJhbWV3b3JrIGJhc2VkIERNQSBkcml2ZXJzIGNh
-biB1c2UgSU9NTVUgLSBpLmUuLCBHUFUgZHJpdmVyIC0KYW5kIHRoZXkgY2FuIHVzZSBub24tY29u
-dGlndW91cyBHRU0gYnVmZmVyIHRocm91Z2ggVU1NLiAoRE1BQlVGKSAKClNvIEdFTSBhbGxvY2F0
-aW9uIHR5cGUgaXMgbm90IGRlcGVuZGVudCBvbiBJT01NVS4KClRoYW5rcywKSW5raSBEYWUKCj4g
-YWxsb2NhdGUgbm9uLWNvbnRpZ3VvdXMgbWVtb3J5LCBvbmx5IHRvIHJldHVybiBlcnJvciBkdXJp
-bmcgdGhlIG5leHQgc3RlcAo+IGZyb20gZXh5bm9zX2RybV9mcmFtZWJ1ZmZlcl9pbml0KCkgd2hp
-Y2ggbGVhZHMgdG8gZGlzcGxheSBtYW5hZ2VyIGZhaWxpbmcKPiB0byBzdGFydC4KPiAKPiBDaGVj
-ayBpZiBub24tY29udGlndW91cyBHRU0gbWVtb3J5IGlzIHJlcXVlc3RlZCB3aXRob3V0IElPTU1V
-LiBJZiBzbywKPiBhbGxvY2F0ZSBjb250aWd1b3VzIEdFTSBtZW1vcnkgdG8gaGVscCBkaXNwbGF5
-IG1hbmFnZXIgc3RhcnQuCj4gCj4gU2lnbmVkLW9mZi1ieTogU2h1YWggS2hhbiA8c2h1YWhraEBv
-c2cuc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9nZW0uYyB8IDE0ICsrKysrKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRp
-b25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9nZW0uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYwo+IGluZGV4
-IDRjNGNiMGUuLjQ3MTkxMTYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2dlbS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2dlbS5jCj4gQEAgLTI2Niw2ICsyNjYsMjAgQEAgaW50IGV4eW5vc19kcm1fZ2VtX2NyZWF0ZV9p
-b2N0bChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB2b2lkICpkYXRhLAo+ICAJc3RydWN0IGV4eW5v
-c19kcm1fZ2VtICpleHlub3NfZ2VtOwo+ICAJaW50IHJldDsKPiAgCj4gKwkvKgo+ICsJICogQ2hl
-Y2sgaWYgbm9uLWNvbnRpZ3VvdXMgR0VNIG1lbW9yeSBpcyByZXF1ZXN0ZWQgd2l0aG91dCBJT01N
-VS4KPiArCSAqIElmIHNvLCBhbGxvY2F0ZSBjb250aWd1b3VzIEdFTSBtZW1vcnkuCj4gKwkgKgo+
-ICsJICogVGhlcmUgaXMgbm8gcG9pbnQgaW4gYXR0ZW1wdGluZyB0byBhbGxvY2F0ZSBub24tY29u
-dGlndW91cyBtZW1vcnksCj4gKwkgKiBvbmx5IHRvIHJldHVybiBlcnJvciBmcm9tIGV4eW5vc19k
-cm1fZnJhbWVidWZmZXJfaW5pdCgpIHdoaWNoIGxlYWRzCj4gKwkgKiB0byBkaXNwbGF5IG1hbmFn
-ZXIgZmFpbGluZyB0byBzdGFydC4KPiArCSovCj4gKwlpZiAoIWlzX2RybV9pb21tdV9zdXBwb3J0
-ZWQoZGV2KSAmJgo+ICsJICAgIChhcmdzLT5mbGFncyAmIEVYWU5PU19CT19OT05DT05USUcpKSB7
-Cj4gKwkJYXJncy0+ZmxhZ3MgJj0gfkVYWU5PU19CT19OT05DT05USUc7Cj4gKwkJYXJncy0+Zmxh
-Z3MgfD0gRVhZTk9TX0JPX0NPTlRJRzsKPiArCX0KPiArCj4gIAlleHlub3NfZ2VtID0gZXh5bm9z
-X2RybV9nZW1fY3JlYXRlKGRldiwgYXJncy0+ZmxhZ3MsIGFyZ3MtPnNpemUpOwo+ICAJaWYgKElT
-X0VSUihleHlub3NfZ2VtKSkKPiAgCQlyZXR1cm4gUFRSX0VSUihleHlub3NfZ2VtKTsKPiAKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 08/10/2016 04:59 PM, Inki Dae wrote:
+> Hi Shuah,
+> 
+> 2016년 08월 11일 02:30에 Shuah Khan 이(가) 쓴 글:
+>> Fix exynos_drm_gem_create_ioctl() attempts to allocate non-contiguous GEM
+>> memory without IOMMU. In this case, there is no point in attempting to
+> 
+> DRM gem can be used for Non-DRM drivers such as GPU, V4L2 based Multimedia device and other DMA devices.
+> Even though IOMMU support is disabled, other framework based DMA drivers can use IOMMU - i.e., GPU driver -
+> and they can use non-contiguous GEM buffer through UMM. (DMABUF) 
+> 
+> So GEM allocation type is not dependent on IOMMU.
+
+Hi Inki,
+
+I am seeing the following failure without IOMMU and light dm fails
+to start:
+
+[drm:exynos_drm_framebuffer_init] *ERROR* Non-continguous GEM memory is not supported.
+
+The change I made fixed that problem and light dm starts without IOMMU.
+Is there a better way to fix this problem? Currently without IOMMU,
+light dm doesn't start.
+
+This is on linux_next
+
+thanks,
+-- Shuah
