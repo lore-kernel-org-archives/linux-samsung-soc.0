@@ -1,66 +1,62 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH] mtd: nand: s3c2410: Register cpufreq notifier only on
- S3C24xx
-Date: Sun, 14 Aug 2016 17:51:40 +0200
-Message-ID: <20160814175140.254b1bec@bbrezillon>
-References: <1467031898-1410-1-git-send-email-k.kozlowski@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
+Date: Mon, 15 Aug 2016 00:17:20 +0200
+Message-ID: <20160814221719.GA10501@katana>
+References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:51564 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752077AbcHNPvm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Aug 2016 11:51:42 -0400
-In-Reply-To: <1467031898-1410-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, kernel@stlinux.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, 27 Jun 2016 14:51:38 +0200
-Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
 
-> The driver registered for CPU frequency transitions to recalculate its
-> clock when ARM clock frequency changes (ratio between frequencies of
-> ARM's parent clock (fclk) and clock for peripherals remains fixed).
-> 
-> This is needed only on S3C24xx platform when cpufreq driver is enabled
-> so limit the ifdef to respective cpufreq Kconfig.
-> 
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied.
+On Tue, Aug 09, 2016 at 01:36:16PM +0200, Wolfram Sang wrote:
+> Since v4.8-rc1, the I2C core will print detailed information when adding =
+an I2C
+> adapter fails. So, drivers can skip this now.
+>=20
+> I am still undecided if I apply this as a single patch or break it out. B=
+ut for
+> reviewing, avoiding the patch bomb is probably a good thing.
+>=20
+> Should go via subsystem tree, I'd think.
+>=20
+> Wolfram Sang (1):
+>   i2c: don't print error when adding adapter fails
+>=20
 
-Thanks,
+Applied to for-next, thanks!
 
-Boris
 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/mtd/nand/s3c2410.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> index d9309cf0ce2e..8d440cc0f002 100644
-> --- a/drivers/mtd/nand/s3c2410.c
-> +++ b/drivers/mtd/nand/s3c2410.c
-> @@ -180,7 +180,7 @@ struct s3c2410_nand_info {
->  
->  	enum s3c_cpu_type		cpu_type;
->  
-> -#ifdef CONFIG_CPU_FREQ
-> +#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
->  	struct notifier_block	freq_transition;
->  #endif
->  };
-> @@ -701,7 +701,7 @@ static void s3c2440_nand_write_buf(struct mtd_info *mtd, const u_char *buf,
->  
->  /* cpufreq driver support */
->  
-> -#ifdef CONFIG_CPU_FREQ
-> +#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
->  
->  static int s3c2410_nand_cpufreq_transition(struct notifier_block *nb,
->  					  unsigned long val, void *data)
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXsO3vAAoJEBQN5MwUoCm2w3IP/jptxJ55zOpqqrP4YiIo9d1P
+ldYqyfLqKHVN00p64U+1H3ryKADkcH4kyXCMj8NNrFmD1Sjp4t+IpSJrfbyjhjxD
+iYkgvfZCKtLXECOE3AnrtBvlwv0wdBIP4Riztq2WgAfwXJvebU8K3dld3fx0f3k0
+KUpk5uQ24K5RbYcSPS+PqqDi7LRvu1iRfsOyqA3j8n7nQ4uKVLLYbcst5NyFpG7x
+168XGity4IdRjQM4PeEEQkXWgN9UdbS/5Ah7vG52Ug3iEfzXgMSyjrUM5NfuxGv8
+oku57fUtN2y+uH2Od5gL0S27m49mGDxNPnhPK4CPItekcz2wxwaFlnb+3eOpRT57
+sADpkE1bpl70FdaWJdSeI9F689dUCvWVsRpg7dglHI8yxzk+oQOE8KfWMXSX0CCn
+JUBsKsSBR1FUDpFAaACjGvMSf4E/2gosQC6pxF2jSo3Y/i2JH+HgzhtQcxRJ2v5f
+zG711NoBMbzZMRteYN5NHidiDrzZeo9fGoGxWLmKuayR2oifMB8O1IVAwx8HeVJh
+hPGCi0ZSGsCYYZ/SZ6QmzYZAfrKnt/EDFjyywJ/egf6yvDB1xkIkbFGkK+V1OhGp
+C61jKV4qHvvDxkOf2l7W77AWxJOswfJW3JZzkMC+1eniXU1yULAsJ09I9Jhol3AZ
+GpCRWj5TN9jg1a0kP26G
+=vwEG
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
