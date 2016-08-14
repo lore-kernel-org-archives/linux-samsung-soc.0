@@ -1,36 +1,66 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: Wakeup source
-Date: Sat, 13 Aug 2016 20:53:03 +0200
-Message-ID: <20160813185303.GA12620@kozik-lap>
-References: <CANMsd03AdbM1JuQPOwmFpiUPUGU0g=TDYuX3KiETr2-fwW5Fqg@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] mtd: nand: s3c2410: Register cpufreq notifier only on
+ S3C24xx
+Date: Sun, 14 Aug 2016 17:51:40 +0200
+Message-ID: <20160814175140.254b1bec@bbrezillon>
+References: <1467031898-1410-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:36882 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752767AbcHNIaJ (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:51564 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752077AbcHNPvm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Aug 2016 04:30:09 -0400
-Received: by mail-wm0-f51.google.com with SMTP id i5so50766082wmg.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Aug 2016 01:30:08 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CANMsd03AdbM1JuQPOwmFpiUPUGU0g=TDYuX3KiETr2-fwW5Fqg@mail.gmail.com>
+	Sun, 14 Aug 2016 11:51:42 -0400
+In-Reply-To: <1467031898-1410-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ryan <ryanphilips19@googlemail.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Fri, Aug 12, 2016 at 07:44:56PM +0530, Ryan wrote:
-> Hello,
+On Mon, 27 Jun 2016 14:51:38 +0200
+Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+
+> The driver registered for CPU frequency transitions to recalculate its
+> clock when ARM clock frequency changes (ratio between frequencies of
+> ARM's parent clock (fclk) and clock for peripherals remains fixed).
 > 
-> I am using Samsung exynos 5422. How can i find the source of wakeup
-> from suspend?
+> This is needed only on S3C24xx platform when cpufreq driver is enabled
+> so limit the ifdef to respective cpufreq Kconfig.
 > 
-> I have multiple wakeup sources? Just wanted to find out what is the
-> source of the interrupt. Like to print it when it resumes back.
 
-This might be helpful:
-https://patchwork.kernel.org/patch/3827341/
+Applied.
 
-Best regards,
-Krzysztof
+Thanks,
+
+Boris
+
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/mtd/nand/s3c2410.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> index d9309cf0ce2e..8d440cc0f002 100644
+> --- a/drivers/mtd/nand/s3c2410.c
+> +++ b/drivers/mtd/nand/s3c2410.c
+> @@ -180,7 +180,7 @@ struct s3c2410_nand_info {
+>  
+>  	enum s3c_cpu_type		cpu_type;
+>  
+> -#ifdef CONFIG_CPU_FREQ
+> +#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
+>  	struct notifier_block	freq_transition;
+>  #endif
+>  };
+> @@ -701,7 +701,7 @@ static void s3c2440_nand_write_buf(struct mtd_info *mtd, const u_char *buf,
+>  
+>  /* cpufreq driver support */
+>  
+> -#ifdef CONFIG_CPU_FREQ
+> +#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
+>  
+>  static int s3c2410_nand_cpufreq_transition(struct notifier_block *nb,
+>  					  unsigned long val, void *data)
