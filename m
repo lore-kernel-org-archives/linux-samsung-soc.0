@@ -1,104 +1,127 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pwm: samsung: fix to use lowest div for large enough
- modulation bits
-Date: Tue, 16 Aug 2016 18:00:10 +0900
-Message-ID: <CA+Ln22Ha6qrbXP87wqJdTTsTD8vXbxZejt7aRkoni0YKpFJvZQ@mail.gmail.com>
-References: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
- <CGME20160816073709epcas1p45d975f43e8f7e3fc17e30cf6f6573dfb@epcas1p4.samsung.com>
- <329cb013-4832-c443-d593-327531db7b40@samsung.com> <57B2CDF0.8020809@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] MAINTAINERS: Switch to kernel.org account for Krzysztof
+ Kozlowski
+Date: Tue, 16 Aug 2016 11:04:18 +0200
+Message-ID: <e9483ee0-33fe-cf3f-c4c1-e0694f9415f4@samsung.com>
+References: <1471285123-10085-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57B2CDF0.8020809@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "sw0312.kim" <sw0312.kim@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:23444 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753242AbcHPJEw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Aug 2016 05:04:52 -0400
+In-reply-to: <1471285123-10085-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
 
-2016-08-16 17:25 GMT+09:00 Seung-Woo Kim <sw0312.kim@samsung.com>:
-> Hi Krzysztof,
->
-> On 2016=EB=85=84 08=EC=9B=94 16=EC=9D=BC 16:37, Krzysztof Kozlowski wrote=
-:
->> On 08/02/2016 12:16 PM, Seung-Woo Kim wrote:
->>> >From pwm_samsung_calc_tin(), there is routine to find the lowest
->>> divider possible to generate lower frequency than requested one.
->>> But it is always possible to generate requested frequency with
->>> large enough modulation bits, so this patch fixes to use lowest
->>> div for the case. This patch removes following UBSAN warning:
->>>
->>>    UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
->>>    shift exponent 32 is too large for 32-bit type 'long unsigned int'
->>>    [...]
->>>    [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shif=
-t_out_of_bounds+0xd8/0x120)
->>>    [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] =
-(pwm_samsung_config+0x508/0x6a4)
->>>    [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state=
-+0x174/0x40c)
->>>    [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8=
-/0x488)
->>>    [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0=
-x70/0x150)
->>>    [...]
->>>
->>> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
->>> ---
->>> The UBSAN warning from ARM is reported with the patch in following link=
-:
->>> https://patchwork.kernel.org/patch/9189575/
->>> ---
->>>  drivers/pwm/pwm-samsung.c |   10 +++++++---
->>>  1 file changed, 7 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
->>> index ada2d32..ff0def6 100644
->>> --- a/drivers/pwm/pwm-samsung.c
->>> +++ b/drivers/pwm/pwm-samsung.c
->>> @@ -193,9 +193,13 @@ static unsigned long pwm_samsung_calc_tin(struct s=
-amsung_pwm_chip *chip,
->>>       * divider settings and choose the lowest divisor that can generat=
-e
->>>       * frequencies lower than requested.
->>>       */
->>> -    for (div =3D variant->div_base; div < 4; ++div)
->>> -            if ((rate >> (variant->bits + div)) < freq)
->>> -                    break;
->>> +    if (fls(rate) <=3D variant->bits) {
->>> +            div =3D variant->div_base;
->>> +    } else {
->>> +            for (div =3D variant->div_base; div < 4; ++div)
->>> +                    if ((rate >> (variant->bits + div)) < freq)
->>> +                            break;
->>> +    }
->>
->> I have trouble with understanding the idea behind initial code from
->> Tomasz (commit 11ad39ede24ee). The variant->bits for all SoC except
->> S3C24xx is 32. This means the shift:
->>       if ((rate >> (variant->bits + div)) < freq)
->> will be always by 32 or more... In practice this will choose always a
->> "div" of 0 because in first iteration of this loop, the shift will be by=
- 32.
->
-> I also confused that part, but I figured out that the bit is used to
-> consider modulation bit to generate pwm signal from the input clock.
->
-> Only the old s3c2440 has 16 bit modulation timer for pwm, and all later
-> soc has 32 bit modulation timer. So 32 bit timer cases, with the lowest
-> div, it can generate all frequencies which can be assigned with 32bit
-> variable.
-> But I uses fls() to consider 64bit case also even though there is no
-> really that kind of clock.
+On 08/15/2016 08:18 PM, Krzysztof Kozlowski wrote:
+> Change my email address to kernel.org account instead of Samsung one.
+> Also switch Maxim MUIC charger drivers from supported to maintained
+> mode.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: linux-samsung-soc@vger.kernel.org
 
-The code may look complicated (in fact I had to think a bit to recall
-what exactly it was supposed to do), but I'm not sure how it could be
-simplified. It's generally intended to handle variant->bits < 32 cases
-only and is effectively a no-op when variant->bits >=3D 32.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-I would suggest just making rate an u64 and be done with the warning.
-IMHO adding this kind of special cases only complicates the (already
-complicated) code unnecessarily.
-
-Best regards,
-Tomasz
+> ---
+> Changes since v1:
+> 1. Update also mailmap after Joe Perches suggestion.
+> 
+> Affected drivers/subsystems:
+> 1. arch/arm,
+> 2. mfd,
+> 3. power,
+> 4. regulator,
+> 5. clk,
+> 6. rtc,
+> 7. extcon,
+> 8. pinctrl,
+> 9. sound/soc,
+> 
+> However if there are no objections, I can push it through my tree (to
+> arm-soc folks).
+> ---
+>  .mailmap    |  1 +
+>  MAINTAINERS | 14 +++++++-------
+>  2 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index 2a91c14c80bf..b18912c5121e 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -88,6 +88,7 @@ Kay Sievers <kay.sievers@vrfy.org>
+>  Kenneth W Chen <kenneth.w.chen@intel.com>
+>  Konstantin Khlebnikov <koct9i@gmail.com> <k.khlebnikov@samsung.com>
+>  Koushik <raghavendra.koushik@neterion.com>
+> +Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski@samsung.com>
+>  Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski.k@gmail.com>
+>  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>  Leonid I Ananiev <leonid.i.ananiev@intel.com>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 45c98485c3f0..d437e0123bac 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1623,7 +1623,7 @@ N:	rockchip
+>  
+>  ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+>  M:	Kukjin Kim <kgene@kernel.org>
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:	Maintained
+> @@ -7465,9 +7465,9 @@ F:	Documentation/devicetree/bindings/sound/max9860.txt
+>  F:	sound/soc/codecs/max9860.*
+>  
+>  MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  L:	linux-pm@vger.kernel.org
+> -S:	Supported
+> +S:	Maintained
+>  F:	drivers/power/supply/max14577_charger.c
+>  F:	drivers/power/supply/max77693_charger.c
+>  
+> @@ -7481,7 +7481,7 @@ F:	include/dt-bindings/*/*max77802.h
+>  
+>  MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
+>  M:	Chanwoo Choi <cw00.choi@samsung.com>
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/*/max14577*.c
+> @@ -9258,7 +9258,7 @@ F:	drivers/pinctrl/sh-pfc/
+>  
+>  PIN CONTROLLER - SAMSUNG
+>  M:	Tomasz Figa <tomasz.figa@gmail.com>
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> @@ -10189,7 +10189,7 @@ S:	Maintained
+>  F:	drivers/platform/x86/samsung-laptop.c
+>  
+>  SAMSUNG AUDIO (ASoC) DRIVERS
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  M:	Sangbeom Kim <sbkim73@samsung.com>
+>  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+> @@ -10204,7 +10204,7 @@ F:	drivers/video/fbdev/s3c-fb.c
+>  
+>  SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
+>  M:	Sangbeom Kim <sbkim73@samsung.com>
+> -M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:	Krzysztof Kozlowski <krzk@kernel.org>
+>  L:	linux-kernel@vger.kernel.org
+>  L:	linux-samsung-soc@vger.kernel.org
+>  S:	Supported
