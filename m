@@ -1,96 +1,61 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 08/17] clk: fixed-factor: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:05 +0200
-Message-ID: <1471354514-24224-9-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Date: Tue, 16 Aug 2016 15:51:10 +0200
+Message-ID: <65703100-1e16-6c34-babe-40e630180688@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> 
+> 
+> Introduction
+> ============
+> The patchset brings new entity: clock controller representing a hardware
+> block.  The clock controller comes with its own prepare lock which
+> is used then in many places.  The idea is to fix the deadlock mentioned
+> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> by keeping clock prepared").
+> 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-fixed-factor.c | 11 +++++++----
- drivers/clk/samsung/clk.c      |  2 +-
- include/linux/clk-provider.h   |  4 +++-
- 3 files changed, 11 insertions(+), 6 deletions(-)
+Damn, I forgot to describe the overall idea. :) It is mentioned in patch
+15 but probably not many will have enough of patience to reach it.
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 4db3be214077..921a99b6e421 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -69,6 +69,7 @@ const struct clk_ops clk_fixed_factor_ops = {
- EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
- 
- struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div)
- {
-@@ -103,13 +104,14 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
- 
--struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div)
- {
- 	struct clk_hw *hw;
- 
--	hw = clk_hw_register_fixed_factor(dev, name, parent_name, flags, mult,
-+	hw = clk_hw_register_fixed_factor(dev, ctrl, name, parent_name, flags, mult,
- 					  div);
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
-@@ -176,8 +178,9 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
- 	if (of_match_node(set_rate_parent_matches, node))
- 		flags |= CLK_SET_RATE_PARENT;
- 
--	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
--					mult, div);
-+	/* TODO: convert to clk_ctrl */
-+	clk = clk_register_fixed_factor(NULL, NULL, clk_name, parent_name,
-+					flags, mult, div);
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- }
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 1a296bbabd47..7bfd895781c5 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -176,7 +176,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
- 	unsigned int idx;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_factor(NULL, list->name,
-+		clk = clk_register_fixed_factor(NULL, ctx->clk_ctrl, list->name,
- 			list->parent_name, list->flags, list->mult, list->div);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f5f062d267a9..26171815948e 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -545,11 +545,13 @@ struct clk_fixed_factor {
- #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
- 
- extern const struct clk_ops clk_fixed_factor_ops;
--struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
-+struct clk *clk_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_unregister_fixed_factor(struct clk *clk);
- struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
-+		struct clk_ctrl *ctrl,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
--- 
-1.9.1
+The locking idea
+================
+Clock controllers representing different hardware blocks, will contain
+its own prepare lock which protects the clocks inside controller.  The
+hierarchy itself is protected by global lock.
+
+In prepare path, the global prepare lock is removed.  This is direct
+solution for the deadlock.
+
+Clock hierarchy imposes also hierarchy between controllers so when a
+prepare happens, also parents have to be locked.
+
+Following locking design was chosen:
+1. For prepare/unprepare paths: lock only clock controller and its
+   parents.
+2. For recalc rates paths: lock global lock, the controller and its
+   children.
+3. For reparent paths: lock entire tree up down (children and parents)
+   and the global lock as well.
+
+
+In each case of traversing the clock hierarchy, the locking of
+controllers is always from children to parents.
+
+
+Best regards,
+Krzysztof
