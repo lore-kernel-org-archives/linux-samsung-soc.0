@@ -1,116 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 5/7] arm64: dts: exynos: Add dts files for Samsung
- Exynos5433 64bit SoC
-Date: Tue, 16 Aug 2016 12:50:58 +0200
-Message-ID: <d4ebd29f-98b7-6e56-42ee-923d55ca85ff@samsung.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471329328-26842-1-git-send-email-cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Switch to kernel.org account for Krzysztof
+ Kozlowski
+Date: Tue, 16 Aug 2016 14:01:57 +0200
+Message-ID: <7f5b8f5e-10cb-e175-50e9-df77f338fc19@kernel.org>
+References: <1471281469-5847-1-git-send-email-krzk@kernel.org>
+ <1686159.ibR5sQZ1NC@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:30724 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753136AbcHPKvV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 06:51:21 -0400
-In-reply-to: <1471329328-26842-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1686159.ibR5sQZ1NC@amdc1976>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, chanwoo@kernel.org
 
-Hi Chanwoo,
+On 08/16/2016 12:36 PM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Monday, August 15, 2016 07:17:49 PM Krzysztof Kozlowski wrote:
+>> Change my email address to kernel.org account instead of Samsung one.
+>> Also switch Maxim MUIC charger drivers from supported to maintained
+>> mode.
+> 
+> I would like to help with maintaining affected drivers/subsystems
+> from Samsung R&D Institute Poland's side (I can devote some of my
+> paid time for this) after your departure from the company.
+> 
+> Would it be possible to add me as co-maintainer to affected
+> drivers/subsystems (except pinctrl and sound/soc ones as they are
+> already covered by Sylwester Nawrocki)?
 
-On 08/16/2016 08:35 AM, Chanwoo Choi wrote:
-> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
-> Octa-core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
-> PSCI (Power State Coordination Interface) v0.1.
+Awesome! I'll add you to the MUICs/PMICs and leave the "supported" state
+for Maxim chargers.
 
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 1580 ++++++++++++++++++++
-
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi 
-> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> new file mode 100644
-> index 000000000000..2a5b05744533
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -0,0 +1,1580 @@
-
-> +
-> +/ {
-> +	compatible = "samsung,exynos5433";
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-
-> +	soc: soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x0 0x0 0x18000000>;
-
-> +		lpass: lpass@11400000 {
-> +			compatible = "samsung,exynos5433-lpass";
-> +			reg = <0x11400000 0x100>;
-> +			samsung,pmu-syscon = <&pmu_system_controller>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2s0: i2s0@11440000 {
-> +			compatible = "samsung,exynos7-i2s";
-> +			reg = <0x11440000 0x100>;
-> +			dmas = <&adma 0 &adma 2>;
-> +			dma-names = "tx", "rx";
-> +			interrupts = <0 70 0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
-> +				 <&cmu_aud CLK_SCLK_AUD_I2S>,
-> +				 <&cmu_aud CLK_SCLK_I2S_BCLK>;
-> +			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&i2s0_bus>;
-> +			status = "disabled";
-> +		};
-
-> +		serial_3: serial@11460000 {
-> +			compatible = "samsung,exynos5433-uart";
-> +			reg = <0x11460000 0x100>;
-> +			interrupts = <0 67 0>;
-> +			clocks = <&cmu_aud CLK_PCLK_AUD_UART>,
-> +				<&cmu_aud CLK_SCLK_AUD_UART>;
-> +			clock-names = "uart", "clk_uart_baud0";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&uart_aud_bus>;
-> +			status = "disabled";
-> +		};
-> +
-
-> +		amba {
-> +			compatible = "arm,amba-bus";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-
-> +			adma: adma@11420000 {
-> +				compatible = "arm,pl330", "arm,primecell";
-> +				reg = <0x11420000 0x1000>;
-> +				interrupts = <0 73 0>;
-> +				clocks = <&cmu_aud CLK_ACLK_DMAC>;
-> +				clock-names = "apb_pclk";
-> +				#dma-cells = <1>;
-> +				#dma-channels = <8>;
-> +				#dma-requests = <32>;
-> +			};
-> +		};
-> +	};
-
-The latest Exynos5433 Audio Subsystem bindings look like this
-https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=for-v4.9/mfd/exynos-lpass-v5&id=104cc6ad3ecc7c4c8ecf73663b93eb48b78f35aa
-i.e. adma@11420000, i2s0@11440000, serial@11460000 should be subnodes of
-the lpass@11400000 node.
-
--- 
-Thanks,
-Sylwester
+Best regards,
+Krzysztof
