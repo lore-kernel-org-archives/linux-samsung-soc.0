@@ -1,9 +1,9 @@
 From: Perr Zhang <strongbox8@zoho.com>
 Subject: [RESEND][PATCH v2] remove duplicate calls in irq handler
-Date: Tue, 16 Aug 2016 18:37:21 +0800
-Message-ID: <1471343841-7422-1-git-send-email-strongbox8@zoho.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Date: Tue, 16 Aug 2016 18:43:30 +0800
+Message-ID: <1471344210-7479-1-git-send-email-strongbox8@zoho.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: tomasz.figa@gmail.com
 Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -42,5 +42,3 @@ index 051b5bf..d32fa2b 100644
  
 -- 
 1.9.3
-
-
