@@ -1,523 +1,149 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 02/17] clk: Add clock controller to fine-grain the prepare lock
-Date: Tue, 16 Aug 2016 15:34:59 +0200
-Message-ID: <1471354514-24224-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC 11/17] clk: gpio: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:08 +0200
+Message-ID: <1471354514-24224-12-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: a.hajda@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add a new entity - clock controller - so the global clock prepare lock
-could be fine-grained per controller.  The controller is an abstract way
-of representing a hardware block.  It overlaps a little with clock
-provider so there is a potential of merging them.
-
-The clock hierarchy might span between many controllers so add necessary
-locking primitives for locking children, parents or everything.
-
-Add a global controller for drivers not converted to new API.  This will
-be removed once everything uses per-device/per-driver clock controller.
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/clk.c            | 300 +++++++++++++++++++++++++++++++++++++++++--
- include/linux/clk-provider.h |  25 +++-
- include/linux/clk.h          |   1 +
- 3 files changed, 310 insertions(+), 16 deletions(-)
+ drivers/clk/clk-gpio.c       | 29 +++++++++++++++++------------
+ include/linux/clk-provider.h | 12 ++++++++----
+ 2 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 238b989bf778..ee1cedfbaa29 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -35,6 +35,7 @@ static struct task_struct *enable_owner;
- static int prepare_refcnt;
- static int enable_refcnt;
- 
-+static LIST_HEAD(clk_ctrl_list);
- static HLIST_HEAD(clk_root_list);
- static HLIST_HEAD(clk_orphan_list);
- static LIST_HEAD(clk_notifier_list);
-@@ -46,6 +47,7 @@ struct clk_core {
- 	const struct clk_ops	*ops;
- 	struct clk_hw		*hw;
- 	struct module		*owner;
-+	struct clk_ctrl		*ctrl;
- 	struct clk_core		*parent;
- 	const char		**parent_names;
- 	struct clk_core		**parents;
-@@ -87,6 +89,24 @@ struct clk {
- 	struct hlist_node clks_node;
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 86b245746a6b..8ebd520c1aa0 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -94,7 +94,8 @@ const struct clk_ops clk_gpio_mux_ops = {
  };
+ EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
  
-+struct clk_ctrl {
-+	struct device *dev; /* Needed? */
-+	struct mutex prepare_lock;
-+	struct task_struct *prepare_owner;
-+	int prepare_refcnt;
-+	struct list_head node;
-+};
-+
-+/*
-+ * As a temporary solution, register all clocks which pass NULL as clock
-+ * controller under this one.  This should be removed after converting
-+ * all users to new clock controller aware API.
-+ */
-+static struct clk_ctrl global_ctrl = {
-+	.prepare_lock = __MUTEX_INITIALIZER(global_ctrl.prepare_lock),
-+	.node = LIST_HEAD_INIT(global_ctrl.node),
-+};
-+
- /***           locking             ***/
- static void clk_prepare_lock(void)
- {
-@@ -148,6 +168,228 @@ static void clk_enable_unlock(unsigned long flags)
- 	spin_unlock_irqrestore(&enable_lock, flags);
- }
- 
-+static void clk_ctrl_prepare_lock(struct clk_ctrl *ctrl)
-+{
-+	if (!ctrl)
-+		return;
-+
-+	if (!mutex_trylock(&ctrl->prepare_lock)) {
-+		if (ctrl->prepare_owner == current) {
-+			ctrl->prepare_refcnt++;
-+			return;
-+		}
-+		mutex_lock(&ctrl->prepare_lock);
-+	}
-+	WARN_ON_ONCE(ctrl->prepare_owner != NULL);
-+	WARN_ON_ONCE(ctrl->prepare_refcnt != 0);
-+	ctrl->prepare_owner = current;
-+	ctrl->prepare_refcnt = 1;
-+}
-+
-+static void clk_ctrl_prepare_unlock(struct clk_ctrl *ctrl)
-+{
-+	if (!ctrl)
-+		return;
-+
-+	WARN_ON_ONCE(ctrl->prepare_owner != current);
-+	WARN_ON_ONCE(ctrl->prepare_refcnt == 0);
-+
-+	if (--ctrl->prepare_refcnt)
-+		return;
-+	ctrl->prepare_owner = NULL;
-+	mutex_unlock(&ctrl->prepare_lock);
-+}
-+
-+static void clk_prepare_lock_ctrl(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_ctrl_prepare_lock(core->ctrl);
-+}
-+
-+static void clk_prepare_unlock_ctrl(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_ctrl_prepare_unlock(core->ctrl);
-+}
-+
-+static void clk_prepare_lock_parents_locked(struct clk_core *core)
-+{
-+	struct clk_ctrl *prev = NULL;
-+
-+	// lockdep_assert_held(&prepare_lock); // tmp comment?
-+
-+	if (!core)
-+		return;
-+
-+	do {
-+		if (core->ctrl != prev) {
-+			clk_ctrl_prepare_lock(core->ctrl);
-+			prev = core->ctrl;
-+		}
-+	} while ((core = core->parent));
-+}
-+
-+static void clk_prepare_lock_parents(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_lock();
-+	clk_prepare_lock_parents_locked(core);
-+	clk_prepare_unlock();
-+}
-+
-+static void clk_prepare_unlock_parents_recur(struct clk_core *core,
-+					     struct clk_ctrl *prev)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_unlock_parents_recur(core->parent, core->ctrl);
-+	if (core->ctrl != prev)
-+		clk_ctrl_prepare_unlock(core->ctrl);
-+}
-+
-+static void clk_prepare_unlock_parents(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_unlock_parents_recur(core, NULL);
-+}
-+
-+// FIXME: important note - will skip first lock
-+static void clk_prepare_lock_children_locked(struct clk_core *core)
-+{
-+	struct clk_core *child;
-+
-+	lockdep_assert_held(&prepare_lock);
-+
-+	if (!core)
-+		return;
-+
-+	hlist_for_each_entry(child, &core->children, child_node) {
-+		clk_prepare_lock_children_locked(child);
-+
-+		/* No need to double lock the same controller */
-+		if (child->ctrl != core->ctrl)
-+			clk_ctrl_prepare_lock(child->ctrl);
-+	}
-+}
-+
-+static void clk_prepare_lock_children(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_lock();
-+	clk_prepare_lock_children_locked(core);
-+	/* Initial lock because children recurrency skiped first one */
-+	clk_ctrl_prepare_lock(core->ctrl);
-+}
-+
-+static void clk_prepare_unlock_children_locked(struct clk_core *core)
-+{
-+	struct clk_core *child;
-+
-+	if (!core)
-+		return;
-+
-+	hlist_for_each_entry(child, &core->children, child_node) {
-+		/* No need to double unlock the same controller */
-+		if (child->ctrl != core->ctrl)
-+			clk_ctrl_prepare_unlock(child->ctrl);
-+
-+		clk_prepare_unlock_children_locked(child);
-+	}
-+}
-+
-+static void clk_prepare_unlock_children(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	/* Unlock the initial controller, skipped in children recurrency */
-+	clk_ctrl_prepare_unlock(core->ctrl);
-+	clk_prepare_unlock_children_locked(core);
-+	clk_prepare_unlock();
-+}
-+
-+/* Locks prepare lock, children and parents */
-+static void clk_prepare_lock_tree(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_lock();
-+	clk_prepare_lock_children_locked(core);
-+	/* Children recurrency skiped locking first one */
-+	clk_ctrl_prepare_lock(core->ctrl);
-+	clk_prepare_lock_parents_locked(core);
-+}
-+
-+static void clk_prepare_unlock_tree(struct clk_core *core)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_unlock_parents(core);
-+	/* Unlock the initial controller, skipped in children recurrency */
-+	clk_ctrl_prepare_unlock(core->ctrl);
-+	clk_prepare_unlock_children_locked(core);
-+	clk_prepare_unlock();
-+}
-+
-+/*
-+ * Unlocks the controller hierarchy (children and parents) but going from
-+ * old parent.  Used in case of reparenting.
-+ * If (core->parent == old_parent), this is equal to clk_prepare_unlock_tree().
-+ */
-+static void clk_prepare_unlock_oldtree(struct clk_core *core,
-+				       struct clk_core *old_parent)
-+{
-+	if (!core)
-+		return;
-+
-+	clk_prepare_unlock_parents(old_parent);
-+	/*
-+	 * Lock parents was called on 'core', but we unlock starting from
-+	 * 'old_parent'. In the same time locking did not lock the same
-+	 * controller twice but this check will be skipped for 'core'.
-+	 */
-+	if (old_parent->ctrl != core->ctrl)
-+		clk_ctrl_prepare_unlock(core->ctrl);
-+
-+	/* Unlock the initial controller, skipped in children recurrency */
-+	clk_ctrl_prepare_unlock(core->ctrl);
-+	clk_prepare_unlock_children_locked(core);
-+	clk_prepare_unlock();
-+}
-+
-+/* Locks everything */
-+/* FIXME: order of locking, it does not follow child-parent */
-+static void clk_prepare_lock_all(void)
-+{
-+	struct clk_ctrl *ctrl;
-+
-+	clk_prepare_lock();
-+	list_for_each_entry(ctrl, &clk_ctrl_list, node)
-+		clk_ctrl_prepare_lock(ctrl);
-+}
-+
-+static void clk_prepare_unlock_all(void)
-+{
-+	struct clk_ctrl *ctrl;
-+
-+	list_for_each_entry(ctrl, &clk_ctrl_list, node)
-+		clk_ctrl_prepare_unlock(ctrl);
-+	clk_prepare_unlock();
-+}
-+
- static bool clk_core_is_prepared(struct clk_core *core)
- {
- 	/*
-@@ -2526,6 +2768,34 @@ void __clk_free_clk(struct clk *clk)
- 	kfree(clk);
- }
- 
-+struct clk_ctrl *clk_ctrl_register(struct device *dev)
-+{
-+	struct clk_ctrl *ctrl;
-+
-+	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
-+	if (!ctrl)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_init(&ctrl->prepare_lock);
-+
-+	clk_prepare_lock();
-+	list_add(&ctrl->node, &clk_ctrl_list);
-+	clk_prepare_unlock();
-+
-+	return ctrl;
-+}
-+EXPORT_SYMBOL_GPL(clk_ctrl_register);
-+
-+void clk_ctrl_unregister(struct clk_ctrl *ctrl)
-+{
-+	clk_prepare_lock();
-+	list_del(&ctrl->node);
-+	clk_prepare_unlock();
-+
-+	kfree(ctrl);
-+}
-+EXPORT_SYMBOL_GPL(clk_ctrl_unregister);
-+
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
-@@ -2537,7 +2807,8 @@ void __clk_free_clk(struct clk *clk)
-  * rest of the clock API.  In the event of an error clk_register will return an
-  * error code; drivers must test for an error code after calling clk_register.
+-static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
++static struct clk_hw *clk_register_gpio(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags,
+ 		const struct clk_ops *clk_gpio_ops)
+@@ -168,25 +169,27 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
   */
--struct clk *clk_register(struct device *dev, struct clk_hw *hw)
-+struct clk *clk_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl,
-+				   struct clk_hw *hw)
+-struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags)
  {
- 	int i, ret;
- 	struct clk_core *core;
-@@ -2561,6 +2832,10 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	core->num_parents = hw->init->num_parents;
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
-+	if (ctrl)
-+		core->ctrl = ctrl;
-+	else
-+		core->ctrl = &global_ctrl;
- 	hw->core = core;
- 
- 	/* allocate local copy in case parent_names is __initdata */
-@@ -2619,7 +2894,7 @@ fail_name:
- fail_out:
- 	return ERR_PTR(ret);
+-	return clk_register_gpio(dev, name,
++	return clk_register_gpio(dev, ctrl, name,
+ 			(parent_name ? &parent_name : NULL),
+ 			(parent_name ? 1 : 0), gpio, active_low, flags,
+ 			&clk_gpio_gate_ops);
  }
--EXPORT_SYMBOL_GPL(clk_register);
-+EXPORT_SYMBOL_GPL(clk_register_with_ctrl);
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
  
- /**
-  * clk_hw_register - register a clk_hw and return an error code
-@@ -2631,11 +2906,12 @@ EXPORT_SYMBOL_GPL(clk_register);
-  * less than zero indicating failure. Drivers must test for an error code after
-  * calling clk_hw_register().
+-struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
+-				       flags);
++	hw = clk_hw_register_gpio_gate(dev, ctrl, name, parent_name, gpio,
++				       active_low, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+ 	return hw->clk;
+@@ -203,7 +206,8 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+  * @active_low: true if gpio should be set to 0 to enable clock
+  * @flags: clock flags
   */
--int clk_hw_register(struct device *dev, struct clk_hw *hw)
-+int clk_hw_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl,
-+			      struct clk_hw *hw)
+-struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
  {
--	return PTR_ERR_OR_ZERO(clk_register(dev, hw));
-+	return PTR_ERR_OR_ZERO(clk_register_with_ctrl(dev, ctrl, hw));
+@@ -212,18 +216,19 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	return clk_register_gpio(dev, name, parent_names, num_parents,
++	return clk_register_gpio(dev, ctrl, name, parent_names, num_parents,
+ 			gpio, active_low, flags, &clk_gpio_mux_ops);
  }
--EXPORT_SYMBOL_GPL(clk_hw_register);
-+EXPORT_SYMBOL_GPL(clk_hw_register_with_ctrl);
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
  
- /* Free memory allocated for a clock. */
- static void __clk_release(struct kref *ref)
-@@ -2644,6 +2920,7 @@ static void __clk_release(struct kref *ref)
- 	int i = core->num_parents;
- 
- 	lockdep_assert_held(&prepare_lock);
-+	// lockdep_assert_not_held(&core->ctrl->prepare_lock); // TODO?
- 
- 	kfree(core->parents);
- 	while (--i >= 0)
-@@ -2767,7 +3044,7 @@ static void devm_clk_hw_release(struct device *dev, void *res)
-  * automatically clk_unregister()ed on driver detach. See clk_register() for
-  * more information.
-  */
--struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
-+struct clk *devm_clk_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl, struct clk_hw *hw)
+-struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
  {
- 	struct clk *clk;
- 	struct clk **clkp;
-@@ -2776,7 +3053,7 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
- 	if (!clkp)
- 		return ERR_PTR(-ENOMEM);
+ 	struct clk_hw *hw;
  
--	clk = clk_register(dev, hw);
-+	clk = clk_register_with_ctrl(dev, ctrl, hw);
- 	if (!IS_ERR(clk)) {
- 		*clkp = clk;
- 		devres_add(dev, clkp);
-@@ -2786,7 +3063,7 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw)
+-	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
++	hw = clk_hw_register_gpio_mux(dev, ctrl, name, parent_names, num_parents,
+ 			gpio, active_low, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+@@ -271,10 +276,10 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 	active_low = of_flags & OF_GPIO_ACTIVE_LOW;
  
- 	return clk;
- }
--EXPORT_SYMBOL_GPL(devm_clk_register);
-+EXPORT_SYMBOL_GPL(devm_clk_register_with_ctrl);
- 
- /**
-  * devm_clk_hw_register - resource managed clk_hw_register()
-@@ -2797,7 +3074,8 @@ EXPORT_SYMBOL_GPL(devm_clk_register);
-  * automatically clk_hw_unregister()ed on driver detach. See clk_hw_register()
-  * for more information.
-  */
--int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
-+int devm_clk_hw_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl,
-+				   struct clk_hw *hw)
- {
- 	struct clk_hw **hwp;
- 	int ret;
-@@ -2806,7 +3084,7 @@ int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
- 	if (!hwp)
- 		return -ENOMEM;
- 
--	ret = clk_hw_register(dev, hw);
-+	ret = clk_hw_register_with_ctrl(dev, ctrl, hw);
- 	if (!ret) {
- 		*hwp = hw;
- 		devres_add(dev, hwp);
-@@ -2816,7 +3094,7 @@ int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(devm_clk_hw_register);
-+EXPORT_SYMBOL_GPL(devm_clk_hw_register_with_ctrl);
- 
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
+ 	if (is_mux)
+-		clk = clk_register_gpio_mux(&pdev->dev, node->name,
++		clk = clk_register_gpio_mux(&pdev->dev, NULL, node->name,
+ 				parent_names, num_parents, gpio, active_low, 0);
+ 	else
+-		clk = clk_register_gpio_gate(&pdev->dev, node->name,
++		clk = clk_register_gpio_gate(&pdev->dev, NULL, node->name,
+ 				parent_names ?  parent_names[0] : NULL, gpio,
+ 				active_low, 0);
+ 	if (IS_ERR(clk))
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a39c0c530778..3589f164ff94 100644
+index 2bd0a8cb7a9c..c39760cba9ac 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -39,6 +39,7 @@
- struct clk;
- struct clk_hw;
- struct clk_core;
-+struct clk_ctrl;
- struct dentry;
+@@ -698,10 +698,12 @@ struct clk_gpio {
+ #define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio, hw)
  
- /**
-@@ -703,6 +704,8 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ extern const struct clk_ops clk_gpio_gate_ops;
+-struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
++struct clk *clk_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
+-struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
+ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+@@ -717,10 +719,12 @@ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+  */
+ 
+ extern const struct clk_ops clk_gpio_mux_ops;
+-struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++struct clk *clk_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
+-struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
  		bool active_low, unsigned long flags);
  void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
- 
-+struct clk_ctrl *clk_ctrl_register(struct device *dev);
-+void clk_ctrl_unregister(struct clk_ctrl *ctrl);
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
-@@ -714,11 +717,23 @@ void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
-  * rest of the clock API.  In the event of an error clk_register will return an
-  * error code; drivers must test for an error code after calling clk_register.
-  */
--struct clk *clk_register(struct device *dev, struct clk_hw *hw);
--struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
--
--int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
--int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
-+struct clk *clk_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl,
-+				   struct clk_hw *hw);
-+struct clk *devm_clk_register_with_ctrl(struct device *dev, struct clk_ctrl *ctrl,
-+					struct clk_hw *hw);
-+
-+#define clk_register(dev, hw)		clk_register_with_ctrl(dev, NULL, hw)
-+#define devm_clk_register(dev, hw)	devm_clk_register_with_ctrl(dev, NULL, hw)
-+
-+int __must_check clk_hw_register_with_ctrl(struct device *dev,
-+					   struct clk_ctrl *ctrl,
-+					   struct clk_hw *hw);
-+int __must_check devm_clk_hw_register_with_ctrl(struct device *dev,
-+						struct clk_ctrl *ctrl,
-+						struct clk_hw *hw);
-+
-+#define clk_hw_register(dev, hw) clk_hw_register_with_ctrl(dev, NULL, hw)
-+#define devm_clk_hw_register(dev, hw) devm_clk_hw_register_with_ctrl(dev, NULL, hw)
- 
- void clk_unregister(struct clk *clk);
- void devm_clk_unregister(struct device *dev, struct clk *clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 123c02788807..8f751d1eb1df 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -19,6 +19,7 @@
- struct device;
- 
- struct clk;
-+struct clk_ctrl;
- 
- /**
-  * DOC: clk notifier callback types
 -- 
 1.9.1
