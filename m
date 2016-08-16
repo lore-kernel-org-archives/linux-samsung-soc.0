@@ -1,54 +1,116 @@
-From: perr perr <strongbox8@zoho.com>
-Subject: [RESEND][PATCH v2] pinctrl: exynos: remove duplicate calls in irq
- handler
-Date: Tue, 16 Aug 2016 18:45:29 +0800
-Message-ID: <15692f4c2b0.efa5c46c29252.3567074676558581477@zoho.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 5/7] arm64: dts: exynos: Add dts files for Samsung
+ Exynos5433 64bit SoC
+Date: Tue, 16 Aug 2016 12:50:58 +0200
+Message-ID: <d4ebd29f-98b7-6e56-42ee-923d55ca85ff@samsung.com>
+References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
+ <1471329328-26842-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sender153-mail.zoho.com ([74.201.84.153]:21359 "EHLO
-	sender153-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751532AbcHPKpa (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:30724 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753136AbcHPKvV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 06:45:30 -0400
+	Tue, 16 Aug 2016 06:51:21 -0400
+In-reply-to: <1471329328-26842-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com
-Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, chanwoo@kernel.org
 
-Because chained_irq_enter() has already called chip->irq_mask() and 
-chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
-so it's not necessary to call chip->irq_*() here. 
- 
-Signed-off-by: Perr Zhang <strongbox8@zoho.com> 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com> 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi Chanwoo,
 
---- 
- drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
- 1 file changed, 1 insertion(+), 5 deletions(-) 
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-index 051b5bf..d32fa2b 100644 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-@@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
-     int eint_irq; 
-  
-     chained_irq_enter(chip, desc); 
--    chip->irq_mask(&desc->irq_data); 
-- 
--    if (chip->irq_ack) 
--        chip->irq_ack(&desc->irq_data); 
-  
-     eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
-     generic_handle_irq(eint_irq); 
--    chip->irq_unmask(&desc->irq_data); 
-+ 
-     chained_irq_exit(chip, desc); 
- } 
-  
---  
-1.9.3 
- 
+On 08/16/2016 08:35 AM, Chanwoo Choi wrote:
+> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
+> Octa-core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
+> PSCI (Power State Coordination Interface) v0.1.
+
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 1580 ++++++++++++++++++++
+
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi 
+> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> new file mode 100644
+> index 000000000000..2a5b05744533
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -0,0 +1,1580 @@
+
+> +
+> +/ {
+> +	compatible = "samsung,exynos5433";
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+
+> +	soc: soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x0 0x0 0x18000000>;
+
+> +		lpass: lpass@11400000 {
+> +			compatible = "samsung,exynos5433-lpass";
+> +			reg = <0x11400000 0x100>;
+> +			samsung,pmu-syscon = <&pmu_system_controller>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2s0: i2s0@11440000 {
+> +			compatible = "samsung,exynos7-i2s";
+> +			reg = <0x11440000 0x100>;
+> +			dmas = <&adma 0 &adma 2>;
+> +			dma-names = "tx", "rx";
+> +			interrupts = <0 70 0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
+> +				 <&cmu_aud CLK_SCLK_AUD_I2S>,
+> +				 <&cmu_aud CLK_SCLK_I2S_BCLK>;
+> +			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&i2s0_bus>;
+> +			status = "disabled";
+> +		};
+
+> +		serial_3: serial@11460000 {
+> +			compatible = "samsung,exynos5433-uart";
+> +			reg = <0x11460000 0x100>;
+> +			interrupts = <0 67 0>;
+> +			clocks = <&cmu_aud CLK_PCLK_AUD_UART>,
+> +				<&cmu_aud CLK_SCLK_AUD_UART>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&uart_aud_bus>;
+> +			status = "disabled";
+> +		};
+> +
+
+> +		amba {
+> +			compatible = "arm,amba-bus";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+
+> +			adma: adma@11420000 {
+> +				compatible = "arm,pl330", "arm,primecell";
+> +				reg = <0x11420000 0x1000>;
+> +				interrupts = <0 73 0>;
+> +				clocks = <&cmu_aud CLK_ACLK_DMAC>;
+> +				clock-names = "apb_pclk";
+> +				#dma-cells = <1>;
+> +				#dma-channels = <8>;
+> +				#dma-requests = <32>;
+> +			};
+> +		};
+> +	};
+
+The latest Exynos5433 Audio Subsystem bindings look like this
+https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=for-v4.9/mfd/exynos-lpass-v5&id=104cc6ad3ecc7c4c8ecf73663b93eb48b78f35aa
+i.e. adma@11420000, i2s0@11440000, serial@11460000 should be subnodes of
+the lpass@11400000 node.
+
+-- 
+Thanks,
+Sylwester
