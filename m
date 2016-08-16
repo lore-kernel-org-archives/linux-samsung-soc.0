@@ -1,124 +1,64 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 13/17] clk: samsung: audss: samsung: Switch to new clock
- controller API
-Date: Tue, 16 Aug 2016 15:35:10 +0200
-Message-ID: <1471354514-24224-14-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC 01/17] clk: bcm2835: Rename clk_register to avoid name conflict
+Date: Tue, 16 Aug 2016 15:34:58 +0200
+Message-ID: <1471354514-24224-2-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: a.hajda@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+During clk_register_*() API refactoring, macros will be used for hiding
+and narrowing the scope of changes thus leading to a name conflict with
+clk_register found in bcm2835 clk driver.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index bdf8b971f332..c13e6ab6f3b6 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -30,6 +30,7 @@ static DEFINE_SPINLOCK(lock);
- static struct clk **clk_table;
- static void __iomem *reg_base;
- static struct clk_onecell_data clk_data;
-+static struct clk_ctrl *clk_ctrl;
- /*
-  * On Exynos5420 this will be a clock which has to be enabled before any
-  * access to audss registers. Typically a child of EPLL.
-@@ -135,6 +136,10 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	if (!clk_table)
- 		return -ENOMEM;
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7a7970865c2d..b77a8efbfce7 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1262,12 +1262,12 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
+ 					    const void *data);
+ struct bcm2835_clk_desc {
+-	bcm2835_clk_register clk_register;
++	bcm2835_clk_register bcm2835_clk_register;
+ 	const void *data;
+ };
  
-+	clk_ctrl = clk_ctrl_register(&pdev->dev); /* FIXME: Use devm-like, leaks now on error path */
-+	if (IS_ERR(clk_ctrl))
-+		return PTR_ERR(clk_ctrl);
-+
- 	clk_data.clks = clk_table;
- 	if (variant == TYPE_EXYNOS5420)
- 		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
-@@ -159,7 +164,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			}
- 		}
+ /* assignment helper macros for different clock types */
+-#define _REGISTER(f, ...) { .clk_register = (bcm2835_clk_register)f, \
++#define _REGISTER(f, ...) { .bcm2835_clk_register = (bcm2835_clk_register)f, \
+ 			    .data = __VA_ARGS__ }
+ #define REGISTER_PLL(...)	_REGISTER(&bcm2835_register_pll,	\
+ 					  &(struct bcm2835_pll_data)	\
+@@ -1825,8 +1825,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < asize; i++) {
+ 		desc = &clk_desc_array[i];
+-		if (desc->clk_register && desc->data)
+-			clks[i] = desc->clk_register(cprman, desc->data);
++		if (desc->bcm2835_clk_register && desc->data)
++			clks[i] = desc->bcm2835_clk_register(cprman, desc->data);
  	}
--	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
-+	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, clk_ctrl, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
-@@ -170,48 +175,48 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		mout_i2s_p[1] = __clk_get_name(cdclk);
- 	if (!IS_ERR(sclk_audio))
- 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
--	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
-+	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, clk_ctrl, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
  
--	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
-+	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, clk_ctrl, "dout_srp",
- 				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
- 				0, &lock);
- 
--	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
-+	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL, clk_ctrl,
- 				"dout_aud_bus", "dout_srp", 0,
- 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
- 
--	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
-+	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, clk_ctrl, "dout_i2s",
- 				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
- 				&lock);
- 
--	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
-+	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, clk_ctrl, "srp_clk",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
- 
--	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
-+	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, clk_ctrl, "i2s_bus",
- 				"dout_aud_bus", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
- 
--	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
-+	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, clk_ctrl, "sclk_i2s",
- 				"dout_i2s", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
- 
--	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
-+	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, clk_ctrl, "pcm_bus",
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
- 	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
- 	if (!IS_ERR(sclk_pcm_in))
- 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
--	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
-+	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, clk_ctrl, "sclk_pcm",
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
- 	if (variant == TYPE_EXYNOS5420) {
--		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
-+		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, clk_ctrl, "adma",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
- 	}
-@@ -261,6 +266,9 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 	if (!IS_ERR(epll))
- 		clk_disable_unprepare(epll);
- 
-+	clk_ctrl_unregister(clk_ctrl);
-+	clk_ctrl = NULL;
-+
- 	return 0;
- }
- 
+ 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
 -- 
 1.9.1
-
