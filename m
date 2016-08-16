@@ -1,145 +1,49 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] exynos-drm: Fix display manager failing to start without
- IOMMU problem
-Date: Tue, 16 Aug 2016 13:40:05 +0900
-Message-ID: <57B29925.4020600@samsung.com>
-References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
- <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
- <57ABB1ED.1080301@samsung.com> <57ABB31E.1070802@osg.samsung.com>
- <57AE0736.6020705@osg.samsung.com> <57AE0CCB.1010708@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] pinctrl: exynos: remove duplicate calls in irq handler
+Date: Tue, 16 Aug 2016 08:04:09 +0200
+Message-ID: <a0e0c977-b687-45cf-2f7e-2cf720d8e755@samsung.com>
+References: <1471256227-6282-1-git-send-email-strongbox8@zoho.com>
+ <20160815165941.GA3769@kozik-lap>
+ <15690a422ec.d724844125972.3079329677610732706@zoho.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <57AE0CCB.1010708@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <15690a422ec.d724844125972.3079329677610732706@zoho.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: perr perr <strongbox8@zoho.com>
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2h1YWgsCgoyMDE264WEIDA47JuUIDEz7J28IDAyOjUy7JeQIFNodWFoIEtoYW4g7J20KOqw
-gCkg7JO0IOq4gDoKPiBPbiAwOC8xMi8yMDE2IDExOjI4IEFNLCBTaHVhaCBLaGFuIHdyb3RlOgo+
-PiBPbiAwOC8xMC8yMDE2IDA1OjA1IFBNLCBTaHVhaCBLaGFuIHdyb3RlOgo+Pj4gT24gMDgvMTAv
-MjAxNiAwNDo1OSBQTSwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4gSGkgU2h1YWgsCj4+Pj4KPj4+PiAy
-MDE264WEIDA47JuUIDEx7J28IDAyOjMw7JeQIFNodWFoIEtoYW4g7J20KOqwgCkg7JO0IOq4gDoK
-Pj4+Pj4gRml4IGV4eW5vc19kcm1fZ2VtX2NyZWF0ZV9pb2N0bCgpIGF0dGVtcHRzIHRvIGFsbG9j
-YXRlIG5vbi1jb250aWd1b3VzIEdFTQo+Pj4+PiBtZW1vcnkgd2l0aG91dCBJT01NVS4gSW4gdGhp
-cyBjYXNlLCB0aGVyZSBpcyBubyBwb2ludCBpbiBhdHRlbXB0aW5nIHRvCj4+Pj4KPj4+PiBEUk0g
-Z2VtIGNhbiBiZSB1c2VkIGZvciBOb24tRFJNIGRyaXZlcnMgc3VjaCBhcyBHUFUsIFY0TDIgYmFz
-ZWQgTXVsdGltZWRpYSBkZXZpY2UgYW5kIG90aGVyIERNQSBkZXZpY2VzLgo+Pj4+IEV2ZW4gdGhv
-dWdoIElPTU1VIHN1cHBvcnQgaXMgZGlzYWJsZWQsIG90aGVyIGZyYW1ld29yayBiYXNlZCBETUEg
-ZHJpdmVycyBjYW4gdXNlIElPTU1VIC0gaS5lLiwgR1BVIGRyaXZlciAtCj4+Pj4gYW5kIHRoZXkg
-Y2FuIHVzZSBub24tY29udGlndW91cyBHRU0gYnVmZmVyIHRocm91Z2ggVU1NLiAoRE1BQlVGKSAK
-Pj4+Pgo+Pj4+IFNvIEdFTSBhbGxvY2F0aW9uIHR5cGUgaXMgbm90IGRlcGVuZGVudCBvbiBJT01N
-VS4KPj4+Cj4+PiBIaSBJbmtpLAo+Pj4KPj4+IEkgYW0gc2VlaW5nIHRoZSBmb2xsb3dpbmcgZmFp
-bHVyZSB3aXRob3V0IElPTU1VIGFuZCBsaWdodCBkbSBmYWlscwo+Pj4gdG8gc3RhcnQ6Cj4+Pgo+
-Pj4gW2RybTpleHlub3NfZHJtX2ZyYW1lYnVmZmVyX2luaXRdICpFUlJPUiogTm9uLWNvbnRpbmd1
-b3VzIEdFTSBtZW1vcnkgaXMgbm90IHN1cHBvcnRlZC4KPj4+Cj4+PiBUaGUgY2hhbmdlIEkgbWFk
-ZSBmaXhlZCB0aGF0IHByb2JsZW0gYW5kIGxpZ2h0IGRtIHN0YXJ0cyB3aXRob3V0IElPTU1VLgo+
-Pj4gSXMgdGhlcmUgYSBiZXR0ZXIgd2F5IHRvIGZpeCB0aGlzIHByb2JsZW0/IEN1cnJlbnRseSB3
-aXRob3V0IElPTU1VLAo+Pj4gbGlnaHQgZG0gZG9lc24ndCBzdGFydC4KPj4+Cj4+PiBUaGlzIGlz
-IG9uIGxpbnV4X25leHQKPj4KPj4gSGkgSW5raSwKPj4KPj4gSSBhbSBsb29raW5nIGludG8gdGhp
-cyBmdXJ0aGVyIGFuZCBJIGFtIGZpbmRpbmcgaW5jb25zaXN0ZW50Cj4+IGNvbW1pdHMgd2l0aCBy
-ZWdhcmRzIHRvIEdFTSBjb250aWd1b3VzIGFuZCBub24tY29udGlndW91cwo+PiBidWZmZXJzLgo+
-Pgo+PiBPa2F5IHdoYXQgeW91IHNhaWQgaXMgdGhhdDoKPj4KPj4gZXh5bW9kLWRybSBzaG91bGQg
-c3VwcG9ydCBub24tY29udGluZ3VvdXMgYW5kIGNvbnRpZ3VvdXMgR0VNIG1lbW9yeQo+PiB0eXBl
-IHdpdGggb3Igd2l0aG91dCBJT01NVQoKUmlnaHQuCgo+Pgo+PiBIb3dldmVyLCB0aGUgY29kZSBj
-dXJyZW50bHkgaXNuJ3QgZG9pbmcgdGhhdC4gVGhlIGZvbGxvd2luZwo+PiBjb21taXQgYWxsb2Nh
-dGVzIG5vbi1jb250aWd1b3VzIGJ1ZmZlcnMgd2hlbiBJT01NVSBpcyBlbmFibGVkCj4+IHRvIGhh
-bmRsZSBjb250aWd1b3VzIGFsbG9jYXRpb24gZmFpbHVyZXMuCj4+Cj4+IFRoZXJlIGFyZSBvdGhl
-ciBjb21taXRzIHRoYXQgcmVtb3ZlZCBjaGVja3MgZm9yIG5vbi1jb250aWcgdHlwZS4KPj4gTGV0
-J3MgbG9vayBhdCB0aGUgZm9sbG93aW5nIGNhc2VzIHRvIHNlZSB3aGF0IHNob3VsZCBiZSB0aGUg
-ZHJpdmVyCj4+IGJlaGF2aW9yIGluIHRoZXNlIGNhc2VzOgo+Pgo+PiBJT01NVSBpcyBkaXNhYmxl
-ZDoKPj4KPj4gZXh5bm9zX2RybV9nZW1fY3JlYXRlX2lvY3RsKCkgZ2V0cyBjYWxsZWQgd2l0aCBO
-T05DT05USUcKPj4gLSBkcml2ZXIgc2hvdWxkIHRyeSB0byBhbGxvY2F0ZSBub24tY29udGlnCj4+
-IC0gaWYgaXQgY2FuJ3QgYWxsb2NhdGUgbm9uLWNvbnRpZywgYWxsb2NhdGUgY29udGlnCj4+ICAg
-KCB0aGlzIHdpbGwgYWxsb3cgYXZvaWQgZmFpbHVyZSBsaWtlIHRoZSBvbmUgSSBhbSBzZWVpbmcp
-Cj4+Cj4+IGV4eW5vc19kcm1fZ2VtX2NyZWF0ZV9pb2N0bCgpIGdldHMgY2FsbGVkIHdpdGggQ09O
-VElHCj4+IC0gZHJpdmVyIHNob3VsZCB0cnkgdG8gYWxsb2NhdGUgY29udGlnCj4+IC0gaWYgaXQg
-Y2FuJ3QgYWxsb2NhdGUgY29udGlnLCBhbGxvY2F0ZSBub24tY29udGlnCj4+Cj4+IFdoYXQgaXMg
-Y29uZnVzaW5nIGlzIHRoZXJlIGFyZSBzZXZlcmFsIGNvZGUgcGF0aHMgaW4gdGhlCj4+IEdFTiBh
-bGxvY2F0aW9uIGFuZCBjaGVja2luZyBtZW1vcnkgdHlwZXMgYXJlIGVuZm9yY2luZwo+PiBub24t
-Y29udGlnIHdpdGggSU9NTVUuIENoZWNrIHRoaXMgcm91dGluZToKPj4KPj4gZXh5bm9zX2RybV9m
-cmFtZWJ1ZmZlcl9pbml0KCkgd2lsbCByZWplY3Qgbm9uLWNvbnRpZwo+PiBtZW1vcnkgdHlwZSB3
-aGVuIGNoZWNrX2ZiX2dlbV9tZW1vcnlfdHlwZSgpIHJlamVjdHMKPj4gbm9uLWNvbnRpZyBHRU0g
-bWVtb3J5IHR5cGUgd2l0aG91dCBJT01NVS4KCk9ubHkgaW4gY2FzZSB0aGF0IHRoZSBnZW0gYnVm
-ZmVyIGlzIHVzZWQgZm9yIGZyYW1lYnVmZmVyLCBnZW0gbWVtb3J5IHR5cGUgc2hvdWxkIGJlIGNo
-ZWNrZWQgYmVjYXVzZSB0aGlzIG1lYW5zIHRoZSBETUEgb2YgRGlzcGxheSBjb250cm9sbGVyIGFj
-Y2Vzc2VzIHRoZSBnZW0gYnVmZmVyIHNvIHdpdGhvdXQgSU9NTVUgdGhlIERNQSBkZXZpY2UgY2Fu
-bm90IGFjY2VzcyBub24tY29udGlndW91cyBtZW1vcnkgcmVnaW9uLgpUaGF0IGlzIHdoeSBleHlu
-b3NfZHJtX2ZyYW1lYnVmZmVyX2luaXQgY2hlY2tzIGdlbSBtZW1vcnkgdHlwZSBmb3IgZmIgbm90
-IHdoZW4gZ2VtIGlzIGNyZWF0ZWQuCgo+IAo+IAo+IG9rYXkgdGhlIHZlcnkgZmlyc3QgY29tbWl0
-IHRoYXQgYWRkZWQgSU9NTVUgc3VwcG9ydAo+IGludHJvZHVjZWQgdGhlIGNvZGUgdGhhdCByZWpl
-Y3RzIG5vbi1jb250aWcgZ2VtIG1lbW9yeQo+IHR5cGUgd2l0aG91dCBJT01NVS4KPiAKPiBjb21t
-aXQgMDUxOWY5YTEyZDAxMTNjYWFiNzg5ODBjNDhhNzkwMmQyYmQ0MGMyYwo+IEF1dGhvcjogSW5r
-aSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+IERhdGU6ICAgU2F0IE9jdCAyMCAwNzo1Mzo0
-MiAyMDEyIC0wNzAwCj4gCj4gICAgIGRybS9leHlub3M6IGFkZCBpb21tdSBzdXBwb3J0IGZvciBl
-eHlub3MgZHJtIGZyYW1ld29yawo+IAo+IEFueXdheSwgaWYgaXQgaXMgdGggcmlnaHQgY2hhbmdl
-IHRvIGZpeCBjaGVja19mYl9nZW1fbWVtb3J5X3R5cGUoKQo+IHRvIG5vdCByZWplY3QgTk9OQ09O
-VElHX0JVRkZFUiwgdGhlbiBJIGNhbiBtYWtlIHRoYXQgY2hhbmdlCgpObywgYXMgSSBtZW50aW9u
-ZWQgYWJvdmUsIHRoZSBnZW0gYnVmZmVyIGZvciBmYiBpcyBkZXBlbmRlbnQgb24gSU9NTVUgYmVj
-YXVzZSB0aGUgZ2VtIGJ1ZmZlciBmb3IgZmIgaXMgdXNlZCBieSBETUEgZGV2aWNlIC0gRklNRCwg
-REVDT04gb3IgTWl4ZXIuCllvdSB3b3VsZCBuZWVkIHRvIHVuZGVyc3RhbmQgdGhhdCBnZW0gYnVm
-ZmVyIGNhbiBiZSB1c2VkIGZvciBvdGhlciBwdXJwb3NlcyAtIDJELzNEIG9yIHBvc3QgcHJvY2Vz
-cyBkZXZpY2VzIHdoaWNoIGRvbid0IHVzZSBmcmFtZWJ1ZmZlciAtIG5vdCBkaXNwbGF5IGNvbnRy
-b2xsZXIgd2hpY2ggdXNlcyBmcmFtZWJ1ZmZlciB0byBzY2Fub3V0CgpUaGFua3MsCklua2kgRGFl
-Cgo+IGluc3RlYWQgb2YgdGhpcyBwYXRjaCBJIHNlbnQuCj4gCj4+Cj4+IFNvIHRoZXJlIGlzIGlu
-Y29uc2lzdGVuY3kgaW4gdGhlIG5vbi1jb250aWcgdnMuIGNvbnRpZwo+PiBHRU0gc3VwcG9ydCBp
-biBleHlub3MtZHJtLiBJIHRoaW5rIHRoaXMgbmVlZHMgdG8gYmUgY2xlYW5lZAo+PiB1cCB0byBn
-ZXQgdGhlIGRlc2lyZWQgYmVoYXZpb3IuCj4+Cj4+IFRoZSBmb2xsb3dpbmcgY29tbWl0IGFsbG9j
-YXRlcyBub24tY29udGlndW91cyBidWZmZXJzIHdoZW4gSU9NTVUgaXMKPj4gZW5hYmxlZCB0byBo
-YW5kbGUgY29udGlndW91cyBhbGxvY2F0aW9uIGZhaWx1cmVzLgo+Pgo+PiBUaGVyZSBhcmUgb3Ro
-ZXIgY29tbWl0cyB0aGF0IHJlbW92ZWQgY2hlY2tzIGZvciBub24tY29udGlnIHR5cGUuCj4+IExl
-dCdzIGxvb2sgYXQgdGhlIGZvbGxvd2luZyBjYXNlcyB0byBzZWUgd2hhdCBzaG91bGQgYmUgdGhl
-IGRyaXZlcgo+PiBiZWhhdmlvciBpbiB0aGVzZSBjYXNlczoKPj4KPj4gY29tbWl0IDEyMmJlZWE4
-NGJiOTAyMzZiMWFlNTQ1ZjA4MjY3YWY1ODU5MWMyMWIKPj4gQXV0aG9yOiBSYWh1bCBTaGFybWEg
-PFJhaHVsLlNoYXJtYUBzYW1zdW5nLmNvbT4KPj4gRGF0ZTogICBXZWQgTWF5IDcgMTc6MjE6Mjkg
-MjAxNCArMDUzMAo+Pgo+PiAgICAgZHJtL2V4eW5vczogYWxsb2NhdGUgbm9uLWNvbnRpZ291cyBi
-dWZmZXJzIHdoZW4gaW9tbXUgaXMgZW5hYmxlZAo+PiAgICAgCj4+ICAgICBBbGxvdyB0byBhbGxv
-Y2F0ZSBub24tY29udGlnb3VzIGJ1ZmZlcnMgd2hlbiBpb21tdSBpcyBlbmFibGVkLgo+PiAgICAg
-Q3VycmVudGx5LCBpdCB0cmllcyB0byBhbGxvY2F0ZXMgY29udGlnb3VzIGJ1ZmZlciB3aGljaCBj
-b25zaXN0ZW50bHkKPj4gICAgIGZhaWwgZm9yIGxhcmdlIGJ1ZmZlcnMgYW5kIHRoZW4gZmFsbCBi
-YWNrIHRvIG5vbiBjb250aWdvdXMuIEFwYXJ0Cj4+ICAgICBmcm9tIGJlaW5nIHNsb3csIHRoaXMg
-aW1wbGVtZW50YXRpb24gaXMgYWxzbyB2ZXJ5IG5vaXN5IGFuZCBmaWxscwo+PiAgICAgdGhlIHNj
-cmVlbiB3aXRoIGFsbG9jIGZhaWwgbG9ncy4KPj4gICAgIAo+PiAgICAgU2lnbmVkLW9mZi1ieTog
-UmFodWwgU2hhcm1hIDxSYWh1bC5TaGFybWFAc2Ftc3VuZy5jb20+Cj4+ICAgICBSZXZpZXdlZC1i
-eTogU2FjaGluIEthbWF0IDxzYWNoaW4ua2FtYXRAbGluYXJvLm9yZz4KPj4gICAgIFNpZ25lZC1v
-ZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4KPj4KPj4gY29tbWl0IGVh
-NmQ2NmMzYTc5NzM3NmQyMWIyM2RjODI2MTczM2NlMzU5NzAwMTQKPj4gQXV0aG9yOiBJbmtpIERh
-ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+IERhdGU6ICAgRnJpIE5vdiAyIDE2OjEwOjM5IDIw
-MTIgKzA5MDAKPj4KPj4gICAgIGRybS9leHlub3M6IHJlbW92ZSBFWFlOT1NfQk9fTk9OQ09OVElH
-IHR5cGUgY2hlY2tpbmcuCj4+ICAgICAKPj4gICAgIFdpdGggaW9tbXUgc3VwcG9ydCwgbm9uLWNv
-bnRpbnVvdXMgYnVmZmVyIGFsc28gaXMgc3VwcG9ydGVkIHNvCj4+ICAgICB0aGlzIHBhdGNoIHJl
-bW92ZXMgdGhlc2UgY2hlY2tpbmcgZnJvbSBleHlub3NfZHJtX2dlbV9nZXQvcHV0X2RtYV9hZGRy
-Cj4+ICAgICBmdW5jaXRvbi4KPj4gICAgIAo+PiAgICAgVGhpcyBwYXRjaCBpcyBiYXNlZCBvbiB0
-aGUgYmVsb3cgcGF0Y2ggc2V0LCAiZHJtL2V4eW5vczogYWRkCj4+ICAgICBpb21tdSBzdXBwb3J0
-IGZvciAtbmV4dCIuCj4+ICAgICAgICAgaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kcmkt
-ZGV2ZWwvbXNnMjkwNDEuaHRtbAo+PiAgICAgCj4+ICAgICBTaWduZWQtb2ZmLWJ5OiBJbmtpIERh
-ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+ICAgICBTaWduZWQtb2ZmLWJ5OiBLeXVuZ21pbiBQ
-YXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgo+Pgo+PiBjb21taXQgMmIzNTg5MmU5ZGE2
-NzJkZjQwY2U4OTBiZmZjNGY5ZjYxMTljNTdlMAo+PiBBdXRob3I6IElua2kgRGFlIDxpbmtpLmRh
-ZUBzYW1zdW5nLmNvbT4KPj4gRGF0ZTogICBGcmkgTWFyIDE2IDE4OjQ3OjA1IDIwMTIgKzA5MDAK
-Pj4KPj4gICAgIGRybS9leHlub3M6IHVwZGF0ZSBnZW0gYW5kIGJ1ZmZlciBmcmFtZXdvcmsuCj4+
-ICAgICAKPj4gICAgIHdpdGggdGhpcyBwYXRjaCwgd2UgY2FuIGFsbG9jYXRlIHBoeXNpY2FsbHkg
-Y29udGludW91cyBvciBub24tY29udGludW91cwo+PiAgICAgbWVtb3J5IGFuZCBhbHNvIGl0IGNy
-ZWF0ZXMgc2NhdHRlcmxpc3QgZm9yIGlvbW11IHN1cHBvcnQgc28gYWxsb2NhdGVkCj4+ICAgICBt
-ZW1vcnkgcmVnaW9uIGNhbiBiZSBtYXBwZWQgdG8gaW9tbXUgcGFnZSB0YWJsZSB1c2luZyBzY2F0
-dGVybGlzdC4KPj4gICAgIAo+PiAgICAgU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFl
-QHNhbXN1bmcuY29tPgo+PiAgICAgU2lnbmVkLW9mZi1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdt
-aW4ucGFya0BzYW1zdW5nLmNvbT4KPj4gICAgIFNpZ25lZC1vZmYtYnk6IERhdmUgQWlybGllIDxh
-aXJsaWVkQHJlZGhhdC5jb20+Cj4+Cj4+IC0tIFNodWFoCj4+Cj4gCj4gLS0KPiBUbyB1bnN1YnNj
-cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ft
-c3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtl
-cm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3Jn
-L21ham9yZG9tby1pbmZvLmh0bWwKPiAKPiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+On 08/16/2016 01:58 AM, perr perr wrote:
+>  ---- On Mon, 15 Aug 2016 09:59:41 -0700 Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote ---- 
+>  > On Mon, Aug 15, 2016 at 06:17:07PM +0800, perr wrote: 
+>  > > Because chained_irq_enter() has already called chip->irq_mask() and 
+>  > > chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
+>  > > so it's not necessary to call chip->irq_*() here. 
+>  > >  
+>  > > Signed-off-by: perr <strongbox8@zoho.com> 
+>  > >  
+>  > > --- 
+>  > >  drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
+>  > >  1 file changed, 1 insertion(+), 5 deletions(-) 
+>  > > 
+>  >  
+>  >  
+>  > Looks correct so for the patch itself: 
+>  > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com> 
+>  >  
+>  > However, your name "Perr" confuses me a little bit. For the 
+>  > Signed-off-by statement, as mentioned in 
+>  > Documentation/SubmittingPatches, a real name is required. The name 
+>  > should match the author. 
+>  >  
+>  > Would you be so kind as to use a full, real name? Unless Perr is your 
+>  > full, real name... then sorry for the trouble. 
+> Perr Zhang <strongbox8@zoho.com>  is OK?
+> I'm from China. Perr is my first name in English.
+
+Yes, seems fine. Could you resend with updated name?
+
+Best regards,
+Krzysztof
