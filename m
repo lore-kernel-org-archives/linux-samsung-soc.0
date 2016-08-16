@@ -1,64 +1,163 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 01/17] clk: bcm2835: Rename clk_register to avoid name conflict
-Date: Tue, 16 Aug 2016 15:34:58 +0200
-Message-ID: <1471354514-24224-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC 09/17] clk: divider: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:06 +0200
+Message-ID: <1471354514-24224-10-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: a.hajda@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-During clk_register_*() API refactoring, macros will be used for hiding
-and narrowing the scope of changes thus leading to a name conflict with
-clk_register found in bcm2835 clk driver.
+Allocate a clock controller and use new clk_register_with_ctrl() API.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-divider.c            | 10 +++++++---
+ drivers/clk/clk-fractional-divider.c |  5 +++--
+ drivers/clk/samsung/clk.c            |  8 ++++----
+ include/linux/clk-provider.h         | 13 +++++++++----
+ 4 files changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7a7970865c2d..b77a8efbfce7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1262,12 +1262,12 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
- typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
- 					    const void *data);
- struct bcm2835_clk_desc {
--	bcm2835_clk_register clk_register;
-+	bcm2835_clk_register bcm2835_clk_register;
- 	const void *data;
- };
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index a0f55bc1ad3d..8e9e89f8c5a8 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -490,7 +490,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+  * @clk_divider_flags: divider-specific flags for this clock
+  * @lock: shared register lock for this clock
+  */
+-struct clk *clk_register_divider(struct device *dev, const char *name,
++struct clk *clk_register_divider(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+@@ -517,7 +518,8 @@ EXPORT_SYMBOL_GPL(clk_register_divider);
+  * @clk_divider_flags: divider-specific flags for this clock
+  * @lock: shared register lock for this clock
+  */
+-struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_divider(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+@@ -541,7 +543,8 @@ EXPORT_SYMBOL_GPL(clk_hw_register_divider);
+  * @table: array of divider/value pairs ending with a div set to 0
+  * @lock: shared register lock for this clock
+  */
+-struct clk *clk_register_divider_table(struct device *dev, const char *name,
++struct clk *clk_register_divider_table(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+@@ -572,6 +575,7 @@ EXPORT_SYMBOL_GPL(clk_register_divider_table);
+  * @lock: shared register lock for this clock
+  */
+ struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index aab904618eb6..1b712a424fd4 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -117,6 +117,7 @@ const struct clk_ops clk_fractional_divider_ops = {
+ EXPORT_SYMBOL_GPL(clk_fractional_divider_ops);
  
- /* assignment helper macros for different clock types */
--#define _REGISTER(f, ...) { .clk_register = (bcm2835_clk_register)f, \
-+#define _REGISTER(f, ...) { .bcm2835_clk_register = (bcm2835_clk_register)f, \
- 			    .data = __VA_ARGS__ }
- #define REGISTER_PLL(...)	_REGISTER(&bcm2835_register_pll,	\
- 					  &(struct bcm2835_pll_data)	\
-@@ -1825,8 +1825,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+@@ -158,14 +159,14 @@ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fractional_divider);
  
- 	for (i = 0; i < asize; i++) {
- 		desc = &clk_desc_array[i];
--		if (desc->clk_register && desc->data)
--			clks[i] = desc->clk_register(cprman, desc->data);
-+		if (desc->bcm2835_clk_register && desc->data)
-+			clks[i] = desc->bcm2835_clk_register(cprman, desc->data);
- 	}
+-struct clk *clk_register_fractional_divider(struct device *dev,
++struct clk *clk_register_fractional_divider(struct device *dev, struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+ 	struct clk_hw *hw;
  
- 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+-	hw = clk_hw_register_fractional_divider(dev, name, parent_name, flags,
++	hw = clk_hw_register_fractional_divider(dev, ctrl, name, parent_name, flags,
+ 			reg, mshift, mwidth, nshift, nwidth, clk_divider_flags,
+ 			lock);
+ 	if (IS_ERR(hw))
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 7bfd895781c5..9a8068d4da77 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -230,14 +230,14 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+ 		if (list->table)
+-			clk = clk_register_divider_table(NULL, list->name,
+-				list->parent_name, list->flags,
++			clk = clk_register_divider_table(NULL, ctx->clk_ctrl,
++				list->name, list->parent_name, list->flags,
+ 				ctx->reg_base + list->offset,
+ 				list->shift, list->width, list->div_flags,
+ 				list->table, &ctx->lock);
+ 		else
+-			clk = clk_register_divider(NULL, list->name,
+-				list->parent_name, list->flags,
++			clk = clk_register_divider(NULL, ctx->clk_ctrl,
++				list->name, list->parent_name, list->flags,
+ 				ctx->reg_base + list->offset, list->shift,
+ 				list->width, list->div_flags, &ctx->lock);
+ 		if (IS_ERR(clk)) {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 26171815948e..cfb3aa3912c5 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -428,20 +428,23 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ 		const struct clk_div_table *table, u8 width,
+ 		unsigned long flags);
+ 
+-struct clk *clk_register_divider(struct device *dev, const char *name,
+-		const char *parent_name, unsigned long flags,
++struct clk *clk_register_divider(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock);
+-struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_divider(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock);
+-struct clk *clk_register_divider_table(struct device *dev, const char *name,
++struct clk *clk_register_divider_table(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock);
+ struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+@@ -586,10 +589,12 @@ struct clk_fractional_divider {
+ 
+ extern const struct clk_ops clk_fractional_divider_ops;
+ struct clk *clk_register_fractional_divider(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock);
+ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
++		struct clk_ctrl *ctrl,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock);
 -- 
 1.9.1
