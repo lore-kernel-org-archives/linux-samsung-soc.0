@@ -1,8 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 14/17] clk: samsung: clkout: samsung: Switch to new clock
- controller API
-Date: Tue, 16 Aug 2016 15:35:11 +0200
-Message-ID: <1471354514-24224-15-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC 10/17] clk: composite: Switch to new clock controller API
+Date: Tue, 16 Aug 2016 15:35:07 +0200
+Message-ID: <1471354514-24224-11-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
@@ -15,58 +14,65 @@ Allocate a clock controller and use new clk_register_with_ctrl() API.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/clk/clk-composite.c  | 8 +++++---
+ include/linux/clk-provider.h | 6 ++++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 96fab6cfb202..9c57a623e741 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -26,6 +26,7 @@
- #define EXYNOS5_CLKOUT_MUX_MASK		0x1f
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 00269de2f390..8ad5c2c4a329 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -211,7 +211,8 @@ static void clk_composite_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
  
- struct exynos_clkout {
-+	struct clk_ctrl *clk_ctrl;
- 	struct clk_gate gate;
- 	struct clk_mux mux;
- 	spinlock_t slock;
-@@ -66,6 +67,10 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	if (!clkout)
- 		return;
+-struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_composite(struct device *dev, struct clk_ctrl *ctrl,
++			const char *name,
+ 			const char * const *parent_names, int num_parents,
+ 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+@@ -324,7 +325,8 @@ err:
+ 	return hw;
+ }
  
-+	clkout->clk_ctrl = clk_ctrl_register(NULL);
-+	if (IS_ERR(clkout->clk_ctrl))
-+		goto free_clkout;
-+
- 	spin_lock_init(&clkout->slock);
+-struct clk *clk_register_composite(struct device *dev, const char *name,
++struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
++			const char *name,
+ 			const char * const *parent_names, int num_parents,
+ 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+@@ -333,7 +335,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ {
+ 	struct clk_hw *hw;
  
- 	parent_count = 0;
-@@ -84,7 +89,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	}
+-	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
++	hw = clk_hw_register_composite(dev, ctrl, name, parent_names, num_parents,
+ 			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
+ 			flags);
+ 	if (IS_ERR(hw))
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index cfb3aa3912c5..2bd0a8cb7a9c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -663,14 +663,16 @@ struct clk_composite {
  
- 	if (!parent_count)
--		goto free_clkout;
-+		goto free_ctrl;
+ #define to_clk_composite(_hw) container_of(_hw, struct clk_composite, hw)
  
- 	clkout->reg = of_iomap(node, 0);
- 	if (!clkout->reg)
-@@ -100,7 +105,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
- 	clkout->mux.lock = &clkout->slock;
- 
--	clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
-+	clkout->clk_table[0] = clk_register_composite(NULL, clkout->clk_ctrl, "clkout",
- 				parent_names, parent_count, &clkout->mux.hw,
- 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
- 				&clk_gate_ops, CLK_SET_RATE_PARENT
-@@ -126,6 +131,8 @@ clks_put:
- 	for (i = 0; i < EXYNOS_CLKOUT_PARENTS; ++i)
- 		if (!IS_ERR(parents[i]))
- 			clk_put(parents[i]);
-+free_ctrl:
-+	clk_ctrl_unregister(clkout->clk_ctrl);
- free_clkout:
- 	kfree(clkout);
- 
+-struct clk *clk_register_composite(struct device *dev, const char *name,
++struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
++		const char *name,
+ 		const char * const *parent_names, int num_parents,
+ 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 		unsigned long flags);
+ void clk_unregister_composite(struct clk *clk);
+-struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_composite(struct device *dev,
++		struct clk_ctrl *ctrl, const char *name,
+ 		const char * const *parent_names, int num_parents,
+ 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
 -- 
 1.9.1
