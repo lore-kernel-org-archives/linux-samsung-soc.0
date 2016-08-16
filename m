@@ -1,63 +1,118 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND][PATCH] pinctrl: exynos: remove duplicate calls in irq
- handler
-Date: Tue, 16 Aug 2016 11:16:10 +0200
-Message-ID: <41a0d7c4-c199-0c1a-a861-10ba25337594@samsung.com>
-References: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pwm: samsung: fix to use lowest div for large enough
+ modulation bits
+Date: Tue, 16 Aug 2016 18:32:20 +0900
+Message-ID: <CA+Ln22EvJRHXLxGTNK8GQPWaBE5j_vOg+sXnKbTqYA4T8AGRug@mail.gmail.com>
+References: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
+ <CGME20160816073709epcas1p45d975f43e8f7e3fc17e30cf6f6573dfb@epcas1p4.samsung.com>
+ <329cb013-4832-c443-d593-327531db7b40@samsung.com>
+ <57B2CDF0.8020809@samsung.com>
+ <CA+Ln22Ha6qrbXP87wqJdTTsTD8vXbxZejt7aRkoni0YKpFJvZQ@mail.gmail.com>
+ <369cde8b-f761-4a0b-50b9-a3a01ba0b75d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: perr perr <strongbox8@zoho.com>, tomasz.figa@gmail.com
-Cc: s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <369cde8b-f761-4a0b-50b9-a3a01ba0b75d@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-pwm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/16/2016 08:49 AM, perr perr wrote:
-> Because chained_irq_enter() has already called chip->irq_mask() and 
-> chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
-> so it's not necessary to call chip->irq_*() here. 
->  
-> Signed-off-by: Perr Zhang<strongbox8@zoho.com> 
->  
-> --- 
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
->  1 file changed, 1 insertion(+), 5 deletions(-) 
-
-Hi,
-
-Thanks for fixing Signed-off-by but now the commiter name does not match
-Signed-off-by. In the same time you skipped the tags you got already
-(Tomasz's ack and my reviewed-by).
-
-BR,
-Krzysztof
-
->  
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-> index 051b5bf..d32fa2b 100644 
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-> @@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
->      int eint_irq; 
->   
->      chained_irq_enter(chip, desc); 
-> -    chip->irq_mask(&desc->irq_data); 
-> - 
-> -    if (chip->irq_ack) 
-> -        chip->irq_ack(&desc->irq_data); 
->   
->      eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
->      generic_handle_irq(eint_irq); 
-> -    chip->irq_unmask(&desc->irq_data); 
-> + 
->      chained_irq_exit(chip, desc); 
->  } 
->   
-> --  
-> 1.9.3 
->  
-> 
-> 
-> 
+MjAxNi0wOC0xNiAxODoxMCBHTVQrMDk6MDAgS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dz
+a2lAc2Ftc3VuZy5jb20+Ogo+IE9uIDA4LzE2LzIwMTYgMTE6MDAgQU0sIFRvbWFzeiBGaWdhIHdy
+b3RlOgo+PiAyMDE2LTA4LTE2IDE3OjI1IEdNVCswOTowMCBTZXVuZy1Xb28gS2ltIDxzdzAzMTIu
+a2ltQHNhbXN1bmcuY29tPjoKPj4+IEhpIEtyenlzenRvZiwKPj4+Cj4+PiBPbiAyMDE264WEIDA4
+7JuUIDE27J28IDE2OjM3LCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+Pj4+IE9uIDA4LzAy
+LzIwMTYgMTI6MTYgUE0sIFNldW5nLVdvbyBLaW0gd3JvdGU6Cj4+Pj4+ID5Gcm9tIHB3bV9zYW1z
+dW5nX2NhbGNfdGluKCksIHRoZXJlIGlzIHJvdXRpbmUgdG8gZmluZCB0aGUgbG93ZXN0Cj4+Pj4+
+IGRpdmlkZXIgcG9zc2libGUgdG8gZ2VuZXJhdGUgbG93ZXIgZnJlcXVlbmN5IHRoYW4gcmVxdWVz
+dGVkIG9uZS4KPj4+Pj4gQnV0IGl0IGlzIGFsd2F5cyBwb3NzaWJsZSB0byBnZW5lcmF0ZSByZXF1
+ZXN0ZWQgZnJlcXVlbmN5IHdpdGgKPj4+Pj4gbGFyZ2UgZW5vdWdoIG1vZHVsYXRpb24gYml0cywg
+c28gdGhpcyBwYXRjaCBmaXhlcyB0byB1c2UgbG93ZXN0Cj4+Pj4+IGRpdiBmb3IgdGhlIGNhc2Uu
+IFRoaXMgcGF0Y2ggcmVtb3ZlcyBmb2xsb3dpbmcgVUJTQU4gd2FybmluZzoKPj4+Pj4KPj4+Pj4g
+ICAgVUJTQU46IFVuZGVmaW5lZCBiZWhhdmlvdXIgaW4gZHJpdmVycy9wd20vcHdtLXNhbXN1bmcu
+YzoxOTc6MTMKPj4+Pj4gICAgc2hpZnQgZXhwb25lbnQgMzIgaXMgdG9vIGxhcmdlIGZvciAzMi1i
+aXQgdHlwZSAnbG9uZyB1bnNpZ25lZCBpbnQnCj4+Pj4+ICAgIFsuLi5dCj4+Pj4+ICAgIFs8YzA2
+NzAyNDg+XSAodWJzYW5fZXBpbG9ndWUpIGZyb20gWzxjMDY3MDdiND5dIChfX3Vic2FuX2hhbmRs
+ZV9zaGlmdF9vdXRfb2ZfYm91bmRzKzB4ZDgvMHgxMjApCj4+Pj4+ICAgIFs8YzA2NzA3YjQ+XSAo
+X191YnNhbl9oYW5kbGVfc2hpZnRfb3V0X29mX2JvdW5kcykgZnJvbSBbPGMwNjk0YjI4Pl0gKHB3
+bV9zYW1zdW5nX2NvbmZpZysweDUwOC8weDZhNCkKPj4+Pj4gICAgWzxjMDY5NGIyOD5dIChwd21f
+c2Ftc3VuZ19jb25maWcpIGZyb20gWzxjMDY5Mjg2Yz5dIChwd21fYXBwbHlfc3RhdGUrMHgxNzQv
+MHg0MGMpCj4+Pj4+ICAgIFs8YzA2OTI4NmM+XSAocHdtX2FwcGx5X3N0YXRlKSBmcm9tIFs8YzBi
+MmUwNzA+XSAocHdtX2Zhbl9wcm9iZSsweGM4LzB4NDg4KQo+Pj4+PiAgICBbPGMwYjJlMDcwPl0g
+KHB3bV9mYW5fcHJvYmUpIGZyb20gWzxjMDdiYThiMD5dIChwbGF0Zm9ybV9kcnZfcHJvYmUrMHg3
+MC8weDE1MCkKPj4+Pj4gICAgWy4uLl0KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogU2V1bmct
+V29vIEtpbSA8c3cwMzEyLmtpbUBzYW1zdW5nLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+IFRoZSBVQlNB
+TiB3YXJuaW5nIGZyb20gQVJNIGlzIHJlcG9ydGVkIHdpdGggdGhlIHBhdGNoIGluIGZvbGxvd2lu
+ZyBsaW5rOgo+Pj4+PiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzkxODk1NzUv
+Cj4+Pj4+IC0tLQo+Pj4+PiAgZHJpdmVycy9wd20vcHdtLXNhbXN1bmcuYyB8ICAgMTAgKysrKysr
+Ky0tLQo+Pj4+PiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
+LSkKPj4+Pj4KPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcHdtL3B3bS1zYW1zdW5nLmMgYi9k
+cml2ZXJzL3B3bS9wd20tc2Ftc3VuZy5jCj4+Pj4+IGluZGV4IGFkYTJkMzIuLmZmMGRlZjYgMTAw
+NjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvcHdtL3B3bS1zYW1zdW5nLmMKPj4+Pj4gKysrIGIvZHJp
+dmVycy9wd20vcHdtLXNhbXN1bmcuYwo+Pj4+PiBAQCAtMTkzLDkgKzE5MywxMyBAQCBzdGF0aWMg
+dW5zaWduZWQgbG9uZyBwd21fc2Ftc3VuZ19jYWxjX3RpbihzdHJ1Y3Qgc2Ftc3VuZ19wd21fY2hp
+cCAqY2hpcCwKPj4+Pj4gICAgICAgKiBkaXZpZGVyIHNldHRpbmdzIGFuZCBjaG9vc2UgdGhlIGxv
+d2VzdCBkaXZpc29yIHRoYXQgY2FuIGdlbmVyYXRlCj4+Pj4+ICAgICAgICogZnJlcXVlbmNpZXMg
+bG93ZXIgdGhhbiByZXF1ZXN0ZWQuCj4+Pj4+ICAgICAgICovCj4+Pj4+IC0gICAgZm9yIChkaXYg
+PSB2YXJpYW50LT5kaXZfYmFzZTsgZGl2IDwgNDsgKytkaXYpCj4+Pj4+IC0gICAgICAgICAgICBp
+ZiAoKHJhdGUgPj4gKHZhcmlhbnQtPmJpdHMgKyBkaXYpKSA8IGZyZXEpCj4+Pj4+IC0gICAgICAg
+ICAgICAgICAgICAgIGJyZWFrOwo+Pj4+PiArICAgIGlmIChmbHMocmF0ZSkgPD0gdmFyaWFudC0+
+Yml0cykgewo+Pj4+PiArICAgICAgICAgICAgZGl2ID0gdmFyaWFudC0+ZGl2X2Jhc2U7Cj4+Pj4+
+ICsgICAgfSBlbHNlIHsKPj4+Pj4gKyAgICAgICAgICAgIGZvciAoZGl2ID0gdmFyaWFudC0+ZGl2
+X2Jhc2U7IGRpdiA8IDQ7ICsrZGl2KQo+Pj4+PiArICAgICAgICAgICAgICAgICAgICBpZiAoKHJh
+dGUgPj4gKHZhcmlhbnQtPmJpdHMgKyBkaXYpKSA8IGZyZXEpCj4+Pj4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4+ICsgICAgfQo+Pj4+Cj4+Pj4gSSBoYXZlIHRyb3Vi
+bGUgd2l0aCB1bmRlcnN0YW5kaW5nIHRoZSBpZGVhIGJlaGluZCBpbml0aWFsIGNvZGUgZnJvbQo+
+Pj4+IFRvbWFzeiAoY29tbWl0IDExYWQzOWVkZTI0ZWUpLiBUaGUgdmFyaWFudC0+Yml0cyBmb3Ig
+YWxsIFNvQyBleGNlcHQKPj4+PiBTM0MyNHh4IGlzIDMyLiBUaGlzIG1lYW5zIHRoZSBzaGlmdDoK
+Pj4+PiAgICAgICBpZiAoKHJhdGUgPj4gKHZhcmlhbnQtPmJpdHMgKyBkaXYpKSA8IGZyZXEpCj4+
+Pj4gd2lsbCBiZSBhbHdheXMgYnkgMzIgb3IgbW9yZS4uLiBJbiBwcmFjdGljZSB0aGlzIHdpbGwg
+Y2hvb3NlIGFsd2F5cyBhCj4+Pj4gImRpdiIgb2YgMCBiZWNhdXNlIGluIGZpcnN0IGl0ZXJhdGlv
+biBvZiB0aGlzIGxvb3AsIHRoZSBzaGlmdCB3aWxsIGJlIGJ5IDMyLgo+Pj4KPj4+IEkgYWxzbyBj
+b25mdXNlZCB0aGF0IHBhcnQsIGJ1dCBJIGZpZ3VyZWQgb3V0IHRoYXQgdGhlIGJpdCBpcyB1c2Vk
+IHRvCj4+PiBjb25zaWRlciBtb2R1bGF0aW9uIGJpdCB0byBnZW5lcmF0ZSBwd20gc2lnbmFsIGZy
+b20gdGhlIGlucHV0IGNsb2NrLgo+Pj4KPj4+IE9ubHkgdGhlIG9sZCBzM2MyNDQwIGhhcyAxNiBi
+aXQgbW9kdWxhdGlvbiB0aW1lciBmb3IgcHdtLCBhbmQgYWxsIGxhdGVyCj4+PiBzb2MgaGFzIDMy
+IGJpdCBtb2R1bGF0aW9uIHRpbWVyLiBTbyAzMiBiaXQgdGltZXIgY2FzZXMsIHdpdGggdGhlIGxv
+d2VzdAo+Pj4gZGl2LCBpdCBjYW4gZ2VuZXJhdGUgYWxsIGZyZXF1ZW5jaWVzIHdoaWNoIGNhbiBi
+ZSBhc3NpZ25lZCB3aXRoIDMyYml0Cj4+PiB2YXJpYWJsZS4KPj4+IEJ1dCBJIHVzZXMgZmxzKCkg
+dG8gY29uc2lkZXIgNjRiaXQgY2FzZSBhbHNvIGV2ZW4gdGhvdWdoIHRoZXJlIGlzIG5vCj4+PiBy
+ZWFsbHkgdGhhdCBraW5kIG9mIGNsb2NrLgo+Pgo+PiBUaGUgY29kZSBtYXkgbG9vayBjb21wbGlj
+YXRlZCAoaW4gZmFjdCBJIGhhZCB0byB0aGluayBhIGJpdCB0byByZWNhbGwKPj4gd2hhdCBleGFj
+dGx5IGl0IHdhcyBzdXBwb3NlZCB0byBkbyksIGJ1dCBJJ20gbm90IHN1cmUgaG93IGl0IGNvdWxk
+IGJlCj4+IHNpbXBsaWZpZWQuIEl0J3MgZ2VuZXJhbGx5IGludGVuZGVkIHRvIGhhbmRsZSB2YXJp
+YW50LT5iaXRzIDwgMzIgY2FzZXMKPj4gb25seSBhbmQgaXMgZWZmZWN0aXZlbHkgYSBuby1vcCB3
+aGVuIHZhcmlhbnQtPmJpdHMgPj0gMzIuCj4KPiBSaWdodCwgYSBjb21tZW50IGZvciB0aGlzIGJl
+aGF2aW9yIHdvdWxkIGJlIHZlcnkgdXNlZnVsLiBObyBuZWVkIHRvCj4gd2FzdGUgdGltZSBmb3Ig
+cmUtdGhpbmtpbmcgaXQgbGF0ZXIuCj4KPj4gSSB3b3VsZCBzdWdnZXN0IGp1c3QgbWFraW5nIHJh
+dGUgYW4gdTY0IGFuZCBiZSBkb25lIHdpdGggdGhlIHdhcm5pbmcuCj4+IElNSE8gYWRkaW5nIHRo
+aXMga2luZCBvZiBzcGVjaWFsIGNhc2VzIG9ubHkgY29tcGxpY2F0ZXMgdGhlIChhbHJlYWR5Cj4+
+IGNvbXBsaWNhdGVkKSBjb2RlIHVubmVjZXNzYXJpbHkuCj4KPiB1NjQgY291bGQgc29sdmUgdGhl
+IHdhcm5pbmcgYnV0IHRoZW4gb25lIHdvdWxkIGhhdmUgdG8gZmlndXJlIG91dAo+IHdoZXRoZXIg
+dGhlIGNhc3RzIGFyZSBzYWZlIG9yIG5vdC4gVW5zaWduZWQgbG9uZyBpcyBhc3NpZ25lZCB0byBy
+YXRlIGFuZAo+IHRoZW4gcmV0dXJuZWQuCj4KPiBIb3cgYWJvdXQgc3BlY2lmaWMgY2hlY2sgKCtj
+b21tZW50KSBsaWtlOgo+IGlmICh2YXJpYW50LT5iaXRzIDwgMzIpIHsKClRlY2huaWNhbGx5IHRo
+aXMgc3RpbGwgZG9lc24ndCBndWFyYW50ZWUgc2FmZSBiZWhhdmlvciwgYnV0IGluCnByYWN0aWNl
+ICgyNHh4IGhhcyBiaXRzID09IDE2KSBzaG91bGQgYmUgZmluZSwgYXNzdW1pbmcgdGhhdCBpdCBz
+dG9wcwpVQlNBTiBmcm9tIGdydW1ibGluZy4KCj4gICAgICAgICAvKiBPbmx5IGZvciBzM2MyNHh4
+ICovCj4gICAgICAgICAvLyB0aGUgZm9yIGxvb3AgYXMgaXQgd2FzCj4gfSBlbHNlIHsKPiAgICAg
+ICAgIC8qIEZvciBvdGhlciB2YXJpYW50cyBqdXN0IGNob29zZSBsb3dlc3QgZGl2aWRlciBhbHdh
+eXMgKi8KCi8qCiAqIE90aGVyIHZhcmlhbnRzIGhhdmUgZW5vdWdoIGNvdW50ZXIgYml0cyB0byBn
+ZW5lcmF0ZSBhbnkgcmVxdWVzdGVkIHJhdGUsCiAqIHNvIG5vIG5lZWQgdG8gY2hlY2sgaGlnaGVy
+IGRpdmlzb3JzLgogKi8KCj4gICAgICAgICBkaXYgPSB2YXJpYW50LT5kaXZfYmFzZTsKPiB9Cj4K
+PiBGb3IgbWUgdGhpcyBpcyBxdWl0ZSBvYnZpb3VzIGFuZCBlcnJvci1wcm9uZSAoZXhwbGljaXQg
+Y2hlY2sgZm9yIHZhbHVlCj4gdG8gYmUgdXNlZCBpbiBzaGlmdCkuCgpJIGd1ZXNzIHlvdSBtZWFu
+dCBlcnJvci1wcm9vZi4gOikgU291bmRzIGdvb2QgdG8gbWUuCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlz
+dApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
+ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
