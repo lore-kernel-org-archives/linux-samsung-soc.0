@@ -1,48 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 12/17] ASoC: samsung: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:13:45 +0100
-Message-ID: <20160816141345.GT9347@sirena.org.uk>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
- <1471354514-24224-13-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rePSHXHJe0GetUdz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1471354514-24224-13-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org, Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.comB
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH v2] pwm: samsung: fix to use lowest div for large enough modulation bits
+Date: Tue, 16 Aug 2016 23:22:01 +0900
+Message-ID: <20160816142201.12672-1-sw0312.kim@samsung.com>
+References: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, thierry.reding@gmail.com, linux-pwm@vger.kernel.org
+Cc: tomasz.figa@gmail.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+>From pwm_samsung_calc_tin(), there is routine to find the lowest
+divider possible to generate lower frequency than requested one.
+But it is always possible to generate requested frequency with
+large enough modulation bits except s3c24xx, so this patch fixes
+to use lowest div for the case. This patch removes following UBSAN
+warning:
 
---rePSHXHJe0GetUdz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
+   shift exponent 32 is too large for 32-bit type 'long unsigned int'
+   [...]
+   [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shift_out_of_bounds+0xd8/0x120)
+   [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] (pwm_samsung_config+0x508/0x6a4)
+   [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state+0x174/0x40c)
+   [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8/0x488)
+   [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0x70/0x150)
+   [...]
 
-On Tue, Aug 16, 2016 at 03:35:09PM +0200, Krzysztof Kozlowski wrote:
-> Allocate a clock controller and use new clk_register_with_ctrl() API.
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+Changes from v1
+ * Remove too complex condition, instead, just checking simple variant->bits as Krzysztof's suggestion
+ * Add comment from Tomasz
 
-Acked-by: Mark Brown <broonie@kernel.org>
+The UBSAN warning from ARM is reported with the patch in following link:
+https://patchwork.kernel.org/patch/9189575/
+---
+ drivers/pwm/pwm-samsung.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
->  	i2s_unregister_clocks(i2s);
-> +	clk_ctrl_unregister(i2s->clk_ctrl);
-
-devm?
-
---rePSHXHJe0GetUdz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXsx+YAAoJECTWi3JdVIfQtXkH/iuQ4LWIduWwXQhaP0MDv7bv
-D4skQGj8vnnKjTNLSjxJaC5ozrwCOStLomdUmHsv9imnx5c5Ynr+ZJJttj2XrWOD
-T25EVIJdolAgYIFvi1VqG5P+K38mvpDD1Ku5zMc5LGoQSr7gflSDZujLqR47L/I8
-ISCbZ3tR02qdIQTFjSyC1NfRQJk2+p6KWsZVfPw64Gpce3/UrOziZzGAyCm7oDOz
-mxEJPuWxoGxOBdvznAx/T5bRgkxu9A8sAjoZ4KylH8xbmB6jPzHqWEsJOHc7Pt5e
-ByWqwA5SgiY4on1zD+SQ+VqhqlubXA/csSwVe1NBn50XbpXMiECryyWcH63bijM=
-=VovP
------END PGP SIGNATURE-----
-
---rePSHXHJe0GetUdz--
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index ada2d32..f113cda 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -193,9 +193,18 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
+ 	 * divider settings and choose the lowest divisor that can generate
+ 	 * frequencies lower than requested.
+ 	 */
+-	for (div = variant->div_base; div < 4; ++div)
+-		if ((rate >> (variant->bits + div)) < freq)
+-			break;
++	if (variant->bits < 32) {
++		/* Only for s3c24xx */
++		for (div = variant->div_base; div < 4; ++div)
++			if ((rate >> (variant->bits + div)) < freq)
++				break;
++	} else {
++		/*
++		 * Other variants have enough counter bits to generate any
++		 * requested rate, so no need to check higher divisors.
++		 */
++		div = variant->div_base;
++	}
+ 
+ 	pwm_samsung_set_divisor(chip, chan, BIT(div));
+ 
+-- 
+2.9.2
