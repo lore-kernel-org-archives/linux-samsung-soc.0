@@ -1,273 +1,104 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/7] pinctrl: samsung: Add GPFx support of Exynos5433
-Date: Tue, 16 Aug 2016 15:27:20 +0900
-Message-ID: <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 7/7] arm64: dts: exynos: Add dts file for Exynos5433-based TM2E
+ board
+Date: Tue, 16 Aug 2016 15:35:28 +0900
+Message-ID: <1471329328-26842-3-git-send-email-cw00.choi@samsung.com>
 References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, cw00.choi@samsung.com, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1471328843-26653-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+This patcha adds the Device Tree source for Exynos5433-based Samsung TM2E
+board. TM2E board is the most similiar with TM2 board. The exynos5433-tm2e.dts
+include the difference between TM2 and TM2E.
 
-This patch add the support of GPFx pin of Exynos5433 SoC. Exynos5433 has
-different memory map of GPFx from previous Exynos SoC. Exynos GPIO has
-following register to control gpio funciton. Usually, all registers of GPIO
-are included in same domain.
-- CON / DAT / PUD / DRV / CONPDN / PUDPDN
-- EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
-
-But, GPFx are included in two domain as following. So, this patch supports
-the GPFx pin which handle the on separate two domains.
-- ALIVE domain : CON / DAT / PUD / DRV / CONPDN / PUDPDN
-- IMEM domain  : EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Ingi kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../bindings/pinctrl/samsung-pinctrl.txt           |  1 +
- drivers/pinctrl/samsung/pinctrl-exynos.c           |  5 +++
- drivers/pinctrl/samsung/pinctrl-exynos.h           | 11 ++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          | 43 ++++++++++++++++++----
- drivers/pinctrl/samsung/pinctrl-samsung.h          |  5 +++
- 5 files changed, 57 insertions(+), 8 deletions(-)
+ .../bindings/arm/samsung/samsung-boards.txt        |  1 +
+ arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 41 ++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 6db16b90873a..807fba1f829f 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -19,6 +19,7 @@ Required Properties:
-   - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
-   - "samsung,exynos5410-pinctrl": for Exynos5410 compatible pin-controller.
-   - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
-+  - "samsung,exynos5433-pinctrl": for Exynos5433 compatible pin-controller.
-   - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index c704b4bf6137..c1bda8d3674c 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -16,6 +16,7 @@ Required root node properties:
+ 	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
+ 	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
+ 	- "samsung,tm2"		- for Exynos5333-based Samsung TM2 board.
++	- "samsung,tm2e"	- for Exynos5333-based Samsung TM2E board.
+ 	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
+ 	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
  
- - reg: Base address of the pin controller hardware module and length of
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 051b5bf701a8..4f95983e0cdd 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1350,6 +1350,11 @@ static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
- 	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
- 	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
- 	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004),
-+	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008),
-+	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c),
-+	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010),
-+	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014),
- };
- 
- /* pin banks of exynos5433 pin-controller - AUD */
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index 0f0f7cedb2dc..4b737b6c434d 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -79,6 +79,17 @@
- 		.name		= id			\
- 	}
- 
-+#define EXYNOS_PIN_BANK_EINTW_EXT(pins, reg, id, offs)	\
-+	{						\
-+		.type		= &bank_type_off,	\
-+		.pctl_offset	= reg,			\
-+		.nr_pins	= pins,			\
-+		.eint_type	= EINT_TYPE_WKUP,	\
-+		.eint_offset	= offs,			\
-+		.eint_ext	= true,			\
-+		.name		= id			\
-+	}
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+new file mode 100644
+index 000000000000..283b4fd19d5a
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+@@ -0,0 +1,41 @@
++/*
++ * SAMSUNG Exynos5433 TM2E board device tree source
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *
++ * Device tree source file for Samsung's TM2E(TM2 EDGE) board which is based on
++ * Samsung Exynos5433 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
- /**
-  * struct exynos_weint_data: irq specific data for all the wakeup interrupts
-  * generated by the external wakeup interrupt controller.
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 513fe6b23248..57e22085c2db 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -338,6 +338,7 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
- 			struct samsung_pin_bank **bank)
- {
- 	struct samsung_pin_bank *b;
-+	void __iomem *virt_base = drvdata->virt_base;
- 
- 	b = drvdata->pin_banks;
- 
-@@ -345,7 +346,10 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
- 			((b->pin_base + b->nr_pins - 1) < pin))
- 		b++;
- 
--	*reg = drvdata->virt_base + b->pctl_offset;
-+	if (b->eint_ext)
-+		virt_base = drvdata->ext_base;
++#include "exynos5433-tm2.dts"
 +
-+	*reg = virt_base + b->pctl_offset;
- 	*offset = pin - b->pin_base;
- 	if (bank)
- 		*bank = b;
-@@ -523,10 +527,12 @@ static void samsung_gpio_set_value(struct gpio_chip *gc,
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *virt_base = bank->eint_ext ?
-+		bank->drvdata->ext_base : bank->drvdata->virt_base;
- 	void __iomem *reg;
- 	u32 data;
- 
--	reg = bank->drvdata->virt_base + bank->pctl_offset;
-+	reg = virt_base + bank->pctl_offset;
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
- 	data &= ~(1 << offset);
-@@ -553,8 +559,10 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
- 	u32 data;
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *virt_base = bank->eint_ext ?
-+		bank->drvdata->ext_base : bank->drvdata->virt_base;
- 
--	reg = bank->drvdata->virt_base + bank->pctl_offset;
-+	reg = virt_base + bank->pctl_offset;
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
- 	data >>= offset;
-@@ -574,6 +582,7 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 	const struct samsung_pin_bank_type *type;
- 	struct samsung_pin_bank *bank;
- 	struct samsung_pinctrl_drv_data *drvdata;
-+	void __iomem *virt_base;
- 	void __iomem *reg;
- 	u32 data, mask, shift;
- 
-@@ -581,7 +590,8 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 	type = bank->type;
- 	drvdata = bank->drvdata;
- 
--	reg = drvdata->virt_base + bank->pctl_offset +
-+	virt_base = bank->eint_ext ? drvdata->ext_base : drvdata->virt_base;
-+	reg = virt_base + bank->pctl_offset +
- 					type->reg_offset[PINCFG_TYPE_FUNC];
- 
- 	mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
-@@ -1007,6 +1017,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		bank->eint_type = bdata->eint_type;
- 		bank->eint_mask = bdata->eint_mask;
- 		bank->eint_offset = bdata->eint_offset;
-+		bank->eint_ext = bdata->eint_ext;
- 		bank->name = bdata->name;
- 
- 		spin_lock_init(&bank->slock);
-@@ -1065,6 +1076,14 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	if (IS_ERR(drvdata->virt_base))
- 		return PTR_ERR(drvdata->virt_base);
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (res) {
-+		drvdata->ext_base =
-+			devm_ioremap(dev, res->start, resource_size(res));
-+		if (!drvdata->ext_base)
-+			return -ENXIO;
-+	}
++/ {
++	model = "Samsung TM2E board";
++	compatible = "samsung,exynos5433-tm2e", "samsung,exynos5433";
++};
 +
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (res)
- 		drvdata->irq = res->start;
-@@ -1102,16 +1121,20 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- static void samsung_pinctrl_suspend_dev(
- 	struct samsung_pinctrl_drv_data *drvdata)
- {
--	void __iomem *virt_base = drvdata->virt_base;
-+	void __iomem *virt_base;
- 	int i;
- 
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
--		void __iomem *reg = virt_base + bank->pctl_offset;
-+		void __iomem *reg;
- 		const u8 *offs = bank->type->reg_offset;
- 		const u8 *widths = bank->type->fld_width;
- 		enum pincfg_type type;
- 
-+		virt_base = bank->eint_ext ?
-+			drvdata->ext_base : drvdata->virt_base;
-+		reg = virt_base + bank->pctl_offset;
++&ldo23_reg {
++	regulator-name = "CAM_SEN_CORE_1.025V_AP";
++	regulator-max-microvolt = <1050000>;
++};
 +
- 		/* Registers without a powerdown config aren't lost */
- 		if (!widths[PINCFG_TYPE_CON_PDN])
- 			continue;
-@@ -1148,7 +1171,7 @@ static void samsung_pinctrl_suspend_dev(
-  */
- static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- {
--	void __iomem *virt_base = drvdata->virt_base;
-+	void __iomem *virt_base;
- 	int i;
- 
- 	if (drvdata->resume)
-@@ -1156,11 +1179,15 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- 
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
--		void __iomem *reg = virt_base + bank->pctl_offset;
-+		void __iomem *reg;
- 		const u8 *offs = bank->type->reg_offset;
- 		const u8 *widths = bank->type->fld_width;
- 		enum pincfg_type type;
- 
-+		virt_base = bank->eint_ext ?
-+			drvdata->ext_base : drvdata->virt_base;
-+		reg = virt_base + bank->pctl_offset;
++&ldo25_reg {
++	regulator-name = "UNUSED_LDO25";
++	regulator-always-off;
++};
 +
- 		/* Registers without a powerdown config aren't lost */
- 		if (!widths[PINCFG_TYPE_CON_PDN])
- 			continue;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index cd31bfaf62cb..3005135f4565 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -131,6 +131,7 @@ struct samsung_pin_bank_data {
- 	enum eint_type	eint_type;
- 	u32		eint_mask;
- 	u32		eint_offset;
-+	bool		eint_ext;
- 	const char	*name;
- };
- 
-@@ -163,6 +164,7 @@ struct samsung_pin_bank {
- 	enum eint_type	eint_type;
- 	u32		eint_mask;
- 	u32		eint_offset;
-+	bool		eint_ext;
- 	const char	*name;
- 
- 	u32		pin_base;
-@@ -201,6 +203,8 @@ struct samsung_pin_ctrl {
-  * struct samsung_pinctrl_drv_data: wrapper for holding driver data together.
-  * @node: global list node
-  * @virt_base: register base address of the controller.
-+ * @ext_base: external register base address of the controller.
-+ * @ext_base: external register base address of the controller.
-  * @dev: device instance representing the controller.
-  * @irq: interrpt number used by the controller to notify gpio interrupts.
-  * @ctrl: pin controller instance managed by the driver.
-@@ -216,6 +220,7 @@ struct samsung_pin_ctrl {
- struct samsung_pinctrl_drv_data {
- 	struct list_head		node;
- 	void __iomem			*virt_base;
-+	void __iomem			*ext_base;
- 	struct device			*dev;
- 	int				irq;
- 
++&ldo31_reg {
++	regulator-name = "TSP_VDD_1.8V_AP";
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++};
++
++&ldo38_reg {
++	regulator-name = "VCC_3.3V_MOTOR_AP";
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++};
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
