@@ -1,78 +1,126 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 10/17] clk: composite: Switch to new clock controller API
-Date: Tue, 16 Aug 2016 15:35:07 +0200
-Message-ID: <1471354514-24224-11-git-send-email-k.kozlowski@samsung.com>
+Subject: [RFC 17/17] Revert
+ "i2c: s3c2410: fix ABBA deadlock by keeping clock prepared"
+Date: Tue, 16 Aug 2016 15:35:14 +0200
+Message-ID: <1471354514-24224-18-git-send-email-k.kozlowski@samsung.com>
 References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
 In-reply-to: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@osg.samsung.com>, a.hajda@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Allocate a clock controller and use new clk_register_with_ctrl() API.
+This reverts commit 34e81ad5f0b60007c95995eb7803da7e00c6c611.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-composite.c  | 8 +++++---
- include/linux/clk-provider.h | 6 ++++--
- 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 00269de2f390..8ad5c2c4a329 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -211,7 +211,8 @@ static void clk_composite_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
+Conflicts:
+	drivers/i2c/busses/i2c-s3c2410.c
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 38dc1cacfd8b..571250415617 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -771,16 +771,14 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 	int retry;
+ 	int ret;
+ 
+-	ret = clk_enable(i2c->clk);
+-	if (ret)
+-		return ret;
++	clk_prepare_enable(i2c->clk);
+ 
+ 	for (retry = 0; retry < adap->retries; retry++) {
+ 
+ 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
+ 
+ 		if (ret != -EAGAIN) {
+-			clk_disable(i2c->clk);
++			clk_disable_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+ 
+@@ -789,7 +787,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 		udelay(100);
+ 	}
+ 
+-	clk_disable(i2c->clk);
++	clk_disable_unprepare(i2c->clk);
+ 	return -EREMOTEIO;
  }
  
--struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+			const char *name,
- 			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-@@ -324,7 +325,8 @@ err:
- 	return hw;
- }
+@@ -1165,7 +1163,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	}
  
--struct clk *clk_register_composite(struct device *dev, const char *name,
-+struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+			const char *name,
- 			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-@@ -333,7 +335,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	ret = s3c24xx_i2c_init(i2c);
+-	clk_disable(i2c->clk);
++	clk_disable_unprepare(i2c->clk);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "I2C controller init failed\n");
+ 		clk_unprepare(i2c->clk);
+@@ -1180,7 +1178,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		i2c->irq = ret = platform_get_irq(pdev, 0);
+ 		if (ret <= 0) {
+ 			dev_err(&pdev->dev, "cannot find IRQ\n");
+-			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+ 
+@@ -1188,7 +1185,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 				       0, dev_name(&pdev->dev), i2c);
+ 		if (ret != 0) {
+ 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+ 	}
+@@ -1196,7 +1192,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
+-		clk_unprepare(i2c->clk);
+ 		return ret;
+ 	}
+ 
+@@ -1218,7 +1213,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
+ 		pm_runtime_disable(&pdev->dev);
+ 		s3c24xx_i2c_deregister_cpufreq(i2c);
+-		clk_unprepare(i2c->clk);
+ 		return ret;
+ 	}
+ 
+@@ -1230,8 +1224,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
  {
- 	struct clk_hw *hw;
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
  
--	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-+	hw = clk_hw_register_composite(dev, ctrl, name, parent_names, num_parents,
- 			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
- 			flags);
- 	if (IS_ERR(hw))
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index cfb3aa3912c5..2bd0a8cb7a9c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -663,14 +663,16 @@ struct clk_composite {
+-	clk_unprepare(i2c->clk);
+-
+ 	pm_runtime_disable(&pdev->dev);
  
- #define to_clk_composite(_hw) container_of(_hw, struct clk_composite, hw)
+ 	s3c24xx_i2c_deregister_cpufreq(i2c);
+@@ -1262,16 +1254,13 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+-	int ret;
  
--struct clk *clk_register_composite(struct device *dev, const char *name,
-+struct clk *clk_register_composite(struct device *dev, struct clk_ctrl *ctrl,
-+		const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
- 		unsigned long flags);
- void clk_unregister_composite(struct clk *clk);
--struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_composite(struct device *dev,
-+		struct clk_ctrl *ctrl, const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 	if (!IS_ERR(i2c->sysreg))
+ 		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
+ 
+-	ret = clk_enable(i2c->clk);
+-	if (ret)
+-		return ret;
++	clk_prepare_enable(i2c->clk);
+ 	s3c24xx_i2c_init(i2c);
+-	clk_disable(i2c->clk);
++	clk_disable_unprepare(i2c->clk);
+ 	i2c->suspended = 0;
+ 
+ 	return 0;
 -- 
 1.9.1
