@@ -1,71 +1,43 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/7] clocksource: exynos_mct: Add the support for Exynos 64bit
- SoC
-Date: Tue, 16 Aug 2016 15:27:17 +0900
-Message-ID: <1471328843-26653-2-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 3/7] cpufreq: dt: Add exynos5433 compatible to use generic
+ cpufreq driver
+Date: Tue, 16 Aug 2016 15:27:19 +0900
+Message-ID: <1471328843-26653-4-git-send-email-cw00.choi@samsung.com>
 References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, cw00.choi@samsung.com, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1471328843-26653-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
-for 32bit SoC.
+This patch adds the exynos5433 compatible string for supporting
+the generic cpufreq driver on Exynos5433.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clocksource/Kconfig      | 2 +-
- drivers/clocksource/exynos_mct.c | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 567788664723..ec443c318c77 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -351,7 +351,7 @@ config CLKSRC_METAG_GENERIC
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 0bb44d5b5df4..470db30f745f 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -40,6 +40,7 @@ static const struct of_device_id machines[] __initconst = {
+ 	{ .compatible = "samsung,exynos5250", },
+ #ifndef CONFIG_BL_SWITCHER
+ 	{ .compatible = "samsung,exynos5420", },
++	{ .compatible = "samsung,exynos5433", },
+ 	{ .compatible = "samsung,exynos5800", },
+ #endif
  
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
--	depends on ARM
-+	depends on ARM || ARM64
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 41840d02c331..8f3488b80896 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
- 	return exynos4_read_count_32();
- }
- 
-+#if defined(CONFIG_ARM)
- static struct delay_timer exynos4_delay_timer;
- 
- static cycles_t exynos4_read_current_timer(void)
-@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
- 			 "cycles_t needs to move to 32-bit for ARM64 usage");
- 	return exynos4_read_count_32();
- }
-+#endif
- 
- static int __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start();
- 
-+#if defined(CONFIG_ARM)
- 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
- 	exynos4_delay_timer.freq = clk_rate;
- 	register_current_timer_delay(&exynos4_delay_timer);
-+#endif
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
