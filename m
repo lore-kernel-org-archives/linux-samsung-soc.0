@@ -1,47 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 4/7] pinctrl: samsung: Add GPFx support of Exynos5433
-Date: Tue, 16 Aug 2016 15:42:38 +0900
-Message-ID: <CA+Ln22ESSK2tK=jiRU94H=sFz23Eoh0Z96k3rBoaz9xnZS9iJg@mail.gmail.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
+From: perr perr <strongbox8@zoho.com>
+Subject: [RESEND][PATCH] pinctrl: exynos: remove duplicate calls in irq
+ handler
+Date: Tue, 16 Aug 2016 14:49:54 +0800
+Message-ID: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, chanwoo@kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, ingi2.kim@samsung.comlinux-arm-kernel <li>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sender153-mail.zoho.com ([74.201.84.153]:21206 "EHLO
+	sender153-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752028AbcHPGt5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Aug 2016 02:49:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: tomasz.figa@gmail.com
+Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-
-2016-08-16 15:27 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> From: Joonyoung Shim <jy0922.shim@samsung.com>
->
-> This patch add the support of GPFx pin of Exynos5433 SoC. Exynos5433 has
-> different memory map of GPFx from previous Exynos SoC. Exynos GPIO has
-> following register to control gpio funciton. Usually, all registers of GPIO
-> are included in same domain.
-> - CON / DAT / PUD / DRV / CONPDN / PUDPDN
-> - EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
->
-> But, GPFx are included in two domain as following. So, this patch supports
-> the GPFx pin which handle the on separate two domains.
-> - ALIVE domain : CON / DAT / PUD / DRV / CONPDN / PUDPDN
-> - IMEM domain  : EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
-
-I'm afraid I don't get anything from the description above. Could you
-describe the layout of registers in memory map and IRQ routing of the
-pins?
-
-Best regards,
-Tomasz
+Because chained_irq_enter() has already called chip->irq_mask() and 
+chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
+so it's not necessary to call chip->irq_*() here. 
+ 
+Signed-off-by: Perr Zhang<strongbox8@zoho.com> 
+ 
+--- 
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
+ 1 file changed, 1 insertion(+), 5 deletions(-) 
+ 
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
+index 051b5bf..d32fa2b 100644 
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
+@@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
+     int eint_irq; 
+  
+     chained_irq_enter(chip, desc); 
+-    chip->irq_mask(&desc->irq_data); 
+- 
+-    if (chip->irq_ack) 
+-        chip->irq_ack(&desc->irq_data); 
+  
+     eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
+     generic_handle_irq(eint_irq); 
+-    chip->irq_unmask(&desc->irq_data); 
++ 
+     chained_irq_exit(chip, desc); 
+ } 
+  
+--  
+1.9.3 
+ 
