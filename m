@@ -1,99 +1,205 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: Re: [PATCH] pwm: samsung: fix to use lowest div for large enough
- modulation bits
-Date: Tue, 16 Aug 2016 17:25:20 +0900
-Message-ID: <57B2CDF0.8020809@samsung.com>
-References: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
- <CGME20160816073709epcas1p45d975f43e8f7e3fc17e30cf6f6573dfb@epcas1p4.samsung.com>
- <329cb013-4832-c443-d593-327531db7b40@samsung.com>
-Reply-To: sw0312.kim@samsung.com
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 4/7] pinctrl: samsung: Add GPFx support of Exynos5433
+Date: Tue, 16 Aug 2016 10:46:02 +0200
+Message-ID: <7a90ee6f-7a2e-e866-b2fa-6f0fff44d647@samsung.com>
+References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
+ <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-reply-to: <329cb013-4832-c443-d593-327531db7b40@samsung.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, linux-pwm@vger.kernel.org, jy0922.shim@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1471328843-26653-5-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2016년 08월 16일 16:37, Krzysztof Kozlowski wrote:
-> On 08/02/2016 12:16 PM, Seung-Woo Kim wrote:
->> >From pwm_samsung_calc_tin(), there is routine to find the lowest
->> divider possible to generate lower frequency than requested one.
->> But it is always possible to generate requested frequency with
->> large enough modulation bits, so this patch fixes to use lowest
->> div for the case. This patch removes following UBSAN warning:
->>
->>    UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
->>    shift exponent 32 is too large for 32-bit type 'long unsigned int'
->>    [...]
->>    [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shift_out_of_bounds+0xd8/0x120)
->>    [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] (pwm_samsung_config+0x508/0x6a4)
->>    [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state+0x174/0x40c)
->>    [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8/0x488)
->>    [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0x70/0x150)
->>    [...]
->>
->> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
->> ---
->> The UBSAN warning from ARM is reported with the patch in following link:
->> https://patchwork.kernel.org/patch/9189575/
->> ---
->>  drivers/pwm/pwm-samsung.c |   10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
->> index ada2d32..ff0def6 100644
->> --- a/drivers/pwm/pwm-samsung.c
->> +++ b/drivers/pwm/pwm-samsung.c
->> @@ -193,9 +193,13 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
->>  	 * divider settings and choose the lowest divisor that can generate
->>  	 * frequencies lower than requested.
->>  	 */
->> -	for (div = variant->div_base; div < 4; ++div)
->> -		if ((rate >> (variant->bits + div)) < freq)
->> -			break;
->> +	if (fls(rate) <= variant->bits) {
->> +		div = variant->div_base;
->> +	} else {
->> +		for (div = variant->div_base; div < 4; ++div)
->> +			if ((rate >> (variant->bits + div)) < freq)
->> +				break;
->> +	}
+On 08/16/2016 08:27 AM, Chanwoo Choi wrote:
+> From: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > 
-> I have trouble with understanding the idea behind initial code from
-> Tomasz (commit 11ad39ede24ee). The variant->bits for all SoC except
-> S3C24xx is 32. This means the shift:
-> 	if ((rate >> (variant->bits + div)) < freq)
-> will be always by 32 or more... In practice this will choose always a
-> "div" of 0 because in first iteration of this loop, the shift will be by 32.
-
-I also confused that part, but I figured out that the bit is used to
-consider modulation bit to generate pwm signal from the input clock.
-
-Only the old s3c2440 has 16 bit modulation timer for pwm, and all later
-soc has 32 bit modulation timer. So 32 bit timer cases, with the lowest
-div, it can generate all frequencies which can be assigned with 32bit
-variable.
-But I uses fls() to consider 64bit case also even though there is no
-really that kind of clock.
-
-Best Regards,
-- Seung-Woo Kim
-
+> This patch add the support of GPFx pin of Exynos5433 SoC. Exynos5433 has
+> different memory map of GPFx from previous Exynos SoC. Exynos GPIO has
+> following register to control gpio funciton. Usually, all registers of GPIO
+> are included in same domain.
+> - CON / DAT / PUD / DRV / CONPDN / PUDPDN
+> - EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
 > 
-> This looks weird and the fix does not really remove the weirdness out of it.
+> But, GPFx are included in two domain as following. So, this patch supports
+> the GPFx pin which handle the on separate two domains.
+> - ALIVE domain : CON / DAT / PUD / DRV / CONPDN / PUDPDN
+> - IMEM domain  : EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
 > 
-> Best regards,
-> Krzysztof
+> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |  1 +
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           |  5 +++
+>  drivers/pinctrl/samsung/pinctrl-exynos.h           | 11 ++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c          | 43 ++++++++++++++++++----
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          |  5 +++
+>  5 files changed, 57 insertions(+), 8 deletions(-)
 > 
-> 
-> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> index 6db16b90873a..807fba1f829f 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> @@ -19,6 +19,7 @@ Required Properties:
+>    - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
+>    - "samsung,exynos5410-pinctrl": for Exynos5410 compatible pin-controller.
+>    - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
+> +  - "samsung,exynos5433-pinctrl": for Exynos5433 compatible pin-controller.
+>    - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
+>  
+>  - reg: Base address of the pin controller hardware module and length of
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index 051b5bf701a8..4f95983e0cdd 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -1350,6 +1350,11 @@ static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
+>  	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+>  	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+>  	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004),
+> +	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008),
+> +	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c),
+> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010),
+> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014),
+>  };
+>  
+>  /* pin banks of exynos5433 pin-controller - AUD */
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> index 0f0f7cedb2dc..4b737b6c434d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> @@ -79,6 +79,17 @@
+>  		.name		= id			\
+>  	}
+>  
+> +#define EXYNOS_PIN_BANK_EINTW_EXT(pins, reg, id, offs)	\
+> +	{						\
+> +		.type		= &bank_type_off,	\
+> +		.pctl_offset	= reg,			\
+> +		.nr_pins	= pins,			\
+> +		.eint_type	= EINT_TYPE_WKUP,	\
+> +		.eint_offset	= offs,			\
+> +		.eint_ext	= true,			\
+> +		.name		= id			\
+> +	}
+> +
+>  /**
+>   * struct exynos_weint_data: irq specific data for all the wakeup interrupts
+>   * generated by the external wakeup interrupt controller.
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 513fe6b23248..57e22085c2db 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -338,6 +338,7 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+>  			struct samsung_pin_bank **bank)
+>  {
+>  	struct samsung_pin_bank *b;
+> +	void __iomem *virt_base = drvdata->virt_base;
+>  
+>  	b = drvdata->pin_banks;
+>  
+> @@ -345,7 +346,10 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+>  			((b->pin_base + b->nr_pins - 1) < pin))
+>  		b++;
+>  
+> -	*reg = drvdata->virt_base + b->pctl_offset;
+> +	if (b->eint_ext)
+> +		virt_base = drvdata->ext_base;
+> +
+> +	*reg = virt_base + b->pctl_offset;
+>  	*offset = pin - b->pin_base;
+>  	if (bank)
+>  		*bank = b;
+> @@ -523,10 +527,12 @@ static void samsung_gpio_set_value(struct gpio_chip *gc,
+>  {
+>  	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
+>  	const struct samsung_pin_bank_type *type = bank->type;
+> +	void __iomem *virt_base = bank->eint_ext ?
+> +		bank->drvdata->ext_base : bank->drvdata->virt_base;
 
--- 
-Seung-Woo Kim
-Samsung Software R&D Center
+I would prefer to avoid '?' operator because it makes the line difficult
+to read. However I wonder whether this check here and later is needed at
+all. It obfuscates the code so how about:
+1. In pinctrl-samsung always access virt_base as it was before.
+The virt_base in probe will be in domain of GPF_CON registers.
+2. Rename ext_base to eint_base
+3. Always assign eint_base in probe():
+	if (exynos5433)
+		eint_base = iomap()...
+	else
+		eint_base = virt_base;
+4. in pinctrl-exynos.c access the eint_base.
+
+No need of scattered if() through various calls and simpler flow.
+
+>  	void __iomem *reg;
+>  	u32 data;
+>  
+> -	reg = bank->drvdata->virt_base + bank->pctl_offset;
+> +	reg = virt_base + bank->pctl_offset;
+>  
+>  	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
+>  	data &= ~(1 << offset);
+> @@ -553,8 +559,10 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
+>  	u32 data;
+>  	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
+>  	const struct samsung_pin_bank_type *type = bank->type;
+> +	void __iomem *virt_base = bank->eint_ext ?
+> +		bank->drvdata->ext_base : bank->drvdata->virt_base;
+>  
+> -	reg = bank->drvdata->virt_base + bank->pctl_offset;
+> +	reg = virt_base + bank->pctl_offset;
+>  
+>  	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
+>  	data >>= offset;
+> @@ -574,6 +582,7 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
+>  	const struct samsung_pin_bank_type *type;
+>  	struct samsung_pin_bank *bank;
+>  	struct samsung_pinctrl_drv_data *drvdata;
+> +	void __iomem *virt_base;
+>  	void __iomem *reg;
+>  	u32 data, mask, shift;
+>  
+> @@ -581,7 +590,8 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
+>  	type = bank->type;
+>  	drvdata = bank->drvdata;
+>  
+> -	reg = drvdata->virt_base + bank->pctl_offset +
+> +	virt_base = bank->eint_ext ? drvdata->ext_base : drvdata->virt_base;
+> +	reg = virt_base + bank->pctl_offset +
+>  					type->reg_offset[PINCFG_TYPE_FUNC];
+>  
+>  	mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+> @@ -1007,6 +1017,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+>  		bank->eint_type = bdata->eint_type;
+>  		bank->eint_mask = bdata->eint_mask;
+>  		bank->eint_offset = bdata->eint_offset;
+> +		bank->eint_ext = bdata->eint_ext;
+>  		bank->name = bdata->name;
+>  
+>  		spin_lock_init(&bank->slock);
+> @@ -1065,6 +1076,14 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+>  	if (IS_ERR(drvdata->virt_base))
+>  		return PTR_ERR(drvdata->virt_base);
+>  
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+
+Additional reg should be documented in bindings documentation.
+
+Best regards,
+Krzysztof
 --
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
