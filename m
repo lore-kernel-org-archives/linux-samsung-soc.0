@@ -1,52 +1,76 @@
-From: perr perr <strongbox8@zoho.com>
-Subject: [RESEND][PATCH] pinctrl: exynos: remove duplicate calls in irq
- handler
-Date: Tue, 16 Aug 2016 14:49:54 +0800
-Message-ID: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] pwm: samsung: fix to use lowest div for large enough
+ modulation bits
+Date: Tue, 16 Aug 2016 09:37:06 +0200
+Message-ID: <329cb013-4832-c443-d593-327531db7b40@samsung.com>
+References: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sender153-mail.zoho.com ([74.201.84.153]:21206 "EHLO
-	sender153-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752028AbcHPGt5 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:16953 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751226AbcHPHhL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 02:49:57 -0400
+	Tue, 16 Aug 2016 03:37:11 -0400
+In-reply-to: <1470133006-4272-1-git-send-email-sw0312.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com
-Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, linux-pwm@vger.kernel.org
+Cc: jy0922.shim@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>
 
-Because chained_irq_enter() has already called chip->irq_mask() and 
-chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
-so it's not necessary to call chip->irq_*() here. 
- 
-Signed-off-by: Perr Zhang<strongbox8@zoho.com> 
- 
---- 
- drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
- 1 file changed, 1 insertion(+), 5 deletions(-) 
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-index 051b5bf..d32fa2b 100644 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-@@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
-     int eint_irq; 
-  
-     chained_irq_enter(chip, desc); 
--    chip->irq_mask(&desc->irq_data); 
-- 
--    if (chip->irq_ack) 
--        chip->irq_ack(&desc->irq_data); 
-  
-     eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
-     generic_handle_irq(eint_irq); 
--    chip->irq_unmask(&desc->irq_data); 
-+ 
-     chained_irq_exit(chip, desc); 
- } 
-  
---  
-1.9.3 
- 
+On 08/02/2016 12:16 PM, Seung-Woo Kim wrote:
+>>From pwm_samsung_calc_tin(), there is routine to find the lowest
+> divider possible to generate lower frequency than requested one.
+> But it is always possible to generate requested frequency with
+> large enough modulation bits, so this patch fixes to use lowest
+> div for the case. This patch removes following UBSAN warning:
+> 
+>    UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
+>    shift exponent 32 is too large for 32-bit type 'long unsigned int'
+>    [...]
+>    [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shift_out_of_bounds+0xd8/0x120)
+>    [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] (pwm_samsung_config+0x508/0x6a4)
+>    [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state+0x174/0x40c)
+>    [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8/0x488)
+>    [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0x70/0x150)
+>    [...]
+> 
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> ---
+> The UBSAN warning from ARM is reported with the patch in following link:
+> https://patchwork.kernel.org/patch/9189575/
+> ---
+>  drivers/pwm/pwm-samsung.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index ada2d32..ff0def6 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -193,9 +193,13 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
+>  	 * divider settings and choose the lowest divisor that can generate
+>  	 * frequencies lower than requested.
+>  	 */
+> -	for (div = variant->div_base; div < 4; ++div)
+> -		if ((rate >> (variant->bits + div)) < freq)
+> -			break;
+> +	if (fls(rate) <= variant->bits) {
+> +		div = variant->div_base;
+> +	} else {
+> +		for (div = variant->div_base; div < 4; ++div)
+> +			if ((rate >> (variant->bits + div)) < freq)
+> +				break;
+> +	}
+
+I have trouble with understanding the idea behind initial code from
+Tomasz (commit 11ad39ede24ee). The variant->bits for all SoC except
+S3C24xx is 32. This means the shift:
+	if ((rate >> (variant->bits + div)) < freq)
+will be always by 32 or more... In practice this will choose always a
+"div" of 0 because in first iteration of this loop, the shift will be by 32.
+
+This looks weird and the fix does not really remove the weirdness out of it.
+
+Best regards,
+Krzysztof
