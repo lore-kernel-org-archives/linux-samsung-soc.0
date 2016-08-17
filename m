@@ -1,170 +1,138 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 5/7] arm64: dts: exynos: Add dts files for Samsung
- Exynos5433 64bit SoC
-Date: Wed, 17 Aug 2016 09:46:28 +0900
-Message-ID: <57B3B3E4.4020500@samsung.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471329328-26842-1-git-send-email-cw00.choi@samsung.com>
- <CGME20160816102954epcas1p4480c2a31fc4bd51c396517a272c44b2c@epcas1p4.samsung.com>
- <6afa2f9c-147a-89d1-1806-b465c5a18c95@samsung.com>
- <57B30E2E.3090506@samsung.com> <20160816175149.GA14206@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45388 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752867AbcHQAqc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 20:46:32 -0400
-In-reply-to: <20160816175149.GA14206@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kukjin Kim <kgene.kim@gmail.com>
+Subject: Re: [PATCH v3] MAINTAINERS: Switch to kernel.org account for Krzysztof Kozlowski
+Date: Wed, 17 Aug 2016 10:45:35 +0900
+Message-ID: <9819B1EB-CDED-464B-A955-AF4935F6E8CD@gmail.com>
+References: <1471366242-11432-1-git-send-email-krzk@kernel.org>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1471366242-11432-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, k.kozlowski@samsung.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
 
-Hi Krzysztof,
+Krzysztof Kozlowski wrote:
+> Change my email address to kernel.org account instead of Samsung one.
+>=20
+> Add Bartlomiej Zolnierkiewicz as a co-maintainer of Maxim and Samsung
+> PMIC drivers.  These are used on many of our boards along with Exynos
+> SoCs and Samsung R&D Institute Poland can still take care of them.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
 
-On 2016년 08월 17일 02:51, Krzysztof Kozlowski wrote:
-> On Tue, Aug 16, 2016 at 09:59:26PM +0900, Chanwoo Choi wrote:
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
->>>> new file mode 100644
->>>> index 000000000000..175121db367e
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
->>>> @@ -0,0 +1,306 @@
->>>> +/*
->>>> + * Device tree sources for Exynos5433 thermal zone
->>>> + *
->>>> + * Copyright (c) 2016 Chanwoo Choi <cw00.choi@samsung.com>
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> + */
->>>> +
->>>> +#include <dt-bindings/thermal/thermal.h>
->>>> +
->>>> +/ {
->>>> +thermal-zones {
->>>> +	atlas0_thermal: atlas0-thermal {
->>>> +		thermal-sensors = <&tmu_atlas0>;
->>>> +		polling-delay-passive = <0>;
->>>> +		polling-delay = <0>;
->>>> +		trips {
->>>> +			atlas0_alert_0: atlas0-alert-0 {
->>>> +				temperature = <50000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_1: atlas0-alert-1 {
->>>> +				temperature = <55000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_2: atlas0-alert-2 {
->>>> +				temperature = <60000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_3: atlas0-alert-3 {
->>>> +				temperature = <70000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_4: atlas0-alert-4 {
->>>> +				temperature = <80000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_5: atlas0-alert-5 {
->>>> +				temperature = <90000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>> +			atlas0_alert_6: atlas0-alert-6 {
->>>> +				temperature = <95000>;	/* millicelsius */
->>>> +				hysteresis = <1000>;	/* millicelsius */
->>>> +				type = "active";
->>>> +			};
->>>
->>> No critical trip? I think it might be useful to shutdown the system in a
->>> user-friendly way.
->>
->> When I use the critical trip, the following event occur[1].
->> But, I guess that this temperature is not correct temperature
->> because after completing the kernel booting, the temperature of big.LITTLE/G3D
->> are normal when checking the /sys/class/thermal/thermal_zoneX/temp right after booting.
->> - Maintain a uniform temperature(38 ~ 45 millicelsius) right after kernel booting.
->>
->> I guess that the critical interrupt may occur before initializing the exynos tmu.
->> But, I don't spend the many time to check the exynos-tmu.c driver.
->>
->> [1]
->> [  445.122122] thermal thermal_zone0: critical temperature reached(108 C),shutting down
->> [  445.122399] exynos-tmu 10060000.tmu: Temperature sensor ID: 0xa
->> [  445.122588] exynos-tmu 10060000.tmu: Calibration type is 2-point calibration
->> [  445.127942] reboot: Failed to start orderly shutdown: forcing the issue
->> [  445.134586] Emergency Sync complete
->> [    1.097954] reboot: Power down
-> 
-> I understand. Apparently the exynos-tmu driver needs some fixes for
-> this race. Skipping critical then makes sense.
-> 
->>
->>>
->>>> +		};
->>>> +
->>>> +		cooling-maps {
->>>> +			map0 {
->>>> +				/* Set maximum frequency as 1800MHz  */
->>>> +				trip = <&atlas0_alert_0>;
->>>> +				cooling-device = <&cpu4 1 1>;
->>>
->>> Out of curiosity: why choosing specific cooling level (so quite fast
->>> the device will slow down) instead of letting cooling framework to
->>> decide how much to cool? Any particular reason behind this?
->>
->> This cooling level is just default value in cooling-maps.
->> This value is able to overwrite on dts file. 
->>
->> And the thermal subsystem support the cpu cooling features
->> with 'cooling-maps'.
->>
->> Also, when I tested the performance and stress test
->> with GLBenchmark, the temperature of big.LITTLE cores/G3D
->> reach easily the critical temperature with 8 online cores.
->> So, I add the cooling level aggressively to protect
->> the system fault of CPU and GPU and to maintain
->> the system state.
-> 
-> I was asking why you do not let cooling framework decide which cooling
-> level to use but instead you force a specific cooling level. Maybe code
-> will be a better example. Why not use:
-> 			map0 {
-> 				/* Set maximum frequency as 1800MHz  */
-> 				trip = <&atlas0_alert_0>;
-> 				cooling-device = <&cpu4 0 1>;
-> 			}
-> 			map1 {
-> 				/* Set maximum frequency as 1700MHz  */
-> 				trip = <&atlas0_alert_1>;
-> 				cooling-device = <&cpu4 1 2>;
-> 			};
-> 
-> For higher frequencies it makes even more sense:
-> 			map6 {
-> 				/* Set maximum frequency as 800MHz  */
-> 				trip = <&atlas0_alert_6>;
-> 				cooling-device = <&cpu4 7 11>;
-> 			};
-> 
-> which allows the system to use suitable cooling level to maintain the
-> balance between performance and temperature dissipance, instead of some
-> fixed cooling level which might not be accurate to the system load.
+Acked-by: Kukjin Kim <kgene@kernel.org>
 
-Ah. I misunderstand of your question. OK. I'll expand the range of
-cooling level as you suggested.
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>=20
+> ---
+>=20
+> Third revision for simple maintainers update. Nice! :)
+>=20
+> Changes since v2:
+> 1. Add Bartlomiej, leave MUIC charger drivers as "Supported".
+>=20
+> Changes since v1:
+> 1. Update also mailmap after Joe Perches suggestion.
+>=20
+> Affected drivers/subsystems:
+> 1. arch/arm,
+> 2. mfd,
+> 3. power,
+> 4. regulator,
+> 5. clk,
+> 6. rtc,
+> 7. extcon,
+> 8. pinctrl,
+> 9. sound/soc,
+>=20
+> However if there are no objections, I can push it through my tree (to
+> arm-soc folks).
+> ---
+> .mailmap    |  1 +
+> MAINTAINERS | 15 +++++++++------
+> 2 files changed, 10 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index 2a91c14c80bf..b18912c5121e 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -88,6 +88,7 @@ Kay Sievers <kay.sievers@vrfy.org>
+> Kenneth W Chen <kenneth.w.chen@intel.com>
+> Konstantin Khlebnikov <koct9i@gmail.com> <k.khlebnikov@samsung.com>
+> Koushik <raghavendra.koushik@neterion.com>
+> +Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski@samsung.com>
+> Krzysztof Kozlowski <krzk@kernel.org> <k.kozlowski.k@gmail.com>
+> Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Leonid I Ananiev <leonid.i.ananiev@intel.com>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 45c98485c3f0..f77df673d097 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1623,7 +1623,7 @@ N:    rockchip
+>=20
+> ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+> M:    Kukjin Kim <kgene@kernel.org>
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> L:    linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)=
 
-Best Regards,
-Chanwoo Choi
+> L:    linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> S:    Maintained
+> @@ -7465,7 +7465,8 @@ F:    Documentation/devicetree/bindings/sound/max986=
+0.txt
+> F:    sound/soc/codecs/max9860.*
+>=20
+> MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> +M:    Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> L:    linux-pm@vger.kernel.org
+> S:    Supported
+> F:    drivers/power/supply/max14577_charger.c
+> @@ -7481,7 +7482,8 @@ F:    include/dt-bindings/*/*max77802.h
+>=20
+> MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
+> M:    Chanwoo Choi <cw00.choi@samsung.com>
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> +M:    Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> L:    linux-kernel@vger.kernel.org
+> S:    Supported
+> F:    drivers/*/max14577*.c
+> @@ -9258,7 +9260,7 @@ F:    drivers/pinctrl/sh-pfc/
+>=20
+> PIN CONTROLLER - SAMSUNG
+> M:    Tomasz Figa <tomasz.figa@gmail.com>
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> M:    Sylwester Nawrocki <s.nawrocki@samsung.com>
+> L:    linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)=
+
+> L:    linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> @@ -10189,7 +10191,7 @@ S:    Maintained
+> F:    drivers/platform/x86/samsung-laptop.c
+>=20
+> SAMSUNG AUDIO (ASoC) DRIVERS
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> M:    Sangbeom Kim <sbkim73@samsung.com>
+> M:    Sylwester Nawrocki <s.nawrocki@samsung.com>
+> L:    alsa-devel@alsa-project.org (moderated for non-subscribers)
+> @@ -10204,7 +10206,8 @@ F:    drivers/video/fbdev/s3c-fb.c
+>=20
+> SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
+> M:    Sangbeom Kim <sbkim73@samsung.com>
+> -M:    Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +M:    Krzysztof Kozlowski <krzk@kernel.org>
+> +M:    Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> L:    linux-kernel@vger.kernel.org
+> L:    linux-samsung-soc@vger.kernel.org
+> S:    Supported
+> --=20
+> 2.7.4
+>=20
