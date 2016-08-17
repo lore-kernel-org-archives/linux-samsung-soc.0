@@ -1,52 +1,52 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Use stdout non-deprecated property and
- add serial options to Odroid XU/XU3/XU4
-Date: Wed, 17 Aug 2016 11:39:35 +0100
-Message-ID: <20160817103935.GE30900@leverpostej>
-References: <1471419298-10414-1-git-send-email-k.kozlowski@samsung.com>
- <20160817102506.GD30900@leverpostej>
- <bae50bce-8e56-62cc-89b4-68532c2acaf0@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:51899 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750968AbcHQKjm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 06:39:42 -0400
-Content-Disposition: inline
-In-Reply-To: <bae50bce-8e56-62cc-89b4-68532c2acaf0@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 0/5] Change my email to kernel.org
+Date: Wed, 17 Aug 2016 14:07:41 +0200
+Message-ID: <1471435666-11880-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Aug 17, 2016 at 12:28:48PM +0200, Krzysztof Kozlowski wrote:
-> On 08/17/2016 12:25 PM, Mark Rutland wrote:
-> > On Wed, Aug 17, 2016 at 09:34:58AM +0200, Krzysztof Kozlowski wrote:
-> >> The "linux,stdout-path" is deprecated.
-> >>
-> >> Add serial options so the console can be properly configured when
-> >> bootloader does not pass "console" parameter to command line.  Without
-> >> options and lack of "console", the serial output dies during boot (just
-> >> after probing sound).
-> > 
-> > I'm confused. Is this just a cleanup (given "linux,stdout-path" is
-> > deprecated but still supported), or a bug fix?
-> 
-> There is no bug, so rather this is cleanup and improvement in one.
-> Usually we pass full console=ttySAC2,115200n8 from UBoot to command
-> line. The usage of serial options allows skipping that.
-> 
-> I can split the cleanup part from improvement. To me it looked a little
-> bit too much but I don't mind.
+Hi,
 
-No need. It just wasn't clear to me that you had U-Boot configured to
-pass the rate on the command line.
 
-As I mentioned, I suspect that the serial output doesn't "die" as such,
-but rather changes rate. It might be worth clarifying that in the commit
-message, but either way the patch itself is fine, and it's no big deal.
+I will be leaving Samsung R&D Institute Poland soon so the Samsung
+email will stop working at some point.  Change it to kernel.org in case
+someone would like to reach the author of the code.
 
-Thanks,
-Mark.
+Maintainers are updated separately [1].
+
+There are no dependencies between patches, please pick up freely
+as you wish.
+
+
+Best regards,
+Krzysztof
+
+[1] https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/commit/?h=fixes&id=d6479b2422f6ef83aba5810d3b1f06bcc42294e6
+
+
+Krzysztof Kozlowski (5):
+  mfd: max14577: Change Krzysztof Kozlowski's email to kernel.org
+  power: supply: Change Krzysztof Kozlowski's email to kernel.org
+  extcon: max14577: Change Krzysztof Kozlowski's email to kernel.org
+  input: misc: max77693: Change Krzysztof Kozlowski's email to
+    kernel.org
+  regulator: Change Krzysztof Kozlowski's email to kernel.org
+
+ Documentation/ABI/testing/sysfs-class-power | 8 ++++----
+ drivers/extcon/extcon-max14577.c            | 4 ++--
+ drivers/input/misc/max77693-haptic.c        | 4 ++--
+ drivers/mfd/max14577.c                      | 4 ++--
+ drivers/power/supply/max14577_charger.c     | 4 ++--
+ drivers/power/supply/max77693_charger.c     | 4 ++--
+ drivers/regulator/max14577-regulator.c      | 4 ++--
+ drivers/regulator/max77693-regulator.c      | 4 ++--
+ include/linux/mfd/max14577-private.h        | 2 +-
+ include/linux/mfd/max14577.h                | 2 +-
+ 10 files changed, 20 insertions(+), 20 deletions(-)
+
+-- 
+1.9.1
+
