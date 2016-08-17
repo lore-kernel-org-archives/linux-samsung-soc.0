@@ -1,93 +1,42 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/5] mfd: max14577: Change Krzysztof Kozlowski's email to
- kernel.org
-Date: Wed, 17 Aug 2016 15:09:02 +0100
-Message-ID: <20160817140902.GE4254@dell>
-References: <1471435666-11880-1-git-send-email-k.kozlowski@samsung.com>
- <1471435666-11880-2-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Use stdout non-deprecated property and
+ add serial options to Odroid XU/XU3/XU4
+Date: Wed, 17 Aug 2016 11:23:22 -0400
+Message-ID: <aaa3911a-1f5d-3567-6992-a24ef7dc2023@osg.samsung.com>
+References: <1471419298-10414-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38136 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752255AbcHQOHf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 10:07:35 -0400
-Received: by mail-wm0-f52.google.com with SMTP id o80so235004604wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2016 07:07:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1471435666-11880-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1471419298-10414-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, 17 Aug 2016, Krzysztof Kozlowski wrote:
+Hello Krzysztof,
 
-> Change my email address to kernel.org instead of Samsung one for the
-> purpose of any future contact.  The copyrights remain untouched and are
-> attributed to Samsung.
+On 08/17/2016 03:34 AM, Krzysztof Kozlowski wrote:
+> The "linux,stdout-path" is deprecated.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Add serial options so the console can be properly configured when
+> bootloader does not pass "console" parameter to command line.  Without
+> options and lack of "console", the serial output dies during boot (just
+> after probing sound).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  drivers/mfd/max14577.c               | 4 ++--
->  include/linux/mfd/max14577-private.h | 2 +-
->  include/linux/mfd/max14577.h         | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+The patch looks good to me.
 
-> diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
-> index 6c245128ab2e..6cbe96b28f42 100644
-> --- a/drivers/mfd/max14577.c
-> +++ b/drivers/mfd/max14577.c
-> @@ -3,7 +3,7 @@
->   *
->   * Copyright (C) 2014 Samsung Electronics
->   * Chanwoo Choi <cw00.choi@samsung.com>
-> - * Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> + * Krzysztof Kozlowski <krzk@kernel.org>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
-> @@ -569,6 +569,6 @@ static void __exit max14577_i2c_exit(void)
->  }
->  module_exit(max14577_i2c_exit);
->  
-> -MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>");
-> +MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>");
->  MODULE_DESCRIPTION("Maxim 14577/77836 multi-function core driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/max14577-private.h b/include/linux/mfd/max14577-private.h
-> index f01c1fae4d84..df75234f979d 100644
-> --- a/include/linux/mfd/max14577-private.h
-> +++ b/include/linux/mfd/max14577-private.h
-> @@ -3,7 +3,7 @@
->   *
->   * Copyright (C) 2014 Samsung Electrnoics
->   * Chanwoo Choi <cw00.choi@samsung.com>
-> - * Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> + * Krzysztof Kozlowski <krzk@kernel.org>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
-> diff --git a/include/linux/mfd/max14577.h b/include/linux/mfd/max14577.h
-> index ccfaf952c31b..d81b52bb8bee 100644
-> --- a/include/linux/mfd/max14577.h
-> +++ b/include/linux/mfd/max14577.h
-> @@ -3,7 +3,7 @@
->   *
->   * Copyright (C) 2014 Samsung Electrnoics
->   * Chanwoo Choi <cw00.choi@samsung.com>
-> - * Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> + * Krzysztof Kozlowski <krzk@kernel.org>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
+Best regards,
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
