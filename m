@@ -1,44 +1,91 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] MAINTAINERS: add myself as Samsung SPI maintainer
-Date: Thu, 18 Aug 2016 09:32:12 +0200
-Message-ID: <CAJKOXPfarfbUAxwseW3JTD-S+GR3cOrkFhDA9J9Xu0_ZNpm+FA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "MAINTAINERS: add myself as Samsung SPI maintainer" to the spi tree
+Date: Thu, 18 Aug 2016 11:17:48 +0100
+Message-ID: <E1baKOS-0002Br-90@debutante>
 References: <20160818072555.9208-1-andi.shyti@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20160818072555.9208-1-andi.shyti@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 18, 2016 at 9:25 AM, Andi Shyti <andi.shyti@samsung.com> wrote:
-> Create a new entry for the Samsung SPI driver supported by the
-> drivers/spi/spi-s3c* and remove it from its original place under
-> "ARM/SAMSUNG EXYNOS ARM ARCHITECTURES".
->
-> The original maintainership inherited from the Samsung Exynos
-> ARM Architecture is kept as it was (i.e. Kukjin and Krzysztof), I
-> will help and co-maintain the driver.
->
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> CC: Kukjin Kim <kgene@kernel.org>
-> CC: Mark Brown <broonie@kernel.org>
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: linux-spi@vger.kernel.org
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
-> Hi,
->
-> as Krzysztof pointed out, in the first version of this patch I
-> forgot some files related to the Samsung's SPI drivers. In this
-> version I added them.
->
-> Thanks,
-> Andi
->
+The patch
 
+   MAINTAINERS: add myself as Samsung SPI maintainer
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2e365a703ea60de617287354ae63bf677e406feb Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Thu, 18 Aug 2016 16:25:55 +0900
+Subject: [PATCH] MAINTAINERS: add myself as Samsung SPI maintainer
+
+Create a new entry for the Samsung SPI driver supported by the
+drivers/spi/spi-s3c* and remove it from its original place under
+"ARM/SAMSUNG EXYNOS ARM ARCHITECTURES".
+
+The original maintainership inherited from the Samsung Exynos
+ARM Architecture is kept as it was (i.e. Kukjin and Krzysztof), I
+will help and co-maintain the driver.
+
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ MAINTAINERS | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 20bb1d00098c..5051c2f46d47 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1633,7 +1633,6 @@ F:	drivers/*/*s3c64xx*
+ F:	drivers/*/*s5pv210*
+ F:	drivers/memory/samsung/*
+ F:	drivers/soc/samsung/*
+-F:	drivers/spi/spi-s3c*
+ F:	Documentation/arm/Samsung/
+ F:	Documentation/devicetree/bindings/arm/samsung/
+ F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
+@@ -10237,6 +10236,17 @@ S:	Supported
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ F:	drivers/clk/samsung/
+ 
++SAMSUNG SPI DRIVERS
++M:	Kukjin Kim <kgene@kernel.org>
++M:	Krzysztof Kozlowski <krzk@kernel.org>
++M:	Andi Shyti <andi.shyti@samsung.com>
++L:	linux-spi@vger.kernel.org
++L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++S:	Maintained
++F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
++F:	drivers/spi/spi-s3c*
++F:	include/linux/platform_data/spi-s3c64xx.h
++
+ SAMSUNG SXGBE DRIVERS
+ M:	Byungho An <bh74.an@samsung.com>
+ M:	Girish K S <ks.giri@samsung.com>
+-- 
+2.8.1
