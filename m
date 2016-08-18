@@ -1,42 +1,48 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Use stdout non-deprecated property and
- add serial options to Odroid XU/XU3/XU4
-Date: Wed, 17 Aug 2016 11:23:22 -0400
-Message-ID: <aaa3911a-1f5d-3567-6992-a24ef7dc2023@osg.samsung.com>
-References: <1471419298-10414-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1471419298-10414-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] ARM: exynos: Fixes for v4.8
+Date: Thu, 18 Aug 2016 08:31:55 +0200
+Message-ID: <1471501915-4746-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Hi,
 
-On 08/17/2016 03:34 AM, Krzysztof Kozlowski wrote:
-> The "linux,stdout-path" is deprecated.
-> 
-> Add serial options so the console can be properly configured when
-> bootloader does not pass "console" parameter to command line.  Without
-> options and lack of "console", the serial output dies during boot (just
-> after probing sound).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-
-The patch looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+A fix and a maintainers update for current release cycle (v4.8).
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Krzysztof
+
+
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.8
+
+for you to fetch changes up to 326dce0734b63c3b82b6a88e5645eab8b54c6692:
+
+  MAINTAINERS: Switch to kernel.org account for Krzysztof Kozlowski (2016-08-17 17:54:56 +0200)
+
+----------------------------------------------------------------
+Fix for v4.8-rc1:
+1. Select proper eMMC HighSpeed mode on Odroid XU.  DTS was mixing
+   "samsung,exynos5250-dw-mshc" compatible (with HS200 as fastest mode)
+   with a property "mmc-hs400-1_8v" thus leading to failures during
+   probe.
+
+2. Update Krzysztof Kozlowski's email address in maintainers.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      ARM: dts: exynos: Properly select eMMC HighSpeed mode on Odroid XU
+      MAINTAINERS: Switch to kernel.org account for Krzysztof Kozlowski
+
+ .mailmap                                  |  1 +
+ MAINTAINERS                               | 15 +++++++++------
+ arch/arm/boot/dts/exynos5410-odroidxu.dts |  3 ---
+ 3 files changed, 10 insertions(+), 9 deletions(-)
