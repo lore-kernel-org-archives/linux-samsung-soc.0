@@ -1,47 +1,39 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
-Date: Thu, 18 Aug 2016 21:47:19 +0900
-Message-ID: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60707 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752429AbcHRMsJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Aug 2016 08:48:09 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/7] Documentation: bindings: Add Exynos5433 PMU compatible
+Date: Thu, 18 Aug 2016 13:59:57 -0500
+Message-ID: <20160818185957.GA10547@rob-hp-laptop>
+References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
+ <1471328843-26653-3-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1471328843-26653-3-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: mark.rutland@arm.com, k.kozlowski@samsung.com, chanwoo@kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, a.hajda@samsung.com, s.nawrocki@samsung.com, beomho.seo@samsung.com, m.szyprowski@samsung.com, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, krzk@kernel.org, jh80.chung@samsung.com, kgene@kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, ingi2.kim@samsung.com, linux-arm-kernel@lists.infradead.org, jaewon02.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, human.hwang@samsung.com, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, chanwoo@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
-and test the patches as supporter. I will help them. I can access the all
-datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
-the exynos4415/5433 clock driver as author and handled the exynos3250 clock
-driver. Lastly, adding the missing information of the exynos clock drivers.
+On Tue, Aug 16, 2016 at 03:27:18PM +0900, Chanwoo Choi wrote:
+> This patch adds the exynos5433 PMU compatible to support the access
+> of PMU (Power Management Unit) block.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 20bb1d00098c..442d6f5c65be 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
- SAMSUNG SOC CLOCK DRIVERS
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- M:	Tomasz Figa <tomasz.figa@gmail.com>
-+M:	Chanwoo Choi <cw00.choi@samsung.com>
- S:	Supported
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- F:	drivers/clk/samsung/
-+F:	include/dt-bindings/clock/exynos*.h
-+F:	Documentation/devicetree/bindings/clock/exynos*.txt
- 
- SAMSUNG SXGBE DRIVERS
- M:	Byungho An <bh74.an@samsung.com>
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
