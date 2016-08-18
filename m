@@ -1,48 +1,71 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: exynos: Fixes for v4.8
-Date: Thu, 18 Aug 2016 08:31:55 +0200
-Message-ID: <1471501915-4746-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] MAINTAINERS: add myself as Samsung SPI maintainer
+Date: Thu, 18 Aug 2016 15:44:31 +0900
+Message-ID: <20160818064431.8982-1-andi.shyti@samsung.com>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Create a new entry for the Samsung SPI driver supported by the
+drivers/spi/spi-s3c* and remove it from its original place under
+"ARM/SAMSUNG EXYNOS ARM ARCHITECTURES".
+
+The original maintainership inherited from the Samsung Exynos
+ARM Architecture is kept as it was (i.e. Kukjin and Krzysztof), I
+will help and co-maintain the driver.
+
+CC: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+CC: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+CC: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+CC: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+CC: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
 Hi,
 
-A fix and a maintainers update for current release cycle (v4.8).
+this patch depends on Krzysztof's previous patch-set on the
+MAINTAINER file: https://lkml.org/lkml/2016/8/16/571
 
-Best regards,
-Krzysztof
+Thanks,
+Andi
 
+ MAINTAINERS | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c9cd8d3..c305fa2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1633,7 +1633,6 @@ F:	drivers/*/*s3c64xx*
+ F:	drivers/*/*s5pv210*
+ F:	drivers/memory/samsung/*
+ F:	drivers/soc/samsung/*
+-F:	drivers/spi/spi-s3c*
+ F:	Documentation/arm/Samsung/
+ F:	Documentation/devicetree/bindings/arm/samsung/
+ F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
+@@ -10240,6 +10239,15 @@ S:	Supported
+ L:	linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (moderated for non-subscribers)
+ F:	drivers/clk/samsung/
+ 
++SAMSUNG SPI DRIVERS
++M:	Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
++M:	Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
++M:	Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++L:	linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
++L:	linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (moderated for non-subscribers)
++S:	Maintained
++F:	drivers/spi/spi-s3c*
++
+ SAMSUNG SXGBE DRIVERS
+ M:	Byungho An <bh74.an-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ M:	Girish K S <ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+-- 
+2.8.1
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.8
-
-for you to fetch changes up to 326dce0734b63c3b82b6a88e5645eab8b54c6692:
-
-  MAINTAINERS: Switch to kernel.org account for Krzysztof Kozlowski (2016-08-17 17:54:56 +0200)
-
-----------------------------------------------------------------
-Fix for v4.8-rc1:
-1. Select proper eMMC HighSpeed mode on Odroid XU.  DTS was mixing
-   "samsung,exynos5250-dw-mshc" compatible (with HS200 as fastest mode)
-   with a property "mmc-hs400-1_8v" thus leading to failures during
-   probe.
-
-2. Update Krzysztof Kozlowski's email address in maintainers.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: dts: exynos: Properly select eMMC HighSpeed mode on Odroid XU
-      MAINTAINERS: Switch to kernel.org account for Krzysztof Kozlowski
-
- .mailmap                                  |  1 +
- MAINTAINERS                               | 15 +++++++++------
- arch/arm/boot/dts/exynos5410-odroidxu.dts |  3 ---
- 3 files changed, 10 insertions(+), 9 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
