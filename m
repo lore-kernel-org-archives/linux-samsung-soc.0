@@ -1,92 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
-Date: Fri, 19 Aug 2016 18:58:47 +0200
-Message-ID: <20160819165847.GA7100@kozik-lap>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
- <65703100-1e16-6c34-babe-40e630180688@samsung.com>
- <20160819144640.GM21682@localhost.localdomain>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 6/7] arm64: dts: exynos: Add dts file for Exynos5433-based
+ TM2 board
+Date: Fri, 19 Aug 2016 19:05:46 +0200
+Message-ID: <0aba7694-e5fc-47be-dce6-06f64fb3759d@samsung.com>
+References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
+ <1471329328-26842-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35777 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754103AbcHSQ6x (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 12:58:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20160819144640.GM21682@localhost.localdomain>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1471329328-26842-2-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, chanwoo@kernel.org, jy0922.shim@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, jh80.chung@samsung.com, a.hajda@samsung.com, kgene@kernel.org, krzk@kernel.org, jaewon02.kim@samsung.com, human.hwang@samsung.com, m.szyprowski@samsung.com, beomho.seo@samsung.com, ingi2.kim@samsung.com, ideal.song@samsung.com, linux-arm-kernel@lists.infradead.org, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-
 
-On Fri, Aug 19, 2016 at 03:46:40PM +0100, Charles Keepax wrote:
-> On Tue, Aug 16, 2016 at 03:51:10PM +0200, Krzysztof Kozlowski wrote:
-> > On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
-> > > Hi,
-> > > 
-> > > RFC, please, do not apply, maybe except patch #1 which is harmless.
-> > > 
-> > > 
-> > > Introduction
-> > > ============
-> > > The patchset brings new entity: clock controller representing a hardware
-> > > block.  The clock controller comes with its own prepare lock which
-> > > is used then in many places.  The idea is to fix the deadlock mentioned
-> > > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
-> > > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
-> > > by keeping clock prepared").
-> > > 
-> > 
-> > Damn, I forgot to describe the overall idea. :) It is mentioned in patch
-> > 15 but probably not many will have enough of patience to reach it.
-> > 
-> > The locking idea
-> > ================
-> > Clock controllers representing different hardware blocks, will contain
-> > its own prepare lock which protects the clocks inside controller.  The
-> > hierarchy itself is protected by global lock.
-> > 
-> > In prepare path, the global prepare lock is removed.  This is direct
-> > solution for the deadlock.
-> > 
-> > Clock hierarchy imposes also hierarchy between controllers so when a
-> > prepare happens, also parents have to be locked.
-> > 
-> > Following locking design was chosen:
-> > 1. For prepare/unprepare paths: lock only clock controller and its
-> >    parents.
-> > 2. For recalc rates paths: lock global lock, the controller and its
-> >    children.
-> > 3. For reparent paths: lock entire tree up down (children and parents)
-> >    and the global lock as well.
-> > 
-> > 
-> > In each case of traversing the clock hierarchy, the locking of
-> > controllers is always from children to parents.
-> > 
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> I have been playing with these patches on my Arndale board and
-> they certainly do seem to resolve the interaction issues I have
-> been SPI and the clocking framework, which is awesome and lets me
-> sensibly add the clocking framework into our codec drivers. I will
-> keep investigating and for what its worth have a little more
-> detailed look through the code.
+On 08/16/2016 08:35 AM, Chanwoo Choi wrote:
+> &spi_1 {
+> +	cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
+> +	status = "okay";
+> +
+> +	wm5110: wm5110-codec@0 {
+> +		compatible = "wlf,wm5110";
+> +		reg = <0x0>;
+> +		spi-max-frequency = <20000000>;
+> +		interrupt-parent = <&gpa0>;
+> +		interrupts = <4 0 0>;
+> +		clocks = <&xxti>, <&s2mps13_osc 2>;
 
-I am really happy to hear it!
+The first clock needs to be CLKOUT, i.e.
 
-Along with other Samsung guys from Poland we really spent a lot of time
-figuring out all the locking cases, possible scenarios and new issues
-which could come out of it.
+	clocks = <&pmu_system_controller 0>, <&s2mps13_osc 2>;
 
-I am glad that it solves also other people's cases, not only ours!
 
-Certainly there is a lot of things to improve in the patchset. Probably
-merging the new "clock controller" entity into clock provider makes
-sense.
-
-Best regards,
-Krzysztof
+-- 
+Thanks,
+Sylwester
