@@ -1,46 +1,62 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 6/7] arm64: dts: exynos: Add dts file for Exynos5433-based
- TM2 board
-Date: Fri, 19 Aug 2016 19:05:46 +0200
-Message-ID: <0aba7694-e5fc-47be-dce6-06f64fb3759d@samsung.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471329328-26842-2-git-send-email-cw00.choi@samsung.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 4/5] input: misc: max77693: Change Krzysztof Kozlowski's
+ email to kernel.org
+Date: Fri, 19 Aug 2016 10:16:31 -0700
+Message-ID: <20160819171631.GG20499@dtor-ws>
+References: <1471435666-11880-1-git-send-email-k.kozlowski@samsung.com>
+ <1471435666-11880-5-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1471329328-26842-2-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, chanwoo@kernel.org, jy0922.shim@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, jh80.chung@samsung.com, a.hajda@samsung.com, kgene@kernel.org, krzk@kernel.org, jaewon02.kim@samsung.com, human.hwang@samsung.com, m.szyprowski@samsung.com, beomho.seo@samsung.com, ingi2.kim@samsung.com, ideal.song@samsung.com, linux-arm-kernel@lists.infradead.org, jonghwa3.lee@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471435666-11880-5-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/16/2016 08:35 AM, Chanwoo Choi wrote:
-> &spi_1 {
-> +	cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
-> +	status = "okay";
-> +
-> +	wm5110: wm5110-codec@0 {
-> +		compatible = "wlf,wm5110";
-> +		reg = <0x0>;
-> +		spi-max-frequency = <20000000>;
-> +		interrupt-parent = <&gpa0>;
-> +		interrupts = <4 0 0>;
-> +		clocks = <&xxti>, <&s2mps13_osc 2>;
+On Wed, Aug 17, 2016 at 02:07:45PM +0200, Krzysztof Kozlowski wrote:
+> Change my email address to kernel.org instead of Samsung one for the
+> purpose of any future contact.  The copyrights remain untouched and are
+> attributed to Samsung.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The first clock needs to be CLKOUT, i.e.
+Applied, thank you.
 
-	clocks = <&pmu_system_controller 0>, <&s2mps13_osc 2>;
-
+> ---
+>  drivers/input/misc/max77693-haptic.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+> index 29ddeb7be84b..46b0f48fbf49 100644
+> --- a/drivers/input/misc/max77693-haptic.c
+> +++ b/drivers/input/misc/max77693-haptic.c
+> @@ -3,7 +3,7 @@
+>   *
+>   * Copyright (C) 2014,2015 Samsung Electronics
+>   * Jaewon Kim <jaewon02.kim@samsung.com>
+> - * Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> + * Krzysztof Kozlowski <krzk@kernel.org>
+>   *
+>   * This program is not provided / owned by Maxim Integrated Products.
+>   *
+> @@ -426,7 +426,7 @@ static struct platform_driver max77693_haptic_driver = {
+>  module_platform_driver(max77693_haptic_driver);
+>  
+>  MODULE_AUTHOR("Jaewon Kim <jaewon02.kim@samsung.com>");
+> -MODULE_AUTHOR("Krzysztof Kozlowski <k.kozlowski@samsung.com>");
+> +MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+>  MODULE_DESCRIPTION("MAXIM 77693/77843 Haptic driver");
+>  MODULE_ALIAS("platform:max77693-haptic");
+>  MODULE_LICENSE("GPL");
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
-Thanks,
-Sylwester
+Dmitry
