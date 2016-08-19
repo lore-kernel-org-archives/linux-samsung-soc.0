@@ -1,48 +1,78 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 2/2] ARM: multi_v7_defconfig: Don't attempt to enable schedutil governor as module
-Date: Fri, 19 Aug 2016 09:47:24 -0400
-Message-ID: <1471614444-10673-2-git-send-email-javier@osg.samsung.com>
-References: <1471614444-10673-1-git-send-email-javier@osg.samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Date: Fri, 19 Aug 2016 15:46:40 +0100
+Message-ID: <20160819144640.GM21682@localhost.localdomain>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+ <65703100-1e16-6c34-babe-40e630180688@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:42099
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754915AbcHSNrr (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:58997 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750889AbcHSOrY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 09:47:47 -0400
-In-Reply-To: <1471614444-10673-1-git-send-email-javier@osg.samsung.com>
+        Fri, 19 Aug 2016 10:47:24 -0400
+Content-Disposition: inline
+In-Reply-To: <65703100-1e16-6c34-babe-40e630180688@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org
 
-The schedutil CPUFreq governor could be built as a module but the commit
-58919e83c85c ("cpufreq / sched: Pass flags to cpufreq_update_util()")
-made it non-modular so attempting to enable as module leads to a warning:
+On Tue, Aug 16, 2016 at 03:51:10PM +0200, Krzysztof Kozlowski wrote:
+> On 08/16/2016 03:34 PM, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > RFC, please, do not apply, maybe except patch #1 which is harmless.
+> > 
+> > 
+> > Introduction
+> > ============
+> > The patchset brings new entity: clock controller representing a hardware
+> > block.  The clock controller comes with its own prepare lock which
+> > is used then in many places.  The idea is to fix the deadlock mentioned
+> > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> > by keeping clock prepared").
+> > 
+> 
+> Damn, I forgot to describe the overall idea. :) It is mentioned in patch
+> 15 but probably not many will have enough of patience to reach it.
+> 
+> The locking idea
+> ================
+> Clock controllers representing different hardware blocks, will contain
+> its own prepare lock which protects the clocks inside controller.  The
+> hierarchy itself is protected by global lock.
+> 
+> In prepare path, the global prepare lock is removed.  This is direct
+> solution for the deadlock.
+> 
+> Clock hierarchy imposes also hierarchy between controllers so when a
+> prepare happens, also parents have to be locked.
+> 
+> Following locking design was chosen:
+> 1. For prepare/unprepare paths: lock only clock controller and its
+>    parents.
+> 2. For recalc rates paths: lock global lock, the controller and its
+>    children.
+> 3. For reparent paths: lock entire tree up down (children and parents)
+>    and the global lock as well.
+> 
+> 
+> In each case of traversing the clock hierarchy, the locking of
+> controllers is always from children to parents.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-warning: symbol value 'm' invalid for CPU_FREQ_GOV_SCHEDUTIL
+I have been playing with these patches on my Arndale board and
+they certainly do seem to resolve the interaction issues I have
+been SPI and the clocking framework, which is awesome and lets me
+sensibly add the clocking framework into our codec drivers. I will
+keep investigating and for what its worth have a little more
+detailed look through the code.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
-Changes in v2:
-- Include linux-samsung-soc ML to cc list. Suggested by Krzysztof Kozlowski.
-
- arch/arm/configs/multi_v7_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 0ccaa519f588..65b5b6172e83 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -136,7 +136,7 @@ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPU_FREQ_GOV_POWERSAVE=m
- CONFIG_CPU_FREQ_GOV_USERSPACE=m
- CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
--CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
-+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
- CONFIG_ARM_IMX6Q_CPUFREQ=y
- CONFIG_QORIQ_CPUFREQ=y
- CONFIG_CPU_IDLE=y
--- 
-2.5.5
+Thanks,
+Charles
