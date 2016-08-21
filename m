@@ -1,49 +1,62 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
-Date: Sat, 20 Aug 2016 18:03:07 +0200
-Message-ID: <20160820160307.GB6344@kozik-book>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
- <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8519a1cf-ec51-2914-e4aa-27b26b9233de@osg.samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback
+Date: Sun, 21 Aug 2016 03:27:45 -0400
+Message-ID: <1471764465-2524-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:45419
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752446AbcHUH2H (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 21 Aug 2016 03:28:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Aug 19, 2016 at 03:31:08PM -0400, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 08/16/2016 09:34 AM, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > RFC, please, do not apply, maybe except patch #1 which is harmless.
-> > 
-> > 
-> > Introduction
-> > ============
-> > The patchset brings new entity: clock controller representing a hardware
-> > block.  The clock controller comes with its own prepare lock which
-> > is used then in many places.  The idea is to fix the deadlock mentioned
-> > in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
-> > I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
-> > by keeping clock prepared").
-> > 
-> > 
-> 
-> I'm not familiar enough with the common clock framework to do a proper review
-> of this patch-set, but I've tested both on an Exynos5800 Peach Pi Chromebook
-> and an Exynos5422 Odroid XU4 board and I didn't find any clock regressions.
-> 
-> Also, I confirmed that the possible deadlock in the Odroid XU4 that was fixed
-> by reverted commit 10ff4c5239a1 doesn't happen anymore with your patches.
-> 
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+controller, and these functionalities are supported by different drivers
+that matches the same compatible strings.
 
-Thanks for testing, I appreciate that!
+Since commit 15cc2ed6dcf9 ("of/irq: Mark initialised interrupt controllers
+as populated") the OF core flags interrupt controllers registered with the
+IRQCHIP_DECLARE() macro as OF_POPULATED, so platform devices with the same
+compatible string as the interrupt controller will not be registered.
 
-Best regards,
-Krzysztof
+This prevents the PMU platform device to be registered so the Exynos PMU
+driver is never probed. This breaks (among other things) Suspend-to-RAM.
+
+Fix this by clearing the OF_POPULATED flag in the PMU IRQ init callback,
+to allow the Exynos PMU platform driver to be probed. The patch is based
+on Philipp Zabel's "ARM: imx6: mark GPC node as not populated after irq
+init to probe pm domain driver".
+
+Fixes: 15cc2ed6dcf9 ("of/irq: Mark initialised interrupt controllers as populated")
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+This was tested on an Exynos5800 Peach Pi Chromebook with v4.8-rc2 +
+Philipp's patch: https://patchwork.kernel.org/patch/9271361/
+
+ arch/arm/mach-exynos/suspend.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 3750575c73c5..06332f626565 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -255,6 +255,12 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
+ 		return -ENOMEM;
+ 	}
+ 
++	/*
++	 * Clear the OF_POPULATED flag set in of_irq_init so that
++	 * later the Exynos PMU platform device won't be skipped.
++	 */
++	of_node_clear_flag(node, OF_POPULATED);
++
+ 	return 0;
+ }
+ 
+-- 
+2.5.5
