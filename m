@@ -1,14 +1,19 @@
-From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: [PATCH 2/2] ARM: dts: add TOPEET itop elite based board
-Date: Mon, 22 Aug 2016 04:04:53 +0800
-Message-ID: <1471809893-31147-3-git-send-email-ayaka@soulik.info>
-References: <1471809893-31147-1-git-send-email-ayaka@soulik.info>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1471809893-31147-1-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+From: Randy Li <ayaka@soulik.info>
+Subject: [PATCH 2/2 v2] ARM: dts: add TOPEET itop elite based board
+Date: Mon, 22 Aug 2016 04:12:39 +0800
+Message-ID: <1471810359-6154-1-git-send-email-ayaka@soulik.info>
+References: <1471809893-31147-3-git-send-email-ayaka@soulik.info>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from kozue.soulik.info ([108.61.200.231]:47429 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752720AbcHUUNE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 21 Aug 2016 16:13:04 -0400
+In-Reply-To: <1471809893-31147-3-git-send-email-ayaka@soulik.info>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Li <ayaka@soulik.info>
 
 The TOPEET itop exynos 4412 have three versions base board. The
 Elite version is the cheap one without too much peripheral devices
@@ -18,13 +23,12 @@ Currently supported are serial console, wired networking(USB),
 USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
 PWM beeper, ADC and LEDs.
 
-Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Signed-off-by: Randy Li <ayaka@soulik.info>
 ---
  .../bindings/arm/samsung/samsung-boards.txt        |   3 +
  arch/arm/boot/dts/Makefile                         |   1 +
  arch/arm/boot/dts/exynos4412-itop-elite.dts        | 148 +++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    |   2 +-
- 4 files changed, 153 insertions(+), 1 deletion(-)
+ 3 files changed, 152 insertions(+)
  create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
@@ -64,7 +68,7 @@ index 0000000..363908e
 + *
 + * Copyright (c) 2016 SUMOMO Computer Association
 + *			https://www.sumomo.mobi
-+ *			Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
++ *			Randy Li <ayaka@soulik.info>
 + *			
 + * Device tree source file for TOPEET iTop Exynos 4412 core board 
 + * which is based on Samsung's Exynos4412 SoC.
@@ -207,23 +211,5 @@ index 0000000..363908e
 +&adc {
 +	status = "okay";
 +};
-diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-index 0860ee6..040037b 100644
---- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-@@ -394,7 +394,7 @@
- 		samsung,pins = "gpm2-4";
- 		samsung,pin-function = <1>;
- 		samsung,pin-pud = <0>;
--		samsung,pin-drv = <3>;
-+		samsung,pin-drv = <0>;
- 	};
- };
- 
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
