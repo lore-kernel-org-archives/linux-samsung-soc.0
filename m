@@ -1,41 +1,42 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 6/7] arm64: dts: exynos: Add dts file for Exynos5433-based
- TM2 board
-Date: Sun, 21 Aug 2016 16:46:42 +0900
-Message-ID: <CAGTfZH0kqwJhZBh_trnK4JstpkVdyHSr6frvdVq4Z=Pxzzp0Ww@mail.gmail.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471329328-26842-2-git-send-email-cw00.choi@samsung.com> <0aba7694-e5fc-47be-dce6-06f64fb3759d@samsung.com>
-Reply-To: chanwoo@kernel.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0aba7694-e5fc-47be-dce6-06f64fb3759d@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, krzk@kernel.org, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, jy0922.shim@samsung.com, "inki.dae@samsung.com" <inki.dae@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, "ideal.song@samsung.com" <ideal.song@samsung.com>, ingi2.kim@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: [PATCH 0/2] Add a new board for exynos 4412
+Date: Mon, 22 Aug 2016 04:04:51 +0800
+Message-ID: <1471809893-31147-1-git-send-email-ayaka@soulik.info>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-08-20 2:05 GMT+09:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
-> On 08/16/2016 08:35 AM, Chanwoo Choi wrote:
->> &spi_1 {
->> +     cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
->> +     status = "okay";
->> +
->> +     wm5110: wm5110-codec@0 {
->> +             compatible = "wlf,wm5110";
->> +             reg = <0x0>;
->> +             spi-max-frequency = <20000000>;
->> +             interrupt-parent = <&gpa0>;
->> +             interrupts = <4 0 0>;
->> +             clocks = <&xxti>, <&s2mps13_osc 2>;
->
-> The first clock needs to be CLKOUT, i.e.
->
->         clocks = <&pmu_system_controller 0>, <&s2mps13_osc 2>;
->
+These patches would add a support for a new exynos 4412 core
+board with a base board.
 
-OK.
+Although the Samsung Exynos 4412 is a old chip but still powerful.
+The main reason I keep to use it is the MFC. It is quite easy
+to use the multimedia functions in samsung.  I would like to
+go into graphics part in the future.
+
+Anyway, the TOPEET iTOP-4412 have many different version,
+I only have Elite and Full version(The other one is Super version).
+With two different Core board Chip pakcage(SCP or POP). As I
+only have the SCP one, I would only offer support to SCP version.
+
+Randy Li (2):
+  ARM: dts: Add TOPEET itop core board SCP package version
+  ARM: dts: add TOPEET itop elite based board
+
+ .../bindings/arm/samsung/samsung-boards.txt        |   3 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 148 +++++++
+ arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    | 434 +++++++++++++++++++++
+ 4 files changed, 586 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
 
 -- 
-Best Regards,
-Chanwoo Choi
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
