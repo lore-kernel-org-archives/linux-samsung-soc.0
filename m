@@ -1,58 +1,123 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: Fix broken architected timer interrupt
- trigger
-Date: Mon, 22 Aug 2016 11:26:33 +0100
-Message-ID: <57BAD359.30707@arm.com>
-References: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com>
- <1470045256-9032-3-git-send-email-marc.zyngier@arm.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Mon, 22 Aug 2016 11:59:24 +0200
+Message-ID: <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:50655 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750839AbcHVK0k (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 06:26:40 -0400
-In-Reply-To: <1470045256-9032-3-git-send-email-marc.zyngier@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Rutland <marc.rutland@arm.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Hou Zhiqiang <B48286@freescale.com>, Michal Simek <michal.simek@xilinx.com>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>l
 
-Arnd, Olof,
-
-On 01/08/16 10:54, Marc Zyngier wrote:
-> The ARM architected timer specification mandates that the interrupt
-> associated with each timer is level triggered (which corresponds to
-> the "counter >= comparator" condition).
-> 
-> A number of DTs are being remarkably creative, declaring the interrupt
-> to be edge triggered. A quick look at the TRM for the corresponding ARM
-> CPUs clearly shows that this is wrong, and I've corrected those.
-> For non-ARM designs (and in the absence of a publicly available TRM),
-> I've made them active low as well, which can't be completely wrong
-> as the GIC cannot disinguish between level low and level high.
-> 
-> The respective maintainers are of course welcome to prove me wrong.
-> 
-> While I was at it, I took the liberty to fix a couple of related issue,
-> such as some spurious affinity bits on ThunderX, and their complete
-> absence on ls1043a (both of which seem to be related to copy-pasting
-> from other DTs).
-> 
-> Acked-by: Duc Dang <dhdang@apm.com>
-> Acked-by: Carlo Caione <carlo@endlessm.com>
-> Acked-by: Michal Simek <michal.simek@xilinx.com>
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-
-Any update on this patch? We have a workaround merged already, but it'd
-be good to have the DTS fixed as well.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+QW0gMjIuMDguMjAxNiB1bSAxMTo0NCBzY2hyaWViIE1hcmVrIFN6eXByb3dza2k6Cj4gRGVhciBh
+bGwsCj4KPiBUaGlzIGlzIHRoZSBpbml0aWFsIHByb3Bvc2FsIGZvciBleHRlbmRpbmcgRFJNIEFQ
+SSB3aXRoIGdlbmVyaWMgc3VwcG9ydCBmb3IKPiBoYXJkd2FyZSBtb2R1bGVzLCB3aGljaCBjYW4g
+YmUgdXNlZCBmb3IgcHJvY2Vzc2luZyBpbWFnZSBkYXRhIGZyb20gdGhlIG9uZQo+IG1lbW9yeSBi
+dWZmZXIgdG8gYW5vdGhlci4gVHlwaWNhbCBtZW1vcnktdG8tbWVtb3J5IG9wZXJhdGlvbnMgYXJl
+Ogo+IHJvdGF0aW9uLCBzY2FsaW5nLCBjb2xvdXIgc3BhY2UgY29udmVyc2lvbiBvciBtaXggb2Yg
+dGhlbS4gSW4gdGhpcyBwcm9wb3NhbAo+IEkgbmFtZWQgc3VjaCBoYXJkd2FyZSBtb2R1bGVzIGEg
+ZnJhbWVidWZmZXIgcHJvY2Vzc29ycy4KPgo+IEVtYmVkZGVkIFNvQ3MgYXJlIGtub3duIHRvIGhh
+dmUgYSBudW1iZXIgb2YgaGFyZHdhcmUgYmxvY2tzLCB3aGljaCBwZXJmb3JtCj4gc3VjaCBvcGVy
+YXRpb25zLiBUaGV5IGNhbiBiZSB1c2VkIGluIHBhcmFsZWwgdG8gdGhlIG1haW4gR1BVIG1vZHVs
+ZSB0bwo+IG9mZmxvYWQgQ1BVIGZyb20gcHJvY2Vzc2luZyBncmFwaWNzIG9yIHZpZGVvIGRhdGEu
+IE9uZSBvZiBleGFtcGxlIHVzZSBvZgo+IHN1Y2ggbW9kdWxlcyBpcyBpbXBsZW1lbnRpbmcgdmlk
+ZW8gb3ZlcmxheSwgd2hpY2ggdXN1YWxseSByZXF1aXJlcyBjb2xvcgo+IHNwYWNlIGNvbnZlcnNp
+b24gZnJvbSBOVjEyIChvciBzaW1pbGFyKSB0byBSR0IzMiBjb2xvciBzcGFjZSBhbmQgc2NhbGlu
+ZyB0bwo+IHRhcmdldCB3aW5kb3cgc2l6ZS4KPgo+IFRpbGwgbm93IHRoZXJlIHdhcyBubyBnZW5l
+cmljLCBoYXJkd2FyZSBpbmRlcGVuZGVudCBBUEkgZm9yIHBlcmZvcm1pbmcgc3VjaAo+IG9wZXJh
+dGlvbnMuIEV4eW5vcyBEUk0gZHJpdmVyIGhhcyBpdHMgb3duIGN1c3RvbSBleHRlbnNpb24gY2Fs
+bGVkIElQUAo+IChJbWFnZSBQb3N0IFByb2Nlc3NpbmcpLCBidXQgZnJhbmtseSBzcGVha2luZywg
+aXQgaXMgb3Zlci1lbmdpbmVlcmVkIGFuZCBub3QKPiByZWFsbHkgdXNlZCBpbiBvcGVuLXNvdXJj
+ZS4gSSBkaWRuJ3QgaW5kZW50aWZ5IHNpbWlsYXIgQVBJIGluIG90aGVyIERSTQo+IGRyaXZlcnMs
+IGJlc2lkZXMgdGhvc2Ugd2hpY2ggZXhwb3NlIGNvbXBsZXRlIHN1cHBvcnQgZm9yIHRoZSB3aG9s
+ZSBHUFUuCgpXZWxsIHRoZXJlIGFyZSBnb29kIHJlYXNvbnMgd2h5IHdlIGRvbid0IGhhdmUgaGFy
+ZHdhcmUgaW5kZXBlbmRlbnQgCmNvbW1hbmQgc3VibWlzc2lvbi4KCldlIGFscmVhZHkgdHJpZWQg
+YXBwcm9hY2hlcyBsaWtlIHRoaXMgYW5kIHRoZXkgZGlkbid0IHdvcmtlZCB2ZXJ5IHdlbGwgCmFu
+ZCBhcmUgZ2VuZXJhbGx5IGEgcGFpbiB0byBnZXQgcmlnaHQuCgpTbyBteSBmZWVsaW5nIGdvZXMg
+aW50byB0aGUgZGlyZWN0aW9uIG9mIGEgTkFLLCBlc3BlY2lhbGx5IHNpbmNlIHlvdSAKZGlkbid0
+IGV4cGxhaW5lZCBpbiB0aGlzIG1haWwgd2h5IHRoZXJlIGlzIG5lZWQgZm9yIGEgY29tbW9uIEFQ
+SS4KClJlZ2FyZHMsCkNocmlzdGlhbi4KCj4KPiBIb3dldmVyLCB0aGUgbmVlZCBmb3IgY29tbW1v
+biBBUEkgaGFzIGJlZW4gYWxyZWFkeSBtZW50aW9uZWQgb24gdGhlIG1haWxpbmcKPiBsaXN0LiBI
+ZXJlIGFyZSBzb21lIGV4YW1wbGUgdGhyZWFkczoKPiAxLiAiUkZDOiBoYXJkd2FyZSBhY2NlbGVy
+YXRlZCBiaXRibHQgdXNpbmcgZG1hIGVuZ2luZSIKPiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xp
+c3RzL2RyaS1kZXZlbC9tc2cxMTQyNTAuaHRtbAo+IDIuICJbUEFUQ0ggMDAvMjVdIEV4eW5vcyBE
+Uk06IG5ldyBsaWZlIG9mIElQUCAoSW1hZ2UgUG9zdCBQcm9jZXNzaW5nKSBzdWJzeXN0ZW0iCj4g
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtTm92
+ZW1iZXIvMDk0MTE1Lmh0bWwKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZl
+cy9kcmktZGV2ZWwvMjAxNS1Ob3ZlbWJlci8wOTQ1MzMuaHRtbAo+Cj4gVGhlIHByb3Bvc2VkIEFQ
+SSBpcyBoZWF2aWx5IGluc3BpcmVkIGJ5IGF0b21pYyBLTVMgYXBwcm9hY2ggLSBpdCBpcyBhbHNv
+Cj4gYmFzZWQgb24gRFJNIG9iamVjdHMgYW5kIHRoZWlyIHByb3BlcnRpZXMuIEEgbmV3IERSTSBv
+YmplY3QgaXMgaW50cm9kdWNlZDoKPiBmcmFtZWJ1ZmZlciBwcm9jZXNzb3IgKGNhbGxlZCBmYnBy
+b2MgZm9yIGNvbnZlbmllbmNlKS4gU3VjaCBmYnByb2Mgb2JqZWN0cwo+IGhhdmUgYSBzZXQgb2Yg
+c3RhbmRhcmQgRFJNIHByb3BlcnRpZXMsIHdoaWNoIGRlc2NyaWJlcyB0aGUgb3BlcmF0aW9uIHRv
+IGJlCj4gcGVyZm9ybWVkIGJ5IHJlc3BlY3RpdmUgaGFyZHdhcmUgbW9kdWxlLiBJbiB0eXBpY2Fs
+IGNhc2UgdGhvc2UgcHJvcGVydGllcwo+IGFyZSBhIHNvdXJjZSBmYiBpZCBhbmQgcmVjdGFuZ2xl
+ICh4LCB5LCB3aWR0aCwgaGVpZ2h0KSBhbmQgZGVzdGluYXRpb24gZmIKPiBpZCBhbmQgcmVjdGFu
+Z2xlLiBPcHRpb25hbGx5IGEgcm90YXRpb24gcHJvcGVydHkgY2FuIGJlIGFsc28gc3BlY2lmaWVk
+IGlmCj4gc3VwcG9ydGVkIGJ5IHRoZSBnaXZlbiBoYXJkd2FyZS4gVG8gcGVyZm9ybSBhbiBvcGVy
+YXRpb24gb24gaW1hZ2UgZGF0YSwKPiB1c2Vyc3BhY2UgcHJvdmlkZXMgYSBzZXQgb2YgcHJvcGVy
+dGllcyBhbmQgdGhlaXIgdmFsdWVzIGZvciBnaXZlbiBmYnByb2MKPiBvYmplY3QgaW4gYSBzaW1p
+bGFyIHdheSBhcyBvYmplY3QgYW5kIHByb3BlcnRpZXMgYXJlIHByb3ZpZGVkIGZvcgo+IHBlcmZv
+cm1pbmcgYXRvbWljIHBhZ2UgZmxpcCAvIG1vZGUgc2V0dGluZy4KPgo+IFRoZSBwcm9wb3NlZCBB
+UEkgY29uc2lzdHMgb2YgdGhlIDMgbmV3IGlvY3RsczoKPiAtIERSTV9JT0NUTF9NT0RFX0dFVEZC
+UFJPQ1JFU09VUkNFUzogdG8gZW51bWVyYXRlIGFsbCBhdmFpbGFibGUgZmJwcm9jCj4gICAgb2Jq
+ZWN0cywKPiAtIERSTV9JT0NUTF9NT0RFX0dFVEZCUFJPQzogdG8gcXVlcnkgY2FwYWJpbGl0aWVz
+IG9mIGdpdmVuIGZicHJvYyBvYmplY3QsCj4gLSBEUk1fSU9DVExfTU9ERV9GQlBST0M6IHRvIHBl
+cmZvcm0gb3BlcmF0aW9uIGRlc2NyaWJlZCBieSBnaXZlbiBwcm9wZXJ0eQo+ICAgIHNldC4KPgo+
+IFRoZSBwcm9wb3NlZCBBUEkgaXMgZXh0ZW5zaWJsZS4gRHJpdmVycyBjYW4gYXR0YWNoIHRoZWly
+IG93biwgY3VzdG9tCj4gcHJvcGVydGllcyB0byBhZGQgc3VwcG9ydCBmb3IgbW9yZSBhZHZhbmNl
+ZCBwaWN0dXJlIHByb2Nlc3NpbmcgKGZvciBleGFtcGxlCj4gYmxlbmRpbmcpLgo+Cj4gUGxlYXNl
+IG5vdGUgdGhhdCB0aGlzIEFQSSBpcyBpbnRlbmRlZCB0byBiZSB1c2VkIGZvciBzaW1wbGUgbWVt
+b3J5LXRvLW1lbW9yeQo+IGltYWdlIHByb2Nlc3NpbmcgaGFyZHdhcmUgbm90IHRoZSBmdWxsLWJs
+b3duIEdQVSBibGl0dGVycywgd2hpY2ggdXN1YWxseQo+IGhhdmUgbW9yZSBmZWF0dXJlcy4gVHlw
+aWNhbGx5IGJsaXR0ZXJzIHByb3ZpZGVzIG11Y2ggbW9yZSBvcGVyYXRpb25zIGJlc2lkZQo+IHNp
+bXBsZSBwaXhlbCBjb3B5aW5nIGFuZCBvcGVyYXRlIGJlc3QgaWYgaXRzIGNvbW1hbmQgcXVldWUg
+aXMgY29udHJvbGxlZCBmcm9tCj4gcmVzcGVjdGl2ZSBkZWRpY2F0ZWQgY29kZSBpbiB1c2Vyc3Bh
+Y2UuCj4KPiBUaGUgcGF0Y2hzZXQgY29uc2lzdCBvZiA0IHBhcnRzOgo+IDEuIGdlbmVyaWMgY29k
+ZSBmb3IgRFJNIGNvcmUgZm9yIGhhbmRsaW5nIGZicHJvYyBvYmplY3RzIGFuZCBpb2N0bHMKPiAy
+LiBleGFtcGxlLCBxdWljayBjb252ZXJzaW9uIG9mIEV4eW5vcyBSb3RhdG9yIGRyaXZlciB0byBm
+YnByb2MgQVBJCj4gMy4gbGliZHJtIGV4dGVuc2lvbnMgZm9yIGhhbmRsaW5nIGZicHJvYyBvYmpl
+Y3RzCj4gNC4gc2ltcGxlIGV4YW1wbGUgb2YgdXNlcnNwYWNlIGNvZGUgZm9yIHBlcmZvcm1pbmcg
+MTgwIGRlZ3JlZSByb3RhdGlvbiBvZiB0aGUKPiAgICAgZnJhbWVidWZmZXIKPgo+IFBhdGNoZXMg
+d2VyZSB0ZXN0ZWQgb24gRXh5bm9zIDQ0MTItYmFzZWQgT2Ryb2lkIFUzIGJvYXJkLCBvbiB0b3AK
+PiBvZiBMaW51eCB2NC44LXJjMSBrZXJuZWwuCj4KPiBUT0RPOgo+IDEuIGFncmVlIG9uIHRoZSBB
+UEkgc2hhcGUKPiAyLiBhZGQgbW9yZSBkb2N1bWVudGF0aW9uLCBlc3BlY2lhbGx5IHRvIHRoZSBr
+ZXJuZWwgZG9jcwo+IDMuIGFkZCBtb3JlIHVzZXJzcGFjZSBleGFtcGxlcwo+Cj4gQmVzdCByZWdh
+cmRzCj4gTWFyZWsgU3p5cHJvd3NraQo+IFNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKPgo+
+Cj4gTWFyZWsgU3p5cHJvd3NraSAoMik6Cj4gICAgZHJtOiBhZGQgc3VwcG9ydCBmb3IgZnJhbWVi
+dWZmZXIgcHJvY2Vzc29yIG9iamVjdHMKPiAgICBkcm0vZXh5bm9zOiByZWdpc3RlciByb3RhdG9y
+IGFzIGZicHJvYyBpbnN0ZWFkIG9mIGN1c3RvbSBpcHAgZnJhbWV3b3JrCj4KPiAgIGRyaXZlcnMv
+Z3B1L2RybS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgfCAgIDMgKy0KPiAgIGRyaXZlcnMv
+Z3B1L2RybS9kcm1fYXRvbWljLmMgICAgICAgICAgICAgICAgfCAgIDUgKwo+ICAgZHJpdmVycy9n
+cHUvZHJtL2RybV9jcnRjLmMgICAgICAgICAgICAgICAgICB8ICAgNiArCj4gICBkcml2ZXJzL2dw
+dS9kcm0vZHJtX2NydGNfaW50ZXJuYWwuaCAgICAgICAgIHwgIDEyICsKPiAgIGRyaXZlcnMvZ3B1
+L2RybS9kcm1fZmJwcm9jLmMgICAgICAgICAgICAgICAgfCA3NTQgKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKwo+ICAgZHJpdmVycy9ncHUvZHJtL2RybV9pb2N0bC5jICAgICAgICAgICAgICAg
+ICB8ICAgMyArCj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgICAg
+IHwgICAxIC0KPiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAg
+fCAgIDMgKy0KPiAgIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMg
+fCAzNTMgKysrKysrKy0tLS0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3JvdGF0b3IuaCB8ICAxOSAtCj4gICBpbmNsdWRlL2RybS9kcm1QLmggICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgIDEwICsKPiAgIGluY2x1ZGUvZHJtL2RybV9jcnRjLmggICAgICAgICAgICAg
+ICAgICAgICAgfCAyMTEgKysrKysrKysKPiAgIGluY2x1ZGUvZHJtL2RybV9pcnEuaCAgICAgICAg
+ICAgICAgICAgICAgICAgfCAgMTQgKwo+ICAgaW5jbHVkZS91YXBpL2RybS9kcm0uaCAgICAgICAg
+ICAgICAgICAgICAgICB8ICAxMyArCj4gICBpbmNsdWRlL3VhcGkvZHJtL2RybV9tb2RlLmggICAg
+ICAgICAgICAgICAgIHwgIDM5ICsrCj4gICAxNSBmaWxlcyBjaGFuZ2VkLCAxMjYzIGluc2VydGlv
+bnMoKyksIDE4MyBkZWxldGlvbnMoLSkKPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dw
+dS9kcm0vZHJtX2ZicHJvYy5jCj4gICBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuaAo+CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
