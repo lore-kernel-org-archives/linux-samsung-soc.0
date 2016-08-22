@@ -1,480 +1,172 @@
-From: ayaka <ayaka@soulik.info>
-Subject: Re: [PATCH 1/2] ARM: dts: Add TOPEET itop core board SCP package
- version
-Date: Mon, 22 Aug 2016 22:49:30 +0800
-Message-ID: <d20d3fa1-9bfb-18df-b030-8a72efdf5084@soulik.info>
-References: <1471809893-31147-1-git-send-email-ayaka@soulik.info>
- <1471809893-31147-2-git-send-email-ayaka@soulik.info>
- <4767fc2a-95b7-ee0d-f51a-7a5d6ca89d8f@samsung.com>
- <A0C9B5F5-6B75-43F3-9280-1D33E77DC3BC@soulik.info>
- <CAGTfZH07v_9bxKKx4gwLSb6+vLpZ+esW4D5sT4=RiHXa3SV-Vg@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Mon, 22 Aug 2016 16:59:52 +0200
+Message-ID: <20160822145952.GG24290@phenom.ffwll.local>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+ <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:51025 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752054AbcHVOtn (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33595 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbcHVO75 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 10:49:43 -0400
-In-Reply-To: <CAGTfZH07v_9bxKKx4gwLSb6+vLpZ+esW4D5sT4=RiHXa3SV-Vg@mail.gmail.com>
+        Mon, 22 Aug 2016 10:59:57 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o80so13908586wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2016 07:59:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: chanwoo@kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk, Kukjin Kim <kgene@kernel.org>, krzk@kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Seung-Woo Kim <sw0312.kim@samsung.com>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+On Mon, Aug 22, 2016 at 11:59:24AM +0200, Christian K�nig wrote:
+> Am 22.08.2016 um 11:44 schrieb Marek Szyprowski:
+> > Dear all,
+> > 
+> > This is the initial proposal for extending DRM API with generic support for
+> > hardware modules, which can be used for processing image data from the one
+> > memory buffer to another. Typical memory-to-memory operations are:
+> > rotation, scaling, colour space conversion or mix of them. In this proposal
+> > I named such hardware modules a framebuffer processors.
+> > 
+> > Embedded SoCs are known to have a number of hardware blocks, which perform
+> > such operations. They can be used in paralel to the main GPU module to
+> > offload CPU from processing grapics or video data. One of example use of
+> > such modules is implementing video overlay, which usually requires color
+> > space conversion from NV12 (or similar) to RGB32 color space and scaling to
+> > target window size.
+> > 
+> > Till now there was no generic, hardware independent API for performing such
+> > operations. Exynos DRM driver has its own custom extension called IPP
+> > (Image Post Processing), but frankly speaking, it is over-engineered and not
+> > really used in open-source. I didn't indentify similar API in other DRM
+> > drivers, besides those which expose complete support for the whole GPU.
+> 
+> Well there are good reasons why we don't have hardware independent command
+> submission.
+> 
+> We already tried approaches like this and they didn't worked very well and
+> are generally a pain to get right.
+> 
+> So my feeling goes into the direction of a NAK, especially since you didn't
+> explained in this mail why there is need for a common API.
 
+We've had an earlier RFC thread, and I made it clear there already that
+this will face a steep uphill battle. I don't really see any explanation
+here why this is not an exact copy of the ideas we've shown to not work
+10+ years ago, hence I concur on this NACK.
 
-On 08/22/2016 10:45 PM, Chanwoo Choi wrote:
-> Hi,
->
-> 2016-08-22 17:28 GMT+09:00 Ayaka <ayaka@soulik.info>:
->> Thank you
->> 從我的 iPad 傳送
->>
->>> Marek Szyprowski <m.szyprowski@samsung.com> 於 2016年8月22日 下午2:50 寫道：
->>>
->>> Dear Randy,
->>>
->>>
->>>> On 2016-08-21 22:04, Randy Li wrote:
->>>> The TOPEET itop is a samsung exnynos 4412 core board, which have
->>>> two package versions. This patch add the support for SCP version.
->>>>
->>>> Currently supported are USB3503A HSIC, USB OTG, eMMC, RTC and PMIC.
->>>> The future features are in the based board. Also MFC and watchdog
->>>> have been enabled.
->>>>
->>>> Signed-off-by: Randy Li <ayaka@soulik.info>
->>>> ---
->>>>   arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 434 ++++++++++++++++++++++++
->>>>   1 file changed, 434 insertions(+)
->>>>   create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
->>>> new file mode 100644
->>>> index 0000000..0860ee6
->>>> --- /dev/null
->>>> +++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
->>>> @@ -0,0 +1,434 @@
->>>> +/*
->>>> + * TOPEET's Exynos4412 based itop board device tree source
->>>> + *
->>>> + * Copyright (c) 2016 SUMOMO Computer Association
->>>> + *            https://www.sumomo.mobi
->>>> + *            Randy Li <ayaka@soulik.info>
->>>> + *
->>>> + * Device tree source file for TOPEET iTop Exynos 4412 SCP package core
->>>> + * board which is based on Samsung's Exynos4412 SoC.
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>> +*/
->>>> +
->>>> +#include "exynos4412.dtsi"
->>>> +#include <dt-bindings/gpio/gpio.h>
->>>> +#include <dt-bindings/input/input.h>
->>>> +
->>>> +/ {
->>>> +    memory {
->>>> +        reg = <0x40000000 0x40000000>;
->>>> +    };
->>>> +
->>>> +    firmware@0203F000 {
->>>> +        compatible = "samsung,secure-firmware";
->>>> +        reg = <0x0203F000 0x1000>;
->>>> +    };
->>>> +
->>>> +    display-timings {
->>>> +        native-mode = <&timing0>;
->>>> +        timing0: timing {
->>>> +            clock-frequency = <47500000>;
->>>> +            hactive = <1024>;
->>>> +            vactive = <600>;
->>>> +            hfront-porch = <64>;
->>>> +            hback-porch = <16>;
->>>> +            hsync-len = <48>;
->>>> +            vback-porch = <64>;
->>>> +            vfront-porch = <16>;
->>>> +            vsync-len = <3>;
->>>> +        };
->>>> +    };
->>>> +
->>>> +    fixed-rate-clocks {
->>>> +        xxti {
->>>> +            compatible = "samsung,clock-xxti";
->>>> +            clock-frequency = <0>;
->>>> +        };
->>>> +
->>>> +        xusbxti {
->>>> +            compatible = "samsung,clock-xusbxti";
->>>> +            clock-frequency = <24000000>;
->>>> +        };
->>>> +    };
->>>> +
->>>> +    usb-hub {
->>>> +        compatible = "smsc,usb3503a";
->>>> +        reset-gpios = <&gpm2 4 GPIO_ACTIVE_LOW>;
->>>> +        connect-gpios = <&gpm3 3 GPIO_ACTIVE_HIGH>;
->>>> +        intn-gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
->>>> +        pinctrl-names = "default";
->>>> +        pinctrl-0 = <&hsic_reset>;
->>>> +    };
->>>> +};
->>>> +
->>>> +&cpu0 {
->>>> +    cpu0-supply = <&buck2_reg>;
->>>> +};
->>>> +
->>>> +&i2c_1 {
->>>> +    #address-cells = <1>;
->>>> +    #size-cells = <0>;
->>>> +    samsung,i2c-sda-delay = <100>;
->>>> +    samsung,i2c-max-bus-freq = <400000>;
->>>> +    pinctrl-0 = <&i2c1_bus>;
->>>> +    pinctrl-names = "default";
->>>> +    status = "okay";
->>>> +
->>>> +    s5m8767_pmic@66 {
->>>> +        compatible = "samsung,s5m8767-pmic";
->>>> +        reg = <0x66>;
->>>> +
->>>> +        s5m8767,pmic-buck-default-dvs-idx = <3>;
->>>> +
->>>> +        s5m8767,pmic-buck-dvs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>,
->>>> +                         <&gpb 6 GPIO_ACTIVE_HIGH>,
->>>> +                         <&gpb 7 GPIO_ACTIVE_HIGH>;
->>>> +
->>>> +        s5m8767,pmic-buck-ds-gpios = <&gpm3 5 GPIO_ACTIVE_HIGH>,
->>>> +                        <&gpm3 6 GPIO_ACTIVE_HIGH>,
->>>> +                        <&gpm3 7 GPIO_ACTIVE_HIGH>;
->>>> +
->>>> +        /* VDD_ARM */
->>>> +        s5m8767,pmic-buck2-dvs-voltage = <1356250>, <1300000>,
->>>> +                         <1243750>, <1118750>,
->>>> +                         <1068750>, <1012500>,
->>>> +                         <956250>, <900000>;
->>>> +        /* VDD_INT */
->>>> +        s5m8767,pmic-buck3-dvs-voltage = <1000000>, <1000000>,
->>>> +                         <925000>, <925000>,
->>>> +                         <887500>, <887500>,
->>>> +                         <850000>, <850000>;
->>>> +        /* VDD_G3D */
->>>> +        s5m8767,pmic-buck4-dvs-voltage = <1081250>, <1081250>,
->>>> +                         <1025000>, <950000>,
->>>> +                         <918750>, <900000>,
->>>> +                         <875000>, <831250>;
->>>> +
->>>> +        regulators {
->>>> +            ldo1_reg: LDO1 {
->>>> +                regulator-name = "VDD_ALIVE";
->>>> +                regulator-min-microvolt = <1100000>;
->>>> +                regulator-max-microvolt = <1100000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            /* SCP uses 1.5v, POP uses 1.2v */
->>>> +            ldo2_reg: LDO2 {
->>>> +                regulator-name = "VDDQ_M12";
->>>> +                regulator-min-microvolt = <1500000>;
->>>> +                regulator-max-microvolt = <1500000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo3_reg: LDO3 {
->>>> +                regulator-name = "VDDIOAP_18";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo4_reg: LDO4 {
->>>> +                regulator-name = "VDDQ_PRE";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo6_reg: LDO6 {
->>>> +                regulator-name = "VDD10_MPLL";
->>>> +                regulator-min-microvolt = <1000000>;
->>>> +                regulator-max-microvolt = <1000000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo7_reg: LDO7 {
->>>> +                regulator-name = "VDD10_XPLL";
->>>> +                regulator-min-microvolt = <1000000>;
->>>> +                regulator-max-microvolt = <1000000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo8_reg: LDO8 {
->>>> +                regulator-name = "VDD10_MIPI";
->>>> +                regulator-min-microvolt = <1000000>;
->>>> +                regulator-max-microvolt = <1000000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo9_reg: LDO9 {
->>>> +                regulator-name = "VDD33_LCD";
->>>> +                regulator-min-microvolt = <3300000>;
->>>> +                regulator-max-microvolt = <3300000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo10_reg: LDO10 {
->>>> +                regulator-name = "VDD18_MIPI";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo11_reg: LDO11 {
->>>> +                regulator-name = "VDD18_ABB1";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo12_reg: LDO12 {
->>>> +                regulator-name = "VDD33_UOTG";
->>>> +                regulator-min-microvolt = <3300000>;
->>>> +                regulator-max-microvolt = <3300000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo13_reg: LDO13 {
->>>> +                regulator-name = "VDDIOPERI_18";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo14_reg: LDO14 {
->>>> +                regulator-name = "VDD18_ABB02";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo15_reg: LDO15 {
->>>> +                regulator-name = "VDD10_USH";
->>>> +                regulator-min-microvolt = <1000000>;
->>>> +                regulator-max-microvolt = <1000000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo16_reg: LDO16 {
->>>> +                regulator-name = "VDD18_HSIC";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo17_reg: LDO17 {
->>>> +                regulator-name = "VDDIOAP_MMC012_28";
->>>> +                regulator-min-microvolt = <2800000>;
->>>> +                regulator-max-microvolt = <2800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            /* Used by HSIC */
->>>> +            ldo18_reg: LDO18 {
->>>> +                regulator-name = "VDDIOPERI_28";
->>>> +                regulator-min-microvolt = <3300000>;
->>>> +                regulator-max-microvolt = <3300000>;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo20_reg: LDO20 {
->>>> +                regulator-name = "VDD28_CAM";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <2800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo21_reg: LDO21 {
->>>> +                regulator-name = "VDD28_AF";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <2800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo22_reg: LDO22 {
->>>> +                regulator-name = "VDDA28_2M";
->>>> +                regulator-min-microvolt = <2800000>;
->>>> +                regulator-max-microvolt = <2800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo23_reg: LDO23 {
->>>> +                regulator-name = "VDD28_TF";
->>>> +                regulator-min-microvolt = <2800000>;
->>>> +                regulator-max-microvolt = <2800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo24_reg: LDO24 {
->>>> +                regulator-name = "VDD33_A31";
->>>> +                regulator-min-microvolt = <3300000>;
->>>> +                regulator-max-microvolt = <3300000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo25_reg: LDO25 {
->>>> +                regulator-name = "VDD18_CAM";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo26_reg: LDO26 {
->>>> +                regulator-name = "VDD18_A31";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo27_reg: LDO27 {
->>>> +                regulator-name = "GPS_1V8";
->>>> +                regulator-min-microvolt = <1800000>;
->>>> +                regulator-max-microvolt = <1800000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            ldo28_reg: LDO28 {
->>>> +                regulator-name = "DVDD12";
->>>> +                regulator-min-microvolt = <1200000>;
->>>> +                regulator-max-microvolt = <1200000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck1_reg: BUCK1 {
->>>> +                regulator-name = "vdd_mif";
->>>> +                regulator-min-microvolt = <850000>;
->>>> +                regulator-max-microvolt    = <1100000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck2_reg: BUCK2 {
->>>> +                regulator-name = "vdd_arm";
->>>> +                regulator-min-microvolt = <850000>;
->>>> +                regulator-max-microvolt    = <1456250>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck3_reg: BUCK3 {
->>>> +                regulator-name = "vdd_int";
->>>> +                regulator-min-microvolt = <875000>;
->>>> +                regulator-max-microvolt    = <1200000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck4_reg: BUCK4 {
->>>> +                regulator-name = "vdd_g3d";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <1500000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck5_reg: BUCK5 {
->>>> +                regulator-name = "vdd_m12";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <1500000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck6_reg: BUCK6 {
->>>> +                regulator-name = "vdd12_5m";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <1500000>;
->>>> +                regulator-always-on;
->>>> +                regulator-boot-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck7_reg: BUCK7 {
->>>> +                regulator-name = "pvdd_buck7";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <2000000>;
->>>> +                regulator-boot-on;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck8_reg: BUCK8 {
->>>> +                regulator-name = "pvdd_buck8";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <1500000>;
->>>> +                regulator-boot-on;
->>>> +                regulator-always-on;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +
->>>> +            buck9_reg: BUCK9 {
->>>> +                regulator-name = "vddf28_emmc";
->>>> +                regulator-min-microvolt = <750000>;
->>>> +                regulator-max-microvolt    = <3000000>;
->>>> +                op_mode = <1>; /* Normal Mode */
->>>> +            };
->>>> +        };
->>>> +    };
->>>> +};
->>>> +
->>>> +&pinctrl_1 {
->>>> +    hsic_reset: hsic-reset {
->>>> +        samsung,pins = "gpm2-4";
->>>> +        samsung,pin-function = <1>;
->>>> +        samsung,pin-pud = <0>;
->>>> +        samsung,pin-drv = <3>;
->>>> +    };
->>>> +};
->>>> +
->>>> +&mfc {
->>>> +    samsung,mfc-r = <0x43000000 0x800000>;
->>>> +    samsung,mfc-l = <0x51000000 0x800000>;
->>>> +    status = "okay";
->>>> +};
->>> Since v4.8-rc1 MFC driver has been converted to generic reserved memory bindings,
->>> so samsung,mfc-* properties are obsoleted and no longer used. If you want to use
->>> MFC driver with reserved memory, please just add following line to your dts:
->>> #include "exynos-mfc-reserved-memory.dtsi"
->>>
->>> Please refer to dts of other boards for more examples.
->> I see, I would also enabled the bus_mfc and mfc entry.
->> I notice the new introduce Exynos bus. I need some time to add support it. I will send a new version later time(maybe you have to wait this weekend, sorry about that).
-> What is meaning of "new introduce Exynos bus"?
-Generic Exynos Bus frequency device
-> Could you explain it to me?
-It seems not very hard, I  have sent new dts. But I am not sure I 
-understand it. For example I don't that C2C, PERIR and FSYS used for.
->
-> [snip]
->
+Make this a driver private thing, operating on gem objects (and yes that
+means you get to reinvent the metdata, which is imo a good thing since it
+avoids encumbering kms with this blitter use-case). And then that
+interface proves indeed useful for multiple blitter IP blocks we can use
+it for that in generic fashion. And if it shows up in different
+display/render/gpu blocks we can reuse the driver using dma-buf/prime
+sharing. So there's really downside, except that your ioctl won't be
+blessed as official in any way, which imo is a Good Thing.
+
+Or this all turns out as a mistake (which I expect it to be) and we can
+quitely burry it again since it's just a little driver.
+
+Trying to push this will lead to 1+ years of frustration and most likely
+still not succeed.
+-Daniel
+
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> > However, the need for commmon API has been already mentioned on the mailing
+> > list. Here are some example threads:
+> > 1. "RFC: hardware accelerated bitblt using dma engine"
+> > http://www.spinics.net/lists/dri-devel/msg114250.html
+> > 2. "[PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem"
+> > https://lists.freedesktop.org/archives/dri-devel/2015-November/094115.html
+> > https://lists.freedesktop.org/archives/dri-devel/2015-November/094533.html
+> > 
+> > The proposed API is heavily inspired by atomic KMS approach - it is also
+> > based on DRM objects and their properties. A new DRM object is introduced:
+> > framebuffer processor (called fbproc for convenience). Such fbproc objects
+> > have a set of standard DRM properties, which describes the operation to be
+> > performed by respective hardware module. In typical case those properties
+> > are a source fb id and rectangle (x, y, width, height) and destination fb
+> > id and rectangle. Optionally a rotation property can be also specified if
+> > supported by the given hardware. To perform an operation on image data,
+> > userspace provides a set of properties and their values for given fbproc
+> > object in a similar way as object and properties are provided for
+> > performing atomic page flip / mode setting.
+> > 
+> > The proposed API consists of the 3 new ioctls:
+> > - DRM_IOCTL_MODE_GETFBPROCRESOURCES: to enumerate all available fbproc
+> >    objects,
+> > - DRM_IOCTL_MODE_GETFBPROC: to query capabilities of given fbproc object,
+> > - DRM_IOCTL_MODE_FBPROC: to perform operation described by given property
+> >    set.
+> > 
+> > The proposed API is extensible. Drivers can attach their own, custom
+> > properties to add support for more advanced picture processing (for example
+> > blending).
+> > 
+> > Please note that this API is intended to be used for simple memory-to-memory
+> > image processing hardware not the full-blown GPU blitters, which usually
+> > have more features. Typically blitters provides much more operations beside
+> > simple pixel copying and operate best if its command queue is controlled from
+> > respective dedicated code in userspace.
+> > 
+> > The patchset consist of 4 parts:
+> > 1. generic code for DRM core for handling fbproc objects and ioctls
+> > 2. example, quick conversion of Exynos Rotator driver to fbproc API
+> > 3. libdrm extensions for handling fbproc objects
+> > 4. simple example of userspace code for performing 180 degree rotation of the
+> >     framebuffer
+> > 
+> > Patches were tested on Exynos 4412-based Odroid U3 board, on top
+> > of Linux v4.8-rc1 kernel.
+> > 
+> > TODO:
+> > 1. agree on the API shape
+> > 2. add more documentation, especially to the kernel docs
+> > 3. add more userspace examples
+> > 
+> > Best regards
+> > Marek Szyprowski
+> > Samsung R&D Institute Poland
+> > 
+> > 
+> > Marek Szyprowski (2):
+> >    drm: add support for framebuffer processor objects
+> >    drm/exynos: register rotator as fbproc instead of custom ipp framework
+> > 
+> >   drivers/gpu/drm/Makefile                    |   3 +-
+> >   drivers/gpu/drm/drm_atomic.c                |   5 +
+> >   drivers/gpu/drm/drm_crtc.c                  |   6 +
+> >   drivers/gpu/drm/drm_crtc_internal.h         |  12 +
+> >   drivers/gpu/drm/drm_fbproc.c                | 754 ++++++++++++++++++++++++++++
+> >   drivers/gpu/drm/drm_ioctl.c                 |   3 +
+> >   drivers/gpu/drm/exynos/Kconfig              |   1 -
+> >   drivers/gpu/drm/exynos/exynos_drm_drv.c     |   3 +-
+> >   drivers/gpu/drm/exynos/exynos_drm_rotator.c | 353 +++++++------
+> >   drivers/gpu/drm/exynos/exynos_drm_rotator.h |  19 -
+> >   include/drm/drmP.h                          |  10 +
+> >   include/drm/drm_crtc.h                      | 211 ++++++++
+> >   include/drm/drm_irq.h                       |  14 +
+> >   include/uapi/drm/drm.h                      |  13 +
+> >   include/uapi/drm/drm_mode.h                 |  39 ++
+> >   15 files changed, 1263 insertions(+), 183 deletions(-)
+> >   create mode 100644 drivers/gpu/drm/drm_fbproc.c
+> >   delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
+> > 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
