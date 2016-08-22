@@ -1,37 +1,40 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/5] clk: samsung: exynos5410: Expose the peripheral DMA gate
- clocks
-Date: Mon, 22 Aug 2016 18:31:00 +0200
-Message-ID: <1471883463-1950-3-git-send-email-s.nawrocki@samsung.com>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Subject: [PATCH 0/5] clk/samsung: Add support for PDMA,
+ EPLL clocks on exynos5410
+Date: Mon, 22 Aug 2016 18:30:58 +0200
+Message-ID: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:33733 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755216AbcHVQdN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 12:33:13 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-clk@vger.kernel.org
 Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-These clocks are needed in order to use the PL330 peripheral
-DMA controllers.
+This patch adds support for the EPLL and the peripheral DMA clocks
+on Exynos5410 SoC.  These clocks are required for sound support
+on Odroid-XU board.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5410.c | 2 ++
- 1 file changed, 2 insertions(+)
+Sylwester Nawrocki (5):
+  clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
+  clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
+  clk: samsung: Use common registration function for pll2550x
+  clk: samsung: Add support for EPLL on exynos5410
+  clk: samsung: Add support for exynos5410 AUDSS clock controller
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 54ec486..cf6fb41 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -176,6 +176,8 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
- 	GATE(CLK_MMC0, "sdmmc0", "aclk200", GATE_BUS_FSYS0, 12, 0, 0),
- 	GATE(CLK_MMC1, "sdmmc1", "aclk200", GATE_BUS_FSYS0, 13, 0, 0),
- 	GATE(CLK_MMC2, "sdmmc2", "aclk200", GATE_BUS_FSYS0, 14, 0, 0),
-+	GATE(CLK_PDMA1, "pdma1", "aclk200", GATE_BUS_FSYS0, 2, 0, 0),
-+	GATE(CLK_PDMA0, "pdma0", "aclk200", GATE_BUS_FSYS0, 1, 0, 0),
- 
- 	GATE(CLK_SCLK_USBPHY301, "sclk_usbphy301", "dout_usbphy301",
- 	     GATE_TOP_SCLK_FSYS, 7, CLK_SET_RATE_PARENT, 0),
--- 
+ .../devicetree/bindings/clock/clk-exynos-audss.txt |   4 +-
+ .../devicetree/bindings/clock/exynos5410-clock.txt |  14 ++
+ drivers/clk/samsung/clk-exynos-audss.c             |  78 ++++++-----
+ drivers/clk/samsung/clk-exynos5410.c               |  32 ++++-
+ drivers/clk/samsung/clk-exynos5440.c               |   9 +-
+ drivers/clk/samsung/clk-pll.c                      | 154 ++++++++++++++-------
+ drivers/clk/samsung/clk-pll.h                      |   2 +
+ include/dt-bindings/clock/exynos5410.h             |   3 +
+ include/dt-bindings/clock/exynos5440.h             |   2 +
+ 9 files changed, 212 insertions(+), 86 deletions(-)
+
+--
 1.9.1
-
