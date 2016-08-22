@@ -1,89 +1,71 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/8] PCI: more trivial demodularization of builtin code
-Date: Mon, 22 Aug 2016 17:59:40 -0400
-Message-ID: <20160822215948.27251-1-paul.gortmaker@windriver.com>
+Subject: [PATCH 7/8] PCI: exynos: make host support explicitly non-modular
+Date: Mon, 22 Aug 2016 17:59:47 -0400
+Message-ID: <20160822215948.27251-8-paul.gortmaker@windriver.com>
+References: <20160822215948.27251-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail5.windriver.com ([192.103.53.11]:32918 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756729AbcHVWAc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 18:00:32 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20160822215948.27251-1-paul.gortmaker@windriver.com>
+Sender: linux-pci-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ley Foon Tan <lftan@altera.com>, Lucas Stach <l.stach@pengutronix.de>, Pratyush Anand <pratyush.anand@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, Tom Long Nguyen <tom.l.nguyen@intel.com>, Will Deacon <will.deacon@arm.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jingoohan1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This is another group of commits that was chosen since they really don't
-change anything even at a binary object file level ; they just replace
-module_init with device_initcall (which are identical), and remove some
-MODULE_<blah> tags that are no-ops in code.  So the run time regression
-risk is zero here.
+The Kconfig currently controlling compilation of this code is:
 
-More specifically, we are doing the following to these PCI files that
-currently can only be built-in:
+drivers/pci/host/Kconfig:config PCI_EXYNOS
+drivers/pci/host/Kconfig:       bool "Samsung Exynos PCIe controller"
 
- -- remove the include of module.h ; replace it with init.h as req'd
+...meaning that it currently is not being built as a module by anyone.
 
- -- drop instances of MODULE_DEVICE_TABLE which is a no-op built-in.
+Lets remove the couple traces of modular infrastructure use, so that
+when reading the driver there is no doubt it is builtin-only.
 
- -- replace module_init (if present) with device_initcall, which is
-    functionally identical once CPP has processed the source.
+Note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
- -- drop instances of MODULE_LICENSE, MODULE_AUTHOR, MODULE_DESCRIPTION
-    while ensuring the contained info is present in the file comments.
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
 
-Build tested for allmodconfig on several arch, including ARM and ARM-64
-on a recent linux-next baseline.
-
-Some non-modular PCI files still remain with unused __exit and/or .remove
-functions.  Those will be dealt with in a separate series after this.
-
-Also note that we looked into modularizing some of the PCI_DW stuff at
-an earlier time[1] but that ran into problems such as trying to create
-unwind for hook_fault_code etc. that wasn't easily solved.  So we just
-go with keeping the code runtime functionally equivalent to what it was.
-
-Paul.
-
-[1] https://lkml.kernel.org/r/1454889644-27830-1-git-send-email-paul.gortmaker@windriver.com
-
----
-
-Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Ley Foon Tan <lftan@altera.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Pratyush Anand <pratyush.anand@gmail.com>
-Cc: Richard Zhu <Richard.Zhu@freescale.com>
-Cc: Tom Long Nguyen <tom.l.nguyen@intel.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: rfi@lists.rocketboards.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: linux-pci@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/pci/host/pci-exynos.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Paul Gortmaker (8):
-  PCI: altera: make msi explicitly non-modular
-  PCI: altera: make it explicitly non-modular
-  PCI: imx6: make it explicitly non-modular
-  PCI: portdrv: make it explicitly non-modular
-  PCI: spear13xx: make it explicitly non-modular
-  PCI: designware: make host support explicitly non-modular
-  PCI: exynos: make host support explicitly non-modular
-  PCI: generic: make host-common explicitly non-modular
-
- drivers/pci/host/pci-exynos.c      |  7 +------
- drivers/pci/host/pci-host-common.c |  7 ++-----
- drivers/pci/host/pci-imx6.c        |  9 +--------
- drivers/pci/host/pcie-altera-msi.c | 10 +++++-----
- drivers/pci/host/pcie-altera.c     | 12 +++++-------
- drivers/pci/host/pcie-designware.c |  5 -----
- drivers/pci/host/pcie-spear13xx.c  | 11 ++---------
- drivers/pci/pcie/portdrv_pci.c     |  8 +-------
- 8 files changed, 17 insertions(+), 52 deletions(-)
-
+diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+index 219976103efc..c3ae9c7a6e33 100644
+--- a/drivers/pci/host/pci-exynos.c
++++ b/drivers/pci/host/pci-exynos.c
+@@ -16,7 +16,7 @@
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+@@ -624,7 +624,6 @@ static const struct of_device_id exynos_pcie_of_match[] = {
+ 	{ .compatible = "samsung,exynos5440-pcie", },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, exynos_pcie_of_match);
+ 
+ static struct platform_driver exynos_pcie_driver = {
+ 	.remove		= __exit_p(exynos_pcie_remove),
+@@ -641,7 +640,3 @@ static int __init exynos_pcie_init(void)
+ 	return platform_driver_probe(&exynos_pcie_driver, exynos_pcie_probe);
+ }
+ subsys_initcall(exynos_pcie_init);
+-
+-MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
+-MODULE_DESCRIPTION("Samsung PCIe host controller driver");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.8.4
