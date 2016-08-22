@@ -1,82 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS
-Date: Mon, 22 Aug 2016 19:19:45 +0900
-Message-ID: <57BAD1C1.9070306@samsung.com>
-References: <1471524439-8115-1-git-send-email-cw00.choi@samsung.com>
- <CGME20160822100246epcas1p1e9547d592f13fcbeb22daee97e0dd129@epcas1p1.samsung.com>
- <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: Fix broken architected timer interrupt
+ trigger
+Date: Mon, 22 Aug 2016 11:26:33 +0100
+Message-ID: <57BAD359.30707@arm.com>
+References: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com>
+ <1470045256-9032-3-git-send-email-marc.zyngier@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <76aea8a8-cda7-ca9f-54ff-d614d834dde0@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, chanwoo@kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:50655 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750839AbcHVK0k (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 06:26:40 -0400
+In-Reply-To: <1470045256-9032-3-git-send-email-marc.zyngier@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Rutland <marc.rutland@arm.com>, Liu Gang <Gang.Liu@nxp.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Hou Zhiqiang <B48286@freescale.com>, Michal Simek <michal.simek@xilinx.com>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>, Tirumalesh Chalamarla <tchalamarla@cavium.com>l
 
-Hi Sylwester,
+Arnd, Olof,
 
-On 2016년 08월 22일 19:01, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
+On 01/08/16 10:54, Marc Zyngier wrote:
+> The ARM architected timer specification mandates that the interrupt
+> associated with each timer is level triggered (which corresponds to
+> the "counter >= comparator" condition).
 > 
-> On 08/18/2016 02:47 PM, Chanwoo Choi wrote:
->> Add the myself to the entry of SAMSUNG SOC CLOCK DRIVERS to review
->> and test the patches as supporter. I will help them. I can access the all
->> datasheet of Exynos SoC and test it on Exynos-based board. I was implemented
->> the exynos4415/5433 clock driver as author and handled the exynos3250 clock
->> driver. Lastly, adding the missing information of the exynos clock drivers.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> A number of DTs are being remarkably creative, declaring the interrupt
+> to be edge triggered. A quick look at the TRM for the corresponding ARM
+> CPUs clearly shows that this is wrong, and I've corrected those.
+> For non-ARM designs (and in the absence of a publicly available TRM),
+> I've made them active low as well, which can't be completely wrong
+> as the GIC cannot disinguish between level low and level high.
 > 
-> I'm going to apply this patch with commit message rephrased as below.
+> The respective maintainers are of course welcome to prove me wrong.
 > 
-> "MAINTAINERS: Add myself as SAMSUNG SOC CLOCK DRIVERS co-maintainer
+> While I was at it, I took the liberty to fix a couple of related issue,
+> such as some spurious affinity bits on ThunderX, and their complete
+> absence on ls1043a (both of which seem to be related to copy-pasting
+> from other DTs).
 > 
-> Add myself to the SAMSUNG SOC CLOCK DRIVERS entry, I'm going to review
-> and test related patches as supporter.  I can access all the datasheet
-> of Exynos SoC series and can do tests on Exynos based boards.  I have
-> implemented the exynos4415/5433 clock drivers and co-authored the
-> exynos3250 clock driver.  While at it, add missing paths of the exynos
-> clock driver files."
-> 
-> Please let me know if you see any issues with that.
+> Acked-by: Duc Dang <dhdang@apm.com>
+> Acked-by: Carlo Caione <carlo@endlessm.com>
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-There is no issue. Thanks.
+Any update on this patch? We have a workaround merged already, but it'd
+be good to have the DTS fixed as well.
 
-Best Regards,
-Chanwoo Choi
+Thanks,
 
-> 
->> ---
->>  MAINTAINERS | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 20bb1d00098c..442d6f5c65be 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -10233,9 +10233,12 @@ F:	drivers/nfc/s3fwrn5
->>  SAMSUNG SOC CLOCK DRIVERS
->>  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->>  M:	Tomasz Figa <tomasz.figa@gmail.com>
->> +M:	Chanwoo Choi <cw00.choi@samsung.com>
->>  S:	Supported
->>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->>  F:	drivers/clk/samsung/
->> +F:	include/dt-bindings/clock/exynos*.h
->> +F:	Documentation/devicetree/bindings/clock/exynos*.txt
->>  
->>  SAMSUNG SXGBE DRIVERS
->>  M:	Byungho An <bh74.an@samsung.com>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
-
+	M.
+-- 
+Jazz is not dead. It just smells funny...
