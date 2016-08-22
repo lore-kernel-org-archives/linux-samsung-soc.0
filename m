@@ -1,42 +1,137 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/5] clk: samsung: exynos: Fix the checkpatch warnings
-Date: Mon, 22 Aug 2016 12:06:20 +0200
-Message-ID: <432d1876-d561-6c4e-6808-b7761d128e94@samsung.com>
-References: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Mon, 22 Aug 2016 12:07:54 +0200
+Message-ID: <57BACEFA.4040900@math.uni-bielefeld.de>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1471859319-30681-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:53297 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754041AbcHVKH6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 06:07:58 -0400
+In-Reply-To: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Stone <daniel@fooishbar.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
 
-Hi Chanwoo,
+Hey Marek,
 
-On 08/22/2016 11:48 AM, Chanwoo Choi wrote:
-> This patches just fix the checkpatch warnings for exynos5433/3250/5260/5420/4
-> series without the behavior changes.
+I had a quick look at the series and I really like the new approach.
+
+I was wondering about the following though. If I understand this
+correctly I can only perform m2m operations on buffers which are
+registered as framebuffers. Is this possible to weaken that requirements
+such that arbitrary GEM objects can be used as input and output?
+
+Anyway, great work!
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
+> Dear all,
 > 
-> Chanwoo Choi (5):
->   clk: samsung: exynos5433: Fix the checkpatch warnings
->   clk: samsung: exynos3250: Fix the checkpatch warnings
->   clk: samsung: exynos5260: Fix the checkpatch warnings
->   clk: samsung: exynos5420: Fix the checkpatch warnings
->   clk: samsung: exynos4: Fix the checkpatch warnings
+> This is the initial proposal for extending DRM API with generic support for
+> hardware modules, which can be used for processing image data from the one
+> memory buffer to another. Typical memory-to-memory operations are:
+> rotation, scaling, colour space conversion or mix of them. In this proposal
+> I named such hardware modules a framebuffer processors.
 > 
->  drivers/clk/samsung/clk-exynos3250.c | 97 ++++++++++++++++++++----------------
->  drivers/clk/samsung/clk-exynos4.c    | 51 ++++++++++---------
->  drivers/clk/samsung/clk-exynos5260.c |  4 +-
->  drivers/clk/samsung/clk-exynos5420.c | 11 ++--
->  drivers/clk/samsung/clk-exynos5433.c |  6 ++-
->  5 files changed, 88 insertions(+), 81 deletions(-)
-
-Sorry, but I have to NAK this whole series.  It's just an unnecessary
-churn and will cause problems when applying real development patches
-that are being worked on.
-
--- 
-Thanks,
-Sylwester
+> Embedded SoCs are known to have a number of hardware blocks, which perform
+> such operations. They can be used in paralel to the main GPU module to
+> offload CPU from processing grapics or video data. One of example use of
+> such modules is implementing video overlay, which usually requires color
+> space conversion from NV12 (or similar) to RGB32 color space and scaling to
+> target window size.
+> 
+> Till now there was no generic, hardware independent API for performing such
+> operations. Exynos DRM driver has its own custom extension called IPP
+> (Image Post Processing), but frankly speaking, it is over-engineered and not
+> really used in open-source. I didn't indentify similar API in other DRM
+> drivers, besides those which expose complete support for the whole GPU.
+> 
+> However, the need for commmon API has been already mentioned on the mailing
+> list. Here are some example threads:
+> 1. "RFC: hardware accelerated bitblt using dma engine"
+> http://www.spinics.net/lists/dri-devel/msg114250.html
+> 2. "[PATCH 00/25] Exynos DRM: new life of IPP (Image Post Processing) subsystem"
+> https://lists.freedesktop.org/archives/dri-devel/2015-November/094115.html
+> https://lists.freedesktop.org/archives/dri-devel/2015-November/094533.html
+> 
+> The proposed API is heavily inspired by atomic KMS approach - it is also
+> based on DRM objects and their properties. A new DRM object is introduced:
+> framebuffer processor (called fbproc for convenience). Such fbproc objects
+> have a set of standard DRM properties, which describes the operation to be
+> performed by respective hardware module. In typical case those properties
+> are a source fb id and rectangle (x, y, width, height) and destination fb
+> id and rectangle. Optionally a rotation property can be also specified if
+> supported by the given hardware. To perform an operation on image data,
+> userspace provides a set of properties and their values for given fbproc
+> object in a similar way as object and properties are provided for
+> performing atomic page flip / mode setting.
+> 
+> The proposed API consists of the 3 new ioctls:
+> - DRM_IOCTL_MODE_GETFBPROCRESOURCES: to enumerate all available fbproc
+>   objects,
+> - DRM_IOCTL_MODE_GETFBPROC: to query capabilities of given fbproc object,
+> - DRM_IOCTL_MODE_FBPROC: to perform operation described by given property
+>   set.
+> 
+> The proposed API is extensible. Drivers can attach their own, custom
+> properties to add support for more advanced picture processing (for example
+> blending).
+> 
+> Please note that this API is intended to be used for simple memory-to-memory
+> image processing hardware not the full-blown GPU blitters, which usually
+> have more features. Typically blitters provides much more operations beside
+> simple pixel copying and operate best if its command queue is controlled from
+> respective dedicated code in userspace.
+> 
+> The patchset consist of 4 parts:
+> 1. generic code for DRM core for handling fbproc objects and ioctls
+> 2. example, quick conversion of Exynos Rotator driver to fbproc API
+> 3. libdrm extensions for handling fbproc objects
+> 4. simple example of userspace code for performing 180 degree rotation of the
+>    framebuffer
+> 
+> Patches were tested on Exynos 4412-based Odroid U3 board, on top
+> of Linux v4.8-rc1 kernel.
+> 
+> TODO:
+> 1. agree on the API shape
+> 2. add more documentation, especially to the kernel docs
+> 3. add more userspace examples
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Marek Szyprowski (2):
+>   drm: add support for framebuffer processor objects
+>   drm/exynos: register rotator as fbproc instead of custom ipp framework
+> 
+>  drivers/gpu/drm/Makefile                    |   3 +-
+>  drivers/gpu/drm/drm_atomic.c                |   5 +
+>  drivers/gpu/drm/drm_crtc.c                  |   6 +
+>  drivers/gpu/drm/drm_crtc_internal.h         |  12 +
+>  drivers/gpu/drm/drm_fbproc.c                | 754 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/drm_ioctl.c                 |   3 +
+>  drivers/gpu/drm/exynos/Kconfig              |   1 -
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c     |   3 +-
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c | 353 +++++++------
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.h |  19 -
+>  include/drm/drmP.h                          |  10 +
+>  include/drm/drm_crtc.h                      | 211 ++++++++
+>  include/drm/drm_irq.h                       |  14 +
+>  include/uapi/drm/drm.h                      |  13 +
+>  include/uapi/drm/drm_mode.h                 |  39 ++
+>  15 files changed, 1263 insertions(+), 183 deletions(-)
+>  create mode 100644 drivers/gpu/drm/drm_fbproc.c
+>  delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
+> 
