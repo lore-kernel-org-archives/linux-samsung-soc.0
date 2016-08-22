@@ -1,166 +1,234 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/5] clk: samsung: Use common registration function for pll2550x
-Date: Mon, 22 Aug 2016 18:31:01 +0200
-Message-ID: <1471883463-1950-4-git-send-email-s.nawrocki@samsung.com>
-References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org
-Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Add entries for sound support on Odroid-XU
+ board
+Date: Mon, 22 Aug 2016 18:34:14 +0200
+Message-ID: <1471883654-2113-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:39274 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753039AbcHVQe6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 12:34:58 -0400
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OCB026TWKQ6O210@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2016 01:34:56 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: k.kozlowski@samsung.com
+Cc: kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-There is no such significant differences in pll2550x PLL type
-to justify a separate registration function.  This patch adapts
-exynos5440 driver to use the common function and removes
-samsung_clk_register_pll2550x().
+This patch adds device nodes for the AUDSS clock controller,
+peripheral DMA 0/1 controllers and the Audio Subsystem I2S controller.
+These entries are required for sound support on Odroid-XU board.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-This patch is untested as I don't have access to any exynos5440
-SoC based board.
+This patch depends on a patch adding clock ID macro definitions.
+I'm going to provide a topic branch containing required changes.
 ---
- drivers/clk/samsung/clk-exynos5440.c   |  9 ++++--
- drivers/clk/samsung/clk-pll.c          | 52 ++++------------------------------
- drivers/clk/samsung/clk-pll.h          |  1 +
- include/dt-bindings/clock/exynos5440.h |  2 ++
- 4 files changed, 15 insertions(+), 49 deletions(-)
+ arch/arm/boot/dts/exynos5410-odroidxu.dts | 70 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi |  9 ++++
+ arch/arm/boot/dts/exynos5410.dtsi         | 59 ++++++++++++++++++++++++++
+ 3 files changed, 138 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-index a57d01b..a80f3ef 100644
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -112,6 +112,11 @@ static struct notifier_block exynos5440_clk_restart_handler = {
- 	.priority = 128,
- };
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+index d949931..91dd8e7 100644
+--- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -15,6 +15,7 @@
+ #include <dt-bindings/clock/maxim,max77802.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos54xx-odroidxu-leds.dtsi"
  
-+static const struct samsung_pll_clock exynos5440_plls[] __initconst = {
-+	PLL(pll_2550x, CLK_CPLLA, "cplla", "xtal", 0, 0x4c, NULL),
-+	PLL(pll_2550x, CLK_CPLLB, "cpllb", "xtal", 0, 0x50, NULL),
+ / {
+@@ -56,6 +57,62 @@
+ 		compatible = "samsung,secure-firmware";
+ 		reg = <0x02073000 0x1000>;
+ 	};
++
++	sound: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,name = "Odroid-XU";
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Speakers", "Speakers";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPL",
++			"Headphone Jack", "HPR",
++			"Headphone Jack", "MICBIAS",
++			"IN1", "Headphone Jack",
++			"Speakers", "SPKL",
++			"Speakers", "SPKR";
++
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
++				<&clock_audss EXYNOS_MOUT_I2S>,
++				<&clock_audss EXYNOS_DOUT_SRP>,
++				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
++
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
++				<&clock_audss EXYNOS_MOUT_AUDSS>;
++
++		assigned-clock-rates =  <0>,
++					<0>,
++					<96000000>,
++					<19200000>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&audi2s0 0>;
++			system-clock-frequency = <19200000>;
++		};
++
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&max98090>;
++			clocks = <&audi2s0 CLK_I2S_CDCLK>;
++		};
++	};
 +};
 +
- /* register exynos5440 clocks */
- static void __init exynos5440_clk_init(struct device_node *np)
- {
-@@ -129,8 +134,8 @@ static void __init exynos5440_clk_init(struct device_node *np)
- 	samsung_clk_of_register_fixed_ext(ctx, exynos5440_fixed_rate_ext_clks,
- 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
- 
--	samsung_clk_register_pll2550x("cplla", "xtal", reg_base + 0x1c, 0x10);
--	samsung_clk_register_pll2550x("cpllb", "xtal", reg_base + 0x20, 0x10);
-+	samsung_clk_register_pll(ctx, exynos5440_plls,
-+			ARRAY_SIZE(exynos5440_plls), ctx->reg_base);
- 
- 	samsung_clk_register_fixed_rate(ctx, exynos5440_fixed_rate_clks,
- 			ARRAY_SIZE(exynos5440_fixed_rate_clks));
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 48139bd..b5ab055 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -890,22 +890,14 @@ static const struct clk_ops samsung_s3c2440_mpll_clk_ops = {
- #define PLL2550X_M_SHIFT      (4)
- #define PLL2550X_S_SHIFT      (0)
- 
--struct samsung_clk_pll2550x {
--	struct clk_hw		hw;
--	const void __iomem	*reg_base;
--	unsigned long		offset;
--};
--
--#define to_clk_pll2550x(_hw) container_of(_hw, struct samsung_clk_pll2550x, hw)
--
- static unsigned long samsung_pll2550x_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
- {
--	struct samsung_clk_pll2550x *pll = to_clk_pll2550x(hw);
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
- 	u32 r, p, m, s, pll_stat;
- 	u64 fvco = parent_rate;
- 
--	pll_stat = readl_relaxed(pll->reg_base + pll->offset * 3);
-+	pll_stat = readl_relaxed(pll->con_reg);
- 	r = (pll_stat >> PLL2550X_R_SHIFT) & PLL2550X_R_MASK;
- 	if (!r)
- 		return 0;
-@@ -923,43 +915,6 @@ static const struct clk_ops samsung_pll2550x_clk_ops = {
- 	.recalc_rate = samsung_pll2550x_recalc_rate,
++&audi2s0 {
++	status = "okay";
++};
++
++&clock {
++       clocks = <&fin_pll>;
++};
++
++&clock_audss {
++	assigned-clocks = <&clock CLK_FOUT_EPLL>;
++	assigned-clock-rates = <192000000>;
  };
  
--struct clk * __init samsung_clk_register_pll2550x(const char *name,
--			const char *pname, const void __iomem *reg_base,
--			const unsigned long offset)
--{
--	struct samsung_clk_pll2550x *pll;
--	struct clk *clk;
--	struct clk_init_data init;
--
--	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
--	if (!pll) {
--		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
--		return NULL;
--	}
--
--	init.name = name;
--	init.ops = &samsung_pll2550x_clk_ops;
--	init.flags = CLK_GET_RATE_NOCACHE;
--	init.parent_names = &pname;
--	init.num_parents = 1;
--
--	pll->hw.init = &init;
--	pll->reg_base = reg_base;
--	pll->offset = offset;
--
--	clk = clk_register(NULL, &pll->hw);
--	if (IS_ERR(clk)) {
--		pr_err("%s: failed to register pll clock %s\n", __func__,
--				name);
--		kfree(pll);
--	}
--
--	if (clk_register_clkdev(clk, name, NULL))
--		pr_err("%s: failed to register lookup for %s", __func__, name);
--
--	return clk;
--}
--
- /*
-  * PLL2550xx Clock Type
-  */
-@@ -1263,6 +1218,9 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 		else
- 			init.ops = &samsung_s3c2440_mpll_clk_ops;
- 		break;
-+	case pll_2550x:
-+		init.ops = &samsung_pll2550x_clk_ops;
-+		break;
- 	case pll_2550xx:
- 		if (!pll->rate_table)
- 			init.ops = &samsung_pll2550xx_clk_min_ops;
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index 213de9a..df4ad8a 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -31,6 +31,7 @@ enum samsung_pll_type {
- 	pll_s3c2410_mpll,
- 	pll_s3c2410_upll,
- 	pll_s3c2440_mpll,
-+	pll_2550x,
- 	pll_2550xx,
- 	pll_2650xx,
- 	pll_1450x,
-diff --git a/include/dt-bindings/clock/exynos5440.h b/include/dt-bindings/clock/exynos5440.h
-index c66fc40..842cdc0 100644
---- a/include/dt-bindings/clock/exynos5440.h
-+++ b/include/dt-bindings/clock/exynos5440.h
-@@ -14,6 +14,8 @@
+ &cpu0_thermal {
+@@ -439,6 +496,19 @@
+ 	};
+ };
  
- #define CLK_XTAL		1
- #define CLK_ARM_CLK		2
-+#define CLK_CPLLA		3
-+#define CLK_CPLLB		4
- #define CLK_SPI_BAUD		16
- #define CLK_PB0_250		17
- #define CLK_PR0_250		18
++&i2c_1 {
++	status = "okay";
++	max98090: max98090@10 {
++		compatible = "maxim,max98090";
++		reg = <0x10>;
++		interrupt-parent = <&gpj3>;
++		interrupts = <0 0>;
++		clocks = <&audi2s0 CLK_I2S_CDCLK>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++	};
++};
++
+ &mmc_0 {
+ 	status = "okay";
+ 	mmc-pwrseq = <&emmc_pwrseq>;
+diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+index b58a0f2..31f08a3 100644
+--- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+@@ -613,4 +613,13 @@
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
++
++	audi2s0_bus: audi2s0-bus {
++		samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
++				"gpz-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ };
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 137f484..7a4cc0f 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -16,6 +16,7 @@
+ #include "exynos54xx.dtsi"
+ #include "exynos-syscon-restart.dtsi"
+ #include <dt-bindings/clock/exynos5410.h>
++#include <dt-bindings/clock/exynos-audss-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -82,6 +83,14 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		clock_audss: audss-clock-controller@3810000 {
++			compatible = "samsung,exynos5410-audss-clock";
++			reg = <0x03810000 0x0C>;
++			#clock-cells = <1>;
++			clocks = <&fin_pll>, <&clock CLK_FOUT_EPLL>;
++			clock-names = "pll_ref", "pll_in";
++		};
++
+ 		tmu_cpu0: tmu@10060000 {
+ 			compatible = "samsung,exynos5420-tmu";
+ 			reg = <0x10060000 0x100>;
+@@ -183,6 +192,56 @@
+ 			reg = <0x03860000 0x1000>;
+ 			interrupts = <0 47 0>;
+ 		};
++
++		amba {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "simple-bus";
++			interrupt-parent = <&gic>;
++			ranges;
++
++			pdma0: pdma@12680000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x121A0000 0x1000>;
++				interrupts = <0 34 0>;
++				clocks = <&clock CLK_PDMA0>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++
++			pdma1: pdma@12690000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x121B0000 0x1000>;
++				interrupts = <0 35 0>;
++				clocks = <&clock CLK_PDMA1>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++		};
++
++		audi2s0: i2s@03830000 {
++			compatible = "samsung,exynos5420-i2s";
++			reg = <0x03830000 0x100>;
++			dmas = <&pdma0 10
++				&pdma0 9
++				&pdma0 8>;
++			dma-names = "tx", "rx", "tx-sec";
++			clocks = <&clock_audss EXYNOS_I2S_BUS>,
++				<&clock_audss EXYNOS_I2S_BUS>,
++				<&clock_audss EXYNOS_SCLK_I2S>;
++			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++			#clock-cells = <1>;
++			clock-output-names = "i2s_cdclk0";
++			#sound-dai-cells = <1>;
++			samsung,idma-addr = <0x03000000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&audi2s0_bus>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	thermal-zones {
 -- 
 1.9.1
-
