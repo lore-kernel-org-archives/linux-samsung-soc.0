@@ -1,216 +1,297 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 5/5] clk: samsung: Add support for exynos5410 AUDSS clock
- controller
-Date: Mon, 22 Aug 2016 18:31:03 +0200
-Message-ID: <1471883463-1950-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 4/5] clk: samsung: Add support for EPLL on exynos5410
+Date: Mon, 22 Aug 2016 18:31:02 +0200
+Message-ID: <1471883463-1950-5-git-send-email-s.nawrocki@samsung.com>
 References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59739 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752364AbcHVQdP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 12:33:15 -0400
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-reply-to: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 To: linux-clk@vger.kernel.org
 Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos5410 Audio Subsystem Clock Controller, comparing to the already
-supported by the driver IP block revisions, has additionally an I2S_MST
-divider so a new compatible string is added.
-While at it, the variant handling is reworked to avoid scattered testing
-for the controller's variant.
-The I2S_MST divider clock will be added in a subsequent patch.
+This patch adds code instantiating the EPLL, which is used as the
+audio subsystem's root clock.
+The requirement to specify the external root clock in clocks property
+is also added.  That ensures proper initialization order by explicitly
+specifying dependencies in devicetree.  It prevents situations when the
+SoC's clock controller driver has initialized, the external oscillator
+clock is not yet registered and setting clock frequencies through
+assigned-clock-rates property doesn't work properly due to unknown
+external oscillator frequency.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- .../devicetree/bindings/clock/clk-exynos-audss.txt |  4 +-
- drivers/clk/samsung/clk-exynos-audss.c             | 78 ++++++++++++----------
- 2 files changed, 47 insertions(+), 35 deletions(-)
+ .../devicetree/bindings/clock/exynos5410-clock.txt |  14 +++
+ drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
+ drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.h                      |   1 +
+ 4 files changed, 145 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-index 180e883..0c3d601 100644
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-@@ -10,6 +10,8 @@ Required Properties:
-   - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
-   - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
-     SoCs.
-+  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
-+    SoCs.
-   - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
-     SoCs.
- - reg: physical base address and length of the controller's register set.
-@@ -91,5 +93,5 @@ i2s0: i2s@03830000 {
- 		<&clock_audss EXYNOS_MOUT_AUDSS>,
- 		<&clock_audss EXYNOS_MOUT_I2S>;
- 	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
--	"mout_audss", "mout_i2s";
-+		      "mout_audss", "mout_i2s";
- };
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index bdf8b97..328260c 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -14,18 +14,13 @@
- #include <linux/clk.h>
+diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+index aeab635..2aefc07 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+@@ -12,6 +12,9 @@ Required Properties:
+ 
+ - #clock-cells: should be 1.
+ 
++- clocks: should contain an entry specifying the root oscillator clock
++  on XXTI pin (fin_pll).
++
+ All available clocks are defined as preprocessor macros in
+ dt-bindings/clock/exynos5410.h header and can be used in device
+ tree sources.
+@@ -24,12 +27,23 @@ with following clock-output-name:
+ 
+  - "fin_pll" - PLL input clock from XXTI
+ 
++This clock should be listed in the clocks property of the controller node.
++
++
+ Example 1: An example of a clock controller node is listed below.
+ 
++	fin_pll: xxti {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "fin_pll";
++		#clock-cells = <0>;
++	};
++
+ 	clock: clock-controller@0x10010000 {
+ 		compatible = "samsung,exynos5410-clock";
+ 		reg = <0x10010000 0x30000>;
+ 		#clock-cells = <1>;
++		clocks = <&fin_pll>;
+ 	};
+ 
+ Example 2: UART controller node that consumes the clock generated by the clock
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index cf6fb41..113ce7d 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -14,6 +14,7 @@
  #include <linux/clk-provider.h>
+ #include <linux/of.h>
  #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/syscore_ops.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
++#include <linux/clk.h>
  
- #include <dt-bindings/clock/exynos-audss-clk.h>
+ #include "clk.h"
  
--enum exynos_audss_clk_type {
--	TYPE_EXYNOS4210,
--	TYPE_EXYNOS5250,
--	TYPE_EXYNOS5420,
--};
--
- static DEFINE_SPINLOCK(lock);
- static struct clk **clk_table;
- static void __iomem *reg_base;
-@@ -44,9 +39,9 @@ static struct clk *epll;
+@@ -21,6 +22,8 @@
+ #define APLL_CON0               0x100
+ #define CPLL_LOCK               0x10020
+ #define CPLL_CON0               0x10120
++#define EPLL_LOCK               0x10040
++#define EPLL_CON0               0x10130
+ #define MPLL_LOCK               0x4000
+ #define MPLL_CON0               0x4100
+ #define BPLL_LOCK               0x20010
+@@ -58,7 +61,7 @@
  
- #ifdef CONFIG_PM_SLEEP
- static unsigned long reg_save[][2] = {
--	{ASS_CLK_SRC,  0},
--	{ASS_CLK_DIV,  0},
--	{ASS_CLK_GATE, 0},
-+	{ ASS_CLK_SRC,  0 },
-+	{ ASS_CLK_DIV,  0 },
-+	{ ASS_CLK_GATE, 0 },
+ /* list of PLLs */
+ enum exynos5410_plls {
+-	apll, cpll, mpll,
++	apll, cpll, epll, mpll,
+ 	bpll, kpll,
+ 	nr_plls                 /* number of PLLs */
+ };
+@@ -67,6 +70,7 @@ enum exynos5410_plls {
+ PNAME(apll_p)		= { "fin_pll", "fout_apll", };
+ PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
+ PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
++PNAME(epll_p)		= { "fin_pll", "fout_epll" };
+ PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
+ PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
+ 
+@@ -95,6 +99,8 @@ static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
+ 	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
+ 	MUX(0, "sclk_bpll_muxed", bpll_user_p, SRC_TOP2, 24, 1),
+ 
++	MUX(0, "sclk_epll", epll_p, SRC_TOP2, 12, 1),
++
+ 	MUX(0, "sclk_cpll", cpll_p, SRC_TOP2, 8, 1),
+ 
+ 	MUX(0, "sclk_mpll_bpll", mpll_bpll_p, SRC_TOP1, 20, 1),
+@@ -219,11 +225,26 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+ 	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
  };
  
- static int exynos_audss_clk_suspend(void)
-@@ -73,14 +68,37 @@ static struct syscore_ops exynos_audss_clk_syscore_ops = {
- };
- #endif /* CONFIG_PM_SLEEP */
- 
-+struct exynos_audss_clk_drvdata {
-+	unsigned int has_adma_clk:1;
-+	unsigned int enable_epll:1;
-+	unsigned int num_clks;
+-static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
++static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
++	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
++	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
++	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
++	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
++	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
++	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
++	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
++	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
++	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
++	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
 +};
 +
-+static const struct exynos_audss_clk_drvdata exynos4210_drvdata = {
-+	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
-+};
-+
-+static const struct exynos_audss_clk_drvdata exynos5420_drvdata = {
-+	.num_clks	= EXYNOS_AUDSS_MAX_CLKS,
-+	.has_adma_clk	= 1,
-+	.enable_epll	= 1,
-+};
-+
- static const struct of_device_id exynos_audss_clk_of_match[] = {
--	{ .compatible = "samsung,exynos4210-audss-clock",
--	  .data = (void *)TYPE_EXYNOS4210, },
--	{ .compatible = "samsung,exynos5250-audss-clock",
--	  .data = (void *)TYPE_EXYNOS5250, },
--	{ .compatible = "samsung,exynos5420-audss-clock",
--	  .data = (void *)TYPE_EXYNOS5420, },
--	{},
-+	{
-+		.compatible	= "samsung,exynos4210-audss-clock",
-+		.data		= &exynos4210_drvdata,
-+	}, {
-+		.compatible	= "samsung,exynos5250-audss-clock",
-+		.data		= &exynos4210_drvdata,
-+	}, {
-+		.compatible	= "samsung,exynos5410-audss-clock",
-+		.data		= &exynos4210_drvdata,
-+	}, {
-+		.compatible	= "samsung,exynos5420-audss-clock",
-+		.data		= &exynos5420_drvdata,
-+	},
-+	{ },
- };
- 
- static void exynos_audss_clk_teardown(void)
-@@ -106,19 +124,17 @@ static void exynos_audss_clk_teardown(void)
- /* register exynos_audss clocks */
- static int exynos_audss_clk_probe(struct platform_device *pdev)
++static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+ 	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+ 		CPLL_CON0, NULL),
++	[epll] = PLL(pll_2650x, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0, NULL),
+ 	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+ 		MPLL_CON0, NULL),
+ 	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+@@ -237,6 +258,7 @@ static void __init exynos5410_clk_init(struct device_node *np)
  {
--	int i, ret = 0;
--	struct resource *res;
- 	const char *mout_audss_p[] = {"fin_pll", "fout_epll"};
- 	const char *mout_i2s_p[] = {"mout_audss", "cdclk0", "sclk_audio0"};
- 	const char *sclk_pcm_p = "sclk_pcm0";
- 	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
--	const struct of_device_id *match;
--	enum exynos_audss_clk_type variant;
-+	const struct exynos_audss_clk_drvdata *variant;
-+	struct resource *res;
-+	int i, ret = 0;
+ 	struct samsung_clk_provider *ctx;
+ 	void __iomem *reg_base;
++	struct clk *xxti;
  
--	match = of_match_node(exynos_audss_clk_of_match, pdev->dev.of_node);
--	if (!match)
-+	variant = of_device_get_match_data(&pdev->dev);
-+	if (!variant)
- 		return -EINVAL;
--	variant = (enum exynos_audss_clk_type)match->data;
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base)
+@@ -244,6 +266,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(&pdev->dev, res);
-@@ -126,7 +142,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "failed to map audss registers\n");
- 		return PTR_ERR(reg_base);
- 	}
--	/* EPLL don't have to be enabled for boards other than Exynos5420 */
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+ 
++	xxti = of_clk_get(np, 0);
++	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
++		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
 +
- 	epll = ERR_PTR(-ENODEV);
+ 	samsung_clk_register_pll(ctx, exynos5410_plls,
+ 			ARRAY_SIZE(exynos5410_plls), reg_base);
  
- 	clk_table = devm_kzalloc(&pdev->dev,
-@@ -136,10 +152,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index b5ab055..d61fd80 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1018,6 +1018,102 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
+ };
  
- 	clk_data.clks = clk_table;
--	if (variant == TYPE_EXYNOS5420)
--		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
--	else
--		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS - 1;
-+	clk_data.clk_num = variant->num_clks;
+ /*
++ * PLL2650x Clock Type
++ */
++
++/* Maximum lock time can be 3000 * PDIV cycles */
++#define PLL2650X_LOCK_FACTOR		3000
++
++#define PLL2650X_M_MASK			0x3FF
++#define PLL2650X_P_MASK			0x3F
++#define PLL2650X_S_MASK			0x7
++#define PLL2650X_K_MASK			0xFFFF
++#define PLL2650X_LOCK_STAT_MASK		0x1
++#define PLL2650X_M_SHIFT		16
++#define PLL2650X_P_SHIFT		8
++#define PLL2650X_S_SHIFT		0
++#define PLL2650X_K_SHIFT		0
++#define PLL2650X_LOCK_STAT_SHIFT	29
++#define PLL2650X_PLL_ENABLE_SHIFT	31
++
++static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u64 fout = parent_rate;
++	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
++	s16 kdiv;
++
++	pll_con0 = readl_relaxed(pll->con_reg);
++	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
++	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
++	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
++
++	pll_con1 = readl_relaxed(pll->con_reg + 4);
++	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
++
++	fout *= (mdiv << 16) + kdiv;
++	do_div(fout, (pdiv << sdiv));
++	fout >>= 16;
++
++	return (unsigned long)fout;
++}
++
++static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	const struct samsung_pll_rate_table *rate;
++	u32 con0, con1;
++
++	/* Get required rate settings from table */
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	con0 = readl_relaxed(pll->con_reg);
++	con1 = readl_relaxed(pll->con_reg + 4);
++
++	/* Set PLL lock time. */
++	writel_relaxed(rate->pdiv * PLL2650X_LOCK_FACTOR, pll->lock_reg);
++
++	/* Change PLL PMS values */
++	con0 &= ~((PLL2650X_M_MASK << PLL2650X_M_SHIFT) |
++			(PLL2650X_P_MASK << PLL2650X_P_SHIFT) |
++			(PLL2650X_S_MASK << PLL2650X_S_SHIFT));
++	con0 |= (rate->mdiv << PLL2650X_M_SHIFT) |
++			(rate->pdiv << PLL2650X_P_SHIFT) |
++			(rate->sdiv << PLL2650X_S_SHIFT);
++	con0 |= (1 << PLL2650X_PLL_ENABLE_SHIFT);
++	writel_relaxed(con0, pll->con_reg);
++
++	con1 &= ~(PLL2650X_K_MASK << PLL2650X_K_SHIFT);
++	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
++	writel_relaxed(con1, pll->con_reg + 4);
++
++	do {
++		cpu_relax();
++		con0 = readl_relaxed(pll->con_reg);
++	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
++			<< PLL2650X_LOCK_STAT_SHIFT)));
++
++	return 0;
++}
++
++static const struct clk_ops samsung_pll2650x_clk_ops = {
++	.recalc_rate = samsung_pll2650x_recalc_rate,
++	.round_rate = samsung_pll_round_rate,
++	.set_rate = samsung_pll2650x_set_rate,
++};
++
++static const struct clk_ops samsung_pll2650x_clk_min_ops = {
++	.recalc_rate = samsung_pll2650x_recalc_rate,
++};
++
++/*
+  * PLL2650XX Clock Type
+  */
  
- 	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
- 	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-@@ -148,13 +161,13 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	if (!IS_ERR(pll_in)) {
- 		mout_audss_p[1] = __clk_get_name(pll_in);
- 
--		if (variant == TYPE_EXYNOS5420) {
-+		if (variant->enable_epll) {
- 			epll = pll_in;
- 
- 			ret = clk_prepare_enable(epll);
- 			if (ret) {
- 				dev_err(&pdev->dev,
--						"failed to prepare the epll clock\n");
-+					"failed to prepare the epll clock\n");
- 				return ret;
- 			}
- 		}
-@@ -210,7 +223,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
--	if (variant == TYPE_EXYNOS5420) {
-+	if (variant->has_adma_clk) {
- 		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
-@@ -234,9 +247,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- 	register_syscore_ops(&exynos_audss_clk_syscore_ops);
- #endif
--
--	dev_info(&pdev->dev, "setup completed\n");
--
- 	return 0;
- 
- unregister:
+@@ -1227,6 +1323,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll2550xx_clk_ops;
+ 		break;
++	case pll_2650x:
++		if (!pll->rate_table)
++			init.ops = &samsung_pll2650x_clk_min_ops;
++		else
++			init.ops = &samsung_pll2650x_clk_ops;
++		break;
+ 	case pll_2650xx:
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll2650xx_clk_min_ops;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index df4ad8a..a1ca023 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -33,6 +33,7 @@ enum samsung_pll_type {
+ 	pll_s3c2440_mpll,
+ 	pll_2550x,
+ 	pll_2550xx,
++	pll_2650x,
+ 	pll_2650xx,
+ 	pll_1450x,
+ 	pll_1451x,
 -- 
 1.9.1
+
