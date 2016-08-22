@@ -1,215 +1,494 @@
-From: Randy Li <ayaka@soulik.info>
-Subject: [PATCH 2/2 v2] ARM: dts: add TOPEET itop elite based board
-Date: Mon, 22 Aug 2016 04:12:39 +0800
-Message-ID: <1471810359-6154-1-git-send-email-ayaka@soulik.info>
-References: <1471809893-31147-3-git-send-email-ayaka@soulik.info>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:47429 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752720AbcHUUNE (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Aug 2016 16:13:04 -0400
-In-Reply-To: <1471809893-31147-3-git-send-email-ayaka@soulik.info>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info to
+ init section
+Date: Mon, 22 Aug 2016 11:49:44 +0900
+Message-ID: <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Li <ayaka@soulik.info>
 
-The TOPEET itop exynos 4412 have three versions base board. The
-Elite version is the cheap one without too much peripheral devices
-on it.
+This patch moves the all samsung_cmu_info struct to initconst section
+because they are used only in initconst section.
 
-Currently supported are serial console, wired networking(USB),
-USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
-PWM beeper, ADC and LEDs.
-
-Signed-off-by: Randy Li <ayaka@soulik.info>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   3 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos4412-itop-elite.dts        | 148 +++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+ drivers/clk/samsung/clk-exynos5260.c | 350 +++++++++++++++++------------------
+ 1 file changed, 175 insertions(+), 175 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index 0ea7f14..c5913ba 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -22,6 +22,9 @@ Required root node properties:
-   * FriendlyARM
- 	- "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
- 				    TINY4412 board.
-+  * Topee
-+	- "topeet,itop4412-elite" - for Exynos4412-based Topeet
-+                                    Elite base board.                             
+diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
+index a43642c36039..fd1d9bfc151b 100644
+--- a/drivers/clk/samsung/clk-exynos5260.c
++++ b/drivers/clk/samsung/clk-exynos5260.c
+@@ -131,21 +131,21 @@ static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
+ 			EN_IP_AUD, 4, 0, 0),
+ };
  
-   * Google
- 	- "google,pi"		- for Exynos5800-based Google Peach Pi
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 48e1d4e..8f47aa0 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -135,6 +135,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
- 	exynos4412-origen.dtb \
- 	exynos4412-smdk4412.dtb \
- 	exynos4412-tiny4412.dtb \
-+	exynos4412-itop-elite.dtb \
- 	exynos4412-trats2.dtb
- dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-arndale.dtb \
-diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-new file mode 100644
-index 0000000..363908e
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -0,0 +1,148 @@
-+/*
-+ * TOPEET's Exynos4412 based itop board device tree source
-+ *
-+ * Copyright (c) 2016 SUMOMO Computer Association
-+ *			https://www.sumomo.mobi
-+ *			Randy Li <ayaka@soulik.info>
-+ *			
-+ * Device tree source file for TOPEET iTop Exynos 4412 core board 
-+ * which is based on Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos4412-itop-scp-core.dtsi"
-+
-+/ {
-+	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
-+	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
-+
-+	chosen {
-+		bootargs ="console=ttySAC2,115200";
-+		stdout-path = &serial_2;
-+	};
-+	
-+	leds {
-+		compatible = "gpio-leds";
-+		
-+		led2 {
-+			label = "red:system";
-+			gpios = <&gpx1 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led3 {
-+			label = "red:user";
-+			gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		
-+		home {
-+			lable = "GPIO Key Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		back {
-+			lable = "GPIO Key Back";
-+			linux,code = <KEY_BACK>;
-+			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		sleep {
-+			lable = "GPIO Key Sleep";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		vol_up {
-+			lable = "GPIO Key Vol+";
-+			linux,code = <KEY_UP>;
-+			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		vol_down {
-+			lable = "GPIO Key Vol-";
-+			linux,code = <KEY_DOWN>;
-+			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+	
-+	beep {
-+		compatible = "pwm-beeper";
-+		pwms = <&pwm>;
-+		pinctrl-0 = <&pwm0_out>;
-+		pinctrl-names = "default";
-+	};
-+
++static const struct samsung_cmu_info aud_cmu __initconst = {
++	.mux_clks	= aud_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(aud_mux_clks),
++	.div_clks	= aud_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
++	.gate_clks	= aud_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
++	.nr_clk_ids	= AUD_NR_CLK,
++	.clk_regs	= aud_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
 +};
 +
-+&pinctrl_1 {
-+	ether-reset {
-+		samsung,pins = "gpc0-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
+ static void __init exynos5260_clk_aud_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = aud_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(aud_mux_clks);
+-	cmu.div_clks = aud_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(aud_div_clks);
+-	cmu.gate_clks = aud_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(aud_gate_clks);
+-	cmu.nr_clk_ids = AUD_NR_CLK;
+-	cmu.clk_regs = aud_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(aud_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &aud_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_aud, "samsung,exynos5260-clock-aud",
+@@ -321,21 +321,21 @@ static const struct samsung_gate_clock disp_gate_clks[] __initconst = {
+ 			EN_IP_DISP, 25, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info disp_cmu __initconst = {
++	.mux_clks	= disp_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(disp_mux_clks),
++	.div_clks	= disp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(disp_div_clks),
++	.gate_clks	= disp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(disp_gate_clks),
++	.nr_clk_ids	= DISP_NR_CLK,
++	.clk_regs	= disp_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(disp_clk_regs),
 +};
 +
-+&sdhci_2 {
-+	bus-width = <4>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
-+	pinctrl-names = "default";
-+	broken-cd;
-+	cap-sd-highspeed;
-+	vmmc-supply = <&ldo23_reg>;
-+	vqmmc-supply = <&ldo17_reg>;
-+	status = "okay";
+ static void __init exynos5260_clk_disp_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = disp_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(disp_mux_clks);
+-	cmu.div_clks = disp_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(disp_div_clks);
+-	cmu.gate_clks = disp_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(disp_gate_clks);
+-	cmu.nr_clk_ids = DISP_NR_CLK;
+-	cmu.clk_regs = disp_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(disp_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &disp_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_disp, "samsung,exynos5260-clock-disp",
+@@ -385,21 +385,21 @@ static const struct samsung_pll_clock egl_pll_clks[] __initconst = {
+ 		pll2550_24mhz_tbl),
+ };
+ 
++static const struct samsung_cmu_info egl_cmu __initconst = {
++	.pll_clks	= egl_pll_clks,
++	.nr_pll_clks	= ARRAY_SIZE(egl_pll_clks),
++	.mux_clks	= egl_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(egl_mux_clks),
++	.div_clks	= egl_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(egl_div_clks),
++	.nr_clk_ids	= EGL_NR_CLK,
++	.clk_regs	= egl_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(egl_clk_regs),
 +};
 +
-+&ehci {
-+	status = "okay";
-+	/* In order to reset USB ethernet */
-+	samsung,vbus-gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
-+
-+	port@0 {
-+		status = "okay";
-+	};
-+
-+	port@2 {
-+		status = "okay";
-+	};
+ static void __init exynos5260_clk_egl_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.pll_clks = egl_pll_clks;
+-	cmu.nr_pll_clks =  ARRAY_SIZE(egl_pll_clks);
+-	cmu.mux_clks = egl_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(egl_mux_clks);
+-	cmu.div_clks = egl_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(egl_div_clks);
+-	cmu.nr_clk_ids = EGL_NR_CLK;
+-	cmu.clk_regs = egl_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(egl_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &egl_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_egl, "samsung,exynos5260-clock-egl",
+@@ -487,19 +487,19 @@ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
+ 			EN_IP_FSYS_SECURE_SMMU_RTIC, 12, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info fsys_cmu __initconst = {
++	.mux_clks	= fsys_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(fsys_mux_clks),
++	.gate_clks	= fsys_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(fsys_gate_clks),
++	.nr_clk_ids	= FSYS_NR_CLK,
++	.clk_regs	= fsys_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(fsys_clk_regs),
 +};
 +
-+&exynos_usbphy {
-+	status = "okay";
+ static void __init exynos5260_clk_fsys_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = fsys_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(fsys_mux_clks);
+-	cmu.gate_clks = fsys_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(fsys_gate_clks);
+-	cmu.nr_clk_ids = FSYS_NR_CLK;
+-	cmu.clk_regs = fsys_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(fsys_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &fsys_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_fsys, "samsung,exynos5260-clock-fsys",
+@@ -576,21 +576,21 @@ static const struct samsung_gate_clock g2d_gate_clks[] __initconst = {
+ 			EN_IP_G2D_SECURE_SMMU_G2D, 15, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info g2d_cmu __initconst = {
++	.mux_clks	= g2d_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(g2d_mux_clks),
++	.div_clks	= g2d_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(g2d_div_clks),
++	.gate_clks	= g2d_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(g2d_gate_clks),
++	.nr_clk_ids	= G2D_NR_CLK,
++	.clk_regs	= g2d_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(g2d_clk_regs),
 +};
 +
-+&hsotg {
-+	dr_mode = "peripheral";
-+	status = "okay";
+ static void __init exynos5260_clk_g2d_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = g2d_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(g2d_mux_clks);
+-	cmu.div_clks = g2d_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(g2d_div_clks);
+-	cmu.gate_clks = g2d_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(g2d_gate_clks);
+-	cmu.nr_clk_ids = G2D_NR_CLK;
+-	cmu.clk_regs = g2d_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(g2d_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &g2d_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_g2d, "samsung,exynos5260-clock-g2d",
+@@ -637,23 +637,23 @@ static const struct samsung_pll_clock g3d_pll_clks[] __initconst = {
+ 		pll2550_24mhz_tbl),
+ };
+ 
++static const struct samsung_cmu_info g3d_cmu __initconst = {
++	.pll_clks	= g3d_pll_clks,
++	.nr_pll_clks	= ARRAY_SIZE(g3d_pll_clks),
++	.mux_clks	= g3d_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(g3d_mux_clks),
++	.div_clks	= g3d_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(g3d_div_clks),
++	.gate_clks	= g3d_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(g3d_gate_clks),
++	.nr_clk_ids	= G3D_NR_CLK,
++	.clk_regs	= g3d_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(g3d_clk_regs),
 +};
 +
-+&serial_1 {
-+	status = "okay";
+ static void __init exynos5260_clk_g3d_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.pll_clks = g3d_pll_clks;
+-	cmu.nr_pll_clks =  ARRAY_SIZE(g3d_pll_clks);
+-	cmu.mux_clks = g3d_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(g3d_mux_clks);
+-	cmu.div_clks = g3d_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(g3d_div_clks);
+-	cmu.gate_clks = g3d_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(g3d_gate_clks);
+-	cmu.nr_clk_ids = G3D_NR_CLK;
+-	cmu.clk_regs = g3d_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(g3d_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &g3d_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_g3d, "samsung,exynos5260-clock-g3d",
+@@ -772,21 +772,21 @@ static const struct samsung_gate_clock gscl_gate_clks[] __initconst = {
+ 			EN_IP_GSCL_SECURE_SMMU_MSCL1, 20, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info gscl_cmu __initconst = {
++	.mux_clks	= gscl_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(gscl_mux_clks),
++	.div_clks	= gscl_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(gscl_div_clks),
++	.gate_clks	= gscl_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(gscl_gate_clks),
++	.nr_clk_ids	= GSCL_NR_CLK,
++	.clk_regs	= gscl_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(gscl_clk_regs),
 +};
 +
-+&serial_2 {
-+	status = "okay";
+ static void __init exynos5260_clk_gscl_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = gscl_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(gscl_mux_clks);
+-	cmu.div_clks = gscl_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(gscl_div_clks);
+-	cmu.gate_clks = gscl_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(gscl_gate_clks);
+-	cmu.nr_clk_ids = GSCL_NR_CLK;
+-	cmu.clk_regs = gscl_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(gscl_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &gscl_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_gscl, "samsung,exynos5260-clock-gscl",
+@@ -891,21 +891,21 @@ static const struct samsung_gate_clock isp_gate_clks[] __initconst = {
+ 			EN_SCLK_ISP, 9, CLK_SET_RATE_PARENT, 0),
+ };
+ 
++static const struct samsung_cmu_info isp_cmu __initconst = {
++	.mux_clks	= isp_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(isp_mux_clks),
++	.div_clks	= isp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(isp_div_clks),
++	.gate_clks	= isp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(isp_gate_clks),
++	.nr_clk_ids	= ISP_NR_CLK,
++	.clk_regs	= isp_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(isp_clk_regs),
 +};
 +
-+&pwm {
-+	pinctrl-0 = <&pwm1_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <1>;
-+	status = "okay";
+ static void __init exynos5260_clk_isp_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = isp_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(isp_mux_clks);
+-	cmu.div_clks = isp_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(isp_div_clks);
+-	cmu.gate_clks = isp_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(isp_gate_clks);
+-	cmu.nr_clk_ids = ISP_NR_CLK;
+-	cmu.clk_regs = isp_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(isp_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &isp_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_isp, "samsung,exynos5260-clock-isp",
+@@ -955,21 +955,21 @@ static const struct samsung_pll_clock kfc_pll_clks[] __initconst = {
+ 		pll2550_24mhz_tbl),
+ };
+ 
++static const struct samsung_cmu_info kfc_cmu __initconst = {
++	.pll_clks	= kfc_pll_clks,
++	.nr_pll_clks	= ARRAY_SIZE(kfc_pll_clks),
++	.mux_clks	= kfc_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(kfc_mux_clks),
++	.div_clks	= kfc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(kfc_div_clks),
++	.nr_clk_ids	= KFC_NR_CLK,
++	.clk_regs	= kfc_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(kfc_clk_regs),
 +};
 +
-+&adc {
-+	status = "okay";
+ static void __init exynos5260_clk_kfc_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.pll_clks = kfc_pll_clks;
+-	cmu.nr_pll_clks =  ARRAY_SIZE(kfc_pll_clks);
+-	cmu.mux_clks = kfc_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(kfc_mux_clks);
+-	cmu.div_clks = kfc_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(kfc_div_clks);
+-	cmu.nr_clk_ids = KFC_NR_CLK;
+-	cmu.clk_regs = kfc_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(kfc_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &kfc_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_kfc, "samsung,exynos5260-clock-kfc",
+@@ -1011,21 +1011,21 @@ static const struct samsung_gate_clock mfc_gate_clks[] __initconst = {
+ 			EN_IP_MFC_SECURE_SMMU2_MFC, 7, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info mfc_cmu __initconst = {
++	.mux_clks	= mfc_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(mfc_mux_clks),
++	.div_clks	= mfc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(mfc_div_clks),
++	.gate_clks	= mfc_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(mfc_gate_clks),
++	.nr_clk_ids	= MFC_NR_CLK,
++	.clk_regs	= mfc_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(mfc_clk_regs),
 +};
++
+ static void __init exynos5260_clk_mfc_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = mfc_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(mfc_mux_clks);
+-	cmu.div_clks = mfc_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(mfc_div_clks);
+-	cmu.gate_clks = mfc_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(mfc_gate_clks);
+-	cmu.nr_clk_ids = MFC_NR_CLK;
+-	cmu.clk_regs = mfc_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(mfc_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &mfc_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_mfc, "samsung,exynos5260-clock-mfc",
+@@ -1158,23 +1158,23 @@ static const struct samsung_pll_clock mif_pll_clks[] __initconst = {
+ 		pll2550_24mhz_tbl),
+ };
+ 
++static const struct samsung_cmu_info mif_cmu __initconst = {
++	.pll_clks	= mif_pll_clks,
++	.nr_pll_clks	= ARRAY_SIZE(mif_pll_clks),
++	.mux_clks	= mif_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(mif_mux_clks),
++	.div_clks	= mif_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(mif_div_clks),
++	.gate_clks	= mif_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(mif_gate_clks),
++	.nr_clk_ids	= MIF_NR_CLK,
++	.clk_regs	= mif_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(mif_clk_regs),
++};
++
+ static void __init exynos5260_clk_mif_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.pll_clks = mif_pll_clks;
+-	cmu.nr_pll_clks =  ARRAY_SIZE(mif_pll_clks);
+-	cmu.mux_clks = mif_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(mif_mux_clks);
+-	cmu.div_clks = mif_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(mif_div_clks);
+-	cmu.gate_clks = mif_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(mif_gate_clks);
+-	cmu.nr_clk_ids = MIF_NR_CLK;
+-	cmu.clk_regs = mif_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(mif_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &mif_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_mif, "samsung,exynos5260-clock-mif",
+@@ -1366,21 +1366,21 @@ static const struct samsung_gate_clock peri_gate_clks[] __initconst = {
+ 		EN_IP_PERI_SECURE_TZPC, 20, 0, 0),
+ };
+ 
++static const struct samsung_cmu_info peri_cmu __initconst = {
++	.mux_clks	= peri_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(peri_mux_clks),
++	.div_clks	= peri_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(peri_div_clks),
++	.gate_clks	= peri_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(peri_gate_clks),
++	.nr_clk_ids	= PERI_NR_CLK,
++	.clk_regs	= peri_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(peri_clk_regs),
++};
++
+ static void __init exynos5260_clk_peri_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.mux_clks = peri_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(peri_mux_clks);
+-	cmu.div_clks = peri_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(peri_div_clks);
+-	cmu.gate_clks = peri_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(peri_gate_clks);
+-	cmu.nr_clk_ids = PERI_NR_CLK;
+-	cmu.clk_regs = peri_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(peri_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &peri_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_peri, "samsung,exynos5260-clock-peri",
+@@ -1818,25 +1818,25 @@ static const struct samsung_pll_clock top_pll_clks[] __initconst = {
+ 		pll2650_24mhz_tbl),
+ };
+ 
++static const struct samsung_cmu_info top_cmu __initconst = {
++	.pll_clks	= top_pll_clks,
++	.nr_pll_clks	= ARRAY_SIZE(top_pll_clks),
++	.mux_clks	= top_mux_clks,
++	.nr_mux_clks	= ARRAY_SIZE(top_mux_clks),
++	.div_clks	= top_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(top_div_clks),
++	.gate_clks	= top_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(top_gate_clks),
++	.fixed_clks	= fixed_rate_clks,
++	.nr_fixed_clks	= ARRAY_SIZE(fixed_rate_clks),
++	.nr_clk_ids	= TOP_NR_CLK,
++	.clk_regs	= top_clk_regs,
++	.nr_clk_regs	= ARRAY_SIZE(top_clk_regs),
++};
++
+ static void __init exynos5260_clk_top_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = { NULL };
+-
+-	cmu.pll_clks = top_pll_clks;
+-	cmu.nr_pll_clks =  ARRAY_SIZE(top_pll_clks);
+-	cmu.mux_clks = top_mux_clks;
+-	cmu.nr_mux_clks = ARRAY_SIZE(top_mux_clks);
+-	cmu.div_clks = top_div_clks;
+-	cmu.nr_div_clks = ARRAY_SIZE(top_div_clks);
+-	cmu.gate_clks = top_gate_clks;
+-	cmu.nr_gate_clks = ARRAY_SIZE(top_gate_clks);
+-	cmu.fixed_clks = fixed_rate_clks;
+-	cmu.nr_fixed_clks = ARRAY_SIZE(fixed_rate_clks);
+-	cmu.nr_clk_ids = TOP_NR_CLK;
+-	cmu.clk_regs = top_clk_regs;
+-	cmu.nr_clk_regs = ARRAY_SIZE(top_clk_regs);
+-
+-	samsung_cmu_register_one(np, &cmu);
++	samsung_cmu_register_one(np, &top_cmu);
+ }
+ 
+ CLK_OF_DECLARE(exynos5260_clk_top, "samsung,exynos5260-clock-top",
 -- 
-2.7.4
+1.9.1
