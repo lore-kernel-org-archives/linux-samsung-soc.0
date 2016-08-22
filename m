@@ -1,54 +1,89 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: [RFC 0/2] New feature: Framebuffer processors
-Date: Tue, 23 Aug 2016 06:05:05 +1000
-Message-ID: <CAPM=9tz_Y9vzWcm9=oYpHPiACJbz-MyyqsfbayzdsuFykt06+g@mail.gmail.com>
-References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 0/8] PCI: more trivial demodularization of builtin code
+Date: Mon, 22 Aug 2016 17:59:40 -0400
+Message-ID: <20160822215948.27251-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:33160 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751980AbcHVUFG (ORCPT
+Received: from mail5.windriver.com ([192.103.53.11]:32918 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756729AbcHVWAc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 16:05:06 -0400
-Received: by mail-ua0-f195.google.com with SMTP id u13so11729109uau.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2016 13:05:06 -0700 (PDT)
-In-Reply-To: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+        Mon, 22 Aug 2016 18:00:32 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ley Foon Tan <lftan@altera.com>, Lucas Stach <l.stach@pengutronix.de>, Pratyush Anand <pratyush.anand@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, Tom Long Nguyen <tom.l.nguyen@intel.com>, Will Deacon <will.deacon@arm.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 22 August 2016 at 19:44, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Dear all,
->
-> This is the initial proposal for extending DRM API with generic support for
-> hardware modules, which can be used for processing image data from the one
-> memory buffer to another. Typical memory-to-memory operations are:
-> rotation, scaling, colour space conversion or mix of them. In this proposal
-> I named such hardware modules a framebuffer processors.
->
-> Embedded SoCs are known to have a number of hardware blocks, which perform
-> such operations. They can be used in paralel to the main GPU module to
-> offload CPU from processing grapics or video data. One of example use of
-> such modules is implementing video overlay, which usually requires color
-> space conversion from NV12 (or similar) to RGB32 color space and scaling to
-> target window size.
->
-> Till now there was no generic, hardware independent API for performing such
-> operations. Exynos DRM driver has its own custom extension called IPP
-> (Image Post Processing), but frankly speaking, it is over-engineered and not
-> really used in open-source. I didn't indentify similar API in other DRM
-> drivers, besides those which expose complete support for the whole GPU.
+This is another group of commits that was chosen since they really don't
+change anything even at a binary object file level ; they just replace
+module_init with device_initcall (which are identical), and remove some
+MODULE_<blah> tags that are no-ops in code.  So the run time regression
+risk is zero here.
 
-So I'm with the others in that it's a road we've travelled and learned from,
-generic accel API don't work very well long term.
+More specifically, we are doing the following to these PCI files that
+currently can only be built-in:
 
-What will happen is the next generation exynos will have a command queue
-for it's dma engine or whatever and someone will shoehorn that into this API
-because this API exists, even if it isn't suitable.
+ -- remove the include of module.h ; replace it with init.h as req'd
 
-What are the requirements for having this API, what userspace feature is driving
-it, compositors?, toolkit rendering?
+ -- drop instances of MODULE_DEVICE_TABLE which is a no-op built-in.
 
-Dave.
+ -- replace module_init (if present) with device_initcall, which is
+    functionally identical once CPP has processed the source.
+
+ -- drop instances of MODULE_LICENSE, MODULE_AUTHOR, MODULE_DESCRIPTION
+    while ensuring the contained info is present in the file comments.
+
+Build tested for allmodconfig on several arch, including ARM and ARM-64
+on a recent linux-next baseline.
+
+Some non-modular PCI files still remain with unused __exit and/or .remove
+functions.  Those will be dealt with in a separate series after this.
+
+Also note that we looked into modularizing some of the PCI_DW stuff at
+an earlier time[1] but that ran into problems such as trying to create
+unwind for hook_fault_code etc. that wasn't easily solved.  So we just
+go with keeping the code runtime functionally equivalent to what it was.
+
+Paul.
+
+[1] https://lkml.kernel.org/r/1454889644-27830-1-git-send-email-paul.gortmaker@windriver.com
+
+---
+
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Ley Foon Tan <lftan@altera.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Richard Zhu <Richard.Zhu@freescale.com>
+Cc: Tom Long Nguyen <tom.l.nguyen@intel.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: rfi@lists.rocketboards.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+
+Paul Gortmaker (8):
+  PCI: altera: make msi explicitly non-modular
+  PCI: altera: make it explicitly non-modular
+  PCI: imx6: make it explicitly non-modular
+  PCI: portdrv: make it explicitly non-modular
+  PCI: spear13xx: make it explicitly non-modular
+  PCI: designware: make host support explicitly non-modular
+  PCI: exynos: make host support explicitly non-modular
+  PCI: generic: make host-common explicitly non-modular
+
+ drivers/pci/host/pci-exynos.c      |  7 +------
+ drivers/pci/host/pci-host-common.c |  7 ++-----
+ drivers/pci/host/pci-imx6.c        |  9 +--------
+ drivers/pci/host/pcie-altera-msi.c | 10 +++++-----
+ drivers/pci/host/pcie-altera.c     | 12 +++++-------
+ drivers/pci/host/pcie-designware.c |  5 -----
+ drivers/pci/host/pcie-spear13xx.c  | 11 ++---------
+ drivers/pci/pcie/portdrv_pci.c     |  8 +-------
+ 8 files changed, 17 insertions(+), 52 deletions(-)
+
+-- 
+2.8.4
