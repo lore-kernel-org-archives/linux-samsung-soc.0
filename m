@@ -1,79 +1,37 @@
-From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 3/4] gpu: drm: exynos_hdmi: Use consolidated function on binding DDC DT property
-Date: Tue, 23 Aug 2016 18:13:38 +0900
-Message-ID: <1471943619-6102-4-git-send-email-woogyom.kim@gmail.com>
-References: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Milo Kim <woogyom.kim@gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Tue, 23 Aug 2016 10:41:38 +0100
+Message-ID: <CAPj87rNo7bQrqMGg-fRkdowdxT_-iUObY66TiHV-4091MqxiPw@mail.gmail.com>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+ <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
+ <CAF6AEGtHeSKoQcVbTuucy-KdA8V=LLtC7uTEDmup3_5tz0HZMg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAF6AEGtHeSKoQcVbTuucy-KdA8V=LLtC7uTEDmup3_5tz0HZMg@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Handle legacy and raw 'ddc' parsing in single function.
-And it also removes goto condition.
-
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 2275efe..6a636f2 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1760,7 +1760,7 @@ static const struct component_ops hdmi_component_ops = {
- 	.unbind = hdmi_unbind,
- };
- 
--static struct device_node *hdmi_legacy_ddc_dt_binding(struct device *dev)
-+static struct device_node *hdmi_ddc_dt_binding(struct device *dev)
- {
- 	const char *compatible_str = "samsung,exynos4210-hdmiddc";
- 	struct device_node *np;
-@@ -1769,7 +1769,13 @@ static struct device_node *hdmi_legacy_ddc_dt_binding(struct device *dev)
- 	if (np)
- 		return of_get_next_parent(np);
- 
--	return NULL;
-+	np = of_parse_phandle(dev->of_node, "ddc", 0);
-+	if (!np)
-+		return NULL;
-+
-+	of_node_put(dev->of_node);
-+
-+	return np;
- }
- 
- static struct device_node *hdmi_legacy_phy_dt_binding(struct device *dev)
-@@ -1811,18 +1817,12 @@ static int hdmi_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ddc_node = hdmi_legacy_ddc_dt_binding(dev);
--	if (ddc_node)
--		goto out_get_ddc_adpt;
--
--	ddc_node = of_parse_phandle(dev->of_node, "ddc", 0);
-+	ddc_node = hdmi_ddc_dt_binding(dev);
- 	if (!ddc_node) {
- 		DRM_ERROR("Failed to find ddc node in device tree\n");
- 		return -ENODEV;
- 	}
--	of_node_put(dev->of_node);
- 
--out_get_ddc_adpt:
- 	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
- 	if (!hdata->ddc_adpt) {
- 		DRM_ERROR("Failed to get ddc i2c adapter by node\n");
--- 
-1.9.1
+SGksCgpPbiAyMiBBdWd1c3QgMjAxNiBhdCAxNjoyMywgUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21h
+aWwuY29tPiB3cm90ZToKPiBJIGd1ZXNzIGEgbG90IGNvbWVzIGRvd24gdG8gJ2hvdyBsb25nIGJl
+Zm9yZSBodyBkZXNpZ25lcnMgYm9sdCBhIENQIHRvCj4gdGhlIHRoaW5nJy4uICBhdCB0aGF0IHBv
+aW50LCBJIHRoaW5rIHlvdSBlc3BlY2lhbGx5IGRvbid0IHdhbnQgYQo+IHBlci1ibGl0IGtlcm5l
+bCBpbnRlcmZhY2UuCgpSZWdhcmRsZXNzIG9mIHdoZXRoZXIgb3Igbm90IHdlIHdhbnQgaXQsIHdl
+IGFscmVhZHkgX2hhdmVfIGl0LCBpbiB0aGUKZm9ybSBvZiBWNEwyIE0yTS4gVGhlcmUgYXJlIGFs
+cmVhZHkgYSBmZXcgSVAgYmxvY2tzIHdvcmtpbmcgb24gdGhhdCwgSQpiZWxpZXZlLiBJZiBWNEwy
+IDwtPiBLTVMgaW50ZXJvcCBpcyBwYWluZnVsLCB3ZWxsLCB3ZSBuZWVkIHRvIGZpeCB0aGF0CmFu
+eXdheSAuLi4KCkNoZWVycywKRGFuaWVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
