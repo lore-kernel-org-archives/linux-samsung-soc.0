@@ -1,7 +1,7 @@
 From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 4/4] gpu: drm: exynos_hdmi: Use consolidated function on binding PHY DT property
-Date: Tue, 23 Aug 2016 18:13:39 +0900
-Message-ID: <1471943619-6102-5-git-send-email-woogyom.kim@gmail.com>
+Subject: [PATCH 3/4] gpu: drm: exynos_hdmi: Use consolidated function on binding DDC DT property
+Date: Tue, 23 Aug 2016 18:13:38 +0900
+Message-ID: <1471943619-6102-4-git-send-email-woogyom.kim@gmail.com>
 References: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
@@ -10,7 +10,7 @@ To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, S
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Milo Kim <woogyom.kim@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Handle legacy and raw 'phy' parsing in single function.
+Handle legacy and raw 'ddc' parsing in single function.
 And it also removes goto condition.
 
 Cc: Inki Dae <inki.dae@samsung.com>
@@ -24,58 +24,56 @@ Cc: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org
 Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 6a636f2..bb2d6d4 100644
+index 2275efe..6a636f2 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1778,11 +1778,22 @@ static struct device_node *hdmi_ddc_dt_binding(struct device *dev)
- 	return np;
- }
+@@ -1760,7 +1760,7 @@ static const struct component_ops hdmi_component_ops = {
+ 	.unbind = hdmi_unbind,
+ };
  
--static struct device_node *hdmi_legacy_phy_dt_binding(struct device *dev)
-+static struct device_node *hdmi_phy_dt_binding(struct device *dev)
+-static struct device_node *hdmi_legacy_ddc_dt_binding(struct device *dev)
++static struct device_node *hdmi_ddc_dt_binding(struct device *dev)
  {
- 	const char *compatible_str = "samsung,exynos4212-hdmiphy";
-+	struct device_node *np;
-+
-+	np = of_find_compatible_node(NULL, NULL, compatible_str);
-+	if (np)
-+		return np;
-+
-+	np = of_parse_phandle(dev->of_node, "phy", 0);
+ 	const char *compatible_str = "samsung,exynos4210-hdmiddc";
+ 	struct device_node *np;
+@@ -1769,7 +1769,13 @@ static struct device_node *hdmi_legacy_ddc_dt_binding(struct device *dev)
+ 	if (np)
+ 		return of_get_next_parent(np);
+ 
+-	return NULL;
++	np = of_parse_phandle(dev->of_node, "ddc", 0);
 +	if (!np)
 +		return NULL;
 +
 +	of_node_put(dev->of_node);
- 
--	return of_find_compatible_node(NULL, NULL, compatible_str);
++
 +	return np;
  }
  
- static int hdmi_probe(struct platform_device *pdev)
-@@ -1829,19 +1840,13 @@ static int hdmi_probe(struct platform_device *pdev)
- 		return -EPROBE_DEFER;
+ static struct device_node *hdmi_legacy_phy_dt_binding(struct device *dev)
+@@ -1811,18 +1817,12 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
--	phy_node = hdmi_legacy_phy_dt_binding(dev);
--	if (phy_node)
--		goto out_get_phy_port;
+-	ddc_node = hdmi_legacy_ddc_dt_binding(dev);
+-	if (ddc_node)
+-		goto out_get_ddc_adpt;
 -
--	phy_node = of_parse_phandle(dev->of_node, "phy", 0);
-+	phy_node = hdmi_phy_dt_binding(dev);
- 	if (!phy_node) {
- 		DRM_ERROR("Failed to find hdmiphy node in device tree\n");
- 		ret = -ENODEV;
- 		goto err_ddc;
+-	ddc_node = of_parse_phandle(dev->of_node, "ddc", 0);
++	ddc_node = hdmi_ddc_dt_binding(dev);
+ 	if (!ddc_node) {
+ 		DRM_ERROR("Failed to find ddc node in device tree\n");
+ 		return -ENODEV;
  	}
 -	of_node_put(dev->of_node);
  
--out_get_phy_port:
- 	if (hdata->drv_data->is_apb_phy) {
- 		hdata->regs_hdmiphy = of_iomap(phy_node, 0);
- 		if (!hdata->regs_hdmiphy) {
+-out_get_ddc_adpt:
+ 	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
+ 	if (!hdata->ddc_adpt) {
+ 		DRM_ERROR("Failed to get ddc i2c adapter by node\n");
 -- 
 1.9.1
