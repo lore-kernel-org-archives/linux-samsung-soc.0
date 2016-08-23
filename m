@@ -1,43 +1,67 @@
 From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH 0/4] ARM: dts: exynos: Enable HDMI in Arndale Octa board
-Date: Tue, 23 Aug 2016 18:13:35 +0900
-Message-ID: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:34541 "EHLO
-        mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbcHWJOT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 05:14:19 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/4] ARM: dts: exynos: Enable HDMI for Arndale Octa board
+Date: Tue, 23 Aug 2016 18:13:36 +0900
+Message-ID: <1471943619-6102-2-git-send-email-woogyom.kim@gmail.com>
+References: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Milo Kim <woogyom.kim@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch-set enables HDMI in Arndale Octa board and fixes HPD DT property.
-It also includes code refactoring on ddc and phy.
+* Support HDMI display data channel
+  I2C #2 is assigned for the HDMI DDC. It enables the EDID access.
 
-Milo Kim (4):
-  ARM: dts: exynos: Enable HDMI for Arndale Octa board
-  ARM: dts: exynos: Use 'hpd-gpios' instead of 'hpd-gpio'
-  gpu: drm: exynos_hdmi: Use consolidated function on binding DDC DT
-    property
-  gpu: drm: exynos_hdmi: Use consolidated function on binding PHY DT
-    property
+* GPIO for HDMI hot plug detect
+  GPX3_7 is used. The HPD awareness is done when the GPIO is active high and
+  single ended.
 
- .../bindings/display/exynos/exynos_hdmi.txt        |  4 +--
- arch/arm/boot/dts/exynos4210-universal_c210.dts    |  2 +-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  2 +-
- arch/arm/boot/dts/exynos5250-arndale.dts           |  2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |  2 +-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  2 +-
- arch/arm/boot/dts/exynos5250-spring.dts            |  2 +-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 17 +++++++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |  2 +-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |  2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  2 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts          |  2 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c               | 41 ++++++++++++----------
- 13 files changed, 52 insertions(+), 30 deletions(-)
+* Enable HDMI block in Exynos5420
+  HDMI PLL consumes 1.0V LDO6 (PVDD_ANAIP_1V0) and HDMI oscillator requires
+  1.8V LDO7 (PVDD_ANAIP_1V8).
 
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 39a3b81..df362a2 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -70,6 +70,23 @@
+ 	status = "disabled";
+ };
+ 
++&i2c_2 {
++	samsung,i2c-slave-addr = <0x50>;
++	status = "okay";
++
++	hdmiddc@50 {
++		compatible = "samsung,exynos4210-hdmiddc";
++		reg = <0x50>;
++	};
++};
++
++&hdmi {
++	hpd-gpios = <&gpx3 7 GPIO_OPEN_SOURCE>;
++	vdd_osc-supply = <&ldo7_reg>;
++	vdd_pll-supply = <&ldo6_reg>;
++	status = "okay";
++};
++
+ &hsi2c_4 {
+ 	status = "okay";
+ 
 -- 
 1.9.1
