@@ -1,87 +1,59 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 0/8] PCI: more trivial demodularization of builtin code
-Date: Tue, 23 Aug 2016 15:48:27 -0500
-Message-ID: <20160823204827.GA5838@localhost>
-References: <20160822215948.27251-1-paul.gortmaker@windriver.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: add TOPEET itop elite based board
+Date: Tue, 23 Aug 2016 17:38:27 -0500
+Message-ID: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA@mail.gmail.com>
+References: <4767fc2a-95b7-ee0d-f51a-7a5d6ca89d8f@samsung.com>
+ <1471875489-11428-1-git-send-email-ayaka@soulik.info> <1471875489-11428-3-git-send-email-ayaka@soulik.info>
+ <20160823181402.GA6302@rob-hp-laptop> <0192d6da-89ce-a158-1c15-48eebba7db3b@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160822215948.27251-1-paul.gortmaker@windriver.com>
+In-Reply-To: <0192d6da-89ce-a158-1c15-48eebba7db3b@soulik.info>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Ley Foon Tan <lftan@altera.com>, Lucas Stach <l.stach@pengutronix.de>, Pratyush Anand <pratyush.anand@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, Tom Long Nguyen <tom.l.nguyen@intel.com>, Will Deacon <will.deacon@arm.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: ayaka <ayaka@soulik.info>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, "kgene@kernel.org" <kgene@kernel.org>, krzk@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 22, 2016 at 05:59:40PM -0400, Paul Gortmaker wrote:
-> This is another group of commits that was chosen since they really don't
-> change anything even at a binary object file level ; they just replace
-> module_init with device_initcall (which are identical), and remove some
-> MODULE_<blah> tags that are no-ops in code.  So the run time regression
-> risk is zero here.
-> 
-> More specifically, we are doing the following to these PCI files that
-> currently can only be built-in:
-> 
->  -- remove the include of module.h ; replace it with init.h as req'd
-> 
->  -- drop instances of MODULE_DEVICE_TABLE which is a no-op built-in.
-> 
->  -- replace module_init (if present) with device_initcall, which is
->     functionally identical once CPP has processed the source.
-> 
->  -- drop instances of MODULE_LICENSE, MODULE_AUTHOR, MODULE_DESCRIPTION
->     while ensuring the contained info is present in the file comments.
-> 
-> Build tested for allmodconfig on several arch, including ARM and ARM-64
-> on a recent linux-next baseline.
-> 
-> Some non-modular PCI files still remain with unused __exit and/or .remove
-> functions.  Those will be dealt with in a separate series after this.
-> 
-> Also note that we looked into modularizing some of the PCI_DW stuff at
-> an earlier time[1] but that ran into problems such as trying to create
-> unwind for hook_fault_code etc. that wasn't easily solved.  So we just
-> go with keeping the code runtime functionally equivalent to what it was.
-> 
-> Paul.
-> 
-> [1] https://lkml.kernel.org/r/1454889644-27830-1-git-send-email-paul.gortmaker@windriver.com
-> 
-> ---
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Ley Foon Tan <lftan@altera.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Pratyush Anand <pratyush.anand@gmail.com>
-> Cc: Richard Zhu <Richard.Zhu@freescale.com>
-> Cc: Tom Long Nguyen <tom.l.nguyen@intel.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: rfi@lists.rocketboards.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> 
-> Paul Gortmaker (8):
->   PCI: altera: make msi explicitly non-modular
->   PCI: altera: make it explicitly non-modular
->   PCI: imx6: make it explicitly non-modular
->   PCI: portdrv: make it explicitly non-modular
->   PCI: spear13xx: make it explicitly non-modular
->   PCI: designware: make host support explicitly non-modular
->   PCI: exynos: make host support explicitly non-modular
->   PCI: generic: make host-common explicitly non-modular
-> 
->  drivers/pci/host/pci-exynos.c      |  7 +------
->  drivers/pci/host/pci-host-common.c |  7 ++-----
->  drivers/pci/host/pci-imx6.c        |  9 +--------
->  drivers/pci/host/pcie-altera-msi.c | 10 +++++-----
->  drivers/pci/host/pcie-altera.c     | 12 +++++-------
->  drivers/pci/host/pcie-designware.c |  5 -----
->  drivers/pci/host/pcie-spear13xx.c  | 11 ++---------
->  drivers/pci/pcie/portdrv_pci.c     |  8 +-------
->  8 files changed, 17 insertions(+), 52 deletions(-)
+On Tue, Aug 23, 2016 at 1:36 PM, ayaka <ayaka@soulik.info> wrote:
+>
+> On 08/24/2016 02:14 AM, Rob Herring wrote:
+>>
+>> On Mon, Aug 22, 2016 at 10:18:09PM +0800, Randy Li wrote:
+>>>
+>>> The TOPEET itop exynos 4412 have three versions base board. The
+>>> Elite version is the cheap one without too much peripheral devices
+>>> on it.
+>>>
+>>> Currently supported are serial console, wired networking(USB),
+>>> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
+>>> PWM beeper, ADC and LEDs.
 
-I applied all these to pci/demodularize for v4.9, thanks, Paul!
+[...]
+
+>>> +/dts-v1/;
+>>> +#include "exynos4412-itop-scp-core.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "TOPEET iTop 4412 Elite board based on Exynos4412";
+>>> +       compatible = "topeet,itop4412-elite", "samsung,exynos4412",
+>>> "samsung,exynos4";
+>>> +
+>>> +       chosen {
+>>> +               bootargs ="console=ttySAC2,115200";
+>>
+>> Don't need console set with...
+>
+> But could I set something like rootfs here ?
+> As the bootloader(old u-boot) offered by the vendor is brick, it is
+> impossible to save any something in u-boot.
+
+Yes, but then that is a user decision and shouldn't really be there
+either. In other words, ether the bootloader should set bootargs
+(which even a vendor u-boot should be able to do either directly or
+the zImage can take it from the ATAGS) or a user can edit the dts and
+carry that change.
+
+However, there are probably plenty of examples in the kernel that
+counter what I just said.
+
+Rob
