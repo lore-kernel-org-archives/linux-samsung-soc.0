@@ -1,40 +1,54 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Remove unused DMC offset and its mapping
-Date: Tue, 23 Aug 2016 11:20:16 +0530
-Message-ID: <1471931416-15991-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v2] ARM: EXYNOS: Remove unused DMC and CMU offset and its
+ mapping
+Date: Tue, 23 Aug 2016 11:31:16 +0530
+Message-ID: <1471932076-16528-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53952 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752458AbcHWFro (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:58650 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756666AbcHWF6z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 01:47:44 -0400
+        Tue, 23 Aug 2016 01:58:55 -0400
 Received: from epcpsbgr2.samsung.com
  (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0OCC01GZLLFIERC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2016 14:47:42 +0900 (KST)
+ with ESMTP id <0OCC01LWRLXSFDA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2016 14:58:40 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: k.kozlowski@samsung.com, krzk@kernel.org, kgene@kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Currently there is no user of DMC SFR offsets, so we can safely remove
-mapping of its SFR address space and cleanup related offset macros from
-mach-exynos.
+Currently there is no user of DMC and CMU SFR offsets we can safely remove
+mapping of their SFR address space and cleanup related offset macros from
+mach-exynos
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/exynos.c                | 10 ----------
- arch/arm/mach-exynos/include/mach/map.h      |  3 ---
- arch/arm/plat-samsung/include/plat/map-s5p.h |  3 ---
- 3 files changed, 16 deletions(-)
+Changes since v1:
+ - Removed unused CMU register mapping and related SFR macros and updated
+   commit message accordingly
+ 
+ arch/arm/mach-exynos/exynos.c                | 15 ---------------
+ arch/arm/mach-exynos/include/mach/map.h      |  5 -----
+ arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
+ 3 files changed, 24 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index acabf0b..139d1ef 100644
+index acabf0b..757fc11 100644
 --- a/arch/arm/mach-exynos/exynos.c
 +++ b/arch/arm/mach-exynos/exynos.c
-@@ -39,16 +39,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+@@ -30,25 +30,10 @@
+ 
+ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	{
+-		.virtual	= (unsigned long)S5P_VA_CMU,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_CMU),
+-		.length		= SZ_128K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
  		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
  		.length		= SZ_8K,
  		.type		= MT_DEVICE,
@@ -52,13 +66,15 @@ index acabf0b..139d1ef 100644
  };
  
 diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index c48ba4f..85d610d 100644
+index c48ba4f..5fb0040 100644
 --- a/arch/arm/mach-exynos/include/mach/map.h
 +++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -20,9 +20,6 @@
+@@ -18,11 +18,6 @@
  
- #define EXYNOS4_PA_CMU			0x10030000
+ #define EXYNOS_PA_CHIPID		0x10000000
  
+-#define EXYNOS4_PA_CMU			0x10030000
+-
 -#define EXYNOS4_PA_DMC0			0x10400000
 -#define EXYNOS4_PA_DMC1			0x10410000
 -
@@ -66,18 +82,19 @@ index c48ba4f..85d610d 100644
  
  #endif /* __ASM_ARCH_MAP_H */
 diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index b63aeeb..9a80bf6 100644
+index b63aeeb..0fe2828 100644
 --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
 +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -16,9 +16,6 @@
- #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
- #define S5P_VA_CMU		S3C_ADDR(0x02100000)
+@@ -14,10 +14,6 @@
+ #define __ASM_PLAT_MAP_S5P_H __FILE__
  
+ #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
+-#define S5P_VA_CMU		S3C_ADDR(0x02100000)
+-
 -#define S5P_VA_DMC0		S3C_ADDR(0x02440000)
 -#define S5P_VA_DMC1		S3C_ADDR(0x02480000)
--
+ 
  #define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
  #define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
- #define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
 -- 
 2.4.5
