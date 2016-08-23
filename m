@@ -1,71 +1,60 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 7/8] PCI: exynos: make host support explicitly non-modular
-Date: Mon, 22 Aug 2016 17:59:47 -0400
-Message-ID: <20160822215948.27251-8-paul.gortmaker@windriver.com>
-References: <20160822215948.27251-1-paul.gortmaker@windriver.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
+ samsung_cmu_info to init section
+Date: Mon, 22 Aug 2016 17:55:12 -0700
+Message-ID: <20160823005512.GP6502@codeaurora.org>
+References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
+ <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20160822215948.27251-1-paul.gortmaker@windriver.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jingoohan1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On 08/22, Chanwoo Choi wrote:
+> This patch moves the all samsung_cmu_info struct to initconst section
+> because they are used only in initconst section.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5260.c | 350 +++++++++++++++++------------------
+>  1 file changed, 175 insertions(+), 175 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
+> index a43642c36039..fd1d9bfc151b 100644
+> --- a/drivers/clk/samsung/clk-exynos5260.c
+> +++ b/drivers/clk/samsung/clk-exynos5260.c
+> @@ -131,21 +131,21 @@ static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
+>  			EN_IP_AUD, 4, 0, 0),
+>  };
+>  
+> +static const struct samsung_cmu_info aud_cmu __initconst = {
+> +	.mux_clks	= aud_mux_clks,
+> +	.nr_mux_clks	= ARRAY_SIZE(aud_mux_clks),
+> +	.div_clks	= aud_div_clks,
+> +	.nr_div_clks	= ARRAY_SIZE(aud_div_clks),
+> +	.gate_clks	= aud_gate_clks,
+> +	.nr_gate_clks	= ARRAY_SIZE(aud_gate_clks),
+> +	.nr_clk_ids	= AUD_NR_CLK,
+> +	.clk_regs	= aud_clk_regs,
+> +	.nr_clk_regs	= ARRAY_SIZE(aud_clk_regs),
+> +};
+> +
+>  static void __init exynos5260_clk_aud_init(struct device_node *np)
+>  {
+> -	struct samsung_cmu_info cmu = { NULL };
+> -
 
-drivers/pci/host/Kconfig:config PCI_EXYNOS
-drivers/pci/host/Kconfig:       bool "Samsung Exynos PCIe controller"
+I presume this was done this way to save some initdata space by
+only allocating the array that's needed at runtime? I would
+expect to see some more kernel image bloat from this change but
+runtime memory usage would stay the same. Is there any real
+benefit from this patch though?
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the couple traces of modular infrastructure use, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/pci/host/pci-exynos.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 219976103efc..c3ae9c7a6e33 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -16,7 +16,7 @@
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_gpio.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-@@ -624,7 +624,6 @@ static const struct of_device_id exynos_pcie_of_match[] = {
- 	{ .compatible = "samsung,exynos5440-pcie", },
- 	{},
- };
--MODULE_DEVICE_TABLE(of, exynos_pcie_of_match);
- 
- static struct platform_driver exynos_pcie_driver = {
- 	.remove		= __exit_p(exynos_pcie_remove),
-@@ -641,7 +640,3 @@ static int __init exynos_pcie_init(void)
- 	return platform_driver_probe(&exynos_pcie_driver, exynos_pcie_probe);
- }
- subsys_initcall(exynos_pcie_init);
--
--MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
--MODULE_DESCRIPTION("Samsung PCIe host controller driver");
--MODULE_LICENSE("GPL v2");
 -- 
-2.8.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
