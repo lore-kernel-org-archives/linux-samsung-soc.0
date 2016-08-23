@@ -1,100 +1,43 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS: Remove unused DMC and CMU offset and its
- mapping
-Date: Tue, 23 Aug 2016 11:31:16 +0530
-Message-ID: <1471932076-16528-1-git-send-email-pankaj.dubey@samsung.com>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: [PATCH 0/4] ARM: dts: exynos: Enable HDMI in Arndale Octa board
+Date: Tue, 23 Aug 2016 18:13:35 +0900
+Message-ID: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58650 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756666AbcHWF6z (ORCPT
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:34541 "EHLO
+        mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbcHWJOT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 01:58:55 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0OCC01LWRLXSFDA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2016 14:58:40 +0900 (KST)
+        Tue, 23 Aug 2016 05:14:19 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: k.kozlowski@samsung.com, krzk@kernel.org, kgene@kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Milo Kim <woogyom.kim@gmail.com>
 
-Currently there is no user of DMC and CMU SFR offsets we can safely remove
-mapping of their SFR address space and cleanup related offset macros from
-mach-exynos
+This patch-set enables HDMI in Arndale Octa board and fixes HPD DT property.
+It also includes code refactoring on ddc and phy.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-Changes since v1:
- - Removed unused CMU register mapping and related SFR macros and updated
-   commit message accordingly
- 
- arch/arm/mach-exynos/exynos.c                | 15 ---------------
- arch/arm/mach-exynos/include/mach/map.h      |  5 -----
- arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
- 3 files changed, 24 deletions(-)
+Milo Kim (4):
+  ARM: dts: exynos: Enable HDMI for Arndale Octa board
+  ARM: dts: exynos: Use 'hpd-gpios' instead of 'hpd-gpio'
+  gpu: drm: exynos_hdmi: Use consolidated function on binding DDC DT
+    property
+  gpu: drm: exynos_hdmi: Use consolidated function on binding PHY DT
+    property
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index acabf0b..757fc11 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -30,25 +30,10 @@
- 
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
--		.virtual	= (unsigned long)S5P_VA_CMU,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_CMU),
--		.length		= SZ_128K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
- 		.length		= SZ_8K,
- 		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S5P_VA_DMC0,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
--		.length		= SZ_64K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S5P_VA_DMC1,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC1),
--		.length		= SZ_64K,
--		.type		= MT_DEVICE,
- 	},
- };
- 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index c48ba4f..5fb0040 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -18,11 +18,6 @@
- 
- #define EXYNOS_PA_CHIPID		0x10000000
- 
--#define EXYNOS4_PA_CMU			0x10030000
--
--#define EXYNOS4_PA_DMC0			0x10400000
--#define EXYNOS4_PA_DMC1			0x10410000
--
- #define EXYNOS4_PA_COREPERI		0x10500000
- 
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index b63aeeb..0fe2828 100644
---- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -14,10 +14,6 @@
- #define __ASM_PLAT_MAP_S5P_H __FILE__
- 
- #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
--#define S5P_VA_CMU		S3C_ADDR(0x02100000)
--
--#define S5P_VA_DMC0		S3C_ADDR(0x02440000)
--#define S5P_VA_DMC1		S3C_ADDR(0x02480000)
- 
- #define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
- #define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
+ .../bindings/display/exynos/exynos_hdmi.txt        |  4 +--
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |  2 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  2 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            |  2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 17 +++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  2 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  2 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               | 41 ++++++++++++----------
+ 13 files changed, 52 insertions(+), 30 deletions(-)
+
 -- 
-2.4.5
+1.9.1
