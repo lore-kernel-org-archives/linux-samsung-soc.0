@@ -1,88 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 1/3] drm/panel: simple-panel: add the delay timing for
- Sharp LQ123P1JX31
-Date: Wed, 24 Aug 2016 16:29:42 +0200
-Message-ID: <20160824142942.GF3714@ulmo.ba.sec>
-References: <1469151750-7130-1-git-send-email-ykk@rock-chips.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in
+ IRQ init callback
+Date: Wed, 24 Aug 2016 19:44:28 +0200
+Message-ID: <20160824174428.GA18394@kozik-book>
+References: <1471764465-2524-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1478415572=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1469151750-7130-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Yao <yzq@rock-chips.com>, Jingoo Han <jingoohan1@gmail.com>, emil.l.velikov@gmail.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, linux-rockchip@lists.infradead.org, daniel.vetter@ffwll.ch, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33889 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755177AbcHXRoi (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 24 Aug 2016 13:44:38 -0400
+Content-Disposition: inline
+In-Reply-To: <1471764465-2524-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-
---===============1478415572==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p8PhoBjPxaQXD0vg"
-Content-Disposition: inline
-
-
---p8PhoBjPxaQXD0vg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 22, 2016 at 09:42:30AM +0800, Yakir Yang wrote:
-> According to page 16 of Sharp LQ123P1JX31 datasheet, we need to add the
-> missing delay timing. Panel prepare time should be t1 (0.5ms~10ms) plus
-> t3 (0ms~100ms), and panel enable time should equal to t7 (0ms~50ms), and
-> panel unprepare time should be t11 (1ms~50ms) plus t12 (500ms~).
->=20
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+On Sun, Aug 21, 2016 at 03:27:45AM -0400, Javier Martinez Canillas wrote:
+> The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
+> controller, and these functionalities are supported by different drivers
+> that matches the same compatible strings.
+> 
+> Since commit 15cc2ed6dcf9 ("of/irq: Mark initialised interrupt controllers
+> as populated") the OF core flags interrupt controllers registered with the
+> IRQCHIP_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string as the interrupt controller will not be registered.
+> 
+> This prevents the PMU platform device to be registered so the Exynos PMU
+> driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> 
+> Fix this by clearing the OF_POPULATED flag in the PMU IRQ init callback,
+> to allow the Exynos PMU platform driver to be probed. The patch is based
+> on Philipp Zabel's "ARM: imx6: mark GPC node as not populated after irq
+> init to probe pm domain driver".
+> 
+> Fixes: 15cc2ed6dcf9 ("of/irq: Mark initialised interrupt controllers as populated")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
 > ---
-> Changes in v2:
-> - Add the reviewed tag from Sean.
->=20
->  drivers/gpu/drm/panel/panel-simple.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> 
+> This was tested on an Exynos5800 Peach Pi Chromebook with v4.8-rc2 +
+> Philipp's patch: https://patchwork.kernel.org/patch/9271361/
+> 
+>  arch/arm/mach-exynos/suspend.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index 3750575c73c5..06332f626565 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -255,6 +255,12 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
+>  		return -ENOMEM;
+>  	}
+>  
+> +	/*
+> +	 * Clear the OF_POPULATED flag set in of_irq_init so that
+> +	 * later the Exynos PMU platform device won't be skipped.
+> +	 */
+> +	of_node_clear_flag(node, OF_POPULATED);
+> +
 
-Applied, thanks.
+Looks like a proper workaround (at least till of_irq_init sets this flag
+before calling irq_init_cb()) however I have some more doubts:
 
-Thierry
+1. The commit 15cc2ed6dcf9 ("of/irq: Mark initialised interrupt
+controllers as populated") might be also applied to clock CLK_OF_DECLARE
+and the problem will appear again.
 
---p8PhoBjPxaQXD0vg
-Content-Type: application/pgp-signature; name="signature.asc"
+2. We are reusing PMU compatible for irqcip, clock provider and a
+platform driver. This is one PMU block with many features thus many
+drivers were created. What happens if the Exynos platform driver
+(drivers/soc/samsung/exynos-pmu.c) binds before irqchip or clk provider?
+Probably we should not reuse the compatible but create a new one for
+each type of driver? How does it match DeviceTree?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Javier, Rob, any hints on that? Best practices, suggestions for future?
 
-iQIcBAABCAAGBQJXva9TAAoJEN0jrNd/PrOh8xwQALA/TCFPF3Vy7px3+TSOjGSp
-tIjk3SYLQC1jNS6t1VoIu6LqfHp3/2Tg/2GLx/B8q12iNgexNDVoEorw6xjlg2U/
-h7Lpn3WaOhbGEdgNo94trv9Kh7C8uV2AR9nkULvCyAn0Crhy8ZcggrnpMz6FJeZK
-Q2q45nj2DgAx8o7c8g+WVGay4ESntU6r1saBMfdVa+AzEq/SPuQq8xEDlbIB53BX
-ToPorbT6ux2+gDP2AWiJ6YMMnXo8JitfNGl84r8P8N5wQPIfsHB8s6nDVsqTugvu
-06nOINtn8NGzi34ma8XDcubk/bWu98MGxE5DezMg08daPsIzX5f3pbndaR3LZKzi
-vjog5cYR+dJjZ9Vrcztyv8jTeDTZgMz6M9BVLzDaIej3tA3+J5VL5MsbhK1Ebbcf
-Do85CEHzu9W9PDmAt/ciOUlJlsNqHRXdgIKhQ3SxZRjcXNb3pgaqexdSbFGxuTjS
-/8hTzEhpMZxU6p9ufTrjPpW3hKqLYdBkRUzPsmJUQAC2HNJNCh2MFrVlaeiyTpTR
-sRJeL+AJQta+b1qXfTnrSHL79w47bV77+KTswhU8oSLxdSe+mf2Fl/wOQwkafxtc
-my9MGEL9dscLZO+RJCltzOfDKn0kjMb+Th3MDZffMXLx+Wf8pnVptlqrG/0IaO6a
-T7jLxoYvbqSn4EmezVpa
-=gz67
------END PGP SIGNATURE-----
-
---p8PhoBjPxaQXD0vg--
-
---===============1478415572==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1478415572==--
+Best regards,
+Krzysztof
