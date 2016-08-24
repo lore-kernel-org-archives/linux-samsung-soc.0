@@ -1,59 +1,50 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: add TOPEET itop elite based board
-Date: Tue, 23 Aug 2016 17:38:27 -0500
-Message-ID: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA@mail.gmail.com>
-References: <4767fc2a-95b7-ee0d-f51a-7a5d6ca89d8f@samsung.com>
- <1471875489-11428-1-git-send-email-ayaka@soulik.info> <1471875489-11428-3-git-send-email-ayaka@soulik.info>
- <20160823181402.GA6302@rob-hp-laptop> <0192d6da-89ce-a158-1c15-48eebba7db3b@soulik.info>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: [PATCH v2 0/4] ARM: dts: exynos: Enable HDMI in Arndale Octa board
+Date: Wed, 24 Aug 2016 11:25:20 +0900
+Message-ID: <1472005524-3489-1-git-send-email-woogyom.kim@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0192d6da-89ce-a158-1c15-48eebba7db3b@soulik.info>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ayaka <ayaka@soulik.info>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, "kgene@kernel.org" <kgene@kernel.org>, krzk@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Milo Kim <woogyom.kim@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 23, 2016 at 1:36 PM, ayaka <ayaka@soulik.info> wrote:
->
-> On 08/24/2016 02:14 AM, Rob Herring wrote:
->>
->> On Mon, Aug 22, 2016 at 10:18:09PM +0800, Randy Li wrote:
->>>
->>> The TOPEET itop exynos 4412 have three versions base board. The
->>> Elite version is the cheap one without too much peripheral devices
->>> on it.
->>>
->>> Currently supported are serial console, wired networking(USB),
->>> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
->>> PWM beeper, ADC and LEDs.
-
-[...]
-
->>> +/dts-v1/;
->>> +#include "exynos4412-itop-scp-core.dtsi"
->>> +
->>> +/ {
->>> +       model = "TOPEET iTop 4412 Elite board based on Exynos4412";
->>> +       compatible = "topeet,itop4412-elite", "samsung,exynos4412",
->>> "samsung,exynos4";
->>> +
->>> +       chosen {
->>> +               bootargs ="console=ttySAC2,115200";
->>
->> Don't need console set with...
->
-> But could I set something like rootfs here ?
-> As the bootloader(old u-boot) offered by the vendor is brick, it is
-> impossible to save any something in u-boot.
-
-Yes, but then that is a user decision and shouldn't really be there
-either. In other words, ether the bootloader should set bootargs
-(which even a vendor u-boot should be able to do either directly or
-the zImage can take it from the ATAGS) or a user can edit the dts and
-carry that change.
-
-However, there are probably plenty of examples in the kernel that
-counter what I just said.
-
-Rob
+VGhpcyBwYXRjaC1zZXQgZW5hYmxlcyBIRE1JIGluIEFybmRhbGUgT2N0YSBib2FyZCBhbmQgZml4
+ZXMgSFBEIERUIHByb3BlcnR5LgpJdCBhbHNvIGluY2x1ZGVzIGNvZGUgcmVmYWN0b3Jpbmcgb24g
+ZGRjIGFuZCBwaHkuCgp2MjoKICBJbmNsdWRlIERSTSBhbmQgRXh5bm9zIG1haW50YWluZXJzIGFu
+ZCByZXNlbmQgdGhlIHBhdGNoLXNldC4KICBBZGQgUm9iJ3MgYWNrIGZvciB0aGUgcGF0Y2gsCglb
+UEFUQ0ggMi80XSBBUk06IGR0czogZXh5bm9zOiBVc2UgJ2hwZC1ncGlvcycgaW5zdGVhZCBvZiAn
+aHBkLWdwaW8nCgpNaWxvIEtpbSAoNCk6CiAgQVJNOiBkdHM6IGV4eW5vczogRW5hYmxlIEhETUkg
+Zm9yIEFybmRhbGUgT2N0YSBib2FyZAogIEFSTTogZHRzOiBleHlub3M6IFVzZSAnaHBkLWdwaW9z
+JyBpbnN0ZWFkIG9mICdocGQtZ3BpbycKICBncHU6IGRybTogZXh5bm9zX2hkbWk6IFVzZSBjb25z
+b2xpZGF0ZWQgZnVuY3Rpb24gb24gYmluZGluZyBEREMgRFQKICAgIHByb3BlcnR5CiAgZ3B1OiBk
+cm06IGV4eW5vc19oZG1pOiBVc2UgY29uc29saWRhdGVkIGZ1bmN0aW9uIG9uIGJpbmRpbmcgUEhZ
+IERUCiAgICBwcm9wZXJ0eQoKIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3NfaGRt
+aS50eHQgICAgICAgIHwgIDQgKy0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLXVuaXZl
+cnNhbF9jMjEwLmR0cyAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLW9k
+cm9pZC1jb21tb24uZHRzaSAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUw
+LWFybmRhbGUuZHRzICAgICAgICAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1
+MjUwLXNtZGs1MjUwLmR0cyAgICAgICAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0cy9leHlu
+b3M1MjUwLXNub3ctY29tbW9uLmR0c2kgICAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0cy9l
+eHlub3M1MjUwLXNwcmluZy5kdHMgICAgICAgICAgICB8ICAyICstCiBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M1NDIwLWFybmRhbGUtb2N0YS5kdHMgICAgICB8IDE3ICsrKysrKysrKwogYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRzICAgICAgICAgfCAgMiArLQogYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1zbWRrNTQyMC5kdHMgICAgICAgICAgfCAgMiArLQog
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kgfCAgMiAr
+LQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMgICAgICAgICAgfCAg
+MiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAgICAgICAg
+fCA0MSArKysrKysrKysrKystLS0tLS0tLS0tCiAxMyBmaWxlcyBjaGFuZ2VkLCA1MiBpbnNlcnRp
+b25zKCspLCAzMCBkZWxldGlvbnMoLSkKCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
