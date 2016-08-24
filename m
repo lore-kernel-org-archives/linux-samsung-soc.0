@@ -1,101 +1,84 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 7/7] arm64: dts: exynos: Add dts file for Exynos5433-based
- TM2E board
-Date: Wed, 24 Aug 2016 22:49:11 +0900
-Message-ID: <1472046551-703-8-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v2 4/7] pinctrl: samsung: Add GPF support for Exynos5433
+Date: Wed, 24 Aug 2016 22:49:08 +0900
+Message-ID: <1472046551-703-5-git-send-email-cw00.choi@samsung.com>
 References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, cw00.choi@samsung.com, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
+Cc: inki.dae@samsung.com, jonghwa3.lee@samsung.com, s.nawrocki@samsung.com, jy0922.shim@samsung.com, a.hajda@samsung.com, jaewon02.kim@samsung.com, Linus Walleij <linus.walleij@linaro.org>, sw0312.kim@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, krzk@kernel.org, jh80.chung@samsung.com, cw00.choi@samsung.com, human.hwang@samsung.com, linux-gpio@vger.kernel.org, chanwoo@kernel.org, ingi2.kim@samsung.com, m.szyprowski@samsung.com, beomho.seo@samsung.com, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the Device Tree source for Exynos5433-based Samsung TM2E
-board. TM2E board is the most similar with TM2 board. The exynos5433-tm2e.dts
-include the difference between TM2 and TM2E.
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+This patch add the support of GPF[1-5] pin of Exynos5433 SoC. The GPFx need
+to support the multiple memory map because the registers of GPFx are located
+in the different domain.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-Signed-off-by: Inha Song <ideal.song@samsung.com>
-Signed-off-by: Ingi kim <ingi2.kim@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+[robh : Acked for binding documentation]
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |  1 +
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 41 ++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+ Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
+ drivers/pinctrl/samsung/pinctrl-exynos.c                      | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index c704b4bf6137..c1bda8d3674c 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -16,6 +16,7 @@ Required root node properties:
- 	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
- 	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
- 	- "samsung,tm2"		- for Exynos5333-based Samsung TM2 board.
-+	- "samsung,tm2e"	- for Exynos5333-based Samsung TM2E board.
- 	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
- 	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index 37bc692445d4..499fb3484915 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -19,6 +19,7 @@ Required Properties:
+   - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
+   - "samsung,exynos5410-pinctrl": for Exynos5410 compatible pin-controller.
+   - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
++  - "samsung,exynos5433-pinctrl": for Exynos5433 compatible pin-controller.
+   - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
  
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-new file mode 100644
-index 000000000000..283b4fd19d5a
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-@@ -0,0 +1,41 @@
-+/*
-+ * SAMSUNG Exynos5433 TM2E board device tree source
-+ *
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ *
-+ * Device tree source file for Samsung's TM2E(TM2 EDGE) board which is based on
-+ * Samsung Exynos5433 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "exynos5433-tm2.dts"
-+
-+/ {
-+	model = "Samsung TM2E board";
-+	compatible = "samsung,exynos5433-tm2e", "samsung,exynos5433";
-+};
-+
-+&ldo23_reg {
-+	regulator-name = "CAM_SEN_CORE_1.025V_AP";
-+	regulator-max-microvolt = <1050000>;
-+};
-+
-+&ldo25_reg {
-+	regulator-name = "UNUSED_LDO25";
-+	regulator-always-off;
-+};
-+
-+&ldo31_reg {
-+	regulator-name = "TSP_VDD_1.8V_AP";
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+};
-+
-+&ldo38_reg {
-+	regulator-name = "VCC_3.3V_MOTOR_AP";
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+};
+ - reg: Base address of the pin controller hardware module and length of
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 12fa9d3f1113..b9605b8282be 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1360,6 +1360,11 @@ static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
++	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1, 0),
++	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1, 0),
++	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1, 0),
++	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1, 0),
++	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1, 0),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - AUD */
+@@ -1441,6 +1446,7 @@ const struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
+ 		.eint_wkup_init = exynos_eint_wkup_init,
+ 		.suspend	= exynos_pinctrl_suspend,
+ 		.resume		= exynos_pinctrl_resume,
++		.nr_ext_resources = 1,
+ 	}, {
+ 		/* pin-controller instance 1 data */
+ 		.pin_banks	= exynos5433_pin_banks1,
 -- 
 1.9.1
