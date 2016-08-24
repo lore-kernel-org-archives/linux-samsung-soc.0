@@ -1,66 +1,30 @@
 From: Milo Kim <woogyom.kim@gmail.com>
-Subject: [PATCH v2 4/4] gpu: drm: exynos_hdmi: Use consolidated function on
- binding PHY DT property
-Date: Wed, 24 Aug 2016 11:25:24 +0900
-Message-ID: <1472005524-3489-5-git-send-email-woogyom.kim@gmail.com>
-References: <1472005524-3489-1-git-send-email-woogyom.kim@gmail.com>
+Subject: Re: [PATCH 0/4] ARM: dts: exynos: Enable HDMI in Arndale Octa board
+Date: Wed, 24 Aug 2016 11:30:25 +0900
+Message-ID: <da2ff73c-b8ca-60dd-ff53-dff634e52dbc@gmail.com>
+References: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
+ <CAJKOXPew=cTK6RkiT+OoPbUcU2SBHdOYTSPG-av3FiN2HYNV=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1472005524-3489-1-git-send-email-woogyom.kim@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Milo Kim <woogyom.kim@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:35904 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbcHXCac (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 23 Aug 2016 22:30:32 -0400
+In-Reply-To: <CAJKOXPew=cTK6RkiT+OoPbUcU2SBHdOYTSPG-av3FiN2HYNV=g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 
-SGFuZGxlIGxlZ2FjeSBhbmQgcmF3ICdwaHknIHBhcnNpbmcgaW4gc2luZ2xlIGZ1bmN0aW9uLgpB
-bmQgaXQgYWxzbyByZW1vdmVzIGdvdG8gY29uZGl0aW9uLgoKQ2M6IEt1a2ppbiBLaW0gPGtnZW5l
-QGtlcm5lbC5vcmc+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5n
-LmNvbT4KQ2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KQ2M6IElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT4KQ2M6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1z
-dW5nLmNvbT4KQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+CkNjOiBL
-eXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgpDYzogUm9iIEhlcnJpbmcg
-PHJvYmgrZHRAa2VybmVsLm9yZz4KQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnCkNjOiBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKQ2M6IGxpbnV4LXNhbXN1bmctc29j
-QHZnZXIua2VybmVsLm9yZwpDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwpDYzogZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpTaWduZWQtb2ZmLWJ5OiBNaWxvIEtpbSA8d29v
-Z3lvbS5raW1AZ21haWwuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYyB8IDIzICsrKysrKysrKysrKysrLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTQgaW5z
-ZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
-LmMKaW5kZXggNmE2MzZmMi4uYmIyZDZkNCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYwpAQCAtMTc3OCwxMSArMTc3OCwyMiBAQCBzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICpo
-ZG1pX2RkY19kdF9iaW5kaW5nKHN0cnVjdCBkZXZpY2UgKmRldikKIAlyZXR1cm4gbnA7CiB9CiAK
-LXN0YXRpYyBzdHJ1Y3QgZGV2aWNlX25vZGUgKmhkbWlfbGVnYWN5X3BoeV9kdF9iaW5kaW5nKHN0
-cnVjdCBkZXZpY2UgKmRldikKK3N0YXRpYyBzdHJ1Y3QgZGV2aWNlX25vZGUgKmhkbWlfcGh5X2R0
-X2JpbmRpbmcoc3RydWN0IGRldmljZSAqZGV2KQogewogCWNvbnN0IGNoYXIgKmNvbXBhdGlibGVf
-c3RyID0gInNhbXN1bmcsZXh5bm9zNDIxMi1oZG1pcGh5IjsKKwlzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5wOworCisJbnAgPSBvZl9maW5kX2NvbXBhdGlibGVfbm9kZShOVUxMLCBOVUxMLCBjb21wYXRp
-YmxlX3N0cik7CisJaWYgKG5wKQorCQlyZXR1cm4gbnA7CisKKwlucCA9IG9mX3BhcnNlX3BoYW5k
-bGUoZGV2LT5vZl9ub2RlLCAicGh5IiwgMCk7CisJaWYgKCFucCkKKwkJcmV0dXJuIE5VTEw7CisK
-KwlvZl9ub2RlX3B1dChkZXYtPm9mX25vZGUpOwogCi0JcmV0dXJuIG9mX2ZpbmRfY29tcGF0aWJs
-ZV9ub2RlKE5VTEwsIE5VTEwsIGNvbXBhdGlibGVfc3RyKTsKKwlyZXR1cm4gbnA7CiB9CiAKIHN0
-YXRpYyBpbnQgaGRtaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQpAQCAtMTgy
-OSwxOSArMTg0MCwxMyBAQCBzdGF0aWMgaW50IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikKIAkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CiAJfQogCi0JcGh5X25vZGUgPSBo
-ZG1pX2xlZ2FjeV9waHlfZHRfYmluZGluZyhkZXYpOwotCWlmIChwaHlfbm9kZSkKLQkJZ290byBv
-dXRfZ2V0X3BoeV9wb3J0OwotCi0JcGh5X25vZGUgPSBvZl9wYXJzZV9waGFuZGxlKGRldi0+b2Zf
-bm9kZSwgInBoeSIsIDApOworCXBoeV9ub2RlID0gaGRtaV9waHlfZHRfYmluZGluZyhkZXYpOwog
-CWlmICghcGh5X25vZGUpIHsKIAkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZmluZCBoZG1pcGh5IG5v
-ZGUgaW4gZGV2aWNlIHRyZWVcbiIpOwogCQlyZXQgPSAtRU5PREVWOwogCQlnb3RvIGVycl9kZGM7
-CiAJfQotCW9mX25vZGVfcHV0KGRldi0+b2Zfbm9kZSk7CiAKLW91dF9nZXRfcGh5X3BvcnQ6CiAJ
-aWYgKGhkYXRhLT5kcnZfZGF0YS0+aXNfYXBiX3BoeSkgewogCQloZGF0YS0+cmVnc19oZG1pcGh5
-ID0gb2ZfaW9tYXAocGh5X25vZGUsIDApOwogCQlpZiAoIWhkYXRhLT5yZWdzX2hkbWlwaHkpIHsK
-LS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 08/24/2016 04:55 AM, Krzysztof Kozlowski wrote:
+> I saw DTS patches on linux-samsung-soc patchwork but still I would
+> appreciate if you send them to appropriate maintainers pointed by
+> get_maintainers.pl script. DTS stuff goes through samsung-soc tree.
+
+Thanks for your tip. I've just sent out the v2.
+
+Best regards,
+Milo
