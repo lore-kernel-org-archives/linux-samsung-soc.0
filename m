@@ -1,68 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Samsung media driver updates
-Date: Wed, 24 Aug 2016 12:21:21 +0200
-Message-ID: <c452c720-b789-0b35-3685-30785f6b4991@samsung.com>
+From: "Shougang Group of company" <victor.flores@nucleares.unam.mx>
+Subject: Job Offer
+Date: Wed, 24 Aug 2016 05:36:40 -0500
+Message-ID: <31d2897b1184f6add8448352dfb95e38.squirrel@bigbang.nucleares.unam.mx>
+Reply-To: zhujimin20@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: LMML <linux-media@vger.kernel.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from athena.nucleares.unam.mx ([132.248.29.9]:36515 "EHLO
+        athena.nucleares.unam.mx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753286AbcHXLNP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 24 Aug 2016 07:13:15 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
 
-this includes Samsung SoC media driver fixes and cleanups for v4.9.
+Shougang Group of company
+45 Huagong Road Xinji City,
+Hebei Province China.
+webpage: www.shougang.com.cn
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+This is an official request for Professional/consultants who will stand as
+our regional representative to run logistics on behalf of Shougang Group.
+We are only looking for individual or company from USA and Canada. You
+will be entitle to ten percent (10%) of every payment you receive from our
+customers in your region on behalf of the company.
 
-are available in the git repository at:
+NOTE: You are not require to travel, all communications with our customers
+will be through email or phone. All fees, including taxes will be handled
+by us.You can apply for this position by filling the information below and
+send back to us;
 
-  git://linuxtv.org/snawrocki/samsung.git for-v4.9/media/next
+Full Name:
+Residencial or office address:
+Town:
+State:
+Zipcode:
+Country:
+Current Job:
+If you own a company, please state the company name:
+Prefered Email:
+Gender:
+Age:
+Telephone:
 
-for you to fetch changes up to ba0f105e7ca81a25b58a5e57ebe30fc51f116616:
+If you have a current job, you can still be part of our business, as
+services for us will not bother with your hours of work.
 
-  exynos4-is: fimc-is-i2c: don't print error when adding adapter fails
-(2016-08-12 16:42:21 +0200)
-
-----------------------------------------------------------------
-Bhaktipriya Shridhar (1):
-      s5p-mfc: Remove deprecated create_singlethread_workqueue
-
-Javier Martinez Canillas (5):
-      s5p-jpeg: set capablity bus_info as required by VIDIOC_QUERYCAP
-      exynos4-is: Fix fimc_is_parse_sensor_config() nodes handling
-      s5p-jpeg: only fill driver's name in capabilities driver field
-      gsc-m2m: add device name sufix to bus_info capatiliby field
-      gsc-m2m: improve v4l2_capability driver and card fields
-
-Shuah Khan (6):
-      media: Doc s5p-mfc add missing fields to s5p_mfc_dev structure definition
-      media: s5p-mfc fix invalid memory access from s5p_mfc_release()
-      media: s5p-mfc remove void function return statement
-      media: s5p-mfc Fix misspelled error message and checkpatch errors
-      media: s5p-mfc remove unnecessary error messages
-      media: s5p-jpeg add missing blank lines after declarations
-
-Wei Yongjun (1):
-      s5p-mfc: remove redundant return value check of platform_get_resource()
-
-Wolfram Sang (1):
-      exynos4-is: fimc-is-i2c: don't print error when adding adapter fails
-
- drivers/media/platform/exynos-gsc/gsc-m2m.c     |  7 +++---
- drivers/media/platform/exynos4-is/fimc-is-i2c.c |  5 +---
- drivers/media/platform/exynos4-is/fimc-is.c     | 16 +++++++-----
- drivers/media/platform/s5p-jpeg/jpeg-core.c     | 20 ++++++++++-----
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 86
-++++++++++++++++++++++++++++++++++++++++-------------------------
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  2 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c    | 11 +++++----
- 7 files changed, 90 insertions(+), 57 deletions(-)
-
--- 
-Thanks,
-Sylwester
+Respectfully,
+Mr. Zhu Jimin (Chief Executive Officer)
+Shougang Group
