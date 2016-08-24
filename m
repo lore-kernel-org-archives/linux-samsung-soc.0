@@ -1,15 +1,16 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 4/4] gpu: drm: exynos_hdmi: Use consolidated function on
- binding PHY DT property
-Date: Wed, 24 Aug 2016 07:58:51 +0200
-Message-ID: <ce59db15-d128-ae4e-fce2-6d18b36ce878@samsung.com>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: exynos: Enable HDMI for Arndale Octa
+ board
+Date: Wed, 24 Aug 2016 16:14:53 +0900
+Message-ID: <ba7795e3-164f-640b-3631-bce3edd97b6e@gmail.com>
 References: <1472005524-3489-1-git-send-email-woogyom.kim@gmail.com>
- <1472005524-3489-5-git-send-email-woogyom.kim@gmail.com>
+ <1472005524-3489-2-git-send-email-woogyom.kim@gmail.com>
+ <7c58bbae-91ce-a6e7-14be-282b6fa40e42@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1472005524-3489-5-git-send-email-woogyom.kim@gmail.com>
+In-Reply-To: <7c58bbae-91ce-a6e7-14be-282b6fa40e42@samsung.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,53 +20,16 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Milo Kim <woogyom.kim@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDgvMjQvMjAxNiAwNDoyNSBBTSwgTWlsbyBLaW0gd3JvdGU6Cj4gSGFuZGxlIGxlZ2FjeSBh
-bmQgcmF3ICdwaHknIHBhcnNpbmcgaW4gc2luZ2xlIGZ1bmN0aW9uLgo+IEFuZCBpdCBhbHNvIHJl
-bW92ZXMgZ290byBjb25kaXRpb24uCj4KPiBDYzogS3VramluIEtpbSA8a2dlbmVAa2VybmVsLm9y
-Zz4KPiBDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4g
-Q2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KPiBDYzogSW5raSBEYWUgPGlua2ku
-ZGFlQHNhbXN1bmcuY29tPgo+IENjOiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3Vu
-Zy5jb20+Cj4gQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6
-IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4gQ2M6IFJvYiBIZXJy
-aW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Cj4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
-Cj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1z
-YW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZwo+IENjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gU2lnbmVkLW9mZi1i
-eTogTWlsbyBLaW0gPHdvb2d5b20ua2ltQGdtYWlsLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMjMgKysrKysrKysrKysrKystLS0tLS0tLS0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCj4KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gaW5kZXggNmE2MzZmMi4uYmIyZDZkNCAxMDA2
-NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiBAQCAtMTc3OCwxMSArMTc3OCwy
-MiBAQCBzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICpoZG1pX2RkY19kdF9iaW5kaW5nKHN0cnVj
-dCBkZXZpY2UgKmRldikKPiAgCXJldHVybiBucDsKPiAgfQo+ICAKPiAtc3RhdGljIHN0cnVjdCBk
-ZXZpY2Vfbm9kZSAqaGRtaV9sZWdhY3lfcGh5X2R0X2JpbmRpbmcoc3RydWN0IGRldmljZSAqZGV2
-KQo+ICtzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICpoZG1pX3BoeV9kdF9iaW5kaW5nKHN0cnVj
-dCBkZXZpY2UgKmRldikKPiAgewo+ICAJY29uc3QgY2hhciAqY29tcGF0aWJsZV9zdHIgPSAic2Ft
-c3VuZyxleHlub3M0MjEyLWhkbWlwaHkiOwo+ICsJc3RydWN0IGRldmljZV9ub2RlICpucDsKPiAr
-Cj4gKwlucCA9IG9mX2ZpbmRfY29tcGF0aWJsZV9ub2RlKE5VTEwsIE5VTEwsIGNvbXBhdGlibGVf
-c3RyKTsKPiArCWlmIChucCkKPiArCQlyZXR1cm4gbnA7Cj4gKwo+ICsJbnAgPSBvZl9wYXJzZV9w
-aGFuZGxlKGRldi0+b2Zfbm9kZSwgInBoeSIsIDApOwo+ICsJaWYgKCFucCkKPiArCQlyZXR1cm4g
-TlVMTDsKPiArCj4gKwlvZl9ub2RlX3B1dChkZXYtPm9mX25vZGUpOwoKSWRlbnRpY2FsIGlzc3Vl
-IGFzIGluIHByZXZpb3VzIHBhdGNoLgoKUmVnYXJkcwpBbmRyemVqCgo+ICAKPiAtCXJldHVybiBv
-Zl9maW5kX2NvbXBhdGlibGVfbm9kZShOVUxMLCBOVUxMLCBjb21wYXRpYmxlX3N0cik7Cj4gKwly
-ZXR1cm4gbnA7Cj4gIH0KPiAgCj4gIHN0YXRpYyBpbnQgaGRtaV9wcm9iZShzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2KQo+IEBAIC0xODI5LDE5ICsxODQwLDEzIEBAIHN0YXRpYyBpbnQgaGRt
-aV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJCXJldHVybiAtRVBST0JF
-X0RFRkVSOwo+ICAJfQo+ICAKPiAtCXBoeV9ub2RlID0gaGRtaV9sZWdhY3lfcGh5X2R0X2JpbmRp
-bmcoZGV2KTsKPiAtCWlmIChwaHlfbm9kZSkKPiAtCQlnb3RvIG91dF9nZXRfcGh5X3BvcnQ7Cj4g
-LQo+IC0JcGh5X25vZGUgPSBvZl9wYXJzZV9waGFuZGxlKGRldi0+b2Zfbm9kZSwgInBoeSIsIDAp
-Owo+ICsJcGh5X25vZGUgPSBoZG1pX3BoeV9kdF9iaW5kaW5nKGRldik7Cj4gIAlpZiAoIXBoeV9u
-b2RlKSB7Cj4gIAkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZmluZCBoZG1pcGh5IG5vZGUgaW4gZGV2
-aWNlIHRyZWVcbiIpOwo+ICAJCXJldCA9IC1FTk9ERVY7Cj4gIAkJZ290byBlcnJfZGRjOwo+ICAJ
-fQo+IC0Jb2Zfbm9kZV9wdXQoZGV2LT5vZl9ub2RlKTsKPiAgCj4gLW91dF9nZXRfcGh5X3BvcnQ6
-Cj4gIAlpZiAoaGRhdGEtPmRydl9kYXRhLT5pc19hcGJfcGh5KSB7Cj4gIAkJaGRhdGEtPnJlZ3Nf
-aGRtaXBoeSA9IG9mX2lvbWFwKHBoeV9ub2RlLCAwKTsKPiAgCQlpZiAoIWhkYXRhLT5yZWdzX2hk
-bWlwaHkpIHsKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+SGkgQW5kcnplaiwKCk9uIDA4LzI0LzIwMTYgMDI6MjggUE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6
+Cj4gUGxlYXNlIHVzZSBkZGMgcHJvcGVydHkgaW4gaGRtaSBub2RlLCBpbnN0ZWFkIG9mIHRoaXMg
+bGVnYWN5IGJpbmRpbmcuCj4gU2VlIGV4eW5vczQyMTAtdW5pdmVyc2FsX2MyMTAuZHRzIG9yIGV4
+eW5vczQ0MTItb2Ryb2lkLWNvbW1vbi5kdHNpIGZvcgo+IHJlZmVyZW5jZS4KCkNvb2whIEkgcHJl
+ZmVyIHRoaXMgc2ltcGxlIHByb3BlcnR5LiBUaGFua3MgZm9yIHRoZSByZXZpZXcuCgpCZXN0IHJl
+Z2FyZHMsCk1pbG8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
