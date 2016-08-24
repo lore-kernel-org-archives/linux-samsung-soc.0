@@ -1,54 +1,60 @@
-From: "Shougang Group of company" <victor.flores@nucleares.unam.mx>
-Subject: Job Offer
-Date: Wed, 24 Aug 2016 05:36:40 -0500
-Message-ID: <31d2897b1184f6add8448352dfb95e38.squirrel@bigbang.nucleares.unam.mx>
-Reply-To: zhujimin20@gmail.com
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Wed, 24 Aug 2016 20:44:24 +0900
+Message-ID: <57BD8898.9000709@samsung.com>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+ <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
+ <CAF6AEGtHeSKoQcVbTuucy-KdA8V=LLtC7uTEDmup3_5tz0HZMg@mail.gmail.com>
+ <CGME20160823094312epcas1p3543c2e968e1be320791460a50b5ec523@epcas1p3.samsung.com>
+ <CAPj87rNo7bQrqMGg-fRkdowdxT_-iUObY66TiHV-4091MqxiPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from athena.nucleares.unam.mx ([132.248.29.9]:36515 "EHLO
-        athena.nucleares.unam.mx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753286AbcHXLNP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 07:13:15 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPj87rNo7bQrqMGg-fRkdowdxT_-iUObY66TiHV-4091MqxiPw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>, Rob Clark <robdclark@gmail.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, =?UTF-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-Shougang Group of company
-45 Huagong Road Xinji City,
-Hebei Province China.
-webpage: www.shougang.com.cn
-
-
-This is an official request for Professional/consultants who will stand as
-our regional representative to run logistics on behalf of Shougang Group.
-We are only looking for individual or company from USA and Canada. You
-will be entitle to ten percent (10%) of every payment you receive from our
-customers in your region on behalf of the company.
-
-NOTE: You are not require to travel, all communications with our customers
-will be through email or phone. All fees, including taxes will be handled
-by us.You can apply for this position by filling the information below and
-send back to us;
-
-Full Name:
-Residencial or office address:
-Town:
-State:
-Zipcode:
-Country:
-Current Job:
-If you own a company, please state the company name:
-Prefered Email:
-Gender:
-Age:
-Telephone:
-
-If you have a current job, you can still be part of our business, as
-services for us will not bother with your hours of work.
-
-Respectfully,
-Mr. Zhu Jimin (Chief Executive Officer)
-Shougang Group
+SGksCgoyMDE264WEIDA47JuUIDIz7J28IDE4OjQx7JeQIERhbmllbCBTdG9uZSDsnbQo6rCAKSDs
+k7Qg6riAOgo+IEhpLAo+IAo+IE9uIDIyIEF1Z3VzdCAyMDE2IGF0IDE2OjIzLCBSb2IgQ2xhcmsg
+PHJvYmRjbGFya0BnbWFpbC5jb20+IHdyb3RlOgo+PiBJIGd1ZXNzIGEgbG90IGNvbWVzIGRvd24g
+dG8gJ2hvdyBsb25nIGJlZm9yZSBodyBkZXNpZ25lcnMgYm9sdCBhIENQIHRvCj4+IHRoZSB0aGlu
+ZycuLiAgYXQgdGhhdCBwb2ludCwgSSB0aGluayB5b3UgZXNwZWNpYWxseSBkb24ndCB3YW50IGEK
+Pj4gcGVyLWJsaXQga2VybmVsIGludGVyZmFjZS4KPiAKPiBSZWdhcmRsZXNzIG9mIHdoZXRoZXIg
+b3Igbm90IHdlIHdhbnQgaXQsIHdlIGFscmVhZHkgX2hhdmVfIGl0LCBpbiB0aGUKPiBmb3JtIG9m
+IFY0TDIgTTJNLiBUaGVyZSBhcmUgYWxyZWFkeSBhIGZldyBJUCBibG9ja3Mgd29ya2luZyBvbiB0
+aGF0LCBJCj4gYmVsaWV2ZS4gSWYgVjRMMiA8LT4gS01TIGludGVyb3AgaXMgcGFpbmZ1bCwgd2Vs
+bCwgd2UgbmVlZCB0byBmaXggdGhhdAo+IGFueXdheSAuLi4KClNvIHdlIGFyZSB0cnlpbmcgdGhp
+cy4gV2UgaGFkIGV4cGVyZW5lY2VkIHVzaW5nIFY0TDIgYW5kIERSTSB0b2dldGhlciBvbiBMaW51
+eCBQbGF0Zm9ybSBtYWtlcyBpdCB0b28gY29tcGxpY2F0ZWQsIGFuZCBhbHNvIGludGVncmF0ZWQg
+RFJNIHdpdGggTTJNIHN1Y2ggYXMgMkQgYW5kIFBvc3QgcHJvY2Vzc29yIG1ha2VzIGl0IHNpbXBs
+aWZpZWQuClNvIFdlIGhhdmUgYmVlbiB0cnlpbmcgdG8gbW92ZSBleGlzdGluZyBWNEwyIGJhc2Vk
+IGRyaXZlcnMgaW50byBEUk0gZXhjZXB0aW5nIEhXIFZpZGVvIENvZGVjIC0gY2FsbGVkIGl0IE1G
+QyAtIGFuZCBDYW1lcmEgc2Vuc29yIGFuZCByZWxldmFudCB0aGluZ3MuCkkgdGhpbmsgbm93IFY0
+TDIgYW5kIERSTSBmcmFtZXdvcmtzIG1heSBtYWtlIG1hbnkgZW5naW5lZXJzIGNvbmZ1c2luZyBi
+ZWNhdXNlIHRoZXJlIGFyZSB0aGUgc2FtZSBkZXZpY2VzIHdoaWNoIGNhbiBiZSBjb250cm9sbGVk
+IGJ5IFY0TDIgYW5kIERSTSBmcmFtZXdvcmtzIC0gbWF5YmUgd2Ugd291bGQgbmVlZCBtb3JlIGVm
+Zm9ydHMgbGlrZSBMYXVyZW50IGRpZCB3aXRoIExpdmUgc291cmNlWzFdIGluIHRoZSBmdXR1cmUu
+CgpBbnl3YXksIHNhZCB0byBzYXksIGl0IHNlZW1zIG90aGVyIG1haW50YWluZXJzIGxlYXZlIE5B
+SyBmb3IgdGhpcyBwYXRjaCBzZXJpZXMgYmVjYXVzZSB0aGlzIHRyeWluZyBoYWQgZmFpbGVkIGFs
+cmVhZHkgbG9uZyB0aW1lIGFnbyAtIHRoZXkgaGFkIGxlYXJuZWQgc3VjaCB0aGluZyBkaWRuJ3Qg
+d29yayB3ZWxsLiBTbyBzZWVtcyB3ZSBoYXZlIHRvIGtlZXAgdGhpcyBpbiBvbmx5IEV4eW5vcyBE
+Uk0uCgoKWzFdIGh0dHBzOi8vbHduLm5ldC9BcnRpY2xlcy82NDAyOTAvCgpUaGFua3MsCklua2kg
+RGFlCgo+IAo+IENoZWVycywKPiBEYW5pZWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
+cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4K
+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1v
+cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
+Zm8uaHRtbAo+IAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
