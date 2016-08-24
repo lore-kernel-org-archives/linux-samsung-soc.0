@@ -1,68 +1,77 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 2/4] ARM: dts: exynos: Use 'hpd-gpios' instead of
- 'hpd-gpio'
-Date: Wed, 24 Aug 2016 07:30:33 +0200
-Message-ID: <58f9145c-9c01-33a8-f5cb-82955fa0e79c@samsung.com>
+Subject: Re: [PATCH v2 3/4] gpu: drm: exynos_hdmi: Use consolidated function on
+ binding DDC DT property
+Date: Wed, 24 Aug 2016 07:55:56 +0200
+Message-ID: <a6d2e6cc-d491-fdd4-8c76-5425ec42ba80@samsung.com>
 References: <1472005524-3489-1-git-send-email-woogyom.kim@gmail.com>
- <1472005524-3489-3-git-send-email-woogyom.kim@gmail.com>
+ <1472005524-3489-4-git-send-email-woogyom.kim@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1472005524-3489-3-git-send-email-woogyom.kim@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1472005524-3489-4-git-send-email-woogyom.kim@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Milo Kim <woogyom.kim@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/24/2016 04:25 AM, Milo Kim wrote:
-> This patch enables getting a HPD GPIO descriptor quickly.
-> The exynos-hdmi driver uses "hpd" for HDMI hot plug detection.
->
-> 	static int hdmi_resources_init(struct hdmi_context *hdata)
-> 	{
-> 		...
-> 		hdata->hpd_gpio = devm_gpiod_get(dev, "hpd", GPIOD_IN);
-> 		...
-> 	}
->
-> This calls 'of_find_gpio()' and it generates the GPIO consumer ID by referring
-> GPIO suffix. So 'hpd-gpios' is preferred on getting a GPIO descriptor.
->
-> However, if the device tree uses 'hpd-gpio', then the exynos-hdmi driver
-> always retries to get a GPIO descriptor because the first GPIO suffix is not
-> 'gpio' but 'gpios'. So you always see the debug message below.
->
-> 	of_get_named_gpiod_flags: can't parse 'hpd-gpios' property of node '/soc/hdmi@14530000[0]'
->
-> Use the preferred property, 'hpd-gpios' instead of 'hpd-gpio'.
->
-> Acked-by: Rob Herring <robh@kernel.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
-I am not sure if this long Cc list is necessary.
-Anyway:
-
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
---
-Regards
-Andrzej
+T24gMDgvMjQvMjAxNiAwNDoyNSBBTSwgTWlsbyBLaW0gd3JvdGU6Cj4gSGFuZGxlIGxlZ2FjeSBh
+bmQgcmF3ICdkZGMnIHBhcnNpbmcgaW4gc2luZ2xlIGZ1bmN0aW9uLgo+IEFuZCBpdCBhbHNvIHJl
+bW92ZXMgZ290byBjb25kaXRpb24uCj4KPiBDYzogS3VramluIEtpbSA8a2dlbmVAa2VybmVsLm9y
+Zz4KPiBDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4g
+Q2M6IERhdmlkIEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KPiBDYzogSW5raSBEYWUgPGlua2ku
+ZGFlQHNhbXN1bmcuY29tPgo+IENjOiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3Vu
+Zy5jb20+Cj4gQ2M6IFNldW5nLVdvbyBLaW0gPHN3MDMxMi5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6
+IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4gQ2M6IFJvYiBIZXJy
+aW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Cj4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
+Cj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1z
+YW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZwo+IENjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gU2lnbmVkLW9mZi1i
+eTogTWlsbyBLaW0gPHdvb2d5b20ua2ltQGdtYWlsLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMTggKysrKysrKysrLS0tLS0tLS0tCj4gIDEgZmls
+ZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfaGRtaS5jCj4gaW5kZXggMjI3NWVmZS4uNmE2MzZmMiAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiBAQCAtMTc2MCw3ICsxNzYwLDcgQEAgc3Rh
+dGljIGNvbnN0IHN0cnVjdCBjb21wb25lbnRfb3BzIGhkbWlfY29tcG9uZW50X29wcyA9IHsKPiAg
+CS51bmJpbmQgPSBoZG1pX3VuYmluZCwKPiAgfTsKPiAgCj4gLXN0YXRpYyBzdHJ1Y3QgZGV2aWNl
+X25vZGUgKmhkbWlfbGVnYWN5X2RkY19kdF9iaW5kaW5nKHN0cnVjdCBkZXZpY2UgKmRldikKPiAr
+c3RhdGljIHN0cnVjdCBkZXZpY2Vfbm9kZSAqaGRtaV9kZGNfZHRfYmluZGluZyhzdHJ1Y3QgZGV2
+aWNlICpkZXYpCj4gIHsKPiAgCWNvbnN0IGNoYXIgKmNvbXBhdGlibGVfc3RyID0gInNhbXN1bmcs
+ZXh5bm9zNDIxMC1oZG1pZGRjIjsKPiAgCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnA7Cj4gQEAgLTE3
+NjksNyArMTc2OSwxMyBAQCBzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICpoZG1pX2xlZ2FjeV9k
+ZGNfZHRfYmluZGluZyhzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gIAlpZiAobnApCj4gIAkJcmV0dXJu
+IG9mX2dldF9uZXh0X3BhcmVudChucCk7Cj4gIAo+IC0JcmV0dXJuIE5VTEw7Cj4gKwlucCA9IG9m
+X3BhcnNlX3BoYW5kbGUoZGV2LT5vZl9ub2RlLCAiZGRjIiwgMCk7Cj4gKwlpZiAoIW5wKQo+ICsJ
+CXJldHVybiBOVUxMOwo+ICsKPiArCW9mX25vZGVfcHV0KGRldi0+b2Zfbm9kZSk7ClRoaXMgaXMg
+bWlzdGFrZSBpbnRyb2R1Y2VkICBieSBvdGhlciBwYXRjaCwgb2Zfbm9kZV9wdXQgc2hvdWxkIGJl
+IGNhbGxlZCBvbgpucCwgYWZ0ZXIgY2FsbGluZyBvZl9maW5kX2kyY19hZGFwdGVyX2J5X25vZGUu
+IFlvdSBjYW4gZml4IGl0IGluIHlvdXIKcGF0Y2ggYXMgd2VsbC4KSSB0aGluayB5b3UgY2FuIG1v
+dmUgb2ZfZmluZF9pMmNfYWRhcHRlcl9ieV9ub2RlIGFsc28gdG8gdGhpcyBmdW5jdGlvbiBhbmQK
+cmVuYW1lIGl0IHRvIHN0aCBsaWtlIGhkbWlfZ2V0X2RkY19hZGFwdGVyLCB0aGlzIHdheSB5b3Ug
+d2lsbCBlbmNsb3NlCndob2xlIGxvZ2ljCm9mIGdldHRpbmcgcmVzb3VyY2UgaW50byBvbmUgZnVu
+Y3Rpb24uCgpSZWdhcmRzCkFuZHJ6ZWoKCj4gKwo+ICsJcmV0dXJuIG5wOwo+ICB9Cj4gIAo+ICBz
+dGF0aWMgc3RydWN0IGRldmljZV9ub2RlICpoZG1pX2xlZ2FjeV9waHlfZHRfYmluZGluZyhzdHJ1
+Y3QgZGV2aWNlICpkZXYpCj4gQEAgLTE4MTEsMTggKzE4MTcsMTIgQEAgc3RhdGljIGludCBoZG1p
+X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAkJcmV0dXJuIHJldDsKPiAg
+CX0KPiAgCj4gLQlkZGNfbm9kZSA9IGhkbWlfbGVnYWN5X2RkY19kdF9iaW5kaW5nKGRldik7Cj4g
+LQlpZiAoZGRjX25vZGUpCj4gLQkJZ290byBvdXRfZ2V0X2RkY19hZHB0Owo+IC0KPiAtCWRkY19u
+b2RlID0gb2ZfcGFyc2VfcGhhbmRsZShkZXYtPm9mX25vZGUsICJkZGMiLCAwKTsKPiArCWRkY19u
+b2RlID0gaGRtaV9kZGNfZHRfYmluZGluZyhkZXYpOwo+ICAJaWYgKCFkZGNfbm9kZSkgewo+ICAJ
+CURSTV9FUlJPUigiRmFpbGVkIHRvIGZpbmQgZGRjIG5vZGUgaW4gZGV2aWNlIHRyZWVcbiIpOwo+
+ICAJCXJldHVybiAtRU5PREVWOwo+ICAJfQo+IC0Jb2Zfbm9kZV9wdXQoZGV2LT5vZl9ub2RlKTsK
+PiAgCj4gLW91dF9nZXRfZGRjX2FkcHQ6Cj4gIAloZGF0YS0+ZGRjX2FkcHQgPSBvZl9maW5kX2ky
+Y19hZGFwdGVyX2J5X25vZGUoZGRjX25vZGUpOwo+ICAJaWYgKCFoZGF0YS0+ZGRjX2FkcHQpIHsK
+PiAgCQlEUk1fRVJST1IoIkZhaWxlZCB0byBnZXQgZGRjIGkyYyBhZGFwdGVyIGJ5IG5vZGVcbiIp
+OwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
