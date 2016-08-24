@@ -1,30 +1,39 @@
-From: Milo Kim <woogyom.kim@gmail.com>
-Subject: Re: [PATCH 0/4] ARM: dts: exynos: Enable HDMI in Arndale Octa board
-Date: Wed, 24 Aug 2016 11:30:25 +0900
-Message-ID: <da2ff73c-b8ca-60dd-ff53-dff634e52dbc@gmail.com>
-References: <1471943619-6102-1-git-send-email-woogyom.kim@gmail.com>
- <CAJKOXPew=cTK6RkiT+OoPbUcU2SBHdOYTSPG-av3FiN2HYNV=g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Remove unused DMC offset and its mapping
+Date: Wed, 24 Aug 2016 06:43:29 +0200
+Message-ID: <20160824044329.GA8407@kozik-book>
+References: <1471931416-15991-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:35904 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbcHXCac (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33890 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbcHXEnd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 22:30:32 -0400
-In-Reply-To: <CAJKOXPew=cTK6RkiT+OoPbUcU2SBHdOYTSPG-av3FiN2HYNV=g@mail.gmail.com>
+        Wed, 24 Aug 2016 00:43:33 -0400
+Received: by mail-wm0-f68.google.com with SMTP id q128so914677wma.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2016 21:43:32 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1471931416-15991-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.com, krzk@kernel.org, kgene@kernel.org
 
-On 08/24/2016 04:55 AM, Krzysztof Kozlowski wrote:
-> I saw DTS patches on linux-samsung-soc patchwork but still I would
-> appreciate if you send them to appropriate maintainers pointed by
-> get_maintainers.pl script. DTS stuff goes through samsung-soc tree.
+On Tue, Aug 23, 2016 at 11:20:16AM +0530, Pankaj Dubey wrote:
+> Currently there is no user of DMC SFR offsets, so we can safely remove
+> mapping of its SFR address space and cleanup related offset macros from
+> mach-exynos.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c                | 10 ----------
+>  arch/arm/mach-exynos/include/mach/map.h      |  3 ---
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |  3 ---
+>  3 files changed, 16 deletions(-)
+>
 
-Thanks for your tip. I've just sent out the v2.
+Thanks, applied.
 
 Best regards,
-Milo
+Krzysztof
