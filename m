@@ -1,63 +1,68 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct samsung_cmu_info
- to init section
-Date: Wed, 24 Aug 2016 17:38:19 +0900
-Message-ID: <57BD5CFB.5050500@samsung.com>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
- <20160824044346.GR6502@codeaurora.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] Samsung media driver updates
+Date: Wed, 24 Aug 2016 12:21:21 +0200
+Message-ID: <c452c720-b789-0b35-3685-30785f6b4991@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <20160824044346.GR6502@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: LMML <linux-media@vger.kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016년 08월 24일 13:43, Stephen Boyd wrote:
-> On 08/23, Sylwester Nawrocki wrote:
->> On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
->> I checked stripped object files and it seems with the patch there
->> is some saving of the kernel image size. Exactly 784 bytes, which
->> makes zImage smaller by 480 bytes.
->>
->> The patch increases .init.rodata section size by 780 bytes but 
->> decreases .init.text section size by 1564 bytes.  Looks like 
->> a static initializer is cheaper.
->>
->> $ ls -l  drivers/clk/samsung/clk-exynos5260.o
->>
->> < -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
->> ---
->>> -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
->>
->>
->> The section size differences are as below:
->> 15c15
->> <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
->> ---
->>>   3 .init.text    0000009c  00000000  00000000  00000034  2**2
->> 25c25
->> <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
->> ---
->>>   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
->>
->> So the saving is rather insignificant but the patch doesn't make
->> things worse and I'd say it might be worth applying.
->>
-> 
-> Sounds good. This sort of information should be in the commit
-> text though. Talking about const doesn't make any sense to me.
+Hi Mauro,
 
-Do you mean that 'const' is initconst secion?
-If possible, could you explain the anything
-why you don't make sense about 'const'?
+this includes Samsung SoC media driver fixes and cleanups for v4.9.
+
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git for-v4.9/media/next
+
+for you to fetch changes up to ba0f105e7ca81a25b58a5e57ebe30fc51f116616:
+
+  exynos4-is: fimc-is-i2c: don't print error when adding adapter fails
+(2016-08-12 16:42:21 +0200)
+
+----------------------------------------------------------------
+Bhaktipriya Shridhar (1):
+      s5p-mfc: Remove deprecated create_singlethread_workqueue
+
+Javier Martinez Canillas (5):
+      s5p-jpeg: set capablity bus_info as required by VIDIOC_QUERYCAP
+      exynos4-is: Fix fimc_is_parse_sensor_config() nodes handling
+      s5p-jpeg: only fill driver's name in capabilities driver field
+      gsc-m2m: add device name sufix to bus_info capatiliby field
+      gsc-m2m: improve v4l2_capability driver and card fields
+
+Shuah Khan (6):
+      media: Doc s5p-mfc add missing fields to s5p_mfc_dev structure definition
+      media: s5p-mfc fix invalid memory access from s5p_mfc_release()
+      media: s5p-mfc remove void function return statement
+      media: s5p-mfc Fix misspelled error message and checkpatch errors
+      media: s5p-mfc remove unnecessary error messages
+      media: s5p-jpeg add missing blank lines after declarations
+
+Wei Yongjun (1):
+      s5p-mfc: remove redundant return value check of platform_get_resource()
+
+Wolfram Sang (1):
+      exynos4-is: fimc-is-i2c: don't print error when adding adapter fails
+
+ drivers/media/platform/exynos-gsc/gsc-m2m.c     |  7 +++---
+ drivers/media/platform/exynos4-is/fimc-is-i2c.c |  5 +---
+ drivers/media/platform/exynos4-is/fimc-is.c     | 16 +++++++-----
+ drivers/media/platform/s5p-jpeg/jpeg-core.c     | 20 ++++++++++-----
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        | 86
+++++++++++++++++++++++++++++++++++++++++-------------------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  2 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c    | 11 +++++----
+ 7 files changed, 90 insertions(+), 57 deletions(-)
 
 -- 
-Best Regards,
-Chanwoo Choi
+Thanks,
+Sylwester
