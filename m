@@ -1,63 +1,43 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-Date: Tue, 23 Aug 2016 21:43:46 -0700
-Message-ID: <20160824044346.GR6502@codeaurora.org>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org>
- <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Remove unused DMC offset and its mapping
+Date: Wed, 24 Aug 2016 06:58:52 +0200
+Message-ID: <20160824045852.GA13990@kozik-book>
+References: <1471931416-15991-1-git-send-email-pankaj.dubey@samsung.com>
+ <20160824044329.GA8407@kozik-book>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:58995 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbcHXEnt (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33965 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbcHXE7X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 00:43:49 -0400
+        Wed, 24 Aug 2016 00:59:23 -0400
+Received: by mail-wm0-f66.google.com with SMTP id q128so945449wma.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2016 21:58:56 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
+In-Reply-To: <20160824044329.GA8407@kozik-book>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org, k.kozlowski@samsung.com, chanwoo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, k.kozlowski@samsung.com, kgene@kernel.org
 
-On 08/23, Sylwester Nawrocki wrote:
-> On 08/23/2016 04:35 AM, Chanwoo Choi wrote:
-> I checked stripped object files and it seems with the patch there
-> is some saving of the kernel image size. Exactly 784 bytes, which
-> makes zImage smaller by 480 bytes.
+On Wed, Aug 24, 2016 at 06:43:29AM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Aug 23, 2016 at 11:20:16AM +0530, Pankaj Dubey wrote:
+> > Currently there is no user of DMC SFR offsets, so we can safely remove
+> > mapping of its SFR address space and cleanup related offset macros from
+> > mach-exynos.
+> > 
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/exynos.c                | 10 ----------
+> >  arch/arm/mach-exynos/include/mach/map.h      |  3 ---
+> >  arch/arm/plat-samsung/include/plat/map-s5p.h |  3 ---
+> >  3 files changed, 16 deletions(-)
+> >
 > 
-> The patch increases .init.rodata section size by 780 bytes but 
-> decreases .init.text section size by 1564 bytes.  Looks like 
-> a static initializer is cheaper.
-> 
-> $ ls -l  drivers/clk/samsung/clk-exynos5260.o
-> 
-> < -rw-rw-r-- 1 snawrocki snawrocki 29100 Aug 23 11:35 drivers/clk/samsung/clk-exynos5260.o
-> ---
-> > -rw-rw-r-- 1 snawrocki snawrocki 28316 Aug 23 11:32 drivers/clk/samsung/clk-exynos5260.o
-> 
-> 
-> The section size differences are as below:
-> 15c15
-> <   3 .init.text    000006b8  00000000  00000000  00000034  2**2
-> ---
-> >   3 .init.text    0000009c  00000000  00000000  00000034  2**2
-> 25c25
-> <   8 .init.rodata  00003f6c  00000000  00000000  00002f20  2**2
-> ---
-> >   8 .init.rodata  00004278  00000000  00000000  00002904  2**2
-> 
-> So the saving is rather insignificant but the patch doesn't make
-> things worse and I'd say it might be worth applying.
-> 
+> Thanks, applied.
 
-Sounds good. This sort of information should be in the commit
-text though. Talking about const doesn't make any sense to me.
+I mean, v2, applied.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+BR,
+Krzysztof
