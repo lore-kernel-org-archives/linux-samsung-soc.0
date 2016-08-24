@@ -1,181 +1,54 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 4/7] pinctrl: samsung: Add GPFx support of Exynos5433
-Date: Wed, 24 Aug 2016 21:53:46 +0900
-Message-ID: <57BD98DA.7020901@samsung.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <CGME20160816062943epcas1p15015ed6a3e22ef0b723c2b84edc93d3d@epcas1p1.samsung.com>
- <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
- <57B6CC38.9090403@samsung.com>
- <CA+Ln22EaUmdrfLXJfYPAtCQ1DY4Y5iLWr-tqG67-P9hSXKMC6w@mail.gmail.com>
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: [PATCH v3 0/5] ARM: dts: exynos: Enable HDMI in Arndale Octa board
+Date: Wed, 24 Aug 2016 22:07:14 +0900
+Message-ID: <1472044039-16536-1-git-send-email-woogyom.kim@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CA+Ln22EaUmdrfLXJfYPAtCQ1DY4Y5iLWr-tqG67-P9hSXKMC6w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, InKi Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Milo Kim <woogyom.kim@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
-
-I'm sorry for delay reply.
-
-On 2016년 08월 19일 20:31, Tomasz Figa wrote:
-> Hi Chanwoo,
-> 
-> 2016-08-19 18:07 GMT+09:00 Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
->> Hi Tomasz Figa,
->>
->> Due to wrong setting of email client,
->> your reply is deleted on my email client at the company.
-> 
-> I used Gmail (in plain text mode) to reply, was that related?
-
-The mistake depend on my filer setting of mail client.
-
-> 
->> I'm so sorry. So, I add your comment on below and then
->> I reply the detailed description.
-> 
-> No problem. Thanks for description.
-> 
->>
->> On 2016년 08월 16일 15:27, Chanwoo Choi wrote:
->>> From: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>
->>> This patch add the support of GPFx pin of Exynos5433 SoC. Exynos5433 has
->>> different memory map of GPFx from previous Exynos SoC. Exynos GPIO has
->>> following register to control gpio funciton. Usually, all registers of GPIO
->>> are included in same domain.
->>> - CON / DAT / PUD / DRV / CONPDN / PUDPDN
->>> - EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
->>>
->>> But, GPFx are included in two domain as following. So, this patch supports
->>> the GPFx pin which handle the on separate two domains.
->>> - ALIVE domain : CON / DAT / PUD / DRV / CONPDN / PUDPDN
->>> - IMEM domain  : EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
->>
->> ---------
->> I'm afraid I don't get anything from the description above. Could you
->> describe the layout of registers in memory map and IRQ routing of the
->> pins?
->>
->> Best regards,
->> Tomasz
->> ----------
->>
->> On this patch, I'm sorry that I described the wrong information about GFP1~5.
->> I explained the memory map of GPF[1-5] the oppositely. Following compositions
->> are correct.
->> - ALIVE : WEINT_FLTCONx, WEINT_MASK, WEING_PEND
->> - IMEM : CON, DAT, PUD, DRV, CONPDN, PUDPDN
->> And, I add the memory map for GPF[1~5][2] and the wakeup interrupt information[1].
->>
->> [1] Memory map for GPF1~5
->> [ALIVE]
->> WEINT_GPA0_CON         : 0x1058_0000 (ALIVE) + (0x0700 = 0x0700 + 0x0)
->> WEINT_GPA1_CON         : 0x1058_0000 (ALIVE) + (0x0704 = 0x0700 + 0x4)
->> WEINT_GPA2_CON         : 0x1058_0000 (ALIVE) + (0x0708 = 0x0700 + 0x8)
->> WEINT_GPA3_CON         : 0x1058_0000 (ALIVE) + (0x070C = 0x0700 + 0xC)
->>
->> WEINT_GPF1_CON         : 0x1058_0000 (ALIVE) + (0x1704 = 0x0700 + 0x1004)
->> WEINT_GPF2_CON         : 0x1058_0000 (ALIVE) + (0x1708 = 0x0700 + 0x1008)
->> WEINT_GPF3_CON         : 0x1058_0000 (ALIVE) + (0x170C = 0x0700 + 0x100C)
->> WEINT_GPF4_CON         : 0x1058_0000 (ALIVE) + (0x1710 = 0x0700 + 0x10010)
->> WEINT_GPF5_CON         : 0x1058_0000 (ALIVE) + (0x1714 = 0x0700 + 0x1014)
->>
->> WEINT_GPF[x]_MASK     : 0x1058_0000 (ALIVE) + (0x1900 + (x * 4))
->> WEINT_GPF[x]_PEND     : 0x1058_0000 (ALIVE) + (0x1A00 + (x * 4))
->> (x : 1 ~ 5)
->>
->> [IMEM]
->> GPF1_CON          : 0X1109_0000 (IMEM) + 0x0020
->> GPF1_DAT           : 0X1109_0000 (IMEM) + 0x0024
->> GPF1_PUD          : 0X1109_0000 (IMEM) + 0x0028
->> GPF1_DRV          : 0X1109_0000 (IMEM) + 0x002C
->> GPF1_CONPDN  : 0X1109_0000 (IMEM) + 0x0030
->> GPF1_PUDPDN  : 0X1109_0000 (IMEM) + 0x0034
->>
->> GPF2_CON         : 0X1109_0000 (IMEM) + 0x0040
->> ...
->> GPF3_CON         : 0X1109_0000 (IMEM) + 0x0060
->> ...
->> GPF4_CON         : 0X1109_0000 (IMEM) + 0x0080
->> ...
->> GPF5_CON         : 0X1109_0000 (IMEM) + 0x00A0
->>
->> [2] Interrput pin information
->> - the total number of wakeup external IRQ is 64.
->> ----------------------------------------------------------------------------------
->> domain| gpio : nr  | wakeup interrput name   | SPI number       |
->> -----------------------------------------------------------------------------------
->> ALIVE | GPA0 : 8 | INTREQ__EINT[0~7]     | SPI[0] ~ SPI[7]   |
->> ALIVE | GPA1 : 8 | INTREQ__EINT[8~15]   | SPI[8] ~ SPI[15] |
->> ALIVE | GPA2 : 8 | INTREQ__EINT_16_63 | SPI[16]               |
->> ALIVE | GPA3 : 8 | INTREQ__EINT_16_63 | SPI[16]               |
->> -----------------------------------------------------------------------------------
->> ALIVE | GPF1 : 8 | INTREQ__EINT_16_63 | SPI[16]               |
->> ALIVE | GPF2 : 4 | INTREQ__EINT_16_63 | SPI[16]               |
->> ALIVE | GPF3 : 4 | INTREQ__EINT_16_63 | SPI[16]               |
->> ALIVE | GPF4 : 8 | INTREQ__EINT_16_63 | SPI[16]               |
->> ALIVE | GPF5 : 8 | INTREQ__EINT_16_63 | SPI[16]               |
->> -----------------------------------------------------------------------------------
->>
->> In summary,
->> If gpf[1-5] handle the CON/DAT/PUD/DRV register,
->> the driver will use the drvdata->ext_base (IMEM base address)
->> instead of drvdata->virt_base(ALIVE base address)
->> because the CON/DAT/PUD/DRV register of gpf[1-5] are included
->> in the IMEM domain.
->>
->> If gpf[1-5] handle the WEINT_* register,
->> the driver will use the drvdata->virt_base(ALIVE base address)
->> because the WEINT_* registers of gpf[1-5] are included in the ALIVE domain.
-> 
-> Okay, so Krzysztof's suggestion doesn't apply because it's not the
-> eint base which is displaced, but the pinctrl base. I'd suggest the
-> following solution then:
-> 
-> - make samsung_pinctrl_drv_data::virt_base an array and save there all
-> mapped iomem resources,
-> 
-> - add unsigned pctl_base_res_idx to samsung_pin_bank_data that would
-> be the index of iomem resource into which the
-> samsung_pin_bank_data::pctl_offset is an offfset, Existing
-> EXYNOS_PIN_BANK* macros don't need to be changed, because the field
-> would be 0 by default. Then only the new bank type macro would have
-> another argument that would be the resource index,
-> 
-> - replace samsung_pin_bank::pctl_offset with void __iomem *pctl_base
-> and precalculate the addresses at probe time for each bank (pctl_base
-> = virt_base[pctl_base_res_idx] + samsung_pin_bank_data::pctl_offset).
-> Since currently there is only a problem with pctl_base and eint_base
-> seems to be only one, EINT code can simply use virt_base[0] all the
-> time for now.
-> 
-> Also you should document the second regs entry in the DT binding.
-> 
-> What do you think?
-
-I understand. I suggest the one thing.
-
-I think that we need to add the 'eint_base_idx'
-for WEINT registers which is handled on pinctrl-exynos.c
-because the composition of gpio registers might be exchanged
-against the Exynos5433's GPFx.
-
-"drvdata->virt_base[pctl_res_idx]" will be used on pinctrl-samsung.c.
-"drvdata->virt_base[eint_res_idx]" will be used on pinctrl-exynos.c.
-
-As your suggestion, I make a patch and this patch is well working.
-I'll send the new patch for samsung pinctrl driver on v2 patchset.
-
--- 
-Best Regards,
-Chanwoo Choi
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhpcyBwYXRjaC1zZXQgZW5hYmxlcyBIRE1JIGluIEFybmRhbGUgT2N0YSBib2FyZCBhbmQgZml4
+ZXMgSFBEIERUIHByb3BlcnR5LgpJdCBhbHNvIGluY2x1ZGVzIGNvZGUgcmVmYWN0b3Jpbmcgb24g
+ZGRjIGFuZCBwaHkuCgp2MzoKICBBZGQgJ3ZkZC1zdXBwbHknIHByb3BlcnR5IGluIGR0cy4KICBV
+c2UgZ2VuZXJpYyAnZGRjJyBwcm9wZXJ0eSBpbnN0ZWFkIG9mIGxlZ2FjeSBwcm9wZXJ0eS4KICBD
+bGVhbiB1cCBEREMgYW5kIFBIWSBsb2dpYyBpbiBfcHJvYmUoKS4KICBSZW1vdmUgZHVwbGljYXRl
+IGNvZGUgb2YgcmVndWxhdG9yIGNvbnN1bWVyIGluaXRpYWxpemF0aW9uLgoKdjI6CiAgSW5jbHVk
+ZSBEUk0gYW5kIEV4eW5vcyBtYWludGFpbmVycyBhbmQgcmVzZW5kIHRoZSBwYXRjaC1zZXQuCiAg
+QWRkIFJvYidzIGFjayBmb3IgdGhlIHBhdGNoLAoJW1BBVENIIDIvNF0gQVJNOiBkdHM6IGV4eW5v
+czogVXNlICdocGQtZ3Bpb3MnIGluc3RlYWQgb2YgJ2hwZC1ncGlvJwoKTWlsbyBLaW0gKDUpOgog
+IEFSTTogZHRzOiBleHlub3M6IEVuYWJsZSBIRE1JIGZvciBBcm5kYWxlIE9jdGEgYm9hcmQKICBB
+Uk06IGR0czogZXh5bm9zOiBVc2UgJ2hwZC1ncGlvcycgaW5zdGVhZCBvZiAnaHBkLWdwaW8nCiAg
+Z3B1OiBkcm06IGV4eW5vc19oZG1pOiBNb3ZlIEREQyBsb2dpYyBpbnRvIHNpbmdsZSBmdW5jdGlv
+bgogIGdwdTogZHJtOiBleHlub3NfaGRtaTogTW92ZSBQSFkgbG9naWMgaW50byBzaW5nbGUgZnVu
+Y3Rpb24KICBncHU6IGRybTogZXh5bm9zX2hkbWk6IFJlbW92ZSBkdXBsaWNhdGUgaW5pdGlhbGl6
+YXRpb24gb2YgcmVndWxhdG9yCiAgICBidWxrIGNvbnN1bWVyCgogLi4uL2JpbmRpbmdzL2Rpc3Bs
+YXkvZXh5bm9zL2V4eW5vc19oZG1pLnR4dCAgICAgICAgfCAgIDQgKy0KIGFyY2gvYXJtL2Jvb3Qv
+ZHRzL2V4eW5vczQyMTAtdW5pdmVyc2FsX2MyMTAuZHRzICAgIHwgICAyICstCiBhcmNoL2FybS9i
+b290L2R0cy9leHlub3M0NDEyLW9kcm9pZC1jb21tb24uZHRzaSAgICB8ICAgMiArLQogYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1hcm5kYWxlLmR0cyAgICAgICAgICAgfCAgIDIgKy0KIGFy
+Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc21kazUyNTAuZHRzICAgICAgICAgIHwgICAyICst
+CiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3ctY29tbW9uLmR0c2kgICAgICB8ICAg
+MiArLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzICAgICAgICAgICAg
+fCAgIDIgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtYXJuZGFsZS1vY3RhLmR0cyAg
+ICAgIHwgIDEzICsrKwogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1wZWFjaC1waXQuZHRz
+ICAgICAgICAgfCAgIDIgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtc21kazU0MjAu
+ZHRzICAgICAgICAgIHwgICAyICstCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIyLW9kcm9p
+ZHh1My1jb21tb24uZHRzaSB8ICAgMiArLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1w
+ZWFjaC1waS5kdHMgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2hkbWkuYyAgICAgICAgICAgICAgIHwgMTEyICsrKysrKysrKysrLS0tLS0tLS0tLQogMTMg
+ZmlsZXMgY2hhbmdlZCwgODQgaW5zZXJ0aW9ucygrKSwgNjUgZGVsZXRpb25zKC0pCgotLSAKMS45
+LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
