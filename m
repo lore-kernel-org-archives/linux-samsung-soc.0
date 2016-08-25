@@ -1,22 +1,14 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-Date: Wed, 24 Aug 2016 17:11:09 -0700
-Message-ID: <20160825001109.GO19826@codeaurora.org>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com>
- <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org>
- <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com>
- <20160824044346.GR6502@codeaurora.org>
- <57BD5CFB.5050500@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 1/3] dt-bindings: Add the clock id for CMU_CDREX (DRAM
+ Express Controller)
+Date: Thu, 25 Aug 2016 15:57:16 +0900
+Message-ID: <1472108238-24309-2-git-send-email-cw00.choi@samsung.com>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <57BD5CFB.5050500@samsung.com>
+In-reply-to: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -26,26 +18,47 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, mturquette@baylibre.com, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDgvMjQsIENoYW53b28gQ2hvaSB3cm90ZToKPiBPbiAyMDE264WEIDA47JuUIDI07J28IDEz
-OjQzLCBTdGVwaGVuIEJveWQgd3JvdGU6Cj4gPiBPbiAwOC8yMywgU3lsd2VzdGVyIE5hd3JvY2tp
-IHdyb3RlOgo+ID4+IFNvIHRoZSBzYXZpbmcgaXMgcmF0aGVyIGluc2lnbmlmaWNhbnQgYnV0IHRo
-ZSBwYXRjaCBkb2Vzbid0IG1ha2UKPiA+PiB0aGluZ3Mgd29yc2UgYW5kIEknZCBzYXkgaXQgbWln
-aHQgYmUgd29ydGggYXBwbHlpbmcuCj4gPj4KPiA+IAo+ID4gU291bmRzIGdvb2QuIFRoaXMgc29y
-dCBvZiBpbmZvcm1hdGlvbiBzaG91bGQgYmUgaW4gdGhlIGNvbW1pdAo+ID4gdGV4dCB0aG91Z2gu
-IFRhbGtpbmcgYWJvdXQgY29uc3QgZG9lc24ndCBtYWtlIGFueSBzZW5zZSB0byBtZS4KPiAKPiBE
-byB5b3UgbWVhbiB0aGF0ICdjb25zdCcgaXMgaW5pdGNvbnN0IHNlY2lvbj8KCk5vLiBNYXJraW5n
-IGl0IGFzIGluaXRjb25zdCBpbiB0aGUgcGF0Y2ggaXMgY29ycmVjdC4KCj4gSWYgcG9zc2libGUs
-IGNvdWxkIHlvdSBleHBsYWluIHRoZSBhbnl0aGluZwo+IHdoeSB5b3UgZG9uJ3QgbWFrZSBzZW5z
-ZSBhYm91dCAnY29uc3QnPwo+IAoKSSdtIGp1c3Qgc2F5aW5nIHRoYXQgdGhlIHJlYXNvbmluZyB0
-byBtb3ZlIGl0IGZyb20gdGhlIHRleHQKc2VjdGlvbiB0byB0aGUgZGF0YSBzZWN0aW9uIHNob3Vs
-ZG4ndCBiZSBiZWNhdXNlIG9mIGNvbnN0LiBUaGVyZQpzaG91bGQgYmUgYmV0dGVyIHJlYXNvbnMg
-dG8gZG8gdGhpcywgbGlrZSBzaXplIGJlbmVmaXRzLgoKLS0gClF1YWxjb21tIElubm92YXRpb24g
-Q2VudGVyLCBJbmMuIGlzIGEgbWVtYmVyIG9mIENvZGUgQXVyb3JhIEZvcnVtLAphIExpbnV4IEZv
-dW5kYXRpb24gQ29sbGFib3JhdGl2ZSBQcm9qZWN0CgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+This patch adds the new clock id for CMU_CDRES (DRAM Express Controller)
+geneates the clocks for DRAM and NoC (Network on Chip) bus clock.
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ include/dt-bindings/clock/exynos5420.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 17ab8394bec7..6fd21c291416 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -214,6 +214,9 @@
+ #define CLK_MOUT_SW_ACLK400     651
+ #define CLK_MOUT_USER_ACLK300_GSCL	652
+ #define CLK_MOUT_SW_ACLK300_GSCL	653
++#define CLK_MOUT_MCLK_CDREX	654
++#define CLK_MOUT_BPLL		655
++#define CLK_MOUT_MX_MSPLL_CCORE	656
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+@@ -239,8 +242,14 @@
+ #define CLK_DOUT_ACLK300_DISP1	788
+ #define CLK_DOUT_ACLK300_GSCL	789
+ #define CLK_DOUT_ACLK400_DISP1	790
++#define CLK_DOUT_PCLK_CDREX	791
++#define CLK_DOUT_SCLK_CDREX	792
++#define CLK_DOUT_ACLK_CDREX1	793
++#define CLK_DOUT_CCLK_DREX0	794
++#define CLK_DOUT_CLK2X_PHY0	795
++#define CLK_DOUT_PCLK_CORE_MEM	796
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		791
++#define CLK_NR_CLKS		797
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+-- 
+1.9.1
