@@ -1,71 +1,35 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5260: Move struct
- samsung_cmu_info to init section
-Date: Thu, 25 Aug 2016 23:43:10 +0900
-Message-ID: <CA+Ln22E7ZeFTuzmAT-S9xDWq5kE1_XhkDp8fp7=odrudgaivYQ@mail.gmail.com>
-References: <1471834185-20249-1-git-send-email-cw00.choi@samsung.com>
- <1471834185-20249-2-git-send-email-cw00.choi@samsung.com> <CGME20160823005523epcas1p3993794ba487bb055cbf8a0b247fcb280@epcas1p3.samsung.com>
- <20160823005512.GP6502@codeaurora.org> <57BBB66E.2060807@samsung.com>
- <84e40b9b-1e08-24e0-f1ef-60b38b760ae6@samsung.com> <20160824044346.GR6502@codeaurora.org>
- <57BD5CFB.5050500@samsung.com> <20160825001109.GO19826@codeaurora.org> <57BE9E16.7090309@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <57BE9E16.7090309@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, chanwoo@kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] MAINTAINERS: Add myself as reviewer for Samsung Exynos support
+Date: Thu, 25 Aug 2016 10:56:48 -0400
+Message-ID: <1472137008-17751-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-08-25 16:28 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> Hi Stephen,
->
-> On 2016=EB=85=84 08=EC=9B=94 25=EC=9D=BC 09:11, Stephen Boyd wrote:
->> On 08/24, Chanwoo Choi wrote:
->>> On 2016=EB=85=84 08=EC=9B=94 24=EC=9D=BC 13:43, Stephen Boyd wrote:
->>>> On 08/23, Sylwester Nawrocki wrote:
->>>>> So the saving is rather insignificant but the patch doesn't make
->>>>> things worse and I'd say it might be worth applying.
->>>>>
->>>>
->>>> Sounds good. This sort of information should be in the commit
->>>> text though. Talking about const doesn't make any sense to me.
->>>
->>> Do you mean that 'const' is initconst secion?
->>
->> No. Marking it as initconst in the patch is correct.
->
-> OK.
->
->>
->>> If possible, could you explain the anything
->>> why you don't make sense about 'const'?
->>>
->>
->> I'm just saying that the reasoning to move it from the text
->> section to the data section shouldn't be because of const. There
->> should be better reasons to do this, like size benefits.
->>
->
-> As I already said, the samsung_cmu_register_on() requires
-> the 'const' type argument for 'struct samsung_cmu_info'.
+I've been helping reviewing and testing Exynos SoC support patches
+for the last couple of years. But it would be easier for me if I'm
+cc'ed for patches, so I'm adding myself as reviewer for this entry.
 
-If a function takes a const pointer as an argument, then it's
-perfectly valid to give a non-const pointer. Casting from non-cost
-into const is valid, other way around not.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
->
-> So, I defined the instance on the out of the exynos5260_clk_aud_init() as=
- following:
->         static const struct samsung_cmu_info aud_cmu __initconst =3D {
->
-> How can i add the 'const' keyword and '__initsecion' to the
-> "struct samsung_cmu_info aud_cmu" in the "static void __init
-> exynos5260_clk_aud_init(struct device_node *np)"?
+---
 
-Stephen meant that there must be some benefit from a change to make it
-worth being included into the kernel.
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Tomasz
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d8e81b1dde30..27ffdb2a98e0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1635,6 +1635,7 @@ N:	rockchip
+ ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
++R:	Javier Martinez Canillas <javier@osg.samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ S:	Maintained
+-- 
+2.5.5
