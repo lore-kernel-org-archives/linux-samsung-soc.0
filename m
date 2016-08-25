@@ -1,99 +1,214 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC 0/2] New feature: Framebuffer processors
-Date: Thu, 25 Aug 2016 14:14:50 +0200
-Message-ID: <20160825121450.GR10980@phenom.ffwll.local>
-References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
- <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
- <CAF6AEGtHeSKoQcVbTuucy-KdA8V=LLtC7uTEDmup3_5tz0HZMg@mail.gmail.com>
- <CGME20160823094312epcas1p3543c2e968e1be320791460a50b5ec523@epcas1p3.samsung.com>
- <CAPj87rNo7bQrqMGg-fRkdowdxT_-iUObY66TiHV-4091MqxiPw@mail.gmail.com>
- <57BD8898.9000709@samsung.com>
- <20160824115711.GD10980@phenom.ffwll.local>
- <57BEA71F.502@samsung.com>
- <20160825084218.GP10980@phenom.ffwll.local>
- <57BEDA55.9020605@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 3/7] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM for one pin-bank
+Date: Thu, 25 Aug 2016 23:30:16 +0900
+Message-ID: <CA+Ln22Ew=8S382zn+M8Ys5vztqvzp1+3EOTKtd81WSfuSyvY6w@mail.gmail.com>
+References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
+ <1472046551-703-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <57BEDA55.9020605@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1472046551-703-4-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, chanwoo@kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, ingi2.kim@samsung.comlinux-arm-kernel <li>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBBdWcgMjUsIDIwMTYgYXQgMDg6NDU6MjVQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4gCj4gCj4gMjAxNuuFhCAwOOyblCAyNeydvCAxNzo0MuyXkCBEYW5pZWwgVmV0dGVyIOydtCjq
-sIApIOyTtCDquIA6Cj4gPiBPbiBUaHUsIEF1ZyAyNSwgMjAxNiBhdCAwNTowNjo1NVBNICswOTAw
-LCBJbmtpIERhZSB3cm90ZToKPiA+Pgo+ID4+Cj4gPj4gMjAxNuuFhCAwOOyblCAyNOydvCAyMDo1
-N+yXkCBEYW5pZWwgVmV0dGVyIOydtCjqsIApIOyTtCDquIA6Cj4gPj4+IE9uIFdlZCwgQXVnIDI0
-LCAyMDE2IGF0IDA4OjQ0OjI0UE0gKzA5MDAsIElua2kgRGFlIHdyb3RlOgo+ID4+Pj4gSGksCj4g
-Pj4+Pgo+ID4+Pj4gMjAxNuuFhCAwOOyblCAyM+ydvCAxODo0MeyXkCBEYW5pZWwgU3RvbmUg7J20
-KOqwgCkg7JO0IOq4gDoKPiA+Pj4+PiBIaSwKPiA+Pj4+Pgo+ID4+Pj4+IE9uIDIyIEF1Z3VzdCAy
-MDE2IGF0IDE2OjIzLCBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+IHdyb3RlOgo+ID4+
-Pj4+PiBJIGd1ZXNzIGEgbG90IGNvbWVzIGRvd24gdG8gJ2hvdyBsb25nIGJlZm9yZSBodyBkZXNp
-Z25lcnMgYm9sdCBhIENQIHRvCj4gPj4+Pj4+IHRoZSB0aGluZycuLiAgYXQgdGhhdCBwb2ludCwg
-SSB0aGluayB5b3UgZXNwZWNpYWxseSBkb24ndCB3YW50IGEKPiA+Pj4+Pj4gcGVyLWJsaXQga2Vy
-bmVsIGludGVyZmFjZS4KPiA+Pj4+Pgo+ID4+Pj4+IFJlZ2FyZGxlc3Mgb2Ygd2hldGhlciBvciBu
-b3Qgd2Ugd2FudCBpdCwgd2UgYWxyZWFkeSBfaGF2ZV8gaXQsIGluIHRoZQo+ID4+Pj4+IGZvcm0g
-b2YgVjRMMiBNMk0uIFRoZXJlIGFyZSBhbHJlYWR5IGEgZmV3IElQIGJsb2NrcyB3b3JraW5nIG9u
-IHRoYXQsIEkKPiA+Pj4+PiBiZWxpZXZlLiBJZiBWNEwyIDwtPiBLTVMgaW50ZXJvcCBpcyBwYWlu
-ZnVsLCB3ZWxsLCB3ZSBuZWVkIHRvIGZpeCB0aGF0Cj4gPj4+Pj4gYW55d2F5IC4uLgo+ID4+Pj4K
-PiA+Pj4+IFNvIHdlIGFyZSB0cnlpbmcgdGhpcy4gV2UgaGFkIGV4cGVyZW5lY2VkIHVzaW5nIFY0
-TDIgYW5kIERSTSB0b2dldGhlciBvbgo+ID4+Pj4gTGludXggUGxhdGZvcm0gbWFrZXMgaXQgdG9v
-IGNvbXBsaWNhdGVkLCBhbmQgYWxzbyBpbnRlZ3JhdGVkIERSTSB3aXRoCj4gPj4+PiBNMk0gc3Vj
-aCBhcyAyRCBhbmQgUG9zdCBwcm9jZXNzb3IgbWFrZXMgaXQgc2ltcGxpZmllZC4gIFNvIFdlIGhh
-dmUgYmVlbgo+ID4+Pj4gdHJ5aW5nIHRvIG1vdmUgZXhpc3RpbmcgVjRMMiBiYXNlZCBkcml2ZXJz
-IGludG8gRFJNIGV4Y2VwdGluZyBIVyBWaWRlbwo+ID4+Pj4gQ29kZWMgLSBjYWxsZWQgaXQgTUZD
-IC0gYW5kIENhbWVyYSBzZW5zb3IgYW5kIHJlbGV2YW50IHRoaW5ncy4KPiA+Pj4+IEkgdGhpbmsg
-bm93IFY0TDIgYW5kIERSTSBmcmFtZXdvcmtzIG1heSBtYWtlIG1hbnkgZW5naW5lZXJzIGNvbmZ1
-c2luZwo+ID4+Pj4gYmVjYXVzZSB0aGVyZSBhcmUgdGhlIHNhbWUgZGV2aWNlcyB3aGljaCBjYW4g
-YmUgY29udHJvbGxlZCBieSBWNEwyIGFuZAo+ID4+Pj4gRFJNIGZyYW1ld29ya3MgLSBtYXliZSB3
-ZSB3b3VsZCBuZWVkIG1vcmUgZWZmb3J0cyBsaWtlIExhdXJlbnQgZGlkIHdpdGgKPiA+Pj4+IExp
-dmUgc291cmNlWzFdIGluIHRoZSBmdXR1cmUuCj4gPj4+Cj4gPj4+IENhbiB5b3UgcGxzIGV4cGxh
-aW4gaW4gbW9yZSBkZXRhaWwgd2hlcmUgd29ya2luZyB3aXRoIGJvdGggdjRsIGFuZCBkcm0KPiA+
-Pj4gZHJpdmVycyBhbmQgbWFraW5nIHRoZW0gY29vcGVyYXRlIHVzaW5nIGRtYS1idWZzIHBvc2Vz
-IHByb2JsZW1zPyBXZSBzaG91bGQKPiA+Pj4gZGVmaW5pdGVseSBmaXggdGhhdC4KPiA+Pgo+ID4+
-IEkgdGhpbmsgaXQgd291bGQgYmUgbW9zdCBMaW51eCBQbGF0Zm9ybXMgLSBBbmRyb2lkLCBDaHJv
-bWUgYW5kIFRpemVuIC0KPiA+PiB3aGljaCB3b3VsZCB1c2UgT3Blbk1BWC9HU3RyZWFtbWVyIGZv
-ciBNdWx0aW1lZGlhIGFuZCBYIG9yCj4gPj4gV2F5bGFuZC9TdXJmYWNlRmxpbmdlciBmb3IgRGlz
-cGxheS4KPiA+Cj4gPiBZZXMsIHRoYXQncyB0aGUgdXNlIGNhc2UuIFdoZXJlIGlzIHRoZSBwcm9i
-bGVtIGluIG1ha2luZyB0aGlzIGhhcHBlbj8gdjRsCj4gPiBjYW4gaW1wb3J0IGRtYS1idWZzLCBk
-cm0gY2FuIGV4cG9ydCB0aGVtLCBhbmQgdGhlcmUncyBwbGVudHkgZGV2aWNlcwo+ID4gc2hpcHBp
-bmcgKGFmYWlrKSB0aGF0IG1ha2UgdXNlIG9mIGV4YWN0IHRoaXMgcGlwZWxpbmUuIENhbiB5b3Ug
-cGxzIGV4cGxhaW4KPiA+IHdoYXQgcHJvYmxlbSB5b3UndmUgaGl0IHRyeWluZyB0byBtYWtlIHRo
-aXMgd29yayBvbiBleHlub3M/Cj4gCj4gTm8gcHJvYmxlbSBidXQganVzdCBtYWtlIGl0IGNvbXBs
-aWNhdGVkIGFzIEkgbWVudGlvbmVkIGFib3ZlIC0gdGhlCj4gc3RyZWFtIG9wZXJhdGlvbnMgLSBT
-X0ZNVCwgUkVRQlVGLCBRVUFSWUJVRiwgUUJVRiwgU1RSRUFNIE9OIGFuZCBEUUJVRgo+IG9mIFY0
-TDIgd291bGQgbmV2ZXIgYmUgc2ltcGxlIGFzIERSTS4gIERvIHlvdSB0aGluayBNMk0gZGV2aWNl
-IHNob3VsZCBiZQo+IGNvbnRyb2xsZWQgYnkgVjRMMiBpbnRlcmZhY2VzPyBhbmQgZXZlbiAyRCBh
-Y2NlbGVyYXRvcj8gQXMgbG9uZyBhcyBJCj4ga25vdywgVGhlIEdyYXBoaWNzIGNhcmQgb24gRGVz
-a3RvcCBoYXMgYWxsIGRldmljZXMgc3VjaCBhcyAyRC8zRCBHUFUsIEhXCj4gVmlkZW8gY29kZWMg
-YW5kIERpc3BsYXkgY29udHJvbGxlciwgYW5kIHRoZXNlIGRldmljZXMgYXJlIGNvbnRyb2xsZWQg
-YnkKPiBEUk0gaW50ZXJmYWNlcy4gU28gd2UgLSBBUk0gRXh5bm9zIC0gYXJlIHRyeWluZyB0byBt
-b3ZlIHRoZXNlIHRoaW5ncyB0bwo+IERSTSB3b3JsZCBhbmQgYWxzbyB0cnlpbmcgdG8gaW1wbGVt
-ZW50IG1vcmUgY29udmVuaWVudCBpbnRlcmZhY2VzIGxpa2UKPiBNYXJlayBkaWQuCgpUaGlzIGlz
-IGEgbWlzY29uY2VwdGlvbiwgdGhlcmUncyBub3RoaW5nIGluIHRoZSBkcm0gd29ybGQgcmVxdWly
-aW5nIHRoYXQKZXZlcnl0aGluZyBpcyB1bmRlciB0aGUgc2FtZSBkcm0gZGV2aWNlLiBBbGwgdGhl
-IHdvcmsgd2UndmUgZG9uZSBvdmVyIHRoZQpwYXN0IHllYXJzIChkbWEtYnVmLCByZXNlcnZhdGlv
-bnMsIGZlbmNlLCBwcmltZSwgY2hhbmdlcyBpbiBYLm9yZyBhbmQKd2F5bGFuZCkgYXJlIF9hbGxf
-IHRvIG1ha2UgaXQgcG9zc2libGUgdG8gaGF2ZSBhIGdmeCBkZXZpY2UgY29uc2lzdGluZyBvZgpt
-dWx0aXBsZSBkcm0vdjRsL3doYXRldmVyIGVsc2Ugbm9kZXMuIEVzcGVjaWFsbHkgZm9yIGEgU29D
-IG1vdmluZyBiYWNrIHRvCmZha2UtaW50ZWdyYXRpbmcgc3R1ZmYgcmVhbGx5IGlzbid0IGEgZ29v
-ZCBpZGVhIEkgdGhpbmsuCgpBbmQgd3J0IGRybSBiZWluZyBzaW1wbGVyIHRoYW4gdjRsIC0gSSBk
-b24ndCB0aGluayBkcm0gaXMgYW55IHNpbXBsZXIsIGF0CmVsYXN0IGlmIHlvdSBsb29rIGF0IHNv
-bWUgb2YgdGhlIG1vcmUgZmVhdHVyZS1mdWxsIHJlbmRlciBkcml2ZXJzLgotRGFuaWVsCi0tIApE
-YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
-YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+Hi Chanwoo,
+
+2016-08-24 22:49 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+> This patch supports the multiple IORESOURCE_MEM resources for one pin-bank.
+> In the pre-existing Exynos series, the registers of the gpio bank are included
+> in the one memory map. But, some gpio bank need to support the one more memory
+> map (IORESOURCE_MEM) because the registers of gpio bank are located in
+> the different memory map.
+
+Please see my comments inline.
+
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> index 6db16b90873a..37bc692445d4 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> @@ -94,6 +94,11 @@ Required Properties:
+>    pin configuration should use the bindings listed in the "pinctrl-bindings.txt"
+>    file.
+>
+> +Optional Properties:
+> +- reg: Second base address of the pin controller hardware module and length of
+> +  the address space it occupies if the specific register of the pin controller
+> +  are located in the different base address.
+> +
+
+I believe it should be required for certain controllers instead. So it
+should be moved to required properties and a list of compatible string
+and controller indices that need this second entry added. It should be
+also precisely stated what are the first and second entry supposed to
+point to for given controllers.
+
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> index 0f0f7cedb2dc..865a84c32fdc 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> @@ -56,7 +56,9 @@
+>                 .pctl_offset    = reg,                  \
+>                 .nr_pins        = pins,                 \
+>                 .eint_type      = EINT_TYPE_NONE,       \
+> -               .name           = id                    \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = 0,                    \
+> +               .eint_res_idx   = 0                     \
+
+No need to explicitly initialize to 0.
+
+>         }
+>
+>  #define EXYNOS_PIN_BANK_EINTG(pins, reg, id, offs)     \
+> @@ -66,7 +68,9 @@
+>                 .nr_pins        = pins,                 \
+>                 .eint_type      = EINT_TYPE_GPIO,       \
+>                 .eint_offset    = offs,                 \
+> -               .name           = id                    \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = 0,                    \
+> +               .eint_res_idx   = 0                     \
+
+Ditto.
+
+>         }
+>
+>  #define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs)     \
+> @@ -76,7 +80,44 @@
+>                 .nr_pins        = pins,                 \
+>                 .eint_type      = EINT_TYPE_WKUP,       \
+>                 .eint_offset    = offs,                 \
+> -               .name           = id                    \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = 0,                    \
+> +               .eint_res_idx   = 0                     \
+
+Ditto.
+
+> +       }
+> +
+> +#define EXYNOS_PIN_BANK_EINTN_EXT(pins, reg, id, pctl_idx, eint_idx)   \
+> +       {                                               \
+> +               .type           = &bank_type_off,       \
+> +               .pctl_offset    = reg,                  \
+> +               .nr_pins        = pins,                 \
+> +               .eint_type      = EINT_TYPE_NONE,       \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = pctl_idx,             \
+> +               .eint_res_idx   = eint_dix              \
+> +       }
+
+Your patch 4/7 doesn't seem to use this one, so this is dead code for
+the time being. Please add when there is real need for it.
+
+Also it doesn't really make much sense to have index for both pctl and
+eint. Please define first entry of regs property as always pointing to
+pctl registers and by also eint registers for usual controllers. Then
+second regs entry would be eint registers for controllers with
+separate register blocks. Then there is only a need to have
+eint_res_idx in the driver and no need for pctl_res_idx, because it
+would be always 0.
+
+> +
+> +#define EXYNOS_PIN_BANK_EINTG_EXT(pins, reg, id, offs, pctl_idx, eint_idx) \
+> +       {                                               \
+> +               .type           = &bank_type_off,       \
+> +               .pctl_offset    = reg,                  \
+> +               .nr_pins        = pins,                 \
+> +               .eint_type      = EINT_TYPE_GPIO,       \
+> +               .eint_offset    = offs,                 \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = pctl_idx,             \
+> +               .eint_res_idx   = eint_idx              \
+> +       }
+
+Ditto.
+
+> +
+> +#define EXYNOS_PIN_BANK_EINTW_EXT(pins, reg, id, offs, pctl_idx, eint_idx) \
+> +       {                                               \
+> +               .type           = &bank_type_alive,     \
+> +               .pctl_offset    = reg,                  \
+> +               .nr_pins        = pins,                 \
+> +               .eint_type      = EINT_TYPE_WKUP,       \
+> +               .eint_offset    = offs,                 \
+> +               .name           = id,                   \
+> +               .pctl_res_idx   = pctl_idx,             \
+> +               .eint_res_idx   = eint_idx              \
+>         }
+>
+>  /**
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 513fe6b23248..f63f7608aef6 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -338,6 +338,7 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+>                         struct samsung_pin_bank **bank)
+>  {
+>         struct samsung_pin_bank *b;
+> +       unsigned int pctl_res_idx;
+>
+>         b = drvdata->pin_banks;
+>
+> @@ -345,7 +346,8 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+>                         ((b->pin_base + b->nr_pins - 1) < pin))
+>                 b++;
+>
+> -       *reg = drvdata->virt_base + b->pctl_offset;
+> +       pctl_res_idx = b->pctl_res_idx;
+> +       *reg = drvdata->virt_base[pctl_res_idx] + b->pctl_offset;
+
+I suggested something slightly different. Instead of
+bank::pctl_res_idx, I proposed bank::pctl_base.
+bank_info::pctl_res_idx would be specified only in init driver data
+and bank::pctl_base would be calculated at probe time as
+drvdata->virt_base[bank_info->pctl_res_idx] + bank_info->pctl_offset.
+This would eliminate the need to do any indexing and adding further in
+the code and make things simpler.
+
+Taking my other comments above, pctl part would be unchanged and only
+eint addresses and offsets would be affected.
+
+>
+> +       d->virt_base = devm_kzalloc(&pdev->dev, sizeof(void __iomem) *
+> +                               (ctrl->nr_ext_resources + 1), GFP_KERNEL);
+> +       if (!d->virt_base)
+> +               return NULL;
+
+Can we just define SAMSUNG_PiNCTRL_NUM_EXT_RESOURCES to 2 and have a
+static array?
+
+Also error code information is lost here by returning NULL.
+
+> +
+> +       for (j = 0 ; j < ctrl->nr_ext_resources + 1; j++) {
+> +               res = platform_get_resource(pdev, IORESOURCE_MEM, j);
+> +               d->virt_base[j] = devm_ioremap_resource(&pdev->dev, res);
+> +               if (IS_ERR(d->virt_base[j]))
+> +                       return NULL;
+
+This causes the error code information to be lost. Error
+
+> +       }
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +       if (res)
+> +               d->irq = res->start;
+> +
+
+Also why all the code above was moved out of samsung_pinctrl_probe()?
+
+Best regards,
+Tomasz
