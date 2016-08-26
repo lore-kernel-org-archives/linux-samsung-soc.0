@@ -1,69 +1,148 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
- Exynos5433-based TM2 board
-Date: Fri, 26 Aug 2016 19:11:33 +0200
-Message-ID: <20160826171133.GA18773@kozik-book>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH v2 5/7] arm64: dts: exynos: Add dts files for Samsung
+ Exynos5433 64bit SoC
+Date: Fri, 26 Aug 2016 13:49:21 -0400
+Message-ID: <4341f429-64a9-b14c-aeca-d61aac2ee81d@osg.samsung.com>
 References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
- <20160826163236.GC15511@kozik-book>
+ <1472046551-703-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160826163236.GC15511@kozik-book>
+In-Reply-To: <1472046551-703-6-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 26, 2016 at 06:32:36PM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
-> > This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
-> > This board fully support the all things for mobile target.
-> > 
-> > This patch supports the following devices:
-> > 1. basic SoC
-> > - Initial booting for Samsung Exynos5433 SoC
-> > - DRAM LPDDR3 (3GB)
-> > - eMMC (32GB)
-> > - ARM architecture timer
-> > 
-> > 2. power management devices
-> > - Sasmung S2MPS13 PMIC for the power supply
-> > - CPUFREQ for big.LITTLE cores
-> > - TMU for big.LITTLE cores and GPU
-> > - ADC with thermistor to measure the temperature of AP/Battery/Charger
-> > - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
-> > 
-> > 3. sound devices
-> > - I2S for sound bus
-> > - LPASS for sound power control
-> > - Wolfson WM5110 for sound codec
-> > - Maxim MAX98504 for speaker amplifier
-> > - TM2 ASoC Machine device driver node
-> > 
-> > 3. display devices
-> > - DECON, DSI and MIC for the panel output
-> > 
-> > 4. usb devices
-> > - USB 3.0 DRD (Dual Role Device)
-> > - USB 3.0 Host controller
-> > 
-> > 5. storage devices
-> > - MSHC (Mobile Storae Host Controller) for eMMC device
-> 
-> Not fixed. Mobile Storage.
-> 
-> Everything else looks fine, so fix above only if you are going to resend
-> everything. If there won't be resend, I can fix it when applying.
+Hello Chanwoo,
 
-Ah, I saw the kbuild report. The patchset needs a resend fixing this -
-spit the makefile change into two.
+The patch looks good to me, I just have a few minor comments:
 
+On 08/24/2016 09:49 AM, Chanwoo Choi wrote:
+
+[snip]
+
+> +
+> +	reboot: syscon-reboot {
+> +		compatible = "syscon-reboot";
+> +		regmap = <&pmu_system_controller>;
+> +		offset = <0x400>;
+
+Maybe adding a comment that the register is SWRESET to be consistent with the
+arm32 Exynos node definition in arch/arm/boot/dts/exynos-syscon-restart.dtsi?
+
+[snip]
+
+> +
+> +		tmu_atlas0: tmu@10060000 {
+> +			compatible = "samsung,exynos5433-tmu";
+> +			reg = <0x10060000 0x200>;
+> +			interrupts = <0 95 0>;
+
+For some interrupts definitions, you are using the GIC interrupt type macros
+while for others like this you are using the constant numbers. I think would
+be better to use the macros consistently (i.e: interrupts = <GIC_SPI 95 0>).
+
+[snip]
+
+> +		mipi_phy: video-phy@105C0708 {
+> +			compatible = "samsung,exynos5433-mipi-video-phy";
+> +			#phy-cells = <1>;
+> +			samsung,pmu-syscon = <&pmu_system_controller>;
+> +			samsung,cam0-sysreg = <&syscon_cam0>;
+> +			samsung,cam1-sysreg = <&syscon_cam1>;
+> +			samsung,disp-sysreg = <&syscon_disp>;
+> +		};
+
+This node has a unit name but it doesn't have a reg property so dtc will
+warn about the mismatch when executed with W=1.
+
+[snip]
+
+> +		usbdrd30: usb@15400000 {
+> +			compatible = "samsung,exynos5250-dwusb3";
+> +			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
+> +				<&cmu_fsys CLK_SCLK_USBDRD30>;
+> +			clock-names = "usbdrd30", "usbdrd30_susp_clk";
+> +			assigned-clocks =
+> +				<&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
+> +				<&cmu_top CLK_MOUT_SCLK_USBDRD30>,
+> +				<&cmu_top CLK_DIV_SCLK_USBDRD30>;
+> +			assigned-clock-parents =
+> +				<&cmu_top CLK_SCLK_USBDRD30_FSYS>,
+> +				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
+> +			assigned-clock-rates = <0>, <0>, <66700000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			status = "disabled";
+> +
+
+Ditto, the node has unit address but no reg property.
+
+> +			dwc3 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0x15400000 0x10000>;
+
+Ditto, the node doesn't have a unit address but has reg property.
+
+> +				interrupts = <0 231 0>;
+> +				phys = <&usbdrd30_phy 0>, <&usbdrd30_phy 1>;
+> +				phy-names = "usb2-phy", "usb3-phy";
+> +			};
+> +		};
+> +
+> +
+> +		usbhost30: usb@15a00000 {
+> +			compatible = "samsung,exynos5250-dwusb3";
+> +			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
+> +				<&cmu_fsys CLK_SCLK_USBHOST30>;
+> +			clock-names = "usbdrd30", "usbdrd30_susp_clk";
+> +			assigned-clocks =
+> +				<&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
+> +				<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+> +				<&cmu_top CLK_DIV_SCLK_USBHOST30>;
+> +			assigned-clock-parents =
+> +				<&cmu_top CLK_SCLK_USBHOST30_FSYS>,
+> +				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
+> +			assigned-clock-rates = <0>, <0>, <66700000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			status = "disabled";
+> +
+
+Ditto, the node has unit address but no reg property.
+
+> +			usbdrd_dwc3_0: dwc3 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0x15a00000 0x10000>;
+
+Ditto, the node doesn't have a unit address but has reg property.
+
+> +				interrupts = <0 244 0>;
+> +				phys = <&usbhost30_phy 0>, <&usbhost30_phy 1>;
+> +				phy-names = "usb2-phy", "usb3-phy";
+> +			};
+> +		};
+> +
+
+[snip]
+
+> +		audio-subsystem {
+> +			compatible = "samsung,exynos5433-lpass";
+> +			reg = <0x11400000 0x100>, <0x11500000 0x08>;
+
+Ditto, the node doesn't have a unit address but has reg property.
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
 Best regards,
-Krzysztof
-
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
