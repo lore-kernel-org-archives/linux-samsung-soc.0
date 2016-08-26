@@ -1,41 +1,71 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
+From: Chanwoo Choi <chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
  Exynos5433-based TM2 board
-Date: Fri, 26 Aug 2016 14:35:20 -0400
-Message-ID: <f6b8a04e-0bb0-59d8-55c7-7aa04d284e48@osg.samsung.com>
+Date: Sat, 27 Aug 2016 05:46:30 +0900
+Message-ID: <CAGTfZH2M1LD+cE3shcr2RMC-0PVkkjzqUZ7ORjvq=CNmHg6T+w@mail.gmail.com>
 References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
- <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
+ <1472046551-703-7-git-send-email-cw00.choi@samsung.com> <20160826163236.GC15511@kozik-book>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36236
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbcHZSft (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Aug 2016 14:35:49 -0400
-In-Reply-To: <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160826163236.GC15511@kozik-book>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang@sam
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
 
-On 08/26/2016 02:30 PM, Javier Martinez Canillas wrote:
+HI Krzysztof,
 
-[snip]
+2016-08-27 1:32 GMT+09:00 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+> On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
+>> This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
+>> This board fully support the all things for mobile target.
+>>
+>> This patch supports the following devices:
+>> 1. basic SoC
+>> - Initial booting for Samsung Exynos5433 SoC
+>> - DRAM LPDDR3 (3GB)
+>> - eMMC (32GB)
+>> - ARM architecture timer
+>>
+>> 2. power management devices
+>> - Sasmung S2MPS13 PMIC for the power supply
+>> - CPUFREQ for big.LITTLE cores
+>> - TMU for big.LITTLE cores and GPU
+>> - ADC with thermistor to measure the temperature of AP/Battery/Charger
+>> - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
+>>
+>> 3. sound devices
+>> - I2S for sound bus
+>> - LPASS for sound power control
+>> - Wolfson WM5110 for sound codec
+>> - Maxim MAX98504 for speaker amplifier
+>> - TM2 ASoC Machine device driver node
+>>
+>> 3. display devices
+>> - DECON, DSI and MIC for the panel output
+>>
+>> 4. usb devices
+>> - USB 3.0 DRD (Dual Role Device)
+>> - USB 3.0 Host controller
+>>
+>> 5. storage devices
+>> - MSHC (Mobile Storae Host Controller) for eMMC device
+>
+> Not fixed. Mobile Storage.
+>
+> Everything else looks fine, so fix above only if you are going to resend
+> everything. If there won't be resend, I can fix it when applying.
 
->> +
->> +			buck3_reg: BUCK3 {
->> +				regulator-name = "VDD_KFC_1.0V_AP";
-> 
-> Same, maybe using "VDD_APL_1.0V_AP" since the big cluster is Apollo?
-> 
+Sorry for that. My mistake. Just I fixed the 'Mobile'.
+I'll fix it and then resend it.
 
-I meant s/big/LITTLE here of course, sorry for the typo.
+>
+> For the record:
+> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Thanks for the review.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
