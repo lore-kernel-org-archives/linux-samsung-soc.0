@@ -1,136 +1,67 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 5/7] arm64: dts: exynos: Add dts files for Samsung
- Exynos5433 64bit SoC
-Date: Fri, 26 Aug 2016 18:14:42 +0200
-Message-ID: <20160826161442.GB15511@kozik-book>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
+ Exynos5433-based TM2 board
+Date: Fri, 26 Aug 2016 18:32:36 +0200
+Message-ID: <20160826163236.GC15511@kozik-book>
 References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-6-git-send-email-cw00.choi@samsung.com>
+ <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1472046551-703-6-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
+In-Reply-To: <1472046551-703-7-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 24, 2016 at 10:49:09PM +0900, Chanwoo Choi wrote:
-> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
-> Octa-core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
-> PSCI (Power State Coordination Interface) v0.1.
+On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
+> This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
+> This board fully support the all things for mobile target.
 > 
-> This patch includes following Device Tree node to support Exynos5433 SoC:
-> 1. Octa cores for big.LITTLE architecture
-> - Cortex-A53 LITTLE Quad-core
-> - Cortex-A57 big Quad-core
-> - Support PSCI v0.1
+> This patch supports the following devices:
+> 1. basic SoC
+> - Initial booting for Samsung Exynos5433 SoC
+> - DRAM LPDDR3 (3GB)
+> - eMMC (32GB)
+> - ARM architecture timer
 > 
-> 2. Clock controller node
-> - CMU_TOP   : clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
-> - CMU_CPIF  : clocks for LLI (Low Latency Interface)
-> - CMU_MIF   : clocks for DRAM Memory Controller
-> - CMU_PERIC : clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS
-> - CMU_PERIS : clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC
-> - CMU_FSYS  : clocks for USB/UFS/SDMMC/TSI/PDMA
-> - CMU_G2D   : clocks for G2D/MDMA
-> - CMU_DISP  : clocks for DECON/HDMI/DSIM/MIXER
-> - CMU_AUD   : clocks for Cortex-A5/BUS/AUDIO
-> - CMU_BUS{0|1|2} : clocks for global data buses and global peripheral buses
-> - CMU_G3D   : clocks for 3D Graphics Engine
-> - CMU_GSCL  : clocks for GSCALER
-> - CMU_APOLLO: clocks for Cortex-A53 Quad-core processor.
-> - CMU_ATLAS : clocks for Cortex-A57 Quad-core processor,
->               CoreSight and L2 cache controller.
-> - CMU_MSCL  : clocks for M2M (Memory to Memory) scaler and JPEG IPs.
-> - CMU_MFC   : clocks for MFC (Multi-Format Codec) IP.
-> - CMU_HEVC  : clocks for HEVC(High Efficiency Video Codec) decoder IP.
-> - CMU_ISP   : clocks for FIMC-ISP/DRC/SCLC/DIS/3DNR IPs.
-> - CMU_CAM0  : clocks for MIPI_CSIS{0|1}/FIMC_LITE_{A|B|D}/FIMC_3AA{0|1} IPs.
-> - CMU_CAM1  : clocks for COrtex-A5/MIPI_CSIS2/FIMC_LITE_C/FIMC-FD IPs.
+> 2. power management devices
+> - Sasmung S2MPS13 PMIC for the power supply
+> - CPUFREQ for big.LITTLE cores
+> - TMU for big.LITTLE cores and GPU
+> - ADC with thermistor to measure the temperature of AP/Battery/Charger
+> - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
 > 
-> 3. pinctrl node for GPIO
-> - alive/aud/cpif/ese/finger/fsys/imem/nfc/peric/touch pad
+> 3. sound devices
+> - I2S for sound bus
+> - LPASS for sound power control
+> - Wolfson WM5110 for sound codec
+> - Maxim MAX98504 for speaker amplifier
+> - TM2 ASoC Machine device driver node
 > 
-> 4. Timer
-> - ARM architecture timer (armv8-timer)
-> - MCT (Multi Core Timer) timer
+> 3. display devices
+> - DECON, DSI and MIC for the panel output
 > 
-> 5. Interrupt controller (GIC-400)
-> 
-> 6. BUS devices
-> - HS-I2C (High-Speed I2C) device
-> - SPI (Serial Peripheral Interface) device
-> 
-> 7. Sound devices
-> - I2S bus
-> - LPASS (Low Power Audio Subsystem)
-> 
-> 8. Power management devices
-> - CPUFREQ for for Cortex-A53/A57
-> - TMU (Thermal Management Unit) for Cortex-A53/A57, G3D, ISP
-> 
-> 9. Display controller devices
-> - DECON (Display and enhancement controller) for panel output
-> - DSI (Display Serial Interface)
-> - MIC (Mobile Image Compressor)
-> 
-> 10. USB
-> - USB 3.0 DRD (Dual Role Device) controller
+> 4. usb devices
+> - USB 3.0 DRD (Dual Role Device)
 > - USB 3.0 Host controller
 > 
-> 11. Storage devices
-> - MSHC (Mobile Stoarage Host Controller)
-> 
-> 12. Misc devices
-> - UART device
-> - ADC (Analog Digital Converter)
-> - PWM (Pulse Width Modulation)
-> - ADMA (Advanced DMA) and PDMA (Peripheral DMA)
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Inha Song <ideal.song@samsung.com>
-> Signed-off-by: Ingi kim <ingi2.kim@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  792 ++++++++++++
->  .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi |   23 +
->  .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |   22 +
->  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     |  306 +++++
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 1327 ++++++++++++++++++++
->  5 files changed, 2470 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> 5. storage devices
+> - MSHC (Mobile Storae Host Controller) for eMMC device
 
-I got only one question:
+Not fixed. Mobile Storage.
 
- +
-> +		cooling-maps {
-> +			map0 {
-> +				/* Set maximum frequency as 1300MHz  */
-> +				trip = <&apollo_alert_0>;
-> +				cooling-device = <&cpu0 0 0>;
+Everything else looks fine, so fix above only if you are going to resend
+everything. If there won't be resend, I can fix it when applying.
 
-Is cooling level=0 really a cooling level? I think it does nothing so it
-should be just removed.
+For the record:
+Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-The same for big cluster.
-
-Rest looks good.
-
-BR,
+Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
