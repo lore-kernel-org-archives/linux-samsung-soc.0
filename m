@@ -1,24 +1,32 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as reviewer for Samsung Exynos
- support
-Date: Fri, 26 Aug 2016 17:23:34 +0200
-Message-ID: <6ea9d132-5629-5e72-f209-b9b9faca239e@samsung.com>
-References: <1472137008-17751-1-git-send-email-javier@osg.samsung.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RESEND PATCH v3 1/3] ARM: dts: DRA7: Add "linux,pci-domain"
+ property for pci dt nodes
+Date: Fri, 26 Aug 2016 08:30:35 -0700
+Message-ID: <20160826153035.h6uyplc4mjlbc3v3@atomide.com>
+References: <1470832400-11929-1-git-send-email-kishon@ti.com>
+ <1470832400-11929-2-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1472137008-17751-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46441 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753842AbcHZPak (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 26 Aug 2016 11:30:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1470832400-11929-2-git-send-email-kishon@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Russell King <linux@armlinux.org.uk>, Benoit Cousson <bcousson@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Santosh Shilimkar <ssantosh@kernel.o>
 
-On 08/25/2016 04:56 PM, Javier Martinez Canillas wrote:
-> I've been helping reviewing and testing Exynos SoC support patches
-> for the last couple of years. But it would be easier for me if I'm
-> cc'ed for patches, so I'm adding myself as reviewer for this entry.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+* Kishon Vijay Abraham I <kishon@ti.com> [160810 05:34]:
+> Since DRA7 has multiple PCIe Rootcomplex, add "linux,pci-domain"
+> property to assign a PCI domain number to each of the host
+> bridges.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Is this patch safe to apply without the other changes?
+
+Regards,
+
+Tony
