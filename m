@@ -1,71 +1,72 @@
-From: Chanwoo Choi <chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
- Exynos5433-based TM2 board
-Date: Sat, 27 Aug 2016 05:46:30 +0900
-Message-ID: <CAGTfZH2M1LD+cE3shcr2RMC-0PVkkjzqUZ7ORjvq=CNmHg6T+w@mail.gmail.com>
-References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com> <20160826163236.GC15511@kozik-book>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block
+ 800Mhz on exynos5422-odroidxu3
+Date: Sat, 27 Aug 2016 18:33:10 +0200
+Message-ID: <20160827163310.GA8616@kozik-book>
+References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
+ <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160826163236.GC15511@kozik-book>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang@sam
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-HI Krzysztof,
+On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
+> This patch sets the clock rate for DREX (DRAM Express) block
+> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
+> DRAM clocks use BPLL clock and CMU_CDREX generates
+> the 800MHz DRAM clock.
+> 
 
-2016-08-27 1:32 GMT+09:00 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
->> This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
->> This board fully support the all things for mobile target.
->>
->> This patch supports the following devices:
->> 1. basic SoC
->> - Initial booting for Samsung Exynos5433 SoC
->> - DRAM LPDDR3 (3GB)
->> - eMMC (32GB)
->> - ARM architecture timer
->>
->> 2. power management devices
->> - Sasmung S2MPS13 PMIC for the power supply
->> - CPUFREQ for big.LITTLE cores
->> - TMU for big.LITTLE cores and GPU
->> - ADC with thermistor to measure the temperature of AP/Battery/Charger
->> - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
->>
->> 3. sound devices
->> - I2S for sound bus
->> - LPASS for sound power control
->> - Wolfson WM5110 for sound codec
->> - Maxim MAX98504 for speaker amplifier
->> - TM2 ASoC Machine device driver node
->>
->> 3. display devices
->> - DECON, DSI and MIC for the panel output
->>
->> 4. usb devices
->> - USB 3.0 DRD (Dual Role Device)
->> - USB 3.0 Host controller
->>
->> 5. storage devices
->> - MSHC (Mobile Storae Host Controller) for eMMC device
+>From the commit message I don't get two things:
+1. Why setting this on XU3-family of boards, not all 542x/5800?
+2. Why this is needed? The commit msg lacks the answer to the "why".
+
+> [clk_summary on exynos5422-odroidxu3 board]
+> fout_bpll                             0            0   800000000          0 0
+>     mout_bpll                          0            0   800000000          0 0
+>        mout_mclk_cdrex                 0            0   800000000          0 0
+>           dout_pclk_core_mem           0            0   200000000          0 0
+>           dout_sclk_cdrex              0            0   800000000          0 0
 >
-> Not fixed. Mobile Storage.
->
-> Everything else looks fine, so fix above only if you are going to resend
-> everything. If there won't be resend, I can fix it when applying.
 
-Sorry for that. My mistake. Just I fixed the 'Mobile'.
-I'll fix it and then resend it.
+What is the purpose of this dump of clk_summary? Is it a state before or
+after the change? After it is quite obvious that it should have
+800MHz...
 
->
-> For the record:
-> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Best regards,
+Krzysztof
 
-Thanks for the review.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index d56253049ccb..fd3f67c72039 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -229,6 +229,11 @@
+>  	status = "okay";
+>  };
+>  
+> +&clock {
+> +	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
+> +	assigned-clock-rates = <800000000>;
+> +};
+> +
+>  &clock_audss {
+>  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+>  			<&clock_audss EXYNOS_MOUT_I2S>,
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
