@@ -1,72 +1,52 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block
- 800Mhz on exynos5422-odroidxu3
-Date: Sat, 27 Aug 2016 18:33:10 +0200
-Message-ID: <20160827163310.GA8616@kozik-book>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
- <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: [PATCH 0/4 v3] Add a new board TOPEET iTOP for exynos 4412
+Date: Sun, 28 Aug 2016 19:21:05 +0800
+Message-ID: <1472383269-3126-1-git-send-email-ayaka@soulik.info>
+References: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA@mail.gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
-> This patch sets the clock rate for DREX (DRAM Express) block
-> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
-> DRAM clocks use BPLL clock and CMU_CDREX generates
-> the 800MHz DRAM clock.
-> 
+The added the audio codec seems work now, but the audio sounds
+still a little different to the original. But I didn't hear the sound
+in the Android, I don't know whether it is qualified.
 
->From the commit message I don't get two things:
-1. Why setting this on XU3-family of boards, not all 542x/5800?
-2. Why this is needed? The commit msg lacks the answer to the "why".
+Also it lacks of full pinctrl for the sleep state.
 
-> [clk_summary on exynos5422-odroidxu3 board]
-> fout_bpll                             0            0   800000000          0 0
->     mout_bpll                          0            0   800000000          0 0
->        mout_mclk_cdrex                 0            0   800000000          0 0
->           dout_pclk_core_mem           0            0   200000000          0 0
->           dout_sclk_cdrex              0            0   800000000          0 0
->
+Changelog:
+ - v3:
+   - fixing the rtc clock, using clock source from PMIC
+   - enable the tmu
+   - enable the fimc for elite board
+   - suuport the audio codec at elite board
+   - fixing minor bugs in the last commit
+ - v2:
+   - removing rtc node
+     the clock source driver is not done yet.
+   - adding exynos-bus
+   - fixing the MFC
 
-What is the purpose of this dump of clk_summary? Is it a state before or
-after the change? After it is quite obvious that it should have
-800MHz...
+Randy Li (4):
+  ARM: dts: Add TOPEET itop core board SCP package version
+  ARM: dts: add TOPEET itop elite based board
+  ARM: dts: add fimc support in exynos4412 TOPEET iTop Elite board
+  ARM: dts: samsung: add analog audio codec on TOPEET iTop 4412 Elite
 
-Best regards,
-Krzysztof
+ .../bindings/arm/samsung/samsung-boards.txt        |   3 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 241 ++++++++++
+ arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    | 489 +++++++++++++++++++++
+ 4 files changed, 734 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index d56253049ccb..fd3f67c72039 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -229,6 +229,11 @@
->  	status = "okay";
->  };
->  
-> +&clock {
-> +	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
-> +	assigned-clock-rates = <800000000>;
-> +};
-> +
->  &clock_audss {
->  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->  			<&clock_audss EXYNOS_MOUT_I2S>,
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
