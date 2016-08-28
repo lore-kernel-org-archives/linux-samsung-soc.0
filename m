@@ -1,211 +1,129 @@
-From: Randy Li <ayaka@soulik.info>
-Subject: [PATCH 2/4] ARM: dts: add TOPEET itop elite based board
-Date: Sun, 28 Aug 2016 19:21:07 +0800
-Message-ID: <1472383269-3126-3-git-send-email-ayaka@soulik.info>
+From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: [PATCH 4/4] ARM: dts: samsung: add analog audio codec on TOPEET iTop 4412 Elite
+Date: Sun, 28 Aug 2016 19:21:09 +0800
+Message-ID: <1472383269-3126-5-git-send-email-ayaka@soulik.info>
 References: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA@mail.gmail.com>
  <1472383269-3126-1-git-send-email-ayaka@soulik.info>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472383269-3126-1-git-send-email-ayaka@soulik.info>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, Randy Li <ayaka@soulik.info>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1472383269-3126-1-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The TOPEET itop exynos 4412 have three versions base board. The
-Elite version is the cheap one without too much peripheral devices
-on it.
+Enable the WM8960 analog audio codec on TOPEET iTop 4412 Elite board.
 
-Currently supported are serial console, wired networking(USB),
-USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
-PWM beeper, ADC and LEDs.
-
-Signed-off-by: Randy Li <ayaka@soulik.info>
+Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 ---
- .../bindings/arm/samsung/samsung-boards.txt        |   3 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/exynos4412-itop-elite.dts        | 148 +++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+ arch/arm/boot/dts/exynos4412-itop-elite.dts | 77 +++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-index 0ea7f14..c7159ac 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-@@ -22,6 +22,9 @@ Required root node properties:
-   * FriendlyARM
- 	- "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
- 				    TINY4412 board.
-+  * TOPEET
-+	- "topeet,itop4412-elite" - for Exynos4412-based TOPEET
-+                                    Elite base board.                             
- 
-   * Google
- 	- "google,pi"		- for Exynos5800-based Google Peach Pi
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 48e1d4e..8f47aa0 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -135,6 +135,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
- 	exynos4412-origen.dtb \
- 	exynos4412-smdk4412.dtb \
- 	exynos4412-tiny4412.dtb \
-+	exynos4412-itop-elite.dtb \
- 	exynos4412-trats2.dtb
- dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5250-arndale.dtb \
 diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-new file mode 100644
-index 0000000..5688589
---- /dev/null
+index 2d11b9a..e1cda54 100644
+--- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
 +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -0,0 +1,148 @@
-+/*
-+ * TOPEET's Exynos4412 based itop board device tree source
-+ *
-+ * Copyright (c) 2016 SUMOMO Computer Association
-+ *			https://www.sumomo.mobi
-+ *			Randy Li <ayaka@soulik.info>
-+ *			
-+ * Device tree source file for TOPEET iTop Exynos 4412 core board 
-+ * which is based on Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+@@ -15,6 +15,7 @@
+ 
+ /dts-v1/;
+ #include "exynos4412-itop-scp-core.dtsi"
++#include <dt-bindings/sound/samsung-i2s.h>
+ 
+ / {
+ 	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
+@@ -75,6 +76,54 @@
+ 			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
 +
-+/dts-v1/;
-+#include "exynos4412-itop-scp-core.dtsi"
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "wm-sound";
 +
-+/ {
-+	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
-+	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
++		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
++				<&clock_audss EXYNOS_MOUT_I2S>,
++				<&clock_audss EXYNOS_DOUT_SRP>,
++				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
++				<&clock_audss EXYNOS_MOUT_AUDSS>;
++		assigned-clock-rates = <0>,
++				<0>,
++				<112896000>,
++				<11289600>;
 +
-+	chosen {
-+		bootargs ="console=ttySAC2,115200 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait";
-+		stdout-path = &serial_2;
-+	};
-+	
-+	leds {
-+		compatible = "gpio-leds";
-+		
-+		led2 {
-+			label = "red:system";
-+			gpios = <&gpx1 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "heartbeat";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		simple-audio-card,widgets =
++			"Microphone", "Mic Jack",
++			"Line", "Line In",
++			"Line", "Line Out",
++			"Speaker", "Speaker",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HP_L",
++			"Headphone Jack", "HP_R",
++			"Speaker", "SPK_LP",
++			"Speaker", "SPK_LN",
++			"Speaker", "SPK_RP",
++			"Speaker", "SPK_RN",
++			"LINPUT1", "Mic Jack",
++			"LINPUT3", "Mic Jack",
++			"RINPUT1", "Mic Jack",
++			"RINPUT2", "Mic Jack";
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
 +		};
 +
-+		led3 {
-+			label = "red:user";
-+			gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		
-+		home {
-+			label = "GPIO Key Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		back {
-+			label = "GPIO Key Back";
-+			linux,code = <KEY_BACK>;
-+			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		sleep {
-+			label = "GPIO Key Sleep";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		vol_up {
-+			label = "GPIO Key Vol+";
-+			linux,code = <KEY_UP>;
-+			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		vol_down {
-+			label = "GPIO Key Vol-";
-+			linux,code = <KEY_DOWN>;
-+			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&codec>;
++			clocks = <&i2s0 CLK_I2S_CDCLK>;
++			system-clock-frequency = <11289600>;
 +		};
 +	};
-+	
-+	beep {
-+		compatible = "pwm-beeper";
-+		pwms = <&pwm>;
-+		pinctrl-0 = <&pwm0_out>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&pinctrl_1 {
-+	ether-reset {
-+		samsung,pins = "gpc0-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&sdhci_2 {
-+	bus-width = <4>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
+ 	
+ 	beep {
+ 		compatible = "pwm-beeper";
+@@ -143,6 +192,34 @@
+ 	status = "okay";
+ };
+ 
++&i2c_4 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <100000>;
++	pinctrl-0 = <&i2c4_bus>;
 +	pinctrl-names = "default";
-+	cd-gpio = <&gpx0 7 GPIO_ACTIVE_LOW>;
-+	cap-sd-highspeed;
-+	vmmc-supply = <&ldo23_reg>;
-+	vqmmc-supply = <&ldo17_reg>;
 +	status = "okay";
-+};
 +
-+&ehci {
-+	status = "okay";
-+	/* In order to reset USB ethernet */
-+	samsung,vbus-gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
-+
-+	port@0 {
-+		status = "okay";
-+	};
-+
-+	port@2 {
-+		status = "okay";
++	codec: wm8960@1a {
++		compatible = "wlf,wm8960";
++		reg = <0x1a>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "MCLK1";
++		wlf,shared-lrclk;
++		#sound-dai-cells = <0>;
 +	};
 +};
 +
-+&exynos_usbphy {
-+	status = "okay";
-+};
-+
-+&hsotg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&serial_1 {
-+	status = "okay";
-+};
-+
-+&serial_2 {
-+	status = "okay";
-+};
-+
-+&pwm {
-+	pinctrl-0 = <&pwm1_out>;
++&i2s0 {
++	pinctrl-0 = <&i2s0_bus>;
 +	pinctrl-names = "default";
-+	samsung,pwm-outputs = <1>;
 +	status = "okay";
++	clocks = <&clock_audss EXYNOS_I2S_BUS>,
++		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
++		 <&clock_audss EXYNOS_SCLK_I2S>;
++	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
 +};
 +
-+&adc {
-+	vdd-supply = <&ldo3_reg>;
-+	status = "okay";
-+};
+ &pwm {
+ 	pinctrl-0 = <&pwm1_out>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
