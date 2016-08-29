@@ -1,31 +1,81 @@
-From: qidaitai <news@taipeifestival.org>
-Subject: =?UTF-8?B?5r6z6Zeo6YeR5rKZ6ZuG5ZuiIO+8jOaJi+acuuS4i+azqOabtOW/q+aNtw==?=  =?UTF-8?B?77yM57K+5b2p6LWb5LqL5LiN5a6c6ZSZ6L+H77yBKEFEKQ==?=
-Date: Mon, 29 Aug 2016 17:36:04 +0200
-Message-ID: <20160829153604.34B3723A40@srv02.yokohama.domainplatzhalter.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from srv02.yokohama.domainplatzhalter.de ([217.69.68.82]:47976 "EHLO
-        srv02.yokohama.domainplatzhalter.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751303AbcH2QBV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 12:01:21 -0400
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Randy Li <ayaka@soulik.info>
+Subject: [PATCH RFC] ARM: dts: samsung: add rga-lvds panel in itop elite
+Date: Tue, 30 Aug 2016 06:50:02 +0800
+Message-ID: <1472511002-9019-1-git-send-email-ayaka@soulik.info>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org, Randy Li <ayaka@soulik.info>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
+It is actually a lvds panel connected through a rga-lvds bridge.
+But I really have no idea about what does a port mean in fimd node.
 
+Also how should I configure this panel size? I think the i2c found
+on the panel schematic, but it more likely to be used a touch screen
+touth. Also the touch screen is not supported in currently driver.
 
-This message was sent to you because "qidaitai <news@taipeifestival.org>" thought you might find the page "Tyre Labelling Tab" at www.yokohama-online.com interesting.
+Signed-off-by: Randy Li <ayaka@soulik.info>
+---
+ arch/arm/boot/dts/exynos4412-itop-elite.dts | 35 ++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
-This is the link to the page:
-http://www.yokohama-online.com/Tyrepedia/Tyre-Labelling/Tyre-Labelling-Tab
-
-Comment by "qidaitai <news@taipeifestival.org>":
-十年磨一剑，倾力打造全球最大博彩公司，现加入澳门金沙集团即可获赠永久性高级VIP贵宾会员，红利多、次次送、天天返、无上限。
-【澳门金沙集团】天天返水1.2％，大额无忧：http://www.834516.com/?linux-samsung-soc@vger.kernel.org
-澳门金沙集团自从创建以来全球享有盛名，是线上博彩最优质的平台！
-------------------------------------------
-                    如果心胸不似海，又怎能有海一样的事业。
+diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+index e1cda54..2d67385 100644
+--- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
++++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+@@ -139,6 +139,20 @@
+ 		assigned-clocks = <&clock CLK_MOUT_CAM0>;
+ 		assigned-clock-parents = <&clock CLK_XUSBXTI>;
+ 	};
++	
++	vcc_sys_lcd: sys-lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
++	};
++
++	panel: panel {
++		ddc-i2c-bus = <&i2c_3>;
++		power-supply = <&vcc_sys_lcd>;
++		enable-gpios = <&gpl0 2 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &pinctrl_1 {
+@@ -221,9 +235,6 @@
+ };
+ 
+ &pwm {
+-	pinctrl-0 = <&pwm1_out>;
+-	pinctrl-names = "default";
+-	samsung,pwm-outputs = <1>;
+ 	status = "okay";
+ };
+ 
+@@ -239,3 +250,21 @@
+ 	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
+ 	assigned-clock-rates = <0>, <176000000>;
+ };
++
++&i2c_3 {
++	status = "okay";
++};
++
++&fimd {
++	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
++	pinctrl-names = "default";
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	port@0 {
++		reg = <0>;
++		rga_lvds: endpoint {
++			remote-endpoint = <&panel>;
++		};
++	};
++};
+-- 
+2.7.4
