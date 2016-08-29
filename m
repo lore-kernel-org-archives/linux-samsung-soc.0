@@ -1,111 +1,105 @@
-From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
- 5422
-Date: Mon, 29 Aug 2016 13:05:30 +0200
-Message-ID: <1472468730.4925.3.camel@mniewoehner.de>
-References: <1472414695.3845.3.camel@mniewoehner.de>
-         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [alsa-devel] [PATCH v5 2/2] ASoC: samsung: Add machine driver
+ for Exynos5433 based TM2 board
+Date: Mon, 29 Aug 2016 16:02:51 +0100
+Message-ID: <20160829150251.GU21682@localhost.localdomain>
+References: <1470752514-11409-1-git-send-email-s.nawrocki@samsung.com>
+ <1470752514-11409-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-jyv3cEXS29gAGWCVilli"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sender163-mail.zoho.com ([74.201.84.163]:24545 "EHLO
-        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757210AbcH2LH7 (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:45023 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757440AbcH2PIG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 07:07:59 -0400
-In-Reply-To: <57C41582.1030604@linux.intel.com>
+        Mon, 29 Aug 2016 11:08:06 -0400
+Content-Disposition: inline
+In-Reply-To: <1470752514-11409-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, k.kozlowski@samsung.com, Inha Song <ideal.song@samsung.com>
 
+On Tue, Aug 09, 2016 at 04:21:54PM +0200, Sylwester Nawrocki wrote:
+> This patch adds the sound machine driver for TM2 and TM2E board.
+> Speaker and headphone playback, Main Mic capture, Bluetooth,
+> Voice call and external accessory are supported.
+> 
+> Signed-off-by: Inha Song <ideal.song@samsung.com>
+> [k.kozlowski: rebased on 4.1]
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> [s.nawrocki: rebased to 4.7, adjustment to the ASoC core changes,
+>  removed unused ops and direct calls to the max98504 function,
+>  added parsing of "audio-amplifier" and "audio-codec"
+>  properties, added TDM API calls, switched to gpiod API]
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> 
+> Changes since v4 (addressing review comments from Charles):
+>  - changed the order of WM5110_FLL{1,2}, WM5110_FLL{1,2}_REFCLK setting,
+>  - ARIZONA_CLK_SYSCLK, ARIZONA_CLK_ASYNCCLK setting moved to late_probe,
+>  - added tm2_aif2_hw_free callback for disabling FLL2,
+>  - removed unneded card->dapm.bias_level assignment in tm2_mic_bias callback,
+>  - suspend_late, resume_early dev_pm_ops used instead of suspend_post,
+>    resume_pre struct snd_soc_card callbacks.
+> 
+> Changes since v3:
+>  - removed SND_SOC_SAMSUNG_AUDSS from Kconfig.
+> 
+> Changes since v2:
+>  - added missing Kconfig dependencies.
+> 
+> Changes since initial version:
+>  - added PDM Tx channels setup through TDM API
+>  - adaptation to renamed 'samsung,model', 'samsung,i2s-controller',
+>    'samsung,speaker-amplifier' properties,
+>  - removed some dev_dbg() calls,
+>  - cleaned up mic-bias GPIO handling and switched to gpiod API,
+>  - added parsing of 'audio-codec' property,
+>  - initialized codec_of_node of dai_link instead of codec_name,
+>  - switched to using clock, clock-names properties from the wm5110
+>    codec node,
+>  - fixed error paths in probe() (of_node reference counting).
+> ---
+<snip>
+> +static int tm2_suspend_late(struct device *dev)
+> +{
+> +	struct snd_soc_card *card = dev_get_drvdata(dev);
+> +
+> +	return tm2_stop_sysclk(card);
+> +}
+> +
+> +static int tm2_resume_early(struct device *dev)
+> +{
+> +	struct snd_soc_card *card = dev_get_drvdata(dev);
+> +
+> +	return tm2_start_sysclk(card);
+> +}
+> +
+> +const struct dev_pm_ops tm2_pm_ops = {
+> +	.suspend	= snd_soc_suspend,
+> +	.suspend_late	= tm2_suspend_late,
+> +	.resume		= snd_soc_resume,
+> +	.resume_early	= tm2_resume_early,
+> +	.freeze		= snd_soc_suspend,
+> +	.thaw		= snd_soc_resume,
+> +	.poweroff	= snd_soc_poweroff,
+> +	.restore	= snd_soc_resume,
+> +};
 
---=-jyv3cEXS29gAGWCVilli
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This bit still looks problematic to me, although admittedly I not
+sure exactly why you don't seem to be hitting any issues with
+it. Before you were effectively calling things from .suspend, now
+its .suspend_late.  As we are now later in the suspend process
+that means its even more likely the SPI will be unavailable when
+we try to talk to the CODEC. You need to run before the SPI
+has started suspending so you can still communicate with the
+CODEC, I still think prepare/complete are likely to be the best
+options for this, unless there are some complications there I
+have missed.
 
-Hi Mathias,
-On Mo, 2016-08-29 at 13:59 +0300, Mathias Nyman wrote:
-> On 29.08.2016 10:28, Felipe Balbi wrote:
-> >=20
-> >=20
-> > Hi,
-> >=20
-> > Michael Niew=C3=B6hner <linux@mniewoehner.de> writes:
-> > >=20
-> > > [1.] One line summary of the problem:
-> > > DWC3 USB 3.0 not working on Odroid-XU4 with Exynos 5422
-> > >=20
-> > > [2.] Full description of the problem/report:
-> > > No usb 3.0 devices are being detected when attached while USB 2.0
-> > > devices work on the same port.
-> > > USB 3.0 works after applying patches [9.1] and [9.2], but seems
-> > > to be
-> > > buggy. The usb hub is redetected every time an usb device is
-> > > attached.
-> >=20
-> > dwc3 is host, which means it's actually XHCI :-)
-> >=20
-> > Adding Mathias
-> >=20
-> > >=20
-> > > dmesg:
-> > > [=C2=A0=C2=A0192.287080] usb 3-1.2: USB disconnect, device number 7
-> > > [=C2=A0=C2=A0210.370699] hub 3-1:1.0: hub_ext_port_status failed (err=
- =3D
-> > > -71)
->=20
-> Looks like the hub GetPortStatus request fails with protocol error.
->=20
-> Reading xhci root hub port status is mostly just register reads and
-> writes. It
-> shouldn't include any actual transfers that could return -EPROTO
->=20
-> So this is not the root hub? but a external or integrated on your
-> board, right?
->=20
-> The protocol error -71 is returned at transfer errors or if device
-> stalled.
->=20
-> Adding more xhci debugging options could show something:
-> echo -n 'module xhci_hcd =3Dp' >
-> /sys/kernel/debug/dynamic_debug/control
->=20
-> >=20
-> > >=20
-> > > [9.] Other notes, patches, fixes, workarounds:
-> > > [9.1] https://lkml.org/lkml/2014/4/28/234
-> > > [9.2] https://lkml.org/lkml/2015/2/2/259
->=20
-> The additional patches that makes things somehow work involve tuning
-> the PHY,
-> this is an area I'm not familiar with
->=20
-> -Mathias
->=20
+Aside from that and the clock stuff we are already discussing
+everything else looks totally fine to me.
 
-
-I'm sorry, I should have said that this is the dmesg output with the
-patches applied. Without them there is no output at all when I attach
-an usb 3.0 device.
-
-Michael
---=-jyv3cEXS29gAGWCVilli
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQGcBAABCAAGBQJXxBb6AAoJECInTNFyFqn8SqIL/i2Ns2K+uMVHviT8pTOZoG5R
-Wk0VZLbmFtYth0R+5/ML61pWf0A4Rhp6X83cDdaY5Pn4GXtT/42gPepxRq548J8q
-cs5ISHcUBxl9tEeNjU1B9Lrviej/GzxB+8JRtMYmlywJdf+pQvno2lIv+xjIaUjB
-ktYW/q94p832hdVrbn8Wfr+wyo4Uk50YN7aNjMlCF5M8o5jdO/KAyKylvSOAqgRE
-75BtCAUvsalTirtmGYbvxAZWXe4cEUp4iHdUeNiPibUM9VkYKFGtURX8eutjuEHE
-h5nM3bRbhIO73BuX/CXUdQ8qucZV6cvvGpBJFWALGKak+3Yc3EVfA7LFyKkKtYw9
-+SGqnkkbuyjkg7tUOk0SJcYfT708CXzBx1cDBj7/+PjwD7ty95KQ0UGYevGmctmg
-iO6gwhL7pn8CAUdfRhHGDqQ3rYuArYS6Zbj9Vy5Lks/yQH0L3vnbLcdgPN0wxq/y
-W0v5S8dnkbOGtouesLFLN6RRtXiuETcjOIiHLybBzw==
-=5g22
------END PGP SIGNATURE-----
-
---=-jyv3cEXS29gAGWCVilli--
+Thanks,
+Charles
