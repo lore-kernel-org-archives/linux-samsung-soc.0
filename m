@@ -1,143 +1,124 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v5 2/2] ASoC: samsung: Add machine driver for
- Exynos5433 based TM2 board
-Date: Tue, 30 Aug 2016 16:57:25 +0200
-Message-ID: <65238f9c-bed0-7ad5-1961-fa2ff3848782@samsung.com>
-References: <1470752514-11409-1-git-send-email-s.nawrocki@samsung.com>
- <1470752514-11409-2-git-send-email-s.nawrocki@samsung.com>
- <20160829150251.GU21682@localhost.localdomain>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
+ Exynos5433-based TM2 board
+Date: Tue, 30 Aug 2016 12:11:46 -0500
+Message-ID: <20160830171146.GA22946@rob-hp-laptop>
+References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
+ <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20160829150251.GU21682-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1472046551-703-7-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/29/2016 05:02 PM, Charles Keepax wrote:
-> On Tue, Aug 09, 2016 at 04:21:54PM +0200, Sylwester Nawrocki wrote:
->> ---
-> <snip>
->> +static int tm2_suspend_late(struct device *dev)
->> +{
->> +	struct snd_soc_card *card = dev_get_drvdata(dev);
->> +
->> +	return tm2_stop_sysclk(card);
->> +}
->> +
->> +static int tm2_resume_early(struct device *dev)
->> +{
->> +	struct snd_soc_card *card = dev_get_drvdata(dev);
->> +
->> +	return tm2_start_sysclk(card);
->> +}
->> +
->> +const struct dev_pm_ops tm2_pm_ops = {
->> +	.suspend	= snd_soc_suspend,
->> +	.suspend_late	= tm2_suspend_late,
->> +	.resume		= snd_soc_resume,
->> +	.resume_early	= tm2_resume_early,
->> +	.freeze		= snd_soc_suspend,
->> +	.thaw		= snd_soc_resume,
->> +	.poweroff	= snd_soc_poweroff,
->> +	.restore	= snd_soc_resume,
->> +};
+On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
+> This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
+> This board fully support the all things for mobile target.
 > 
-> This bit still looks problematic to me, although admittedly I not
-> sure exactly why you don't seem to be hitting any issues with
-> it. Before you were effectively calling things from .suspend, now
-> its .suspend_late.  As we are now later in the suspend process
-> that means its even more likely the SPI will be unavailable when
-> we try to talk to the CODEC. You need to run before the SPI
-> has started suspending so you can still communicate with the
-> CODEC, I still think prepare/complete are likely to be the best
-> options for this, unless there are some complications there I
-> have missed.
+> This patch supports the following devices:
+> 1. basic SoC
+> - Initial booting for Samsung Exynos5433 SoC
+> - DRAM LPDDR3 (3GB)
+> - eMMC (32GB)
+> - ARM architecture timer
 > 
-> Aside from that and the clock stuff we are already discussing
-> everything else looks totally fine to me.
+> 2. power management devices
+> - Sasmung S2MPS13 PMIC for the power supply
+> - CPUFREQ for big.LITTLE cores
+> - TMU for big.LITTLE cores and GPU
+> - ADC with thermistor to measure the temperature of AP/Battery/Charger
+> - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
+> 
+> 3. sound devices
+> - I2S for sound bus
+> - LPASS for sound power control
+> - Wolfson WM5110 for sound codec
+> - Maxim MAX98504 for speaker amplifier
+> - TM2 ASoC Machine device driver node
+> 
+> 3. display devices
+> - DECON, DSI and MIC for the panel output
+> 
+> 4. usb devices
+> - USB 3.0 DRD (Dual Role Device)
+> - USB 3.0 Host controller
+> 
+> 5. storage devices
+> - MSHC (Mobile Storae Host Controller) for eMMC device
+> 
+> 6. misc devices
+> - gpio-keys (power, volume up/down, home key)
+> - PWM (Pulse Width Modulation Timer)
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Ingi kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../bindings/arm/samsung/samsung-boards.txt        |   1 +
+>  arch/arm64/boot/dts/exynos/Makefile                |   5 +-
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 985 +++++++++++++++++++++
+>  3 files changed, 990 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> index 0ea7f14ef294..c704b4bf6137 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> @@ -15,6 +15,7 @@ Required root node properties:
+>  	- "samsung,xyref5260"	- for Exynos5260-based Samsung board.
+>  	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
+>  	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
+> +	- "samsung,tm2"		- for Exynos5333-based Samsung TM2 board.
 
-Thanks for your review. First of all I'm testing system suspend
-related changes on 4.1 kernel as there is no full support for the
-exynos5433 SoC in mainline yet.
-I will use prepare/complete as with late_suspend/early_resume power
-sequences are wrong as you point out. I still need to debug why
-there is no errors reported when the SPI controller is suspended
-while there are supposed to be done SPI bus transfers.
+This does not match...
 
-It seems I missed the main point of making that pm_ops change, I
-focused on the MCLK clock presence while the main issue was
-communication with the codec over SPI bus.
+> +	compatible = "samsung,exynos5433-tm2", "samsung,exynos5433";
 
-I added some debug prints and below are logs when using
-late_suspend/early_resume and prepare/complete. In both cases
-tm2_stop_sysclk() returns 0.
+Is it 5433 or 5333?
 
-I think suspend/resume sequences are still correct when snd_soc_pm_ops
-are used thanks to order of linking drivers into kernel image and
-adding device to dpm_list.
+> +
+> +	aliases {
+> +		pinctrl0 = &pinctrl_alive;
+> +		pinctrl1 = &pinctrl_aud;
+> +		pinctrl2 = &pinctrl_cpif;
+> +		pinctrl3 = &pinctrl_ese;
+> +		pinctrl4 = &pinctrl_finger;
+> +		pinctrl5 = &pinctrl_fsys;
+> +		pinctrl6 = &pinctrl_imem;
+> +		pinctrl7 = &pinctrl_nfc;
+> +		pinctrl8 = &pinctrl_peric;
+> +		pinctrl9 = &pinctrl_touch;
 
--------------------------------8<-----------------------------------
-suspend_late/early_resume
+Drop all these.
 
-# dmesg | grep "resume\|suspend\|arizona"
+> +		serial0 = &serial_0;
+> +		serial1 = &serial_1;
+> +		serial2 = &serial_2;
+> +		serial3 = &serial_3;
 
-[   42.169691] Suspending console(s) (use no_console_suspend to debug)
+> +		spi0 = &spi_0;
+> +		spi1 = &spi_1;
+> +		spi2 = &spi_2;
+> +		spi3 = &spi_3;
+> +		spi4 = &spi_4;
 
-[   42.211115] tm2-audio sound: snd_soc_suspend
-[   42.213991] s3c64xx-spi 14d30000.spi: s3c64xx_spi_suspend
-
-[   42.215097] PM: suspend of devices complete after 40.028 msecs
-[   42.229764] tm2-audio sound: tm2_suspend_late: 0
-
-[   42.231496] PM: late suspend of devices complete after 6.362 msecs
-[   42.237318] PM: noirq suspend of devices complete after 5.804 msecs
-[   42.819161] PM: noirq resume of devices complete after 62.500 msecs
-
-[   43.063552] arizona spi1.0: FLL1: Timed out waiting for lock
-[   43.063572] tm2-audio sound: tm2_resume_early: 0
-[   43.066830] PM: early resume of devices complete after 247.302 msecs
-
-[   43.078789] s3c64xx-spi 14d30000.spi: s3c64xx_spi_resume
-[   43.080192] tm2-audio sound: snd_soc_resume
-[   43.080212] tm2-audio sound: ASoC: starting resume work
-
-[   43.319459] PM: resume of devices complete after 241.698 msecs
--------------------------------8<-----------------------------------
-
-
--------------------------------8<-----------------------------------
-prepare/complete
-
-# dmesg -c | grep "prepare\|complete\|suspend\|resume\|arizona"
-
-[  172.398552] Suspending console(s) (use no_console_suspend to debug)
-[  172.399431] tm2-audio sound: tm2_prepare: 0
-[  172.441073] tm2-audio sound: snd_soc_suspend
-[  172.443653] s3c64xx-spi 14d30000.spi: s3c64xx_spi_suspend
-
-[  172.444766] PM: suspend of devices complete after 42.202 msecs
-[  172.459500] PM: late suspend of devices complete after 6.407 msecs
-[  172.465277] PM: noirq suspend of devices complete after 5.758 msecs
-[  173.039052] PM: noirq resume of devices complete after 62.396 msecs
-[  173.044578] PM: early resume of devices complete after 5.152 msecs
-
-[  173.057042] s3c64xx-spi 14d30000.spi: s3c64xx_spi_resume
-[  173.058423] tm2-audio sound: snd_soc_resume
-[  173.058442] tm2-audio sound: ASoC: starting resume work
-
-[  173.299428] PM: resume of devices complete after 243.393 msecs
-[  173.329555] arizona spi1.0: Spurious HPDET IRQ
-[  173.329704] arizona spi1.0: Mixer dropped sample
-[  173.329758] tm2-audio sound: tm2_complete: 0
--------------------------------8<-----------------------------------
-
-
--- 
-Thanks,
-Sylwester
+And these.
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
