@@ -1,138 +1,106 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos 5422
-Date: Tue, 30 Aug 2016 10:32:01 +0530
-Message-ID: <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
-References: <1472414695.3845.3.camel@mniewoehner.de> <87lgzgdof3.fsf@linux.intel.com>
- <57C41582.1030604@linux.intel.com> <1472468730.4925.3.camel@mniewoehner.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC 0/2] New feature: Framebuffer processors
+Date: Tue, 30 Aug 2016 14:52:38 +0900
+Message-ID: <57C51F26.2050401@samsung.com>
+References: <1471859077-15679-1-git-send-email-m.szyprowski@samsung.com>
+ <925c67f8-4990-04c6-ec2e-c6c01e283258@amd.com>
+ <CAF6AEGtHeSKoQcVbTuucy-KdA8V=LLtC7uTEDmup3_5tz0HZMg@mail.gmail.com>
+ <CGME20160823094312epcas1p3543c2e968e1be320791460a50b5ec523@epcas1p3.samsung.com>
+ <CAPj87rNo7bQrqMGg-fRkdowdxT_-iUObY66TiHV-4091MqxiPw@mail.gmail.com>
+ <57BD8898.9000709@samsung.com> <20160824115711.GD10980@phenom.ffwll.local>
+ <57BEA71F.502@samsung.com> <20160825084218.GP10980@phenom.ffwll.local>
+ <57BEDA55.9020605@samsung.com> <20160825121450.GR10980@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:36458 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751804AbcH3FCX (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 01:02:23 -0400
-In-Reply-To: <1472468730.4925.3.camel@mniewoehner.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20160825121450.GR10980@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Enrico Weigelt <enrico.weigelt@gr13.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, =?UTF-8?B?Q2hyaXN0aWFuIEvDtg==?= =?UTF-8?B?bmln?= <christian.koenig@amd.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Michael_Niew=C3=B6hner?= <linux@mniewoehner.de>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi All
-
-Adding Vivek Gautam.
-
-On 29 August 2016 at 16:35, Michael Niew=C3=B6hner <linux@mniewoehner.de> w=
-rote:
-> Hi Mathias,
-> On Mo, 2016-08-29 at 13:59 +0300, Mathias Nyman wrote:
->> On 29.08.2016 10:28, Felipe Balbi wrote:
->> >
->> >
->> > Hi,
->> >
->> > Michael Niew=C3=B6hner <linux@mniewoehner.de> writes:
->> > >
->> > > [1.] One line summary of the problem:
->> > > DWC3 USB 3.0 not working on Odroid-XU4 with Exynos 5422
->> > >
->> > > [2.] Full description of the problem/report:
->> > > No usb 3.0 devices are being detected when attached while USB 2.0
->> > > devices work on the same port.
->> > > USB 3.0 works after applying patches [9.1] and [9.2], but seems
->> > > to be
->> > > buggy. The usb hub is redetected every time an usb device is
->> > > attached.
->> >
->> > dwc3 is host, which means it's actually XHCI :-)
->> >
->> > Adding Mathias
->> >
->> > >
->> > > dmesg:
->> > > [  192.287080] usb 3-1.2: USB disconnect, device number 7
->> > > [  210.370699] hub 3-1:1.0: hub_ext_port_status failed (err =3D
->> > > -71)
->>
->> Looks like the hub GetPortStatus request fails with protocol error.
->>
->> Reading xhci root hub port status is mostly just register reads and
->> writes. It
->> shouldn't include any actual transfers that could return -EPROTO
->>
->> So this is not the root hub? but a external or integrated on your
->> board, right?
->>
->> The protocol error -71 is returned at transfer errors or if device
->> stalled.
->>
->> Adding more xhci debugging options could show something:
->> echo -n 'module xhci_hcd =3Dp' >
->> /sys/kernel/debug/dynamic_debug/control
->>
->> >
->> > >
->> > > [9.] Other notes, patches, fixes, workarounds:
->> > > [9.1] https://lkml.org/lkml/2014/4/28/234
->> > > [9.2] https://lkml.org/lkml/2015/2/2/259
->>
->> The additional patches that makes things somehow work involve tuning
->> the PHY,
->> this is an area I'm not familiar with
->>
->> -Mathias
->>
->
->
-> I'm sorry, I should have said that this is the dmesg output with the
-> patches applied. Without them there is no output at all when I attach
-> an usb 3.0 device.
->
-> Michael
-
-There are two dwc3 ports in the SoC : one for Gbit Ethernet another
-one for on-board GL3521 USB 3.0 hub controller.
-
-3.10.x kernel
-odroid@odroid:~$ lsusb -t
-/:  Bus 06.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=3DVendor Specific Class, Driver=3Dr8152,=
- 5000M
-/:  Bus 05.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 480M
-/:  Bus 04.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=3DHub, Driver=3Dhub/2p, 5000M
-/:  Bus 03.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=3DHub, Driver=3Dhub/2p, 480M
-/:  Bus 02.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dexynos-ohci/3p, 12M
-/:  Bus 01.Port 1: Dev 1, Class=3Droot_hub, Driver=3Ds5p-ehci/3p, 480M
-
-4.x kernel
-odroid@odroid:~$ lsusb -t
-/:  Bus 06.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000M
-/:  Bus 05.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=3DVendor Specific Class, Driver=3Dr8152,=
- 480M
-/:  Bus 04.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=3DHub, Driver=3Dhub/2p, 5000M
-        |__ Port 1: Dev 3, If 0, Class=3DMass Storage, Driver=3Dusb-storage=
-, 5000M
-        |__ Port 2: Dev 4, If 0, Class=3DMass Storage, Driver=3Dusb-storage=
-, 5000M
-/:  Bus 03.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=3DHub, Driver=3Dhub/2p, 480M
-/:  Bus 02.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dexynos-ohci/3p, 12M
-/:  Bus 01.Port 1: Dev 1, Class=3Droot_hub, Driver=3Dexynos-ehci/3p, 480M
-
-I fell that Ethernet driver r8152 is not getting registered to
-xhci-hcd to bus port 06
-which lead to other ports to miss configure, some time the Ethernet
-port get register to bus port 04
-
-Their is also a possibility that all the port are not getting proper
-power from the S2MPS11 PMIC
-and possible some reset of the phy is needed to reconfigure the exynos
-USB HSIC controller.
-
-Best Regards
--Anand Moon
+CgoyMDE264WEIDA47JuUIDI17J28IDIxOjE07JeQIERhbmllbCBWZXR0ZXIg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbiBUaHUsIEF1ZyAyNSwgMjAxNiBhdCAwODo0NToyNVBNICswOTAwLCBJbmtpIERh
+ZSB3cm90ZToKPj4KPj4KPj4gMjAxNuuFhCAwOOyblCAyNeydvCAxNzo0MuyXkCBEYW5pZWwgVmV0
+dGVyIOydtCjqsIApIOyTtCDquIA6Cj4+PiBPbiBUaHUsIEF1ZyAyNSwgMjAxNiBhdCAwNTowNjo1
+NVBNICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4+Pgo+Pj4+Cj4+Pj4gMjAxNuuFhCAwOOyblCAy
+NOydvCAyMDo1N+yXkCBEYW5pZWwgVmV0dGVyIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+IE9uIFdl
+ZCwgQXVnIDI0LCAyMDE2IGF0IDA4OjQ0OjI0UE0gKzA5MDAsIElua2kgRGFlIHdyb3RlOgo+Pj4+
+Pj4gSGksCj4+Pj4+Pgo+Pj4+Pj4gMjAxNuuFhCAwOOyblCAyM+ydvCAxODo0MeyXkCBEYW5pZWwg
+U3RvbmUg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+PiBIaSwKPj4+Pj4+Pgo+Pj4+Pj4+IE9uIDIy
+IEF1Z3VzdCAyMDE2IGF0IDE2OjIzLCBSb2IgQ2xhcmsgPHJvYmRjbGFya0BnbWFpbC5jb20+IHdy
+b3RlOgo+Pj4+Pj4+PiBJIGd1ZXNzIGEgbG90IGNvbWVzIGRvd24gdG8gJ2hvdyBsb25nIGJlZm9y
+ZSBodyBkZXNpZ25lcnMgYm9sdCBhIENQIHRvCj4+Pj4+Pj4+IHRoZSB0aGluZycuLiAgYXQgdGhh
+dCBwb2ludCwgSSB0aGluayB5b3UgZXNwZWNpYWxseSBkb24ndCB3YW50IGEKPj4+Pj4+Pj4gcGVy
+LWJsaXQga2VybmVsIGludGVyZmFjZS4KPj4+Pj4+Pgo+Pj4+Pj4+IFJlZ2FyZGxlc3Mgb2Ygd2hl
+dGhlciBvciBub3Qgd2Ugd2FudCBpdCwgd2UgYWxyZWFkeSBfaGF2ZV8gaXQsIGluIHRoZQo+Pj4+
+Pj4+IGZvcm0gb2YgVjRMMiBNMk0uIFRoZXJlIGFyZSBhbHJlYWR5IGEgZmV3IElQIGJsb2NrcyB3
+b3JraW5nIG9uIHRoYXQsIEkKPj4+Pj4+PiBiZWxpZXZlLiBJZiBWNEwyIDwtPiBLTVMgaW50ZXJv
+cCBpcyBwYWluZnVsLCB3ZWxsLCB3ZSBuZWVkIHRvIGZpeCB0aGF0Cj4+Pj4+Pj4gYW55d2F5IC4u
+Lgo+Pj4+Pj4KPj4+Pj4+IFNvIHdlIGFyZSB0cnlpbmcgdGhpcy4gV2UgaGFkIGV4cGVyZW5lY2Vk
+IHVzaW5nIFY0TDIgYW5kIERSTSB0b2dldGhlciBvbgo+Pj4+Pj4gTGludXggUGxhdGZvcm0gbWFr
+ZXMgaXQgdG9vIGNvbXBsaWNhdGVkLCBhbmQgYWxzbyBpbnRlZ3JhdGVkIERSTSB3aXRoCj4+Pj4+
+PiBNMk0gc3VjaCBhcyAyRCBhbmQgUG9zdCBwcm9jZXNzb3IgbWFrZXMgaXQgc2ltcGxpZmllZC4g
+IFNvIFdlIGhhdmUgYmVlbgo+Pj4+Pj4gdHJ5aW5nIHRvIG1vdmUgZXhpc3RpbmcgVjRMMiBiYXNl
+ZCBkcml2ZXJzIGludG8gRFJNIGV4Y2VwdGluZyBIVyBWaWRlbwo+Pj4+Pj4gQ29kZWMgLSBjYWxs
+ZWQgaXQgTUZDIC0gYW5kIENhbWVyYSBzZW5zb3IgYW5kIHJlbGV2YW50IHRoaW5ncy4KPj4+Pj4+
+IEkgdGhpbmsgbm93IFY0TDIgYW5kIERSTSBmcmFtZXdvcmtzIG1heSBtYWtlIG1hbnkgZW5naW5l
+ZXJzIGNvbmZ1c2luZwo+Pj4+Pj4gYmVjYXVzZSB0aGVyZSBhcmUgdGhlIHNhbWUgZGV2aWNlcyB3
+aGljaCBjYW4gYmUgY29udHJvbGxlZCBieSBWNEwyIGFuZAo+Pj4+Pj4gRFJNIGZyYW1ld29ya3Mg
+LSBtYXliZSB3ZSB3b3VsZCBuZWVkIG1vcmUgZWZmb3J0cyBsaWtlIExhdXJlbnQgZGlkIHdpdGgK
+Pj4+Pj4+IExpdmUgc291cmNlWzFdIGluIHRoZSBmdXR1cmUuCj4+Pj4+Cj4+Pj4+IENhbiB5b3Ug
+cGxzIGV4cGxhaW4gaW4gbW9yZSBkZXRhaWwgd2hlcmUgd29ya2luZyB3aXRoIGJvdGggdjRsIGFu
+ZCBkcm0KPj4+Pj4gZHJpdmVycyBhbmQgbWFraW5nIHRoZW0gY29vcGVyYXRlIHVzaW5nIGRtYS1i
+dWZzIHBvc2VzIHByb2JsZW1zPyBXZSBzaG91bGQKPj4+Pj4gZGVmaW5pdGVseSBmaXggdGhhdC4K
+Pj4+Pgo+Pj4+IEkgdGhpbmsgaXQgd291bGQgYmUgbW9zdCBMaW51eCBQbGF0Zm9ybXMgLSBBbmRy
+b2lkLCBDaHJvbWUgYW5kIFRpemVuIC0KPj4+PiB3aGljaCB3b3VsZCB1c2UgT3Blbk1BWC9HU3Ry
+ZWFtbWVyIGZvciBNdWx0aW1lZGlhIGFuZCBYIG9yCj4+Pj4gV2F5bGFuZC9TdXJmYWNlRmxpbmdl
+ciBmb3IgRGlzcGxheS4KPj4+Cj4+PiBZZXMsIHRoYXQncyB0aGUgdXNlIGNhc2UuIFdoZXJlIGlz
+IHRoZSBwcm9ibGVtIGluIG1ha2luZyB0aGlzIGhhcHBlbj8gdjRsCj4+PiBjYW4gaW1wb3J0IGRt
+YS1idWZzLCBkcm0gY2FuIGV4cG9ydCB0aGVtLCBhbmQgdGhlcmUncyBwbGVudHkgZGV2aWNlcwo+
+Pj4gc2hpcHBpbmcgKGFmYWlrKSB0aGF0IG1ha2UgdXNlIG9mIGV4YWN0IHRoaXMgcGlwZWxpbmUu
+IENhbiB5b3UgcGxzIGV4cGxhaW4KPj4+IHdoYXQgcHJvYmxlbSB5b3UndmUgaGl0IHRyeWluZyB0
+byBtYWtlIHRoaXMgd29yayBvbiBleHlub3M/Cj4+Cj4+IE5vIHByb2JsZW0gYnV0IGp1c3QgbWFr
+ZSBpdCBjb21wbGljYXRlZCBhcyBJIG1lbnRpb25lZCBhYm92ZSAtIHRoZQo+PiBzdHJlYW0gb3Bl
+cmF0aW9ucyAtIFNfRk1ULCBSRVFCVUYsIFFVQVJZQlVGLCBRQlVGLCBTVFJFQU0gT04gYW5kIERR
+QlVGCj4+IG9mIFY0TDIgd291bGQgbmV2ZXIgYmUgc2ltcGxlIGFzIERSTS4gIERvIHlvdSB0aGlu
+ayBNMk0gZGV2aWNlIHNob3VsZCBiZQo+PiBjb250cm9sbGVkIGJ5IFY0TDIgaW50ZXJmYWNlcz8g
+YW5kIGV2ZW4gMkQgYWNjZWxlcmF0b3I/IEFzIGxvbmcgYXMgSQo+PiBrbm93LCBUaGUgR3JhcGhp
+Y3MgY2FyZCBvbiBEZXNrdG9wIGhhcyBhbGwgZGV2aWNlcyBzdWNoIGFzIDJELzNEIEdQVSwgSFcK
+Pj4gVmlkZW8gY29kZWMgYW5kIERpc3BsYXkgY29udHJvbGxlciwgYW5kIHRoZXNlIGRldmljZXMg
+YXJlIGNvbnRyb2xsZWQgYnkKPj4gRFJNIGludGVyZmFjZXMuIFNvIHdlIC0gQVJNIEV4eW5vcyAt
+IGFyZSB0cnlpbmcgdG8gbW92ZSB0aGVzZSB0aGluZ3MgdG8KPj4gRFJNIHdvcmxkIGFuZCBhbHNv
+IHRyeWluZyB0byBpbXBsZW1lbnQgbW9yZSBjb252ZW5pZW50IGludGVyZmFjZXMgbGlrZQo+PiBN
+YXJlayBkaWQuCj4gCj4gVGhpcyBpcyBhIG1pc2NvbmNlcHRpb24sIHRoZXJlJ3Mgbm90aGluZyBp
+biB0aGUgZHJtIHdvcmxkIHJlcXVpcmluZyB0aGF0Cj4gZXZlcnl0aGluZyBpcyB1bmRlciB0aGUg
+c2FtZSBkcm0gZGV2aWNlLiBBbGwgdGhlIHdvcmsgd2UndmUgZG9uZSBvdmVyIHRoZQo+IHBhc3Qg
+eWVhcnMgKGRtYS1idWYsIHJlc2VydmF0aW9ucywgZmVuY2UsIHByaW1lLCBjaGFuZ2VzIGluIFgu
+b3JnIGFuZAo+IHdheWxhbmQpIGFyZSBfYWxsXyB0byBtYWtlIGl0IHBvc3NpYmxlIHRvIGhhdmUg
+YSBnZnggZGV2aWNlIGNvbnNpc3Rpbmcgb2YKPiBtdWx0aXBsZSBkcm0vdjRsL3doYXRldmVyIGVs
+c2Ugbm9kZXMuIEVzcGVjaWFsbHkgZm9yIGEgU29DIG1vdmluZyBiYWNrIHRvCj4gZmFrZS1pbnRl
+Z3JhdGluZyBzdHVmZiByZWFsbHkgaXNuJ3QgYSBnb29kIGlkZWEgSSB0aGluay4KClllcywgbm90
+IGFsbCBkZXZpY2VzLiBBcyBJIG1lbnRpb25lZCBhbHJlYWR5IC0gZXhjZXB0aW5nIEhXIFZpZGVv
+IGNvZGVjIGFuZCBDYW1lcmEgZGV2aWNlLCB3ZSBoYXZlIGNoYW5nZWQgYSBwb3N0IHByb2Nlc3Nv
+ciBkcml2ZXIgdG8gRFJNIGluc3RlYWQgb2YgVjRMMiBhbmQgbm93IHdlIGFyZSB0cnlpbmcgdG8g
+c3RhbmRhcmQgdGhlIHBvc3QgcHJvY2Vzc3NvciBpbnRlcmZhY2VzLgpJIGtub3cgdGhhdCB0aGUg
+RGlzcGxheSBjb250cm9sbGVycyBvZiBzZXZlcmFsIFNvQyBpbmNsdWRlIFBvc3QgcHJvY2Vzc2lu
+ZyBmdW5jdGlvbiB3aGljaCBtYWtlcyBpbWFnZSB0byBiZSBzY2FsZWQgdXAsIGRvd24gb3Igcm90
+YXRlZCBhbmQgcGl4ZWwgZm9ybWF0IG9mIHRoZSBpbWFnZSB0byBiZSBjb252ZXJ0ZWQgdG8gb3Ro
+ZXIgcGl4ZWwgZm9ybWF0LCBhbmQgdGhlc2UgZGV2aWNlIGFyZSBjb250cm9sbGVkIGJ5IERSTS4K
+CkRvIHlvdSB0aGluayB0aGVzZSBwb3N0IHByb2Nlc3NvciBkZXZpY2VzIHNob3VsZCBiZSBjb250
+cm9sbGVkIGJ5IFY0TDI/CiAKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBBbmQgd3J0IGRybSBiZWlu
+ZyBzaW1wbGVyIHRoYW4gdjRsIC0gSSBkb24ndCB0aGluayBkcm0gaXMgYW55IHNpbXBsZXIsIGF0
+Cj4gZWxhc3QgaWYgeW91IGxvb2sgYXQgc29tZSBvZiB0aGUgbW9yZSBmZWF0dXJlLWZ1bGwgcmVu
+ZGVyIGRyaXZlcnMuCj4gLURhbmllbAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
