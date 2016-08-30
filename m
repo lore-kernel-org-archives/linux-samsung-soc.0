@@ -1,82 +1,61 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 4/4] ARM: defconfig: Exynos for v4.9
-Date: Tue, 30 Aug 2016 11:18:56 +0200
-Message-ID: <1472548739-20050-2-git-send-email-k.kozlowski@samsung.com>
-References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5410: Add clock IDs for PDMA and
+ EPLL clocks
+Date: Tue, 30 Aug 2016 11:54:16 +0200
+Message-ID: <2885a9f5-7fcf-f718-234d-2742e0719c55@samsung.com>
+References: <1471883463-1950-1-git-send-email-s.nawrocki@samsung.com>
+ <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:63777 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757638AbcH3JT0 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32465 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757682AbcH3JyW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 05:19:26 -0400
-In-reply-to: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
+        Tue, 30 Aug 2016 05:54:22 -0400
+In-reply-to: <1471883463-1950-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: tomasz.figa@gmail.com, sboyd@codeaurora.org, mturquette@baylibre.com, kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 08/22/2016 06:30 PM, Sylwester Nawrocki wrote:
+> The PDMA{0,1} and EPLL clock IDs are added separately in this
+> patch so the patch can be merged to the arm-soc tree as dependency.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  include/dt-bindings/clock/exynos5410.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+> index 85b467b..a74442a 100644
+> --- a/include/dt-bindings/clock/exynos5410.h
+> +++ b/include/dt-bindings/clock/exynos5410.h
+> @@ -19,6 +19,7 @@
+>  #define CLK_FOUT_MPLL		4
+>  #define CLK_FOUT_BPLL		5
+>  #define CLK_FOUT_KPLL		6
+> +#define CLK_FOUT_EPLL		7
+>  
+>  /* gate for special clocks (sclk) */
+>  #define CLK_SCLK_UART0		128
+> @@ -48,6 +49,8 @@
+>  #define CLK_USI3		268
+>  #define CLK_UART3		260
+>  #define CLK_PWM			279
+> +#define CLK_PDMA0		280
+> +#define CLK_PDMA1		281
 
-Expected conflict in multi_v7 - take all the changes:
-
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -135,8 -136,7 +136,8 @@@ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=
-  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-  CONFIG_CPU_FREQ_GOV_USERSPACE=m
-  CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
-- CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
-+ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
- +CONFIG_ARM_IMX6Q_CPUFREQ=y
-  CONFIG_QORIQ_CPUFREQ=y
-  CONFIG_CPU_IDLE=y
-  CONFIG_ARM_CPUIDLE=y
-
-
+How about making the IDs the same as in exynos5420? This way those
+drivers could be merged someday in the future (if someone would be
+bored...).
 
 Best regards,
 Krzysztof
 
-
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
-
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.9
-
-for you to fetch changes up to 88ea168f0a35c6aeab3c6703f7eb3b1c925c5b12:
-
-  Merge tag 'tags/samsung-defconfig-schedutil-4.9' into next/defconfig (2016-08-24 06:54:32 +0200)
-
-----------------------------------------------------------------
-
-Samsung defconfig update for v4.9:
-1. Device dynamic frequency and voltage scalling is now supported
-   on many Exynos boards, enable it.
-2. Enable PM_DEBUG, cleanup old IPV6_PRIVACY.
-3. Enable SECCOMP for Systemd on Arch.
-4. cpufreq schedutil cannot be module anymore.
-
-----------------------------------------------------------------
-Borislav Petkov (1):
-      ARM: s3c2410_defconfig: Remove CONFIG_IPV6_PRIVACY
-
-Chanwoo Choi (1):
-      ARM: exynos_defconfig: Enable bus frequency scaling with devfreq
-
-Javier Martinez Canillas (2):
-      ARM: exynos_defconfig: Don't attempt to enable schedutil governor as module
-      ARM: multi_v7_defconfig: Don't attempt to enable schedutil governor as module
-
-Krzysztof Kozlowski (4):
-      ARM: exynos_defconfig: Enable PM_DEBUG
-      ARM: exynos_defconfig: Enable SECCOMP
-      ARM: multi_v7_defconfig: Enable SECCOMP
-      Merge tag 'tags/samsung-defconfig-schedutil-4.9' into next/defconfig
-
- arch/arm/configs/exynos_defconfig   | 11 ++++++++++-
- arch/arm/configs/multi_v7_defconfig |  3 ++-
- arch/arm/configs/s3c2410_defconfig  |  1 -
- 3 files changed, 12 insertions(+), 3 deletions(-)
+>  #define CLK_MCT			315
+>  #define CLK_WDT			316
+>  #define CLK_RTC			317
+> 
