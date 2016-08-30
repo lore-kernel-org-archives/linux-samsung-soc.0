@@ -1,135 +1,31 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/4] ARM: dts: samsung: add analog audio codec on TOPEET
- iTop 4412 Elite
-Date: Tue, 30 Aug 2016 09:35:58 +0200
-Message-ID: <1dbacd78-6457-0877-91a3-2e1033d06d9b@kernel.org>
-References: <CAL_JsqKY=VEZ+U11kY+XbMWuXhaFDr6GpnR3AXKd1U=9_=8fgA@mail.gmail.com>
- <1472383269-3126-1-git-send-email-ayaka@soulik.info>
- <1472383269-3126-5-git-send-email-ayaka@soulik.info>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1472383269-3126-5-git-send-email-ayaka@soulik.info>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Li <ayaka@soulik.info>, devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL 0/4] ARM: exynos: Stuff for v4.9
+Date: Tue, 30 Aug 2016 11:18:55 +0200
+Message-ID: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29653 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757635AbcH3JT0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 05:19:26 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-On 08/28/2016 01:21 PM, Randy Li wrote:
-> Enable the WM8960 analog audio codec on TOPEET iTop 4412 Elite board.
-> 
-> Signed-off-by: Randy Li <ayaka@soulik.info>
-> ---
->  arch/arm/boot/dts/exynos4412-itop-elite.dts | 77 +++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> index 2d11b9a..e1cda54 100644
-> --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> @@ -15,6 +15,7 @@
->  
->  /dts-v1/;
->  #include "exynos4412-itop-scp-core.dtsi"
-> +#include <dt-bindings/sound/samsung-i2s.h>
+Hi,
 
-Reverse the includes and squash the patch with #2.
+Not much stuff for v4.9. No specific order of pulling in.
+
+I expect more patches coming in later so probably I will send
+another pull request for v4.9 in a couple of weeks.
+
+
+BTW, since few weeks and till end of September I am traveling a lot,
+so my on-line availability is reduced. After September I will be
+leaving Samsung. I hope to continue open-source maintenance during
+my personal time.
+
 
 Best regards,
 Krzysztof
-
->  
->  / {
->  	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
-> @@ -75,6 +76,54 @@
->  			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
->  		};
->  	};
-> +
-> +	sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "wm-sound";
-> +
-> +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-> +				<&clock_audss EXYNOS_MOUT_I2S>,
-> +				<&clock_audss EXYNOS_DOUT_SRP>,
-> +				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> +		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-> +				<&clock_audss EXYNOS_MOUT_AUDSS>;
-> +		assigned-clock-rates = <0>,
-> +				<0>,
-> +				<112896000>,
-> +				<11289600>;
-> +
-> +		simple-audio-card,format = "i2s";
-> +		simple-audio-card,bitclock-master = <&link0_codec>;
-> +		simple-audio-card,frame-master = <&link0_codec>;
-> +
-> +		simple-audio-card,widgets =
-> +			"Microphone", "Mic Jack",
-> +			"Line", "Line In",
-> +			"Line", "Line Out",
-> +			"Speaker", "Speaker",
-> +			"Headphone", "Headphone Jack";
-> +		simple-audio-card,routing =
-> +			"Headphone Jack", "HP_L",
-> +			"Headphone Jack", "HP_R",
-> +			"Speaker", "SPK_LP",
-> +			"Speaker", "SPK_LN",
-> +			"Speaker", "SPK_RP",
-> +			"Speaker", "SPK_RN",
-> +			"LINPUT1", "Mic Jack",
-> +			"LINPUT3", "Mic Jack",
-> +			"RINPUT1", "Mic Jack",
-> +			"RINPUT2", "Mic Jack";
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai = <&i2s0 0>;
-> +		};
-> +
-> +		link0_codec: simple-audio-card,codec {
-> +			sound-dai = <&codec>;
-> +			clocks = <&i2s0 CLK_I2S_CDCLK>;
-> +			system-clock-frequency = <11289600>;
-> +		};
-> +	};
->  	
->  	beep {
->  		compatible = "pwm-beeper";
-> @@ -143,6 +192,34 @@
->  	status = "okay";
->  };
->  
-> +&i2c_4 {
-> +	samsung,i2c-sda-delay = <100>;
-> +	samsung,i2c-slave-addr = <0x10>;
-> +	samsung,i2c-max-bus-freq = <100000>;
-> +	pinctrl-0 = <&i2c4_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	codec: wm8960@1a {
-> +		compatible = "wlf,wm8960";
-> +		reg = <0x1a>;
-> +		clocks = <&pmu_system_controller 0>;
-> +		clock-names = "MCLK1";
-> +		wlf,shared-lrclk;
-> +		#sound-dai-cells = <0>;
-> +	};
-> +};
-> +
-> +&i2s0 {
-> +	pinctrl-0 = <&i2s0_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +	clocks = <&clock_audss EXYNOS_I2S_BUS>,
-> +		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
-> +		 <&clock_audss EXYNOS_SCLK_I2S>;
-> +	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-> +};
-> +
->  &pwm {
->  	pinctrl-0 = <&pwm1_out>;
->  	pinctrl-names = "default";
-> 
