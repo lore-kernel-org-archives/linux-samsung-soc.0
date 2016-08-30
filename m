@@ -1,38 +1,42 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL 3/4] arm64: dts: exynos: DeviceTree ARM64 for v4.9
-Date: Tue, 30 Aug 2016 11:18:58 +0200
-Message-ID: <1472548739-20050-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL 4/4] ARM: defconfig: Exynos for v4.9
+Date: Tue, 30 Aug 2016 11:18:56 +0200
+Message-ID: <1472548739-20050-2-git-send-email-k.kozlowski@samsung.com>
 References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:63777 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757638AbcH3JT0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 05:19:26 -0400
 In-reply-to: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-This is an old one. It was ready for v4.8 but then Marc Zynger posted
-some conflicting change so I postponed it. Marc's patch didn't get in,
-so there is no reason to wait.
+Expected conflict in multi_v7 - take all the changes:
 
-No conflict expected yet, but if you apply Marc's "arm64: dts: Fix
-broken architected timer interrupt trigger" then proper resolution would be:
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@@ -135,8 -136,7 +136,8 @@@ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=
+  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+  CONFIG_CPU_FREQ_GOV_USERSPACE=m
+  CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
+- CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
++ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+ +CONFIG_ARM_IMX6Q_CPUFREQ=y
+  CONFIG_QORIQ_CPUFREQ=y
+  CONFIG_CPU_IDLE=y
+  CONFIG_ARM_CPUIDLE=y
 
-arch/arm64/boot/dts/exynos/exynos7.dtsi:
-
-+                       interrupts = <GIC_PPI 13
-+                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+                                    <GIC_PPI 14
-+                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+                                    <GIC_PPI 11
-+                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+                                    <GIC_PPI 10
-+                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
 
 
 Best regards,
 Krzysztof
+
 
 The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
@@ -40,19 +44,39 @@ The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.9
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.9
 
-for you to fetch changes up to 36d1c9cd07cd6a065f1dde3cbbfe3a9867d693a4:
+for you to fetch changes up to 88ea168f0a35c6aeab3c6703f7eb3b1c925c5b12:
 
-  arm64: dts: exynos: Use human-friendly symbols for timer interrupt flags (2016-08-10 11:09:46 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree ARM64 update for v4.9:
-1. Use human-friendly symbols for interrupt flags.
+  Merge tag 'tags/samsung-defconfig-schedutil-4.9' into next/defconfig (2016-08-24 06:54:32 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      arm64: dts: exynos: Use human-friendly symbols for timer interrupt flags
 
- arch/arm64/boot/dts/exynos/exynos7.dtsi | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Samsung defconfig update for v4.9:
+1. Device dynamic frequency and voltage scalling is now supported
+   on many Exynos boards, enable it.
+2. Enable PM_DEBUG, cleanup old IPV6_PRIVACY.
+3. Enable SECCOMP for Systemd on Arch.
+4. cpufreq schedutil cannot be module anymore.
+
+----------------------------------------------------------------
+Borislav Petkov (1):
+      ARM: s3c2410_defconfig: Remove CONFIG_IPV6_PRIVACY
+
+Chanwoo Choi (1):
+      ARM: exynos_defconfig: Enable bus frequency scaling with devfreq
+
+Javier Martinez Canillas (2):
+      ARM: exynos_defconfig: Don't attempt to enable schedutil governor as module
+      ARM: multi_v7_defconfig: Don't attempt to enable schedutil governor as module
+
+Krzysztof Kozlowski (4):
+      ARM: exynos_defconfig: Enable PM_DEBUG
+      ARM: exynos_defconfig: Enable SECCOMP
+      ARM: multi_v7_defconfig: Enable SECCOMP
+      Merge tag 'tags/samsung-defconfig-schedutil-4.9' into next/defconfig
+
+ arch/arm/configs/exynos_defconfig   | 11 ++++++++++-
+ arch/arm/configs/multi_v7_defconfig |  3 ++-
+ arch/arm/configs/s3c2410_defconfig  |  1 -
+ 3 files changed, 12 insertions(+), 3 deletions(-)
