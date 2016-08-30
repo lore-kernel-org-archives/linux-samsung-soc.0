@@ -1,125 +1,42 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
- Exynos5433-based TM2 board
-Date: Tue, 30 Aug 2016 12:11:46 -0500
-Message-ID: <20160830171146.GA22946@rob-hp-laptop>
-References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RESEND PATCH v3 1/3] ARM: dts: DRA7: Add "linux,pci-domain"
+ property for pci dt nodes
+Date: Tue, 30 Aug 2016 11:47:03 -0700
+Message-ID: <20160830184702.hgn2vgxlts4pgkyy@atomide.com>
+References: <1470832400-11929-1-git-send-email-kishon@ti.com>
+ <1470832400-11929-2-git-send-email-kishon@ti.com>
+ <20160826153035.h6uyplc4mjlbc3v3@atomide.com>
+ <57C5687C.8030805@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1472046551-703-7-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+In-Reply-To: <57C5687C.8030805@ti.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Russell King <linux@armlinux.org.uk>, Benoit Cousson <bcousson@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Krzysztof Halasa <khalasa@piap.pl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Santosh Shilimkar <ssantosh@kernel.o>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 24, 2016 at 10:49:10PM +0900, Chanwoo Choi wrote:
-> This patch adds the Device Tree source for Exynos5433-based Samsung TM2 board.
-> This board fully support the all things for mobile target.
+* Kishon Vijay Abraham I <kishon@ti.com> [160830 04:06]:
+> Hi Tony,
 > 
-> This patch supports the following devices:
-> 1. basic SoC
-> - Initial booting for Samsung Exynos5433 SoC
-> - DRAM LPDDR3 (3GB)
-> - eMMC (32GB)
-> - ARM architecture timer
+> On Friday 26 August 2016 09:00 PM, Tony Lindgren wrote:
+> > * Kishon Vijay Abraham I <kishon@ti.com> [160810 05:34]:
+> >> Since DRA7 has multiple PCIe Rootcomplex, add "linux,pci-domain"
+> >> property to assign a PCI domain number to each of the host
+> >> bridges.
+> > 
+> > Is this patch safe to apply without the other changes?
 > 
-> 2. power management devices
-> - Sasmung S2MPS13 PMIC for the power supply
-> - CPUFREQ for big.LITTLE cores
-> - TMU for big.LITTLE cores and GPU
-> - ADC with thermistor to measure the temperature of AP/Battery/Charger
-> - Maxim MAX77843 Interface PMIC (MUIC/Haptic/Regulator)
-> 
-> 3. sound devices
-> - I2S for sound bus
-> - LPASS for sound power control
-> - Wolfson WM5110 for sound codec
-> - Maxim MAX98504 for speaker amplifier
-> - TM2 ASoC Machine device driver node
-> 
-> 3. display devices
-> - DECON, DSI and MIC for the panel output
-> 
-> 4. usb devices
-> - USB 3.0 DRD (Dual Role Device)
-> - USB 3.0 Host controller
-> 
-> 5. storage devices
-> - MSHC (Mobile Storae Host Controller) for eMMC device
-> 
-> 6. misc devices
-> - gpio-keys (power, volume up/down, home key)
-> - PWM (Pulse Width Modulation Timer)
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Ingi kim <ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   1 +
->  arch/arm64/boot/dts/exynos/Makefile                |   5 +-
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 985 +++++++++++++++++++++
->  3 files changed, 990 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index 0ea7f14ef294..c704b4bf6137 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -15,6 +15,7 @@ Required root node properties:
->  	- "samsung,xyref5260"	- for Exynos5260-based Samsung board.
->  	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
->  	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
-> +	- "samsung,tm2"		- for Exynos5333-based Samsung TM2 board.
+> Yes. I verified pcie on dra7x by applying only this patch and it doesn't break
+> anything.
 
-This does not match...
+OK thanks for testing, I'm picking the dts change into omap-for-v4.9/dt
+branch.
 
-> +	compatible = "samsung,exynos5433-tm2", "samsung,exynos5433";
+The other patches you probably should upload to RMKs patch system
+if no more comments.
 
-Is it 5433 or 5333?
+Regards,
 
-> +
-> +	aliases {
-> +		pinctrl0 = &pinctrl_alive;
-> +		pinctrl1 = &pinctrl_aud;
-> +		pinctrl2 = &pinctrl_cpif;
-> +		pinctrl3 = &pinctrl_ese;
-> +		pinctrl4 = &pinctrl_finger;
-> +		pinctrl5 = &pinctrl_fsys;
-> +		pinctrl6 = &pinctrl_imem;
-> +		pinctrl7 = &pinctrl_nfc;
-> +		pinctrl8 = &pinctrl_peric;
-> +		pinctrl9 = &pinctrl_touch;
-
-Drop all these.
-
-> +		serial0 = &serial_0;
-> +		serial1 = &serial_1;
-> +		serial2 = &serial_2;
-> +		serial3 = &serial_3;
-
-> +		spi0 = &spi_0;
-> +		spi1 = &spi_1;
-> +		spi2 = &spi_2;
-> +		spi3 = &spi_3;
-> +		spi4 = &spi_4;
-
-And these.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tony
