@@ -1,86 +1,77 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/3] media: exynos4-is: Improve clock management
-Date: Wed, 31 Aug 2016 15:25:17 +0200
-Message-ID: <1472649918-10371-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 1/3] media: exynos4-is: Add support for all required clocks
+Date: Wed, 31 Aug 2016 15:25:16 +0200
+Message-ID: <1472649918-10371-2-git-send-email-m.szyprowski@samsung.com>
 References: <1472649918-10371-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41285 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932622AbcHaNZd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50384 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754570AbcHaNZb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 09:25:33 -0400
+        Wed, 31 Aug 2016 09:25:31 -0400
 In-reply-to: <1472649918-10371-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-There is no need to keep all clocks prepared all the time. Call to
-clk_prepare/unprepare can be done on demand from runtime pm callbacks
-(it is allowed to call sleeping functions from that context).
+This patch adds 3 more clocks to Exynos4 ISP driver. Enabling them is
+needed to make the hardware operational. Till now it worked only because
+those clocks were registered with IGNORE_UNUSED flag and were enabled
+by default after SoC reset.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-lite.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/media/exynos4-fimc-is.txt | 7 ++++---
+ drivers/media/platform/exynos4-is/fimc-is.c                 | 3 +++
+ drivers/media/platform/exynos4-is/fimc-is.h                 | 3 +++
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index a0f149fb88e1..fd16605dd1d4 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1454,25 +1454,17 @@ static void fimc_lite_clk_put(struct fimc_lite *fimc)
- 	if (IS_ERR(fimc->clock))
- 		return;
- 
--	clk_unprepare(fimc->clock);
- 	clk_put(fimc->clock);
- 	fimc->clock = ERR_PTR(-EINVAL);
- }
- 
- static int fimc_lite_clk_get(struct fimc_lite *fimc)
- {
--	int ret;
--
- 	fimc->clock = clk_get(&fimc->pdev->dev, FLITE_CLK_NAME);
- 	if (IS_ERR(fimc->clock))
- 		return PTR_ERR(fimc->clock);
- 
--	ret = clk_prepare(fimc->clock);
--	if (ret < 0) {
--		clk_put(fimc->clock);
--		fimc->clock = ERR_PTR(-EINVAL);
--	}
--	return ret;
-+	return 0;
- }
- 
- static const struct of_device_id flite_of_match[];
-@@ -1543,7 +1535,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 
- 	if (!pm_runtime_enabled(dev)) {
--		ret = clk_enable(fimc->clock);
-+		ret = clk_prepare_enable(fimc->clock);
- 		if (ret < 0)
- 			goto err_sd;
- 	}
-@@ -1568,7 +1560,7 @@ static int fimc_lite_runtime_resume(struct device *dev)
- {
- 	struct fimc_lite *fimc = dev_get_drvdata(dev);
- 
--	clk_enable(fimc->clock);
-+	clk_prepare_enable(fimc->clock);
- 	return 0;
- }
- 
-@@ -1576,7 +1568,7 @@ static int fimc_lite_runtime_suspend(struct device *dev)
- {
- 	struct fimc_lite *fimc = dev_get_drvdata(dev);
- 
--	clk_disable(fimc->clock);
-+	clk_disable_unprepare(fimc->clock);
- 	return 0;
- }
- #endif
+diff --git a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+index 55c9ad6f9599..32ced99d4244 100644
+--- a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
++++ b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+@@ -16,9 +16,10 @@ Required properties:
+ - clocks	: list of clock specifiers, corresponding to entries in
+ 		  clock-names property;
+ - clock-names	: must contain "ppmuispx", "ppmuispx", "lite0", "lite1"
+-		  "mpll", "sysreg", "isp", "drc", "fd", "mcuisp", "uart",
+-		  "ispdiv0", "ispdiv1", "mcuispdiv0", "mcuispdiv1", "aclk200",
+-		  "div_aclk200", "aclk400mcuisp", "div_aclk400mcuisp" entries,
++		  "mpll", "sysreg", "isp", "drc", "fd", "mcuisp", "gicisp",
++		  "pwm_isp", "mcuctl_isp", "uart", "ispdiv0", "ispdiv1",
++		  "mcuispdiv0", "mcuispdiv1", "aclk200", "div_aclk200",
++		  "aclk400mcuisp", "div_aclk400mcuisp" entries,
+ 		  matching entries in the clocks property.
+ pmu subnode
+ -----------
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 32ca55f16677..5cedf2322bb4 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -52,6 +52,9 @@ static char *fimc_is_clocks[ISS_CLKS_MAX] = {
+ 	[ISS_CLK_DRC]			= "drc",
+ 	[ISS_CLK_FD]			= "fd",
+ 	[ISS_CLK_MCUISP]		= "mcuisp",
++	[ISS_CLK_GICISP]		= "gicisp",
++	[ISS_CLK_PWM_ISP]		= "pwm_isp",
++	[ISS_CLK_MCUCTL_ISP]		= "mcuctl_isp",
+ 	[ISS_CLK_UART]			= "uart",
+ 	[ISS_CLK_ISP_DIV0]		= "ispdiv0",
+ 	[ISS_CLK_ISP_DIV1]		= "ispdiv1",
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
+index 3a82c6a214c7..ee05da034aa1 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.h
++++ b/drivers/media/platform/exynos4-is/fimc-is.h
+@@ -77,6 +77,9 @@ enum {
+ 	ISS_CLK_DRC,
+ 	ISS_CLK_FD,
+ 	ISS_CLK_MCUISP,
++	ISS_CLK_GICISP,
++	ISS_CLK_PWM_ISP,
++	ISS_CLK_MCUCTL_ISP,
+ 	ISS_CLK_UART,
+ 	ISS_GATE_CLKS_MAX,
+ 	ISS_CLK_ISP_DIV0 = ISS_GATE_CLKS_MAX,
 -- 
 1.9.1
