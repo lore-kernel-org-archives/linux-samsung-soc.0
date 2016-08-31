@@ -1,73 +1,88 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
- memory node DTC warnings
-Date: Wed, 31 Aug 2016 19:40:21 +0200
-Message-ID: <12377780.GCreFUiXAa@amdc1976>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/7] ARM: dts: exynos: Add missing memory node for
+ Exynos5440 boards
+Date: Wed, 31 Aug 2016 19:22:51 +0200
+Message-ID: <3638650.aebblMKNhB@amdc1976>
 References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
- <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07@kernel.org>
- <0da13ae1-90a8-912b-227e-0e94439953d5@osg.samsung.com>
+ <1472645679-5696-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <0da13ae1-90a8-912b-227e-0e94439953d5-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1472645679-5696-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
 Hi,
 
-On Wednesday, August 31, 2016 03:45:24 PM Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On Wednesday, August 31, 2016 02:14:33 PM Javier Martinez Canillas wrote:
+> The skeleton.dtsi file was removed in ARM64 for different reasons as
+> explained in commit ("3ebee5a2e141 arm64: dts: kill skeleton.dtsi").
 > 
-> On 08/31/2016 02:55 PM, Krzysztof Kozlowski wrote:
-> > On 08/31/2016 02:14 PM, Javier Martinez Canillas wrote:
-> >> Hello Krzysztof,
-> >>
-> >> This series removes the usage of the skeleton.dtsi in all the Exynos dts,
-> >> which allows to get rid of the DTC warnings about a mismatch between the
-> >> memory nodes' unit names and reg properties.
-> >>
-> >> Patches are pretty trivial and shouldn't cause functional changes AFAIK,
-> >> but only the Exynos5 changes have been tested. The others patches were
-> >> just built tested.
-> > 
-> > I think this is a common problem, not only Exynos-specific, so I would
+> These also applies to ARM and it will also allow to get rid of the
+> following DTC warnings in the future:
 > 
-> That's correct.
+> "Node /memory has a reg or ranges property, but no unit name"
 > 
-> > prefer to stick to common pattern. Either all DTS/DTSI include skeleton
-> > or none of them.
-> >
+> But these boards don't have a memory node defined, so removing the
+> skeleton.dtsi inclusion in exynos4.dtsi will cause a change in the
+> compiled DTB. Add a dummy memory node so the compiled DTB doesn't
+> change if the skeleton.dtsi is removed from exynos4.dtsi.
 > 
-> The idea is to get rid of skeleton.dtsi [0], but that will of course take
-> time until the dtsi is removed from all the files. So this patch is a step
-> in the right direction so at least Exynos is not a blocker to remove it.
+> Eventually the correct starting addresses and sizes should be used
+> but I didn't find that information.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  arch/arm/boot/dts/exynos5440-sd5v1.dts    | 5 +++++
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts | 5 +++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> index a98501bab6fc..333db4ff373a 100644
+> --- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> +++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> @@ -20,6 +20,11 @@
+>  		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
+>  	};
+>  
+> +	memory {
+> +		device_type = "memory";
+> +		reg = <0 0>;
+> +	};
 
-Krzysztof's point is valid.  If you are going to convert all DTS/DTSI
-then it is okay to apply Exynos specific changes, otherwise the code
-should stay as it is currently.
+I think that this node deserves a FIXME comment.
 
-Exynos won't be a blocker since we have your patches now and they can
-be applied when/if needed ;)..
+> +
+>  	fixed-rate-clocks {
+>  		xtal {
+>  			compatible = "samsung,clock-xtal";
+> diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> index 6a0d802e87c8..82fea6f94704 100644
+> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> @@ -21,6 +21,11 @@
+>  		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
+>  	};
+>  
+> +	memory {
+> +		device_type = "memory";
+> +		reg = <0 0>;
+> +	};
 
-> > Best regards,
-> > Krzysztof
-> > 
+ditto
+
+>  	fixed-rate-clocks {
+>  		xtal {
+>  			compatible = "samsung,clock-xtal";
 > 
-> [0]: https://lkml.org/lkml/2016/8/3/195
-> 
-> Best regards,
 
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
