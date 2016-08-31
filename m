@@ -1,74 +1,59 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/6] drm/exynos: fimc: fix system and runtime pm integration
-Date: Wed, 31 Aug 2016 14:55:54 +0200
-Message-ID: <1472648159-9814-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 4/6] drm/exynos: g2d: fix system and runtime pm integration
+Date: Wed, 31 Aug 2016 14:55:57 +0200
+Message-ID: <1472648159-9814-5-git-send-email-m.szyprowski@samsung.com>
 References: <1472648159-9814-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15387 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934090AbcHaM4Q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 08:56:16 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1472648159-9814-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Use generic helpers instead of open-coding usage of runtime pm for system
-sleep pm, which was potentially broken for some corner cases.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 29 ++---------------------------
- 1 file changed, 2 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 0525c56145db..147ef0d298cb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1753,32 +1753,6 @@ static int fimc_clk_ctrl(struct fimc_context *ctx, bool enable)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int fimc_suspend(struct device *dev)
--{
--	struct fimc_context *ctx = get_fimc_context(dev);
--
--	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
--
--	if (pm_runtime_suspended(dev))
--		return 0;
--
--	return fimc_clk_ctrl(ctx, false);
--}
--
--static int fimc_resume(struct device *dev)
--{
--	struct fimc_context *ctx = get_fimc_context(dev);
--
--	DRM_DEBUG_KMS("id[%d]\n", ctx->id);
--
--	if (!pm_runtime_suspended(dev))
--		return fimc_clk_ctrl(ctx, true);
--
--	return 0;
--}
--#endif
--
- static int fimc_runtime_suspend(struct device *dev)
- {
- 	struct fimc_context *ctx = get_fimc_context(dev);
-@@ -1799,7 +1773,8 @@ static int fimc_runtime_resume(struct device *dev)
- #endif
- 
- static const struct dev_pm_ops fimc_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(fimc_suspend, fimc_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
- 	SET_RUNTIME_PM_OPS(fimc_runtime_suspend, fimc_runtime_resume, NULL)
- };
- 
--- 
-1.9.1
+TW92ZSBjb2RlIGZyb20gc3lzdGVtIHNsZWVwIHBtIHRvIHJ1bnRpbWUgcG0gY2FsbGJhY2tzIHRv
+IGVuc3VyZSBwcm9wZXIKZHJpdmVyIHN0YXRlIHByZXNlcnZhdGlvbiB3aGVuIGRldmljZSBpcyB1
+bmRlciBwb3dlciBkb21haW4uIFRoZW4sIHVzZQpnZW5lcmljIGhlbHBlcnMgZm9yIHVzaW5nIHJ1
+bnRpbWUgcG0gZm9yIHN5c3RlbSBzbGVlcCBwbS4KClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXBy
+b3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZzJkLmMgfCAyOSArKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQog
+MSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pCgpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCmluZGV4IDRiZjAwZjU3ZmZlOC4uNmVjYThi
+Yjg4NjQ4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJk
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCkBAIC0xNDc1
+LDggKzE0NzUsOCBAQCBzdGF0aWMgaW50IGcyZF9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2Rldmlj
+ZSAqcGRldikKIAlyZXR1cm4gMDsKIH0KIAotI2lmZGVmIENPTkZJR19QTV9TTEVFUAotc3RhdGlj
+IGludCBnMmRfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCisjaWZkZWYgQ09ORklHX1BNCitz
+dGF0aWMgaW50IGcyZF9ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQogewogCXN0
+cnVjdCBnMmRfZGF0YSAqZzJkID0gZGV2X2dldF9kcnZkYXRhKGRldik7CiAKQEAgLTE0OTAsMjUg
+KzE0OTAsNiBAQCBzdGF0aWMgaW50IGcyZF9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIAog
+CWZsdXNoX3dvcmsoJmcyZC0+cnVucXVldWVfd29yayk7CiAKLQlyZXR1cm4gMDsKLX0KLQotc3Rh
+dGljIGludCBnMmRfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKLXsKLQlzdHJ1Y3QgZzJkX2Rh
+dGEgKmcyZCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwotCi0JZzJkLT5zdXNwZW5kZWQgPSBmYWxz
+ZTsKLQlnMmRfZXhlY19ydW5xdWV1ZShnMmQpOwotCi0JcmV0dXJuIDA7Ci19Ci0jZW5kaWYKLQot
+I2lmZGVmIENPTkZJR19QTQotc3RhdGljIGludCBnMmRfcnVudGltZV9zdXNwZW5kKHN0cnVjdCBk
+ZXZpY2UgKmRldikKLXsKLQlzdHJ1Y3QgZzJkX2RhdGEgKmcyZCA9IGRldl9nZXRfZHJ2ZGF0YShk
+ZXYpOwotCiAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGcyZC0+Z2F0ZV9jbGspOwogCiAJcmV0dXJu
+IDA7CkBAIC0xNTIzLDEyICsxNTA0LDE2IEBAIHN0YXRpYyBpbnQgZzJkX3J1bnRpbWVfcmVzdW1l
+KHN0cnVjdCBkZXZpY2UgKmRldikKIAlpZiAocmV0IDwgMCkKIAkJZGV2X3dhcm4oZGV2LCAiZmFp
+bGVkIHRvIGVuYWJsZSBjbG9jay5cbiIpOwogCisJZzJkLT5zdXNwZW5kZWQgPSBmYWxzZTsKKwln
+MmRfZXhlY19ydW5xdWV1ZShnMmQpOworCiAJcmV0dXJuIHJldDsKIH0KICNlbmRpZgogCiBzdGF0
+aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZzJkX3BtX29wcyA9IHsKLQlTRVRfU1lTVEVNX1NM
+RUVQX1BNX09QUyhnMmRfc3VzcGVuZCwgZzJkX3Jlc3VtZSkKKwlTRVRfU1lTVEVNX1NMRUVQX1BN
+X09QUyhwbV9ydW50aW1lX2ZvcmNlX3N1c3BlbmQsCisJCQkJcG1fcnVudGltZV9mb3JjZV9yZXN1
+bWUpCiAJU0VUX1JVTlRJTUVfUE1fT1BTKGcyZF9ydW50aW1lX3N1c3BlbmQsIGcyZF9ydW50aW1l
+X3Jlc3VtZSwgTlVMTCkKIH07CiAKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
