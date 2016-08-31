@@ -1,136 +1,303 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 1/2] mfd: Add DT bindings documentation for Samsung
- Exynos LPASS
-Date: Wed, 31 Aug 2016 12:31:23 +0100
-Message-ID: <20160831113123.GL27357@dell>
+Subject: Re: [PATCH v6 2/2] mfd: Add Samsung Exynos Low Power Audio Subsystem
+ driver
+Date: Wed, 31 Aug 2016 12:31:37 +0100
+Message-ID: <20160831113137.GM27357@dell>
 References: <1470840500-2428-1-git-send-email-s.nawrocki@samsung.com>
+ <1470840500-2428-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38247 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759408AbcHaL3h (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 07:29:37 -0400
-Received: by mail-wm0-f48.google.com with SMTP id 1so34966137wmz.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Aug 2016 04:29:36 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1470840500-2428-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1470840500-2428-2-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org, robh@kernel.org, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: broonie@kernel.org, alsa-devel@alsa-project.org, robh@kernel.org, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Inha Song <ideal.song@samsung.com>, Beomho Seo <beomho.seo@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wed, 10 Aug 2016, Sylwester Nawrocki wrote:
 
-> This patch adds documentation of the DT bindings for the Samsung
-> Exynos SoC Low Power Audio Subsystem.
+> This patch adds common driver for the Top block of the Samsung Exynos
+> SoC Low Power Audio Subsystem.  This is a minimal driver which prepares
+> resources for IP blocks like I2S, audio DMA and UART and exposes
+> a regmap for the Top block registers.  Also system power ops are added
+> to ensure the Audio Subsystem is operational after system suspend/resume
+> cycle.
 > 
+> Signed-off-by: Inha Song <ideal.song@samsung.com>
+> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Rob Herring <robh@kernel.org>
 > ---
 > 
 > Changes since v5:
->  - none.
+>  - BIT() used for the register bit macro definitions,
+>  - removed unneeded dev->of_node test,
+>  - exynos_lpass_{suspend,resume} functions compiled-in conditionally,
+>  - added comments for struct exynos_lpass fields.
 > 
 > Changes since v4:
->  - text reformatting, added VIC to the list of sub-devices, relative
->    paths used for the reference DT binding documentation files, added
->    example dts.
+>  - none.
 > 
 > Changes since v3:
->  - moved to Documentation/devicetree/bindings/mfd,
->  - added #address-cells, #size-cells, ranges as required
->    properties,
->  - added description of the IP block subnodes and links
->    to their binding's documentation.
+>  - moved from sound/soc/samsung and rewritten as a MFD driver,
+>  - PMU register definitions moved to include/linux/mfd/syscon/exynos5-pmu.h,
+>  - added regmap for LPASS Top SFR region,
+>  - cleaned up register bit field defintions.
 > 
 > Changes since v2:
->  - none.
+>  - move misplaced SND_SAMSUNG_AUDSS Kconfig symbol addition
+>    to this patch.
 > ---
->  .../bindings/mfd/samsung,exynos5433-lpass.txt      | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+>  drivers/mfd/Kconfig                    |   8 ++
+>  drivers/mfd/Makefile                   |   1 +
+>  drivers/mfd/exynos-lpass.c             | 187 +++++++++++++++++++++++++++++++++
+>  include/linux/mfd/syscon/exynos5-pmu.h |   4 +-
+>  4 files changed, 199 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mfd/exynos-lpass.c
 
 Applied, thanks.
 
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 2d1fb64..a7ec890 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -281,6 +281,14 @@ config MFD_DLN2
+>  	  etc. must be enabled in order to use the functionality of
+>  	  the device.
+>  
+> +config MFD_EXYNOS_LPASS
+> +	tristate "Samsung Exynos SoC Low Power Audio Subsystem"
+> +	select MFD_CORE
+> +	select REGMAP_MMIO
+> +	help
+> +	  Select this option to enable support for Samsung Exynos Low Power
+> +	  Audio Subsystem.
+> +
+>  config MFD_MC13XXX
+>  	tristate
+>  	depends on (SPI_MASTER || I2C)
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 2ba3ba3..41510bb 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
+>  obj-$(CONFIG_MFD_CROS_EC)	+= cros_ec.o
+>  obj-$(CONFIG_MFD_CROS_EC_I2C)	+= cros_ec_i2c.o
+>  obj-$(CONFIG_MFD_CROS_EC_SPI)	+= cros_ec_spi.o
+> +obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
+>  
+>  rtsx_pci-objs			:= rtsx_pcr.o rts5209.o rts5229.o rtl8411.o rts5227.o rts5249.o
+>  obj-$(CONFIG_MFD_RTSX_PCI)	+= rtsx_pci.o
+> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
 > new file mode 100644
-> index 0000000..c110e11
+> index 0000000..578ac7b
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-> @@ -0,0 +1,70 @@
-> +Samsung Exynos SoC Low Power Audio Subsystem (LPASS)
+> +++ b/drivers/mfd/exynos-lpass.c
+> @@ -0,0 +1,187 @@
+> +/*
+> + * Copyright (C) 2015 - 2016 Samsung Electronics Co., Ltd.
+> + *
+> + * Authors: Inha Song <ideal.song@samsung.com>
+> + *          Sylwester Nawrocki <s.nawrocki@samsung.com>
+> + *
+> + * Samsung Exynos SoC series Low Power Audio Subsystem driver.
+> + *
+> + * This module provides regmap for the Top SFR region and instantiates
+> + * devices for IP blocks like DMAC, I2S, UART.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + */
 > +
-> +Required properties:
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/mfd/syscon/exynos5-pmu.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
 > +
-> + - compatible		: "samsung,exynos5433-lpass"
-> + - reg			: should contain the LPASS top SFR region location
-> +			  and size
-> + - samsung,pmu-syscon	: the phandle to the Power Management Unit node
-> + - #address-cells	: should be 1
-> + - #size-cells		: should be 1
-> + - ranges		: must be present
+> +/* LPASS Top register definitions */
+> +#define SFR_LPASS_CORE_SW_RESET		0x08
+> +#define  LPASS_SB_SW_RESET		BIT(11)
+> +#define  LPASS_UART_SW_RESET		BIT(10)
+> +#define  LPASS_PCM_SW_RESET		BIT(9)
+> +#define  LPASS_I2S_SW_RESET		BIT(8)
+> +#define  LPASS_WDT1_SW_RESET		BIT(4)
+> +#define  LPASS_WDT0_SW_RESET		BIT(3)
+> +#define  LPASS_TIMER_SW_RESET		BIT(2)
+> +#define  LPASS_MEM_SW_RESET		BIT(1)
+> +#define  LPASS_DMA_SW_RESET		BIT(0)
 > +
-> +Each IP block of the Low Power Audio Subsystem should be specified as
-> +an optional sub-node. For "samsung,exynos5433-lpass" compatible this includes:
-> +UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, VIC, WDT 0...1 devices.
+> +#define SFR_LPASS_INTR_CA5_MASK		0x48
+> +#define SFR_LPASS_INTR_CPU_MASK		0x58
+> +#define  LPASS_INTR_APM			BIT(9)
+> +#define  LPASS_INTR_MIF			BIT(8)
+> +#define  LPASS_INTR_TIMER		BIT(7)
+> +#define  LPASS_INTR_DMA			BIT(6)
+> +#define  LPASS_INTR_GPIO		BIT(5)
+> +#define  LPASS_INTR_I2S			BIT(4)
+> +#define  LPASS_INTR_PCM			BIT(3)
+> +#define  LPASS_INTR_SLIMBUS		BIT(2)
+> +#define  LPASS_INTR_UART		BIT(1)
+> +#define  LPASS_INTR_SFR			BIT(0)
 > +
-> +Bindings of the sub-nodes are described in:
-> +  ../serial/samsung_uart.txt
-> +  ../sound/samsung-i2s.txt
-> +  ../dma/arm-pl330.txt
+> +struct exynos_lpass {
+> +	/* pointer to the Power Management Unit regmap */
+> +	struct regmap *pmu;
+> +	/* pointer to the LPASS TOP regmap */
+> +	struct regmap *top;
+> +};
 > +
+> +static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
+> +{
+> +	unsigned int val = 0;
 > +
-> +Example:
+> +	regmap_read(lpass->top, SFR_LPASS_CORE_SW_RESET, &val);
 > +
-> +audio-subsystem {
-> +	compatible = "samsung,exynos5433-lpass";
-> +	reg = <0x11400000 0x100>, <0x11500000 0x08>;
-> +	samsung,pmu-syscon = <&pmu_system_controller>;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges;
+> +	val &= ~mask;
+> +	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
 > +
-> +	adma: adma@11420000 {
-> +		compatible = "arm,pl330", "arm,primecell";
-> +		reg = <0x11420000 0x1000>;
-> +		interrupts = <0 73 0>;
-> +		clocks = <&cmu_aud CLK_ACLK_DMAC>;
-> +		clock-names = "apb_pclk";
-> +		#dma-cells = <1>;
-> +		#dma-channels = <8>;
-> +		#dma-requests = <32>;
-> +	};
+> +	usleep_range(100, 150);
 > +
-> +	i2s0: i2s0@11440000 {
-> +		compatible = "samsung,exynos7-i2s";
-> +		reg = <0x11440000 0x100>;
-> +		dmas = <&adma 0 &adma 2>;
-> +		dma-names = "tx", "rx";
-> +		interrupts = <0 70 0>;
-> +		clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
-> +			 <&cmu_aud CLK_SCLK_AUD_I2S>,
-> +			 <&cmu_aud CLK_SCLK_I2S_BCLK>;
-> +		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&i2s0_bus>;
-> +		status = "disabled";
-> +	};
+> +	val |= mask;
+> +	regmap_write(lpass->top, SFR_LPASS_CORE_SW_RESET, val);
+> +}
 > +
-> +	serial_3: serial@11460000 {
-> +		compatible = "samsung,exynos5433-uart";
-> +		reg = <0x11460000 0x100>;
-> +		interrupts = <0 67 0>;
-> +		clocks = <&cmu_aud CLK_PCLK_AUD_UART>,
-> +			 <&cmu_aud CLK_SCLK_AUD_UART>;
-> +		clock-names = "uart", "clk_uart_baud0";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&uart_aud_bus>;
-> +		status = "disabled";
-> +	};
-> + };
+> +static void exynos_lpass_enable(struct exynos_lpass *lpass)
+> +{
+> +	/* Unmask SFR, DMA and I2S interrupt */
+> +	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
+> +		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
+> +
+> +	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK,
+> +		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
+> +
+> +	/* Activate related PADs from retention state */
+> +	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
+> +		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
+> +
+> +	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
+> +	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
+> +	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
+> +}
+> +
+> +static void exynos_lpass_disable(struct exynos_lpass *lpass)
+> +{
+> +	/* Mask any unmasked IP interrupt sources */
+> +	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK, 0);
+> +	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK, 0);
+> +
+> +	/* Deactivate related PADs from retention state */
+> +	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION, 0);
+> +}
+> +
+> +static const struct regmap_config exynos_lpass_reg_conf = {
+> +	.reg_bits	= 32,
+> +	.reg_stride	= 4,
+> +	.val_bits	= 32,
+> +	.max_register	= 0xfc,
+> +	.fast_io	= true,
+> +};
+> +
+> +static int exynos_lpass_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct exynos_lpass *lpass;
+> +	void __iomem *base_top;
+> +	struct resource *res;
+> +
+> +	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
+> +	if (!lpass)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base_top = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base_top))
+> +		return PTR_ERR(base_top);
+> +
+> +	lpass->top = regmap_init_mmio(dev, base_top,
+> +					&exynos_lpass_reg_conf);
+> +	if (IS_ERR(lpass->top)) {
+> +		dev_err(dev, "LPASS top regmap initialization failed\n");
+> +		return PTR_ERR(lpass->top);
+> +	}
+> +
+> +	lpass->pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
+> +						"samsung,pmu-syscon");
+> +	if (IS_ERR(lpass->pmu)) {
+> +		dev_err(dev, "Failed to lookup PMU regmap\n");
+> +		return PTR_ERR(lpass->pmu);
+> +	}
+> +
+> +	platform_set_drvdata(pdev, lpass);
+> +	exynos_lpass_enable(lpass);
+> +
+> +	return of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int exynos_lpass_suspend(struct device *dev)
+> +{
+> +	struct exynos_lpass *lpass = dev_get_drvdata(dev);
+> +
+> +	exynos_lpass_disable(lpass);
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_lpass_resume(struct device *dev)
+> +{
+> +	struct exynos_lpass *lpass = dev_get_drvdata(dev);
+> +
+> +	exynos_lpass_enable(lpass);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
+> +					exynos_lpass_resume);
+> +
+> +static const struct of_device_id exynos_lpass_of_match[] = {
+> +	{ .compatible = "samsung,exynos5433-lpass" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_lpass_of_match);
+> +
+> +static struct platform_driver exynos_lpass_driver = {
+> +	.driver = {
+> +		.name		= "exynos-lpass",
+> +		.pm		= &lpass_pm_ops,
+> +		.of_match_table	= exynos_lpass_of_match,
+> +	},
+> +	.probe	= exynos_lpass_probe,
+> +};
+> +module_platform_driver(exynos_lpass_driver);
+> +
+> +MODULE_DESCRIPTION("Samsung Low Power Audio Subsystem driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+> index 76f30f9..c28ff21 100644
+> --- a/include/linux/mfd/syscon/exynos5-pmu.h
+> +++ b/include/linux/mfd/syscon/exynos5-pmu.h
+> @@ -43,8 +43,10 @@
+>  #define EXYNOS5433_MIPI_PHY2_CONTROL		(0x718)
+>  
+>  #define EXYNOS5_PHY_ENABLE			BIT(0)
+> -
+>  #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+>  #define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
+>  
+> +#define EXYNOS5433_PAD_RETENTION_AUD_OPTION		(0x3028)
+> +#define EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR	BIT(28)
+> +
+>  #endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
 
 -- 
 Lee Jones
