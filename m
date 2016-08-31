@@ -1,23 +1,18 @@
 From: ayaka <ayaka@soulik.info>
 Subject: Re: [PATCH RFC] ARM: dts: samsung: add rga-lvds panel in itop elite
-Date: Thu, 1 Sep 2016 01:53:33 +0800
-Message-ID: <30e64895-34da-68ba-3616-f537e4196e9a@soulik.info>
+Date: Thu, 1 Sep 2016 01:55:08 +0800
+Message-ID: <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
 References: <1472511002-9019-1-git-send-email-ayaka@soulik.info>
  <dee989f5-17b0-7445-514b-559e98d77acd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:56080 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753070AbcHaRxt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 13:53:49 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <dee989f5-17b0-7445-514b-559e98d77acd@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, thierry.reding@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
 
@@ -67,9 +62,9 @@ simple-dpi for MIPI, but what is for parallel video or lvds?
 > Regards
 > Andrzej
 The other problem is that I don't how to configure the display-times, 
-the datasheet for CLAA070WP03XG should talk about total time, active 
-time and blank time for both Horizontal an Vertical time. Does it mean 
-the front-porch and sync-len for horizontal and vertical are zero ?
+the datasheet for CLAA070WP03XG only talk about total time, active time 
+and blank time for both Horizontal an Vertical time. Does it mean the 
+front-porch and sync-len for horizontal and vertical are zero ?
 
 +       ports {
 +               #address-cells = <1>;
@@ -99,3 +94,4 @@ the front-porch and sync-len for horizontal and vertical are zero ?
 +                               vback-porch = <8>;
 +                               vsync-len = <0>;
 +                       };
++      };
