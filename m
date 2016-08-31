@@ -1,36 +1,89 @@
-From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: [PATCH 3/3 v3] devicetree: bindings: Add vendor prefix for Topeet.
-Date: Wed, 31 Aug 2016 21:00:25 +0800
-Message-ID: <1472648425-3920-1-git-send-email-ayaka@soulik.info>
-References: <f90ffaf4-dc95-9c32-1f4d-771f96424783@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
+Date: Wed, 31 Aug 2016 15:07:00 +0200
+Message-ID: <bf55b24c-b1ee-78be-d56d-8fdda4f2fdc9@samsung.com>
+References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
+ <28320955.k33BrW2NEN@wuerfel>
+ <07ddb8f8-a9e1-6105-ace9-edb5c8cc2f57@samsung.com> <6113443.1q3Xq4YM82@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f90ffaf4-dc95-9c32-1f4d-771f96424783-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-reply-to: <6113443.1q3Xq4YM82@wuerfel>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add TOPEET, a ARM devlopment board vendor in China mainland.
+On 08/31/2016 02:58 PM, Arnd Bergmann wrote:
+> On Wednesday, August 31, 2016 2:53:02 PM CEST Krzysztof Kozlowski wrote:
+>> On 08/31/2016 02:42 PM, Arnd Bergmann wrote:
+>>> On Wednesday, August 31, 2016 2:13:25 PM CEST Krzysztof Kozlowski wrote:
+>>>>
+>>>> +#define PIN_PULL_NONE          0
+>>>> +#define PIN_PULL_DOWN          1
+>>>> +#define PIN_PULL_UP            3
+>>>> +
+>>>> +#define PIN_DRV_LV1            0
+>>>> +#define PIN_DRV_LV2            2
+>>>> +#define PIN_DRV_LV3            1
+>>>> +#define PIN_DRV_LV4            3
+>>>> +
+>>>> +#define PIN_FUNC_INPUT         0
+>>>> +#define PIN_FUNC_OUTPUT                1
+>>>> +#define PIN_FUNC_SPC_2         2
+>>>> +#define PIN_FUNC_SPC_3         3
+>>>> +#define PIN_FUNC_SPC_4         4
+>>>> +#define PIN_FUNC_SPC_5         5
+>>>> +#define PIN_FUNC_SPC_F         0xf
+>>>
+>>> Any reason for having a copy in each of those files instead of one
+>>> that is shared across all of them?
+>>
+>> The drive strengths differ between some of them. There are three groups
+>> of drive strengths:
+>> 1. Exynos3250, Exynos4 (all) and Exynos5250,
+>> 2. Exynos5260,
+>> 3. Exynos5410, 542x and 5800.
+> 
+> I see. That sounds like an even stronger reason to not duplicate
+> the definitions, as this is very confusing.
 
-Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+Okay.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 0d9d4d8..1e28cfd 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -266,6 +266,7 @@ technologic	Technologic Systems
- thine	THine Electronics, Inc.
- ti	Texas Instruments
- tlm	Trusted Logic Mobility
-+topeet  Topeet
- toradex	Toradex AG
- toshiba	Toshiba Corporation
- toumaz	Toumaz
--- 
-2.7.4
+> 
+>> Rest (functions and pull up/down) is the same so sharing the defines is
+>> possible but not that obvious. Solution would be for example adding a
+>> SoC-family prefix for PIN_DRV_LVx. Not that good...
+>>
+>> I could put it into three DTSI:
+>>  - exynos3-pinctrl.dtsi (new file)
+>>  - exynos5260-pinctrl.dtsi (like it is now)
+>>  - exynos54xx-pinctrl.dtsi (new file)
+>>
+>> which would reduce the duplication. Other ideas?
+> 
+> I think having the soc-family prefix is better, as it avoids
+> defining the same symbol to a different value. Better make this
+> as explicit as possible.
+
+Ok, sounds reasonable. I want to convert also older platforms S3C (drive
+strengths and pull up/down differ) and arm64 SoC: Exynos7. For the
+latter the problem is there is no common place for sharing DTS, except
+the headers. However this does not really belong to headers. I guess
+some level of duplication might be still exist.
+
+
+> I think overall, a better solution would have been to define the
+> constants globally (shared with non-exynos) to start with,
+> and have the driver translate generic numbers into vendor
+> specific ones. Obviously it's too late for that now.
+
+We could extend driver by adding new bindings accepting generic numbers
+(and still backward compatible) but this looks like an overkill.
+
+Best regards,
+Krzysztof
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
