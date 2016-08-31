@@ -1,256 +1,214 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
-Date: Wed, 31 Aug 2016 14:13:25 +0200
-Message-ID: <1472645613-5362-2-git-send-email-k.kozlowski@samsung.com>
-References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 3/7] ARM: dts: exynos: Remove skeleton.dtsi usage for Exynos4
+Date: Wed, 31 Aug 2016 14:14:35 +0200
+Message-ID: <1472645679-5696-4-git-send-email-javier@osg.samsung.com>
+References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add macros for replacing hard-coded GPIO configuration: pull up/down,
-drive strength and function.
+The skeleton.dtsi file was removed in ARM64 for different reasons as
+explained in commit ("3ebee5a2e141 arm64: dts: kill skeleton.dtsi").
 
-Although PIN_FUNC_SPC_2 does not bring much information about the
-function itself, it still is more descriptive then hard-coded
-number <2>.
+These also applies to ARM and it will also allow to get rid of the
+following DTC warnings in the future:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+"Node /memory has a reg or ranges property, but no unit name"
+
+The disassembled DTB are almost the same besides an empty chosen
+node being removed and nodes reordered, so it should not have
+functional changes.
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  5 +++++
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 17 +++++++++++++++++
- arch/arm/boot/dts/exynos4415-pinctrl.dtsi | 17 +++++++++++++++++
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 13 +++++++++++++
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 17 +++++++++++++++++
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi | 17 ++++++++++++++---
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 16 ++++++++++++++++
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 17 +++++++++++++++++
- 8 files changed, 116 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 40ea7de44933..645bc3669554 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -26,6 +26,11 @@
- #define PIN_PDN_INPUT		2
- #define PIN_PDN_PREV		3
+ arch/arm/boot/dts/exynos4.dtsi                  | 3 ++-
+ arch/arm/boot/dts/exynos4210-origen.dts         | 1 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       | 1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          | 1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 1 +
+ arch/arm/boot/dts/exynos4412-odroidu3.dts       | 1 +
+ arch/arm/boot/dts/exynos4412-odroidx.dts        | 1 +
+ arch/arm/boot/dts/exynos4412-odroidx2.dts       | 1 +
+ arch/arm/boot/dts/exynos4412-origen.dts         | 1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       | 1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       | 1 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
+ arch/arm/boot/dts/exynos4415.dtsi               | 3 ++-
+ 13 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 32f22e12c70b..5f034eb5a5e2 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -21,11 +21,12 @@
  
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+
- #define PIN_IN(_pin, _pull, _drv)			\
- 	_pin {						\
- 		samsung,pins = #_pin;			\
-diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-index 9331c6252eff..21129263e4e5 100644
---- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-@@ -14,6 +14,23 @@
-  * published by the Free Software Foundation.
- */
+ #include <dt-bindings/clock/exynos4.h>
+ #include <dt-bindings/clock/exynos-audss-clk.h>
+-#include "skeleton.dtsi"
+ #include "exynos-syscon-restart.dtsi"
  
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		2
-+#define PIN_DRV_LV3		1
-+#define PIN_DRV_LV4		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_5		5
-+#define PIN_FUNC_SPC_F		0xf
-+
  / {
- 	pinctrl@11400000 {
- 		gpa0: gpa0 {
-diff --git a/arch/arm/boot/dts/exynos4415-pinctrl.dtsi b/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-index 75af9c56123e..ae9d140a24d1 100644
---- a/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-@@ -11,6 +11,23 @@
-  * published by the Free Software Foundation.
- */
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
  
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		2
-+#define PIN_DRV_LV3		1
-+#define PIN_DRV_LV4		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_5		5
-+#define PIN_FUNC_SPC_F		0xf
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-index 856b29254374..ba5865208d3e 100644
---- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-@@ -16,11 +16,24 @@
- #define PIN_PULL_DOWN		1
- #define PIN_PULL_UP		3
+ 	aliases {
+ 		spi0 = &spi_0;
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index be2751eebaf8..6b2c41a87a3e 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -25,6 +25,7 @@
+ 	compatible = "insignal,origen", "samsung,exynos4210", "samsung,exynos4";
  
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		2
-+#define PIN_DRV_LV3		1
-+#define PIN_DRV_LV4		3
-+
- #define PIN_PDN_OUT0		0
- #define PIN_PDN_OUT1		1
- #define PIN_PDN_INPUT		2
- #define PIN_PDN_PREV		3
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x10000000
+ 		       0x50000000 0x10000000
+ 		       0x60000000 0x10000000
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 847fae3dd1f1..3c759baeadcc 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -24,6 +24,7 @@
+ 	compatible = "samsung,smdkv310", "samsung,exynos4210", "samsung,exynos4";
  
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_5		5
-+#define PIN_FUNC_SPC_F		0xf
-+
- #define PIN_SLP(_pin, _mode, _pull)				\
- 	_pin {							\
- 		samsung,pins = #_pin;				\
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 880917e508b2..5563dd80d4d0 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -12,6 +12,23 @@
-  * published by the Free Software Foundation.
- */
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x80000000>;
+ 	};
  
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		2
-+#define PIN_DRV_LV3		1
-+#define PIN_DRV_LV4		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_5		5
-+#define PIN_FUNC_SPC_F		0xf
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-index f6ee55ea0708..efd01b816538 100644
---- a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-@@ -12,9 +12,20 @@
-  * published by the Free Software Foundation.
- */
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 79d983036560..5f7ddb0627fb 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -21,6 +21,7 @@
+ 	compatible = "samsung,trats", "samsung,exynos4210", "samsung,exynos4";
  
--#define PIN_PULL_NONE	0
--#define PIN_PULL_DOWN	1
--#define PIN_PULL_UP	3
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		1
-+#define PIN_DRV_LV4		2
-+#define PIN_DRV_LV6		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
+ 	memory {
++		device_type = "memory";
+ 		reg =  <0x40000000 0x10000000
+ 			0x50000000 0x10000000
+ 			0x60000000 0x10000000
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index cf95202fa310..30d938e17c9f 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -21,6 +21,7 @@
+ 	compatible = "samsung,universal_c210", "samsung,exynos4210", "samsung,exynos4";
  
- &pinctrl_0 {
- 	gpa0: gpa0 {
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index b58a0f29f42c..10272fa54c37 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -9,6 +9,22 @@
+ 	memory {
++		device_type = "memory";
+ 		reg =  <0x40000000 0x10000000
+ 			0x50000000 0x10000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+index d73aa6c58fe3..cc1b87e09534 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+@@ -19,6 +19,7 @@
+ 	compatible = "hardkernel,odroid-u3", "samsung,exynos4412", "samsung,exynos4";
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x7FF00000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 2af235151301..518ca57837be 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -19,6 +19,7 @@
+ 	compatible = "hardkernel,odroid-x", "samsung,exynos4412", "samsung,exynos4";
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x3FF00000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
+index 3e3584270e00..92cdeea1cfb3 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
+@@ -18,6 +18,7 @@
+ 	compatible = "hardkernel,odroid-x2", "samsung,exynos4412", "samsung,exynos4";
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x7FF00000>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 26a36fed9652..9156a35a6117 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -23,6 +23,7 @@
+ 	compatible = "insignal,origen4412", "samsung,exynos4412", "samsung,exynos4";
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index 231ffbdbf9d0..2e868c4c307e 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -21,6 +21,7 @@
+ 	compatible = "samsung,smdk4412", "samsung,exynos4412", "samsung,exynos4";
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index 4840bbdaa9ec..ad60f3840e24 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -24,6 +24,7 @@
+ 	};
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg = <0x40000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 129e973a06a6..e1380bae8ee3 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -31,6 +31,7 @@
+ 	};
+ 
+ 	memory {
++		device_type = "memory";
+ 		reg =  <0x40000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
+index 28b04b6795c9..3c40f8a956dd 100644
+--- a/arch/arm/boot/dts/exynos4415.dtsi
++++ b/arch/arm/boot/dts/exynos4415.dtsi
+@@ -16,13 +16,14 @@
   * published by the Free Software Foundation.
   */
  
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		1
-+#define PIN_DRV_LV3		2
-+#define PIN_DRV_LV4		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_F		0xf
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index 14beb7e07323..41abc8ec474a 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -12,6 +12,23 @@
-  * published by the Free Software Foundation.
- */
+-#include "skeleton.dtsi"
+ #include <dt-bindings/clock/exynos4415.h>
+ #include <dt-bindings/clock/exynos-audss-clk.h>
  
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_DRV_LV1		0
-+#define PIN_DRV_LV2		1
-+#define PIN_DRV_LV3		2
-+#define PIN_DRV_LV4		3
-+
-+#define PIN_FUNC_INPUT		0
-+#define PIN_FUNC_OUTPUT		1
-+#define PIN_FUNC_SPC_2		2
-+#define PIN_FUNC_SPC_3		3
-+#define PIN_FUNC_SPC_4		4
-+#define PIN_FUNC_SPC_5		5
-+#define PIN_FUNC_SPC_F		0xf
-+
- &pinctrl_0 {
- 	gpy7: gpy7 {
- 		gpio-controller;
+ / {
+ 	compatible = "samsung,exynos4415";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	aliases {
+ 		pinctrl0 = &pinctrl_0;
 -- 
-1.9.1
+2.7.4
