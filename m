@@ -1,51 +1,66 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 6/6] media: s5p-jpeg: fix system and runtime pm integration
-Date: Wed, 31 Aug 2016 14:55:59 +0200
-Message-ID: <1472648159-9814-7-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/6] drm/exynos: rotator: fix system and runtime pm integration
+Date: Wed, 31 Aug 2016 14:55:56 +0200
+Message-ID: <1472648159-9814-4-git-send-email-m.szyprowski@samsung.com>
 References: <1472648159-9814-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1472648159-9814-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-media-owner@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VXNlIGdlbmVyaWMgaGVscGVycyBpbnN0ZWFkIG9mIG9wZW4tY29kaW5nIHVzYWdlIG9mIHJ1bnRp
-bWUgcG0gZm9yIHN5c3RlbQpzbGVlcCBwbSwgd2hpY2ggd2FzIHBvdGVudGlhbGx5IGJyb2tlbiBm
-b3Igc29tZSBjb3JuZXIgY2FzZXMuCgpTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxt
-LnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zNXAt
-anBlZy9qcGVnLWNvcmUuYyB8IDI0ICsrKystLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNo
-YW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMjAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9tZWRpYS9wbGF0Zm9ybS9zNXAtanBlZy9qcGVnLWNvcmUuYyBiL2RyaXZlcnMvbWVkaWEv
-cGxhdGZvcm0vczVwLWpwZWcvanBlZy1jb3JlLmMKaW5kZXggNzg1ZTY5MzZjODgxLi43MzllZTQ5
-Yjk3OTAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLWpwZWcvanBlZy1j
-b3JlLmMKKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zNXAtanBlZy9qcGVnLWNvcmUuYwpA
-QCAtMjk5NiwyNyArMjk5NiwxMSBAQCBzdGF0aWMgaW50IHM1cF9qcGVnX3J1bnRpbWVfcmVzdW1l
-KHN0cnVjdCBkZXZpY2UgKmRldikKIH0KICNlbmRpZiAvKiBDT05GSUdfUE0gKi8KIAotI2lmZGVm
-IENPTkZJR19QTV9TTEVFUAotc3RhdGljIGludCBzNXBfanBlZ19zdXNwZW5kKHN0cnVjdCBkZXZp
-Y2UgKmRldikKLXsKLQlpZiAocG1fcnVudGltZV9zdXNwZW5kZWQoZGV2KSkKLQkJcmV0dXJuIDA7
-Ci0KLQlyZXR1cm4gczVwX2pwZWdfcnVudGltZV9zdXNwZW5kKGRldik7Ci19Ci0KLXN0YXRpYyBp
-bnQgczVwX2pwZWdfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKLXsKLQlpZiAocG1fcnVudGlt
-ZV9zdXNwZW5kZWQoZGV2KSkKLQkJcmV0dXJuIDA7Ci0KLQlyZXR1cm4gczVwX2pwZWdfcnVudGlt
-ZV9yZXN1bWUoZGV2KTsKLX0KLSNlbmRpZgotCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9v
-cHMgczVwX2pwZWdfcG1fb3BzID0gewotCVNFVF9TWVNURU1fU0xFRVBfUE1fT1BTKHM1cF9qcGVn
-X3N1c3BlbmQsIHM1cF9qcGVnX3Jlc3VtZSkKLQlTRVRfUlVOVElNRV9QTV9PUFMoczVwX2pwZWdf
-cnVudGltZV9zdXNwZW5kLCBzNXBfanBlZ19ydW50aW1lX3Jlc3VtZSwgTlVMTCkKKwlTRVRfU1lT
-VEVNX1NMRUVQX1BNX09QUyhwbV9ydW50aW1lX2ZvcmNlX3N1c3BlbmQsCisJCQkJcG1fcnVudGlt
-ZV9mb3JjZV9yZXN1bWUpCisJU0VUX1JVTlRJTUVfUE1fT1BTKHM1cF9qcGVnX3J1bnRpbWVfc3Vz
-cGVuZCwgczVwX2pwZWdfcnVudGltZV9yZXN1bWUsCisJCQkgICBOVUxMKQogfTsKIAogc3RhdGlj
-IHN0cnVjdCBzNXBfanBlZ192YXJpYW50IHM1cF9qcGVnX2RydmRhdGEgPSB7Ci0tIAoxLjkuMQoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Use generic helpers instead of open-coding usage of runtime pm for system
+sleep pm, which was potentially broken for some corner cases.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c | 26 ++------------------------
+ 1 file changed, 2 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index 404367a430b5..6591e406084c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -794,29 +794,6 @@ static int rotator_clk_crtl(struct rot_context *rot, bool enable)
+ 	return 0;
+ }
+ 
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int rotator_suspend(struct device *dev)
+-{
+-	struct rot_context *rot = dev_get_drvdata(dev);
+-
+-	if (pm_runtime_suspended(dev))
+-		return 0;
+-
+-	return rotator_clk_crtl(rot, false);
+-}
+-
+-static int rotator_resume(struct device *dev)
+-{
+-	struct rot_context *rot = dev_get_drvdata(dev);
+-
+-	if (!pm_runtime_suspended(dev))
+-		return rotator_clk_crtl(rot, true);
+-
+-	return 0;
+-}
+-#endif
+-
+ static int rotator_runtime_suspend(struct device *dev)
+ {
+ 	struct rot_context *rot = dev_get_drvdata(dev);
+@@ -833,7 +810,8 @@ static int rotator_runtime_resume(struct device *dev)
+ #endif
+ 
+ static const struct dev_pm_ops rotator_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(rotator_suspend, rotator_resume)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
+ 	SET_RUNTIME_PM_OPS(rotator_runtime_suspend, rotator_runtime_resume,
+ 									NULL)
+ };
+-- 
+1.9.1
