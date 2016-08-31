@@ -1,43 +1,59 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
-Date: Wed, 31 Aug 2016 14:42:57 +0200
-Message-ID: <28320955.k33BrW2NEN@wuerfel>
-References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com> <1472645613-5362-2-git-send-email-k.kozlowski@samsung.com>
+Date: Wed, 31 Aug 2016 14:53:02 +0200
+Message-ID: <07ddb8f8-a9e1-6105-ace9-edb5c8cc2f57@samsung.com>
+References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
+ <1472645613-5362-2-git-send-email-k.kozlowski@samsung.com>
+ <28320955.k33BrW2NEN@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1472645613-5362-2-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <28320955.k33BrW2NEN@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, August 31, 2016 2:13:25 PM CEST Krzysztof Kozlowski wrote:
+On 08/31/2016 02:42 PM, Arnd Bergmann wrote:
+> On Wednesday, August 31, 2016 2:13:25 PM CEST Krzysztof Kozlowski wrote:
+>>
+>> +#define PIN_PULL_NONE          0
+>> +#define PIN_PULL_DOWN          1
+>> +#define PIN_PULL_UP            3
+>> +
+>> +#define PIN_DRV_LV1            0
+>> +#define PIN_DRV_LV2            2
+>> +#define PIN_DRV_LV3            1
+>> +#define PIN_DRV_LV4            3
+>> +
+>> +#define PIN_FUNC_INPUT         0
+>> +#define PIN_FUNC_OUTPUT                1
+>> +#define PIN_FUNC_SPC_2         2
+>> +#define PIN_FUNC_SPC_3         3
+>> +#define PIN_FUNC_SPC_4         4
+>> +#define PIN_FUNC_SPC_5         5
+>> +#define PIN_FUNC_SPC_F         0xf
 > 
-> +#define PIN_PULL_NONE          0
-> +#define PIN_PULL_DOWN          1
-> +#define PIN_PULL_UP            3
-> +
-> +#define PIN_DRV_LV1            0
-> +#define PIN_DRV_LV2            2
-> +#define PIN_DRV_LV3            1
-> +#define PIN_DRV_LV4            3
-> +
-> +#define PIN_FUNC_INPUT         0
-> +#define PIN_FUNC_OUTPUT                1
-> +#define PIN_FUNC_SPC_2         2
-> +#define PIN_FUNC_SPC_3         3
-> +#define PIN_FUNC_SPC_4         4
-> +#define PIN_FUNC_SPC_5         5
-> +#define PIN_FUNC_SPC_F         0xf
+> Any reason for having a copy in each of those files instead of one
+> that is shared across all of them?
 
-Any reason for having a copy in each of those files instead of one
-that is shared across all of them?
+The drive strengths differ between some of them. There are three groups
+of drive strengths:
+1. Exynos3250, Exynos4 (all) and Exynos5250,
+2. Exynos5260,
+3. Exynos5410, 542x and 5800.
 
-	Arnd
+Rest (functions and pull up/down) is the same so sharing the defines is
+possible but not that obvious. Solution would be for example adding a
+SoC-family prefix for PIN_DRV_LVx. Not that good...
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I could put it into three DTSI:
+ - exynos3-pinctrl.dtsi (new file)
+ - exynos5260-pinctrl.dtsi (like it is now)
+ - exynos54xx-pinctrl.dtsi (new file)
+
+which would reduce the duplication. Other ideas?
+
+Best regards,
+Krzysztof
