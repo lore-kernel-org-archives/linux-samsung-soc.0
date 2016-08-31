@@ -1,38 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
-Date: Wed, 31 Aug 2016 15:33:47 +0200
-Message-ID: <5709554.y3Mq6my3Uz@wuerfel>
-References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com> <6113443.1q3Xq4YM82@wuerfel> <bf55b24c-b1ee-78be-d56d-8fdda4f2fdc9@samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
+ memory node DTC warnings
+Date: Wed, 31 Aug 2016 15:45:24 +0200
+Message-ID: <0da13ae1-90a8-912b-227e-0e94439953d5@osg.samsung.com>
+References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+ <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bf55b24c-b1ee-78be-d56d-8fdda4f2fdc9@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, August 31, 2016 3:07:00 PM CEST Krzysztof Kozlowski wrote:
-> 
-> Ok, sounds reasonable. I want to convert also older platforms S3C (drive
-> strengths and pull up/down differ) and arm64 SoC: Exynos7. For the
-> latter the problem is there is no common place for sharing DTS, except
-> the headers. However this does not really belong to headers. I guess
-> some level of duplication might be still exist.
+Hello Krzysztof,
 
-We have stuff in the headers that belongs way less there, so I wouldn't
-mind, but having a separate set of definitions for arm64 also isn't
-a problem at all.
+On 08/31/2016 02:55 PM, Krzysztof Kozlowski wrote:
+> On 08/31/2016 02:14 PM, Javier Martinez Canillas wrote:
+>> Hello Krzysztof,
+>>
+>> This series removes the usage of the skeleton.dtsi in all the Exynos dts,
+>> which allows to get rid of the DTC warnings about a mismatch between the
+>> memory nodes' unit names and reg properties.
+>>
+>> Patches are pretty trivial and shouldn't cause functional changes AFAIK,
+>> but only the Exynos5 changes have been tested. The others patches were
+>> just built tested.
+> 
+> I think this is a common problem, not only Exynos-specific, so I would
+
+That's correct.
+
+> prefer to stick to common pattern. Either all DTS/DTSI include skeleton
+> or none of them.
+>
+
+The idea is to get rid of skeleton.dtsi [0], but that will of course take
+time until the dtsi is removed from all the files. So this patch is a step
+in the right direction so at least Exynos is not a blocker to remove it.
  
-> > I think overall, a better solution would have been to define the
-> > constants globally (shared with non-exynos) to start with,
-> > and have the driver translate generic numbers into vendor
-> > specific ones. Obviously it's too late for that now.
+> Best regards,
+> Krzysztof
 > 
-> We could extend driver by adding new bindings accepting generic numbers
-> (and still backward compatible) but this looks like an overkill.
 
-Agreed, that would only make things more confusing, not less.
+[0]: https://lkml.org/lkml/2016/8/3/195
 
-	Arnd
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
