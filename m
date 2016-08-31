@@ -1,59 +1,38 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
-Date: Wed, 31 Aug 2016 14:53:02 +0200
-Message-ID: <07ddb8f8-a9e1-6105-ace9-edb5c8cc2f57@samsung.com>
-References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
- <1472645613-5362-2-git-send-email-k.kozlowski@samsung.com>
- <28320955.k33BrW2NEN@wuerfel>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
+ memory node DTC warnings
+Date: Wed, 31 Aug 2016 14:55:57 +0200
+Message-ID: <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07@kernel.org>
+References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <28320955.k33BrW2NEN@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1472645679-5696-1-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/31/2016 02:42 PM, Arnd Bergmann wrote:
-> On Wednesday, August 31, 2016 2:13:25 PM CEST Krzysztof Kozlowski wrote:
->>
->> +#define PIN_PULL_NONE          0
->> +#define PIN_PULL_DOWN          1
->> +#define PIN_PULL_UP            3
->> +
->> +#define PIN_DRV_LV1            0
->> +#define PIN_DRV_LV2            2
->> +#define PIN_DRV_LV3            1
->> +#define PIN_DRV_LV4            3
->> +
->> +#define PIN_FUNC_INPUT         0
->> +#define PIN_FUNC_OUTPUT                1
->> +#define PIN_FUNC_SPC_2         2
->> +#define PIN_FUNC_SPC_3         3
->> +#define PIN_FUNC_SPC_4         4
->> +#define PIN_FUNC_SPC_5         5
->> +#define PIN_FUNC_SPC_F         0xf
+On 08/31/2016 02:14 PM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Any reason for having a copy in each of those files instead of one
-> that is shared across all of them?
+> This series removes the usage of the skeleton.dtsi in all the Exynos dts,
+> which allows to get rid of the DTC warnings about a mismatch between the
+> memory nodes' unit names and reg properties.
+> 
+> Patches are pretty trivial and shouldn't cause functional changes AFAIK,
+> but only the Exynos5 changes have been tested. The others patches were
+> just built tested.
 
-The drive strengths differ between some of them. There are three groups
-of drive strengths:
-1. Exynos3250, Exynos4 (all) and Exynos5250,
-2. Exynos5260,
-3. Exynos5410, 542x and 5800.
-
-Rest (functions and pull up/down) is the same so sharing the defines is
-possible but not that obvious. Solution would be for example adding a
-SoC-family prefix for PIN_DRV_LVx. Not that good...
-
-I could put it into three DTSI:
- - exynos3-pinctrl.dtsi (new file)
- - exynos5260-pinctrl.dtsi (like it is now)
- - exynos54xx-pinctrl.dtsi (new file)
-
-which would reduce the duplication. Other ideas?
+I think this is a common problem, not only Exynos-specific, so I would
+prefer to stick to common pattern. Either all DTS/DTSI include skeleton
+or none of them.
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
