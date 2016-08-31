@@ -1,91 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add macros for GPIO configuration
-Date: Wed, 31 Aug 2016 15:07:00 +0200
-Message-ID: <bf55b24c-b1ee-78be-d56d-8fdda4f2fdc9@samsung.com>
-References: <1472645613-5362-1-git-send-email-k.kozlowski@samsung.com>
- <28320955.k33BrW2NEN@wuerfel>
- <07ddb8f8-a9e1-6105-ace9-edb5c8cc2f57@samsung.com> <6113443.1q3Xq4YM82@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <6113443.1q3Xq4YM82@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/3] media: exynos4-is: Improve clock management
+Date: Wed, 31 Aug 2016 15:25:17 +0200
+Message-ID: <1472649918-10371-3-git-send-email-m.szyprowski@samsung.com>
+References: <1472649918-10371-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41285 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932622AbcHaNZd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 31 Aug 2016 09:25:33 -0400
+In-reply-to: <1472649918-10371-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 08/31/2016 02:58 PM, Arnd Bergmann wrote:
-> On Wednesday, August 31, 2016 2:53:02 PM CEST Krzysztof Kozlowski wrote:
->> On 08/31/2016 02:42 PM, Arnd Bergmann wrote:
->>> On Wednesday, August 31, 2016 2:13:25 PM CEST Krzysztof Kozlowski wrote:
->>>>
->>>> +#define PIN_PULL_NONE          0
->>>> +#define PIN_PULL_DOWN          1
->>>> +#define PIN_PULL_UP            3
->>>> +
->>>> +#define PIN_DRV_LV1            0
->>>> +#define PIN_DRV_LV2            2
->>>> +#define PIN_DRV_LV3            1
->>>> +#define PIN_DRV_LV4            3
->>>> +
->>>> +#define PIN_FUNC_INPUT         0
->>>> +#define PIN_FUNC_OUTPUT                1
->>>> +#define PIN_FUNC_SPC_2         2
->>>> +#define PIN_FUNC_SPC_3         3
->>>> +#define PIN_FUNC_SPC_4         4
->>>> +#define PIN_FUNC_SPC_5         5
->>>> +#define PIN_FUNC_SPC_F         0xf
->>>
->>> Any reason for having a copy in each of those files instead of one
->>> that is shared across all of them?
->>
->> The drive strengths differ between some of them. There are three groups
->> of drive strengths:
->> 1. Exynos3250, Exynos4 (all) and Exynos5250,
->> 2. Exynos5260,
->> 3. Exynos5410, 542x and 5800.
-> 
-> I see. That sounds like an even stronger reason to not duplicate
-> the definitions, as this is very confusing.
+There is no need to keep all clocks prepared all the time. Call to
+clk_prepare/unprepare can be done on demand from runtime pm callbacks
+(it is allowed to call sleeping functions from that context).
 
-Okay.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-lite.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-> 
->> Rest (functions and pull up/down) is the same so sharing the defines is
->> possible but not that obvious. Solution would be for example adding a
->> SoC-family prefix for PIN_DRV_LVx. Not that good...
->>
->> I could put it into three DTSI:
->>  - exynos3-pinctrl.dtsi (new file)
->>  - exynos5260-pinctrl.dtsi (like it is now)
->>  - exynos54xx-pinctrl.dtsi (new file)
->>
->> which would reduce the duplication. Other ideas?
-> 
-> I think having the soc-family prefix is better, as it avoids
-> defining the same symbol to a different value. Better make this
-> as explicit as possible.
-
-Ok, sounds reasonable. I want to convert also older platforms S3C (drive
-strengths and pull up/down differ) and arm64 SoC: Exynos7. For the
-latter the problem is there is no common place for sharing DTS, except
-the headers. However this does not really belong to headers. I guess
-some level of duplication might be still exist.
-
-
-> I think overall, a better solution would have been to define the
-> constants globally (shared with non-exynos) to start with,
-> and have the driver translate generic numbers into vendor
-> specific ones. Obviously it's too late for that now.
-
-We could extend driver by adding new bindings accepting generic numbers
-(and still backward compatible) but this looks like an overkill.
-
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index a0f149fb88e1..fd16605dd1d4 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1454,25 +1454,17 @@ static void fimc_lite_clk_put(struct fimc_lite *fimc)
+ 	if (IS_ERR(fimc->clock))
+ 		return;
+ 
+-	clk_unprepare(fimc->clock);
+ 	clk_put(fimc->clock);
+ 	fimc->clock = ERR_PTR(-EINVAL);
+ }
+ 
+ static int fimc_lite_clk_get(struct fimc_lite *fimc)
+ {
+-	int ret;
+-
+ 	fimc->clock = clk_get(&fimc->pdev->dev, FLITE_CLK_NAME);
+ 	if (IS_ERR(fimc->clock))
+ 		return PTR_ERR(fimc->clock);
+ 
+-	ret = clk_prepare(fimc->clock);
+-	if (ret < 0) {
+-		clk_put(fimc->clock);
+-		fimc->clock = ERR_PTR(-EINVAL);
+-	}
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct of_device_id flite_of_match[];
+@@ -1543,7 +1535,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(dev);
+ 
+ 	if (!pm_runtime_enabled(dev)) {
+-		ret = clk_enable(fimc->clock);
++		ret = clk_prepare_enable(fimc->clock);
+ 		if (ret < 0)
+ 			goto err_sd;
+ 	}
+@@ -1568,7 +1560,7 @@ static int fimc_lite_runtime_resume(struct device *dev)
+ {
+ 	struct fimc_lite *fimc = dev_get_drvdata(dev);
+ 
+-	clk_enable(fimc->clock);
++	clk_prepare_enable(fimc->clock);
+ 	return 0;
+ }
+ 
+@@ -1576,7 +1568,7 @@ static int fimc_lite_runtime_suspend(struct device *dev)
+ {
+ 	struct fimc_lite *fimc = dev_get_drvdata(dev);
+ 
+-	clk_disable(fimc->clock);
++	clk_disable_unprepare(fimc->clock);
+ 	return 0;
+ }
+ #endif
+-- 
+1.9.1
