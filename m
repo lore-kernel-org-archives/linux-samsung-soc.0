@@ -1,38 +1,48 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
- memory node DTC warnings
-Date: Wed, 31 Aug 2016 14:55:57 +0200
-Message-ID: <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07@kernel.org>
-References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/6] Exynos: runtime/sleep pm fixes for gfx and media drivers
+Date: Wed, 31 Aug 2016 14:55:53 +0200
+Message-ID: <1472648159-9814-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1472645679-5696-1-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/31/2016 02:14 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> This series removes the usage of the skeleton.dtsi in all the Exynos dts,
-> which allows to get rid of the DTC warnings about a mismatch between the
-> memory nodes' unit names and reg properties.
-> 
-> Patches are pretty trivial and shouldn't cause functional changes AFAIK,
-> but only the Exynos5 changes have been tested. The others patches were
-> just built tested.
-
-I think this is a common problem, not only Exynos-specific, so I would
-prefer to stick to common pattern. Either all DTS/DTSI include skeleton
-or none of them.
-
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RGVhciBhbGwsCgpUaGlzIGlzIGEgcXVpY2sgZml4IG9mIHRoZSBpbmNvcnJlY3QgdXNhZ2Ugb2Yg
+cnVudGltZSBwbSBmb3Igc3lzdGVtIHNsZWVwCnBtIHB1cnBvc2VzLiBQYXRjaGVzIGludHJvZHVj
+ZSB1c2FnZSBvZiB0aGUgZ2VuZXJpYyBoZWxwZXJzCnBtX3J1bnRpbWVfZm9yY2Vfe3N1c3BlbmQs
+cmVzdW1lfSBpbnN0ZWFkIG9mIG9wZW4tY29kaW5nIHRoZW0sIHdoaWNoIHdhcwpwb3RlbnRpYWxs
+eSBicm9rZW4gZm9yIHNvbWUgY29ybmVyIGNhc2VzLiBUaGUgc2lkZS1lZmZlY3Qgb2YgdGhpcyBw
+YXRjaApzZXQgaXMgbm90aWNhYmxlIGNvZGUgcmVkdWN0aW9uLiBQYXRjaGVzIDEtNCBzaG91bGQg
+Z28gdmlhIGV4eW5vcyBkcm0Ka2VybmVsIHRyZWUsIHdoaWxlIHBhdGNoZXMgNS02IGFyZSBhaW1l
+ZCBmb3IgbWVkaWEgdHJlZS4KCkJlc3QgcmVnYXJkcwpNYXJlayBTenlwcm93c2tpClNhbXN1bmcg
+UiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpNYXJlayBTenlwcm93c2tpICg2KToKICBkcm0vZXh5bm9z
+OiBmaW1jOiBmaXggc3lzdGVtIGFuZCBydW50aW1lIHBtIGludGVncmF0aW9uCiAgZHJtL2V4eW5v
+czogZ3NjOiBmaXggc3lzdGVtIGFuZCBydW50aW1lIHBtIGludGVncmF0aW9uCiAgZHJtL2V4eW5v
+czogcm90YXRvcjogZml4IHN5c3RlbSBhbmQgcnVudGltZSBwbSBpbnRlZ3JhdGlvbgogIGRybS9l
+eHlub3M6IGcyZDogZml4IHN5c3RlbSBhbmQgcnVudGltZSBwbSBpbnRlZ3JhdGlvbgogIG1lZGlh
+OiBzNXAtY2VjOiBmaXggc3lzdGVtIGFuZCBydW50aW1lIHBtIGludGVncmF0aW9uCiAgbWVkaWE6
+IHM1cC1qcGVnOiBmaXggc3lzdGVtIGFuZCBydW50aW1lIHBtIGludGVncmF0aW9uCgogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyAgICB8IDI5ICsrLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMg
+ICAgIHwgMjkgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9nc2MuYyAgICAgfCAyOSArKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyB8IDI2ICsr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3M1cC1qcGVn
+L2pwZWctY29yZS5jIHwgMjQgKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL3N0YWdp
+bmcvbWVkaWEvczVwLWNlYy9zNXBfY2VjLmMgICAgIHwgMTcgKystLS0tLS0tLS0tLS0tLS0KIDYg
+ZmlsZXMgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMTM1IGRlbGV0aW9ucygtKQoKLS0gCjEu
+OS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
