@@ -1,54 +1,37 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
- memory node DTC warnings
-Date: Thu, 1 Sep 2016 12:40:46 +0100
-Message-ID: <20160901114046.GB4220@leverpostej>
-References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
- <12377780.GCreFUiXAa@amdc1976>
- <21e643af-bff7-2563-0254-d2b6e4a9a385@osg.samsung.com>
- <11690712.d89FASKYvI@amdc1976>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] video: fbdev: exynos: Remove old non-working MIPI driver
+Date: Thu, 01 Sep 2016 13:44:35 +0200
+Message-ID: <176ff6ca-5e1e-1d7e-bfb6-7e0b9da44179@kernel.org>
+References: <1472729876-9218-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56326 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932589AbcIALk7 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:26221 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754928AbcIALpN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 07:40:59 -0400
-Content-Disposition: inline
-In-Reply-To: <11690712.d89FASKYvI@amdc1976>
+        Thu, 1 Sep 2016 07:45:13 -0400
+In-reply-to: <1472729876-9218-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Thu, Sep 01, 2016 at 11:59:48AM +0200, Bartlomiej Zolnierkiewicz wrote:
-> On Thursday, September 01, 2016 10:35:15 AM Javier Martinez Canillas wrote:
-> > On 08/31/2016 07:40 PM, Bartlomiej Zolnierkiewicz wrote:
-> > > On Wednesday, August 31, 2016 03:45:24 PM Javier Martinez Canillas wrote:
-> > >> The idea is to get rid of skeleton.dtsi [0], but that will of course take
-> > >> time until the dtsi is removed from all the files. So this patch is a step
-> > >> in the right direction so at least Exynos is not a blocker to remove it.
-> > > 
-> > > Krzysztof's point is valid.  If you are going to convert all DTS/DTSI
-> > > then it is okay to apply Exynos specific changes, otherwise the code
-> > > should stay as it is currently.
-> > > 
-> > > Exynos won't be a blocker since we have your patches now and they can
-> > > be applied when/if needed ;)..
-> > 
-> > Sorry but I disagree. I see no reasons to need this to be an atomic, rather
-> > than incremental change. Deprecated things are usually handled by removing
-> > the usage and once there are no users, finally removing them.
+On 09/01/2016 01:37 PM, Krzysztof Kozlowski wrote:
+> The old non-DRM Exynos MIPI driver does not support DeviceTree and
+> requires board files.  Our platforms do not provide such so the driver
+> is not usable since a long time ago.  All features provided by the
+> driver (and associated s6e8ax0 panel driver) are already supported by
+> newer DRM version so the old code can be removed.
 > 
-> Yes, given that there is agreement on the direction and people are aware
-> of the needed changes.  This doesn't seem to be a case yet as there is
-> no comment in skeleton.dtsi about being deprecated and other platforms'
-> Maintainers are not aware of the need for the change.
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Donghwa Lee <dh09.lee@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On the DT side we're all agreed that skeleton.dtsi should die. I'll send
-a patch adding a note to skeleton.dtsi to make this more obvious, but
-that shouldn't be a blocker for removing existing uses.
 
-Thanks,
-Mark.
+Damn, I forgot to update top-fbdev Makefile. I will resend soon.
+
+BR,
+Krzysztof
