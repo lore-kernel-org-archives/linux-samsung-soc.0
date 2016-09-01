@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 6/7] ARM: dts: exynos: Add missing unit name to memory nodes in Exynos4 DTS
-Date: Thu,  1 Sep 2016 11:06:55 +0200
-Message-ID: <1472720817-20362-7-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v2 7/7] ARM: dts: exynos: Add missing unit name to memory nodes in Exynos5 DTS
+Date: Thu,  1 Sep 2016 11:06:56 +0200
+Message-ID: <1472720817-20362-8-git-send-email-javier@osg.samsung.com>
 References: <1472720817-20362-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1472720817-20362-1-git-send-email-javier@osg.samsung.com>
@@ -15,165 +15,208 @@ This patch fixes the following DTC warnings:
 "Node /memory has a reg or ranges property, but no unit name"
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
 
 Changes in v2: None
 
- arch/arm/boot/dts/exynos4210-origen.dts         | 2 +-
- arch/arm/boot/dts/exynos4210-smdkv310.dts       | 2 +-
- arch/arm/boot/dts/exynos4210-trats.dts          | 2 +-
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 2 +-
- arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 2 +-
- arch/arm/boot/dts/exynos4412-odroidx2.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-origen.dts         | 2 +-
- arch/arm/boot/dts/exynos4412-smdk4412.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-tiny4412.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts         | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts           | 2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          | 2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      | 2 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            | 2 +-
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         | 2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          | 2 +-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          | 2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 2 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 2 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          | 2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5440-sd5v1.dts             | 2 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts          | 2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 2 +-
+ 14 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 6b2c41a87a3e..a2c6a13fe67b 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -24,7 +24,7 @@
- 	model = "Insignal Origen evaluation board based on Exynos4210";
- 	compatible = "insignal,origen", "samsung,exynos4210", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x10000000
- 		       0x50000000 0x10000000
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 3c759baeadcc..af6ef3e6214d 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -23,7 +23,7 @@
- 	model = "Samsung smdkv310 evaluation board based on Exynos4210";
- 	compatible = "samsung,smdkv310", "samsung,exynos4210", "samsung,exynos4";
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 54397c7e8d7c..6098dacd09f1 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -20,7 +20,7 @@
+ 	model = "Insignal Arndale evaluation board based on EXYNOS5250";
+ 	compatible = "insignal,arndale", "samsung,exynos5250", "samsung,exynos5";
  
 -	memory {
 +	memory@40000000 {
  		device_type = "memory";
  		reg = <0x40000000 0x80000000>;
  	};
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 5f7ddb0627fb..0ca1b4d355f2 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -20,7 +20,7 @@
- 	model = "Samsung Trats based on Exynos4210";
- 	compatible = "samsung,trats", "samsung,exynos4210", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg =  <0x40000000 0x10000000
- 			0x50000000 0x10000000
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 30d938e17c9f..f1172be318cd 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -20,7 +20,7 @@
- 	model = "Samsung Universal C210 based on Exynos4210 rev0";
- 	compatible = "samsung,universal_c210", "samsung,exynos4210", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg =  <0x40000000 0x10000000
- 			0x50000000 0x10000000>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index cc1b87e09534..99634c54dca9 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -18,7 +18,7 @@
- 	model = "Hardkernel ODROID-U3 board based on Exynos4412";
- 	compatible = "hardkernel,odroid-u3", "samsung,exynos4412", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x7FF00000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 518ca57837be..d0a07673ae8b 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -18,7 +18,7 @@
- 	model = "Hardkernel ODROID-X board based on Exynos4412";
- 	compatible = "hardkernel,odroid-x", "samsung,exynos4412", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x3FF00000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-index 92cdeea1cfb3..4d228858f172 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-@@ -17,7 +17,7 @@
- 	model = "Hardkernel ODROID-X2 board based on Exynos4412";
- 	compatible = "hardkernel,odroid-x2", "samsung,exynos4412", "samsung,exynos4";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x7FF00000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 9156a35a6117..54a9f6906ed2 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index b85b78a57299..124e7bf1ed97 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
 @@ -22,7 +22,7 @@
- 	model = "Insignal Origen evaluation board based on Exynos4412";
- 	compatible = "insignal,origen4412", "samsung,exynos4412", "samsung,exynos4";
+ 	aliases {
+ 	};
  
 -	memory {
 +	memory@40000000 {
  		device_type = "memory";
- 		reg = <0x40000000 0x40000000>;
+ 		reg = <0x40000000 0x80000000>;
  	};
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index 2e868c4c307e..2e208d84ff6a 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index 5324eb488e30..9ddf5d2701c2 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -19,7 +19,7 @@
+ 		i2c104 = &i2c_104;
+ 	};
+ 
+-	memory {
++	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0x40000000 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+index bdc55fa7c576..103d8f94e1da 100644
+--- a/arch/arm/boot/dts/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/exynos5250-spring.dts
 @@ -20,7 +20,7 @@
- 	model = "Samsung SMDK evaluation board based on Exynos4412";
- 	compatible = "samsung,smdk4412", "samsung,exynos4412", "samsung,exynos4";
+ 	model = "Google Spring";
+ 	compatible = "google,spring", "samsung,exynos5250", "samsung,exynos5";
  
 -	memory {
 +	memory@40000000 {
  		device_type = "memory";
- 		reg = <0x40000000 0x40000000>;
+ 		reg = <0x40000000 0x80000000>;
  	};
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index ad60f3840e24..5504398e6e37 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -23,7 +23,7 @@
- 		stdout-path = &serial_0;
+diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
+index d7f62918ed4b..d75685cad627 100644
+--- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
++++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
+@@ -16,7 +16,7 @@
+ 	model = "SAMSUNG XYREF5260 board based on EXYNOS5260";
+ 	compatible = "samsung,xyref5260", "samsung,exynos5260", "samsung,exynos5";
+ 
+-	memory {
++	memory@20000000 {
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x80000000>;
  	};
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+index f1d831fe4ac0..cdc577265002 100644
+--- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -21,7 +21,7 @@
+ 	model = "Hardkernel Odroid XU";
+ 	compatible = "hardkernel,odroid-xu", "samsung,exynos5410", "samsung,exynos5";
  
 -	memory {
 +	memory@40000000 {
  		device_type = "memory";
- 		reg = <0x40000000 0x40000000>;
+ 		reg = <0x40000000 0x7ea00000>;
  	};
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index e1380bae8ee3..41ecd6d465a7 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -30,7 +30,7 @@
- 		i2c12 = &i2c_max77693_fuel;
- 	};
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index 6ea1ac4cf1e7..5e36bddb0509 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -16,7 +16,7 @@
+ 	model = "Samsung SMDK5410 board based on EXYNOS5410";
+ 	compatible = "samsung,smdk5410", "samsung,exynos5410", "samsung,exynos5";
  
 -	memory {
 +	memory@40000000 {
  		device_type = "memory";
- 		reg =  <0x40000000 0x40000000>;
+ 		reg = <0x40000000 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 98138bd64fad..68b91e6e5526 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -22,7 +22,7 @@
+ 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
+ 	compatible = "insignal,arndale-octa", "samsung,exynos5420", "samsung,exynos5";
+ 
+-	memory {
++	memory@20000000 {
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index cd0c44b0bfa5..bc76dfdc57e6 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -79,7 +79,7 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@20000000 {
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 3a744d5611ea..b9192ef11257 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -19,7 +19,7 @@
+ 	model = "Samsung SMDK5420 board based on EXYNOS5420";
+ 	compatible = "samsung,smdk5420", "samsung,exynos5420", "samsung,exynos5";
+ 
+-	memory {
++	memory@20000000 {
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 05ae7284bb1b..0747c6fdadf8 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -21,7 +21,7 @@
+ #include "exynos-mfc-reserved-memory.dtsi"
+ 
+ / {
+-	memory {
++	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0x40000000 0x7EA00000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+index afd21a41e05b..ad6f533b3f40 100644
+--- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
++++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+@@ -21,7 +21,7 @@
+ 	};
+ 
+ 	/* FIXME: set reg property with correct start address and size */
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+index bdb3bf622e2f..92bd2c6f7631 100644
+--- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
++++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+@@ -22,7 +22,7 @@
+ 	};
+ 
+ 	/* FIXME: set reg property with correct start address and size */
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 72f89c8803d4..9fafe10d9e4e 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -79,7 +79,7 @@
+ 
+ 	};
+ 
+-	memory {
++	memory@20000000 {
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x80000000>;
  	};
 -- 
 2.7.4
