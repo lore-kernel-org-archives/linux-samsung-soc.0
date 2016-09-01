@@ -1,57 +1,74 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/6] pinctrl: dt-bindings: samsung: Add macros for S3C64xx pin
- configuration
-Date: Thu, 01 Sep 2016 11:21:51 +0200
-Message-ID: <1472721715-2833-3-git-send-email-k.kozlowski@samsung.com>
-References: <1472721715-2833-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/7] ARM: dts: exynos: Add missing memory node for
+ Exynos5440 boards
+Date: Thu, 01 Sep 2016 11:28:31 +0200
+Message-ID: <b051f0fc-e99c-769c-e790-aaafc749a9ef@kernel.org>
+References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+ <1472645679-5696-2-git-send-email-javier@osg.samsung.com>
+ <20160831174657.GA19969@kozik-lap>
+ <c043b569-fbad-23bb-5807-5dda9cc8b37f@osg.samsung.com>
+ <e3cdab3d-f1ef-f751-b169-e3328178b835@kernel.org>
+ <0e8e0b3c-0dd9-c44b-d1ad-03c840d3a725@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1472721715-2833-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <0e8e0b3c-0dd9-c44b-d1ad-03c840d3a725-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add macros for configuring pins pull up/down on S3C64xx and S5PV210.
-They differ from Exynos SoC family.  Also add pin function with value of 6.
+On 09/01/2016 11:19 AM, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 09/01/2016 11:05 AM, Krzysztof Kozlowski wrote:
+>> On 09/01/2016 10:43 AM, Javier Martinez Canillas wrote:
+>>>>> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>>>>> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>>>>> @@ -21,6 +21,11 @@
+>>>>>  		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
+>>>>>  	};
+>>>>>  
+>>>>> +	memory {
+>>>>> +		device_type = "memory";
+>>>>> +		reg = <0 0>;
+>>>>> +	};
+>>>>
+>>>> This looks okay, but the default size and address cells won't be
+>>>> present. Won't that be a problem?
+>>>>
+>>>
+>>> They will be present since at this point exynos5440.dtsi is still including
+>>> exynos5440.dtsi, we are just overriding the memory node with the same values
+>>> than skeleton.dtsi so this can be removed later in patch 7/7.
+>>
+>> I don't get it. exynos5440.dtsi does not set size/address cells in top node.
+>>
+> 
+> Sorry, maybe I'm misunderstanding your question. The size/address cells are set
+> in the top node by exynos5440.dtsi including the skeleton.dtsi (since these are
+> set in that included dtsi).
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- include/dt-bindings/pinctrl/samsung.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Where? Nothing in my sources...
 
-diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
-index b2132f3fe1ac..8ba07a6de003 100644
---- a/include/dt-bindings/pinctrl/samsung.h
-+++ b/include/dt-bindings/pinctrl/samsung.h
-@@ -17,6 +17,10 @@
- #define EXYNOS_PIN_PULL_DOWN		1
- #define EXYNOS_PIN_PULL_UP		3
- 
-+#define S3C64XX_PIN_PULL_NONE		0
-+#define S3C64XX_PIN_PULL_DOWN		1
-+#define S3C64XX_PIN_PULL_UP		2
-+
- /* Pin function in power down mode */
- #define EXYNOS_PIN_PDN_OUT0		0
- #define EXYNOS_PIN_PDN_OUT1		1
-@@ -47,6 +51,7 @@
- #define EXYNOS_PIN_FUNC_3		3
- #define EXYNOS_PIN_FUNC_4		4
- #define EXYNOS_PIN_FUNC_5		5
-+#define EXYNOS_PIN_FUNC_6		6
- #define EXYNOS_PIN_FUNC_F		0xf
- 
- #endif /* __DT_BINDINGS_PINCTRL_EXYNOS_H__ */
--- 
-1.9.1
+15 / {
+16         compatible = "samsung,exynos5440", "samsung,exynos5";
+17
+18         interrupt-parent = <&gic>;
+
+> 
+> IOW, scripts/dtc/dtx_diff doesn't show differences for these exynos5440 DTB
+> before and after $SUBJECT.
+
+Maybe these are also the default values so no differences... stating
+them explicitly would be useful.
+
+Best regards,
+Krzysztof
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
