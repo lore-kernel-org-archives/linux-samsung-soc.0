@@ -1,86 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/4] exynos4-is: Clear isp-i2c adapter power.ignore_children
- flag
-Date: Thu, 01 Sep 2016 13:39:16 +0200
-Message-ID: <1472729956-17475-1-git-send-email-s.nawrocki@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
+ memory node DTC warnings
+Date: Thu, 1 Sep 2016 12:40:46 +0100
+Message-ID: <20160901114046.GB4220@leverpostej>
+References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
+ <12377780.GCreFUiXAa@amdc1976>
+ <21e643af-bff7-2563-0254-d2b6e4a9a385@osg.samsung.com>
+ <11690712.d89FASKYvI@amdc1976>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44181 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755066AbcIALjh (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:56326 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932589AbcIALk7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 07:39:37 -0400
+        Thu, 1 Sep 2016 07:40:59 -0400
+Content-Disposition: inline
+In-Reply-To: <11690712.d89FASKYvI@amdc1976>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: m.szyprowski@samsung.com, wsa@the-dreams.de, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, stable@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 
-Since commit 04f59143b571161d25315dd52d7a2ecc022cb71a
-("i2c: let I2C masters ignore their children for PM")
-the power.ignore_children flag is set when registering an I2C
-adapter. Since I2C transfers are not managed by the fimc-isp-i2c
-driver its clients use pm_runtime_* calls directly to communicate
-required power state of the bus controller.
-However when the power.ignore_children flag is set that doesn't
-work, so clear that flag back after registering the adapter.
-While at it drop pm_runtime_enable() call on the i2c_adapter
-as it is already done by the I2C subsystem when registering
-I2C adapter.
+On Thu, Sep 01, 2016 at 11:59:48AM +0200, Bartlomiej Zolnierkiewicz wrote:
+> On Thursday, September 01, 2016 10:35:15 AM Javier Martinez Canillas wrote:
+> > On 08/31/2016 07:40 PM, Bartlomiej Zolnierkiewicz wrote:
+> > > On Wednesday, August 31, 2016 03:45:24 PM Javier Martinez Canillas wrote:
+> > >> The idea is to get rid of skeleton.dtsi [0], but that will of course take
+> > >> time until the dtsi is removed from all the files. So this patch is a step
+> > >> in the right direction so at least Exynos is not a blocker to remove it.
+> > > 
+> > > Krzysztof's point is valid.  If you are going to convert all DTS/DTSI
+> > > then it is okay to apply Exynos specific changes, otherwise the code
+> > > should stay as it is currently.
+> > > 
+> > > Exynos won't be a blocker since we have your patches now and they can
+> > > be applied when/if needed ;)..
+> > 
+> > Sorry but I disagree. I see no reasons to need this to be an atomic, rather
+> > than incremental change. Deprecated things are usually handled by removing
+> > the usage and once there are no users, finally removing them.
+> 
+> Yes, given that there is agreement on the direction and people are aware
+> of the needed changes.  This doesn't seem to be a case yet as there is
+> no comment in skeleton.dtsi about being deprecated and other platforms'
+> Maintainers are not aware of the need for the change.
 
-Cc: <stable@vger.kernel.org> # 4.7+
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/media/platform/exynos4-is/fimc-is-i2c.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+On the DT side we're all agreed that skeleton.dtsi should die. I'll send
+a patch adding a note to skeleton.dtsi to make this more obvious, but
+that shouldn't be a blocker for removing existing uses.
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-index 7521aa5..03b4246 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-@@ -55,26 +55,37 @@ static int fimc_is_i2c_probe(struct platform_device *pdev)
- 	i2c_adap->algo = &fimc_is_i2c_algorithm;
- 	i2c_adap->class = I2C_CLASS_SPD;
- 
-+	platform_set_drvdata(pdev, isp_i2c);
-+	pm_runtime_enable(&pdev->dev);
-+
- 	ret = i2c_add_adapter(i2c_adap);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add I2C bus %s\n",
- 						node->full_name);
--		return ret;
-+		goto err_pm_dis;
- 	}
- 
--	platform_set_drvdata(pdev, isp_i2c);
--
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_enable(&i2c_adap->dev);
--
-+	/*
-+	 * Client drivers of this adapter don't do any I2C transfers as that
-+	 * is handled by the ISP firmware.  But we rely on the runtime PM
-+	 * state propagation from the clients up to the adapter driver so
-+	 * clear the ignore_children flags here.  PM rutnime calls are not
-+	 * used in probe() handler of clients of this adapter so there is
-+	 * no issues with clearing the flag right after registering the I2C
-+	 * adapter.
-+	 */
-+	pm_suspend_ignore_children(&i2c_adap->dev, false);
- 	return 0;
-+
-+err_pm_dis:
-+	pm_runtime_disable(&pdev->dev);
-+	return ret;
- }
- 
- static int fimc_is_i2c_remove(struct platform_device *pdev)
- {
- 	struct fimc_is_i2c *isp_i2c = platform_get_drvdata(pdev);
- 
--	pm_runtime_disable(&isp_i2c->adapter.dev);
- 	pm_runtime_disable(&pdev->dev);
- 	i2c_del_adapter(&isp_i2c->adapter);
- 
--- 
-1.9.1
+Thanks,
+Mark.
