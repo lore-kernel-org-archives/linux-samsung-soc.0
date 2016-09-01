@@ -1,40 +1,40 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 00/10] pinctrl: exynos/samsung: Add header with values
- used for configuration
-Date: Thu, 1 Sep 2016 12:14:16 +0200
-Message-ID: <f56eacb7-d861-cc95-f63f-4101e738ca09@osg.samsung.com>
-References: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Fix mismatched value for SD4 pull
+ up/down configuration on exynos4210
+Date: Thu, 1 Sep 2016 12:19:47 +0200
+Message-ID: <35fb6718-aa5a-bb72-be3f-a44fab0c5aef@osg.samsung.com>
+References: <1472719022-27226-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:53609
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752984AbcIAKTx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 1 Sep 2016 06:19:53 -0400
+In-Reply-To: <1472719022-27226-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 Hello Krzysztof,
 
-On 09/01/2016 09:23 AM, Krzysztof Kozlowski wrote:
-> Hi,
+On 09/01/2016 10:37 AM, Krzysztof Kozlowski wrote:
+> The pinctrl pull up/down register on exynos4210 is 2-bit wide for each
+> pin and it accepts only values of 0, 1 and 3.  The pins sd4-bus-width8
+> were configured with value of 4.  The driver does not validate the value
+> so this overflow effectively set a bit 1 in adjacent pins thus
+> configuring them to pull down.
 > 
-> Merging
-> =======
-> Patch #1 should probably go through pinctrl tree. In that case I would
-> appreciate a stable branch/tag so DTS could base on top of it.
+> The author's intention was probably to set drive strength of 4x.  All
+> other bus-widths pins are configured with pull up and drive strength of
+> 4x.  Fix this one with same pattern.
 > 
-> 
-> Changes since v1
-> ================
-> 1. Follow Arnd's suggestion about moving the macros to common place.
-> 2. Subjects: replace "GPIO" with "pinctrl".
-> 3. There were some major changes here so I did not add Javier's
->    reviewed-by and tested-by tags.
-> 
-
-I've reviewed this series + the v2.1 1/10 resend and looks good to me.
-So for the whole series:
+> Fixes: 87711d8c7c70 ("ARM: dts: Add pinctrl node entries for SAMSUNG EXYNOS4210 SoC")
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
