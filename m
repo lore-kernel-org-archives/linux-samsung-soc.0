@@ -1,528 +1,107 @@
-From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: [PATCH v5 1/3] ARM: dts: Add TOPEET itop core board SCP package version
-Date: Thu,  1 Sep 2016 06:06:50 +0800
-Message-ID: <1472681212-5287-2-git-send-email-ayaka@soulik.info>
-References: <1472681212-5287-1-git-send-email-ayaka@soulik.info>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1472681212-5287-1-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH RFC] ARM: dts: samsung: add rga-lvds panel in itop elite
+Date: Thu, 01 Sep 2016 09:04:41 +0200
+Message-ID: <94dc2e0d-2521-a636-ee3d-90168f30fe28@samsung.com>
+References: <1472511002-9019-1-git-send-email-ayaka@soulik.info>
+ <dee989f5-17b0-7445-514b-559e98d77acd@samsung.com>
+ <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: ayaka <ayaka@soulik.info>, devicetree <devicetree@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The TOPEET itop is a samsung exnynos 4412 core board, which have
-two package versions. This patch add the support for SCP version.
-
-Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
-PMIC. The future features are in the based board. Also MFC and
-watchdog have been enabled.
-
-Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
----
- arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 490 ++++++++++++++++++++++++
- 1 file changed, 490 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-new file mode 100644
-index 0000000..9c02b16
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-@@ -0,0 +1,490 @@
-+/*
-+ * TOPEET's Exynos4412 based itop board device tree source
-+ *
-+ * Copyright (c) 2016 SUMOMO Computer Association
-+ *			https://www.sumomo.mobi
-+ *			Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-+ *			
-+ * Device tree source file for TOPEET iTop Exynos 4412 SCP package core 
-+ * board which is based on Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/clock/samsung,s2mps11.h>
-+#include "exynos4412.dtsi"
-+#include "exynos4412-ppmu-common.dtsi"
-+#include "exynos-mfc-reserved-memory.dtsi"
-+
-+/ {
-+	memory {
-+		reg = <0x40000000 0x40000000>;
-+	};
-+
-+	firmware@0203F000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x0203F000 0x1000>;
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible = "samsung,clock-xxti";
-+			clock-frequency = <0>;
-+		};
-+
-+		xusbxti {
-+			compatible = "samsung,clock-xusbxti";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			cooling-maps {
-+				map0 {
-+				     /* Corresponds to 800MHz at freq_table */
-+				     cooling-device = <&cpu0 7 7>;
-+				};
-+				map1 {
-+				     /* Corresponds to 200MHz at freq_table */
-+				     cooling-device = <&cpu0 13 13>;
-+			       };
-+		       };
-+		};
-+	};
-+
-+	usb-hub {
-+		compatible = "smsc,usb3503a";
-+		reset-gpios = <&gpm2 4 GPIO_ACTIVE_LOW>;
-+		connect-gpios = <&gpm3 3 GPIO_ACTIVE_HIGH>;
-+		intn-gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hsic_reset>;
-+	};
-+};
-+
-+&bus_dmc {
-+	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
-+	vdd-supply = <&buck1_reg>;
-+	status = "okay";
-+};
-+
-+&bus_acp {
-+        devfreq = <&bus_dmc>;
-+        status = "okay";
-+};
-+
-+&bus_c2c {
-+        devfreq = <&bus_dmc>;
-+        status = "okay";
-+};
-+
-+&bus_leftbus {
-+        devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
-+        vdd-supply = <&buck3_reg>;
-+        status = "okay";
-+};
-+
-+&bus_rightbus {
-+        devfreq = <&bus_leftbus>;
-+        status = "okay";
-+};
-+
-+&bus_fsys {
-+        devfreq = <&bus_leftbus>;
-+        status = "okay";
-+};
-+
-+&bus_peri {
-+        devfreq = <&bus_leftbus>;
-+        status = "okay";
-+};
-+
-+&bus_mfc {
-+        devfreq = <&bus_leftbus>;
-+        status = "okay";
-+};
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
-+&hsotg {
-+	vusb_d-supply = <&ldo15_reg>;
-+	vusb_a-supply = <&ldo12_reg>;
-+};
-+
-+&i2c_1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+	pinctrl-0 = <&i2c1_bus>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	s5m8767: s5m8767_pmic@66 {
-+		compatible = "samsung,s5m8767-pmic";
-+		reg = <0x66>;
-+
-+		s5m8767,pmic-buck-default-dvs-idx = <3>;
-+
-+		s5m8767,pmic-buck-dvs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>,
-+						 <&gpb 6 GPIO_ACTIVE_HIGH>,
-+						 <&gpb 7 GPIO_ACTIVE_HIGH>;
-+
-+		s5m8767,pmic-buck-ds-gpios = <&gpm3 5 GPIO_ACTIVE_HIGH>,
-+						<&gpm3 6 GPIO_ACTIVE_HIGH>,
-+						<&gpm3 7 GPIO_ACTIVE_HIGH>;
-+
-+		/* VDD_ARM */
-+		s5m8767,pmic-buck2-dvs-voltage = <1356250>, <1300000>,
-+						 <1243750>, <1118750>,
-+						 <1068750>, <1012500>,
-+						 <956250>, <900000>;
-+		/* VDD_INT */
-+		s5m8767,pmic-buck3-dvs-voltage = <1000000>, <1000000>,
-+						 <925000>, <925000>,
-+						 <887500>, <887500>,
-+						 <850000>, <850000>;
-+		/* VDD_G3D */
-+		s5m8767,pmic-buck4-dvs-voltage = <1081250>, <1081250>,
-+						 <1025000>, <950000>,
-+						 <918750>, <900000>,
-+						 <875000>, <831250>;
-+
-+		regulators {
-+			ldo1_reg: LDO1 {
-+				regulator-name = "VDD_ALIVE";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			/* SCP uses 1.5v, POP uses 1.2v */
-+			ldo2_reg: LDO2 {
-+				regulator-name = "VDDQ_M12";
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo3_reg: LDO3 {
-+				regulator-name = "VDDIOAP_18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo4_reg: LDO4 {
-+				regulator-name = "VDDQ_PRE";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo6_reg: LDO6 {
-+				regulator-name = "VDD10_MPLL";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo7_reg: LDO7 {
-+				regulator-name = "VDD10_XPLL";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo8_reg: LDO8 {
-+				regulator-name = "VDD10_MIPI";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo9_reg: LDO9 {
-+				regulator-name = "VDD33_LCD";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo10_reg: LDO10 {
-+				regulator-name = "VDD18_MIPI";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo11_reg: LDO11 {
-+				regulator-name = "VDD18_ABB1";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo12_reg: LDO12 {
-+				regulator-name = "VDD33_UOTG";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo13_reg: LDO13 {
-+				regulator-name = "VDDIOPERI_18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo14_reg: LDO14 {
-+				regulator-name = "VDD18_ABB02";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo15_reg: LDO15 {
-+				regulator-name = "VDD10_USH";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo16_reg: LDO16 {
-+				regulator-name = "VDD18_HSIC";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo17_reg: LDO17 {
-+				regulator-name = "VDDIOAP_MMC012_28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			/* Used by HSIC */
-+			ldo18_reg: LDO18 {
-+				regulator-name = "VDDIOPERI_28";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo20_reg: LDO20 {
-+				regulator-name = "VDD28_CAM";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo21_reg: LDO21 {
-+				regulator-name = "VDD28_AF";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo22_reg: LDO22 {
-+				regulator-name = "VDDA28_2M";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo23_reg: LDO23 {
-+				regulator-name = "VDD28_TF";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo24_reg: LDO24 {
-+				regulator-name = "VDD33_A31";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo25_reg: LDO25 {
-+				regulator-name = "VDD18_CAM";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo26_reg: LDO26 {
-+				regulator-name = "VDD18_A31";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo27_reg: LDO27 {
-+				regulator-name = "GPS_1V8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			ldo28_reg: LDO28 {
-+				regulator-name = "DVDD12";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt	= <1100000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck2_reg: BUCK2 {
-+				regulator-name = "vdd_arm";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt	= <1456250>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck3_reg: BUCK3 {
-+				regulator-name = "vdd_int";
-+				regulator-min-microvolt = <875000>;
-+				regulator-max-microvolt	= <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck4_reg: BUCK4 {
-+				regulator-name = "vdd_g3d";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck5_reg: BUCK5 {
-+				regulator-name = "vdd_m12";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck6_reg: BUCK6 {
-+				regulator-name = "vdd12_5m";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck7_reg: BUCK7 {
-+				regulator-name = "pvdd_buck7";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <2000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck8_reg: BUCK8 {
-+				regulator-name = "pvdd_buck8";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <1500000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+
-+			buck9_reg: BUCK9 {
-+				regulator-name = "vddf28_emmc";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt	= <3000000>;
-+				op_mode = <1>; /* Normal Mode */
-+			};
-+		};
-+
-+		s5m8767_osc: clocks {
-+			#clock-cells = <1>;
-+			clock-output-names = "s5m8767_ap",
-+					"s5m8767_cp", "s5m8767_bt";
-+		};
-+
-+	};
-+};
-+
-+&mfc {
-+	status = "okay";
-+};
-+
-+&mshc_0 {
-+	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	vmmc-supply = <&buck9_reg>;
-+	num-slots = <1>;
-+	broken-cd;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <2 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+};
-+
-+&pinctrl_1 {
-+	hsic_reset: hsic-reset {
-+		samsung,pins = "gpm2-4";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+};
-+
-+&rtc {
-+	status = "okay";
-+	clocks = <&clock CLK_RTC>, <&s5m8767_osc S2MPS11_CLK_AP>;
-+	clock-names = "rtc", "rtc_src";
-+};
-+
-+&tmu {
-+	vtmu-supply = <&ldo16_reg>;
-+	status = "okay";
-+};
-+
-+&watchdog {
-+	status = "okay";
-+};
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMDgvMzEvMjAxNiAwNzo1NSBQTSwgYXlha2Egd3JvdGU6Cj4KPiBPbiAwOC8zMS8yMDE2IDA4
+OjMwIFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBIaSwKPj4KPj4KPj4gT24gMDgvMzAvMjAx
+NiAxMjo1MCBBTSwgUmFuZHkgTGkgd3JvdGU6Cj4+PiBJdCBpcyBhY3R1YWxseSBhIGx2ZHMgcGFu
+ZWwgY29ubmVjdGVkIHRocm91Z2ggYSByZ2EtbHZkcyBicmlkZ2UuCj4+PiBCdXQgSSByZWFsbHkg
+aGF2ZSBubyBpZGVhIGFib3V0IHdoYXQgZG9lcyBhIHBvcnQgbWVhbiBpbiBmaW1kIG5vZGUuCj4+
+Pgo+Pj4gQWxzbyBob3cgc2hvdWxkIEkgY29uZmlndXJlIHRoaXMgcGFuZWwgc2l6ZT8gSSB0aGlu
+ayB0aGUgaTJjIGZvdW5kCj4+PiBvbiB0aGUgcGFuZWwgc2NoZW1hdGljLCBidXQgaXQgbW9yZSBs
+aWtlbHkgdG8gYmUgdXNlZCBhIHRvdWNoIHNjcmVlbgo+Pj4gdG91dGguIEFsc28gdGhlIHRvdWNo
+IHNjcmVlbiBpcyBub3Qgc3VwcG9ydGVkIGluIGN1cnJlbnRseSBkcml2ZXIuCj4+Pgo+Pj4gU2ln
+bmVkLW9mZi1ieTogUmFuZHkgTGkgPGF5YWthQHNvdWxpay5pbmZvPgo+Pj4gLS0tCj4+PiAgIGFy
+Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItaXRvcC1lbGl0ZS5kdHMgfCAzNSArKysrKysrKysr
+KysrKysrKysrKysrKysrKy0tLQo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMzIgaW5zZXJ0aW9ucygr
+KSwgMyBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
+ZXh5bm9zNDQxMi1pdG9wLWVsaXRlLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTIt
+aXRvcC1lbGl0ZS5kdHMKPj4+IGluZGV4IGUxY2RhNTQuLjJkNjczODUgMTAwNjQ0Cj4+PiAtLS0g
+YS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWl0b3AtZWxpdGUuZHRzCj4+PiArKysgYi9h
+cmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWl0b3AtZWxpdGUuZHRzCj4+PiBAQCAtMTM5LDYg
+KzEzOSwyMCBAQAo+Pj4gICAJCWFzc2lnbmVkLWNsb2NrcyA9IDwmY2xvY2sgQ0xLX01PVVRfQ0FN
+MD47Cj4+PiAgIAkJYXNzaWduZWQtY2xvY2stcGFyZW50cyA9IDwmY2xvY2sgQ0xLX1hVU0JYVEk+
+Owo+Pj4gICAJfTsKPj4+ICsJCj4+PiArCXZjY19zeXNfbGNkOiBzeXMtbGNkIHsKPj4+ICsJCWNv
+bXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKPj4+ICsJCXJlZ3VsYXRvci1uYW1lID0gInZj
+Y181diI7Cj4+PiArCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsKPj4+ICsJ
+CXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDUwMDAwMDA+Owo+Pj4gKwkJZ3BpbyA9IDwmZ3Bs
+MCA0IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pj4gKwl9Owo+Pj4gKwo+Pj4gKwlwYW5lbDogcGFuZWwg
+ewo+Pj4gKwkJZGRjLWkyYy1idXMgPSA8JmkyY18zPjsKPj4+ICsJCXBvd2VyLXN1cHBseSA9IDwm
+dmNjX3N5c19sY2Q+Owo+Pj4gKwkJZW5hYmxlLWdwaW9zID0gPCZncGwwIDIgR1BJT19BQ1RJVkVf
+SElHSD47Cj4+PiArCX07Cj4+IFBhbmVsIGhhcyBubyBjb21wYXRpYmxlIHN0cmluZywgd2hpY2gg
+ZHJpdmVyIHdpbGwgaGFuZGxlIHRoaXMgbm9kZT8KPiBUaGUgcHJvYmxlbSBpcyB0aGF0LCBpdCBp
+cyBwYW5lbCBub3Qgc3VwcG9ydGVkIGJ5IGtlcm5lbC4gCgpGb3Igc2ltcGxlIHBhbmVsIHlvdSBj
+YW4gdGFrZSBhIGxvb2sgYXQgWzFdWzJdLiBJZS4gaWYgdGhlIHBhbmVsIG5lZWRzCm9ubHkgcG93
+ZXIgc3VwcGx5IGFuZCBlbmFibGUgZ3BpbywgeW91IGp1c3QgbmVlZCB0byBhZGQgZmV3IGxpbmVz
+IHRvIFsyXS4KClsxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+cGFuZWwvc2ltcGxlLXBhbmVsLnR4dApbMl06IGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1z
+aW1wbGUuYwoKPiBJcyBpdCBwb3NzaWJsZSAKPiB0byBzdXBwb3J0IHdpdGhvdXQgYWRkaW5nIGEg
+bmV3IGRyaXZlciBmb3IgaXQgPyBJIGtub3cgdGhlcmUgaXMgYSAKPiBzaW1wbGUtZHBpIGZvciBN
+SVBJLCBidXQgd2hhdCBpcyBmb3IgcGFyYWxsZWwgdmlkZW8gb3IgbHZkcz8KCnNpbXBsZS1kcGkg
+aXMganVzdCBwYXJhbGxlbCBvdXRwdXQuIExWRFMgaXMgbm90IHN1cHBvcnRlZCBieSBFeHlub3M0
+NDEyIGJ1dApib2FyZHMgdXN1YWxseSBoYXZlIFJHQi9MVkRTIGJyaWRnZSBmb3Igc3VjaCBwYW5l
+bHMsIEkgaGF2ZSBubyBhY2Nlc3MgdG8KaXRvcApib2FyZCBzY2hlbWF0aWNzLCBidXQgSSBzdXBw
+b3NlIGl0IGhhcyBzdWNoIGJyaWRnZS4gTFZEUyBicmlkZ2VzIG9mdGVuCmRvIG5vdApuZWVkIExp
+bnV4IGRyaXZlciwgc28gZnJvbSBkZXZlbG9wZXIgcG9pbnQgb2YgdmlldyBMVkRTIHBhbmVscyB3
+aXRoIHN1Y2gKYnJpZGdlCmFyZSBoYW5kbGVkIHRoZSBzYW1lIHdheSBhcyBSR0IgcGFuZWxzLiBF
+eGFtcGxlIGZpbWQgYmluZGluZ3MgZm9yIFJHQiBwYW5lbHMKYXJlIGluIFszXS4KClszXTogYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC11bml2ZXJzYWxfYzIxMC5kdHMKCj4+IFJlZ2FyZHMK
+Pj4gQW5kcnplago+IFRoZSBvdGhlciBwcm9ibGVtIGlzIHRoYXQgSSBkb24ndCBob3cgdG8gY29u
+ZmlndXJlIHRoZSBkaXNwbGF5LXRpbWVzLCAKPiB0aGUgZGF0YXNoZWV0IGZvciBDTEFBMDcwV1Aw
+M1hHIG9ubHkgdGFsayBhYm91dCB0b3RhbCB0aW1lLCBhY3RpdmUgdGltZSAKPiBhbmQgYmxhbmsg
+dGltZSBmb3IgYm90aCBIb3Jpem9udGFsIGFuIFZlcnRpY2FsIHRpbWUuIERvZXMgaXQgbWVhbiB0
+aGUgCj4gZnJvbnQtcG9yY2ggYW5kIHN5bmMtbGVuIGZvciBob3Jpem9udGFsIGFuZCB2ZXJ0aWNh
+bCBhcmUgemVybyA/CgpZb3UgY2FuIGxvb2sgYXQgdmVuZG9yJ3MgY29kZS4gT3IganVzdCBleHBl
+cmltZW50IHdpdGggZGlmZmVyZW50IHZhbHVlcy4KVGhlIGVxdWF0aW9uIGlzOiB0b3RhbD1hY3Rp
+dmUrYmFja19wb3JjaCtibGFuaytmcm9udF9wb3JjaC4KU28gaWYgaHRvdGFsPTg2NCwgaGFjdGl2
+ZT04MDAsIGhibGFuaz02NCwgdGhlbiBocG9yY2hlcyBhcmUgMC4KSW4gY2FzZSBvZiB2dG90YWw9
+MTI4OCwgdmFjdGl2ZT0xMjAwLCB2Ymxhbms9OCB5b3UgaGF2ZSBsZWZ0IDgwIGZvciBwb3JjaGVz
+LAp5b3UgY2FuIHRyeSB0byBzcGxpdCB0aGVtIGVxdWFsbHkgZm9yIGZyb250IGFuZCBiYWNrIGZv
+ciBzdGFydGVycy4KClJlZ2FyZHMKQW5kcnplagoKPgo+ICsgICAgICAgcG9ydHMgewo+ICsgICAg
+ICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPiArICAgICAgICAgICAgICAgI3NpemUt
+Y2VsbHMgPSA8MD47Cj4gKyAgICAgICAgICAgICAgIHBvcnRAMyB7Cj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgcmVnID0gPDM+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJnYV9sdmRzOiBl
+bmRwb2ludCB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9p
+bnQgPSA8JnBhbmVsPjsKPiArICAgICAgICAgICAgICAgICAgICAgICB9Owo+ICsgICAgICAgICAg
+ICAgICB9Owo+ICsgICAgICAgfTsKPiArCj4gKyAgICAgICBwYW5lbDogcGFuZWxAMCB7Cj4gKyAg
+ICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicGFuZWwtc2ltcGxlIjsKPiArCj4gKyAgICAgICAg
+ICAgICAgIHBvd2VyLXN1cHBseSA9IDwmdmNjX3N5c19sY2Q+Owo+ICsgICAgICAgICAgICAgICBl
+bmFibGUtZ3Bpb3MgPSA8JmdwbDAgMiBHUElPX0FDVElWRV9ISUdIPjsKPiArICAgICAgICAgICAg
+ICAgZGlzcGxheS10aW1pbmdzIHsKPiArICAgICAgICAgICAgICAgICAgICAgICB0aW1pbmctMCB7
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1mcmVxdWVuY3kgPSA8NjY3
+NzAwMDA+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFjdGl2ZSA9IDw4MDA+
+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdmFjdGl2ZSA9IDwxMjgwPjsKPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhmcm9udC1wb3JjaCA9IDwwPjsKPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhiYWNrLXBvcmNoID0gPDY0PjsKPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGhzeW5jLWxlbiA9IDwwPjsKPiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHZmcm9udC1wb3JjaCA9IDwwPjsKPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHZiYWNrLXBvcmNoID0gPDg+Owo+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdnN5bmMtbGVuID0gPDA+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIH07
+Cj4gKyAgICAgIH07Cj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
+IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBv
+ZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21v
+IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4K
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
