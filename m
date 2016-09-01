@@ -1,76 +1,57 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RESEND PATCH 1/3] ARM: dts: Add TOPEET itop core board SCP
- package version
-Date: Thu, 01 Sep 2016 15:03:51 +0200
-Message-ID: <5477278.USWYFxDPfA@amdc1976>
-References: <a35686c3-294b-a16a-2b0e-0ef2fd460244@kernel.org>
- <1472648307-3818-1-git-send-email-ayaka@soulik.info>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RESEND PATCH 2/3] ARM: dts: add TOPEET itop elite based board
+Date: Thu, 01 Sep 2016 15:07:03 +0200
+Message-ID: <6405623.At7R6O470M@amdc1976>
+References: <750b6941-7d22-971e-84c9-996deab9a7c1@kernel.org>
+ <1472648361-3871-1-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1472648307-3818-1-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1472648361-3871-1-git-send-email-ayaka@soulik.info>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Li <ayaka@soulik.info>
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
 Hi,
 
-On Wednesday, August 31, 2016 08:58:27 PM Randy Li wrote:
-> The TOPEET itop is a samsung exnynos 4412 core board, which have
-> two package versions. This patch add the support for SCP version.
+On Wednesday, August 31, 2016 08:59:21 PM Randy Li wrote:
+> The TOPEET itop exynos 4412 have three versions base board. The
+> Elite version is the cheap one without too much peripheral devices
+> on it.
 > 
-> Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
-> PMIC. The future features are in the based board. Also MFC and
-> watchdog have been enabled.
+> Currently supported are serial console, wired networking(USB),
+> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
+> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
+> enabled.
 > 
-> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 490 ++++++++++++++++++++++++
->  1 file changed, 490 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> The FIMC is not used for camera currently, I enabled it just for a
+> colorspace convertor.
+> 
+> Signed-off-by: Randy Li <ayaka@soulik.info>
 
 [...]
 
-> +		s5m8767_osc: clocks {
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -135,6 +135,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+>  	exynos4412-origen.dtb \
+>  	exynos4412-smdk4412.dtb \
+>  	exynos4412-tiny4412.dtb \
+> +	exynos4412-itop-elite.dtb \
 
-Don't you also need:
+Minor nit:
 
-			compatible = "samsung,s5m8767-clk";
+Please keep dtb files in alphabetical order.
 
-here?
-
-BTW Does anyone know why there are no users of
-"samsung,s2mps11-clk" compatible in the tree
-(commit 53c31b3437a6400c6ffc2c9315680217ad84cb6d
-"mfd: sec-core: Add of_compatible strings for
-clock MFD cells" added it in March 2014)?
-
-> +			#clock-cells = <1>;
-> +			clock-output-names = "s5m8767_ap",
-> +					"s5m8767_cp", "s5m8767_bt";
-> +		};
-> +
-> +	};
-> +};
-
-[...]
-
-> +&rtc {
-> +	status = "okay";
-> +	clocks = <&clock CLK_RTC>, <&s5m8767_osc S2MPS11_CLK_AP>;
-> +	clock-names = "rtc", "rtc_src";
-> +};
+>  	exynos4412-trats2.dtb
+>  dtb-$(CONFIG_ARCH_EXYNOS5) += \
+>  	exynos5250-arndale.dtb \
 
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
