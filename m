@@ -1,77 +1,47 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 0/7] ARM: dts: exynos: Remove skeleton.dtsi usage and fix
- memory node DTC warnings
-Date: Thu, 1 Sep 2016 10:35:15 +0200
-Message-ID: <21e643af-bff7-2563-0254-d2b6e4a9a385@osg.samsung.com>
-References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
- <5366f8a4-b4fb-ec2d-eb1e-5534f24c4a07@kernel.org>
- <0da13ae1-90a8-912b-227e-0e94439953d5@osg.samsung.com>
- <12377780.GCreFUiXAa@amdc1976>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <12377780.GCreFUiXAa@amdc1976>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: exynos: Fix mismatched value for SD4 pull
+ up/down configuration on exynos4210
+Date: Thu, 01 Sep 2016 10:37:01 +0200
+Message-ID: <1472719022-27226-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:23598 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbcIAIhP (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 1 Sep 2016 04:37:15 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: javier@osg.samsung.com, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Bartlomiej,
+The pinctrl pull up/down register on exynos4210 is 2-bit wide for each
+pin and it accepts only values of 0, 1 and 3.  The pins sd4-bus-width8
+were configured with value of 4.  The driver does not validate the value
+so this overflow effectively set a bit 1 in adjacent pins thus
+configuring them to pull down.
 
-On 08/31/2016 07:40 PM, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Wednesday, August 31, 2016 03:45:24 PM Javier Martinez Canillas wrote:
->> Hello Krzysztof,
->>
->> On 08/31/2016 02:55 PM, Krzysztof Kozlowski wrote:
->>> On 08/31/2016 02:14 PM, Javier Martinez Canillas wrote:
->>>> Hello Krzysztof,
->>>>
->>>> This series removes the usage of the skeleton.dtsi in all the Exynos dts,
->>>> which allows to get rid of the DTC warnings about a mismatch between the
->>>> memory nodes' unit names and reg properties.
->>>>
->>>> Patches are pretty trivial and shouldn't cause functional changes AFAIK,
->>>> but only the Exynos5 changes have been tested. The others patches were
->>>> just built tested.
->>>
->>> I think this is a common problem, not only Exynos-specific, so I would
->>
->> That's correct.
->>
->>> prefer to stick to common pattern. Either all DTS/DTSI include skeleton
->>> or none of them.
->>>
->>
->> The idea is to get rid of skeleton.dtsi [0], but that will of course take
->> time until the dtsi is removed from all the files. So this patch is a step
->> in the right direction so at least Exynos is not a blocker to remove it.
-> 
-> Krzysztof's point is valid.  If you are going to convert all DTS/DTSI
-> then it is okay to apply Exynos specific changes, otherwise the code
-> should stay as it is currently.
-> 
-> Exynos won't be a blocker since we have your patches now and they can
-> be applied when/if needed ;)..
->
+The author's intention was probably to set drive strength of 4x.  All
+other bus-widths pins are configured with pull up and drive strength of
+4x.  Fix this one with same pattern.
 
-Sorry but I disagree. I see no reasons to need this to be an atomic, rather
-than incremental change. Deprecated things are usually handled by removing
-the usage and once there are no users, finally removing them.
+Fixes: 87711d8c7c70 ("ARM: dts: Add pinctrl node entries for SAMSUNG EXYNOS4210 SoC")
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, each subsystem maintainer should carry the patches for their platform
-so it can't be a kernel wide change anyways and most likely split by kernel
-releases.
+diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+index 8046340e50ac..d9b6d25e4abe 100644
+--- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+@@ -649,7 +649,7 @@
+ 		sd4_bus8: sd4-bus-width8 {
+ 			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
+ 			samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+-			samsung,pin-pud = <4>;
++			samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+ 			samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 		};
  
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
