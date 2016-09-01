@@ -1,98 +1,147 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/7] ARM: dts: exynos: Add missing memory node for
- Exynos5440 boards
-Date: Thu, 1 Sep 2016 10:43:35 +0200
-Message-ID: <c043b569-fbad-23bb-5807-5dda9cc8b37f@osg.samsung.com>
-References: <1472645679-5696-1-git-send-email-javier@osg.samsung.com>
- <1472645679-5696-2-git-send-email-javier@osg.samsung.com>
- <20160831174657.GA19969@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH RFC] ARM: dts: samsung: add rga-lvds panel in itop elite
+Date: Thu, 01 Sep 2016 10:53:27 +0200
+Message-ID: <28f6838b-6bd8-a533-fcdb-5af41dbdaa7f@samsung.com>
+References: <1472511002-9019-1-git-send-email-ayaka@soulik.info>
+ <dee989f5-17b0-7445-514b-559e98d77acd@samsung.com>
+ <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
+ <94dc2e0d-2521-a636-ee3d-90168f30fe28@samsung.com>
+ <20EC8D13-CF96-4869-B46F-93A89211367E@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160831174657.GA19969@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20EC8D13-CF96-4869-B46F-93A89211367E@soulik.info>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ayaka <ayaka@soulik.info>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 08/31/2016 07:46 PM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 31, 2016 at 02:14:33PM +0200, Javier Martinez Canillas wrote:
->> The skeleton.dtsi file was removed in ARM64 for different reasons as
->> explained in commit ("3ebee5a2e141 arm64: dts: kill skeleton.dtsi").
->>
->> These also applies to ARM and it will also allow to get rid of the
->> following DTC warnings in the future:
->>
->> "Node /memory has a reg or ranges property, but no unit name"
->>
->> But these boards don't have a memory node defined, so removing the
->> skeleton.dtsi inclusion in exynos4.dtsi will cause a change in the
->> compiled DTB. Add a dummy memory node so the compiled DTB doesn't
->> change if the skeleton.dtsi is removed from exynos4.dtsi.
-> 
-> You mean extnos5440.dtsi?
->
-
-Yes, I meant exynos5440.dtsi, it's a commit message copy and paste error.
-Thanks for pointing out, I'll fix it in v2.
- 
->>
->> Eventually the correct starting addresses and sizes should be used
->> but I didn't find that information.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> ---
->>
->>  arch/arm/boot/dts/exynos5440-sd5v1.dts    | 5 +++++
->>  arch/arm/boot/dts/exynos5440-ssdk5440.dts | 5 +++++
->>  2 files changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
->> index a98501bab6fc..333db4ff373a 100644
->> --- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
->> +++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
->> @@ -20,6 +20,11 @@
->>  		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
->>  	};
->>  
->> +	memory {
->> +		device_type = "memory";
->> +		reg = <0 0>;
->> +	};
->> +
->>  	fixed-rate-clocks {
->>  		xtal {
->>  			compatible = "samsung,clock-xtal";
->> diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
->> index 6a0d802e87c8..82fea6f94704 100644
->> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
->> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
->> @@ -21,6 +21,11 @@
->>  		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
->>  	};
->>  
->> +	memory {
->> +		device_type = "memory";
->> +		reg = <0 0>;
->> +	};
-> 
-> This looks okay, but the default size and address cells won't be
-> present. Won't that be a problem?
->
-
-They will be present since at this point exynos5440.dtsi is still including
-exynos5440.dtsi, we are just overriding the memory node with the same values
-than skeleton.dtsi so this can be removed later in patch 7/7.
- 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+T24gMDkvMDEvMjAxNiAxMDoyNCBBTSwgQXlha2Egd3JvdGU6Cj4KPiDlvp7miJHnmoQgaVBhZCDl
+grPpgIEKPiBUaGFuayB5b3UKPj4gQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4g
+5pa8IDIwMTblubQ55pyIMeaXpSDkuIvljYgzOjA0IOWvq+mBk++8mgo+Pgo+Pj4gT24gMDgvMzEv
+MjAxNiAwNzo1NSBQTSwgYXlha2Egd3JvdGU6Cj4+Pgo+Pj4+IE9uIDA4LzMxLzIwMTYgMDg6MzAg
+UE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+Pj4gSGksCj4+Pj4KPj4+Pgo+Pj4+PiBPbiAwOC8z
+MC8yMDE2IDEyOjUwIEFNLCBSYW5keSBMaSB3cm90ZToKPj4+Pj4gSXQgaXMgYWN0dWFsbHkgYSBs
+dmRzIHBhbmVsIGNvbm5lY3RlZCB0aHJvdWdoIGEgcmdhLWx2ZHMgYnJpZGdlLgo+Pj4+PiBCdXQg
+SSByZWFsbHkgaGF2ZSBubyBpZGVhIGFib3V0IHdoYXQgZG9lcyBhIHBvcnQgbWVhbiBpbiBmaW1k
+IG5vZGUuCj4+Pj4+Cj4+Pj4+IEFsc28gaG93IHNob3VsZCBJIGNvbmZpZ3VyZSB0aGlzIHBhbmVs
+IHNpemU/IEkgdGhpbmsgdGhlIGkyYyBmb3VuZAo+Pj4+PiBvbiB0aGUgcGFuZWwgc2NoZW1hdGlj
+LCBidXQgaXQgbW9yZSBsaWtlbHkgdG8gYmUgdXNlZCBhIHRvdWNoIHNjcmVlbgo+Pj4+PiB0b3V0
+aC4gQWxzbyB0aGUgdG91Y2ggc2NyZWVuIGlzIG5vdCBzdXBwb3J0ZWQgaW4gY3VycmVudGx5IGRy
+aXZlci4KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTogUmFuZHkgTGkgPGF5YWthQHNvdWxpay5p
+bmZvPgo+Pj4+PiAtLS0KPj4+Pj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItaXRvcC1l
+bGl0ZS5kdHMgfCAzNSArKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQo+Pj4+PiAgMSBmaWxl
+IGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Pj4+Cj4+Pj4+IGRp
+ZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWl0b3AtZWxpdGUuZHRzIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi1pdG9wLWVsaXRlLmR0cwo+Pj4+PiBpbmRleCBl
+MWNkYTU0Li4yZDY3Mzg1IDEwMDY0NAo+Pj4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlu
+b3M0NDEyLWl0b3AtZWxpdGUuZHRzCj4+Pj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
+czQ0MTItaXRvcC1lbGl0ZS5kdHMKPj4+Pj4gQEAgLTEzOSw2ICsxMzksMjAgQEAKPj4+Pj4gICAg
+ICAgICAgYXNzaWduZWQtY2xvY2tzID0gPCZjbG9jayBDTEtfTU9VVF9DQU0wPjsKPj4+Pj4gICAg
+ICAgICAgYXNzaWduZWQtY2xvY2stcGFyZW50cyA9IDwmY2xvY2sgQ0xLX1hVU0JYVEk+Owo+Pj4+
+PiAgICAgIH07Cj4+Pj4+ICsgICAgCj4+Pj4+ICsgICAgdmNjX3N5c19sY2Q6IHN5cy1sY2Qgewo+
+Pj4+PiArICAgICAgICBjb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhlZCI7Cj4+Pj4+ICsgICAg
+ICAgIHJlZ3VsYXRvci1uYW1lID0gInZjY181diI7Cj4+Pj4+ICsgICAgICAgIHJlZ3VsYXRvci1t
+aW4tbWljcm92b2x0ID0gPDUwMDAwMDA+Owo+Pj4+PiArICAgICAgICByZWd1bGF0b3ItbWF4LW1p
+Y3Jvdm9sdCA9IDw1MDAwMDAwPjsKPj4+Pj4gKyAgICAgICAgZ3BpbyA9IDwmZ3BsMCA0IEdQSU9f
+QUNUSVZFX0hJR0g+Owo+Pj4+PiArICAgIH07Cj4+Pj4+ICsKPj4+Pj4gKyAgICBwYW5lbDogcGFu
+ZWwgewo+Pj4+PiArICAgICAgICBkZGMtaTJjLWJ1cyA9IDwmaTJjXzM+Owo+Pj4+PiArICAgICAg
+ICBwb3dlci1zdXBwbHkgPSA8JnZjY19zeXNfbGNkPjsKPj4+Pj4gKyAgICAgICAgZW5hYmxlLWdw
+aW9zID0gPCZncGwwIDIgR1BJT19BQ1RJVkVfSElHSD47Cj4+Pj4+ICsgICAgfTsKPj4+PiBQYW5l
+bCBoYXMgbm8gY29tcGF0aWJsZSBzdHJpbmcsIHdoaWNoIGRyaXZlciB3aWxsIGhhbmRsZSB0aGlz
+IG5vZGU/Cj4+PiBUaGUgcHJvYmxlbSBpcyB0aGF0LCBpdCBpcyBwYW5lbCBub3Qgc3VwcG9ydGVk
+IGJ5IGtlcm5lbC4gCj4+IEZvciBzaW1wbGUgcGFuZWwgeW91IGNhbiB0YWtlIGEgbG9vayBhdCBb
+MV1bMl0uIEllLiBpZiB0aGUgcGFuZWwgbmVlZHMKPj4gb25seSBwb3dlciBzdXBwbHkgYW5kIGVu
+YWJsZSBncGlvLCB5b3UganVzdCBuZWVkIHRvIGFkZCBmZXcgbGluZXMgdG8gWzJdLgo+IEJ1dCBJ
+IHN0aWxsIGRvbid0IGtub3cgd2hpY2ggY29tcGF0aWJsZSBzdHJpbmcgSSBzaG91bGQgdXNlLCAi
+c2ltcGxlLWRwaSIgPwoKSGF2ZSB5b3UgbG9va2VkIGF0IFsyXT8KT3IganVzdCBydW4gY29tbWFu
+ZCBpbiBrZXJuZWwgZ2l0IHRyZWU6CmdpdCBsb2cgLXAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
+bmVsLXNpbXBsZS5jCgpUbyBhZGQgc3VwcG9ydCBmb3Igc3BlY2lmaWMgcGFuZWwgeW91IGFkZDoK
+MS4gZGlzcGxheSBtb2RlKHMpLAoyLiBwYW5lbCBkZXNjcmlwdGlvbiwKMy4gcGFuZWwgY29tcGF0
+aWJsZSBzdHJpbmcuCgpBbmQgdGhlbiB5b3UgdXNlIHRoaXMgY29tcGF0aWJsZSBpbiBkdHMuClRv
+IGhhdmUgcGF0Y2hlcyBhY2NlcHRlZCBpbiBtYWlubGluZSB5b3Ugc2hvdWxkIGFkZCBiaW5kaW5n
+cwpmb3IgdGhlIHBhbmVsLCBjaGVjayBoaXN0b3J5IG9mIGRyaS1kZXZlbCB0byBzZWUgaG93IHRv
+IGRvIGl0LgoKPj4KPj4gWzFdOiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
+cGxheS9wYW5lbC9zaW1wbGUtcGFuZWwudHh0Cj4+IFsyXTogZHJpdmVycy9ncHUvZHJtL3BhbmVs
+L3BhbmVsLXNpbXBsZS5jCj4+Cj4+PiBJcyBpdCBwb3NzaWJsZSAKPj4+IHRvIHN1cHBvcnQgd2l0
+aG91dCBhZGRpbmcgYSBuZXcgZHJpdmVyIGZvciBpdCA/IEkga25vdyB0aGVyZSBpcyBhIAo+Pj4g
+c2ltcGxlLWRwaSBmb3IgTUlQSSwgYnV0IHdoYXQgaXMgZm9yIHBhcmFsbGVsIHZpZGVvIG9yIGx2
+ZHM/Cj4+IHNpbXBsZS1kcGkgaXMganVzdCBwYXJhbGxlbCBvdXRwdXQuIExWRFMgaXMgbm90IHN1
+cHBvcnRlZCBieSBFeHlub3M0NDEyIGJ1dAo+PiBib2FyZHMgdXN1YWxseSBoYXZlIFJHQi9MVkRT
+IGJyaWRnZSBmb3Igc3VjaCBwYW5lbHMsIEkgaGF2ZSBubyBhY2Nlc3MgdG8KPj4gaXRvcAo+PiBi
+b2FyZCBzY2hlbWF0aWNzLCBidXQgSSBzdXBwb3NlIGl0IGhhcyBzdWNoIGJyaWRnZS4gTFZEUyBi
+cmlkZ2VzIG9mdGVuCj4+IGRvIG5vdAo+PiBuZWVkIExpbnV4IGRyaXZlciwgc28gZnJvbSBkZXZl
+bG9wZXIgcG9pbnQgb2YgdmlldyBMVkRTIHBhbmVscyB3aXRoIHN1Y2gKPj4gYnJpZGdlCj4gWWVz
+IGl0IGlzLgo+PiBhcmUgaGFuZGxlZCB0aGUgc2FtZSB3YXkgYXMgUkdCIHBhbmVscy4gRXhhbXBs
+ZSBmaW1kIGJpbmRpbmdzIGZvciBSR0IgcGFuZWxzCj4+IGFyZSBpbiBbM10uCj4+Cj4+IFszXTog
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC11bml2ZXJzYWxfYzIxMC5kdHMKPj4KPiBXb3Vs
+ZCBpdCBhcHBlYXIgYXMgYSBmcmFtZSBidWZmZXIgZGV2aWNlIGluIExpbnV4ID8gUmVnYXJkIG9m
+IGRpc3BsYXkgdGltaW5ncywgSSBjb3VsZCBzb2x2ZSBpdCBsYXRlci4gSWYgdGhlIGZyYW1lIGJ1
+ZmZlciBub2RlIGlzIGNyZWF0ZWQsIEkgY291bGQga25vdyBJIGhhdmUgYSB3YXkgdG8gdGVzdC4K
+ClllcywgaXQgc2hvdWxkLCBpZiBldmVyeXRoaW5nIGlzIHByb3Blcmx5IGRvbmUgL2Rldi9mYjAg
+c2hvdWxkIGJlIGF2YWlsYWJsZS4KUm91Z2hseSBzdGVwcyB0byBkbzoKMS4gYWRkIHBhbmVsIGRl
+ZmluaXRpb24gdG8gZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNpbXBsZS5jLgoyLiBhZGQg
+cGFuZWwgZW50cnkgYW5kIGZpbWQgYmluZGluZ3MgdG8gaXRvcCBkdHMuCjMuIGVuYWJsZSBleHlu
+b3MgZHBpLCBzaW1wbGUgcGFuZWwsIGRybV9mcmFtZWJ1ZmZlciBpbiAuY29uZmlnLgoKCj4+Pj4g
+UmVnYXJkcwo+Pj4+IEFuZHJ6ZWoKPj4+IFRoZSBvdGhlciBwcm9ibGVtIGlzIHRoYXQgSSBkb24n
+dCBob3cgdG8gY29uZmlndXJlIHRoZSBkaXNwbGF5LXRpbWVzLCAKPj4+IHRoZSBkYXRhc2hlZXQg
+Zm9yIENMQUEwNzBXUDAzWEcgb25seSB0YWxrIGFib3V0IHRvdGFsIHRpbWUsIGFjdGl2ZSB0aW1l
+IAo+Pj4gYW5kIGJsYW5rIHRpbWUgZm9yIGJvdGggSG9yaXpvbnRhbCBhbiBWZXJ0aWNhbCB0aW1l
+LiBEb2VzIGl0IG1lYW4gdGhlIAo+Pj4gZnJvbnQtcG9yY2ggYW5kIHN5bmMtbGVuIGZvciBob3Jp
+em9udGFsIGFuZCB2ZXJ0aWNhbCBhcmUgemVybyA/Cj4+IFlvdSBjYW4gbG9vayBhdCB2ZW5kb3In
+cyBjb2RlLgo+IEl0IGlzIGEgdmVyeSBvbGQga2VybmVsLiBCdXQgaXQgc2VlbXMgdGhhdCB0aGV5
+IGRpZG4ndCBjb25maWd1cmUgdGhlIGZpbWQgYnV0IHRoZSBmcmFtZSBidWZmZXIuCgpUaGlzIGlz
+IGp1c3QgbWF0dGVyIG9mIGRpZmZlcmVudCBkaXNwbGF5IGZyYW1ld29yayB0aGV5IGhhdmUgdXNl
+ZC4KSW4gY3VycmVudCBrZXJuZWwgeW91IHNob3VsZCB1c2UgZHJtIGZyYW1ld29yay4KCj4+IE9y
+IGp1c3QgZXhwZXJpbWVudCB3aXRoIGRpZmZlcmVudCB2YWx1ZXMuCj4+IFRoZSBlcXVhdGlvbiBp
+czogdG90YWw9YWN0aXZlK2JhY2tfcG9yY2grYmxhbmsrZnJvbnRfcG9yY2guCj4+IFNvIGlmIGh0
+b3RhbD04NjQsIGhhY3RpdmU9ODAwLCBoYmxhbms9NjQsIHRoZW4gaHBvcmNoZXMgYXJlIDAuCj4+
+IEluIGNhc2Ugb2YgdnRvdGFsPTEyODgsIHZhY3RpdmU9MTIwMCwgdmJsYW5rPTggeW91IGhhdmUg
+bGVmdCA4MCBmb3IgcG9yY2hlcywKPj4geW91IGNhbiB0cnkgdG8gc3BsaXQgdGhlbSBlcXVhbGx5
+IGZvciBmcm9udCBhbmQgYmFjayBmb3Igc3RhcnRlcnMuCj4gQnV0IHRpbWluZ3MgZGlhZ3JhbSBp
+biBkYXRhIHNoZWV0IGRvZXNuJ3QgbG9vayBsaWtlIHRoYXQsIEkgaGF2ZSBhc2tlZCB0aGUgdmVu
+ZG9yIGZvciBzb21lIGhlbHAsIEkgaG9wZSBJIGNvdWxkIGdldCBhIHJlcGx5IGZyb20gdGhlIHZl
+bmRvci4KCkFmdGVyIGVudGVyaW5nIENMQUEwNzBXUDAzWEcgaW50byB3ZWIgc2VhcmNoIHlvdSBj
+YW4gZmluZCBkYXRhc2hlZXQgb2YgaXQuCkl0IGNvbnRhaW5zIHRpbWluZ3Mgc3BlY2lmaWVkIGFi
+b3ZlLgoKUmVnYXJkcwpBbmRyemVqCgoKPj4gUmVnYXJkcwo+PiBBbmRyemVqCj4+Cj4+PiArICAg
+ICAgIHBvcnRzIHsKPj4+ICsgICAgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPj4+
+ICsgICAgICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDwwPjsKPj4+ICsgICAgICAgICAgICAgICBw
+b3J0QDMgewo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDM+Owo+Pj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgcmdhX2x2ZHM6IGVuZHBvaW50IHsKPj4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0gPCZwYW5lbD47Cj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgICB9Owo+Pj4gKyAgICAgICAgICAgICAgIH07Cj4+PiArICAgICAgIH07
+Cj4+PiArCj4+PiArICAgICAgIHBhbmVsOiBwYW5lbEAwIHsKPj4+ICsgICAgICAgICAgICAgICBj
+b21wYXRpYmxlID0gInBhbmVsLXNpbXBsZSI7Cj4+PiArCj4+PiArICAgICAgICAgICAgICAgcG93
+ZXItc3VwcGx5ID0gPCZ2Y2Nfc3lzX2xjZD47Cj4+PiArICAgICAgICAgICAgICAgZW5hYmxlLWdw
+aW9zID0gPCZncGwwIDIgR1BJT19BQ1RJVkVfSElHSD47Cj4+PiArICAgICAgICAgICAgICAgZGlz
+cGxheS10aW1pbmdzIHsKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHRpbWluZy0wIHsKPj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY2xvY2stZnJlcXVlbmN5ID0gPDY2Nzcw
+MDAwPjsKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFjdGl2ZSA9IDw4MDA+
+Owo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWN0aXZlID0gPDEyODA+Owo+
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoZnJvbnQtcG9yY2ggPSA8MD47Cj4+
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhiYWNrLXBvcmNoID0gPDY0PjsKPj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaHN5bmMtbGVuID0gPDA+Owo+Pj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2ZnJvbnQtcG9yY2ggPSA8MD47Cj4+PiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZiYWNrLXBvcmNoID0gPDg+Owo+Pj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB2c3luYy1sZW4gPSA8MD47Cj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgICB9Owo+Pj4gKyAgICAgIH07Cj4+Pgo+Pj4gLS0KPj4+IFRvIHVuc3Vic2Ny
+aWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1z
+dW5nLXNvYyIgaW4KPj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5r
+ZXJuZWwub3JnCj4+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
+b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4+Cj4+Pgo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJv
+bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29j
+IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
+Cj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
+bW8taW5mby5odG1sCj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
