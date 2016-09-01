@@ -1,107 +1,104 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH RFC] ARM: dts: samsung: add rga-lvds panel in itop elite
-Date: Thu, 01 Sep 2016 09:04:41 +0200
-Message-ID: <94dc2e0d-2521-a636-ee3d-90168f30fe28@samsung.com>
-References: <1472511002-9019-1-git-send-email-ayaka@soulik.info>
- <dee989f5-17b0-7445-514b-559e98d77acd@samsung.com>
- <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <790048d1-6533-2e43-5343-13782382bf84@soulik.info>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: ayaka <ayaka@soulik.info>, devicetree <devicetree@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 01/10] pinctrl: dt-bindings: samsung: Add header with values
+ used for configuration
+Date: Thu, 01 Sep 2016 09:23:49 +0200
+Message-ID: <1472714638-15676-2-git-send-email-k.kozlowski@samsung.com>
+References: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDgvMzEvMjAxNiAwNzo1NSBQTSwgYXlha2Egd3JvdGU6Cj4KPiBPbiAwOC8zMS8yMDE2IDA4
-OjMwIFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBIaSwKPj4KPj4KPj4gT24gMDgvMzAvMjAx
-NiAxMjo1MCBBTSwgUmFuZHkgTGkgd3JvdGU6Cj4+PiBJdCBpcyBhY3R1YWxseSBhIGx2ZHMgcGFu
-ZWwgY29ubmVjdGVkIHRocm91Z2ggYSByZ2EtbHZkcyBicmlkZ2UuCj4+PiBCdXQgSSByZWFsbHkg
-aGF2ZSBubyBpZGVhIGFib3V0IHdoYXQgZG9lcyBhIHBvcnQgbWVhbiBpbiBmaW1kIG5vZGUuCj4+
-Pgo+Pj4gQWxzbyBob3cgc2hvdWxkIEkgY29uZmlndXJlIHRoaXMgcGFuZWwgc2l6ZT8gSSB0aGlu
-ayB0aGUgaTJjIGZvdW5kCj4+PiBvbiB0aGUgcGFuZWwgc2NoZW1hdGljLCBidXQgaXQgbW9yZSBs
-aWtlbHkgdG8gYmUgdXNlZCBhIHRvdWNoIHNjcmVlbgo+Pj4gdG91dGguIEFsc28gdGhlIHRvdWNo
-IHNjcmVlbiBpcyBub3Qgc3VwcG9ydGVkIGluIGN1cnJlbnRseSBkcml2ZXIuCj4+Pgo+Pj4gU2ln
-bmVkLW9mZi1ieTogUmFuZHkgTGkgPGF5YWthQHNvdWxpay5pbmZvPgo+Pj4gLS0tCj4+PiAgIGFy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItaXRvcC1lbGl0ZS5kdHMgfCAzNSArKysrKysrKysr
-KysrKysrKysrKysrKysrKy0tLQo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMzIgaW5zZXJ0aW9ucygr
-KSwgMyBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
-ZXh5bm9zNDQxMi1pdG9wLWVsaXRlLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTIt
-aXRvcC1lbGl0ZS5kdHMKPj4+IGluZGV4IGUxY2RhNTQuLjJkNjczODUgMTAwNjQ0Cj4+PiAtLS0g
-YS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWl0b3AtZWxpdGUuZHRzCj4+PiArKysgYi9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWl0b3AtZWxpdGUuZHRzCj4+PiBAQCAtMTM5LDYg
-KzEzOSwyMCBAQAo+Pj4gICAJCWFzc2lnbmVkLWNsb2NrcyA9IDwmY2xvY2sgQ0xLX01PVVRfQ0FN
-MD47Cj4+PiAgIAkJYXNzaWduZWQtY2xvY2stcGFyZW50cyA9IDwmY2xvY2sgQ0xLX1hVU0JYVEk+
-Owo+Pj4gICAJfTsKPj4+ICsJCj4+PiArCXZjY19zeXNfbGNkOiBzeXMtbGNkIHsKPj4+ICsJCWNv
-bXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKPj4+ICsJCXJlZ3VsYXRvci1uYW1lID0gInZj
-Y181diI7Cj4+PiArCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsKPj4+ICsJ
-CXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDUwMDAwMDA+Owo+Pj4gKwkJZ3BpbyA9IDwmZ3Bs
-MCA0IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pj4gKwl9Owo+Pj4gKwo+Pj4gKwlwYW5lbDogcGFuZWwg
-ewo+Pj4gKwkJZGRjLWkyYy1idXMgPSA8JmkyY18zPjsKPj4+ICsJCXBvd2VyLXN1cHBseSA9IDwm
-dmNjX3N5c19sY2Q+Owo+Pj4gKwkJZW5hYmxlLWdwaW9zID0gPCZncGwwIDIgR1BJT19BQ1RJVkVf
-SElHSD47Cj4+PiArCX07Cj4+IFBhbmVsIGhhcyBubyBjb21wYXRpYmxlIHN0cmluZywgd2hpY2gg
-ZHJpdmVyIHdpbGwgaGFuZGxlIHRoaXMgbm9kZT8KPiBUaGUgcHJvYmxlbSBpcyB0aGF0LCBpdCBp
-cyBwYW5lbCBub3Qgc3VwcG9ydGVkIGJ5IGtlcm5lbC4gCgpGb3Igc2ltcGxlIHBhbmVsIHlvdSBj
-YW4gdGFrZSBhIGxvb2sgYXQgWzFdWzJdLiBJZS4gaWYgdGhlIHBhbmVsIG5lZWRzCm9ubHkgcG93
-ZXIgc3VwcGx5IGFuZCBlbmFibGUgZ3BpbywgeW91IGp1c3QgbmVlZCB0byBhZGQgZmV3IGxpbmVz
-IHRvIFsyXS4KClsxXTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-cGFuZWwvc2ltcGxlLXBhbmVsLnR4dApbMl06IGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1z
-aW1wbGUuYwoKPiBJcyBpdCBwb3NzaWJsZSAKPiB0byBzdXBwb3J0IHdpdGhvdXQgYWRkaW5nIGEg
-bmV3IGRyaXZlciBmb3IgaXQgPyBJIGtub3cgdGhlcmUgaXMgYSAKPiBzaW1wbGUtZHBpIGZvciBN
-SVBJLCBidXQgd2hhdCBpcyBmb3IgcGFyYWxsZWwgdmlkZW8gb3IgbHZkcz8KCnNpbXBsZS1kcGkg
-aXMganVzdCBwYXJhbGxlbCBvdXRwdXQuIExWRFMgaXMgbm90IHN1cHBvcnRlZCBieSBFeHlub3M0
-NDEyIGJ1dApib2FyZHMgdXN1YWxseSBoYXZlIFJHQi9MVkRTIGJyaWRnZSBmb3Igc3VjaCBwYW5l
-bHMsIEkgaGF2ZSBubyBhY2Nlc3MgdG8KaXRvcApib2FyZCBzY2hlbWF0aWNzLCBidXQgSSBzdXBw
-b3NlIGl0IGhhcyBzdWNoIGJyaWRnZS4gTFZEUyBicmlkZ2VzIG9mdGVuCmRvIG5vdApuZWVkIExp
-bnV4IGRyaXZlciwgc28gZnJvbSBkZXZlbG9wZXIgcG9pbnQgb2YgdmlldyBMVkRTIHBhbmVscyB3
-aXRoIHN1Y2gKYnJpZGdlCmFyZSBoYW5kbGVkIHRoZSBzYW1lIHdheSBhcyBSR0IgcGFuZWxzLiBF
-eGFtcGxlIGZpbWQgYmluZGluZ3MgZm9yIFJHQiBwYW5lbHMKYXJlIGluIFszXS4KClszXTogYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC11bml2ZXJzYWxfYzIxMC5kdHMKCj4+IFJlZ2FyZHMK
-Pj4gQW5kcnplago+IFRoZSBvdGhlciBwcm9ibGVtIGlzIHRoYXQgSSBkb24ndCBob3cgdG8gY29u
-ZmlndXJlIHRoZSBkaXNwbGF5LXRpbWVzLCAKPiB0aGUgZGF0YXNoZWV0IGZvciBDTEFBMDcwV1Aw
-M1hHIG9ubHkgdGFsayBhYm91dCB0b3RhbCB0aW1lLCBhY3RpdmUgdGltZSAKPiBhbmQgYmxhbmsg
-dGltZSBmb3IgYm90aCBIb3Jpem9udGFsIGFuIFZlcnRpY2FsIHRpbWUuIERvZXMgaXQgbWVhbiB0
-aGUgCj4gZnJvbnQtcG9yY2ggYW5kIHN5bmMtbGVuIGZvciBob3Jpem9udGFsIGFuZCB2ZXJ0aWNh
-bCBhcmUgemVybyA/CgpZb3UgY2FuIGxvb2sgYXQgdmVuZG9yJ3MgY29kZS4gT3IganVzdCBleHBl
-cmltZW50IHdpdGggZGlmZmVyZW50IHZhbHVlcy4KVGhlIGVxdWF0aW9uIGlzOiB0b3RhbD1hY3Rp
-dmUrYmFja19wb3JjaCtibGFuaytmcm9udF9wb3JjaC4KU28gaWYgaHRvdGFsPTg2NCwgaGFjdGl2
-ZT04MDAsIGhibGFuaz02NCwgdGhlbiBocG9yY2hlcyBhcmUgMC4KSW4gY2FzZSBvZiB2dG90YWw9
-MTI4OCwgdmFjdGl2ZT0xMjAwLCB2Ymxhbms9OCB5b3UgaGF2ZSBsZWZ0IDgwIGZvciBwb3JjaGVz
-LAp5b3UgY2FuIHRyeSB0byBzcGxpdCB0aGVtIGVxdWFsbHkgZm9yIGZyb250IGFuZCBiYWNrIGZv
-ciBzdGFydGVycy4KClJlZ2FyZHMKQW5kcnplagoKPgo+ICsgICAgICAgcG9ydHMgewo+ICsgICAg
-ICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPiArICAgICAgICAgICAgICAgI3NpemUt
-Y2VsbHMgPSA8MD47Cj4gKyAgICAgICAgICAgICAgIHBvcnRAMyB7Cj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgcmVnID0gPDM+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJnYV9sdmRzOiBl
-bmRwb2ludCB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9p
-bnQgPSA8JnBhbmVsPjsKPiArICAgICAgICAgICAgICAgICAgICAgICB9Owo+ICsgICAgICAgICAg
-ICAgICB9Owo+ICsgICAgICAgfTsKPiArCj4gKyAgICAgICBwYW5lbDogcGFuZWxAMCB7Cj4gKyAg
-ICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicGFuZWwtc2ltcGxlIjsKPiArCj4gKyAgICAgICAg
-ICAgICAgIHBvd2VyLXN1cHBseSA9IDwmdmNjX3N5c19sY2Q+Owo+ICsgICAgICAgICAgICAgICBl
-bmFibGUtZ3Bpb3MgPSA8JmdwbDAgMiBHUElPX0FDVElWRV9ISUdIPjsKPiArICAgICAgICAgICAg
-ICAgZGlzcGxheS10aW1pbmdzIHsKPiArICAgICAgICAgICAgICAgICAgICAgICB0aW1pbmctMCB7
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1mcmVxdWVuY3kgPSA8NjY3
-NzAwMDA+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFjdGl2ZSA9IDw4MDA+
-Owo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdmFjdGl2ZSA9IDwxMjgwPjsKPiAr
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhmcm9udC1wb3JjaCA9IDwwPjsKPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhiYWNrLXBvcmNoID0gPDY0PjsKPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGhzeW5jLWxlbiA9IDwwPjsKPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHZmcm9udC1wb3JjaCA9IDwwPjsKPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHZiYWNrLXBvcmNoID0gPDg+Owo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgdnN5bmMtbGVuID0gPDA+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIH07
-Cj4gKyAgICAgIH07Cj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
-IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBv
-ZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4K
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hard-coded pinctrl configuration values are scattered through DTS files.
+The numbers are difficult to decode by human, especially without the
+datasheet.  Additionally the drive strength differs between Exynos SoC
+families increasing the confusion.
+
+The header will help making this more readable and maintainable.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ MAINTAINERS                           |  1 +
+ include/dt-bindings/pinctrl/samsung.h | 57 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/samsung.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d8e81b1dde30..836bcd327ee4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9318,6 +9318,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/pinctrl/samsung/
++F:	include/dt-bindings/pinctrl/samsung.h
+ 
+ PIN CONTROLLER - SINGLE
+ M:	Tony Lindgren <tony@atomide.com>
+diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
+new file mode 100644
+index 000000000000..0f410ba5ec7e
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/samsung.h
+@@ -0,0 +1,57 @@
++/*
++ * Samsung's Exynos pinctrl bindings
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Author: Krzysztof Kozlowski <krzk@kernel.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __DT_BINDINGS_PINCTRL_EXYNOS_H__
++#define __DT_BINDINGS_PINCTRL_EXYNOS_H__
++
++#define EXYNOS_PIN_PULL_NONE		0
++#define EXYNOS_PIN_PULL_DOWN		1
++#define EXYNOS_PIN_PULL_UP		3
++
++/* Pin function in power down mode */
++#define EXYNOS_PIN_PDN_OUT0		0
++#define EXYNOS_PIN_PDN_OUT1		1
++#define EXYNOS_PIN_PDN_INPUT		2
++#define EXYNOS_PIN_PDN_PREV		3
++
++/* Drive strengths for Exynos3250, Exynos4 (all) and Exynos5250 */
++#define EXYNOS4_PIN_DRV_LV1		0
++#define EXYNOS4_PIN_DRV_LV2		2
++#define EXYNOS4_PIN_DRV_LV3		1
++#define EXYNOS4_PIN_DRV_LV4		3
++
++/* Drive strengths for Exynos5260 */
++#define EXYNOS5260_PIN_DRV_LV1		0
++#define EXYNOS5260_PIN_DRV_LV2		1
++#define EXYNOS5260_PIN_DRV_LV4		2
++#define EXYNOS5260_PIN_DRV_LV6		3
++
++/* Drive strengths for Exynos5410, Exynos542x and Exynos5800 */
++#define EXYNOS5420_PIN_DRV_LV1		0
++#define EXYNOS5420_PIN_DRV_LV2		1
++#define EXYNOS5420_PIN_DRV_LV3		2
++#define EXYNOS5420_PIN_DRV_LV4		3
++
++#define EXYONS_PIN_PDN_OUT0		0
++#define EXYNOS_PIN_PDN_OUT1		1
++#define EXYNOS_PIN_PDN_INPUT		2
++#define EXYNOS_PIN_PDN_PREV		3
++
++#define EXYNOS_PIN_FUNC_INPUT		0
++#define EXYNOS_PIN_FUNC_OUTPUT		1
++#define EXYNOS_PIN_FUNC_2		2
++#define EXYNOS_PIN_FUNC_3		3
++#define EXYNOS_PIN_FUNC_4		4
++#define EXYNOS_PIN_FUNC_5		5
++#define EXYNOS_PIN_FUNC_F		0xf
++
++#endif /* __DT_BINDINGS_PINCTRL_EXYNOS_H__ */
+-- 
+1.9.1
