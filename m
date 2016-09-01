@@ -1,65 +1,43 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Fix mismatched value for SD4 pull
- up/down configuration on exynos4210
-Date: Thu, 01 Sep 2016 13:17:35 +0200
-Message-ID: <2498577.5hS2QaaMmd@amdc1976>
-References: <1472719022-27226-1-git-send-email-k.kozlowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 5/6] ARM: dts: s3c2416: Use macros for pinctrl
+ configuration
+Date: Thu, 01 Sep 2016 13:17:13 +0200
+Message-ID: <5137342.oSWmFr9Y8D@wuerfel>
+References: <1472721715-2833-1-git-send-email-k.kozlowski@samsung.com>
+ <1608454.1ZuTJsprje@amdc1976>
+ <e37fbfa0-f30c-ab34-3428-fb9a66182089@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1472719022-27226-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <e37fbfa0-f30c-ab34-3428-fb9a66182089@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, javier@osg.samsung.com, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-Hi,
-
-On Thursday, September 01, 2016 10:37:01 AM Krzysztof Kozlowski wrote:
-> The pinctrl pull up/down register on exynos4210 is 2-bit wide for each
-> pin and it accepts only values of 0, 1 and 3.  The pins sd4-bus-width8
-> were configured with value of 4.  The driver does not validate the value
-> so this overflow effectively set a bit 1 in adjacent pins thus
-> configuring them to pull down.
+On Thursday, September 1, 2016 1:12:18 PM CEST Krzysztof Kozlowski wrote:
+> > 
+> > Shouldn't macros that are also used by s3c* be named as
+> > SAMSUNG_PIN_FUNC_2 etc. (s3c* SoCs are not Exynos)?
 > 
-> The author's intention was probably to set drive strength of 4x.  All
-> other bus-widths pins are configured with pull up and drive strength of
-> 4x.  Fix this one with same pattern.
-> 
-> Fixes: 87711d8c7c70 ("ARM: dts: Add pinctrl node entries for SAMSUNG EXYNOS4210 SoC")
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Right, this is the inconsistency. The problem with "samsung" prefix is
+> that there is no guarantee it will be like that for newer SoCs. How
+> about one of:
+> 1. using the oldest prefix (S3C24XX in this case),
+> 2. duplicating them per SoC family (so S3C24XX, S3C64XX, EXYNOS).
+> ?
 
-sd4_bus8 is currently unused by other drivers so there should be no
-problem with this change.
+I'd suggest living with the inconsistency and using EXYNOS as the prefix,
+as that is the most common one these days, even if the other ones
+predate it.
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-> ---
->  arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> index 8046340e50ac..d9b6d25e4abe 100644
-> --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> @@ -649,7 +649,7 @@
->  		sd4_bus8: sd4-bus-width8 {
->  			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
->  			samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
-> -			samsung,pin-pud = <4>;
-> +			samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
->  			samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
->  		};
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
