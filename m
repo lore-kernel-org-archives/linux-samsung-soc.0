@@ -1,42 +1,49 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 4/4] ARM: defconfig: Exynos for v4.9
-Date: Fri, 02 Sep 2016 17:47:11 +0200
-Message-ID: <4575445.BeuOIIGatt@wuerfel>
-References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com> <1472548739-20050-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: Fix broken architected timer interrupt trigger
+Date: Fri, 02 Sep 2016 18:20:00 +0200
+Message-ID: <19742803.nMPmp3hcfz@wuerfel>
+References: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com> <1470045256-9032-3-git-send-email-marc.zyngier@arm.com> <CAK7LNARVw+mDhHT2+WjDtHpBvsxauUQpRCJeNLrQxrj0Oo=hrQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.133]:56794 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.130]:57087 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932236AbcIBPr2 (ORCPT
+        with ESMTP id S1752007AbcIBQVs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 11:47:28 -0400
-In-Reply-To: <1472548739-20050-2-git-send-email-k.kozlowski@samsung.com>
+        Fri, 2 Sep 2016 12:21:48 -0400
+In-Reply-To: <CAK7LNARVw+mDhHT2+WjDtHpBvsxauUQpRCJeNLrQxrj0Oo=hrQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Marc Zyngier <marc.zyngier@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Mark Rutland <marc.rutland@arm.com>, Liu Gang <Gang.Liu@nxp.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, arm@kernel.org, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>
 
-On Tuesday, August 30, 2016 11:18:56 AM CEST Krzysztof Kozlowski wrote:
-> Expected conflict in multi_v7 - take all the changes:
+On Monday, August 1, 2016 7:00:50 PM CEST Masahiro Yamada wrote:
+> > Acked-by: Duc Dang <dhdang@apm.com>
+> > Acked-by: Carlo Caione <carlo@endlessm.com>
+> > Acked-by: Michal Simek <michal.simek@xilinx.com>
+> > Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+> > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> > ---
+> >  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
+> >  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
+> >  arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
+> >  arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
+> >  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
+> >  arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
+> >  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
+> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi       | 8 ++++----
+> >  arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
+> >  arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
 > 
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@@ -135,8 -136,7 +136,8 @@@ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=
->   CONFIG_CPU_FREQ_GOV_POWERSAVE=m
->   CONFIG_CPU_FREQ_GOV_USERSPACE=m
->   CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
-> - CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
-> + CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
->  +CONFIG_ARM_IMX6Q_CPUFREQ=y
->   CONFIG_QORIQ_CPUFREQ=y
->   CONFIG_CPU_IDLE=y
->   CONFIG_ARM_CPUIDLE=y
+> 
+> For uniphier-ph1-ld20.dtsi,
+> 
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > 
 > 
 
-I pulled this into next/defconfig, but didn't see the conflict,
-presumably I'll get it after merging the other branches?
+Applied to the fixes branch for 4.8, thanks
 
 	Arnd
