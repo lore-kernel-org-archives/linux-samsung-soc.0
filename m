@@ -1,49 +1,35 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 2/2] arm64: dts: Fix broken architected timer interrupt trigger
-Date: Fri, 02 Sep 2016 18:20:00 +0200
-Message-ID: <19742803.nMPmp3hcfz@wuerfel>
-References: <1470045256-9032-1-git-send-email-marc.zyngier@arm.com> <1470045256-9032-3-git-send-email-marc.zyngier@arm.com> <CAK7LNARVw+mDhHT2+WjDtHpBvsxauUQpRCJeNLrQxrj0Oo=hrQ@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] ARM: exynos: SoC/Mach for v4.9
+Date: Fri, 02 Sep 2016 18:26:42 +0200
+Message-ID: <5635206.ooNAZCeQOe@wuerfel>
+References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com> <1472548739-20050-5-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:57087 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752007AbcIBQVs (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:21:48 -0400
-In-Reply-To: <CAK7LNARVw+mDhHT2+WjDtHpBvsxauUQpRCJeNLrQxrj0Oo=hrQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1472548739-20050-5-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Marc Zyngier <marc.zyngier@arm.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hou Zhiqiang <B48286@freescale.com>, Mark Rutland <marc.rutland@arm.com>, Liu Gang <Gang.Liu@nxp.com>, Mingkai Hu <Mingkai.Hu@freescale.com>, Florian Fainelli <f.fainelli@gmail.com>, arm@kernel.org, Kevin Hilman <khilman@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Jon Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Ray Jui <rjui@broadcom.com>
 
-On Monday, August 1, 2016 7:00:50 PM CEST Masahiro Yamada wrote:
-> > Acked-by: Duc Dang <dhdang@apm.com>
-> > Acked-by: Carlo Caione <carlo@endlessm.com>
-> > Acked-by: Michal Simek <michal.simek@xilinx.com>
-> > Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> > Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> > ---
-> >  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 8 ++++----
-> >  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          | 8 ++++----
-> >  arch/arm64/boot/dts/apm/apm-storm.dtsi               | 8 ++++----
-> >  arch/arm64/boot/dts/broadcom/ns2.dtsi                | 8 ++++----
-> >  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 8 ++++----
-> >  arch/arm64/boot/dts/exynos/exynos7.dtsi              | 8 ++++----
-> >  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 8 ++++----
-> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi       | 8 ++++----
-> >  arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 8 ++++----
-> >  arch/arm64/boot/dts/socionext/uniphier-ph1-ld20.dtsi | 8 ++++----
-> 
-> 
-> For uniphier-ph1-ld20.dtsi,
-> 
-> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Tuesday, August 30, 2016 11:18:59 AM CEST Krzysztof Kozlowski wrote:
+> Samsung mach/soc update for v4.9:
+> 1. Fix for DMA on S3C24xx. This was probably broken for long time, nobody runs
+>    this code... till now.
+
+Good to know. This reminds me that the s3c24xx DMA code is one of those
+that need to be converted to dma_slave_map at some point. Maybe if someone
+is now running that code, they could give that a try as well?
+
+It shouldn't be hard to convert, let me know if you need more information.
+
+> 2. After fixes from Matthew Leach and Ben Dooks, most of our mach code
+>    and drivers is now endian-safe. Mark the platform as supporting big endian.
+> 3. Cleanups.
 > 
 > 
 
-Applied to the fixes branch for 4.8, thanks
+Pulled into next/soc, thanks!
 
 	Arnd
