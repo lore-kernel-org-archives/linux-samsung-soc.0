@@ -1,112 +1,224 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: Set the clock rate for DREX block 800Mhz
- on exynos5422-odroidxu3
-Date: Fri, 02 Sep 2016 17:58:38 +0900
-Message-ID: <57C93F3E.4030802@samsung.com>
-References: <1472108238-24309-1-git-send-email-cw00.choi@samsung.com>
- <1472108238-24309-4-git-send-email-cw00.choi@samsung.com>
- <CGME20160827163323epcas1p36e8aa80709136d2784f38f4531a5dab8@epcas1p3.samsung.com>
- <20160827163310.GA8616@kozik-book>
+Subject: Re: [PATCH v2 5/7] arm64: dts: exynos: Add dts files for Samsung
+ Exynos5433 64bit SoC
+Date: Fri, 02 Sep 2016 18:54:36 +0900
+Message-ID: <57C94C5C.8070406@samsung.com>
+References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
+ <1472046551-703-6-git-send-email-cw00.choi@samsung.com>
+ <CGME20160826161551epcas1p2386a62f005140f42c03d3ff1c679ebe6@epcas1p2.samsung.com>
+ <20160826161442.GB15511@kozik-book>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160827163310.GA8616@kozik-book>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, kgene@kernel.org, chanwoo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:52430 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbcIBJyk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 2 Sep 2016 05:54:40 -0400
+In-reply-to: <20160826161442.GB15511@kozik-book>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
 
-On 2016년 08월 28일 01:33, Krzysztof Kozlowski wrote:
-> On Thu, Aug 25, 2016 at 03:57:18PM +0900, Chanwoo Choi wrote:
->> This patch sets the clock rate for DREX (DRAM Express) block
->> on exynos5422-odroidxu3 board. In the exynos5422 TRM,
->> DRAM clocks use BPLL clock and CMU_CDREX generates
->> the 800MHz DRAM clock.
+On 2016년 08월 27일 01:14, Krzysztof Kozlowski wrote:
+> On Wed, Aug 24, 2016 at 10:49:09PM +0900, Chanwoo Choi wrote:
+>> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
+>> Octa-core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
+>> PSCI (Power State Coordination Interface) v0.1.
 >>
-> 
->>From the commit message I don't get two things:
-> 1. Why setting this on XU3-family of boards, not all 542x/5800?
-
-I have the only xu3 board. I cannot test it on other boards.
-
-> 2. Why this is needed? The commit msg lacks the answer to the "why".
-
-In the exynos5422's TRM, CMU_CDREX generates the 800MHz DRAM clock
-as above commit message. But, I'm missing what there is different
-before applying this patch. I add comment why we should set the 
-clock rate for DRAM on below.
-
-> 
->> [clk_summary on exynos5422-odroidxu3 board]
->> fout_bpll                             0            0   800000000          0 0
->>     mout_bpll                          0            0   800000000          0 0
->>        mout_mclk_cdrex                 0            0   800000000          0 0
->>           dout_pclk_core_mem           0            0   200000000          0 0
->>           dout_sclk_cdrex              0            0   800000000          0 0
+>> This patch includes following Device Tree node to support Exynos5433 SoC:
+>> 1. Octa cores for big.LITTLE architecture
+>> - Cortex-A53 LITTLE Quad-core
+>> - Cortex-A57 big Quad-core
+>> - Support PSCI v0.1
 >>
-> 
-> What is the purpose of this dump of clk_summary? Is it a state before or
-> after the change? After it is quite obvious that it should have
-> 800MHz...
-
-I'm missing the difference before applying this patch.
-
-As I mentioned on v1[1] patch, if I don't set the clock rate for CDREX,
-the default clock is 825MHz instead of 800MHz. So, I set the clock rate
-on this patch.
-[1] https://lkml.org/lkml/2016/8/22/255
-
-If I don't apply this patch, the DREX clock is 825MHz.
-fout_bpll                             0            0   825000000          0 0  
-       mout_bpll                          0            0   825000000          0 0  
-          mout_mclk_cdrex                 0            0   825000000          0 0  
-             dout_pclk_core_mem           0            0   206250000          0 0  
-             dout_sclk_cdrex              0            0   825000000          0 0  
-                dout_clk2x_phy0           0            0   825000000          0 0  
-                   dout_aclk_cdrex1           0            0   412500000          0 0  
-                      dout_pclk_cdrex           0            0   103125000          0 0  
-                   dout_cclk_drex0           0            0   412500000          0 0  
-
-
-If you want to edit the commit message, I'll resend the v3 patch.
-
-Best Regards,
-Chanwoo Choi
-
-> 
-> Best regards,
-> Krzysztof
-> 
+>> 2. Clock controller node
+>> - CMU_TOP   : clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
+>> - CMU_CPIF  : clocks for LLI (Low Latency Interface)
+>> - CMU_MIF   : clocks for DRAM Memory Controller
+>> - CMU_PERIC : clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS
+>> - CMU_PERIS : clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC
+>> - CMU_FSYS  : clocks for USB/UFS/SDMMC/TSI/PDMA
+>> - CMU_G2D   : clocks for G2D/MDMA
+>> - CMU_DISP  : clocks for DECON/HDMI/DSIM/MIXER
+>> - CMU_AUD   : clocks for Cortex-A5/BUS/AUDIO
+>> - CMU_BUS{0|1|2} : clocks for global data buses and global peripheral buses
+>> - CMU_G3D   : clocks for 3D Graphics Engine
+>> - CMU_GSCL  : clocks for GSCALER
+>> - CMU_APOLLO: clocks for Cortex-A53 Quad-core processor.
+>> - CMU_ATLAS : clocks for Cortex-A57 Quad-core processor,
+>>               CoreSight and L2 cache controller.
+>> - CMU_MSCL  : clocks for M2M (Memory to Memory) scaler and JPEG IPs.
+>> - CMU_MFC   : clocks for MFC (Multi-Format Codec) IP.
+>> - CMU_HEVC  : clocks for HEVC(High Efficiency Video Codec) decoder IP.
+>> - CMU_ISP   : clocks for FIMC-ISP/DRC/SCLC/DIS/3DNR IPs.
+>> - CMU_CAM0  : clocks for MIPI_CSIS{0|1}/FIMC_LITE_{A|B|D}/FIMC_3AA{0|1} IPs.
+>> - CMU_CAM1  : clocks for COrtex-A5/MIPI_CSIS2/FIMC_LITE_C/FIMC-FD IPs.
+>>
+>> 3. pinctrl node for GPIO
+>> - alive/aud/cpif/ese/finger/fsys/imem/nfc/peric/touch pad
+>>
+>> 4. Timer
+>> - ARM architecture timer (armv8-timer)
+>> - MCT (Multi Core Timer) timer
+>>
+>> 5. Interrupt controller (GIC-400)
+>>
+>> 6. BUS devices
+>> - HS-I2C (High-Speed I2C) device
+>> - SPI (Serial Peripheral Interface) device
+>>
+>> 7. Sound devices
+>> - I2S bus
+>> - LPASS (Low Power Audio Subsystem)
+>>
+>> 8. Power management devices
+>> - CPUFREQ for for Cortex-A53/A57
+>> - TMU (Thermal Management Unit) for Cortex-A53/A57, G3D, ISP
+>>
+>> 9. Display controller devices
+>> - DECON (Display and enhancement controller) for panel output
+>> - DSI (Display Serial Interface)
+>> - MIC (Mobile Image Compressor)
+>>
+>> 10. USB
+>> - USB 3.0 DRD (Dual Role Device) controller
+>> - USB 3.0 Host controller
+>>
+>> 11. Storage devices
+>> - MSHC (Mobile Stoarage Host Controller)
+>>
+>> 12. Misc devices
+>> - UART device
+>> - ADC (Analog Digital Converter)
+>> - PWM (Pulse Width Modulation)
+>> - ADMA (Advanced DMA) and PDMA (Peripheral DMA)
+>>
 >> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+>> Signed-off-by: Inha Song <ideal.song@samsung.com>
+>> Signed-off-by: Ingi kim <ingi2.kim@samsung.com>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 >> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index d56253049ccb..fd3f67c72039 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -229,6 +229,11 @@
->>  	status = "okay";
->>  };
->>  
->> +&clock {
->> +	assigned-clocks = <&clock CLK_DOUT_SCLK_CDREX>;
->> +	assigned-clock-rates = <800000000>;
->> +};
->> +
->>  &clock_audss {
->>  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->>  			<&clock_audss EXYNOS_MOUT_I2S>,
->> -- 
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  792 ++++++++++++
+>>  .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi |   23 +
+>>  .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |   22 +
+>>  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     |  306 +++++
+>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 1327 ++++++++++++++++++++
+>>  5 files changed, 2470 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> 
+> I got only one question:
+> 
+>  +
+>> +		cooling-maps {
+>> +			map0 {
+>> +				/* Set maximum frequency as 1300MHz  */
+>> +				trip = <&apollo_alert_0>;
+>> +				cooling-device = <&cpu0 0 0>;
+> 
+> Is cooling level=0 really a cooling level? I think it does nothing so it
+> should be just removed.
+
+You are right. I'll modify it for big cores as following: 
+- cooling-device = <&cpu4 1 2>;
+
+Also, I'll use the only 5 step cooling level instead of 7 step.
+for LITTLE cores.
+
+
+For big cores:
+	cooling-maps {
+		map0 {
+			/* Set maximum frequency as 1800MHz  */
+			trip = <&atlas0_alert_0>;
+			cooling-device = <&cpu4 1 2>;
+		};
+		map1 {
+			/* Set maximum frequency as 1700MHz  */
+			trip = <&atlas0_alert_1>;
+			cooling-device = <&cpu4 2 3>;
+		};
+		map2 {
+			/* Set maximum frequency as 1600MHz  */
+			trip = <&atlas0_alert_2>;
+			cooling-device = <&cpu4 3 4>;
+		};
+		map3 {
+			/* Set maximum frequency as 1500MHz  */
+			trip = <&atlas0_alert_3>;
+			cooling-device = <&cpu4 4 5>;
+		};
+		map4 {
+			/* Set maximum frequency as 1400MHz  */
+			trip = <&atlas0_alert_4>;
+			cooling-device = <&cpu4 5 7>;
+		};
+		map5 {
+			/* Set maximum frequencyas 1200MHz  */
+			trip = <&atlas0_alert_5>;
+			cooling-device = <&cpu4 7 9>;
+		};
+		map6 {
+			/* Set maximum frequency as 1000MHz  */
+			trip = <&atlas0_alert_6>;
+			cooling-device = <&cpu4 9 14>;
+		};
+	};
+
+
+For LITTLE cores:
+	cooling-maps {
+		map0 {
+			/* Set maximum frequency as 1200MHz  */
+			trip = <&apollo_alert_2>;
+			cooling-device = <&cpu0 1 2>;
+		};
+		map1 {
+			/* Set maximum frequency as 1100MHz  */
+			trip = <&apollo_alert_3>;
+			cooling-device = <&cpu0 2 3>;
+		};
+		map2 {
+			/* Set maximum frequency as 1000MHz  */
+			trip = <&apollo_alert_4>;
+			cooling-device = <&cpu0 3 4>;
+		};
+		map3 {
+			/* Set maximum frequency as 900MHz  */
+			trip = <&apollo_alert_5>;
+			cooling-device = <&cpu0 4 5>;
+		};
+		map4 {
+			/* Set maximum frequency as 800MHz  */
+			trip = <&apollo_alert_6>;
+			cooling-device = <&cpu0 5 9>;
+		};
+	};
+
+> 
+> The same for big cluster.
+> 
+> Rest looks good.
+> 
+> BR,
+> Krzysztof
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
@@ -114,3 +226,7 @@ Chanwoo Choi
 > 
 > 
 > 
+
+-- 
+Best Regards,
+Chanwoo Choi
