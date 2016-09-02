@@ -1,198 +1,200 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 5/7] arm64: dts: exynos: Add dts files for Samsung
- Exynos5433 64bit SoC
-Date: Fri, 02 Sep 2016 19:59:20 +0900
-Message-ID: <57C95B88.80909@samsung.com>
+Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
+ Exynos5433-based TM2 board
+Date: Fri, 02 Sep 2016 20:29:27 +0900
+Message-ID: <57C96297.1080704@samsung.com>
 References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-6-git-send-email-cw00.choi@samsung.com>
- <CGME20160826174936epcas1p3e0fe5d9cd14e17aba25c3109ba899e83@epcas1p3.samsung.com>
- <4341f429-64a9-b14c-aeca-d61aac2ee81d@osg.samsung.com>
+ <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
+ <CGME20160826183044epcas1p1335170a5e46d0432d97c415de293e8ac@epcas1p1.samsung.com>
+ <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4341f429-64a9-b14c-aeca-d61aac2ee81d@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:37337 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751762AbcIBL3b (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 2 Sep 2016 07:29:31 -0400
+In-reply-to: <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Javier,
 
-On 2016년 08월 27일 02:49, Javier Martinez Canillas wrote:
+On 2016년 08월 27일 03:30, Javier Martinez Canillas wrote:
 > Hello Chanwoo,
 > 
-> The patch looks good to me, I just have a few minor comments:
-> 
-> On 08/24/2016 09:49 AM, Chanwoo Choi wrote:
+> The patch looks mostly good to me, I've just some comments:
 > 
 > [snip]
 > 
 >> +
->> +	reboot: syscon-reboot {
->> +		compatible = "syscon-reboot";
->> +		regmap = <&pmu_system_controller>;
->> +		offset = <0x400>;
+>> +&decon {
+>> +	status = "okay";
+>> +	iommu-reserved-mapping = <0x20000000 0x20000000 0xc0000000>;
+>> +
 > 
-> Maybe adding a comment that the register is SWRESET to be consistent with the
-> arm32 Exynos node definition in arch/arm/boot/dts/exynos-syscon-restart.dtsi?
+> This property never made to mainline due not having an agreement on
+> how this should be fixed properly IIUC [0]. So you should remove it.
 
-OK. I'll add a comment as following:
-	offset = <0x400>; /* SWRESET */
+OK. I'll remove it.
 
 > 
 > [snip]
 > 
 >> +
->> +		tmu_atlas0: tmu@10060000 {
->> +			compatible = "samsung,exynos5433-tmu";
->> +			reg = <0x10060000 0x200>;
->> +			interrupts = <0 95 0>;
-> 
-> For some interrupts definitions, you are using the GIC interrupt type macros
-> while for others like this you are using the constant numbers. I think would
-> be better to use the macros consistently (i.e: interrupts = <GIC_SPI 95 0>).
-
-OK. I'll use the GIC_SPI at all of them.
-
-> 
-> [snip]
-> 
->> +		mipi_phy: video-phy@105C0708 {
->> +			compatible = "samsung,exynos5433-mipi-video-phy";
->> +			#phy-cells = <1>;
->> +			samsung,pmu-syscon = <&pmu_system_controller>;
->> +			samsung,cam0-sysreg = <&syscon_cam0>;
->> +			samsung,cam1-sysreg = <&syscon_cam1>;
->> +			samsung,disp-sysreg = <&syscon_disp>;
+>> +	s2mps13-pmic@66 {
+>> +		compatible = "samsung,s2mps13-pmic";
+>> +		interrupt-parent = <&gpa0>;
+>> +		interrupts = <7 IRQ_TYPE_NONE>;
+>> +		reg = <0x66>;
+>> +		samsung,s2mps11-wrstbi-ground;
+>> +
+>> +		s2mps13_osc: clocks {
+>> +			compatible = "samsung,s2mps13-clk";
+>> +			#clock-cells = <1>;
+>> +			clock-output-names = "s2mps13_ap", "s2mps13_cp",
+>> +				"s2mps13_bt";
 >> +		};
+>> +
 > 
-> This node has a unit name but it doesn't have a reg property so dtc will
-> warn about the mismatch when executed with W=1.
-
-The mipi_phy address are included in the PMU (base 0x105c_0000).
-There is no memory map for only MIPI_PHY. Instead, the mipi_phy driver[1]
-uses the regmap (pmu, syscon_cam0/1/disp).
-[1] drivers/phy/phy-exynos-mipi-video.c don't use
-
-Also, the first MIPI_PHY's address is 0x105c0710. I'll fix it.
-
-If you want to add the 'reg' property, I can add DT node as following:
-
-	mipi_phy: video-phy@105c0710 {
-		reg = <0x105c0710 0x0>;
-		compatible = "samsung,exynos5433-mipi-video-phy";
-		...
-	};
-
-But it looks strange because the mipi_phy driver[1] never gets
-the base address with of_iomap().
-
+> I see that most of the following regulators are marked as always-on
+> but I wonder if this is really needed. For example some of them are
+> looked up by consumer devices.
 > 
 > [snip]
 > 
->> +		usbdrd30: usb@15400000 {
->> +			compatible = "samsung,exynos5250-dwusb3";
->> +			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
->> +				<&cmu_fsys CLK_SCLK_USBDRD30>;
->> +			clock-names = "usbdrd30", "usbdrd30_susp_clk";
->> +			assigned-clocks =
->> +				<&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
->> +				<&cmu_top CLK_MOUT_SCLK_USBDRD30>,
->> +				<&cmu_top CLK_DIV_SCLK_USBDRD30>;
->> +			assigned-clock-parents =
->> +				<&cmu_top CLK_SCLK_USBDRD30_FSYS>,
->> +				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
->> +			assigned-clock-rates = <0>, <0>, <66700000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			status = "disabled";
->> +
-> 
-> Ditto, the node has unit address but no reg property.
-
-The usbdrd[2] driver don't map the base address.
-So, this DT node don't include any code calling the of_iomap().
-[2] drivers/usb/dwc3/dwc3-exynos.c
-
-But, the usbdrd's base address is 0x15400000.
-
-> 
->> +			dwc3 {
->> +				compatible = "snps,dwc3";
->> +				reg = <0x15400000 0x10000>;
-> 
-> Ditto, the node doesn't have a unit address but has reg property.
-
-OK. I'll modify it as following:
-			dwc3@15400000 {
-
-> 
->> +				interrupts = <0 231 0>;
->> +				phys = <&usbdrd30_phy 0>, <&usbdrd30_phy 1>;
->> +				phy-names = "usb2-phy", "usb3-phy";
 >> +			};
->> +		};
 >> +
->> +
->> +		usbhost30: usb@15a00000 {
->> +			compatible = "samsung,exynos5250-dwusb3";
->> +			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
->> +				<&cmu_fsys CLK_SCLK_USBHOST30>;
->> +			clock-names = "usbdrd30", "usbdrd30_susp_clk";
->> +			assigned-clocks =
->> +				<&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
->> +				<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
->> +				<&cmu_top CLK_DIV_SCLK_USBHOST30>;
->> +			assigned-clock-parents =
->> +				<&cmu_top CLK_SCLK_USBHOST30_FSYS>,
->> +				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
->> +			assigned-clock-rates = <0>, <0>, <66700000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			status = "disabled";
->> +
-> 
-> Ditto, the node has unit address but no reg property.
-
-This case is same with above 'usbdrd30'.
-
-> 
->> +			usbdrd_dwc3_0: dwc3 {
->> +				compatible = "snps,dwc3";
->> +				reg = <0x15a00000 0x10000>;
-> 
-> Ditto, the node doesn't have a unit address but has reg property.
-
-I'll modify it as following:
-			usbdrd_dwc3_0: dwc3@15a00000 {
-
-> 
->> +				interrupts = <0 244 0>;
->> +				phys = <&usbhost30_phy 0>, <&usbhost30_phy 1>;
->> +				phy-names = "usb2-phy", "usb3-phy";
+>> +			ldo3_reg: LDO3 {
+>> +				regulator-name = "VDD1_E_1.8V_AP";
+>> +				regulator-min-microvolt = <1800000>;
+>> +				regulator-max-microvolt = <1800000>;
+>> +				regulator-always-on;
 >> +			};
->> +		};
->> +
+> 
+> This is used by both the ADC and the TMU so I guess it should be safe
+> to not mark it as always-on (unless is used by other critical IP block
+> not described in the DT).
+
+This regulator should be always ON state.
+This regulator provides the voltage to ALIVE domain of Exynos5433.
+
 > 
 > [snip]
 > 
->> +		audio-subsystem {
-
-I'll modify it as following:
-		audio-subsystem@11400000 {
-
->> +			compatible = "samsung,exynos5433-lpass";
->> +			reg = <0x11400000 0x100>, <0x11500000 0x08>;
+>> +
+>> +			ldo6_reg: LDO6 {
+>> +				regulator-name = "VDD10_MIPI2L_1.0V_AP";
+>> +				regulator-min-microvolt = <1000000>;
+>> +				regulator-max-microvolt = <1000000>;
+>> +				regulator-always-on;
 > 
-> Ditto, the node doesn't have a unit address but has reg property.
+> Same question, this is used by both the dsi and usbdrd30 nodes so maybe
+> it shouldn't be marked as always-on as well.
+
+OK. I'll remove it.
+
+> 
+>> +				regulator-state-mem {
+>> +					regulator-off-in-suspend;
+>> +				};
+>> +			};
+>> +
+>> +			ldo7_reg: LDO7 {
+>> +				regulator-name = "VDD18_MIPI2L_1.8V_AP";
+>> +				regulator-min-microvolt = <1800000>;
+>> +				regulator-max-microvolt = <1800000>;
+>> +				regulator-always-on;
+> 
+> This is used by the dsi node as well.
+
+OK. I'll remove it.
+
+> 
+> [snip]
+> 
+>> +
+>> +			ldo10_reg: LDO10 {
+>> +				regulator-name = "VDD33_USB30_3.0V_AP";
+>> +				regulator-min-microvolt = <3000000>;
+>> +				regulator-max-microvolt = <3000000>;
+>> +				regulator-always-on;
+> 
+> Use by the usbdrd30 node.
+
+OK. I'll remove it.
+
+> 
+> [snip]
+> 
+>> +
+>> +			ldo18_reg: LDO18 {
+>> +				regulator-name = "V_CODEC_1.8V_AP";
+>> +				regulator-min-microvolt = <1800000>;
+>> +				regulator-max-microvolt = <1800000>;
+>> +				regulator-always-on;
+> 
+> Use by the wm5110-codec node.
+
+OK. I'll remove it.
+
+> 
+> [snip]
+> 
+>> +
+>> +			buck2_reg: BUCK2 {
+>> +				regulator-name = "VDD_EGL_1.0V_AP";
+> 
+> I wonder if this shouldn't be "VDD_ATL_1.0V_AP" or something since
+> the big cluster isn't called Eagle like in arm32 Exynos but Atlas?
+
+I used the regulator's name according to TM2's schematic.
+As I knew, Eagle means the big cores.
+
+> 
+>> +				regulator-min-microvolt = <900000>;
+>> +				regulator-max-microvolt = <1300000>;
+>> +				regulator-always-on;
+>> +				regulator-state-mem {
+>> +					regulator-off-in-suspend;
+>> +				};
+>> +			};
+>> +
+>> +			buck3_reg: BUCK3 {
+>> +				regulator-name = "VDD_KFC_1.0V_AP";
+> 
+> Same, maybe using "VDD_APL_1.0V_AP" since the big cluster is Apollo?
+
+ditto.
+The KFC (King Fisher) means the little cores.
+
+> 
+>> +				regulator-min-microvolt = <800000>;
+>> +				regulator-max-microvolt = <1200000>;
+>> +				regulator-always-on;
+>> +				regulator-state-mem {
+>> +					regulator-off-in-suspend;
+>> +				};
+>> +			};
+>> +
+> 
+> Used by the big and LITTLE clusters respectively, although for these two
+> I'm not that sure if it would be safe to remove the always-on property.
+
 > 
 > Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Thanks for your review.
 
+> 
+> [0]: http://www.spinics.net/lists/arm-kernel/msg419747.html
+> 
+> Best regards,
+> 
 -- 
 Best Regards,
 Chanwoo Choi
