@@ -1,49 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 4/4] ARM: defconfig: Exynos for v4.9
-Date: Fri, 2 Sep 2016 18:30:25 +0200
-Message-ID: <20160902163025.GA5534@kozik-lap>
+Subject: Re: [GIT PULL 1/4] ARM: exynos: SoC/Mach for v4.9
+Date: Fri, 2 Sep 2016 18:32:44 +0200
+Message-ID: <20160902163244.GB5534@kozik-lap>
 References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
- <1472548739-20050-2-git-send-email-k.kozlowski@samsung.com>
- <4575445.BeuOIIGatt@wuerfel>
+ <1472548739-20050-5-git-send-email-k.kozlowski@samsung.com>
+ <5635206.ooNAZCeQOe@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35612 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932338AbcIBQae (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:30:34 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4575445.BeuOIIGatt@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <5635206.ooNAZCeQOe@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 02, 2016 at 05:47:11PM +0200, Arnd Bergmann wrote:
-> On Tuesday, August 30, 2016 11:18:56 AM CEST Krzysztof Kozlowski wrote:
-> > Expected conflict in multi_v7 - take all the changes:
-> > 
-> > --- a/arch/arm/configs/multi_v7_defconfig
-> > +++ b/arch/arm/configs/multi_v7_defconfig
-> > @@@ -135,8 -136,7 +136,8 @@@ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=
-> >   CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-> >   CONFIG_CPU_FREQ_GOV_USERSPACE=m
-> >   CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
-> > - CONFIG_CPU_FREQ_GOV_SCHEDUTIL=m
-> > + CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
-> >  +CONFIG_ARM_IMX6Q_CPUFREQ=y
-> >   CONFIG_QORIQ_CPUFREQ=y
-> >   CONFIG_CPU_IDLE=y
-> >   CONFIG_ARM_CPUIDLE=y
-> > 
-> > 
+On Fri, Sep 02, 2016 at 06:26:42PM +0200, Arnd Bergmann wrote:
+> On Tuesday, August 30, 2016 11:18:59 AM CEST Krzysztof Kozlowski wrote:
+> > Samsung mach/soc update for v4.9:
+> > 1. Fix for DMA on S3C24xx. This was probably broken for long time, nobody runs
+> >    this code... till now.
 > 
-> I pulled this into next/defconfig, but didn't see the conflict,
-> presumably I'll get it after merging the other branches?
+> Good to know. This reminds me that the s3c24xx DMA code is one of those
+> that need to be converted to dma_slave_map at some point. Maybe if someone
+> is now running that code, they could give that a try as well?
+> 
+> It shouldn't be hard to convert, let me know if you need more information.
 
-The conflict is between my tree and imx-mxs tree so you might encounter
-it later when merging IMX changes.
++Cc Sylwester,
+
+Sylwester recently dig into this platform. I think he managed to play
+some audio.
 
 Best regards,
 Krzysztof
