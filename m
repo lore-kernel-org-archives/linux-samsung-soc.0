@@ -1,200 +1,88 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
- Exynos5433-based TM2 board
-Date: Fri, 02 Sep 2016 20:29:27 +0900
-Message-ID: <57C96297.1080704@samsung.com>
-References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
- <CGME20160826183044epcas1p1335170a5e46d0432d97c415de293e8ac@epcas1p1.samsung.com>
- <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37337 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbcIBL3b (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:29:31 -0400
-In-reply-to: <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 1/2] ASoC: samsung: Add DT bindings documentation for TM2
+ sound subsystem
+Date: Fri, 02 Sep 2016 14:58:12 +0200
+Message-ID: <1472821093-25815-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
 
-Hi Javier,
+This patch adds DT binding documentation for Exynos5433 based TM2
+and TM2E boards sound subsystem.
 
-On 2016년 08월 27일 03:30, Javier Martinez Canillas wrote:
-> Hello Chanwoo,
-> 
-> The patch looks mostly good to me, I've just some comments:
-> 
-> [snip]
-> 
->> +
->> +&decon {
->> +	status = "okay";
->> +	iommu-reserved-mapping = <0x20000000 0x20000000 0xc0000000>;
->> +
-> 
-> This property never made to mainline due not having an agreement on
-> how this should be fixed properly IIUC [0]. So you should remove it.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+Changes since v5:
+ - none.
 
-OK. I'll remove it.
+Changes since v4:
+ - indentation changes.
 
-> 
-> [snip]
-> 
->> +
->> +	s2mps13-pmic@66 {
->> +		compatible = "samsung,s2mps13-pmic";
->> +		interrupt-parent = <&gpa0>;
->> +		interrupts = <7 IRQ_TYPE_NONE>;
->> +		reg = <0x66>;
->> +		samsung,s2mps11-wrstbi-ground;
->> +
->> +		s2mps13_osc: clocks {
->> +			compatible = "samsung,s2mps13-clk";
->> +			#clock-cells = <1>;
->> +			clock-output-names = "s2mps13_ap", "s2mps13_cp",
->> +				"s2mps13_bt";
->> +		};
->> +
-> 
-> I see that most of the following regulators are marked as always-on
-> but I wonder if this is really needed. For example some of them are
-> looked up by consumer devices.
-> 
-> [snip]
-> 
->> +			};
->> +
->> +			ldo3_reg: LDO3 {
->> +				regulator-name = "VDD1_E_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +			};
-> 
-> This is used by both the ADC and the TMU so I guess it should be safe
-> to not mark it as always-on (unless is used by other critical IP block
-> not described in the DT).
+Changes since v2:
+ - none.
 
-This regulator should be always ON state.
-This regulator provides the voltage to ALIVE domain of Exynos5433.
+Changes since initial version:
+ - dropped clocks, clock-names properties, instead properties from
+   the CODEC node will be used,
+ - property renames: 'samsung,model' -> 'model', 'samsung,i2s-controller'
+   -> 'i2s-controller', 'samsung,speaker-amplifier' -> 'audio-amplifier',
+ - added 'audio-codec' property.
+---
+ .../bindings/sound/samsung,tm2-audio.txt           | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
 
-> 
-> [snip]
-> 
->> +
->> +			ldo6_reg: LDO6 {
->> +				regulator-name = "VDD10_MIPI2L_1.0V_AP";
->> +				regulator-min-microvolt = <1000000>;
->> +				regulator-max-microvolt = <1000000>;
->> +				regulator-always-on;
-> 
-> Same question, this is used by both the dsi and usbdrd30 nodes so maybe
-> it shouldn't be marked as always-on as well.
+diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+new file mode 100644
+index 0000000..94442e5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+@@ -0,0 +1,38 @@
++Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
++
++Required properties:
++
++ - compatible		 : "samsung,tm2-audio"
++ - model		 : the user-visible name of this sound complex
++ - audio-codec		 : the phandle of the wm5110 audio codec node,
++			   as described in ../mfd/arizona.txt
++ - i2s-controller	 : the phandle of the I2S controller
++ - audio-amplifier	 : the phandle of the MAX98504 amplifier
++ - samsung,audio-routing : a list of the connections between audio components;
++			   each entry is a pair of strings, the first being the
++			   connection's sink, the second being the connection's
++			   source; valid names for sources and sinks are the
++			   WM5110's and MAX98504's pins and the jacks on the
++			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
++			   Headset Mic
++ - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
++
++
++Example:
++
++sound {
++	compatible = "samsung,tm2-audio";
++	audio-codec = <&wm5110>;
++	i2s-controller = <&i2s0>;
++	audio-amplifier = <&max98504>;
++	mic-bias-gpios = <&gpr3 2 0>;
++	model = "wm5110";
++	samsung,audio-routing =
++		"HP", "HPOUT1L",
++		"HP", "HPOUT1R",
++		"SPK", "SPKOUT",
++		"SPKOUT", "HPOUT2L",
++		"SPKOUT", "HPOUT2R",
++		"Main Mic", "MICBIAS2",
++		"IN1R", "Main Mic";
++};
+--
+1.9.1
 
-OK. I'll remove it.
-
-> 
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo7_reg: LDO7 {
->> +				regulator-name = "VDD18_MIPI2L_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
-> 
-> This is used by the dsi node as well.
-
-OK. I'll remove it.
-
-> 
-> [snip]
-> 
->> +
->> +			ldo10_reg: LDO10 {
->> +				regulator-name = "VDD33_USB30_3.0V_AP";
->> +				regulator-min-microvolt = <3000000>;
->> +				regulator-max-microvolt = <3000000>;
->> +				regulator-always-on;
-> 
-> Use by the usbdrd30 node.
-
-OK. I'll remove it.
-
-> 
-> [snip]
-> 
->> +
->> +			ldo18_reg: LDO18 {
->> +				regulator-name = "V_CODEC_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
-> 
-> Use by the wm5110-codec node.
-
-OK. I'll remove it.
-
-> 
-> [snip]
-> 
->> +
->> +			buck2_reg: BUCK2 {
->> +				regulator-name = "VDD_EGL_1.0V_AP";
-> 
-> I wonder if this shouldn't be "VDD_ATL_1.0V_AP" or something since
-> the big cluster isn't called Eagle like in arm32 Exynos but Atlas?
-
-I used the regulator's name according to TM2's schematic.
-As I knew, Eagle means the big cores.
-
-> 
->> +				regulator-min-microvolt = <900000>;
->> +				regulator-max-microvolt = <1300000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			buck3_reg: BUCK3 {
->> +				regulator-name = "VDD_KFC_1.0V_AP";
-> 
-> Same, maybe using "VDD_APL_1.0V_AP" since the big cluster is Apollo?
-
-ditto.
-The KFC (King Fisher) means the little cores.
-
-> 
->> +				regulator-min-microvolt = <800000>;
->> +				regulator-max-microvolt = <1200000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
-> 
-> Used by the big and LITTLE clusters respectively, although for these two
-> I'm not that sure if it would be safe to remove the always-on property.
-
-> 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Thanks for your review.
-
-> 
-> [0]: http://www.spinics.net/lists/arm-kernel/msg419747.html
-> 
-> Best regards,
-> 
--- 
-Best Regards,
-Chanwoo Choi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
