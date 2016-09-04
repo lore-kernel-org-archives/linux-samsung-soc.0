@@ -1,149 +1,52 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 16/17] ARM: dts: s3c2416: Use macros for pinctrl configuration
-Date: Sun,  4 Sep 2016 13:04:19 +0200
-Message-ID: <1472987060-28293-17-git-send-email-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v3 12/17] ARM: dts: exynos: Fix mismatched value for SD4 pull up/down configuration on exynos4210
+Date: Sun,  4 Sep 2016 13:04:15 +0200
+Message-ID: <1472987060-28293-13-git-send-email-krzk@kernel.org>
 References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472987060-28293-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1472987060-28293-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Usage of DTS macros instead of hard-coded numbers makes code easier
-to read.  One does not have to remember which value means pull-up/down
-or specific driver strength.
+The pinctrl pull up/down register on exynos4210 is 2-bit wide for each
+pin and it accepts only values of 0, 1 and 3.  The pins sd4-bus-width8
+were configured with value of 4.  The driver does not validate the value
+so this overflow effectively set a bit 1 in adjacent pins thus
+configuring them to pull down.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+The author's intention was probably to set drive strength of 4x.  All
+other bus-widths pins are configured with pull up and drive strength of
+4x.  Fix this one with same pattern.
+
+Fixes: 87711d8c7c70 ("ARM: dts: Add pinctrl node entries for SAMSUNG EXYNOS4210 SoC")
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/s3c2416-pinctrl.dtsi | 38 ++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-index 527e3193817f..6274359fb323 100644
---- a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-@@ -8,6 +8,8 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+index 8046340e50ac..d9b6d25e4abe 100644
+--- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+@@ -649,7 +649,7 @@
+ 		sd4_bus8: sd4-bus-width8 {
+ 			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
+ 			samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+-			samsung,pin-pud = <4>;
++			samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+ 			samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 		};
  
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- &pinctrl_0 {
- 	/*
- 	 * Pin banks
-@@ -83,91 +85,91 @@
- 
- 	uart0_data: uart0-data {
- 		samsung,pins = "gph-0", "gph-1";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart0_fctl: uart0-fctl {
- 		samsung,pins = "gph-8", "gph-9";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart1_data: uart1-data {
- 		samsung,pins = "gph-2", "gph-3";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart1_fctl: uart1-fctl {
- 		samsung,pins = "gph-10", "gph-11";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart2_data: uart2-data {
- 		samsung,pins = "gph-4", "gph-5";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart2_fctl: uart2-fctl {
- 		samsung,pins = "gph-6", "gph-7";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	uart3_data: uart3-data {
- 		samsung,pins = "gph-6", "gph-7";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	extuart_clk: extuart-clk {
- 		samsung,pins = "gph-12";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	i2c0_bus: i2c0-bus {
- 		samsung,pins = "gpe-14", "gpe-15";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	spi0_bus: spi0-bus {
- 		samsung,pins = "gpe-11", "gpe-12", "gpe-13";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd0_clk: sd0-clk {
- 		samsung,pins = "gpe-5";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd0_cmd: sd0-cmd {
- 		samsung,pins = "gpe-6";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd0_bus1: sd0-bus1 {
- 		samsung,pins = "gpe-7";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd0_bus4: sd0-bus4 {
- 		samsung,pins = "gpe-8", "gpe-9", "gpe-10";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd1_cmd: sd1-cmd {
- 		samsung,pins = "gpl-8";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd1_clk: sd1-clk {
- 		samsung,pins = "gpl-9";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd1_bus1: sd1-bus1 {
- 		samsung,pins = "gpl-0";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
- 	sd1_bus4: sd1-bus4 {
- 		samsung,pins = "gpl-1", "gpl-2", "gpl-3";
--		samsung,pin-function = <2>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- };
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
