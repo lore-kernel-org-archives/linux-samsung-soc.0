@@ -1,177 +1,122 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v3 00/17] pinctrl: exynos/samsung: Add header with values used for configuration
-Date: Sun,  4 Sep 2016 13:04:03 +0200
-Message-ID: <1472987060-28293-1-git-send-email-krzk@kernel.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 01/17] pinctrl: dt-bindings: samsung: Add header with values used for configuration
+Date: Sun,  4 Sep 2016 13:04:04 +0200
+Message-ID: <1472987060-28293-2-git-send-email-krzk@kernel.org>
+References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:60064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752937AbcIDLEw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 4 Sep 2016 07:04:52 -0400
+In-Reply-To: <1472987060-28293-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi,
+Hard-coded pinctrl configuration values are scattered through DTS files.
+The numbers are difficult to decode by human, especially without the
+datasheet.  Additionally the drive strength differs between S3C64xx,
+S5PV210 and Exynos SoC families increasing the confusion.
 
-Changes since v2
-================
-1. Combine separate patchsets into one. Previously I sent separately the fixes
-   and changes for S3C platforms.
-2. Fix issues pointed during review.
-3. Add review tags.
+The header will help making this more readable and maintainable.
 
-Changes since v1
-================
-1. Follow Arnd's suggestion about moving the macros to common place.
-2. Subjects: replace "GPIO" with "pinctrl".
-3. There were some major changes here so I did not add Javier's
-   reviewed-by and tested-by tags.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Merging
-=======
-Patches #1 and #2 should probably go through pinctrl tree. In that case I would
-appreciate a stable branch/tag so DTS could base on top of it.
+---
 
-Goal
-====
-Increase readability:
- 	uart0_data: uart0-data {
- 		samsung,pins = "gpa0-0", "gpa0-1";
--		samsung,pin-function = <2>;
--		samsung,pin-pud = <0>;
--		samsung,pin-drv = <0>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
-
-Everything generated with sed:
-sed -i -e 's/samsung,pin-pud = <0>;$/samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-pud = <1>;$/samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-pud = <3>;$/samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;/' arch/arm/boot/dts/exynos*
-
-sed -i -e 's/samsung,pin-drv = <0>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;/' arch/arm/boot/dts/exynos[34]* arch/arm/boot/dts/exynos5250*
-sed -i -e 's/samsung,pin-drv = <2>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;/' arch/arm/boot/dts/exynos[34]* arch/arm/boot/dts/exynos5250*
-sed -i -e 's/samsung,pin-drv = <1>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;/' arch/arm/boot/dts/exynos[34]* arch/arm/boot/dts/exynos5250*
-sed -i -e 's/samsung,pin-drv = <3>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;/' arch/arm/boot/dts/exynos[34]* arch/arm/boot/dts/exynos5250*
-
-sed -i -e 's/samsung,pin-drv = <0>;$/samsung,pin-drv = <EXYNOS5260_PIN_DRV_LV1>;/' arch/arm/boot/dts/exynos5260*
-sed -i -e 's/samsung,pin-drv = <1>;$/samsung,pin-drv = <EXYNOS5260_PIN_DRV_LV2>;/' arch/arm/boot/dts/exynos5260*
-sed -i -e 's/samsung,pin-drv = <2>;$/samsung,pin-drv = <EXYNOS5260_PIN_DRV_LV4>;/' arch/arm/boot/dts/exynos5260*
-sed -i -e 's/samsung,pin-drv = <3>;$/samsung,pin-drv = <EXYNOS5260_PIN_DRV_LV6>;/' arch/arm/boot/dts/exynos5260*
-
-sed -i -e 's/samsung,pin-drv = <0>;$/samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;/' arch/arm/boot/dts/exynos5[48]*
-sed -i -e 's/samsung,pin-drv = <1>;$/samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV2>;/' arch/arm/boot/dts/exynos5[48]*
-sed -i -e 's/samsung,pin-drv = <2>;$/samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV3>;/' arch/arm/boot/dts/exynos5[48]*
-sed -i -e 's/samsung,pin-drv = <3>;$/samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;/' arch/arm/boot/dts/exynos5[48]*
-
-sed -i -e 's/samsung,pin-function = <0>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <1>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;/' arch/arm/boot/dts/exynos*
-
-sed -i -e 's/samsung,pin-function = <2>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_2>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <\(0x\)\?2>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_2>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <\(0x\)\?3>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_3>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <3>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_3>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <4>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_4>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <5>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_5>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <6>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_6>;/' arch/arm/boot/dts/exynos*
-sed -i -e 's/samsung,pin-function = <0xf>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_F>;/' arch/arm/boot/dts/exynos*
-
-sed -i -e 's/samsung,pin-drv = <0>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;/' arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-drv = <2>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;/' arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-drv = <1>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;/' arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-drv = <3>;$/samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;/' arch/arm/boot/dts/s5p*
-
-sed -i -e 's/samsung,pin-pud = <0>;$/samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-pud = <1>;$/samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-pud = <2>;$/samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-
-sed -i -e 's/samsung,pin-function = <0>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <2>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_2>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <\(0x\)\?2>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_2>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <\(0x\)\?3>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_3>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <3>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_3>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <4>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_4>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <5>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_5>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <6>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_6>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-sed -i -e 's/samsung,pin-function = <0xf>;$/samsung,pin-function = <EXYNOS_PIN_FUNC_F>;/' arch/arm/boot/dts/s3c* arch/arm/boot/dts/s5p*
-
-
-Tested with:
-rm -fr dts-old; cp -r out/arch/arm/boot/dts dts-old
-rm -fr dts-new; cp -r out/arch/arm/boot/dts dts-new
-for i in dts-old/exynos*dtb; do scripts/dtc/dtx_diff $i dts-new/$(basename $i);  done
-for i in dts-old/s3c*dtb; do scripts/dtc/dtx_diff $i dts-new/$(basename $i);  done
-for i in dts-old/s5p*dtb; do scripts/dtc/dtx_diff $i dts-new/$(basename $i);  done
-
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (17):
-  pinctrl: dt-bindings: samsung: Add header with values used for
-    configuration
-  pinctrl: dt-bindings: samsung: Update documentation with new macros
-  ARM: dts: exynos: Use common macros for pinctrl configuration
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos3250
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos4210
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos4x12
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos4415
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos5250
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos5260
-  ARM: dts: exynos: Use macros for pinctrl configuration on exynos5410
-  ARM: dts: exynos: Use macros for pinctrl configuration on
-    exynos542x/exynos5800
-  ARM: dts: exynos: Fix mismatched value for SD4 pull up/down
-    configuration on exynos4210
-  ARM: dts: exynos: Fix mismatched values of SD drive strengh
-    configuration on exynos4415
-  ARM: dts: s3c64xx: Use common macros for pinctrl configuration
-  ARM: dts: s5pv210: Use macros for pinctrl configuration
-  ARM: dts: s3c2416: Use macros for pinctrl configuration
-  ARM: dts: s3c64xx: Use macros for pinctrl configuration
-
- .../bindings/pinctrl/samsung-pinctrl.txt           |  44 +-
- MAINTAINERS                                        |   2 +
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi          | 346 +++++++-------
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi          | 458 +++++++++---------
- arch/arm/boot/dts/exynos4210-smdkv310.dts          |  12 +-
- arch/arm/boot/dts/exynos4210-universal_c210.dts    |   8 +-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  14 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts           |   2 +-
- arch/arm/boot/dts/exynos4412-origen.dts            |  12 +-
- arch/arm/boot/dts/exynos4412-smdk4412.dts          |  12 +-
- arch/arm/boot/dts/exynos4415-pinctrl.dtsi          | 296 ++++++------
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          | 525 ++++++++++-----------
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi          | 404 ++++++++--------
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   6 +-
- arch/arm/boot/dts/exynos5250-snow-common.dtsi      |  76 +--
- arch/arm/boot/dts/exynos5250-snow-rev5.dts         |   6 +-
- arch/arm/boot/dts/exynos5250-snow.dts              |   6 +-
- arch/arm/boot/dts/exynos5250-spring.dts            |  72 +--
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi          | 280 ++++++-----
- arch/arm/boot/dts/exynos5260-xyref5260.dts         |   6 +-
- arch/arm/boot/dts/exynos5410-odroidxu.dts          |  30 +-
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi          | 182 +++----
- arch/arm/boot/dts/exynos5410-smdk5410.dts          |  10 +-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   6 +-
- arch/arm/boot/dts/exynos5420-peach-pit.dts         | 126 ++---
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 356 +++++++-------
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |  18 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  18 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts          | 126 ++---
- arch/arm/boot/dts/s3c2416-pinctrl.dtsi             |  38 +-
- arch/arm/boot/dts/s3c6410-mini6410.dts             |   4 +-
- arch/arm/boot/dts/s3c64xx-pinctrl.dtsi             | 356 +++++++-------
- arch/arm/boot/dts/s5pv210-aquila.dts               |   4 +-
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi             | 476 +++++++++----------
- include/dt-bindings/pinctrl/samsung.h              |  57 +++
- 35 files changed, 2223 insertions(+), 2171 deletions(-)
+Changes since v2:
+1. Rename double-include protection (suggested by Bartlomiej).
+2. Squash here:
+   pinctrl: dt-bindings: samsung: Add macros for S3C64xx pin configuration
+   http://www.spinics.net/lists/arm-kernel/msg528016.html
+3. Add Javier's reviewed-by.
+4. Extend MAINTAINERS entry with bindings documentation
+---
+ MAINTAINERS                           |  2 ++
+ include/dt-bindings/pinctrl/samsung.h | 57 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
  create mode 100644 include/dt-bindings/pinctrl/samsung.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d8e81b1dde30..be3dcca8439a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9318,6 +9318,8 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/pinctrl/samsung/
++F:	include/dt-bindings/pinctrl/samsung.h
++F:	Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+ 
+ PIN CONTROLLER - SINGLE
+ M:	Tony Lindgren <tony@atomide.com>
+diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
+new file mode 100644
+index 000000000000..6276eb785e2b
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/samsung.h
+@@ -0,0 +1,57 @@
++/*
++ * Samsung's Exynos pinctrl bindings
++ *
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Author: Krzysztof Kozlowski <krzk@kernel.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __DT_BINDINGS_PINCTRL_SAMSUNG_H__
++#define __DT_BINDINGS_PINCTRL_SAMSUNG_H__
++
++#define EXYNOS_PIN_PULL_NONE		0
++#define EXYNOS_PIN_PULL_DOWN		1
++#define EXYNOS_PIN_PULL_UP		3
++
++#define S3C64XX_PIN_PULL_NONE		0
++#define S3C64XX_PIN_PULL_DOWN		1
++#define S3C64XX_PIN_PULL_UP		2
++
++/* Pin function in power down mode */
++#define EXYNOS_PIN_PDN_OUT0		0
++#define EXYNOS_PIN_PDN_OUT1		1
++#define EXYNOS_PIN_PDN_INPUT		2
++#define EXYNOS_PIN_PDN_PREV		3
++
++/* Drive strengths for Exynos3250, Exynos4 (all) and Exynos5250 */
++#define EXYNOS4_PIN_DRV_LV1		0
++#define EXYNOS4_PIN_DRV_LV2		2
++#define EXYNOS4_PIN_DRV_LV3		1
++#define EXYNOS4_PIN_DRV_LV4		3
++
++/* Drive strengths for Exynos5260 */
++#define EXYNOS5260_PIN_DRV_LV1		0
++#define EXYNOS5260_PIN_DRV_LV2		1
++#define EXYNOS5260_PIN_DRV_LV4		2
++#define EXYNOS5260_PIN_DRV_LV6		3
++
++/* Drive strengths for Exynos5410, Exynos542x and Exynos5800 */
++#define EXYNOS5420_PIN_DRV_LV1		0
++#define EXYNOS5420_PIN_DRV_LV2		1
++#define EXYNOS5420_PIN_DRV_LV3		2
++#define EXYNOS5420_PIN_DRV_LV4		3
++
++#define EXYNOS_PIN_FUNC_INPUT		0
++#define EXYNOS_PIN_FUNC_OUTPUT		1
++#define EXYNOS_PIN_FUNC_2		2
++#define EXYNOS_PIN_FUNC_3		3
++#define EXYNOS_PIN_FUNC_4		4
++#define EXYNOS_PIN_FUNC_5		5
++#define EXYNOS_PIN_FUNC_6		6
++#define EXYNOS_PIN_FUNC_F		0xf
++
++#endif /* __DT_BINDINGS_PINCTRL_SAMSUNG_H__ */
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
