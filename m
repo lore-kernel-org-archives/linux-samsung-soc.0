@@ -1,630 +1,860 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 03/17] ARM: dts: exynos: Use common macros for pinctrl
- configuration
-Date: Sun,  4 Sep 2016 13:04:06 +0200
-Message-ID: <1472987060-28293-4-git-send-email-krzk@kernel.org>
+Subject: [PATCH v3 15/17] ARM: dts: s5pv210: Use macros for pinctrl configuration
+Date: Sun,  4 Sep 2016 13:04:18 +0200
+Message-ID: <1472987060-28293-16-git-send-email-krzk@kernel.org>
 References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1472987060-28293-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, javier@osg.samsung.com, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Replace duplicated macros in each DTSI file with a common macro coming
-from header.  Include the header in each pinctrl DTSI so further changes
-could use it.
-
-Although PIN_FUNC_SPC_2 does not bring much information about the
-function itself, it still is more descriptive then hard-coded
-number <2>.
+Usage of DTS macros instead of hard-coded numbers makes code easier
+to read.  One does not have to remember which value means pull-up/down
+or specific driver strength.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 76 +++++++++++-------------
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  2 +
- arch/arm/boot/dts/exynos4415-pinctrl.dtsi |  2 +
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 21 +++----
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |  2 +
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi | 96 +++++++++++++++----------------
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi |  2 +
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi |  2 +
- 8 files changed, 96 insertions(+), 107 deletions(-)
+ arch/arm/boot/dts/s5pv210-aquila.dts   |   4 +-
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 476 +++++++++++++++++----------------
+ 2 files changed, 241 insertions(+), 239 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 40ea7de44933..ed22d94f4fe5 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -12,58 +12,46 @@
-  * published by the Free Software Foundation.
- */
- 
--#define PIN_PULL_NONE		0
--#define PIN_PULL_DOWN		1
--#define PIN_PULL_UP		3
--
--#define PIN_DRV_LV1		0
--#define PIN_DRV_LV2		2
--#define PIN_DRV_LV3		1
--#define PIN_DRV_LV4		3
--
--#define PIN_PDN_OUT0		0
--#define PIN_PDN_OUT1		1
--#define PIN_PDN_INPUT		2
--#define PIN_PDN_PREV		3
--
--#define PIN_IN(_pin, _pull, _drv)			\
--	_pin {						\
--		samsung,pins = #_pin;			\
--		samsung,pin-function = <0>;		\
--		samsung,pin-pud = <PIN_PULL_ ##_pull>;	\
--		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+#include <dt-bindings/pinctrl/samsung.h>
-+
-+#define PIN_IN(_pin, _pull, _drv)					\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;		\
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_ ##_pull>;		\
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;		\
- 	}
- 
--#define PIN_OUT(_pin, _drv)				\
--	_pin {						\
--		samsung,pins = #_pin;			\
--		samsung,pin-function = <1>;		\
--		samsung,pin-pud = <0>;			\
--		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+#define PIN_OUT(_pin, _drv)						\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;	\
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;		\
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;		\
- 	}
- 
--#define PIN_OUT_SET(_pin, _val, _drv)			\
--	_pin {						\
--		samsung,pins = #_pin;			\
--		samsung,pin-function = <1>;		\
--		samsung,pin-pud = <0>;			\
--		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
--		samsung,pin-val = <_val>;		\
-+#define PIN_OUT_SET(_pin, _val, _drv)					\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;	\
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;		\
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;		\
-+		samsung,pin-val = <_val>;				\
- 	}
- 
--#define PIN_CFG(_pin, _sel, _pull, _drv)		\
--	_pin {						\
--		samsung,pins = #_pin;			\
--		samsung,pin-function = <_sel>;		\
--		samsung,pin-pud = <PIN_PULL_ ##_pull>;	\
--		samsung,pin-drv = <PIN_DRV_ ##_drv>;	\
-+#define PIN_CFG(_pin, _sel, _pull, _drv)				\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-function = <_sel>;				\
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_ ##_pull>;		\
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;		\
- 	}
- 
--#define PIN_SLP(_pin, _mode, _pull)				\
--	_pin {							\
--		samsung,pins = #_pin;				\
--		samsung,pin-con-pdn = <PIN_PDN_ ##_mode>;	\
--		samsung,pin-pud-pdn = <PIN_PULL_ ##_pull>;	\
-+#define PIN_SLP(_pin, _mode, _pull)					\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_ ##_mode>;	\
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_ ##_pull>;	\
- 	}
- 
- &pinctrl_0 {
-diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-index 9331c6252eff..cc65537ff79b 100644
---- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-@@ -14,6 +14,8 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- / {
- 	pinctrl@11400000 {
- 		gpa0: gpa0 {
-diff --git a/arch/arm/boot/dts/exynos4415-pinctrl.dtsi b/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-index 75af9c56123e..63714445dddb 100644
---- a/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4415-pinctrl.dtsi
-@@ -11,6 +11,8 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-index 856b29254374..b5ded0ccce07 100644
---- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-@@ -12,20 +12,13 @@
-  * published by the Free Software Foundation.
- */
- 
--#define PIN_PULL_NONE		0
--#define PIN_PULL_DOWN		1
--#define PIN_PULL_UP		3
--
--#define PIN_PDN_OUT0		0
--#define PIN_PDN_OUT1		1
--#define PIN_PDN_INPUT		2
--#define PIN_PDN_PREV		3
--
--#define PIN_SLP(_pin, _mode, _pull)				\
--	_pin {							\
--		samsung,pins = #_pin;				\
--		samsung,pin-con-pdn = <PIN_PDN_ ##_mode>;	\
--		samsung,pin-pud-pdn = <PIN_PULL_ ##_pull>;	\
-+#include <dt-bindings/pinctrl/samsung.h>
-+
-+#define PIN_SLP(_pin, _mode, _pull)					\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_ ##_mode>;	\
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_ ##_pull>;	\
- 	}
- 
- / {
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 880917e508b2..d1a4ea0fb838 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -12,6 +12,8 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-index f6ee55ea0708..39c046758029 100644
---- a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-@@ -12,9 +12,7 @@
-  * published by the Free Software Foundation.
- */
- 
--#define PIN_PULL_NONE	0
--#define PIN_PULL_DOWN	1
--#define PIN_PULL_UP	3
-+#include <dt-bindings/pinctrl/samsung.h>
- 
- &pinctrl_0 {
- 	gpa0: gpa0 {
-@@ -188,56 +186,56 @@
- 	uart0_data: uart0-data {
- 		samsung,pins = "gpa0-0", "gpa0-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	uart0_fctl: uart0-fctl {
- 		samsung,pins = "gpa0-2", "gpa0-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	uart1_data: uart1-data {
- 		samsung,pins = "gpa1-0", "gpa1-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	uart1_fctl: uart1-fctl {
- 		samsung,pins = "gpa1-2", "gpa1-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	uart2_data: uart2-data {
- 		samsung,pins = "gpa1-4", "gpa1-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	spi0_bus: spi0-bus {
- 		samsung,pins = "gpa2-0", "gpa2-2", "gpa2-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	spi1_bus: spi1-bus {
- 		samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	usb3_vbus0_en: usb3-vbus0-en {
- 		samsung,pins = "gpa2-4";
- 		samsung,pin-function = <1>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
-@@ -245,7 +243,7 @@
- 		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
- 				"gpb0-4";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
-@@ -253,105 +251,105 @@
- 		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
- 				"gpb0-4";
- 		samsung,pin-function = <3>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	spdif1_bus: spdif1-bus {
- 		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2";
- 		samsung,pin-function = <4>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	spi2_bus: spi2-bus {
- 		samsung,pins = "gpb1-0", "gpb1-2", "gpb1-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c0_hs_bus: i2c0-hs-bus {
- 		samsung,pins = "gpb3-0", "gpb3-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c1_hs_bus: i2c1-hs-bus {
- 		samsung,pins = "gpb3-2", "gpb3-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c2_hs_bus: i2c2-hs-bus {
- 		samsung,pins = "gpb3-4", "gpb3-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c3_hs_bus: i2c3-hs-bus {
- 		samsung,pins = "gpb3-6", "gpb3-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c4_bus: i2c4-bus {
- 		samsung,pins = "gpb4-0", "gpb4-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c5_bus: i2c5-bus {
- 		samsung,pins = "gpb4-2", "gpb4-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c6_bus: i2c6-bus {
- 		samsung,pins = "gpb4-4", "gpb4-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c7_bus: i2c7-bus {
- 		samsung,pins = "gpb4-6", "gpb4-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c8_bus: i2c8-bus {
- 		samsung,pins = "gpb5-0", "gpb5-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c9_bus: i2c9-bus {
- 		samsung,pins = "gpb5-2", "gpb5-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c10_bus: i2c10-bus {
- 		samsung,pins = "gpb5-4", "gpb5-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	i2c11_bus: i2c11-bus {
- 		samsung,pins = "gpb5-6", "gpb5-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
-@@ -360,7 +358,7 @@
- 			"gpe0-4", "gpe0-5", "gpe0-6", "gpe0-7",
- 			"gpe1-0", "gpe1-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
-@@ -368,35 +366,35 @@
- 		samsung,pins = "gpf0-0", "gpf0-1", "gpf0-2", "gpf0-3",
- 			"gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
- 		samsung,pin-function = <3>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	cam_i2c1_bus: cam-i2c1-bus {
- 		samsung,pins = "gpf0-2", "gpf0-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	cam_i2c0_bus: cam-i2c0-bus {
- 		samsung,pins = "gpf0-0", "gpf0-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	cam_spi0_bus: cam-spi0-bus {
- 		samsung,pins = "gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
- 	};
- 
- 	cam_spi1_bus: cam-spi1-bus {
- 		samsung,pins = "gpf1-4", "gpf1-5", "gpf1-6", "gpf1-7";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <0>;
+diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
+index da24ab570b0e..f6cb82f36aae 100644
+--- a/arch/arm/boot/dts/s5pv210-aquila.dts
++++ b/arch/arm/boot/dts/s5pv210-aquila.dts
+@@ -387,7 +387,7 @@
+ &pinctrl0 {
+ 	t_flash_detect: t-flash-detect {
+ 		samsung,pins = "gph3-4";
+-		samsung,pin-function = <0>;
+-		samsung,pin-pud = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
  	};
  };
-@@ -445,112 +443,112 @@
- 	sd0_clk: sd0-clk {
- 		samsung,pins = "gpc0-0";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd0_cmd: sd0-cmd {
- 		samsung,pins = "gpc0-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd0_bus1: sd0-bus-width1 {
- 		samsung,pins = "gpc0-2";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd0_bus4: sd0-bus-width4 {
- 		samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd0_bus8: sd0-bus-width8 {
- 		samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd0_rdqs: sd0-rdqs {
- 		samsung,pins = "gpc0-6";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd1_clk: sd1-clk {
- 		samsung,pins = "gpc1-0";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd1_cmd: sd1-cmd {
- 		samsung,pins = "gpc1-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd1_bus1: sd1-bus-width1 {
- 		samsung,pins = "gpc1-2";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd1_bus4: sd1-bus-width4 {
- 		samsung,pins = "gpc1-3", "gpc1-4", "gpc1-5";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd1_bus8: sd1-bus-width8 {
- 		samsung,pins = "gpc4-0", "gpc4-1", "gpc4-2", "gpc4-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd2_clk: sd2-clk {
- 		samsung,pins = "gpc2-0";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd2_cmd: sd2-cmd {
- 		samsung,pins = "gpc2-1";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_NONE>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd2_cd: sd2-cd {
- 		samsung,pins = "gpc2-2";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd2_bus1: sd2-bus-width1 {
- 		samsung,pins = "gpc2-3";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- 
- 	sd2_bus4: sd2-bus-width4 {
- 		samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
- 		samsung,pin-function = <2>;
--		samsung,pin-pud = <PIN_PULL_UP>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <3>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index b58a0f29f42c..bf43792efe27 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -9,6 +9,8 @@
+diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+index 8c714088e3c6..9a3e851e2e22 100644
+--- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+@@ -19,6 +19,8 @@
   * published by the Free Software Foundation.
   */
  
 +#include <dt-bindings/pinctrl/samsung.h>
 +
- &pinctrl_0 {
+ &pinctrl0 {
  	gpa0: gpa0 {
  		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index 14beb7e07323..cf7d2986780a 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -12,6 +12,8 @@
-  * published by the Free Software Foundation.
- */
+@@ -270,559 +272,559 @@
  
-+#include <dt-bindings/pinctrl/samsung.h>
-+
- &pinctrl_0 {
- 	gpy7: gpy7 {
- 		gpio-controller;
+ 	uart0_data: uart0-data {
+ 		samsung,pins = "gpa0-0", "gpa0-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart0_fctl: uart0-fctl {
+ 		samsung,pins = "gpa0-2", "gpa0-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart1_data: uart1-data {
+ 		samsung,pins = "gpa0-4", "gpa0-5";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart1_fctl: uart1-fctl {
+ 		samsung,pins = "gpa0-6", "gpa0-7";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart2_data: uart2-data {
+ 		samsung,pins = "gpa1-0", "gpa1-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart2_fctl: uart2-fctl {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart3_data: uart3-data {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	uart_audio: uart-audio {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+-		samsung,pin-function = <4>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	spi0_bus: spi0-bus {
+ 		samsung,pins = "gpb-0", "gpb-2", "gpb-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	spi1_bus: spi1-bus {
+ 		samsung,pins = "gpb-4", "gpb-6", "gpb-7";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2s0_bus: i2s0-bus {
+ 		samsung,pins = "gpi-0", "gpi-1", "gpi-2", "gpi-3",
+ 				"gpi-4", "gpi-5", "gpi-6";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2s1_bus: i2s1-bus {
+ 		samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+ 				"gpc0-4";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2s2_bus: i2s2-bus {
+ 		samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
+ 				"gpc1-4";
+-		samsung,pin-function = <4>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pcm1_bus: pcm1-bus {
+ 		samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+ 				"gpc0-4";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	ac97_bus: ac97-bus {
+ 		samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+ 				"gpc0-4";
+-		samsung,pin-function = <4>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2s2_bus: i2s2-bus {
+ 		samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
+ 				"gpc1-4";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pcm2_bus: pcm2-bus {
+ 		samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
+ 				"gpc1-4";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	spdif_bus: spdif-bus {
+ 		samsung,pins = "gpc1-0", "gpc1-1";
+-		samsung,pin-function = <4>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	spi2_bus: spi2-bus {
+ 		samsung,pins = "gpc1-1", "gpc1-2", "gpc1-3", "gpc1-4";
+-		samsung,pin-function = <5>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_5>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2c0_bus: i2c0-bus {
+ 		samsung,pins = "gpd1-0", "gpd1-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2c1_bus: i2c1-bus {
+ 		samsung,pins = "gpd1-2", "gpd1-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	i2c2_bus: i2c2-bus {
+ 		samsung,pins = "gpd1-4", "gpd1-5";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pwm0_out: pwm0-out {
+ 		samsung,pins = "gpd0-0";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pwm1_out: pwm1-out {
+ 		samsung,pins = "gpd0-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pwm2_out: pwm2-out {
+ 		samsung,pins = "gpd0-2";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	pwm3_out: pwm3-out {
+ 		samsung,pins = "gpd0-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row0: keypad-row-0 {
+ 		samsung,pins = "gph3-0";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row1: keypad-row-1 {
+ 		samsung,pins = "gph3-1";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row2: keypad-row-2 {
+ 		samsung,pins = "gph3-2";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row3: keypad-row-3 {
+ 		samsung,pins = "gph3-3";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row4: keypad-row-4 {
+ 		samsung,pins = "gph3-4";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row5: keypad-row-5 {
+ 		samsung,pins = "gph3-5";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row6: keypad-row-6 {
+ 		samsung,pins = "gph3-6";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_row7: keypad-row-7 {
+ 		samsung,pins = "gph3-7";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col0: keypad-col-0 {
+ 		samsung,pins = "gph2-0";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col1: keypad-col-1 {
+ 		samsung,pins = "gph2-1";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col2: keypad-col-2 {
+ 		samsung,pins = "gph2-2";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col3: keypad-col-3 {
+ 		samsung,pins = "gph2-3";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col4: keypad-col-4 {
+ 		samsung,pins = "gph2-4";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col5: keypad-col-5 {
+ 		samsung,pins = "gph2-5";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col6: keypad-col-6 {
+ 		samsung,pins = "gph2-6";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	keypad_col7: keypad-col-7 {
+ 		samsung,pins = "gph2-7";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	sd0_clk: sd0-clk {
+ 		samsung,pins = "gpg0-0";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd0_cmd: sd0-cmd {
+ 		samsung,pins = "gpg0-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd0_cd: sd0-cd {
+ 		samsung,pins = "gpg0-2";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd0_bus1: sd0-bus-width1 {
+ 		samsung,pins = "gpg0-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd0_bus4: sd0-bus-width4 {
+ 		samsung,pins = "gpg0-3", "gpg0-4", "gpg0-5", "gpg0-6";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd0_bus8: sd0-bus-width8 {
+ 		samsung,pins = "gpg1-3", "gpg1-4", "gpg1-5", "gpg1-6";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd1_clk: sd1-clk {
+ 		samsung,pins = "gpg1-0";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd1_cmd: sd1-cmd {
+ 		samsung,pins = "gpg1-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd1_cd: sd1-cd {
+ 		samsung,pins = "gpg1-2";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd1_bus1: sd1-bus-width1 {
+ 		samsung,pins = "gpg1-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd1_bus4: sd1-bus-width4 {
+ 		samsung,pins = "gpg1-3", "gpg1-4", "gpg1-5", "gpg1-6";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_clk: sd2-clk {
+ 		samsung,pins = "gpg2-0";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_cmd: sd2-cmd {
+ 		samsung,pins = "gpg2-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_cd: sd2-cd {
+ 		samsung,pins = "gpg2-2";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_bus1: sd2-bus-width1 {
+ 		samsung,pins = "gpg2-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_bus4: sd2-bus-width4 {
+ 		samsung,pins = "gpg2-3", "gpg2-4", "gpg2-5", "gpg2-6";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd2_bus8: sd2-bus-width8 {
+ 		samsung,pins = "gpg3-3", "gpg3-4", "gpg3-5", "gpg3-6";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd3_clk: sd3-clk {
+ 		samsung,pins = "gpg3-0";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd3_cmd: sd3-cmd {
+ 		samsung,pins = "gpg3-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd3_cd: sd3-cd {
+ 		samsung,pins = "gpg3-2";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd3_bus1: sd3-bus-width1 {
+ 		samsung,pins = "gpg3-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	sd3_bus4: sd3-bus-width4 {
+ 		samsung,pins = "gpg3-3", "gpg3-4", "gpg3-5", "gpg3-6";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <2>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	eint0: ext-int0 {
+ 		samsung,pins = "gph0-0";
+-		samsung,pin-function = <0xf>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	eint8: ext-int8 {
+ 		samsung,pins = "gph1-0";
+-		samsung,pin-function = <0xf>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	eint15: ext-int15 {
+ 		samsung,pins = "gph1-7";
+-		samsung,pin-function = <0xf>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	eint16: ext-int16 {
+ 		samsung,pins = "gph2-0";
+-		samsung,pin-function = <0xf>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	eint31: ext-int31 {
+ 		samsung,pins = "gph3-7";
+-		samsung,pin-function = <0xf>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	cam_port_a_io: cam-port-a-io {
+ 		samsung,pins = "gpe0-0", "gpe0-1", "gpe0-2", "gpe0-3",
+ 				"gpe0-4", "gpe0-5", "gpe0-6", "gpe0-7",
+ 				"gpe1-0", "gpe1-1", "gpe1-2", "gpe1-4";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	cam_port_a_clk_active: cam-port-a-clk-active {
+ 		samsung,pins = "gpe1-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	cam_port_a_clk_idle: cam-port-a-clk-idle {
+ 		samsung,pins = "gpe1-3";
+-		samsung,pin-function = <0>;
+-		samsung,pin-pud = <1>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	cam_port_b_io: cam-port-b-io {
+ 		samsung,pins = "gpj0-0", "gpj0-1", "gpj0-2", "gpj0-3",
+ 				"gpj0-4", "gpj0-5", "gpj0-6", "gpj0-7",
+ 				"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-4";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	cam_port_b_clk_active: cam-port-b-clk-active {
+ 		samsung,pins = "gpj1-3";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
+ 	};
+ 
+ 	cam_port_b_clk_idle: cam-port-b-clk-idle {
+ 		samsung,pins = "gpj1-3";
+-		samsung,pin-function = <0>;
+-		samsung,pin-pud = <1>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 		lcd_ctrl: lcd-ctrl {
+ 		samsung,pins = "gpd0-0", "gpd0-1";
+-		samsung,pin-function = <3>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	lcd_sync: lcd-sync {
+ 		samsung,pins = "gpf0-0", "gpf0-1";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	lcd_clk: lcd-clk {
+ 		samsung,pins = "gpf0-0", "gpf0-1", "gpf0-2", "gpf0-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
+ 	lcd_data24: lcd-data-width24 {
+@@ -832,8 +834,8 @@
+ 				"gpf2-0", "gpf2-1", "gpf2-2", "gpf2-3",
+ 				"gpf2-4", "gpf2-5", "gpf2-6", "gpf2-7",
+ 				"gpf3-0", "gpf3-1", "gpf3-2", "gpf3-3";
+-		samsung,pin-function = <2>;
+-		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <0>;
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ };
 -- 
 2.7.4
