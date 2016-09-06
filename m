@@ -1,60 +1,65 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] mfd: exynos-lpass: mark PM functions as __maybe_unused
-Date: Tue,  6 Sep 2016 15:24:00 +0200
-Message-ID: <20160906132432.2083493-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Inha Song <ideal.song@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH, RESEND] drm: exynos: avoid unused function warning
+Date: Tue,  6 Sep 2016 15:30:07 +0200
+Message-ID: <20160906133027.2206326-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Ingi Kim <ingi2.kim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The newly added exynos lpass driver produces a build warning when
-CONFIG_PM is disabled since the only callers of exynos_lpass_disable
-are under an #ifdef:
-
-drivers/mfd/exynos-lpass.c:93:13: error: 'exynos_lpass_disable' defined but not used [-Werror=unused-function]
- static void exynos_lpass_disable(struct exynos_lpass *lpass)
-
-This removes the #ifdef and replaces it with __maybe_unused annotations
-so the compiler can leave out the unused code silently with less
-room for mistakes.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 36c26760bba8 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
----
- drivers/mfd/exynos-lpass.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 578ac7b57b96..2e064fb8826f 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -144,8 +144,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int exynos_lpass_suspend(struct device *dev)
-+static int __maybe_unused exynos_lpass_suspend(struct device *dev)
- {
- 	struct exynos_lpass *lpass = dev_get_drvdata(dev);
- 
-@@ -154,7 +153,7 @@ static int exynos_lpass_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int exynos_lpass_resume(struct device *dev)
-+static int __maybe_unused exynos_lpass_resume(struct device *dev)
- {
- 	struct exynos_lpass *lpass = dev_get_drvdata(dev);
- 
-@@ -162,7 +161,6 @@ static int exynos_lpass_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
- 					exynos_lpass_resume);
--- 
-2.9.0
+V2hlbiBDT05GSUdfUE0gaXMgbm90IHNldCwgd2UgZ2V0IGEgd2FybmluZyBhYm91dCBhbiB1bnVz
+ZWQgZnVuY3Rpb246Cgpkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmM6MTIx
+OToxMjogZXJyb3I6ICdnc2NfY2xrX2N0cmwnIGRlZmluZWQgYnV0IG5vdCB1c2VkIFstV2Vycm9y
+PXVudXNlZC1mdW5jdGlvbl0KIHN0YXRpYyBpbnQgZ3NjX2Nsa19jdHJsKHN0cnVjdCBnc2NfY29u
+dGV4dCAqY3R4LCBib29sIGVuYWJsZSkKICAgICAgICAgICAgXn5+fn5+fn5+fn5+CgpUaGlzIHJl
+bW92ZXMgdGhlIHR3byAjaWZkZWYgY2hlY2tzIGluIHRoaXMgZmlsZSBhbmQgaW5zdGVhZCBtYXJr
+cyB0aGUKZnVuY3Rpb25zIGFzIF9fbWF5YmVfdW51c2VkLCB3aGljaCBpcyBhIG1vcmUgcmVsaWFi
+bGUgd2F5IG9mIGRvaW5nIHRoZQpzYW1lLCBhbGxvd2luZyBiZXR0ZXIgYnVpbGQgY292ZXJhZ2Ug
+YW5kIGF2b2lkaW5nIHRoZSB3YXJuaW5nIGFib3ZlLgoKU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
+bWFubiA8YXJuZEBhcm5kYi5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZ3NjLmMgfCAxMiArKysrLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMo
+KyksIDggZGVsZXRpb25zKC0pCgpPcmlnaW5hbGx5IHNlbnQgb24gSnVseSAxMSwgYnV0IEkganVz
+dCBnb3QgdGhpcyBhZ2FpbiBhbmQgbm90aWNlZAppdCBoYWQgbmV2ZXIgYmVlbiBhcHBsaWVkLCBh
+bmQgSSBkaWRuJ3QgZ2V0IGFueSByZXBseSBmb3IgdGhlIHBhdGNoLgoKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9nc2MuYwppbmRleCA1ZDIwZGE4Zjk1N2UuLmIwYTc3Mzc5MGY4NSAx
+MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwpAQCAtMTc2MCw4ICsxNzYw
+LDcgQEAgc3RhdGljIGludCBnc2NfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+CiAJcmV0dXJuIDA7CiB9CiAKLSNpZmRlZiBDT05GSUdfUE1fU0xFRVAKLXN0YXRpYyBpbnQgZ3Nj
+X3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3RhdGljIGludCBfX21heWJlX3VudXNlZCBn
+c2Nfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiB7CiAJc3RydWN0IGdzY19jb250ZXh0ICpj
+dHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2KTsKIApAQCAtMTc3Myw3ICsxNzcyLDcgQEAgc3RhdGlj
+IGludCBnc2Nfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJcmV0dXJuIGdzY19jbGtfY3Ry
+bChjdHgsIGZhbHNlKTsKIH0KIAotc3RhdGljIGludCBnc2NfcmVzdW1lKHN0cnVjdCBkZXZpY2Ug
+KmRldikKK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgZ3NjX3Jlc3VtZShzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCiB7CiAJc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2
+KTsKIApAQCAtMTc4NCwxMCArMTc4Myw4IEBAIHN0YXRpYyBpbnQgZ3NjX3Jlc3VtZShzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpCiAKIAlyZXR1cm4gMDsKIH0KLSNlbmRpZgogCi0jaWZkZWYgQ09ORklHX1BN
+Ci1zdGF0aWMgaW50IGdzY19ydW50aW1lX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQorc3Rh
+dGljIGludCBfX21heWJlX3VudXNlZCBnc2NfcnVudGltZV9zdXNwZW5kKHN0cnVjdCBkZXZpY2Ug
+KmRldikKIHsKIAlzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCA9IGdldF9nc2NfY29udGV4dChkZXYp
+OwogCkBAIC0xNzk2LDcgKzE3OTMsNyBAQCBzdGF0aWMgaW50IGdzY19ydW50aW1lX3N1c3BlbmQo
+c3RydWN0IGRldmljZSAqZGV2KQogCXJldHVybiAgZ3NjX2Nsa19jdHJsKGN0eCwgZmFsc2UpOwog
+fQogCi1zdGF0aWMgaW50IGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCitz
+dGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGdzY19ydW50aW1lX3Jlc3VtZShzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCiB7CiAJc3RydWN0IGdzY19jb250ZXh0ICpjdHggPSBnZXRfZ3NjX2NvbnRleHQoZGV2
+KTsKIApAQCAtMTgwNCw3ICsxODAxLDYgQEAgc3RhdGljIGludCBnc2NfcnVudGltZV9yZXN1bWUo
+c3RydWN0IGRldmljZSAqZGV2KQogCiAJcmV0dXJuICBnc2NfY2xrX2N0cmwoY3R4LCB0cnVlKTsK
+IH0KLSNlbmRpZgogCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgZ3NjX3BtX29wcyA9
+IHsKIAlTRVRfU1lTVEVNX1NMRUVQX1BNX09QUyhnc2Nfc3VzcGVuZCwgZ3NjX3Jlc3VtZSkKLS0g
+CjIuOS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
