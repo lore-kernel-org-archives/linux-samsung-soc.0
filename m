@@ -1,115 +1,238 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH] drm/bridge: analogix_dp: detect Sink PSR state after
- configuring the PSR
-Date: Tue, 6 Sep 2016 15:51:34 -0400
-Message-ID: <CAOw6vbKVkbqo9ZeCOgpBw9aGceF_vu93hMVThj2nwVM0x+rv-Q@mail.gmail.com>
-References: <1472206752-19967-1-git-send-email-ykk@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1472206752-19967-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] [media] squash lines for simple wrapper functions
+Date: Wed,  7 Sep 2016 07:52:24 +0900
+Message-ID: <1473202344-5218-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Shuah Khan <shuah@kernel.org>, Kukjin Kim <kgene@kernel.org>, Malcolm Priestley <tvboxspy@gmail.com>, linux-kernel@vger.kernel.org, Benoit Parrot <bparrot@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Max Kellermann <max@duempel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Julia Lawall <Julia.Lawall@lip6.fr>, Hans Verkuil <hverkuil@xs4all.nl>, Abhilash Jindal <klock.android@gmail.com>, Michael Ira Krufky <mkrufky@linuxtv.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBBdWcgMjYsIDIwMTYgYXQgNjoxOSBBTSwgWWFraXIgWWFuZyA8eWtrQHJvY2stY2hp
-cHMuY29tPiB3cm90ZToKPiBNYWtlIHN1cmUgdGhlIHJlcXVlc3QgUFNSIHN0YXRlIGNvdWxkIGVm
-ZmVjdCBpbiBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoKQo+IGZ1bmN0aW9uLCBvciBwcmludGlu
-ZyB0aGUgZXJyb3IgU2luayBQU1Igc3RhdGUgaWYgd2UgZmFpbGVkIHRvIGVmZmVjdAo+IHRoZSBy
-ZXF1ZXN0IFBTUiBzZXR0aW5nLgo+Cj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJv
-Y2stY2hpcHMuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2Fu
-YWxvZ2l4X2RwX2NvcmUuYyB8ICA2ICsrLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
-bG9naXgvYW5hbG9naXhfZHBfY29yZS5oIHwgIDQgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8IDI2ICsrKysrKysrKysrKysrKysrKysr
-LS0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
-ZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
-b3JlLmMKPiBpbmRleCBlZmFjOGFiLi41YTM3ZGU4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiBAQCAtMTE1LDggKzEx
-NSw3IEBAIGludCBhbmFsb2dpeF9kcF9lbmFibGVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKPiAg
-ICAgICAgIHBzcl92c2MuREIwID0gMDsKPiAgICAgICAgIHBzcl92c2MuREIxID0gRURQX1ZTQ19Q
-U1JfU1RBVEVfQUNUSVZFIHwgRURQX1ZTQ19QU1JfQ1JDX1ZBTFVFU19WQUxJRDsKPgo+IC0gICAg
-ICAgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3BkKGRwLCAmcHNyX3ZzYyk7Cj4gLSAgICAgICByZXR1
-cm4gMDsKPiArICAgICAgIHJldHVybiBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoZHAsICZwc3Jf
-dnNjKTsKPiAgfQo+ICBFWFBPUlRfU1lNQk9MX0dQTChhbmFsb2dpeF9kcF9lbmFibGVfcHNyKTsK
-Pgo+IEBAIC0xMzgsOCArMTM3LDcgQEAgaW50IGFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNyKHN0cnVj
-dCBkZXZpY2UgKmRldikKPiAgICAgICAgIHBzcl92c2MuREIwID0gMDsKPiAgICAgICAgIHBzcl92
-c2MuREIxID0gMDsKPgo+IC0gICAgICAgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3BkKGRwLCAmcHNy
-X3ZzYyk7Cj4gLSAgICAgICByZXR1cm4gMDsKPiArICAgICAgIHJldHVybiBhbmFsb2dpeF9kcF9z
-ZW5kX3Bzcl9zcGQoZHAsICZwc3JfdnNjKTsKPiAgfQo+ICBFWFBPUlRfU1lNQk9MX0dQTChhbmFs
-b2dpeF9kcF9kaXNhYmxlX3Bzcik7Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmggYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdl
-L2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAo+IGluZGV4IDQ3M2I5ODAuLmY2MTdhOWQgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
-b3JlLmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2Rw
-X2NvcmUuaAo+IEBAIC0yODMsNyArMjgzLDcgQEAgdm9pZCBhbmFsb2dpeF9kcF9jb25maWdfdmlk
-ZW9fc2xhdmVfbW9kZShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4gIHZvaWQgYW5h
-bG9naXhfZHBfZW5hYmxlX3NjcmFtYmxpbmcoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
-Owo+ICB2b2lkIGFuYWxvZ2l4X2RwX2Rpc2FibGVfc2NyYW1ibGluZyhzdHJ1Y3QgYW5hbG9naXhf
-ZHBfZGV2aWNlICpkcCk7Cj4gIHZvaWQgYW5hbG9naXhfZHBfZW5hYmxlX3Bzcl9jcmMoc3RydWN0
-IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwo+IC12b2lkIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3Nw
-ZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKPiAtICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19wc3IgKnZzYyk7Cj4gK2ludCBhbmFsb2dpeF9kcF9zZW5k
-X3Bzcl9zcGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsCj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19wc3IgKnZzYyk7Cj4KPiAgI2VuZGlmIC8qIF9B
-TkFMT0dJWF9EUF9DT1JFX0ggKi8KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRn
-ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
-bG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiBpbmRleCA1MmMxYjZiLi41MDVlOWQ4IDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMK
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5j
-Cj4gQEAgLTEzMjgsOSArMTMyOCwxMSBAQCB2b2lkIGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3JfY3Jj
-KHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICAgICAgICAgd3JpdGVsKFBTUl9WSURf
-Q1JDX0VOQUJMRSwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQ1JDX0NPTik7Cj4gIH0KPgo+
-IC12b2lkIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNl
-ICpkcCwKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19wc3Ig
-KnZzYykKPiAraW50IGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBf
-ZGV2aWNlICpkcCwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBlZHBfdnNj
-X3BzciAqdnNjKQo+ICB7Cj4gKyAgICAgICB1bnNpZ25lZCBsb25nIHRpbWVvdXQ7Cj4gKyAgICAg
-ICB1bnNpZ25lZCBjaGFyIHNpbms7Cgp1OAoKPiAgICAgICAgIHVuc2lnbmVkIGludCB2YWw7Cj4K
-PiAgICAgICAgIC8qIGRvbid0IHNlbmQgaW5mbyBmcmFtZSAqLwo+IEBAIC0xMzcyLDQgKzEzNzQs
-MjQgQEAgdm9pZCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoc3RydWN0IGFuYWxvZ2l4X2RwX2Rl
-dmljZSAqZHAsCj4gICAgICAgICB2YWwgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9E
-UF9QS1RfU0VORF9DVEwpOwo+ICAgICAgICAgdmFsIHw9IElGX0VOOwo+ICAgICAgICAgd3JpdGVs
-KHZhbCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUEtUX1NFTkRfQ1RMKTsKPiArCj4gKyAg
-ICAgICB0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoMTAwKTsKClB1bGwgMTAw
-IG91dCBpbnRvIGEgI2RlZmluZQoKPiArICAgICAgIHdoaWxlICgxKSB7Cj4gKyAgICAgICAgICAg
-ICAgIGFuYWxvZ2l4X2RwX3JlYWRfYnl0ZV9mcm9tX2RwY2QoZHAsIERQX1BTUl9TVEFUVVMsICZz
-aW5rKTsKCllvdSBzaG91bGQgYmUgY2hlY2tpbmcgcmV0dXJuIHZhbHVlIGhlcmUuCgo+ICsKPiAr
-ICAgICAgICAgICAgICAgaWYgKHZzYy0+REIxICYmIHNpbmsgPT0gRFBfUFNSX1NJTktfQUNUSVZF
-X1JGQikKPiArICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKPiArCj4gKyAgICAgICAgICAg
-ICAgIGlmICghdnNjLT5EQjEgJiYgc2luayA9PSBEUF9QU1JfU0lOS19JTkFDVElWRSkKPiArICAg
-ICAgICAgICAgICAgICAgICAgICBicmVhazsKPiArCj4gKyAgICAgICAgICAgICAgIGlmICh0aW1l
-X2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2
-X3dhcm4oZHAtPmRldiwgIkZhaWxlZCB0byBlZmZlY3QgUFNSOiAleCIsIHNpbmspOwo+ICsgICAg
-ICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUJVU1k7CgotRVRJTUVET1VUIGlzIG1vcmUgYXBw
-cm9wcmlhdGUKCj4gKyAgICAgICAgICAgICAgIH0KPiArCj4gKyAgICAgICAgICAgICAgIHVzbGVl
-cF9yYW5nZSgxMDAwLCAxNTAwKTsKPiArICAgICAgIH0KClRoZSB3aGlsZSgxKSBsb29wIGlzIGEg
-bGl0dGxlIHNjYXJ5LiBJJ2QgcmF0aGVyIGRvOgoKd2hpbGUgKHRpbWVfYmVmb3JlKGppZmZpZXMs
-IHRpbWVvdXQpKSB7CiAgICAgICAgICAgICAgIHJldCA9IGFuYWxvZ2l4X2RwX3JlYWRfYnl0ZV9m
-cm9tX2RwY2QoZHAsIERQX1BTUl9TVEFUVVMsICZzaW5rKTsKICAgICAgICAgICAgICAgaWYgKHJl
-dCAhPSAxKSB7CiAgICAgICAgICAgICAgICAgICAgICAgRFJNX0RFVl9FUlJPUihkcC0+ZGV2LCAi
-UFNSX1NUQVRVUyByZWFkIGZhaWxlZApyZXQ9JWQiLCByZXQpOwogICAgICAgICAgICAgICAgICAg
-ICAgIHJldHVybiByZXQ7CiAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgIGlmICh2c2Mt
-PkRCMSAmJiBzaW5rID09IERQX1BTUl9TSU5LX0FDVElWRV9SRkIgfHwKICAgICAgICAgICAgICAg
-ICAgICF2c2MtPkRCMSAmJiBzaW5rID09IERQX1BTUl9TSU5LX0lOQUNUSVZFKQogICAgICAgICAg
-ICAgICAgICAgICAgIHJldHVybiAwOwoKICAgICAgICAgICAgICAgdXNsZWVwX3JhbmdlKDEwMDAs
-IDE1MDApOwp9CgpkZXZfd2FybihkcC0+ZGV2LCAiRmFpbGVkIHRvIGVmZmVjdCBQU1I6ICV4Iiwg
-c2luayk7CnJldHVybiAtRVRJTUVET1VUOwoKCgo+ICsKPiArICAgICAgIHJldHVybiAwOwo+ICB9
-Cj4gLS0KPiAxLjkuMQo+Cj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9k
-eSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jk
-b21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Remove unneeded variables and assignments.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/media/dvb-core/dvb_frontend.c             |  8 ++------
+ drivers/media/pci/meye/meye.c                     |  5 +----
+ drivers/media/pci/ttpci/av7110.c                  |  4 +---
+ drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c | 17 +++--------------
+ drivers/media/platform/ti-vpe/cal.c               |  6 +-----
+ drivers/media/rc/fintek-cir.c                     |  6 +-----
+ drivers/media/usb/dvb-usb-v2/lmedm04.c            | 14 ++++++--------
+ drivers/media/usb/dvb-usb/m920x.c                 | 10 +++-------
+ drivers/media/usb/gspca/jl2005bcd.c               |  5 +----
+ drivers/media/usb/gspca/sq905c.c                  |  5 +----
+ 10 files changed, 20 insertions(+), 60 deletions(-)
+
+diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+index be99c8d..43fcbb8 100644
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -1515,12 +1515,8 @@ static int dtv_set_frontend(struct dvb_frontend *fe);
+ 
+ static bool is_dvbv3_delsys(u32 delsys)
+ {
+-	bool status;
+-
+-	status = (delsys == SYS_DVBT) || (delsys == SYS_DVBC_ANNEX_A) ||
+-		 (delsys == SYS_DVBS) || (delsys == SYS_ATSC);
+-
+-	return status;
++	return (delsys == SYS_DVBT) || (delsys == SYS_DVBC_ANNEX_A) ||
++	       (delsys == SYS_DVBS) || (delsys == SYS_ATSC);
+ }
+ 
+ /**
+diff --git a/drivers/media/pci/meye/meye.c b/drivers/media/pci/meye/meye.c
+index ba887e8..7727d59 100644
+--- a/drivers/media/pci/meye/meye.c
++++ b/drivers/media/pci/meye/meye.c
+@@ -587,10 +587,7 @@ static void mchip_hic_stop(void)
+ /* get the next ready frame from the dma engine */
+ static u32 mchip_get_frame(void)
+ {
+-	u32 v;
+-
+-	v = mchip_read(MCHIP_MM_FIR(meye.mchip_fnum));
+-	return v;
++	return mchip_read(MCHIP_MM_FIR(meye.mchip_fnum));
+ }
+ 
+ /* frees the current frame from the dma engine */
+diff --git a/drivers/media/pci/ttpci/av7110.c b/drivers/media/pci/ttpci/av7110.c
+index 382caf2..aee26af 100644
+--- a/drivers/media/pci/ttpci/av7110.c
++++ b/drivers/media/pci/ttpci/av7110.c
+@@ -2930,9 +2930,7 @@ static struct saa7146_extension av7110_extension_driver = {
+ 
+ static int __init av7110_init(void)
+ {
+-	int retval;
+-	retval = saa7146_register_extension(&av7110_extension_driver);
+-	return retval;
++	return saa7146_register_extension(&av7110_extension_driver);
+ }
+ 
+ 
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+index 0912d0a..a1d823a 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+@@ -178,20 +178,12 @@ void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int version)
+ 
+ unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
+ {
+-	unsigned int	int_status;
+-
+-	int_status = readl(base + EXYNOS4_INT_STATUS_REG);
+-
+-	return int_status;
++	return readl(base + EXYNOS4_INT_STATUS_REG);
+ }
+ 
+ unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base)
+ {
+-	unsigned int fifo_status;
+-
+-	fifo_status = readl(base + EXYNOS4_FIFO_STATUS_REG);
+-
+-	return fifo_status;
++	return readl(base + EXYNOS4_FIFO_STATUS_REG);
+ }
+ 
+ void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value)
+@@ -296,10 +288,7 @@ void exynos4_jpeg_set_encode_hoff_cnt(void __iomem *base, unsigned int fmt)
+ 
+ unsigned int exynos4_jpeg_get_stream_size(void __iomem *base)
+ {
+-	unsigned int size;
+-
+-	size = readl(base + EXYNOS4_BITSTREAM_SIZE_REG);
+-	return size;
++	return readl(base + EXYNOS4_BITSTREAM_SIZE_REG);
+ }
+ 
+ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size)
+diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+index e967fcf..2a9de42 100644
+--- a/drivers/media/platform/ti-vpe/cal.c
++++ b/drivers/media/platform/ti-vpe/cal.c
+@@ -483,11 +483,7 @@ static void cal_get_hwinfo(struct cal_dev *dev)
+ 
+ static inline int cal_runtime_get(struct cal_dev *dev)
+ {
+-	int r;
+-
+-	r = pm_runtime_get_sync(&dev->pdev->dev);
+-
+-	return r;
++	return pm_runtime_get_sync(&dev->pdev->dev);
+ }
+ 
+ static inline void cal_runtime_put(struct cal_dev *dev)
+diff --git a/drivers/media/rc/fintek-cir.c b/drivers/media/rc/fintek-cir.c
+index bd7b3bd..ecab69e 100644
+--- a/drivers/media/rc/fintek-cir.c
++++ b/drivers/media/rc/fintek-cir.c
+@@ -104,11 +104,7 @@ static inline void fintek_cir_reg_write(struct fintek_dev *fintek, u8 val, u8 of
+ /* read val from cir config register */
+ static u8 fintek_cir_reg_read(struct fintek_dev *fintek, u8 offset)
+ {
+-	u8 val;
+-
+-	val = inb(fintek->cir_addr + offset);
+-
+-	return val;
++	return inb(fintek->cir_addr + offset);
+ }
+ 
+ /* dump current cir register contents */
+diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+index 3721ee6..8a28e87 100644
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -156,21 +156,19 @@ struct lme2510_state {
+ static int lme2510_bulk_write(struct usb_device *dev,
+ 				u8 *snd, int len, u8 pipe)
+ {
+-	int ret, actual_l;
++	int actual_l;
+ 
+-	ret = usb_bulk_msg(dev, usb_sndbulkpipe(dev, pipe),
+-				snd, len , &actual_l, 100);
+-	return ret;
++	return usb_bulk_msg(dev, usb_sndbulkpipe(dev, pipe),
++			    snd, len, &actual_l, 100);
+ }
+ 
+ static int lme2510_bulk_read(struct usb_device *dev,
+ 				u8 *rev, int len, u8 pipe)
+ {
+-	int ret, actual_l;
++	int actual_l;
+ 
+-	ret = usb_bulk_msg(dev, usb_rcvbulkpipe(dev, pipe),
+-				 rev, len , &actual_l, 200);
+-	return ret;
++	return usb_bulk_msg(dev, usb_rcvbulkpipe(dev, pipe),
++			    rev, len, &actual_l, 200);
+ }
+ 
+ static int lme2510_usb_talk(struct dvb_usb_device *d,
+diff --git a/drivers/media/usb/dvb-usb/m920x.c b/drivers/media/usb/dvb-usb/m920x.c
+index eafc5c8..70672e1 100644
+--- a/drivers/media/usb/dvb-usb/m920x.c
++++ b/drivers/media/usb/dvb-usb/m920x.c
+@@ -55,13 +55,9 @@ static inline int m920x_read(struct usb_device *udev, u8 request, u16 value,
+ static inline int m920x_write(struct usb_device *udev, u8 request,
+ 			      u16 value, u16 index)
+ {
+-	int ret;
+-
+-	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+-			      request, USB_TYPE_VENDOR | USB_DIR_OUT,
+-			      value, index, NULL, 0, 2000);
+-
+-	return ret;
++	return usb_control_msg(udev, usb_sndctrlpipe(udev, 0), request,
++			       USB_TYPE_VENDOR | USB_DIR_OUT, value, index,
++			       NULL, 0, 2000);
+ }
+ 
+ static inline int m920x_write_seq(struct usb_device *udev, u8 request,
+diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
+index 5b481fa..229c66a 100644
+--- a/drivers/media/usb/gspca/jl2005bcd.c
++++ b/drivers/media/usb/gspca/jl2005bcd.c
+@@ -300,10 +300,7 @@ static int jl2005c_stream_start_cif_small(struct gspca_dev *gspca_dev)
+ 
+ static int jl2005c_stop(struct gspca_dev *gspca_dev)
+ {
+-	int retval;
+-
+-	retval = jl2005c_write_reg(gspca_dev, 0x07, 0x00);
+-	return retval;
++	return jl2005c_write_reg(gspca_dev, 0x07, 0x00);
+ }
+ 
+ /*
+diff --git a/drivers/media/usb/gspca/sq905c.c b/drivers/media/usb/gspca/sq905c.c
+index aa21edc..9eaed32 100644
+--- a/drivers/media/usb/gspca/sq905c.c
++++ b/drivers/media/usb/gspca/sq905c.c
+@@ -257,11 +257,8 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
+ /* this function is called at probe and resume time */
+ static int sd_init(struct gspca_dev *gspca_dev)
+ {
+-	int ret;
+-
+ 	/* connect to the camera and reset it. */
+-	ret = sq905c_command(gspca_dev, SQ905C_CLEAR, 0);
+-	return ret;
++	return sq905c_command(gspca_dev, SQ905C_CLEAR, 0);
+ }
+ 
+ /* Set up for getting frames. */
+-- 
+1.9.1
