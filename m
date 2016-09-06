@@ -1,48 +1,49 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add entries for sound support on
- Odroid-XU board
-Date: Tue, 06 Sep 2016 13:30:12 +0200
-Message-ID: <bc8544f0-6a28-532f-cfdb-7ca28270b662@samsung.com>
-References: <1471883654-2113-1-git-send-email-s.nawrocki@samsung.com>
- <05c45777-732b-3701-36dc-2448003acd50@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28970 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934617AbcIFLaV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 07:30:21 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OD200MWTYMIX520@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Sep 2016 12:30:18 +0100 (BST)
-In-reply-to: <05c45777-732b-3701-36dc-2448003acd50@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v2 1/7] clk: samsung: exynos5410: Add clock IDs for PDMA and
+ EPLL clocks
+Date: Tue, 06 Sep 2016 14:04:50 +0200
+Message-ID: <1473163496-17820-2-git-send-email-s.nawrocki@samsung.com>
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: kgene@kernel.org, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/30/2016 08:42 AM, Krzysztof Kozlowski wrote:
->> +&clock {
->> > +       clocks = <&fin_pll>;
-> I dig into it and I have some questions:
-> 1. Missing clock-names?
-> 2. What code parses it?
-> 3. Don't we need it also for other SoC/boards?
+The PDMA{0,1} and EPLL clock IDs are added separately in this
+patch so the patch can be merged to the arm-soc tree as dependency.
 
-Apologies, I missed this one.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+Changes since v1:
+ - used same index values as for exynos5420.
+---
+ include/dt-bindings/clock/exynos5410.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Ad.1. clock-names is not needed as there will be only one clock and there
-is no need to get the clock by name.  If it bothers you we could add e.g.
-clock-names = "osc", but IMO it's just an unnecessary complication.
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 85b467b..6cb4e90 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -19,6 +19,7 @@
+ #define CLK_FOUT_MPLL		4
+ #define CLK_FOUT_BPLL		5
+ #define CLK_FOUT_KPLL		6
++#define CLK_FOUT_EPLL		7
 
-Ad.2 of_clk_get() called from within of_clk_init() and exynos5410_clk_init.
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_UART0		128
+@@ -55,6 +56,8 @@
+ #define CLK_MMC0		351
+ #define CLK_MMC1		352
+ #define CLK_MMC2		353
++#define CLK_PDMA0		362
++#define CLK_PDMA1		363
+ #define CLK_USBH20		365
+ #define CLK_USBD300		366
+ #define CLK_USBD301		367
+--
+1.9.1
 
-Ad.2. I think it makes sense to add it for all Exynos SoCs where it's missing.
-
--- 
-Regards,
-Sylwester
