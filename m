@@ -1,129 +1,104 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: exynos: Add dts file for
- Exynos5433-based TM2 board
-Date: Wed, 7 Sep 2016 10:08:35 +0200
-Message-ID: <f0c14647-a21c-0c20-3fdd-4323cefc1469@osg.samsung.com>
-References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
- <1472046551-703-7-git-send-email-cw00.choi@samsung.com>
- <CGME20160826183044epcas1p1335170a5e46d0432d97c415de293e8ac@epcas1p1.samsung.com>
- <0a6dffe0-8508-724e-c831-d14c32f8cd64@osg.samsung.com>
- <57C96297.1080704@samsung.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v2 2/2] ARM: exynos_defconfig: Remove old non-working MIPI
+ driver
+Date: Wed, 7 Sep 2016 11:14:13 +0300
+Message-ID: <2b3688bb-8dcb-24d4-8112-a0cc56573e48@ti.com>
+References: <1472730589-18683-1-git-send-email-k.kozlowski@samsung.com>
+ <1472730589-18683-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57C96297.1080704@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, k.kozlowski@samsung.com, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, inki.dae@samsung.com, jonghwa3.lee@samsung.com, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@samsung.com, ideal.song@samsung.com, ingi2.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, s.nawrocki@samsung.com, chanwoo@kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature";
+        boundary="1qjEoEhmkGsTUdk897kAhAEf8rfx1s1jj"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([198.47.19.11]:51545 "EHLO bear.ext.ti.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934002AbcIGIO6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 04:14:58 -0400
+In-Reply-To: <1472730589-18683-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Chanwoo,
+--1qjEoEhmkGsTUdk897kAhAEf8rfx1s1jj
+Content-Type: multipart/mixed; boundary="L5a7APrpX4cC10V518VcmxqhbXoAAfEAa";
+ protected-headers="v1"
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <2b3688bb-8dcb-24d4-8112-a0cc56573e48@ti.com>
+Subject: Re: [PATCH v2 2/2] ARM: exynos_defconfig: Remove old non-working MIPI
+ driver
+References: <1472730589-18683-1-git-send-email-k.kozlowski@samsung.com>
+ <1472730589-18683-2-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1472730589-18683-2-git-send-email-k.kozlowski@samsung.com>
 
-On 09/02/2016 01:29 PM, Chanwoo Choi wrote:
-> Hi Javier,
-> 
-> On 2016년 08월 27일 03:30, Javier Martinez Canillas wrote:
->> Hello Chanwoo,
->>
+--L5a7APrpX4cC10V518VcmxqhbXoAAfEAa
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-[snip]
+On 01/09/16 14:49, Krzysztof Kozlowski wrote:
+> The Exynos MIPI driver does not work anymore (it is board file only) so=
 
->>> +
->>
->> I see that most of the following regulators are marked as always-on
->> but I wonder if this is really needed. For example some of them are
->> looked up by consumer devices.
->>
->> [snip]
->>
->>> +			};
->>> +
->>> +			ldo3_reg: LDO3 {
->>> +				regulator-name = "VDD1_E_1.8V_AP";
->>> +				regulator-min-microvolt = <1800000>;
->>> +				regulator-max-microvolt = <1800000>;
->>> +				regulator-always-on;
->>> +			};
->>
->> This is used by both the ADC and the TMU so I guess it should be safe
->> to not mark it as always-on (unless is used by other critical IP block
->> not described in the DT).
-> 
-> This regulator should be always ON state.
-> This regulator provides the voltage to ALIVE domain of Exynos5433.
->
+> it is removed.  Remove also config option.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+> ---
+>=20
+> Changes since v1:
+> 1. New patch.
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exyno=
+s_defconfig
+> index 4e484f406419..fea8edef1534 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -168,7 +168,6 @@ CONFIG_DRM_PANEL_SAMSUNG_LD9040=3Dy
+>  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=3Dy
+>  CONFIG_DRM_NXP_PTN3460=3Dy
+>  CONFIG_DRM_PARADE_PS8622=3Dy
+> -CONFIG_EXYNOS_VIDEO=3Dy
+>  CONFIG_EXYNOS_MIPI_DSI=3Dy
 
-Ok, that's what I wanted to know since I don't have a schematics of this board.
+EXYNOS_MIPI_DSI too?
 
-Maybe add a comment explaining why should be always-on for all regulators that
-need it?
+ Tomi
 
-[snip]
 
->>
->>> +
->>> +			buck2_reg: BUCK2 {
->>> +				regulator-name = "VDD_EGL_1.0V_AP";
->>
->> I wonder if this shouldn't be "VDD_ATL_1.0V_AP" or something since
->> the big cluster isn't called Eagle like in arm32 Exynos but Atlas?
-> 
-> I used the regulator's name according to TM2's schematic.
-> As I knew, Eagle means the big cores.
->
+--L5a7APrpX4cC10V518VcmxqhbXoAAfEAa--
 
-I see, as I mentioned I don't have a TM2 schematic, but the Exynos5433 SoC
-manual doesn't refer the big and LITTLE cores as Eagle and King Fisher but
-as Atlas and Apollo.
+--1qjEoEhmkGsTUdk897kAhAEf8rfx1s1jj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-In any case, I think that makes sense to match what is in the schematic so
-I agree with you to use whatever is there regardless if matches the manual
-or not.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
->>
->>> +				regulator-min-microvolt = <900000>;
->>> +				regulator-max-microvolt = <1300000>;
->>> +				regulator-always-on;
->>> +				regulator-state-mem {
->>> +					regulator-off-in-suspend;
->>> +				};
->>> +			};
->>> +
->>> +			buck3_reg: BUCK3 {
->>> +				regulator-name = "VDD_KFC_1.0V_AP";
->>
->> Same, maybe using "VDD_APL_1.0V_AP" since the big cluster is Apollo?
-> 
-> ditto.
-> The KFC (King Fisher) means the little cores.
->
->>
->>> +				regulator-min-microvolt = <800000>;
->>> +				regulator-max-microvolt = <1200000>;
->>> +				regulator-always-on;
->>> +				regulator-state-mem {
->>> +					regulator-off-in-suspend;
->>> +				};
->>> +			};
->>> +
->>
->> Used by the big and LITTLE clusters respectively, although for these two
->> I'm not that sure if it would be safe to remove the always-on property.
-> 
->>
->> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> Thanks for your review.
-> 
->>
->> [0]: http://www.spinics.net/lists/arm-kernel/msg419747.html
->>
->> Best regards,
->>
+iQIcBAEBCAAGBQJXz8xVAAoJEPo9qoy8lh71jNoP/2W1oMY4iNR4gZDp+4w7mcoU
+7npbg9Aj5HpvNRxVCrgvdQpooJ+FuH+XWeJ2qelgYZBVDy3Z6PenfizEt1Z+8myD
+rXbuyTOwECWTNrsm628R/y7JIFRfpB6L5DFUQ+yq94uQ6YBtuStw4AtZdXKYK9LS
+4BZunWdrBbTh4YLNU1vDjrsGSz1nTWckDW59mQsjnH4Fuy0vwXELmt+i+1yStbwg
+eNVPkChT4lCDD3/ClFd7Cd3VHdkXzvJyX5/yV0VHpabuIKCNsIFS/KWjSEq2+2j5
+Kj8PQ5jcmWTxBWF1wUM2zsmn2B3DPGMHgSvyDzoR8vi0h0cLpB99+fwQQlNr80GR
+5r3hJawr/nDqGcfr1KeHjyn0m6CFaXZAeAwh9a0TaMglJSDf2uIxgJ5j8lDshtQx
+orl/jd1Q3tdhTf4jLVJ/pUw5QbzEdq5sY+cHUT72q3svYWHC9u41PHVtXzW0ZN/8
+HwFQiEcDhQD4PS4hr7I1H+zAUzbySmMIl5g+AQ2uUl+Jn/WWopfRSWXDVqVyaSy6
+rQn9k31eKazTg2k+UxEN/H3ipELm/6tjZCAJPAYk5WwKHTAkxPgjIngOWDJ39XaI
+BW3pupcq1vl0ZYtzN8mDviFAe7Mf5SxRTdwE59ZPWwqxMc0NVPszVu80eu8LfCjf
+QoSlAALsrpQGMlPDqOAU
+=8WS9
+-----END PGP SIGNATURE-----
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--1qjEoEhmkGsTUdk897kAhAEf8rfx1s1jj--
