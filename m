@@ -1,53 +1,70 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 00/10] pinctrl: exynos/samsung: Add header with values
- used for configuration
-Date: Wed, 7 Sep 2016 22:20:52 +0200
-Message-ID: <CACRpkdZuRym=SuAiBA_UsNmKd7N5n9g=z=ZxwcEk7J0BcXDsFw@mail.gmail.com>
-References: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/4] exynos4-is: Clear isp-i2c adapter power.ignore_children
+ flag
+Date: Wed, 7 Sep 2016 22:38:34 +0200
+Message-ID: <CACRpkdaFj58kMqniVHxC87K0XmHoPy3x-GHs=JrK-t2osKCZ1w@mail.gmail.com>
+References: <1472729956-17475-1-git-send-email-s.nawrocki@samsung.com> <20160901114711.GF2893@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:34207 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754406AbcIGUUx (ORCPT
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33766 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754598AbcIGUio (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 16:20:53 -0400
-Received: by mail-oi0-f44.google.com with SMTP id m11so42496969oif.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2016 13:20:53 -0700 (PDT)
-In-Reply-To: <1472714638-15676-1-git-send-email-k.kozlowski@samsung.com>
+        Wed, 7 Sep 2016 16:38:44 -0400
+Received: by mail-oi0-f50.google.com with SMTP id y2so43309566oie.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2016 13:38:35 -0700 (PDT)
+In-Reply-To: <20160901114711.GF2893@katana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Wolfram Sang <wsa@the-dreams.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, stable <stable@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-I have one comment though, if you're anyway making changes to all
-the DTS files:
+On Thu, Sep 1, 2016 at 1:47 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Thu, Sep 01, 2016 at 01:39:16PM +0200, Sylwester Nawrocki wrote:
 
-On Thu, Sep 1, 2016 at 9:23 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
+>> Since commit 04f59143b571161d25315dd52d7a2ecc022cb71a
+>> ("i2c: let I2C masters ignore their children for PM")
+>> the power.ignore_children flag is set when registering an I2C
+>> adapter. Since I2C transfers are not managed by the fimc-isp-i2c
+>> driver its clients use pm_runtime_* calls directly to communicate
+>> required power state of the bus controller.
+>> However when the power.ignore_children flag is set that doesn't
+>> work, so clear that flag back after registering the adapter.
+>> While at it drop pm_runtime_enable() call on the i2c_adapter
+>> as it is already done by the I2C subsystem when registering
+>> I2C adapter.
+>>
+>> Cc: <stable@vger.kernel.org> # 4.7+
+>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> -               samsung,pin-function = <2>;
-> -               samsung,pin-pud = <0>;
-> -               samsung,pin-drv = <0>;
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+I understand what the patch is doing but not this commit message.
 
-Nowadays we have standard bindings for this, see
-Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+What does it mean when you say "Since I2C transfers are not
+managed by the fimc-isp-i2c driver its clients use pm_runtime_*
+calls directly to communicate required power state of the bus
+controller."?
 
-Section "Generic pin multiplexing node content".
+I find it very hard to understand.
 
-By patching the driver and bindings to accept also the standard
-bindings with just function and pins and also adding support
-for standard pin configurations like bias-disable
-bias-pull-up with the old samsung,* bindings as a fallback
-etc you can actually modernize the whole binding and
-DTS looks to something simpler.
+The intent of the commit is to decouple I2C slave devices'
+runtime PM state from their parents, so say a gyroscope on an
+I2C bus does not have to bring up it's host controller to be
+active, for example it usually has an IRQ line to wake up
+the driver and that will talk using I2C and the I2C traffic will
+wake up the I2C master.
 
-You will find that this is how newer platforms do it.
+When I look at the driver it appears it is not even used for
+I2C traffic, just to take the clocks up and down and make it
+possible to manage a clock using runtime PM and interface
+with the DT logic... so I guess since it's likely and odd one-off
+and the driver is sufficiently weird anyways, it's fine to merge
+this patch making it even weirder.
 
-But it is admittedly a bigger project.
+Maybe a sort of mock adapter type should actually be
+created in the I2C core for these things so it can be handled
+there but who am I to say.
 
 Yours,
 Linus Walleij
