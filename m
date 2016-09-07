@@ -1,73 +1,164 @@
-From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Subject: Re: [PATCH v2 02/10] driver core: Functional dependencies tracking
-	support
-Date: Wed, 07 Sep 2016 01:57:11 +0200
-Message-ID: <1546158.G8Vnv1pldV@vostro.rjw.lan>
-References: <1466144820-6286-1-git-send-email-m.szyprowski@samsung.com>
-	<2841548.NIYVpJFBcH@vostro.rjw.lan>
-	<20160728152831.GA1929@wunner.de>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH] drm/bridge: analogix_dp: detect Sink PSR state after
+ configuring the PSR
+Date: Wed, 7 Sep 2016 11:50:29 +0800
+Message-ID: <f28814d9-905b-1007-8550-011d49c68d5a@rock-chips.com>
+References: <1472206752-19967-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbKVkbqo9ZeCOgpBw9aGceF_vu93hMVThj2nwVM0x+rv-Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20160728152831.GA1929-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:AMD IOMMU (AMD-VI)" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andreas Noever <andreas.noever-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.136]:33124 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755567AbcIGDul (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 6 Sep 2016 23:50:41 -0400
+In-Reply-To: <CAOw6vbKVkbqo9ZeCOgpBw9aGceF_vu93hMVThj2nwVM0x+rv-Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, David Airlie <airlied@linux.ie>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-On Thursday, July 28, 2016 05:28:31 PM Lukas Wunner wrote:
-> On Thu, Jul 28, 2016 at 02:30:31AM +0200, Rafael J. Wysocki wrote:
-> > On Monday, July 25, 2016 12:48:32 AM Lukas Wunner wrote:
-> > > On Thu, Jul 21, 2016 at 02:25:15AM +0200, Rafael J. Wysocki wrote:
-> > > > On Thursday, July 21, 2016 01:25:53 AM Lukas Wunner wrote:
-> > > > > I guess I could amend portdrv to return -EPROBE_DEFER on Macs if
-> > > > > no driver is bound to the NHI. Doesn't feel pretty to me though.
-> > > > > 
-> > > > > Ultimately this seems to be the same issue as with calling
-> > > > > dev_pm_domain_set() for a bound device. Perhaps device_link_add()
-> > > > > can likewise be allowed if a runtime PM ref is held for the devices
-> > > > > and the call happens under lock_system_sleep()?
-> > > > 
-> > > > No, the whole synchronization scheme in the links code would have had to be
-> > > > changed for that to really work.
-> > > > 
-> > > > And it really is about what is needed (at least in principle) to run your
-> > > > device.  If you think you need device X with a driver to handle device Y
-> > > > correctly, then either you need it all the time, from probe to remove, or
-> > > > you just don't really need it at all.
-> > > 
-> > > Real life isn't as simple as that.
-> > > 
-> > > In this case, we have consumers (hotplug ports) which are doing fine
-> > > if the driver for the supplier (NHI) is not loaded. But once it loads,
-> > > the links must be in place.
-> > 
-> > Hmm.
-> > 
-> > What if it is not loaded and the system suspends.  Will everything work
-> > as expected after the subsequent resume?
-> 
-> The short answer is yes.
+Sean,
 
-OK
+Thanks for your comments.
 
-I think it's possible to add a link flag to address this case.
+On 09/07/2016 03:51 AM, Sean Paul wrote:
+> On Fri, Aug 26, 2016 at 6:19 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Make sure the request PSR state could effect in analogix_dp_send_psr_spd()
+>> function, or printing the error Sink PSR state if we failed to effect
+>> the request PSR setting.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++---
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  4 ++--
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 26 ++++++++++++++++++++--
+>>   3 files changed, 28 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index efac8ab..5a37de8 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -115,8 +115,7 @@ int analogix_dp_enable_psr(struct device *dev)
+>>          psr_vsc.DB0 = 0;
+>>          psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+>>
+>> -       analogix_dp_send_psr_spd(dp, &psr_vsc);
+>> -       return 0;
+>> +       return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+>>
+>> @@ -138,8 +137,7 @@ int analogix_dp_disable_psr(struct device *dev)
+>>          psr_vsc.DB0 = 0;
+>>          psr_vsc.DB1 = 0;
+>>
+>> -       analogix_dp_send_psr_spd(dp, &psr_vsc);
+>> -       return 0;
+>> +       return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> index 473b980..f617a9d 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> @@ -283,7 +283,7 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
+>>   void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
+>>   void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+>>   void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
+>> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> -                             struct edp_vsc_psr *vsc);
+>> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> +                            struct edp_vsc_psr *vsc);
+>>
+>>   #endif /* _ANALOGIX_DP_CORE_H */
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> index 52c1b6b..505e9d8 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> @@ -1328,9 +1328,11 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
+>>          writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
+>>   }
+>>
+>> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> -                             struct edp_vsc_psr *vsc)
+>> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> +                            struct edp_vsc_psr *vsc)
+>>   {
+>> +       unsigned long timeout;
+>> +       unsigned char sink;
+> u8
+Done
+>>          unsigned int val;
+>>
+>>          /* don't send info frame */
+>> @@ -1372,4 +1374,24 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>>          val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>>          val |= IF_EN;
+>>          writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>> +
+>> +       timeout = jiffies + msecs_to_jiffies(100);
+> Pull 100 out into a #define
+Done
+>> +       while (1) {
+>> +               analogix_dp_read_byte_from_dpcd(dp, DP_PSR_STATUS, &sink);
+> You should be checking return value here.
+Done
+>> +
+>> +               if (vsc->DB1 && sink == DP_PSR_SINK_ACTIVE_RFB)
+>> +                       break;
+>> +
+>> +               if (!vsc->DB1 && sink == DP_PSR_SINK_INACTIVE)
+>> +                       break;
+>> +
+>> +               if (time_after(jiffies, timeout)) {
+>> +                       dev_warn(dp->dev, "Failed to effect PSR: %x", sink);
+>> +                       return -EBUSY;
+> -ETIMEDOUT is more appropriate
+Done
+>> +               }
+>> +
+>> +               usleep_range(1000, 1500);
+>> +       }
+> The while(1) loop is a little scary. I'd rather do:
+>
+> while (time_before(jiffies, timeout)) {
+>                 ret = analogix_dp_read_byte_from_dpcd(dp, DP_PSR_STATUS, &sink);
+>                 if (ret != 1) {
+>                         DRM_DEV_ERROR(dp->dev, "PSR_STATUS read failed
+> ret=%d", ret);
+>                         return ret;
+>                 }
+>
+>                 if (vsc->DB1 && sink == DP_PSR_SINK_ACTIVE_RFB ||
+>                     !vsc->DB1 && sink == DP_PSR_SINK_INACTIVE)
+>                         return 0;
+>
+>                 usleep_range(1000, 1500);
+> }
+>
+> dev_warn(dp->dev, "Failed to effect PSR: %x", sink);
+> return -ETIMEDOUT;
 
-Namely, if that flag is passed to device_link_add(), the link will be
-added in the DEVICE_LINK_ACTIVE state right away, but that will need to
-be synchronized against all possible transitions of the consumer device
-(at least).
+Thanks for your code.
 
-It's better to do that in a separate patch for this reason IMO.
+- Yakir
 
-Thanks,
-Rafael
+>
+>
+>> +
+>> +       return 0;
+>>   }
+>> --
+>> 1.9.1
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
