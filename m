@@ -1,70 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] exynos4-is: Clear isp-i2c adapter power.ignore_children
- flag
-Date: Wed, 7 Sep 2016 22:38:34 +0200
-Message-ID: <CACRpkdaFj58kMqniVHxC87K0XmHoPy3x-GHs=JrK-t2osKCZ1w@mail.gmail.com>
-References: <1472729956-17475-1-git-send-email-s.nawrocki@samsung.com> <20160901114711.GF2893@katana>
+Subject: Re: [PATCH v3 01/17] pinctrl: dt-bindings: samsung: Add header with
+ values used for configuration
+Date: Wed, 7 Sep 2016 23:18:39 +0200
+Message-ID: <CACRpkdb9gq0Zez=_NW8XB6YKiJteC3GB12e-Wi9my52b4Q-C7A@mail.gmail.com>
+References: <1472987060-28293-1-git-send-email-krzk@kernel.org> <1472987060-28293-2-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:33766 "EHLO
-        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754598AbcIGUio (ORCPT
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34487 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755453AbcIGVSk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 16:38:44 -0400
-Received: by mail-oi0-f50.google.com with SMTP id y2so43309566oie.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2016 13:38:35 -0700 (PDT)
-In-Reply-To: <20160901114711.GF2893@katana>
+        Wed, 7 Sep 2016 17:18:40 -0400
+Received: by mail-oi0-f48.google.com with SMTP id m11so44505441oif.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2016 14:18:40 -0700 (PDT)
+In-Reply-To: <1472987060-28293-2-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, stable <stable@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Thu, Sep 1, 2016 at 1:47 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Thu, Sep 01, 2016 at 01:39:16PM +0200, Sylwester Nawrocki wrote:
+On Sun, Sep 4, 2016 at 1:04 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
->> Since commit 04f59143b571161d25315dd52d7a2ecc022cb71a
->> ("i2c: let I2C masters ignore their children for PM")
->> the power.ignore_children flag is set when registering an I2C
->> adapter. Since I2C transfers are not managed by the fimc-isp-i2c
->> driver its clients use pm_runtime_* calls directly to communicate
->> required power state of the bus controller.
->> However when the power.ignore_children flag is set that doesn't
->> work, so clear that flag back after registering the adapter.
->> While at it drop pm_runtime_enable() call on the i2c_adapter
->> as it is already done by the I2C subsystem when registering
->> I2C adapter.
->>
->> Cc: <stable@vger.kernel.org> # 4.7+
->> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Hard-coded pinctrl configuration values are scattered through DTS files.
+> The numbers are difficult to decode by human, especially without the
+> datasheet.  Additionally the drive strength differs between S3C64xx,
+> S5PV210 and Exynos SoC families increasing the confusion.
+>
+> The header will help making this more readable and maintainable.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-I understand what the patch is doing but not this commit message.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-What does it mean when you say "Since I2C transfers are not
-managed by the fimc-isp-i2c driver its clients use pm_runtime_*
-calls directly to communicate required power state of the bus
-controller."?
-
-I find it very hard to understand.
-
-The intent of the commit is to decouple I2C slave devices'
-runtime PM state from their parents, so say a gyroscope on an
-I2C bus does not have to bring up it's host controller to be
-active, for example it usually has an IRQ line to wake up
-the driver and that will talk using I2C and the I2C traffic will
-wake up the I2C master.
-
-When I look at the driver it appears it is not even used for
-I2C traffic, just to take the clocks up and down and make it
-possible to manage a clock using runtime PM and interface
-with the DT logic... so I guess since it's likely and odd one-off
-and the driver is sufficiently weird anyways, it's fine to merge
-this patch making it even weirder.
-
-Maybe a sort of mock adapter type should actually be
-created in the I2C core for these things so it can be handled
-there but who am I to say.
+Take this with the rest of the changes into ARM SoC.
 
 Yours,
 Linus Walleij
