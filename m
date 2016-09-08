@@ -1,99 +1,59 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] ARM: dts: s5p: Add missing unit name to memory nodes for S5PV210 boards
-Date: Thu,  8 Sep 2016 11:26:01 -0400
-Message-ID: <1473348361-15784-3-git-send-email-javier@osg.samsung.com>
-References: <1473348361-15784-1-git-send-email-javier@osg.samsung.com>
+From: Sam Van Den Berge <sam.van.den.berge@telenet.be>
+Subject: Re: [GIT PULL 1/4] ARM: exynos: SoC/Mach for v4.9
+Date: Thu, 8 Sep 2016 21:24:34 +0200
+Message-ID: <20160908192434.GA609@sam-MacBookPro>
+References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
+ <1472548739-20050-5-git-send-email-k.kozlowski@samsung.com>
+ <5635206.ooNAZCeQOe@wuerfel>
+ <20160902163244.GB5534@kozik-lap>
+ <08dfc5c7-e844-023c-b5a8-9996dfb403ff@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:48873
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966667AbcIHP01 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:56982 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938685AbcIHTYp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 11:26:27 -0400
-In-Reply-To: <1473348361-15784-1-git-send-email-javier@osg.samsung.com>
+        Thu, 8 Sep 2016 15:24:45 -0400
+Content-Disposition: inline
+In-Reply-To: <08dfc5c7-e844-023c-b5a8-9996dfb403ff@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch fixes the following DTC warnings:
+On Mon, Sep 05, 2016 at 10:06:14AM +0200, Sylwester Nawrocki wrote:
+> On 09/02/2016 06:32 PM, Krzysztof Kozlowski wrote:
+> > On Fri, Sep 02, 2016 at 06:26:42PM +0200, Arnd Bergmann wrote:
+> >> On Tuesday, August 30, 2016 11:18:59 AM CEST Krzysztof Kozlowski wrote:
+> >>> Samsung mach/soc update for v4.9:
+> >>> 1. Fix for DMA on S3C24xx. This was probably broken for long time, nobody runs
+> >>>    this code... till now.
+> >>
+> >> Good to know. This reminds me that the s3c24xx DMA code is one of those
+> >> that need to be converted to dma_slave_map at some point. Maybe if someone
+> >> is now running that code, they could give that a try as well?
+> >>
+> >> It shouldn't be hard to convert, let me know if you need more information.
+> > 
+> > +Cc Sylwester,
+> > 
+> > Sylwester recently dig into this platform. I think he managed to play
+> > some audio.
+> 
+> I revived this platform for testing ASoC changes.  I should find time
+> to do that dma_slave_map refactoring sooner or later.
+> 
+> Or if you would like to do it Sam please go ahead.
 
-"Node /memory has a reg or ranges property, but no unit name"
+Thanks for the suggestion and apologies for the late response. Last couple of 
+days I've been figuring out what this would involve and I decided that I want
+to give this a try. I found this patch series [1] that I'll use as an example.
+If I understand it correctly, I'll need to create a dma_slave_map and
+pass that via the platform data into the s3c24xx-dma driver. There I'll
+need to fill in the filter_map of the dma slave device. Right?
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/393635.html
 
----
-
- arch/arm/boot/dts/s5pv210-aquila.dts   | 2 +-
- arch/arm/boot/dts/s5pv210-goni.dts     | 2 +-
- arch/arm/boot/dts/s5pv210-smdkc110.dts | 2 +-
- arch/arm/boot/dts/s5pv210-smdkv210.dts | 2 +-
- arch/arm/boot/dts/s5pv210-torbreck.dts | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
-index da24ab570b0e..d763c5b4c65d 100644
---- a/arch/arm/boot/dts/s5pv210-aquila.dts
-+++ b/arch/arm/boot/dts/s5pv210-aquila.dts
-@@ -29,7 +29,7 @@
- 		bootargs = "console=ttySAC2,115200n8 root=/dev/mmcblk1p5 rw rootwait ignore_loglevel earlyprintk";
- 	};
- 
--	memory {
-+	memory@30000000 {
- 		device_type = "memory";
- 		reg = <0x30000000 0x05000000
- 			0x40000000 0x18000000>;
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index 0a33d402138e..c56f51ee7897 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -29,7 +29,7 @@
- 		bootargs = "console=ttySAC0,115200n8 root=/dev/mmcblk0p5 rw rootwait ignore_loglevel earlyprintk";
- 	};
- 
--	memory {
-+	memory@30000000 {
- 		device_type = "memory";
- 		reg = <0x30000000 0x05000000
- 			0x40000000 0x10000000
-diff --git a/arch/arm/boot/dts/s5pv210-smdkc110.dts b/arch/arm/boot/dts/s5pv210-smdkc110.dts
-index 1eedab7ffe94..5d14da911aa5 100644
---- a/arch/arm/boot/dts/s5pv210-smdkc110.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkc110.dts
-@@ -29,7 +29,7 @@
- 		bootargs = "console=ttySAC0,115200n8 root=/dev/mmcblk0p1 rw rootwait ignore_loglevel earlyprintk";
- 	};
- 
--	memory {
-+	memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x20000000>;
- 	};
-diff --git a/arch/arm/boot/dts/s5pv210-smdkv210.dts b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-index 9eb6aff3e38f..75398318ed57 100644
---- a/arch/arm/boot/dts/s5pv210-smdkv210.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-@@ -29,7 +29,7 @@
- 		bootargs = "console=ttySAC0,115200n8 root=/dev/mmcblk0p1 rw rootwait ignore_loglevel earlyprintk";
- 	};
- 
--	memory {
-+	memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x40000000>;
- 	};
-diff --git a/arch/arm/boot/dts/s5pv210-torbreck.dts b/arch/arm/boot/dts/s5pv210-torbreck.dts
-index 622599fd2cfa..7cb50bcee888 100644
---- a/arch/arm/boot/dts/s5pv210-torbreck.dts
-+++ b/arch/arm/boot/dts/s5pv210-torbreck.dts
-@@ -29,7 +29,7 @@
- 		bootargs = "console=ttySAC0,115200n8 root=/dev/mmcblk0p1 rw rootwait ignore_loglevel earlyprintk";
- 	};
- 
--	memory {
-+	memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x20000000>;
- 	};
--- 
-2.7.4
+Kr,
+Sam
