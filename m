@@ -1,104 +1,1053 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/4] exynos4-is: Clear isp-i2c adapter
- power.ignore_children flag
-Date: Thu, 08 Sep 2016 13:16:43 +0200
-Message-ID: <92b9deab-1a2d-eb76-e9dc-63ab4576b299@samsung.com>
-References: <1472729956-17475-1-git-send-email-s.nawrocki@samsung.com>
- <20160901114711.GF2893@katana>
- <CACRpkdaFj58kMqniVHxC87K0XmHoPy3x-GHs=JrK-t2osKCZ1w@mail.gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v2 1/2] drm/bridge: analogix_dp: Remove duplicated code v2
+Date: Thu, 8 Sep 2016 09:50:41 -0400
+Message-ID: <CAOw6vbJyQDqMz0a9y7amhmB1iQGUv4X6x36wHvvPPB0iXR2vsA@mail.gmail.com>
+References: <1473306506-4283-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:61780 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941023AbcIHLRQ (ORCPT
+Received: from mail-yw0-f175.google.com ([209.85.161.175]:33843 "EHLO
+        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941513AbcIHNvP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 07:17:16 -0400
-In-reply-to: <CACRpkdaFj58kMqniVHxC87K0XmHoPy3x-GHs=JrK-t2osKCZ1w@mail.gmail.com>
+        Thu, 8 Sep 2016 09:51:15 -0400
+Received: by mail-yw0-f175.google.com with SMTP id g192so28755201ywh.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Sep 2016 06:51:15 -0700 (PDT)
+Received: from mail-yw0-f179.google.com (mail-yw0-f179.google.com. [209.85.161.179])
+        by smtp.gmail.com with ESMTPSA id n192sm4648457ywd.12.2016.09.08.06.51.03
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Sep 2016 06:51:07 -0700 (PDT)
+Received: by mail-yw0-f179.google.com with SMTP id j1so28551095ywb.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Sep 2016 06:51:03 -0700 (PDT)
+In-Reply-To: <1473306506-4283-1-git-send-email-ykk@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, stable <stable@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@intel.com>
 
-On 09/07/2016 10:38 PM, Linus Walleij wrote:
-> On Thu, Sep 1, 2016 at 1:47 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> On Thu, Sep 01, 2016 at 01:39:16PM +0200, Sylwester Nawrocki wrote:
-> 
->>> Since commit 04f59143b571161d25315dd52d7a2ecc022cb71a
->>> ("i2c: let I2C masters ignore their children for PM")
->>> the power.ignore_children flag is set when registering an I2C
->>> adapter. Since I2C transfers are not managed by the fimc-isp-i2c
->>> driver its clients use pm_runtime_* calls directly to communicate
->>> required power state of the bus controller.
->>> However when the power.ignore_children flag is set that doesn't
->>> work, so clear that flag back after registering the adapter.
->>> While at it drop pm_runtime_enable() call on the i2c_adapter
->>> as it is already done by the I2C subsystem when registering
->>> I2C adapter.
->>>
->>> Cc: <stable@vger.kernel.org> # 4.7+
->>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> I understand what the patch is doing but not this commit message.
-> 
-> What does it mean when you say "Since I2C transfers are not
-> managed by the fimc-isp-i2c driver its clients use pm_runtime_*
-> calls directly to communicate required power state of the bus
-> controller."?
-> 
-> I find it very hard to understand.
+On Wed, Sep 7, 2016 at 11:48 PM, Yakir Yang <ykk@rock-chips.com> wrote:
+> From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>
+> Remove code for reading the EDID and DPCD fields and use the helpers
+> instead.
+>
+> Besides the obvious code reduction, other helpers are being added to the
+> core that could be used in this driver and will be good to be able to
+> use them instead of duplicating them.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Mika Kahola <mika.kahola@intel.com>
+> Cc: Yakir Yang <ykk@rock-chips.com>
+> Cc: Daniel Vetter <daniel.vetter@intel.com>
+>
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> Reviewed-by: Yakir Yang <ykk@rock-chips.com>
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Sean Paul <seanpaul@chromium.org>
+> ---
+> Changes in v2:
+> - A bunch of good fixes from Sean and Yakir
+> - Moved the transfer function to analogix_dp_reg.c
+> - Removed reference to the EDID from the dp struct
+> - Rebase on Sean's next tree
+>     git://people.freedesktop.org/~seanpaul/dogwood
+>
 
-When a video device node is opened the I2C client (v4l2 subdevice)
-in its s_power() handler makes pm_runtime_get/pm_runtime_put calls
-on its corresponding i2c_client.  It's true we use an imitation of
-I2C bus adapter just to make things work with standard DT bindings
-and except of device instantiation this adapter's task is just
-to control the clock.
-I admit that it's all an odd use case, it comes from the fact that
-the image sensor devices are handled in the ISP's firmware, where
-normally we have an I2C client driver for each sensor in V4L2.
 
-Now, I don't like those pm_runtime_* calls in the sensor drivers
-as that's a non standard thing.  The other option to fix the
-regression which I have been considering is to remove the whole
-PM runtime dependency and make the driver of the I2C controller's
-parent device [1] handle the clocks, as it's done with clocks of
-some other IP blocks in that whole camera subsystem.  Probably
-it's the lesser of two evils.
+This patch has already been merged to my 'base' branch, I suppose
+since no one has picked it up yet, I'll pull it in my rockchip
+for-next.
 
-> The intent of the commit is to decouple I2C slave devices'
-> runtime PM state from their parents, so say a gyroscope on an
-> I2C bus does not have to bring up it's host controller to be
-> active, for example it usually has an IRQ line to wake up
-> the driver and that will talk using I2C and the I2C traffic will
-> wake up the I2C master.
-> 
-> When I look at the driver it appears it is not even used for
-> I2C traffic, just to take the clocks up and down and make it
-> possible to manage a clock using runtime PM and interface
-> with the DT logic... so I guess since it's likely and odd one-off
-> and the driver is sufficiently weird anyways, it's fine to merge
-> this patch making it even weirder.
-
-Yeah, it's an odd one-off, there is no other drivers in mainline
-with such a "non standard" split of hardware control responsibility
-between main CPU and the ISP's MCU.
-
-I'd merge the $subject patch as a regression fix for 4.7 and 4.8
-and then think about a little larger patch moving the clock handling
-responsibility the the ISP_I2C controller's parent driver.
-
-> Maybe a sort of mock adapter type should actually be
-> created in the I2C core for these things so it can be handled
-> there but who am I to say.
-
-Not sure if we need it right now, probably if there is more such
-use cases we could think about something like this.
-
-[1] http://lxr.linux.no/#linux+v4.7.3/arch/arm/boot/dts/exynos4x12.dtsi#L148
-
--- 
 Thanks,
-Sylwester
+
+Sean
+
+
+
+
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 263 ++++--------
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  41 +-
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 451 ++++++---------------
+>  3 files changed, 204 insertions(+), 551 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index efac8ab..5fe3982 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -31,6 +31,7 @@
+>  #include <drm/bridge/analogix_dp.h>
+>
+>  #include "analogix_dp_core.h"
+> +#include "analogix_dp_reg.h"
+>
+>  #define to_dp(nm)      container_of(nm, struct analogix_dp_device, nm)
+>
+> @@ -174,150 +175,21 @@ static void analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
+>         analogix_dp_enable_psr_crc(dp);
+>  }
+>
+> -static unsigned char analogix_dp_calc_edid_check_sum(unsigned char *edid_data)
+> -{
+> -       int i;
+> -       unsigned char sum = 0;
+> -
+> -       for (i = 0; i < EDID_BLOCK_LENGTH; i++)
+> -               sum = sum + edid_data[i];
+> -
+> -       return sum;
+> -}
+> -
+> -static int analogix_dp_read_edid(struct analogix_dp_device *dp)
+> -{
+> -       unsigned char *edid = dp->edid;
+> -       unsigned int extend_block = 0;
+> -       unsigned char sum;
+> -       unsigned char test_vector;
+> -       int retval;
+> -
+> -       /*
+> -        * EDID device address is 0x50.
+> -        * However, if necessary, you must have set upper address
+> -        * into E-EDID in I2C device, 0x30.
+> -        */
+> -
+> -       /* Read Extension Flag, Number of 128-byte EDID extension blocks */
+> -       retval = analogix_dp_read_byte_from_i2c(dp, I2C_EDID_DEVICE_ADDR,
+> -                                               EDID_EXTENSION_FLAG,
+> -                                               &extend_block);
+> -       if (retval)
+> -               return retval;
+> -
+> -       if (extend_block > 0) {
+> -               dev_dbg(dp->dev, "EDID data includes a single extension!\n");
+> -
+> -               /* Read EDID data */
+> -               retval = analogix_dp_read_bytes_from_i2c(dp,
+> -                                               I2C_EDID_DEVICE_ADDR,
+> -                                               EDID_HEADER_PATTERN,
+> -                                               EDID_BLOCK_LENGTH,
+> -                                               &edid[EDID_HEADER_PATTERN]);
+> -               if (retval != 0) {
+> -                       dev_err(dp->dev, "EDID Read failed!\n");
+> -                       return -EIO;
+> -               }
+> -               sum = analogix_dp_calc_edid_check_sum(edid);
+> -               if (sum != 0) {
+> -                       dev_err(dp->dev, "EDID bad checksum!\n");
+> -                       return -EIO;
+> -               }
+> -
+> -               /* Read additional EDID data */
+> -               retval = analogix_dp_read_bytes_from_i2c(dp,
+> -                               I2C_EDID_DEVICE_ADDR,
+> -                               EDID_BLOCK_LENGTH,
+> -                               EDID_BLOCK_LENGTH,
+> -                               &edid[EDID_BLOCK_LENGTH]);
+> -               if (retval != 0) {
+> -                       dev_err(dp->dev, "EDID Read failed!\n");
+> -                       return -EIO;
+> -               }
+> -               sum = analogix_dp_calc_edid_check_sum(&edid[EDID_BLOCK_LENGTH]);
+> -               if (sum != 0) {
+> -                       dev_err(dp->dev, "EDID bad checksum!\n");
+> -                       return -EIO;
+> -               }
+> -
+> -               analogix_dp_read_byte_from_dpcd(dp, DP_TEST_REQUEST,
+> -                                               &test_vector);
+> -               if (test_vector & DP_TEST_LINK_EDID_READ) {
+> -                       analogix_dp_write_byte_to_dpcd(dp,
+> -                               DP_TEST_EDID_CHECKSUM,
+> -                               edid[EDID_BLOCK_LENGTH + EDID_CHECKSUM]);
+> -                       analogix_dp_write_byte_to_dpcd(dp,
+> -                               DP_TEST_RESPONSE,
+> -                               DP_TEST_EDID_CHECKSUM_WRITE);
+> -               }
+> -       } else {
+> -               dev_info(dp->dev, "EDID data does not include any extensions.\n");
+> -
+> -               /* Read EDID data */
+> -               retval = analogix_dp_read_bytes_from_i2c(dp,
+> -                               I2C_EDID_DEVICE_ADDR, EDID_HEADER_PATTERN,
+> -                               EDID_BLOCK_LENGTH, &edid[EDID_HEADER_PATTERN]);
+> -               if (retval != 0) {
+> -                       dev_err(dp->dev, "EDID Read failed!\n");
+> -                       return -EIO;
+> -               }
+> -               sum = analogix_dp_calc_edid_check_sum(edid);
+> -               if (sum != 0) {
+> -                       dev_err(dp->dev, "EDID bad checksum!\n");
+> -                       return -EIO;
+> -               }
+> -
+> -               analogix_dp_read_byte_from_dpcd(dp, DP_TEST_REQUEST,
+> -                                               &test_vector);
+> -               if (test_vector & DP_TEST_LINK_EDID_READ) {
+> -                       analogix_dp_write_byte_to_dpcd(dp,
+> -                               DP_TEST_EDID_CHECKSUM, edid[EDID_CHECKSUM]);
+> -                       analogix_dp_write_byte_to_dpcd(dp,
+> -                               DP_TEST_RESPONSE, DP_TEST_EDID_CHECKSUM_WRITE);
+> -               }
+> -       }
+> -
+> -       dev_dbg(dp->dev, "EDID Read success!\n");
+> -       return 0;
+> -}
+> -
+> -static int analogix_dp_handle_edid(struct analogix_dp_device *dp)
+> -{
+> -       u8 buf[12];
+> -       int i;
+> -       int retval;
+> -
+> -       /* Read DPCD DP_DPCD_REV~RECEIVE_PORT1_CAP_1 */
+> -       retval = analogix_dp_read_bytes_from_dpcd(dp, DP_DPCD_REV, 12, buf);
+> -       if (retval)
+> -               return retval;
+> -
+> -       /* Read EDID */
+> -       for (i = 0; i < 3; i++) {
+> -               retval = analogix_dp_read_edid(dp);
+> -               if (!retval)
+> -                       break;
+> -       }
+> -
+> -       return retval;
+> -}
+> -
+>  static void
+>  analogix_dp_enable_rx_to_enhanced_mode(struct analogix_dp_device *dp,
+>                                        bool enable)
+>  {
+>         u8 data;
+>
+> -       analogix_dp_read_byte_from_dpcd(dp, DP_LANE_COUNT_SET, &data);
+> +       drm_dp_dpcd_readb(&dp->aux, DP_LANE_COUNT_SET, &data);
+>
+>         if (enable)
+> -               analogix_dp_write_byte_to_dpcd(dp, DP_LANE_COUNT_SET,
+> -                                              DP_LANE_COUNT_ENHANCED_FRAME_EN |
+> -                                              DPCD_LANE_COUNT_SET(data));
+> +               drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
+> +                                  DP_LANE_COUNT_ENHANCED_FRAME_EN |
+> +                                       DPCD_LANE_COUNT_SET(data));
+>         else
+> -               analogix_dp_write_byte_to_dpcd(dp, DP_LANE_COUNT_SET,
+> -                                              DPCD_LANE_COUNT_SET(data));
+> +               drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
+> +                                  DPCD_LANE_COUNT_SET(data));
+>  }
+>
+>  static int analogix_dp_is_enhanced_mode_available(struct analogix_dp_device *dp)
+> @@ -325,7 +197,7 @@ static int analogix_dp_is_enhanced_mode_available(struct analogix_dp_device *dp)
+>         u8 data;
+>         int retval;
+>
+> -       analogix_dp_read_byte_from_dpcd(dp, DP_MAX_LANE_COUNT, &data);
+> +       drm_dp_dpcd_readb(&dp->aux, DP_MAX_LANE_COUNT, &data);
+>         retval = DPCD_ENHANCED_FRAME_CAP(data);
+>
+>         return retval;
+> @@ -344,8 +216,8 @@ static void analogix_dp_training_pattern_dis(struct analogix_dp_device *dp)
+>  {
+>         analogix_dp_set_training_pattern(dp, DP_NONE);
+>
+> -       analogix_dp_write_byte_to_dpcd(dp, DP_TRAINING_PATTERN_SET,
+> -                                      DP_TRAINING_PATTERN_DISABLE);
+> +       drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                          DP_TRAINING_PATTERN_DISABLE);
+>  }
+>
+>  static void
+> @@ -390,8 +262,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
+>         /* Setup RX configuration */
+>         buf[0] = dp->link_train.link_rate;
+>         buf[1] = dp->link_train.lane_count;
+> -       retval = analogix_dp_write_bytes_to_dpcd(dp, DP_LINK_BW_SET, 2, buf);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, 2);
+> +       if (retval < 0)
+>                 return retval;
+>
+>         /* Set TX pre-emphasis to minimum */
+> @@ -415,20 +287,22 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
+>         analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
+>
+>         /* Set RX training pattern */
+> -       retval = analogix_dp_write_byte_to_dpcd(dp,
+> -                       DP_TRAINING_PATTERN_SET,
+> -                       DP_LINK_SCRAMBLING_DISABLE | DP_TRAINING_PATTERN_1);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                                   DP_LINK_SCRAMBLING_DISABLE |
+> +                                       DP_TRAINING_PATTERN_1);
+> +       if (retval < 0)
+>                 return retval;
+>
+>         for (lane = 0; lane < lane_count; lane++)
+>                 buf[lane] = DP_TRAIN_PRE_EMPH_LEVEL_0 |
+>                             DP_TRAIN_VOLTAGE_SWING_LEVEL_0;
+>
+> -       retval = analogix_dp_write_bytes_to_dpcd(dp, DP_TRAINING_LANE0_SET,
+> -                                                lane_count, buf);
+> +       retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, buf,
+> +                                  lane_count);
+> +       if (retval < 0)
+> +               return retval;
+>
+> -       return retval;
+> +       return 0;
+>  }
+>
+>  static unsigned char analogix_dp_get_lane_status(u8 link_status[2], int lane)
+> @@ -580,25 +454,23 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
+>
+>         lane_count = dp->link_train.lane_count;
+>
+> -       retval =  analogix_dp_read_bytes_from_dpcd(dp,
+> -                       DP_LANE0_1_STATUS, 2, link_status);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status, 2);
+> +       if (retval < 0)
+>                 return retval;
+>
+> -       retval =  analogix_dp_read_bytes_from_dpcd(dp,
+> -                       DP_ADJUST_REQUEST_LANE0_1, 2, adjust_request);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_read(&dp->aux, DP_ADJUST_REQUEST_LANE0_1,
+> +                                 adjust_request, 2);
+> +       if (retval < 0)
+>                 return retval;
+>
+>         if (analogix_dp_clock_recovery_ok(link_status, lane_count) == 0) {
+>                 /* set training pattern 2 for EQ */
+>                 analogix_dp_set_training_pattern(dp, TRAINING_PTN2);
+>
+> -               retval = analogix_dp_write_byte_to_dpcd(dp,
+> -                               DP_TRAINING_PATTERN_SET,
+> -                               DP_LINK_SCRAMBLING_DISABLE |
+> -                               DP_TRAINING_PATTERN_2);
+> -               if (retval)
+> +               retval = drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                                           DP_LINK_SCRAMBLING_DISABLE |
+> +                                               DP_TRAINING_PATTERN_2);
+> +               if (retval < 0)
+>                         return retval;
+>
+>                 dev_info(dp->dev, "Link Training Clock Recovery success\n");
+> @@ -636,13 +508,12 @@ static int analogix_dp_process_clock_recovery(struct analogix_dp_device *dp)
+>                 analogix_dp_set_lane_link_training(dp,
+>                         dp->link_train.training_lane[lane], lane);
+>
+> -       retval = analogix_dp_write_bytes_to_dpcd(dp,
+> -                       DP_TRAINING_LANE0_SET, lane_count,
+> -                       dp->link_train.training_lane);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> +                                  dp->link_train.training_lane, lane_count);
+> +       if (retval < 0)
+>                 return retval;
+>
+> -       return retval;
+> +       return 0;
+>  }
+>
+>  static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+> @@ -655,9 +526,8 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+>
+>         lane_count = dp->link_train.lane_count;
+>
+> -       retval = analogix_dp_read_bytes_from_dpcd(dp,
+> -                       DP_LANE0_1_STATUS, 2, link_status);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status, 2);
+> +       if (retval < 0)
+>                 return retval;
+>
+>         if (analogix_dp_clock_recovery_ok(link_status, lane_count)) {
+> @@ -665,14 +535,13 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+>                 return -EIO;
+>         }
+>
+> -       retval = analogix_dp_read_bytes_from_dpcd(dp,
+> -                       DP_ADJUST_REQUEST_LANE0_1, 2, adjust_request);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_read(&dp->aux, DP_ADJUST_REQUEST_LANE0_1, adjust_request, 2);
+> +       if (retval < 0)
+>                 return retval;
+>
+> -       retval = analogix_dp_read_byte_from_dpcd(dp,
+> -                       DP_LANE_ALIGN_STATUS_UPDATED, &link_align);
+> -       if (retval)
+> +       retval = drm_dp_dpcd_readb(&dp->aux, DP_LANE_ALIGN_STATUS_UPDATED,
+> +                                  &link_align);
+> +       if (retval < 0)
+>                 return retval;
+>
+>         analogix_dp_get_adjust_training_lane(dp, adjust_request);
+> @@ -713,10 +582,12 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+>                 analogix_dp_set_lane_link_training(dp,
+>                         dp->link_train.training_lane[lane], lane);
+>
+> -       retval = analogix_dp_write_bytes_to_dpcd(dp, DP_TRAINING_LANE0_SET,
+> -                       lane_count, dp->link_train.training_lane);
+> +       retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> +                                  dp->link_train.training_lane, lane_count);
+> +       if (retval < 0)
+> +               return retval;
+>
+> -       return retval;
+> +       return 0;
+>  }
+>
+>  static void analogix_dp_get_max_rx_bandwidth(struct analogix_dp_device *dp,
+> @@ -730,7 +601,7 @@ static void analogix_dp_get_max_rx_bandwidth(struct analogix_dp_device *dp,
+>          * For DP rev.1.2, Maximum link rate of Main Link lanes
+>          * 0x06 = 1.62 Gbps, 0x0a = 2.7 Gbps, 0x14 = 5.4Gbps
+>          */
+> -       analogix_dp_read_byte_from_dpcd(dp, DP_MAX_LINK_RATE, &data);
+> +       drm_dp_dpcd_readb(&dp->aux, DP_MAX_LINK_RATE, &data);
+>         *bandwidth = data;
+>  }
+>
+> @@ -743,7 +614,7 @@ static void analogix_dp_get_max_rx_lane_count(struct analogix_dp_device *dp,
+>          * For DP rev.1.1, Maximum number of Main Link lanes
+>          * 0x01 = 1 lane, 0x02 = 2 lanes, 0x04 = 4 lanes
+>          */
+> -       analogix_dp_read_byte_from_dpcd(dp, DP_MAX_LANE_COUNT, &data);
+> +       drm_dp_dpcd_readb(&dp->aux, DP_MAX_LANE_COUNT, &data);
+>         *lane_count = DPCD_MAX_LANE_COUNT(data);
+>  }
+>
+> @@ -912,19 +783,15 @@ static void analogix_dp_enable_scramble(struct analogix_dp_device *dp,
+>         if (enable) {
+>                 analogix_dp_enable_scrambling(dp);
+>
+> -               analogix_dp_read_byte_from_dpcd(dp, DP_TRAINING_PATTERN_SET,
+> -                                               &data);
+> -               analogix_dp_write_byte_to_dpcd(dp,
+> -                       DP_TRAINING_PATTERN_SET,
+> -                       (u8)(data & ~DP_LINK_SCRAMBLING_DISABLE));
+> +               drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET, &data);
+> +               drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                                  (u8)(data & ~DP_LINK_SCRAMBLING_DISABLE));
+>         } else {
+>                 analogix_dp_disable_scrambling(dp);
+>
+> -               analogix_dp_read_byte_from_dpcd(dp, DP_TRAINING_PATTERN_SET,
+> -                                               &data);
+> -               analogix_dp_write_byte_to_dpcd(dp,
+> -                       DP_TRAINING_PATTERN_SET,
+> -                       (u8)(data | DP_LINK_SCRAMBLING_DISABLE));
+> +               drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET, &data);
+> +               drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                                  (u8)(data | DP_LINK_SCRAMBLING_DISABLE));
+>         }
+>  }
+>
+> @@ -1053,7 +920,7 @@ out:
+>  int analogix_dp_get_modes(struct drm_connector *connector)
+>  {
+>         struct analogix_dp_device *dp = to_dp(connector);
+> -       struct edid *edid = (struct edid *)dp->edid;
+> +       struct edid *edid;
+>         int ret, num_modes = 0;
+>
+>         ret = analogix_dp_prepare_panel(dp, true, false);
+> @@ -1062,9 +929,11 @@ int analogix_dp_get_modes(struct drm_connector *connector)
+>                 return 0;
+>         }
+>
+> -       if (analogix_dp_handle_edid(dp) == 0) {
+> +       edid = drm_get_edid(connector, &dp->aux.ddc);
+> +       if (edid) {
+>                 drm_mode_connector_update_edid_property(&dp->connector, edid);
+>                 num_modes += drm_add_edid_modes(&dp->connector, edid);
+> +               kfree(edid);
+>         }
+>
+>         if (dp->plat_data->panel)
+> @@ -1395,6 +1264,14 @@ static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
+>         return 0;
+>  }
+>
+> +static ssize_t analogix_dpaux_transfer(struct drm_dp_aux *aux,
+> +                                      struct drm_dp_aux_msg *msg)
+> +{
+> +       struct analogix_dp_device *dp = to_dp(aux);
+> +
+> +       return analogix_dp_transfer(dp, msg);
+> +}
+> +
+>  int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>                      struct analogix_dp_plat_data *plat_data)
+>  {
+> @@ -1515,6 +1392,14 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>         dp->drm_dev = drm_dev;
+>         dp->encoder = dp->plat_data->encoder;
+>
+> +       dp->aux.name = "DP-AUX";
+> +       dp->aux.transfer = analogix_dpaux_transfer;
+> +       dp->aux.dev = &pdev->dev;
+> +
+> +       ret = drm_dp_aux_register(&dp->aux);
+> +       if (ret)
+> +               goto err_disable_pm_runtime;
+> +
+>         ret = analogix_dp_create_bridge(drm_dev, dp);
+>         if (ret) {
+>                 DRM_ERROR("failed to create bridge (%d)\n", ret);
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> index 473b980..a15f076 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> @@ -20,15 +20,6 @@
+>  #define MAX_CR_LOOP 5
+>  #define MAX_EQ_LOOP 5
+>
+> -/* I2C EDID Chip ID, Slave Address */
+> -#define I2C_EDID_DEVICE_ADDR                   0x50
+> -#define I2C_E_EDID_DEVICE_ADDR                 0x30
+> -
+> -#define EDID_BLOCK_LENGTH                      0x80
+> -#define EDID_HEADER_PATTERN                    0x00
+> -#define EDID_EXTENSION_FLAG                    0x7e
+> -#define EDID_CHECKSUM                          0x7f
+> -
+>  /* DP_MAX_LANE_COUNT */
+>  #define DPCD_ENHANCED_FRAME_CAP(x)             (((x) >> 7) & 0x1)
+>  #define DPCD_MAX_LANE_COUNT(x)                 ((x) & 0x1f)
+> @@ -166,6 +157,7 @@ struct analogix_dp_device {
+>         struct drm_device       *drm_dev;
+>         struct drm_connector    connector;
+>         struct drm_bridge       *bridge;
+> +       struct drm_dp_aux       aux;
+>         struct clk              *clock;
+>         unsigned int            irq;
+>         void __iomem            *reg_base;
+> @@ -176,7 +168,6 @@ struct analogix_dp_device {
+>         int                     dpms_mode;
+>         int                     hpd_gpio;
+>         bool                    force_hpd;
+> -       unsigned char           edid[EDID_BLOCK_LENGTH * 2];
+>         bool                    psr_support;
+>
+>         struct mutex            panel_lock;
+> @@ -210,33 +201,6 @@ void analogix_dp_reset_aux(struct analogix_dp_device *dp);
+>  void analogix_dp_init_aux(struct analogix_dp_device *dp);
+>  int analogix_dp_get_plug_in_status(struct analogix_dp_device *dp);
+>  void analogix_dp_enable_sw_function(struct analogix_dp_device *dp);
+> -int analogix_dp_start_aux_transaction(struct analogix_dp_device *dp);
+> -int analogix_dp_write_byte_to_dpcd(struct analogix_dp_device *dp,
+> -                                  unsigned int reg_addr,
+> -                                  unsigned char data);
+> -int analogix_dp_read_byte_from_dpcd(struct analogix_dp_device *dp,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned char *data);
+> -int analogix_dp_write_bytes_to_dpcd(struct analogix_dp_device *dp,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned int count,
+> -                                   unsigned char data[]);
+> -int analogix_dp_read_bytes_from_dpcd(struct analogix_dp_device *dp,
+> -                                    unsigned int reg_addr,
+> -                                    unsigned int count,
+> -                                    unsigned char data[]);
+> -int analogix_dp_select_i2c_device(struct analogix_dp_device *dp,
+> -                                 unsigned int device_addr,
+> -                                 unsigned int reg_addr);
+> -int analogix_dp_read_byte_from_i2c(struct analogix_dp_device *dp,
+> -                                  unsigned int device_addr,
+> -                                  unsigned int reg_addr,
+> -                                  unsigned int *data);
+> -int analogix_dp_read_bytes_from_i2c(struct analogix_dp_device *dp,
+> -                                   unsigned int device_addr,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned int count,
+> -                                   unsigned char edid[]);
+>  void analogix_dp_set_link_bandwidth(struct analogix_dp_device *dp, u32 bwtype);
+>  void analogix_dp_get_link_bandwidth(struct analogix_dp_device *dp, u32 *bwtype);
+>  void analogix_dp_set_lane_count(struct analogix_dp_device *dp, u32 count);
+> @@ -285,5 +249,6 @@ void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+>  void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
+>  void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>                               struct edp_vsc_psr *vsc);
+> -
+> +ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+> +                            struct drm_dp_aux_msg *msg);
+>  #endif /* _ANALOGIX_DP_CORE_H */
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> index 52c1b6b..a4d17b8 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> @@ -585,330 +585,6 @@ int analogix_dp_write_byte_to_dpcd(struct analogix_dp_device *dp,
+>         return retval;
+>  }
+>
+> -int analogix_dp_read_byte_from_dpcd(struct analogix_dp_device *dp,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned char *data)
+> -{
+> -       u32 reg;
+> -       int i;
+> -       int retval;
+> -
+> -       for (i = 0; i < 3; i++) {
+> -               /* Clear AUX CH data buffer */
+> -               reg = BUF_CLR;
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> -
+> -               /* Select DPCD device address */
+> -               reg = AUX_ADDR_7_0(reg_addr);
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_7_0);
+> -               reg = AUX_ADDR_15_8(reg_addr);
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_15_8);
+> -               reg = AUX_ADDR_19_16(reg_addr);
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_19_16);
+> -
+> -               /*
+> -                * Set DisplayPort transaction and read 1 byte
+> -                * If bit 3 is 1, DisplayPort transaction.
+> -                * If Bit 3 is 0, I2C transaction.
+> -                */
+> -               reg = AUX_TX_COMM_DP_TRANSACTION | AUX_TX_COMM_READ;
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -               /* Start AUX transaction */
+> -               retval = analogix_dp_start_aux_transaction(dp);
+> -               if (retval == 0)
+> -                       break;
+> -
+> -               dev_dbg(dp->dev, "%s: Aux Transaction fail!\n", __func__);
+> -       }
+> -
+> -       /* Read data buffer */
+> -       reg = readl(dp->reg_base + ANALOGIX_DP_BUF_DATA_0);
+> -       *data = (unsigned char)(reg & 0xff);
+> -
+> -       return retval;
+> -}
+> -
+> -int analogix_dp_write_bytes_to_dpcd(struct analogix_dp_device *dp,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned int count,
+> -                                   unsigned char data[])
+> -{
+> -       u32 reg;
+> -       unsigned int start_offset;
+> -       unsigned int cur_data_count;
+> -       unsigned int cur_data_idx;
+> -       int i;
+> -       int retval = 0;
+> -
+> -       /* Clear AUX CH data buffer */
+> -       reg = BUF_CLR;
+> -       writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> -
+> -       start_offset = 0;
+> -       while (start_offset < count) {
+> -               /* Buffer size of AUX CH is 16 * 4bytes */
+> -               if ((count - start_offset) > 16)
+> -                       cur_data_count = 16;
+> -               else
+> -                       cur_data_count = count - start_offset;
+> -
+> -               for (i = 0; i < 3; i++) {
+> -                       /* Select DPCD device address */
+> -                       reg = AUX_ADDR_7_0(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_7_0);
+> -                       reg = AUX_ADDR_15_8(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_15_8);
+> -                       reg = AUX_ADDR_19_16(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_19_16);
+> -
+> -                       for (cur_data_idx = 0; cur_data_idx < cur_data_count;
+> -                            cur_data_idx++) {
+> -                               reg = data[start_offset + cur_data_idx];
+> -                               writel(reg, dp->reg_base +
+> -                                      ANALOGIX_DP_BUF_DATA_0 +
+> -                                      4 * cur_data_idx);
+> -                       }
+> -
+> -                       /*
+> -                        * Set DisplayPort transaction and write
+> -                        * If bit 3 is 1, DisplayPort transaction.
+> -                        * If Bit 3 is 0, I2C transaction.
+> -                        */
+> -                       reg = AUX_LENGTH(cur_data_count) |
+> -                               AUX_TX_COMM_DP_TRANSACTION | AUX_TX_COMM_WRITE;
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -                       /* Start AUX transaction */
+> -                       retval = analogix_dp_start_aux_transaction(dp);
+> -                       if (retval == 0)
+> -                               break;
+> -
+> -                       dev_dbg(dp->dev, "%s: Aux Transaction fail!\n",
+> -                               __func__);
+> -               }
+> -
+> -               start_offset += cur_data_count;
+> -       }
+> -
+> -       return retval;
+> -}
+> -
+> -int analogix_dp_read_bytes_from_dpcd(struct analogix_dp_device *dp,
+> -                                    unsigned int reg_addr,
+> -                                    unsigned int count,
+> -                                    unsigned char data[])
+> -{
+> -       u32 reg;
+> -       unsigned int start_offset;
+> -       unsigned int cur_data_count;
+> -       unsigned int cur_data_idx;
+> -       int i;
+> -       int retval = 0;
+> -
+> -       /* Clear AUX CH data buffer */
+> -       reg = BUF_CLR;
+> -       writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> -
+> -       start_offset = 0;
+> -       while (start_offset < count) {
+> -               /* Buffer size of AUX CH is 16 * 4bytes */
+> -               if ((count - start_offset) > 16)
+> -                       cur_data_count = 16;
+> -               else
+> -                       cur_data_count = count - start_offset;
+> -
+> -               /* AUX CH Request Transaction process */
+> -               for (i = 0; i < 3; i++) {
+> -                       /* Select DPCD device address */
+> -                       reg = AUX_ADDR_7_0(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_7_0);
+> -                       reg = AUX_ADDR_15_8(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_15_8);
+> -                       reg = AUX_ADDR_19_16(reg_addr + start_offset);
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_19_16);
+> -
+> -                       /*
+> -                        * Set DisplayPort transaction and read
+> -                        * If bit 3 is 1, DisplayPort transaction.
+> -                        * If Bit 3 is 0, I2C transaction.
+> -                        */
+> -                       reg = AUX_LENGTH(cur_data_count) |
+> -                               AUX_TX_COMM_DP_TRANSACTION | AUX_TX_COMM_READ;
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -                       /* Start AUX transaction */
+> -                       retval = analogix_dp_start_aux_transaction(dp);
+> -                       if (retval == 0)
+> -                               break;
+> -
+> -                       dev_dbg(dp->dev, "%s: Aux Transaction fail!\n",
+> -                               __func__);
+> -               }
+> -
+> -               for (cur_data_idx = 0; cur_data_idx < cur_data_count;
+> -                   cur_data_idx++) {
+> -                       reg = readl(dp->reg_base + ANALOGIX_DP_BUF_DATA_0
+> -                                                + 4 * cur_data_idx);
+> -                       data[start_offset + cur_data_idx] =
+> -                               (unsigned char)reg;
+> -               }
+> -
+> -               start_offset += cur_data_count;
+> -       }
+> -
+> -       return retval;
+> -}
+> -
+> -int analogix_dp_select_i2c_device(struct analogix_dp_device *dp,
+> -                                 unsigned int device_addr,
+> -                                 unsigned int reg_addr)
+> -{
+> -       u32 reg;
+> -       int retval;
+> -
+> -       /* Set EDID device address */
+> -       reg = device_addr;
+> -       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_7_0);
+> -       writel(0x0, dp->reg_base + ANALOGIX_DP_AUX_ADDR_15_8);
+> -       writel(0x0, dp->reg_base + ANALOGIX_DP_AUX_ADDR_19_16);
+> -
+> -       /* Set offset from base address of EDID device */
+> -       writel(reg_addr, dp->reg_base + ANALOGIX_DP_BUF_DATA_0);
+> -
+> -       /*
+> -        * Set I2C transaction and write address
+> -        * If bit 3 is 1, DisplayPort transaction.
+> -        * If Bit 3 is 0, I2C transaction.
+> -        */
+> -       reg = AUX_TX_COMM_I2C_TRANSACTION | AUX_TX_COMM_MOT |
+> -               AUX_TX_COMM_WRITE;
+> -       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -       /* Start AUX transaction */
+> -       retval = analogix_dp_start_aux_transaction(dp);
+> -       if (retval != 0)
+> -               dev_dbg(dp->dev, "%s: Aux Transaction fail!\n", __func__);
+> -
+> -       return retval;
+> -}
+> -
+> -int analogix_dp_read_byte_from_i2c(struct analogix_dp_device *dp,
+> -                                  unsigned int device_addr,
+> -                                  unsigned int reg_addr,
+> -                                  unsigned int *data)
+> -{
+> -       u32 reg;
+> -       int i;
+> -       int retval;
+> -
+> -       for (i = 0; i < 3; i++) {
+> -               /* Clear AUX CH data buffer */
+> -               reg = BUF_CLR;
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> -
+> -               /* Select EDID device */
+> -               retval = analogix_dp_select_i2c_device(dp, device_addr,
+> -                                                      reg_addr);
+> -               if (retval != 0)
+> -                       continue;
+> -
+> -               /*
+> -                * Set I2C transaction and read data
+> -                * If bit 3 is 1, DisplayPort transaction.
+> -                * If Bit 3 is 0, I2C transaction.
+> -                */
+> -               reg = AUX_TX_COMM_I2C_TRANSACTION |
+> -                       AUX_TX_COMM_READ;
+> -               writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -               /* Start AUX transaction */
+> -               retval = analogix_dp_start_aux_transaction(dp);
+> -               if (retval == 0)
+> -                       break;
+> -
+> -               dev_dbg(dp->dev, "%s: Aux Transaction fail!\n", __func__);
+> -       }
+> -
+> -       /* Read data */
+> -       if (retval == 0)
+> -               *data = readl(dp->reg_base + ANALOGIX_DP_BUF_DATA_0);
+> -
+> -       return retval;
+> -}
+> -
+> -int analogix_dp_read_bytes_from_i2c(struct analogix_dp_device *dp,
+> -                                   unsigned int device_addr,
+> -                                   unsigned int reg_addr,
+> -                                   unsigned int count,
+> -                                   unsigned char edid[])
+> -{
+> -       u32 reg;
+> -       unsigned int i, j;
+> -       unsigned int cur_data_idx;
+> -       unsigned int defer = 0;
+> -       int retval = 0;
+> -
+> -       for (i = 0; i < count; i += 16) {
+> -               for (j = 0; j < 3; j++) {
+> -                       /* Clear AUX CH data buffer */
+> -                       reg = BUF_CLR;
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> -
+> -                       /* Set normal AUX CH command */
+> -                       reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
+> -                       reg &= ~ADDR_ONLY;
+> -                       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
+> -
+> -                       /*
+> -                        * If Rx sends defer, Tx sends only reads
+> -                        * request without sending address
+> -                        */
+> -                       if (!defer)
+> -                               retval = analogix_dp_select_i2c_device(dp,
+> -                                               device_addr, reg_addr + i);
+> -                       else
+> -                               defer = 0;
+> -
+> -                       if (retval == 0) {
+> -                               /*
+> -                                * Set I2C transaction and write data
+> -                                * If bit 3 is 1, DisplayPort transaction.
+> -                                * If Bit 3 is 0, I2C transaction.
+> -                                */
+> -                               reg = AUX_LENGTH(16) |
+> -                                       AUX_TX_COMM_I2C_TRANSACTION |
+> -                                       AUX_TX_COMM_READ;
+> -                               writel(reg, dp->reg_base +
+> -                                       ANALOGIX_DP_AUX_CH_CTL_1);
+> -
+> -                               /* Start AUX transaction */
+> -                               retval = analogix_dp_start_aux_transaction(dp);
+> -                               if (retval == 0)
+> -                                       break;
+> -
+> -                               dev_dbg(dp->dev, "%s: Aux Transaction fail!\n",
+> -                                       __func__);
+> -                       }
+> -                       /* Check if Rx sends defer */
+> -                       reg = readl(dp->reg_base + ANALOGIX_DP_AUX_RX_COMM);
+> -                       if (reg == AUX_RX_COMM_AUX_DEFER ||
+> -                           reg == AUX_RX_COMM_I2C_DEFER) {
+> -                               dev_err(dp->dev, "Defer: %d\n\n", reg);
+> -                               defer = 1;
+> -                       }
+> -               }
+> -
+> -               for (cur_data_idx = 0; cur_data_idx < 16; cur_data_idx++) {
+> -                       reg = readl(dp->reg_base + ANALOGIX_DP_BUF_DATA_0
+> -                                                + 4 * cur_data_idx);
+> -                       edid[i + cur_data_idx] = (unsigned char)reg;
+> -               }
+> -       }
+> -
+> -       return retval;
+> -}
+> -
+>  void analogix_dp_set_link_bandwidth(struct analogix_dp_device *dp, u32 bwtype)
+>  {
+>         u32 reg;
+> @@ -1373,3 +1049,130 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>         val |= IF_EN;
+>         writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>  }
+> +
+> +ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+> +                            struct drm_dp_aux_msg *msg)
+> +{
+> +       u32 reg;
+> +       u8 *buffer = msg->buffer;
+> +       int timeout_loop = 0;
+> +       unsigned int i;
+> +       int num_transferred = 0;
+> +
+> +       /* Buffer size of AUX CH is 16 bytes */
+> +       if (WARN_ON(msg->size > 16))
+> +               return -E2BIG;
+> +
+> +       /* Clear AUX CH data buffer */
+> +       reg = BUF_CLR;
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_BUFFER_DATA_CTL);
+> +
+> +       switch (msg->request & ~DP_AUX_I2C_MOT) {
+> +       case DP_AUX_I2C_WRITE:
+> +               reg = AUX_TX_COMM_WRITE | AUX_TX_COMM_I2C_TRANSACTION;
+> +               if (msg->request & DP_AUX_I2C_MOT)
+> +                       reg |= AUX_TX_COMM_MOT;
+> +               break;
+> +
+> +       case DP_AUX_I2C_READ:
+> +               reg = AUX_TX_COMM_READ | AUX_TX_COMM_I2C_TRANSACTION;
+> +               if (msg->request & DP_AUX_I2C_MOT)
+> +                       reg |= AUX_TX_COMM_MOT;
+> +               break;
+> +
+> +       case DP_AUX_NATIVE_WRITE:
+> +               reg = AUX_TX_COMM_WRITE | AUX_TX_COMM_DP_TRANSACTION;
+> +               break;
+> +
+> +       case DP_AUX_NATIVE_READ:
+> +               reg = AUX_TX_COMM_READ | AUX_TX_COMM_DP_TRANSACTION;
+> +               break;
+> +
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       reg |= AUX_LENGTH(msg->size);
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_1);
+> +
+> +       /* Select DPCD device address */
+> +       reg = AUX_ADDR_7_0(msg->address);
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_7_0);
+> +       reg = AUX_ADDR_15_8(msg->address);
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_15_8);
+> +       reg = AUX_ADDR_19_16(msg->address);
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_ADDR_19_16);
+> +
+> +       if (!(msg->request & DP_AUX_I2C_READ)) {
+> +               for (i = 0; i < msg->size; i++) {
+> +                       reg = buffer[i];
+> +                       writel(reg, dp->reg_base + ANALOGIX_DP_BUF_DATA_0 +
+> +                              4 * i);
+> +                       num_transferred++;
+> +               }
+> +       }
+> +
+> +       /* Enable AUX CH operation */
+> +       reg = AUX_EN;
+> +
+> +       /* Zero-sized messages specify address-only transactions. */
+> +       if (msg->size < 1)
+> +               reg |= ADDR_ONLY;
+> +
+> +       writel(reg, dp->reg_base + ANALOGIX_DP_AUX_CH_CTL_2);
+> +
+> +       /* Is AUX CH command reply received? */
+> +       /* TODO: Wait for an interrupt instead of looping? */
+> +       reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+> +       while (!(reg & RPLY_RECEIV)) {
+> +               timeout_loop++;
+> +               if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+> +                       dev_err(dp->dev, "AUX CH command reply failed!\n");
+> +                       return -ETIMEDOUT;
+> +               }
+> +               reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+> +               usleep_range(10, 11);
+> +       }
+> +
+> +       /* Clear interrupt source for AUX CH command reply */
+> +       writel(RPLY_RECEIV, dp->reg_base + ANALOGIX_DP_INT_STA);
+> +
+> +       /* Clear interrupt source for AUX CH access error */
+> +       reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+> +       if (reg & AUX_ERR) {
+> +               writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
+> +               return -EREMOTEIO;
+> +       }
+> +
+> +       /* Check AUX CH error access status */
+> +       reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
+> +       if ((reg & AUX_STATUS_MASK)) {
+> +               dev_err(dp->dev, "AUX CH error happened: %d\n\n",
+> +                       reg & AUX_STATUS_MASK);
+> +               return -EREMOTEIO;
+> +       }
+> +
+> +       if (msg->request & DP_AUX_I2C_READ) {
+> +               for (i = 0; i < msg->size; i++) {
+> +                       reg = readl(dp->reg_base + ANALOGIX_DP_BUF_DATA_0 +
+> +                                   4 * i);
+> +                       buffer[i] = (unsigned char)reg;
+> +                       num_transferred++;
+> +               }
+> +       }
+> +
+> +       /* Check if Rx sends defer */
+> +       reg = readl(dp->reg_base + ANALOGIX_DP_AUX_RX_COMM);
+> +       if (reg == AUX_RX_COMM_AUX_DEFER)
+> +               msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
+> +       else if (reg == AUX_RX_COMM_I2C_DEFER)
+> +               msg->reply = DP_AUX_I2C_REPLY_DEFER;
+> +       else if ((msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_I2C_WRITE ||
+> +                (msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_I2C_READ)
+> +               msg->reply = DP_AUX_I2C_REPLY_ACK;
+> +       else if ((msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_NATIVE_WRITE ||
+> +                (msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_NATIVE_READ)
+> +               msg->reply = DP_AUX_NATIVE_REPLY_ACK;
+> +
+> +       return num_transferred;
+> +}
+> --
+> 1.9.1
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
