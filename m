@@ -1,59 +1,322 @@
-From: Sam Van Den Berge <sam.van.den.berge@telenet.be>
-Subject: Re: [GIT PULL 1/4] ARM: exynos: SoC/Mach for v4.9
-Date: Thu, 8 Sep 2016 21:24:34 +0200
-Message-ID: <20160908192434.GA609@sam-MacBookPro>
-References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com>
- <1472548739-20050-5-git-send-email-k.kozlowski@samsung.com>
- <5635206.ooNAZCeQOe@wuerfel>
- <20160902163244.GB5534@kozik-lap>
- <08dfc5c7-e844-023c-b5a8-9996dfb403ff@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH] [media] platform: constify vb2_ops structures
+Date: Fri,  9 Sep 2016 01:59:10 +0200
+Message-ID: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:56982 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938685AbcIHTYp (ORCPT
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:60212 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751187AbcIIARU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 15:24:45 -0400
-Content-Disposition: inline
-In-Reply-To: <08dfc5c7-e844-023c-b5a8-9996dfb403ff@samsung.com>
+        Thu, 8 Sep 2016 20:17:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Kyungmin Park <kyungmin.park@samsung.com>, Benoit Parrot <bparrot@ti.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 05, 2016 at 10:06:14AM +0200, Sylwester Nawrocki wrote:
-> On 09/02/2016 06:32 PM, Krzysztof Kozlowski wrote:
-> > On Fri, Sep 02, 2016 at 06:26:42PM +0200, Arnd Bergmann wrote:
-> >> On Tuesday, August 30, 2016 11:18:59 AM CEST Krzysztof Kozlowski wrote:
-> >>> Samsung mach/soc update for v4.9:
-> >>> 1. Fix for DMA on S3C24xx. This was probably broken for long time, nobody runs
-> >>>    this code... till now.
-> >>
-> >> Good to know. This reminds me that the s3c24xx DMA code is one of those
-> >> that need to be converted to dma_slave_map at some point. Maybe if someone
-> >> is now running that code, they could give that a try as well?
-> >>
-> >> It shouldn't be hard to convert, let me know if you need more information.
-> > 
-> > +Cc Sylwester,
-> > 
-> > Sylwester recently dig into this platform. I think he managed to play
-> > some audio.
-> 
-> I revived this platform for testing ASoC changes.  I should find time
-> to do that dma_slave_map refactoring sooner or later.
-> 
-> Or if you would like to do it Sam please go ahead.
+Check for vb2_ops structures that are only stored in the ops field of a
+vb2_queue structure.  That field is declared const, so vb2_ops structures
+that have this property can be declared as const also.
 
-Thanks for the suggestion and apologies for the late response. Last couple of 
-days I've been figuring out what this would involve and I decided that I want
-to give this a try. I found this patch series [1] that I'll use as an example.
-If I understand it correctly, I'll need to create a dma_slave_map and
-pass that via the platform data into the s3c24xx-dma driver. There I'll
-need to fill in the filter_map of the dma slave device. Right?
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/393635.html
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
-Kr,
-Sam
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/exynos-gsc/gsc-m2m.c              |    2 +-
+ drivers/media/platform/exynos4-is/fimc-capture.c         |    2 +-
+ drivers/media/platform/exynos4-is/fimc-m2m.c             |    2 +-
+ drivers/media/platform/m2m-deinterlace.c                 |    2 +-
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c       |    2 +-
+ drivers/media/platform/mx2_emmaprp.c                     |    2 +-
+ drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
+ drivers/media/platform/rcar_jpu.c                        |    2 +-
+ drivers/media/platform/s5p-g2d/g2d.c                     |    2 +-
+ drivers/media/platform/s5p-jpeg/jpeg-core.c              |    2 +-
+ drivers/media/platform/sh_vou.c                          |    2 +-
+ drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
+ drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
+ drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c            |    2 +-
+ drivers/media/platform/ti-vpe/cal.c                      |    2 +-
+ drivers/media/platform/ti-vpe/vpe.c                      |    2 +-
+ drivers/media/platform/vim2m.c                           |    2 +-
+ drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
+ 19 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index 7ae1a13..1d5836c 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -474,7 +474,7 @@ static void xvip_dma_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irq(&dma->queued_lock);
+ }
+ 
+-static struct vb2_ops xvip_dma_queue_qops = {
++static const struct vb2_ops xvip_dma_queue_qops = {
+ 	.queue_setup = xvip_dma_queue_setup,
+ 	.buf_prepare = xvip_dma_buffer_prepare,
+ 	.buf_queue = xvip_dma_buffer_queue,
+diff --git a/drivers/media/platform/soc_camera/atmel-isi.c b/drivers/media/platform/soc_camera/atmel-isi.c
+index 30211f6..46de657 100644
+--- a/drivers/media/platform/soc_camera/atmel-isi.c
++++ b/drivers/media/platform/soc_camera/atmel-isi.c
+@@ -536,7 +536,7 @@ static void stop_streaming(struct vb2_queue *vq)
+ 	pm_runtime_put(ici->v4l2_dev.dev);
+ }
+ 
+-static struct vb2_ops isi_video_qops = {
++static const struct vb2_ops isi_video_qops = {
+ 	.queue_setup		= queue_setup,
+ 	.buf_init		= buffer_init,
+ 	.buf_prepare		= buffer_prepare,
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 785e693..d9c07b8 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2538,7 +2538,7 @@ static void s5p_jpeg_stop_streaming(struct vb2_queue *q)
+ 	pm_runtime_put(ctx->jpeg->dev);
+ }
+ 
+-static struct vb2_ops s5p_jpeg_qops = {
++static const struct vb2_ops s5p_jpeg_qops = {
+ 	.queue_setup		= s5p_jpeg_queue_setup,
+ 	.buf_prepare		= s5p_jpeg_buf_prepare,
+ 	.buf_queue		= s5p_jpeg_buf_queue,
+diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+index e967fcf..44323cb 100644
+--- a/drivers/media/platform/ti-vpe/cal.c
++++ b/drivers/media/platform/ti-vpe/cal.c
+@@ -1379,7 +1379,7 @@ static void cal_stop_streaming(struct vb2_queue *vq)
+ 	cal_runtime_put(ctx->dev);
+ }
+ 
+-static struct vb2_ops cal_video_qops = {
++static const struct vb2_ops cal_video_qops = {
+ 	.queue_setup		= cal_queue_setup,
+ 	.buf_prepare		= cal_buffer_prepare,
+ 	.buf_queue		= cal_buffer_queue,
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index 55a1458..0189f7f 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -1878,7 +1878,7 @@ static void vpe_stop_streaming(struct vb2_queue *q)
+ 	vpdma_dump_regs(ctx->dev->vpdma);
+ }
+ 
+-static struct vb2_ops vpe_qops = {
++static const struct vb2_ops vpe_qops = {
+ 	.queue_setup	 = vpe_queue_setup,
+ 	.buf_prepare	 = vpe_buf_prepare,
+ 	.buf_queue	 = vpe_buf_queue,
+diff --git a/drivers/media/platform/soc_camera/rcar_vin.c b/drivers/media/platform/soc_camera/rcar_vin.c
+index 9c13752..0009fc5 100644
+--- a/drivers/media/platform/soc_camera/rcar_vin.c
++++ b/drivers/media/platform/soc_camera/rcar_vin.c
+@@ -856,7 +856,7 @@ static void rcar_vin_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irq(&priv->lock);
+ }
+ 
+-static struct vb2_ops rcar_vin_vb2_ops = {
++static const struct vb2_ops rcar_vin_vb2_ops = {
+ 	.queue_setup	= rcar_vin_videobuf_setup,
+ 	.buf_queue	= rcar_vin_videobuf_queue,
+ 	.stop_streaming	= rcar_vin_stop_streaming,
+diff --git a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
+index 02b519d..02c8dc5 100644
+--- a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
++++ b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
+@@ -470,7 +470,7 @@ static void sh_mobile_ceu_stop_streaming(struct vb2_queue *q)
+ 	sh_mobile_ceu_soft_reset(pcdev);
+ }
+ 
+-static struct vb2_ops sh_mobile_ceu_videobuf_ops = {
++static const struct vb2_ops sh_mobile_ceu_videobuf_ops = {
+ 	.queue_setup	= sh_mobile_ceu_videobuf_setup,
+ 	.buf_prepare	= sh_mobile_ceu_videobuf_prepare,
+ 	.buf_queue	= sh_mobile_ceu_videobuf_queue,
+diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+index 391dd7a..62c0dec 100644
+--- a/drivers/media/platform/s5p-g2d/g2d.c
++++ b/drivers/media/platform/s5p-g2d/g2d.c
+@@ -138,7 +138,7 @@ static void g2d_buf_queue(struct vb2_buffer *vb)
+ 	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
+ }
+ 
+-static struct vb2_ops g2d_qops = {
++static const struct vb2_ops g2d_qops = {
+ 	.queue_setup	= g2d_queue_setup,
+ 	.buf_prepare	= g2d_buf_prepare,
+ 	.buf_queue	= g2d_buf_queue,
+diff --git a/drivers/media/platform/rcar_jpu.c b/drivers/media/platform/rcar_jpu.c
+index 16782ce..d1746ec 100644
+--- a/drivers/media/platform/rcar_jpu.c
++++ b/drivers/media/platform/rcar_jpu.c
+@@ -1183,7 +1183,7 @@ static void jpu_stop_streaming(struct vb2_queue *vq)
+ 	}
+ }
+ 
+-static struct vb2_ops jpu_qops = {
++static const struct vb2_ops jpu_qops = {
+ 	.queue_setup		= jpu_queue_setup,
+ 	.buf_prepare		= jpu_buf_prepare,
+ 	.buf_queue		= jpu_buf_queue,
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index ec6494c..a341a7f 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -261,7 +261,7 @@ static void gsc_m2m_buf_queue(struct vb2_buffer *vb)
+ 		v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
+ }
+ 
+-static struct vb2_ops gsc_m2m_qops = {
++static const struct vb2_ops gsc_m2m_qops = {
+ 	.queue_setup	 = gsc_m2m_queue_setup,
+ 	.buf_prepare	 = gsc_m2m_buf_prepare,
+ 	.buf_queue	 = gsc_m2m_buf_queue,
+diff --git a/drivers/media/platform/sh_vou.c b/drivers/media/platform/sh_vou.c
+index e1f39b4..1ec9a2e 100644
+--- a/drivers/media/platform/sh_vou.c
++++ b/drivers/media/platform/sh_vou.c
+@@ -362,7 +362,7 @@ static void sh_vou_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irqrestore(&vou_dev->lock, flags);
+ }
+ 
+-static struct vb2_ops sh_vou_qops = {
++static const struct vb2_ops sh_vou_qops = {
+ 	.queue_setup		= sh_vou_queue_setup,
+ 	.buf_prepare		= sh_vou_buf_prepare,
+ 	.buf_queue		= sh_vou_buf_queue,
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+index 3b1ac68..45f82b5 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -527,7 +527,7 @@ static void bdisp_stop_streaming(struct vb2_queue *q)
+ 	pm_runtime_put(ctx->bdisp_dev->dev);
+ }
+ 
+-static struct vb2_ops bdisp_qops = {
++static const struct vb2_ops bdisp_qops = {
+ 	.queue_setup     = bdisp_queue_setup,
+ 	.buf_prepare     = bdisp_buf_prepare,
+ 	.buf_queue       = bdisp_buf_queue,
+diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platform/m2m-deinterlace.c
+index 0fcb5c78..0870fad 100644
+--- a/drivers/media/platform/m2m-deinterlace.c
++++ b/drivers/media/platform/m2m-deinterlace.c
+@@ -852,7 +852,7 @@ static void deinterlace_buf_queue(struct vb2_buffer *vb)
+ 	v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
+ }
+ 
+-static struct vb2_ops deinterlace_qops = {
++static const struct vb2_ops deinterlace_qops = {
+ 	.queue_setup	 = deinterlace_queue_setup,
+ 	.buf_prepare	 = deinterlace_buf_prepare,
+ 	.buf_queue	 = deinterlace_buf_queue,
+diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/mx2_emmaprp.c
+index c639406..e68d271 100644
+--- a/drivers/media/platform/mx2_emmaprp.c
++++ b/drivers/media/platform/mx2_emmaprp.c
+@@ -743,7 +743,7 @@ static void emmaprp_buf_queue(struct vb2_buffer *vb)
+ 	v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
+ }
+ 
+-static struct vb2_ops emmaprp_qops = {
++static const struct vb2_ops emmaprp_qops = {
+ 	.queue_setup	 = emmaprp_queue_setup,
+ 	.buf_prepare	 = emmaprp_buf_prepare,
+ 	.buf_queue	 = emmaprp_buf_queue,
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 496aa97..07c07c1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1116,7 +1116,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 	rvin_disable_interrupts(vin);
+ }
+ 
+-static struct vb2_ops rvin_qops = {
++static const struct vb2_ops rvin_qops = {
+ 	.queue_setup		= rvin_queue_setup,
+ 	.buf_prepare		= rvin_buffer_prepare,
+ 	.buf_queue		= rvin_buffer_queue,
+diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
+index cd0ff4a..a98f679 100644
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -815,7 +815,7 @@ static void vim2m_stop_streaming(struct vb2_queue *q)
+ 	}
+ }
+ 
+-static struct vb2_ops vim2m_qops = {
++static const struct vb2_ops vim2m_qops = {
+ 	.queue_setup	 = vim2m_queue_setup,
+ 	.buf_prepare	 = vim2m_buf_prepare,
+ 	.buf_queue	 = vim2m_buf_queue,
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index fdec499..344028e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -452,7 +452,7 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&fimc->slock, flags);
+ }
+ 
+-static struct vb2_ops fimc_capture_qops = {
++static const struct vb2_ops fimc_capture_qops = {
+ 	.queue_setup		= queue_setup,
+ 	.buf_prepare		= buffer_prepare,
+ 	.buf_queue		= buffer_queue,
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index b1309e1..6028e4f 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -219,7 +219,7 @@ static void fimc_buf_queue(struct vb2_buffer *vb)
+ 	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
+ }
+ 
+-static struct vb2_ops fimc_qops = {
++static const struct vb2_ops fimc_qops = {
+ 	.queue_setup	 = fimc_queue_setup,
+ 	.buf_prepare	 = fimc_buf_prepare,
+ 	.buf_queue	 = fimc_buf_queue,
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
+index 3ed3f2d..f8e4611 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
+@@ -864,7 +864,7 @@ static void vb2ops_venc_stop_streaming(struct vb2_queue *q)
+ 	ctx->state = MTK_STATE_FREE;
+ }
+ 
+-static struct vb2_ops mtk_venc_vb2_ops = {
++static const struct vb2_ops mtk_venc_vb2_ops = {
+ 	.queue_setup		= vb2ops_venc_queue_setup,
+ 	.buf_prepare		= vb2ops_venc_buf_prepare,
+ 	.buf_queue		= vb2ops_venc_buf_queue,
