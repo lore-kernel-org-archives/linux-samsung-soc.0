@@ -1,71 +1,88 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Samsung clock updates for 4.9
-Date: Fri, 09 Sep 2016 17:45:27 +0200
-Message-ID: <5763a275-eb8a-6911-6a15-2e0b434d066c@samsung.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: Re: [PATCH] [media] platform: constify vb2_ops structures
+Date: Fri, 9 Sep 2016 11:03:55 -0500
+Message-ID: <20160909160355.GC27225@ti.com>
+References: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, kernel-janitors@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Kyungmin Park <kyungmin.park@samsung.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.orglinux-
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+Thanks for the patch.
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+Julia Lawall <Julia.Lawall@lip6.fr> wrote on Fri [2016-Sep-09 01:59:10 +0200]:
+> Check for vb2_ops structures that are only stored in the ops field of a
+> vb2_queue structure.  That field is declared const, so vb2_ops structures
+> that have this property can be declared as const also.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct vb2_ops i@p = { ... };
+> 
+> @ok@
+> identifier r.i;
+> struct vb2_queue e;
+> position p;
+> @@
+> e.ops = &i@p;
+> 
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> struct vb2_ops e;
+> @@
+> e@i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct vb2_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c              |    2 +-
+>  drivers/media/platform/exynos4-is/fimc-capture.c         |    2 +-
+>  drivers/media/platform/exynos4-is/fimc-m2m.c             |    2 +-
+>  drivers/media/platform/m2m-deinterlace.c                 |    2 +-
+>  drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c       |    2 +-
+>  drivers/media/platform/mx2_emmaprp.c                     |    2 +-
+>  drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
+>  drivers/media/platform/rcar_jpu.c                        |    2 +-
+>  drivers/media/platform/s5p-g2d/g2d.c                     |    2 +-
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c              |    2 +-
+>  drivers/media/platform/sh_vou.c                          |    2 +-
+>  drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
+>  drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
+>  drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
+>  drivers/media/platform/sti/bdisp/bdisp-v4l2.c            |    2 +-
 
-are available in the git repository at:
+For the following 2 drivers,
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-samsung
+>  drivers/media/platform/ti-vpe/cal.c                      |    2 +-
+>  drivers/media/platform/ti-vpe/vpe.c                      |    2 +-
 
-for you to fetch changes up to be95d2c7d918b2b7b973378a1e92bdc6559c21f9:
+Reviewed-by: Benoit Parrot <bparrot@ti.com>
 
-  clk: samsung: Add support for EPLL on exynos5410 (2016-09-09 17:35:13 +0200)
+>  drivers/media/platform/vim2m.c                           |    2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
+>  19 files changed, 19 insertions(+), 19 deletions(-)
 
-----------------------------------------------------------------
-In addition to a few clean up and code consolidation patches this
-includes:
-- addition of sound subsystem related clocks for Exynos5410 SoC
-  (EPLL, PDMA) and support for "samsung,exynos5410-audss-clock"
-  compatible in the clk-exynos-audss driver,
-- addition of DRAM controller related clocks for exynos5420,
-- MAINTAINERS update adding Chanwoo Choi as the Samsung SoC
-  clock drivers co-maintainer.
-
-----------------------------------------------------------------
-Chanwoo Choi (5):
-      clk: samsung: Add clock IDs for the CMU_CDREX (DRAM Express Controller)
-      MAINTAINERS: Add myself as Samsung SoC clock drivers co-maintainer
-      clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
-      clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
-      clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
-
-Sylwester Nawrocki (7):
-      clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
-      clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
-      clk: samsung: Use common registration function for pll2550x
-      clk: samsung: clk-exynos-audss: controller variant handling rework
-      clk: samsung: clk-exynos-audss: Add exynos5410 compatible
-      clk: samsung: clk-exynos-audss: Whitespace and debug trace cleanup
-      clk: samsung: Add support for EPLL on exynos5410
-
- .../devicetree/bindings/clock/clk-exynos-audss.txt  |   4 +-
- .../devicetree/bindings/clock/exynos5410-clock.txt  |  21 +-
- MAINTAINERS                                         |   3 +
- drivers/clk/samsung/clk-exynos-audss.c              |  84 +++--
- drivers/clk/samsung/clk-exynos5260.c                | 350 ++++++++++-----------
- drivers/clk/samsung/clk-exynos5410.c                |  61 ++--
- drivers/clk/samsung/clk-exynos5420.c                |  37 +++
- drivers/clk/samsung/clk-exynos5440.c                |   9 +-
- drivers/clk/samsung/clk-pll.c                       | 154 ++++++---
- drivers/clk/samsung/clk-pll.h                       |   2 +
- include/dt-bindings/clock/exynos5410.h              |   3 +
- include/dt-bindings/clock/exynos5420.h              |  11 +-
- include/dt-bindings/clock/exynos5440.h              |   2 +
- 13 files changed, 453 insertions(+), 288 deletions(-)
-
--- 
-Thanks,
-Sylwester
+Regards,
+Benoit Parrot
