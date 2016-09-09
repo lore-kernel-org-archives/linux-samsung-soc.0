@@ -1,322 +1,142 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH] [media] platform: constify vb2_ops structures
-Date: Fri,  9 Sep 2016 01:59:10 +0200
-Message-ID: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:60212 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751187AbcIIARU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 20:17:20 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Date: Thu, 8 Sep 2016 17:24:32 -0700
+Message-ID: <20160909002432.GE13062@codeaurora.org>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org, Marek Szyprowski <m.szyprowski@samsung.com>, Charles
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Kyungmin Park <kyungmin.park@samsung.com>, Benoit Parrot <bparrot@ti.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Check for vb2_ops structures that are only stored in the ops field of a
-vb2_queue structure.  That field is declared const, so vb2_ops structures
-that have this property can be declared as const also.
+On 08/16, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> 
+> 
+> Introduction
+> ============
+> The patchset brings new entity: clock controller representing a hardware
+> block.  The clock controller comes with its own prepare lock which
+> is used then in many places.  The idea is to fix the deadlock mentioned
+> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
+> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
+> by keeping clock prepared").
+> 
+> 
+> Disclaimer
+> ==========
+> Request for comments, so:
+> 1. Only exynos_defconfig builds,
+> 2. A lot of FIXME/TODO note still,
+> 3. Checkpatch not run, lines not aligned,
+> 4. Other (non-exynos) drivers not converted,
+> 5. Probably not yet bisectable,
+> 6. Locking became quite complex.
+>    The previous one lock was simple.  Inefficient and dead-lock prone but
+>    simple.  Because of clock hierarchy spanning through controllers, the
+>    new locking became quite complicated.  I don't like it but...
+> 
+> 
+> Details
+> =======
+> In Exynos-based boards case the deadlock occurs between clock's
+> prepare_lock and regmap-i2c's lock:
+> 
+> CPU #0:                             CPU #1:
+> lock(regmap)
+>                                     s2mps11-clk: clk_prepare_lock()
+> 
+> i2c-exynos: clk_prepare_lock() - wait
+>                                     lock(regmap) - wait
+> 
+> The clk_prepare_lock() on both CPUs come from different clock drivers
+> and components:
+> 1. I2C clock is part of SoC block and is required by i2c-s3c2410/i2c-exynos5
+>    driver,
+> 2. S2MPS11 clock is separate device, however driver uses I2C regmap.
+> 
+> The deadlock was reported by lockdep (always) and was happening
+> in 20% of boots of Odroid XU3 with multi_v7 defconfig.  Workaround for
+> deadlock was implemented by removing prepare/unprepare calls from I2C
+> transfers.  However these are just workarounds... which after applying
+> this patch can be reverted.
+> 
+> Additionally Marek Szyprowski's work on domains/clocks/pinctrl exposed
+> the deadlock again in different configuration.
+> 
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Per-controller locks seems to be a misnomer. These patches look
+more like per-clk_register() locks. The clk registrant can decide
+how fine grained to make the prepare locking scheme. They can
+decide to have one lock per clk, one lock for the entire tree, or
+one lock per arbitrary subtree. I'd prefer to drop the controller
+concept unless it's really done that way, by attaching to the OF
+clk provider or device pointer.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct vb2_ops i@p = { ... };
+Given that, it seems that conceptually these patches allow clk
+registrants to carve out a set of clks that they want to be
+treated as an atomic unit with regards to the prepare lock.
+TL;DR trees of per-process recursive prepare mutex locks where
+the locks cover one or more clks.
 
-@ok@
-identifier r.i;
-struct vb2_queue e;
-position p;
-@@
-e.ops = &i@p;
+The locks are recursive per-process to simplify the problem where
+we need to acquire the same lock multiple times while traversing
+a tree that shares the same lock, right? Otherwise we would need
+to track which locks we've already grabbed and refcount and we
+wouldn't be able to re-enter the framework from within the clk
+ops of the same atomic unit.
 
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct vb2_ops e;
-@@
-e@i@p
+As long as we can guarantee that we always take the locks in the
+same order we'll be fine. The burden to ensure that would be
+placed on the clk registrants though, and verifying that will be
+left up to humans? That seems fragile and error prone. We can
+always say that we take the global lock and then traverse the
+children up to the roots, but we can't be sure that during the
+tree traversal we don't take locks in different order because of
+how the clk registrant has structured things.
 
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct vb2_ops i = { ... };
-// </smpl>
+It would be great if the different clk APIs were listed, with the
+order of how locks are taken BTW. And really overall just more
+information about how the locking scheme works. I had to read
+this patch series quite a few times to come to (hopefully the
+right) conclusions.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+So I'm not very fond of this design because the locking scheme is
+pretty much out of the hands of the framework and can be easily
+broken. I'm biased of course, because I'd prefer we go with my
+wwmutex design of per-clk locks[1]. Taking locks in any order
+works fine there, and we resolve quite a few long standing
+locking problems that we have while improving scalability. The
+problem there is that we don't get the recursive mutex design
+(maybe that's a benefit!). Once a clk_op reenters the framework
+with consumer APIs and tries to grab the same lock we deadlock.
+This is why I've been slowly splitting consumers from providers
+so we can easily identify these cases. If we had something like
+coordinated clk rate switching, we could get rid of clk_ops
+reentering the framework and avoid this problem (and we really do
+need to do that).
 
----
- drivers/media/platform/exynos-gsc/gsc-m2m.c              |    2 +-
- drivers/media/platform/exynos4-is/fimc-capture.c         |    2 +-
- drivers/media/platform/exynos4-is/fimc-m2m.c             |    2 +-
- drivers/media/platform/m2m-deinterlace.c                 |    2 +-
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c       |    2 +-
- drivers/media/platform/mx2_emmaprp.c                     |    2 +-
- drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
- drivers/media/platform/rcar_jpu.c                        |    2 +-
- drivers/media/platform/s5p-g2d/g2d.c                     |    2 +-
- drivers/media/platform/s5p-jpeg/jpeg-core.c              |    2 +-
- drivers/media/platform/sh_vou.c                          |    2 +-
- drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
- drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
- drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
- drivers/media/platform/sti/bdisp/bdisp-v4l2.c            |    2 +-
- drivers/media/platform/ti-vpe/cal.c                      |    2 +-
- drivers/media/platform/ti-vpe/vpe.c                      |    2 +-
- drivers/media/platform/vim2m.c                           |    2 +-
- drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
- 19 files changed, 19 insertions(+), 19 deletions(-)
+The one thing I do like about this patch series though is the
+gradual movement of providers to the new locking scheme. Maybe if
+we combined that idea with per-clk wwmutex locks we could have
+the best of both worlds and fix reentrancy later when we need it?
+There's wwmutex_trylock() that we could use. Perhaps always pass
+a NULL context if some clk flag isn't set (CLK_USE_PER_CLK_LOCK).
+Plus we could assign the same wwmutex all over the place when
+that flag isn't set and allocate a unique wwmutex at clk_register
+time otherwise. I haven't thought about it deeply, so there may
+be some glaring problem that I'm missing like when we have half
+the clks in a tree with the flag set or something. This is where
+driving home from the office for 45 minutes helps.
 
-diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index 7ae1a13..1d5836c 100644
---- a/drivers/media/platform/xilinx/xilinx-dma.c
-+++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -474,7 +474,7 @@ static void xvip_dma_stop_streaming(struct vb2_queue *vq)
- 	spin_unlock_irq(&dma->queued_lock);
- }
- 
--static struct vb2_ops xvip_dma_queue_qops = {
-+static const struct vb2_ops xvip_dma_queue_qops = {
- 	.queue_setup = xvip_dma_queue_setup,
- 	.buf_prepare = xvip_dma_buffer_prepare,
- 	.buf_queue = xvip_dma_buffer_queue,
-diff --git a/drivers/media/platform/soc_camera/atmel-isi.c b/drivers/media/platform/soc_camera/atmel-isi.c
-index 30211f6..46de657 100644
---- a/drivers/media/platform/soc_camera/atmel-isi.c
-+++ b/drivers/media/platform/soc_camera/atmel-isi.c
-@@ -536,7 +536,7 @@ static void stop_streaming(struct vb2_queue *vq)
- 	pm_runtime_put(ici->v4l2_dev.dev);
- }
- 
--static struct vb2_ops isi_video_qops = {
-+static const struct vb2_ops isi_video_qops = {
- 	.queue_setup		= queue_setup,
- 	.buf_init		= buffer_init,
- 	.buf_prepare		= buffer_prepare,
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 785e693..d9c07b8 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -2538,7 +2538,7 @@ static void s5p_jpeg_stop_streaming(struct vb2_queue *q)
- 	pm_runtime_put(ctx->jpeg->dev);
- }
- 
--static struct vb2_ops s5p_jpeg_qops = {
-+static const struct vb2_ops s5p_jpeg_qops = {
- 	.queue_setup		= s5p_jpeg_queue_setup,
- 	.buf_prepare		= s5p_jpeg_buf_prepare,
- 	.buf_queue		= s5p_jpeg_buf_queue,
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index e967fcf..44323cb 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1379,7 +1379,7 @@ static void cal_stop_streaming(struct vb2_queue *vq)
- 	cal_runtime_put(ctx->dev);
- }
- 
--static struct vb2_ops cal_video_qops = {
-+static const struct vb2_ops cal_video_qops = {
- 	.queue_setup		= cal_queue_setup,
- 	.buf_prepare		= cal_buffer_prepare,
- 	.buf_queue		= cal_buffer_queue,
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index 55a1458..0189f7f 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -1878,7 +1878,7 @@ static void vpe_stop_streaming(struct vb2_queue *q)
- 	vpdma_dump_regs(ctx->dev->vpdma);
- }
- 
--static struct vb2_ops vpe_qops = {
-+static const struct vb2_ops vpe_qops = {
- 	.queue_setup	 = vpe_queue_setup,
- 	.buf_prepare	 = vpe_buf_prepare,
- 	.buf_queue	 = vpe_buf_queue,
-diff --git a/drivers/media/platform/soc_camera/rcar_vin.c b/drivers/media/platform/soc_camera/rcar_vin.c
-index 9c13752..0009fc5 100644
---- a/drivers/media/platform/soc_camera/rcar_vin.c
-+++ b/drivers/media/platform/soc_camera/rcar_vin.c
-@@ -856,7 +856,7 @@ static void rcar_vin_stop_streaming(struct vb2_queue *vq)
- 	spin_unlock_irq(&priv->lock);
- }
- 
--static struct vb2_ops rcar_vin_vb2_ops = {
-+static const struct vb2_ops rcar_vin_vb2_ops = {
- 	.queue_setup	= rcar_vin_videobuf_setup,
- 	.buf_queue	= rcar_vin_videobuf_queue,
- 	.stop_streaming	= rcar_vin_stop_streaming,
-diff --git a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-index 02b519d..02c8dc5 100644
---- a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-+++ b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-@@ -470,7 +470,7 @@ static void sh_mobile_ceu_stop_streaming(struct vb2_queue *q)
- 	sh_mobile_ceu_soft_reset(pcdev);
- }
- 
--static struct vb2_ops sh_mobile_ceu_videobuf_ops = {
-+static const struct vb2_ops sh_mobile_ceu_videobuf_ops = {
- 	.queue_setup	= sh_mobile_ceu_videobuf_setup,
- 	.buf_prepare	= sh_mobile_ceu_videobuf_prepare,
- 	.buf_queue	= sh_mobile_ceu_videobuf_queue,
-diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-index 391dd7a..62c0dec 100644
---- a/drivers/media/platform/s5p-g2d/g2d.c
-+++ b/drivers/media/platform/s5p-g2d/g2d.c
-@@ -138,7 +138,7 @@ static void g2d_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
- }
- 
--static struct vb2_ops g2d_qops = {
-+static const struct vb2_ops g2d_qops = {
- 	.queue_setup	= g2d_queue_setup,
- 	.buf_prepare	= g2d_buf_prepare,
- 	.buf_queue	= g2d_buf_queue,
-diff --git a/drivers/media/platform/rcar_jpu.c b/drivers/media/platform/rcar_jpu.c
-index 16782ce..d1746ec 100644
---- a/drivers/media/platform/rcar_jpu.c
-+++ b/drivers/media/platform/rcar_jpu.c
-@@ -1183,7 +1183,7 @@ static void jpu_stop_streaming(struct vb2_queue *vq)
- 	}
- }
- 
--static struct vb2_ops jpu_qops = {
-+static const struct vb2_ops jpu_qops = {
- 	.queue_setup		= jpu_queue_setup,
- 	.buf_prepare		= jpu_buf_prepare,
- 	.buf_queue		= jpu_buf_queue,
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index ec6494c..a341a7f 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -261,7 +261,7 @@ static void gsc_m2m_buf_queue(struct vb2_buffer *vb)
- 		v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
- }
- 
--static struct vb2_ops gsc_m2m_qops = {
-+static const struct vb2_ops gsc_m2m_qops = {
- 	.queue_setup	 = gsc_m2m_queue_setup,
- 	.buf_prepare	 = gsc_m2m_buf_prepare,
- 	.buf_queue	 = gsc_m2m_buf_queue,
-diff --git a/drivers/media/platform/sh_vou.c b/drivers/media/platform/sh_vou.c
-index e1f39b4..1ec9a2e 100644
---- a/drivers/media/platform/sh_vou.c
-+++ b/drivers/media/platform/sh_vou.c
-@@ -362,7 +362,7 @@ static void sh_vou_stop_streaming(struct vb2_queue *vq)
- 	spin_unlock_irqrestore(&vou_dev->lock, flags);
- }
- 
--static struct vb2_ops sh_vou_qops = {
-+static const struct vb2_ops sh_vou_qops = {
- 	.queue_setup		= sh_vou_queue_setup,
- 	.buf_prepare		= sh_vou_buf_prepare,
- 	.buf_queue		= sh_vou_buf_queue,
-diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-index 3b1ac68..45f82b5 100644
---- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-+++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-@@ -527,7 +527,7 @@ static void bdisp_stop_streaming(struct vb2_queue *q)
- 	pm_runtime_put(ctx->bdisp_dev->dev);
- }
- 
--static struct vb2_ops bdisp_qops = {
-+static const struct vb2_ops bdisp_qops = {
- 	.queue_setup     = bdisp_queue_setup,
- 	.buf_prepare     = bdisp_buf_prepare,
- 	.buf_queue       = bdisp_buf_queue,
-diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platform/m2m-deinterlace.c
-index 0fcb5c78..0870fad 100644
---- a/drivers/media/platform/m2m-deinterlace.c
-+++ b/drivers/media/platform/m2m-deinterlace.c
-@@ -852,7 +852,7 @@ static void deinterlace_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
- }
- 
--static struct vb2_ops deinterlace_qops = {
-+static const struct vb2_ops deinterlace_qops = {
- 	.queue_setup	 = deinterlace_queue_setup,
- 	.buf_prepare	 = deinterlace_buf_prepare,
- 	.buf_queue	 = deinterlace_buf_queue,
-diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/mx2_emmaprp.c
-index c639406..e68d271 100644
---- a/drivers/media/platform/mx2_emmaprp.c
-+++ b/drivers/media/platform/mx2_emmaprp.c
-@@ -743,7 +743,7 @@ static void emmaprp_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
- }
- 
--static struct vb2_ops emmaprp_qops = {
-+static const struct vb2_ops emmaprp_qops = {
- 	.queue_setup	 = emmaprp_queue_setup,
- 	.buf_prepare	 = emmaprp_buf_prepare,
- 	.buf_queue	 = emmaprp_buf_queue,
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 496aa97..07c07c1 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1116,7 +1116,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 	rvin_disable_interrupts(vin);
- }
- 
--static struct vb2_ops rvin_qops = {
-+static const struct vb2_ops rvin_qops = {
- 	.queue_setup		= rvin_queue_setup,
- 	.buf_prepare		= rvin_buffer_prepare,
- 	.buf_queue		= rvin_buffer_queue,
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index cd0ff4a..a98f679 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -815,7 +815,7 @@ static void vim2m_stop_streaming(struct vb2_queue *q)
- 	}
- }
- 
--static struct vb2_ops vim2m_qops = {
-+static const struct vb2_ops vim2m_qops = {
- 	.queue_setup	 = vim2m_queue_setup,
- 	.buf_prepare	 = vim2m_buf_prepare,
- 	.buf_queue	 = vim2m_buf_queue,
-diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index fdec499..344028e 100644
---- a/drivers/media/platform/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -452,7 +452,7 @@ static void buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&fimc->slock, flags);
- }
- 
--static struct vb2_ops fimc_capture_qops = {
-+static const struct vb2_ops fimc_capture_qops = {
- 	.queue_setup		= queue_setup,
- 	.buf_prepare		= buffer_prepare,
- 	.buf_queue		= buffer_queue,
-diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
-index b1309e1..6028e4f 100644
---- a/drivers/media/platform/exynos4-is/fimc-m2m.c
-+++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
-@@ -219,7 +219,7 @@ static void fimc_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
- }
- 
--static struct vb2_ops fimc_qops = {
-+static const struct vb2_ops fimc_qops = {
- 	.queue_setup	 = fimc_queue_setup,
- 	.buf_prepare	 = fimc_buf_prepare,
- 	.buf_queue	 = fimc_buf_queue,
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-index 3ed3f2d..f8e4611 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-@@ -864,7 +864,7 @@ static void vb2ops_venc_stop_streaming(struct vb2_queue *q)
- 	ctx->state = MTK_STATE_FREE;
- }
- 
--static struct vb2_ops mtk_venc_vb2_ops = {
-+static const struct vb2_ops mtk_venc_vb2_ops = {
- 	.queue_setup		= vb2ops_venc_queue_setup,
- 	.buf_prepare		= vb2ops_venc_buf_prepare,
- 	.buf_queue		= vb2ops_venc_buf_queue,
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-April/251039.html
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
