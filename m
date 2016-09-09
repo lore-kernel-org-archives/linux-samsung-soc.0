@@ -1,100 +1,57 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v3 3/3] drm/bridge: analogix_dp: detect Sink PSR state after
- configuring the PSR
-Date: Fri,  9 Sep 2016 17:45:02 +0800
-Message-ID: <1473414302-390-1-git-send-email-ykk@rock-chips.com>
-References: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] [media] platform: constify vb2_ops structures
+Date: Fri, 09 Sep 2016 11:48:34 +0200
+Message-ID: <fe79a710-f524-a161-2211-3b536c9da255@samsung.com>
+References: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-media-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Kyungmin Park <kyungmin.park@samsung.com>, Benoit Parrot <bparrot@ti.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-TWFrZSBzdXJlIHRoZSByZXF1ZXN0IFBTUiBzdGF0ZSB0YWtlcyBlZmZlY3QgaW4gYW5hbG9naXhf
-ZHBfc2VuZF9wc3Jfc3BkKCkKZnVuY3Rpb24sIG9yIHByaW50IHRoZSBzaW5rIFBTUiBlcnJvciBz
-dGF0ZSBpZiB3ZSBmYWlsZWQgdG8gYXBwbHkgdGhlCnJlcXVlc3RlZCBQU1Igc2V0dGluZy4KClNp
-Z25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KLS0tCkNoYW5nZXMg
-aW4gdjM6Ci0gVXBkYXRlIGNvbW1pdCBtZXNzYWdlCi0gQWRkIERQX1RJTUVPVVRfUFNSX0xPT1Bf
-TVMgbWFyY29zCi0gQ29ycmVjdCB0aGUgcmV0dXJuIHZhbHVlcyBvZiBhbmFsb2dpeF9kcF9zZW5k
-X3Bzcl9zcGQoKQoKQ2hhbmdlcyBpbiB2MjoKLSBBIGJ1bmNoIG9mIGdvb2QgZml4ZXMgZnJvbSBT
-ZWFuCgogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMg
-fCAgNiArKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBf
-Y29yZS5oIHwgIDUgKysrLS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
-aXhfZHBfcmVnLmMgIHwgMjUgKysrKysrKysrKysrKysrKysrKystLQogMyBmaWxlcyBjaGFuZ2Vk
-LCAyOCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKaW5kZXggNWZlMzk4Mi4uYzBj
-ZTE2YSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
-eF9kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dp
-eF9kcF9jb3JlLmMKQEAgLTExNiw4ICsxMTYsNyBAQCBpbnQgYW5hbG9naXhfZHBfZW5hYmxlX3Bz
-cihzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJcHNyX3ZzYy5EQjAgPSAwOwogCXBzcl92c2MuREIxID0g
-RURQX1ZTQ19QU1JfU1RBVEVfQUNUSVZFIHwgRURQX1ZTQ19QU1JfQ1JDX1ZBTFVFU19WQUxJRDsK
-IAotCWFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChkcCwgJnBzcl92c2MpOwotCXJldHVybiAwOwor
-CXJldHVybiBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoZHAsICZwc3JfdnNjKTsKIH0KIEVYUE9S
-VF9TWU1CT0xfR1BMKGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3IpOwogCkBAIC0xMzksOCArMTM4LDcg
-QEAgaW50IGFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKIAlwc3Jf
-dnNjLkRCMCA9IDA7CiAJcHNyX3ZzYy5EQjEgPSAwOwogCi0JYW5hbG9naXhfZHBfc2VuZF9wc3Jf
-c3BkKGRwLCAmcHNyX3ZzYyk7Ci0JcmV0dXJuIDA7CisJcmV0dXJuIGFuYWxvZ2l4X2RwX3NlbmRf
-cHNyX3NwZChkcCwgJnBzcl92c2MpOwogfQogRVhQT1JUX1NZTUJPTF9HUEwoYW5hbG9naXhfZHBf
-ZGlzYWJsZV9wc3IpOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgv
-YW5hbG9naXhfZHBfY29yZS5oCmluZGV4IGQ1NjRlOTAuLmEyN2YxZTMgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCisrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCkBAIC0yMCw2
-ICsyMCw3IEBACiAjZGVmaW5lIE1BWF9FUV9MT09QIDUKIAogI2RlZmluZSBEUF9USU1FT1VUX0xP
-T1BfTVMJCQltc2Vjc190b19qaWZmaWVzKDEpCisjZGVmaW5lIERQX1RJTUVPVVRfUFNSX0xPT1Bf
-TVMJCQltc2Vjc190b19qaWZmaWVzKDMwMCkKIAogLyogRFBfTUFYX0xBTkVfQ09VTlQgKi8KICNk
-ZWZpbmUgRFBDRF9FTkhBTkNFRF9GUkFNRV9DQVAoeCkJCSgoKHgpID4+IDcpICYgMHgxKQpAQCAt
-MjQ4LDggKzI0OSw4IEBAIHZvaWQgYW5hbG9naXhfZHBfY29uZmlnX3ZpZGVvX3NsYXZlX21vZGUo
-c3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwogdm9pZCBhbmFsb2dpeF9kcF9lbmFibGVf
-c2NyYW1ibGluZyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7CiB2b2lkIGFuYWxvZ2l4
-X2RwX2Rpc2FibGVfc2NyYW1ibGluZyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7CiB2
-b2lkIGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3JfY3JjKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2Ug
-KmRwKTsKLXZvaWQgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3BkKHN0cnVjdCBhbmFsb2dpeF9kcF9k
-ZXZpY2UgKmRwLAotCQkJICAgICAgc3RydWN0IGVkcF92c2NfcHNyICp2c2MpOworaW50IGFuYWxv
-Z2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKKwkJCSAg
-ICAgc3RydWN0IGVkcF92c2NfcHNyICp2c2MpOwogc3NpemVfdCBhbmFsb2dpeF9kcF90cmFuc2Zl
-cihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKIAkJCSAgICAgc3RydWN0IGRybV9kcF9h
-dXhfbXNnICptc2cpOwogI2VuZGlmIC8qIF9BTkFMT0dJWF9EUF9DT1JFX0ggKi8KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCmluZGV4IDE1
-YTRjZjAuLjdmZDRlZDAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9n
-aXgvYW5hbG9naXhfZHBfcmVnLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
-eC9hbmFsb2dpeF9kcF9yZWcuYwpAQCAtMTAwNCwxMCArMTAwNCwxMiBAQCB2b2lkIGFuYWxvZ2l4
-X2RwX2VuYWJsZV9wc3JfY3JjKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQogCXdyaXRl
-bChQU1JfVklEX0NSQ19FTkFCTEUsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX0NSQ19DT04p
-OwogfQogCi12b2lkIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBf
-ZGV2aWNlICpkcCwKLQkJCSAgICAgIHN0cnVjdCBlZHBfdnNjX3BzciAqdnNjKQoraW50IGFuYWxv
-Z2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKKwkJCSAg
-ICAgc3RydWN0IGVkcF92c2NfcHNyICp2c2MpCiB7CisJdW5zaWduZWQgbG9uZyB0aW1lb3V0Owog
-CXVuc2lnbmVkIGludCB2YWw7CisJdTggc2luazsKIAogCS8qIGRvbid0IHNlbmQgaW5mbyBmcmFt
-ZSAqLwogCXZhbCA9IHJlYWRsKGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NU
-TCk7CkBAIC0xMDQ4LDYgKzEwNTAsMjUgQEAgdm9pZCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQo
-c3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsCiAJdmFsID0gcmVhZGwoZHAtPnJlZ19iYXNl
-ICsgQU5BTE9HSVhfRFBfUEtUX1NFTkRfQ1RMKTsKIAl2YWwgfD0gSUZfRU47CiAJd3JpdGVsKHZh
-bCwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfUEtUX1NFTkRfQ1RMKTsKKworCXRpbWVvdXQg
-PSBqaWZmaWVzICsgRFBfVElNRU9VVF9QU1JfTE9PUF9NUzsKKwl3aGlsZSAodGltZV9iZWZvcmUo
-amlmZmllcywgdGltZW91dCkpIHsKKwkJdmFsID0gZHJtX2RwX2RwY2RfcmVhZGIoJmRwLT5hdXgs
-IERQX1BTUl9TVEFUVVMsICZzaW5rKTsKKwkJaWYgKHZhbCAhPSAxKSB7CisJCQlkZXZfZXJyKGRw
-LT5kZXYsICJQU1JfU1RBVFVTIHJlYWQgZmFpbGVkIHJldD0lZCIsIHZhbCk7CisJCQlyZXR1cm4g
-LUVCVVNZOworCQl9CisKKwkJaWYgKCh2c2MtPkRCMSAmJiBzaW5rID09IERQX1BTUl9TSU5LX0FD
-VElWRV9SRkIpIHx8CisJCSAgICAoIXZzYy0+REIxICYmIHNpbmsgPT0gRFBfUFNSX1NJTktfSU5B
-Q1RJVkUpKQorCQkJcmV0dXJuIDA7CisKKwkJdXNsZWVwX3JhbmdlKDEwMDAsIDE1MDApOworCX0K
-KworCWRldl93YXJuKGRwLT5kZXYsICJGYWlsZWQgdG8gYXBwbHkgUFNSLCBzaW5rIHN0YXRlIHdh
-cyBbJXhdIiwgc2luayk7CisKKwlyZXR1cm4gLUVUSU1FRE9VVDsKIH0KIAogc3NpemVfdCBhbmFs
-b2dpeF9kcF90cmFuc2ZlcihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKLS0gCjEuOS4x
-CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Julia,
+
+On 09/09/2016 01:59 AM, Julia Lawall wrote:
+> Check for vb2_ops structures that are only stored in the ops field of a
+> vb2_queue structure.  That field is declared const, so vb2_ops structures
+> that have this property can be declared as const also.
+>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+[...]
+
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> index 785e693..d9c07b8 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> @@ -2538,7 +2538,7 @@ static void s5p_jpeg_stop_streaming(struct vb2_queue *q)
+>  	pm_runtime_put(ctx->jpeg->dev);
+>  }
+>
+> -static struct vb2_ops s5p_jpeg_qops = {
+> +static const struct vb2_ops s5p_jpeg_qops = {
+>  	.queue_setup		= s5p_jpeg_queue_setup,
+>  	.buf_prepare		= s5p_jpeg_buf_prepare,
+>  	.buf_queue		= s5p_jpeg_buf_queue,
+> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+> index e967fcf..44323cb 100644
+> --- a/drivers/media/platform/ti-vpe/cal.c
+> +++ b/drivers/media/platform/ti-vpe/cal.c
+> @@ -1379,7 +1379,7 @@ static void cal_stop_streaming(struct vb2_queue *vq)
+>  	cal_runtime_put(ctx->dev);
+>  }
+
+Thanks for the patch.
+
+For s5p-jpeg driver:
+
+Reviewed-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
+-- 
+Best regards,
+Jacek Anaszewski
