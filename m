@@ -1,142 +1,162 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
-Date: Thu, 8 Sep 2016 17:24:32 -0700
-Message-ID: <20160909002432.GE13062@codeaurora.org>
-References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 4/7] clk: samsung: Add support for EPLL on exynos5410
+Date: Fri, 09 Sep 2016 13:56:31 +0900
+Message-ID: <57D240FF.5090009@samsung.com>
+References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20160906120551epcas1p1296ff11fa56842df249f5b6520fe0ab8@epcas1p1.samsung.com>
+ <1473163496-17820-5-git-send-email-s.nawrocki@samsung.com>
+ <57CF942C.1030808@samsung.com>
+ <a7316c24-2b57-7006-6564-fe25cbec252a@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <a7316c24-2b57-7006-6564-fe25cbec252a@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org, Marek Szyprowski <m.szyprowski@samsung.com>, Charles
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/16, Krzysztof Kozlowski wrote:
-> Hi,
+On 2016년 09월 07일 17:27, Sylwester Nawrocki wrote:
+> On 09/07/2016 06:14 AM, Chanwoo Choi wrote:
+>> On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
+> ...
+>>> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
+>>> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
+>>> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
+>>
+>> In the Exynos5410's TRM, the EPLL PMS table has the 
+>> 'P' state is 3 instead of 2 when target is 400MHz as following:
+>>
+>> 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
 > 
-> RFC, please, do not apply, maybe except patch #1 which is harmless.
+> Indeed, thanks for pointing out.
 > 
+>>> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
+>>> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
+>>> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
+>>> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
+>>> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
+>>> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
+>>> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
+>>> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
+>>> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
+>>
+>> The all entry of EPLL PMS table has the zero(0) for 'K' value.
+>> How about using the PLL_35XX_RATE() which has the P,M,S entry without K entry?
 > 
-> Introduction
-> ============
-> The patchset brings new entity: clock controller representing a hardware
-> block.  The clock controller comes with its own prepare lock which
-> is used then in many places.  The idea is to fix the deadlock mentioned
-> in commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA deadlock by keeping
-> I2C clock prepared") and commit 34e81ad5f0b6 ("i2c: s3c2410: fix ABBA deadlock
-> by keeping clock prepared").
+> Don't have a strong opinion on that, I'm inclined to stay with
+> PLL_36XX_RATE() though, to indicate the K value is valid for this
+> PLL type.
 > 
+>>> @@ -237,6 +258,7 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>>  {
+>>>  	struct samsung_clk_provider *ctx;
+>>>  	void __iomem *reg_base;
+>>> +	struct clk *xxti;
+>>>  
+>>>  	reg_base = of_iomap(np, 0);
+>>>  	if (!reg_base)
+>>> @@ -244,6 +266,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>>>  
+>>>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+>>>  
+>>> +	xxti = of_clk_get(np, 0);
+>>> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
+>>> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
+>>> +
+>>
+>> I sent the patch to use the samsung_cmu_register_one()
+>>
+>> and applied it[1]. I think that you need to rebase this patch on patch[1].
+>> [1] https://lkml.org/lkml/2016/9/1/602
+>> - Re: [PATCH 2/2] clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
 > 
-> Disclaimer
-> ==========
-> Request for comments, so:
-> 1. Only exynos_defconfig builds,
-> 2. A lot of FIXME/TODO note still,
-> 3. Checkpatch not run, lines not aligned,
-> 4. Other (non-exynos) drivers not converted,
-> 5. Probably not yet bisectable,
-> 6. Locking became quite complex.
->    The previous one lock was simple.  Inefficient and dead-lock prone but
->    simple.  Because of clock hierarchy spanning through controllers, the
->    new locking became quite complicated.  I don't like it but...
+> Yes, I need to rebase onto latest tree.
 > 
+>>> +/* Maximum lock time can be 3000 * PDIV cycles */
+>>> +#define PLL2650X_LOCK_FACTOR		3000
+>>> +
+>>> +#define PLL2650X_M_MASK			0x3FF
+>>
+>> 1FF instead of 0x3FF because the MDIV [24:16]?
 > 
-> Details
-> =======
-> In Exynos-based boards case the deadlock occurs between clock's
-> prepare_lock and regmap-i2c's lock:
+> Right, my bad, I'll correct this.
 > 
-> CPU #0:                             CPU #1:
-> lock(regmap)
->                                     s2mps11-clk: clk_prepare_lock()
+>>> +#define PLL2650X_P_MASK			0x3F
+>>> +#define PLL2650X_S_MASK			0x7
+>>> +#define PLL2650X_K_MASK			0xFFFF
+>>> +#define PLL2650X_LOCK_STAT_MASK		0x1
+>>> +#define PLL2650X_M_SHIFT		16
+>>> +#define PLL2650X_P_SHIFT		8
+>>> +#define PLL2650X_S_SHIFT		0
+>>> +#define PLL2650X_K_SHIFT		0
+>>> +#define PLL2650X_LOCK_STAT_SHIFT	29
+>>> +#define PLL2650X_PLL_ENABLE_SHIFT	31
+>>> +
+>>> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
+>>> +				unsigned long parent_rate)
+>>> +{
+>>> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+>>> +	u64 fout = parent_rate;
+>>> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
+>>> +	s16 kdiv;
+>>> +
+>>> +	pll_con0 = readl_relaxed(pll->con_reg);
+>>> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
+>>> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
+>>> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
+>>> +
+>>> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
+>>> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
+>>> +
+>>> +	fout *= (mdiv << 16) + kdiv;
+>>> +	do_div(fout, (pdiv << sdiv));
+>>> +	fout >>= 16;
+>>> +
+>>> +	return (unsigned long)fout;
+>>
+>> I got some confusion because the EPLL_CON1 register don't include
+>> the 'K' value. Instead, the name is 'DSM' which is PLL DSM(Delta-Sigma 
+>> Modulator).
+>> But, I knew that DSM means the 'K' value as your implementation.
 > 
-> i2c-exynos: clk_prepare_lock() - wait
->                                     lock(regmap) - wait
-> 
-> The clk_prepare_lock() on both CPUs come from different clock drivers
-> and components:
-> 1. I2C clock is part of SoC block and is required by i2c-s3c2410/i2c-exynos5
->    driver,
-> 2. S2MPS11 clock is separate device, however driver uses I2C regmap.
-> 
-> The deadlock was reported by lockdep (always) and was happening
-> in 20% of boots of Odroid XU3 with multi_v7 defconfig.  Workaround for
-> deadlock was implemented by removing prepare/unprepare calls from I2C
-> transfers.  However these are just workarounds... which after applying
-> this patch can be reverted.
-> 
-> Additionally Marek Szyprowski's work on domains/clocks/pinctrl exposed
-> the deadlock again in different configuration.
-> 
+> Yes, the documentation seems incomplete, the K coefficient is used
+> in the PLL output frequency equations and I found that register
+> bit field used in some downstream kernel.
+> Perhaps this is corrected in newer User Manual version than
+> the "Preeliminary" I have.
 
-Per-controller locks seems to be a misnomer. These patches look
-more like per-clk_register() locks. The clk registrant can decide
-how fine grained to make the prepare locking scheme. They can
-decide to have one lock per clk, one lock for the entire tree, or
-one lock per arbitrary subtree. I'd prefer to drop the controller
-concept unless it's really done that way, by attaching to the OF
-clk provider or device pointer.
+OK. Thanks.
 
-Given that, it seems that conceptually these patches allow clk
-registrants to carve out a set of clks that they want to be
-treated as an atomic unit with regards to the prepare lock.
-TL;DR trees of per-process recursive prepare mutex locks where
-the locks cover one or more clks.
+> 
+>> I have a question.
+>> When I check the calculation fomula as following:
+>> 	FFOUT = ((m+k/65536) x FFIN) / (p x 2^S);
+>>
+>> So, pll2560x might shift the kdiv instead of mdiv.
+>> 	fout *= mdiv + (kdiv << 16);
+> 
+> First we multiply both sides of the equation by 65536 (2^16):
+> 
+>  65536 * FFOUT = 65536 * ((M + K/65536) x FFIN) / (P x 2^S);
+> 
+> That means M needs to be multiplied by 2^16, not K:
+> 
+>  65536 * FFOUT = (65536 * M + K) x FFIN) / (P x 2^S);
 
-The locks are recursive per-process to simplify the problem where
-we need to acquire the same lock multiple times while traversing
-a tree that shares the same lock, right? Otherwise we would need
-to track which locks we've already grabbed and refcount and we
-wouldn't be able to re-enter the framework from within the clk
-ops of the same atomic unit.
+I understand. I was missing to check the "fout >>= 16;" equation.
+Thanks for your explanation
 
-As long as we can guarantee that we always take the locks in the
-same order we'll be fine. The burden to ensure that would be
-placed on the clk registrants though, and verifying that will be
-left up to humans? That seems fragile and error prone. We can
-always say that we take the global lock and then traverse the
-children up to the roots, but we can't be sure that during the
-tree traversal we don't take locks in different order because of
-how the clk registrant has structured things.
-
-It would be great if the different clk APIs were listed, with the
-order of how locks are taken BTW. And really overall just more
-information about how the locking scheme works. I had to read
-this patch series quite a few times to come to (hopefully the
-right) conclusions.
-
-So I'm not very fond of this design because the locking scheme is
-pretty much out of the hands of the framework and can be easily
-broken. I'm biased of course, because I'd prefer we go with my
-wwmutex design of per-clk locks[1]. Taking locks in any order
-works fine there, and we resolve quite a few long standing
-locking problems that we have while improving scalability. The
-problem there is that we don't get the recursive mutex design
-(maybe that's a benefit!). Once a clk_op reenters the framework
-with consumer APIs and tries to grab the same lock we deadlock.
-This is why I've been slowly splitting consumers from providers
-so we can easily identify these cases. If we had something like
-coordinated clk rate switching, we could get rid of clk_ops
-reentering the framework and avoid this problem (and we really do
-need to do that).
-
-The one thing I do like about this patch series though is the
-gradual movement of providers to the new locking scheme. Maybe if
-we combined that idea with per-clk wwmutex locks we could have
-the best of both worlds and fix reentrancy later when we need it?
-There's wwmutex_trylock() that we could use. Perhaps always pass
-a NULL context if some clk flag isn't set (CLK_USE_PER_CLK_LOCK).
-Plus we could assign the same wwmutex all over the place when
-that flag isn't set and allocate a unique wwmutex at clk_register
-time otherwise. I haven't thought about it deeply, so there may
-be some glaring problem that I'm missing like when we have half
-the clks in a tree with the flag set or something. This is where
-driving home from the office for 45 minutes helps.
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-April/251039.html
+> 
+> K is the "fractional" coefficient here, with least impact on FFOUT.
+> Finally we divide fout by 2^16 to reverse previous multiplication.
+> 
+> I tested this code with audio playback, if it had been incorrect
+> in such a way the sampling rate would certainly have been incorrect
+> and it would have been heard.
+> 
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards,
+Chanwoo Choi
