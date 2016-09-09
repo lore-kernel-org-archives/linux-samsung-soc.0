@@ -1,162 +1,314 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 4/7] clk: samsung: Add support for EPLL on exynos5410
-Date: Fri, 09 Sep 2016 13:56:31 +0900
-Message-ID: <57D240FF.5090009@samsung.com>
-References: <1473163496-17820-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20160906120551epcas1p1296ff11fa56842df249f5b6520fe0ab8@epcas1p1.samsung.com>
- <1473163496-17820-5-git-send-email-s.nawrocki@samsung.com>
- <57CF942C.1030808@samsung.com>
- <a7316c24-2b57-7006-6564-fe25cbec252a@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Add support for EPLL on exynos5410
+Date: Fri, 09 Sep 2016 13:57:10 +0900
+Message-ID: <57D24126.9090705@samsung.com>
+References: <CGME20160908145712epcas1p197081847b921c8ed070009d9b1169c82@epcas1p1.samsung.com>
+ <1473346574-538-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <a7316c24-2b57-7006-6564-fe25cbec252a@samsung.com>
+In-reply-to: <1473346574-538-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: b.zolnierkie@samsung.com, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016년 09월 07일 17:27, Sylwester Nawrocki wrote:
-> On 09/07/2016 06:14 AM, Chanwoo Choi wrote:
->> On 2016년 09월 06일 21:04, Sylwester Nawrocki wrote:
-> ...
->>> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
->>> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
->>> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
->>
->> In the Exynos5410's TRM, the EPLL PMS table has the 
->> 'P' state is 3 instead of 2 when target is 400MHz as following:
->>
->> 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
-> 
-> Indeed, thanks for pointing out.
-> 
->>> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
->>> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
->>> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
->>> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
->>> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
->>> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
->>> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
->>> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
->>> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
->>
->> The all entry of EPLL PMS table has the zero(0) for 'K' value.
->> How about using the PLL_35XX_RATE() which has the P,M,S entry without K entry?
-> 
-> Don't have a strong opinion on that, I'm inclined to stay with
-> PLL_36XX_RATE() though, to indicate the K value is valid for this
-> PLL type.
-> 
->>> @@ -237,6 +258,7 @@ static void __init exynos5410_clk_init(struct device_node *np)
->>>  {
->>>  	struct samsung_clk_provider *ctx;
->>>  	void __iomem *reg_base;
->>> +	struct clk *xxti;
->>>  
->>>  	reg_base = of_iomap(np, 0);
->>>  	if (!reg_base)
->>> @@ -244,6 +266,10 @@ static void __init exynos5410_clk_init(struct device_node *np)
->>>  
->>>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
->>>  
->>> +	xxti = of_clk_get(np, 0);
->>> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
->>> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
->>> +
->>
->> I sent the patch to use the samsung_cmu_register_one()
->>
->> and applied it[1]. I think that you need to rebase this patch on patch[1].
->> [1] https://lkml.org/lkml/2016/9/1/602
->> - Re: [PATCH 2/2] clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
-> 
-> Yes, I need to rebase onto latest tree.
-> 
->>> +/* Maximum lock time can be 3000 * PDIV cycles */
->>> +#define PLL2650X_LOCK_FACTOR		3000
->>> +
->>> +#define PLL2650X_M_MASK			0x3FF
->>
->> 1FF instead of 0x3FF because the MDIV [24:16]?
-> 
-> Right, my bad, I'll correct this.
-> 
->>> +#define PLL2650X_P_MASK			0x3F
->>> +#define PLL2650X_S_MASK			0x7
->>> +#define PLL2650X_K_MASK			0xFFFF
->>> +#define PLL2650X_LOCK_STAT_MASK		0x1
->>> +#define PLL2650X_M_SHIFT		16
->>> +#define PLL2650X_P_SHIFT		8
->>> +#define PLL2650X_S_SHIFT		0
->>> +#define PLL2650X_K_SHIFT		0
->>> +#define PLL2650X_LOCK_STAT_SHIFT	29
->>> +#define PLL2650X_PLL_ENABLE_SHIFT	31
->>> +
->>> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
->>> +				unsigned long parent_rate)
->>> +{
->>> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
->>> +	u64 fout = parent_rate;
->>> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
->>> +	s16 kdiv;
->>> +
->>> +	pll_con0 = readl_relaxed(pll->con_reg);
->>> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
->>> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
->>> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
->>> +
->>> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
->>> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
->>> +
->>> +	fout *= (mdiv << 16) + kdiv;
->>> +	do_div(fout, (pdiv << sdiv));
->>> +	fout >>= 16;
->>> +
->>> +	return (unsigned long)fout;
->>
->> I got some confusion because the EPLL_CON1 register don't include
->> the 'K' value. Instead, the name is 'DSM' which is PLL DSM(Delta-Sigma 
->> Modulator).
->> But, I knew that DSM means the 'K' value as your implementation.
-> 
-> Yes, the documentation seems incomplete, the K coefficient is used
-> in the PLL output frequency equations and I found that register
-> bit field used in some downstream kernel.
-> Perhaps this is corrected in newer User Manual version than
-> the "Preeliminary" I have.
+Hi Sylwester,
 
-OK. Thanks.
+Looks good to me.
 
-> 
->> I have a question.
->> When I check the calculation fomula as following:
->> 	FFOUT = ((m+k/65536) x FFIN) / (p x 2^S);
->>
->> So, pll2560x might shift the kdiv instead of mdiv.
->> 	fout *= mdiv + (kdiv << 16);
-> 
-> First we multiply both sides of the equation by 65536 (2^16):
-> 
->  65536 * FFOUT = 65536 * ((M + K/65536) x FFIN) / (P x 2^S);
-> 
-> That means M needs to be multiplied by 2^16, not K:
-> 
->  65536 * FFOUT = (65536 * M + K) x FFIN) / (P x 2^S);
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I understand. I was missing to check the "fout >>= 16;" equation.
-Thanks for your explanation
-
-> 
-> K is the "fractional" coefficient here, with least impact on FFOUT.
-> Finally we divide fout by 2^16 to reverse previous multiplication.
-> 
-> I tested this code with audio playback, if it had been incorrect
-> in such a way the sampling rate would certainly have been incorrect
-> and it would have been heard.
-> 
-
--- 
 Best Regards,
 Chanwoo Choi
+
+On 2016년 09월 08일 23:56, Sylwester Nawrocki wrote:
+> This patch adds code instantiating the EPLL, which is used as the
+> audio subsystem's root clock.
+> The requirement to specify the external root clock in clocks property
+> is documented.  Having the consumer 'clocks' property ensures proper
+> initialization order by explicitly specifying dependencies in DT.
+> It prevents situations when the SoC's clock controller driver has
+> initialized, the external oscillator clock is not yet registered
+> and setting clock frequencies through assigned-clock-rates property
+> doesn't work properly due to unknown external oscillator frequency.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since v2:
+>  - corrected exynos5410_pll2550x_24mhz_tbl table entry for
+>    fout=400MHz, corrected PLL2650X_M_MASK mask value.
+> 
+> Changes since v1:
+>  - rephrased paragraph of the DT binding describing the external
+>    XXTI clock.
+> ---
+>  .../devicetree/bindings/clock/exynos5410-clock.txt |  21 +++--
+>  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
+>  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
+>  drivers/clk/samsung/clk-pll.h                      |   1 +
+>  4 files changed, 144 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> index aeab635..4527de3 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> @@ -12,24 +12,29 @@ Required Properties:
+>  
+>  - #clock-cells: should be 1.
+>  
+> +- clocks: should contain an entry specifying the root clock from external
+> +  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
+> +  defined using standard clock bindings with "fin_pll" clock-output-name.
+> +  That clock is being passed internally to the 9 PLLs.
+> +
+>  All available clocks are defined as preprocessor macros in
+>  dt-bindings/clock/exynos5410.h header and can be used in device
+>  tree sources.
+>  
+> -External clock:
+> -
+> -There is clock that is generated outside the SoC. It
+> -is expected that it is defined using standard clock bindings
+> -with following clock-output-name:
+> -
+> - - "fin_pll" - PLL input clock from XXTI
+> -
+>  Example 1: An example of a clock controller node is listed below.
+>  
+> +	fin_pll: xxti {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "fin_pll";
+> +		#clock-cells = <0>;
+> +	};
+> +
+>  	clock: clock-controller@0x10010000 {
+>  		compatible = "samsung,exynos5410-clock";
+>  		reg = <0x10010000 0x30000>;
+>  		#clock-cells = <1>;
+> +		clocks = <&fin_pll>;
+>  	};
+>  
+>  Example 2: UART controller node that consumes the clock generated by the clock
+> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+> index eefed92..fc471a4 100644
+> --- a/drivers/clk/samsung/clk-exynos5410.c
+> +++ b/drivers/clk/samsung/clk-exynos5410.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/clk.h>
+>  
+>  #include "clk.h"
+>  
+> @@ -21,6 +22,8 @@
+>  #define APLL_CON0               0x100
+>  #define CPLL_LOCK               0x10020
+>  #define CPLL_CON0               0x10120
+> +#define EPLL_LOCK               0x10040
+> +#define EPLL_CON0               0x10130
+>  #define MPLL_LOCK               0x4000
+>  #define MPLL_CON0               0x4100
+>  #define BPLL_LOCK               0x20010
+> @@ -58,7 +61,7 @@
+>  
+>  /* list of PLLs */
+>  enum exynos5410_plls {
+> -	apll, cpll, mpll,
+> +	apll, cpll, epll, mpll,
+>  	bpll, kpll,
+>  	nr_plls                 /* number of PLLs */
+>  };
+> @@ -67,6 +70,7 @@ enum exynos5410_plls {
+>  PNAME(apll_p)		= { "fin_pll", "fout_apll", };
+>  PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
+>  PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
+> +PNAME(epll_p)		= { "fin_pll", "fout_epll" };
+>  PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
+>  PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
+>  
+> @@ -95,6 +99,8 @@ static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
+>  	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
+>  	MUX(0, "sclk_bpll_muxed", bpll_user_p, SRC_TOP2, 24, 1),
+>  
+> +	MUX(0, "sclk_epll", epll_p, SRC_TOP2, 12, 1),
+> +
+>  	MUX(0, "sclk_cpll", cpll_p, SRC_TOP2, 8, 1),
+>  
+>  	MUX(0, "sclk_mpll_bpll", mpll_bpll_p, SRC_TOP1, 20, 1),
+> @@ -219,11 +225,26 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
+>  	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
+>  };
+>  
+> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
+> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
+> +	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
+> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
+> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
+> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
+> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
+> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
+> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
+> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
+> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
+> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
+> +};
+> +
+> +static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+>  	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+>  		APLL_CON0, NULL),
+>  	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+>  		CPLL_CON0, NULL),
+> +	[epll] = PLL(pll_2650x, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
+> +		EPLL_CON0, NULL),
+>  	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+>  		MPLL_CON0, NULL),
+>  	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+> @@ -247,6 +268,11 @@ static const struct samsung_cmu_info cmu __initconst = {
+>  /* register exynos5410 clocks */
+>  static void __init exynos5410_clk_init(struct device_node *np)
+>  {
+> +	struct clk *xxti = of_clk_get(np, 0);
+> +
+> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
+> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
+> +
+>  	samsung_cmu_register_one(np, &cmu);
+>  
+>  	pr_debug("Exynos5410: clock setup completed.\n");
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index b5ab055..9617825 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -1018,6 +1018,102 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
+>  };
+>  
+>  /*
+> + * PLL2650x Clock Type
+> + */
+> +
+> +/* Maximum lock time can be 3000 * PDIV cycles */
+> +#define PLL2650X_LOCK_FACTOR		3000
+> +
+> +#define PLL2650X_M_MASK			0x1ff
+> +#define PLL2650X_P_MASK			0x3f
+> +#define PLL2650X_S_MASK			0x7
+> +#define PLL2650X_K_MASK			0xffff
+> +#define PLL2650X_LOCK_STAT_MASK		0x1
+> +#define PLL2650X_M_SHIFT		16
+> +#define PLL2650X_P_SHIFT		8
+> +#define PLL2650X_S_SHIFT		0
+> +#define PLL2650X_K_SHIFT		0
+> +#define PLL2650X_LOCK_STAT_SHIFT	29
+> +#define PLL2650X_PLL_ENABLE_SHIFT	31
+> +
+> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
+> +				unsigned long parent_rate)
+> +{
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u64 fout = parent_rate;
+> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
+> +	s16 kdiv;
+> +
+> +	pll_con0 = readl_relaxed(pll->con_reg);
+> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
+> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
+> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
+> +
+> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
+> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
+> +
+> +	fout *= (mdiv << 16) + kdiv;
+> +	do_div(fout, (pdiv << sdiv));
+> +	fout >>= 16;
+> +
+> +	return (unsigned long)fout;
+> +}
+> +
+> +static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
+> +					unsigned long prate)
+> +{
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	const struct samsung_pll_rate_table *rate;
+> +	u32 con0, con1;
+> +
+> +	/* Get required rate settings from table */
+> +	rate = samsung_get_pll_settings(pll, drate);
+> +	if (!rate) {
+> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
+> +			drate, clk_hw_get_name(hw));
+> +		return -EINVAL;
+> +	}
+> +
+> +	con0 = readl_relaxed(pll->con_reg);
+> +	con1 = readl_relaxed(pll->con_reg + 4);
+> +
+> +	/* Set PLL lock time. */
+> +	writel_relaxed(rate->pdiv * PLL2650X_LOCK_FACTOR, pll->lock_reg);
+> +
+> +	/* Change PLL PMS values */
+> +	con0 &= ~((PLL2650X_M_MASK << PLL2650X_M_SHIFT) |
+> +			(PLL2650X_P_MASK << PLL2650X_P_SHIFT) |
+> +			(PLL2650X_S_MASK << PLL2650X_S_SHIFT));
+> +	con0 |= (rate->mdiv << PLL2650X_M_SHIFT) |
+> +			(rate->pdiv << PLL2650X_P_SHIFT) |
+> +			(rate->sdiv << PLL2650X_S_SHIFT);
+> +	con0 |= (1 << PLL2650X_PLL_ENABLE_SHIFT);
+> +	writel_relaxed(con0, pll->con_reg);
+> +
+> +	con1 &= ~(PLL2650X_K_MASK << PLL2650X_K_SHIFT);
+> +	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
+> +	writel_relaxed(con1, pll->con_reg + 4);
+> +
+> +	do {
+> +		cpu_relax();
+> +		con0 = readl_relaxed(pll->con_reg);
+> +	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
+> +			<< PLL2650X_LOCK_STAT_SHIFT)));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops samsung_pll2650x_clk_ops = {
+> +	.recalc_rate = samsung_pll2650x_recalc_rate,
+> +	.round_rate = samsung_pll_round_rate,
+> +	.set_rate = samsung_pll2650x_set_rate,
+> +};
+> +
+> +static const struct clk_ops samsung_pll2650x_clk_min_ops = {
+> +	.recalc_rate = samsung_pll2650x_recalc_rate,
+> +};
+> +
+> +/*
+>   * PLL2650XX Clock Type
+>   */
+>  
+> @@ -1227,6 +1323,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>  		else
+>  			init.ops = &samsung_pll2550xx_clk_ops;
+>  		break;
+> +	case pll_2650x:
+> +		if (!pll->rate_table)
+> +			init.ops = &samsung_pll2650x_clk_min_ops;
+> +		else
+> +			init.ops = &samsung_pll2650x_clk_ops;
+> +		break;
+>  	case pll_2650xx:
+>  		if (!pll->rate_table)
+>  			init.ops = &samsung_pll2650xx_clk_min_ops;
+> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> index df4ad8a..a1ca023 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -33,6 +33,7 @@ enum samsung_pll_type {
+>  	pll_s3c2440_mpll,
+>  	pll_2550x,
+>  	pll_2550xx,
+> +	pll_2650x,
+>  	pll_2650xx,
+>  	pll_1450x,
+>  	pll_1451x,
+> 
