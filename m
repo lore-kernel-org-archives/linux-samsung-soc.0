@@ -1,314 +1,85 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Add support for EPLL on exynos5410
-Date: Fri, 09 Sep 2016 13:57:10 +0900
-Message-ID: <57D24126.9090705@samsung.com>
-References: <CGME20160908145712epcas1p197081847b921c8ed070009d9b1169c82@epcas1p1.samsung.com>
- <1473346574-538-1-git-send-email-s.nawrocki@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] [media] platform: constify vb2_ops structures
+Date: Fri, 09 Sep 2016 11:42:19 +0300
+Message-ID: <1520635.43zSurJaks@avalon>
+References: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1473346574-538-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, kernel-janitors@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Kyungmin Park <kyungmin.park@samsung.com>, Benoit Parrot <bparrot@ti.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Hyun Kwon <hyun.kwon@xilinx.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.orgAndrzej
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Hi Julia,
 
-Looks good to me.
+Thank you for the patch.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Friday 09 Sep 2016 01:59:10 Julia Lawall wrote:
+> Check for vb2_ops structures that are only stored in the ops field of a
+> vb2_queue structure.  That field is declared const, so vb2_ops structures
+> that have this property can be declared as const also.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct vb2_ops i@p = { ... };
+> 
+> @ok@
+> identifier r.i;
+> struct vb2_queue e;
+> position p;
+> @@
+> e.ops = &i@p;
+> 
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> struct vb2_ops e;
+> @@
+> e@i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct vb2_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Best Regards,
-Chanwoo Choi
+For the drivers below,
 
-On 2016년 09월 08일 23:56, Sylwester Nawrocki wrote:
-> This patch adds code instantiating the EPLL, which is used as the
-> audio subsystem's root clock.
-> The requirement to specify the external root clock in clocks property
-> is documented.  Having the consumer 'clocks' property ensures proper
-> initialization order by explicitly specifying dependencies in DT.
-> It prevents situations when the SoC's clock controller driver has
-> initialized, the external oscillator clock is not yet registered
-> and setting clock frequencies through assigned-clock-rates property
-> doesn't work properly due to unknown external oscillator frequency.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v2:
->  - corrected exynos5410_pll2550x_24mhz_tbl table entry for
->    fout=400MHz, corrected PLL2650X_M_MASK mask value.
-> 
-> Changes since v1:
->  - rephrased paragraph of the DT binding describing the external
->    XXTI clock.
-> ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  21 +++--
->  drivers/clk/samsung/clk-exynos5410.c               |  30 +++++-
->  drivers/clk/samsung/clk-pll.c                      | 102 +++++++++++++++++++++
->  drivers/clk/samsung/clk-pll.h                      |   1 +
->  4 files changed, 144 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> index aeab635..4527de3 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> @@ -12,24 +12,29 @@ Required Properties:
->  
->  - #clock-cells: should be 1.
->  
-> +- clocks: should contain an entry specifying the root clock from external
-> +  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
-> +  defined using standard clock bindings with "fin_pll" clock-output-name.
-> +  That clock is being passed internally to the 9 PLLs.
-> +
->  All available clocks are defined as preprocessor macros in
->  dt-bindings/clock/exynos5410.h header and can be used in device
->  tree sources.
->  
-> -External clock:
-> -
-> -There is clock that is generated outside the SoC. It
-> -is expected that it is defined using standard clock bindings
-> -with following clock-output-name:
-> -
-> - - "fin_pll" - PLL input clock from XXTI
-> -
->  Example 1: An example of a clock controller node is listed below.
->  
-> +	fin_pll: xxti {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <24000000>;
-> +		clock-output-names = "fin_pll";
-> +		#clock-cells = <0>;
-> +	};
-> +
->  	clock: clock-controller@0x10010000 {
->  		compatible = "samsung,exynos5410-clock";
->  		reg = <0x10010000 0x30000>;
->  		#clock-cells = <1>;
-> +		clocks = <&fin_pll>;
->  	};
->  
->  Example 2: UART controller node that consumes the clock generated by the clock
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index eefed92..fc471a4 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -14,6 +14,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/clk.h>
->  
->  #include "clk.h"
->  
-> @@ -21,6 +22,8 @@
->  #define APLL_CON0               0x100
->  #define CPLL_LOCK               0x10020
->  #define CPLL_CON0               0x10120
-> +#define EPLL_LOCK               0x10040
-> +#define EPLL_CON0               0x10130
->  #define MPLL_LOCK               0x4000
->  #define MPLL_CON0               0x4100
->  #define BPLL_LOCK               0x20010
-> @@ -58,7 +61,7 @@
->  
->  /* list of PLLs */
->  enum exynos5410_plls {
-> -	apll, cpll, mpll,
-> +	apll, cpll, epll, mpll,
->  	bpll, kpll,
->  	nr_plls                 /* number of PLLs */
->  };
-> @@ -67,6 +70,7 @@ enum exynos5410_plls {
->  PNAME(apll_p)		= { "fin_pll", "fout_apll", };
->  PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
->  PNAME(cpll_p)		= { "fin_pll", "fout_cpll" };
-> +PNAME(epll_p)		= { "fin_pll", "fout_epll" };
->  PNAME(mpll_p)		= { "fin_pll", "fout_mpll", };
->  PNAME(kpll_p)		= { "fin_pll", "fout_kpll", };
->  
-> @@ -95,6 +99,8 @@ static const struct samsung_mux_clock exynos5410_mux_clks[] __initconst = {
->  	MUX(0, "sclk_bpll", bpll_p, SRC_CDREX, 0, 1),
->  	MUX(0, "sclk_bpll_muxed", bpll_user_p, SRC_TOP2, 24, 1),
->  
-> +	MUX(0, "sclk_epll", epll_p, SRC_TOP2, 12, 1),
-> +
->  	MUX(0, "sclk_cpll", cpll_p, SRC_TOP2, 8, 1),
->  
->  	MUX(0, "sclk_mpll_bpll", mpll_bpll_p, SRC_TOP1, 20, 1),
-> @@ -219,11 +225,26 @@ static const struct samsung_gate_clock exynos5410_gate_clks[] __initconst = {
->  	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
->  };
->  
-> -static const struct samsung_pll_clock exynos5410_plls[nr_plls] __initconst = {
-> +static const struct samsung_pll_rate_table exynos5410_pll2550x_24mhz_tbl[] __initconst = {
-> +	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
-> +	PLL_36XX_RATE(333000000U, 111, 2, 2, 0),
-> +	PLL_36XX_RATE(300000000U, 100, 2, 2, 0),
-> +	PLL_36XX_RATE(266000000U, 266, 3, 3, 0),
-> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-> +	PLL_36XX_RATE(192000000U, 192, 3, 3, 0),
-> +	PLL_36XX_RATE(166000000U, 166, 3, 3, 0),
-> +	PLL_36XX_RATE(133000000U, 266, 3, 4, 0),
-> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-> +	PLL_36XX_RATE(66000000U,  176, 2, 5, 0),
-> +};
-> +
-> +static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
->  	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
->  		APLL_CON0, NULL),
->  	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
->  		CPLL_CON0, NULL),
-> +	[epll] = PLL(pll_2650x, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-> +		EPLL_CON0, NULL),
->  	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
->  		MPLL_CON0, NULL),
->  	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
-> @@ -247,6 +268,11 @@ static const struct samsung_cmu_info cmu __initconst = {
->  /* register exynos5410 clocks */
->  static void __init exynos5410_clk_init(struct device_node *np)
->  {
-> +	struct clk *xxti = of_clk_get(np, 0);
-> +
-> +	if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
-> +		exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
-> +
->  	samsung_cmu_register_one(np, &cmu);
->  
->  	pr_debug("Exynos5410: clock setup completed.\n");
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index b5ab055..9617825 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -1018,6 +1018,102 @@ static const struct clk_ops samsung_pll2550xx_clk_min_ops = {
->  };
->  
->  /*
-> + * PLL2650x Clock Type
-> + */
-> +
-> +/* Maximum lock time can be 3000 * PDIV cycles */
-> +#define PLL2650X_LOCK_FACTOR		3000
-> +
-> +#define PLL2650X_M_MASK			0x1ff
-> +#define PLL2650X_P_MASK			0x3f
-> +#define PLL2650X_S_MASK			0x7
-> +#define PLL2650X_K_MASK			0xffff
-> +#define PLL2650X_LOCK_STAT_MASK		0x1
-> +#define PLL2650X_M_SHIFT		16
-> +#define PLL2650X_P_SHIFT		8
-> +#define PLL2650X_S_SHIFT		0
-> +#define PLL2650X_K_SHIFT		0
-> +#define PLL2650X_LOCK_STAT_SHIFT	29
-> +#define PLL2650X_PLL_ENABLE_SHIFT	31
-> +
-> +static unsigned long samsung_pll2650x_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u64 fout = parent_rate;
-> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
-> +	s16 kdiv;
-> +
-> +	pll_con0 = readl_relaxed(pll->con_reg);
-> +	mdiv = (pll_con0 >> PLL2650X_M_SHIFT) & PLL2650X_M_MASK;
-> +	pdiv = (pll_con0 >> PLL2650X_P_SHIFT) & PLL2650X_P_MASK;
-> +	sdiv = (pll_con0 >> PLL2650X_S_SHIFT) & PLL2650X_S_MASK;
-> +
-> +	pll_con1 = readl_relaxed(pll->con_reg + 4);
-> +	kdiv = (s16)((pll_con1 >> PLL2650X_K_SHIFT) & PLL2650X_K_MASK);
-> +
-> +	fout *= (mdiv << 16) + kdiv;
-> +	do_div(fout, (pdiv << sdiv));
-> +	fout >>= 16;
-> +
-> +	return (unsigned long)fout;
-> +}
-> +
-> +static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
-> +					unsigned long prate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	const struct samsung_pll_rate_table *rate;
-> +	u32 con0, con1;
-> +
-> +	/* Get required rate settings from table */
-> +	rate = samsung_get_pll_settings(pll, drate);
-> +	if (!rate) {
-> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-> +			drate, clk_hw_get_name(hw));
-> +		return -EINVAL;
-> +	}
-> +
-> +	con0 = readl_relaxed(pll->con_reg);
-> +	con1 = readl_relaxed(pll->con_reg + 4);
-> +
-> +	/* Set PLL lock time. */
-> +	writel_relaxed(rate->pdiv * PLL2650X_LOCK_FACTOR, pll->lock_reg);
-> +
-> +	/* Change PLL PMS values */
-> +	con0 &= ~((PLL2650X_M_MASK << PLL2650X_M_SHIFT) |
-> +			(PLL2650X_P_MASK << PLL2650X_P_SHIFT) |
-> +			(PLL2650X_S_MASK << PLL2650X_S_SHIFT));
-> +	con0 |= (rate->mdiv << PLL2650X_M_SHIFT) |
-> +			(rate->pdiv << PLL2650X_P_SHIFT) |
-> +			(rate->sdiv << PLL2650X_S_SHIFT);
-> +	con0 |= (1 << PLL2650X_PLL_ENABLE_SHIFT);
-> +	writel_relaxed(con0, pll->con_reg);
-> +
-> +	con1 &= ~(PLL2650X_K_MASK << PLL2650X_K_SHIFT);
-> +	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
-> +	writel_relaxed(con1, pll->con_reg + 4);
-> +
-> +	do {
-> +		cpu_relax();
-> +		con0 = readl_relaxed(pll->con_reg);
-> +	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
-> +			<< PLL2650X_LOCK_STAT_SHIFT)));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops samsung_pll2650x_clk_ops = {
-> +	.recalc_rate = samsung_pll2650x_recalc_rate,
-> +	.round_rate = samsung_pll_round_rate,
-> +	.set_rate = samsung_pll2650x_set_rate,
-> +};
-> +
-> +static const struct clk_ops samsung_pll2650x_clk_min_ops = {
-> +	.recalc_rate = samsung_pll2650x_recalc_rate,
-> +};
-> +
-> +/*
->   * PLL2650XX Clock Type
->   */
->  
-> @@ -1227,6 +1323,12 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  		else
->  			init.ops = &samsung_pll2550xx_clk_ops;
->  		break;
-> +	case pll_2650x:
-> +		if (!pll->rate_table)
-> +			init.ops = &samsung_pll2650x_clk_min_ops;
-> +		else
-> +			init.ops = &samsung_pll2650x_clk_ops;
-> +		break;
->  	case pll_2650xx:
->  		if (!pll->rate_table)
->  			init.ops = &samsung_pll2650xx_clk_min_ops;
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index df4ad8a..a1ca023 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -33,6 +33,7 @@ enum samsung_pll_type {
->  	pll_s3c2440_mpll,
->  	pll_2550x,
->  	pll_2550xx,
-> +	pll_2650x,
->  	pll_2650xx,
->  	pll_1450x,
->  	pll_1451x,
-> 
+>  drivers/media/platform/m2m-deinterlace.c                 |    2 +-
+>  drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
+>  drivers/media/platform/rcar_jpu.c                        |    2 +-
+>  drivers/media/platform/sh_vou.c                          |    2 +-
+>  drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
+>  drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
+>  drivers/media/platform/vim2m.c                           |    2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+For
+
+>  drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
+
+you can also add my
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+tag, but the driver will be scheduled for removal very soon.
+
+-- 
+Regards,
+
+Laurent Pinchart
