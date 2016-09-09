@@ -1,340 +1,134 @@
-From: Fabien DESSENNE <fabien.dessenne-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH] [media] platform: constify vb2_ops structures
-Date: Fri, 9 Sep 2016 10:53:49 +0200
-Message-ID: <ebe67dae-f197-e438-bd3f-0a74c0836a8c@st.com>
-References: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v2 2/2] drm/bridge: analogix_dp: detect Sink PSR state
+ after configuring the PSR
+Date: Fri, 9 Sep 2016 17:15:37 +0800
+Message-ID: <a0b12086-ea57-2e10-bd25-d1e209bedd1d@rock-chips.com>
+References: <1473306506-4283-1-git-send-email-ykk@rock-chips.com>
+ <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vb+apDfnqLtr3TDNxEzKe_kREeabevh4B6Z9wRquLRn6ag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1473379150-17315-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kamil Debski <kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?Windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Mikhail Ulyanov <mikhail.ulyanov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>, "linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hyun
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOw6vb+apDfnqLtr3TDNxEzKe_kREeabevh4B6Z9wRquLRn6ag@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
-
-
-On 09/09/2016 01:59 AM, Julia Lawall wrote:
-> Check for vb2_ops structures that are only stored in the ops field of a
-> vb2_queue structure.  That field is declared const, so vb2_ops structures
-> that have this property can be declared as const also.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct vb2_ops i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> struct vb2_queue e;
-> position p;
-> @@
-> e.ops = &i@p;
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct vb2_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->   struct vb2_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
->
-> ---
->   drivers/media/platform/exynos-gsc/gsc-m2m.c              |    2 +-
->   drivers/media/platform/exynos4-is/fimc-capture.c         |    2 +-
->   drivers/media/platform/exynos4-is/fimc-m2m.c             |    2 +-
->   drivers/media/platform/m2m-deinterlace.c                 |    2 +-
->   drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c       |    2 +-
->   drivers/media/platform/mx2_emmaprp.c                     |    2 +-
->   drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
->   drivers/media/platform/rcar_jpu.c                        |    2 +-
->   drivers/media/platform/s5p-g2d/g2d.c                     |    2 +-
->   drivers/media/platform/s5p-jpeg/jpeg-core.c              |    2 +-
->   drivers/media/platform/sh_vou.c                          |    2 +-
->   drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
->   drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
->   drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
-
-For this driver:
->   drivers/media/platform/sti/bdisp/bdisp-v4l2.c            |    2 +-
-Reviewed-by: Fabien Dessenne <fabien.dessenne-qxv4g6HH51o@public.gmane.org>
-
->   drivers/media/platform/ti-vpe/cal.c                      |    2 +-
->   drivers/media/platform/ti-vpe/vpe.c                      |    2 +-
->   drivers/media/platform/vim2m.c                           |    2 +-
->   drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
->   19 files changed, 19 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-> index 7ae1a13..1d5836c 100644
-> --- a/drivers/media/platform/xilinx/xilinx-dma.c
-> +++ b/drivers/media/platform/xilinx/xilinx-dma.c
-> @@ -474,7 +474,7 @@ static void xvip_dma_stop_streaming(struct vb2_queue *vq)
->          spin_unlock_irq(&dma->queued_lock);
->   }
->
-> -static struct vb2_ops xvip_dma_queue_qops = {
-> +static const struct vb2_ops xvip_dma_queue_qops = {
->          .queue_setup = xvip_dma_queue_setup,
->          .buf_prepare = xvip_dma_buffer_prepare,
->          .buf_queue = xvip_dma_buffer_queue,
-> diff --git a/drivers/media/platform/soc_camera/atmel-isi.c b/drivers/media/platform/soc_camera/atmel-isi.c
-> index 30211f6..46de657 100644
-> --- a/drivers/media/platform/soc_camera/atmel-isi.c
-> +++ b/drivers/media/platform/soc_camera/atmel-isi.c
-> @@ -536,7 +536,7 @@ static void stop_streaming(struct vb2_queue *vq)
->          pm_runtime_put(ici->v4l2_dev.dev);
->   }
->
-> -static struct vb2_ops isi_video_qops = {
-> +static const struct vb2_ops isi_video_qops = {
->          .queue_setup            = queue_setup,
->          .buf_init               = buffer_init,
->          .buf_prepare            = buffer_prepare,
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index 785e693..d9c07b8 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -2538,7 +2538,7 @@ static void s5p_jpeg_stop_streaming(struct vb2_queue *q)
->          pm_runtime_put(ctx->jpeg->dev);
->   }
->
-> -static struct vb2_ops s5p_jpeg_qops = {
-> +static const struct vb2_ops s5p_jpeg_qops = {
->          .queue_setup            = s5p_jpeg_queue_setup,
->          .buf_prepare            = s5p_jpeg_buf_prepare,
->          .buf_queue              = s5p_jpeg_buf_queue,
-> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-> index e967fcf..44323cb 100644
-> --- a/drivers/media/platform/ti-vpe/cal.c
-> +++ b/drivers/media/platform/ti-vpe/cal.c
-> @@ -1379,7 +1379,7 @@ static void cal_stop_streaming(struct vb2_queue *vq)
->          cal_runtime_put(ctx->dev);
->   }
->
-> -static struct vb2_ops cal_video_qops = {
-> +static const struct vb2_ops cal_video_qops = {
->          .queue_setup            = cal_queue_setup,
->          .buf_prepare            = cal_buffer_prepare,
->          .buf_queue              = cal_buffer_queue,
-> diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-> index 55a1458..0189f7f 100644
-> --- a/drivers/media/platform/ti-vpe/vpe.c
-> +++ b/drivers/media/platform/ti-vpe/vpe.c
-> @@ -1878,7 +1878,7 @@ static void vpe_stop_streaming(struct vb2_queue *q)
->          vpdma_dump_regs(ctx->dev->vpdma);
->   }
->
-> -static struct vb2_ops vpe_qops = {
-> +static const struct vb2_ops vpe_qops = {
->          .queue_setup     = vpe_queue_setup,
->          .buf_prepare     = vpe_buf_prepare,
->          .buf_queue       = vpe_buf_queue,
-> diff --git a/drivers/media/platform/soc_camera/rcar_vin.c b/drivers/media/platform/soc_camera/rcar_vin.c
-> index 9c13752..0009fc5 100644
-> --- a/drivers/media/platform/soc_camera/rcar_vin.c
-> +++ b/drivers/media/platform/soc_camera/rcar_vin.c
-> @@ -856,7 +856,7 @@ static void rcar_vin_stop_streaming(struct vb2_queue *vq)
->          spin_unlock_irq(&priv->lock);
->   }
->
-> -static struct vb2_ops rcar_vin_vb2_ops = {
-> +static const struct vb2_ops rcar_vin_vb2_ops = {
->          .queue_setup    = rcar_vin_videobuf_setup,
->          .buf_queue      = rcar_vin_videobuf_queue,
->          .stop_streaming = rcar_vin_stop_streaming,
-> diff --git a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-> index 02b519d..02c8dc5 100644
-> --- a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-> +++ b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-> @@ -470,7 +470,7 @@ static void sh_mobile_ceu_stop_streaming(struct vb2_queue *q)
->          sh_mobile_ceu_soft_reset(pcdev);
->   }
->
-> -static struct vb2_ops sh_mobile_ceu_videobuf_ops = {
-> +static const struct vb2_ops sh_mobile_ceu_videobuf_ops = {
->          .queue_setup    = sh_mobile_ceu_videobuf_setup,
->          .buf_prepare    = sh_mobile_ceu_videobuf_prepare,
->          .buf_queue      = sh_mobile_ceu_videobuf_queue,
-> diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-> index 391dd7a..62c0dec 100644
-> --- a/drivers/media/platform/s5p-g2d/g2d.c
-> +++ b/drivers/media/platform/s5p-g2d/g2d.c
-> @@ -138,7 +138,7 @@ static void g2d_buf_queue(struct vb2_buffer *vb)
->          v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
->   }
->
-> -static struct vb2_ops g2d_qops = {
-> +static const struct vb2_ops g2d_qops = {
->          .queue_setup    = g2d_queue_setup,
->          .buf_prepare    = g2d_buf_prepare,
->          .buf_queue      = g2d_buf_queue,
-> diff --git a/drivers/media/platform/rcar_jpu.c b/drivers/media/platform/rcar_jpu.c
-> index 16782ce..d1746ec 100644
-> --- a/drivers/media/platform/rcar_jpu.c
-> +++ b/drivers/media/platform/rcar_jpu.c
-> @@ -1183,7 +1183,7 @@ static void jpu_stop_streaming(struct vb2_queue *vq)
->          }
->   }
->
-> -static struct vb2_ops jpu_qops = {
-> +static const struct vb2_ops jpu_qops = {
->          .queue_setup            = jpu_queue_setup,
->          .buf_prepare            = jpu_buf_prepare,
->          .buf_queue              = jpu_buf_queue,
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> index ec6494c..a341a7f 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> @@ -261,7 +261,7 @@ static void gsc_m2m_buf_queue(struct vb2_buffer *vb)
->                  v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
->   }
->
-> -static struct vb2_ops gsc_m2m_qops = {
-> +static const struct vb2_ops gsc_m2m_qops = {
->          .queue_setup     = gsc_m2m_queue_setup,
->          .buf_prepare     = gsc_m2m_buf_prepare,
->          .buf_queue       = gsc_m2m_buf_queue,
-> diff --git a/drivers/media/platform/sh_vou.c b/drivers/media/platform/sh_vou.c
-> index e1f39b4..1ec9a2e 100644
-> --- a/drivers/media/platform/sh_vou.c
-> +++ b/drivers/media/platform/sh_vou.c
-> @@ -362,7 +362,7 @@ static void sh_vou_stop_streaming(struct vb2_queue *vq)
->          spin_unlock_irqrestore(&vou_dev->lock, flags);
->   }
->
-> -static struct vb2_ops sh_vou_qops = {
-> +static const struct vb2_ops sh_vou_qops = {
->          .queue_setup            = sh_vou_queue_setup,
->          .buf_prepare            = sh_vou_buf_prepare,
->          .buf_queue              = sh_vou_buf_queue,
-> diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-> index 3b1ac68..45f82b5 100644
-> --- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-> +++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-> @@ -527,7 +527,7 @@ static void bdisp_stop_streaming(struct vb2_queue *q)
->          pm_runtime_put(ctx->bdisp_dev->dev);
->   }
->
-> -static struct vb2_ops bdisp_qops = {
-> +static const struct vb2_ops bdisp_qops = {
->          .queue_setup     = bdisp_queue_setup,
->          .buf_prepare     = bdisp_buf_prepare,
->          .buf_queue       = bdisp_buf_queue,
-> diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platform/m2m-deinterlace.c
-> index 0fcb5c78..0870fad 100644
-> --- a/drivers/media/platform/m2m-deinterlace.c
-> +++ b/drivers/media/platform/m2m-deinterlace.c
-> @@ -852,7 +852,7 @@ static void deinterlace_buf_queue(struct vb2_buffer *vb)
->          v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
->   }
->
-> -static struct vb2_ops deinterlace_qops = {
-> +static const struct vb2_ops deinterlace_qops = {
->          .queue_setup     = deinterlace_queue_setup,
->          .buf_prepare     = deinterlace_buf_prepare,
->          .buf_queue       = deinterlace_buf_queue,
-> diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/mx2_emmaprp.c
-> index c639406..e68d271 100644
-> --- a/drivers/media/platform/mx2_emmaprp.c
-> +++ b/drivers/media/platform/mx2_emmaprp.c
-> @@ -743,7 +743,7 @@ static void emmaprp_buf_queue(struct vb2_buffer *vb)
->          v4l2_m2m_buf_queue(ctx->m2m_ctx, vbuf);
->   }
->
-> -static struct vb2_ops emmaprp_qops = {
-> +static const struct vb2_ops emmaprp_qops = {
->          .queue_setup     = emmaprp_queue_setup,
->          .buf_prepare     = emmaprp_buf_prepare,
->          .buf_queue       = emmaprp_buf_queue,
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-> index 496aa97..07c07c1 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -1116,7 +1116,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
->          rvin_disable_interrupts(vin);
->   }
->
-> -static struct vb2_ops rvin_qops = {
-> +static const struct vb2_ops rvin_qops = {
->          .queue_setup            = rvin_queue_setup,
->          .buf_prepare            = rvin_buffer_prepare,
->          .buf_queue              = rvin_buffer_queue,
-> diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-> index cd0ff4a..a98f679 100644
-> --- a/drivers/media/platform/vim2m.c
-> +++ b/drivers/media/platform/vim2m.c
-> @@ -815,7 +815,7 @@ static void vim2m_stop_streaming(struct vb2_queue *q)
->          }
->   }
->
-> -static struct vb2_ops vim2m_qops = {
-> +static const struct vb2_ops vim2m_qops = {
->          .queue_setup     = vim2m_queue_setup,
->          .buf_prepare     = vim2m_buf_prepare,
->          .buf_queue       = vim2m_buf_queue,
-> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-> index fdec499..344028e 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-> @@ -452,7 +452,7 @@ static void buffer_queue(struct vb2_buffer *vb)
->          spin_unlock_irqrestore(&fimc->slock, flags);
->   }
->
-> -static struct vb2_ops fimc_capture_qops = {
-> +static const struct vb2_ops fimc_capture_qops = {
->          .queue_setup            = queue_setup,
->          .buf_prepare            = buffer_prepare,
->          .buf_queue              = buffer_queue,
-> diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
-> index b1309e1..6028e4f 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-m2m.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
-> @@ -219,7 +219,7 @@ static void fimc_buf_queue(struct vb2_buffer *vb)
->          v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
->   }
->
-> -static struct vb2_ops fimc_qops = {
-> +static const struct vb2_ops fimc_qops = {
->          .queue_setup     = fimc_queue_setup,
->          .buf_prepare     = fimc_buf_prepare,
->          .buf_queue       = fimc_buf_queue,
-> diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-> index 3ed3f2d..f8e4611 100644
-> --- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-> +++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-> @@ -864,7 +864,7 @@ static void vb2ops_venc_stop_streaming(struct vb2_queue *q)
->          ctx->state = MTK_STATE_FREE;
->   }
->
-> -static struct vb2_ops mtk_venc_vb2_ops = {
-> +static const struct vb2_ops mtk_venc_vb2_ops = {
->          .queue_setup            = vb2ops_venc_queue_setup,
->          .buf_prepare            = vb2ops_venc_buf_prepare,
->          .buf_queue              = vb2ops_venc_buf_queue,
->
+T24gMDkvMDgvMjAxNiAxMDoxMiBQTSwgU2VhbiBQYXVsIHdyb3RlOgo+IE9uIFdlZCwgU2VwIDcs
+IDIwMTYgYXQgMTE6NDggUE0sIFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4gd3JvdGU6
+Cj4+IE1ha2Ugc3VyZSB0aGUgcmVxdWVzdCBQU1Igc3RhdGUgY291bGQgZWZmZWN0IGluIGFuYWxv
+Z2l4X2RwX3NlbmRfcHNyX3NwZCgpCj4+IGZ1bmN0aW9uLCBvciBwcmludGluZyB0aGUgZXJyb3Ig
+U2luayBQU1Igc3RhdGUgaWYgd2UgZmFpbGVkIHRvIGVmZmVjdAo+PiB0aGUgcmVxdWVzdCBQU1Ig
+c2V0dGluZy4KPj4KPgo+IExldCdzIGNoYW5nZSB0bzoKPgo+IE1ha2Ugc3VyZSB0aGUgcmVxdWVz
+dCBQU1Igc3RhdGUgdGFrZXMgZWZmZWN0IGluIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZCgpCj4g
+ZnVuY3Rpb24sIG9yIHByaW50IHRoZSBzaW5rIFBTUiBlcnJvciBzdGF0ZSBpZiB3ZSBmYWlsZWQg
+dG8gYXBwbHkgdGhlCj4gcmVxdWVzdGVkIFBTUgo+IHNldHRpbmcuCkRvbmUsCj4+IFNpZ25lZC1v
+ZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBzLmNvbT4KPj4gLS0tCj4+IENoYW5nZXMg
+aW4gdjI6Cj4+IC0gQSBidW5jaCBvZiBnb29kIGZpeGVzIGZyb20gU2Vhbgo+Pgo+PiAgIGRyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5jIHwgIDYgKystLS0t
+Cj4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgg
+fCAgNCArKy0tCj4+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9yZWcuYyAgfCAyNSArKysrKysrKysrKysrKysrKysrKy0tCj4+ICAgMyBmaWxlcyBjaGFuZ2Vk
+LCAyNyBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiBpbmRleCA1ZmUz
+OTgyLi5jMGNlMTZhIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
+Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
+YWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+PiBAQCAtMTE2LDggKzExNiw3IEBAIGludCBhbmFs
+b2dpeF9kcF9lbmFibGVfcHNyKHN0cnVjdCBkZXZpY2UgKmRldikKPj4gICAgICAgICAgcHNyX3Zz
+Yy5EQjAgPSAwOwo+PiAgICAgICAgICBwc3JfdnNjLkRCMSA9IEVEUF9WU0NfUFNSX1NUQVRFX0FD
+VElWRSB8IEVEUF9WU0NfUFNSX0NSQ19WQUxVRVNfVkFMSUQ7Cj4+Cj4+IC0gICAgICAgYW5hbG9n
+aXhfZHBfc2VuZF9wc3Jfc3BkKGRwLCAmcHNyX3ZzYyk7Cj4+IC0gICAgICAgcmV0dXJuIDA7Cj4+
+ICsgICAgICAgcmV0dXJuIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChkcCwgJnBzcl92c2MpOwo+
+PiAgIH0KPj4gICBFWFBPUlRfU1lNQk9MX0dQTChhbmFsb2dpeF9kcF9lbmFibGVfcHNyKTsKPj4K
+Pj4gQEAgLTEzOSw4ICsxMzgsNyBAQCBpbnQgYW5hbG9naXhfZHBfZGlzYWJsZV9wc3Ioc3RydWN0
+IGRldmljZSAqZGV2KQo+PiAgICAgICAgICBwc3JfdnNjLkRCMCA9IDA7Cj4+ICAgICAgICAgIHBz
+cl92c2MuREIxID0gMDsKPj4KPj4gLSAgICAgICBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoZHAs
+ICZwc3JfdnNjKTsKPj4gLSAgICAgICByZXR1cm4gMDsKPj4gKyAgICAgICByZXR1cm4gYW5hbG9n
+aXhfZHBfc2VuZF9wc3Jfc3BkKGRwLCAmcHNyX3ZzYyk7Cj4+ICAgfQo+PiAgIEVYUE9SVF9TWU1C
+T0xfR1BMKGFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNyKTsKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIGIvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gaW5kZXggYTE1ZjA3
+Ni4uNmMwN2E1MCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
+eC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
+b2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gQEAgLTI0Nyw4ICsyNDcsOCBAQCB2b2lkIGFuYWxv
+Z2l4X2RwX2NvbmZpZ192aWRlb19zbGF2ZV9tb2RlKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2Ug
+KmRwKTsKPj4gICB2b2lkIGFuYWxvZ2l4X2RwX2VuYWJsZV9zY3JhbWJsaW5nKHN0cnVjdCBhbmFs
+b2dpeF9kcF9kZXZpY2UgKmRwKTsKPj4gICB2b2lkIGFuYWxvZ2l4X2RwX2Rpc2FibGVfc2NyYW1i
+bGluZyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4+ICAgdm9pZCBhbmFsb2dpeF9k
+cF9lbmFibGVfcHNyX2NyYyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4+IC12b2lk
+IGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwK
+Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGVkcF92c2NfcHNyICp2c2Mp
+Owo+PiAraW50IGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
+aWNlICpkcCwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19w
+c3IgKnZzYyk7Cj4+ICAgc3NpemVfdCBhbmFsb2dpeF9kcF90cmFuc2ZlcihzdHJ1Y3QgYW5hbG9n
+aXhfZHBfZGV2aWNlICpkcCwKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0
+IGRybV9kcF9hdXhfbXNnICptc2cpOwo+PiAgICNlbmRpZiAvKiBfQU5BTE9HSVhfRFBfQ09SRV9I
+ICovCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX3JlZy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9yZWcuYwo+PiBpbmRleCBhNGQxN2I4Li4wOWQ3MDNiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gQEAgLTEwMDQs
+MTAgKzEwMDQsMTIgQEAgdm9pZCBhbmFsb2dpeF9kcF9lbmFibGVfcHNyX2NyYyhzdHJ1Y3QgYW5h
+bG9naXhfZHBfZGV2aWNlICpkcCkKPj4gICAgICAgICAgd3JpdGVsKFBTUl9WSURfQ1JDX0VOQUJM
+RSwgZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQ1JDX0NPTik7Cj4+ICAgfQo+Pgo+PiAtdm9p
+ZCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAs
+Cj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBlZHBfdnNjX3BzciAqdnNj
+KQo+PiAraW50IGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2
+aWNlICpkcCwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19w
+c3IgKnZzYykKPj4gICB7Cj4+ICsgICAgICAgdW5zaWduZWQgbG9uZyB0aW1lb3V0Owo+PiAgICAg
+ICAgICB1bnNpZ25lZCBpbnQgdmFsOwo+PiArICAgICAgIHU4IHNpbms7Cj4+Cj4+ICAgICAgICAg
+IC8qIGRvbid0IHNlbmQgaW5mbyBmcmFtZSAqLwo+PiAgICAgICAgICB2YWwgPSByZWFkbChkcC0+
+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QS1RfU0VORF9DVEwpOwo+PiBAQCAtMTA0OCw2ICsxMDUw
+LDI1IEBAIHZvaWQgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3BkKHN0cnVjdCBhbmFsb2dpeF9kcF9k
+ZXZpY2UgKmRwLAo+PiAgICAgICAgICB2YWwgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJ
+WF9EUF9QS1RfU0VORF9DVEwpOwo+PiAgICAgICAgICB2YWwgfD0gSUZfRU47Cj4+ICAgICAgICAg
+IHdyaXRlbCh2YWwsIGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NUTCk7Cj4+
+ICsKPj4gKyAgICAgICB0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoRFBfVElN
+RU9VVF9MT09QX0NPVU5UKTsKPiBNaXNtYXRjaGVkIHVuaXRzIGhlcmUuIERQX1RJTUVPVVRfTE9P
+UF9DT1VOVCBpcyBkZWZpbmVkIGFzIG51bWJlciBvZgo+IHJldHJpZXMsIHdoZXJlYXMgeW91J3Jl
+IHVzaW5nIGl0IGFzIG51bWJlciBvZiBtcy4gRm9ydHVuYXRlbHksIHRoZQo+IHJldHJ5IG51bWJl
+ciBpcyBzbyBoaWdoIHRoYXQgdGhpcyB3b3JrcyBvdXQgOikKPgo+IEluIGEgc2VwYXJhdGUgcGF0
+Y2ggcHJlY2VkaW5nIHRoaXMgb25lLCBjYW4geW91IGNoYW5nZQo+IERQX1RJTUVPVVRfTE9PUF9D
+T1VOVCB0byBEUF9USU1FT1VUX0xPT1BfTVMgYW5kIGFsdGVyIHRoZSBvdGhlcgo+IHRpbWVvdXQg
+bG9vcHMgdG8gdXNlIHRpbWVfYmVmb3JlKCkgbGlrZSB0aGlzIG9uZSBpbnN0ZWFkIG9mIGJsaW5k
+bHkKPiBsb29waW5nIDEwMCB0aW1lcz8gQWZ0ZXIgdGhhdCwgeW91IGNhbiB1c2UgRFBfVElNRU9V
+VF9MT09QX01TIGhlcmUuCgpEb25lLCBhbmQgYWZ0ZXIgZG8gc29tZSBleHBlcmltZW50cywgSSBm
+b3VuZCB3ZSBuZWVkIHRvIHNldCB0aGUgdGltZW91dCAKdG8gMzAwbXMuIENhdXNlIGluIHNvbWUg
+Y2FzZSB3ZSB3b3VsZCB0YWtlIGFib3V0IDI5MG1zIGhlcmUgdG8gZ2V0IHRoZSAKcmlnaHQgcHNy
+IHN0YXRlLgoKCj4+ICsgICAgICAgd2hpbGUgKHRpbWVfYmVmb3JlKGppZmZpZXMsIHRpbWVvdXQp
+KSB7Cj4+ICsgICAgICAgICAgICAgICB2YWwgPSBkcm1fZHBfZHBjZF9yZWFkYigmZHAtPmF1eCwg
+RFBfUFNSX1NUQVRVUywgJnNpbmspOwo+PiArICAgICAgICAgICAgICAgaWYgKHZhbCAhPSAxKSB7
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoZHAtPmRldiwgIlBTUl9TVEFUVVMg
+cmVhZCBmYWlsZWQgcmV0PSVkIiwgdmFsKTsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0
+dXJuIHZhbDsKPiBPaywgc2luY2UgdGhpcyBpcyBteSBzbmlwcGV0IHRoaXMgY29tbWVudCBpcyBt
+eSBmYXVsdCwgYW5kIEkgYXBvbG9naXplCj4gZm9yIHRoYXQgOikuIEhvd2V2ZXIsIHRoaXMgY291
+bGQgcmV0dXJuIDAuIElmIGRybV9kcF9kcGNkX3JlYWRiCj4gcmV0dXJucyAwLCB5b3UgcHJvYmFi
+bHkgd2FudCB0byByZXRyeSAoc2FtZSBhcyAtRUJVU1kpLgpkb25lLCBqdXN0IHJldHVybiAtRUJV
+U1kKPgo+PiArICAgICAgICAgICAgICAgfQo+PiArCj4+ICsgICAgICAgICAgICAgICBpZiAodnNj
+LT5EQjEgJiYgc2luayA9PSBEUF9QU1JfU0lOS19BQ1RJVkVfUkZCIHx8Cj4+ICsgICAgICAgICAg
+ICAgICAgICAgIXZzYy0+REIxICYmIHNpbmsgPT0gRFBfUFNSX1NJTktfSU5BQ1RJVkUpCj4+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+PiArCj4+ICsgICAgICAgICAgICAgICB1c2xl
+ZXBfcmFuZ2UoMTAwMCwgMTUwMCk7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgZGV2X3dh
+cm4oZHAtPmRldiwgIkZhaWxlZCB0byBlZmZlY3QgUFNSOiAleCIsIHNpbmspOwo+IE5pdDogSSB0
+aGluayB5b3Ugd2FudCB0byBzYXkgIlBTUiBmYWlsZWQgdG8gdGFrZSBlZmZlY3QiIG9yICJGYWls
+ZWQgdG8KPiBhcHBseSBQU1IiCkRvbmUKCi0gWWFraXIKPiBTZWFuCj4KPj4gKwo+PiArICAgICAg
+IHJldHVybiAtRVRJTUVET1VUOwo+PiAgIH0KPj4KPj4gICBzc2l6ZV90IGFuYWxvZ2l4X2RwX3Ry
+YW5zZmVyKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+PiAtLQo+PiAxLjkuMQo+Pgo+
+Pgo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAi
+dW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2Fn
+ZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4KCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
