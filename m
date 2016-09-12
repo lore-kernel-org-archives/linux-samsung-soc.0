@@ -1,123 +1,106 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain to
- exynos4x12 clocks device
-Date: Mon, 12 Sep 2016 12:23:30 +0200
-Message-ID: <f340cca5-6cd6-6bd1-3b9a-ccd58cbc0091@samsung.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
- <20160908002254.GD13062@codeaurora.org>
- <CGME20160912102332eucas1p145e79669788329b44343da62dcbe50ca@eucas1p1.samsung.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v3 2/3] drm/bridge: analogix_dp: use jiffies to simulate
+ timeout loop
+Date: Mon, 12 Sep 2016 09:51:10 -0400
+Message-ID: <CAOw6vbLhXONEGfWP8B+bkJE+H0oAZb0hPyAP9SodNu-m3cXrGQ@mail.gmail.com>
+References: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
+ <1473414290-335-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20160908002254.GD13062@codeaurora.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1473414290-335-1-git-send-email-ykk@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Stephen,
-
-
-On 2016-09-08 02:22, Stephen Boyd wrote:
-> On 09/01, Marek Szyprowski wrote:
->> Exynos4412 clock controller contains some additional clocks for FIMC-ISP
->> (Camera ISP) subsystem. Registers for those clocks are partially located
->> in the SOC area, which belongs to ISP power domain.
->>
->> This patch extends clock controller node with ISP clock sub-node and link
->> (phandle) to ISP power domain.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
->> index 3394bdcf10ae..4daea67546b9 100644
->> --- a/arch/arm/boot/dts/exynos4x12.dtsi
->> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
->> @@ -74,6 +74,11 @@
->>   		compatible = "samsung,exynos4412-clock";
->>   		reg = <0x10030000 0x20000>;
->>   		#clock-cells = <1>;
->> +
->> +		isp-clock-controller {
->> +			compatible = "samsung,exynos4412-isp-clock";
->> +			power-domains = <&pd_isp>;
->> +		};
-> Why can't we extend support in power domains code to have
-> multiple domains for a single device node? i.e. power-domains =
-> <&pd_isp>, <&pd_foo>, <&pd_bar>, and then pick the right one with
-> power-domain-names or something like that? Making a subnode
-> (which seems to turn into a child platform device?) seems like a
-> quick solution for larger problems.
-
-The larger problem here is the fact that clock controller is partially 
-located
-in different power areas of SoC. Majority of the clock controllers is 
-located
-in the area which is typically always powered (besides system sleep case),
-while a few Camera ISP registers are located in the ISP block, which have
-separate power domain. Having a separate nodes for sub-parts of the 
-device is
-rather common approach, already practices by some more complex devices.
-
-I see some serious design problems with multiple entries in power domains
-property. First how to show that some part of the device IS NOT in any 
-domain?
-The question is how the automated assignment to domains would be handled for
-such case?
-
-The second is related to Linux kernel internals. Right now device 
-drivers are
-not aware of the power domains - there are no direct calls to power domains
-code, everything is hidden behind runtime pm which does all the hard work.
-
-Similar situation is on Exynos 542x/5800, which will look more or less like
-this:
-
-         clock: clock-controller@10010000 {
-              compatible = "samsung,exynos5420-clock";
-              reg = <0x10010000 0x30000>;
-              #clock-cells = <1>;
-+
-+            gsc-clock-controller {
-+                 compatible = "samsung,exynos5420-gsc-clock";
-+                 power-domains = <&gsc_pd>;
-+            };
-+
-+            isp-clock-controller {
-+                 compatible = "samsung,exynos5420-isp-clock";
-+                 power-domains = <&isp_pd>;
-+            };
-+
-+            mfc-clock-controller {
-+                 compatible = "samsung,exynos5420-mfc-clock";
-+                 power-domains = <&mfc_pd>;
-+            };
-+
-+            msc-clock-controller {
-+                 compatible = "samsung,exynos5420-msc-clock";
-+                 power-domains = <&msc_pd>;
-+            };
-+
-+            disp-clock-controller {
-+                 compatible = "samsung,exynos5420-disp-clock";
-+                 power-domains = <&disp_pd>;
-+            };
-          };
-
-The patch is not yet ready, so I didn't include it in this patchset.
-
-The clock controller evolved and in the latest Exynos 5433 it is divided in
-several parts (each related to given hw block and its power domains), which
-each is now modeled by a separate device node. This allows to bind power
-domains cleanly without any need for sub-nodes for the clock controllers.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+T24gRnJpLCBTZXAgOSwgMjAxNiBhdCA1OjQ0IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlw
+cy5jb20+IHdyb3RlOgo+IFNpZ25lZC1vZmYtYnk6IFlha2lyIFlhbmcgPHlra0Byb2NrLWNoaXBz
+LmNvbT4KPiAtLS0KPiBDaGFuZ2VzIGluIHYzOgo+IC0gU3VnZ2VzdGVkIGJ5IFNlYW4KPgo+IENo
+YW5nZXMgaW4gdjI6IE5vbmUKPgo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2Fu
+YWxvZ2l4X2RwX2NvcmUuaCB8ICAzICsrLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
+Z2l4L2FuYWxvZ2l4X2RwX3JlZy5jICB8IDE4ICsrKysrKysrKy0tLS0tLS0tLQo+ICAyIGZpbGVz
+IGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIGIv
+ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPiBpbmRl
+eCBhMTVmMDc2Li5kNTY0ZTkwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
+YW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRn
+ZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPiBAQCAtMTYsMTAgKzE2LDExIEBACj4gICNp
+bmNsdWRlIDxkcm0vZHJtX2NydGMuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1fZHBfaGVscGVyLmg+
+Cj4KPiAtI2RlZmluZSBEUF9USU1FT1VUX0xPT1BfQ09VTlQgMTAwCj4gICNkZWZpbmUgTUFYX0NS
+X0xPT1AgNQo+ICAjZGVmaW5lIE1BWF9FUV9MT09QIDUKPgo+ICsjZGVmaW5lIERQX1RJTUVPVVRf
+TE9PUF9NUyAgICAgICAgICAgICAgICAgICAgIG1zZWNzX3RvX2ppZmZpZXMoMSkKClRoZSBuYW1l
+IHN1Z2dlc3RzIHRoZSB1bml0cyBoZXJlIGFyZSBtcywgYnV0IHlvdSdyZSBzdG9yaW5nIGppZmZp
+ZXMuCkRvIHRoZSBtc2Vjc190b19qaWZmaWVzIGNvbnZlcnNpb24gZG93biBiZWxvdy4KCj4gKwo+
+ICAvKiBEUF9NQVhfTEFORV9DT1VOVCAqLwo+ICAjZGVmaW5lIERQQ0RfRU5IQU5DRURfRlJBTUVf
+Q0FQKHgpICAgICAgICAgICAgICgoKHgpID4+IDcpICYgMHgxKQo+ICAjZGVmaW5lIERQQ0RfTUFY
+X0xBTkVfQ09VTlQoeCkgICAgICAgICAgICAgICAgICgoeCkgJiAweDFmKQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jIGIvZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+IGluZGV4IGE0
+ZDE3YjguLjE1YTRjZjAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFs
+b2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
+bG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPiBAQCAtMzM1LDcgKzMzNSw3IEBAIHZvaWQgYW5hbG9n
+aXhfZHBfc2V0X2FuYWxvZ19wb3dlcl9kb3duKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRw
+LAo+ICB2b2lkIGFuYWxvZ2l4X2RwX2luaXRfYW5hbG9nX2Z1bmMoc3RydWN0IGFuYWxvZ2l4X2Rw
+X2RldmljZSAqZHApCj4gIHsKPiAgICAgICAgIHUzMiByZWc7Cj4gLSAgICAgICBpbnQgdGltZW91
+dF9sb29wID0gMDsKPiArICAgICAgIHVuc2lnbmVkIGxvbmcgdGltZW91dDsKPgo+ICAgICAgICAg
+YW5hbG9naXhfZHBfc2V0X2FuYWxvZ19wb3dlcl9kb3duKGRwLCBQT1dFUl9BTEwsIDApOwo+Cj4g
+QEAgLTM1MCw5ICszNTAsOSBAQCB2b2lkIGFuYWxvZ2l4X2RwX2luaXRfYW5hbG9nX2Z1bmMoc3Ry
+dWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4gICAgICAgICBpZiAoYW5hbG9naXhfZHBfZ2V0
+X3BsbF9sb2NrX3N0YXR1cyhkcCkgPT0gUExMX1VOTE9DS0VEKSB7Cj4gICAgICAgICAgICAgICAg
+IGFuYWxvZ2l4X2RwX3NldF9wbGxfcG93ZXJfZG93bihkcCwgMCk7Cj4KPiArICAgICAgICAgICAg
+ICAgdGltZW91dCA9IGppZmZpZXMgKyBEUF9USU1FT1VUX0xPT1BfTVM7Cgp0aW1lb3V0ID0gamlm
+ZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoRFBfVElNRU9VVF9MT09QX01TKTsKCj4gICAgICAgICAg
+ICAgICAgIHdoaWxlIChhbmFsb2dpeF9kcF9nZXRfcGxsX2xvY2tfc3RhdHVzKGRwKSA9PSBQTExf
+VU5MT0NLRUQpIHsKPiAtICAgICAgICAgICAgICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPiAt
+ICAgICAgICAgICAgICAgICAgICAgICBpZiAoRFBfVElNRU9VVF9MT09QX0NPVU5UIDwgdGltZW91
+dF9sb29wKSB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKHRpbWVfYWZ0ZXIoamlmZmll
+cywgdGltZW91dCkpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIo
+ZHAtPmRldiwgImZhaWxlZCB0byBnZXQgcGxsIGxvY2sgc3RhdHVzXG4iKTsKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHJldHVybjsKPiAgICAgICAgICAgICAgICAgICAgICAgICB9
+Cj4gQEAgLTUwMSw3ICs1MDEsNyBAQCBpbnQgYW5hbG9naXhfZHBfc3RhcnRfYXV4X3RyYW5zYWN0
+aW9uKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICB7Cj4gICAgICAgICBpbnQgcmVn
+Owo+ICAgICAgICAgaW50IHJldHZhbCA9IDA7Cj4gLSAgICAgICBpbnQgdGltZW91dF9sb29wID0g
+MDsKPiArICAgICAgIHVuc2lnbmVkIGxvbmcgdGltZW91dDsKPgo+ICAgICAgICAgLyogRW5hYmxl
+IEFVWCBDSCBvcGVyYXRpb24gKi8KPiAgICAgICAgIHJlZyA9IHJlYWRsKGRwLT5yZWdfYmFzZSAr
+IEFOQUxPR0lYX0RQX0FVWF9DSF9DVExfMik7Cj4gQEAgLTUwOSwxMCArNTA5LDEwIEBAIGludCBh
+bmFsb2dpeF9kcF9zdGFydF9hdXhfdHJhbnNhY3Rpb24oc3RydWN0IGFuYWxvZ2l4X2RwX2Rldmlj
+ZSAqZHApCj4gICAgICAgICB3cml0ZWwocmVnLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9B
+VVhfQ0hfQ1RMXzIpOwo+Cj4gICAgICAgICAvKiBJcyBBVVggQ0ggY29tbWFuZCByZXBseSByZWNl
+aXZlZD8gKi8KPiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsgRFBfVElNRU9VVF9MT09QX01T
+Owo+ICAgICAgICAgcmVnID0gcmVhZGwoZHAtPnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfSU5UX1NU
+QSk7Cj4gICAgICAgICB3aGlsZSAoIShyZWcgJiBSUExZX1JFQ0VJVikpIHsKPiAtICAgICAgICAg
+ICAgICAgdGltZW91dF9sb29wKys7Cj4gLSAgICAgICAgICAgICAgIGlmIChEUF9USU1FT1VUX0xP
+T1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsKPiArICAgICAgICAgICAgICAgaWYgKHRpbWVfYWZ0
+ZXIoamlmZmllcywgdGltZW91dCkpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJy
+KGRwLT5kZXYsICJBVVggQ0ggY29tbWFuZCByZXBseSBmYWlsZWQhXG4iKTsKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICByZXR1cm4gLUVUSU1FRE9VVDsKPiAgICAgICAgICAgICAgICAgfQo+IEBA
+IC0xMDU1LDcgKzEwNTUsNyBAQCBzc2l6ZV90IGFuYWxvZ2l4X2RwX3RyYW5zZmVyKHN0cnVjdCBh
+bmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+ICB7Cj4gICAgICAgICB1MzIgcmVnOwo+ICAgICAgICAg
+dTggKmJ1ZmZlciA9IG1zZy0+YnVmZmVyOwo+IC0gICAgICAgaW50IHRpbWVvdXRfbG9vcCA9IDA7
+Cj4gKyAgICAgICB1bnNpZ25lZCBsb25nIHRpbWVvdXQ7Cj4gICAgICAgICB1bnNpZ25lZCBpbnQg
+aTsKPiAgICAgICAgIGludCBudW1fdHJhbnNmZXJyZWQgPSAwOwo+Cj4gQEAgLTExMjMsMTAgKzEx
+MjMsMTAgQEAgc3NpemVfdCBhbmFsb2dpeF9kcF90cmFuc2ZlcihzdHJ1Y3QgYW5hbG9naXhfZHBf
+ZGV2aWNlICpkcCwKPgo+ICAgICAgICAgLyogSXMgQVVYIENIIGNvbW1hbmQgcmVwbHkgcmVjZWl2
+ZWQ/ICovCj4gICAgICAgICAvKiBUT0RPOiBXYWl0IGZvciBhbiBpbnRlcnJ1cHQgaW5zdGVhZCBv
+ZiBsb29waW5nPyAqLwo+ICsgICAgICAgdGltZW91dCA9IGppZmZpZXMgKyBEUF9USU1FT1VUX0xP
+T1BfTVM7Cj4gICAgICAgICByZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9J
+TlRfU1RBKTsKPiAgICAgICAgIHdoaWxlICghKHJlZyAmIFJQTFlfUkVDRUlWKSkgewo+IC0gICAg
+ICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPiAtICAgICAgICAgICAgICAgaWYgKHRpbWVvdXRf
+bG9vcCA+IERQX1RJTUVPVVRfTE9PUF9DT1VOVCkgewo+ICsgICAgICAgICAgICAgICBpZiAodGlt
+ZV9hZnRlcihqaWZmaWVzLCB0aW1lb3V0KSkgewo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRl
+dl9lcnIoZHAtPmRldiwgIkFVWCBDSCBjb21tYW5kIHJlcGx5IGZhaWxlZCFcbiIpOwo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVRJTUVET1VUOwo+ICAgICAgICAgICAgICAgICB9
+Cj4gLS0KPiAxLjkuMQo+Cj4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
