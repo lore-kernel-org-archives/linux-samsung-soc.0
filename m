@@ -1,40 +1,138 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 02/17] pinctrl: dt-bindings: samsung: Update
- documentation with new macros
-Date: Mon, 12 Sep 2016 11:10:00 -0500
-Message-ID: <20160912160959.GA348@rob-hp-laptop>
-References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
- <1472987060-28293-3-git-send-email-krzk@kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain
+ to exynos4x12 clocks device
+Date: Mon, 12 Sep 2016 15:28:52 -0700
+Message-ID: <20160912222852.GH7243@codeaurora.org>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
+ <20160908002254.GD13062@codeaurora.org>
+ <CGME20160912102332eucas1p145e79669788329b44343da62dcbe50ca@eucas1p1.samsung.com>
+ <f340cca5-6cd6-6bd1-3b9a-ccd58cbc0091@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1472987060-28293-3-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <f340cca5-6cd6-6bd1-3b9a-ccd58cbc0091@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Sep 04, 2016 at 01:04:05PM +0200, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On 09/12, Marek Szyprowski wrote:
+> Hi Stephen,
 > 
-> Update examples in Samsung pinctrl dt-bindings with new macros coming
-> from header file.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> On 2016-09-08 02:22, Stephen Boyd wrote:
+> >On 09/01, Marek Szyprowski wrote:
+> >>Exynos4412 clock controller contains some additional clocks for FIMC-ISP
+> >>(Camera ISP) subsystem. Registers for those clocks are partially located
+> >>in the SOC area, which belongs to ISP power domain.
+> >>
+> >>This patch extends clock controller node with ISP clock sub-node and link
+> >>(phandle) to ISP power domain.
+> >>
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>---
+> >>  arch/arm/boot/dts/exynos4x12.dtsi | 5 +++++
+> >>  1 file changed, 5 insertions(+)
+> >>
+> >>diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> >>index 3394bdcf10ae..4daea67546b9 100644
+> >>--- a/arch/arm/boot/dts/exynos4x12.dtsi
+> >>+++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> >>@@ -74,6 +74,11 @@
+> >>  		compatible = "samsung,exynos4412-clock";
+> >>  		reg = <0x10030000 0x20000>;
+> >>  		#clock-cells = <1>;
+> >>+
+> >>+		isp-clock-controller {
+> >>+			compatible = "samsung,exynos4412-isp-clock";
+> >>+			power-domains = <&pd_isp>;
+> >>+		};
+> >Why can't we extend support in power domains code to have
+> >multiple domains for a single device node? i.e. power-domains =
+> ><&pd_isp>, <&pd_foo>, <&pd_bar>, and then pick the right one with
+> >power-domain-names or something like that? Making a subnode
+> >(which seems to turn into a child platform device?) seems like a
+> >quick solution for larger problems.
 > 
-> ---
+> The larger problem here is the fact that clock controller is
+> partially located
+> in different power areas of SoC. Majority of the clock controllers
+> is located
+> in the area which is typically always powered (besides system sleep case),
+> while a few Camera ISP registers are located in the ISP block, which have
+> separate power domain. Having a separate nodes for sub-parts of the
+> device is
+> rather common approach, already practices by some more complex devices.
 > 
-> Changes since v1:
-> 1. Add Javier's reviewed-by.
-> 2. Include necessary header in example (pointed by Javier).
-> ---
->  .../bindings/pinctrl/samsung-pinctrl.txt           | 44 +++++++++++-----------
->  1 file changed, 23 insertions(+), 21 deletions(-)
+> I see some serious design problems with multiple entries in power domains
+> property. First how to show that some part of the device IS NOT in
+> any domain?
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Is that even possible? Every device should be in some power
+domain, even if it's just an "always on" power domain that we
+don't really control from software.
+
+> The question is how the automated assignment to domains would be handled for
+> such case?
+
+I don't get this part. Do you mean how we indicate to the driver
+which power domain to use at the right time?
+
+> 
+> The second is related to Linux kernel internals. Right now device
+> drivers are
+> not aware of the power domains - there are no direct calls to power domains
+> code, everything is hidden behind runtime pm which does all the hard work.
+
+Right. Runtime PM will need to be improved to allow this case.
+
+> 
+> Similar situation is on Exynos 542x/5800, which will look more or less like
+> this:
+> 
+>         clock: clock-controller@10010000 {
+>              compatible = "samsung,exynos5420-clock";
+>              reg = <0x10010000 0x30000>;
+>              #clock-cells = <1>;
+> +
+> +            gsc-clock-controller {
+> +                 compatible = "samsung,exynos5420-gsc-clock";
+> +                 power-domains = <&gsc_pd>;
+> +            };
+> +
+> +            isp-clock-controller {
+> +                 compatible = "samsung,exynos5420-isp-clock";
+> +                 power-domains = <&isp_pd>;
+> +            };
+> +
+> +            mfc-clock-controller {
+> +                 compatible = "samsung,exynos5420-mfc-clock";
+> +                 power-domains = <&mfc_pd>;
+> +            };
+> +
+> +            msc-clock-controller {
+> +                 compatible = "samsung,exynos5420-msc-clock";
+> +                 power-domains = <&msc_pd>;
+> +            };
+> +
+> +            disp-clock-controller {
+> +                 compatible = "samsung,exynos5420-disp-clock";
+> +                 power-domains = <&disp_pd>;
+> +            };
+>          };
+> 
+> The patch is not yet ready, so I didn't include it in this patchset.
+
+Ok. From a DT perspective the sub-nodes seem to be a workaround
+for how the linux device model is mapped to power domains. I'm
+not sure we want to make subnodes in the clk controller just to
+make sub devices that we can target from the clk registration
+path. Those sub nodes aren't devices at all. I understand why
+it's being done this way, I just don't see how it fits into DT
+design methodologies.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
