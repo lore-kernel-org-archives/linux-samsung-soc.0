@@ -1,119 +1,40 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 3/3] drm/bridge: analogix_dp: detect Sink PSR state
- after configuring the PSR
-Date: Mon, 12 Sep 2016 09:52:53 -0400
-Message-ID: <CAOw6vbJKggHaA9zeeiL2FUR7oraMRdVEocmLzrtBtM7mjBCVcQ@mail.gmail.com>
-References: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
- <1473414302-390-1-git-send-email-ykk@rock-chips.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 02/17] pinctrl: dt-bindings: samsung: Update
+ documentation with new macros
+Date: Mon, 12 Sep 2016 11:10:00 -0500
+Message-ID: <20160912160959.GA348@rob-hp-laptop>
+References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
+ <1472987060-28293-3-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1473414302-390-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Yakir Yang <ykk@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1472987060-28293-3-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBTZXAgOSwgMjAxNiBhdCA1OjQ1IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlw
-cy5jb20+IHdyb3RlOgo+IE1ha2Ugc3VyZSB0aGUgcmVxdWVzdCBQU1Igc3RhdGUgdGFrZXMgZWZm
-ZWN0IGluIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZCgpCj4gZnVuY3Rpb24sIG9yIHByaW50IHRo
-ZSBzaW5rIFBTUiBlcnJvciBzdGF0ZSBpZiB3ZSBmYWlsZWQgdG8gYXBwbHkgdGhlCj4gcmVxdWVz
-dGVkIFBTUiBzZXR0aW5nLgo+Cj4gU2lnbmVkLW9mZi1ieTogWWFraXIgWWFuZyA8eWtrQHJvY2st
-Y2hpcHMuY29tPgo+IC0tLQo+IENoYW5nZXMgaW4gdjM6Cj4gLSBVcGRhdGUgY29tbWl0IG1lc3Nh
-Z2UKPiAtIEFkZCBEUF9USU1FT1VUX1BTUl9MT09QX01TIG1hcmNvcwo+IC0gQ29ycmVjdCB0aGUg
-cmV0dXJuIHZhbHVlcyBvZiBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoKQo+Cj4gQ2hhbmdlcyBp
-biB2MjoKPiAtIEEgYnVuY2ggb2YgZ29vZCBmaXhlcyBmcm9tIFNlYW4KPgo+ICBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8ICA2ICsrLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICA1ICsr
-Ky0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMg
-IHwgMjUgKysrKysrKysrKysrKysrKysrKystLQo+ICAzIGZpbGVzIGNoYW5nZWQsIDI4IGluc2Vy
-dGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+IGluZGV4IDVmZTM5ODIuLmMwY2UxNmEg
-MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
-cF9jb3JlLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4
-X2RwX2NvcmUuYwo+IEBAIC0xMTYsOCArMTE2LDcgQEAgaW50IGFuYWxvZ2l4X2RwX2VuYWJsZV9w
-c3Ioc3RydWN0IGRldmljZSAqZGV2KQo+ICAgICAgICAgcHNyX3ZzYy5EQjAgPSAwOwo+ICAgICAg
-ICAgcHNyX3ZzYy5EQjEgPSBFRFBfVlNDX1BTUl9TVEFURV9BQ1RJVkUgfCBFRFBfVlNDX1BTUl9D
-UkNfVkFMVUVTX1ZBTElEOwo+Cj4gLSAgICAgICBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoZHAs
-ICZwc3JfdnNjKTsKPiAtICAgICAgIHJldHVybiAwOwo+ICsgICAgICAgcmV0dXJuIGFuYWxvZ2l4
-X2RwX3NlbmRfcHNyX3NwZChkcCwgJnBzcl92c2MpOwo+ICB9Cj4gIEVYUE9SVF9TWU1CT0xfR1BM
-KGFuYWxvZ2l4X2RwX2VuYWJsZV9wc3IpOwo+Cj4gQEAgLTEzOSw4ICsxMzgsNyBAQCBpbnQgYW5h
-bG9naXhfZHBfZGlzYWJsZV9wc3Ioc3RydWN0IGRldmljZSAqZGV2KQo+ICAgICAgICAgcHNyX3Zz
-Yy5EQjAgPSAwOwo+ICAgICAgICAgcHNyX3ZzYy5EQjEgPSAwOwo+Cj4gLSAgICAgICBhbmFsb2dp
-eF9kcF9zZW5kX3Bzcl9zcGQoZHAsICZwc3JfdnNjKTsKPiAtICAgICAgIHJldHVybiAwOwo+ICsg
-ICAgICAgcmV0dXJuIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChkcCwgJnBzcl92c2MpOwo+ICB9
-Cj4gIEVYUE9SVF9TWU1CT0xfR1BMKGFuYWxvZ2l4X2RwX2Rpc2FibGVfcHNyKTsKPgo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUu
-aCBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCj4g
-aW5kZXggZDU2NGU5MC4uYTI3ZjFlMyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oCj4gQEAgLTIwLDYgKzIwLDcgQEAKPiAg
-I2RlZmluZSBNQVhfRVFfTE9PUCA1Cj4KPiAgI2RlZmluZSBEUF9USU1FT1VUX0xPT1BfTVMgICAg
-ICAgICAgICAgICAgICAgICBtc2Vjc190b19qaWZmaWVzKDEpCj4gKyNkZWZpbmUgRFBfVElNRU9V
-VF9QU1JfTE9PUF9NUyAgICAgICAgICAgICAgICAgbXNlY3NfdG9famlmZmllcygzMDApCgpTYW1l
-IGNvbW1lbnQgaGVyZSByZTogdW5pdHMuCgozMDBtcyBzZWVtcyBsaWtlIGEgcmVhbGx5IGxvbmcg
-dGltZS4gV2h5IGRvZXMgaXQgdGFrZSB0aGlzIGxvbmc/CgpTZWFuCgoKPgo+ICAvKiBEUF9NQVhf
-TEFORV9DT1VOVCAqLwo+ICAjZGVmaW5lIERQQ0RfRU5IQU5DRURfRlJBTUVfQ0FQKHgpICAgICAg
-ICAgICAgICgoKHgpID4+IDcpICYgMHgxKQo+IEBAIC0yNDgsOCArMjQ5LDggQEAgdm9pZCBhbmFs
-b2dpeF9kcF9jb25maWdfdmlkZW9fc2xhdmVfbW9kZShzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNl
-ICpkcCk7Cj4gIHZvaWQgYW5hbG9naXhfZHBfZW5hYmxlX3NjcmFtYmxpbmcoc3RydWN0IGFuYWxv
-Z2l4X2RwX2RldmljZSAqZHApOwo+ICB2b2lkIGFuYWxvZ2l4X2RwX2Rpc2FibGVfc2NyYW1ibGlu
-ZyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCk7Cj4gIHZvaWQgYW5hbG9naXhfZHBfZW5h
-YmxlX3Bzcl9jcmMoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApOwo+IC12b2lkIGFuYWxv
-Z2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKPiAtICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19wc3IgKnZzYyk7Cj4gK2lu
-dCBhbmFsb2dpeF9kcF9zZW5kX3Bzcl9zcGQoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAs
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZWRwX3ZzY19wc3IgKnZzYyk7
-Cj4gIHNzaXplX3QgYW5hbG9naXhfZHBfdHJhbnNmZXIoc3RydWN0IGFuYWxvZ2l4X2RwX2Rldmlj
-ZSAqZHAsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2RwX2F1eF9t
-c2cgKm1zZyk7Cj4gICNlbmRpZiAvKiBfQU5BTE9HSVhfRFBfQ09SRV9IICovCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4gaW5kZXgg
-MTVhNGNmMC4uN2ZkNGVkMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2Fu
-YWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
-bmFsb2dpeC9hbmFsb2dpeF9kcF9yZWcuYwo+IEBAIC0xMDA0LDEwICsxMDA0LDEyIEBAIHZvaWQg
-YW5hbG9naXhfZHBfZW5hYmxlX3Bzcl9jcmMoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAp
-Cj4gICAgICAgICB3cml0ZWwoUFNSX1ZJRF9DUkNfRU5BQkxFLCBkcC0+cmVnX2Jhc2UgKyBBTkFM
-T0dJWF9EUF9DUkNfQ09OKTsKPiAgfQo+Cj4gLXZvaWQgYW5hbG9naXhfZHBfc2VuZF9wc3Jfc3Bk
-KHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+IC0gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHN0cnVjdCBlZHBfdnNjX3BzciAqdnNjKQo+ICtpbnQgYW5hbG9naXhfZHBfc2VuZF9w
-c3Jfc3BkKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgc3RydWN0IGVkcF92c2NfcHNyICp2c2MpCj4gIHsKPiArICAgICAgIHVuc2ln
-bmVkIGxvbmcgdGltZW91dDsKPiAgICAgICAgIHVuc2lnbmVkIGludCB2YWw7Cj4gKyAgICAgICB1
-OCBzaW5rOwo+Cj4gICAgICAgICAvKiBkb24ndCBzZW5kIGluZm8gZnJhbWUgKi8KPiAgICAgICAg
-IHZhbCA9IHJlYWRsKGRwLT5yZWdfYmFzZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NUTCk7Cj4g
-QEAgLTEwNDgsNiArMTA1MCwyNSBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NlbmRfcHNyX3NwZChzdHJ1
-Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCwKPiAgICAgICAgIHZhbCA9IHJlYWRsKGRwLT5yZWdf
-YmFzZSArIEFOQUxPR0lYX0RQX1BLVF9TRU5EX0NUTCk7Cj4gICAgICAgICB2YWwgfD0gSUZfRU47
-Cj4gICAgICAgICB3cml0ZWwodmFsLCBkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9QS1RfU0VO
-RF9DVEwpOwo+ICsKPiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsgRFBfVElNRU9VVF9QU1Jf
-TE9PUF9NUzsKPiArICAgICAgIHdoaWxlICh0aW1lX2JlZm9yZShqaWZmaWVzLCB0aW1lb3V0KSkg
-ewo+ICsgICAgICAgICAgICAgICB2YWwgPSBkcm1fZHBfZHBjZF9yZWFkYigmZHAtPmF1eCwgRFBf
-UFNSX1NUQVRVUywgJnNpbmspOwo+ICsgICAgICAgICAgICAgICBpZiAodmFsICE9IDEpIHsKPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRwLT5kZXYsICJQU1JfU1RBVFVTIHJlYWQg
-ZmFpbGVkIHJldD0lZCIsIHZhbCk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1F
-QlVTWTsKPiArICAgICAgICAgICAgICAgfQo+ICsKPiArICAgICAgICAgICAgICAgaWYgKCh2c2Mt
-PkRCMSAmJiBzaW5rID09IERQX1BTUl9TSU5LX0FDVElWRV9SRkIpIHx8Cj4gKyAgICAgICAgICAg
-ICAgICAgICAoIXZzYy0+REIxICYmIHNpbmsgPT0gRFBfUFNSX1NJTktfSU5BQ1RJVkUpKQo+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAwOwo+ICsKPiArICAgICAgICAgICAgICAgdXNs
-ZWVwX3JhbmdlKDEwMDAsIDE1MDApOwo+ICsgICAgICAgfQo+ICsKPiArICAgICAgIGRldl93YXJu
-KGRwLT5kZXYsICJGYWlsZWQgdG8gYXBwbHkgUFNSLCBzaW5rIHN0YXRlIHdhcyBbJXhdIiwgc2lu
-ayk7Cj4gKwo+ICsgICAgICAgcmV0dXJuIC1FVElNRURPVVQ7Cj4gIH0KPgo+ICBzc2l6ZV90IGFu
-YWxvZ2l4X2RwX3RyYW5zZmVyKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRwLAo+IC0tCj4g
-MS45LjEKPgo+Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUg
-bGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBt
-ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
-IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Sun, Sep 04, 2016 at 01:04:05PM +0200, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> Update examples in Samsung pinctrl dt-bindings with new macros coming
+> from header file.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Add Javier's reviewed-by.
+> 2. Include necessary header in example (pointed by Javier).
+> ---
+>  .../bindings/pinctrl/samsung-pinctrl.txt           | 44 +++++++++++-----------
+>  1 file changed, 23 insertions(+), 21 deletions(-)
+
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
