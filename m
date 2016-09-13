@@ -1,323 +1,94 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH 1/5] clk: add support for runtime pm
-Date: Tue, 13 Sep 2016 10:49:48 +0200
-Message-ID: <CAPDyKFo7R1f1H1R5Q78L4e_nHfngRYfo8jP_Dfi3uf_OGWvZCg@mail.gmail.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com> <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+Date: Tue, 13 Sep 2016 11:07:45 +0200
+Message-ID: <e3cceb9a-7a30-c662-dba4-bc453f6fddb6@samsung.com>
+References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
+ <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+ <20160908001943.GC13062@codeaurora.org>
+ <CGME20160912101857eucas1p29b2bbd5ac0eda92284091ad1b86decc4@eucas1p2.samsung.com>
+ <f18fee35-cb5d-abce-0415-a98b58e3a302@samsung.com>
+ <20160912223105.GI7243@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1472737551-15272-2-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <20160912223105.GI7243@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 1 September 2016 at 15:45, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Registers for some clocks might be located in the SOC area, which are under the
-> power domain. To enable access to those registers respective domain has to be
-> turned on. Additionally, registers for such clocks will usually loose its
-> contents when power domain is turned off, so additional saving and restoring of
-> them might be needed in the clock controller driver.
+Hi Stephen,
 
-This is indeed correct, I can confirm that the UX500 SoC's PRCC clock
-controllers also needs to be managed like this.
 
->
-> This patch adds basic infrastructure in the clocks core to allow implementing
-> driver for such clocks under power domains. Clock provider can supply a
-> struct device pointer, which is the used by clock core for tracking and managing
-> clock's controller runtime pm state. Each clk_prepare() operation
-> will first call pm_runtime_get_sync() on the supplied device, while
-> clk_unprepare() will do pm_runtime_put() at the end.
+On 2016-09-13 00:31, Stephen Boyd wrote:
+> On 09/12, Marek Szyprowski wrote:
+>> Hi Stephen,
+>>
+>>
+>> On 2016-09-08 02:19, Stephen Boyd wrote:
+>>> On 09/01, Marek Szyprowski wrote:
+>>>> Registers for some clocks might be located in the SOC area, which are under the
+>>>> power domain. To enable access to those registers respective domain has to be
+>>>> turned on. Additionally, registers for such clocks will usually loose its
+>>>> contents when power domain is turned off, so additional saving and restoring of
+>>>> them might be needed in the clock controller driver.
+>>>>
+>>>> This patch adds basic infrastructure in the clocks core to allow implementing
+>>>> driver for such clocks under power domains. Clock provider can supply a
+>>>> struct device pointer, which is the used by clock core for tracking and managing
+>>>> clock's controller runtime pm state. Each clk_prepare() operation
+>>>> will first call pm_runtime_get_sync() on the supplied device, while
+>>>> clk_unprepare() will do pm_runtime_put() at the end.
+>>>>
+>>>> Additional calls to pm_runtime_get/put functions are required to ensure that any
+>>>> register access (like calculating/chaning clock rates) will be done with clock
+>>>> controller in active runtime state.
+>>>>
+>>>> Special handling of the case when runtime pm is disabled for clock controller's
+>>>> device is needed to let this feature work properly also during system sleep
+>>>> suspend/resume operations (runtime pm is first disabled before entering sleep
+>>>> state's, but controller is usually still operational until its suspend pm
+>>>> callback is called).
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> My "knee jerk" concern is that we're going to take a runtime PM
+>>> lock underneath the prepare lock. That seems like a situation
+>>> where we could hit a lock inversion if the runtime PM callbacks
+>>> themselves acquire the prepare lock by calling clk APIs? But this
+>>> concern is false right? We release the runtime PM lock before
+>>> calling the PM callback, so we shouldn't hit any deadlock and
+>>> lockdep won't complain?
+>> Runtime PM uses fine grained locking based on per-device locks, so there
+>> should be no problem with global clock prepare lock. The only lock
+>> interaction
+>> is between clock controller device's rpm lock and clocks global
+>> prepare lock, but
+>> it always done with the same access pattern. I've tested it
+>> extensively (also
+>> with lock dep) with various use cases and found no problems.
+>>
+> Great! So you have runtime PM callbacks that are calling
+> clk_prepare/unprepare?
 
-This make sense!
+Well, not really. clock controller's runtime pm functions must not call
+clk_prepare/unprepare yet.
 
->
-> Additional calls to pm_runtime_get/put functions are required to ensure that any
-> register access (like calculating/chaning clock rates) will be done with clock
+I didn't get your question. I thought that you are asking if my change
+won't introduce any deadlock related to prepare and dev->pm locks. My
+runtime pm functions doesn't do any call to clk_prepare/unprepare.
+Although global clock prepare lock is re-entrant from the same process, it
+would cause deadlock if called from runtime pm functions, because runtime
+pm functions might be called from the worker running on the different
+cpu/process.
 
-/s/chaning/changing
+I hope that the work started by Krzysztof Kozlowski on splitting prepare
+lock on per-controller basis will solve limitation and one would be able
+to call clk_prapare/unprepare on clocks from other controllers even from
+the runtime pm functions.
 
-> controller in active runtime state.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-/s/active runtime/runtime resumed
-
->
-> Special handling of the case when runtime pm is disabled for clock controller's
-> device is needed to let this feature work properly also during system sleep
-> suspend/resume operations (runtime pm is first disabled before entering sleep
-> state's, but controller is usually still operational until its suspend pm
-> callback is called).
-
-This needs to be clarified. I agree we need to cover system PM as
-well, but let's try be a bit more precise about it.
-
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-I would also like to extend the change log to describe a little bit of
-how a clk provider should interact with this new and nice feature.
-Something like:
-
-*) It needs to provide a struct device to the core when registering
-the provider.
-**) It needs to enable runtime PM.
-***) It needs to make sure the runtime PM status of the controller
-device reflects the HW state.
-
-> ---
->  drivers/clk/clk.c | 84 +++++++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 76 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 820a939fb6bb..a1934e9b4e95 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -21,6 +21,7 @@
->  #include <linux/of.h>
->  #include <linux/device.h>
->  #include <linux/init.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/sched.h>
->  #include <linux/clkdev.h>
->
-> @@ -46,6 +47,7 @@ struct clk_core {
->         const struct clk_ops    *ops;
->         struct clk_hw           *hw;
->         struct module           *owner;
-> +       struct device           *dev;
->         struct clk_core         *parent;
->         const char              **parent_names;
->         struct clk_core         **parents;
-> @@ -87,6 +89,42 @@ struct clk {
->         struct hlist_node clks_node;
->  };
->
-> +/***           runtime pm          ***/
-> +static int clk_pm_runtime_get(struct clk_core *core)
-> +{
-> +       int ret = 0;
-> +
-> +       if (!core->dev)
-> +               return 0;
-> +
-> +       if (pm_runtime_enabled(core->dev)) {
-
-Why do you need to check for this?
-
-> +               ret = pm_runtime_get_sync(core->dev);
-> +       } else {
-> +               if (!pm_runtime_status_suspended(core->dev))
-> +                       pm_runtime_get_noresume(core->dev);
-
-This looks weird. I guess it's related to the system PM case somehow?
-
-> +       }
-> +       return ret < 0 ? ret : 0;
-> +}
-> +
-> +static void clk_pm_runtime_put(struct clk_core *core)
-> +{
-
-Similar comments as for clk_pm_runtime_get().
-
-> +       if (!core->dev)
-> +               return;
-> +
-> +       if (pm_runtime_enabled(core->dev))
-> +               pm_runtime_put(core->dev);
-> +       else
-> +               pm_runtime_put_noidle(core->dev);
-> +}
-> +
-> +static bool clk_pm_runtime_suspended(struct clk_core *core)
-> +{
-> +       if (!core->dev)
-> +               return 0;
-> +
-> +       return pm_runtime_suspended(core->dev);
-> +}
-> +
->  /***           locking             ***/
->  static void clk_prepare_lock(void)
->  {
-> @@ -150,6 +188,9 @@ static void clk_enable_unlock(unsigned long flags)
->
->  static bool clk_core_is_prepared(struct clk_core *core)
->  {
-> +       if (clk_pm_runtime_suspended(core))
-> +               return false;
-> +
-
-This isn't safe, as even if the clock controller is runtime resumed at
-this point, that's *not* a guarantee that is stays runtime resumed
-while invoking the ->ops->is_prepared().
-
-Instead you must call a pm_runtime_get_noresume() before you check the
-runtime PM status, as that should avoid the device from being runtime
-suspended. Then when the ->ops->is_prepared() has been invoked, we
-should call pm_runtime_put().
-
-Although, I am not sure the above change becomes entirely correct as I
-think we are mixing the runtime PM status with the clock prepare
-status here. In other words, the next time the clock controller
-becomes runtime resumed, it may very well restore some register
-context which may prepare the clock, unless someone explicitly has
-unprepared it.
-
-Of course, it all depends on how clk_core_is_prepared() is used by the
-clock framework.
-
->         /*
->          * .is_prepared is optional for clocks that can prepare
->          * fall back to software usage counter if it is missing
-> @@ -162,6 +203,9 @@ static bool clk_core_is_prepared(struct clk_core *core)
->
->  static bool clk_core_is_enabled(struct clk_core *core)
->  {
-> +       if (clk_pm_runtime_suspended(core))
-> +               return false;
-> +
-
-Similar comment as for clk_core_is_prepared().
-
->         /*
->          * .is_enabled is only mandatory for clocks that gate
->          * fall back to software usage counter if .is_enabled is missing
-> @@ -489,6 +533,8 @@ static void clk_core_unprepare(struct clk_core *core)
->         if (core->ops->unprepare)
->                 core->ops->unprepare(core->hw);
->
-> +       clk_pm_runtime_put(core);
-> +
->         trace_clk_unprepare_complete(core);
->         clk_core_unprepare(core->parent);
->  }
-> @@ -530,10 +576,14 @@ static int clk_core_prepare(struct clk_core *core)
->                 return 0;
->
->         if (core->prepare_count == 0) {
-> -               ret = clk_core_prepare(core->parent);
-> +               ret = clk_pm_runtime_get(core);
->                 if (ret)
->                         return ret;
->
-> +               ret = clk_core_prepare(core->parent);
-> +               if (ret)
-> +                       goto runtime_put;
-> +
->                 trace_clk_prepare(core);
->
->                 if (core->ops->prepare)
-> @@ -541,15 +591,18 @@ static int clk_core_prepare(struct clk_core *core)
->
->                 trace_clk_prepare_complete(core);
->
-> -               if (ret) {
-> -                       clk_core_unprepare(core->parent);
-> -                       return ret;
-> -               }
-> +               if (ret)
-> +                       goto unprepare;
->         }
->
->         core->prepare_count++;
->
->         return 0;
-> +unprepare:
-> +       clk_core_unprepare(core->parent);
-> +runtime_put:
-> +       clk_pm_runtime_put(core);
-> +       return ret;
->  }
->
->  static int clk_core_prepare_lock(struct clk_core *core)
-> @@ -1563,6 +1616,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->  {
->         struct clk_core *top, *fail_clk;
->         unsigned long rate = req_rate;
-> +       int ret = 0;
->
->         if (!core)
->                 return 0;
-> @@ -1579,21 +1633,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (!top)
->                 return -EINVAL;
->
-> +       ret = clk_pm_runtime_get(core);
-> +       if (ret)
-> +               return ret;
-> +
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
->                 pr_debug("%s: failed to set %s rate\n", __func__,
->                                 fail_clk->name);
->                 clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
-> -               return -EBUSY;
-> +               ret = -EBUSY;
-> +               goto err;
->         }
->
->         /* change the rates */
->         clk_change_rate(top);
->
->         core->req_rate = req_rate;
-> +err:
-> +       clk_pm_runtime_put(core);
->
-> -       return 0;
-> +       return ret;
->  }
->
->  /**
-> @@ -1824,12 +1885,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
->                 p_rate = parent->rate;
->         }
->
-> +       ret = clk_pm_runtime_get(core);
-> +       if (ret)
-> +               goto out;
-> +
->         /* propagate PRE_RATE_CHANGE notifications */
->         ret = __clk_speculate_rates(core, p_rate);
->
->         /* abort if a driver objects */
->         if (ret & NOTIFY_STOP_MASK)
-> -               goto out;
-> +               goto runtime_put;
->
->         /* do the re-parent */
->         ret = __clk_set_parent(core, parent, p_index);
-> @@ -1842,6 +1907,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
->                 __clk_recalc_accuracies(core);
->         }
->
-> +runtime_put:
-> +       clk_pm_runtime_put(core);
->  out:
->         clk_prepare_unlock();
->
-> @@ -2546,6 +2613,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->                 goto fail_name;
->         }
->         core->ops = hw->init->ops;
-> +       core->dev = dev;
->         if (dev && dev->driver)
->                 core->owner = dev->driver->owner;
->         core->hw = hw;
-> --
-> 1.9.1
->
-
-I believe we are also accessing the clock controller HW from the
-late_initcall_sync(clk_disable_unused) function.
-
-More precisely, in clk_disable_unused_subtree(), we probably need a
-pm_runtime_get_sync() before calling clk_core_is_enabled(). And then
-restore that with a pm_runtime_put() after the clock has been
-disabled.
-The similar is needed in clk_unprepare_unused_subtree().
-
-Kind regards
-Uffe
