@@ -1,57 +1,59 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] iommu/exynos: Improve page fault debug message
-Date: Wed, 14 Sep 2016 14:44:43 +0200
-Message-ID: <1473857083-1078-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20160914124448eucas1p2b5d1cac9d4af5dc594c012007b21c3c4@eucas1p2.samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 3/4] arm64: dts: exynos: DeviceTree ARM64 for v4.9
+Date: Wed, 14 Sep 2016 16:52:07 +0200
+Message-ID: <2355200.e1COboIX4U@wuerfel>
+References: <1472548739-20050-1-git-send-email-k.kozlowski@samsung.com> <1472548739-20050-4-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31044 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755879AbcINMox (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.133]:64013 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756249AbcINOwr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 08:44:53 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODH0033XVEQK6A0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Sep 2016 13:44:50 +0100 (BST)
+        Wed, 14 Sep 2016 10:52:47 -0400
+In-Reply-To: <1472548739-20050-4-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Add master device name to default IOMMU fault message to make easier to
-find which device triggered the fault. While at it, move printing some
-information (like page table base and first level entry addresses) to
-dev_dbg(), because those are typically not very useful for typical device
-driver user/developer not equipped with hardware debugging tools.
+On Tuesday, August 30, 2016 11:18:58 AM CEST Krzysztof Kozlowski wrote:
+> This is an old one. It was ready for v4.8 but then Marc Zynger posted
+> some conflicting change so I postponed it. Marc's patch didn't get in,
+> so there is no reason to wait.
+> 
+> No conflict expected yet, but if you apply Marc's "arm64: dts: Fix
+> broken architected timer interrupt trigger" then proper resolution would be:
+> 
+> arch/arm64/boot/dts/exynos/exynos7.dtsi:
+> 
+> +                       interrupts = <GIC_PPI 13
+> +                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 14
+> +                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 11
+> +                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 10
+> +                                       (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+> 
+>   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.9
+> 
+> for you to fetch changes up to 36d1c9cd07cd6a065f1dde3cbbfe3a9867d693a4:
+> 
+>   arm64: dts: exynos: Use human-friendly symbols for timer interrupt flags (2016-08-10 11:09:46 +0200)
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Pulled into next/dt64, thanks!
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 30808e9..47f0d67 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -368,13 +368,14 @@ static void show_fault_information(struct sysmmu_drvdata *data,
- {
- 	sysmmu_pte_t *ent;
- 
--	dev_err(data->sysmmu, "%s FAULT occurred at %#x (page table base: %pa)\n",
--		finfo->name, fault_addr, &data->pgtable);
-+	dev_err(data->sysmmu, "%s: %s FAULT occurred at %#x\n",
-+		dev_name(data->master), finfo->name, fault_addr);
-+	dev_dbg(data->sysmmu, "Page table base: %pa\n", &data->pgtable);
- 	ent = section_entry(phys_to_virt(data->pgtable), fault_addr);
--	dev_err(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
-+	dev_dbg(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
- 	if (lv1ent_page(ent)) {
- 		ent = page_entry(ent, fault_addr);
--		dev_err(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
-+		dev_dbg(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
- 	}
- }
- 
--- 
-1.9.1
+	Arnd
