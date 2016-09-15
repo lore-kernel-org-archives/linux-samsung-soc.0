@@ -1,35 +1,83 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH] ARM: s3c24xx: Add dma_slave_map for s3c2440 devices
-Date: Thu, 15 Sep 2016 11:05:12 +0200
-Message-ID: <2fa402bf-0e3f-0495-41ca-7a3c89eaa2e1@samsung.com>
-References: <CGME20160914183040eucas1p22a61e6b39333cfe1aa9a6b63e74a1bcf@eucas1p2.samsung.com>
- <1473877775-7537-1-git-send-email-sam.van.den.berge@telenet.be>
+Date: Thu, 15 Sep 2016 11:26:22 +0200
+Message-ID: <9078781.4yTPDTPaPN@wuerfel>
+References: <1473877775-7537-1-git-send-email-sam.van.den.berge@telenet.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1473877775-7537-1-git-send-email-sam.van.den.berge@telenet.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sam Van Den Berge <sam.van.den.berge@telenet.be>
-Cc: vinod.koul@intel.com, dmaengine@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:65172 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753427AbcIOJ1I (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 15 Sep 2016 05:27:08 -0400
+In-Reply-To: <1473877775-7537-1-git-send-email-sam.van.den.berge@telenet.be>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Sam Van Den Berge <sam.van.den.berge@telenet.be>, vinod.koul@intel.com, dmaengine@vger.kernel.org, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org
 
-On 09/14/2016 08:29 PM, Sam Van Den Berge wrote:
-> +static const struct dma_slave_map s3c2440_dma_slave_map[] = {
+On Wednesday, September 14, 2016 8:29:35 PM CEST Sam Van Den Berge wrote:
+> This patch updates the s3c24xx dma driver to be able to pass a
+> dma_slave_map array via the platform data. This is needed to
+> be able to use the new, simpler dmaengine API [1].
+> I used the virtual DMA channels as a parameter for the dma_filter
+> function. By doing that, I could reuse the existing filter function in
+> drivers/dma/s3c24xx-dma.c.
+> 
+> I have tested this on my mini2440 board with the audio driver.
+> (I first applied the audio fixes from Sylwester Nawrocki [2])
+> According to my observations, dma_request_slave_channel in the
+> function dmaengine_pcm_new in the file
+> sound/soc/soc-generic-dmaengine-pcm.c now returns a valid DMA channel
+> whereas before no DMA channel was returned at that point.
+> 
+> Entries for DMACH_XD0, DMACH_XD1 and DMACH_TIMER are missing because I
+> don't realy know which driver to use for these.
+> 
+> [1]
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/393635.html
+> [2] http://www.spinics.net/lists/arm-kernel/msg521918.html
+> 
+> Signed-off-by: Sam Van Den Berge <sam.van.den.berge@telenet.be>
+> 
+
+Thanks for doing this, once this is merged we should be able to
+change all the drivers that currently use this DMA support
+(I think just spi, mmc and audio) over to the new dma_request_chan
+function.
+
+The logical follow-up after that would be to unify the slave_map
+with the s3c24xx_dma_channel tables, along the lines of
+
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -475,28 +475,14 @@ static struct resource s3c2443_dma_resource[] = {
+ 	[6] = DEFINE_RES_IRQ(IRQ_S3C2443_DMA5),
+ };
+ 
+-static struct s3c24xx_dma_channel s3c2443_dma_channels[DMACH_MAX] = {
++static struct dma_slave_map s3c2443_dma_channels[] = {
+-	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, 17 },
+-	[DMACH_XD1] = { S3C24XX_DMA_AHB, true, 18 },
+-	[DMACH_SDI] = { S3C24XX_DMA_APB, false, 10 },
+-	[DMACH_SPI0_RX] = { S3C24XX_DMA_APB, true, 1 },
+-	[DMACH_SPI0_TX] = { S3C24XX_DMA_APB, true, 0 },
+-	[DMACH_SPI1_RX] = { S3C24XX_DMA_APB, true, 3 },
+-	[DMACH_SPI1_TX] = { S3C24XX_DMA_APB, true, 2 },
++	{ "xd0",	"data",	 S3C_DMA_SLAVE(S3C24XX_DMA_AHB, true,  17) },
++	{ "xd1",	"data",	 S3C_DMA_SLAVE(S3C24XX_DMA_AHB, true,  18) },
++	{ "3c2440-sdi", "data",	 S3C_DMA_SLAVE(S3C24XX_DMA_APB, false, 10) },
++	{ "s3c2410-spi.0", "rx", S3C_DMA_SLAVE(S3C24XX_DMA_APB, true,   1) },
++	{ "s3c2410-spi.0", "tx", S3C_DMA_SLAVE(S3C24XX_DMA_APB, true,   0) },
++	{ "s3c2410-spi.1", "rx", S3C_DMA_SLAVE(S3C24XX_DMA_APB, true,   3) },
++	{ "s3c2410-spi.1", "tx", S3C_DMA_SLAVE(S3C24XX_DMA_APB, true,   2) },
 ...
-> +	{ "3c2440-sdi", "rx", (void *)DMACH_SDI },
-> +	{ "3c2440-sdi", "tx", (void *)DMACH_SDI },
+ };
+ 
+ static struct s3c24xx_dma_platdata s3c2443_dma_platdata = {
 
-The device names seem misspelled here, and looking at what
-drivers/mmc/host/s3cmci.c driver does we need just a single common
-entry for rx and tx
+For this patch:
 
-	{ "s3c2440-sdi", "rx-tx", (void *)DMACH_SDI },
-
-With this fixed feel free to add
-
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Thanks,
-Sylwester
+Acked-by: Arnd Bergmann <arnd@arndb.de>
