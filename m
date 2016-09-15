@@ -1,45 +1,37 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 4/5] ARM: dts: exynos: add support for ISP power domain to
- exynos4x12 clocks device
-Date: Thu, 15 Sep 2016 16:13:31 +0200
-Message-ID: <CAPDyKFpibwe2fgviT8z3atd4RJUBx1PMNuG3txbjAa5qY8o_dg@mail.gmail.com>
-References: <1472737551-15272-1-git-send-email-m.szyprowski@samsung.com>
- <1472737551-15272-5-git-send-email-m.szyprowski@samsung.com>
- <20160908002254.GD13062@codeaurora.org> <CGME20160912102332eucas1p145e79669788329b44343da62dcbe50ca@eucas1p1.samsung.com>
- <f340cca5-6cd6-6bd1-3b9a-ccd58cbc0091@samsung.com> <20160912222852.GH7243@codeaurora.org>
- <6e52af56-8b0e-d8c4-62c2-6efeee0e912d@samsung.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH] ARM: s3c24xx: Add dma_slave_map for s3c2440 devices
+Date: Thu, 15 Sep 2016 21:54:49 +0530
+Message-ID: <20160915162449.GY13920@localhost>
+References: <CGME20160914183040eucas1p22a61e6b39333cfe1aa9a6b63e74a1bcf@eucas1p2.samsung.com>
+ <1473877775-7537-1-git-send-email-sam.van.den.berge@telenet.be>
+ <2fa402bf-0e3f-0495-41ca-7a3c89eaa2e1@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <6e52af56-8b0e-d8c4-62c2-6efeee0e912d@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2fa402bf-0e3f-0495-41ca-7a3c89eaa2e1@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sam Van Den Berge <sam.van.den.berge@telenet.be>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, dmaengine@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[...]
+On Thu, Sep 15, 2016 at 11:05:12AM +0200, Sylwester Nawrocki wrote:
+> On 09/14/2016 08:29 PM, Sam Van Den Berge wrote:
+> > +static const struct dma_slave_map s3c2440_dma_slave_map[] = {
+> ...
+> > +	{ "3c2440-sdi", "rx", (void *)DMACH_SDI },
+> > +	{ "3c2440-sdi", "tx", (void *)DMACH_SDI },
+> 
+> The device names seem misspelled here, and looking at what
+> drivers/mmc/host/s3cmci.c driver does we need just a single common
+> entry for rx and tx
+> 
+> 	{ "s3c2440-sdi", "rx-tx", (void *)DMACH_SDI },
+> 
+> With this fixed feel free to add
 
->>> I see some serious design problems with multiple entries in power domains
->>> property. First how to show that some part of the device IS NOT in
->>> any domain?
->>
->> Is that even possible? Every device should be in some power
->> domain, even if it's just an "always on" power domain that we
->> don't really control from software.
->
->
-> Right now none dts of which I'm aware of doesn't define the power domain for
-> the parts of the SoC, which are always on and doesn't need any additional
-> management.
+And please change the title to dmaengine and NOT arm... I was about ti skip
+this!
 
-Actually there's is one reason for doing this, as it would allow
-devices to be monitored for device PM QoS constraints by the genpd
-governor.
-
-Although, I doubt's someone actually does it because of this benefit,
-at least yet.
-
-[...]
-
-Kind regards
-Uffe
+-- 
+~Vinod
