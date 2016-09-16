@@ -1,41 +1,68 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: dts: exynos: Remove "simple-bus" compatible from fimc-is
- node
-Date: Fri, 16 Sep 2016 10:33:45 +0200
-Message-ID: <1474014825-28969-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: usb phy reset for ethernet.
+Date: Fri, 16 Sep 2016 10:55:56 +0200
+Message-ID: <45aff519-892a-7b3c-f0fd-9f3c1c116e6f@samsung.com>
+References: <CGME20160910102333eucas1p1c6562273f27fb7f27749691ac73e9615@eucas1p1.samsung.com>
+ <CANAwSgT0f5LiD6O2yogfAJAvrHQqXKYxmMgqHuzv9AsqhSK29g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39628 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757375AbcIPI4E (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 16 Sep 2016 04:56:04 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ODL00GA3A5C7500@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2016 09:56:00 +0100 (BST)
+In-reply-to: <CANAwSgT0f5LiD6O2yogfAJAvrHQqXKYxmMgqHuzv9AsqhSK29g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@debian.org>
 
-The "simple-bus" compatible was originally added for fimc-is only
-to ensure the child devices instantiation.  The child devices are
-now being created by the parent device driver so remove the
-"simple-bus" compatible.
+On 09/10/2016 12:23 PM, Anand Moon wrote:
+> Hi Krzysztof,
+> 
+> For log time I am trying to understanding the reset for PHY for Odroid XU4
+> for ethenet/emmc/sdcard.
+> 
+> So in-order to reset the PHY I would like to attempt some thing like this below.
+> I am trying to understand and modify the driver drivers/regulator/s2mps11.c
+> If you thing this approach is good enough. Or their will be another approach.
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index d562530..bed5263 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -369,9 +369,10 @@
+>                         };
+> 
+>                         ldo17_reg: LDO17 {
+> -                               regulator-name = "tsp_avdd";
+> +                               regulator-name = "vdd_eth";
+>                                 regulator-min-microvolt = <3300000>;
+>                                 regulator-max-microvolt = <3300000>;
+> +                               samsung,ext-control-gpios = <&gpg1 1
+> GPIO_ACTIVE_HIGH>;
+>                                 regulator-always-on;
+>                         };
+> 
+> Or is there reset core logic for the usb phy to be integrated for
+> exynos platform.
+> 
+> Please let me know your thought on this.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't see any correlation between the patch and the goal you
+mentioned. An always on regulator, won't be turned off... because it is
+always on.
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c452499..e8d0678 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -147,7 +147,7 @@
- 		};
- 
- 		fimc_is: fimc-is@12000000 {
--			compatible = "samsung,exynos4212-fimc-is", "simple-bus";
-+			compatible = "samsung,exynos4212-fimc-is";
- 			reg = <0x12000000 0x260000>;
- 			interrupts = <0 90 0>, <0 95 0>;
- 			power-domains = <&pd_isp>;
--- 
-1.9.1
+The DTS change above does not introduce any reset-phy logic. You need to
+use a proper driver for that.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
