@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 06/10] ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5
-Date: Fri, 16 Sep 2016 21:42:47 +0200
-Message-ID: <1474054971-16831-7-git-send-email-krzk@kernel.org>
+Subject: [PATCH 09/10] ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5260
+Date: Fri, 16 Sep 2016 21:42:50 +0200
+Message-ID: <1474054971-16831-10-git-send-email-krzk@kernel.org>
 References: <1474054971-16831-1-git-send-email-krzk@kernel.org>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1474054971-16831-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
@@ -23,142 +23,137 @@ Reported-by: Alban Browaeys <alban.browaeys-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.
 Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
 Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5.dtsi | 60 ++++++++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 17 deletions(-)
+ arch/arm/boot/dts/exynos5260.dtsi | 39 ++++++++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 8f06609879f5..d9b1607db5ad 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -13,6 +13,7 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index a86a4898d077..b0848a3d3d88 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -10,6 +10,7 @@
+ */
  
+ #include <dt-bindings/clock/exynos5260-clk.h>
 +#include <dt-bindings/interrupt-controller/irq.h>
- #include "exynos-syscon-restart.dtsi"
  
  / {
-@@ -53,14 +54,38 @@
- 			interrupt-controller;
- 			samsung,combiner-nr = <32>;
- 			reg = <0x10440000 0x1000>;
--			interrupts =	<0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--					<0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--					<0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--					<0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--					<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
--					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
--					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
--					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
-+			interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 9 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 17 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 18 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 19 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 20 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 21 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 22 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 23 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 24 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 25 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 26 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 27 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 28 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 29 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 30 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 31 IRQ_TYPE_LEVEL_HIGH>;
+ 	compatible = "samsung,exynos5260", "samsung,exynos5";
+@@ -181,10 +182,18 @@
+ 			reg = <0x100B0000 0x1000>;
+ 			clocks = <&fin_pll>, <&clock_peri PERI_CLK_MCT>;
+ 			clock-names = "fin_pll", "mct";
+-			interrupts = <0 104 0>, <0 105 0>, <0 106 0>,
+-					<0 107 0>, <0 122 0>, <0 123 0>,
+-					<0 124 0>, <0 125 0>, <0 126 0>,
+-					<0 127 0>, <0 128 0>, <0 129 0>;
++			interrupts = <0 104 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 105 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 106 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 107 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 127 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 129 IRQ_TYPE_LEVEL_HIGH>;
  		};
  
- 		gic: interrupt-controller@10481000 {
-@@ -82,31 +107,31 @@
- 		serial_0: serial@12C00000 {
+ 		cci: cci@10F00000 {
+@@ -210,25 +219,25 @@
+ 		pinctrl_0: pinctrl@11600000 {
+ 			compatible = "samsung,exynos5260-pinctrl";
+ 			reg = <0x11600000 0x1000>;
+-			interrupts = <0 79 0>;
++			interrupts = <0 79 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			wakeup-interrupt-controller {
+ 				compatible = "samsung,exynos4210-wakeup-eint";
+ 				interrupt-parent = <&gic>;
+-				interrupts = <0 32 0>;
++				interrupts = <0 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
+ 		};
+ 
+ 		pinctrl_1: pinctrl@12290000 {
+ 			compatible = "samsung,exynos5260-pinctrl";
+ 			reg = <0x12290000 0x1000>;
+-			interrupts = <0 157 0>;
++			interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		pinctrl_2: pinctrl@128B0000 {
+ 			compatible = "samsung,exynos5260-pinctrl";
+ 			reg = <0x128B0000 0x1000>;
+-			interrupts = <0 243 0>;
++			interrupts = <0 243 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		pmu_system_controller: system-controller@10D50000 {
+@@ -239,7 +248,7 @@
+ 		uart0: serial@12C00000 {
  			compatible = "samsung,exynos4210-uart";
  			reg = <0x12C00000 0x100>;
--			interrupts = <0 51 0>;
-+			interrupts = <0 51 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		serial_1: serial@12C10000 {
+-			interrupts = <0 146 0>;
++			interrupts = <0 146 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock_peri PERI_CLK_UART0>, <&clock_peri PERI_SCLK_UART0>;
+ 			clock-names = "uart", "clk_uart_baud0";
+ 			status = "disabled";
+@@ -248,7 +257,7 @@
+ 		uart1: serial@12C10000 {
  			compatible = "samsung,exynos4210-uart";
  			reg = <0x12C10000 0x100>;
--			interrupts = <0 52 0>;
-+			interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		serial_2: serial@12C20000 {
+-			interrupts = <0 147 0>;
++			interrupts = <0 147 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock_peri PERI_CLK_UART1>, <&clock_peri PERI_SCLK_UART1>;
+ 			clock-names = "uart", "clk_uart_baud0";
+ 			status = "disabled";
+@@ -257,7 +266,7 @@
+ 		uart2: serial@12C20000 {
  			compatible = "samsung,exynos4210-uart";
  			reg = <0x12C20000 0x100>;
--			interrupts = <0 53 0>;
-+			interrupts = <0 53 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		serial_3: serial@12C30000 {
- 			compatible = "samsung,exynos4210-uart";
- 			reg = <0x12C30000 0x100>;
--			interrupts = <0 54 0>;
-+			interrupts = <0 54 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
- 		i2c_0: i2c@12C60000 {
- 			compatible = "samsung,s3c2440-i2c";
- 			reg = <0x12C60000 0x100>;
--			interrupts = <0 56 0>;
-+			interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			samsung,sysreg-phandle = <&sysreg_system_controller>;
-@@ -116,7 +141,7 @@
- 		i2c_1: i2c@12C70000 {
- 			compatible = "samsung,s3c2440-i2c";
- 			reg = <0x12C70000 0x100>;
--			interrupts = <0 57 0>;
-+			interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			samsung,sysreg-phandle = <&sysreg_system_controller>;
-@@ -126,7 +151,7 @@
- 		i2c_2: i2c@12C80000 {
- 			compatible = "samsung,s3c2440-i2c";
- 			reg = <0x12C80000 0x100>;
--			interrupts = <0 58 0>;
-+			interrupts = <0 58 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			samsung,sysreg-phandle = <&sysreg_system_controller>;
-@@ -136,7 +161,7 @@
- 		i2c_3: i2c@12C90000 {
- 			compatible = "samsung,s3c2440-i2c";
- 			reg = <0x12C90000 0x100>;
--			interrupts = <0 59 0>;
-+			interrupts = <0 59 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			samsung,sysreg-phandle = <&sysreg_system_controller>;
-@@ -153,7 +178,8 @@
- 		rtc: rtc@101E0000 {
- 			compatible = "samsung,s3c6410-rtc";
- 			reg = <0x101E0000 0x100>;
--			interrupts = <0 43 0>, <0 44 0>;
-+			interrupts = <0 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <0 44 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupts = <0 148 0>;
++			interrupts = <0 148 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock_peri PERI_CLK_UART2>, <&clock_peri PERI_SCLK_UART2>;
+ 			clock-names = "uart", "clk_uart_baud0";
  			status = "disabled";
- 		};
- 
+@@ -266,7 +275,7 @@
+ 		uart3: serial@12860000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x12860000 0x100>;
+-			interrupts = <0 145 0>;
++			interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock_aud AUD_CLK_AUD_UART>, <&clock_aud AUD_SCLK_AUD_UART>;
+ 			clock-names = "uart", "clk_uart_baud0";
+ 			status = "disabled";
+@@ -275,7 +284,7 @@
+ 		mmc_0: mmc@12140000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12140000 0x2000>;
+-			interrupts = <0 156 0>;
++			interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC0>, <&clock_top TOP_SCLK_MMC0>;
+@@ -287,7 +296,7 @@
+ 		mmc_1: mmc@12150000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12150000 0x2000>;
+-			interrupts = <0 158 0>;
++			interrupts = <0 158 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC1>, <&clock_top TOP_SCLK_MMC1>;
+@@ -299,7 +308,7 @@
+ 		mmc_2: mmc@12160000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12160000 0x2000>;
+-			interrupts = <0 159 0>;
++			interrupts = <0 159 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC2>, <&clock_top TOP_SCLK_MMC2>;
 -- 
 2.7.4
 
