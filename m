@@ -1,68 +1,73 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: usb phy reset for ethernet.
-Date: Fri, 16 Sep 2016 10:55:56 +0200
-Message-ID: <45aff519-892a-7b3c-f0fd-9f3c1c116e6f@samsung.com>
-References: <CGME20160910102333eucas1p1c6562273f27fb7f27749691ac73e9615@eucas1p1.samsung.com>
- <CANAwSgT0f5LiD6O2yogfAJAvrHQqXKYxmMgqHuzv9AsqhSK29g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] exynos4-is: add of_platform_populate() call for FIMC-IS child
+ devices
+Date: Fri, 16 Sep 2016 11:02:16 +0200
+Message-ID: <1474016536-29766-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39628 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757375AbcIPI4E (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50332 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751257AbcIPJCf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 04:56:04 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODL00GA3A5C7500@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2016 09:56:00 +0100 (BST)
-In-reply-to: <CANAwSgT0f5LiD6O2yogfAJAvrHQqXKYxmMgqHuzv9AsqhSK29g@mail.gmail.com>
+        Fri, 16 Sep 2016 05:02:35 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@debian.org>
+To: linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 09/10/2016 12:23 PM, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> For log time I am trying to understanding the reset for PHY for Odroid XU4
-> for ethenet/emmc/sdcard.
-> 
-> So in-order to reset the PHY I would like to attempt some thing like this below.
-> I am trying to understand and modify the driver drivers/regulator/s2mps11.c
-> If you thing this approach is good enough. Or their will be another approach.
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index d562530..bed5263 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -369,9 +369,10 @@
->                         };
-> 
->                         ldo17_reg: LDO17 {
-> -                               regulator-name = "tsp_avdd";
-> +                               regulator-name = "vdd_eth";
->                                 regulator-min-microvolt = <3300000>;
->                                 regulator-max-microvolt = <3300000>;
-> +                               samsung,ext-control-gpios = <&gpg1 1
-> GPIO_ACTIVE_HIGH>;
->                                 regulator-always-on;
->                         };
-> 
-> Or is there reset core logic for the usb phy to be integrated for
-> exynos platform.
-> 
-> Please let me know your thought on this.
+Instead of relying on the "simple-bus" compatible and the driver core
+populating FIMC-IS child devices make the fimc-is driver populating its
+child devices.  This prevents issues related to accessing ISP_I2C clock
+registers with corresponding power domain switched off, which happens
+after applying some pending Exynos IOMMU driver patches improving
+runtime PM.  Now the I2C_ISP child devices will be instantiated only
+when required parent device drivers are initialized and ready.
 
-I don't see any correlation between the patch and the goal you
-mentioned. An always on regulator, won't be turned off... because it is
-always on.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-The DTS change above does not introduce any reset-phy logic. You need to
-use a proper driver for that.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 313ab10..518ad34 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -852,13 +852,18 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 		goto err_pm;
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
++
++	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	if (ret < 0)
++		goto err_pm;
++
+ 	/*
+ 	 * Register FIMC-IS V4L2 subdevs to this driver. The video nodes
+ 	 * will be created within the subdev's registered() callback.
+ 	 */
+ 	ret = fimc_is_register_subdevs(is);
+ 	if (ret < 0)
+-		goto err_pm;
++		goto err_of_dep;
+ 
+ 	ret = fimc_is_debugfs_create(is);
+ 	if (ret < 0)
+@@ -877,6 +882,8 @@ err_dfs:
+ 	fimc_is_debugfs_remove(is);
+ err_sd:
+ 	fimc_is_unregister_subdevs(is);
++err_of_dep:
++	of_platform_depopulate(dev);
+ err_pm:
+ 	if (!pm_runtime_enabled(dev))
+ 		fimc_is_runtime_suspend(dev);
+@@ -936,6 +943,7 @@ static int fimc_is_remove(struct platform_device *pdev)
+ 	if (!pm_runtime_status_suspended(dev))
+ 		fimc_is_runtime_suspend(dev);
+ 	free_irq(is->irq, is);
++	of_platform_depopulate(dev);
+ 	fimc_is_unregister_subdevs(is);
+ 	vb2_dma_contig_clear_max_seg_size(dev);
+ 	fimc_is_put_clocks(is);
+-- 
+1.9.1
