@@ -1,64 +1,130 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add entries for sound support on
- Odroid-XU board
-Date: Fri, 16 Sep 2016 13:58:32 +0200
-Message-ID: <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
-References: <CGME20160916112217eucas1p1694395dda2a1e8cdf562007ed8141542@eucas1p1.samsung.com>
- <1474024920-32744-1-git-send-email-s.nawrocki@samsung.com>
- <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RFC PATCH] drm/exynos: fix pending update handling
+Date: Fri, 16 Sep 2016 15:27:17 +0200
+Message-ID: <57DBF335.4070306@math.uni-bielefeld.de>
+References: <572C4C65.4070501@math.uni-bielefeld.de>
+ <1462521783-4723-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51134 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755563AbcIPL6j (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 07:58:39 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODL00HE1ILOLF50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2016 12:58:36 +0100 (BST)
-In-reply-to: <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1462521783-4723-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, tjakobi@math.uni-bielefeld.de
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On 09/16/2016 01:25 PM, Sylwester Nawrocki wrote:
-> On 09/16/2016 01:22 PM, Sylwester Nawrocki wrote:
->> This patch adds device nodes for the AUDSS clock controller,
->> peripheral DMA 0/1 controllers and the Audio Subsystem I2S controller.
->> These entries are required for sound support on Odroid-XU board.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->> This patch depends on a patch adding clock ID macro definitions.
->> I'm going to provide a topic branch containing required changes.
->>
->> Changes since v1:
->>  - GIC_SPI, IRQ_TYPE_NONE used in the PDMA and max98080 interrupt
->>    specifiers,
->>  - assigned-clock-* properties moved to respective controller
->>    nodes.
-> 
-> And here is a pull request containing clk dependency patches:
-> 
-> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
-> 
->   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-exynos54x0-dt
-> 
-> for you to fetch changes up to 58d6506f327e3d192998ba03632f546da221b8d8:
-> 
->   clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks (2016-09-09
-> 10:13:02 +0200)
-> 
-
-Pulled and applied, thanks!
-
-Krzysztof
+SGVsbG8gZXZlcnlvbmUsCgphbnkgdXBkYXRlIG9uIHRoaXMgaXNzdWU/IEkgY2FuIHNlZSB0aGF0
+IHRoZSBvbGQvY3VzdG9tIHdhaXQtZm9yLXZibGFuawpjb2RlIGlzIHN0aWxsIGluIHBsYWNlLgoK
+QW5kcnplaiBtZW50aW9uZWQgdGhhdCB0aGlzIHBhdGNoIGlzIHF1aWNrL2RpcnR5LCBidXQgaXNu
+J3QgdXNpbmcgRFJNCmNvcmUgZnVuY3Rpb25hbGl0eSBhY3R1YWxseSB0aGUgYmV0dGVyIGFwcHJv
+YWNoPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKQW5kcnplaiBIYWpkYSB3cm90ZToKPiBF
+eHlub3MgRFJNIGRldmljZXMgdXBkYXRlIHRoZWlyIHJlZ2lzdGVycyBhdCB2YmxhbmsgdGltZS4g
+RXh5bm9zLURSTSB1c2VzCj4gY3VzdG9tIG1lY2hhbmlzbSB0byB3YWl0IGZvciB2YmxhbmsuIFRo
+aXMgbWVjaGFuaXNtIGlzIGVycm9yIHByb25lIC0KPiB2YXJpYWJsZXMgYXJlIG5vdCB1cGRhdGVk
+IGF0b21pY2FsbHkuIEFzIGEgcmVzdWx0IGluIGNlcnRhaW4gY2lyY3Vtc3RhbmNlcwo+IHVzZXIg
+c3BhY2UgY2FuIHRyeSB0byBmcmVlIGJ1ZmZlcnMgd2hpY2ggYXJlIHN0aWxsIGluIHVzZSBieSBo
+YXJkd2FyZSwKPiBpbiBzdWNoIGNhc2VzIElPTU1VIGNhbiB0aHJvdyBPT1BTLgo+IFRoZSBwYXRj
+aCBpbnN0ZWFkIG9mIGZpeGluZyB0aGUgbWVjaGFuaXNtIHJlcGxhY2VzIGl0IHdpdGggZHJtIGNv
+cmUgaGVscGVyLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ft
+c3VuZy5jb20+Cj4gLS0tCj4gSGkgVG9iaWFzLAo+IAo+IFRoaXMgaXMgYSBxdWljay9kaXJ0eSBw
+YXRjaCBqdXN0IGZvciBjaGVja2luZyBpZiBpdCBzb2x2ZXMgeW91ciBpc3N1ZS4KPiBTdWNjZXNz
+ZnVsbHkgdGVzdGVkIG9uIGRlY29uNTQzMy9kc2kvaTgwIHBhdGguCj4gCj4gUGxlYXNlIHZlcmlm
+eSBpZiBpdCBoZWxwcyBpbiB5b3VyIGNhc2UuCj4gCj4gVGhlIHBhdGNoIGlzIGJhc2VkIG9uIGV4
+eW5vcy1kcm0tbmV4dCBhbmQKPiAiZHJtL2V4eW5vczogZml4IGNhbmNlbCBwYWdlIGZsaXAgY29k
+ZSIgWzFdLgo+IAo+IFsxXTogaHR0cDovL3Blcm1hbGluay5nbWFuZS5vcmcvZ21hbmUubGludXgu
+a2VybmVsLnNhbXN1bmctc29jLzUzODAxCj4gCj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPiAtLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDE2ICstLS0tLS0tLS0t
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgIHwgNDQgKy0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5oICB8ICAyIC0tCj4gIDMgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
+LCA2MCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+cnRjLmMKPiBpbmRleCA3ODVmZmE2Li41YjY4NDViIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gQEAgLTEzNCw4ICsxMzQsNiBAQCBzdHJ1Y3QgZXh5bm9z
+X2RybV9jcnRjICpleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
+ZGV2LAo+ICAJZXh5bm9zX2NydGMtPm9wcyA9IG9wczsKPiAgCWV4eW5vc19jcnRjLT5jdHggPSBj
+dHg7Cj4gIAo+IC0JaW5pdF93YWl0cXVldWVfaGVhZCgmZXh5bm9zX2NydGMtPndhaXRfdXBkYXRl
+KTsKPiAtCj4gIAljcnRjID0gJmV4eW5vc19jcnRjLT5iYXNlOwo+ICAKPiAgCXByaXZhdGUtPmNy
+dGNbcGlwZV0gPSBjcnRjOwo+IEBAIC0xNzUsMTMgKzE3Myw2IEBAIHZvaWQgZXh5bm9zX2RybV9j
+cnRjX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBw
+aXBlKQo+ICAJCWV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGVfdmJsYW5rKGV4eW5vc19jcnRjKTsK
+PiAgfQo+ICAKPiAtdm9pZCBleHlub3NfZHJtX2NydGNfd2FpdF9wZW5kaW5nX3VwZGF0ZShzdHJ1
+Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YykKPiAtewo+IC0Jd2FpdF9ldmVudF90aW1l
+b3V0KGV4eW5vc19jcnRjLT53YWl0X3VwZGF0ZSwKPiAtCQkJICAgKGF0b21pY19yZWFkKCZleHlu
+b3NfY3J0Yy0+cGVuZGluZ191cGRhdGUpID09IDApLAo+IC0JCQkgICBtc2Vjc190b19qaWZmaWVz
+KDUwKSk7Cj4gLX0KPiAtCj4gIHZvaWQgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF91cGRhdGUoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMsCj4gIAkJCQlzdHJ1Y3QgZXh5bm9zX2Ry
+bV9wbGFuZSAqZXh5bm9zX3BsYW5lKQo+ICB7Cj4gQEAgLTE5MCw5ICsxODEsNiBAQCB2b2lkIGV4
+eW5vc19kcm1fY3J0Y19maW5pc2hfdXBkYXRlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5v
+c19jcnRjLAo+ICAKPiAgCWV4eW5vc19wbGFuZS0+cGVuZGluZ19mYiA9IE5VTEw7Cj4gIAo+IC0J
+aWYgKGF0b21pY19kZWNfYW5kX3Rlc3QoJmV4eW5vc19jcnRjLT5wZW5kaW5nX3VwZGF0ZSkpCj4g
+LQkJd2FrZV91cCgmZXh5bm9zX2NydGMtPndhaXRfdXBkYXRlKTsKPiAtCj4gIAlzcGluX2xvY2tf
+aXJxc2F2ZSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4gIAlpZiAoZXh5bm9zX2Ny
+dGMtPmV2ZW50KQo+ICAJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMsIGV4eW5vc19j
+cnRjLT5ldmVudCk7Cj4gQEAgLTIzNSwxMCArMjIzLDggQEAgdm9pZCBleHlub3NfZHJtX2NydGNf
+Y2FuY2VsX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gIAlzcGluX2xvY2tfaXJx
+c2F2ZSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4gIAo+ICAJZSA9IGV4eW5vc19j
+cnRjLT5ldmVudDsKPiAtCWlmIChlICYmIGUtPmJhc2UuZmlsZV9wcml2ID09IGZpbGUpIHsKPiAr
+CWlmIChlICYmIGUtPmJhc2UuZmlsZV9wcml2ID09IGZpbGUpCj4gIAkJZXh5bm9zX2NydGMtPmV2
+ZW50ID0gTlVMTDsKPiAtCQlhdG9taWNfZGVjKCZleHlub3NfY3J0Yy0+cGVuZGluZ191cGRhdGUp
+Owo+IC0JfQo+ICAKPiAgCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmNydGMtPmRldi0+ZXZlbnRf
+bG9jaywgZmxhZ3MpOwo+ICAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5j
+Cj4gaW5kZXggMDI4MWIzMC4uY2M5NmU4NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmMKPiBAQCAtNDUsMzcgKzQ1LDExIEBAIHN0cnVjdCBleHlub3NfYXRvbWlj
+X2NvbW1pdCB7Cj4gIAl1MzIJCQljcnRjczsKPiAgfTsKPiAgCj4gLXN0YXRpYyB2b2lkIGV4eW5v
+c19hdG9taWNfd2FpdF9mb3JfY29tbWl0KHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkK
+PiAtewo+IC0Jc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlOwo+IC0Jc3RydWN0IGRy
+bV9jcnRjICpjcnRjOwo+IC0JaW50IGksIHJldDsKPiAtCj4gLQlmb3JfZWFjaF9jcnRjX2luX3N0
+YXRlKHN0YXRlLCBjcnRjLCBjcnRjX3N0YXRlLCBpKSB7Cj4gLQkJc3RydWN0IGV4eW5vc19kcm1f
+Y3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKPiAtCj4gLQkJaWYgKCFj
+cnRjLT5zdGF0ZS0+ZW5hYmxlKQo+IC0JCQljb250aW51ZTsKPiAtCj4gLQkJcmV0ID0gZHJtX2Ny
+dGNfdmJsYW5rX2dldChjcnRjKTsKPiAtCQlpZiAocmV0KQo+IC0JCQljb250aW51ZTsKPiAtCj4g
+LQkJZXh5bm9zX2RybV9jcnRjX3dhaXRfcGVuZGluZ191cGRhdGUoZXh5bm9zX2NydGMpOwo+IC0J
+CWRybV9jcnRjX3ZibGFua19wdXQoY3J0Yyk7Cj4gLQl9Cj4gLX0KPiAtCj4gIHN0YXRpYyB2b2lk
+IGV4eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKHN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1p
+dCAqY29tbWl0KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0gY29tbWl0LT5kZXY7
+Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2ID0gZGV2LT5kZXZfcHJpdmF0ZTsK
+PiAgCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSA9IGNvbW1pdC0+c3RhdGU7Cj4gLQlz
+dHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKPiAtCXN0cnVjdCBkcm1fY3J0YyAqY3J0YzsKPiAtCXN0
+cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0YXRlOwo+IC0Jc3RydWN0IGRybV9jcnRjX3N0
+YXRlICpjcnRjX3N0YXRlOwo+IC0JaW50IGk7Cj4gIAo+ICAJZHJtX2F0b21pY19oZWxwZXJfY29t
+bWl0X21vZGVzZXRfZGlzYWJsZXMoZGV2LCBzdGF0ZSk7Cj4gIAo+IEBAIC04OSwyNSArNjMsOSBA
+QCBzdGF0aWMgdm9pZCBleHlub3NfYXRvbWljX2NvbW1pdF9jb21wbGV0ZShzdHJ1Y3QgZXh5bm9z
+X2F0b21pY19jb21taXQgKmNvbW1pdCkKPiAgCSAqIGhhdmUgdGhlIHJlbGV2YW50IGNsb2NrcyBl
+bmFibGVkIHRvIHBlcmZvcm0gdGhlIHVwZGF0ZS4KPiAgCSAqLwo+ICAKPiAtCWZvcl9lYWNoX2Ny
+dGNfaW5fc3RhdGUoc3RhdGUsIGNydGMsIGNydGNfc3RhdGUsIGkpIHsKPiAtCQlzdHJ1Y3QgZXh5
+bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+IC0KPiAt
+CQlhdG9taWNfc2V0KCZleHlub3NfY3J0Yy0+cGVuZGluZ191cGRhdGUsIDApOwo+IC0JfQo+IC0K
+PiAtCWZvcl9lYWNoX3BsYW5lX2luX3N0YXRlKHN0YXRlLCBwbGFuZSwgcGxhbmVfc3RhdGUsIGkp
+IHsKPiAtCQlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9Cj4gLQkJCQkJCXRv
+X2V4eW5vc19jcnRjKHBsYW5lLT5jcnRjKTsKPiAtCj4gLQkJaWYgKCFwbGFuZS0+Y3J0YykKPiAt
+CQkJY29udGludWU7Cj4gLQo+IC0JCWF0b21pY19pbmMoJmV4eW5vc19jcnRjLT5wZW5kaW5nX3Vw
+ZGF0ZSk7Cj4gLQl9Cj4gLQo+ICAJZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3BsYW5lcyhkZXYs
+IHN0YXRlLCBmYWxzZSk7Cj4gIAo+IC0JZXh5bm9zX2F0b21pY193YWl0X2Zvcl9jb21taXQoc3Rh
+dGUpOwo+ICsJZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5rcyhkZXYsIHN0YXRlKTsK
+PiAgCj4gIAlkcm1fYXRvbWljX2hlbHBlcl9jbGVhbnVwX3BsYW5lcyhkZXYsIHN0YXRlKTsKPiAg
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+IGluZGV4IDU2MTkyNWYu
+LjBiYjM3NjYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5oCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4g
+QEAgLTE3NCw4ICsxNzQsNiBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjIHsKPiAgCWVudW0gZXh5
+bm9zX2RybV9vdXRwdXRfdHlwZQl0eXBlOwo+ICAJdW5zaWduZWQgaW50CQkJcGlwZTsKPiAgCXN0
+cnVjdCBkcm1fcGVuZGluZ192YmxhbmtfZXZlbnQJKmV2ZW50Owo+IC0Jd2FpdF9xdWV1ZV9oZWFk
+X3QJCXdhaXRfdXBkYXRlOwo+IC0JYXRvbWljX3QJCQlwZW5kaW5nX3VwZGF0ZTsKPiAgCWNvbnN0
+IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzCSpvcHM7Cj4gIAl2b2lkCQkJCSpjdHg7Cj4gIAlz
+dHJ1Y3QgZXh5bm9zX2RybV9jbGsJCSpwaXBlX2NsazsKPiAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
