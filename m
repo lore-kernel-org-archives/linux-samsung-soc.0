@@ -1,151 +1,81 @@
-From: Sam Van Den Berge <sam.van.den.berge@telenet.be>
-Subject: [PATCH v2] dmaengine: s3c24xx: Add dma_slave_map for s3c2440 devices
-Date: Thu, 15 Sep 2016 21:41:46 +0200
-Message-ID: <1473968506-4150-1-git-send-email-sam.van.den.berge@telenet.be>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56283 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753482AbcIOTl4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 15:41:56 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] media: s5p-mfc: fix failure path of s5p_mfc_alloc_memdev()
+Date: Fri, 16 Sep 2016 08:14:33 +0200
+Message-ID: <1474006490-13283-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20160916061511eucas1p21e71e28d5f12ef94694ccbdec8379774@eucas1p2.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: vinod.koul@intel.com, dmaengine@vger.kernel.org
-Cc: k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Van Den Berge <sam.van.den.berge@telenet.be>
 
-This patch updates the s3c24xx dma driver to be able to pass a
-dma_slave_map array via the platform data. This is needed to
-be able to use the new, simpler dmaengine API [1].
-I used the virtual DMA channels as a parameter for the dma_filter
-function. By doing that, I could reuse the existing filter function in
-drivers/dma/s3c24xx-dma.c.
+s5p_mfc_alloc_memdev() function lacks proper releasing of allocated device
+in case of reserved memory initialization failure. This results in NULL pointer
+dereference:
+[    2.828457] Unable to handle kernel NULL pointer dereference at virtual address 00000001
+[    2.835089] pgd = c0004000
+[    2.837752] [00000001] *pgd=00000000
+[    2.844696] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+[    2.848680] Modules linked in:
+[    2.851722] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.8.0-rc6-00002-gafa1b97 #878
+[    2.859357] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    2.865433] task: ef080000 task.stack: ef06c000
+[    2.869952] PC is at strcmp+0x0/0x30
+[    2.873508] LR is at platform_match+0x84/0xac
+[    2.877847] pc : [<c032621c>]    lr : [<c03f65e8>]    psr: 20000013
+[    2.877847] sp : ef06dea0  ip : 00000000  fp : 00000000
+[    2.889303] r10: 00000000  r9 : c0b34848  r8 : c0b1e968
+[    2.894511] r7 : 00000000  r6 : 00000001  r5 : c086e7fc  r4 : eeb8e010
+[    2.901021] r3 : 0000006d  r2 : 00000000  r1 : c086e7fc  r0 : 00000001
+[    2.907533] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[    2.914649] Control: 10c5387d  Table: 4000404a  DAC: 00000051
+[    2.920378] Process swapper/0 (pid: 1, stack limit = 0xef06c210)
+[    2.926367] Stack: (0xef06dea0 to 0xef06e000)
+[    2.930711] dea0: eeb8e010 c0c2d91c c03f4a6c c03f4a8c 00000000 c0c2d91c c03f4a6c c03f2fc8
+[    2.938870] dec0: ef003274 ef10c4c0 c0c2d91c ef10cc80 c0c21270 c03f3fa4 c09c1be8 c0c2d91c
+[    2.947028] dee0: 00000006 c0c2d91c 00000006 c0b3483c c0c47000 c03f5314 c0c2d908 c0b5fed8
+[    2.955188] df00: 00000006 c010178c 60000013 c0a4ef14 00000000 c06feaa0 ef080000 60000013
+[    2.963347] df20: 00000000 c0c095c8 efffca76 c0816b8c 000000d5 c0134098 c0b34848 c09d6cdc
+[    2.971506] df40: c0a4de70 00000000 00000006 00000006 c0c09568 efffca40 c0b5fed8 00000006
+[    2.979665] df60: c0b3483c c0c47000 000000d5 c0b34848 c0b005a4 c0b00d84 00000006 00000006
+[    2.987824] df80: 00000000 c0b005a4 00000000 c06fb4d8 00000000 00000000 00000000 00000000
+[    2.995983] dfa0: 00000000 c06fb4e0 00000000 c01079b8 00000000 00000000 00000000 00000000
+[    3.004142] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    3.012302] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffffffff ffffffff
+[    3.020469] [<c032621c>] (strcmp) from [<c03f65e8>] (platform_match+0x84/0xac)
+[    3.027672] [<c03f65e8>] (platform_match) from [<c03f4a8c>] (__driver_attach+0x20/0xb0)
+[    3.035654] [<c03f4a8c>] (__driver_attach) from [<c03f2fc8>] (bus_for_each_dev+0x54/0x88)
+[    3.043812] [<c03f2fc8>] (bus_for_each_dev) from [<c03f3fa4>] (bus_add_driver+0xe8/0x1f4)
+[    3.051971] [<c03f3fa4>] (bus_add_driver) from [<c03f5314>] (driver_register+0x78/0xf4)
+[    3.059958] [<c03f5314>] (driver_register) from [<c010178c>] (do_one_initcall+0x3c/0x16c)
+[    3.068123] [<c010178c>] (do_one_initcall) from [<c0b00d84>] (kernel_init_freeable+0x120/0x1ec)
+[    3.076802] [<c0b00d84>] (kernel_init_freeable) from [<c06fb4e0>] (kernel_init+0x8/0x118)
+[    3.084958] [<c06fb4e0>] (kernel_init) from [<c01079b8>] (ret_from_fork+0x14/0x3c)
+[    3.092506] Code: 1afffffb e12fff1e e1a03000 eafffff7 (e4d03001)
+[    3.098618] ---[ end trace 511bf9d750810709 ]---
+[    3.103207] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-I have tested this on my mini2440 board with the audio driver.
-(I first applied the audio fixes from Sylwester Nawrocki [2])
-According to my observations, dma_request_slave_channel in the
-function dmaengine_pcm_new in the file
-sound/soc/soc-generic-dmaengine-pcm.c now returns a valid DMA channel
-whereas before no DMA channel was returned at that point.
+This patch fixes this issue.
 
-Entries for DMACH_XD0, DMACH_XD1 and DMACH_TIMER are missing because I
-don't realy know which driver to use for these.
-
-[1]
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/393635.html
-[2] http://www.spinics.net/lists/arm-kernel/msg521918.html
-
-Signed-off-by: Sam Van Den Berge <sam.van.den.berge@telenet.be>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
+Fixes: c79667dd93b084fe412bcfe7fbf0ba43f7dec520 ("media: s5p-mfc: replace custom
+	reserved memory handling code with generic one")
+CC: stable@vger.kernel.org  # v4.7+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v1:
-- rename arm into dmaengine in title
-- one channel for s3c2440-sdi named "rx-tx"
-
- arch/arm/mach-s3c24xx/common.c            | 35 +++++++++++++++++++++++++++++++
- drivers/dma/s3c24xx-dma.c                 |  3 +++
- include/linux/platform_data/dma-s3c24xx.h |  6 ++++++
- 3 files changed, 44 insertions(+)
-
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index fe7485d..13785c9 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -33,6 +33,7 @@
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/platform_data/dma-s3c24xx.h>
-+#include <linux/dmaengine.h>
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index e3f104f..9e88c2f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1073,6 +1073,7 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
+ 							 idx);
+ 		if (ret == 0)
+ 			return child;
++		device_del(child);
+ 	}
  
- #include <mach/hardware.h>
- #include <mach/regs-clock.h>
-@@ -445,10 +446,44 @@ static struct s3c24xx_dma_channel s3c2440_dma_channels[DMACH_MAX] = {
- 	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
- };
- 
-+static const struct dma_slave_map s3c2440_dma_slave_map[] = {
-+	/* TODO: DMACH_XD0 */
-+	/* TODO: DMACH_XD1 */
-+	{ "3c2440-sdi", "rx-tx", (void *)DMACH_SDI },
-+	{ "s3c2410-spi.0", "rx", (void *)DMACH_SPI0 },
-+	{ "s3c2410-spi.0", "tx", (void *)DMACH_SPI0 },
-+	{ "s3c2410-spi.1", "rx", (void *)DMACH_SPI1 },
-+	{ "s3c2410-spi.1", "tx", (void *)DMACH_SPI1 },
-+	{ "s3c2440-uart.0", "rx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.0", "tx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.1", "rx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.1", "tx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.2", "rx", (void *)DMACH_UART2 },
-+	{ "s3c2440-uart.2", "tx", (void *)DMACH_UART2 },
-+	{ "s3c2440-uart.3", "rx", (void *)DMACH_UART3 },
-+	{ "s3c2440-uart.3", "tx", (void *)DMACH_UART3 },
-+	/* TODO: DMACH_TIMER */
-+	{ "s3c24xx-iis", "rx", (void *)DMACH_I2S_IN },
-+	{ "s3c24xx-iis", "tx", (void *)DMACH_I2S_OUT },
-+	{ "samsung-ac97", "rx", (void *)DMACH_PCM_IN },
-+	{ "samsung-ac97", "tx", (void *)DMACH_PCM_OUT },
-+	{ "samsung-ac97", "rx", (void *)DMACH_MIC_IN },
-+	{ "s3c-hsudc", "rx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "rx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "rx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "rx3", (void *)DMACH_USB_EP4 },
-+	{ "s3c-hsudc", "tx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "tx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "tx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "tx3", (void *)DMACH_USB_EP4 }
-+};
-+
- static struct s3c24xx_dma_platdata s3c2440_dma_platdata = {
- 	.num_phy_channels = 4,
- 	.channels = s3c2440_dma_channels,
- 	.num_channels = DMACH_MAX,
-+	.slave_map = s3c2440_dma_slave_map,
-+	.slavecnt = ARRAY_SIZE(s3c2440_dma_slave_map),
- };
- 
- struct platform_device s3c2440_device_dma = {
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index ce67075..d5c85e7 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -1301,6 +1301,9 @@ static int s3c24xx_dma_probe(struct platform_device *pdev)
- 	s3cdma->slave.device_prep_dma_cyclic = s3c24xx_dma_prep_dma_cyclic;
- 	s3cdma->slave.device_config = s3c24xx_dma_set_runtime_config;
- 	s3cdma->slave.device_terminate_all = s3c24xx_dma_terminate_all;
-+	s3cdma->slave.filter.map = pdata->slave_map;
-+	s3cdma->slave.filter.mapcnt = pdata->slavecnt;
-+	s3cdma->slave.filter.fn = s3c24xx_dma_filter;
- 
- 	/* Register as many memcpy channels as there are physical channels */
- 	ret = s3c24xx_dma_init_virtual_channels(s3cdma, &s3cdma->memcpy,
-diff --git a/include/linux/platform_data/dma-s3c24xx.h b/include/linux/platform_data/dma-s3c24xx.h
-index 89ba1b0..4f9aba4 100644
---- a/include/linux/platform_data/dma-s3c24xx.h
-+++ b/include/linux/platform_data/dma-s3c24xx.h
-@@ -30,16 +30,22 @@ struct s3c24xx_dma_channel {
- 	u16 chansel;
- };
- 
-+struct dma_slave_map;
-+
- /**
-  * struct s3c24xx_dma_platdata - platform specific settings
-  * @num_phy_channels: number of physical channels
-  * @channels: array of virtual channel descriptions
-  * @num_channels: number of virtual channels
-+ * @slave_map: dma slave map matching table
-+ * @slavecnt: number of elements in slave_map
-  */
- struct s3c24xx_dma_platdata {
- 	int num_phy_channels;
- 	struct s3c24xx_dma_channel *channels;
- 	int num_channels;
-+	const struct dma_slave_map *slave_map;
-+	int slavecnt;
- };
- 
- struct dma_chan;
+ 	put_device(child);
 -- 
 1.9.1
