@@ -1,216 +1,222 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC PATCH] drm/exynos: fix pending update handling
-Date: Fri, 16 Sep 2016 15:41:17 +0200
-Message-ID: <6d1c2ba2-9036-274e-98f2-5316cd038533@samsung.com>
-References: <572C4C65.4070501@math.uni-bielefeld.de>
- <1462521783-4723-1-git-send-email-a.hajda@samsung.com>
- <CGME20160916132726eucas1p22da51190ea8899fb60d2d112f84a2c26@eucas1p2.samsung.com>
- <57DBF335.4070306@math.uni-bielefeld.de>
+From: ayaka <ayaka@soulik.info>
+Subject: Re: [PATCH v6 2/3] ARM: dts: add TOPEET itop elite based board
+Date: Fri, 16 Sep 2016 22:04:29 +0800
+Message-ID: <865b9f84-385f-fea8-2e3d-2b31e3bfe84c@soulik.info>
+References: <1473285535-21996-1-git-send-email-ayaka@soulik.info>
+ <1473285535-21996-3-git-send-email-ayaka@soulik.info>
+ <CGME20160916072303eucas1p2941ba2907605055f5ea5abb2e6891d77@eucas1p2.samsung.com>
+ <6bd9905d-0818-a917-8b8e-6abce134a3d3@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54515 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933756AbcIPNlW (ORCPT
+Received: from kozue.soulik.info ([108.61.200.231]:55212 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756794AbcIPOEj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:41:22 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODL00HY3NCV7470@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2016 14:41:19 +0100 (BST)
-In-reply-to: <57DBF335.4070306@math.uni-bielefeld.de>
+        Fri, 16 Sep 2016 10:04:39 -0400
+In-Reply-To: <6bd9905d-0818-a917-8b8e-6abce134a3d3@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
+To: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
 
-On 16.09.2016 15:27, Tobias Jakobi wrote:
-> Hello everyone,
->
-> any update on this issue? I can see that the old/custom wait-for-vblank
-> code is still in place.
->
-> Andrzej mentioned that this patch is quick/dirty, but isn't using DRM
-> core functionality actually the better approach?
 
-Thanks for pinging the problem.
 
-As the patch changes exynos-drm core, it can influence all exynos
-crtc drivers. These drivers requires review and testing. I will look
-at them to verify if the patch does not introduce regression.
-
-Regards
-Andrzej
-
->
-> With best wishes,
-> Tobias
->
->
-> Andrzej Hajda wrote:
->> Exynos DRM devices update their registers at vblank time. Exynos-DRM uses
->> custom mechanism to wait for vblank. This mechanism is error prone -
->> variables are not updated atomically. As a result in certain circumstances
->> user space can try to free buffers which are still in use by hardware,
->> in such cases IOMMU can throw OOPS.
->> The patch instead of fixing the mechanism replaces it with drm core helper.
+On 09/16/2016 03:23 PM, Krzysztof Kozlowski wrote:
+> On 09/07/2016 11:58 PM, Randy Li wrote:
+>> The TOPEET itop exynos 4412 have three versions base board. The
+>> Elite version is the cheap one without too much peripheral devices
+>> on it.
 >>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Currently supported are serial console, wired networking(USB),
+>> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
+>> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
+>> enabled.
+>>
+>> The FIMC is not used for camera currently, I enabled it just for a
+>> colorspace convertor.
+>>
+>> Signed-off-by: Randy Li <ayaka@soulik.info>
 >> ---
->> Hi Tobias,
+>>   .../bindings/arm/samsung/samsung-boards.txt        |   3 +
+>>   arch/arm/boot/dts/Makefile                         |   1 +
+>>   arch/arm/boot/dts/exynos4412-itop-elite.dts        | 239 +++++++++++++++++++++
+>>   3 files changed, 243 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
 >>
->> This is a quick/dirty patch just for checking if it solves your issue.
->> Successfully tested on decon5433/dsi/i80 path.
->>
->> Please verify if it helps in your case.
->>
->> The patch is based on exynos-drm-next and
->> "drm/exynos: fix cancel page flip code" [1].
->>
->> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/53801
->>
->> Regards
->> Andrzej
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 16 +-----------
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 44 +-------------------------------
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  2 --
->>  3 files changed, 2 insertions(+), 60 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> index 785ffa6..5b6845b 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> @@ -134,8 +134,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
->>  	exynos_crtc->ops = ops;
->>  	exynos_crtc->ctx = ctx;
->>  
->> -	init_waitqueue_head(&exynos_crtc->wait_update);
->> -
->>  	crtc = &exynos_crtc->base;
->>  
->>  	private->crtc[pipe] = crtc;
->> @@ -175,13 +173,6 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, unsigned int pipe)
->>  		exynos_crtc->ops->disable_vblank(exynos_crtc);
->>  }
->>  
->> -void exynos_drm_crtc_wait_pending_update(struct exynos_drm_crtc *exynos_crtc)
->> -{
->> -	wait_event_timeout(exynos_crtc->wait_update,
->> -			   (atomic_read(&exynos_crtc->pending_update) == 0),
->> -			   msecs_to_jiffies(50));
->> -}
->> -
->>  void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
->>  				struct exynos_drm_plane *exynos_plane)
->>  {
->> @@ -190,9 +181,6 @@ void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
->>  
->>  	exynos_plane->pending_fb = NULL;
->>  
->> -	if (atomic_dec_and_test(&exynos_crtc->pending_update))
->> -		wake_up(&exynos_crtc->wait_update);
->> -
->>  	spin_lock_irqsave(&crtc->dev->event_lock, flags);
->>  	if (exynos_crtc->event)
->>  		drm_crtc_send_vblank_event(crtc, exynos_crtc->event);
->> @@ -235,10 +223,8 @@ void exynos_drm_crtc_cancel_page_flip(struct drm_crtc *crtc,
->>  	spin_lock_irqsave(&crtc->dev->event_lock, flags);
->>  
->>  	e = exynos_crtc->event;
->> -	if (e && e->base.file_priv == file) {
->> +	if (e && e->base.file_priv == file)
->>  		exynos_crtc->event = NULL;
->> -		atomic_dec(&exynos_crtc->pending_update);
->> -	}
->>  
->>  	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
->>  
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> index 0281b30..cc96e85 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -45,37 +45,11 @@ struct exynos_atomic_commit {
->>  	u32			crtcs;
->>  };
->>  
->> -static void exynos_atomic_wait_for_commit(struct drm_atomic_state *state)
->> -{
->> -	struct drm_crtc_state *crtc_state;
->> -	struct drm_crtc *crtc;
->> -	int i, ret;
->> -
->> -	for_each_crtc_in_state(state, crtc, crtc_state, i) {
->> -		struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->> -
->> -		if (!crtc->state->enable)
->> -			continue;
->> -
->> -		ret = drm_crtc_vblank_get(crtc);
->> -		if (ret)
->> -			continue;
->> -
->> -		exynos_drm_crtc_wait_pending_update(exynos_crtc);
->> -		drm_crtc_vblank_put(crtc);
->> -	}
->> -}
->> -
->>  static void exynos_atomic_commit_complete(struct exynos_atomic_commit *commit)
->>  {
->>  	struct drm_device *dev = commit->dev;
->>  	struct exynos_drm_private *priv = dev->dev_private;
->>  	struct drm_atomic_state *state = commit->state;
->> -	struct drm_plane *plane;
->> -	struct drm_crtc *crtc;
->> -	struct drm_plane_state *plane_state;
->> -	struct drm_crtc_state *crtc_state;
->> -	int i;
->>  
->>  	drm_atomic_helper_commit_modeset_disables(dev, state);
->>  
->> @@ -89,25 +63,9 @@ static void exynos_atomic_commit_complete(struct exynos_atomic_commit *commit)
->>  	 * have the relevant clocks enabled to perform the update.
->>  	 */
->>  
->> -	for_each_crtc_in_state(state, crtc, crtc_state, i) {
->> -		struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->> -
->> -		atomic_set(&exynos_crtc->pending_update, 0);
->> -	}
->> -
->> -	for_each_plane_in_state(state, plane, plane_state, i) {
->> -		struct exynos_drm_crtc *exynos_crtc =
->> -						to_exynos_crtc(plane->crtc);
->> -
->> -		if (!plane->crtc)
->> -			continue;
->> -
->> -		atomic_inc(&exynos_crtc->pending_update);
->> -	}
->> -
->>  	drm_atomic_helper_commit_planes(dev, state, false);
->>  
->> -	exynos_atomic_wait_for_commit(state);
->> +	drm_atomic_helper_wait_for_vblanks(dev, state);
->>  
->>  	drm_atomic_helper_cleanup_planes(dev, state);
->>  
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 561925f..0bb3766 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -174,8 +174,6 @@ struct exynos_drm_crtc {
->>  	enum exynos_drm_output_type	type;
->>  	unsigned int			pipe;
->>  	struct drm_pending_vblank_event	*event;
->> -	wait_queue_head_t		wait_update;
->> -	atomic_t			pending_update;
->>  	const struct exynos_drm_crtc_ops	*ops;
->>  	void				*ctx;
->>  	struct exynos_drm_clk		*pipe_clk;
->>
+>> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+>> index 0ea7f14..c7159ac 100644
+>> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+>> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+>> @@ -22,6 +22,9 @@ Required root node properties:
+>>     * FriendlyARM
+>>   	- "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
+>>   				    TINY4412 board.
+>> +  * TOPEET
+>> +	- "topeet,itop4412-elite" - for Exynos4412-based TOPEET
+>> +                                    Elite base board.
+>>   
+>>     * Google
+>>   	- "google,pi"		- for Exynos5800-based Google Peach Pi
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index 207f96f..0b39d00 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -130,6 +130,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+>>   	exynos4210-smdkv310.dtb \
+>>   	exynos4210-trats.dtb \
+>>   	exynos4210-universal_c210.dtb \
+>> +	exynos4412-itop-elite.dtb \
+>>   	exynos4412-odroidu3.dtb \
+>>   	exynos4412-odroidx.dtb \
+>>   	exynos4412-odroidx2.dtb \
+>> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+>> new file mode 100644
+>> index 0000000..dd83689
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+>> @@ -0,0 +1,239 @@
+>> +/*
+>> + * TOPEET's Exynos4412 based itop board device tree source
+>> + *
+>> + * Copyright (c) 2016 SUMOMO Computer Association
+>> + *			https://www.sumomo.mobi
+>> + *			Randy Li <ayaka@soulik.info>
+>> + *			
+>> + * Device tree source file for TOPEET iTop Exynos 4412 core board
+>> + * which is based on Samsung's Exynos4412 SoC.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> +*/
+>> +
+>> +/dts-v1/;
+>> +#include <dt-bindings/sound/samsung-i2s.h>
+>> +#include "exynos4412-itop-scp-core.dtsi"
+>> +
+>> +/ {
+>> +	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
+>> +	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
+>> +
+>> +	chosen {
+>> +		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait";
+>> +		stdout-path = "serial2:115200n8";
+>> +	};
+>> +	
+>> +	leds {
+>> +		compatible = "gpio-leds";
+>> +		
+>> +		led2 {
+>> +			label = "red:system";
+>> +			gpios = <&gpx1 0 GPIO_ACTIVE_HIGH>;
+>> +			default-state = "off";
+>> +			linux,default-trigger = "heartbeat";
+>> +		};
+>> +
+>> +		led3 {
+>> +			label = "red:user";
+>> +			gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
+>> +			default-state = "off";
+>> +		};
+>> +	};
+>> +
+>> +	gpio-keys {
+>> +		compatible = "gpio-keys";
+>> +		
+>> +		home {
+>> +			label = "GPIO Key Home";
+>> +			linux,code = <KEY_HOME>;
+>> +			gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +
+>> +		back {
+>> +			label = "GPIO Key Back";
+>> +			linux,code = <KEY_BACK>;
+>> +			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +
+>> +		sleep {
+>> +			label = "GPIO Key Sleep";
+>> +			linux,code = <KEY_POWER>;
+>> +			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +
+>> +		vol-up {
+>> +			label = "GPIO Key Vol+";
+>> +			linux,code = <KEY_UP>;
+>> +			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +
+>> +		vol-down {
+>> +			label = "GPIO Key Vol-";
+>> +			linux,code = <KEY_DOWN>;
+>> +			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +	};
+>> +
+>> +	sound {
+>> +		compatible = "simple-audio-card";
+>> +		simple-audio-card,name = "wm-sound";
+>> +
+>> +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+>> +				<&clock_audss EXYNOS_MOUT_I2S>,
+>> +				<&clock_audss EXYNOS_DOUT_SRP>,
+>> +				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
+>> +		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+>> +				<&clock_audss EXYNOS_MOUT_AUDSS>;
+>> +		assigned-clock-rates = <0>,
+>> +				<0>,
+>> +				<112896000>,
+>> +				<11289600>;
+>> +
+>> +		simple-audio-card,format = "i2s";
+>> +		simple-audio-card,bitclock-master = <&link0_codec>;
+>> +		simple-audio-card,frame-master = <&link0_codec>;
+>> +
+>> +		simple-audio-card,widgets =
+>> +			"Microphone", "Mic Jack",
+>> +			"Line", "Line In",
+>> +			"Line", "Line Out",
+>> +			"Speaker", "Speaker",
+>> +			"Headphone", "Headphone Jack";
+>> +		simple-audio-card,routing =
+>> +			"Headphone Jack", "HP_L",
+>> +			"Headphone Jack", "HP_R",
+>> +			"Speaker", "SPK_LP",
+>> +			"Speaker", "SPK_LN",
+>> +			"Speaker", "SPK_RP",
+>> +			"Speaker", "SPK_RN",
+>> +			"LINPUT1", "Mic Jack",
+>> +			"LINPUT3", "Mic Jack",
+>> +			"RINPUT1", "Mic Jack",
+>> +			"RINPUT2", "Mic Jack";
+>> +
+>> +		simple-audio-card,cpu {
+>> +			sound-dai = <&i2s0 0>;
+>> +		};
+>> +
+>> +		link0_codec: simple-audio-card,codec {
+>> +			sound-dai = <&codec>;
+>> +			clocks = <&i2s0 CLK_I2S_CDCLK>;
+>> +			system-clock-frequency = <11289600>;
+>> +		};
+>> +	};
+>> +	
+>> +	beep {
+>> +		compatible = "pwm-beeper";
+>> +		pwms = <&pwm 0 4000000 PWM_POLARITY_INVERTED>;
+> I have serious doubts that you run this code... if it does not even
+> compile. Sorry, I cannot accept code that does not compile and was not
+> tested.
 >
+> Please, test your DTS on top of current Linux tree, which would be one of:
+> 1. Linus' master branch: v4.8-rc6,
+> 2. one of my branches (for-next, next/dt etc),
+When I sent those patches, I tested in "Add linux-next specific files 
+for 20160907"
+> 3. recent linux-next.
 >
->
+> Best regards,
+> Krzysztof
