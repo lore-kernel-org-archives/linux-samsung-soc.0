@@ -1,35 +1,33 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM: exynos: Fixes for v4.8, secound round
-Date: Fri, 16 Sep 2016 16:31:32 +0200
-Message-ID: <6792013.IrD9SrjCDf@wuerfel>
-References: <CGME20160916071017eucas1p155978eec97e20211d9c54ef670e319eb@eucas1p1.samsung.com> <1474009808-8520-1-git-send-email-k.kozlowski@samsung.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 3/3] devicetree: bindings: Add vendor prefix for
+ Topeet.
+Date: Fri, 16 Sep 2016 10:24:11 -0500
+Message-ID: <20160916152411.GA4515@rob-hp-laptop>
+References: <1473285535-21996-1-git-send-email-ayaka@soulik.info>
+ <1473285535-21996-4-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:49821 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935097AbcIPOcK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 10:32:10 -0400
-In-Reply-To: <1474009808-8520-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1473285535-21996-4-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-On Friday, September 16, 2016 9:10:08 AM CEST Krzysztof Kozlowski wrote:
-> 1. A recent change in populating irqchip devices from Device Tree
->    broke Suspend to RAM on Exynos boards due to lack of probing of
->    PMU (Power Management Unit) driver.  Multiple drivers attach to
->    the PMU's DT node: irqchip, clock controller and PMU platform
->    driver for handling suspend.  The new irqchip code marked the
->    PMU's DT node as OF_POPULATED but we need to attach to this
->    node also PMU platform driver.
+On Thu, Sep 08, 2016 at 05:58:55AM +0800, Randy Li wrote:
+> Add TOPEET, a ARM devlopment board vendor in China mainland.
 > 
-> 2. Add Javier as additional reviewer for Exynos patches.
-> 
+> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Pulled into fixes, thanks!
+I applied this one to avoid any merge conflicts with fixing 
+alphabetizing of this file this cycle.
 
-	Arnd
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
