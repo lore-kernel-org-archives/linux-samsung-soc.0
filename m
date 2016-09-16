@@ -1,222 +1,35 @@
-From: ayaka <ayaka@soulik.info>
-Subject: Re: [PATCH v6 2/3] ARM: dts: add TOPEET itop elite based board
-Date: Fri, 16 Sep 2016 22:04:29 +0800
-Message-ID: <865b9f84-385f-fea8-2e3d-2b31e3bfe84c@soulik.info>
-References: <1473285535-21996-1-git-send-email-ayaka@soulik.info>
- <1473285535-21996-3-git-send-email-ayaka@soulik.info>
- <CGME20160916072303eucas1p2941ba2907605055f5ea5abb2e6891d77@eucas1p2.samsung.com>
- <6bd9905d-0818-a917-8b8e-6abce134a3d3@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] ARM: exynos: Fixes for v4.8, secound round
+Date: Fri, 16 Sep 2016 16:31:32 +0200
+Message-ID: <6792013.IrD9SrjCDf@wuerfel>
+References: <CGME20160916071017eucas1p155978eec97e20211d9c54ef670e319eb@eucas1p1.samsung.com> <1474009808-8520-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:55212 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756794AbcIPOEj (ORCPT
+Received: from mout.kundenserver.de ([217.72.192.74]:49821 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935097AbcIPOcK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 10:04:39 -0400
-In-Reply-To: <6bd9905d-0818-a917-8b8e-6abce134a3d3@kernel.org>
+        Fri, 16 Sep 2016 10:32:10 -0400
+In-Reply-To: <1474009808-8520-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
+On Friday, September 16, 2016 9:10:08 AM CEST Krzysztof Kozlowski wrote:
+> 1. A recent change in populating irqchip devices from Device Tree
+>    broke Suspend to RAM on Exynos boards due to lack of probing of
+>    PMU (Power Management Unit) driver.  Multiple drivers attach to
+>    the PMU's DT node: irqchip, clock controller and PMU platform
+>    driver for handling suspend.  The new irqchip code marked the
+>    PMU's DT node as OF_POPULATED but we need to attach to this
+>    node also PMU platform driver.
+> 
+> 2. Add Javier as additional reviewer for Exynos patches.
+> 
 
+Pulled into fixes, thanks!
 
-On 09/16/2016 03:23 PM, Krzysztof Kozlowski wrote:
-> On 09/07/2016 11:58 PM, Randy Li wrote:
->> The TOPEET itop exynos 4412 have three versions base board. The
->> Elite version is the cheap one without too much peripheral devices
->> on it.
->>
->> Currently supported are serial console, wired networking(USB),
->> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
->> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
->> enabled.
->>
->> The FIMC is not used for camera currently, I enabled it just for a
->> colorspace convertor.
->>
->> Signed-off-by: Randy Li <ayaka@soulik.info>
->> ---
->>   .../bindings/arm/samsung/samsung-boards.txt        |   3 +
->>   arch/arm/boot/dts/Makefile                         |   1 +
->>   arch/arm/boot/dts/exynos4412-itop-elite.dts        | 239 +++++++++++++++++++++
->>   3 files changed, 243 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
->>
->> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
->> index 0ea7f14..c7159ac 100644
->> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
->> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
->> @@ -22,6 +22,9 @@ Required root node properties:
->>     * FriendlyARM
->>   	- "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
->>   				    TINY4412 board.
->> +  * TOPEET
->> +	- "topeet,itop4412-elite" - for Exynos4412-based TOPEET
->> +                                    Elite base board.
->>   
->>     * Google
->>   	- "google,pi"		- for Exynos5800-based Google Peach Pi
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 207f96f..0b39d00 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -130,6 +130,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
->>   	exynos4210-smdkv310.dtb \
->>   	exynos4210-trats.dtb \
->>   	exynos4210-universal_c210.dtb \
->> +	exynos4412-itop-elite.dtb \
->>   	exynos4412-odroidu3.dtb \
->>   	exynos4412-odroidx.dtb \
->>   	exynos4412-odroidx2.dtb \
->> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
->> new file mode 100644
->> index 0000000..dd83689
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
->> @@ -0,0 +1,239 @@
->> +/*
->> + * TOPEET's Exynos4412 based itop board device tree source
->> + *
->> + * Copyright (c) 2016 SUMOMO Computer Association
->> + *			https://www.sumomo.mobi
->> + *			Randy Li <ayaka@soulik.info>
->> + *			
->> + * Device tree source file for TOPEET iTop Exynos 4412 core board
->> + * which is based on Samsung's Exynos4412 SoC.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/dts-v1/;
->> +#include <dt-bindings/sound/samsung-i2s.h>
->> +#include "exynos4412-itop-scp-core.dtsi"
->> +
->> +/ {
->> +	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
->> +	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
->> +
->> +	chosen {
->> +		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait";
->> +		stdout-path = "serial2:115200n8";
->> +	};
->> +	
->> +	leds {
->> +		compatible = "gpio-leds";
->> +		
->> +		led2 {
->> +			label = "red:system";
->> +			gpios = <&gpx1 0 GPIO_ACTIVE_HIGH>;
->> +			default-state = "off";
->> +			linux,default-trigger = "heartbeat";
->> +		};
->> +
->> +		led3 {
->> +			label = "red:user";
->> +			gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
->> +			default-state = "off";
->> +		};
->> +	};
->> +
->> +	gpio-keys {
->> +		compatible = "gpio-keys";
->> +		
->> +		home {
->> +			label = "GPIO Key Home";
->> +			linux,code = <KEY_HOME>;
->> +			gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
->> +		};
->> +
->> +		back {
->> +			label = "GPIO Key Back";
->> +			linux,code = <KEY_BACK>;
->> +			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
->> +		};
->> +
->> +		sleep {
->> +			label = "GPIO Key Sleep";
->> +			linux,code = <KEY_POWER>;
->> +			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
->> +		};
->> +
->> +		vol-up {
->> +			label = "GPIO Key Vol+";
->> +			linux,code = <KEY_UP>;
->> +			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
->> +		};
->> +
->> +		vol-down {
->> +			label = "GPIO Key Vol-";
->> +			linux,code = <KEY_DOWN>;
->> +			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
->> +		};
->> +	};
->> +
->> +	sound {
->> +		compatible = "simple-audio-card";
->> +		simple-audio-card,name = "wm-sound";
->> +
->> +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->> +				<&clock_audss EXYNOS_MOUT_I2S>,
->> +				<&clock_audss EXYNOS_DOUT_SRP>,
->> +				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
->> +		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
->> +				<&clock_audss EXYNOS_MOUT_AUDSS>;
->> +		assigned-clock-rates = <0>,
->> +				<0>,
->> +				<112896000>,
->> +				<11289600>;
->> +
->> +		simple-audio-card,format = "i2s";
->> +		simple-audio-card,bitclock-master = <&link0_codec>;
->> +		simple-audio-card,frame-master = <&link0_codec>;
->> +
->> +		simple-audio-card,widgets =
->> +			"Microphone", "Mic Jack",
->> +			"Line", "Line In",
->> +			"Line", "Line Out",
->> +			"Speaker", "Speaker",
->> +			"Headphone", "Headphone Jack";
->> +		simple-audio-card,routing =
->> +			"Headphone Jack", "HP_L",
->> +			"Headphone Jack", "HP_R",
->> +			"Speaker", "SPK_LP",
->> +			"Speaker", "SPK_LN",
->> +			"Speaker", "SPK_RP",
->> +			"Speaker", "SPK_RN",
->> +			"LINPUT1", "Mic Jack",
->> +			"LINPUT3", "Mic Jack",
->> +			"RINPUT1", "Mic Jack",
->> +			"RINPUT2", "Mic Jack";
->> +
->> +		simple-audio-card,cpu {
->> +			sound-dai = <&i2s0 0>;
->> +		};
->> +
->> +		link0_codec: simple-audio-card,codec {
->> +			sound-dai = <&codec>;
->> +			clocks = <&i2s0 CLK_I2S_CDCLK>;
->> +			system-clock-frequency = <11289600>;
->> +		};
->> +	};
->> +	
->> +	beep {
->> +		compatible = "pwm-beeper";
->> +		pwms = <&pwm 0 4000000 PWM_POLARITY_INVERTED>;
-> I have serious doubts that you run this code... if it does not even
-> compile. Sorry, I cannot accept code that does not compile and was not
-> tested.
->
-> Please, test your DTS on top of current Linux tree, which would be one of:
-> 1. Linus' master branch: v4.8-rc6,
-> 2. one of my branches (for-next, next/dt etc),
-When I sent those patches, I tested in "Add linux-next specific files 
-for 20160907"
-> 3. recent linux-next.
->
-> Best regards,
-> Krzysztof
+	Arnd
