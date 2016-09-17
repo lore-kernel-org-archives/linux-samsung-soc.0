@@ -1,387 +1,311 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [RFT] arm64 dts: exynos: Fix invalid GIC interrupt flags in exynos7
-Date: Sat, 17 Sep 2016 17:06:08 +0530
-Message-ID: <57DD2AA8.9060507@samsung.com>
-References: <1474056073-8071-1-git-send-email-krzk@kernel.org>
- <CGME20160917113730epcas3p42e26e92f5e72fa42e89967798dbbbecf@epcas3p4.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56443 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758631AbcIQLhf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 17 Sep 2016 07:37:35 -0400
-In-reply-to: <1474056073-8071-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Subject: [PATCH] mtd: s3c2410: add device tree support
+Date: Sat, 17 Sep 2016 12:22:40 -0300
+Message-ID: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alban Browaeys <alban.browaeys@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
 
-Hi Krzysztof,
+Tested on FriendlyARM Mini2440
 
-On 09/17/2016 01:31 AM, Krzysztof Kozlowski wrote:
-> Interrupt of type IRQ_TYPE_NONE is not allowed for GIC interrupts and
-> generates an error:
-> 	genirq: Setting trigger mode 0 for irq 16 failed (gic_set_type+0x0/0x68)
->
-> The GIC requires shared interrupts to be edge rising or level high.
-> Platform declares support for both.  Choose level high everywhere.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reported-by: Alban Browaeys <alban.browaeys@gmail.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+---
+ .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  70 +++++++++++
+ drivers/mtd/nand/s3c2410.c                         | 129 ++++++++++++++++++++-
+ include/linux/platform_data/mtd-nand-s3c2410.h     |   1 +
+ 3 files changed, 195 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
 
-This patch does resolve the error reported in commit.
-Have booted on exynos7 board, things looks fine (have not done a 
-extensive testing though).
-With the _Typo_ fixed as pointed by you, feel free to add
+diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+new file mode 100644
+index 000000000000..1c39f6cf483b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+@@ -0,0 +1,70 @@
++* Samsung S3C2410 and compatible NAND flash controller
++
++Required properties:
++- compatible : The possible values are:
++	"samsung,s3c2410-nand"
++	"samsung,s3c2412-nand"
++	"samsung,s3c2440-nand"
++	"samsung,s3c6400-nand"
++- reg : register's location and length.
++- #address-cells, #size-cells : see nand.txt
++- clocks : phandle to the nand controller clock
++- clock-names : must contain "nand"
++
++Optional properties:
++- samsung,tacls : time for active CLE/ALE to nWE/nOE
++- samsung,twrph0 : active time for nWE/nOE
++- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive
++- samsung,ignore_unset_ecc : boolean to ignore error when we have
++                             0xff,0xff,0xff read ECC, on the
++                             assumption that it is an un-eccd page
++
++Optional children nodes:
++Children nodes representing the available nand chips.
++
++Optional children properties:
++- nand-ecc-mode : see nand.txt
++- nand-on-flash-bbt : see nand.txt
++
++Each children device node may optionally contain a 'partitions' sub-node,
++which further contains sub-nodes describing the flash partition mapping.
++See partition.txt for more detail.
++
++Example:
++
++nand@4e000000 {
++	compatible = "samsung,s3c2440-nand";
++	reg = <0x4e000000 0x40>;
++
++	#address-cells = <1>;
++        #size-cells = <0>;
++
++	clocks = <&clocks HCLK_NAND>;
++	clock-names = "nand";
++
++	samsung,tacls = <0>;
++	samsung,twrph0 = <25>;
++	samsung,twrph1 = <15>;
++	samsung,ignore_unset_ecc;
++
++	nand@0 {
++		nand-ecc-mode = "soft";
++		nand-on-flash-bbt;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0 0x040000>;
++			};
++
++			partition@40000 {
++				label = "kernel";
++				reg = <0x040000 0x500000>;
++			};
++		};
++	};
++};
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index d9309cf0ce2e..ecbb9c9c1e9a 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -39,6 +39,8 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+@@ -185,6 +187,26 @@ struct s3c2410_nand_info {
+ #endif
+ };
+ 
++struct s3c24XX_nand_devtype_data {
++	enum s3c_cpu_type type;
++};
++
++struct s3c24XX_nand_devtype_data s3c2410_nand_devtype_data = {
++	.type = TYPE_S3C2410,
++};
++
++struct s3c24XX_nand_devtype_data s3c2412_nand_devtype_data = {
++	.type = TYPE_S3C2412,
++};
++
++struct s3c24XX_nand_devtype_data s3c2440_nand_devtype_data = {
++	.type = TYPE_S3C2440,
++};
++
++struct s3c24XX_nand_devtype_data s3c6400_nand_devtype_data = {
++	.type = TYPE_S3C2412,
++};
++
+ /* conversion functions */
+ 
+ static struct s3c2410_nand_mtd *s3c2410_nand_mtd_toours(struct mtd_info *mtd)
+@@ -813,6 +835,8 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+ 	struct nand_chip *chip = &nmtd->chip;
+ 	void __iomem *regs = info->regs;
+ 
++	nand_set_flash_node(chip, set->of_node);
++
+ 	chip->write_buf    = s3c2410_nand_write_buf;
+ 	chip->read_buf     = s3c2410_nand_read_buf;
+ 	chip->select_chip  = s3c2410_nand_select_chip;
+@@ -947,6 +971,96 @@ static void s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+ 	}
+ }
+ 
++#ifdef CONFIG_OF_MTD
++static const struct of_device_id s3c24xx_nand_dt_ids[] = {
++	{
++		.compatible = "samsung,s3c2410-nand",
++		.data = &s3c2410_nand_devtype_data,
++	}, {
++		.compatible = "samsung,s3c2412-nand",
++		.data = &s3c2412_nand_devtype_data,
++	}, {
++		.compatible = "samsung,s3c2440-nand",
++		.data = &s3c2440_nand_devtype_data,
++	}, {
++		.compatible = "samsung,s3c6400-nand",
++		.data = &s3c6400_nand_devtype_data,
++	},
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, s3c24xx_nand_dt_ids);
++
++static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
++{
++	const struct s3c24XX_nand_devtype_data *devtype_data;
++	struct s3c2410_platform_nand *pdata;
++	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
++	struct device_node *np = pdev->dev.of_node, *child;
++	const struct of_device_id *of_id;
++	struct s3c2410_nand_set *sets;
++
++	of_id = of_match_device(s3c24xx_nand_dt_ids, &pdev->dev);
++	if (!of_id)
++		return 1;
++
++	devtype_data = of_id->data;
++	info->cpu_type = devtype_data->type;
++
++	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	pdev->dev.platform_data = pdata;
++
++	of_property_read_u32(np, "samsung,tacls",  &pdata->tacls);
++	of_property_read_u32(np, "samsung,twrph0", &pdata->twrph0);
++	of_property_read_u32(np, "samsung,twrph1", &pdata->twrph1);
++
++	if (of_get_property(np, "samsung,ignore_unset_ecc", NULL))
++		pdata->ignore_unset_ecc = 1;
++
++	pdata->nr_sets = of_get_child_count(np);
++	if (!pdata->nr_sets)
++		return 0;
++
++	sets = devm_kzalloc(&pdev->dev, sizeof(*sets) * pdata->nr_sets,
++			   GFP_KERNEL);
++	if (!sets)
++		return -ENOMEM;
++
++	pdata->sets = sets;
++
++	for_each_available_child_of_node(np, child) {
++
++		sets->name = (char *)child->name;
++		sets->of_node = child;
++		sets->nr_chips = 1;
++
++		if (!of_property_match_string(child, "nand-ecc-mode", "none"))
++			sets->disable_ecc = 1;
++
++		if (of_get_property(child, "nand-on-flash-bbt", NULL))
++			sets->flash_bbt = 1;
++
++		sets++;
++	}
++
++	return 0;
++}
++#else
++static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
++{
++	return 1;
++}
++#endif
++
++static void s3c24xx_nand_probe_pdata(struct platform_device *pdev)
++{
++	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
++
++	info->cpu_type = platform_get_device_id(pdev)->driver_data;
++}
++
+ /* s3c24xx_nand_probe
+  *
+  * called by device layer when it finds a device matching
+@@ -956,8 +1070,7 @@ static void s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+ */
+ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ {
+-	struct s3c2410_platform_nand *plat = to_nand_plat(pdev);
+-	enum s3c_cpu_type cpu_type;
++	struct s3c2410_platform_nand *plat;
+ 	struct s3c2410_nand_info *info;
+ 	struct s3c2410_nand_mtd *nmtd;
+ 	struct s3c2410_nand_set *sets;
+@@ -967,8 +1080,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 	int nr_sets;
+ 	int setno;
+ 
+-	cpu_type = platform_get_device_id(pdev)->driver_data;
+-
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (info == NULL) {
+ 		err = -ENOMEM;
+@@ -991,6 +1102,14 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 
+ 	s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
+ 
++	err = s3c24xx_nand_probe_dt(pdev);
++	if (err > 0)
++		s3c24xx_nand_probe_pdata(pdev);
++	else if (err < 0)
++		goto exit_error;
++
++	plat = to_nand_plat(pdev);
++
+ 	/* allocate and map the resource */
+ 
+ 	/* currently we assume we have the one resource */
+@@ -999,7 +1118,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 
+ 	info->device	= &pdev->dev;
+ 	info->platform	= plat;
+-	info->cpu_type	= cpu_type;
+ 
+ 	info->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(info->regs)) {
+@@ -1156,6 +1274,7 @@ static struct platform_driver s3c24xx_nand_driver = {
+ 	.id_table	= s3c24xx_driver_ids,
+ 	.driver		= {
+ 		.name	= "s3c24xx-nand",
++		.of_match_table = s3c24xx_nand_dt_ids,
+ 	},
+ };
+ 
+diff --git a/include/linux/platform_data/mtd-nand-s3c2410.h b/include/linux/platform_data/mtd-nand-s3c2410.h
+index c55e42ee57fa..9d20871e4bbd 100644
+--- a/include/linux/platform_data/mtd-nand-s3c2410.h
++++ b/include/linux/platform_data/mtd-nand-s3c2410.h
+@@ -40,6 +40,7 @@ struct s3c2410_nand_set {
+ 	char			*name;
+ 	int			*nr_map;
+ 	struct mtd_partition	*partitions;
++	struct device_node	*of_node;
+ };
+ 
+ struct s3c2410_platform_nand {
+-- 
+1.9.1
 
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-On another note, please cc me if case you want to check/verify something 
-on exynos7 platform. I almost missed this patch.
-
-Thanks.
-
->   arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi | 20 +++++--
->   arch/arm64/boot/dts/exynos/exynos7.dtsi         | 69 +++++++++++++------------
->   2 files changed, 51 insertions(+), 38 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> index f77ddaf21d04..983c63ba38c8 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> @@ -20,8 +20,14 @@
->   		interrupt-controller;
->   		interrupt-parent = <&gic>;
->   		#interrupt-cells = <2>;
-> -		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> -			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>;
-> +		interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 1 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 2 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 3 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 4 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 5 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 6 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 7 IRQ_TYPE_LEVEL_HIGH>;
->   	};
->
->   	gpa1: gpa1 {
-> @@ -31,8 +37,14 @@
->   		interrupt-controller;
->   		interrupt-parent = <&gic>;
->   		#interrupt-cells = <2>;
-> -		interrupts = <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> -			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-> +		interrupts = <0 8 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 9 IRQ_TYPE_LEVEL_HIGH>
-> +			     <0 10 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 11 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 12 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 13 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 14 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <0 15 IRQ_TYPE_LEVEL_HIGH>;
->   	};
->
->   	gpa2: gpa2 {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index 6328a66ed97e..0a80dabfbe95 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -106,7 +106,7 @@
->   			pdma0: pdma@10E10000 {
->   				compatible = "arm,pl330", "arm,primecell";
->   				reg = <0x10E10000 0x1000>;
-> -				interrupts = <0 225 0>;
-> +				interrupts = <0 225 IRQ_TYPE_LEVEL_HIGH>;
->   				clocks = <&clock_fsys0 ACLK_PDMA0>;
->   				clock-names = "apb_pclk";
->   				#dma-cells = <1>;
-> @@ -117,7 +117,7 @@
->   			pdma1: pdma@10EB0000 {
->   				compatible = "arm,pl330", "arm,primecell";
->   				reg = <0x10EB0000 0x1000>;
-> -				interrupts = <0 226 0>;
-> +				interrupts = <0 226 IRQ_TYPE_LEVEL_HIGH>;
->   				clocks = <&clock_fsys0 ACLK_PDMA1>;
->   				clock-names = "apb_pclk";
->   				#dma-cells = <1>;
-> @@ -220,7 +220,7 @@
->   		serial_0: serial@13630000 {
->   			compatible = "samsung,exynos4210-uart";
->   			reg = <0x13630000 0x100>;
-> -			interrupts = <0 440 0>;
-> +			interrupts = <0 440 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peric0 PCLK_UART0>,
->   				 <&clock_peric0 SCLK_UART0>;
->   			clock-names = "uart", "clk_uart_baud0";
-> @@ -230,7 +230,7 @@
->   		serial_1: serial@14c20000 {
->   			compatible = "samsung,exynos4210-uart";
->   			reg = <0x14c20000 0x100>;
-> -			interrupts = <0 456 0>;
-> +			interrupts = <0 456 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peric1 PCLK_UART1>,
->   				 <&clock_peric1 SCLK_UART1>;
->   			clock-names = "uart", "clk_uart_baud0";
-> @@ -240,7 +240,7 @@
->   		serial_2: serial@14c30000 {
->   			compatible = "samsung,exynos4210-uart";
->   			reg = <0x14c30000 0x100>;
-> -			interrupts = <0 457 0>;
-> +			interrupts = <0 457 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peric1 PCLK_UART2>,
->   				 <&clock_peric1 SCLK_UART2>;
->   			clock-names = "uart", "clk_uart_baud0";
-> @@ -250,7 +250,7 @@
->   		serial_3: serial@14c40000 {
->   			compatible = "samsung,exynos4210-uart";
->   			reg = <0x14c40000 0x100>;
-> -			interrupts = <0 458 0>;
-> +			interrupts = <0 458 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peric1 PCLK_UART3>,
->   				 <&clock_peric1 SCLK_UART3>;
->   			clock-names = "uart", "clk_uart_baud0";
-> @@ -264,62 +264,62 @@
->   			wakeup-interrupt-controller {
->   				compatible = "samsung,exynos7-wakeup-eint";
->   				interrupt-parent = <&gic>;
-> -				interrupts = <0 16 0>;
-> +				interrupts = <0 16 IRQ_TYPE_LEVEL_HIGH>;
->   			};
->   		};
->
->   		pinctrl_bus0: pinctrl@13470000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x13470000 0x1000>;
-> -			interrupts = <0 383 0>;
-> +			interrupts = <0 383 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_nfc: pinctrl@14cd0000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x14cd0000 0x1000>;
-> -			interrupts = <0 473 0>;
-> +			interrupts = <0 473 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_touch: pinctrl@14ce0000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x14ce0000 0x1000>;
-> -			interrupts = <0 474 0>;
-> +			interrupts = <0 474 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_ff: pinctrl@14c90000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x14c90000 0x1000>;
-> -			interrupts = <0 475 0>;
-> +			interrupts = <0 475 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_ese: pinctrl@14ca0000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x14ca0000 0x1000>;
-> -			interrupts = <0 476 0>;
-> +			interrupts = <0 476 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_fsys0: pinctrl@10e60000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x10e60000 0x1000>;
-> -			interrupts = <0 221 0>;
-> +			interrupts = <0 221 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_fsys1: pinctrl@15690000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x15690000 0x1000>;
-> -			interrupts = <0 203 0>;
-> +			interrupts = <0 203 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		pinctrl_bus1: pinctrl@14870000 {
->   			compatible = "samsung,exynos7-pinctrl";
->   			reg = <0x14870000 0x1000>;
-> -			interrupts = <0 384 0>;
-> +			interrupts = <0 384 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->
->   		hsi2c_0: hsi2c@13640000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13640000 0x1000>;
-> -			interrupts = <0 441 0>;
-> +			interrupts = <0 441 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -332,7 +332,7 @@
->   		hsi2c_1: hsi2c@13650000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13650000 0x1000>;
-> -			interrupts = <0 442 0>;
-> +			interrupts = <0 442 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -345,7 +345,7 @@
->   		hsi2c_2: hsi2c@14e60000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x14e60000 0x1000>;
-> -			interrupts = <0 459 0>;
-> +			interrupts = <0 459 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -358,7 +358,7 @@
->   		hsi2c_3: hsi2c@14e70000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x14e70000 0x1000>;
-> -			interrupts = <0 460 0>;
-> +			interrupts = <0 460 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -371,7 +371,7 @@
->   		hsi2c_4: hsi2c@13660000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13660000 0x1000>;
-> -			interrupts = <0 443 0>;
-> +			interrupts = <0 443 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -384,7 +384,7 @@
->   		hsi2c_5: hsi2c@13670000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13670000 0x1000>;
-> -			interrupts = <0 444 0>;
-> +			interrupts = <0 444 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -397,7 +397,7 @@
->   		hsi2c_6: hsi2c@14e00000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x14e00000 0x1000>;
-> -			interrupts = <0 461 0>;
-> +			interrupts = <0 461 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -410,7 +410,7 @@
->   		hsi2c_7: hsi2c@13e10000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13e10000 0x1000>;
-> -			interrupts = <0 462 0>;
-> +			interrupts = <0 462 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -423,7 +423,7 @@
->   		hsi2c_8: hsi2c@14e20000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x14e20000 0x1000>;
-> -			interrupts = <0 463 0>;
-> +			interrupts = <0 463 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -436,7 +436,7 @@
->   		hsi2c_9: hsi2c@13680000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13680000 0x1000>;
-> -			interrupts = <0 445 0>;
-> +			interrupts = <0 445 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -449,7 +449,7 @@
->   		hsi2c_10: hsi2c@13690000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x13690000 0x1000>;
-> -			interrupts = <0 446 0>;
-> +			interrupts = <0 446 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -462,7 +462,7 @@
->   		hsi2c_11: hsi2c@136a0000 {
->   			compatible = "samsung,exynos7-hsi2c";
->   			reg = <0x136a0000 0x1000>;
-> -			interrupts = <0 447 0>;
-> +			interrupts = <0 447 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			pinctrl-names = "default";
-> @@ -499,7 +499,8 @@
->   		rtc: rtc@10590000 {
->   			compatible = "samsung,s3c6410-rtc";
->   			reg = <0x10590000 0x100>;
-> -			interrupts = <0 355 0>, <0 356 0>;
-> +			interrupts = <0 355 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <0 356 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_ccore PCLK_RTC>;
->   			clock-names = "rtc";
->   			status = "disabled";
-> @@ -508,7 +509,7 @@
->   		watchdog: watchdog@101d0000 {
->   			compatible = "samsung,exynos7-wdt";
->   			reg = <0x101d0000 0x100>;
-> -			interrupts = <0 110 0>;
-> +			interrupts = <0 110 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peris PCLK_WDT>;
->   			clock-names = "watchdog";
->   			samsung,syscon-phandle = <&pmu_system_controller>;
-> @@ -517,7 +518,7 @@
->
->   		mmc_0: mmc@15740000 {
->   			compatible = "samsung,exynos7-dw-mshc-smu";
-> -			interrupts = <0 201 0>;
-> +			interrupts = <0 201 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			reg = <0x15740000 0x2000>;
-> @@ -530,7 +531,7 @@
->
->   		mmc_1: mmc@15750000 {
->   			compatible = "samsung,exynos7-dw-mshc";
-> -			interrupts = <0 202 0>;
-> +			interrupts = <0 202 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			reg = <0x15750000 0x2000>;
-> @@ -543,7 +544,7 @@
->
->   		mmc_2: mmc@15560000 {
->   			compatible = "samsung,exynos7-dw-mshc-smu";
-> -			interrupts = <0 216 0>;
-> +			interrupts = <0 216 IRQ_TYPE_LEVEL_HIGH>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   			reg = <0x15560000 0x2000>;
-> @@ -557,7 +558,7 @@
->   		adc: adc@13620000 {
->   			compatible = "samsung,exynos7-adc";
->   			reg = <0x13620000 0x100>;
-> -			interrupts = <0 448 0>;
-> +			interrupts = <0 448 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peric0 PCLK_ADCIF>;
->   			clock-names = "adc";
->   			#io-channel-cells = <1>;
-> @@ -577,7 +578,7 @@
->   		tmuctrl_0: tmu@10060000 {
->   			compatible = "samsung,exynos7-tmu";
->   			reg = <0x10060000 0x200>;
-> -			interrupts = <0 108 0>;
-> +			interrupts = <0 108 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&clock_peris PCLK_TMU>,
->   				 <&clock_peris SCLK_TMU>;
->   			clock-names = "tmu_apbif", "tmu_sclk";
->
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
