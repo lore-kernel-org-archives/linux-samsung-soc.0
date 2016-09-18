@@ -1,125 +1,44 @@
-From: ayaka <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: Re: [PATCH v6 2/3] ARM: dts: add TOPEET itop elite based board
-Date: Sun, 18 Sep 2016 17:46:23 +0800
-Message-ID: <9c542a0d-6237-164f-847f-d68ebc267fce@soulik.info>
-References: <1473285535-21996-1-git-send-email-ayaka@soulik.info>
- <1473285535-21996-3-git-send-email-ayaka@soulik.info>
- <CGME20160916072303eucas1p2941ba2907605055f5ea5abb2e6891d77@eucas1p2.samsung.com>
- <6bd9905d-0818-a917-8b8e-6abce134a3d3@kernel.org>
- <865b9f84-385f-fea8-2e3d-2b31e3bfe84c@soulik.info>
- <20160916172110.GA7511@kozik-lap>
- <1e4335db-9004-bb7c-6dc1-e435e66b8126@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1e4335db-9004-bb7c-6dc1-e435e66b8126-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Baoyou Xie <baoyou.xie@linaro.org>
+Subject: [PATCH] drm/exynos: mark exynos_dp_crtc_clock_enable() static
+Date: Sun, 18 Sep 2016 21:58:30 +0800
+Message-ID: <1474207110-16111-1-git-send-email-baoyou.xie@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:35939 "EHLO
+        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755853AbcIRN6r (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 18 Sep 2016 09:58:47 -0400
+Received: by mail-pa0-f46.google.com with SMTP id id6so40053891pad.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Sep 2016 06:58:46 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jingoohan1@gmail.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, baoyou.xie@linaro.org, xie.baoyou@zte.com.cn
 
+We get 1 warning when building kernel with W=1:
+drivers/gpu/drm/exynos/exynos_dp.c:46:5: warning: no previous prototype for 'exynos_dp_crtc_clock_enable' [-Wmissing-prototypes]
 
+In fact, this function is only used in the file in which it is
+declared and don't need a declaration, but can be made static.
+So this patch marks it 'static'.
 
-On 09/17/2016 02:09 AM, Javier Martinez Canillas wrote:
-> Hello Randy,
->
-> On 09/16/2016 01:21 PM, Krzysztof Kozlowski wrote:
->
-> [snip]
->
->>>>> +	
->>>>> +	beep {
->>>>> +		compatible = "pwm-beeper";
->>>>> +		pwms = <&pwm 0 4000000 PWM_POLARITY_INVERTED>;
->>>> I have serious doubts that you run this code... if it does not even
->>>> compile. Sorry, I cannot accept code that does not compile and was not
->>>> tested.
->>>>
->>>> Please, test your DTS on top of current Linux tree, which would be one of:
->>>> 1. Linus' master branch: v4.8-rc6,
->>>> 2. one of my branches (for-next, next/dt etc),
->>> When I sent those patches, I tested in "Add linux-next specific files for
->>> 20160907"
->> OK, good, but please tell me why kbuild reported that build error?
->>
-> I agree with Krzysztof, it doesn't seem that you tested the exact version
-I am sure I does.
-> that was posted. You will need the following change to make the DTS build
-> in latest linux-next:
-I didn't post the patch is WIP, which would adding the LCD panel support 
-to this board.
->
-> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> index dd83689892ff..8559f891a740 100644
-> --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> @@ -14,6 +14,7 @@
->   */
->   
->   /dts-v1/;
-> +#include <dt-bindings/pwm/pwm.h>
->   #include <dt-bindings/sound/samsung-i2s.h>
->   #include "exynos4412-itop-scp-core.dtsi"
->
-> So please squash that change and resend.
-I would, but I meet a problem in memory with the latest next-20160916, 
-it seems that it can't access the memory while it never happened before.
-MMC read: dev # 1, block # 2048, count 14336 ...14336 blocks read: 
-OK                                                     [58/426]
-Boot with zImage
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ drivers/gpu/drm/exynos/exynos_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Starting kernel ...
-
-Uncompressing Linux... done, booting the kernel.
-[    0.000000] Booting Linux on physical CPU 0xa00
-[    0.000000] Linux version 4.8.0-rc6-next-20160916-00004-gae92137 
-(ayaka@ritsuko) (gcc version 6.1.0 (Buildroot 2016.05-00006-g0
-792d0d-dirty) ) #83 SMP PREEMPT Sun Sep 18 17:29:56 CST 2016
-[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), 
-cr=10c5387d
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing 
-instruction cache
-[    0.000000] OF: fdt:Machine model: TOPEET iTop 4412 Elite board based 
-on Exynos4412
-[    0.000000] bootconsole [earlycon0] enabled
-[    0.000000] OF: reserved mem: failed to allocate memory for node 
-'region_mfc_right'
-[    0.000000] OF: reserved mem: failed to allocate memory for node 
-'region_mfc_left'
-[    0.000000] cma: Failed to reserve 32 MiB
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 
-0x2000 bytes below 0x0.
-[    0.000000]
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 
-4.8.0-rc6-next-20160916-00004-gae92137 #83
-[    0.000000] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[    0.000000] [<c010e17c>] (unwind_backtrace) from [<c010af78>] 
-(show_stack+0x10/0x14)
-[    0.000000] [<c010af78>] (show_stack) from [<c03080e4>] 
-(dump_stack+0x70/0x8c)
-[    0.000000] [<c03080e4>] (dump_stack) from [<c019e580>] 
-(panic+0xc4/0x244)
-[    0.000000] [<c019e580>] (panic) from [<c0810e3c>] 
-(memblock_alloc_base+0x2c/0x38)
-[    0.000000] [<c0810e3c>] (memblock_alloc_base) from [<c0806aec>] 
-(early_alloc_aligned+0xc/0x2c)
-[    0.000000] [<c0806aec>] (early_alloc_aligned) from [<c08074c8>] 
-(paging_init+0x548/0xa70)
-[    0.000000] [<c08074c8>] (paging_init) from [<c0803dc8>] 
-(setup_arch+0x50c/0xa28)
-[    0.000000] [<c0803dc8>] (setup_arch) from [<c080091c>] 
-(start_kernel+0x50/0x384)
-[    0.000000] [<c080091c>] (start_kernel) from [<4000807c>] (0x4000807c)
-[    0.000000] ---[ end Kernel panic - not syncing: ERROR: Failed to 
-allocate 0x2000 bytes below 0x0.
-[    0.000000
-
->
-> Best regards,
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 4f08505..528229f 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -43,7 +43,7 @@ struct exynos_dp_device {
+ 	struct analogix_dp_plat_data plat_data;
+ };
+ 
+-int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
++static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+ 				bool enable)
+ {
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
+-- 
+2.7.4
