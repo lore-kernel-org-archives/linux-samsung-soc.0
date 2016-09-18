@@ -1,20 +1,20 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 06/10] ARM: dts: exynos: Fix invalid GIC interrupt flags
- in exynos5
-Date: Sun, 18 Sep 2016 11:17:04 -0400
-Message-ID: <c64744b1-eab5-350b-7f87-86c159abffb6@osg.samsung.com>
+Subject: Re: [PATCH 08/10] ARM: dts: exynos: Fix invalid GIC interrupt flags
+ in exynos5410/exynos542x
+Date: Sun, 18 Sep 2016 11:18:13 -0400
+Message-ID: <83ea3f1f-476a-0a49-abe5-1bafaa269dd2@osg.samsung.com>
 References: <1474054971-16831-1-git-send-email-krzk@kernel.org>
- <1474054971-16831-7-git-send-email-krzk@kernel.org>
+ <1474054971-16831-9-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:50603
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:50620
         "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932796AbcIRPRV (ORCPT
+        with ESMTP id S932796AbcIRPSb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2016 11:17:21 -0400
-In-Reply-To: <1474054971-16831-7-git-send-email-krzk@kernel.org>
+        Sun, 18 Sep 2016 11:18:31 -0400
+In-Reply-To: <1474054971-16831-9-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -36,9 +36,6 @@ On 09/16/2016 03:42 PM, Krzysztof Kozlowski wrote:
 > Cc: Marc Zyngier <marc.zyngier@arm.com>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
-
-I tested this patch on an Exynos5800 Peach Pi Chromebook and
-an Exynos5422 Odroid XU4 board and no regressions were found.
 
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
