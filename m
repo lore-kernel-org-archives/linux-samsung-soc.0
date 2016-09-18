@@ -1,12 +1,12 @@
 From: Randy Li <ayaka@soulik.info>
-Subject: [RFC PATCH v2 2/2] drm/panel: Add support for Chunghwa CLAA070WP03XG panel
-Date: Sun, 18 Sep 2016 22:27:39 +0800
-Message-ID: <1474208859-10045-3-git-send-email-ayaka@soulik.info>
+Subject: [RFC PATCH v2 1/2] ARM: dts: samsung: add rga-lvds panel in itop elite
+Date: Sun, 18 Sep 2016 22:27:38 +0800
+Message-ID: <1474208859-10045-2-git-send-email-ayaka@soulik.info>
 References: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:56498 "EHLO
+Received: from kozue.soulik.info ([108.61.200.231]:56490 "EHLO
         kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932354AbcIRO2e (ORCPT
+        with ESMTP id S1758528AbcIRO2e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 18 Sep 2016 10:28:34 -0400
 In-Reply-To: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
@@ -15,73 +15,91 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org, Randy Li <ayaka@soulik.info>
 
-The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
-supported by the simple panel driver.
+It is actually a lvds panel connected through a rga-lvds bridge.
+The touchscreen is communicated with i2c bus but the driver is not
+support now.
 
 Signed-off-by: Randy Li <ayaka@soulik.info>
 ---
- .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
- drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+ arch/arm/boot/dts/exynos4412-itop-elite.dts | 54 +++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-new file mode 100644
-index 0000000..dd22685
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-@@ -0,0 +1,7 @@
-+Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
+diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+index b08705e..9ef0505 100644
+--- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
++++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+@@ -138,6 +138,36 @@
+ 		assigned-clocks = <&clock CLK_MOUT_CAM0>;
+ 		assigned-clock-parents = <&clock CLK_XUSBXTI>;
+ 	};
 +
-+Required properties:
-+- compatible: should be "chunghwa,claa070wp03xg"
++	vcc_sys_lcd: sys-lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
++	};
 +
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index f178998..3204e6b 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -583,6 +583,30 @@ static const struct panel_desc avic_tm070ddh03 = {
- 	},
++	panel: panel@0 {
++		compatible = "chunghwa,claa070wp03xg";
++
++		power-supply = <&vcc_sys_lcd>;
++		enable-gpios = <&gpl0 2 GPIO_ACTIVE_HIGH>;
++		backlight = <&bl>;
++
++		port {
++			lcd_ep: endpoint {
++				remote-endpoint = <&rga_lvds>;
++			};
++		};
++	};
++
++	bl: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 1 5000000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <0 5 12 16 32 64 128 255>;
++		default-brightness-level = <5>;
++		power-supply = <&vcc_sys_lcd>;
++	};
  };
  
-+static const struct drm_display_mode chunghwa_claa070wp03xg_mode = {
-+	.clock = 66770,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 49,
-+	.hsync_end = 800 + 49 + 33,
-+	.htotal = 800 + 49 + 33 + 17,
-+	.vdisplay = 1280,
-+	.vsync_start = 1280 + 1,
-+	.vsync_end = 1280 + 1 + 7,
-+	.vtotal = 1280 + 1 + 7 + 15,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
+ &adc {
+@@ -215,9 +245,9 @@
+ 
+ &pwm {
+ 	status = "okay";
+-	pinctrl-0 = <&pwm0_out>;
++	pinctrl-0 = <&pwm0_out &pwm1_out>;
+ 	pinctrl-names = "default";
+-	samsung,pwm-outputs = <0>;
++	samsung,pwm-outputs = <0>, <1>;
+ };
+ 
+ &sdhci_2 {
+@@ -238,3 +268,23 @@
+ &serial_2 {
+ 	status = "okay";
+ };
++
++&i2c_3 {
++	status = "okay";
 +};
 +
-+static const struct panel_desc chunghwa_claa070wp03xg = {
-+	.modes = &chunghwa_claa070wp03xg_mode,
-+	.num_modes = 1,
-+	.bpc = 6,
-+	.size = {
-+		.width = 94,
-+		.height = 150,
-+	},
++&fimd {
++	pinctrl-0 = <&lcd_clk &lcd_data24>;
++	pinctrl-names = "default";
++	status = "okay";
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@3 {
++			reg = <3>;
++			rga_lvds: endpoint {
++				remote-endpoint = <&lcd_ep>;
++			};
++		};
++	};
 +};
-+
- static const struct drm_display_mode chunghwa_claa101wa01a_mode = {
- 	.clock = 72070,
- 	.hdisplay = 1366,
-@@ -1544,6 +1568,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "avic,tm070ddh03",
- 		.data = &avic_tm070ddh03,
- 	}, {
-+		.compatible = "chunghwa,claa070wp03xg",
-+		.data = &chunghwa_claa070wp03xg,
-+	}, {
- 		.compatible = "chunghwa,claa101wa01a",
- 		.data = &chunghwa_claa101wa01a
- 	}, {
 -- 
 2.7.4
