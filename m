@@ -1,54 +1,87 @@
 From: Randy Li <ayaka@soulik.info>
-Subject: [PATCH] ASoC: samsung: make audio interface/controller explicitly
-Date: Sun, 18 Sep 2016 22:09:11 +0800
-Message-ID: <1474207751-9804-2-git-send-email-ayaka@soulik.info>
-References: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
+Subject: [RFC PATCH v2 2/2] drm/panel: Add support for Chunghwa CLAA070WP03XG panel
+Date: Sun, 18 Sep 2016 22:27:39 +0800
+Message-ID: <1474208859-10045-3-git-send-email-ayaka@soulik.info>
+References: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:56470 "EHLO
+Received: from kozue.soulik.info ([108.61.200.231]:56498 "EHLO
         kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934363AbcIROJf (ORCPT
+        with ESMTP id S932354AbcIRO2e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2016 10:09:35 -0400
-In-Reply-To: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
+        Sun, 18 Sep 2016 10:28:34 -0400
+In-Reply-To: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org
-Cc: sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Li <ayaka@soulik.info>
+To: dri-devel@lists.freedesktop.org
+Cc: linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org, Randy Li <ayaka@soulik.info>
 
-It is simple sound card time, we could assign different codec
-to a interface without making a specific driver for it.
+The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
+supported by the simple panel driver.
 
 Signed-off-by: Randy Li <ayaka@soulik.info>
 ---
- sound/soc/samsung/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 7b722b0..b7b3a38 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -18,18 +18,18 @@ config SND_S3C2412_SOC_I2S
- 	select SND_S3C_I2SV2_SOC
+diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+new file mode 100644
+index 0000000..dd22685
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+@@ -0,0 +1,7 @@
++Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
++
++Required properties:
++- compatible: should be "chunghwa,claa070wp03xg"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index f178998..3204e6b 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -583,6 +583,30 @@ static const struct panel_desc avic_tm070ddh03 = {
+ 	},
+ };
  
- config SND_SAMSUNG_PCM
--	tristate
-+	tristate "Samsung PCM interface support"
- 
- config SND_SAMSUNG_AC97
--	tristate
-+	tristate "Samsung AC97 controller support"
- 	select SND_SOC_AC97_BUS
- 
- config SND_SAMSUNG_SPDIF
--	tristate
-+	tristate "Samsung SPDIF transmitter support"
- 	select SND_SOC_SPDIF
- 
- config SND_SAMSUNG_I2S
--	tristate
-+	tristate "Samsung I2S interface support"
- 
- config SND_SOC_SAMSUNG_NEO1973_WM8753
- 	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
++static const struct drm_display_mode chunghwa_claa070wp03xg_mode = {
++	.clock = 66770,
++	.hdisplay = 800,
++	.hsync_start = 800 + 49,
++	.hsync_end = 800 + 49 + 33,
++	.htotal = 800 + 49 + 33 + 17,
++	.vdisplay = 1280,
++	.vsync_start = 1280 + 1,
++	.vsync_end = 1280 + 1 + 7,
++	.vtotal = 1280 + 1 + 7 + 15,
++	.vrefresh = 60,
++	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
++};
++
++static const struct panel_desc chunghwa_claa070wp03xg = {
++	.modes = &chunghwa_claa070wp03xg_mode,
++	.num_modes = 1,
++	.bpc = 6,
++	.size = {
++		.width = 94,
++		.height = 150,
++	},
++};
++
+ static const struct drm_display_mode chunghwa_claa101wa01a_mode = {
+ 	.clock = 72070,
+ 	.hdisplay = 1366,
+@@ -1544,6 +1568,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "avic,tm070ddh03",
+ 		.data = &avic_tm070ddh03,
+ 	}, {
++		.compatible = "chunghwa,claa070wp03xg",
++		.data = &chunghwa_claa070wp03xg,
++	}, {
+ 		.compatible = "chunghwa,claa101wa01a",
+ 		.data = &chunghwa_claa101wa01a
+ 	}, {
 -- 
 2.7.4
