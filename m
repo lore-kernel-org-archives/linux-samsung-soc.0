@@ -1,136 +1,146 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [RFC PATCH v2 1/2] ARM: dts: samsung: add rga-lvds panel in itop
  elite
-Date: Sun, 18 Sep 2016 21:03:48 +0200
-Message-ID: <20160918190348.GA5556@kozik-book>
+Date: Sun, 18 Sep 2016 21:09:32 +0200
+Message-ID: <20160918190932.GB5556@kozik-book>
 References: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
  <1474208859-10045-2-git-send-email-ayaka@soulik.info>
+ <20160918190348.GA5556@kozik-book>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33128 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755551AbcIRTDy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2016 15:03:54 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1474208859-10045-2-git-send-email-ayaka@soulik.info>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20160918190348.GA5556@kozik-book>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Randy Li <ayaka@soulik.info>
-Cc: dri-devel@lists.freedesktop.org, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org
 
-On Sun, Sep 18, 2016 at 10:27:38PM +0800, Randy Li wrote:
-> It is actually a lvds panel connected through a rga-lvds bridge.
-> The touchscreen is communicated with i2c bus but the driver is not
-> support now.
+On Sun, Sep 18, 2016 at 09:03:48PM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Sep 18, 2016 at 10:27:38PM +0800, Randy Li wrote:
+> > It is actually a lvds panel connected through a rga-lvds bridge.
+> > The touchscreen is communicated with i2c bus but the driver is not
+> > support now.
+> > 
+> > Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 > 
-> Signed-off-by: Randy Li <ayaka@soulik.info>
-
-Subject: ARM: dts: exynos
-
-> ---
->  arch/arm/boot/dts/exynos4412-itop-elite.dts | 54 +++++++++++++++++++++++++++--
->  1 file changed, 52 insertions(+), 2 deletions(-)
+> Subject: ARM: dts: exynos
 > 
-> diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> index b08705e..9ef0505 100644
-> --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-> @@ -138,6 +138,36 @@
->  		assigned-clocks = <&clock CLK_MOUT_CAM0>;
->  		assigned-clock-parents = <&clock CLK_XUSBXTI>;
->  	};
-> +
-> +	vcc_sys_lcd: sys-lcd {
+> > ---
+> >  arch/arm/boot/dts/exynos4412-itop-elite.dts | 54 +++++++++++++++++++++++++++--
+> >  1 file changed, 52 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> > index b08705e..9ef0505 100644
+> > --- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> > +++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+> > @@ -138,6 +138,36 @@
+> >  		assigned-clocks = <&clock CLK_MOUT_CAM0>;
+> >  		assigned-clock-parents = <&clock CLK_XUSBXTI>;
+> >  	};
+> > +
+> > +	vcc_sys_lcd: sys-lcd {
+> 
+> No underscores, use hyphens.
 
-No underscores, use hyphens.
+Ah wait, it's a label, so underscore seems ok. My mistake.
 
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_5v";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
+> 
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "vcc_5v";
+> > +		regulator-min-microvolt = <5000000>;
+> > +		regulator-max-microvolt = <5000000>;
+> > +		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
+> 
+> Isn't this one of S5M8767 PMIC regulators? If so, then it should be
+> defined there... On the other hand, the PMIC supports GPIO enable
+> control only for buck9...
+> 
+> > +	};
+> > +
+> > +	panel: panel@0 {
+> > +		compatible = "chunghwa,claa070wp03xg";
+> > +
+> > +		power-supply = <&vcc_sys_lcd>;
+> > +		enable-gpios = <&gpl0 2 GPIO_ACTIVE_HIGH>;
+> > +		backlight = <&bl>;
+> > +
+> > +		port {
+> > +			lcd_ep: endpoint {
+> 
+> lcd-ep
 
-Isn't this one of S5M8767 PMIC regulators? If so, then it should be
-defined there... On the other hand, the PMIC supports GPIO enable
-control only for buck9...
-
-> +	};
-> +
-> +	panel: panel@0 {
-> +		compatible = "chunghwa,claa070wp03xg";
-> +
-> +		power-supply = <&vcc_sys_lcd>;
-> +		enable-gpios = <&gpl0 2 GPIO_ACTIVE_HIGH>;
-> +		backlight = <&bl>;
-> +
-> +		port {
-> +			lcd_ep: endpoint {
-
-lcd-ep
-
-> +				remote-endpoint = <&rga_lvds>;
-> +			};
-> +		};
-> +	};
-> +
-> +	bl: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm 1 5000000 PWM_POLARITY_INVERTED>;
-> +		brightness-levels = <0 5 12 16 32 64 128 255>;
-> +		default-brightness-level = <5>;
-> +		power-supply = <&vcc_sys_lcd>;
-> +	};
->  };
->  
->  &adc {
-> @@ -215,9 +245,9 @@
->  
->  &pwm {
->  	status = "okay";
-> -	pinctrl-0 = <&pwm0_out>;
-> +	pinctrl-0 = <&pwm0_out &pwm1_out>;
->  	pinctrl-names = "default";
-> -	samsung,pwm-outputs = <0>;
-> +	samsung,pwm-outputs = <0>, <1>;
->  };
->  
->  &sdhci_2 {
-> @@ -238,3 +268,23 @@
->  &serial_2 {
->  	status = "okay";
->  };
-> +
-> +&i2c_3 {
-> +	status = "okay";
-> +};
-> +
-> +&fimd {
-
-Please put these nodes in alphabetical order. I asked about it for
-initial DTS and it applies still.
-
-> +	pinctrl-0 = <&lcd_clk &lcd_data24>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		port@3 {
-> +			reg = <3>;
-> +			rga_lvds: endpoint {
-
-rga-lvds
+No need, the same.
 
 Best regards,
 Krzysztof
 
-> +				remote-endpoint = <&lcd_ep>;
-> +			};
-> +		};
-> +	};
-> +};
-> -- 
-> 2.7.4
 > 
+> > +				remote-endpoint = <&rga_lvds>;
+> > +			};
+> > +		};
+> > +	};
+> > +
+> > +	bl: backlight {
+> > +		compatible = "pwm-backlight";
+> > +		pwms = <&pwm 1 5000000 PWM_POLARITY_INVERTED>;
+> > +		brightness-levels = <0 5 12 16 32 64 128 255>;
+> > +		default-brightness-level = <5>;
+> > +		power-supply = <&vcc_sys_lcd>;
+> > +	};
+> >  };
+> >  
+> >  &adc {
+> > @@ -215,9 +245,9 @@
+> >  
+> >  &pwm {
+> >  	status = "okay";
+> > -	pinctrl-0 = <&pwm0_out>;
+> > +	pinctrl-0 = <&pwm0_out &pwm1_out>;
+> >  	pinctrl-names = "default";
+> > -	samsung,pwm-outputs = <0>;
+> > +	samsung,pwm-outputs = <0>, <1>;
+> >  };
+> >  
+> >  &sdhci_2 {
+> > @@ -238,3 +268,23 @@
+> >  &serial_2 {
+> >  	status = "okay";
+> >  };
+> > +
+> > +&i2c_3 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&fimd {
+> 
+> Please put these nodes in alphabetical order. I asked about it for
+> initial DTS and it applies still.
+> 
+> > +	pinctrl-0 = <&lcd_clk &lcd_data24>;
+> > +	pinctrl-names = "default";
+> > +	status = "okay";
+> > +	ports {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +		port@3 {
+> > +			reg = <3>;
+> > +			rga_lvds: endpoint {
+> 
+> rga-lvds
+> 
+> Best regards,
+> Krzysztof
+> 
+> > +				remote-endpoint = <&lcd_ep>;
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > -- 
+> > 2.7.4
+> > 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
