@@ -1,90 +1,103 @@
-From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: [RFC PATCH v2 0/2] adding panel claa070wp03xg support for exynos
-Date: Sun, 18 Sep 2016 22:27:37 +0800
-Message-ID: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH 00/10] ARM: dts: exynos: Fix invalid GIC interrupt
+ flags
+Date: Sun, 18 Sep 2016 16:30:21 +0200
+Message-ID: <20160918143021.GA9489@kozik-book>
+References: <1474054971-16831-1-git-send-email-krzk@kernel.org>
+ <CAGOxZ50WiEVGNKf_1_8DQiKruxY=0813dko18fPfuRqxeyud0A@mail.gmail.com>
+ <20160917175553.GA9499@kozik-lap>
+ <20160918103436.6af07ee9@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35029 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932848AbcIROa0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 18 Sep 2016 10:30:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20160918103436.6af07ee9@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alban Browaeys <alban.browaeys@gmail.com>
 
-I am trying to add LCD panel with LVDS interface for exynos 4412 topeet
-itop. That board using a bridge chip to convert the parallel RGB signal
-to LVDS signal. I could make a fb0 node appear in system now. But I can't
-make it work yet. redirecting the urandom to fb0 won't make anything
-change in panel.
+On Sun, Sep 18, 2016 at 10:34:36AM +0100, Marc Zyngier wrote:
+> On Sat, 17 Sep 2016 19:55:53 +0200
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+> > On Sat, Sep 17, 2016 at 11:05:39PM +0530, Alim Akhtar wrote:
+> > > Hi Krzysztof,
+> > > 
+> > > On Sat, Sep 17, 2016 at 1:12 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:  
+> > > > Hi,
+> > > >
+> > > > Marek (internally), Geert and Alban reported errors like:
+> > > >         genirq: Setting trigger mode 0 for irq 16 failed (gic_set_type+0x0/0x68)
+> > > > The patchset fixes this issue.
+> > > >
+> > > > Tested on:
+> > > > 1. Exynos4412: Odroid U3,
+> > > > 2. Exynos5410: Odroid XU,
+> > > > 3. Exynos5422: Odroid XU3.
+> > > >  
+> > > 
+> > > Tested on Exynos5800 based peach-pi board, so fpr patch 06/10
+> > > 
+> > > Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > > 
+> > >   
+> > > > Other platforms not tested so testing would be highly appreciated.
+> > > >
+> > > > Best regards,
+> > > > Krzysztof
+> > > >
+> > > > Krzysztof Kozlowski (10):
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos4
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos4210
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos4x12
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos4415
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos3250
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5250
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in
+> > > >     exynos5410/exynos542x
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5260
+> > > >   ARM: dts: exynos: Fix invalid GIC interrupt flags in exynos5440
+> > > >  
+> > > 
+> > > In general these patches looks good, feel free to add my review-by tag
+> > > for this series.
+> > > 
+> > > Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > >   
+> > 
+> > Thanks, I'll add your reviewed-by to all patches.
+> 
+> There is a couple of things that I don't like about these patches:
+> 
+> - Are you sure that all your interrupts are level? I appreciate that's
+>   a very common setting, but you seem to have simply decided that there
+>   wasn't any edge interrupt. Is that a "Let's see what breaks"
+>   situation? If so, It'd be good to state it.
 
-The timing for this panel is calcuated from Hyundai T7, but it looks
-different to the vendor's kernel. But those timings settings is disabled, so
-I decided not to use it.
+Yes, that's the case. I can mention it in commit msg more explicitly.
+Anyway till now, Exynos platform always used IRQ_TYPE_NONE. Also vendor
+kernel uses it. However this did not affect the platform. I didn't dig
+too much into it but it seemts that __irq_set_trigger wasn't called
+before for these interrupts.
 
-I attach them as references:
-/* From Hyundai T7 */
-static struct s3cfb_lcd hs101h = {
-	.width = 1280,
-	.height = 800,
-	.bpp = 24,
-	.freq = 60,
+> 
+> - You've used the IRQ_TYPE_LEVEL_HIGH macro everywhere, but didn't use
+>   the GIC_SPI macro as the first argument of each interrupt specifier.
+>   I'm by no mean a fan of these macros, but you should at least have
+>   some consistency inside an interrupt specifier.
 
-	.timing = {
-		.h_fp = 49,
-		.h_bp = 17,
-		.h_sw = 33,
-		.v_fp = 4,
-		.v_fpe = 1,
-		.v_bp = 15,
-		.v_bpe = 1,
-		.v_sw = 6,
-	},
+I wanted to fix here only the error itself. Using GIC_SPI instead of 0
+is not related so I replaced it in separate patches [1]. Keeping such
+change separate makes testing easy - dtx_diff.
 
-	.polarity = {
-		.rise_vclk = 0,
-		.inv_hsync = 1,
-		.inv_vsync = 1,
-		.inv_vden = 0,
-	},
-};
-/* From vendor */
-static struct s3cfb_lcd dummy_mipi_lcd = {                                                                                   
-	.width = 800,                                                                                 
-        .height = 1280,                                         
-        .bpp = 24,                                                                             
-        .freq = 60,                                                                                                 
-        .timing = {                                                                                                          
-                .h_fp = 16,                                                                                            
-                .h_bp = 140,                                                                                        
-                .h_sw = 14,                                                                                             
-                .v_fp = 8,                                                                                               
-                //.v_fpe = 2,                                                                                                 
-                .v_bp = 4,                                                                                               
-                //.v_bpe = 1,                                                                                                 
-                .v_sw = 4,                                                                                              
-                .cmd_allow_len = 4,                                                                                           
-        },                                                                                                                    
-                                                                                                                              
-        .polarity = {                                                                                                         
-                .rise_vclk = 0,                                                                                          
-                .inv_hsync = 0,                                                                                               
-                .inv_vsync = 0,                                                                                               
-                .inv_vden = 0,                                                                                                
-        },                                                                                                                    
-}
+Best regards,
+Krzysztof
 
-
-Randy Li (2):
-  ARM: dts: samsung: add rga-lvds panel in itop elite
-  drm/panel: Add support for Chunghwa CLAA070WP03XG panel
-
- .../display/panel/chunghwa,claa070wp03xg.txt       |  7 +++
- arch/arm/boot/dts/exynos4412-itop-elite.dts        | 54 +++++++++++++++++++++-
- drivers/gpu/drm/panel/panel-simple.c               | 27 +++++++++++
- 3 files changed, 86 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1] https://patchwork.kernel.org/patch/9336781/
