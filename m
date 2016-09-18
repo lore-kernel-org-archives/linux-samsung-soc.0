@@ -1,73 +1,38 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add entries for sound support on
- Odroid-XU board
-Date: Sat, 17 Sep 2016 22:00:17 +0200
-Message-ID: <20160917200017.GA13666@kozik-lap>
-References: <CGME20160916112217eucas1p1694395dda2a1e8cdf562007ed8141542@eucas1p1.samsung.com>
- <1474024920-32744-1-git-send-email-s.nawrocki@samsung.com>
- <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
- <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC PATCH 00/10] ARM: dts: exynos: Fix invalid GIC interrupt flags
+Date: Sun, 18 Sep 2016 10:49:36 +0200
+Message-ID: <CAMuHMdUGsVKzye7rVzmHMvmskL+tnE5kDnctfmiHnmHX88bh4w@mail.gmail.com>
+References: <1474054971-16831-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35601 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751982AbcIQUAW (ORCPT
+Received: from mail-io0-f170.google.com ([209.85.223.170]:33216 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755127AbcIRIth (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 17 Sep 2016 16:00:22 -0400
-Received: by mail-lf0-f65.google.com with SMTP id s64so6484835lfs.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 Sep 2016 13:00:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
+        Sun, 18 Sep 2016 04:49:37 -0400
+In-Reply-To: <1474054971-16831-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alban Browaeys <alban.browaeys@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
 
-On Fri, Sep 16, 2016 at 01:58:32PM +0200, Krzysztof Kozlowski wrote:
-> On 09/16/2016 01:25 PM, Sylwester Nawrocki wrote:
-> > On 09/16/2016 01:22 PM, Sylwester Nawrocki wrote:
-> >> This patch adds device nodes for the AUDSS clock controller,
-> >> peripheral DMA 0/1 controllers and the Audio Subsystem I2S controller.
-> >> These entries are required for sound support on Odroid-XU board.
-> >>
-> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> ---
-> >> This patch depends on a patch adding clock ID macro definitions.
-> >> I'm going to provide a topic branch containing required changes.
-> >>
-> >> Changes since v1:
-> >>  - GIC_SPI, IRQ_TYPE_NONE used in the PDMA and max98080 interrupt
-> >>    specifiers,
-> >>  - assigned-clock-* properties moved to respective controller
-> >>    nodes.
-> > 
-> > And here is a pull request containing clk dependency patches:
-> > 
-> > The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
-> > 
-> >   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-exynos54x0-dt
-> > 
-> > for you to fetch changes up to 58d6506f327e3d192998ba03632f546da221b8d8:
-> > 
-> >   clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks (2016-09-09
-> > 10:13:02 +0200)
-> > 
-> 
-> Pulled and applied, thanks!
->
+Hi Krzysztof,
 
-This does not boot...
-http://www.krzk.eu/builders/boot-odroid-xu-exynos/builds/216
-http://www.krzk.eu/builders/boot-odroid-xu-multi_v7/builds/195
+On Fri, Sep 16, 2016 at 9:42 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Marek (internally), Geert and Alban reported errors like:
+>         genirq: Setting trigger mode 0 for irq 16 failed (gic_set_type+0x0/0x68)
 
-I am going to send pull request this weekend (or Monday) so probably this
-won't be included. If by any chance you prepare a fix soon, then it
-will save me from rebasing the branch.
+I didn't report these on Exynos, though, so I think you should drop my
+Reported-by.
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
