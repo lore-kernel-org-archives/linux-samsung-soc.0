@@ -1,105 +1,90 @@
-From: Randy Li <ayaka@soulik.info>
-Subject: [RFC PATCH v2 1/2] ARM: dts: samsung: add rga-lvds panel in itop elite
-Date: Sun, 18 Sep 2016 22:27:38 +0800
-Message-ID: <1474208859-10045-2-git-send-email-ayaka@soulik.info>
-References: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:56490 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758528AbcIRO2e (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2016 10:28:34 -0400
-In-Reply-To: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: [RFC PATCH v2 0/2] adding panel claa070wp03xg support for exynos
+Date: Sun, 18 Sep 2016 22:27:37 +0800
+Message-ID: <1474208859-10045-1-git-send-email-ayaka@soulik.info>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org, Randy Li <ayaka@soulik.info>
 
-It is actually a lvds panel connected through a rga-lvds bridge.
-The touchscreen is communicated with i2c bus but the driver is not
-support now.
+I am trying to add LCD panel with LVDS interface for exynos 4412 topeet
+itop. That board using a bridge chip to convert the parallel RGB signal
+to LVDS signal. I could make a fb0 node appear in system now. But I can't
+make it work yet. redirecting the urandom to fb0 won't make anything
+change in panel.
 
-Signed-off-by: Randy Li <ayaka@soulik.info>
----
- arch/arm/boot/dts/exynos4412-itop-elite.dts | 54 +++++++++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 2 deletions(-)
+The timing for this panel is calcuated from Hyundai T7, but it looks
+different to the vendor's kernel. But those timings settings is disabled, so
+I decided not to use it.
 
-diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-index b08705e..9ef0505 100644
---- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
-+++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
-@@ -138,6 +138,36 @@
- 		assigned-clocks = <&clock CLK_MOUT_CAM0>;
- 		assigned-clock-parents = <&clock CLK_XUSBXTI>;
- 	};
-+
-+	vcc_sys_lcd: sys-lcd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	panel: panel@0 {
-+		compatible = "chunghwa,claa070wp03xg";
-+
-+		power-supply = <&vcc_sys_lcd>;
-+		enable-gpios = <&gpl0 2 GPIO_ACTIVE_HIGH>;
-+		backlight = <&bl>;
-+
-+		port {
-+			lcd_ep: endpoint {
-+				remote-endpoint = <&rga_lvds>;
-+			};
-+		};
-+	};
-+
-+	bl: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 1 5000000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <0 5 12 16 32 64 128 255>;
-+		default-brightness-level = <5>;
-+		power-supply = <&vcc_sys_lcd>;
-+	};
- };
- 
- &adc {
-@@ -215,9 +245,9 @@
- 
- &pwm {
- 	status = "okay";
--	pinctrl-0 = <&pwm0_out>;
-+	pinctrl-0 = <&pwm0_out &pwm1_out>;
- 	pinctrl-names = "default";
--	samsung,pwm-outputs = <0>;
-+	samsung,pwm-outputs = <0>, <1>;
- };
- 
- &sdhci_2 {
-@@ -238,3 +268,23 @@
- &serial_2 {
- 	status = "okay";
- };
-+
-+&i2c_3 {
-+	status = "okay";
-+};
-+
-+&fimd {
-+	pinctrl-0 = <&lcd_clk &lcd_data24>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@3 {
-+			reg = <3>;
-+			rga_lvds: endpoint {
-+				remote-endpoint = <&lcd_ep>;
-+			};
-+		};
-+	};
-+};
+I attach them as references:
+/* From Hyundai T7 */
+static struct s3cfb_lcd hs101h = {
+	.width = 1280,
+	.height = 800,
+	.bpp = 24,
+	.freq = 60,
+
+	.timing = {
+		.h_fp = 49,
+		.h_bp = 17,
+		.h_sw = 33,
+		.v_fp = 4,
+		.v_fpe = 1,
+		.v_bp = 15,
+		.v_bpe = 1,
+		.v_sw = 6,
+	},
+
+	.polarity = {
+		.rise_vclk = 0,
+		.inv_hsync = 1,
+		.inv_vsync = 1,
+		.inv_vden = 0,
+	},
+};
+/* From vendor */
+static struct s3cfb_lcd dummy_mipi_lcd = {                                                                                   
+	.width = 800,                                                                                 
+        .height = 1280,                                         
+        .bpp = 24,                                                                             
+        .freq = 60,                                                                                                 
+        .timing = {                                                                                                          
+                .h_fp = 16,                                                                                            
+                .h_bp = 140,                                                                                        
+                .h_sw = 14,                                                                                             
+                .v_fp = 8,                                                                                               
+                //.v_fpe = 2,                                                                                                 
+                .v_bp = 4,                                                                                               
+                //.v_bpe = 1,                                                                                                 
+                .v_sw = 4,                                                                                              
+                .cmd_allow_len = 4,                                                                                           
+        },                                                                                                                    
+                                                                                                                              
+        .polarity = {                                                                                                         
+                .rise_vclk = 0,                                                                                          
+                .inv_hsync = 0,                                                                                               
+                .inv_vsync = 0,                                                                                               
+                .inv_vden = 0,                                                                                                
+        },                                                                                                                    
+}
+
+
+Randy Li (2):
+  ARM: dts: samsung: add rga-lvds panel in itop elite
+  drm/panel: Add support for Chunghwa CLAA070WP03XG panel
+
+ .../display/panel/chunghwa,claa070wp03xg.txt       |  7 +++
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 54 +++++++++++++++++++++-
+ drivers/gpu/drm/panel/panel-simple.c               | 27 +++++++++++
+ 3 files changed, 86 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
