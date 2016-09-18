@@ -1,44 +1,311 @@
-From: Baoyou Xie <baoyou.xie@linaro.org>
-Subject: [PATCH] drm/exynos: mark exynos_dp_crtc_clock_enable() static
-Date: Sun, 18 Sep 2016 21:58:30 +0800
-Message-ID: <1474207110-16111-1-git-send-email-baoyou.xie@linaro.org>
+From: Randy Li <ayaka@soulik.info>
+Subject: [PATCH v7 2/3] ARM: dts: add TOPEET itop elite based board
+Date: Sun, 18 Sep 2016 22:01:18 +0800
+Message-ID: <1474207279-9662-3-git-send-email-ayaka@soulik.info>
+References: <1474207279-9662-1-git-send-email-ayaka@soulik.info>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:35939 "EHLO
-        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755853AbcIRN6r (ORCPT
+Received: from kozue.soulik.info ([108.61.200.231]:56425 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758069AbcIROBt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2016 09:58:47 -0400
-Received: by mail-pa0-f46.google.com with SMTP id id6so40053891pad.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Sep 2016 06:58:46 -0700 (PDT)
+        Sun, 18 Sep 2016 10:01:49 -0400
+In-Reply-To: <1474207279-9662-1-git-send-email-ayaka@soulik.info>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jingoohan1@gmail.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, baoyou.xie@linaro.org, xie.baoyou@zte.com.cn
+To: devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, Randy Li <ayaka@soulik.info>
 
-We get 1 warning when building kernel with W=1:
-drivers/gpu/drm/exynos/exynos_dp.c:46:5: warning: no previous prototype for 'exynos_dp_crtc_clock_enable' [-Wmissing-prototypes]
+The TOPEET itop exynos 4412 have three versions base board. The
+Elite version is the cheap one without too much peripheral devices
+on it.
 
-In fact, this function is only used in the file in which it is
-declared and don't need a declaration, but can be made static.
-So this patch marks it 'static'.
+Currently supported are serial console, wired networking(USB),
+USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
+PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
+enabled.
 
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+The FIMC is not used for camera currently, I enabled it just for a
+colorspace convertor.
+
+Signed-off-by: Randy Li <ayaka@soulik.info>
 ---
- drivers/gpu/drm/exynos/exynos_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/arm/samsung/samsung-boards.txt        |   3 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 240 +++++++++++++++++++++
+ 3 files changed, 244 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 4f08505..528229f 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -43,7 +43,7 @@ struct exynos_dp_device {
- 	struct analogix_dp_plat_data plat_data;
- };
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+index 0ea7f14..5160fa5 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+@@ -22,6 +22,9 @@ Required root node properties:
+   * FriendlyARM
+ 	- "friendlyarm,tiny4412"  - for Exynos4412-based FriendlyARM
+ 				    TINY4412 board.
++  * TOPEET
++	- "topeet,itop4412-elite" - for Exynos4412-based TOPEET
++                                    Elite base board.
  
--int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
-+static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
- 				bool enable)
- {
- 	struct exynos_dp_device *dp = to_dp(plat_data);
+   * Google
+ 	- "google,pi"		- for Exynos5800-based Google Peach Pi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index befcd26..d709f74 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -136,6 +136,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4210-universal_c210.dtb \
++	exynos4412-itop-elite.dtb \
+ 	exynos4412-odroidu3.dtb \
+ 	exynos4412-odroidx.dtb \
+ 	exynos4412-odroidx2.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+new file mode 100644
+index 0000000..b08705e
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+@@ -0,0 +1,240 @@
++/*
++ * TOPEET's Exynos4412 based itop board device tree source
++ *
++ * Copyright (c) 2016 SUMOMO Computer Association
++ *			https://www.sumomo.mobi
++ *			Randy Li <ayaka@soulik.info>
++ *
++ * Device tree source file for TOPEET iTop Exynos 4412 core board
++ * which is based on Samsung's Exynos4412 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include <dt-bindings/pwm/pwm.h>
++#include <dt-bindings/sound/samsung-i2s.h>
++#include "exynos4412-itop-scp-core.dtsi"
++
++/ {
++	model = "TOPEET iTop 4412 Elite board based on Exynos4412";
++	compatible = "topeet,itop4412-elite", "samsung,exynos4412", "samsung,exynos4";
++
++	chosen {
++		bootargs = "root=/dev/mmcblk0p2 rw rootfstype=ext4 rootdelay=1 rootwait";
++		stdout-path = "serial2:115200n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led2 {
++			label = "red:system";
++			gpios = <&gpx1 0 GPIO_ACTIVE_HIGH>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++
++		led3 {
++			label = "red:user";
++			gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
++			default-state = "off";
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		home {
++			label = "GPIO Key Home";
++			linux,code = <KEY_HOME>;
++			gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
++		};
++
++		back {
++			label = "GPIO Key Back";
++			linux,code = <KEY_BACK>;
++			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
++		};
++
++		sleep {
++			label = "GPIO Key Sleep";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
++		};
++
++		vol-up {
++			label = "GPIO Key Vol+";
++			linux,code = <KEY_UP>;
++			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
++		};
++
++		vol-down {
++			label = "GPIO Key Vol-";
++			linux,code = <KEY_DOWN>;
++			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "wm-sound";
++
++		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
++				<&clock_audss EXYNOS_MOUT_I2S>,
++				<&clock_audss EXYNOS_DOUT_SRP>,
++				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
++				<&clock_audss EXYNOS_MOUT_AUDSS>;
++		assigned-clock-rates = <0>,
++				<0>,
++				<112896000>,
++				<11289600>;
++
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		simple-audio-card,widgets =
++			"Microphone", "Mic Jack",
++			"Line", "Line In",
++			"Line", "Line Out",
++			"Speaker", "Speaker",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HP_L",
++			"Headphone Jack", "HP_R",
++			"Speaker", "SPK_LP",
++			"Speaker", "SPK_LN",
++			"Speaker", "SPK_RP",
++			"Speaker", "SPK_RN",
++			"LINPUT1", "Mic Jack",
++			"LINPUT3", "Mic Jack",
++			"RINPUT1", "Mic Jack",
++			"RINPUT2", "Mic Jack";
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&codec>;
++			clocks = <&i2s0 CLK_I2S_CDCLK>;
++			system-clock-frequency = <11289600>;
++		};
++	};
++
++	beep {
++		compatible = "pwm-beeper";
++		pwms = <&pwm 0 4000000 PWM_POLARITY_INVERTED>;
++	};
++
++	camera: camera {
++		pinctrl-0 = <&cam_port_a_clk_active>;
++		pinctrl-names = "default";
++		status = "okay";
++		assigned-clocks = <&clock CLK_MOUT_CAM0>;
++		assigned-clock-parents = <&clock CLK_XUSBXTI>;
++	};
++};
++
++&adc {
++	vdd-supply = <&ldo3_reg>;
++	status = "okay";
++};
++
++&ehci {
++	status = "okay";
++	/* In order to reset USB ethernet */
++	samsung,vbus-gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
++
++	port@0 {
++		status = "okay";
++	};
++
++	port@2 {
++		status = "okay";
++	};
++};
++
++&exynos_usbphy {
++	status = "okay";
++};
++
++&fimc_0 {
++	status = "okay";
++	assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++			<&clock CLK_SCLK_FIMC0>;
++	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++	assigned-clock-rates = <0>, <176000000>;
++};
++
++&hsotg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
++&i2c_4 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <100000>;
++	pinctrl-0 = <&i2c4_bus>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	codec: wm8960@1a {
++		compatible = "wlf,wm8960";
++		reg = <0x1a>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "MCLK1";
++		wlf,shared-lrclk;
++		#sound-dai-cells = <0>;
++	};
++};
++
++&i2s0 {
++	pinctrl-0 = <&i2s0_bus>;
++	pinctrl-names = "default";
++	status = "okay";
++	clocks = <&clock_audss EXYNOS_I2S_BUS>,
++		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
++		 <&clock_audss EXYNOS_SCLK_I2S>;
++	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++};
++
++&pinctrl_1 {
++	ether-reset {
++		samsung,pins = "gpc0-1";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&pwm {
++	status = "okay";
++	pinctrl-0 = <&pwm0_out>;
++	pinctrl-names = "default";
++	samsung,pwm-outputs = <0>;
++};
++
++&sdhci_2 {
++	bus-width = <4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
++	pinctrl-names = "default";
++	cd-gpio = <&gpx0 7 GPIO_ACTIVE_LOW>;
++	cap-sd-highspeed;
++	vmmc-supply = <&ldo23_reg>;
++	vqmmc-supply = <&ldo17_reg>;
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
 -- 
 2.7.4
