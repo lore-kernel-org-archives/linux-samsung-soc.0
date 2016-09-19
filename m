@@ -1,136 +1,106 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add entries for sound support on
- Odroid-XU board
-Date: Mon, 19 Sep 2016 10:47:46 +0200
-Message-ID: <5fef2bec-adcf-0230-cd00-7fc29cbbcd32@samsung.com>
-References: <CGME20160916112217eucas1p1694395dda2a1e8cdf562007ed8141542@eucas1p1.samsung.com>
- <1474024920-32744-1-git-send-email-s.nawrocki@samsung.com>
- <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
- <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
- <20160917200017.GA13666@kozik-lap>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] mtd: s3c2410: add device tree support
+Date: Mon, 19 Sep 2016 10:11:55 +0100
+Message-ID: <20160919091155.GB11118@leverpostej>
+References: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50542 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760326AbcISIrw (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:56856 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752255AbcISJMQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 04:47:52 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODQ00FL1TRPKZ50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2016 09:47:49 +0100 (BST)
-In-reply-to: <20160917200017.GA13666@kozik-lap>
+        Mon, 19 Sep 2016 05:12:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, robh+dt@kernel.org, kgene@kernel.org, k.kozlowski@samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 09/17/2016 10:00 PM, Krzysztof Kozlowski wrote:
-> On Fri, Sep 16, 2016 at 01:58:32PM +0200, Krzysztof Kozlowski wrote:
->> > On 09/16/2016 01:25 PM, Sylwester Nawrocki wrote:
->>> > > On 09/16/2016 01:22 PM, Sylwester Nawrocki wrote:
->>>> > >> This patch adds device nodes for the AUDSS clock controller,
->>>> > >> peripheral DMA 0/1 controllers and the Audio Subsystem I2S controller.
->>>> > >> These entries are required for sound support on Odroid-XU board.
->>>> > >>
->>>> > >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>> > >> ---
->>>> > >> This patch depends on a patch adding clock ID macro definitions.
->>>> > >> I'm going to provide a topic branch containing required changes.
->>>> > >>
->>>> > >> Changes since v1:
->>>> > >>  - GIC_SPI, IRQ_TYPE_NONE used in the PDMA and max98080 interrupt
->>>> > >>    specifiers,
->>>> > >>  - assigned-clock-* properties moved to respective controller
->>>> > >>    nodes.
->>> > > 
->>> > > And here is a pull request containing clk dependency patches:
->>> > > 
->>> > > The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
->>> > > 
->>> > >   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
->>> > > 
->>> > > are available in the git repository at:
->>> > > 
->>> > >   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-exynos54x0-dt
->>> > > 
->>> > > for you to fetch changes up to 58d6506f327e3d192998ba03632f546da221b8d8:
->>> > > 
->>> > >   clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks (2016-09-09
->>> > > 10:13:02 +0200)
->>> > > 
->> > 
->> > Pulled and applied, thanks!
->
-> This does not boot...
-> http://www.krzk.eu/builders/boot-odroid-xu-exynos/builds/216
-> http://www.krzk.eu/builders/boot-odroid-xu-multi_v7/builds/195
+On Sat, Sep 17, 2016 at 12:22:40PM -0300, Sergio Prado wrote:
+> Tested on FriendlyARM Mini2440
 > 
-> I am going to send pull request this weekend (or Monday) so probably this
-> won't be included. If by any chance you prepare a fix soon, then it
-> will save me from rebasing the branch.
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  70 +++++++++++
+>  drivers/mtd/nand/s3c2410.c                         | 129 ++++++++++++++++++++-
+>  include/linux/platform_data/mtd-nand-s3c2410.h     |   1 +
+>  3 files changed, 195 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> new file mode 100644
+> index 000000000000..1c39f6cf483b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> @@ -0,0 +1,70 @@
+> +* Samsung S3C2410 and compatible NAND flash controller
+> +
+> +Required properties:
+> +- compatible : The possible values are:
+> +	"samsung,s3c2410-nand"
+> +	"samsung,s3c2412-nand"
+> +	"samsung,s3c2440-nand"
+> +	"samsung,s3c6400-nand"
+> +- reg : register's location and length.
+> +- #address-cells, #size-cells : see nand.txt
+> +- clocks : phandle to the nand controller clock
+> +- clock-names : must contain "nand"
 
-Oops, indeed, I didn't test with just that part of clk changes applied.
-The only resolution here I can see is to pull my whole clk branch,
-it has already been pulled to the upstream clk tree.
+Is there only one clock feeding into the NAND block? Is it actually
+called "nand", or does the datasheet not give the input a nme?
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+> +
+> +Optional properties:
+> +- samsung,tacls : time for active CLE/ALE to nWE/nOE
+> +- samsung,twrph0 : active time for nWE/nOE
+> +- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+If these are necessary, what units are these in?
 
-are available in the git repository at:
+> +- samsung,ignore_unset_ecc : boolean to ignore error when we have
+> +                             0xff,0xff,0xff read ECC, on the
+> +                             assumption that it is an un-eccd page
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-samsung
+s/_/-/ in property names, please.
 
-for you to fetch changes up to be95d2c7d918b2b7b973378a1e92bdc6559c21f9:
+That said, this name reads like policy rather than a HW description.
+Why/when is this necessary to set?
 
-  clk: samsung: Add support for EPLL on exynos5410 (2016-09-09 17:35:13 +0200)
+[...]
 
-----------------------------------------------------------------
-In addition to a few clean up and code consolidation patches this
-includes:
-- addition of sound subsystem related clocks for Exynos5410 SoC
-  (EPLL, PDMA) and support for "samsung,exynos5410-audss-clock"
-  compatible in the clk-exynos-audss driver,
-- addition of DRAM controller related clocks for exynos5420,
-- MAINTAINERS update adding Chanwoo Choi as the Samsung SoC
-  clock drivers co-maintainer.
+> +	of_property_read_u32(np, "samsung,tacls",  &pdata->tacls);
+> +	of_property_read_u32(np, "samsung,twrph0", &pdata->twrph0);
+> +	of_property_read_u32(np, "samsung,twrph1", &pdata->twrph1);
 
-----------------------------------------------------------------
-Chanwoo Choi (5):
-      clk: samsung: Add clock IDs for the CMU_CDREX (DRAM Express Controller)
-      MAINTAINERS: Add myself as Samsung SoC clock drivers co-maintainer
-      clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
-      clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
-      clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
+Are all values in the range [0, 0xffffffff] valid for these? If not, it
+would be a good idea to sanity-check the values.
 
-Sylwester Nawrocki (7):
-      clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
-      clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
-      clk: samsung: Use common registration function for pll2550x
-      clk: samsung: clk-exynos-audss: controller variant handling rework
-      clk: samsung: clk-exynos-audss: Add exynos5410 compatible
-      clk: samsung: clk-exynos-audss: Whitespace and debug trace cleanup
-      clk: samsung: Add support for EPLL on exynos5410
+> +	if (of_get_property(np, "samsung,ignore_unset_ecc", NULL))
+> +		pdata->ignore_unset_ecc = 1;
 
- .../devicetree/bindings/clock/clk-exynos-audss.txt  |   4 +-
- .../devicetree/bindings/clock/exynos5410-clock.txt  |  21 +-
- MAINTAINERS                                         |   3 +
- drivers/clk/samsung/clk-exynos-audss.c              |  84 +++--
- drivers/clk/samsung/clk-exynos5260.c                | 350 ++++++++++-----------
- drivers/clk/samsung/clk-exynos5410.c                |  61 ++--
- drivers/clk/samsung/clk-exynos5420.c                |  37 +++
- drivers/clk/samsung/clk-exynos5440.c                |   9 +-
- drivers/clk/samsung/clk-pll.c                       | 154 ++++++---
- drivers/clk/samsung/clk-pll.h                       |   2 +
- include/dt-bindings/clock/exynos5410.h              |   3 +
- include/dt-bindings/clock/exynos5420.h              |  11 +-
- include/dt-bindings/clock/exynos5440.h              |   2 +
- 13 files changed, 453 insertions(+), 288 deletions(-)
+Use of_property_read_bool();
 
---
+[...]
+
+> +	for_each_available_child_of_node(np, child) {
+> +
+> +		sets->name = (char *)child->name;
+> +		sets->of_node = child;
+
+Strictly speaking, you should increment the child node refcount here, as
+you maintain a reference to it and its name field.
+
+> +		sets->nr_chips = 1;
+> +
+> +		if (!of_property_match_string(child, "nand-ecc-mode", "none"))
+> +			sets->disable_ecc = 1;
+> +
+> +		if (of_get_property(child, "nand-on-flash-bbt", NULL))
+> +			sets->flash_bbt = 1;
+
+Use of_property_read_bool().
+
 Thanks,
-Sylwester
+Mark.
