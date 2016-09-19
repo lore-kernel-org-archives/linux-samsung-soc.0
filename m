@@ -1,30 +1,36 @@
-From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Subject: [RFC PATCH v3 0/2] adding panel claa070wp03xg support for exynos
-Date: Tue, 20 Sep 2016 03:02:49 +0800
-Message-ID: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] ARM: dts: samsung: add rga-lvds panel in itop
+ elite
+Date: Mon, 19 Sep 2016 16:12:33 -0300
+Message-ID: <CAOMZO5Agngx7b24bo3w7S84xtwZV81c-wAszs0B96FZhMeMW8A@mail.gmail.com>
+References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
+ <1474311771-23321-2-git-send-email-ayaka@soulik.info>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1474311771-23321-2-git-send-email-ayaka@soulik.info>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Randy Li <ayaka@soulik.info>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>, krzk@kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The timings issue is still here, this version is just some modifications
-in dts file.
-
-Randy Li (2):
-  ARM: dts: samsung: add rga-lvds panel in itop elite
-  drm/panel: Add support for Chunghwa CLAA070WP03XG panel
-
- .../display/panel/chunghwa,claa070wp03xg.txt       |  7 +++
- arch/arm/boot/dts/exynos4412-itop-elite.dts        | 54 +++++++++++++++++++++-
- drivers/gpu/drm/panel/panel-simple.c               | 27 +++++++++++
- 3 files changed, 86 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gTW9uLCBTZXAgMTksIDIwMTYgYXQgNDowMiBQTSwgUmFuZHkgTGkgPGF5YWthQHNvdWxpay5p
+bmZvPiB3cm90ZToKCj4gKyAgICAgICB2Y2Nfc3lzX2xjZDogc3lzLWxjZCB7Cj4gKyAgICAgICAg
+ICAgICAgIGNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKPiArICAgICAgICAgICAgICAg
+cmVndWxhdG9yLW5hbWUgPSAidmNjXzV2IjsKPiArICAgICAgICAgICAgICAgcmVndWxhdG9yLW1p
+bi1taWNyb3ZvbHQgPSA8NTAwMDAwMD47Cj4gKyAgICAgICAgICAgICAgIHJlZ3VsYXRvci1tYXgt
+bWljcm92b2x0ID0gPDUwMDAwMDA+Owo+ICsgICAgICAgICAgICAgICBncGlvID0gPCZncGwwIDQg
+R1BJT19BQ1RJVkVfSElHSD47CgpJcyB0aGlzIHJlYWxseSBhY3RpdmUgaGlnaD8gSWYgc28sIHlv
+dSBzaG91bGQgYWRkIHRoZQonZW5hYmxlLWFjdGl2ZS1oaWdoJyBwcm9wZXJ0eS4KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
