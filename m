@@ -1,63 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
-Date: Mon, 19 Sep 2016 11:23:06 +0100
-Message-ID: <20160919102306.GJ10189@sirena.org.uk>
-References: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
- <1474207751-9804-2-git-send-email-ayaka@soulik.info>
- <20160919083342.GE10189@sirena.org.uk>
- <1BBB8B7D-0C1B-48E0-A516-402515A04568@soulik.info>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] mtd: s3c2410: add device tree support
+Date: Mon, 19 Sep 2016 12:44:07 +0200
+Message-ID: <f8907616-0d6b-37ef-1419-f6aedf3ddbdc@samsung.com>
+References: <CGME20160917152404eucas1p2ca0ebfe59dd762f5cdd611a9dd3cd1a5@eucas1p2.samsung.com>
+ <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UlxN1C6awaFNesUv"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57426 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759487AbcISKXr (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57182 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754765AbcISKoO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 06:23:47 -0400
-Content-Disposition: inline
-In-Reply-To: <1BBB8B7D-0C1B-48E0-A516-402515A04568@soulik.info>
+        Mon, 19 Sep 2016 06:44:14 -0400
+In-reply-to: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ayaka <ayaka@soulik.info>
-Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, k.kozlowski@samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+On 09/17/2016 05:22 PM, Sergio Prado wrote:
+> +static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
+> +{
+> +	const struct s3c24XX_nand_devtype_data *devtype_data;
+> +	struct s3c2410_platform_nand *pdata;
+> +	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
+> +	struct device_node *np = pdev->dev.of_node, *child;
+> +	const struct of_device_id *of_id;
+> +	struct s3c2410_nand_set *sets;
+> +
+> +	of_id = of_match_device(s3c24xx_nand_dt_ids, &pdev->dev);
+> +	if (!of_id)
+> +		return 1;
+> +
+> +	devtype_data = of_id->data;
 
---UlxN1C6awaFNesUv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You could make it a bit simpler with of_device_get_match_data().
 
-On Mon, Sep 19, 2016 at 05:41:50PM +0800, Ayaka wrote:
-> =E5=BE=9E=E6=88=91=E7=9A=84 iPad =E5=82=B3=E9=80=81
-
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
-
-> > Are you *sure* simple-card works for AC'97?
-
-> Not sure. I could hardly find a AC97 device in embedded market. If it
-> didn't I could disable it. I have only tested simple sound card for
-> i2s and SPDIF.
-
-I would be very surprised if it does and AC'97 is supposed to be
-enumerable and not need a card binding anyway so best to remove this one
-for the time being.
-
---UlxN1C6awaFNesUv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJX37yJAAoJECTWi3JdVIfQKCEH/jcdL3TMu28relB+MD7pvak7
-c3qkaukosdLSGSZpo1WZQVyiMsqeHrFB9pVT1lYh79jkyZtRNtf5mZFpvl45LNED
-hw0oEidEMTVFLP2/9sKBUKRLW05jutaxHGppW+TSzdqCYECkVsTAYwWz4SOceP7x
-i4goC7JXGOhJdSR3aaa0E6Re7gtR2taZs5S4hNxCfpP9coXWAC/ES8n2+p5U53jI
-R15+O9PgjSbg5BXvt6zkhTkyL5J6+schXoOuy6rZdk7EwvUp79uw6044AZerPtqY
-7a+sOCosFNgbgHrZbSN0whK25FS/87ee/WRgNPZMjgatqMkrujQdsOWx9t7ttow=
-=rYr5
------END PGP SIGNATURE-----
-
---UlxN1C6awaFNesUv--
+--
+Thanks,
+Sylwester
