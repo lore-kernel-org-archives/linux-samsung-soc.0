@@ -1,35 +1,82 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/3] ARM: soc: exynos: Drivers for v4.9
-Date: Mon, 19 Sep 2016 17:02:40 +0200
-Message-ID: <2663426.T8oUku18qe@wuerfel>
-References: <1474216788-17282-1-git-send-email-krzk@kernel.org> <1474216788-17282-2-git-send-email-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
+Date: Mon, 19 Sep 2016 17:15:12 +0200
+Message-ID: <20160919151512.GA2012@kozik-book>
+References: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
+ <1474207751-9804-2-git-send-email-ayaka@soulik.info>
+ <20160918144247.GA11009@kozik-book>
+ <1bc1a3db-8120-a2ae-0f55-a5c1bb154dc6@soulik.info>
+ <20160918180938.GA19279@kozik-book>
+ <30C748BE-359C-4212-96D3-C2A71E1094C3@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:63255 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbcISPDV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 11:03:21 -0400
-In-Reply-To: <1474216788-17282-2-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <30C748BE-359C-4212-96D3-C2A71E1094C3@soulik.info>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ayaka <ayaka@soulik.info>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, alsa-devel@alsa-project.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On Sunday, September 18, 2016 6:39:46 PM CEST Krzysztof Kozlowski wrote:
-> Samsung drivers/soc update for v4.9:
-> 1. Allow compile testing of exynos-mct clocksource driver on ARM64.
-> 2. Document Exynos5433 PMU compatible (already used by clkout driver and more
->    will be coming soon).
+On Mon, Sep 19, 2016 at 09:21:54AM +0800, Ayaka wrote:
+> 
+> 
+> 從我的 iPad 傳送
+> 
+> > Krzysztof Kozlowski <krzk@kernel.org> 於 2016年9月19日 上午2:09 寫道：
+> > 
+> >> On Sun, Sep 18, 2016 at 11:12:34PM +0800, ayaka wrote:
+> >> 
+> >> 
+> >>> On 09/18/2016 10:42 PM, Krzysztof Kozlowski wrote:
+> >>>> On Sun, Sep 18, 2016 at 10:09:11PM +0800, Randy Li wrote:
+> >>>> It is simple sound card time, we could assign different codec
+> >>>> to a interface without making a specific driver for it.
+> >>> The description does not convince me and I do not see an example using
+> >>> this. Could you provide one?
+> >> Sorry, the board TOPEET iTop 4412 for exynos 4412 I posted supported codec
+> >> with I2S interface using the simple sound card. Anyway, it is no harm to
+> >> make them explicitly right?
+> > 
+> > kbuild gave you the answer...
+> Not sure how comes, even time I sent patches to you, I at lease build and run it once.
 
-Pulled into next/drivers, thanks
+Building only one ARM config may be sufficient for trivial changes but
+for more complex stuff (especially when dealing with Kconfig) needs more
+build coverage. 
 
-Just for my understanding: why do we need the exynos-mct driver on ARM64
-but not the delay-timer portion of it?
+On Ubuntu you can easily cross compile for x86, x86_64,
+arm, arm64 and powerpc. You can also use this cross-compiler collection:
+https://www.kernel.org/pub/tools/crosstool
 
-Is there an advantage in using MCT over the architected timer on these
-chips? If so, should we also have a way to use it as the delay timer?
 
-	Arnd
+> > 
+> >> Or I have to enabled those codec support for
+> >> SMDK, which is not needed for the other board.
+> > 
+> > If I understand correctly, the i2s/pcm etc are still needed but not
+> > built in config choosing only simple-audio-card? I tried now such
+> > configuration on Odroid XU and indeed the audio is missing.
+> > 
+> > The patch looks like needed but:
+> > 1. You need to describe the rationale in commit message, why it is
+> > needed.
+> Sorry about English.
+> > 2. You need to fix it... kbuild pointed build issues.
+> I would check that.
+> > 
+> > Other solution would be to add a user-selectable option for generic
+> > sound on Samsung using simple audio card. The option would then select
+> > appropriate SND_SAMSUNG* options, just like specific drivers do. I see
+> > that sh does like this. Personally this approach seems simpler to me -
+> > the defconfig could just choose this generic sound instead of many
+> > SND_SAMSUNG_* sub-options.
+> I would just what  Freescale did. It included those options entries in a sub-menu.
+> I don't those options should be bound either, as a board may only use one of interface or controller(like TOPEET iTOP would only use i2s. No place for SPDIF, AC97 nor PCM.)
+
+OK, sounds good for me. Thanks for explanation.
+
+
+Best regards,
+Krzysztof
