@@ -1,50 +1,104 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 2/3] ARM: dts: add TOPEET itop elite based board
-Date: Sun, 18 Sep 2016 21:23:14 +0200
-Message-ID: <20160918192314.GA6676@kozik-book>
-References: <1474207279-9662-1-git-send-email-ayaka@soulik.info>
- <1474207279-9662-3-git-send-email-ayaka@soulik.info>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1474207279-9662-3-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Ayaka <ayaka@soulik.info>
+Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
+Date: Mon, 19 Sep 2016 09:21:54 +0800
+Message-ID: <30C748BE-359C-4212-96D3-C2A71E1094C3@soulik.info>
+References: <1474207751-9804-1-git-send-email-ayaka@soulik.info> <1474207751-9804-2-git-send-email-ayaka@soulik.info> <20160918144247.GA11009@kozik-book> <1bc1a3db-8120-a2ae-0f55-a5c1bb154dc6@soulik.info> <20160918180938.GA19279@kozik-book>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+        charset=big5
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from kozue.soulik.info ([108.61.200.231]:56799 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932543AbcISBWE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 18 Sep 2016 21:22:04 -0400
+In-Reply-To: <20160918180938.GA19279@kozik-book>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Sep 18, 2016 at 10:01:18PM +0800, Randy Li wrote:
-> The TOPEET itop exynos 4412 have three versions base board. The
-> Elite version is the cheap one without too much peripheral devices
-> on it.
+
+
+從我的 iPad 傳送
+
+> Krzysztof Kozlowski <krzk@kernel.org> 於 2016年9月19日 上午2:09 寫道：
 > 
-> Currently supported are serial console, wired networking(USB),
-> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
-> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
-> enabled.
+>> On Sun, Sep 18, 2016 at 11:12:34PM +0800, ayaka wrote:
+>> 
+>> 
+>>> On 09/18/2016 10:42 PM, Krzysztof Kozlowski wrote:
+>>>> On Sun, Sep 18, 2016 at 10:09:11PM +0800, Randy Li wrote:
+>>>> It is simple sound card time, we could assign different codec
+>>>> to a interface without making a specific driver for it.
+>>> The description does not convince me and I do not see an example using
+>>> this. Could you provide one?
+>> Sorry, the board TOPEET iTop 4412 for exynos 4412 I posted supported codec
+>> with I2S interface using the simple sound card. Anyway, it is no harm to
+>> make them explicitly right?
 > 
-> The FIMC is not used for camera currently, I enabled it just for a
-> colorspace convertor.
+> kbuild gave you the answer...
+Not sure how comes, even time I sent patches to you, I at lease build and run it once.
 > 
-> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-> ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   3 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos4412-itop-elite.dts        | 240 +++++++++++++++++++++
->  3 files changed, 244 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
-
-Looks good to me, for the record:
-
-Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
-You don't need to resend the third patch. Rob took it.
-
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Or I have to enabled those codec support for
+>> SMDK, which is not needed for the other board.
+> 
+> If I understand correctly, the i2s/pcm etc are still needed but not
+> built in config choosing only simple-audio-card? I tried now such
+> configuration on Odroid XU and indeed the audio is missing.
+> 
+> The patch looks like needed but:
+> 1. You need to describe the rationale in commit message, why it is
+> needed.
+Sorry about English.
+> 2. You need to fix it... kbuild pointed build issues.
+I would check that.
+> 
+> Other solution would be to add a user-selectable option for generic
+> sound on Samsung using simple audio card. The option would then select
+> appropriate SND_SAMSUNG* options, just like specific drivers do. I see
+> that sh does like this. Personally this approach seems simpler to me -
+> the defconfig could just choose this generic sound instead of many
+> SND_SAMSUNG_* sub-options.
+I would just what  Freescale did. It included those options entries in a sub-menu.
+I don't those options should be bound either, as a board may only use one of interface or controller(like TOPEET iTOP would only use i2s. No place for SPDIF, AC97 nor PCM.)
+> 
+> Best regards,
+> Krzysztof
+> 
+>>> 
+>>> Best regards,
+>>> Krzysztof
+>>> 
+>>> 
+>>>> Signed-off-by: Randy Li <ayaka@soulik.info>
+>>>> ---
+>>>> sound/soc/samsung/Kconfig | 8 ++++----
+>>>> 1 file changed, 4 insertions(+), 4 deletions(-)
+>>>> 
+>>>> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+>>>> index 7b722b0..b7b3a38 100644
+>>>> --- a/sound/soc/samsung/Kconfig
+>>>> +++ b/sound/soc/samsung/Kconfig
+>>>> @@ -18,18 +18,18 @@ config SND_S3C2412_SOC_I2S
+>>>>    select SND_S3C_I2SV2_SOC
+>>>> config SND_SAMSUNG_PCM
+>>>> -    tristate
+>>>> +    tristate "Samsung PCM interface support"
+>>>> config SND_SAMSUNG_AC97
+>>>> -    tristate
+>>>> +    tristate "Samsung AC97 controller support"
+>>>>    select SND_SOC_AC97_BUS
+>>>> config SND_SAMSUNG_SPDIF
+>>>> -    tristate
+>>>> +    tristate "Samsung SPDIF transmitter support"
+>>>>    select SND_SOC_SPDIF
+>>>> config SND_SAMSUNG_I2S
+>>>> -    tristate
+>>>> +    tristate "Samsung I2S interface support"
+>>>> config SND_SOC_SAMSUNG_NEO1973_WM8753
+>>>>    tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
+>>>> -- 
+>>>> 2.7.4
+>> 
