@@ -1,46 +1,86 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/3] ARM: soc: exynos: Drivers for v4.9
-Date: Mon, 19 Sep 2016 17:53:02 +0200
-Message-ID: <20160919155302.GA4447@kozik-book>
-References: <1474216788-17282-1-git-send-email-krzk@kernel.org>
- <1474216788-17282-2-git-send-email-krzk@kernel.org>
- <2663426.T8oUku18qe@wuerfel>
+Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
+Date: Mon, 19 Sep 2016 18:37:09 +0200
+Message-ID: <20160919163709.GA5981@kozik-book>
+References: <1474300318-26767-1-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2663426.T8oUku18qe@wuerfel>
+In-Reply-To: <1474300318-26767-1-git-send-email-ayaka@soulik.info>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Randy Li <ayaka@soulik.info>
+Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 19, 2016 at 05:02:40PM +0200, Arnd Bergmann wrote:
-> On Sunday, September 18, 2016 6:39:46 PM CEST Krzysztof Kozlowski wrote:
-> > Samsung drivers/soc update for v4.9:
-> > 1. Allow compile testing of exynos-mct clocksource driver on ARM64.
-> > 2. Document Exynos5433 PMU compatible (already used by clkout driver and more
-> >    will be coming soon).
+On Mon, Sep 19, 2016 at 11:51:58PM +0800, Randy Li wrote:
+> It is simple sound card time, we could assign different codec
+> to a interface without making a specific driver for it. The SPDIF
+> and I2S interface for Samsung would be possible used by simple-sound-card,
+> but not sure about the PCM.
 > 
-> Pulled into next/drivers, thanks
+> Signed-off-by: Randy Li <ayaka@soulik.info>
+> ---
+>  sound/soc/samsung/Kconfig | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
 > 
-> Just for my understanding: why do we need the exynos-mct driver on ARM64
-> but not the delay-timer portion of it?
+> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+> index 7b722b0..210ce38 100644
+> --- a/sound/soc/samsung/Kconfig
+> +++ b/sound/soc/samsung/Kconfig
+> @@ -1,3 +1,7 @@
+> +menu "SoC Audio for Samsung CPUs"
 
-I think we want all of it but Doug's optimization 3252a646aa2c
-("clocksource: exynos_mct: Only use 32-bits where possible") is not
-ARM64 friendly. One way of dealing with it would be to prepare two
-versions of exynos4_read_current_timer(). One reading only lower 32-bit
-value for ARMv7 and second (slow) reading lower and upper for ARMv8.
+This adds a new empty layer. One have to choose this menu and then
+SND_SOC_SAMSUNG to access specific options. Instead of new menu, the
+SND_SOC_SAMSUNG should be menuconfig. The existing "depends on" and the
+one you added below won't be needed then, I think. Just have to be sure
+that nothing selects particular drivers without selecting
+SND_SOC_SAMSUNG first.
 
-> 
-> Is there an advantage in using MCT over the architected timer on these
-> chips? If so, should we also have a way to use it as the delay timer?
-
-No, there is no real advantage... except that the SoC has some
-interesting "characteristics"... The timers are tightly coupled. Very
-tightly. I spent a lot of time and failed to boot my ARMv8 board without
-some MCT magic.
 
 Best regards,
 Krzysztof
+
+
+> +
+> +comment "Common SoC Audio options for Samsung CPUs:"
+> +
+>  config SND_SOC_SAMSUNG
+>  	tristate "ASoC support for Samsung"
+>  	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
+> @@ -18,18 +22,22 @@ config SND_S3C2412_SOC_I2S
+>  	select SND_S3C_I2SV2_SOC
+>  
+>  config SND_SAMSUNG_PCM
+> -	tristate
+> +	tristate "Samsung PCM interface support"
+> +	depends on SND_SOC_SAMSUNG
+>  
+>  config SND_SAMSUNG_AC97
+>  	tristate
+>  	select SND_SOC_AC97_BUS
+> +	depends on SND_SOC_SAMSUNG
+>  
+>  config SND_SAMSUNG_SPDIF
+> -	tristate
+> +	tristate "Samsung SPDIF transmitter support"
+> +	depends on SND_SOC_SAMSUNG
+>  	select SND_SOC_SPDIF
+>  
+>  config SND_SAMSUNG_I2S
+> -	tristate
+> +	tristate "Samsung I2S interface support"
+> +	depends on I2C && SND_SOC_SAMSUNG
+>  
+>  config SND_SOC_SAMSUNG_NEO1973_WM8753
+>  	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
+> @@ -229,3 +237,5 @@ config SND_SOC_ARNDALE_RT5631_ALC5631
+>          depends on SND_SOC_SAMSUNG && I2C
+>          select SND_SAMSUNG_I2S
+>          select SND_SOC_RT5631
+> +
+> +endmenu
+> -- 
+> 2.7.4
+> 
