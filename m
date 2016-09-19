@@ -1,106 +1,39 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] mtd: s3c2410: add device tree support
-Date: Mon, 19 Sep 2016 10:11:55 +0100
-Message-ID: <20160919091155.GB11118@leverpostej>
-References: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Ayaka <ayaka@soulik.info>
+Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
+Date: Mon, 19 Sep 2016 17:41:50 +0800
+Message-ID: <1BBB8B7D-0C1B-48E0-A516-402515A04568@soulik.info>
+References: <1474207751-9804-1-git-send-email-ayaka@soulik.info> <1474207751-9804-2-git-send-email-ayaka@soulik.info> <20160919083342.GE10189@sirena.org.uk>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+        charset=big5
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56856 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbcISJMQ (ORCPT
+Received: from kozue.soulik.info ([108.61.200.231]:57005 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbcISJmF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 05:12:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
+        Mon, 19 Sep 2016 05:42:05 -0400
+In-Reply-To: <20160919083342.GE10189@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, robh+dt@kernel.org, kgene@kernel.org, k.kozlowski@samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 17, 2016 at 12:22:40PM -0300, Sergio Prado wrote:
-> Tested on FriendlyARM Mini2440
+
+
+從我的 iPad 傳送
+
+> Mark Brown <broonie@kernel.org> 於 2016年9月19日 下午4:33 寫道：
 > 
-> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> ---
->  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  70 +++++++++++
->  drivers/mtd/nand/s3c2410.c                         | 129 ++++++++++++++++++++-
->  include/linux/platform_data/mtd-nand-s3c2410.h     |   1 +
->  3 files changed, 195 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+>> On Sun, Sep 18, 2016 at 10:09:11PM +0800, Randy Li wrote:
+>> 
+>> It is simple sound card time, we could assign different codec
+>> to a interface without making a specific driver for it.
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> new file mode 100644
-> index 000000000000..1c39f6cf483b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> @@ -0,0 +1,70 @@
-> +* Samsung S3C2410 and compatible NAND flash controller
-> +
-> +Required properties:
-> +- compatible : The possible values are:
-> +	"samsung,s3c2410-nand"
-> +	"samsung,s3c2412-nand"
-> +	"samsung,s3c2440-nand"
-> +	"samsung,s3c6400-nand"
-> +- reg : register's location and length.
-> +- #address-cells, #size-cells : see nand.txt
-> +- clocks : phandle to the nand controller clock
-> +- clock-names : must contain "nand"
-
-Is there only one clock feeding into the NAND block? Is it actually
-called "nand", or does the datasheet not give the input a nme?
-
-> +
-> +Optional properties:
-> +- samsung,tacls : time for active CLE/ALE to nWE/nOE
-> +- samsung,twrph0 : active time for nWE/nOE
-> +- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive
-
-If these are necessary, what units are these in?
-
-> +- samsung,ignore_unset_ecc : boolean to ignore error when we have
-> +                             0xff,0xff,0xff read ECC, on the
-> +                             assumption that it is an un-eccd page
-
-s/_/-/ in property names, please.
-
-That said, this name reads like policy rather than a HW description.
-Why/when is this necessary to set?
-
-[...]
-
-> +	of_property_read_u32(np, "samsung,tacls",  &pdata->tacls);
-> +	of_property_read_u32(np, "samsung,twrph0", &pdata->twrph0);
-> +	of_property_read_u32(np, "samsung,twrph1", &pdata->twrph1);
-
-Are all values in the range [0, 0xffffffff] valid for these? If not, it
-would be a good idea to sanity-check the values.
-
-> +	if (of_get_property(np, "samsung,ignore_unset_ecc", NULL))
-> +		pdata->ignore_unset_ecc = 1;
-
-Use of_property_read_bool();
-
-[...]
-
-> +	for_each_available_child_of_node(np, child) {
-> +
-> +		sets->name = (char *)child->name;
-> +		sets->of_node = child;
-
-Strictly speaking, you should increment the child node refcount here, as
-you maintain a reference to it and its name field.
-
-> +		sets->nr_chips = 1;
-> +
-> +		if (!of_property_match_string(child, "nand-ecc-mode", "none"))
-> +			sets->disable_ecc = 1;
-> +
-> +		if (of_get_property(child, "nand-on-flash-bbt", NULL))
-> +			sets->flash_bbt = 1;
-
-Use of_property_read_bool().
-
-Thanks,
-Mark.
+>> config SND_SAMSUNG_AC97
+>> -    tristate
+>> +    tristate "Samsung AC97 controller support"
+>>    select SND_SOC_AC97_BUS
+> 
+> Are you *sure* simple-card works for AC'97?
+Not sure. I could hardly find a AC97 device in embedded market. If it didn't I could disable it. I have only tested simple sound card for i2s and SPDIF.
