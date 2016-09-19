@@ -1,74 +1,136 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] make samsung interface entries explicitly
-Date: Mon, 19 Sep 2016 09:33:01 +0100
-Message-ID: <20160919083301.GD10189@sirena.org.uk>
-References: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add entries for sound support on
+ Odroid-XU board
+Date: Mon, 19 Sep 2016 10:47:46 +0200
+Message-ID: <5fef2bec-adcf-0230-cd00-7fc29cbbcd32@samsung.com>
+References: <CGME20160916112217eucas1p1694395dda2a1e8cdf562007ed8141542@eucas1p1.samsung.com>
+ <1474024920-32744-1-git-send-email-s.nawrocki@samsung.com>
+ <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
+ <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
+ <20160917200017.GA13666@kozik-lap>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8178512804345380994=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Randy Li <ayaka@soulik.info>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, linux-kernel@vger.kernel.org, tiwai@suse.com, krzk@kernel.org, lgirdwood@gmail.com, s.nawrocki@samsung.com, perex@perex.cz, linux-arm-kernel@lists.infradead.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============8178512804345380994==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
-Content-Disposition: inline
-
-
---at6+YcpfzWZg/htY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Sep 18, 2016 at 10:09:10PM +0800, Randy Li wrote:
-> I found those modules should be selected directly, as I
-> only use the simple sound card.
-
-Please don't send cover letters for single patches, if there is anything
-that needs saying put it in the changelog of the patch or after the ---
-if it's administrative stuff.  This reduces mail volume and ensures that=20
-any important information is recorded in the changelog rather than being
-lost.=20
-
---at6+YcpfzWZg/htY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJX36KxAAoJECTWi3JdVIfQiK4H/RdoYt/i8SIImzxTgBRi4T+p
-ldfiAH5f9tlHCsshS3KtDLhqpBJ+1mzZ2IkaNb8oBbrMgOsIC3QRV7pc4KzzdpMC
-2IPLLzmxfpzWf0aA7CxBA57nsgfe8sj9mYTVliRci1MSkb3Qau4WTLmkXhCa+hZ/
-I+sMfp2I5tnIZgovBNh5IBro67b/nJdd4tjytTo62W8TrCrO1u9BApSYr8/xNzLS
-K5zAWljHfegzjYPUXDTiTYLmJwR3aXxj2Ch9NsGckKFgCOt5NUBLbcmPWGocgQgv
-Z6SDD+w+2UrLiAkCL+KzCVSi4M/lZ+VX6abTfhnAafDroMVMhZe5zW7IwQB4z9Q=
-=YJcx
------END PGP SIGNATURE-----
-
---at6+YcpfzWZg/htY--
-
-
---===============8178512804345380994==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50542 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760326AbcISIrw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 19 Sep 2016 04:47:52 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0ODQ00FL1TRPKZ50@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2016 09:47:49 +0100 (BST)
+In-reply-to: <20160917200017.GA13666@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 09/17/2016 10:00 PM, Krzysztof Kozlowski wrote:
+> On Fri, Sep 16, 2016 at 01:58:32PM +0200, Krzysztof Kozlowski wrote:
+>> > On 09/16/2016 01:25 PM, Sylwester Nawrocki wrote:
+>>> > > On 09/16/2016 01:22 PM, Sylwester Nawrocki wrote:
+>>>> > >> This patch adds device nodes for the AUDSS clock controller,
+>>>> > >> peripheral DMA 0/1 controllers and the Audio Subsystem I2S controller.
+>>>> > >> These entries are required for sound support on Odroid-XU board.
+>>>> > >>
+>>>> > >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>>> > >> ---
+>>>> > >> This patch depends on a patch adding clock ID macro definitions.
+>>>> > >> I'm going to provide a topic branch containing required changes.
+>>>> > >>
+>>>> > >> Changes since v1:
+>>>> > >>  - GIC_SPI, IRQ_TYPE_NONE used in the PDMA and max98080 interrupt
+>>>> > >>    specifiers,
+>>>> > >>  - assigned-clock-* properties moved to respective controller
+>>>> > >>    nodes.
+>>> > > 
+>>> > > And here is a pull request containing clk dependency patches:
+>>> > > 
+>>> > > The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+>>> > > 
+>>> > >   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+>>> > > 
+>>> > > are available in the git repository at:
+>>> > > 
+>>> > >   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-exynos54x0-dt
+>>> > > 
+>>> > > for you to fetch changes up to 58d6506f327e3d192998ba03632f546da221b8d8:
+>>> > > 
+>>> > >   clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks (2016-09-09
+>>> > > 10:13:02 +0200)
+>>> > > 
+>> > 
+>> > Pulled and applied, thanks!
+>
+> This does not boot...
+> http://www.krzk.eu/builders/boot-odroid-xu-exynos/builds/216
+> http://www.krzk.eu/builders/boot-odroid-xu-multi_v7/builds/195
+> 
+> I am going to send pull request this weekend (or Monday) so probably this
+> won't be included. If by any chance you prepare a fix soon, then it
+> will save me from rebasing the branch.
 
---===============8178512804345380994==--
+Oops, indeed, I didn't test with just that part of clk changes applied.
+The only resolution here I can see is to pull my whole clk branch,
+it has already been pulled to the upstream clk tree.
+
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.9-samsung
+
+for you to fetch changes up to be95d2c7d918b2b7b973378a1e92bdc6559c21f9:
+
+  clk: samsung: Add support for EPLL on exynos5410 (2016-09-09 17:35:13 +0200)
+
+----------------------------------------------------------------
+In addition to a few clean up and code consolidation patches this
+includes:
+- addition of sound subsystem related clocks for Exynos5410 SoC
+  (EPLL, PDMA) and support for "samsung,exynos5410-audss-clock"
+  compatible in the clk-exynos-audss driver,
+- addition of DRAM controller related clocks for exynos5420,
+- MAINTAINERS update adding Chanwoo Choi as the Samsung SoC
+  clock drivers co-maintainer.
+
+----------------------------------------------------------------
+Chanwoo Choi (5):
+      clk: samsung: Add clock IDs for the CMU_CDREX (DRAM Express Controller)
+      MAINTAINERS: Add myself as Samsung SoC clock drivers co-maintainer
+      clk: samsung: exynos5260: Move struct samsung_cmu_info to init section
+      clk: samsung: exynos5410: Use samsung_cmu_register_one() to simplify code
+      clk: samsung: exynos5420: Add clocks for CMU_CDREX domain
+
+Sylwester Nawrocki (7):
+      clk: samsung: exynos5410: Add clock IDs for PDMA and EPLL clocks
+      clk: samsung: exynos5410: Expose the peripheral DMA gate clocks
+      clk: samsung: Use common registration function for pll2550x
+      clk: samsung: clk-exynos-audss: controller variant handling rework
+      clk: samsung: clk-exynos-audss: Add exynos5410 compatible
+      clk: samsung: clk-exynos-audss: Whitespace and debug trace cleanup
+      clk: samsung: Add support for EPLL on exynos5410
+
+ .../devicetree/bindings/clock/clk-exynos-audss.txt  |   4 +-
+ .../devicetree/bindings/clock/exynos5410-clock.txt  |  21 +-
+ MAINTAINERS                                         |   3 +
+ drivers/clk/samsung/clk-exynos-audss.c              |  84 +++--
+ drivers/clk/samsung/clk-exynos5260.c                | 350 ++++++++++-----------
+ drivers/clk/samsung/clk-exynos5410.c                |  61 ++--
+ drivers/clk/samsung/clk-exynos5420.c                |  37 +++
+ drivers/clk/samsung/clk-exynos5440.c                |   9 +-
+ drivers/clk/samsung/clk-pll.c                       | 154 ++++++---
+ drivers/clk/samsung/clk-pll.h                       |   2 +
+ include/dt-bindings/clock/exynos5410.h              |   3 +
+ include/dt-bindings/clock/exynos5420.h              |  11 +-
+ include/dt-bindings/clock/exynos5440.h              |   2 +
+ 13 files changed, 453 insertions(+), 288 deletions(-)
+
+--
+Thanks,
+Sylwester
