@@ -1,82 +1,30 @@
-From: Randy Li <ayaka@soulik.info>
-Subject: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa CLAA070WP03XG panel
-Date: Tue, 20 Sep 2016 03:02:51 +0800
-Message-ID: <1474311771-23321-3-git-send-email-ayaka@soulik.info>
-References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org, Randy Li <ayaka@soulik.info>
+From: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: [RFC PATCH v3 0/2] adding panel claa070wp03xg support for exynos
+Date: Tue, 20 Sep 2016 03:02:49 +0800
+Message-ID: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
-supported by the simple panel driver.
+The timings issue is still here, this version is just some modifications
+in dts file.
 
-Signed-off-by: Randy Li <ayaka@soulik.info>
----
- .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
- drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+Randy Li (2):
+  ARM: dts: samsung: add rga-lvds panel in itop elite
+  drm/panel: Add support for Chunghwa CLAA070WP03XG panel
+
+ .../display/panel/chunghwa,claa070wp03xg.txt       |  7 +++
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 54 +++++++++++++++++++++-
+ drivers/gpu/drm/panel/panel-simple.c               | 27 +++++++++++
+ 3 files changed, 86 insertions(+), 2 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
 
-diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-new file mode 100644
-index 0000000..dd22685
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-@@ -0,0 +1,7 @@
-+Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "chunghwa,claa070wp03xg"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index f178998..3204e6b 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -583,6 +583,30 @@ static const struct panel_desc avic_tm070ddh03 = {
- 	},
- };
- 
-+static const struct drm_display_mode chunghwa_claa070wp03xg_mode = {
-+	.clock = 66770,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 49,
-+	.hsync_end = 800 + 49 + 33,
-+	.htotal = 800 + 49 + 33 + 17,
-+	.vdisplay = 1280,
-+	.vsync_start = 1280 + 1,
-+	.vsync_end = 1280 + 1 + 7,
-+	.vtotal = 1280 + 1 + 7 + 15,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
-+};
-+
-+static const struct panel_desc chunghwa_claa070wp03xg = {
-+	.modes = &chunghwa_claa070wp03xg_mode,
-+	.num_modes = 1,
-+	.bpc = 6,
-+	.size = {
-+		.width = 94,
-+		.height = 150,
-+	},
-+};
-+
- static const struct drm_display_mode chunghwa_claa101wa01a_mode = {
- 	.clock = 72070,
- 	.hdisplay = 1366,
-@@ -1544,6 +1568,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "avic,tm070ddh03",
- 		.data = &avic_tm070ddh03,
- 	}, {
-+		.compatible = "chunghwa,claa070wp03xg",
-+		.data = &chunghwa_claa070wp03xg,
-+	}, {
- 		.compatible = "chunghwa,claa101wa01a",
- 		.data = &chunghwa_claa101wa01a
- 	}, {
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
