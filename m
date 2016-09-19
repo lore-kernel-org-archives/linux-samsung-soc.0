@@ -1,13 +1,12 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: make audio interface/controller explicitly
-Date: Mon, 19 Sep 2016 09:33:42 +0100
-Message-ID: <20160919083342.GE10189@sirena.org.uk>
+Subject: Re: [PATCH] make samsung interface entries explicitly
+Date: Mon, 19 Sep 2016 09:33:01 +0100
+Message-ID: <20160919083301.GD10189@sirena.org.uk>
 References: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
- <1474207751-9804-2-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7840731993418887820=="
+Content-Type: multipart/mixed; boundary="===============8178512804345380994=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1474207751-9804-2-git-send-email-ayaka@soulik.info>
+In-Reply-To: <1474207751-9804-1-git-send-email-ayaka@soulik.info>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,47 +21,46 @@ Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@sams
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============7840731993418887820==
+--===============8178512804345380994==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+	protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
 Content-Disposition: inline
 
 
---pY3vCvL1qV+PayAL
+--at6+YcpfzWZg/htY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 18, 2016 at 10:09:11PM +0800, Randy Li wrote:
+On Sun, Sep 18, 2016 at 10:09:10PM +0800, Randy Li wrote:
+> I found those modules should be selected directly, as I
+> only use the simple sound card.
 
-> It is simple sound card time, we could assign different codec
-> to a interface without making a specific driver for it.
+Please don't send cover letters for single patches, if there is anything
+that needs saying put it in the changelog of the patch or after the ---
+if it's administrative stuff.  This reduces mail volume and ensures that=20
+any important information is recorded in the changelog rather than being
+lost.=20
 
->  config SND_SAMSUNG_AC97
-> -	tristate
-> +	tristate "Samsung AC97 controller support"
->  	select SND_SOC_AC97_BUS
-
-Are you *sure* simple-card works for AC'97?
-
---pY3vCvL1qV+PayAL
+--at6+YcpfzWZg/htY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJX36LmAAoJECTWi3JdVIfQ8bsH/j5OQAtQh5koE3Hr79mMEhh3
-3tR9Q0iLYiPc/RRb+zf0FmE5cymA+FVzTA1KARY5Wm5BRCw60ZFZ2X2WK0I8eBvL
-TCHILJxxguHzip3MTVh7gsmc106qoWqoj5Iz+q/GHQC9aEa38mtaJVe9uNV81j5I
-4L5vyLGcj581tFbwoGukjqbjFuw9K8cknsrTxTU6mvY4HFjJJLT+oeiz9vGo+SqM
-NlmMpFVUhVmV7xPtsiCN9gpRXexpHFy6tJ+ptGZeALtzj8psMr6puUkg4nLRQ8Q2
-ZEhtWJJaR4x8srHAMgsSxskGTaTHq2yMF8w/F9QC8UlPPxWS/XRy8HInUAjQbA0=
-=KNL1
+iQEcBAEBCAAGBQJX36KxAAoJECTWi3JdVIfQiK4H/RdoYt/i8SIImzxTgBRi4T+p
+ldfiAH5f9tlHCsshS3KtDLhqpBJ+1mzZ2IkaNb8oBbrMgOsIC3QRV7pc4KzzdpMC
+2IPLLzmxfpzWf0aA7CxBA57nsgfe8sj9mYTVliRci1MSkb3Qau4WTLmkXhCa+hZ/
+I+sMfp2I5tnIZgovBNh5IBro67b/nJdd4tjytTo62W8TrCrO1u9BApSYr8/xNzLS
+K5zAWljHfegzjYPUXDTiTYLmJwR3aXxj2Ch9NsGckKFgCOt5NUBLbcmPWGocgQgv
+Z6SDD+w+2UrLiAkCL+KzCVSi4M/lZ+VX6abTfhnAafDroMVMhZe5zW7IwQB4z9Q=
+=YJcx
 -----END PGP SIGNATURE-----
 
---pY3vCvL1qV+PayAL--
+--at6+YcpfzWZg/htY--
 
 
---===============7840731993418887820==
+--===============8178512804345380994==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -73,4 +71,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============7840731993418887820==--
+--===============8178512804345380994==--
