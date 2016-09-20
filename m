@@ -1,406 +1,117 @@
-From: Sergio Prado <sergio.prado@e-labworks.com>
-Subject: Re: [PATCH] mtd: s3c2410: add device tree support
-Date: Mon, 19 Sep 2016 23:08:28 -0300
-Message-ID: <20160920020827.GA11294@n1>
-References: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
- <20160917193123.762587d0@bbrezillon>
+From: Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH v3 2/3] drm/bridge: analogix_dp: use jiffies to simulate
+ timeout loop
+Date: Tue, 20 Sep 2016 10:18:38 +0800
+Message-ID: <01b6f408-ba3b-b2c0-b9f2-097420ef96cb@rock-chips.com>
+References: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
+ <1473414290-335-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbLhXONEGfWP8B+bkJE+H0oAZb0hPyAP9SodNu-m3cXrGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160917193123.762587d0@bbrezillon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, k.kozlowski@samsung.com, richard@nod.at, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOw6vbLhXONEGfWP8B+bkJE+H0oAZb0hPyAP9SodNu-m3cXrGQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Sep 17, 2016 at 07:31:23PM +0200, Boris Brezillon wrote:
-> Hi Sergio,
-> 
-> On Sat, 17 Sep 2016 12:22:40 -0300
-> Sergio Prado <sergio.prado@e-labworks.com> wrote:
-> 
-> > Tested on FriendlyARM Mini2440
-> > 
-> > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> > ---
-> >  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  70 +++++++++++
-> 
-> DT maintainers usually ask people to keep the DT bindings doc in a
-> separate patch.
-
-Right. I'll send the DT bindings doc in a separate patch.
-
-> 
-> >  drivers/mtd/nand/s3c2410.c                         | 129 ++++++++++++++++++++-
-> >  include/linux/platform_data/mtd-nand-s3c2410.h     |   1 +
-> >  3 files changed, 195 insertions(+), 5 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> > new file mode 100644
-> > index 000000000000..1c39f6cf483b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> > @@ -0,0 +1,70 @@
-> > +* Samsung S3C2410 and compatible NAND flash controller
-> > +
-> > +Required properties:
-> > +- compatible : The possible values are:
-> > +	"samsung,s3c2410-nand"
-> > +	"samsung,s3c2412-nand"
-> > +	"samsung,s3c2440-nand"
-> > +	"samsung,s3c6400-nand"
-> > +- reg : register's location and length.
-> > +- #address-cells, #size-cells : see nand.txt
-> > +- clocks : phandle to the nand controller clock
-> > +- clock-names : must contain "nand"
-> > +
-> > +Optional properties:
-> > +- samsung,tacls : time for active CLE/ALE to nWE/nOE
-> > +- samsung,twrph0 : active time for nWE/nOE
-> > +- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive
-> 
-> Can you try to extract these information from the nand_sdr_timings
-> struct instead of passing it in your DT?
-
-OK. Looks like it is possible to extract the timings from
-nand_sdr_timings. I'll try to do it.
-
-> 
-> > +- samsung,ignore_unset_ecc : boolean to ignore error when we have
-> > +                             0xff,0xff,0xff read ECC, on the
-> > +                             assumption that it is an un-eccd page
-> > +
-> > +Optional children nodes:
-> > +Children nodes representing the available nand chips.
-> > +
-> > +Optional children properties:
-> > +- nand-ecc-mode : see nand.txt
-> > +- nand-on-flash-bbt : see nand.txt
-> > +
-> > +Each children device node may optionally contain a 'partitions' sub-node,
-> > +which further contains sub-nodes describing the flash partition mapping.
-> > +See partition.txt for more detail.
-> > +
-> > +Example:
-> > +
-> > +nand@4e000000 {
-> 
-> s/nand/nand-controller/
-
-Ops. My bad.
-
-> 
-> > +	compatible = "samsung,s3c2440-nand";
-> > +	reg = <0x4e000000 0x40>;
-> > +
-> > +	#address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +	clocks = <&clocks HCLK_NAND>;
-> > +	clock-names = "nand";
-> > +
-> > +	samsung,tacls = <0>;
-> > +	samsung,twrph0 = <25>;
-> > +	samsung,twrph1 = <15>;
-> 
-> As said above, I think these timings can be extracted from the
-> nand_sdr_timings struct, which is know automatically attached to
-> nand_chip at detection time.
-
-Right.
-
-> 
-> > +	samsung,ignore_unset_ecc;
-> 
-> Just discovered this ->ignore_unset_ecc property, and I don't
-> understand why it's here for...
-> Either you don't want to have ECC, and in this case you should set
-> NAND_ECC_NONE, or you want to have ECC calculated, and in this case,
-> the only valid situation where ECC bytes are 0xff is when the page is
-> erased.
-> 
-> If I'm right, please fix the driver instead of adding this DT property.
-> If I'm wrong, could you explain in more detail when you have ECC bytes
-> set to 0xff?
-
-That's what I initially thought, but I must confess I just focused on
-keeping the same interface. I'll try to understand better if this check is
-really necessary.
-
-> 
-> > +
-> > +	nand@0 {
-> 
-> @0 implies having a reg property. I don't see any in your example, and
-> it's not document in the required property list.
-> 
-> Is your controller able to connect to different CS?
-
-No, it is not necessary. I'll remove @0.
-
-> 
-> > +		nand-ecc-mode = "soft";
-> > +		nand-on-flash-bbt;
-> > +
-> > +		partitions {
-> > +			compatible = "fixed-partitions";
-> > +			#address-cells = <1>;
-> > +			#size-cells = <1>;
-> > +
-> > +			partition@0 {
-> > +				label = "u-boot";
-> > +				reg = <0 0x040000>;
-> > +			};
-> > +
-> > +			partition@40000 {
-> > +				label = "kernel";
-> > +				reg = <0x040000 0x500000>;
-> > +			};
-> > +		};
-> > +	};
-> > +};
-> > diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> > index d9309cf0ce2e..ecbb9c9c1e9a 100644
-> > --- a/drivers/mtd/nand/s3c2410.c
-> > +++ b/drivers/mtd/nand/s3c2410.c
-> > @@ -39,6 +39,8 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/cpufreq.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_device.h>
-> >  
-> >  #include <linux/mtd/mtd.h>
-> >  #include <linux/mtd/nand.h>
-> > @@ -185,6 +187,26 @@ struct s3c2410_nand_info {
-> >  #endif
-> >  };
-> >  
-> > +struct s3c24XX_nand_devtype_data {
-> > +	enum s3c_cpu_type type;
-> > +};
-> > +
-> > +struct s3c24XX_nand_devtype_data s3c2410_nand_devtype_data = {
-> > +	.type = TYPE_S3C2410,
-> > +};
-> > +
-> > +struct s3c24XX_nand_devtype_data s3c2412_nand_devtype_data = {
-> > +	.type = TYPE_S3C2412,
-> > +};
-> > +
-> > +struct s3c24XX_nand_devtype_data s3c2440_nand_devtype_data = {
-> > +	.type = TYPE_S3C2440,
-> > +};
-> > +
-> > +struct s3c24XX_nand_devtype_data s3c6400_nand_devtype_data = {
-> > +	.type = TYPE_S3C2412,
-> > +};
-> > +
-> >  /* conversion functions */
-> >  
-> >  static struct s3c2410_nand_mtd *s3c2410_nand_mtd_toours(struct mtd_info *mtd)
-> > @@ -813,6 +835,8 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
-> >  	struct nand_chip *chip = &nmtd->chip;
-> >  	void __iomem *regs = info->regs;
-> >  
-> > +	nand_set_flash_node(chip, set->of_node);
-> > +
-> >  	chip->write_buf    = s3c2410_nand_write_buf;
-> >  	chip->read_buf     = s3c2410_nand_read_buf;
-> >  	chip->select_chip  = s3c2410_nand_select_chip;
-> > @@ -947,6 +971,96 @@ static void s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
-> >  	}
-> >  }
-> >  
-> > +#ifdef CONFIG_OF_MTD
-> 
-> Hm, I thought this symbol had been dropped, but apparently I forgot to
-> remove it. You should make it dependent on CONFIG_OF, not CONFIG_OF_MTD.
-> 
-> Anyway, I'm not even sure this ifdef is needed. Just test if
-> pdev->dev.of_node is NULL in s3c24xx_nand_probe_dt() and return -1 in
-> this case.
-
-Right. I'll remove this ifdef.
-
-> 
-> > +static const struct of_device_id s3c24xx_nand_dt_ids[] = {
-> > +	{
-> > +		.compatible = "samsung,s3c2410-nand",
-> > +		.data = &s3c2410_nand_devtype_data,
-> > +	}, {
-> > +		.compatible = "samsung,s3c2412-nand",
-> > +		.data = &s3c2412_nand_devtype_data,
-> > +	}, {
-> > +		.compatible = "samsung,s3c2440-nand",
-> > +		.data = &s3c2440_nand_devtype_data,
-> > +	}, {
-> > +		.compatible = "samsung,s3c6400-nand",
-> > +		.data = &s3c6400_nand_devtype_data,
-> > +	},
-> > +	{ /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, s3c24xx_nand_dt_ids);
-> > +
-> > +static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
-> > +{
-> > +	const struct s3c24XX_nand_devtype_data *devtype_data;
-> > +	struct s3c2410_platform_nand *pdata;
-> > +	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
-> > +	struct device_node *np = pdev->dev.of_node, *child;
-> > +	const struct of_device_id *of_id;
-> > +	struct s3c2410_nand_set *sets;
-> > +
-> > +	of_id = of_match_device(s3c24xx_nand_dt_ids, &pdev->dev);
-> > +	if (!of_id)
-> > +		return 1;
-> > +
-> > +	devtype_data = of_id->data;
-> > +	info->cpu_type = devtype_data->type;
-> > +
-> > +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-> > +	if (!pdata)
-> > +		return -ENOMEM;
-> > +
-> > +	pdev->dev.platform_data = pdata;
-> > +
-> > +	of_property_read_u32(np, "samsung,tacls",  &pdata->tacls);
-> > +	of_property_read_u32(np, "samsung,twrph0", &pdata->twrph0);
-> > +	of_property_read_u32(np, "samsung,twrph1", &pdata->twrph1);
-> > +
-> > +	if (of_get_property(np, "samsung,ignore_unset_ecc", NULL))
-> > +		pdata->ignore_unset_ecc = 1;
-> > +
-> > +	pdata->nr_sets = of_get_child_count(np);
-> > +	if (!pdata->nr_sets)
-> > +		return 0;
-> > +
-> > +	sets = devm_kzalloc(&pdev->dev, sizeof(*sets) * pdata->nr_sets,
-> > +			   GFP_KERNEL);
-> > +	if (!sets)
-> > +		return -ENOMEM;
-> > +
-> > +	pdata->sets = sets;
-> > +
-> > +	for_each_available_child_of_node(np, child) {
-> > +
-> > +		sets->name = (char *)child->name;
-> > +		sets->of_node = child;
-> > +		sets->nr_chips = 1;
-> > +
-> > +		if (!of_property_match_string(child, "nand-ecc-mode", "none"))
-> > +			sets->disable_ecc = 1;
-> > +
-> > +		if (of_get_property(child, "nand-on-flash-bbt", NULL))
-> > +			sets->flash_bbt = 1;
-> > +
-> 
-> These properties are automatically extracted in nand_scan_ident(), why
-> do you need to parse them twice?
-
-Looks like the driver uses this properties before they are extracted in
-nand_scan_ident(). But I'll try to understand better what the driver is
-doing and prevent from parsing these properties twice.
-
-> 
-> > +		sets++;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +#else
-> > +static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
-> > +{
-> > +	return 1;
-> > +}
-> > +#endif
-> > +
-> > +static void s3c24xx_nand_probe_pdata(struct platform_device *pdev)
-> > +{
-> > +	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
-> > +
-> > +	info->cpu_type = platform_get_device_id(pdev)->driver_data;
-> > +}
-> > +
-> >  /* s3c24xx_nand_probe
-> >   *
-> >   * called by device layer when it finds a device matching
-> > @@ -956,8 +1070,7 @@ static void s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
-> >  */
-> >  static int s3c24xx_nand_probe(struct platform_device *pdev)
-> >  {
-> > -	struct s3c2410_platform_nand *plat = to_nand_plat(pdev);
-> > -	enum s3c_cpu_type cpu_type;
-> > +	struct s3c2410_platform_nand *plat;
-> >  	struct s3c2410_nand_info *info;
-> >  	struct s3c2410_nand_mtd *nmtd;
-> >  	struct s3c2410_nand_set *sets;
-> > @@ -967,8 +1080,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
-> >  	int nr_sets;
-> >  	int setno;
-> >  
-> > -	cpu_type = platform_get_device_id(pdev)->driver_data;
-> > -
-> >  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-> >  	if (info == NULL) {
-> >  		err = -ENOMEM;
-> > @@ -991,6 +1102,14 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
-> >  
-> >  	s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
-> >  
-> > +	err = s3c24xx_nand_probe_dt(pdev);
-> > +	if (err > 0)
-> > +		s3c24xx_nand_probe_pdata(pdev);
-> > +	else if (err < 0)
-> > +		goto exit_error;
-> > +
-> > +	plat = to_nand_plat(pdev);
-> > +
-> >  	/* allocate and map the resource */
-> >  
-> >  	/* currently we assume we have the one resource */
-> > @@ -999,7 +1118,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
-> >  
-> >  	info->device	= &pdev->dev;
-> >  	info->platform	= plat;
-> > -	info->cpu_type	= cpu_type;
-> >  
-> >  	info->regs = devm_ioremap_resource(&pdev->dev, res);
-> >  	if (IS_ERR(info->regs)) {
-> > @@ -1156,6 +1274,7 @@ static struct platform_driver s3c24xx_nand_driver = {
-> >  	.id_table	= s3c24xx_driver_ids,
-> >  	.driver		= {
-> >  		.name	= "s3c24xx-nand",
-> > +		.of_match_table = s3c24xx_nand_dt_ids,
-> 
-> If you keep the #ifdef CONFIG_OF section
-> 
-> 		.of_match_table = of_match_ptr(s3c24xx_nand_dt_ids),
-
-I'll remove the ifdef.
-
-> 
-> >  	},
-> >  };
-> >  
-> > diff --git a/include/linux/platform_data/mtd-nand-s3c2410.h b/include/linux/platform_data/mtd-nand-s3c2410.h
-> > index c55e42ee57fa..9d20871e4bbd 100644
-> > --- a/include/linux/platform_data/mtd-nand-s3c2410.h
-> > +++ b/include/linux/platform_data/mtd-nand-s3c2410.h
-> > @@ -40,6 +40,7 @@ struct s3c2410_nand_set {
-> >  	char			*name;
-> >  	int			*nr_map;
-> >  	struct mtd_partition	*partitions;
-> > +	struct device_node	*of_node;
-> >  };
-> >  
-> >  struct s3c2410_platform_nand {
-> 
-
--- 
-Sergio Prado
-Embedded Labworks
-Office: +55 11 2628-3461
-Mobile: +55 11 97123-3420
+SGkgU2VhbiwKCgpPbiAwOS8xMi8yMDE2IDA5OjUxIFBNLCBTZWFuIFBhdWwgd3JvdGU6Cj4gT24g
+RnJpLCBTZXAgOSwgMjAxNiBhdCA1OjQ0IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5j
+b20+IHdyb3RlOgo+PiBTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5j
+b20+Cj4+IC0tLQo+PiBDaGFuZ2VzIGluIHYzOgo+PiAtIFN1Z2dlc3RlZCBieSBTZWFuCj4+Cj4+
+IENoYW5nZXMgaW4gdjI6IE5vbmUKPj4KPj4gICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
+Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICAzICsrLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlk
+Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgIHwgMTggKysrKysrKysrLS0tLS0tLS0tCj4+
+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPj4K
+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
+ZHBfY29yZS5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
+b3JlLmgKPj4gaW5kZXggYTE1ZjA3Ni4uZDU2NGU5MCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gQEAgLTE2LDEw
+ICsxNiwxMSBAQAo+PiAgICNpbmNsdWRlIDxkcm0vZHJtX2NydGMuaD4KPj4gICAjaW5jbHVkZSA8
+ZHJtL2RybV9kcF9oZWxwZXIuaD4KPj4KPj4gLSNkZWZpbmUgRFBfVElNRU9VVF9MT09QX0NPVU5U
+IDEwMAo+PiAgICNkZWZpbmUgTUFYX0NSX0xPT1AgNQo+PiAgICNkZWZpbmUgTUFYX0VRX0xPT1Ag
+NQo+Pgo+PiArI2RlZmluZSBEUF9USU1FT1VUX0xPT1BfTVMgICAgICAgICAgICAgICAgICAgICBt
+c2Vjc190b19qaWZmaWVzKDEpCj4gVGhlIG5hbWUgc3VnZ2VzdHMgdGhlIHVuaXRzIGhlcmUgYXJl
+IG1zLCBidXQgeW91J3JlIHN0b3JpbmcgamlmZmllcy4KPiBEbyB0aGUgbXNlY3NfdG9famlmZmll
+cyBjb252ZXJzaW9uIGRvd24gYmVsb3cuCgpJIHN1ZGRlbmx5IHJlYWxpemVkIHRoYXQgJ2FuYWxv
+Z2l4X2RwX2NvcmUuYycgYWxzbyB1c2VkIHRoZSAKJ0RQX1RJTUVPVVRfTE9PUF9DT1VOVCcgbWFj
+cm9zLCBhbmQgJ2FuYWxvZ2l4X2RwX2NvcmUuYycgaGF2ZSBmb3VyIGtpbmRzIApvZiB0aW1lb3V0
+LAogICAtIERQX1RJTUVPVVRfTE9PUF9DT1VOVCAqIDF1cwogICAtIERQX1RJTUVPVVRfTE9PUF9D
+T1VOVCAqIDEwdXMKICAgLSBEUF9USU1FT1VUX0xPT1BfQ09VTlQgKiAxMDB1cwogICAtIERQX1RJ
+TUVPVVRfTE9PUF9DT1VOVCAqIDEwMDB1cwoKSSBtYXkgZ3Vlc3MgaXQncyBub3QgbmVjZXNzYXJ5
+IHRvIHJlcGxhY2UgdGhlICdEUF9USU1FT1VUX0xPT1BfQ09VTlQnIApub3cgIDotKQoKLSBZYWtp
+cgoKPgo+PiArCj4+ICAgLyogRFBfTUFYX0xBTkVfQ09VTlQgKi8KPj4gICAjZGVmaW5lIERQQ0Rf
+RU5IQU5DRURfRlJBTUVfQ0FQKHgpICAgICAgICAgICAgICgoKHgpID4+IDcpICYgMHgxKQo+PiAg
+ICNkZWZpbmUgRFBDRF9NQVhfTEFORV9DT1VOVCh4KSAgICAgICAgICAgICAgICAgKCh4KSAmIDB4
+MWYpCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
+Z2l4X2RwX3JlZy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
+cF9yZWcuYwo+PiBpbmRleCBhNGQxN2I4Li4xNWE0Y2YwIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gQEAgLTMzNSw3
+ICszMzUsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2dfcG93ZXJfZG93bihzdHJ1Y3Qg
+YW5hbG9naXhfZHBfZGV2aWNlICpkcCwKPj4gICB2b2lkIGFuYWxvZ2l4X2RwX2luaXRfYW5hbG9n
+X2Z1bmMoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4+ICAgewo+PiAgICAgICAgICB1
+MzIgcmVnOwo+PiAtICAgICAgIGludCB0aW1lb3V0X2xvb3AgPSAwOwo+PiArICAgICAgIHVuc2ln
+bmVkIGxvbmcgdGltZW91dDsKPj4KPj4gICAgICAgICAgYW5hbG9naXhfZHBfc2V0X2FuYWxvZ19w
+b3dlcl9kb3duKGRwLCBQT1dFUl9BTEwsIDApOwo+Pgo+PiBAQCAtMzUwLDkgKzM1MCw5IEBAIHZv
+aWQgYW5hbG9naXhfZHBfaW5pdF9hbmFsb2dfZnVuYyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNl
+ICpkcCkKPj4gICAgICAgICAgaWYgKGFuYWxvZ2l4X2RwX2dldF9wbGxfbG9ja19zdGF0dXMoZHAp
+ID09IFBMTF9VTkxPQ0tFRCkgewo+PiAgICAgICAgICAgICAgICAgIGFuYWxvZ2l4X2RwX3NldF9w
+bGxfcG93ZXJfZG93bihkcCwgMCk7Cj4+Cj4+ICsgICAgICAgICAgICAgICB0aW1lb3V0ID0gamlm
+ZmllcyArIERQX1RJTUVPVVRfTE9PUF9NUzsKPiB0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3Rv
+X2ppZmZpZXMoRFBfVElNRU9VVF9MT09QX01TKTsKPgo+PiAgICAgICAgICAgICAgICAgIHdoaWxl
+IChhbmFsb2dpeF9kcF9nZXRfcGxsX2xvY2tfc3RhdHVzKGRwKSA9PSBQTExfVU5MT0NLRUQpIHsK
+Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgdGltZW91dF9sb29wKys7Cj4+IC0gICAgICAgICAg
+ICAgICAgICAgICAgIGlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKHRpbWVfYWZ0ZXIoamlmZmllcywgdGltZW91
+dCkpIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkcC0+ZGV2
+LCAiZmFpbGVkIHRvIGdldCBwbGwgbG9jayBzdGF0dXNcbiIpOwo+PiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICByZXR1cm47Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICB9Cj4+
+IEBAIC01MDEsNyArNTAxLDcgQEAgaW50IGFuYWxvZ2l4X2RwX3N0YXJ0X2F1eF90cmFuc2FjdGlv
+bihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPj4gICB7Cj4+ICAgICAgICAgIGludCBy
+ZWc7Cj4+ICAgICAgICAgIGludCByZXR2YWwgPSAwOwo+PiAtICAgICAgIGludCB0aW1lb3V0X2xv
+b3AgPSAwOwo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgdGltZW91dDsKPj4KPj4gICAgICAgICAg
+LyogRW5hYmxlIEFVWCBDSCBvcGVyYXRpb24gKi8KPj4gICAgICAgICAgcmVnID0gcmVhZGwoZHAt
+PnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQVVYX0NIX0NUTF8yKTsKPj4gQEAgLTUwOSwxMCArNTA5
+LDEwIEBAIGludCBhbmFsb2dpeF9kcF9zdGFydF9hdXhfdHJhbnNhY3Rpb24oc3RydWN0IGFuYWxv
+Z2l4X2RwX2RldmljZSAqZHApCj4+ICAgICAgICAgIHdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSAr
+IEFOQUxPR0lYX0RQX0FVWF9DSF9DVExfMik7Cj4+Cj4+ICAgICAgICAgIC8qIElzIEFVWCBDSCBj
+b21tYW5kIHJlcGx5IHJlY2VpdmVkPyAqLwo+PiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsg
+RFBfVElNRU9VVF9MT09QX01TOwo+PiAgICAgICAgICByZWcgPSByZWFkbChkcC0+cmVnX2Jhc2Ug
+KyBBTkFMT0dJWF9EUF9JTlRfU1RBKTsKPj4gICAgICAgICAgd2hpbGUgKCEocmVnICYgUlBMWV9S
+RUNFSVYpKSB7Cj4+IC0gICAgICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPj4gLSAgICAgICAg
+ICAgICAgIGlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsKPj4gKyAg
+ICAgICAgICAgICAgIGlmICh0aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRwLT5kZXYsICJBVVggQ0ggY29tbWFuZCByZXBs
+eSBmYWlsZWQhXG4iKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVRJTUVE
+T1VUOwo+PiAgICAgICAgICAgICAgICAgIH0KPj4gQEAgLTEwNTUsNyArMTA1NSw3IEBAIHNzaXpl
+X3QgYW5hbG9naXhfZHBfdHJhbnNmZXIoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsCj4+
+ICAgewo+PiAgICAgICAgICB1MzIgcmVnOwo+PiAgICAgICAgICB1OCAqYnVmZmVyID0gbXNnLT5i
+dWZmZXI7Cj4+IC0gICAgICAgaW50IHRpbWVvdXRfbG9vcCA9IDA7Cj4+ICsgICAgICAgdW5zaWdu
+ZWQgbG9uZyB0aW1lb3V0Owo+PiAgICAgICAgICB1bnNpZ25lZCBpbnQgaTsKPj4gICAgICAgICAg
+aW50IG51bV90cmFuc2ZlcnJlZCA9IDA7Cj4+Cj4+IEBAIC0xMTIzLDEwICsxMTIzLDEwIEBAIHNz
+aXplX3QgYW5hbG9naXhfZHBfdHJhbnNmZXIoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAs
+Cj4+Cj4+ICAgICAgICAgIC8qIElzIEFVWCBDSCBjb21tYW5kIHJlcGx5IHJlY2VpdmVkPyAqLwo+
+PiAgICAgICAgICAvKiBUT0RPOiBXYWl0IGZvciBhbiBpbnRlcnJ1cHQgaW5zdGVhZCBvZiBsb29w
+aW5nPyAqLwo+PiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsgRFBfVElNRU9VVF9MT09QX01T
+Owo+PiAgICAgICAgICByZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRf
+U1RBKTsKPj4gICAgICAgICAgd2hpbGUgKCEocmVnICYgUlBMWV9SRUNFSVYpKSB7Cj4+IC0gICAg
+ICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPj4gLSAgICAgICAgICAgICAgIGlmICh0aW1lb3V0
+X2xvb3AgPiBEUF9USU1FT1VUX0xPT1BfQ09VTlQpIHsKPj4gKyAgICAgICAgICAgICAgIGlmICh0
+aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICBkZXZfZXJyKGRwLT5kZXYsICJBVVggQ0ggY29tbWFuZCByZXBseSBmYWlsZWQhXG4iKTsKPj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVRJTUVET1VUOwo+PiAgICAgICAgICAg
+ICAgICAgIH0KPj4gLS0KPj4gMS45LjEKPj4KPj4KPgo+CgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
