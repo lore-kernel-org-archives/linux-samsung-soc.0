@@ -1,117 +1,160 @@
 From: Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH v3 2/3] drm/bridge: analogix_dp: use jiffies to simulate
- timeout loop
-Date: Tue, 20 Sep 2016 10:18:38 +0800
-Message-ID: <01b6f408-ba3b-b2c0-b9f2-097420ef96cb@rock-chips.com>
+Subject: Re: [PATCH v3 3/3] drm/bridge: analogix_dp: detect Sink PSR state
+ after configuring the PSR
+Date: Tue, 20 Sep 2016 10:22:34 +0800
+Message-ID: <a2d8a2e5-7568-12b2-0541-5d58d3aafca6@rock-chips.com>
 References: <1473306526-4340-1-git-send-email-ykk@rock-chips.com>
- <1473414290-335-1-git-send-email-ykk@rock-chips.com>
- <CAOw6vbLhXONEGfWP8B+bkJE+H0oAZb0hPyAP9SodNu-m3cXrGQ@mail.gmail.com>
+ <1473414302-390-1-git-send-email-ykk@rock-chips.com>
+ <CAOw6vbJKggHaA9zeeiL2FUR7oraMRdVEocmLzrtBtM7mjBCVcQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAOw6vbLhXONEGfWP8B+bkJE+H0oAZb0hPyAP9SodNu-m3cXrGQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.136]:38746 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753407AbcITCWw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 19 Sep 2016 22:22:52 -0400
+In-Reply-To: <CAOw6vbJKggHaA9zeeiL2FUR7oraMRdVEocmLzrtBtM7mjBCVcQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Douglas Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-SGkgU2VhbiwKCgpPbiAwOS8xMi8yMDE2IDA5OjUxIFBNLCBTZWFuIFBhdWwgd3JvdGU6Cj4gT24g
-RnJpLCBTZXAgOSwgMjAxNiBhdCA1OjQ0IEFNLCBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5j
-b20+IHdyb3RlOgo+PiBTaWduZWQtb2ZmLWJ5OiBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5j
-b20+Cj4+IC0tLQo+PiBDaGFuZ2VzIGluIHYzOgo+PiAtIFN1Z2dlc3RlZCBieSBTZWFuCj4+Cj4+
-IENoYW5nZXMgaW4gdjI6IE5vbmUKPj4KPj4gICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxv
-Z2l4L2FuYWxvZ2l4X2RwX2NvcmUuaCB8ICAzICsrLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMgIHwgMTggKysrKysrKysrLS0tLS0tLS0tCj4+
-ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPj4K
-Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhf
-ZHBfY29yZS5oIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9j
-b3JlLmgKPj4gaW5kZXggYTE1ZjA3Ni4uZDU2NGU5MCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPj4gQEAgLTE2LDEw
-ICsxNiwxMSBAQAo+PiAgICNpbmNsdWRlIDxkcm0vZHJtX2NydGMuaD4KPj4gICAjaW5jbHVkZSA8
-ZHJtL2RybV9kcF9oZWxwZXIuaD4KPj4KPj4gLSNkZWZpbmUgRFBfVElNRU9VVF9MT09QX0NPVU5U
-IDEwMAo+PiAgICNkZWZpbmUgTUFYX0NSX0xPT1AgNQo+PiAgICNkZWZpbmUgTUFYX0VRX0xPT1Ag
-NQo+Pgo+PiArI2RlZmluZSBEUF9USU1FT1VUX0xPT1BfTVMgICAgICAgICAgICAgICAgICAgICBt
-c2Vjc190b19qaWZmaWVzKDEpCj4gVGhlIG5hbWUgc3VnZ2VzdHMgdGhlIHVuaXRzIGhlcmUgYXJl
-IG1zLCBidXQgeW91J3JlIHN0b3JpbmcgamlmZmllcy4KPiBEbyB0aGUgbXNlY3NfdG9famlmZmll
-cyBjb252ZXJzaW9uIGRvd24gYmVsb3cuCgpJIHN1ZGRlbmx5IHJlYWxpemVkIHRoYXQgJ2FuYWxv
-Z2l4X2RwX2NvcmUuYycgYWxzbyB1c2VkIHRoZSAKJ0RQX1RJTUVPVVRfTE9PUF9DT1VOVCcgbWFj
-cm9zLCBhbmQgJ2FuYWxvZ2l4X2RwX2NvcmUuYycgaGF2ZSBmb3VyIGtpbmRzIApvZiB0aW1lb3V0
-LAogICAtIERQX1RJTUVPVVRfTE9PUF9DT1VOVCAqIDF1cwogICAtIERQX1RJTUVPVVRfTE9PUF9D
-T1VOVCAqIDEwdXMKICAgLSBEUF9USU1FT1VUX0xPT1BfQ09VTlQgKiAxMDB1cwogICAtIERQX1RJ
-TUVPVVRfTE9PUF9DT1VOVCAqIDEwMDB1cwoKSSBtYXkgZ3Vlc3MgaXQncyBub3QgbmVjZXNzYXJ5
-IHRvIHJlcGxhY2UgdGhlICdEUF9USU1FT1VUX0xPT1BfQ09VTlQnIApub3cgIDotKQoKLSBZYWtp
-cgoKPgo+PiArCj4+ICAgLyogRFBfTUFYX0xBTkVfQ09VTlQgKi8KPj4gICAjZGVmaW5lIERQQ0Rf
-RU5IQU5DRURfRlJBTUVfQ0FQKHgpICAgICAgICAgICAgICgoKHgpID4+IDcpICYgMHgxKQo+PiAg
-ICNkZWZpbmUgRFBDRF9NQVhfTEFORV9DT1VOVCh4KSAgICAgICAgICAgICAgICAgKCh4KSAmIDB4
-MWYpCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxv
-Z2l4X2RwX3JlZy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9k
-cF9yZWcuYwo+PiBpbmRleCBhNGQxN2I4Li4xNWE0Y2YwIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX3JlZy5jCj4+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfcmVnLmMKPj4gQEAgLTMzNSw3
-ICszMzUsNyBAQCB2b2lkIGFuYWxvZ2l4X2RwX3NldF9hbmFsb2dfcG93ZXJfZG93bihzdHJ1Y3Qg
-YW5hbG9naXhfZHBfZGV2aWNlICpkcCwKPj4gICB2b2lkIGFuYWxvZ2l4X2RwX2luaXRfYW5hbG9n
-X2Z1bmMoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4+ICAgewo+PiAgICAgICAgICB1
-MzIgcmVnOwo+PiAtICAgICAgIGludCB0aW1lb3V0X2xvb3AgPSAwOwo+PiArICAgICAgIHVuc2ln
-bmVkIGxvbmcgdGltZW91dDsKPj4KPj4gICAgICAgICAgYW5hbG9naXhfZHBfc2V0X2FuYWxvZ19w
-b3dlcl9kb3duKGRwLCBQT1dFUl9BTEwsIDApOwo+Pgo+PiBAQCAtMzUwLDkgKzM1MCw5IEBAIHZv
-aWQgYW5hbG9naXhfZHBfaW5pdF9hbmFsb2dfZnVuYyhzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNl
-ICpkcCkKPj4gICAgICAgICAgaWYgKGFuYWxvZ2l4X2RwX2dldF9wbGxfbG9ja19zdGF0dXMoZHAp
-ID09IFBMTF9VTkxPQ0tFRCkgewo+PiAgICAgICAgICAgICAgICAgIGFuYWxvZ2l4X2RwX3NldF9w
-bGxfcG93ZXJfZG93bihkcCwgMCk7Cj4+Cj4+ICsgICAgICAgICAgICAgICB0aW1lb3V0ID0gamlm
-ZmllcyArIERQX1RJTUVPVVRfTE9PUF9NUzsKPiB0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3Rv
-X2ppZmZpZXMoRFBfVElNRU9VVF9MT09QX01TKTsKPgo+PiAgICAgICAgICAgICAgICAgIHdoaWxl
-IChhbmFsb2dpeF9kcF9nZXRfcGxsX2xvY2tfc3RhdHVzKGRwKSA9PSBQTExfVU5MT0NLRUQpIHsK
-Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgdGltZW91dF9sb29wKys7Cj4+IC0gICAgICAgICAg
-ICAgICAgICAgICAgIGlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsK
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKHRpbWVfYWZ0ZXIoamlmZmllcywgdGltZW91
-dCkpIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkcC0+ZGV2
-LCAiZmFpbGVkIHRvIGdldCBwbGwgbG9jayBzdGF0dXNcbiIpOwo+PiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICByZXR1cm47Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICB9Cj4+
-IEBAIC01MDEsNyArNTAxLDcgQEAgaW50IGFuYWxvZ2l4X2RwX3N0YXJ0X2F1eF90cmFuc2FjdGlv
-bihzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPj4gICB7Cj4+ICAgICAgICAgIGludCBy
-ZWc7Cj4+ICAgICAgICAgIGludCByZXR2YWwgPSAwOwo+PiAtICAgICAgIGludCB0aW1lb3V0X2xv
-b3AgPSAwOwo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgdGltZW91dDsKPj4KPj4gICAgICAgICAg
-LyogRW5hYmxlIEFVWCBDSCBvcGVyYXRpb24gKi8KPj4gICAgICAgICAgcmVnID0gcmVhZGwoZHAt
-PnJlZ19iYXNlICsgQU5BTE9HSVhfRFBfQVVYX0NIX0NUTF8yKTsKPj4gQEAgLTUwOSwxMCArNTA5
-LDEwIEBAIGludCBhbmFsb2dpeF9kcF9zdGFydF9hdXhfdHJhbnNhY3Rpb24oc3RydWN0IGFuYWxv
-Z2l4X2RwX2RldmljZSAqZHApCj4+ICAgICAgICAgIHdyaXRlbChyZWcsIGRwLT5yZWdfYmFzZSAr
-IEFOQUxPR0lYX0RQX0FVWF9DSF9DVExfMik7Cj4+Cj4+ICAgICAgICAgIC8qIElzIEFVWCBDSCBj
-b21tYW5kIHJlcGx5IHJlY2VpdmVkPyAqLwo+PiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsg
-RFBfVElNRU9VVF9MT09QX01TOwo+PiAgICAgICAgICByZWcgPSByZWFkbChkcC0+cmVnX2Jhc2Ug
-KyBBTkFMT0dJWF9EUF9JTlRfU1RBKTsKPj4gICAgICAgICAgd2hpbGUgKCEocmVnICYgUlBMWV9S
-RUNFSVYpKSB7Cj4+IC0gICAgICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPj4gLSAgICAgICAg
-ICAgICAgIGlmIChEUF9USU1FT1VUX0xPT1BfQ09VTlQgPCB0aW1lb3V0X2xvb3ApIHsKPj4gKyAg
-ICAgICAgICAgICAgIGlmICh0aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRwLT5kZXYsICJBVVggQ0ggY29tbWFuZCByZXBs
-eSBmYWlsZWQhXG4iKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVRJTUVE
-T1VUOwo+PiAgICAgICAgICAgICAgICAgIH0KPj4gQEAgLTEwNTUsNyArMTA1NSw3IEBAIHNzaXpl
-X3QgYW5hbG9naXhfZHBfdHJhbnNmZXIoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsCj4+
-ICAgewo+PiAgICAgICAgICB1MzIgcmVnOwo+PiAgICAgICAgICB1OCAqYnVmZmVyID0gbXNnLT5i
-dWZmZXI7Cj4+IC0gICAgICAgaW50IHRpbWVvdXRfbG9vcCA9IDA7Cj4+ICsgICAgICAgdW5zaWdu
-ZWQgbG9uZyB0aW1lb3V0Owo+PiAgICAgICAgICB1bnNpZ25lZCBpbnQgaTsKPj4gICAgICAgICAg
-aW50IG51bV90cmFuc2ZlcnJlZCA9IDA7Cj4+Cj4+IEBAIC0xMTIzLDEwICsxMTIzLDEwIEBAIHNz
-aXplX3QgYW5hbG9naXhfZHBfdHJhbnNmZXIoc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAs
-Cj4+Cj4+ICAgICAgICAgIC8qIElzIEFVWCBDSCBjb21tYW5kIHJlcGx5IHJlY2VpdmVkPyAqLwo+
-PiAgICAgICAgICAvKiBUT0RPOiBXYWl0IGZvciBhbiBpbnRlcnJ1cHQgaW5zdGVhZCBvZiBsb29w
-aW5nPyAqLwo+PiArICAgICAgIHRpbWVvdXQgPSBqaWZmaWVzICsgRFBfVElNRU9VVF9MT09QX01T
-Owo+PiAgICAgICAgICByZWcgPSByZWFkbChkcC0+cmVnX2Jhc2UgKyBBTkFMT0dJWF9EUF9JTlRf
-U1RBKTsKPj4gICAgICAgICAgd2hpbGUgKCEocmVnICYgUlBMWV9SRUNFSVYpKSB7Cj4+IC0gICAg
-ICAgICAgICAgICB0aW1lb3V0X2xvb3ArKzsKPj4gLSAgICAgICAgICAgICAgIGlmICh0aW1lb3V0
-X2xvb3AgPiBEUF9USU1FT1VUX0xPT1BfQ09VTlQpIHsKPj4gKyAgICAgICAgICAgICAgIGlmICh0
-aW1lX2FmdGVyKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICBkZXZfZXJyKGRwLT5kZXYsICJBVVggQ0ggY29tbWFuZCByZXBseSBmYWlsZWQhXG4iKTsKPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVRJTUVET1VUOwo+PiAgICAgICAgICAg
-ICAgICAgIH0KPj4gLS0KPj4gMS45LjEKPj4KPj4KPgo+CgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Sean,
+
+On 09/12/2016 09:52 PM, Sean Paul wrote:
+> On Fri, Sep 9, 2016 at 5:45 AM, Yakir Yang <ykk@rock-chips.com> wrote:
+>> Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
+>> function, or print the sink PSR error state if we failed to apply the
+>> requested PSR setting.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+>> ---
+>> Changes in v3:
+>> - Update commit message
+>> - Add DP_TIMEOUT_PSR_LOOP_MS marcos
+>> - Correct the return values of analogix_dp_send_psr_spd()
+>>
+>> Changes in v2:
+>> - A bunch of good fixes from Sean
+>>
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++----
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  5 +++--
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 25 ++++++++++++++++++++--
+>>   3 files changed, 28 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 5fe3982..c0ce16a 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -116,8 +116,7 @@ int analogix_dp_enable_psr(struct device *dev)
+>>          psr_vsc.DB0 = 0;
+>>          psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+>>
+>> -       analogix_dp_send_psr_spd(dp, &psr_vsc);
+>> -       return 0;
+>> +       return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+>>
+>> @@ -139,8 +138,7 @@ int analogix_dp_disable_psr(struct device *dev)
+>>          psr_vsc.DB0 = 0;
+>>          psr_vsc.DB1 = 0;
+>>
+>> -       analogix_dp_send_psr_spd(dp, &psr_vsc);
+>> -       return 0;
+>> +       return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> index d564e90..a27f1e3 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> @@ -20,6 +20,7 @@
+>>   #define MAX_EQ_LOOP 5
+>>
+>>   #define DP_TIMEOUT_LOOP_MS                     msecs_to_jiffies(1)
+>> +#define DP_TIMEOUT_PSR_LOOP_MS                 msecs_to_jiffies(300)
+> Same comment here re: units.
+>
+> 300ms seems like a really long time. Why does it take this long?
+
+This magic number '300ms' just come from my test, I haven't found the 
+description in eDP 1.4a Spec about what exact time should Sink take to 
+entry PSR.
+
+- Yakir
+
+> Sean
+>
+>
+>>   /* DP_MAX_LANE_COUNT */
+>>   #define DPCD_ENHANCED_FRAME_CAP(x)             (((x) >> 7) & 0x1)
+>> @@ -248,8 +249,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
+>>   void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
+>>   void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+>>   void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
+>> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> -                             struct edp_vsc_psr *vsc);
+>> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> +                            struct edp_vsc_psr *vsc);
+>>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+>>                               struct drm_dp_aux_msg *msg);
+>>   #endif /* _ANALOGIX_DP_CORE_H */
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> index 15a4cf0..7fd4ed0 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> @@ -1004,10 +1004,12 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
+>>          writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
+>>   }
+>>
+>> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> -                             struct edp_vsc_psr *vsc)
+>> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>> +                            struct edp_vsc_psr *vsc)
+>>   {
+>> +       unsigned long timeout;
+>>          unsigned int val;
+>> +       u8 sink;
+>>
+>>          /* don't send info frame */
+>>          val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>> @@ -1048,6 +1050,25 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>>          val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>>          val |= IF_EN;
+>>          writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>> +
+>> +       timeout = jiffies + DP_TIMEOUT_PSR_LOOP_MS;
+>> +       while (time_before(jiffies, timeout)) {
+>> +               val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &sink);
+>> +               if (val != 1) {
+>> +                       dev_err(dp->dev, "PSR_STATUS read failed ret=%d", val);
+>> +                       return -EBUSY;
+>> +               }
+>> +
+>> +               if ((vsc->DB1 && sink == DP_PSR_SINK_ACTIVE_RFB) ||
+>> +                   (!vsc->DB1 && sink == DP_PSR_SINK_INACTIVE))
+>> +                       return 0;
+>> +
+>> +               usleep_range(1000, 1500);
+>> +       }
+>> +
+>> +       dev_warn(dp->dev, "Failed to apply PSR, sink state was [%x]", sink);
+>> +
+>> +       return -ETIMEDOUT;
+>>   }
+>>
+>>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+>> --
+>> 1.9.1
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
