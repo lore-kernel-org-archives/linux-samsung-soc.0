@@ -1,41 +1,36 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] PM / devfreq: exynos-ppmu: ppmu_events array should not be NULL terminated
-Date: Wed, 21 Sep 2016 08:30:40 +0800
-Message-ID: <1474417840-7999-1-git-send-email-axel.lin@ingics.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36729 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754466AbcIUAbB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 20:31:01 -0400
-Received: by mail-pf0-f194.google.com with SMTP id n24so1577629pfb.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Sep 2016 17:31:00 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 0/2] ARM: cleanup PCI specific configs
+Date: Wed, 21 Sep 2016 22:47:47 +0200
+Message-ID: <3547319.cIOFfkHalq@wuerfel>
+References: <1473848346-17905-1-git-send-email-kishon@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1473848346-17905-1-git-send-email-kishon@ti.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux@armlinux.org.uk, bcousson@baylibre.com, tony@atomide.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, k.kozlowski@samsung.com, magnus.damm@gmail.com, horms@verge.net.au, shawnguo@kernel.org, nicolas.ferre@atmel.com, nsekhar@ti.com, kgene@kernel.org, khalasa@piap.pl, kernel@pengutronix.de, ssantosh@kernel.org, fabio.estevam@nxp.com, alexandre.belloni@free-electrons.com, plagnioj@jcrosoft.com, shiraz.linux.kernel@gmail.com, vireshk@kernel.org, arm@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
 
-The rest of the code uses ARRAY_SIZE to count the number of entries in
-ppmu_events array. The NULL terminated entry makes ARRAY_SIZE return
-off-by-one value.
+On Wednesday, September 14, 2016 3:49:04 PM CEST Kishon Vijay Abraham I wrote:
+> This series was initially sent to add support for two PCIe
+> ports in dra7. This included selecting PCI_DOMAINS config
+> in SOC_DRA7XX.
+> 
+> However from the review, PCI_DOMAINS can instead be selected
+> from ARCH_MULTIPLATFORM. This is fixed in this series along
+> with removing PCI_DOMAINS from other configs.
+> 
+> Changes from v3:
+> *) Added *Acked-by:*
+> *) Fixed $subject to not have *Fix*
+> 
+> Kishon Vijay Abraham I (2):
+>   ARM: stop *MIGHT_HAVE_PCI* config from being selected redundantly
+>   ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+> 
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/devfreq/event/exynos-ppmu.c | 2 --
- 1 file changed, 2 deletions(-)
+Applied both to next/cleanup now.
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index f55cf0e..c9ffaf0 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -90,8 +90,6 @@ struct __exynos_ppmu_events {
- 	PPMU_EVENT(d1-cpu),
- 	PPMU_EVENT(d1-general),
- 	PPMU_EVENT(d1-rt),
--
--	{ /* sentinel */ },
- };
- 
- static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
--- 
-2.7.4
+	Arnd
