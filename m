@@ -1,49 +1,59 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: exynos-ppmu: ppmu_events array should not be
- NULL terminated
-Date: Thu, 22 Sep 2016 15:26:26 +0900
-Message-ID: <57E37992.2030500@samsung.com>
-References: <CGME20160921003108epcas1p13c13f6dbfbcf86c22d88e33606e8fc97@epcas1p1.samsung.com>
- <1474417840-7999-1-git-send-email-axel.lin@ingics.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: drm/exynos: probe deferral for sub drivers
+Date: Thu, 22 Sep 2016 15:51:16 +0200
+Message-ID: <444ad8a6-7ae8-d2f6-02b3-2aad99c759a9@samsung.com>
+References: <CGME20160920220749eucas1p1b78ce2aea95e1f6fdd31b28091ba9faa@eucas1p1.samsung.com>
+ <57E1B31B.4000501@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1474417840-7999-1-git-send-email-axel.lin@ingics.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <57E1B31B.4000501@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 2016년 09월 21일 09:30, Axel Lin wrote:
-> The rest of the code uses ARRAY_SIZE to count the number of entries in
-> ppmu_events array. The NULL terminated entry makes ARRAY_SIZE return
-> off-by-one value.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->  drivers/devfreq/event/exynos-ppmu.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index f55cf0e..c9ffaf0 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -90,8 +90,6 @@ struct __exynos_ppmu_events {
->  	PPMU_EVENT(d1-cpu),
->  	PPMU_EVENT(d1-general),
->  	PPMU_EVENT(d1-rt),
-> -
-> -	{ /* sentinel */ },
->  };
->  
->  static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
-> 
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
+T24gMjEuMDkuMjAxNiAwMDowNywgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbywKPgo+IEkn
+bSBjdXJyZW50bHkgZmFjaW5nIHRoZSBmb2xsb3dpbmcgcHJvYmxlbS4KPgo+IEkgd2FudCB0byB1
+c2UgYSBkZXZmcmVxIGRldmljZSBpbiBvbmUgb2YgdGhlIEV4eW5vcyBzdWIgZHJpdmVycywgbmFt
+ZWx5Cj4gdGhlIEcyRCBzdWIgZHJpdmVyLiBNeSBjdXJyZW50IGFwcHJvYWNoIGlzIHRvIHVzZQo+
+IGRldmZyZXFfZ2V0X2RldmZyZXFfYnlfcGhhbmRsZSgpIGluIGcyZF9wcm9iZSgpLiBCdXQgYXQg
+dGhlIEcyRCBwcm9iaW5nCj4gdGltZSB0aGUgZGV2ZnJlcSBzdWJzeXN0ZW0gaXNuJ3QgaW5pdGlh
+bGl6ZWQgeWV0LCBhbmQgSSBnZXQgRVBST0JFX0RFRkVSCj4gYmFjay4KPgo+IE5vdyBJIHNpbXBs
+eSBsZXQgZzJkX3Byb2JlKCkgZmFpbCB3aXRoIEVQUk9CRV9ERUZFUiBpbiB0aGF0IGNhc2UuCj4g
+RXZlbnR1YWxseSBkZXZmcmVxIGlzIG9ubGluZSBhbmQgZzJkX3Byb2JlKCkgcnVucyBzdWNjZXNz
+ZnVsbHkuCj4KPiBTbyBmYXIsIHNvIGdvb2QuIEhvd2V2ZXIgc29tZSBkZWJ1Z2dpbmcgc2hvd3Mg
+dGhhdCBnMmRfc3ViZHJ2X3Byb2JlKCksCj4gd2hpY2ggZG9lcyBJT01NVSBzZXR1cCBhbmQgYWxs
+b2NhdGVzIHRoZSBjbWRsaXN0LCBuZXZlciBoYXBwZW5zIGluIHRoYXQKPiBjYXNlLgo+Cj4gSSd2
+ZSBsb29rZWQgYXQgZXh5bm9zX2RybV9sb2FkKCkgd2hpY2ggaXNzdWVzCj4gZXh5bm9zX2RybV9k
+ZXZpY2Vfc3ViZHJ2X3Byb2JlKCkgYXQgc29tZSBwb2ludCwgd2hpY2ggYXBwYXJhbnRseSBvbmx5
+Cj4gcHJvYmVzIHRob3NlIGRldmljZXMgd2hpY2ggYXJlIHJlZ2lzdGVyZWQgYXQgdGhhdCB0aW1l
+LiBIZW5jZSwgaWYgdGhlCj4gRzJEIHByb2JlIGhhc24ndCBoYXBwZW5lZCB1bnRpbCB0aGVuLCB0
+aGUgRXh5bm9zIERSTSB3b24ndCBldmVyIHNlZSBpdC4KPgo+IFRoYXQgbWFkZSBtZSB3b25kZXIg
+aG93IHRoZSBkcml2ZXIgbWFrZXMgc3VyZSB0aGF0IHRoZSBzdWIgZHJpdmVycyBhcmUKPiBhbGwg
+cmVhZGlseSBwcm9iZWQgaW4gdGhhdCBzaXR1YXRpb24uIEkgc2VlIHRoYXQgYSBjb21wb25lbnRf
+YmluZF9hbGwoKQo+IGlzIGlzc3VlZCBwcmlvciB0byBzdWJkcnYgcHJvYmluZywgYnV0IGJvdGgg
+dGhlIEcyRCBhbmQgdGhlIElQUCBzdWJkcnYKPiBkb24ndCBoYXZlIGJpbmQvdW5iaW5kIGNhbGxz
+LiBJIGd1ZXNzIHN1YmRydiAhPSBzdWJkcnYsIGVoPwo+Cj4gQXQgcHJlc2VudCBpdCBhcHBlYXJz
+IHRoYXQgaXQncyBtZXJlbHkgbHVjayB0aGF0IHRoZSBHMkQgaXMgcHJvYmVkIHdoZW4KPiBzdWIg
+ZHJpdmVycyBhcmUgcHJvYmVkPwo+Cj4gQW55d2F5LCBwcm9iZSBkZWZlcnJhbCBzZWVtcyB0byB3
+b3JrIGNvcnJlY3RseSB3aXRoIEV4eW5vcyBIRE1JLCBzbyBJCj4gd2FzIHdvbmRlcmluZyBpZiB0
+aGVyZSBpcyBzb21lIHdheSB0byBhbHNvIG1ha2UgaXQgd29yayB3aXRoIHRoZSBHMkQ/CgpIRE1J
+IGlzIGNvbXBvbmVudGl6ZWQsIEcyRCBubywgc28gaXQgZG9lcyBub3Qgd29yayB3aXRoIGRlZmVy
+cmVkIHByb2JlLgpUaGUgYmVzdCBzb2x1dGlvbiBhdCB0aGUgbW9tZW50IGlzIHRvIGNvbXBvbmVu
+dGl6ZSBHMkQsIGl0IHNob3VsZApub3QgYmUgZGlmZmljdWx0LgoKUmVnYXJkcwpBbmRyemVqCgo+
+Cj4gVGhhbmtzIGluIGFkdmFuY2UhCj4KPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRvYmlhcwo+IF9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVs
+IG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
