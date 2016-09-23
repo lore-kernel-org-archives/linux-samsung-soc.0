@@ -1,43 +1,49 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v8 2/2] ARM: dts: add TOPEET itop elite based board
-Date: Fri, 23 Sep 2016 12:55:43 -0500
-Message-ID: <20160923175543.GA4471@rob-hp-laptop>
-References: <1474300103-26659-1-git-send-email-ayaka@soulik.info>
- <1474300103-26659-3-git-send-email-ayaka@soulik.info>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
+ CLAA070WP03XG panel
+Date: Fri, 23 Sep 2016 13:00:42 -0500
+Message-ID: <20160923180042.GA7132@rob-hp-laptop>
+References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
+ <1474311771-23321-3-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33890 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751529AbcIWSAo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 23 Sep 2016 14:00:44 -0400
 Content-Disposition: inline
-In-Reply-To: <1474300103-26659-3-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Randy Li <ayaka@soulik.info>
+Cc: dri-devel@lists.freedesktop.org, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org
 
-On Mon, Sep 19, 2016 at 11:48:23PM +0800, Randy Li wrote:
-> The TOPEET itop exynos 4412 have three versions base board. The
-> Elite version is the cheap one without too much peripheral devices
-> on it.
+On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
+> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
+> supported by the simple panel driver.
 > 
-> Currently supported are serial console, wired networking(USB),
-> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
-> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
-> enabled.
-> 
-> The FIMC is not used for camera currently, I enabled it just for a
-> colorspace convertor.
-> 
-> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Randy Li <ayaka@soulik.info>
 > ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   3 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos4412-itop-elite.dts        | 240 +++++++++++++++++++++
->  3 files changed, 244 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+>  .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
+>  drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+> new file mode 100644
+> index 0000000..dd22685
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+> @@ -0,0 +1,7 @@
+> +Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
+> +
+> +Required properties:
+> +- compatible: should be "chunghwa,claa070wp03xg"
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+What about VCC, VLED, LED_EN (PWM), LVBIT, LVFMT, DITHER signals?
+
+> +
+> +This binding is compatible with the simple-panel binding, which is specified
+> +in simple-panel.txt in this directory.
