@@ -1,86 +1,42 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos/fimd: add clock rate checking
-Date: Fri, 23 Sep 2016 12:43:29 +0200
-Message-ID: <1474627409-28711-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20160923104338eucas1p11e63c7ef693d7b495872fbc2661d0e12@eucas1p1.samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 1/2] drm/exynos/vidi: use timer for vblanks instead of
+ sleeping worker
+Date: Fri, 23 Sep 2016 15:27:41 +0300
+Message-ID: <20160923122741.GA30511@joana>
+References: <1474618524-8916-1-git-send-email-a.hajda@samsung.com>
+ <CGME20160923081541eucas1p277bce738f62966250216ae1da9accc81@eucas1p2.samsung.com>
+ <1474618524-8916-2-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36780 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758823AbcIWM1o (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 23 Sep 2016 08:27:44 -0400
+Received: by mail-lf0-f68.google.com with SMTP id s29so5631384lfg.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2016 05:27:43 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1474618524-8916-2-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-SW4gY2FzZSBvZiBzb21lIHBsYXRmb3JtcyBmaW1kIGNsb2NrcyBjYW4gYmUgY29uZmlndXJlZCB0
-bwp2ZXJ5IGxvdyB2YWx1ZXMsIGFzIGEgcmVzdWx0IHJlZnJlc2ggcmF0ZSBjYW4gYmUgdmVyeSBs
-b3cgYW5kCmRyaXZlci9kcm0tY29yZSB3aWxsIHRpbWVvdXQgd2FpdGluZyBmb3IgdmJsYW5rcywg
-aXQgd2lsbCByZXN1bHQKaW4gcHJlbWF0dXJlIHJlbW92YWwgb2YgZnJhbWVidWZmZXJzIGFuZCB3
-aWxsIGNhdXNlIG9vcHNlcy4KVGhlIHBhdGNoIGFkZHMgYXRvbWljX2NoZWNrIGNhbGxiYWNrIHRv
-IGZpbWQgdG8gcHJldmVudCBzZXR0aW5nCnN1Y2ggbW9kZXMuCgpSZXBvcnRlZC1ieTogVG9iaWFz
-IEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+ClNpZ25lZC1vZmYtYnk6IEFu
-ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDQxICsrKysrKysrKysrKysrKysrKysrKystLS0tLS0t
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggZDQ3MjE2NC4uMGU3
-NDk5OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBAIC0xOTgs
-NiArMTk4LDcgQEAgc3RydWN0IGZpbWRfY29udGV4dCB7CiAJYXRvbWljX3QJCQl3YWl0X3ZzeW5j
-X2V2ZW50OwogCWF0b21pY190CQkJd2luX3VwZGF0ZWQ7CiAJYXRvbWljX3QJCQl0cmlnZ2VyaW5n
-OworCWludAkJCQljbGtkaXY7CiAKIAljb25zdCBzdHJ1Y3QgZmltZF9kcml2ZXJfZGF0YSAqZHJp
-dmVyX2RhdGE7CiAJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyOwpAQCAtMzg5LDE1ICszOTAs
-MTggQEAgc3RhdGljIHZvaWQgZmltZF9jbGVhcl9jaGFubmVscyhzdHJ1Y3QgZXh5bm9zX2RybV9j
-cnRjICpjcnRjKQogCXBtX3J1bnRpbWVfcHV0KGN0eC0+ZGV2KTsKIH0KIAotc3RhdGljIHUzMiBm
-aW1kX2NhbGNfY2xrZGl2KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwKLQkJY29uc3Qgc3RydWN0
-IGRybV9kaXNwbGF5X21vZGUgKm1vZGUpCisKK3N0YXRpYyBpbnQgZmltZF9hdG9taWNfY2hlY2so
-c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKKwkJc3RydWN0IGRybV9jcnRjX3N0YXRlICpz
-dGF0ZSkKIHsKLQl1bnNpZ25lZCBsb25nIGlkZWFsX2NsazsKLQl1MzIgY2xrZGl2OworCXN0cnVj
-dCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0gJnN0YXRlLT5hZGp1c3RlZF9tb2RlOworCXN0cnVj
-dCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKKwl1bnNpZ25lZCBsb25nIGlkZWFsX2Ns
-aywgbGNkX3JhdGU7CisJaW50IGNsa2RpdjsKIAogCWlmIChtb2RlLT5jbG9jayA9PSAwKSB7Ci0J
-CURSTV9FUlJPUigiTW9kZSBoYXMgemVybyBjbG9jayB2YWx1ZS5cbiIpOwotCQlyZXR1cm4gMHhm
-ZjsKKwkJRFJNX0lORk8oIk1vZGUgaGFzIHplcm8gY2xvY2sgdmFsdWUuXG4iKTsKKwkJcmV0dXJu
-IC1FSU5WQUw7CiAJfQogCiAJaWRlYWxfY2xrID0gbW9kZS0+Y2xvY2sgKiAxMDAwOwpAQCAtNDEw
-LDEwICs0MTQsMjMgQEAgc3RhdGljIHUzMiBmaW1kX2NhbGNfY2xrZGl2KHN0cnVjdCBmaW1kX2Nv
-bnRleHQgKmN0eCwKIAkJaWRlYWxfY2xrICo9IDI7CiAJfQogCisJbGNkX3JhdGUgPSBjbGtfZ2V0
-X3JhdGUoY3R4LT5sY2RfY2xrKTsKKwlpZiAoMiAqIGxjZF9yYXRlIDwgaWRlYWxfY2xrKSB7CisJ
-CURSTV9JTkZPKCJzY2xrX2ZpbWQgY2xvY2sgdG9vIGxvdyglbHUpIGZvciByZXF1ZXN0ZWQgcGl4
-ZWwgY2xvY2soJWx1KVxuIiwKKwkJCSBsY2RfcmF0ZSwgaWRlYWxfY2xrKTsKKwkJcmV0dXJuIC1F
-SU5WQUw7CisJfQorCiAJLyogRmluZCB0aGUgY2xvY2sgZGl2aWRlciB2YWx1ZSB0aGF0IGdldHMg
-dXMgY2xvc2VzdCB0byBpZGVhbF9jbGsgKi8KLQljbGtkaXYgPSBESVZfUk9VTkRfQ0xPU0VTVChj
-bGtfZ2V0X3JhdGUoY3R4LT5sY2RfY2xrKSwgaWRlYWxfY2xrKTsKKwljbGtkaXYgPSBESVZfUk9V
-TkRfQ0xPU0VTVChsY2RfcmF0ZSwgaWRlYWxfY2xrKTsKKwlpZiAoY2xrZGl2ID49IDB4MjAwKSB7
-CisJCURSTV9JTkZPKCJyZXF1ZXN0ZWQgcGl4ZWwgY2xvY2soJWx1KSB0b28gbG93XG4iLCBpZGVh
-bF9jbGspOworCQlyZXR1cm4gLUVJTlZBTDsKKwl9CisKKwljdHgtPmNsa2RpdiA9IChjbGtkaXYg
-PCAweDEwMCkgPyBjbGtkaXYgOiAweGZmOwogCi0JcmV0dXJuIChjbGtkaXYgPCAweDEwMCkgPyBj
-bGtkaXYgOiAweGZmOworCXJldHVybiAwOwogfQogCiBzdGF0aWMgdm9pZCBmaW1kX3NldHVwX3Ry
-aWdnZXIoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4KQpAQCAtNDQyLDcgKzQ1OSw3IEBAIHN0YXRp
-YyB2b2lkIGZpbWRfY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJc3RydWN0
-IGRybV9kaXNwbGF5X21vZGUgKm1vZGUgPSAmY3J0Yy0+YmFzZS5zdGF0ZS0+YWRqdXN0ZWRfbW9k
-ZTsKIAljb25zdCBzdHJ1Y3QgZmltZF9kcml2ZXJfZGF0YSAqZHJpdmVyX2RhdGEgPSBjdHgtPmRy
-aXZlcl9kYXRhOwogCXZvaWQgKnRpbWluZ19iYXNlID0gY3R4LT5yZWdzICsgZHJpdmVyX2RhdGEt
-PnRpbWluZ19iYXNlOwotCXUzMiB2YWwsIGNsa2RpdjsKKwl1MzIgdmFsOwogCiAJaWYgKGN0eC0+
-c3VzcGVuZGVkKQogCQlyZXR1cm47CkBAIC01NDMsOSArNTYwLDggQEAgc3RhdGljIHZvaWQgZmlt
-ZF9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAlpZiAoY3R4LT5kcml2ZXJf
-ZGF0YS0+aGFzX2Nsa3NlbCkKIAkJdmFsIHw9IFZJRENPTjBfQ0xLU0VMX0xDRDsKIAotCWNsa2Rp
-diA9IGZpbWRfY2FsY19jbGtkaXYoY3R4LCBtb2RlKTsKLQlpZiAoY2xrZGl2ID4gMSkKLQkJdmFs
-IHw9IFZJRENPTjBfQ0xLVkFMX0YoY2xrZGl2IC0gMSkgfCBWSURDT04wX0NMS0RJUjsKKwlpZiAo
-Y3R4LT5jbGtkaXYgPiAxKQorCQl2YWwgfD0gVklEQ09OMF9DTEtWQUxfRihjdHgtPmNsa2RpdiAt
-IDEpIHwgVklEQ09OMF9DTEtESVI7CiAKIAl3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBWSURDT04w
-KTsKIH0KQEAgLTkzOSw2ICs5NTUsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1f
-Y3J0Y19vcHMgZmltZF9jcnRjX29wcyA9IHsKIAkudXBkYXRlX3BsYW5lID0gZmltZF91cGRhdGVf
-cGxhbmUsCiAJLmRpc2FibGVfcGxhbmUgPSBmaW1kX2Rpc2FibGVfcGxhbmUsCiAJLmF0b21pY19m
-bHVzaCA9IGZpbWRfYXRvbWljX2ZsdXNoLAorCS5hdG9taWNfY2hlY2sgPSBmaW1kX2F0b21pY19j
-aGVjaywKIAkudGVfaGFuZGxlciA9IGZpbWRfdGVfaGFuZGxlciwKIH07CiAKLS0gCjIuNy40Cgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+2016-09-23 Andrzej Hajda <a.hajda@samsung.com>:
+
+> VIDI driver uses fake vblank handler to generate vblank events.
+> It was implemented using worker which slept for vblank time, additionally
+> it did not work if there were no page flips. The patch replaces it with
+> timer, uses drm_crtc_vblank_(on|off) helpers to manage it and fixes
+> behavior for non-page-flip cases.
+> This change allows further improvements of vblank in exynos-drm framework.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c | 66 ++++++++++----------------------
+>  1 file changed, 20 insertions(+), 46 deletions(-)
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Gustavo
