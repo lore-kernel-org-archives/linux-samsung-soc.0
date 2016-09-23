@@ -1,112 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Add reboot reason support for Trats2
-Date: Thu, 22 Sep 2016 22:55:22 +0200
-Message-ID: <20160922205522.GA15917@kozik-lap>
-References: <20160922174606.GA4988@kozik-lap>
- <87shsrlq1f.fsf@monsta.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/2] Use drm-core helpers to wait for updates
+Date: Fri, 23 Sep 2016 10:15:22 +0200
+Message-ID: <1474618524-8916-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20160923081538eucas1p16f72b58a8c885c07e8188fd33dfafa8c@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33393 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933377AbcIVUz2 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Sep 2016 16:55:28 -0400
-Content-Disposition: inline
-In-Reply-To: <87shsrlq1f.fsf@monsta.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, javier@osg.samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thu, Sep 22, 2016 at 08:59:03PM +0200, Wolfgang Wiedmeyer wrote:
-> 
-> Krzysztof Kozlowski writes:
-> 
-> > On Thu, Sep 22, 2016 at 06:48:35PM +0200, Wolfgang Wiedmeyer wrote:
-> >> This allows to reboot the device into recovery mode and into the download
-> >> mode of the bootloader.
-> >
-> > Which bootloader? Probably UBoot... or Samsung stock one? Could you put
-> > that information here?
-> 
-> I'm only working with the stock one. I was under the impression that the
-> stock bootloader cannot be replaced on a i9300 because there's a
-> signature check. Is UBoot loaded after the stock one on Trats2 or how
-> does this work? I didn't find information on that.
-
-+CC Marek,
-
-Trats2 is working with U-Boot. Just U-Boot. However I never converted S3
-into Trats2 on my own. I always used targets prepared to be "Trats2"
-type. 
-
-Of course kernel is independent to bootloader but in that case you want
-to use a specific interface between kernel and specific bootloader
-type/version. In that case - this should be U-Boot, I think.
-
-> 
-> >> 
-> >> Signed-off-by: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
-> >> ---
-> >>  arch/arm/boot/dts/exynos4412-trats2.dts | 14 ++++++++++++++
-> >>  arch/arm/boot/dts/exynos4x12.dtsi       |  2 +-
-> >>  2 files changed, 15 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> >> index 129e973..a38d1e3 100644
-> >> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> >> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> >> @@ -1294,3 +1294,17 @@
-> >>  	vtmu-supply = <&ldo10_reg>;
-> >>  	status = "okay";
-> >>  };
-> >> +
-> >> +&pmu {
-> >> +	compatible = "syscon", "simple-mfd";
-> >> +
-> >> +	reboot-mode {
-> >> +		compatible = "syscon-reboot-mode";
-> >> +		offset = <0x80c>;
-> >> +
-> >> +		mode-normal	= <0x12345670>;
-> >> +		mode-bootloader	= <0x12345671>;
-> >> +		mode-download	= <0x12345671>;
-> >> +		mode-recovery	= <0x12345674>;
-> >
-> > Hmmm, how did you get these values? Are they already supported?
-> 
-> I only have the vendor source drop as documentation. The magic mode
-> values [1] and the offset [2] can be found there.
-
-It would be useful to mention that in commit msg (just the source)...
-however as I wrote above, these values should be for U-Boot, not the
-stock one.
-
-Best regards,
-Krzysztof
-
-> 
-> > It would be nice to document them:
-> > 1. In Documentation/arm/Samsung/Bootloader-interface.txt
-> > 2. In header. I hate such magic numbers... you could add new header next
-> >    to existing rockchip one:
-> >    include/dt-bindings/soc/samsung,boot-mode.h
-> >    (and update maintainers entry :) )
-> 
-> Thanks for the review! I will do the documentation and update the commit
-> message.
-> 
-> Best regards,
-> Wolfgang
-> 
-> [1] https://code.fossencdi.org/kernel_samsung_smdk4412.git/tree/arch/arm/mach-exynos/sec-reboot.c#n65
-> 
-> [2] https://code.fossencdi.org/kernel_samsung_smdk4412.git/tree/arch/arm/mach-exynos/include/mach/regs-pmu.h#n79
-> 
-> 
-> -- 
-> Website: https://fossencdi.org
-> Jabber: wolfgang@wiedmeyer.de
-> OpenPGP: 0F30 D1A0 2F73 F70A 6FEE  048E 5816 A24C 1075 7FC4
-> Key download: https://wiedmeyer.de/keys/ww.asc
+SGkgSW5raSwKClRoZXNlIHR3byBwYXRjaGVzIHJlcGxhY2VzIGV4eW5vcy1kcm0gc3BlY2lmaWMg
+bWVjaGFuaXNtIGZvciB3YWl0aW5nCmZvciB2YmxhbmtzIHdpdGggdGhlIG9uZSBwcm92aWRlZCBi
+eSBkcm0tY29yZS4KVGhlIHBhdGNoc2V0IGhhcyBuaWNlIGRpZmZzdGF0IGFuZCBmaXhlcyBzb21l
+IGlzc3VlcywKZGVzY3JpYmVkIGluIGRhdGFpbCBpbiBwYXRjaGVzLgoKQXMgdGhlIHBhdGNoZXMg
+dG91Y2hlcyBleHlub3MtZHJtIGNvcmUgSSBoYXZlIHRlc3RlZCB0aGVtIGluIGRpZmZlcmVudApz
+Y2VuYXJpb3Mgb24gZGlmZmVyZW50IHBpcGVsaW5lczoKLSBUTTI6IHZpZGksIHR2LCBkc2ksCi0g
+T2Ryb2lkLXUzOiB2aWRpLCB0diwKLSBVbml2ZXJzYWwtYzIxMDogdmlkaSwgdHYsIHJnYi4KCklu
+IGFsbCBjYXNlcyBpdCB3b3JrZWQuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhhamRhICgy
+KToKICBkcm0vZXh5bm9zL3ZpZGk6IHVzZSB0aW1lciBmb3IgdmJsYW5rcyBpbnN0ZWFkIG9mIHNs
+ZWVwaW5nIHdvcmtlcgogIGRybS9leHlub3M6IGZpeCBwZW5kaW5nIHVwZGF0ZSBoYW5kbGluZwoK
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCAxNiArLS0tLS0tLQog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICB8IDQ0ICstLS0tLS0tLS0t
+LS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICB8ICAy
+IC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgfCA2NiArKysrKysr
+KysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogNCBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRpb25z
+KCspLCAxMDYgZGVsZXRpb25zKC0pCgotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
