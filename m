@@ -1,64 +1,72 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RFC] drm/exynos: g2d: fix runtime PM
-Date: Fri, 23 Sep 2016 17:15:48 +0200
-Message-ID: <57E54724.5030803@math.uni-bielefeld.de>
-References: <1474643436-24844-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1474643436-24844-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] mtd: s3c2410: add device tree support
+Date: Fri, 23 Sep 2016 12:44:35 -0500
+Message-ID: <20160923174435.GA29914@rob-hp-laptop>
+References: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1474643436-24844-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, mark.rutland@arm.com, kgene@kernel.org, k.kozlowski@samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VG9iaWFzIEpha29iaSB3cm90ZToKPiBUaGUgY29tbWl0IGIwNTk4NGUyMWE3ZTAwMGJmNTA3NGFj
-ZTAwZDdhNTc0OTQ0YjJjMTYgYnJva2UKPiBvcGVyYXRpb24gb2YgdGhlIEcyRC4gQWZ0ZXIgdGhp
-cyBjb21taXQgdGhlIGZvbGxvd2luZwo+IGhhcHBlbnMuCj4gLSBleHlub3NfZzJkX2V4ZWNfaW9j
-dGwoKSBwcmVwYXJlcyBhIHJ1bnF1ZXVlIG5vZGUgYW5kCj4gICBjYWxscyBnMmRfZXhlY19ydW5x
-dWV1ZSgpCj4gLSBnMmRfZXhlY19ydW5xdWV1ZSgpIGNhbGxzIGcyZF9kbWFfc3RhcnQoKSB3aGlj
-aCBnZXRzCj4gICBydW50aW1lIFBNIHN5bmMKPiAtIHJ1bnRpbWUgUE0gY2FsbHMgZzJkX3J1bnRp
-bWVfcmVzdW1lKCkKPiAtIGcyZF9ydW50aW1lX3Jlc3VtZSgpIGNhbGxzIGcyZF9leGVjX3J1bnF1
-ZXVlKCkKPiAKPiBMdWNraWx5IGZvciB1cyB0aGlzIGRvZXNuJ3QgcmVhbGx5IGxvb3AsIGJ1dCBj
-cmVhdGVzIGEKPiBtdXRleCBsb2NrdXAsIHdoaWNoIHRoZSBrZXJuZWwgZXZlbiBwcmVkaWN0cy4K
-PiAKPiBBbnl3YXksIHdlIGZpeCB0aGlzIGJ5IHJlaW50cm9kdWNpbmcgZGVkaWNhdGVkIHNsZWVw
-Cj4gb3BlcmF0aW9ucyBhZ2FpbiwgYW5kIG9ubHkgbGV0dGluZyBydW50aW1lIFBNIGNvbnRyb2wK
-PiB0aGUgZ2F0ZSBjbG9jay4KPiAKPiBUaGlzIGlzIG5vdCBlbm91Z2ggdG8gZml4IHRoZSBpc3N1
-ZSB0aG91Z2guCj4gLSBXZSBzd2l0Y2ggcnVudGltZSBQTSB0byBhdXRvc3VzcGVuZC4gQ3VycmVu
-dGx5IGNsb2NrcyBnZXQKPiAgIGRpc2FibGVkLCBhbmQgdGhlbiByZS1lbmFibGVkIGFnYWluIGlu
-IHRoZSBydW5xdWV1ZSB3b3JrZXIKPiAgIHdoZW4gYSBub2RlIGlzIGNvbXBsZXRlZCBhbmQgdGhl
-IG5leHQgaXMgc3RhcnRlZC4KPiAgIFdpdGggdGhlIHVwY29taW5nIGludHJvZHVjdGlvbiBvZiBJ
-T01NVSBydW50aW1lIFBNIHRoaXMKPiAgIHNpdHVhdGlvbnMgZ2V0cyB3b3JzZSwgc2luY2Ugbm93
-IGFsc28gdGhlIElPTU1VIGdvZXMKPiAgIHRocm91Z2ggYSBkaXNhYmxlL2VuYWJsZSBjeWNsZSBi
-ZWZvcmUgdGhlIG5leHQgbm9kZSBpcwo+ICAgc3RhcnRlZC4KPiAtIFdlIGNvbnNvbGlkYXRlIGFs
-bCBydW50aW1lIFBNIG1hbmFnZW1lbnQgdG8gdGhlIHJ1bnF1ZXVlCj4gICB3b3JrZXIuCj4gLSBX
-ZSBpbnRyb2R1Y2UgZzJkX3dhaXRfZmluaXNoKCkgd2hpY2ggd2FpdHMgdW50aWwgdGhlIGN1cnJl
-bnRseQo+ICAgcHJvY2Vzc2VkIHJ1bnF1ZXVlIG5vZGUgaXMgZmluaXNoZWQuCj4gICBJZiB0aGlz
-IHRha2VzIHRvbyBsb25nLCB0aGUgZW5naW5lIGlzIGZvcmNpYmx5IHJlc2V0LiBUaGlzCj4gICBp
-cyBuZWNlc3NhcnkgdG8gcHJvcGVybHkgY2xvc2UgdGhlIGRyaXZlciBpbiBjYXNlIHRoZSBlbmdp
-bmUKPiAgIHNob3VsZCBoYW5nIHdpdGggcmVhZC93cml0ZSBhY2Nlc3MgdG8gc29tZSBhcmVhIG9m
-IG1lbW9yeS4KPiAgIEluIHRoaXMgc2l0dWF0aW9uIHdlIGNhbid0IHByb3Blcmx5IHVubWFwIEdF
-TS91c2VycHRyCj4gICBvYmplY3RzLCBzaW5jZSB0aGlzIG1pZ2h0IGNyZWF0ZSBhIHBhZ2VmYXVs
-dC4KPiAtIFNsZWVwIHN1c3BlbmQgaXNzdWVzIGEgc3VzcGVuZCBvZiB0aGUgcnVucXVldWUgYW5k
-IHRoZW4gY2FsbHMKPiAgIGcyZF93YWl0X2ZpbmlzaGVkKCksIHdoaWNoIHJldHVybnMgdGhlIGVu
-Z2luZSBpbiB0aGUgaWRsZSBzdGF0ZS4KVGhpcyBzaG91bGQgcmVhZCAnZzJkX3dhaXRfZmluaXNo
-KCknLgoKCgo+ICAgVGhlIGN1cnJlbnQgcnVucXVldWUgbm9kZSBnZXRzIGNvbXBsZXRlZCwgYWxs
-IG90aGVyIHF1ZXVlZAo+ICAgbm9kZXMgc3RheSBpbiB0aGUgcXVldWUuIFRoZXJlIGlzIG5vIGhh
-cmR3YXJlIHN0YXRlIHRoYXQKPiAgIG5lZWRzIHRvIGJlIHJldGFpbmVkLgo+IC0gU2xlZXAgcmVz
-dW1lIGp1c3QgcG9rZXMgdGhlIHJ1bnF1ZXVlIHdvcmtlciwgd2hpY2gsIHNob3VsZAo+ICAgc29t
-ZXRoaW5nIGJlIGluIHF1ZXVlLCBjb250aW51ZXMgaXRzIHdvcmssIG9yIGp1c3QgZXhpdHMuCj4g
-Cj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
-bGQuZGU+Cgo8c25pcD4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+On Sat, Sep 17, 2016 at 12:22:40PM -0300, Sergio Prado wrote:
+> Tested on FriendlyARM Mini2440
+> 
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  70 +++++++++++
+>  drivers/mtd/nand/s3c2410.c                         | 129 ++++++++++++++++++++-
+>  include/linux/platform_data/mtd-nand-s3c2410.h     |   1 +
+>  3 files changed, 195 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> new file mode 100644
+> index 000000000000..1c39f6cf483b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> @@ -0,0 +1,70 @@
+> +* Samsung S3C2410 and compatible NAND flash controller
+> +
+> +Required properties:
+> +- compatible : The possible values are:
+> +	"samsung,s3c2410-nand"
+> +	"samsung,s3c2412-nand"
+> +	"samsung,s3c2440-nand"
+> +	"samsung,s3c6400-nand"
+> +- reg : register's location and length.
+> +- #address-cells, #size-cells : see nand.txt
+> +- clocks : phandle to the nand controller clock
+> +- clock-names : must contain "nand"
+> +
+> +Optional properties:
+> +- samsung,tacls : time for active CLE/ALE to nWE/nOE
+> +- samsung,twrph0 : active time for nWE/nOE
+> +- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive
+> +- samsung,ignore_unset_ecc : boolean to ignore error when we have
+
+Use '-', not '_'.
+
+> +                             0xff,0xff,0xff read ECC, on the
+> +                             assumption that it is an un-eccd page
+> +
+> +Optional children nodes:
+> +Children nodes representing the available nand chips.
+
+s/Children/Child/
+
+> +
+> +Optional children properties:
+> +- nand-ecc-mode : see nand.txt
+> +- nand-on-flash-bbt : see nand.txt
+> +
+> +Each children device node may optionally contain a 'partitions' sub-node,
+
+s/children/child/
+
+> +which further contains sub-nodes describing the flash partition mapping.
+> +See partition.txt for more detail.
