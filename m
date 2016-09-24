@@ -1,49 +1,70 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
- CLAA070WP03XG panel
-Date: Fri, 23 Sep 2016 13:00:42 -0500
-Message-ID: <20160923180042.GA7132@rob-hp-laptop>
-References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
- <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v3 0/2] Exynos IOMMU: proper runtime PM support (use device dependencies)
+Date: Sat, 24 Sep 2016 03:25:17 +0200
+Message-ID: <1514800.L7P1tHiLfo@vostro.rjw.lan>
+References: <CGME20160913124917eucas1p23425d2cb1c24e73ae3c2927ec141fd30@eucas1p2.samsung.com> <6114649.EDczdxzVVo@vostro.rjw.lan> <20160923135002.GB4077@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33890 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751529AbcIWSAo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 14:00:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1474311771-23321-3-git-send-email-ayaka@soulik.info>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160923135002.GB4077@wunner.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Randy Li <ayaka@soulik.info>
-Cc: dri-devel@lists.freedesktop.org, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org
 
-On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
-> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
-> supported by the simple panel driver.
+On Friday, September 23, 2016 03:50:02 PM Lukas Wunner wrote:
+> On Fri, Sep 23, 2016 at 02:49:20PM +0200, Rafael J. Wysocki wrote:
+> > On Tuesday, September 20, 2016 10:51:13 AM Marek Szyprowski wrote:
+> > > On 2016-09-19 23:45, Tobias Jakobi wrote:
+> > > > I did some tests with the new version today. Sadly the reboot/shutdown
+> > > > issues are still present.
+> > > 
+> > > Thanks for the report. I've managed to reproduce this issue and it is again
+> > > caused by modifying device on devices_kset list before it will be finally
+> > > added by device_add(). I thought that the new patchset allows creating
+> > > links to a device, which has not been yet added to system device list.
 > 
-> Signed-off-by: Randy Li <ayaka@soulik.info>
-> ---
->  .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
->  2 files changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+> Hm, Marek, why isn't it possible to set up the links from the consumer's
+> ->probe hook in this case?
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-> new file mode 100644
-> index 0000000..dd22685
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
-> @@ -0,0 +1,7 @@
-> +Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
-> +
-> +Required properties:
-> +- compatible: should be "chunghwa,claa070wp03xg"
+> 
+> > > Should it be allowed to create a link to device, which
+> > > has not yet been added to system device list by device_add()?
+> > 
+> > While it would be easy to require both the consumer and producer devices to
+> > be registered for creating a link between them, that would just make it
+> > harder to use links in the first place.
+> > 
+> > So ideally, it should be possible to create links between devices before
+> > registering them, but since I didn't take that into account in the current
+> > patch series, some quite substantial changes are needed to cover that.
+> > 
+> > Additional link states come to mind, but then the "stateless" links are
+> > affected by this problem too.
+> 
+> device_link_add() could be changed to call device_reorder_to_tail()
+> only if device_is_registered(consumer) returns true.
+> 
+> That's an inline function defined in <linux/device.h> which returns
+> dev->kobj.state_in_sysfs, a flag which is set in kobject_add().
 
-What about VCC, VLED, LED_EN (PWM), LVBIT, LVFMT, DITHER signals?
+I know what that function is, but using it alone is not sufficient,
+because dev->kobj.state_in_sysfs is set before the device is added to
+dpm_list.
 
-> +
-> +This binding is compatible with the simple-panel binding, which is specified
-> +in simple-panel.txt in this directory.
+> Then device_add() would have to check if any links are already
+> set up and reorder the consumer behind the suppliers.
+> 
+> Doesn't seem to be *that* complex, but probably I'm missing something,
+> this is just off the cuff...
+
+There are some cases to consider and some races to avoid AFAICS.
+
+It all gets a lot simpler if device_link_add() is allowed to return NULL when
+the supplier device passed to it has not been registered yet.  That looks like
+a reasonable thing to do to me, but I wonder if someone has a use case in which
+it would be a substantial limitation.
+
+Thanks,
+Rafael
