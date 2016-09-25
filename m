@@ -1,160 +1,299 @@
-From: Wolfgang Wiedmeyer <wolfgang-CMKNnOTVkIZM7kwft8N7nw@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Add reboot reason support for Trats2
-Date: Sat, 24 Sep 2016 23:04:49 +0200
-Message-ID: <87fuopvwjy.fsf@machinist.wiedmeyer.de>
-References: <20160922205522.GA15917@kozik-lap>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20160922205522.GA15917@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: exynos: organize the asoc audio into a menu" to the asoc tree
+Date: Sat, 24 Sep 2016 22:58:18 -0700
+Message-ID: <E1bo2SA-0002up-G3@finisterre>
+References: <1474311470-23175-1-git-send-email-ayaka@soulik.info>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1474311470-23175-1-git-send-email-ayaka@soulik.info>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Li <ayaka@soulik.info>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, linux-kernel@vger.kernel.org, tiwai@suse.com, krzk@kernel.org, lgirdwood@gmail.combroonie@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.orgalsa-devel@alsa-project.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The patch
 
+   ASoC: exynos: organize the asoc audio into a menu
 
-Krzysztof Kozlowski writes:
+has been applied to the asoc tree at
 
-> On Thu, Sep 22, 2016 at 08:59:03PM +0200, Wolfgang Wiedmeyer wrote:
->>=20
->> Krzysztof Kozlowski writes:
->>=20
->> > On Thu, Sep 22, 2016 at 06:48:35PM +0200, Wolfgang Wiedmeyer wrote:
->> >> This allows to reboot the device into recovery mode and into the down=
-load
->> >> mode of the bootloader.
->> >
->> > Which bootloader? Probably UBoot... or Samsung stock one? Could you put
->> > that information here?
->>=20
->> I'm only working with the stock one. I was under the impression that the
->> stock bootloader cannot be replaced on a i9300 because there's a
->> signature check. Is UBoot loaded after the stock one on Trats2 or how
->> does this work? I didn't find information on that.
->
-> +CC Marek,
->
-> Trats2 is working with U-Boot. Just U-Boot. However I never converted S3
-> into Trats2 on my own. I always used targets prepared to be "Trats2"
-> type.=20
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-It would be awesome to be able to run U-Boot on i9300. Is there a way to
-test this by not risking to brick the device, e.g. by booting from the
-SD card? Then I could send an updated version of the patch that is
-compatible with U-Boot :)=20
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> Of course kernel is independent to bootloader but in that case you want
-> to use a specific interface between kernel and specific bootloader
-> type/version. In that case - this should be U-Boot, I think.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I absolutely understand that. Having the patch in mainline doesn't make
-much sense if it's not compatible with U-Boot.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Best regards,
-Wolfgang
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
->> >> Signed-off-by: Wolfgang Wiedmeyer <wolfgit-CMKNnOTVkIZM7kwft8N7nw@public.gmane.org>
->> >> ---
->> >>  arch/arm/boot/dts/exynos4412-trats2.dts | 14 ++++++++++++++
->> >>  arch/arm/boot/dts/exynos4x12.dtsi       |  2 +-
->> >>  2 files changed, 15 insertions(+), 1 deletion(-)
->> >>=20
->> >> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/=
-dts/exynos4412-trats2.dts
->> >> index 129e973..a38d1e3 100644
->> >> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
->> >> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
->> >> @@ -1294,3 +1294,17 @@
->> >>  	vtmu-supply =3D <&ldo10_reg>;
->> >>  	status =3D "okay";
->> >>  };
->> >> +
->> >> +&pmu {
->> >> +	compatible =3D "syscon", "simple-mfd";
->> >> +
->> >> +	reboot-mode {
->> >> +		compatible =3D "syscon-reboot-mode";
->> >> +		offset =3D <0x80c>;
->> >> +
->> >> +		mode-normal	=3D <0x12345670>;
->> >> +		mode-bootloader	=3D <0x12345671>;
->> >> +		mode-download	=3D <0x12345671>;
->> >> +		mode-recovery	=3D <0x12345674>;
->> >
->> > Hmmm, how did you get these values? Are they already supported?
->>=20
->> I only have the vendor source drop as documentation. The magic mode
->> values [1] and the offset [2] can be found there.
->
-> It would be useful to mention that in commit msg (just the source)...
-> however as I wrote above, these values should be for U-Boot, not the
-> stock one.
->
-> Best regards,
-> Krzysztof
->
->>=20
->> > It would be nice to document them:
->> > 1. In Documentation/arm/Samsung/Bootloader-interface.txt
->> > 2. In header. I hate such magic numbers... you could add new header ne=
-xt
->> >    to existing rockchip one:
->> >    include/dt-bindings/soc/samsung,boot-mode.h
->> >    (and update maintainers entry :) )
->>=20
->> Thanks for the review! I will do the documentation and update the commit
->> message.
->>=20
->> Best regards,
->> Wolfgang
->>=20
->> [1] https://code.fossencdi.org/kernel_samsung_smdk4412.git/tree/arch/arm=
-/mach-exynos/sec-reboot.c#n65
->>=20
->> [2] https://code.fossencdi.org/kernel_samsung_smdk4412.git/tree/arch/arm=
-/mach-exynos/include/mach/regs-pmu.h#n79
->>=20
->>=20
->> --=20
->> Website: https://fossencdi.org
->> Jabber: wolfgang-CMKNnOTVkIZM7kwft8N7nw@public.gmane.org
->> OpenPGP: 0F30 D1A0 2F73 F70A 6FEE  048E 5816 A24C 1075 7FC4
->> Key download: https://wiedmeyer.de/keys/ww.asc
+Thanks,
+Mark
 
+>From 090d93488135c8422d7711a8cefa4ed1cff7744a Mon Sep 17 00:00:00 2001
+From: Randy Li <ayaka@soulik.info>
+Date: Tue, 20 Sep 2016 02:57:50 +0800
+Subject: [PATCH] ASoC: exynos: organize the asoc audio into a menu
 
-=2D-=20
-Website: https://fossencdi.org
-Jabber: wolfgang-CMKNnOTVkIZM7kwft8N7nw@public.gmane.org
-OpenPGP: 0F30 D1A0 2F73 F70A 6FEE  048E 5816 A24C 1075 7FC4
-Key download: https://wiedmeyer.de/keys/ww.asc
+It is simple sound card time, we could assign different codec
+to a interface without making a specific driver for it. The SPDIF
+and I2S interface for Samsung would be possible used by
+simple-sound-card, but not sure about the PCM.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Those S3C time entries are left alone as I don't think any new board
+would need them.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Signed-off-by: Randy Li <ayaka@soulik.info>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/Kconfig | 57 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
 
-iQIcBAEBCgAGBQJX5upxAAoJEFgWokwQdX/EcfUP/3nOEr8pqxIAZdjc7/S4Oosq
-9cA4R69GfGYmGo//mT2RYE9L+3hPDXDm4HoAHYd7e871Maecnnf5r7xteBfoY+p9
-ZeWb6oiGBhoO5IftxWBfLcfyKOCm8zLNAysocCM//sR/MBkcZb5NpiDphUcVfePy
-zBITjqK8LmLAvMWj4xsB/SQPxfuOkMBqK+59Uj0iX8srPRxSN7WRqFlSBxY97ftD
-lUvXBttUxJvKAMdk1c77XmBX4XgK+iJKXoYN8SztvshMhTK7iW0yf4aaWgvm8kTX
-fJz94MXKt33nwPvho5SV7v2rXMVLO+7flazypwzMXgZXoeDFdbPJ3PXzpZlZqi1I
-cOPJAKHmMpQfyhuBNNx2Wmpc43RcvqspBrhI0dCE3982e6eSwLBw8avB4cwN2h5V
-qNnj2vxD98SDEz5N/89jySAVOMC5YFSCoXxjmsjDJbHX917NmWNpWD/rorL718Vc
-D6afvKSWVZNpsVsVPPqMvtir23kuvQdteNgtPEjuVKI2vVOe/fzORyM1XyVpAw5m
-uPmF0v+oYlSN9tMnE7nb1Tk6LD/zJrmBK21PQBEMuYpJd/yfxV8Gp15i/CPm0PbZ
-rO8lCrASJJ7zJOv2IjtIPwReHlRqxi0UQiD6Oe0DXy8ZK1JaIqRbZPiM7lLniqy+
-ZsFdXa+SavBY3jPW1jGp
-=+Zl7
------END PGP SIGNATURE-----
---=-=-=--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 7b722b0094d9..f6023b46c107 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -1,12 +1,14 @@
+-config SND_SOC_SAMSUNG
++menuconfig SND_SOC_SAMSUNG
+ 	tristate "ASoC support for Samsung"
+ 	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+-	help
++	---help---
+ 	  Say Y or M if you want to add support for codecs attached to
+ 	  the Samsung SoCs' Audio interfaces. You will also need to
+ 	  select the audio interfaces to support below.
+ 
++if SND_SOC_SAMSUNG
++
+ config SND_S3C24XX_I2S
+ 	tristate
+ 
+@@ -18,22 +20,22 @@ config SND_S3C2412_SOC_I2S
+ 	select SND_S3C_I2SV2_SOC
+ 
+ config SND_SAMSUNG_PCM
+-	tristate
++	tristate "Samsung PCM interface support"
+ 
+ config SND_SAMSUNG_AC97
+ 	tristate
+ 	select SND_SOC_AC97_BUS
+ 
+ config SND_SAMSUNG_SPDIF
+-	tristate
++	tristate "Samsung SPDIF transmitter support"
+ 	select SND_SOC_SPDIF
+ 
+ config SND_SAMSUNG_I2S
+-	tristate
++	tristate "Samsung I2S interface support"
+ 
+ config SND_SOC_SAMSUNG_NEO1973_WM8753
+ 	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
+-	depends on SND_SOC_SAMSUNG && MACH_NEO1973_GTA02
++	depends on MACH_NEO1973_GTA02
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_WM8753
+ 	select SND_SOC_BT_SCO
+@@ -43,7 +45,7 @@ config SND_SOC_SAMSUNG_NEO1973_WM8753
+ 
+ config SND_SOC_SAMSUNG_JIVE_WM8750
+ 	tristate "SoC I2S Audio support for Jive"
+-	depends on SND_SOC_SAMSUNG && MACH_JIVE && I2C
++	depends on MACH_JIVE && I2C
+ 	select SND_SOC_WM8750
+ 	select SND_S3C2412_SOC_I2S
+ 	help
+@@ -51,7 +53,7 @@ config SND_SOC_SAMSUNG_JIVE_WM8750
+ 
+ config SND_SOC_SAMSUNG_SMDK_WM8580
+ 	tristate "SoC I2S Audio support for WM8580 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110)
++	depends on MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110
+ 	depends on I2C
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_I2S
+@@ -60,7 +62,6 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
+ 
+ config SND_SOC_SAMSUNG_SMDK_WM8994
+ 	tristate "SoC I2S Audio support for WM8994 on SMDK"
+-	depends on SND_SOC_SAMSUNG
+ 	depends on I2C=y
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
+@@ -70,7 +71,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
+ 
+ config SND_SOC_SAMSUNG_SMDK2443_WM9710
+ 	tristate "SoC AC97 Audio support for SMDK2443 - WM9710"
+-	depends on SND_SOC_SAMSUNG && MACH_SMDK2443
++	depends on MACH_SMDK2443
+ 	select AC97_BUS
+ 	select SND_SOC_AC97_CODEC
+ 	select SND_SAMSUNG_AC97
+@@ -80,7 +81,7 @@ config SND_SOC_SAMSUNG_SMDK2443_WM9710
+ 
+ config SND_SOC_SAMSUNG_LN2440SBC_ALC650
+ 	tristate "SoC AC97 Audio support for LN2440SBC - ALC650"
+-	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX
++	depends on ARCH_S3C24XX
+ 	select AC97_BUS
+ 	select SND_SOC_AC97_CODEC
+ 	select SND_SAMSUNG_AC97
+@@ -90,7 +91,7 @@ config SND_SOC_SAMSUNG_LN2440SBC_ALC650
+ 
+ config SND_SOC_SAMSUNG_S3C24XX_UDA134X
+ 	tristate "SoC I2S Audio support UDA134X wired to a S3C24XX"
+-	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX
++	depends on ARCH_S3C24XX
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_L3
+ 	select SND_SOC_UDA134X
+@@ -102,21 +103,21 @@ config SND_SOC_SAMSUNG_SIMTEC
+ 
+ config SND_SOC_SAMSUNG_SIMTEC_TLV320AIC23
+ 	tristate "SoC I2S Audio support for TLV320AIC23 on Simtec boards"
+-	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX && I2C
++	depends on ARCH_S3C24XX && I2C
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	select SND_SOC_SAMSUNG_SIMTEC
+ 
+ config SND_SOC_SAMSUNG_SIMTEC_HERMES
+ 	tristate "SoC I2S Audio support for Simtec Hermes board"
+-	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX && I2C
++	depends on ARCH_S3C24XX && I2C
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_TLV320AIC3X
+ 	select SND_SOC_SAMSUNG_SIMTEC
+ 
+ config SND_SOC_SAMSUNG_H1940_UDA1380
+ 	tristate "Audio support for the HP iPAQ H1940"
+-	depends on SND_SOC_SAMSUNG && ARCH_H1940 && I2C
++	depends on ARCH_H1940 && I2C
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_UDA1380
+ 	help
+@@ -124,7 +125,7 @@ config SND_SOC_SAMSUNG_H1940_UDA1380
+ 
+ config SND_SOC_SAMSUNG_RX1950_UDA1380
+ 	tristate "Audio support for the HP iPAQ RX1950"
+-	depends on SND_SOC_SAMSUNG && MACH_RX1950 && I2C
++	depends on MACH_RX1950 && I2C
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_UDA1380
+ 	help
+@@ -132,7 +133,7 @@ config SND_SOC_SAMSUNG_RX1950_UDA1380
+ 
+ config SND_SOC_SAMSUNG_SMDK_WM9713
+ 	tristate "SoC AC97 Audio support for SMDK with WM9713"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110)
++	depends on MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110
+ 	select SND_SOC_WM9713
+ 	select SND_SAMSUNG_AC97
+ 	help
+@@ -140,20 +141,19 @@ config SND_SOC_SAMSUNG_SMDK_WM9713
+ 
+ config SND_SOC_SMARTQ
+ 	tristate "SoC I2S Audio support for SmartQ board"
+-	depends on SND_SOC_SAMSUNG && MACH_SMARTQ && I2C
++	depends on MACH_SMARTQ && I2C
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8750
+ 
+ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 	tristate "SoC S/PDIF Audio support for SMDK"
+-	depends on SND_SOC_SAMSUNG
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
+ 
+ config SND_SOC_SMDK_WM8580_PCM
+ 	tristate "SoC PCM Audio support for WM8580 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDKV210 || MACH_SMDKC110)
++	depends on MACH_SMDKV210 || MACH_SMDKC110
+ 	depends on I2C
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_PCM
+@@ -162,7 +162,6 @@ config SND_SOC_SMDK_WM8580_PCM
+ 
+ config SND_SOC_SMDK_WM8994_PCM
+ 	tristate "SoC PCM Audio support for WM8994 on SMDK"
+-	depends on SND_SOC_SAMSUNG
+ 	depends on I2C=y
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
+@@ -172,7 +171,7 @@ config SND_SOC_SMDK_WM8994_PCM
+ 
+ config SND_SOC_SPEYSIDE
+ 	tristate "Audio support for Wolfson Speyside"
+-	depends on SND_SOC_SAMSUNG && I2C && SPI_MASTER
++	depends on I2C && SPI_MASTER
+ 	depends on MACH_WLF_CRAGG_6410 || COMPILE_TEST
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8996
+@@ -182,14 +181,14 @@ config SND_SOC_SPEYSIDE
+ 
+ config SND_SOC_TOBERMORY
+ 	tristate "Audio support for Wolfson Tobermory"
+-	depends on SND_SOC_SAMSUNG && INPUT && I2C
++	depends on INPUT && I2C
+ 	depends on MACH_WLF_CRAGG_6410 || COMPILE_TEST
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8962
+ 
+ config SND_SOC_BELLS
+ 	tristate "Audio support for Wolfson Bells"
+-	depends on SND_SOC_SAMSUNG && MFD_ARIZONA && I2C && SPI_MASTER
++	depends on MFD_ARIZONA && I2C && SPI_MASTER
+ 	depends on MACH_WLF_CRAGG_6410 || COMPILE_TEST
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM5102
+@@ -200,7 +199,7 @@ config SND_SOC_BELLS
+ 
+ config SND_SOC_LOWLAND
+ 	tristate "Audio support for Wolfson Lowland"
+-	depends on SND_SOC_SAMSUNG && I2C
++	depends on I2C
+ 	depends on MACH_WLF_CRAGG_6410 || COMPILE_TEST
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM5100
+@@ -208,7 +207,7 @@ config SND_SOC_LOWLAND
+ 
+ config SND_SOC_LITTLEMILL
+ 	tristate "Audio support for Wolfson Littlemill"
+-	depends on SND_SOC_SAMSUNG && I2C
++	depends on I2C
+ 	depends on MACH_WLF_CRAGG_6410 || COMPILE_TEST
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+@@ -216,7 +215,7 @@ config SND_SOC_LITTLEMILL
+ 
+ config SND_SOC_SNOW
+ 	tristate "Audio support for Google Snow boards"
+-	depends on SND_SOC_SAMSUNG && I2C
++	depends on I2C
+ 	select SND_SOC_MAX98090
+ 	select SND_SOC_MAX98095
+ 	select SND_SAMSUNG_I2S
+@@ -226,6 +225,8 @@ config SND_SOC_SNOW
+ 
+ config SND_SOC_ARNDALE_RT5631_ALC5631
+         tristate "Audio support for RT5631(ALC5631) on Arndale Board"
+-        depends on SND_SOC_SAMSUNG && I2C
++        depends on I2C
+         select SND_SAMSUNG_I2S
+         select SND_SOC_RT5631
++
++endif #SND_SOC_SAMSUNG
+-- 
+2.9.3
