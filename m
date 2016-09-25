@@ -1,37 +1,36 @@
-From: Baoyou Xie <baoyou.xie@linaro.org>
-Subject: [PATCH] drm/exynos: mark exynos_dp_crtc_clock_enable() static
-Date: Sun, 25 Sep 2016 15:54:59 +0800
-Message-ID: <1474790099-5489-1-git-send-email-baoyou.xie@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jingoohan1@gmail.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, baoyou.xie@linaro.org, xie.baoyou@zte.com.cn, han.fei@zte.com.cn, tang.qiang007@zte.com.cn
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH v2 1/2] PM / devfreq: exynos-nocp: Select REGMAP_MMIO
+Date: Sun, 25 Sep 2016 20:13:57 +0800
+Message-ID: <1474805638-30407-1-git-send-email-axel.lin@ingics.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-We get 1 warning when building kernel with W=1:
-drivers/gpu/drm/exynos/exynos_dp.c:46:5: warning: no previous prototype for 'exynos_dp_crtc_clock_enable' [-Wmissing-prototypes]
+This driver uses devm_regmap_init_mmio(), so select REGMAP_MMIO to avoid
+build failure.
 
-In fact, this function is only used in the file in which it is
-declared and don't need a declaration, but can be made static.
-So this patch marks it 'static'.
-
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: fix typo in commit log and also add Chanwoo's Ack.
+This one is a build fix, I think it should be for v4.8.
+ drivers/devfreq/event/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 4f08505..528229f 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -43,7 +43,7 @@ struct exynos_dp_device {
- 	struct analogix_dp_plat_data plat_data;
- };
- 
--int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
-+static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
- 				bool enable)
- {
- 	struct exynos_dp_device *dp = to_dp(plat_data);
+diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+index 0fdae86..cd94980 100644
+--- a/drivers/devfreq/event/Kconfig
++++ b/drivers/devfreq/event/Kconfig
+@@ -17,6 +17,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
+ 	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
+ 	select PM_OPP
++	select REGMAP_MMIO
+ 	help
+ 	  This add the devfreq-event driver for Exynos SoC. It provides NoC
+ 	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
 -- 
 2.7.4
+
