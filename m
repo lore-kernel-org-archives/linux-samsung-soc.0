@@ -1,116 +1,249 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] mtd: s3c2410: add device tree support
-Date: Sun, 25 Sep 2016 20:05:05 +0200
-Message-ID: <20160925200505.372672ee@bbrezillon>
-References: <1474125760-28168-1-git-send-email-sergio.prado@e-labworks.com>
-        <20160917193123.762587d0@bbrezillon>
-        <20160925174257.GA20238@sprado-desktop>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/4] drm/exynos: mixer: convert booleans to flags in
+ mixer context
+Date: Mon, 26 Sep 2016 16:23:19 +0900
+Message-ID: <57E8CCE7.9010509@samsung.com>
+References: <1474556240-14055-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20160922145904epcas1p45727150292370ce709d449b61b1fe4c3@epcas1p4.samsung.com>
+ <1474556240-14055-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160925174257.GA20238@sprado-desktop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Cc: dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47408 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759810AbcIZHXV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 26 Sep 2016 03:23:21 -0400
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OE301APQOIVI510@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2016 16:23:19 +0900 (KST)
+In-reply-to: <1474556240-14055-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, a.hajda@samsung.com
 
-Hi Sergio,
-
-On Sun, 25 Sep 2016 14:42:57 -0300
-Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org> wrote:
-
-> Hi Boris,
-> 
-> > > +Optional properties:
-> > > +- samsung,tacls : time for active CLE/ALE to nWE/nOE
-> > > +- samsung,twrph0 : active time for nWE/nOE
-> > > +- samsung,twrph1 : time for release CLE/ALE from nWE/nOE inactive  
-> > 
-> > Can you try to extract these information from the nand_sdr_timings
-> > struct instead of passing it in your DT?  
-> 
-> I've tested and the nand chip I'm working on is not ONFI or JEDEC
-> compatible, so looks like it is not possible to extract the timing
-> information from nand_sdr_timings. Am I right?
-
-There's an default_onfi_timing_mode in the nand_flash_dev struct. You
-can define a full-id for your NAND chip in the nand-ids table if you
-want. Otherwise, this means you'll have to use ONFI timing mode 0
-(which should work for all NANDs).
-
-Note that we've recently introduced a generic interface [1] to let NAND
-controllers configure the timings, and let the core select the best
-timings based on the information it has (ONFI, JEDEC or the nand-ids
-table).
-
-> 
-> > > +	samsung,ignore_unset_ecc;  
-> > 
-> > Just discovered this ->ignore_unset_ecc property, and I don't
-> > understand why it's here for...
-> > Either you don't want to have ECC, and in this case you should set
-> > NAND_ECC_NONE, or you want to have ECC calculated, and in this case,
-> > the only valid situation where ECC bytes are 0xff is when the page is
-> > erased.
-> > 
-> > If I'm right, please fix the driver instead of adding this DT property.
-> > If I'm wrong, could you explain in more detail when you have ECC bytes
-> > set to 0xff?  
-> 
-> I think you are right but I am not an expert on flash devices and the
-> MTD sub-system. The commit message of this code says "If a block's ecc
-> field is all 0xff, then ignore the ECC correction. This is for systems
-> where some of the blocks, such as the initial cramfs are written without
-> ECC and need to be loaded on start.". Does it make sense?
-
-Well, no, it does not make any sense. What could have a sense is
-enabling ECC on some partitions, but not on others, but that's not
-supported right now (actually, I tried to add support for that once,
-but it was not accepted).
-
-Do you really need that? I mean, is the platform you're trying to
-convert to DT using this property in its platform_data objects?
-
-I'd recommend to drop this property until we figure what it's really
-used for.
-
-> 
-> > > +	for_each_available_child_of_node(np, child) {
-> > > +
-> > > +		sets->name = (char *)child->name;
-> > > +		sets->of_node = child;
-> > > +		sets->nr_chips = 1;
-> > > +
-> > > +		if (!of_property_match_string(child, "nand-ecc-mode", "none"))
-> > > +			sets->disable_ecc = 1;
-> > > +
-> > > +		if (of_get_property(child, "nand-on-flash-bbt", NULL))
-> > > +			sets->flash_bbt = 1;
-> > > +  
-> > 
-> > These properties are automatically extracted in nand_scan_ident(), why
-> > do you need to parse them twice?
-> >   
-> 
-> You are right, there is no need to parse them twice. But taking a look
-> at the code I found a problem. Right now enabling hardware ECC is done
-> at compile time by enabling CONFIG_MTD_NAND_S3C2410_HWECC in the
-> menuconfig. Looks like this config option should be removed so we can
-> select ECC mode using nand-ecc-mode property in the device tree. But
-> this would break current boards that are not using a device tree. So it
-> would be necessary to add a ecc_mode field in the platform_data of these
-> boards and set them all to the default ECC mode (NAND_ECC_SOFT). Is this
-> the right approach?
-
-It's the right approach, indeed.
+Picked this one up.
 
 Thanks,
+Inki Dae
 
-Boris
-
-[1]http://www.spinics.net/lists/arm-kernel/msg532007.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2016년 09월 22일 23:57에 Tobias Jakobi 이(가) 쓴 글:
+> The mixer context struct already has a 'flags' field, so
+> we can use it to store the 'interlace', 'vp_enabled' and
+> 'has_sclk' booleans.
+> We use the non-atomic helper functions to access these bits.
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 54 +++++++++++++++++++----------------
+>  1 file changed, 29 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 9a48aa1..1e78d57 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -73,6 +73,9 @@ enum mixer_version_id {
+>  enum mixer_flag_bits {
+>  	MXR_BIT_POWERED,
+>  	MXR_BIT_VSYNC,
+> +	MXR_BIT_INTERLACE,
+> +	MXR_BIT_VP_ENABLED,
+> +	MXR_BIT_HAS_SCLK,
+>  };
+>  
+>  static const uint32_t mixer_formats[] = {
+> @@ -98,9 +101,6 @@ struct mixer_context {
+>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+>  	int			pipe;
+>  	unsigned long		flags;
+> -	bool			interlace;
+> -	bool			vp_enabled;
+> -	bool			has_sclk;
+>  
+>  	struct mixer_resources	mixer_res;
+>  	enum mixer_version_id	mxr_ver;
+> @@ -346,7 +346,7 @@ static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
+>  	mixer_reg_writemask(res, MXR_STATUS, enable ?
+>  			MXR_STATUS_SYNC_ENABLE : 0, MXR_STATUS_SYNC_ENABLE);
+>  
+> -	if (ctx->vp_enabled)
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
+>  		vp_reg_write(res, VP_SHADOW_UPDATE, enable ?
+>  			VP_SHADOW_UPDATE_ENABLE : 0);
+>  }
+> @@ -357,8 +357,8 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
+>  	u32 val;
+>  
+>  	/* choosing between interlace and progressive mode */
+> -	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
+> -				MXR_CFG_SCAN_PROGRESSIVE);
+> +	val = test_bit(MXR_BIT_INTERLACE, &ctx->flags) ?
+> +		MXR_CFG_SCAN_INTERLACE : MXR_CFG_SCAN_PROGRESSIVE;
+>  
+>  	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
+>  		/* choosing between proper HD and SD mode */
+> @@ -436,9 +436,10 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
+>  		mixer_reg_writemask(res, MXR_LAYER_CFG,
+>  				    MXR_LAYER_CFG_GRP1_VAL(priority),
+>  				    MXR_LAYER_CFG_GRP1_MASK);
+> +
+>  		break;
+>  	case VP_DEFAULT_WIN:
+> -		if (ctx->vp_enabled) {
+> +		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>  			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
+>  			mixer_reg_writemask(res, MXR_CFG, val,
+>  				MXR_CFG_VP_ENABLE);
+> @@ -501,7 +502,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>  	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
+>  
+>  	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
+> -		ctx->interlace = true;
+> +		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+>  		if (tiled_mode) {
+>  			luma_addr[1] = luma_addr[0] + 0x40;
+>  			chroma_addr[1] = chroma_addr[0] + 0x40;
+> @@ -510,7 +511,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>  			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
+>  		}
+>  	} else {
+> -		ctx->interlace = false;
+> +		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
+>  		luma_addr[1] = 0;
+>  		chroma_addr[1] = 0;
+>  	}
+> @@ -518,7 +519,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>  	spin_lock_irqsave(&res->reg_slock, flags);
+>  
+>  	/* interlace or progressive scan mode */
+> -	val = (ctx->interlace ? ~0 : 0);
+> +	val = (test_bit(MXR_BIT_INTERLACE, &ctx->flags) ? ~0 : 0);
+>  	vp_reg_writemask(res, VP_MODE, val, VP_MODE_LINE_SKIP);
+>  
+>  	/* setup format */
+> @@ -541,7 +542,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+>  
+>  	vp_reg_write(res, VP_DST_WIDTH, state->crtc.w);
+>  	vp_reg_write(res, VP_DST_H_POSITION, state->crtc.x);
+> -	if (ctx->interlace) {
+> +	if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
+>  		vp_reg_write(res, VP_DST_HEIGHT, state->crtc.h / 2);
+>  		vp_reg_write(res, VP_DST_V_POSITION, state->crtc.y / 2);
+>  	} else {
+> @@ -636,9 +637,9 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+>  	src_y_offset = 0;
+>  
+>  	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+> -		ctx->interlace = true;
+> +		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
+>  	else
+> -		ctx->interlace = false;
+> +		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
+>  
+>  	spin_lock_irqsave(&res->reg_slock, flags);
+>  
+> @@ -733,7 +734,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
+>  	mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
+>  	mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
+>  
+> -	if (ctx->vp_enabled) {
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>  		/* configuration of Video Processor Registers */
+>  		vp_win_reset(ctx);
+>  		vp_default_filter(res);
+> @@ -742,7 +743,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
+>  	/* disable all layers */
+>  	mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP0_ENABLE);
+>  	mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP1_ENABLE);
+> -	if (ctx->vp_enabled)
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
+>  		mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_VP_ENABLE);
+>  
+>  	spin_unlock_irqrestore(&res->reg_slock, flags);
+> @@ -767,7 +768,7 @@ static irqreturn_t mixer_irq_handler(int irq, void *arg)
+>  		val &= ~MXR_INT_STATUS_VSYNC;
+>  
+>  		/* interlace scan need to check shadow register */
+> -		if (ctx->interlace) {
+> +		if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
+>  			base = mixer_reg_read(res, MXR_GRAPHIC_BASE(0));
+>  			shadow = mixer_reg_read(res, MXR_GRAPHIC_BASE_S(0));
+>  			if (base != shadow)
+> @@ -867,7 +868,7 @@ static int vp_resources_init(struct mixer_context *mixer_ctx)
+>  		return -ENODEV;
+>  	}
+>  
+> -	if (mixer_ctx->has_sclk) {
+> +	if (test_bit(MXR_BIT_HAS_SCLK, &mixer_ctx->flags)) {
+>  		mixer_res->sclk_mixer = devm_clk_get(dev, "sclk_mixer");
+>  		if (IS_ERR(mixer_res->sclk_mixer)) {
+>  			dev_err(dev, "failed to get clock 'sclk_mixer'\n");
+> @@ -917,7 +918,7 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
+>  		return ret;
+>  	}
+>  
+> -	if (mixer_ctx->vp_enabled) {
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &mixer_ctx->flags)) {
+>  		/* acquire vp resources: regs, irqs, clocks */
+>  		ret = vp_resources_init(mixer_ctx);
+>  		if (ret) {
+> @@ -1160,7 +1161,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+>  		return ret;
+>  
+>  	for (i = 0; i < MIXER_WIN_NR; i++) {
+> -		if (i == VP_DEFAULT_WIN && !ctx->vp_enabled)
+> +		if (i == VP_DEFAULT_WIN && !test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
+>  			continue;
+>  
+>  		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
+> @@ -1215,10 +1216,13 @@ static int mixer_probe(struct platform_device *pdev)
+>  
+>  	ctx->pdev = pdev;
+>  	ctx->dev = dev;
+> -	ctx->vp_enabled = drv->is_vp_enabled;
+> -	ctx->has_sclk = drv->has_sclk;
+>  	ctx->mxr_ver = drv->version;
+>  
+> +	if (drv->is_vp_enabled)
+> +		__set_bit(MXR_BIT_VP_ENABLED, &ctx->flags);
+> +	if (drv->has_sclk)
+> +		__set_bit(MXR_BIT_HAS_SCLK, &ctx->flags);
+> +
+>  	platform_set_drvdata(pdev, ctx);
+>  
+>  	ret = component_add(&pdev->dev, &mixer_component_ops);
+> @@ -1244,9 +1248,9 @@ static int __maybe_unused exynos_mixer_suspend(struct device *dev)
+>  
+>  	clk_disable_unprepare(res->hdmi);
+>  	clk_disable_unprepare(res->mixer);
+> -	if (ctx->vp_enabled) {
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>  		clk_disable_unprepare(res->vp);
+> -		if (ctx->has_sclk)
+> +		if (test_bit(MXR_BIT_HAS_SCLK, &ctx->flags))
+>  			clk_disable_unprepare(res->sclk_mixer);
+>  	}
+>  
+> @@ -1269,14 +1273,14 @@ static int __maybe_unused exynos_mixer_resume(struct device *dev)
+>  		DRM_ERROR("Failed to prepare_enable the hdmi clk [%d]\n", ret);
+>  		return ret;
+>  	}
+> -	if (ctx->vp_enabled) {
+> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
+>  		ret = clk_prepare_enable(res->vp);
+>  		if (ret < 0) {
+>  			DRM_ERROR("Failed to prepare_enable the vp clk [%d]\n",
+>  				  ret);
+>  			return ret;
+>  		}
+> -		if (ctx->has_sclk) {
+> +		if (test_bit(MXR_BIT_HAS_SCLK, &ctx->flags)) {
+>  			ret = clk_prepare_enable(res->sclk_mixer);
+>  			if (ret < 0) {
+>  				DRM_ERROR("Failed to prepare_enable the " \
+> 
