@@ -1,249 +1,210 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/4] drm/exynos: mixer: convert booleans to flags in
- mixer context
-Date: Mon, 26 Sep 2016 16:23:19 +0900
-Message-ID: <57E8CCE7.9010509@samsung.com>
+Subject: Re: [PATCH v2 2/4] drm/exynos: mixer: configure layers once in
+ mixer_atomic_flush()
+Date: Mon, 26 Sep 2016 16:32:50 +0900
+Message-ID: <57E8CF22.60309@samsung.com>
 References: <1474556240-14055-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CGME20160922145904epcas1p45727150292370ce709d449b61b1fe4c3@epcas1p4.samsung.com>
- <1474556240-14055-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20160922145855epcas1p4cbf42f776771130315d8096762c925c0@epcas1p4.samsung.com>
+ <1474556240-14055-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47408 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759810AbcIZHXV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 03:23:21 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OE301APQOIVI510@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2016 16:23:19 +0900 (KST)
-In-reply-to: <1474556240-14055-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1474556240-14055-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, a.hajda@samsung.com
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Picked this one up.
-
-Thanks,
-Inki Dae
-
-2016년 09월 22일 23:57에 Tobias Jakobi 이(가) 쓴 글:
-> The mixer context struct already has a 'flags' field, so
-> we can use it to store the 'interlace', 'vp_enabled' and
-> 'has_sclk' booleans.
-> We use the non-atomic helper functions to access these bits.
-> 
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 54 +++++++++++++++++++----------------
->  1 file changed, 29 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 9a48aa1..1e78d57 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -73,6 +73,9 @@ enum mixer_version_id {
->  enum mixer_flag_bits {
->  	MXR_BIT_POWERED,
->  	MXR_BIT_VSYNC,
-> +	MXR_BIT_INTERLACE,
-> +	MXR_BIT_VP_ENABLED,
-> +	MXR_BIT_HAS_SCLK,
->  };
->  
->  static const uint32_t mixer_formats[] = {
-> @@ -98,9 +101,6 @@ struct mixer_context {
->  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->  	int			pipe;
->  	unsigned long		flags;
-> -	bool			interlace;
-> -	bool			vp_enabled;
-> -	bool			has_sclk;
->  
->  	struct mixer_resources	mixer_res;
->  	enum mixer_version_id	mxr_ver;
-> @@ -346,7 +346,7 @@ static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
->  	mixer_reg_writemask(res, MXR_STATUS, enable ?
->  			MXR_STATUS_SYNC_ENABLE : 0, MXR_STATUS_SYNC_ENABLE);
->  
-> -	if (ctx->vp_enabled)
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
->  		vp_reg_write(res, VP_SHADOW_UPDATE, enable ?
->  			VP_SHADOW_UPDATE_ENABLE : 0);
->  }
-> @@ -357,8 +357,8 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
->  	u32 val;
->  
->  	/* choosing between interlace and progressive mode */
-> -	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
-> -				MXR_CFG_SCAN_PROGRESSIVE);
-> +	val = test_bit(MXR_BIT_INTERLACE, &ctx->flags) ?
-> +		MXR_CFG_SCAN_INTERLACE : MXR_CFG_SCAN_PROGRESSIVE;
->  
->  	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
->  		/* choosing between proper HD and SD mode */
-> @@ -436,9 +436,10 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->  		mixer_reg_writemask(res, MXR_LAYER_CFG,
->  				    MXR_LAYER_CFG_GRP1_VAL(priority),
->  				    MXR_LAYER_CFG_GRP1_MASK);
-> +
->  		break;
->  	case VP_DEFAULT_WIN:
-> -		if (ctx->vp_enabled) {
-> +		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->  			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->  			mixer_reg_writemask(res, MXR_CFG, val,
->  				MXR_CFG_VP_ENABLE);
-> @@ -501,7 +502,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->  	chroma_addr[0] = exynos_drm_fb_dma_addr(fb, 1);
->  
->  	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
-> -		ctx->interlace = true;
-> +		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
->  		if (tiled_mode) {
->  			luma_addr[1] = luma_addr[0] + 0x40;
->  			chroma_addr[1] = chroma_addr[0] + 0x40;
-> @@ -510,7 +511,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->  			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
->  		}
->  	} else {
-> -		ctx->interlace = false;
-> +		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
->  		luma_addr[1] = 0;
->  		chroma_addr[1] = 0;
->  	}
-> @@ -518,7 +519,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->  	spin_lock_irqsave(&res->reg_slock, flags);
->  
->  	/* interlace or progressive scan mode */
-> -	val = (ctx->interlace ? ~0 : 0);
-> +	val = (test_bit(MXR_BIT_INTERLACE, &ctx->flags) ? ~0 : 0);
->  	vp_reg_writemask(res, VP_MODE, val, VP_MODE_LINE_SKIP);
->  
->  	/* setup format */
-> @@ -541,7 +542,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
->  
->  	vp_reg_write(res, VP_DST_WIDTH, state->crtc.w);
->  	vp_reg_write(res, VP_DST_H_POSITION, state->crtc.x);
-> -	if (ctx->interlace) {
-> +	if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
->  		vp_reg_write(res, VP_DST_HEIGHT, state->crtc.h / 2);
->  		vp_reg_write(res, VP_DST_V_POSITION, state->crtc.y / 2);
->  	} else {
-> @@ -636,9 +637,9 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
->  	src_y_offset = 0;
->  
->  	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-> -		ctx->interlace = true;
-> +		__set_bit(MXR_BIT_INTERLACE, &ctx->flags);
->  	else
-> -		ctx->interlace = false;
-> +		__clear_bit(MXR_BIT_INTERLACE, &ctx->flags);
->  
->  	spin_lock_irqsave(&res->reg_slock, flags);
->  
-> @@ -733,7 +734,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
->  	mixer_reg_write(res, MXR_BG_COLOR1, 0x008080);
->  	mixer_reg_write(res, MXR_BG_COLOR2, 0x008080);
->  
-> -	if (ctx->vp_enabled) {
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->  		/* configuration of Video Processor Registers */
->  		vp_win_reset(ctx);
->  		vp_default_filter(res);
-> @@ -742,7 +743,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
->  	/* disable all layers */
->  	mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP0_ENABLE);
->  	mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP1_ENABLE);
-> -	if (ctx->vp_enabled)
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
->  		mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_VP_ENABLE);
->  
->  	spin_unlock_irqrestore(&res->reg_slock, flags);
-> @@ -767,7 +768,7 @@ static irqreturn_t mixer_irq_handler(int irq, void *arg)
->  		val &= ~MXR_INT_STATUS_VSYNC;
->  
->  		/* interlace scan need to check shadow register */
-> -		if (ctx->interlace) {
-> +		if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
->  			base = mixer_reg_read(res, MXR_GRAPHIC_BASE(0));
->  			shadow = mixer_reg_read(res, MXR_GRAPHIC_BASE_S(0));
->  			if (base != shadow)
-> @@ -867,7 +868,7 @@ static int vp_resources_init(struct mixer_context *mixer_ctx)
->  		return -ENODEV;
->  	}
->  
-> -	if (mixer_ctx->has_sclk) {
-> +	if (test_bit(MXR_BIT_HAS_SCLK, &mixer_ctx->flags)) {
->  		mixer_res->sclk_mixer = devm_clk_get(dev, "sclk_mixer");
->  		if (IS_ERR(mixer_res->sclk_mixer)) {
->  			dev_err(dev, "failed to get clock 'sclk_mixer'\n");
-> @@ -917,7 +918,7 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
->  		return ret;
->  	}
->  
-> -	if (mixer_ctx->vp_enabled) {
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &mixer_ctx->flags)) {
->  		/* acquire vp resources: regs, irqs, clocks */
->  		ret = vp_resources_init(mixer_ctx);
->  		if (ret) {
-> @@ -1160,7 +1161,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
->  		return ret;
->  
->  	for (i = 0; i < MIXER_WIN_NR; i++) {
-> -		if (i == VP_DEFAULT_WIN && !ctx->vp_enabled)
-> +		if (i == VP_DEFAULT_WIN && !test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
->  			continue;
->  
->  		ret = exynos_plane_init(drm_dev, &ctx->planes[i], i,
-> @@ -1215,10 +1216,13 @@ static int mixer_probe(struct platform_device *pdev)
->  
->  	ctx->pdev = pdev;
->  	ctx->dev = dev;
-> -	ctx->vp_enabled = drv->is_vp_enabled;
-> -	ctx->has_sclk = drv->has_sclk;
->  	ctx->mxr_ver = drv->version;
->  
-> +	if (drv->is_vp_enabled)
-> +		__set_bit(MXR_BIT_VP_ENABLED, &ctx->flags);
-> +	if (drv->has_sclk)
-> +		__set_bit(MXR_BIT_HAS_SCLK, &ctx->flags);
-> +
->  	platform_set_drvdata(pdev, ctx);
->  
->  	ret = component_add(&pdev->dev, &mixer_component_ops);
-> @@ -1244,9 +1248,9 @@ static int __maybe_unused exynos_mixer_suspend(struct device *dev)
->  
->  	clk_disable_unprepare(res->hdmi);
->  	clk_disable_unprepare(res->mixer);
-> -	if (ctx->vp_enabled) {
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->  		clk_disable_unprepare(res->vp);
-> -		if (ctx->has_sclk)
-> +		if (test_bit(MXR_BIT_HAS_SCLK, &ctx->flags))
->  			clk_disable_unprepare(res->sclk_mixer);
->  	}
->  
-> @@ -1269,14 +1273,14 @@ static int __maybe_unused exynos_mixer_resume(struct device *dev)
->  		DRM_ERROR("Failed to prepare_enable the hdmi clk [%d]\n", ret);
->  		return ret;
->  	}
-> -	if (ctx->vp_enabled) {
-> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->  		ret = clk_prepare_enable(res->vp);
->  		if (ret < 0) {
->  			DRM_ERROR("Failed to prepare_enable the vp clk [%d]\n",
->  				  ret);
->  			return ret;
->  		}
-> -		if (ctx->has_sclk) {
-> +		if (test_bit(MXR_BIT_HAS_SCLK, &ctx->flags)) {
->  			ret = clk_prepare_enable(res->sclk_mixer);
->  			if (ret < 0) {
->  				DRM_ERROR("Failed to prepare_enable the " \
-> 
+CgoyMDE264WEIDA57JuUIDIy7J28IDIzOjU37JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbmx5IG1hbmlwdWxhdGUgdGhlIE1YUl9DRkcgYW5kIE1YUl9MQVlFUl9DRkcgcmVn
+aXN0ZXJzIG9uY2UKPiBpbiBtaXhlcl9jZmdfbGF5ZXIoKS4KPiBUcmlnZ2VyIHRoaXMgdmlhIGF0
+b21pYyBmbHVzaC4KPiAKPiBDaGFuZ2VzIGluIHYyOgo+IC0gaXNzdWUgbWl4ZXJfY2ZnX2xheWVy
+KCkgaW4gbWl4ZXJfZGlzYWJsZSgpCj4gLSByZW5hbWUgZmllbGRzIGFzIHN1Z2dlc3RlZCBieSBB
+bmRyemVqCj4gLSBhZGRlZCBkb2N1IHRvIG1peGVyIGNvbnRleHQgc3RydWN0Cj4gLSBzaW1wbGlm
+eSBtaXhlcl93aW5fcmVzZXQoKSBhcyB3ZWxsCj4gCj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEph
+a29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxMzMgKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgICAy
+ICsKPiAgMiBmaWxlcyBjaGFuZ2VkLCA5MCBpbnNlcnRpb25zKCspLCA0NSBkZWxldGlvbnMoLSkK
+PiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRleCAxZTc4ZDU3Li5j
+M2RhZDY2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
+LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gQEAgLTkz
+LDEyICs5MywyNSBAQCBzdGF0aWMgY29uc3QgdWludDMyX3QgdnBfZm9ybWF0c1tdID0gewo+ICAJ
+RFJNX0ZPUk1BVF9OVjIxLAo+ICB9Owo+ICAKPiArLyoKPiArICogTWl4ZXIgY29udGV4dCBzdHJ1
+Y3R1cmUuCj4gKyAqCj4gKyAqIEBjcnRjOiBUaGUgSERNSSBDUlRDIGF0dGFjaGVkIHRvIHRoZSBt
+aXhlci4KPiArICogQHBsYW5lczogQXJyYXkgb2YgcGxhbmUgb2JqZWN0cyBmb3IgZWFjaCBvZiB0
+aGUgbWl4ZXIgd2luZG93cy4KPiArICogQGFjdGl2ZV93aW5kb3dzOiBDYWNoZSBvZiB0aGUgbWl4
+ZXIncyBoYXJkd2FyZSBzdGF0ZS4KPiArICogICAgICAgVHJhY2tzIHdoaWNoIG1peGVyIHdpbmRv
+d3MgYXJlIGFjdGl2ZS9pbmFjdGl2ZS4KPiArICogQHBpcGU6IFRoZSBDUlRDIGluZGV4Lgo+ICsg
+KiBAZmxhZ3M6IEJpdGZpZWxkIGJ1aWxkIGZyb20gdGhlIG1peGVyX2ZsYWdfYml0cyBlbnVtZXJh
+dG9yLgo+ICsgKiBAbWl4ZXJfcmVzb3VyY2VzOiBBIHN0cnVjdCBjb250YWluaW5nIHJlZ2lzdGVy
+cywgY2xvY2tzLCBldGMuCj4gKyAqIEBteHJfdmVyOiBUaGUgaGFyZHdhcmUgcmV2aXNpb24vdmVy
+c2lvbiBvZiB0aGUgbWl4ZXIuCj4gKyAqLwoKQWJvdmUgY2hhbmdlcyBhcmUgbm90IHJlbGF0ZWQg
+dG8gdGhpcyBwYXRjaCBidXQgdHJpdmlhbCB0aGluZyBzbyBubyBwcm9ibGVtLgoKPiAgc3RydWN0
+IG1peGVyX2NvbnRleHQgewo+ICAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldjsKPiAgCXN0
+cnVjdCBkZXZpY2UJCSpkZXY7Cj4gIAlzdHJ1Y3QgZHJtX2RldmljZQkqZHJtX2RldjsKPiAgCXN0
+cnVjdCBleHlub3NfZHJtX2NydGMJKmNydGM7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZQlw
+bGFuZXNbTUlYRVJfV0lOX05SXTsKPiArCXVuc2lnbmVkIGxvbmcJCWFjdGl2ZV93aW5kb3dzOwo+
+ICAJaW50CQkJcGlwZTsKPiAgCXVuc2lnbmVkIGxvbmcJCWZsYWdzOwo+ICAKPiBAQCAtNDE4LDM3
+ICs0MzEsNjggQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3JnYl9mbXQoc3RydWN0IG1peGVyX2Nv
+bnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKPiAgCW1peGVyX3JlZ193cml0ZW1hc2so
+cmVzLCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdfUkdCX0ZNVF9NQVNLKTsKPiAgfQo+ICAKPiAtc3Rh
+dGljIHZvaWQgbWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2ln
+bmVkIGludCB3aW4sCj4gLQkJCSAgICB1bnNpZ25lZCBpbnQgcHJpb3JpdHksIGJvb2wgZW5hYmxl
+KQo+ICtzdGF0aWMgdm9pZCBtaXhlcl9jZmdfbGF5ZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0
+eCkKPiAgewo+ICAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVz
+Owo+IC0JdTMyIHZhbCA9IGVuYWJsZSA/IH4wIDogMDsKPiAtCj4gLQlzd2l0Y2ggKHdpbikgewo+
+IC0JY2FzZSAwOgo+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfQ0ZHLCB2YWwsIE1Y
+Ul9DRkdfR1JQMF9FTkFCTEUpOwo+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfTEFZ
+RVJfQ0ZHLAo+IC0JCQkJICAgIE1YUl9MQVlFUl9DRkdfR1JQMF9WQUwocHJpb3JpdHkpLAo+IC0J
+CQkJICAgIE1YUl9MQVlFUl9DRkdfR1JQMF9NQVNLKTsKPiAtCQlicmVhazsKPiAtCWNhc2UgMToK
+PiAtCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZHX0dSUDFf
+RU5BQkxFKTsKPiAtCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0xBWUVSX0NGRywKPiAt
+CQkJCSAgICBNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKHByaW9yaXR5KSwKPiAtCQkJCSAgICBNWFJf
+TEFZRVJfQ0ZHX0dSUDFfTUFTSyk7Cj4gKwl1bnNpZ25lZCBpbnQgd2luOwo+ICAKPiAtCQlicmVh
+azsKPiAtCWNhc2UgVlBfREVGQVVMVF9XSU46Cj4gLQkJaWYgKHRlc3RfYml0KE1YUl9CSVRfVlBf
+RU5BQkxFRCwgJmN0eC0+ZmxhZ3MpKSB7Cj4gLQkJCXZwX3JlZ193cml0ZW1hc2socmVzLCBWUF9F
+TkFCTEUsIHZhbCwgVlBfRU5BQkxFX09OKTsKPiAtCQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMs
+IE1YUl9DRkcsIHZhbCwKPiAtCQkJCU1YUl9DRkdfVlBfRU5BQkxFKTsKPiAtCQkJbWl4ZXJfcmVn
+X3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9DRkcsCj4gLQkJCQkJICAgIE1YUl9MQVlFUl9DRkdf
+VlBfVkFMKHByaW9yaXR5KSwKPiAtCQkJCQkgICAgTVhSX0xBWUVSX0NGR19WUF9NQVNLKTsKPiAr
+CXN0cnVjdCBleHlub3NfZHJtX3BsYW5lX3N0YXRlICpzdGF0ZTsKPiArCXN0cnVjdCBkcm1fZnJh
+bWVidWZmZXIgKmZiOwo+ICsJdW5zaWduZWQgaW50IHByaW9yaXR5Owo+ICsJdTMyIG14cl9jZmcg
+PSAwLCBteHJfbGF5ZXJfY2ZnID0gMCwgdnBfZW5hYmxlID0gMDsKPiArCWJvb2wgZW5hYmxlOwo+
+ICsKPiArCWZvciAod2luID0gMDsgd2luIDwgTUlYRVJfV0lOX05SOyArK3dpbikgewo+ICsJCXN0
+YXRlID0gdG9fZXh5bm9zX3BsYW5lX3N0YXRlKGN0eC0+cGxhbmVzW3dpbl0uYmFzZS5zdGF0ZSk7
+Cj4gKwkJZmIgPSBzdGF0ZS0+ZmI7Cj4gKwo+ICsJCXByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9y
+bWFsaXplZF96cG9zICsgMTsKPiArCQllbmFibGUgPSB0ZXN0X2JpdCh3aW4sICZjdHgtPmFjdGl2
+ZV93aW5kb3dzKTsKPiArCj4gKwkJaWYgKCFlbmFibGUpCj4gKwkJCWNvbnRpbnVlOwoKaWYgKCFl
+bmFibGUgfHwgIWZiKQoJY29udGludWU7Cgo+ICsKPiArCQlzd2l0Y2ggKHdpbikgewo+ICsJCWNh
+c2UgMDoKPiArCQkJbXhyX2NmZyB8PSAgTVhSX0NGR19HUlAwX0VOQUJMRTsKPiArCQkJbXhyX2xh
+eWVyX2NmZyB8PSBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFMKHByaW9yaXR5KTsKPiArCQkJYnJlYWs7
+Cj4gKwo+ICsJCWNhc2UgMToKPiArCQkJbXhyX2NmZyB8PSAgTVhSX0NGR19HUlAxX0VOQUJMRTsK
+PiArCQkJbXhyX2xheWVyX2NmZyB8PSBNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKHByaW9yaXR5KTsK
+PiArCQkJYnJlYWs7Cj4gKwo+ICsJCWNhc2UgVlBfREVGQVVMVF9XSU46Cj4gKwkJCXZwX2VuYWJs
+ZSA9IFZQX0VOQUJMRV9PTjsKPiArCQkJbXhyX2NmZyB8PSAgTVhSX0NGR19WUF9FTkFCTEU7Cj4g
+KwkJCW14cl9sYXllcl9jZmcgfD0gTVhSX0xBWUVSX0NGR19WUF9WQUwocHJpb3JpdHkpOwo+ICsJ
+CQlicmVhazsKPiArCQl9Cj4gKwo+ICsJCWlmICghZmIpCj4gKwkJCWNvbnRpbnVlOwoKQW5kIHJl
+bW92ZSBhYm92ZSB0d28gbGluZXMuCgo+ICsKPiArCQkvKgo+ICsJCSAqIFRPRE86IERvbid0IGVu
+YWJsZSBhbHBoYSBibGVuZGluZyBmb3IgdGhlIGJvdHRvbSB3aW5kb3cuCj4gKwkJICovCj4gKwkJ
+c3dpdGNoICh3aW4pIHsKPiArCQljYXNlIDA6Cj4gKwkJY2FzZSAxOgo+ICsJCQltaXhlcl9jZmdf
+Z2Z4X2JsZW5kKGN0eCwgd2luLCBpc19hbHBoYV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwo+
+ICsJCQlicmVhazsKPiArCj4gKwkJY2FzZSBWUF9ERUZBVUxUX1dJTjoKPiArCQkJbWl4ZXJfY2Zn
+X3ZwX2JsZW5kKGN0eCk7Cj4gKwkJCWJyZWFrOwo+ICAJCX0KPiAtCQlicmVhazsKCkhvdyBhYm91
+dCBzZXBhcmF0aW5nIGFib3ZlIHR3byBzd2l0Y2ggfiBjYXNlcyBpbnRvIGRpZmZlcmVudCBmdW5j
+dGlvbnM/IEllLiwgbWl4ZXJfY2ZnX3VwZGF0ZV9sYXllciBhbmQgbWl4ZXJfY2ZnX3VwZGF0ZV9i
+bGVuZAoKPiAgCX0KPiArCj4gKwlpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4
+LT5mbGFncykpCj4gKwkJdnBfcmVnX3dyaXRlbWFzayhyZXMsIFZQX0VOQUJMRSwgdnBfZW5hYmxl
+LCBWUF9FTkFCTEVfT04pOwo+ICsKPiArCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfQ0ZH
+LCBteHJfY2ZnLCBNWFJfQ0ZHX0VOQUJMRV9NQVNLKTsKPiArCW1peGVyX3JlZ193cml0ZW1hc2so
+cmVzLCBNWFJfTEFZRVJfQ0ZHLCBteHJfbGF5ZXJfY2ZnLCBNWFJfTEFZRVJfQ0ZHX01BU0spOwoK
+QW5kIG1vdmUgYWJvdmUgdHdvIGxpbmVzIHRvIGVhY2ggbmV3IGZ1bmN0aW9uLiBKdXN0IGxvb2tz
+IHN0cmFuZ2UgZm9yIG9uZSBmdW5jdGlvbiBoYXMgdHdvIHN3aXRjaCB+IGNhc2VzLgoKPiAgfQo+
+ICAKPiAgc3RhdGljIHZvaWQgbWl4ZXJfcnVuKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4g
+QEAgLTQ3OCw3ICs1MjIsNiBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1p
+eGVyX2NvbnRleHQgKmN0eCwKPiAgCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0gJnN0
+YXRlLT5iYXNlLmNydGMtPnN0YXRlLT5hZGp1c3RlZF9tb2RlOwo+ICAJc3RydWN0IG1peGVyX3Jl
+c291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+ICAJc3RydWN0IGRybV9mcmFtZWJ1ZmZl
+ciAqZmIgPSBzdGF0ZS0+ZmI7Cj4gLQl1bnNpZ25lZCBpbnQgcHJpb3JpdHkgPSBzdGF0ZS0+YmFz
+ZS5ub3JtYWxpemVkX3pwb3MgKyAxOwo+ICAJdW5zaWduZWQgbG9uZyBmbGFnczsKPiAgCWRtYV9h
+ZGRyX3QgbHVtYV9hZGRyWzJdLCBjaHJvbWFfYWRkclsyXTsKPiAgCWJvb2wgdGlsZWRfbW9kZSA9
+IGZhbHNlOwo+IEBAIC01NjMsOCArNjA2LDYgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVy
+KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCj4gIAo+ICAJbWl4ZXJfY2ZnX3NjYW4oY3R4LCBt
+b2RlLT52ZGlzcGxheSk7Cj4gIAltaXhlcl9jZmdfcmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5
+KTsKPiAtCW1peGVyX2NmZ19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHksIHRydWUp
+Owo+IC0JbWl4ZXJfY2ZnX3ZwX2JsZW5kKGN0eCk7Cj4gIAltaXhlcl9ydW4oY3R4KTsKPiAgCj4g
+IAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZyZXMtPnJlZ19zbG9jaywgZmxhZ3MpOwo+IEBAIC01
+ODgsNyArNjI5LDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhl
+cl9jb250ZXh0ICpjdHgsCj4gIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZzdGF0
+ZS0+YmFzZS5jcnRjLT5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsKPiAgCXN0cnVjdCBtaXhlcl9yZXNv
+dXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPiAgCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIg
+KmZiID0gc3RhdGUtPmZiOwo+IC0JdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uu
+bm9ybWFsaXplZF96cG9zICsgMTsKPiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gIAl1bnNpZ25l
+ZCBpbnQgd2luID0gcGxhbmUtPmluZGV4Owo+ICAJdW5zaWduZWQgaW50IHhfcmF0aW8gPSAwLCB5
+X3JhdGlvID0gMDsKPiBAQCAtNjgwLDggKzcyMCw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBo
+X2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+ICAKPiAgCW1peGVyX2NmZ19zY2Fu
+KGN0eCwgbW9kZS0+dmRpc3BsYXkpOwo+ICAJbWl4ZXJfY2ZnX3JnYl9mbXQoY3R4LCBtb2RlLT52
+ZGlzcGxheSk7Cj4gLQltaXhlcl9jZmdfbGF5ZXIoY3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsK
+PiAtCW1peGVyX2NmZ19nZnhfYmxlbmQoY3R4LCB3aW4sIGlzX2FscGhhX2Zvcm1hdChmYi0+cGl4
+ZWxfZm9ybWF0KSk7Cj4gIAo+ICAJLyogbGF5ZXIgdXBkYXRlIG1hbmRhdG9yeSBmb3IgbWl4ZXIg
+MTYuMC4zMy4wICovCj4gIAlpZiAoY3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTZfMF8zM18wIHx8
+Cj4gQEAgLTcyNiw5ICs3NjQsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl93aW5fcmVzZXQoc3RydWN0
+IG1peGVyX2NvbnRleHQgKmN0eCkKPiAgCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfU1RB
+VFVTLCBNWFJfU1RBVFVTXzE2X0JVUlNULAo+ICAJCU1YUl9TVEFUVVNfQlVSU1RfTUFTSyk7Cj4g
+IAo+IC0JLyogcmVzZXQgZGVmYXVsdCBsYXllciBwcmlvcml0eSAqLwo+IC0JbWl4ZXJfcmVnX3dy
+aXRlKHJlcywgTVhSX0xBWUVSX0NGRywgMCk7Cj4gLQo+ICAJLyogc2V0dGluZyBiYWNrZ3JvdW5k
+IGNvbG9yICovCj4gIAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IwLCAweDAwODA4
+MCk7Cj4gIAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IxLCAweDAwODA4MCk7Cj4g
+QEAgLTc0MCwxMSArNzc1LDkgQEAgc3RhdGljIHZvaWQgbWl4ZXJfd2luX3Jlc2V0KHN0cnVjdCBt
+aXhlcl9jb250ZXh0ICpjdHgpCj4gIAkJdnBfZGVmYXVsdF9maWx0ZXIocmVzKTsKPiAgCX0KPiAg
+Cj4gLQkvKiBkaXNhYmxlIGFsbCBsYXllcnMgKi8KPiAtCW1peGVyX3JlZ193cml0ZW1hc2socmVz
+LCBNWFJfQ0ZHLCAwLCBNWFJfQ0ZHX0dSUDBfRU5BQkxFKTsKPiAtCW1peGVyX3JlZ193cml0ZW1h
+c2socmVzLCBNWFJfQ0ZHLCAwLCBNWFJfQ0ZHX0dSUDFfRU5BQkxFKTsKPiAtCWlmICh0ZXN0X2Jp
+dChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSkKPiAtCQltaXhlcl9yZWdfd3JpdGVt
+YXNrKHJlcywgTVhSX0NGRywgMCwgTVhSX0NGR19WUF9FTkFCTEUpOwo+ICsJLyogZGlzYWJsZSBh
+bGwgbGF5ZXJzIGFuZCByZXNldCBsYXllciBwcmlvcml0eSB0byBkZWZhdWx0ICovCj4gKwljdHgt
+PmFjdGl2ZV93aW5kb3dzID0gMDsKPiArCW1peGVyX2NmZ19sYXllcihjdHgpOwo+ICAKPiAgCXNw
+aW5fdW5sb2NrX2lycXJlc3RvcmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gIH0KPiBAQCAt
+OTk0LDMyICsxMDI3LDM2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3VwZGF0ZV9wbGFuZShzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpjcnRjLAo+ICAJCXZwX3ZpZGVvX2J1ZmZlcihtaXhlcl9jdHgsIHBs
+YW5lKTsKPiAgCWVsc2UKPiAgCQltaXhlcl9ncmFwaF9idWZmZXIobWl4ZXJfY3R4LCBwbGFuZSk7
+Cj4gKwo+ICsJX19zZXRfYml0KHBsYW5lLT5pbmRleCwgJm1peGVyX2N0eC0+YWN0aXZlX3dpbmRv
+d3MpOwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCBtaXhlcl9kaXNhYmxlX3BsYW5lKHN0cnVjdCBl
+eHlub3NfZHJtX2NydGMgKmNydGMsCj4gIAkJCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxh
+bmUpCj4gIHsKPiAgCXN0cnVjdCBtaXhlcl9jb250ZXh0ICptaXhlcl9jdHggPSBjcnRjLT5jdHg7
+Cj4gLQlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmbWl4ZXJfY3R4LT5taXhlcl9yZXM7
+Cj4gLQl1bnNpZ25lZCBsb25nIGZsYWdzOwo+ICAKPiAgCURSTV9ERUJVR19LTVMoIndpbjogJWRc
+biIsIHBsYW5lLT5pbmRleCk7Cj4gIAo+ICAJaWYgKCF0ZXN0X2JpdChNWFJfQklUX1BPV0VSRUQs
+ICZtaXhlcl9jdHgtPmZsYWdzKSkKPiAgCQlyZXR1cm47Cj4gIAo+IC0Jc3Bpbl9sb2NrX2lycXNh
+dmUoJnJlcy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gLQltaXhlcl9jZmdfbGF5ZXIobWl4ZXJfY3R4
+LCBwbGFuZS0+aW5kZXgsIDAsIGZhbHNlKTsKPiAtCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnJl
+cy0+cmVnX3Nsb2NrLCBmbGFncyk7Cj4gKwlfX2NsZWFyX2JpdChwbGFuZS0+aW5kZXgsICZtaXhl
+cl9jdHgtPmFjdGl2ZV93aW5kb3dzKTsKPiAgfQo+ICAKPiAgc3RhdGljIHZvaWQgbWl4ZXJfYXRv
+bWljX2ZsdXNoKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCj4gIHsKPiAgCXN0cnVjdCBt
+aXhlcl9jb250ZXh0ICptaXhlcl9jdHggPSBjcnRjLT5jdHg7Cj4gKwlzdHJ1Y3QgbWl4ZXJfcmVz
+b3VyY2VzICpyZXMgPSAmbWl4ZXJfY3R4LT5taXhlcl9yZXM7Cj4gKwl1bnNpZ25lZCBsb25nIGZs
+YWdzOwo+ICAKPiAgCWlmICghdGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmbWl4ZXJfY3R4LT5m
+bGFncykpCj4gIAkJcmV0dXJuOwo+ICAKPiArCXNwaW5fbG9ja19pcnFzYXZlKCZyZXMtPnJlZ19z
+bG9jaywgZmxhZ3MpOwo+ICsJbWl4ZXJfY2ZnX2xheWVyKG1peGVyX2N0eCk7Cj4gKwlzcGluX3Vu
+bG9ja19pcnFyZXN0b3JlKCZyZXMtPnJlZ19zbG9jaywgZmxhZ3MpOwo+ICsKPiAgCW1peGVyX3Zz
+eW5jX3NldF91cGRhdGUobWl4ZXJfY3R4LCB0cnVlKTsKPiAgfQo+ICAKPiBAQCAtMTA1Myw2ICsx
+MDkwLDggQEAgc3RhdGljIHZvaWQgbWl4ZXJfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmNydGMpCj4gIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0
+YyAqY3J0YykKPiAgewo+ICAJc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsK
+PiArCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPiArCXVu
+c2lnbmVkIGxvbmcgZmxhZ3M7Cj4gIAlpbnQgaTsKPiAgCj4gIAlpZiAoIXRlc3RfYml0KE1YUl9C
+SVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpKQo+IEBAIC0xMDY0LDYgKzExMDMsMTAgQEAgc3RhdGlj
+IHZvaWQgbWl4ZXJfZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+ICAJZm9y
+IChpID0gMDsgaSA8IE1JWEVSX1dJTl9OUjsgaSsrKQo+ICAJCW1peGVyX2Rpc2FibGVfcGxhbmUo
+Y3J0YywgJmN0eC0+cGxhbmVzW2ldKTsKPiAgCj4gKwlzcGluX2xvY2tfaXJxc2F2ZSgmcmVzLT5y
+ZWdfc2xvY2ssIGZsYWdzKTsKPiArCW1peGVyX2NmZ19sYXllcihjdHgpOwo+ICsJc3Bpbl91bmxv
+Y2tfaXJxcmVzdG9yZSgmcmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsKPiArCj4gIAlleHlub3NfZHJt
+X3BpcGVfY2xrX2VuYWJsZShjcnRjLCBmYWxzZSk7Cj4gIAo+ICAJcG1fcnVudGltZV9wdXQoY3R4
+LT5kZXYpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIu
+aCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4gaW5kZXggN2YyMmRmNS4u
+NzI4YTE4ZSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIu
+aAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4gQEAgLTEwMCw2
+ICsxMDAsNyBAQAo+ICAjZGVmaW5lIE1YUl9DRkdfR1JQMV9FTkFCTEUJCSgxIDw8IDUpCj4gICNk
+ZWZpbmUgTVhSX0NGR19HUlAwX0VOQUJMRQkJKDEgPDwgNCkKPiAgI2RlZmluZSBNWFJfQ0ZHX1ZQ
+X0VOQUJMRQkJKDEgPDwgMykKPiArI2RlZmluZSBNWFJfQ0ZHX0VOQUJMRV9NQVNLCQkoMHg3IDw8
+IDMpCj4gICNkZWZpbmUgTVhSX0NGR19TQ0FOX0lOVEVSTEFDRQkJKDAgPDwgMikKPiAgI2RlZmlu
+ZSBNWFJfQ0ZHX1NDQU5fUFJPR1JFU1NJVkUJKDEgPDwgMikKPiAgI2RlZmluZSBNWFJfQ0ZHX1ND
+QU5fTlRTQwkJKDAgPDwgMSkKPiBAQCAtMTUxLDYgKzE1Miw3IEBACj4gICNkZWZpbmUgTVhSX0xB
+WUVSX0NGR19HUlAwX01BU0sJCU1YUl9MQVlFUl9DRkdfR1JQMF9WQUwofjApCj4gICNkZWZpbmUg
+TVhSX0xBWUVSX0NGR19WUF9WQUwoeCkJCU1YUl9NQVNLX1ZBTCh4LCAzLCAwKQo+ICAjZGVmaW5l
+IE1YUl9MQVlFUl9DRkdfVlBfTUFTSwkJTVhSX0xBWUVSX0NGR19WUF9WQUwofjApCj4gKyNkZWZp
+bmUgTVhSX0xBWUVSX0NGR19NQVNLCQkweEZGRgo+ICAKPiAgI2VuZGlmIC8qIFNBTVNVTkdfUkVH
+U19NSVhFUl9IICovCj4gIAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
