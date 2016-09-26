@@ -1,73 +1,111 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [RFC v3] drm/exynos: g2d: fix runtime PM
-Date: Mon, 26 Sep 2016 15:58:22 +0200
-Message-ID: <b534f79f-4660-74d5-1831-2339fc753e0d@samsung.com>
+Date: Mon, 26 Sep 2016 16:15:01 +0200
+Message-ID: <57E92D65.4000306@math.uni-bielefeld.de>
 References: <CGME20160924190241epcas5p46ec40455f202e285918f1f6609a467f0@epcas5p4.samsung.com>
  <1474743486-3881-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <b534f79f-4660-74d5-1831-2339fc753e0d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1474743486-3881-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38944 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965676AbcIZOPF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 26 Sep 2016 10:15:05 -0400
+In-Reply-To: <b534f79f-4660-74d5-1831-2339fc753e0d@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com
 
-RGVhciBUb2JpYXMsCgpPbiAyMDE2LTA5LTI0IDIwOjU4LCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+
-IFRoZSBjb21taXQgYjA1OTg0ZTIxYTdlMDAwYmY1MDc0YWNlMDBkN2E1NzQ5NDRiMmMxNiBicm9r
-ZQo+IG9wZXJhdGlvbiBvZiB0aGUgRzJELiBBZnRlciB0aGlzIGNvbW1pdCB0aGUgZm9sbG93aW5n
-Cj4gaGFwcGVucy4KPiAtIGV4eW5vc19nMmRfZXhlY19pb2N0bCgpIHByZXBhcmVzIGEgcnVucXVl
-dWUgbm9kZSBhbmQKPiAgICBjYWxscyBnMmRfZXhlY19ydW5xdWV1ZSgpCj4gLSBnMmRfZXhlY19y
-dW5xdWV1ZSgpIGNhbGxzIGcyZF9kbWFfc3RhcnQoKSB3aGljaCBnZXRzCj4gICAgcnVudGltZSBQ
-TSBzeW5jCj4gLSBydW50aW1lIFBNIGNhbGxzIGcyZF9ydW50aW1lX3Jlc3VtZSgpCj4gLSBnMmRf
-cnVudGltZV9yZXN1bWUoKSBjYWxscyBnMmRfZXhlY19ydW5xdWV1ZSgpCj4KPiBMdWNraWx5IGZv
-ciB1cyB0aGlzIGRvZXNuJ3QgcmVhbGx5IGxvb3AsIGJ1dCBjcmVhdGVzIGEKPiBtdXRleCBsb2Nr
-dXAsIHdoaWNoIHRoZSBrZXJuZWwgZXZlbiBwcmVkaWN0cy4KPgo+IEFueXdheSwgd2UgZml4IHRo
-aXMgYnkgcmVpbnRyb2R1Y2luZyBkZWRpY2F0ZWQgc2xlZXAKPiBvcGVyYXRpb25zIGFnYWluLCBh
-bmQgb25seSBsZXR0aW5nIHJ1bnRpbWUgUE0gY29udHJvbAo+IHRoZSBnYXRlIGNsb2NrLgo+Cj4g
-VGhpcyBpcyBub3QgZW5vdWdoIHRvIGZpeCB0aGUgaXNzdWUgdGhvdWdoLgo+IC0gV2Ugc3dpdGNo
-IHJ1bnRpbWUgUE0gdG8gYXV0b3N1c3BlbmQuIEN1cnJlbnRseSBjbG9ja3MgZ2V0Cj4gICAgZGlz
-YWJsZWQsIGFuZCB0aGVuIHJlLWVuYWJsZWQgYWdhaW4gaW4gdGhlIHJ1bnF1ZXVlIHdvcmtlcgo+
-ICAgIHdoZW4gYSBub2RlIGlzIGNvbXBsZXRlZCBhbmQgdGhlIG5leHQgaXMgc3RhcnRlZC4KPiAg
-ICBXaXRoIHRoZSB1cGNvbWluZyBpbnRyb2R1Y3Rpb24gb2YgSU9NTVUgcnVudGltZSBQTSB0aGlz
-Cj4gICAgc2l0dWF0aW9ucyBnZXRzIHdvcnNlLCBzaW5jZSBub3cgYWxzbyB0aGUgSU9NTVUgZ29l
-cwo+ICAgIHRocm91Z2ggYSBkaXNhYmxlL2VuYWJsZSBjeWNsZSBiZWZvcmUgdGhlIG5leHQgbm9k
-ZSBpcwo+ICAgIHN0YXJ0ZWQuCj4gLSBXZSBjb25zb2xpZGF0ZSBhbGwgcnVudGltZSBQTSBtYW5h
-Z2VtZW50IHRvIHRoZSBydW5xdWV1ZQo+ICAgIHdvcmtlci4KPiAtIFdlIGludHJvZHVjZSBnMmRf
-d2FpdF9maW5pc2goKSB3aGljaCB3YWl0cyB1bnRpbCB0aGUgY3VycmVudGx5Cj4gICAgcHJvY2Vz
-c2VkIHJ1bnF1ZXVlIG5vZGUgaXMgZmluaXNoZWQuCj4gICAgSWYgdGhpcyB0YWtlcyB0b28gbG9u
-ZywgdGhlIGVuZ2luZSBpcyBmb3JjaWJseSByZXNldC4gVGhpcwo+ICAgIGlzIG5lY2Vzc2FyeSB0
-byBwcm9wZXJseSBjbG9zZSB0aGUgZHJpdmVyIGluIGNhc2UgdGhlIGVuZ2luZQo+ICAgIHNob3Vs
-ZCBoYW5nIHdpdGggcmVhZC93cml0ZSBhY2Nlc3MgdG8gc29tZSBhcmVhIG9mIG1lbW9yeS4KPiAg
-ICBJbiB0aGlzIHNpdHVhdGlvbiB3ZSBjYW4ndCBwcm9wZXJseSB1bm1hcCBHRU0vdXNlcnB0cgo+
-ICAgIG9iamVjdHMsIHNpbmNlIHRoaXMgbWlnaHQgY3JlYXRlIGEgcGFnZWZhdWx0Lgo+IC0gU2xl
-ZXAgc3VzcGVuZCBpc3N1ZXMgYSBzdXNwZW5kIG9mIHRoZSBydW5xdWV1ZSBhbmQgdGhlbiBjYWxs
-cwo+ICAgIGcyZF93YWl0X2ZpbmlzaCgpLCB3aGljaCByZXR1cm5zIHRoZSBlbmdpbmUgaW4gdGhl
-IGlkbGUgc3RhdGUuCj4gICAgVGhlIGN1cnJlbnQgcnVucXVldWUgbm9kZSBnZXRzIGNvbXBsZXRl
-ZCwgYWxsIG90aGVyIHF1ZXVlZAo+ICAgIG5vZGVzIHN0YXkgaW4gdGhlIHF1ZXVlLiBUaGVyZSBp
-cyBubyBoYXJkd2FyZSBzdGF0ZSB0aGF0Cj4gICAgbmVlZHMgdG8gYmUgcmV0YWluZWQuCj4gLSBT
-bGVlcCByZXN1bWUganVzdCBwb2tlcyB0aGUgcnVucXVldWUgd29ya2VyLCB3aGljaCwgc2hvdWxk
-Cj4gICAgc29tZXRoaW5nIGJlIGluIHF1ZXVlLCBjb250aW51ZXMgaXRzIHdvcmssIG9yIGp1c3Qg
-ZXhpdHMuCgpJTUhPIHRoZXJlIGlzIHRvbyBtdWNoIGRvbmUgaW4gb25lIHBhdGNoLiBJdCB3b3Vs
-ZCBiZSBtdWNoIGVhc2llciB0bwp1bmRlcnN0YW5kIGl0IGlmIHRoZSBjaGFuZ2VzIGFyZSBzcGxp
-dCBpbnRvIDIgcGFydHM6IHJlc3RvcmluZyBkZWRpY2F0ZWQKc3BlZXAgY2FsbGJhY2tzIGFuZCB0
-aGVpciBpbnRlZ3JhdGlvbiB3aXRoIHJ1bnF1ZXVlIHdvcmtlciBhbmQgYWRkaXRpb24Kb2YgYXV0
-b3N1c3BlbmQtYmFzZWQgcnVudGltZSBwbS4KCj4gQ2hhbmdlcyBpbiB2MjoKPiAtIGRpc2FibGUg
-YXV0b3N1c3BlbmQgbW9kZSBhZ2FpbiBpbiBnMmRfcmVtb3ZlKCkKPiAtIG9ubHkgZ2V0IHN5bmMg
-aW4gZzJkX3J1bnF1ZXVlX3dvcmtlcigpIGlmIHRoZXJlIGlzIG5vZGUKPiAgICBpbiB0aGUgcXVl
-dWUgbGVmdAo+Cj4gQ2hhbmdlcyBpbiB2MzoKPiAtIGFjdHVhbGx5IGRlbGV0ZSBub2RlIGluIGcy
-ZF9yZW1vdmVfcnVucXVldWVfbm9kZXMoKQo+Cj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29i
-aSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+CgpbLi4uXQoKQmVzdCByZWdhcmRzCi0t
-IApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Marek,
+
+Marek Szyprowski wrote:
+> Dear Tobias,
+> 
+> On 2016-09-24 20:58, Tobias Jakobi wrote:
+>> The commit b05984e21a7e000bf5074ace00d7a574944b2c16 broke
+>> operation of the G2D. After this commit the following
+>> happens.
+>> - exynos_g2d_exec_ioctl() prepares a runqueue node and
+>>    calls g2d_exec_runqueue()
+>> - g2d_exec_runqueue() calls g2d_dma_start() which gets
+>>    runtime PM sync
+>> - runtime PM calls g2d_runtime_resume()
+>> - g2d_runtime_resume() calls g2d_exec_runqueue()
+>>
+>> Luckily for us this doesn't really loop, but creates a
+>> mutex lockup, which the kernel even predicts.
+>>
+>> Anyway, we fix this by reintroducing dedicated sleep
+>> operations again, and only letting runtime PM control
+>> the gate clock.
+>>
+>> This is not enough to fix the issue though.
+>> - We switch runtime PM to autosuspend. Currently clocks get
+>>    disabled, and then re-enabled again in the runqueue worker
+>>    when a node is completed and the next is started.
+>>    With the upcoming introduction of IOMMU runtime PM this
+>>    situations gets worse, since now also the IOMMU goes
+>>    through a disable/enable cycle before the next node is
+>>    started.
+>> - We consolidate all runtime PM management to the runqueue
+>>    worker.
+>> - We introduce g2d_wait_finish() which waits until the currently
+>>    processed runqueue node is finished.
+>>    If this takes too long, the engine is forcibly reset. This
+>>    is necessary to properly close the driver in case the engine
+>>    should hang with read/write access to some area of memory.
+>>    In this situation we can't properly unmap GEM/userptr
+>>    objects, since this might create a pagefault.
+>> - Sleep suspend issues a suspend of the runqueue and then calls
+>>    g2d_wait_finish(), which returns the engine in the idle state.
+>>    The current runqueue node gets completed, all other queued
+>>    nodes stay in the queue. There is no hardware state that
+>>    needs to be retained.
+>> - Sleep resume just pokes the runqueue worker, which, should
+>>    something be in queue, continues its work, or just exits.
+> 
+> IMHO there is too much done in one patch. It would be much easier to
+> understand it if the changes are split into 2 parts: restoring dedicated
+> speep callbacks and their integration with runqueue worker and addition
+> of autosuspend-based runtime pm.
+so you mean first revert your patch, and then put more changes on top of
+it in a separate patch? I'm not sure into which 'functional units' I
+should break this one down.
+
+I can of course create a separate patch for autosuspend, that that would
+only replace a put_sync() with mark_last_busy() + put_autosuspend(),
+wouldn't it?
+
+
+My current idea of functional units:
+1) revert Marek's patch
+2) move runpm management to g2d_runqueue_worker()
+3) introduce g2d_wait_finish() and use it sleep call
+4) also use it in g2d_close() and g2d_remove()
+5) put autosuspend on top
+
+Would this make sense?
+
+
+
+With best wishes,
+Tobias
+
+
+>> Changes in v2:
+>> - disable autosuspend mode again in g2d_remove()
+>> - only get sync in g2d_runqueue_worker() if there is node
+>>    in the queue left
+>>
+>> Changes in v3:
+>> - actually delete node in g2d_remove_runqueue_nodes()
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> 
+> [...]
+> 
+> Best regards
