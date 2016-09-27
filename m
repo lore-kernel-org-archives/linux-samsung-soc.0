@@ -1,42 +1,100 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v3] dmaengine: s3c24xx: Add dma_slave_map for s3c2440
- devices
-Date: Mon, 26 Sep 2016 23:13:35 +0530
-Message-ID: <20160926174335.GG2467@localhost>
-References: <1474570275-7238-1-git-send-email-sam.van.den.berge@telenet.be>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
+ mixer_atomic_flush()
+Date: Tue, 27 Sep 2016 12:36:58 +0900
+Message-ID: <57E9E95A.6010606@samsung.com>
+References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
+ <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:55727 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034469AbcIZRfO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 13:35:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1474570275-7238-1-git-send-email-sam.van.den.berge@telenet.be>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sam Van Den Berge <sam.van.den.berge@telenet.be>
-Cc: dmaengine@vger.kernel.org, k.kozlowski@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 22, 2016 at 08:51:15PM +0200, Sam Van Den Berge wrote:
-> This patch updates the s3c24xx dma driver to be able to pass a
-> dma_slave_map array via the platform data. This is needed to
-> be able to use the new, simpler dmaengine API [1].
-> I used the virtual DMA channels as a parameter for the dma_filter
-> function. By doing that, I could reuse the existing filter function in
-> drivers/dma/s3c24xx-dma.c.
-> 
-> I have tested this on my mini2440 board with the audio driver.
-> According to my observations, dma_request_slave_channel in the
-> function dmaengine_pcm_new in the file
-> sound/soc/soc-generic-dmaengine-pcm.c now returns a valid DMA channel
-> whereas before no DMA channel was returned at that point.
-> 
-> Entries for DMACH_XD0, DMACH_XD1 and DMACH_TIMER are missing because I
-> don't realy know which driver to use for these.
-
-Applied, thanks
-
--- 
-~Vinod
+CgoyMDE264WEIDA57JuUIDI27J28IDIwOjM27JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbmx5IG1hbmlwdWxhdGUgdGhlIE1YUl9DRkcgYW5kIE1YUl9MQVlFUl9DRkcgcmVn
+aXN0ZXJzIG9uY2UKPiBpbiBtaXhlcl9jZmdfbGF5ZXIoKS4KPiBUcmlnZ2VyIHRoaXMgdmlhIGF0
+b21pYyBmbHVzaC4KPiAKPiBDaGFuZ2VzIGluIHYyOgo+IC0gaXNzdWUgbWl4ZXJfY2ZnX2xheWVy
+KCkgaW4gbWl4ZXJfZGlzYWJsZSgpCj4gLSByZW5hbWUgZmllbGRzIGFzIHN1Z2dlc3RlZCBieSBB
+bmRyemVqCj4gLSBhZGRlZCBkb2N1IHRvIG1peGVyIGNvbnRleHQgc3RydWN0Cj4gLSBzaW1wbGlm
+eSBtaXhlcl93aW5fcmVzZXQoKSBhcyB3ZWxsCj4gCj4gQ2hhbmdlcyBpbiB2MzoKPiAtIHNpbXBs
+aWZ5IHNvbWUgY29uZGl0aW9ucyBhcyBzdWdnZXN0ZWQgYnkgSW5raQo+IC0gYWRkIGRvY3UgdG8g
+bWl4ZXJfY2ZnX2xheWVyKCkKPiAtIGZvbGQgc3dpdGNoIHN0YXRlbWVudHMgaW50byBhIHNpbmds
+ZSBvbmUKPiAKPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5p
+LWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
+ZXIuYyB8IDEzNSArKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvcmVncy1taXhlci5oICAgfCAgIDIgKwo+ICAyIGZpbGVzIGNoYW5nZWQs
+IDkyIGluc2VydGlvbnMoKyksIDQ1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IDFlNzhkNTcuLjRmMDZmNGQgMTAwNjQ0Cj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtOTMsMTIgKzkzLDI1IEBAIHN0YXRpYyBj
+b25zdCB1aW50MzJfdCB2cF9mb3JtYXRzW10gPSB7Cj4gIAlEUk1fRk9STUFUX05WMjEsCj4gIH07
+Cj4gIAo+ICsvKgo+ICsgKiBNaXhlciBjb250ZXh0IHN0cnVjdHVyZS4KPiArICoKPiArICogQGNy
+dGM6IFRoZSBIRE1JIENSVEMgYXR0YWNoZWQgdG8gdGhlIG1peGVyLgo+ICsgKiBAcGxhbmVzOiBB
+cnJheSBvZiBwbGFuZSBvYmplY3RzIGZvciBlYWNoIG9mIHRoZSBtaXhlciB3aW5kb3dzLgo+ICsg
+KiBAYWN0aXZlX3dpbmRvd3M6IENhY2hlIG9mIHRoZSBtaXhlcidzIGhhcmR3YXJlIHN0YXRlLgo+
+ICsgKiAgICAgICBUcmFja3Mgd2hpY2ggbWl4ZXIgd2luZG93cyBhcmUgYWN0aXZlL2luYWN0aXZl
+Lgo+ICsgKiBAcGlwZTogVGhlIENSVEMgaW5kZXguCj4gKyAqIEBmbGFnczogQml0ZmllbGQgYnVp
+bGQgZnJvbSB0aGUgbWl4ZXJfZmxhZ19iaXRzIGVudW1lcmF0b3IuCj4gKyAqIEBtaXhlcl9yZXNv
+dXJjZXM6IEEgc3RydWN0IGNvbnRhaW5pbmcgcmVnaXN0ZXJzLCBjbG9ja3MsIGV0Yy4KPiArICog
+QG14cl92ZXI6IFRoZSBoYXJkd2FyZSByZXZpc2lvbi92ZXJzaW9uIG9mIHRoZSBtaXhlci4KPiAr
+ICovCj4gIHN0cnVjdCBtaXhlcl9jb250ZXh0IHsKPiAgCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXY7Cj4gIAlzdHJ1Y3QgZGV2aWNlCQkqZGV2Owo+ICAJc3RydWN0IGRybV9kZXZpY2UJKmRy
+bV9kZXY7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjCSpjcnRjOwo+ICAJc3RydWN0IGV4eW5v
+c19kcm1fcGxhbmUJcGxhbmVzW01JWEVSX1dJTl9OUl07Cj4gKwl1bnNpZ25lZCBsb25nCQlhY3Rp
+dmVfd2luZG93czsKPiAgCWludAkJCXBpcGU7Cj4gIAl1bnNpZ25lZCBsb25nCQlmbGFnczsKPiAg
+Cj4gQEAgLTQxOCwzNyArNDMxLDcwIEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0
+cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCj4gIAltaXhlcl9y
+ZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZHX1JHQl9GTVRfTUFTSyk7Cj4g
+IH0KPiAgCj4gLXN0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihzdHJ1Y3QgbWl4ZXJfY29udGV4
+dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luLAo+IC0JCQkgICAgdW5zaWduZWQgaW50IHByaW9yaXR5
+LCBib29sIGVuYWJsZSkKPiArLyoqCj4gKyAqIG1peGVyX2NmZ19sYXllciAtIGFwcGx5IGxheWVy
+IGNvbmZpZ3VyYXRpb24gdG8gaGFyZHdhcmUKPiArICogQGN0eDogbWl4ZXIgY29udGV4dAo+ICsg
+Kgo+ICsgKiBUaGlzIGNvbmZpZ3VyZXMgdGhlIE1YUl9DRkcgYW5kIE1YUl9MQVlFUl9DRkcgaGFy
+ZHdhcmUgcmVnaXN0ZXJzCj4gKyAqIHVzaW5nIHRoZSAnYWN0aXZlX3dpbmRvd3MnIGZpZWxkIG9m
+IHRoZSB0aGUgbWl4ZXIgY29udGVudCwgYW5kCj4gKyAqIHRoZSBwaXhlbCBmb3JtYXQgb2YgdGhl
+IGZyYW1lYnVmZmVycyBhc3NvY2lhdGVkIHdpdGggdGhlIGVuYWJsZWQKPiArICogd2luZG93cy4K
+PiArICoKPiArICogSGFzIHRvIGJlIGNhbGxlZCB1bmRlciBtaXhlciBsb2NrLgo+ICsgKi8KPiAr
+c3RhdGljIHZvaWQgbWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4g
+IHsKPiAgCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPiAt
+CXUzMiB2YWwgPSBlbmFibGUgPyB+MCA6IDA7Cj4gLQo+IC0Jc3dpdGNoICh3aW4pIHsKPiAtCWNh
+c2UgMDoKPiAtCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZH
+X0dSUDBfRU5BQkxFKTsKPiAtCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0xBWUVSX0NG
+RywKPiAtCQkJCSAgICBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFMKHByaW9yaXR5KSwKPiAtCQkJCSAg
+ICBNWFJfTEFZRVJfQ0ZHX0dSUDBfTUFTSyk7Cj4gLQkJYnJlYWs7Cj4gLQljYXNlIDE6Cj4gLQkJ
+bWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19HUlAxX0VOQUJM
+RSk7Cj4gLQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9DRkcsCj4gLQkJCQkg
+ICAgTVhSX0xBWUVSX0NGR19HUlAxX1ZBTChwcmlvcml0eSksCj4gLQkJCQkgICAgTVhSX0xBWUVS
+X0NGR19HUlAxX01BU0spOwo+ICsJdW5zaWduZWQgaW50IHdpbjsKPiAgCj4gLQkJYnJlYWs7Cj4g
+LQljYXNlIFZQX0RFRkFVTFRfV0lOOgo+IC0JCWlmICh0ZXN0X2JpdChNWFJfQklUX1ZQX0VOQUJM
+RUQsICZjdHgtPmZsYWdzKSkgewo+IC0JCQl2cF9yZWdfd3JpdGVtYXNrKHJlcywgVlBfRU5BQkxF
+LCB2YWwsIFZQX0VOQUJMRV9PTik7Cj4gLQkJCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJf
+Q0ZHLCB2YWwsCj4gLQkJCQlNWFJfQ0ZHX1ZQX0VOQUJMRSk7Cj4gLQkJCW1peGVyX3JlZ193cml0
+ZW1hc2socmVzLCBNWFJfTEFZRVJfQ0ZHLAo+IC0JCQkJCSAgICBNWFJfTEFZRVJfQ0ZHX1ZQX1ZB
+TChwcmlvcml0eSksCj4gLQkJCQkJICAgIE1YUl9MQVlFUl9DRkdfVlBfTUFTSyk7Cj4gKwlzdHJ1
+Y3QgZXh5bm9zX2RybV9wbGFuZV9zdGF0ZSAqc3RhdGU7Cj4gKwlzdHJ1Y3QgZHJtX2ZyYW1lYnVm
+ZmVyICpmYjsKPiArCXVuc2lnbmVkIGludCBwcmlvcml0eTsKPiArCXUzMiBteHJfY2ZnID0gMCwg
+bXhyX2xheWVyX2NmZyA9IDAsIHZwX2VuYWJsZSA9IDA7Cj4gKwlib29sIGVuYWJsZTsKPiArCj4g
+Kwlmb3IgKHdpbiA9IDA7IHdpbiA8IE1JWEVSX1dJTl9OUjsgKyt3aW4pIHsKPiArCQlzdGF0ZSA9
+IHRvX2V4eW5vc19wbGFuZV9zdGF0ZShjdHgtPnBsYW5lc1t3aW5dLmJhc2Uuc3RhdGUpOwo+ICsJ
+CWZiID0gc3RhdGUtPmZiOwo+ICsKPiArCQlwcmlvcml0eSA9IHN0YXRlLT5iYXNlLm5vcm1hbGl6
+ZWRfenBvcyArIDE7Cj4gKwkJZW5hYmxlID0gdGVzdF9iaXQod2luLCAmY3R4LT5hY3RpdmVfd2lu
+ZG93cyk7Cj4gKwo+ICsJCWlmICghZW5hYmxlKQo+ICsJCQljb250aW51ZTsKPiArCj4gKwkJQlVH
+X09OKCFmYik7CgpOb3QgZ29vZC4gRXZlbiB0aHJvdWdoIHNvbWUgcHJvYmxlbSBoYXBwZW5zIGF0
+IG1peGVyIGRyaXZlciwgb3RoZXIgS01TIGRyaXZlcnMgc2hvdWxkIHdvcmsuCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
