@@ -1,97 +1,111 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 1/6] Revert "drm/exynos: g2d: fix system and runtime pm integration"
-Date: Tue, 27 Sep 2016 17:50:06 +0200
-Message-ID: <1474991411-2937-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 2/6] drm/exynos: g2d: move PM management to runqueue worker
+Date: Tue, 27 Sep 2016 17:50:07 +0200
+Message-ID: <1474991411-2937-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40846 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933939AbcI0Puq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 11:50:46 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This reverts commit b05984e21a7e000bf5074ace00d7a574944b2c16.
-
-The change, i.e. merging the sleep and runpm operations, produces
-a deadlock situation:
-(1) exynos_g2d_exec_ioctl() prepares a runqueue node and
-    calls g2d_exec_runqueue()
-(2) g2d_exec_runqueue() calls g2d_dma_start() which gets
-    runtime PM sync
-(3) runtime PM core calls g2d_runtime_resume()
-(4) g2d_runtime_resume() calls g2d_exec_runqueue(), which
-    loops back to (2)
-
-Due to mutexes that are in place, a deadlock situation is created.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 6eca8bb..4bf00f5 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -1475,8 +1475,8 @@ static int g2d_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int g2d_runtime_suspend(struct device *dev)
-+#ifdef CONFIG_PM_SLEEP
-+static int g2d_suspend(struct device *dev)
- {
- 	struct g2d_data *g2d = dev_get_drvdata(dev);
- 
-@@ -1490,6 +1490,25 @@ static int g2d_runtime_suspend(struct device *dev)
- 
- 	flush_work(&g2d->runqueue_work);
- 
-+	return 0;
-+}
-+
-+static int g2d_resume(struct device *dev)
-+{
-+	struct g2d_data *g2d = dev_get_drvdata(dev);
-+
-+	g2d->suspended = false;
-+	g2d_exec_runqueue(g2d);
-+
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_PM
-+static int g2d_runtime_suspend(struct device *dev)
-+{
-+	struct g2d_data *g2d = dev_get_drvdata(dev);
-+
- 	clk_disable_unprepare(g2d->gate_clk);
- 
- 	return 0;
-@@ -1504,16 +1523,12 @@ static int g2d_runtime_resume(struct device *dev)
- 	if (ret < 0)
- 		dev_warn(dev, "failed to enable clock.\n");
- 
--	g2d->suspended = false;
--	g2d_exec_runqueue(g2d);
--
- 	return ret;
- }
- #endif
- 
- static const struct dev_pm_ops g2d_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(g2d_suspend, g2d_resume)
- 	SET_RUNTIME_PM_OPS(g2d_runtime_suspend, g2d_runtime_resume, NULL)
- };
- 
--- 
-2.7.3
+RG8gYWxsIHBtX3J1bnRpbWVfe2dldCxwdXR9KCkgY2FsbHMgaW4gdGhlIHJ1bnF1ZXVlIHdvcmtl
+ci4KQWxzbyBrZWVwIHRyYWNrIG9mIHRoZSBlbmdpbmUncyBpZGxlL2J1c3kgc3RhdGUuCgpTaWdu
+ZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4K
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgfCA3OCArKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA1NiBpbnNlcnRpb25z
+KCspLCAyMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZzJkLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJk
+LmMKaW5kZXggNGJmMDBmNS4uZWRhMzg1YSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2cyZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9nMmQuYwpAQCAtMTM4LDYgKzEzOCwxOCBAQCBlbnVtIGcyZF9yZWdfdHlwZSB7CiAJTUFY
+X1JFR19UWVBFX05SCiB9OwogCitlbnVtIGcyZF9mbGFnX2JpdHMgeworCS8qCisJICogSWYgc2V0
+LCBzdXNwZW5kcyB0aGUgcnVucXVldWUgd29ya2VyIGFmdGVyIHRoZSBjdXJyZW50bHkKKwkgKiBw
+cm9jZXNzZWQgbm9kZSBpcyBmaW5pc2hlZC4KKwkgKi8KKwlHMkRfQklUX1NVU1BFTkRfUlVOUVVF
+VUUsCisJLyoKKwkgKiBJZiBzZXQsIGluZGljYXRlcyB0aGF0IHRoZSBlbmdpbmUgaXMgY3VycmVu
+dGx5IGJ1c3kuCisJICovCisJRzJEX0JJVF9FTkdJTkVfQlVTWSwKK307CisKIC8qIGNtZGxpc3Qg
+ZGF0YSBzdHJ1Y3R1cmUgKi8KIHN0cnVjdCBnMmRfY21kbGlzdCB7CiAJdTMyCQloZWFkOwpAQCAt
+MjI2LDcgKzIzOCw3IEBAIHN0cnVjdCBnMmRfZGF0YSB7CiAJc3RydWN0IHdvcmtxdWV1ZV9zdHJ1
+Y3QJCSpnMmRfd29ya3E7CiAJc3RydWN0IHdvcmtfc3RydWN0CQlydW5xdWV1ZV93b3JrOwogCXN0
+cnVjdCBleHlub3NfZHJtX3N1YmRydglzdWJkcnY7Ci0JYm9vbAkJCQlzdXNwZW5kZWQ7CisJdW5z
+aWduZWQgbG9uZwkJCWZsYWdzOwogCiAJLyogY21kbGlzdCAqLwogCXN0cnVjdCBnMmRfY21kbGlz
+dF9ub2RlCQkqY21kbGlzdF9ub2RlOwpAQCAtODAzLDEyICs4MTUsOCBAQCBzdGF0aWMgdm9pZCBn
+MmRfZG1hX3N0YXJ0KHN0cnVjdCBnMmRfZGF0YSAqZzJkLAogCXN0cnVjdCBnMmRfY21kbGlzdF9u
+b2RlICpub2RlID0KIAkJCQlsaXN0X2ZpcnN0X2VudHJ5KCZydW5xdWV1ZV9ub2RlLT5ydW5fY21k
+bGlzdCwKIAkJCQkJCXN0cnVjdCBnMmRfY21kbGlzdF9ub2RlLCBsaXN0KTsKLQlpbnQgcmV0Owot
+Ci0JcmV0ID0gcG1fcnVudGltZV9nZXRfc3luYyhnMmQtPmRldik7Ci0JaWYgKHJldCA8IDApCi0J
+CXJldHVybjsKIAorCXNldF9iaXQoRzJEX0JJVF9FTkdJTkVfQlVTWSwgJmcyZC0+ZmxhZ3MpOwog
+CXdyaXRlbF9yZWxheGVkKG5vZGUtPmRtYV9hZGRyLCBnMmQtPnJlZ3MgKyBHMkRfRE1BX1NGUl9C
+QVNFX0FERFIpOwogCXdyaXRlbF9yZWxheGVkKEcyRF9ETUFfU1RBUlQsIGcyZC0+cmVncyArIEcy
+RF9ETUFfQ09NTUFORCk7CiB9CkBAIC04NTgsMTggKzg2NiwzNyBAQCBzdGF0aWMgdm9pZCBnMmRf
+cnVucXVldWVfd29ya2VyKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykKIHsKIAlzdHJ1Y3QgZzJk
+X2RhdGEgKmcyZCA9IGNvbnRhaW5lcl9vZih3b3JrLCBzdHJ1Y3QgZzJkX2RhdGEsCiAJCQkJCSAg
+ICBydW5xdWV1ZV93b3JrKTsKKwlzdHJ1Y3QgZzJkX3J1bnF1ZXVlX25vZGUgKnJ1bnF1ZXVlX25v
+ZGU7CisKKwkvKgorCSAqIFRoZSBlbmdpbmUgaXMgYnVzeSBhbmQgdGhlIGNvbXBsZXRpb24gb2Yg
+dGhlIGN1cnJlbnQgbm9kZSBpcyBnb2luZworCSAqIHRvIHBva2UgdGhlIHJ1bnF1ZXVlIHdvcmtl
+ciwgc28gbm90aGluZyB0byBkbyBoZXJlLgorCSAqLworCWlmICh0ZXN0X2JpdChHMkRfQklUX0VO
+R0lORV9CVVNZLCAmZzJkLT5mbGFncykpCisJCXJldHVybjsKIAogCW11dGV4X2xvY2soJmcyZC0+
+cnVucXVldWVfbXV0ZXgpOwotCXBtX3J1bnRpbWVfcHV0X3N5bmMoZzJkLT5kZXYpOwogCi0JY29t
+cGxldGUoJmcyZC0+cnVucXVldWVfbm9kZS0+Y29tcGxldGUpOwotCWlmIChnMmQtPnJ1bnF1ZXVl
+X25vZGUtPmFzeW5jKQotCQlnMmRfZnJlZV9ydW5xdWV1ZV9ub2RlKGcyZCwgZzJkLT5ydW5xdWV1
+ZV9ub2RlKTsKKwlydW5xdWV1ZV9ub2RlID0gZzJkLT5ydW5xdWV1ZV9ub2RlOworCWcyZC0+cnVu
+cXVldWVfbm9kZSA9IE5VTEw7CisKKwlpZiAocnVucXVldWVfbm9kZSkgeworCQlwbV9ydW50aW1l
+X3B1dChnMmQtPmRldik7CisKKwkJY29tcGxldGUoJnJ1bnF1ZXVlX25vZGUtPmNvbXBsZXRlKTsK
+KwkJaWYgKHJ1bnF1ZXVlX25vZGUtPmFzeW5jKQorCQkJZzJkX2ZyZWVfcnVucXVldWVfbm9kZShn
+MmQsIHJ1bnF1ZXVlX25vZGUpOworCX0KKworCWlmICghdGVzdF9iaXQoRzJEX0JJVF9TVVNQRU5E
+X1JVTlFVRVVFLCAmZzJkLT5mbGFncykpIHsKKwkJZzJkLT5ydW5xdWV1ZV9ub2RlID0gZzJkX2dl
+dF9ydW5xdWV1ZV9ub2RlKGcyZCk7CisKKwkJaWYgKGcyZC0+cnVucXVldWVfbm9kZSkgeworCQkJ
+cG1fcnVudGltZV9nZXRfc3luYyhnMmQtPmRldik7CisJCQlnMmRfZG1hX3N0YXJ0KGcyZCwgZzJk
+LT5ydW5xdWV1ZV9ub2RlKTsKKwkJfQorCX0KIAotCWlmIChnMmQtPnN1c3BlbmRlZCkKLQkJZzJk
+LT5ydW5xdWV1ZV9ub2RlID0gTlVMTDsKLQllbHNlCi0JCWcyZF9leGVjX3J1bnF1ZXVlKGcyZCk7
+CiAJbXV0ZXhfdW5sb2NrKCZnMmQtPnJ1bnF1ZXVlX211dGV4KTsKIH0KIApAQCAtOTE4LDggKzk0
+NSwxMCBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZzJkX2lycV9oYW5kbGVyKGludCBpcnEsIHZvaWQg
+KmRldl9pZCkKIAkJfQogCX0KIAotCWlmIChwZW5kaW5nICYgRzJEX0lOVFBfQUNNRF9GSU4pCisJ
+aWYgKHBlbmRpbmcgJiBHMkRfSU5UUF9BQ01EX0ZJTikgeworCQljbGVhcl9iaXQoRzJEX0JJVF9F
+TkdJTkVfQlVTWSwgJmcyZC0+ZmxhZ3MpOwogCQlxdWV1ZV93b3JrKGcyZC0+ZzJkX3dvcmtxLCAm
+ZzJkLT5ydW5xdWV1ZV93b3JrKTsKKwl9CiAKIAlyZXR1cm4gSVJRX0hBTkRMRUQ7CiB9CkBAIC0x
+MjU5LDEwICsxMjg4LDExIEBAIGludCBleHlub3NfZzJkX2V4ZWNfaW9jdGwoc3RydWN0IGRybV9k
+ZXZpY2UgKmRybV9kZXYsIHZvaWQgKmRhdGEsCiAJcnVucXVldWVfbm9kZS0+cGlkID0gY3VycmVu
+dC0+cGlkOwogCXJ1bnF1ZXVlX25vZGUtPmZpbHAgPSBmaWxlOwogCWxpc3RfYWRkX3RhaWwoJnJ1
+bnF1ZXVlX25vZGUtPmxpc3QsICZnMmQtPnJ1bnF1ZXVlKTsKLQlpZiAoIWcyZC0+cnVucXVldWVf
+bm9kZSkKLQkJZzJkX2V4ZWNfcnVucXVldWUoZzJkKTsKIAltdXRleF91bmxvY2soJmcyZC0+cnVu
+cXVldWVfbXV0ZXgpOwogCisJLyogTGV0IHRoZSBydW5xdWV1ZSBrbm93IHRoYXQgdGhlcmUgaXMg
+d29yayB0byBkby4gKi8KKwlxdWV1ZV93b3JrKGcyZC0+ZzJkX3dvcmtxLCAmZzJkLT5ydW5xdWV1
+ZV93b3JrKTsKKwogCWlmIChydW5xdWV1ZV9ub2RlLT5hc3luYykKIAkJZ290byBvdXQ7CiAKQEAg
+LTE0MDAsNiArMTQzMCw4IEBAIHN0YXRpYyBpbnQgZzJkX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYpCiAJfQogCiAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsKKwljbGVhcl9iaXQo
+RzJEX0JJVF9TVVNQRU5EX1JVTlFVRVVFLCAmZzJkLT5mbGFncyk7CisJY2xlYXJfYml0KEcyRF9C
+SVRfRU5HSU5FX0JVU1ksICZnMmQtPmZsYWdzKTsKIAogCXJlcyA9IHBsYXRmb3JtX2dldF9yZXNv
+dXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7CiAKQEAgLTE0NTgsNiArMTQ5MCw5IEBAIHN0
+YXRpYyBpbnQgZzJkX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewogCXN0
+cnVjdCBnMmRfZGF0YSAqZzJkID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7CiAKKwkvKiBT
+dXNwZW5kIHJ1bnF1ZXVlIG9wZXJhdGlvbi4gKi8KKwlzZXRfYml0KEcyRF9CSVRfU1VTUEVORF9S
+VU5RVUVVRSwgJmcyZC0+ZmxhZ3MpOworCiAJY2FuY2VsX3dvcmtfc3luYygmZzJkLT5ydW5xdWV1
+ZV93b3JrKTsKIAlleHlub3NfZHJtX3N1YmRydl91bnJlZ2lzdGVyKCZnMmQtPnN1YmRydik7CiAK
+QEAgLTE0ODAsOSArMTUxNSw4IEBAIHN0YXRpYyBpbnQgZzJkX3N1c3BlbmQoc3RydWN0IGRldmlj
+ZSAqZGV2KQogewogCXN0cnVjdCBnMmRfZGF0YSAqZzJkID0gZGV2X2dldF9kcnZkYXRhKGRldik7
+CiAKLQltdXRleF9sb2NrKCZnMmQtPnJ1bnF1ZXVlX211dGV4KTsKLQlnMmQtPnN1c3BlbmRlZCA9
+IHRydWU7Ci0JbXV0ZXhfdW5sb2NrKCZnMmQtPnJ1bnF1ZXVlX211dGV4KTsKKwkvKiBTdXNwZW5k
+IHJ1bnF1ZXVlIG9wZXJhdGlvbi4gKi8KKwlzZXRfYml0KEcyRF9CSVRfU1VTUEVORF9SVU5RVUVV
+RSwgJmcyZC0+ZmxhZ3MpOwogCiAJd2hpbGUgKGcyZC0+cnVucXVldWVfbm9kZSkKIAkJLyogRklY
+TUU6IGdvb2QgcmFuZ2U/ICovCkBAIC0xNDk3LDggKzE1MzEsOCBAQCBzdGF0aWMgaW50IGcyZF9y
+ZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQogewogCXN0cnVjdCBnMmRfZGF0YSAqZzJkID0gZGV2
+X2dldF9kcnZkYXRhKGRldik7CiAKLQlnMmQtPnN1c3BlbmRlZCA9IGZhbHNlOwotCWcyZF9leGVj
+X3J1bnF1ZXVlKGcyZCk7CisJY2xlYXJfYml0KEcyRF9CSVRfU1VTUEVORF9SVU5RVUVVRSwgJmcy
+ZC0+ZmxhZ3MpOworCXF1ZXVlX3dvcmsoZzJkLT5nMmRfd29ya3EsICZnMmQtPnJ1bnF1ZXVlX3dv
+cmspOwogCiAJcmV0dXJuIDA7CiB9Ci0tIAoyLjcuMwoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
