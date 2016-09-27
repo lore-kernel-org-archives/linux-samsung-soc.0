@@ -1,168 +1,122 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Tue, 27 Sep 2016 15:52:45 +0900
-Message-ID: <57EA173D.6090604@samsung.com>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57E9E95A.6010606@samsung.com> <57EA0648.5000106@math.uni-bielefeld.de>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v3 2/2] ARM: exynos_defconfig: Remove old non-working MIPI
+ driver
+Date: Tue, 27 Sep 2016 11:06:45 +0300
+Message-ID: <0e4921a8-ac07-8760-bd64-ec0528bbcd9a@ti.com>
+References: <1474014760-23173-1-git-send-email-k.kozlowski@samsung.com>
+ <CGME20160916083252eucas1p12f57a9bc08176e10b8e07c3b421bb0ad@eucas1p1.samsung.com>
+ <1474014760-23173-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature";
+        boundary="SGug7GK0mCndfr9D7PdrQMTAAJ7E9RrFx"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34968 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbcI0Gws (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:51067 "EHLO
+        devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754127AbcI0IHW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 02:52:48 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OE500DODHRX8500@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2016 15:52:45 +0900 (KST)
-In-reply-to: <57EA0648.5000106@math.uni-bielefeld.de>
+        Tue, 27 Sep 2016 04:07:22 -0400
+In-Reply-To: <1474014760-23173-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, m.szyprowski@samsung.com
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+
+--SGug7GK0mCndfr9D7PdrQMTAAJ7E9RrFx
+Content-Type: multipart/mixed; boundary="cUXB1nO098FCewnVrWFUxdcUOWKmINq3U";
+ protected-headers="v1"
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>
+Message-ID: <0e4921a8-ac07-8760-bd64-ec0528bbcd9a@ti.com>
+Subject: Re: [PATCH v3 2/2] ARM: exynos_defconfig: Remove old non-working MIPI
+ driver
+References: <1474014760-23173-1-git-send-email-k.kozlowski@samsung.com>
+ <CGME20160916083252eucas1p12f57a9bc08176e10b8e07c3b421bb0ad@eucas1p1.samsung.com>
+ <1474014760-23173-2-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <1474014760-23173-2-git-send-email-k.kozlowski@samsung.com>
+
+--cUXB1nO098FCewnVrWFUxdcUOWKmINq3U
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 16/09/16 11:32, Krzysztof Kozlowski wrote:
+> The Exynos MIPI driver does not work anymore (it is board file only) so=
+
+> it is removed.  Remove also config options.
+>=20
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Donghwa Lee <dh09.lee@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+> ---
+>=20
+> This does not really depend on patch #1. The driver is dysfunctional an=
+d
+> it does not work so defconfig change can be applied separately.
+>=20
+> Changes since v2:
+> 1. Remove also EXYNOS_MIPI_DSI, pointed out by Tomi Valkeinen.
+>=20
+> Changes since v1:
+> 1. New patch.
+> ---
+>  arch/arm/configs/exynos_defconfig | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exyno=
+s_defconfig
+> index 4e484f406419..c58f6841f8aa 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -168,8 +168,6 @@ CONFIG_DRM_PANEL_SAMSUNG_LD9040=3Dy
+>  CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=3Dy
+>  CONFIG_DRM_NXP_PTN3460=3Dy
+>  CONFIG_DRM_PARADE_PS8622=3Dy
+> -CONFIG_EXYNOS_VIDEO=3Dy
+> -CONFIG_EXYNOS_MIPI_DSI=3Dy
+>  CONFIG_LCD_CLASS_DEVICE=3Dy
+>  CONFIG_LCD_PLATFORM=3Dy
+>  CONFIG_BACKLIGHT_PWM=3Dy
+>=20
+
+Thanks, queued these for 4.9.
+
+ Tomi
 
 
+--cUXB1nO098FCewnVrWFUxdcUOWKmINq3U--
 
-2016년 09월 27일 14:40에 Tobias Jakobi 이(가) 쓴 글:
-> Inki Dae wrote:
->>
->>
->> 2016년 09월 26일 20:36에 Tobias Jakobi 이(가) 쓴 글:
->>> Only manipulate the MXR_CFG and MXR_LAYER_CFG registers once
->>> in mixer_cfg_layer().
->>> Trigger this via atomic flush.
->>>
->>> Changes in v2:
->>> - issue mixer_cfg_layer() in mixer_disable()
->>> - rename fields as suggested by Andrzej
->>> - added docu to mixer context struct
->>> - simplify mixer_win_reset() as well
->>>
->>> Changes in v3:
->>> - simplify some conditions as suggested by Inki
->>> - add docu to mixer_cfg_layer()
->>> - fold switch statements into a single one
->>>
->>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_mixer.c | 135 ++++++++++++++++++++++------------
->>>  drivers/gpu/drm/exynos/regs-mixer.h   |   2 +
->>>  2 files changed, 92 insertions(+), 45 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>> index 1e78d57..4f06f4d 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>> @@ -93,12 +93,25 @@ static const uint32_t vp_formats[] = {
->>>  	DRM_FORMAT_NV21,
->>>  };
->>>  
->>> +/*
->>> + * Mixer context structure.
->>> + *
->>> + * @crtc: The HDMI CRTC attached to the mixer.
->>> + * @planes: Array of plane objects for each of the mixer windows.
->>> + * @active_windows: Cache of the mixer's hardware state.
->>> + *       Tracks which mixer windows are active/inactive.
->>> + * @pipe: The CRTC index.
->>> + * @flags: Bitfield build from the mixer_flag_bits enumerator.
->>> + * @mixer_resources: A struct containing registers, clocks, etc.
->>> + * @mxr_ver: The hardware revision/version of the mixer.
->>> + */
->>>  struct mixer_context {
->>>  	struct platform_device *pdev;
->>>  	struct device		*dev;
->>>  	struct drm_device	*drm_dev;
->>>  	struct exynos_drm_crtc	*crtc;
->>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->>> +	unsigned long		active_windows;
->>>  	int			pipe;
->>>  	unsigned long		flags;
->>>  
->>> @@ -418,37 +431,70 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
->>>  }
->>>  
->>> -static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->>> -			    unsigned int priority, bool enable)
->>> +/**
->>> + * mixer_cfg_layer - apply layer configuration to hardware
->>> + * @ctx: mixer context
->>> + *
->>> + * This configures the MXR_CFG and MXR_LAYER_CFG hardware registers
->>> + * using the 'active_windows' field of the the mixer content, and
->>> + * the pixel format of the framebuffers associated with the enabled
->>> + * windows.
->>> + *
->>> + * Has to be called under mixer lock.
->>> + */
->>> +static void mixer_cfg_layer(struct mixer_context *ctx)
->>>  {
->>>  	struct mixer_resources *res = &ctx->mixer_res;
->>> -	u32 val = enable ? ~0 : 0;
->>> -
->>> -	switch (win) {
->>> -	case 0:
->>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>> -				    MXR_LAYER_CFG_GRP0_VAL(priority),
->>> -				    MXR_LAYER_CFG_GRP0_MASK);
->>> -		break;
->>> -	case 1:
->>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP1_ENABLE);
->>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>> -				    MXR_LAYER_CFG_GRP1_VAL(priority),
->>> -				    MXR_LAYER_CFG_GRP1_MASK);
->>> +	unsigned int win;
->>>  
->>> -		break;
->>> -	case VP_DEFAULT_WIN:
->>> -		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->>> -			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->>> -			mixer_reg_writemask(res, MXR_CFG, val,
->>> -				MXR_CFG_VP_ENABLE);
->>> -			mixer_reg_writemask(res, MXR_LAYER_CFG,
->>> -					    MXR_LAYER_CFG_VP_VAL(priority),
->>> -					    MXR_LAYER_CFG_VP_MASK);
->>> +	struct exynos_drm_plane_state *state;
->>> +	struct drm_framebuffer *fb;
->>> +	unsigned int priority;
->>> +	u32 mxr_cfg = 0, mxr_layer_cfg = 0, vp_enable = 0;
->>> +	bool enable;
->>> +
->>> +	for (win = 0; win < MIXER_WIN_NR; ++win) {
->>> +		state = to_exynos_plane_state(ctx->planes[win].base.state);
->>> +		fb = state->fb;
->>> +
->>> +		priority = state->base.normalized_zpos + 1;
->>> +		enable = test_bit(win, &ctx->active_windows);
->>> +
->>> +		if (!enable)
->>> +			continue;
->>> +
->>> +		BUG_ON(!fb);
->>
->> Not good. Even through some problem happens at mixer driver, other KMS drivers should work.
-> That would be a issue at core level. And in this case, BUG_ON() should
-> be triggered.
+--SGug7GK0mCndfr9D7PdrQMTAAJ7E9RrFx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-If so, the fb should be checked at core level not specific driver.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> 
-> - Tobias
-> 
-> 
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+iQIcBAEBCAAGBQJX6iiWAAoJEPo9qoy8lh71TrIP/2IX3oE84NZK1SDCFCvLQu3L
+0HUvLwq7XfIphEs9Zor4PV1pmYSXgOL9k5pkjMZEzPoNZbUaiRCq71Kbpp+55Q8t
+t8cjX+1oWXNGxImdwLBHiQego3opr7SsWA8DsGR3/EsOadi9v2UIH00v0e+F7o09
+n8XMRSVV/5VMGf9ARPYGzR4Cg3Zvr1FZ/suQzc6Gig3eB+7D06iA42V5tIfZC+Lc
+0zYW8TQIlm+YPLjPnx//kQxvV2i1AmuGGYKHThhkyvLklo83u/noyqxXXFQ5RXzS
+PJPHRUG6lbjTclefcBueLucBj/toubSatgyN2g+Nqu1ytUSLqzFhv9k9NeILGm+l
+7qzlwr4f9MYtGygZUzCPDALSzgt3W9wLxGca1XsVY1bKziUmPOAarFt6K3i6R3jj
+UW+3RDi7EqmF/j5uvnsZnXyzQ7MT/vNOjy5QkH1BtSElfmTpaq2ZBzQITtWnK+sg
+oa4TWt8Zo7NPvr4ZABnUyW+gRUDWlFpYDe6XIi6RIX8z4CQX9kAN8rueKkNnLRSO
+NRh4fM+Dap9g8g8OwCDUEuNDSmoH9Lh0zq8gvogHTQXJrrABkfE08SG0mnS26rFt
+IcS6P2go+Ip4LTtpMG40StTlpTIu7xecdLb3qfqgeVFD3MmR9xoNlkcEOz8iOnO2
+ciRQtDUKjqQZKT0CVrl2
+=qaUe
+-----END PGP SIGNATURE-----
+
+--SGug7GK0mCndfr9D7PdrQMTAAJ7E9RrFx--
