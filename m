@@ -1,212 +1,43 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Wed, 28 Sep 2016 08:38:43 +0900
-Message-ID: <57EB0303.3020409@samsung.com>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57E9E95A.6010606@samsung.com> <57EA0648.5000106@math.uni-bielefeld.de>
- <57EA173D.6090604@samsung.com> <57EA5662.4040006@math.uni-bielefeld.de>
+Subject: Re: [PATCH 0/6] drm/exynos: g2d: rework sleep and runtime PM
+Date: Wed, 28 Sep 2016 08:41:28 +0900
+Message-ID: <57EB03A8.1060103@samsung.com>
+References: <CGME20160927155105epcas1p2f38b5f490e87cdfd9893a01b28b30e54@epcas1p2.samsung.com>
+ <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40639 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753049AbcI0Xiq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 19:38:46 -0400
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OE602W5USCJ4650@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2016 08:38:43 +0900 (KST)
-In-reply-to: <57EA5662.4040006@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, m.szyprowski@samsung.com
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2016년 09월 27일 20:22에 Tobias Jakobi 이(가) 쓴 글:
-> Hey Inki,
-> 
-> 
-> Inki Dae wrote:
->> 2016년 09월 27일 14:40에 Tobias Jakobi 이(가) 쓴 글:
->>> Inki Dae wrote:
->>>>
->>>>
->>>> 2016년 09월 26일 20:36에 Tobias Jakobi 이(가) 쓴 글:
->>>>> Only manipulate the MXR_CFG and MXR_LAYER_CFG registers once
->>>>> in mixer_cfg_layer().
->>>>> Trigger this via atomic flush.
->>>>>
->>>>> Changes in v2:
->>>>> - issue mixer_cfg_layer() in mixer_disable()
->>>>> - rename fields as suggested by Andrzej
->>>>> - added docu to mixer context struct
->>>>> - simplify mixer_win_reset() as well
->>>>>
->>>>> Changes in v3:
->>>>> - simplify some conditions as suggested by Inki
->>>>> - add docu to mixer_cfg_layer()
->>>>> - fold switch statements into a single one
->>>>>
->>>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>> ---
->>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 135 ++++++++++++++++++++++------------
->>>>>  drivers/gpu/drm/exynos/regs-mixer.h   |   2 +
->>>>>  2 files changed, 92 insertions(+), 45 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>> index 1e78d57..4f06f4d 100644
->>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>> @@ -93,12 +93,25 @@ static const uint32_t vp_formats[] = {
->>>>>  	DRM_FORMAT_NV21,
->>>>>  };
->>>>>  
->>>>> +/*
->>>>> + * Mixer context structure.
->>>>> + *
->>>>> + * @crtc: The HDMI CRTC attached to the mixer.
->>>>> + * @planes: Array of plane objects for each of the mixer windows.
->>>>> + * @active_windows: Cache of the mixer's hardware state.
->>>>> + *       Tracks which mixer windows are active/inactive.
->>>>> + * @pipe: The CRTC index.
->>>>> + * @flags: Bitfield build from the mixer_flag_bits enumerator.
->>>>> + * @mixer_resources: A struct containing registers, clocks, etc.
->>>>> + * @mxr_ver: The hardware revision/version of the mixer.
->>>>> + */
->>>>>  struct mixer_context {
->>>>>  	struct platform_device *pdev;
->>>>>  	struct device		*dev;
->>>>>  	struct drm_device	*drm_dev;
->>>>>  	struct exynos_drm_crtc	*crtc;
->>>>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->>>>> +	unsigned long		active_windows;
->>>>>  	int			pipe;
->>>>>  	unsigned long		flags;
->>>>>  
->>>>> @@ -418,37 +431,70 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>>>>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
->>>>>  }
->>>>>  
->>>>> -static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->>>>> -			    unsigned int priority, bool enable)
->>>>> +/**
->>>>> + * mixer_cfg_layer - apply layer configuration to hardware
->>>>> + * @ctx: mixer context
->>>>> + *
->>>>> + * This configures the MXR_CFG and MXR_LAYER_CFG hardware registers
->>>>> + * using the 'active_windows' field of the the mixer content, and
->>>>> + * the pixel format of the framebuffers associated with the enabled
->>>>> + * windows.
->>>>> + *
->>>>> + * Has to be called under mixer lock.
->>>>> + */
->>>>> +static void mixer_cfg_layer(struct mixer_context *ctx)
->>>>>  {
->>>>>  	struct mixer_resources *res = &ctx->mixer_res;
->>>>> -	u32 val = enable ? ~0 : 0;
->>>>> -
->>>>> -	switch (win) {
->>>>> -	case 0:
->>>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->>>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>> -				    MXR_LAYER_CFG_GRP0_VAL(priority),
->>>>> -				    MXR_LAYER_CFG_GRP0_MASK);
->>>>> -		break;
->>>>> -	case 1:
->>>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP1_ENABLE);
->>>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>> -				    MXR_LAYER_CFG_GRP1_VAL(priority),
->>>>> -				    MXR_LAYER_CFG_GRP1_MASK);
->>>>> +	unsigned int win;
->>>>>  
->>>>> -		break;
->>>>> -	case VP_DEFAULT_WIN:
->>>>> -		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->>>>> -			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->>>>> -			mixer_reg_writemask(res, MXR_CFG, val,
->>>>> -				MXR_CFG_VP_ENABLE);
->>>>> -			mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>> -					    MXR_LAYER_CFG_VP_VAL(priority),
->>>>> -					    MXR_LAYER_CFG_VP_MASK);
->>>>> +	struct exynos_drm_plane_state *state;
->>>>> +	struct drm_framebuffer *fb;
->>>>> +	unsigned int priority;
->>>>> +	u32 mxr_cfg = 0, mxr_layer_cfg = 0, vp_enable = 0;
->>>>> +	bool enable;
->>>>> +
->>>>> +	for (win = 0; win < MIXER_WIN_NR; ++win) {
->>>>> +		state = to_exynos_plane_state(ctx->planes[win].base.state);
->>>>> +		fb = state->fb;
->>>>> +
->>>>> +		priority = state->base.normalized_zpos + 1;
->>>>> +		enable = test_bit(win, &ctx->active_windows);
->>>>> +
->>>>> +		if (!enable)
->>>>> +			continue;
->>>>> +
->>>>> +		BUG_ON(!fb);
->>>>
->>>> Not good. Even through some problem happens at mixer driver, other KMS drivers should work.
->>> That would be a issue at core level. And in this case, BUG_ON() should
->>> be triggered.
->>
->> If so, the fb should be checked at core level not specific driver.
-> I'm not sure I can follow you here. So you actually agree on putting
-> BUG_ON() here, or not?
-> 
-> Or let me phrase it differently. We have three options here:
-> (1) Put a BUG_ON(). If something goes terribly wrong in DRM core and fb
-> is NULL at this point, then we get a nice descriptive Oops.
-> (2) Put nothing here. Again, something goes terribly wrong, fb is NULL,
-> etc. Then we also get an Oops here, since we dereference NULL.
-> (3) Put 'if (fb) something();' here. Now we mask/ignore the issue in DRM
-> core and continue as if nothing went wrong.
-> 
-> Obviously (3) is the worst approach. We want to fix bugs, not hide them.
-> Second best in my opinion is (2). The Oops is going to tell us that NULL
-> was dereferenced, but depending on the build, it's not immediately clear
-> where in the code that happens.
-> Best is (1) in my opinion since the Oops is more descriptive and the
-> code itself actually tells us that this shouldn't happen.
-
-Simply saying, the issue should be handled by someone who made the issue. How about adding the BUG_ON at core code which incurs actual problem if you can assue it?
-Otherwise, is there any reason that this exception should be handled only here?
-
-IMO, looks reasonable to remove such BUG_ON call from specific driver.
-
-> 
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> 
->>
->>>
->>> - Tobias
->>>
->>>
->>>>
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+V2Ugd291bGQgbmVlZCB0byByZXZpZXcgdGhpcyBwYXRjaCBzZXJpZXMgZm9yIC1uZXh0IGluIGEg
+aHVycnkuCkkgaGF2ZSB0byByZXF1ZXN0IGdpdC1wdWxsIHNvb24uCgoyMDE264WEIDA57JuUIDI4
+7J28IDAwOjUw7JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0IOq4gDoKPiBIZWxsbyBldmVy
+eW9uZSwKPiAKPiBhcyBkaXNjdXNzZWQgd2l0aCBNYXJlayBJIGhhdmUgYnJva2VuIGRvd24gbXkg
+aW5pdGlhbCBwYXRjaCBpbnRvIHNtYWxsZXIgcGllY2VyLgo+IAo+IEFueXdheSwgdGhpcyBzZXJp
+ZXMgZml4ZXMgYSByZWdyZXNzaW9uIGludHJvZHVjZWQgYnkgY29tbWl0Cj4gYjA1OTg0ZTIxYTdl
+MDAwYmY1MDc0YWNlMDBkN2E1NzQ5NDRiMmMxNi4KPiAKPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRv
+Ymlhcwo+IAo+IFRvYmlhcyBKYWtvYmkgKDYpOgo+ICAgUmV2ZXJ0ICJkcm0vZXh5bm9zOiBnMmQ6
+IGZpeCBzeXN0ZW0gYW5kIHJ1bnRpbWUgcG0gaW50ZWdyYXRpb24iCj4gICBkcm0vZXh5bm9zOiBn
+MmQ6IG1vdmUgUE0gbWFuYWdlbWVudCB0byBydW5xdWV1ZSB3b3JrZXIKPiAgIGRybS9leHlub3M6
+IGcyZDogcmVtb3ZlIHJ1bnF1ZXVlIG5vZGVzIGluIGcyZF97Y2xvc2UscmVtb3ZlfSgpCj4gICBk
+cm0vZXh5bm9zOiBnMmQ6IHdhaXQgZm9yIGVuZ2luZSB0byBmaW5pc2gKPiAgIGRybS9leHlub3M6
+IGcyZDogdXNlIGF1dG9zdXNwZW5kIG1vZGUgZm9yIFBNIHJ1bnRpbWUKPiAgIGRybS9leHlub3M6
+IGcyZDogc2ltcGxpZnkgZzJkX2ZyZWVfcnVucXVldWVfbm9kZSgpCj4gCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyB8IDIzNyArKysrKysrKysrKysrKysrKysrKysr
+KysrLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTg4IGluc2VydGlvbnMoKyksIDQ5IGRlbGV0
+aW9ucygtKQo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
