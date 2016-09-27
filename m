@@ -1,52 +1,37 @@
-From: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
-Subject: [PATCH] serial: samsung: add clock controls in
- s3c24xx_serial_resume_noirq()
-Date: Tue, 27 Sep 2016 22:43:54 +0900
-Message-ID: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 0/6] drm/exynos: g2d: rework sleep and runtime PM
+Date: Tue, 27 Sep 2016 17:50:05 +0200
+Message-ID: <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36371 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753901AbcI0Nn5 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 09:43:57 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-This patch adds clock controls in s3c24xx_serial_resume_noirq()
-to set S3C64XX_UINTM register.
-
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
----
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index ae2095a..97f7b3b 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
- static int s3c24xx_serial_resume_noirq(struct device *dev)
- {
- 	struct uart_port *port = s3c24xx_dev_to_port(dev);
-+	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
- 	if (port) {
- 		/* restore IRQ mask */
-@@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 				uintm &= ~S3C64XX_UINTM_TXD_MSK;
- 			if (rx_enabled(port))
- 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
-+			clk_prepare_enable(ourport->clk);
- 			wr_regl(port, S3C64XX_UINTM, uintm);
-+			clk_disable_unprepare(ourport->clk);
- 		}
- 	}
- 
--- 
-2.8.1
+SGVsbG8gZXZlcnlvbmUsCgphcyBkaXNjdXNzZWQgd2l0aCBNYXJlayBJIGhhdmUgYnJva2VuIGRv
+d24gbXkgaW5pdGlhbCBwYXRjaCBpbnRvIHNtYWxsZXIgcGllY2VyLgoKQW55d2F5LCB0aGlzIHNl
+cmllcyBmaXhlcyBhIHJlZ3Jlc3Npb24gaW50cm9kdWNlZCBieSBjb21taXQKYjA1OTg0ZTIxYTdl
+MDAwYmY1MDc0YWNlMDBkN2E1NzQ5NDRiMmMxNi4KCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoK
+VG9iaWFzIEpha29iaSAoNik6CiAgUmV2ZXJ0ICJkcm0vZXh5bm9zOiBnMmQ6IGZpeCBzeXN0ZW0g
+YW5kIHJ1bnRpbWUgcG0gaW50ZWdyYXRpb24iCiAgZHJtL2V4eW5vczogZzJkOiBtb3ZlIFBNIG1h
+bmFnZW1lbnQgdG8gcnVucXVldWUgd29ya2VyCiAgZHJtL2V4eW5vczogZzJkOiByZW1vdmUgcnVu
+cXVldWUgbm9kZXMgaW4gZzJkX3tjbG9zZSxyZW1vdmV9KCkKICBkcm0vZXh5bm9zOiBnMmQ6IHdh
+aXQgZm9yIGVuZ2luZSB0byBmaW5pc2gKICBkcm0vZXh5bm9zOiBnMmQ6IHVzZSBhdXRvc3VzcGVu
+ZCBtb2RlIGZvciBQTSBydW50aW1lCiAgZHJtL2V4eW5vczogZzJkOiBzaW1wbGlmeSBnMmRfZnJl
+ZV9ydW5xdWV1ZV9ub2RlKCkKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJk
+LmMgfCAyMzcgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxODggaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0pCgotLSAKMi43LjMKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
