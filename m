@@ -1,190 +1,90 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Tue, 27 Sep 2016 13:22:10 +0200
-Message-ID: <57EA5662.4040006@math.uni-bielefeld.de>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57E9E95A.6010606@samsung.com> <57EA0648.5000106@math.uni-bielefeld.de>
- <57EA173D.6090604@samsung.com>
+Subject: Re: [RFC v3] drm/exynos: g2d: fix runtime PM
+Date: Tue, 27 Sep 2016 13:24:36 +0200
+Message-ID: <57EA56F4.6030901@math.uni-bielefeld.de>
+References: <CGME20160924190241epcas5p46ec40455f202e285918f1f6609a467f0@epcas5p4.samsung.com>
+ <1474743486-3881-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <b534f79f-4660-74d5-1831-2339fc753e0d@samsung.com>
+ <57E92D65.4000306@math.uni-bielefeld.de>
+ <cb7e5d49-e0e7-aaff-3045-0c90f35af846@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40327 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752979AbcI0LWP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 07:22:15 -0400
-In-Reply-To: <57EA173D.6090604@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <cb7e5d49-e0e7-aaff-3045-0c90f35af846@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, m.szyprowski@samsung.com
 
-Hey Inki,
-
-
-Inki Dae wrote:
-> 2016년 09월 27일 14:40에 Tobias Jakobi 이(가) 쓴 글:
->> Inki Dae wrote:
->>>
->>>
->>> 2016년 09월 26일 20:36에 Tobias Jakobi 이(가) 쓴 글:
->>>> Only manipulate the MXR_CFG and MXR_LAYER_CFG registers once
->>>> in mixer_cfg_layer().
->>>> Trigger this via atomic flush.
->>>>
->>>> Changes in v2:
->>>> - issue mixer_cfg_layer() in mixer_disable()
->>>> - rename fields as suggested by Andrzej
->>>> - added docu to mixer context struct
->>>> - simplify mixer_win_reset() as well
->>>>
->>>> Changes in v3:
->>>> - simplify some conditions as suggested by Inki
->>>> - add docu to mixer_cfg_layer()
->>>> - fold switch statements into a single one
->>>>
->>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>> ---
->>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 135 ++++++++++++++++++++++------------
->>>>  drivers/gpu/drm/exynos/regs-mixer.h   |   2 +
->>>>  2 files changed, 92 insertions(+), 45 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> index 1e78d57..4f06f4d 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> @@ -93,12 +93,25 @@ static const uint32_t vp_formats[] = {
->>>>  	DRM_FORMAT_NV21,
->>>>  };
->>>>  
->>>> +/*
->>>> + * Mixer context structure.
->>>> + *
->>>> + * @crtc: The HDMI CRTC attached to the mixer.
->>>> + * @planes: Array of plane objects for each of the mixer windows.
->>>> + * @active_windows: Cache of the mixer's hardware state.
->>>> + *       Tracks which mixer windows are active/inactive.
->>>> + * @pipe: The CRTC index.
->>>> + * @flags: Bitfield build from the mixer_flag_bits enumerator.
->>>> + * @mixer_resources: A struct containing registers, clocks, etc.
->>>> + * @mxr_ver: The hardware revision/version of the mixer.
->>>> + */
->>>>  struct mixer_context {
->>>>  	struct platform_device *pdev;
->>>>  	struct device		*dev;
->>>>  	struct drm_device	*drm_dev;
->>>>  	struct exynos_drm_crtc	*crtc;
->>>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->>>> +	unsigned long		active_windows;
->>>>  	int			pipe;
->>>>  	unsigned long		flags;
->>>>  
->>>> @@ -418,37 +431,70 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>>>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
->>>>  }
->>>>  
->>>> -static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->>>> -			    unsigned int priority, bool enable)
->>>> +/**
->>>> + * mixer_cfg_layer - apply layer configuration to hardware
->>>> + * @ctx: mixer context
->>>> + *
->>>> + * This configures the MXR_CFG and MXR_LAYER_CFG hardware registers
->>>> + * using the 'active_windows' field of the the mixer content, and
->>>> + * the pixel format of the framebuffers associated with the enabled
->>>> + * windows.
->>>> + *
->>>> + * Has to be called under mixer lock.
->>>> + */
->>>> +static void mixer_cfg_layer(struct mixer_context *ctx)
->>>>  {
->>>>  	struct mixer_resources *res = &ctx->mixer_res;
->>>> -	u32 val = enable ? ~0 : 0;
->>>> -
->>>> -	switch (win) {
->>>> -	case 0:
->>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>> -				    MXR_LAYER_CFG_GRP0_VAL(priority),
->>>> -				    MXR_LAYER_CFG_GRP0_MASK);
->>>> -		break;
->>>> -	case 1:
->>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP1_ENABLE);
->>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>> -				    MXR_LAYER_CFG_GRP1_VAL(priority),
->>>> -				    MXR_LAYER_CFG_GRP1_MASK);
->>>> +	unsigned int win;
->>>>  
->>>> -		break;
->>>> -	case VP_DEFAULT_WIN:
->>>> -		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->>>> -			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->>>> -			mixer_reg_writemask(res, MXR_CFG, val,
->>>> -				MXR_CFG_VP_ENABLE);
->>>> -			mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>> -					    MXR_LAYER_CFG_VP_VAL(priority),
->>>> -					    MXR_LAYER_CFG_VP_MASK);
->>>> +	struct exynos_drm_plane_state *state;
->>>> +	struct drm_framebuffer *fb;
->>>> +	unsigned int priority;
->>>> +	u32 mxr_cfg = 0, mxr_layer_cfg = 0, vp_enable = 0;
->>>> +	bool enable;
->>>> +
->>>> +	for (win = 0; win < MIXER_WIN_NR; ++win) {
->>>> +		state = to_exynos_plane_state(ctx->planes[win].base.state);
->>>> +		fb = state->fb;
->>>> +
->>>> +		priority = state->base.normalized_zpos + 1;
->>>> +		enable = test_bit(win, &ctx->active_windows);
->>>> +
->>>> +		if (!enable)
->>>> +			continue;
->>>> +
->>>> +		BUG_ON(!fb);
->>>
->>> Not good. Even through some problem happens at mixer driver, other KMS drivers should work.
->> That would be a issue at core level. And in this case, BUG_ON() should
->> be triggered.
-> 
-> If so, the fb should be checked at core level not specific driver.
-I'm not sure I can follow you here. So you actually agree on putting
-BUG_ON() here, or not?
-
-Or let me phrase it differently. We have three options here:
-(1) Put a BUG_ON(). If something goes terribly wrong in DRM core and fb
-is NULL at this point, then we get a nice descriptive Oops.
-(2) Put nothing here. Again, something goes terribly wrong, fb is NULL,
-etc. Then we also get an Oops here, since we dereference NULL.
-(3) Put 'if (fb) something();' here. Now we mask/ignore the issue in DRM
-core and continue as if nothing went wrong.
-
-Obviously (3) is the worst approach. We want to fix bugs, not hide them.
-Second best in my opinion is (2). The Oops is going to tell us that NULL
-was dereferenced, but depending on the build, it's not immediately clear
-where in the code that happens.
-Best is (1) in my opinion since the Oops is more descriptive and the
-code itself actually tells us that this shouldn't happen.
-
-
-With best wishes,
-Tobias
-
-
-
-> 
->>
->> - Tobias
->>
->>
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
+SGVsbG8gTWFyZWssCgoKTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSBUb2JpYXMsCj4gCj4g
+T24gMjAxNi0wOS0yNiAxNjoxNSwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4gTWFyZWsgU3p5cHJv
+d3NraSB3cm90ZToKPj4+IE9uIDIwMTYtMDktMjQgMjA6NTgsIFRvYmlhcyBKYWtvYmkgd3JvdGU6
+Cj4+Pj4gVGhlIGNvbW1pdCBiMDU5ODRlMjFhN2UwMDBiZjUwNzRhY2UwMGQ3YTU3NDk0NGIyYzE2
+IGJyb2tlCj4+Pj4gb3BlcmF0aW9uIG9mIHRoZSBHMkQuIEFmdGVyIHRoaXMgY29tbWl0IHRoZSBm
+b2xsb3dpbmcKPj4+PiBoYXBwZW5zLgo+Pj4+IC0gZXh5bm9zX2cyZF9leGVjX2lvY3RsKCkgcHJl
+cGFyZXMgYSBydW5xdWV1ZSBub2RlIGFuZAo+Pj4+ICAgICBjYWxscyBnMmRfZXhlY19ydW5xdWV1
+ZSgpCj4+Pj4gLSBnMmRfZXhlY19ydW5xdWV1ZSgpIGNhbGxzIGcyZF9kbWFfc3RhcnQoKSB3aGlj
+aCBnZXRzCj4+Pj4gICAgIHJ1bnRpbWUgUE0gc3luYwo+Pj4+IC0gcnVudGltZSBQTSBjYWxscyBn
+MmRfcnVudGltZV9yZXN1bWUoKQo+Pj4+IC0gZzJkX3J1bnRpbWVfcmVzdW1lKCkgY2FsbHMgZzJk
+X2V4ZWNfcnVucXVldWUoKQo+Pj4+Cj4+Pj4gTHVja2lseSBmb3IgdXMgdGhpcyBkb2Vzbid0IHJl
+YWxseSBsb29wLCBidXQgY3JlYXRlcyBhCj4+Pj4gbXV0ZXggbG9ja3VwLCB3aGljaCB0aGUga2Vy
+bmVsIGV2ZW4gcHJlZGljdHMuCj4+Pj4KPj4+PiBBbnl3YXksIHdlIGZpeCB0aGlzIGJ5IHJlaW50
+cm9kdWNpbmcgZGVkaWNhdGVkIHNsZWVwCj4+Pj4gb3BlcmF0aW9ucyBhZ2FpbiwgYW5kIG9ubHkg
+bGV0dGluZyBydW50aW1lIFBNIGNvbnRyb2wKPj4+PiB0aGUgZ2F0ZSBjbG9jay4KPj4+Pgo+Pj4+
+IFRoaXMgaXMgbm90IGVub3VnaCB0byBmaXggdGhlIGlzc3VlIHRob3VnaC4KPj4+PiAtIFdlIHN3
+aXRjaCBydW50aW1lIFBNIHRvIGF1dG9zdXNwZW5kLiBDdXJyZW50bHkgY2xvY2tzIGdldAo+Pj4+
+ICAgICBkaXNhYmxlZCwgYW5kIHRoZW4gcmUtZW5hYmxlZCBhZ2FpbiBpbiB0aGUgcnVucXVldWUg
+d29ya2VyCj4+Pj4gICAgIHdoZW4gYSBub2RlIGlzIGNvbXBsZXRlZCBhbmQgdGhlIG5leHQgaXMg
+c3RhcnRlZC4KPj4+PiAgICAgV2l0aCB0aGUgdXBjb21pbmcgaW50cm9kdWN0aW9uIG9mIElPTU1V
+IHJ1bnRpbWUgUE0gdGhpcwo+Pj4+ICAgICBzaXR1YXRpb25zIGdldHMgd29yc2UsIHNpbmNlIG5v
+dyBhbHNvIHRoZSBJT01NVSBnb2VzCj4+Pj4gICAgIHRocm91Z2ggYSBkaXNhYmxlL2VuYWJsZSBj
+eWNsZSBiZWZvcmUgdGhlIG5leHQgbm9kZSBpcwo+Pj4+ICAgICBzdGFydGVkLgo+Pj4+IC0gV2Ug
+Y29uc29saWRhdGUgYWxsIHJ1bnRpbWUgUE0gbWFuYWdlbWVudCB0byB0aGUgcnVucXVldWUKPj4+
+PiAgICAgd29ya2VyLgo+Pj4+IC0gV2UgaW50cm9kdWNlIGcyZF93YWl0X2ZpbmlzaCgpIHdoaWNo
+IHdhaXRzIHVudGlsIHRoZSBjdXJyZW50bHkKPj4+PiAgICAgcHJvY2Vzc2VkIHJ1bnF1ZXVlIG5v
+ZGUgaXMgZmluaXNoZWQuCj4+Pj4gICAgIElmIHRoaXMgdGFrZXMgdG9vIGxvbmcsIHRoZSBlbmdp
+bmUgaXMgZm9yY2libHkgcmVzZXQuIFRoaXMKPj4+PiAgICAgaXMgbmVjZXNzYXJ5IHRvIHByb3Bl
+cmx5IGNsb3NlIHRoZSBkcml2ZXIgaW4gY2FzZSB0aGUgZW5naW5lCj4+Pj4gICAgIHNob3VsZCBo
+YW5nIHdpdGggcmVhZC93cml0ZSBhY2Nlc3MgdG8gc29tZSBhcmVhIG9mIG1lbW9yeS4KPj4+PiAg
+ICAgSW4gdGhpcyBzaXR1YXRpb24gd2UgY2FuJ3QgcHJvcGVybHkgdW5tYXAgR0VNL3VzZXJwdHIK
+Pj4+PiAgICAgb2JqZWN0cywgc2luY2UgdGhpcyBtaWdodCBjcmVhdGUgYSBwYWdlZmF1bHQuCj4+
+Pj4gLSBTbGVlcCBzdXNwZW5kIGlzc3VlcyBhIHN1c3BlbmQgb2YgdGhlIHJ1bnF1ZXVlIGFuZCB0
+aGVuIGNhbGxzCj4+Pj4gICAgIGcyZF93YWl0X2ZpbmlzaCgpLCB3aGljaCByZXR1cm5zIHRoZSBl
+bmdpbmUgaW4gdGhlIGlkbGUgc3RhdGUuCj4+Pj4gICAgIFRoZSBjdXJyZW50IHJ1bnF1ZXVlIG5v
+ZGUgZ2V0cyBjb21wbGV0ZWQsIGFsbCBvdGhlciBxdWV1ZWQKPj4+PiAgICAgbm9kZXMgc3RheSBp
+biB0aGUgcXVldWUuIFRoZXJlIGlzIG5vIGhhcmR3YXJlIHN0YXRlIHRoYXQKPj4+PiAgICAgbmVl
+ZHMgdG8gYmUgcmV0YWluZWQuCj4+Pj4gLSBTbGVlcCByZXN1bWUganVzdCBwb2tlcyB0aGUgcnVu
+cXVldWUgd29ya2VyLCB3aGljaCwgc2hvdWxkCj4+Pj4gICAgIHNvbWV0aGluZyBiZSBpbiBxdWV1
+ZSwgY29udGludWVzIGl0cyB3b3JrLCBvciBqdXN0IGV4aXRzLgo+Pj4gSU1ITyB0aGVyZSBpcyB0
+b28gbXVjaCBkb25lIGluIG9uZSBwYXRjaC4gSXQgd291bGQgYmUgbXVjaCBlYXNpZXIgdG8KPj4+
+IHVuZGVyc3RhbmQgaXQgaWYgdGhlIGNoYW5nZXMgYXJlIHNwbGl0IGludG8gMiBwYXJ0czogcmVz
+dG9yaW5nIGRlZGljYXRlZAo+Pj4gc3BlZXAgY2FsbGJhY2tzIGFuZCB0aGVpciBpbnRlZ3JhdGlv
+biB3aXRoIHJ1bnF1ZXVlIHdvcmtlciBhbmQgYWRkaXRpb24KPj4+IG9mIGF1dG9zdXNwZW5kLWJh
+c2VkIHJ1bnRpbWUgcG0uCj4+IHNvIHlvdSBtZWFuIGZpcnN0IHJldmVydCB5b3VyIHBhdGNoLCBh
+bmQgdGhlbiBwdXQgbW9yZSBjaGFuZ2VzIG9uIHRvcCBvZgo+PiBpdCBpbiBhIHNlcGFyYXRlIHBh
+dGNoPyBJJ20gbm90IHN1cmUgaW50byB3aGljaCAnZnVuY3Rpb25hbCB1bml0cycgSQo+PiBzaG91
+bGQgYnJlYWsgdGhpcyBvbmUgZG93bi4KPj4KPj4gSSBjYW4gb2YgY291cnNlIGNyZWF0ZSBhIHNl
+cGFyYXRlIHBhdGNoIGZvciBhdXRvc3VzcGVuZCwgdGhhdCB0aGF0IHdvdWxkCj4+IG9ubHkgcmVw
+bGFjZSBhIHB1dF9zeW5jKCkgd2l0aCBtYXJrX2xhc3RfYnVzeSgpICsgcHV0X2F1dG9zdXNwZW5k
+KCksCj4+IHdvdWxkbid0IGl0Pwo+Pgo+Pgo+PiBNeSBjdXJyZW50IGlkZWEgb2YgZnVuY3Rpb25h
+bCB1bml0czoKPj4gMSkgcmV2ZXJ0IE1hcmVrJ3MgcGF0Y2gKPj4gMikgbW92ZSBydW5wbSBtYW5h
+Z2VtZW50IHRvIGcyZF9ydW5xdWV1ZV93b3JrZXIoKQo+PiAzKSBpbnRyb2R1Y2UgZzJkX3dhaXRf
+ZmluaXNoKCkgYW5kIHVzZSBpdCBzbGVlcCBjYWxsCj4+IDQpIGFsc28gdXNlIGl0IGluIGcyZF9j
+bG9zZSgpIGFuZCBnMmRfcmVtb3ZlKCkKPj4gNSkgcHV0IGF1dG9zdXNwZW5kIG9uIHRvcAo+Pgo+
+PiBXb3VsZCB0aGlzIG1ha2Ugc2Vuc2U/Cj4gCj4gWWVzLCBkZWZpbml0ZWx5IHRoaXMgYXBwcm9h
+Y2ggbWFrZXMgbXVjaCBtb3JlIHNlbnNlIGluIG15IG9waW5pb24uIEknbQo+IHNvcnJ5Cj4gZm9y
+IG15IGJyb2tlbiBpbml0aWFsIHBhdGNoIGFuZCB0aGUgYWRkaXRpb25hbCB3b3JrIHlvdSBoYWQg
+dG8gZG8uCk5vIHByb2JsZW0hIFRoYW5rcyBmb3IgbG9va2luZyBvdmVyIHRoaXMhCgpXaXRoIGJl
+c3Qgd2lzaGVzLApUb2JpYXMKCgo+IAo+IEJlc3QgcmVnYXJkcwoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
