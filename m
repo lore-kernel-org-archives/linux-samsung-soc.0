@@ -1,149 +1,103 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Tue, 27 Sep 2016 07:40:24 +0200
-Message-ID: <57EA0648.5000106@math.uni-bielefeld.de>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57E9E95A.6010606@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFC v3] drm/exynos: g2d: fix runtime PM
+Date: Tue, 27 Sep 2016 07:59:25 +0200
+Message-ID: <cb7e5d49-e0e7-aaff-3045-0c90f35af846@samsung.com>
+References: <CGME20160924190241epcas5p46ec40455f202e285918f1f6609a467f0@epcas5p4.samsung.com>
+ <1474743486-3881-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <b534f79f-4660-74d5-1831-2339fc753e0d@samsung.com>
+ <57E92D65.4000306@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39736 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751382AbcI0Fkd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41392 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751499AbcI0F7d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 01:40:33 -0400
-In-Reply-To: <57E9E95A.6010606@samsung.com>
+        Tue, 27 Sep 2016 01:59:33 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OE500LPRFB5WD30@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2016 06:59:29 +0100 (BST)
+In-reply-to: <57E92D65.4000306@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, a.hajda@samsung.com, m.szyprowski@samsung.com
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com
 
-Inki Dae wrote:
-> 
-> 
-> 2016년 09월 26일 20:36에 Tobias Jakobi 이(가) 쓴 글:
->> Only manipulate the MXR_CFG and MXR_LAYER_CFG registers once
->> in mixer_cfg_layer().
->> Trigger this via atomic flush.
->>
->> Changes in v2:
->> - issue mixer_cfg_layer() in mixer_disable()
->> - rename fields as suggested by Andrzej
->> - added docu to mixer context struct
->> - simplify mixer_win_reset() as well
->>
->> Changes in v3:
->> - simplify some conditions as suggested by Inki
->> - add docu to mixer_cfg_layer()
->> - fold switch statements into a single one
->>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos_mixer.c | 135 ++++++++++++++++++++++------------
->>  drivers/gpu/drm/exynos/regs-mixer.h   |   2 +
->>  2 files changed, 92 insertions(+), 45 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->> index 1e78d57..4f06f4d 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -93,12 +93,25 @@ static const uint32_t vp_formats[] = {
->>  	DRM_FORMAT_NV21,
->>  };
->>  
->> +/*
->> + * Mixer context structure.
->> + *
->> + * @crtc: The HDMI CRTC attached to the mixer.
->> + * @planes: Array of plane objects for each of the mixer windows.
->> + * @active_windows: Cache of the mixer's hardware state.
->> + *       Tracks which mixer windows are active/inactive.
->> + * @pipe: The CRTC index.
->> + * @flags: Bitfield build from the mixer_flag_bits enumerator.
->> + * @mixer_resources: A struct containing registers, clocks, etc.
->> + * @mxr_ver: The hardware revision/version of the mixer.
->> + */
->>  struct mixer_context {
->>  	struct platform_device *pdev;
->>  	struct device		*dev;
->>  	struct drm_device	*drm_dev;
->>  	struct exynos_drm_crtc	*crtc;
->>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->> +	unsigned long		active_windows;
->>  	int			pipe;
->>  	unsigned long		flags;
->>  
->> @@ -418,37 +431,70 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
->>  }
->>  
->> -static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->> -			    unsigned int priority, bool enable)
->> +/**
->> + * mixer_cfg_layer - apply layer configuration to hardware
->> + * @ctx: mixer context
->> + *
->> + * This configures the MXR_CFG and MXR_LAYER_CFG hardware registers
->> + * using the 'active_windows' field of the the mixer content, and
->> + * the pixel format of the framebuffers associated with the enabled
->> + * windows.
->> + *
->> + * Has to be called under mixer lock.
->> + */
->> +static void mixer_cfg_layer(struct mixer_context *ctx)
->>  {
->>  	struct mixer_resources *res = &ctx->mixer_res;
->> -	u32 val = enable ? ~0 : 0;
->> -
->> -	switch (win) {
->> -	case 0:
->> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->> -				    MXR_LAYER_CFG_GRP0_VAL(priority),
->> -				    MXR_LAYER_CFG_GRP0_MASK);
->> -		break;
->> -	case 1:
->> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP1_ENABLE);
->> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->> -				    MXR_LAYER_CFG_GRP1_VAL(priority),
->> -				    MXR_LAYER_CFG_GRP1_MASK);
->> +	unsigned int win;
->>  
->> -		break;
->> -	case VP_DEFAULT_WIN:
->> -		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->> -			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->> -			mixer_reg_writemask(res, MXR_CFG, val,
->> -				MXR_CFG_VP_ENABLE);
->> -			mixer_reg_writemask(res, MXR_LAYER_CFG,
->> -					    MXR_LAYER_CFG_VP_VAL(priority),
->> -					    MXR_LAYER_CFG_VP_MASK);
->> +	struct exynos_drm_plane_state *state;
->> +	struct drm_framebuffer *fb;
->> +	unsigned int priority;
->> +	u32 mxr_cfg = 0, mxr_layer_cfg = 0, vp_enable = 0;
->> +	bool enable;
->> +
->> +	for (win = 0; win < MIXER_WIN_NR; ++win) {
->> +		state = to_exynos_plane_state(ctx->planes[win].base.state);
->> +		fb = state->fb;
->> +
->> +		priority = state->base.normalized_zpos + 1;
->> +		enable = test_bit(win, &ctx->active_windows);
->> +
->> +		if (!enable)
->> +			continue;
->> +
->> +		BUG_ON(!fb);
-> 
-> Not good. Even through some problem happens at mixer driver, other KMS drivers should work.
-That would be a issue at core level. And in this case, BUG_ON() should
-be triggered.
+Hi Tobias,
 
-- Tobias
+On 2016-09-26 16:15, Tobias Jakobi wrote:
+> Marek Szyprowski wrote:
+>> On 2016-09-24 20:58, Tobias Jakobi wrote:
+>>> The commit b05984e21a7e000bf5074ace00d7a574944b2c16 broke
+>>> operation of the G2D. After this commit the following
+>>> happens.
+>>> - exynos_g2d_exec_ioctl() prepares a runqueue node and
+>>>     calls g2d_exec_runqueue()
+>>> - g2d_exec_runqueue() calls g2d_dma_start() which gets
+>>>     runtime PM sync
+>>> - runtime PM calls g2d_runtime_resume()
+>>> - g2d_runtime_resume() calls g2d_exec_runqueue()
+>>>
+>>> Luckily for us this doesn't really loop, but creates a
+>>> mutex lockup, which the kernel even predicts.
+>>>
+>>> Anyway, we fix this by reintroducing dedicated sleep
+>>> operations again, and only letting runtime PM control
+>>> the gate clock.
+>>>
+>>> This is not enough to fix the issue though.
+>>> - We switch runtime PM to autosuspend. Currently clocks get
+>>>     disabled, and then re-enabled again in the runqueue worker
+>>>     when a node is completed and the next is started.
+>>>     With the upcoming introduction of IOMMU runtime PM this
+>>>     situations gets worse, since now also the IOMMU goes
+>>>     through a disable/enable cycle before the next node is
+>>>     started.
+>>> - We consolidate all runtime PM management to the runqueue
+>>>     worker.
+>>> - We introduce g2d_wait_finish() which waits until the currently
+>>>     processed runqueue node is finished.
+>>>     If this takes too long, the engine is forcibly reset. This
+>>>     is necessary to properly close the driver in case the engine
+>>>     should hang with read/write access to some area of memory.
+>>>     In this situation we can't properly unmap GEM/userptr
+>>>     objects, since this might create a pagefault.
+>>> - Sleep suspend issues a suspend of the runqueue and then calls
+>>>     g2d_wait_finish(), which returns the engine in the idle state.
+>>>     The current runqueue node gets completed, all other queued
+>>>     nodes stay in the queue. There is no hardware state that
+>>>     needs to be retained.
+>>> - Sleep resume just pokes the runqueue worker, which, should
+>>>     something be in queue, continues its work, or just exits.
+>> IMHO there is too much done in one patch. It would be much easier to
+>> understand it if the changes are split into 2 parts: restoring dedicated
+>> speep callbacks and their integration with runqueue worker and addition
+>> of autosuspend-based runtime pm.
+> so you mean first revert your patch, and then put more changes on top of
+> it in a separate patch? I'm not sure into which 'functional units' I
+> should break this one down.
+>
+> I can of course create a separate patch for autosuspend, that that would
+> only replace a put_sync() with mark_last_busy() + put_autosuspend(),
+> wouldn't it?
+>
+>
+> My current idea of functional units:
+> 1) revert Marek's patch
+> 2) move runpm management to g2d_runqueue_worker()
+> 3) introduce g2d_wait_finish() and use it sleep call
+> 4) also use it in g2d_close() and g2d_remove()
+> 5) put autosuspend on top
+>
+> Would this make sense?
 
+Yes, definitely this approach makes much more sense in my opinion. I'm sorry
+for my broken initial patch and the additional work you had to do.
 
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
