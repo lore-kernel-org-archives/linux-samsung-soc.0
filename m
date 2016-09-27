@@ -1,148 +1,52 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Tue, 27 Sep 2016 13:57:59 +0200
-Message-ID: <130cf67d-4082-1e29-8f14-7c952c8a8012@samsung.com>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57EA0D68.401@samsung.com> <57EA5664.3040106@math.uni-bielefeld.de>
+From: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Subject: [PATCH] serial: samsung: add clock controls in
+ s3c24xx_serial_resume_noirq()
+Date: Tue, 27 Sep 2016 22:43:54 +0900
+Message-ID: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <57EA5664.3040106@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36371 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753901AbcI0Nn5 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 27 Sep 2016 09:43:57 -0400
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-T24gMjcuMDkuMjAxNiAxMzoyMiwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbyBJbmtpLAo+
-Cj4KPiBJbmtpIERhZSB3cm90ZToKPj4gMjAxNuuFhCAwOeyblCAyNuydvCAyMDozNuyXkCBUb2Jp
-YXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+PiBPbmx5IG1hbmlwdWxhdGUgdGhlIE1YUl9D
-RkcgYW5kIE1YUl9MQVlFUl9DRkcgcmVnaXN0ZXJzIG9uY2UKPj4+IGluIG1peGVyX2NmZ19sYXll
-cigpLgo+Pj4gVHJpZ2dlciB0aGlzIHZpYSBhdG9taWMgZmx1c2guCj4+Pgo+Pj4gQ2hhbmdlcyBp
-biB2MjoKPj4+IC0gaXNzdWUgbWl4ZXJfY2ZnX2xheWVyKCkgaW4gbWl4ZXJfZGlzYWJsZSgpCj4+
-PiAtIHJlbmFtZSBmaWVsZHMgYXMgc3VnZ2VzdGVkIGJ5IEFuZHJ6ZWoKPj4+IC0gYWRkZWQgZG9j
-dSB0byBtaXhlciBjb250ZXh0IHN0cnVjdAo+Pj4gLSBzaW1wbGlmeSBtaXhlcl93aW5fcmVzZXQo
-KSBhcyB3ZWxsCj4+Pgo+Pj4gQ2hhbmdlcyBpbiB2MzoKPj4+IC0gc2ltcGxpZnkgc29tZSBjb25k
-aXRpb25zIGFzIHN1Z2dlc3RlZCBieSBJbmtpCj4+PiAtIGFkZCBkb2N1IHRvIG1peGVyX2NmZ19s
-YXllcigpCj4+PiAtIGZvbGQgc3dpdGNoIHN0YXRlbWVudHMgaW50byBhIHNpbmdsZSBvbmUKPj4+
-Cj4+PiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxl
-ZmVsZC5kZT4KPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
-LmMgfCAxMzUgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLQo+Pj4gIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvcmVncy1taXhlci5oICAgfCAgIDIgKwo+Pj4gIDIgZmlsZXMgY2hhbmdl
-ZCwgOTIgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jCj4+PiBpbmRleCAxZTc4ZDU3Li40ZjA2ZjRkIDEwMDY0NAo+
-Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gQEAgLTkzLDEyICs5Mywy
-NSBAQCBzdGF0aWMgY29uc3QgdWludDMyX3QgdnBfZm9ybWF0c1tdID0gewo+Pj4gIAlEUk1fRk9S
-TUFUX05WMjEsCj4+PiAgfTsKPj4+ICAKPj4+ICsvKgo+Pj4gKyAqIE1peGVyIGNvbnRleHQgc3Ry
-dWN0dXJlLgo+Pj4gKyAqCj4+PiArICogQGNydGM6IFRoZSBIRE1JIENSVEMgYXR0YWNoZWQgdG8g
-dGhlIG1peGVyLgo+Pj4gKyAqIEBwbGFuZXM6IEFycmF5IG9mIHBsYW5lIG9iamVjdHMgZm9yIGVh
-Y2ggb2YgdGhlIG1peGVyIHdpbmRvd3MuCj4+PiArICogQGFjdGl2ZV93aW5kb3dzOiBDYWNoZSBv
-ZiB0aGUgbWl4ZXIncyBoYXJkd2FyZSBzdGF0ZS4KPj4+ICsgKiAgICAgICBUcmFja3Mgd2hpY2gg
-bWl4ZXIgd2luZG93cyBhcmUgYWN0aXZlL2luYWN0aXZlLgo+Pj4gKyAqIEBwaXBlOiBUaGUgQ1JU
-QyBpbmRleC4KPj4+ICsgKiBAZmxhZ3M6IEJpdGZpZWxkIGJ1aWxkIGZyb20gdGhlIG1peGVyX2Zs
-YWdfYml0cyBlbnVtZXJhdG9yLgo+Pj4gKyAqIEBtaXhlcl9yZXNvdXJjZXM6IEEgc3RydWN0IGNv
-bnRhaW5pbmcgcmVnaXN0ZXJzLCBjbG9ja3MsIGV0Yy4KPj4+ICsgKiBAbXhyX3ZlcjogVGhlIGhh
-cmR3YXJlIHJldmlzaW9uL3ZlcnNpb24gb2YgdGhlIG1peGVyLgo+Pj4gKyAqLwo+Pj4gIHN0cnVj
-dCBtaXhlcl9jb250ZXh0IHsKPj4+ICAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldjsKPj4+
-ICAJc3RydWN0IGRldmljZQkJKmRldjsKPj4+ICAJc3RydWN0IGRybV9kZXZpY2UJKmRybV9kZXY7
-Cj4+PiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMJKmNydGM7Cj4+PiAgCXN0cnVjdCBleHlub3Nf
-ZHJtX3BsYW5lCXBsYW5lc1tNSVhFUl9XSU5fTlJdOwo+Pj4gKwl1bnNpZ25lZCBsb25nCQlhY3Rp
-dmVfd2luZG93czsKPj4+ICAJaW50CQkJcGlwZTsKPj4+ICAJdW5zaWduZWQgbG9uZwkJZmxhZ3M7
-Cj4+PiAgCj4+PiBAQCAtNDE4LDM3ICs0MzEsNzAgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3Jn
-Yl9mbXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKPj4+
-ICAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19SR0JfRk1U
-X01BU0spOwo+Pj4gIH0KPj4+ICAKPj4+IC1zdGF0aWMgdm9pZCBtaXhlcl9jZmdfbGF5ZXIoc3Ry
-dWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdpbiwKPj4+IC0JCQkgICAgdW5z
-aWduZWQgaW50IHByaW9yaXR5LCBib29sIGVuYWJsZSkKPj4+ICsvKioKPj4+ICsgKiBtaXhlcl9j
-ZmdfbGF5ZXIgLSBhcHBseSBsYXllciBjb25maWd1cmF0aW9uIHRvIGhhcmR3YXJlCj4+PiArICog
-QGN0eDogbWl4ZXIgY29udGV4dAo+Pj4gKyAqCj4+PiArICogVGhpcyBjb25maWd1cmVzIHRoZSBN
-WFJfQ0ZHIGFuZCBNWFJfTEFZRVJfQ0ZHIGhhcmR3YXJlIHJlZ2lzdGVycwo+Pj4gKyAqIHVzaW5n
-IHRoZSAnYWN0aXZlX3dpbmRvd3MnIGZpZWxkIG9mIHRoZSB0aGUgbWl4ZXIgY29udGVudCwgYW5k
-Cj4+PiArICogdGhlIHBpeGVsIGZvcm1hdCBvZiB0aGUgZnJhbWVidWZmZXJzIGFzc29jaWF0ZWQg
-d2l0aCB0aGUgZW5hYmxlZAo+Pj4gKyAqIHdpbmRvd3MuCj4+PiArICoKPj4+ICsgKiBIYXMgdG8g
-YmUgY2FsbGVkIHVuZGVyIG1peGVyIGxvY2suCj4+PiArICovCj4+PiArc3RhdGljIHZvaWQgbWl4
-ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+PiAgewo+Pj4gIAlzdHJ1
-Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+PiAtCXUzMiB2YWwg
-PSBlbmFibGUgPyB+MCA6IDA7Cj4+PiAtCj4+PiAtCXN3aXRjaCAod2luKSB7Cj4+PiAtCWNhc2Ug
-MDoKPj4+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdf
-R1JQMF9FTkFCTEUpOwo+Pj4gLQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9D
-RkcsCj4+PiAtCQkJCSAgICBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFMKHByaW9yaXR5KSwKPj4+IC0J
-CQkJICAgIE1YUl9MQVlFUl9DRkdfR1JQMF9NQVNLKTsKPj4+IC0JCWJyZWFrOwo+Pj4gLQljYXNl
-IDE6Cj4+PiAtCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZH
-X0dSUDFfRU5BQkxFKTsKPj4+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfTEFZRVJf
-Q0ZHLAo+Pj4gLQkJCQkgICAgTVhSX0xBWUVSX0NGR19HUlAxX1ZBTChwcmlvcml0eSksCj4+PiAt
-CQkJCSAgICBNWFJfTEFZRVJfQ0ZHX0dSUDFfTUFTSyk7Cj4+PiArCXVuc2lnbmVkIGludCB3aW47
-Cj4+PiAgCj4+PiAtCQlicmVhazsKPj4+IC0JY2FzZSBWUF9ERUZBVUxUX1dJTjoKPj4+IC0JCWlm
-ICh0ZXN0X2JpdChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSkgewo+Pj4gLQkJCXZw
-X3JlZ193cml0ZW1hc2socmVzLCBWUF9FTkFCTEUsIHZhbCwgVlBfRU5BQkxFX09OKTsKPj4+IC0J
-CQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLAo+Pj4gLQkJCQlNWFJfQ0ZH
-X1ZQX0VOQUJMRSk7Cj4+PiAtCQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9D
-RkcsCj4+PiAtCQkJCQkgICAgTVhSX0xBWUVSX0NGR19WUF9WQUwocHJpb3JpdHkpLAo+Pj4gLQkJ
-CQkJICAgIE1YUl9MQVlFUl9DRkdfVlBfTUFTSyk7Cj4+PiArCXN0cnVjdCBleHlub3NfZHJtX3Bs
-YW5lX3N0YXRlICpzdGF0ZTsKPj4+ICsJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmI7Cj4+PiAr
-CXVuc2lnbmVkIGludCBwcmlvcml0eTsKPj4+ICsJdTMyIG14cl9jZmcgPSAwLCBteHJfbGF5ZXJf
-Y2ZnID0gMCwgdnBfZW5hYmxlID0gMDsKPj4+ICsJYm9vbCBlbmFibGU7Cj4+PiArCj4+PiArCWZv
-ciAod2luID0gMDsgd2luIDwgTUlYRVJfV0lOX05SOyArK3dpbikgewo+Pj4gKwkJc3RhdGUgPSB0
-b19leHlub3NfcGxhbmVfc3RhdGUoY3R4LT5wbGFuZXNbd2luXS5iYXNlLnN0YXRlKTsKPj4+ICsJ
-CWZiID0gc3RhdGUtPmZiOwo+Pj4gKwo+Pj4gKwkJcHJpb3JpdHkgPSBzdGF0ZS0+YmFzZS5ub3Jt
-YWxpemVkX3pwb3MgKyAxOwo+Pj4gKwkJZW5hYmxlID0gdGVzdF9iaXQod2luLCAmY3R4LT5hY3Rp
-dmVfd2luZG93cyk7Cj4+PiArCj4+PiArCQlpZiAoIWVuYWJsZSkKPj4+ICsJCQljb250aW51ZTsK
-Pj4+ICsKPj4+ICsJCUJVR19PTighZmIpOwo+Pj4gKwo+Pj4gKwkJLyoKPj4+ICsJCSAqIFRPRE86
-IERvbid0IGVuYWJsZSBhbHBoYSBibGVuZGluZyBmb3IgdGhlIGJvdHRvbSB3aW5kb3cuCj4+PiAr
-CQkgKi8KPj4+ICsJCXN3aXRjaCAod2luKSB7Cj4+PiArCQljYXNlIDA6Cj4+PiArCQkJbXhyX2Nm
-ZyB8PSAgTVhSX0NGR19HUlAwX0VOQUJMRTsKPj4+ICsJCQlteHJfbGF5ZXJfY2ZnIHw9IE1YUl9M
-QVlFUl9DRkdfR1JQMF9WQUwocHJpb3JpdHkpOwo+Pj4gKwkJCW1peGVyX2NmZ19nZnhfYmxlbmQo
-Y3R4LCB3aW4sIGlzX2FscGhhX2Zvcm1hdChmYi0+cGl4ZWxfZm9ybWF0KSk7Cj4+PiArCQkJYnJl
-YWs7Cj4+PiArCj4+PiArCQljYXNlIDE6Cj4+PiArCQkJbXhyX2NmZyB8PSAgTVhSX0NGR19HUlAx
-X0VOQUJMRTsKPj4+ICsJCQlteHJfbGF5ZXJfY2ZnIHw9IE1YUl9MQVlFUl9DRkdfR1JQMV9WQUwo
-cHJpb3JpdHkpOwo+Pj4gKwkJCW1peGVyX2NmZ19nZnhfYmxlbmQoY3R4LCB3aW4sIGlzX2FscGhh
-X2Zvcm1hdChmYi0+cGl4ZWxfZm9ybWF0KSk7Cj4+PiArCQkJYnJlYWs7Cj4+PiArCj4+PiArCQlj
-YXNlIFZQX0RFRkFVTFRfV0lOOgo+Pj4gKwkJCXZwX2VuYWJsZSA9IFZQX0VOQUJMRV9PTjsKPj4+
-ICsJCQlteHJfY2ZnIHw9ICBNWFJfQ0ZHX1ZQX0VOQUJMRTsKPj4+ICsJCQlteHJfbGF5ZXJfY2Zn
-IHw9IE1YUl9MQVlFUl9DRkdfVlBfVkFMKHByaW9yaXR5KTsKPj4+ICsJCQltaXhlcl9jZmdfdnBf
-YmxlbmQoY3R4KTsKPj4+ICsJCQlicmVhazsKPj4+ICAJCX0KPj4+IC0JCWJyZWFrOwo+Pj4gIAl9
-Cj4+PiArCj4+PiArCWlmICh0ZXN0X2JpdChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdz
-KSkKPj4+ICsJCXZwX3JlZ193cml0ZW1hc2socmVzLCBWUF9FTkFCTEUsIHZwX2VuYWJsZSwgVlBf
-RU5BQkxFX09OKTsKPj4+ICsKPj4+ICsJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcs
-IG14cl9jZmcsIE1YUl9DRkdfRU5BQkxFX01BU0spOwo+Pj4gKwltaXhlcl9yZWdfd3JpdGVtYXNr
-KHJlcywgTVhSX0xBWUVSX0NGRywgbXhyX2xheWVyX2NmZywgTVhSX0xBWUVSX0NGR19NQVNLKTsK
-Pj4+ICB9Cj4+PiAgCj4+PiAgc3RhdGljIHZvaWQgbWl4ZXJfcnVuKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgpCj4+PiBAQCAtNDc4LDcgKzUyNCw2IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1
-ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+Pj4gIAlzdHJ1Y3QgZHJtX2Rpc3BsYXlf
-bW9kZSAqbW9kZSA9ICZzdGF0ZS0+YmFzZS5jcnRjLT5zdGF0ZS0+YWRqdXN0ZWRfbW9kZTsKPj4+
-ICAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+Pj4gIAlz
-dHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IHN0YXRlLT5mYjsKPj4+IC0JdW5zaWduZWQgaW50
-IHByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsKPj4+ICAJdW5zaWdu
-ZWQgbG9uZyBmbGFnczsKPj4+ICAJZG1hX2FkZHJfdCBsdW1hX2FkZHJbMl0sIGNocm9tYV9hZGRy
-WzJdOwo+Pj4gIAlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKPj4+IEBAIC01NjMsOCArNjA4LDYg
-QEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgs
-Cj4+PiAgCj4+PiAgCW1peGVyX2NmZ19zY2FuKGN0eCwgbW9kZS0+dmRpc3BsYXkpOwo+Pj4gIAlt
-aXhlcl9jZmdfcmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5KTsKPj4+IC0JbWl4ZXJfY2ZnX2xh
-eWVyKGN0eCwgcGxhbmUtPmluZGV4LCBwcmlvcml0eSwgdHJ1ZSk7Cj4+PiAtCW1peGVyX2NmZ192
-cF9ibGVuZChjdHgpOwo+PiBZb3UgcmVtb3ZlZCB0aGUgZnVuY3Rpb24gY2FsbCB0byBzZXQgTVhS
-X0NGRyBhbmQgTVhSX0xBWUVSX0NGRyByZWdpc3RlcnMgc28gd2hhdCBpZiBsYWdhY3kgc2V0IHBs
-YW5lIGlvY3RsIGlzIGNhbGxlZCBieSB1c2VyIHVzZXIgc3BhY2U/IFdoZXJlIHRoZXNlIHJlZ2lz
-dGVyIGFyZSB1cGRhdGVkPwo+IHllcywgeW91J3JlIHJpZ2h0LiBJIGNvbXBsZXRseSBmb3Jnb3Qg
-YWJvdXQgdGhlIGxlZ2FjeSBjb2RlcGF0aHMuIFNvcnJ5Cj4gYWJvdXQgdGhhdCEKCkFyZSB5b3Ug
-dGFsa2luZyBhYm91dCBEUk1fSU9DVExfTU9ERV9TRVRQTEFORT8KSXQgZG9lcyBub3Qgc2VlbSB0
-byBiZSBsZWdhY3ksIG9yIHRvIGJlIG1vcmUgcHJlY2lzZSBpdCBjYWxscwoudXBkYXRlX3BsYW5l
-IGFuZCAuZGlzYWJsZV9wbGFuZQpjYWxsYmFja3Mgd2hpY2ggaW4gZXh5bm9zIGFyZSBzZXQgYXMg
-Zm9sbG93OgogICAgLnVwZGF0ZV9wbGFuZSAgICA9IGRybV9hdG9taWNfaGVscGVyX3VwZGF0ZV9w
-bGFuZSwKICAgIC5kaXNhYmxlX3BsYW5lICAgID0gZHJtX2F0b21pY19oZWxwZXJfZGlzYWJsZV9w
-bGFuZSwKClNvIERSTV9JT0NUTF9NT0RFX1NFVFBMQU5FIGNhbGxzIGF0b21pYyBjb2RlcGF0aCBh
-bnl3YXkuCgpSZWdhcmRzCkFuZHJ6ZWoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+This patch adds clock controls in s3c24xx_serial_resume_noirq()
+to set S3C64XX_UINTM register.
+
+Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+---
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index ae2095a..97f7b3b 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
+ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ {
+ 	struct uart_port *port = s3c24xx_dev_to_port(dev);
++	struct s3c24xx_uart_port *ourport = to_ourport(port);
+ 
+ 	if (port) {
+ 		/* restore IRQ mask */
+@@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ 				uintm &= ~S3C64XX_UINTM_TXD_MSK;
+ 			if (rx_enabled(port))
+ 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
++			clk_prepare_enable(ourport->clk);
+ 			wr_regl(port, S3C64XX_UINTM, uintm);
++			clk_disable_unprepare(ourport->clk);
+ 		}
+ 	}
+ 
+-- 
+2.8.1
