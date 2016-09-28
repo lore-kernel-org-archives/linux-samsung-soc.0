@@ -1,329 +1,232 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
  mixer_atomic_flush()
-Date: Wed, 28 Sep 2016 10:56:46 +0900
-Message-ID: <57EB235E.2050808@samsung.com>
+Date: Wed, 28 Sep 2016 11:06:57 +0200
+Message-ID: <57EB8831.2000508@math.uni-bielefeld.de>
 References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
  <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
  <57EA0D68.401@samsung.com> <57EA5664.3040106@math.uni-bielefeld.de>
  <130cf67d-4082-1e29-8f14-7c952c8a8012@samsung.com>
  <57EAA3C2.5000409@math.uni-bielefeld.de> <57EB014D.6010908@samsung.com>
- <57EB08B4.4070201@math.uni-bielefeld.de>
+ <57EB08B4.4070201@math.uni-bielefeld.de> <57EB1C37.9020905@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38722 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754696AbcI1B4z (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 21:56:55 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OE602DPBYQM4810@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2016 10:56:46 +0900 (KST)
-In-reply-to: <57EB08B4.4070201@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <57EB1C37.9020905@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2016년 09월 28일 09:03에 Tobias Jakobi 이(가) 쓴 글:
-> Hey Inki,
-> 
-> 
-> Inki Dae wrote:
->>
->>
->> 2016년 09월 28일 01:52에 Tobias Jakobi 이(가) 쓴 글:
->>> Hello Andrzej,
->>>
->>>
->>> Andrzej Hajda wrote:
->>>> On 27.09.2016 13:22, Tobias Jakobi wrote:
->>>>> Hello Inki,
->>>>>
->>>>>
->>>>> Inki Dae wrote:
->>>>>> 2016년 09월 26일 20:36에 Tobias Jakobi 이(가) 쓴 글:
->>>>>>> Only manipulate the MXR_CFG and MXR_LAYER_CFG registers once
->>>>>>> in mixer_cfg_layer().
->>>>>>> Trigger this via atomic flush.
->>>>>>>
->>>>>>> Changes in v2:
->>>>>>> - issue mixer_cfg_layer() in mixer_disable()
->>>>>>> - rename fields as suggested by Andrzej
->>>>>>> - added docu to mixer context struct
->>>>>>> - simplify mixer_win_reset() as well
->>>>>>>
->>>>>>> Changes in v3:
->>>>>>> - simplify some conditions as suggested by Inki
->>>>>>> - add docu to mixer_cfg_layer()
->>>>>>> - fold switch statements into a single one
->>>>>>>
->>>>>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>>>> ---
->>>>>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 135 ++++++++++++++++++++++------------
->>>>>>>  drivers/gpu/drm/exynos/regs-mixer.h   |   2 +
->>>>>>>  2 files changed, 92 insertions(+), 45 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>>> index 1e78d57..4f06f4d 100644
->>>>>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>>>>> @@ -93,12 +93,25 @@ static const uint32_t vp_formats[] = {
->>>>>>>  	DRM_FORMAT_NV21,
->>>>>>>  };
->>>>>>>  
->>>>>>> +/*
->>>>>>> + * Mixer context structure.
->>>>>>> + *
->>>>>>> + * @crtc: The HDMI CRTC attached to the mixer.
->>>>>>> + * @planes: Array of plane objects for each of the mixer windows.
->>>>>>> + * @active_windows: Cache of the mixer's hardware state.
->>>>>>> + *       Tracks which mixer windows are active/inactive.
->>>>>>> + * @pipe: The CRTC index.
->>>>>>> + * @flags: Bitfield build from the mixer_flag_bits enumerator.
->>>>>>> + * @mixer_resources: A struct containing registers, clocks, etc.
->>>>>>> + * @mxr_ver: The hardware revision/version of the mixer.
->>>>>>> + */
->>>>>>>  struct mixer_context {
->>>>>>>  	struct platform_device *pdev;
->>>>>>>  	struct device		*dev;
->>>>>>>  	struct drm_device	*drm_dev;
->>>>>>>  	struct exynos_drm_crtc	*crtc;
->>>>>>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->>>>>>> +	unsigned long		active_windows;
->>>>>>>  	int			pipe;
->>>>>>>  	unsigned long		flags;
->>>>>>>  
->>>>>>> @@ -418,37 +431,70 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->>>>>>>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
->>>>>>>  }
->>>>>>>  
->>>>>>> -static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win,
->>>>>>> -			    unsigned int priority, bool enable)
->>>>>>> +/**
->>>>>>> + * mixer_cfg_layer - apply layer configuration to hardware
->>>>>>> + * @ctx: mixer context
->>>>>>> + *
->>>>>>> + * This configures the MXR_CFG and MXR_LAYER_CFG hardware registers
->>>>>>> + * using the 'active_windows' field of the the mixer content, and
->>>>>>> + * the pixel format of the framebuffers associated with the enabled
->>>>>>> + * windows.
->>>>>>> + *
->>>>>>> + * Has to be called under mixer lock.
->>>>>>> + */
->>>>>>> +static void mixer_cfg_layer(struct mixer_context *ctx)
->>>>>>>  {
->>>>>>>  	struct mixer_resources *res = &ctx->mixer_res;
->>>>>>> -	u32 val = enable ? ~0 : 0;
->>>>>>> -
->>>>>>> -	switch (win) {
->>>>>>> -	case 0:
->>>>>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP0_ENABLE);
->>>>>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>>>> -				    MXR_LAYER_CFG_GRP0_VAL(priority),
->>>>>>> -				    MXR_LAYER_CFG_GRP0_MASK);
->>>>>>> -		break;
->>>>>>> -	case 1:
->>>>>>> -		mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_GRP1_ENABLE);
->>>>>>> -		mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>>>> -				    MXR_LAYER_CFG_GRP1_VAL(priority),
->>>>>>> -				    MXR_LAYER_CFG_GRP1_MASK);
->>>>>>> +	unsigned int win;
->>>>>>>  
->>>>>>> -		break;
->>>>>>> -	case VP_DEFAULT_WIN:
->>>>>>> -		if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags)) {
->>>>>>> -			vp_reg_writemask(res, VP_ENABLE, val, VP_ENABLE_ON);
->>>>>>> -			mixer_reg_writemask(res, MXR_CFG, val,
->>>>>>> -				MXR_CFG_VP_ENABLE);
->>>>>>> -			mixer_reg_writemask(res, MXR_LAYER_CFG,
->>>>>>> -					    MXR_LAYER_CFG_VP_VAL(priority),
->>>>>>> -					    MXR_LAYER_CFG_VP_MASK);
->>>>>>> +	struct exynos_drm_plane_state *state;
->>>>>>> +	struct drm_framebuffer *fb;
->>>>>>> +	unsigned int priority;
->>>>>>> +	u32 mxr_cfg = 0, mxr_layer_cfg = 0, vp_enable = 0;
->>>>>>> +	bool enable;
->>>>>>> +
->>>>>>> +	for (win = 0; win < MIXER_WIN_NR; ++win) {
->>>>>>> +		state = to_exynos_plane_state(ctx->planes[win].base.state);
->>>>>>> +		fb = state->fb;
->>>>>>> +
->>>>>>> +		priority = state->base.normalized_zpos + 1;
->>>>>>> +		enable = test_bit(win, &ctx->active_windows);
->>>>>>> +
->>>>>>> +		if (!enable)
->>>>>>> +			continue;
->>>>>>> +
->>>>>>> +		BUG_ON(!fb);
->>>>>>> +
->>>>>>> +		/*
->>>>>>> +		 * TODO: Don't enable alpha blending for the bottom window.
->>>>>>> +		 */
->>>>>>> +		switch (win) {
->>>>>>> +		case 0:
->>>>>>> +			mxr_cfg |=  MXR_CFG_GRP0_ENABLE;
->>>>>>> +			mxr_layer_cfg |= MXR_LAYER_CFG_GRP0_VAL(priority);
->>>>>>> +			mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
->>>>>>> +			break;
->>>>>>> +
->>>>>>> +		case 1:
->>>>>>> +			mxr_cfg |=  MXR_CFG_GRP1_ENABLE;
->>>>>>> +			mxr_layer_cfg |= MXR_LAYER_CFG_GRP1_VAL(priority);
->>>>>>> +			mixer_cfg_gfx_blend(ctx, win, is_alpha_format(fb->pixel_format));
->>>>>>> +			break;
->>>>>>> +
->>>>>>> +		case VP_DEFAULT_WIN:
->>>>>>> +			vp_enable = VP_ENABLE_ON;
->>>>>>> +			mxr_cfg |=  MXR_CFG_VP_ENABLE;
->>>>>>> +			mxr_layer_cfg |= MXR_LAYER_CFG_VP_VAL(priority);
->>>>>>> +			mixer_cfg_vp_blend(ctx);
->>>>>>> +			break;
->>>>>>>  		}
->>>>>>> -		break;
->>>>>>>  	}
->>>>>>> +
->>>>>>> +	if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
->>>>>>> +		vp_reg_writemask(res, VP_ENABLE, vp_enable, VP_ENABLE_ON);
->>>>>>> +
->>>>>>> +	mixer_reg_writemask(res, MXR_CFG, mxr_cfg, MXR_CFG_ENABLE_MASK);
->>>>>>> +	mixer_reg_writemask(res, MXR_LAYER_CFG, mxr_layer_cfg, MXR_LAYER_CFG_MASK);
->>>>>>>  }
->>>>>>>  
->>>>>>>  static void mixer_run(struct mixer_context *ctx)
->>>>>>> @@ -478,7 +524,6 @@ static void vp_video_buffer(struct mixer_context *ctx,
->>>>>>>  	struct drm_display_mode *mode = &state->base.crtc->state->adjusted_mode;
->>>>>>>  	struct mixer_resources *res = &ctx->mixer_res;
->>>>>>>  	struct drm_framebuffer *fb = state->fb;
->>>>>>> -	unsigned int priority = state->base.normalized_zpos + 1;
->>>>>>>  	unsigned long flags;
->>>>>>>  	dma_addr_t luma_addr[2], chroma_addr[2];
->>>>>>>  	bool tiled_mode = false;
->>>>>>> @@ -563,8 +608,6 @@ static void vp_video_buffer(struct mixer_context *ctx,
->>>>>>>  
->>>>>>>  	mixer_cfg_scan(ctx, mode->vdisplay);
->>>>>>>  	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
->>>>>>> -	mixer_cfg_layer(ctx, plane->index, priority, true);
->>>>>>> -	mixer_cfg_vp_blend(ctx);
->>>>>> You removed the function call to set MXR_CFG and MXR_LAYER_CFG registers so what if lagacy set plane ioctl is called by user user space? Where these register are updated?
->>>>> yes, you're right. I completly forgot about the legacy codepaths. Sorry
->>>>> about that!
->>>>
->>>> Are you talking about DRM_IOCTL_MODE_SETPLANE?
->>>> It does not seem to be legacy, or to be more precise it calls
->>>> .update_plane and .disable_plane
->>>> callbacks which in exynos are set as follow:
->>>>     .update_plane    = drm_atomic_helper_update_plane,
->>>>     .disable_plane    = drm_atomic_helper_disable_plane,
->>>>
->>>> So DRM_IOCTL_MODE_SETPLANE calls atomic codepath anyway.
->>> thanks a lot for the heads-up. I can confirm that drm_mode_setplane()
->>> also goes through the atomic path.
->>>
->>> The simplified callstack:
->>> - drm_mode_setplane()
->>>   - __setplane_internal()
->>>     - disable_plane() (set in plane_helper_funcs in exynos_drm_plane.c)
->>>     - update_plane() (same here)
->>
->> Sorry for previous comments not enough.
->>
->> update_plane
->> 	...
->> 	- mixer_update_plane
->> 		- vp_video_buffer or mixer_graph_buffer
->>
->> However, you removed mixer_cfg_layer call from above functions.
-> exactly, because that is the very purpose of this patch.
-> 
-> 
->> So my intention was to keep the modifed mixer_cfg_layer call on vp_video_buffer and mixer_grpah_buffer functions.
-> That is not my intention. I want to move register manipulation to the
-> atomic flush step.
-> 
-> 
->> mixer_atomic_flush function is not really proper place to call mixer_cfg_layer function even mixer_win_reset.
-> Why do you think so? I think it makes perfect sense to put it there. We
-> flush the new configuration to the hardware registers there.
-> 
-> 
->> For this I mentioned already at previous my comment,
->> "atomic_flush callback will be used to make sure registers to be updated to the real hardware. So calling mixer_cfg_layer function here wouldn't be reasonable."
-> You're confusing me. That is exactly what my patch is doing. It moves
-> more of the actual hardware register updating to the atomic flush step.
-> 
-> 
->> Also it would be reasonable to remove mixer_cfg_layer function call from mixer_win_reset function.
-> Why is that? In mixer_win_reset() we want to apply a default
-> configuration to the various registers. Hence we set active_windows to
-> zero and call mixer_cfg_layer().
-
-mixer_win_reset function sets registers to default value because mixer device has no reset HW register like vp did.
-So original codes set the registers to default value but you removed them like below,
--       /* reset default layer priority */
--       mixer_reg_write(res, MXR_LAYER_CFG, 0);
-
-
--       /* disable all layers */
--       mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP0_ENABLE);
--       mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_GRP1_ENABLE);
--       if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags))
--               mixer_reg_writemask(res, MXR_CFG, 0, MXR_CFG_VP_ENABLE);
-
-and called mixer_cfg_layer function which configures overlay registers as previous plane state but not HW default values.
-With this patch do you know that how many times mixer_cfg_layer function is called when we requested atomic operation?
-
-> 
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> 
->>> For completeness I've also checked drm_mode_setcrtc(), the other legacy
->>> DRM call that manipulates the primary plane.
->>>
->>> It goes the following route:
->>> - drm_mode_setcrtc
->>>   - drm_mode_set_config_internal()
->>>     - set_config() (set in exynos_crtc_funcs in exynos_drm_crtc.c)
->>>
->>> Also here: .set_config = drm_atomic_helper_set_config
->>>
->>> Both DRM_IOCTL_MODE_SETPLANE and DRM_IOCTL_MODE_CRTC go the atomic
->>> route, so the patch is fine this way.
->>>
->>> @Inki: Can you still queue this up for 4.9.y?
->>>
->>>
->>> With best wishes,
->>> Tobias
->>>
->>>
->>>>
->>>> Regards
->>>> Andrzej
->>>>
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> 
-> 
-> 
+SGVsbG8gSW5raSwKCgpJbmtpIERhZSB3cm90ZToKPiAKPiAKPiAyMDE264WEIDA57JuUIDI47J28
+IDA5OjAz7JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0IOq4gDoKPj4gSGV5IElua2ksCj4+
+Cj4+Cj4+IElua2kgRGFlIHdyb3RlOgo+Pj4KPj4+Cj4+PiAyMDE264WEIDA57JuUIDI47J28IDAx
+OjUy7JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0IOq4gDoKPj4+PiBIZWxsbyBBbmRyemVq
+LAo+Pj4+Cj4+Pj4KPj4+PiBBbmRyemVqIEhhamRhIHdyb3RlOgo+Pj4+PiBPbiAyNy4wOS4yMDE2
+IDEzOjIyLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+Pj4+Pj4gSGVsbG8gSW5raSwKPj4+Pj4+Cj4+
+Pj4+Pgo+Pj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4gMjAxNuuFhCAwOeyblCAyNuydvCAy
+MDozNuyXkCBUb2JpYXMgSmFrb2JpIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+Pj4+IE9ubHkgbWFu
+aXB1bGF0ZSB0aGUgTVhSX0NGRyBhbmQgTVhSX0xBWUVSX0NGRyByZWdpc3RlcnMgb25jZQo+Pj4+
+Pj4+PiBpbiBtaXhlcl9jZmdfbGF5ZXIoKS4KPj4+Pj4+Pj4gVHJpZ2dlciB0aGlzIHZpYSBhdG9t
+aWMgZmx1c2guCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IENoYW5nZXMgaW4gdjI6Cj4+Pj4+Pj4+IC0gaXNz
+dWUgbWl4ZXJfY2ZnX2xheWVyKCkgaW4gbWl4ZXJfZGlzYWJsZSgpCj4+Pj4+Pj4+IC0gcmVuYW1l
+IGZpZWxkcyBhcyBzdWdnZXN0ZWQgYnkgQW5kcnplago+Pj4+Pj4+PiAtIGFkZGVkIGRvY3UgdG8g
+bWl4ZXIgY29udGV4dCBzdHJ1Y3QKPj4+Pj4+Pj4gLSBzaW1wbGlmeSBtaXhlcl93aW5fcmVzZXQo
+KSBhcyB3ZWxsCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IENoYW5nZXMgaW4gdjM6Cj4+Pj4+Pj4+IC0gc2lt
+cGxpZnkgc29tZSBjb25kaXRpb25zIGFzIHN1Z2dlc3RlZCBieSBJbmtpCj4+Pj4+Pj4+IC0gYWRk
+IGRvY3UgdG8gbWl4ZXJfY2ZnX2xheWVyKCkKPj4+Pj4+Pj4gLSBmb2xkIHN3aXRjaCBzdGF0ZW1l
+bnRzIGludG8gYSBzaW5nbGUgb25lCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IFNpZ25lZC1vZmYtYnk6IFRv
+YmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+Pj4+Pj4+PiAtLS0K
+Pj4+Pj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxMzUgKysr
+KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLQo+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9yZWdzLW1peGVyLmggICB8ICAgMiArCj4+Pj4+Pj4+ICAyIGZpbGVzIGNoYW5nZWQs
+IDkyIGluc2VydGlvbnMoKyksIDQ1IGRlbGV0aW9ucygtKQo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+Pj4+Pj4gaW5kZXggMWU3OGQ1Ny4uNGYw
+NmY0ZCAxMDA2NDQKPj4+Pj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+bWl4ZXIuYwo+Pj4+Pj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCj4+Pj4+Pj4+IEBAIC05MywxMiArOTMsMjUgQEAgc3RhdGljIGNvbnN0IHVpbnQzMl90IHZw
+X2Zvcm1hdHNbXSA9IHsKPj4+Pj4+Pj4gIAlEUk1fRk9STUFUX05WMjEsCj4+Pj4+Pj4+ICB9Owo+
+Pj4+Pj4+PiAgCj4+Pj4+Pj4+ICsvKgo+Pj4+Pj4+PiArICogTWl4ZXIgY29udGV4dCBzdHJ1Y3R1
+cmUuCj4+Pj4+Pj4+ICsgKgo+Pj4+Pj4+PiArICogQGNydGM6IFRoZSBIRE1JIENSVEMgYXR0YWNo
+ZWQgdG8gdGhlIG1peGVyLgo+Pj4+Pj4+PiArICogQHBsYW5lczogQXJyYXkgb2YgcGxhbmUgb2Jq
+ZWN0cyBmb3IgZWFjaCBvZiB0aGUgbWl4ZXIgd2luZG93cy4KPj4+Pj4+Pj4gKyAqIEBhY3RpdmVf
+d2luZG93czogQ2FjaGUgb2YgdGhlIG1peGVyJ3MgaGFyZHdhcmUgc3RhdGUuCj4+Pj4+Pj4+ICsg
+KiAgICAgICBUcmFja3Mgd2hpY2ggbWl4ZXIgd2luZG93cyBhcmUgYWN0aXZlL2luYWN0aXZlLgo+
+Pj4+Pj4+PiArICogQHBpcGU6IFRoZSBDUlRDIGluZGV4Lgo+Pj4+Pj4+PiArICogQGZsYWdzOiBC
+aXRmaWVsZCBidWlsZCBmcm9tIHRoZSBtaXhlcl9mbGFnX2JpdHMgZW51bWVyYXRvci4KPj4+Pj4+
+Pj4gKyAqIEBtaXhlcl9yZXNvdXJjZXM6IEEgc3RydWN0IGNvbnRhaW5pbmcgcmVnaXN0ZXJzLCBj
+bG9ja3MsIGV0Yy4KPj4+Pj4+Pj4gKyAqIEBteHJfdmVyOiBUaGUgaGFyZHdhcmUgcmV2aXNpb24v
+dmVyc2lvbiBvZiB0aGUgbWl4ZXIuCj4+Pj4+Pj4+ICsgKi8KPj4+Pj4+Pj4gIHN0cnVjdCBtaXhl
+cl9jb250ZXh0IHsKPj4+Pj4+Pj4gIAlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2Owo+Pj4+
+Pj4+PiAgCXN0cnVjdCBkZXZpY2UJCSpkZXY7Cj4+Pj4+Pj4+ICAJc3RydWN0IGRybV9kZXZpY2UJ
+KmRybV9kZXY7Cj4+Pj4+Pj4+ICAJc3RydWN0IGV4eW5vc19kcm1fY3J0YwkqY3J0YzsKPj4+Pj4+
+Pj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZQlwbGFuZXNbTUlYRVJfV0lOX05SXTsKPj4+Pj4+
+Pj4gKwl1bnNpZ25lZCBsb25nCQlhY3RpdmVfd2luZG93czsKPj4+Pj4+Pj4gIAlpbnQJCQlwaXBl
+Owo+Pj4+Pj4+PiAgCXVuc2lnbmVkIGxvbmcJCWZsYWdzOwo+Pj4+Pj4+PiAgCj4+Pj4+Pj4+IEBA
+IC00MTgsMzcgKzQzMSw3MCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfcmdiX2ZtdChzdHJ1Y3Qg
+bWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQo+Pj4+Pj4+PiAgCW1peGVy
+X3JlZ193cml0ZW1hc2socmVzLCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdfUkdCX0ZNVF9NQVNLKTsK
+Pj4+Pj4+Pj4gIH0KPj4+Pj4+Pj4gIAo+Pj4+Pj4+PiAtc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX2xh
+eWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sCj4+Pj4+Pj4+
+IC0JCQkgICAgdW5zaWduZWQgaW50IHByaW9yaXR5LCBib29sIGVuYWJsZSkKPj4+Pj4+Pj4gKy8q
+Kgo+Pj4+Pj4+PiArICogbWl4ZXJfY2ZnX2xheWVyIC0gYXBwbHkgbGF5ZXIgY29uZmlndXJhdGlv
+biB0byBoYXJkd2FyZQo+Pj4+Pj4+PiArICogQGN0eDogbWl4ZXIgY29udGV4dAo+Pj4+Pj4+PiAr
+ICoKPj4+Pj4+Pj4gKyAqIFRoaXMgY29uZmlndXJlcyB0aGUgTVhSX0NGRyBhbmQgTVhSX0xBWUVS
+X0NGRyBoYXJkd2FyZSByZWdpc3RlcnMKPj4+Pj4+Pj4gKyAqIHVzaW5nIHRoZSAnYWN0aXZlX3dp
+bmRvd3MnIGZpZWxkIG9mIHRoZSB0aGUgbWl4ZXIgY29udGVudCwgYW5kCj4+Pj4+Pj4+ICsgKiB0
+aGUgcGl4ZWwgZm9ybWF0IG9mIHRoZSBmcmFtZWJ1ZmZlcnMgYXNzb2NpYXRlZCB3aXRoIHRoZSBl
+bmFibGVkCj4+Pj4+Pj4+ICsgKiB3aW5kb3dzLgo+Pj4+Pj4+PiArICoKPj4+Pj4+Pj4gKyAqIEhh
+cyB0byBiZSBjYWxsZWQgdW5kZXIgbWl4ZXIgbG9jay4KPj4+Pj4+Pj4gKyAqLwo+Pj4+Pj4+PiAr
+c3RhdGljIHZvaWQgbWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+
+Pj4+Pj4+ICB7Cj4+Pj4+Pj4+ICAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+
+bWl4ZXJfcmVzOwo+Pj4+Pj4+PiAtCXUzMiB2YWwgPSBlbmFibGUgPyB+MCA6IDA7Cj4+Pj4+Pj4+
+IC0KPj4+Pj4+Pj4gLQlzd2l0Y2ggKHdpbikgewo+Pj4+Pj4+PiAtCWNhc2UgMDoKPj4+Pj4+Pj4g
+LQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19HUlAwX0VO
+QUJMRSk7Cj4+Pj4+Pj4+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfTEFZRVJfQ0ZH
+LAo+Pj4+Pj4+PiAtCQkJCSAgICBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFMKHByaW9yaXR5KSwKPj4+
+Pj4+Pj4gLQkJCQkgICAgTVhSX0xBWUVSX0NGR19HUlAwX01BU0spOwo+Pj4+Pj4+PiAtCQlicmVh
+azsKPj4+Pj4+Pj4gLQljYXNlIDE6Cj4+Pj4+Pj4+IC0JCW1peGVyX3JlZ193cml0ZW1hc2socmVz
+LCBNWFJfQ0ZHLCB2YWwsIE1YUl9DRkdfR1JQMV9FTkFCTEUpOwo+Pj4+Pj4+PiAtCQltaXhlcl9y
+ZWdfd3JpdGVtYXNrKHJlcywgTVhSX0xBWUVSX0NGRywKPj4+Pj4+Pj4gLQkJCQkgICAgTVhSX0xB
+WUVSX0NGR19HUlAxX1ZBTChwcmlvcml0eSksCj4+Pj4+Pj4+IC0JCQkJICAgIE1YUl9MQVlFUl9D
+RkdfR1JQMV9NQVNLKTsKPj4+Pj4+Pj4gKwl1bnNpZ25lZCBpbnQgd2luOwo+Pj4+Pj4+PiAgCj4+
+Pj4+Pj4+IC0JCWJyZWFrOwo+Pj4+Pj4+PiAtCWNhc2UgVlBfREVGQVVMVF9XSU46Cj4+Pj4+Pj4+
+IC0JCWlmICh0ZXN0X2JpdChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSkgewo+Pj4+
+Pj4+PiAtCQkJdnBfcmVnX3dyaXRlbWFzayhyZXMsIFZQX0VOQUJMRSwgdmFsLCBWUF9FTkFCTEVf
+T04pOwo+Pj4+Pj4+PiAtCQkJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwK
+Pj4+Pj4+Pj4gLQkJCQlNWFJfQ0ZHX1ZQX0VOQUJMRSk7Cj4+Pj4+Pj4+IC0JCQltaXhlcl9yZWdf
+d3JpdGVtYXNrKHJlcywgTVhSX0xBWUVSX0NGRywKPj4+Pj4+Pj4gLQkJCQkJICAgIE1YUl9MQVlF
+Ul9DRkdfVlBfVkFMKHByaW9yaXR5KSwKPj4+Pj4+Pj4gLQkJCQkJICAgIE1YUl9MQVlFUl9DRkdf
+VlBfTUFTSyk7Cj4+Pj4+Pj4+ICsJc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKnN0YXRl
+Owo+Pj4+Pj4+PiArCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiOwo+Pj4+Pj4+PiArCXVuc2ln
+bmVkIGludCBwcmlvcml0eTsKPj4+Pj4+Pj4gKwl1MzIgbXhyX2NmZyA9IDAsIG14cl9sYXllcl9j
+ZmcgPSAwLCB2cF9lbmFibGUgPSAwOwo+Pj4+Pj4+PiArCWJvb2wgZW5hYmxlOwo+Pj4+Pj4+PiAr
+Cj4+Pj4+Pj4+ICsJZm9yICh3aW4gPSAwOyB3aW4gPCBNSVhFUl9XSU5fTlI7ICsrd2luKSB7Cj4+
+Pj4+Pj4+ICsJCXN0YXRlID0gdG9fZXh5bm9zX3BsYW5lX3N0YXRlKGN0eC0+cGxhbmVzW3dpbl0u
+YmFzZS5zdGF0ZSk7Cj4+Pj4+Pj4+ICsJCWZiID0gc3RhdGUtPmZiOwo+Pj4+Pj4+PiArCj4+Pj4+
+Pj4+ICsJCXByaW9yaXR5ID0gc3RhdGUtPmJhc2Uubm9ybWFsaXplZF96cG9zICsgMTsKPj4+Pj4+
+Pj4gKwkJZW5hYmxlID0gdGVzdF9iaXQod2luLCAmY3R4LT5hY3RpdmVfd2luZG93cyk7Cj4+Pj4+
+Pj4+ICsKPj4+Pj4+Pj4gKwkJaWYgKCFlbmFibGUpCj4+Pj4+Pj4+ICsJCQljb250aW51ZTsKPj4+
+Pj4+Pj4gKwo+Pj4+Pj4+PiArCQlCVUdfT04oIWZiKTsKPj4+Pj4+Pj4gKwo+Pj4+Pj4+PiArCQkv
+Kgo+Pj4+Pj4+PiArCQkgKiBUT0RPOiBEb24ndCBlbmFibGUgYWxwaGEgYmxlbmRpbmcgZm9yIHRo
+ZSBib3R0b20gd2luZG93Lgo+Pj4+Pj4+PiArCQkgKi8KPj4+Pj4+Pj4gKwkJc3dpdGNoICh3aW4p
+IHsKPj4+Pj4+Pj4gKwkJY2FzZSAwOgo+Pj4+Pj4+PiArCQkJbXhyX2NmZyB8PSAgTVhSX0NGR19H
+UlAwX0VOQUJMRTsKPj4+Pj4+Pj4gKwkJCW14cl9sYXllcl9jZmcgfD0gTVhSX0xBWUVSX0NGR19H
+UlAwX1ZBTChwcmlvcml0eSk7Cj4+Pj4+Pj4+ICsJCQltaXhlcl9jZmdfZ2Z4X2JsZW5kKGN0eCwg
+d2luLCBpc19hbHBoYV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwo+Pj4+Pj4+PiArCQkJYnJl
+YWs7Cj4+Pj4+Pj4+ICsKPj4+Pj4+Pj4gKwkJY2FzZSAxOgo+Pj4+Pj4+PiArCQkJbXhyX2NmZyB8
+PSAgTVhSX0NGR19HUlAxX0VOQUJMRTsKPj4+Pj4+Pj4gKwkJCW14cl9sYXllcl9jZmcgfD0gTVhS
+X0xBWUVSX0NGR19HUlAxX1ZBTChwcmlvcml0eSk7Cj4+Pj4+Pj4+ICsJCQltaXhlcl9jZmdfZ2Z4
+X2JsZW5kKGN0eCwgd2luLCBpc19hbHBoYV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwo+Pj4+
+Pj4+PiArCQkJYnJlYWs7Cj4+Pj4+Pj4+ICsKPj4+Pj4+Pj4gKwkJY2FzZSBWUF9ERUZBVUxUX1dJ
+TjoKPj4+Pj4+Pj4gKwkJCXZwX2VuYWJsZSA9IFZQX0VOQUJMRV9PTjsKPj4+Pj4+Pj4gKwkJCW14
+cl9jZmcgfD0gIE1YUl9DRkdfVlBfRU5BQkxFOwo+Pj4+Pj4+PiArCQkJbXhyX2xheWVyX2NmZyB8
+PSBNWFJfTEFZRVJfQ0ZHX1ZQX1ZBTChwcmlvcml0eSk7Cj4+Pj4+Pj4+ICsJCQltaXhlcl9jZmdf
+dnBfYmxlbmQoY3R4KTsKPj4+Pj4+Pj4gKwkJCWJyZWFrOwo+Pj4+Pj4+PiAgCQl9Cj4+Pj4+Pj4+
+IC0JCWJyZWFrOwo+Pj4+Pj4+PiAgCX0KPj4+Pj4+Pj4gKwo+Pj4+Pj4+PiArCWlmICh0ZXN0X2Jp
+dChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSkKPj4+Pj4+Pj4gKwkJdnBfcmVnX3dy
+aXRlbWFzayhyZXMsIFZQX0VOQUJMRSwgdnBfZW5hYmxlLCBWUF9FTkFCTEVfT04pOwo+Pj4+Pj4+
+PiArCj4+Pj4+Pj4+ICsJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIG14cl9jZmcs
+IE1YUl9DRkdfRU5BQkxFX01BU0spOwo+Pj4+Pj4+PiArCW1peGVyX3JlZ193cml0ZW1hc2socmVz
+LCBNWFJfTEFZRVJfQ0ZHLCBteHJfbGF5ZXJfY2ZnLCBNWFJfTEFZRVJfQ0ZHX01BU0spOwo+Pj4+
+Pj4+PiAgfQo+Pj4+Pj4+PiAgCj4+Pj4+Pj4+ICBzdGF0aWMgdm9pZCBtaXhlcl9ydW4oc3RydWN0
+IG1peGVyX2NvbnRleHQgKmN0eCkKPj4+Pj4+Pj4gQEAgLTQ3OCw3ICs1MjQsNiBAQCBzdGF0aWMg
+dm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKPj4+Pj4+Pj4g
+IAlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZzdGF0ZS0+YmFzZS5jcnRjLT5zdGF0
+ZS0+YWRqdXN0ZWRfbW9kZTsKPj4+Pj4+Pj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMg
+PSAmY3R4LT5taXhlcl9yZXM7Cj4+Pj4+Pj4+ICAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIg
+PSBzdGF0ZS0+ZmI7Cj4+Pj4+Pj4+IC0JdW5zaWduZWQgaW50IHByaW9yaXR5ID0gc3RhdGUtPmJh
+c2Uubm9ybWFsaXplZF96cG9zICsgMTsKPj4+Pj4+Pj4gIAl1bnNpZ25lZCBsb25nIGZsYWdzOwo+
+Pj4+Pj4+PiAgCWRtYV9hZGRyX3QgbHVtYV9hZGRyWzJdLCBjaHJvbWFfYWRkclsyXTsKPj4+Pj4+
+Pj4gIAlib29sIHRpbGVkX21vZGUgPSBmYWxzZTsKPj4+Pj4+Pj4gQEAgLTU2Myw4ICs2MDgsNiBA
+QCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwK
+Pj4+Pj4+Pj4gIAo+Pj4+Pj4+PiAgCW1peGVyX2NmZ19zY2FuKGN0eCwgbW9kZS0+dmRpc3BsYXkp
+Owo+Pj4+Pj4+PiAgCW1peGVyX2NmZ19yZ2JfZm10KGN0eCwgbW9kZS0+dmRpc3BsYXkpOwo+Pj4+
+Pj4+PiAtCW1peGVyX2NmZ19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHksIHRydWUp
+Owo+Pj4+Pj4+PiAtCW1peGVyX2NmZ192cF9ibGVuZChjdHgpOwo+Pj4+Pj4+IFlvdSByZW1vdmVk
+IHRoZSBmdW5jdGlvbiBjYWxsIHRvIHNldCBNWFJfQ0ZHIGFuZCBNWFJfTEFZRVJfQ0ZHIHJlZ2lz
+dGVycyBzbyB3aGF0IGlmIGxhZ2FjeSBzZXQgcGxhbmUgaW9jdGwgaXMgY2FsbGVkIGJ5IHVzZXIg
+dXNlciBzcGFjZT8gV2hlcmUgdGhlc2UgcmVnaXN0ZXIgYXJlIHVwZGF0ZWQ/Cj4+Pj4+PiB5ZXMs
+IHlvdSdyZSByaWdodC4gSSBjb21wbGV0bHkgZm9yZ290IGFib3V0IHRoZSBsZWdhY3kgY29kZXBh
+dGhzLiBTb3JyeQo+Pj4+Pj4gYWJvdXQgdGhhdCEKPj4+Pj4KPj4+Pj4gQXJlIHlvdSB0YWxraW5n
+IGFib3V0IERSTV9JT0NUTF9NT0RFX1NFVFBMQU5FPwo+Pj4+PiBJdCBkb2VzIG5vdCBzZWVtIHRv
+IGJlIGxlZ2FjeSwgb3IgdG8gYmUgbW9yZSBwcmVjaXNlIGl0IGNhbGxzCj4+Pj4+IC51cGRhdGVf
+cGxhbmUgYW5kIC5kaXNhYmxlX3BsYW5lCj4+Pj4+IGNhbGxiYWNrcyB3aGljaCBpbiBleHlub3Mg
+YXJlIHNldCBhcyBmb2xsb3c6Cj4+Pj4+ICAgICAudXBkYXRlX3BsYW5lICAgID0gZHJtX2F0b21p
+Y19oZWxwZXJfdXBkYXRlX3BsYW5lLAo+Pj4+PiAgICAgLmRpc2FibGVfcGxhbmUgICAgPSBkcm1f
+YXRvbWljX2hlbHBlcl9kaXNhYmxlX3BsYW5lLAo+Pj4+Pgo+Pj4+PiBTbyBEUk1fSU9DVExfTU9E
+RV9TRVRQTEFORSBjYWxscyBhdG9taWMgY29kZXBhdGggYW55d2F5Lgo+Pj4+IHRoYW5rcyBhIGxv
+dCBmb3IgdGhlIGhlYWRzLXVwLiBJIGNhbiBjb25maXJtIHRoYXQgZHJtX21vZGVfc2V0cGxhbmUo
+KQo+Pj4+IGFsc28gZ29lcyB0aHJvdWdoIHRoZSBhdG9taWMgcGF0aC4KPj4+Pgo+Pj4+IFRoZSBz
+aW1wbGlmaWVkIGNhbGxzdGFjazoKPj4+PiAtIGRybV9tb2RlX3NldHBsYW5lKCkKPj4+PiAgIC0g
+X19zZXRwbGFuZV9pbnRlcm5hbCgpCj4+Pj4gICAgIC0gZGlzYWJsZV9wbGFuZSgpIChzZXQgaW4g
+cGxhbmVfaGVscGVyX2Z1bmNzIGluIGV4eW5vc19kcm1fcGxhbmUuYykKPj4+PiAgICAgLSB1cGRh
+dGVfcGxhbmUoKSAoc2FtZSBoZXJlKQo+Pj4KPj4+IFNvcnJ5IGZvciBwcmV2aW91cyBjb21tZW50
+cyBub3QgZW5vdWdoLgo+Pj4KPj4+IHVwZGF0ZV9wbGFuZQo+Pj4gCS4uLgo+Pj4gCS0gbWl4ZXJf
+dXBkYXRlX3BsYW5lCj4+PiAJCS0gdnBfdmlkZW9fYnVmZmVyIG9yIG1peGVyX2dyYXBoX2J1ZmZl
+cgo+Pj4KPj4+IEhvd2V2ZXIsIHlvdSByZW1vdmVkIG1peGVyX2NmZ19sYXllciBjYWxsIGZyb20g
+YWJvdmUgZnVuY3Rpb25zLgo+PiBleGFjdGx5LCBiZWNhdXNlIHRoYXQgaXMgdGhlIHZlcnkgcHVy
+cG9zZSBvZiB0aGlzIHBhdGNoLgo+Pgo+Pgo+Pj4gU28gbXkgaW50ZW50aW9uIHdhcyB0byBrZWVw
+IHRoZSBtb2RpZmVkIG1peGVyX2NmZ19sYXllciBjYWxsIG9uIHZwX3ZpZGVvX2J1ZmZlciBhbmQg
+bWl4ZXJfZ3JwYWhfYnVmZmVyIGZ1bmN0aW9ucy4KPj4gVGhhdCBpcyBub3QgbXkgaW50ZW50aW9u
+LiBJIHdhbnQgdG8gbW92ZSByZWdpc3RlciBtYW5pcHVsYXRpb24gdG8gdGhlCj4+IGF0b21pYyBm
+bHVzaCBzdGVwLgo+Pgo+Pgo+Pj4gbWl4ZXJfYXRvbWljX2ZsdXNoIGZ1bmN0aW9uIGlzIG5vdCBy
+ZWFsbHkgcHJvcGVyIHBsYWNlIHRvIGNhbGwgbWl4ZXJfY2ZnX2xheWVyIGZ1bmN0aW9uIGV2ZW4g
+bWl4ZXJfd2luX3Jlc2V0Lgo+PiBXaHkgZG8geW91IHRoaW5rIHNvPyBJIHRoaW5rIGl0IG1ha2Vz
+IHBlcmZlY3Qgc2Vuc2UgdG8gcHV0IGl0IHRoZXJlLiBXZQo+PiBmbHVzaCB0aGUgbmV3IGNvbmZp
+Z3VyYXRpb24gdG8gdGhlIGhhcmR3YXJlIHJlZ2lzdGVycyB0aGVyZS4KPj4KPj4KPj4+IEZvciB0
+aGlzIEkgbWVudGlvbmVkIGFscmVhZHkgYXQgcHJldmlvdXMgbXkgY29tbWVudCwKPj4+ICJhdG9t
+aWNfZmx1c2ggY2FsbGJhY2sgd2lsbCBiZSB1c2VkIHRvIG1ha2Ugc3VyZSByZWdpc3RlcnMgdG8g
+YmUgdXBkYXRlZCB0byB0aGUgcmVhbCBoYXJkd2FyZS4gU28gY2FsbGluZyBtaXhlcl9jZmdfbGF5
+ZXIgZnVuY3Rpb24gaGVyZSB3b3VsZG4ndCBiZSByZWFzb25hYmxlLiIKPj4gWW91J3JlIGNvbmZ1
+c2luZyBtZS4gVGhhdCBpcyBleGFjdGx5IHdoYXQgbXkgcGF0Y2ggaXMgZG9pbmcuIEl0IG1vdmVz
+Cj4+IG1vcmUgb2YgdGhlIGFjdHVhbCBoYXJkd2FyZSByZWdpc3RlciB1cGRhdGluZyB0byB0aGUg
+YXRvbWljIGZsdXNoIHN0ZXAuCj4gCj4gT2ssIGZvciB5b3VyIHVuZGVyc3RhbmRpbmcsIHlvdSBj
+YW4gY2hlY2sgYXRvbWljX2JlZ2luLCBhdG9taWNfZmx1c2ggYW5kIHVwZGF0ZV9wbGFuZSBjYWxs
+YmFjayBmdW5jdGlvbnMgb2YgZXh5bm9zX2RybV9maW1kLmMuCj4gQWZ0ZXIgdGhhdCBJIHRoaW5r
+IHdlIGNvdWxkIGNvbnRpbnVlIHRvIGRpc2N1c3MgdGhpcy4gSSBkb2Vzbid0IHJlYWxseSB3YW50
+IHRvIHRhY2tsZSB5b3UuCkknbSBhd2FyZSBvZiB0aGF0IGNvZGUsIGJ1dCBpdCdzIGZvciB0aGUg
+RklNRCBhbmQgbm90IHRoZSBtaXhlci4gU28gSQpkb24ndCBzZWUgaG93IGl0IGlzIHJlbGV2YW50
+IHRvIHRoZSBkaXNjdXNzaW9uLiBPbmUgY291bGQgcHJvYmFibHkgZG8KdGhlIHNhbWUgdGhpbmcg
+Zm9yIHRoZSBGSU1ELCBpLmUuIG1vdmluZyBtb3JlIGNvZGUgdG8gdGhlIGZsdXNoIHN0ZXAuCkhv
+d2V2ZXIgSSBsYWNrIHRoZSBoYXJkd2FyZSB0byBwcm9wZXJseSB0ZXN0IHRoaXMsIHNvIHRoaXMg
+d291bGQgYmUgYQpiaXQgZGlmZmljdWx0IHRvIHdvcmsgb24uCgoKV2l0aCBiZXN0IHdpc2hlcywK
+VG9iaWFzCgoKPj4+IEFsc28gaXQgd291bGQgYmUgcmVhc29uYWJsZSB0byByZW1vdmUgbWl4ZXJf
+Y2ZnX2xheWVyIGZ1bmN0aW9uIGNhbGwgZnJvbSBtaXhlcl93aW5fcmVzZXQgZnVuY3Rpb24uCj4+
+IFdoeSBpcyB0aGF0PyBJbiBtaXhlcl93aW5fcmVzZXQoKSB3ZSB3YW50IHRvIGFwcGx5IGEgZGVm
+YXVsdAo+PiBjb25maWd1cmF0aW9uIHRvIHRoZSB2YXJpb3VzIHJlZ2lzdGVycy4gSGVuY2Ugd2Ug
+c2V0IGFjdGl2ZV93aW5kb3dzIHRvCj4+IHplcm8gYW5kIGNhbGwgbWl4ZXJfY2ZnX2xheWVyKCku
+Cj4+Cj4+Cj4+IFdpdGggYmVzdCB3aXNoZXMsCj4+IFRvYmlhcwo+Pgo+Pgo+Pgo+Pj4+IEZvciBj
+b21wbGV0ZW5lc3MgSSd2ZSBhbHNvIGNoZWNrZWQgZHJtX21vZGVfc2V0Y3J0YygpLCB0aGUgb3Ro
+ZXIgbGVnYWN5Cj4+Pj4gRFJNIGNhbGwgdGhhdCBtYW5pcHVsYXRlcyB0aGUgcHJpbWFyeSBwbGFu
+ZS4KPj4+Pgo+Pj4+IEl0IGdvZXMgdGhlIGZvbGxvd2luZyByb3V0ZToKPj4+PiAtIGRybV9tb2Rl
+X3NldGNydGMKPj4+PiAgIC0gZHJtX21vZGVfc2V0X2NvbmZpZ19pbnRlcm5hbCgpCj4+Pj4gICAg
+IC0gc2V0X2NvbmZpZygpIChzZXQgaW4gZXh5bm9zX2NydGNfZnVuY3MgaW4gZXh5bm9zX2RybV9j
+cnRjLmMpCj4+Pj4KPj4+PiBBbHNvIGhlcmU6IC5zZXRfY29uZmlnID0gZHJtX2F0b21pY19oZWxw
+ZXJfc2V0X2NvbmZpZwo+Pj4+Cj4+Pj4gQm90aCBEUk1fSU9DVExfTU9ERV9TRVRQTEFORSBhbmQg
+RFJNX0lPQ1RMX01PREVfQ1JUQyBnbyB0aGUgYXRvbWljCj4+Pj4gcm91dGUsIHNvIHRoZSBwYXRj
+aCBpcyBmaW5lIHRoaXMgd2F5Lgo+Pj4+Cj4+Pj4gQElua2k6IENhbiB5b3Ugc3RpbGwgcXVldWUg
+dGhpcyB1cCBmb3IgNC45Lnk/Cj4+Pj4KPj4+Pgo+Pj4+IFdpdGggYmVzdCB3aXNoZXMsCj4+Pj4g
+VG9iaWFzCj4+Pj4KPj4+Pgo+Pj4+Pgo+Pj4+PiBSZWdhcmRzCj4+Pj4+IEFuZHJ6ZWoKPj4+Pj4K
+Pj4+Pgo+Pj4+IC0tCj4+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
+IGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4+IHRoZSBib2R5IG9m
+IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+Pj4gTW9yZSBtYWpvcmRv
+bW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4+
+Pj4KPj4+Pgo+Pj4+Cj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNl
+bmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFq
+b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
+bAo+Pj4KPj4KPj4KPj4KPj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
