@@ -1,54 +1,51 @@
-From: ayaka <ayaka@soulik.info>
-Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
- CLAA070WP03XG panel
-Date: Thu, 29 Sep 2016 03:51:44 +0800
-Message-ID: <91b2efcc-4a74-c965-2163-a26a7f11fcd0@soulik.info>
-References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
- <1474311771-23321-3-git-send-email-ayaka@soulik.info>
- <20160923180042.GA7132@rob-hp-laptop>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 0/6] drm/exynos: g2d: rework sleep and runtime PM
+Date: Wed, 28 Sep 2016 22:57:31 +0200
+Message-ID: <57EC2EBB.8030007@math.uni-bielefeld.de>
+References: <CGME20160927155025eucas1p2ccb53d883393322dc40433a1af91a75a@eucas1p2.samsung.com>
+ <1474991411-2937-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <94315e2e-53b8-d78c-f10d-af632d58031d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kozue.soulik.info ([108.61.200.231]:40718 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752864AbcI1Tvw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Sep 2016 15:51:52 -0400
-In-Reply-To: <20160923180042.GA7132@rob-hp-laptop>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <94315e2e-53b8-d78c-f10d-af632d58031d@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org
 
-
-
-On 09/24/2016 02:00 AM, Rob Herring wrote:
-> On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
->> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
->> supported by the simple panel driver.
->>
->> Signed-off-by: Randy Li <ayaka@soulik.info>
->> ---
->>   .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
->>   drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
->>   2 files changed, 34 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
->>
->> diff --git a/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
->> new file mode 100644
->> index 0000000..dd22685
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
->> @@ -0,0 +1,7 @@
->> +Chunghwa Picture Tubes Ltd. 7" WXGA TFT LCD panel
->> +
->> +Required properties:
->> +- compatible: should be "chunghwa,claa070wp03xg"
-> What about VCC, VLED, LED_EN (PWM), LVBIT, LVFMT, DITHER signals?
-I didn't see the other simple-panel has that, so I didn't neither.
-And I think it would only have VCC and LED_EN(PWM).
->
->> +
->> +This binding is compatible with the simple-panel binding, which is specified
->> +in simple-panel.txt in this directory.
+SGVsbG8gTWFyZWssCgoKTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBEZWFyIFRvYmlhcywKPiAK
+PiAKPiBPbiAyMDE2LTA5LTI3IDE3OjUwLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBIZWxsbyBl
+dmVyeW9uZSwKPj4KPj4gYXMgZGlzY3Vzc2VkIHdpdGggTWFyZWsgSSBoYXZlIGJyb2tlbiBkb3du
+IG15IGluaXRpYWwgcGF0Y2ggaW50bwo+PiBzbWFsbGVyIHBpZWNlci4KPj4KPj4gQW55d2F5LCB0
+aGlzIHNlcmllcyBmaXhlcyBhIHJlZ3Jlc3Npb24gaW50cm9kdWNlZCBieSBjb21taXQKPj4gYjA1
+OTg0ZTIxYTdlMDAwYmY1MDc0YWNlMDBkN2E1NzQ5NDRiMmMxNi4KPj4KPj4gV2l0aCBiZXN0IHdp
+c2hlcywKPj4gVG9iaWFzCj4gCj4gUGF0Y2hlcyBsb29rcyByZWFsbHkgbmljZSEgSG93ZXZlciBJ
+IGRpZG4ndCBoYXZlIHRpbWUgdG8gdGVzdCB0aGVtIG9uCj4gdGhlIHJlYWwKPiBoYXJkd2FyZS4K
+dGhhbmtzIGZvciBoYXZpbmcgYSBsb29rIQoKSSBoYXZlIGp1c3QgdGVzdGVkIHRoZSBzcGxpdCB2
+ZXJzaW9uIG9mIHRoZSBwYXRjaCBvbiB0b3Agb2YgNC44LXJjOCwgYW5kCmNhbiBjb25maXJtIHRo
+YXQgYWxsIHRoZSB0ZXN0cyBpbiB1cHN0cmVhbSBsaWJkcm0gYXJlIHdvcmtpbmcuCgpXaXRoIGJl
+c3Qgd2lzaGVzLApUb2JpYXMKCgoKPiBZb3UgY2FuIGFkZCBteToKPiBBY2tlZC1ieTogTWFyZWsg
+U3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IAo+PiBUb2JpYXMgSmFrb2Jp
+ICg2KToKPj4gICAgUmV2ZXJ0ICJkcm0vZXh5bm9zOiBnMmQ6IGZpeCBzeXN0ZW0gYW5kIHJ1bnRp
+bWUgcG0gaW50ZWdyYXRpb24iCj4+ICAgIGRybS9leHlub3M6IGcyZDogbW92ZSBQTSBtYW5hZ2Vt
+ZW50IHRvIHJ1bnF1ZXVlIHdvcmtlcgo+PiAgICBkcm0vZXh5bm9zOiBnMmQ6IHJlbW92ZSBydW5x
+dWV1ZSBub2RlcyBpbiBnMmRfe2Nsb3NlLHJlbW92ZX0oKQo+PiAgICBkcm0vZXh5bm9zOiBnMmQ6
+IHdhaXQgZm9yIGVuZ2luZSB0byBmaW5pc2gKPj4gICAgZHJtL2V4eW5vczogZzJkOiB1c2UgYXV0
+b3N1c3BlbmQgbW9kZSBmb3IgUE0gcnVudGltZQo+PiAgICBkcm0vZXh5bm9zOiBnMmQ6IHNpbXBs
+aWZ5IGcyZF9mcmVlX3J1bnF1ZXVlX25vZGUoKQo+Pgo+PiAgIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9nMmQuYyB8IDIzNwo+PiArKysrKysrKysrKysrKysrKysrKysrKysrLS0t
+LS0tLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxODggaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25z
+KC0pCj4+Cj4gCj4gQmVzdCByZWdhcmRzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
