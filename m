@@ -1,48 +1,50 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 1/2] iommu/exynos: Remove excessive, useless debug
-Date: Thu, 29 Sep 2016 10:12:30 +0200
-Message-ID: <1475136751-31340-2-git-send-email-m.szyprowski@samsung.com>
-References: <1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20160929081239eucas1p19c6a5cce5e010996fd3da9dd0b5912da@eucas1p1.samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 1/2] PM / devfreq: exynos-nocp: Select REGMAP_MMIO
+Date: Thu, 29 Sep 2016 14:29:30 +0200
+Message-ID: <9785239.FWYofzirS3@vostro.rjw.lan>
+References: <1474805638-30407-1-git-send-email-axel.lin@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1475136751-31340-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:46621 "HELO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1753513AbcI2MXD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 29 Sep 2016 08:23:03 -0400
+In-Reply-To: <1474805638-30407-1-git-send-email-axel.lin@ingics.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Remove excessive, useless debug about skipping TLB invalidation, which
-is a normal situation when more aggressive power management is enabled.
+On Sunday, September 25, 2016 08:13:57 PM Axel Lin wrote:
+> This driver uses devm_regmap_init_mmio(), so select REGMAP_MMIO to avoid
+> build failure.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+> v2: fix typo in commit log and also add Chanwoo's Ack.
+> This one is a build fix, I think it should be for v4.8.
+>  drivers/devfreq/event/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+> index 0fdae86..cd94980 100644
+> --- a/drivers/devfreq/event/Kconfig
+> +++ b/drivers/devfreq/event/Kconfig
+> @@ -17,6 +17,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
+>  	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+>  	depends on ARCH_EXYNOS || COMPILE_TEST
+>  	select PM_OPP
+> +	select REGMAP_MMIO
+>  	help
+>  	  This add the devfreq-event driver for Exynos SoC. It provides NoC
+>  	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 3 ---
- 1 file changed, 3 deletions(-)
+MyungJoo, I can apply this one and the [2/2] directly.  Should I do that?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 33dcc29ec200..dfb44034b4ee 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -578,9 +578,6 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
- 			sysmmu_unblock(data);
- 		}
- 		clk_disable(data->clk_master);
--	} else {
--		dev_dbg(data->master,
--			"disabled. Skipping TLB invalidation @ %#x\n", iova);
- 	}
- 	spin_unlock_irqrestore(&data->lock, flags);
- }
--- 
-1.9.1
+Thanks,
+Rafael
