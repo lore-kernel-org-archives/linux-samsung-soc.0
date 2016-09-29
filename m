@@ -1,50 +1,39 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 1/2] PM / devfreq: exynos-nocp: Select REGMAP_MMIO
-Date: Thu, 29 Sep 2016 14:29:30 +0200
-Message-ID: <9785239.FWYofzirS3@vostro.rjw.lan>
-References: <1474805638-30407-1-git-send-email-axel.lin@ingics.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:46621 "HELO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1753513AbcI2MXD (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 08:23:03 -0400
-In-Reply-To: <1474805638-30407-1-git-send-email-axel.lin@ingics.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: zain wang <wzz@rock-chips.com>
+Subject: [PATCH v1 0/4] Misc changes to Rockchip PSR drivers
+Date: Thu, 29 Sep 2016 22:46:36 +0800
+Message-ID: <1475160400-30782-1-git-send-email-wzz@rock-chips.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Yakir Yang <ykk@rock-chips.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, zain wang <wzz@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Sunday, September 25, 2016 08:13:57 PM Axel Lin wrote:
-> This driver uses devm_regmap_init_mmio(), so select REGMAP_MMIO to avoid
-> build failure.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
-> v2: fix typo in commit log and also add Chanwoo's Ack.
-> This one is a build fix, I think it should be for v4.8.
->  drivers/devfreq/event/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-> index 0fdae86..cd94980 100644
-> --- a/drivers/devfreq/event/Kconfig
-> +++ b/drivers/devfreq/event/Kconfig
-> @@ -17,6 +17,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
->  	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
->  	depends on ARCH_EXYNOS || COMPILE_TEST
->  	select PM_OPP
-> +	select REGMAP_MMIO
->  	help
->  	  This add the devfreq-event driver for Exynos SoC. It provides NoC
->  	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
-> 
 
-MyungJoo, I can apply this one and the [2/2] directly.  Should I do that?
+1. prevent runing enable_psr when disabled bridge
+2. get sync PM when init eDP
+3. detect Sink PSR state after configuring the PSR
+4. switch Main-Link and eDP phy when enable/disable psr
 
-Thanks,
-Rafael
+BR,
+- Zain
+
+
+Yakir Yang (1):
+  drm/bridge: analogix_dp: detect Sink PSR state after configuring the
+    PSR
+
+zain wang (3):
+  drm/bridge: analogix_dp: prevent runing enable_psr when disabled
+    bridge.
+  drm/bridge: analogix_dp: get sync PM when init eDP
+  drm: bridge/analogix: switch Main-link and eDP PHY when enable/disable
+    psr
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 107 +++++++++++----------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   6 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  |  25 ++++-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |   8 +-
+ 4 files changed, 88 insertions(+), 58 deletions(-)
+
+-- 
+1.9.1
