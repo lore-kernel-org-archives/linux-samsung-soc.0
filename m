@@ -1,319 +1,434 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: mixer: configure layers once in
- mixer_atomic_flush()
-Date: Thu, 29 Sep 2016 13:26:00 +0900
-Message-ID: <57EC97D8.3070206@samsung.com>
-References: <CGME20160926113649epcas1p3cc06d1dbcf7a6f4c0a8a0bd07a9e13a8@epcas1p3.samsung.com>
- <1474889789-26721-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <57EA0D68.401@samsung.com> <57EA5664.3040106@math.uni-bielefeld.de>
- <130cf67d-4082-1e29-8f14-7c952c8a8012@samsung.com>
- <57EAA3C2.5000409@math.uni-bielefeld.de> <57EB014D.6010908@samsung.com>
- <57EB08B4.4070201@math.uni-bielefeld.de> <57EB1C37.9020905@samsung.com>
- <57EB8831.2000508@math.uni-bielefeld.de>
- <CAAQKjZN_snFRFjc4QYatq5M9cctAaEBuzpX_raTuZgGN3R+Acg@mail.gmail.com>
- <57EBEFAE.6000001@math.uni-bielefeld.de>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 2/2] iommu/exynos: Add proper runtime pm support
+Date: Thu, 29 Sep 2016 10:12:31 +0200
+Message-ID: <1475136751-31340-3-git-send-email-m.szyprowski@samsung.com>
+References: <1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
+	<CGME20160929081240eucas1p231c1ab5c5936886cbec6bc3f5267c940@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <57EBEFAE.6000001@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1475136751-31340-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE264WEIDA57JuUIDI57J28IDAxOjI47JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
-IOq4gDoKPiBJbmtpIERhZSB3cm90ZToKPj4gMjAxNi0wOS0yOCAxODowNiBHTVQrMDk6MDAgVG9i
-aWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ogo+Pj4gSGVsbG8gSW5r
-aSwKPj4+Cj4+Pgo+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4KPj4+Pgo+Pj4+IDIwMTbrhYQgMDns
-m5QgMjjsnbwgMDk6MDPsl5AgVG9iaWFzIEpha29iaSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+PiBI
-ZXkgSW5raSwKPj4+Pj4KPj4+Pj4KPj4+Pj4gSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pgo+Pj4+Pj4K
-Pj4+Pj4+IDIwMTbrhYQgMDnsm5QgMjjsnbwgMDE6NTLsl5AgVG9iaWFzIEpha29iaSDsnbQo6rCA
-KSDsk7Qg6riAOgo+Pj4+Pj4+IEhlbGxvIEFuZHJ6ZWosCj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+
-IEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+Pj4+Pj4+IE9uIDI3LjA5LjIwMTYgMTM6MjIsIFRvYmlh
-cyBKYWtvYmkgd3JvdGU6Cj4+Pj4+Pj4+PiBIZWxsbyBJbmtpLAo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+
-Cj4+Pj4+Pj4+PiBJbmtpIERhZSB3cm90ZToKPj4+Pj4+Pj4+PiAyMDE264WEIDA57JuUIDI27J28
-IDIwOjM27JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+Pj4+Pj4gT25s
-eSBtYW5pcHVsYXRlIHRoZSBNWFJfQ0ZHIGFuZCBNWFJfTEFZRVJfQ0ZHIHJlZ2lzdGVycyBvbmNl
-Cj4+Pj4+Pj4+Pj4+IGluIG1peGVyX2NmZ19sYXllcigpLgo+Pj4+Pj4+Pj4+PiBUcmlnZ2VyIHRo
-aXMgdmlhIGF0b21pYyBmbHVzaC4KPj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4gQ2hhbmdlcyBpbiB2
-MjoKPj4+Pj4+Pj4+Pj4gLSBpc3N1ZSBtaXhlcl9jZmdfbGF5ZXIoKSBpbiBtaXhlcl9kaXNhYmxl
-KCkKPj4+Pj4+Pj4+Pj4gLSByZW5hbWUgZmllbGRzIGFzIHN1Z2dlc3RlZCBieSBBbmRyemVqCj4+
-Pj4+Pj4+Pj4+IC0gYWRkZWQgZG9jdSB0byBtaXhlciBjb250ZXh0IHN0cnVjdAo+Pj4+Pj4+Pj4+
-PiAtIHNpbXBsaWZ5IG1peGVyX3dpbl9yZXNldCgpIGFzIHdlbGwKPj4+Pj4+Pj4+Pj4KPj4+Pj4+
-Pj4+Pj4gQ2hhbmdlcyBpbiB2MzoKPj4+Pj4+Pj4+Pj4gLSBzaW1wbGlmeSBzb21lIGNvbmRpdGlv
-bnMgYXMgc3VnZ2VzdGVkIGJ5IElua2kKPj4+Pj4+Pj4+Pj4gLSBhZGQgZG9jdSB0byBtaXhlcl9j
-ZmdfbGF5ZXIoKQo+Pj4+Pj4+Pj4+PiAtIGZvbGQgc3dpdGNoIHN0YXRlbWVudHMgaW50byBhIHNp
-bmdsZSBvbmUKPj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEph
-a29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+Pj4+Pj4+Pj4+IC0tLQo+Pj4+
-Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDEzNSArKysr
-KysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tCj4+Pj4+Pj4+Pj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgICAyICsKPj4+Pj4+Pj4+Pj4gIDIgZmlsZXMgY2hh
-bmdlZCwgOTIgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRpb25zKC0pCj4+Pj4+Pj4+Pj4+Cj4+Pj4+
-Pj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4+Pj4+Pj4+PiBpbmRl
-eCAxZTc4ZDU3Li40ZjA2ZjRkIDEwMDY0NAo+Pj4+Pj4+Pj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+Pj4+Pj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+Pj4+Pj4+Pj4gQEAgLTkzLDEyICs5MywyNSBAQCBz
-dGF0aWMgY29uc3QgdWludDMyX3QgdnBfZm9ybWF0c1tdID0gewo+Pj4+Pj4+Pj4+PiAgICAgICAg
-RFJNX0ZPUk1BVF9OVjIxLAo+Pj4+Pj4+Pj4+PiAgfTsKPj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4g
-Ky8qCj4+Pj4+Pj4+Pj4+ICsgKiBNaXhlciBjb250ZXh0IHN0cnVjdHVyZS4KPj4+Pj4+Pj4+Pj4g
-KyAqCj4+Pj4+Pj4+Pj4+ICsgKiBAY3J0YzogVGhlIEhETUkgQ1JUQyBhdHRhY2hlZCB0byB0aGUg
-bWl4ZXIuCj4+Pj4+Pj4+Pj4+ICsgKiBAcGxhbmVzOiBBcnJheSBvZiBwbGFuZSBvYmplY3RzIGZv
-ciBlYWNoIG9mIHRoZSBtaXhlciB3aW5kb3dzLgo+Pj4+Pj4+Pj4+PiArICogQGFjdGl2ZV93aW5k
-b3dzOiBDYWNoZSBvZiB0aGUgbWl4ZXIncyBoYXJkd2FyZSBzdGF0ZS4KPj4+Pj4+Pj4+Pj4gKyAq
-ICAgICAgIFRyYWNrcyB3aGljaCBtaXhlciB3aW5kb3dzIGFyZSBhY3RpdmUvaW5hY3RpdmUuCj4+
-Pj4+Pj4+Pj4+ICsgKiBAcGlwZTogVGhlIENSVEMgaW5kZXguCj4+Pj4+Pj4+Pj4+ICsgKiBAZmxh
-Z3M6IEJpdGZpZWxkIGJ1aWxkIGZyb20gdGhlIG1peGVyX2ZsYWdfYml0cyBlbnVtZXJhdG9yLgo+
-Pj4+Pj4+Pj4+PiArICogQG1peGVyX3Jlc291cmNlczogQSBzdHJ1Y3QgY29udGFpbmluZyByZWdp
-c3RlcnMsIGNsb2NrcywgZXRjLgo+Pj4+Pj4+Pj4+PiArICogQG14cl92ZXI6IFRoZSBoYXJkd2Fy
-ZSByZXZpc2lvbi92ZXJzaW9uIG9mIHRoZSBtaXhlci4KPj4+Pj4+Pj4+Pj4gKyAqLwo+Pj4+Pj4+
-Pj4+PiAgc3RydWN0IG1peGVyX2NvbnRleHQgewo+Pj4+Pj4+Pj4+PiAgICAgICAgc3RydWN0IHBs
-YXRmb3JtX2RldmljZSAqcGRldjsKPj4+Pj4+Pj4+Pj4gICAgICAgIHN0cnVjdCBkZXZpY2UgICAg
-ICAgICAgICpkZXY7Cj4+Pj4+Pj4+Pj4+ICAgICAgICBzdHJ1Y3QgZHJtX2RldmljZSAgICAgICAq
-ZHJtX2RldjsKPj4+Pj4+Pj4+Pj4gICAgICAgIHN0cnVjdCBleHlub3NfZHJtX2NydGMgICpjcnRj
-Owo+Pj4+Pj4+Pj4+PiAgICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgcGxhbmVzW01JWEVS
-X1dJTl9OUl07Cj4+Pj4+Pj4+Pj4+ICsgICAgICB1bnNpZ25lZCBsb25nICAgICAgICAgICBhY3Rp
-dmVfd2luZG93czsKPj4+Pj4+Pj4+Pj4gICAgICAgIGludCAgICAgICAgICAgICAgICAgICAgIHBp
-cGU7Cj4+Pj4+Pj4+Pj4+ICAgICAgICB1bnNpZ25lZCBsb25nICAgICAgICAgICBmbGFnczsKPj4+
-Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4gQEAgLTQxOCwzNyArNDMxLDcwIEBAIHN0YXRpYyB2b2lkIG1p
-eGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBo
-ZWlnaHQpCj4+Pj4+Pj4+Pj4+ICAgICAgICBtaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NG
-RywgdmFsLCBNWFJfQ0ZHX1JHQl9GTVRfTUFTSyk7Cj4+Pj4+Pj4+Pj4+ICB9Cj4+Pj4+Pj4+Pj4+
-Cj4+Pj4+Pj4+Pj4+IC1zdGF0aWMgdm9pZCBtaXhlcl9jZmdfbGF5ZXIoc3RydWN0IG1peGVyX2Nv
-bnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdpbiwKPj4+Pj4+Pj4+Pj4gLSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgdW5zaWduZWQgaW50IHByaW9yaXR5LCBib29sIGVuYWJsZSkKPj4+Pj4+Pj4+
-Pj4gKy8qKgo+Pj4+Pj4+Pj4+PiArICogbWl4ZXJfY2ZnX2xheWVyIC0gYXBwbHkgbGF5ZXIgY29u
-ZmlndXJhdGlvbiB0byBoYXJkd2FyZQo+Pj4+Pj4+Pj4+PiArICogQGN0eDogbWl4ZXIgY29udGV4
-dAo+Pj4+Pj4+Pj4+PiArICoKPj4+Pj4+Pj4+Pj4gKyAqIFRoaXMgY29uZmlndXJlcyB0aGUgTVhS
-X0NGRyBhbmQgTVhSX0xBWUVSX0NGRyBoYXJkd2FyZSByZWdpc3RlcnMKPj4+Pj4+Pj4+Pj4gKyAq
-IHVzaW5nIHRoZSAnYWN0aXZlX3dpbmRvd3MnIGZpZWxkIG9mIHRoZSB0aGUgbWl4ZXIgY29udGVu
-dCwgYW5kCj4+Pj4+Pj4+Pj4+ICsgKiB0aGUgcGl4ZWwgZm9ybWF0IG9mIHRoZSBmcmFtZWJ1ZmZl
-cnMgYXNzb2NpYXRlZCB3aXRoIHRoZSBlbmFibGVkCj4+Pj4+Pj4+Pj4+ICsgKiB3aW5kb3dzLgo+
-Pj4+Pj4+Pj4+PiArICoKPj4+Pj4+Pj4+Pj4gKyAqIEhhcyB0byBiZSBjYWxsZWQgdW5kZXIgbWl4
-ZXIgbG9jay4KPj4+Pj4+Pj4+Pj4gKyAqLwo+Pj4+Pj4+Pj4+PiArc3RhdGljIHZvaWQgbWl4ZXJf
-Y2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+Pj4+Pj4+Pj4+ICB7Cj4+Pj4+
-Pj4+Pj4+ICAgICAgICBzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9y
-ZXM7Cj4+Pj4+Pj4+Pj4+IC0gICAgICB1MzIgdmFsID0gZW5hYmxlID8gfjAgOiAwOwo+Pj4+Pj4+
-Pj4+PiAtCj4+Pj4+Pj4+Pj4+IC0gICAgICBzd2l0Y2ggKHdpbikgewo+Pj4+Pj4+Pj4+PiAtICAg
-ICAgY2FzZSAwOgo+Pj4+Pj4+Pj4+PiAtICAgICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGVtYXNr
-KHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZHX0dSUDBfRU5BQkxFKTsKPj4+Pj4+Pj4+Pj4gLSAg
-ICAgICAgICAgICAgbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9DRkcsCj4+Pj4+
-Pj4+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTVhSX0xBWUVSX0NGR19H
-UlAwX1ZBTChwcmlvcml0eSksCj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgTVhSX0xBWUVSX0NGR19HUlAwX01BU0spOwo+Pj4+Pj4+Pj4+PiAtICAgICAgICAg
-ICAgICBicmVhazsKPj4+Pj4+Pj4+Pj4gLSAgICAgIGNhc2UgMToKPj4+Pj4+Pj4+Pj4gLSAgICAg
-ICAgICAgICAgbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19H
-UlAxX0VOQUJMRSk7Cj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAgIG1peGVyX3JlZ193cml0ZW1h
-c2socmVzLCBNWFJfTEFZRVJfQ0ZHLAo+Pj4+Pj4+Pj4+PiAtICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIE1YUl9MQVlFUl9DRkdfR1JQMV9WQUwocHJpb3JpdHkpLAo+Pj4+Pj4+Pj4+
-PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1YUl9MQVlFUl9DRkdfR1JQMV9N
-QVNLKTsKPj4+Pj4+Pj4+Pj4gKyAgICAgIHVuc2lnbmVkIGludCB3aW47Cj4+Pj4+Pj4+Pj4+Cj4+
-Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAgIGJyZWFrOwo+Pj4+Pj4+Pj4+PiAtICAgICAgY2FzZSBW
-UF9ERUZBVUxUX1dJTjoKPj4+Pj4+Pj4+Pj4gLSAgICAgICAgICAgICAgaWYgKHRlc3RfYml0KE1Y
-Ul9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpKSB7Cj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAg
-ICAgICAgICAgICAgdnBfcmVnX3dyaXRlbWFzayhyZXMsIFZQX0VOQUJMRSwgdmFsLCBWUF9FTkFC
-TEVfT04pOwo+Pj4+Pj4+Pj4+PiAtICAgICAgICAgICAgICAgICAgICAgIG1peGVyX3JlZ193cml0
-ZW1hc2socmVzLCBNWFJfQ0ZHLCB2YWwsCj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBNWFJfQ0ZHX1ZQX0VOQUJMRSk7Cj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAg
-ICAgICAgICAgbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9MQVlFUl9DRkcsCj4+Pj4+Pj4+
-Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBNWFJfTEFZRVJf
-Q0ZHX1ZQX1ZBTChwcmlvcml0eSksCj4+Pj4+Pj4+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBNWFJfTEFZRVJfQ0ZHX1ZQX01BU0spOwo+Pj4+Pj4+Pj4+PiAr
-ICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmVfc3RhdGUgKnN0YXRlOwo+Pj4+Pj4+Pj4+PiAr
-ICAgICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmI7Cj4+Pj4+Pj4+Pj4+ICsgICAgICB1bnNp
-Z25lZCBpbnQgcHJpb3JpdHk7Cj4+Pj4+Pj4+Pj4+ICsgICAgICB1MzIgbXhyX2NmZyA9IDAsIG14
-cl9sYXllcl9jZmcgPSAwLCB2cF9lbmFibGUgPSAwOwo+Pj4+Pj4+Pj4+PiArICAgICAgYm9vbCBl
-bmFibGU7Cj4+Pj4+Pj4+Pj4+ICsKPj4+Pj4+Pj4+Pj4gKyAgICAgIGZvciAod2luID0gMDsgd2lu
-IDwgTUlYRVJfV0lOX05SOyArK3dpbikgewo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICBzdGF0
-ZSA9IHRvX2V4eW5vc19wbGFuZV9zdGF0ZShjdHgtPnBsYW5lc1t3aW5dLmJhc2Uuc3RhdGUpOwo+
-Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICBmYiA9IHN0YXRlLT5mYjsKPj4+Pj4+Pj4+Pj4gKwo+
-Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICBwcmlvcml0eSA9IHN0YXRlLT5iYXNlLm5vcm1hbGl6
-ZWRfenBvcyArIDE7Cj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgIGVuYWJsZSA9IHRlc3RfYml0
-KHdpbiwgJmN0eC0+YWN0aXZlX3dpbmRvd3MpOwo+Pj4+Pj4+Pj4+PiArCj4+Pj4+Pj4+Pj4+ICsg
-ICAgICAgICAgICAgIGlmICghZW5hYmxlKQo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAg
-ICAgIGNvbnRpbnVlOwo+Pj4+Pj4+Pj4+PiArCj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgIEJV
-R19PTighZmIpOwo+Pj4+Pj4+Pj4+PiArCj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgIC8qCj4+
-Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgICAqIFRPRE86IERvbid0IGVuYWJsZSBhbHBoYSBibGVu
-ZGluZyBmb3IgdGhlIGJvdHRvbSB3aW5kb3cuCj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgICAq
-Lwo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICBzd2l0Y2ggKHdpbikgewo+Pj4+Pj4+Pj4+PiAr
-ICAgICAgICAgICAgICBjYXNlIDA6Cj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-bXhyX2NmZyB8PSAgTVhSX0NGR19HUlAwX0VOQUJMRTsKPj4+Pj4+Pj4+Pj4gKyAgICAgICAgICAg
-ICAgICAgICAgICBteHJfbGF5ZXJfY2ZnIHw9IE1YUl9MQVlFUl9DRkdfR1JQMF9WQUwocHJpb3Jp
-dHkpOwo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgIG1peGVyX2NmZ19nZnhfYmxl
-bmQoY3R4LCB3aW4sIGlzX2FscGhhX2Zvcm1hdChmYi0+cGl4ZWxfZm9ybWF0KSk7Cj4+Pj4+Pj4+
-Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4+Pj4+Pj4+ICsKPj4+Pj4+Pj4+
-Pj4gKyAgICAgICAgICAgICAgY2FzZSAxOgo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAg
-ICAgIG14cl9jZmcgfD0gIE1YUl9DRkdfR1JQMV9FTkFCTEU7Cj4+Pj4+Pj4+Pj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgbXhyX2xheWVyX2NmZyB8PSBNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKHBy
-aW9yaXR5KTsKPj4+Pj4+Pj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICBtaXhlcl9jZmdfZ2Z4
-X2JsZW5kKGN0eCwgd2luLCBpc19hbHBoYV9mb3JtYXQoZmItPnBpeGVsX2Zvcm1hdCkpOwo+Pj4+
-Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+Pj4+Pj4+Pj4+PiArCj4+Pj4+
-Pj4+Pj4+ICsgICAgICAgICAgICAgIGNhc2UgVlBfREVGQVVMVF9XSU46Cj4+Pj4+Pj4+Pj4+ICsg
-ICAgICAgICAgICAgICAgICAgICAgdnBfZW5hYmxlID0gVlBfRU5BQkxFX09OOwo+Pj4+Pj4+Pj4+
-PiArICAgICAgICAgICAgICAgICAgICAgIG14cl9jZmcgfD0gIE1YUl9DRkdfVlBfRU5BQkxFOwo+
-Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgIG14cl9sYXllcl9jZmcgfD0gTVhSX0xB
-WUVSX0NGR19WUF9WQUwocHJpb3JpdHkpOwo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAgICAg
-ICAgIG1peGVyX2NmZ192cF9ibGVuZChjdHgpOwo+Pj4+Pj4+Pj4+PiArICAgICAgICAgICAgICAg
-ICAgICAgIGJyZWFrOwo+Pj4+Pj4+Pj4+PiAgICAgICAgICAgICAgICB9Cj4+Pj4+Pj4+Pj4+IC0g
-ICAgICAgICAgICAgIGJyZWFrOwo+Pj4+Pj4+Pj4+PiAgICAgICAgfQo+Pj4+Pj4+Pj4+PiArCj4+
-Pj4+Pj4+Pj4+ICsgICAgICBpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4LT5m
-bGFncykpCj4+Pj4+Pj4+Pj4+ICsgICAgICAgICAgICAgIHZwX3JlZ193cml0ZW1hc2socmVzLCBW
-UF9FTkFCTEUsIHZwX2VuYWJsZSwgVlBfRU5BQkxFX09OKTsKPj4+Pj4+Pj4+Pj4gKwo+Pj4+Pj4+
-Pj4+PiArICAgICAgbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIG14cl9jZmcsIE1Y
-Ul9DRkdfRU5BQkxFX01BU0spOwo+Pj4+Pj4+Pj4+PiArICAgICAgbWl4ZXJfcmVnX3dyaXRlbWFz
-ayhyZXMsIE1YUl9MQVlFUl9DRkcsIG14cl9sYXllcl9jZmcsIE1YUl9MQVlFUl9DRkdfTUFTSyk7
-Cj4+Pj4+Pj4+Pj4+ICB9Cj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+ICBzdGF0aWMgdm9pZCBtaXhl
-cl9ydW4oc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKPj4+Pj4+Pj4+Pj4gQEAgLTQ3OCw3ICs1
-MjQsNiBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQg
-KmN0eCwKPj4+Pj4+Pj4+Pj4gICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0g
-JnN0YXRlLT5iYXNlLmNydGMtPnN0YXRlLT5hZGp1c3RlZF9tb2RlOwo+Pj4+Pj4+Pj4+PiAgICAg
-ICAgc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+Pj4+Pj4+
-Pj4+PiAgICAgICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBzdGF0ZS0+ZmI7Cj4+Pj4+
-Pj4+Pj4+IC0gICAgICB1bnNpZ25lZCBpbnQgcHJpb3JpdHkgPSBzdGF0ZS0+YmFzZS5ub3JtYWxp
-emVkX3pwb3MgKyAxOwo+Pj4+Pj4+Pj4+PiAgICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsKPj4+
-Pj4+Pj4+Pj4gICAgICAgIGRtYV9hZGRyX3QgbHVtYV9hZGRyWzJdLCBjaHJvbWFfYWRkclsyXTsK
-Pj4+Pj4+Pj4+Pj4gICAgICAgIGJvb2wgdGlsZWRfbW9kZSA9IGZhbHNlOwo+Pj4+Pj4+Pj4+PiBA
-QCAtNTYzLDggKzYwOCw2IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4
-ZXJfY29udGV4dCAqY3R4LAo+Pj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+PiAgICAgICAgbWl4ZXJfY2Zn
-X3NjYW4oY3R4LCBtb2RlLT52ZGlzcGxheSk7Cj4+Pj4+Pj4+Pj4+ICAgICAgICBtaXhlcl9jZmdf
-cmdiX2ZtdChjdHgsIG1vZGUtPnZkaXNwbGF5KTsKPj4+Pj4+Pj4+Pj4gLSAgICAgIG1peGVyX2Nm
-Z19sYXllcihjdHgsIHBsYW5lLT5pbmRleCwgcHJpb3JpdHksIHRydWUpOwo+Pj4+Pj4+Pj4+PiAt
-ICAgICAgbWl4ZXJfY2ZnX3ZwX2JsZW5kKGN0eCk7Cj4+Pj4+Pj4+Pj4gWW91IHJlbW92ZWQgdGhl
-IGZ1bmN0aW9uIGNhbGwgdG8gc2V0IE1YUl9DRkcgYW5kIE1YUl9MQVlFUl9DRkcgcmVnaXN0ZXJz
-IHNvIHdoYXQgaWYgbGFnYWN5IHNldCBwbGFuZSBpb2N0bCBpcyBjYWxsZWQgYnkgdXNlciB1c2Vy
-IHNwYWNlPyBXaGVyZSB0aGVzZSByZWdpc3RlciBhcmUgdXBkYXRlZD8KPj4+Pj4+Pj4+IHllcywg
-eW91J3JlIHJpZ2h0LiBJIGNvbXBsZXRseSBmb3Jnb3QgYWJvdXQgdGhlIGxlZ2FjeSBjb2RlcGF0
-aHMuIFNvcnJ5Cj4+Pj4+Pj4+PiBhYm91dCB0aGF0IQo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBBcmUgeW91
-IHRhbGtpbmcgYWJvdXQgRFJNX0lPQ1RMX01PREVfU0VUUExBTkU/Cj4+Pj4+Pj4+IEl0IGRvZXMg
-bm90IHNlZW0gdG8gYmUgbGVnYWN5LCBvciB0byBiZSBtb3JlIHByZWNpc2UgaXQgY2FsbHMKPj4+
-Pj4+Pj4gLnVwZGF0ZV9wbGFuZSBhbmQgLmRpc2FibGVfcGxhbmUKPj4+Pj4+Pj4gY2FsbGJhY2tz
-IHdoaWNoIGluIGV4eW5vcyBhcmUgc2V0IGFzIGZvbGxvdzoKPj4+Pj4+Pj4gICAgIC51cGRhdGVf
-cGxhbmUgICAgPSBkcm1fYXRvbWljX2hlbHBlcl91cGRhdGVfcGxhbmUsCj4+Pj4+Pj4+ICAgICAu
-ZGlzYWJsZV9wbGFuZSAgICA9IGRybV9hdG9taWNfaGVscGVyX2Rpc2FibGVfcGxhbmUsCj4+Pj4+
-Pj4+Cj4+Pj4+Pj4+IFNvIERSTV9JT0NUTF9NT0RFX1NFVFBMQU5FIGNhbGxzIGF0b21pYyBjb2Rl
-cGF0aCBhbnl3YXkuCj4+Pj4+Pj4gdGhhbmtzIGEgbG90IGZvciB0aGUgaGVhZHMtdXAuIEkgY2Fu
-IGNvbmZpcm0gdGhhdCBkcm1fbW9kZV9zZXRwbGFuZSgpCj4+Pj4+Pj4gYWxzbyBnb2VzIHRocm91
-Z2ggdGhlIGF0b21pYyBwYXRoLgo+Pj4+Pj4+Cj4+Pj4+Pj4gVGhlIHNpbXBsaWZpZWQgY2FsbHN0
-YWNrOgo+Pj4+Pj4+IC0gZHJtX21vZGVfc2V0cGxhbmUoKQo+Pj4+Pj4+ICAgLSBfX3NldHBsYW5l
-X2ludGVybmFsKCkKPj4+Pj4+PiAgICAgLSBkaXNhYmxlX3BsYW5lKCkgKHNldCBpbiBwbGFuZV9o
-ZWxwZXJfZnVuY3MgaW4gZXh5bm9zX2RybV9wbGFuZS5jKQo+Pj4+Pj4+ICAgICAtIHVwZGF0ZV9w
-bGFuZSgpIChzYW1lIGhlcmUpCj4+Pj4+Pgo+Pj4+Pj4gU29ycnkgZm9yIHByZXZpb3VzIGNvbW1l
-bnRzIG5vdCBlbm91Z2guCj4+Pj4+Pgo+Pj4+Pj4gdXBkYXRlX3BsYW5lCj4+Pj4+PiAgICAgLi4u
-Cj4+Pj4+PiAgICAgLSBtaXhlcl91cGRhdGVfcGxhbmUKPj4+Pj4+ICAgICAgICAgICAgIC0gdnBf
-dmlkZW9fYnVmZmVyIG9yIG1peGVyX2dyYXBoX2J1ZmZlcgo+Pj4+Pj4KPj4+Pj4+IEhvd2V2ZXIs
-IHlvdSByZW1vdmVkIG1peGVyX2NmZ19sYXllciBjYWxsIGZyb20gYWJvdmUgZnVuY3Rpb25zLgo+
-Pj4+PiBleGFjdGx5LCBiZWNhdXNlIHRoYXQgaXMgdGhlIHZlcnkgcHVycG9zZSBvZiB0aGlzIHBh
-dGNoLgo+Pj4+Pgo+Pj4+Pgo+Pj4+Pj4gU28gbXkgaW50ZW50aW9uIHdhcyB0byBrZWVwIHRoZSBt
-b2RpZmVkIG1peGVyX2NmZ19sYXllciBjYWxsIG9uIHZwX3ZpZGVvX2J1ZmZlciBhbmQgbWl4ZXJf
-Z3JwYWhfYnVmZmVyIGZ1bmN0aW9ucy4KPj4+Pj4gVGhhdCBpcyBub3QgbXkgaW50ZW50aW9uLiBJ
-IHdhbnQgdG8gbW92ZSByZWdpc3RlciBtYW5pcHVsYXRpb24gdG8gdGhlCj4+Pj4+IGF0b21pYyBm
-bHVzaCBzdGVwLgo+Pj4+Pgo+Pj4+Pgo+Pj4+Pj4gbWl4ZXJfYXRvbWljX2ZsdXNoIGZ1bmN0aW9u
-IGlzIG5vdCByZWFsbHkgcHJvcGVyIHBsYWNlIHRvIGNhbGwgbWl4ZXJfY2ZnX2xheWVyIGZ1bmN0
-aW9uIGV2ZW4gbWl4ZXJfd2luX3Jlc2V0Lgo+Pj4+PiBXaHkgZG8geW91IHRoaW5rIHNvPyBJIHRo
-aW5rIGl0IG1ha2VzIHBlcmZlY3Qgc2Vuc2UgdG8gcHV0IGl0IHRoZXJlLiBXZQo+Pj4+PiBmbHVz
-aCB0aGUgbmV3IGNvbmZpZ3VyYXRpb24gdG8gdGhlIGhhcmR3YXJlIHJlZ2lzdGVycyB0aGVyZS4K
-Pj4+Pj4KPj4+Pj4KPj4+Pj4+IEZvciB0aGlzIEkgbWVudGlvbmVkIGFscmVhZHkgYXQgcHJldmlv
-dXMgbXkgY29tbWVudCwKPj4+Pj4+ICJhdG9taWNfZmx1c2ggY2FsbGJhY2sgd2lsbCBiZSB1c2Vk
-IHRvIG1ha2Ugc3VyZSByZWdpc3RlcnMgdG8gYmUgdXBkYXRlZCB0byB0aGUgcmVhbCBoYXJkd2Fy
-ZS4gU28gY2FsbGluZyBtaXhlcl9jZmdfbGF5ZXIgZnVuY3Rpb24gaGVyZSB3b3VsZG4ndCBiZSBy
-ZWFzb25hYmxlLiIKPj4+Pj4gWW91J3JlIGNvbmZ1c2luZyBtZS4gVGhhdCBpcyBleGFjdGx5IHdo
-YXQgbXkgcGF0Y2ggaXMgZG9pbmcuIEl0IG1vdmVzCj4+Pj4+IG1vcmUgb2YgdGhlIGFjdHVhbCBo
-YXJkd2FyZSByZWdpc3RlciB1cGRhdGluZyB0byB0aGUgYXRvbWljIGZsdXNoIHN0ZXAuCj4+Pj4K
-Pj4+PiBPaywgZm9yIHlvdXIgdW5kZXJzdGFuZGluZywgeW91IGNhbiBjaGVjayBhdG9taWNfYmVn
-aW4sIGF0b21pY19mbHVzaCBhbmQgdXBkYXRlX3BsYW5lIGNhbGxiYWNrIGZ1bmN0aW9ucyBvZiBl
-eHlub3NfZHJtX2ZpbWQuYy4KPj4+PiBBZnRlciB0aGF0IEkgdGhpbmsgd2UgY291bGQgY29udGlu
-dWUgdG8gZGlzY3VzcyB0aGlzLiBJIGRvZXNuJ3QgcmVhbGx5IHdhbnQgdG8gdGFja2xlIHlvdS4K
-Pj4+IEknbSBhd2FyZSBvZiB0aGF0IGNvZGUsIGJ1dCBpdCdzIGZvciB0aGUgRklNRCBhbmQgbm90
-IHRoZSBtaXhlci4gU28gSQo+Pj4gZG9uJ3Qgc2VlIGhvdyBpdCBpcyByZWxldmFudCB0byB0aGUg
-ZGlzY3Vzc2lvbi4gT25lIGNvdWxkIHByb2JhYmx5IGRvCj4+PiB0aGUgc2FtZSB0aGluZyBmb3Ig
-dGhlIEZJTUQsIGkuZS4gbW92aW5nIG1vcmUgY29kZSB0byB0aGUgZmx1c2ggc3RlcC4KPj4+IEhv
-d2V2ZXIgSSBsYWNrIHRoZSBoYXJkd2FyZSB0byBwcm9wZXJseSB0ZXN0IHRoaXMsIHNvIHRoaXMg
-d291bGQgYmUgYQo+Pj4gYml0IGRpZmZpY3VsdCB0byB3b3JrIG9uLgo+Pgo+PiBGaXJzdCwgY2hl
-Y2sgYmVsb3cgZGVzY3JpcHRpb25zIGZvciBhdG9taWNfYmVnaW4gYW5kIGF0b21pY19mbHVzaCBj
-YWxsYmFja3MsCj4+Cj4+ICJAYXRvbWljX2JlZ2luOgo+PiAuLi4KPj4gRGVwZW5kaW5nIHVwb24g
-aGFyZHdhcmUgdGhpcyBtaWdodCBiZSB2YmxhbmsKPj4gZXZhc2lvbiwgYmxvY2tpbmcgdXBkYXRl
-cyBieSBzZXR0aW5nIGJpdHMgb3IgZG9pbmcgcHJlcGFyYXRvcnkgd29yawo+PiBmb3IgZS5nLiBt
-YW51YWwgdXBkYXRlIGRpc3BsYXkuCj4+Cj4+Cj4+IEBhdG9taWNfZmx1c2g6Cj4+ICAuLi4KPj4g
-RGVwZW5kaW5nIHVwb24gaGFyZHdhcmUgdGhpcyBtaWdodCBpbmNsdWRlCj4+IGNoZWNraW5nIHRo
-YXQgdmJsYW5rIGV2YXNpb24gd2FzIHN1Y2Nlc3NmdWwsIHVuYmxvY2tpbmcgdXBkYXRlcyBieQo+
-PiBzZXR0aW5nIGJpdHMgb3Igc2V0dGluZyB0aGUgR08gYml0IHRvIGZsdXNoIG91dCBhbGwgdXBk
-YXRlcy4iCj4+Cj4+IEFuZCBmb3IgdGhpcyBNaXhlciBkZXZpY2UgaGFzIHNpbWlsYXIgcmVnaXN0
-ZXJzIHRvIEZJTUQgb25lcy4gU2VlIHRoZQo+PiBiZWxvdyBjb2RlcywKPj4KPj4gc3RhdGljIHZv
-aWQgbWl4ZXJfdnN5bmNfc2V0X3VwZGF0ZShzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBib29s
-IGVuYWJsZSkKPj4gewo+PiAgc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4
-ZXJfcmVzOwo+PiAgLyogYmxvY2sgdXBkYXRlIG9uIHZzeW5jICovCj4+ICBtaXhlcl9yZWdfd3Jp
-dGVtYXNrKHJlcywgTVhSX1NUQVRVUywgZW5hYmxlID8KPj4gICAgTVhSX1NUQVRVU19TWU5DX0VO
-QUJMRSA6IDAsIE1YUl9TVEFUVVNfU1lOQ19FTkFCTEUpOwo+PiAgaWYgKGN0eC0+dnBfZW5hYmxl
-ZCkKPj4gICB2cF9yZWdfd3JpdGUocmVzLCBWUF9TSEFET1dfVVBEQVRFLCBlbmFibGUgPwo+PiAg
-ICBWUF9TSEFET1dfVVBEQVRFX0VOQUJMRSA6IDApOwo+PiB9Cj4+Cj4+IEFjY29yZGluZyB0byB0
-aGUgc2Vjb25kIGFyZ3VtZW50IG9mIGFib3ZlIGZ1bmN0aW9uIC0gZW5hYmxlIHZhbHVlIC0sCj4+
-IHRoaXMgZnVuY3Rpb24gd2lsbCBkbyBzb21ldGhpbmcgcmVxdWlyZWQgYnkgYXRvbWljX2JlZ2lu
-IG9yCj4+IGF0b21pY19mbHVzaCBjYWxsYmFjay4KPj4gQW5kIHRoaXMgZnVuY3Rpb24gaXMgYWxy
-ZWFkeSBjYWxsZWQgYnkgbWl4ZXJfYXRvbWljX2JlZ2luIGFuZAo+PiBtaXhlcl9hdG9taWNfZmx1
-c2ggZnVuY3Rpb25zIHByb3Blcmx5Lgo+IEknbSBhd2FyZSBob3cgdGhlIG1peGVyIG9wZXJhdGVz
-LiBIb3dldmVyIG15IGNvZGUgZG9lc24ndCBtb2RpZnkKPiBtYW5pcHVsYXRpb24gb2YgdGhlIE1Y
-Ul9TVEFUVVMgcmVnaXN0ZXIsIHVwZGF0ZSBibG9ja2luZyBzdGlsbCB3b3JrcyB0aGUKPiBzYW1l
-IGFzIGJlZm9yZS4KCk15IGNvbW1lbnQgaXMgcmVhbGx5IHNpbXBsZS4gSnVzdCBETyBOT1Qgb3Ro
-ZXIgc2V0dGluZyBoZXJlLCBhdG9taWNfZmx1c2ggY2FsbGJhY2suIFNvIE5BSy4KCj4gCj4gCj4+
-IFlvdSBhcmUgdHJ5aW5nIHRvIHJlYWxseSBzcHJlYWQgb3V0IHJlZ2lzdGVyIHNldHRpbmcgY29k
-ZXMgaGVyZSBhbmQKPj4gdGhlcmUgd2l0aCB0aGlzIHBhdGNoLgo+Pgo+IFVobSwgbm8/IFRoZSBj
-b250cmFyeSBpcyB0cnVlLCBJIGNvbnNvbGlkYXRlIHJlZ2lzdGVyIG1hbmlwdWxhdGlvbi4gQXJl
-Cj4geW91IHN1cmUgeW91J3JlIHJlYWRpbmcgbXkgcGF0Y2ggY29ycmVjdGx5PwoKWW91IGFyZSBz
-cHJlYWRpbmcgb3V0LgoKPiAKPiBAQW5kcnplajogTWF5YmUgeW91IGNhbiBjb21tZW50IG9uIHRo
-aXM/Cj4gCj4gCj4+IFBzLiBtb3N0IGNydGMgZGV2aWNlcyBoYXZlIHNwZWNpYWwgcmVnaXN0ZXJz
-IHdoaWNoIGJsb2NrIHNldHRpbmcKPj4gdmFsdWVzIHRvIGJlIHVwZGF0ZWQgdG8gcmVhbCBoYXJk
-d2FyZSBhZnRlciB2c3luYyBjb21wbGV0aW9uIHRvIG1ha2UKPj4gc3VyZSBmb3IgYWxsIHJlZ2lz
-dGVyIHNldHRpbmcgdmFsdWVzIHRvIGJlIHVwZGF0ZWQgdG8gcmVhbCBoYXJkd2FyZQo+PiB3aGVu
-IHRoZXkgYXJlIHJlYWxseSByZWFkeS4gU28gYXRvbWljX2JlZ2luIGFuZCBhdG9taWNfZmx1c2gg
-Y2FsbGJhY2tzCj4+IGFyZSB1c2VkIGZvciBzdWNoIHB1cnBvc2UuCj4gSSdtIGFsc28gYXdhcmUg
-b2YgdGhpcy4gQnV0IHRoaXMgaXMgb3J0aG9nb25hbCB0byB3aGF0IG15IHBhdGNoIHdhbnQgdG8K
-PiBhY2hpZXZlLgo+IAo+IAo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4gCj4gCj4gCj4+
-Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPj4KPj4+Cj4+Pgo+Pj4gV2l0aCBiZXN0IHdpc2hlcywK
-Pj4+IFRvYmlhcwo+Pj4KPj4+Cj4+Pj4+PiBBbHNvIGl0IHdvdWxkIGJlIHJlYXNvbmFibGUgdG8g
-cmVtb3ZlIG1peGVyX2NmZ19sYXllciBmdW5jdGlvbiBjYWxsIGZyb20gbWl4ZXJfd2luX3Jlc2V0
-IGZ1bmN0aW9uLgo+Pj4+PiBXaHkgaXMgdGhhdD8gSW4gbWl4ZXJfd2luX3Jlc2V0KCkgd2Ugd2Fu
-dCB0byBhcHBseSBhIGRlZmF1bHQKPj4+Pj4gY29uZmlndXJhdGlvbiB0byB0aGUgdmFyaW91cyBy
-ZWdpc3RlcnMuIEhlbmNlIHdlIHNldCBhY3RpdmVfd2luZG93cyB0bwo+Pj4+PiB6ZXJvIGFuZCBj
-YWxsIG1peGVyX2NmZ19sYXllcigpLgo+Pj4+Pgo+Pj4+Pgo+Pj4+PiBXaXRoIGJlc3Qgd2lzaGVz
-LAo+Pj4+PiBUb2JpYXMKPj4+Pj4KPj4+Pj4KPj4+Pj4KPj4+Pj4+PiBGb3IgY29tcGxldGVuZXNz
-IEkndmUgYWxzbyBjaGVja2VkIGRybV9tb2RlX3NldGNydGMoKSwgdGhlIG90aGVyIGxlZ2FjeQo+
-Pj4+Pj4+IERSTSBjYWxsIHRoYXQgbWFuaXB1bGF0ZXMgdGhlIHByaW1hcnkgcGxhbmUuCj4+Pj4+
-Pj4KPj4+Pj4+PiBJdCBnb2VzIHRoZSBmb2xsb3dpbmcgcm91dGU6Cj4+Pj4+Pj4gLSBkcm1fbW9k
-ZV9zZXRjcnRjCj4+Pj4+Pj4gICAtIGRybV9tb2RlX3NldF9jb25maWdfaW50ZXJuYWwoKQo+Pj4+
-Pj4+ICAgICAtIHNldF9jb25maWcoKSAoc2V0IGluIGV4eW5vc19jcnRjX2Z1bmNzIGluIGV4eW5v
-c19kcm1fY3J0Yy5jKQo+Pj4+Pj4+Cj4+Pj4+Pj4gQWxzbyBoZXJlOiAuc2V0X2NvbmZpZyA9IGRy
-bV9hdG9taWNfaGVscGVyX3NldF9jb25maWcKPj4+Pj4+Pgo+Pj4+Pj4+IEJvdGggRFJNX0lPQ1RM
-X01PREVfU0VUUExBTkUgYW5kIERSTV9JT0NUTF9NT0RFX0NSVEMgZ28gdGhlIGF0b21pYwo+Pj4+
-Pj4+IHJvdXRlLCBzbyB0aGUgcGF0Y2ggaXMgZmluZSB0aGlzIHdheS4KPj4+Pj4+Pgo+Pj4+Pj4+
-IEBJbmtpOiBDYW4geW91IHN0aWxsIHF1ZXVlIHRoaXMgdXAgZm9yIDQuOS55Pwo+Pj4+Pj4+Cj4+
-Pj4+Pj4KPj4+Pj4+PiBXaXRoIGJlc3Qgd2lzaGVzLAo+Pj4+Pj4+IFRvYmlhcwo+Pj4+Pj4+Cj4+
-Pj4+Pj4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gUmVnYXJkcwo+Pj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pj4+
-Cj4+Pj4+Pj4KPj4+Pj4+PiAtLQo+Pj4+Pj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
-OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPj4+Pj4+
-PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+Pj4+
-Pj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
-b21vLWluZm8uaHRtbAo+Pj4+Pj4+Cj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4gLS0KPj4+Pj4+IFRv
-IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBs
-aW51eC1zYW1zdW5nLXNvYyIgaW4KPj4+Pj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpv
-cmRvbW9Admdlci5rZXJuZWwub3JnCj4+Pj4+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4+Pj4+Cj4+Pj4+Cj4+Pj4+
-Cj4+Pj4+Cj4+Pj4+Cj4+Pgo+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KPj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4+IGRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKPj4+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
-dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
-IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWwKPiAKPiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+This patch uses recently introduced device links to track the runtime pm
+state of the master's device. This way each SYSMMU controller is runtime
+activated when its master's device is active and can save/restore its state
+instead of being enabled all the time. This way SYSMMU controllers no
+longer prevents respective power domains to be turned off when master's
+device is not used.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/iommu/exynos-iommu.c | 225 ++++++++++++++++++-------------------------
+ 1 file changed, 94 insertions(+), 131 deletions(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index dfb44034b4ee..c8926e030713 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -206,6 +206,7 @@ static const struct sysmmu_fault_info sysmmu_v5_faults[] = {
+ struct exynos_iommu_owner {
+ 	struct list_head controllers;	/* list of sysmmu_drvdata.owner_node */
+ 	struct iommu_domain *domain;	/* domain this device is attached */
++	struct mutex rpm_lock;		/* for runtime pm of all sysmmus */
+ };
+ 
+ /*
+@@ -237,8 +238,8 @@ struct sysmmu_drvdata {
+ 	struct clk *aclk;		/* SYSMMU's aclk clock */
+ 	struct clk *pclk;		/* SYSMMU's pclk clock */
+ 	struct clk *clk_master;		/* master's device clock */
+-	int activations;		/* number of calls to sysmmu_enable */
+ 	spinlock_t lock;		/* lock for modyfying state */
++	int active;			/* current status */
+ 	struct exynos_iommu_domain *domain; /* domain we belong to */
+ 	struct list_head domain_node;	/* node for domain clients list */
+ 	struct list_head owner_node;	/* node for owner controllers list */
+@@ -251,25 +252,6 @@ static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
+ 	return container_of(dom, struct exynos_iommu_domain, domain);
+ }
+ 
+-static bool set_sysmmu_active(struct sysmmu_drvdata *data)
+-{
+-	/* return true if the System MMU was not active previously
+-	   and it needs to be initialized */
+-	return ++data->activations == 1;
+-}
+-
+-static bool set_sysmmu_inactive(struct sysmmu_drvdata *data)
+-{
+-	/* return true if the System MMU is needed to be disabled */
+-	BUG_ON(data->activations < 1);
+-	return --data->activations == 0;
+-}
+-
+-static bool is_sysmmu_active(struct sysmmu_drvdata *data)
+-{
+-	return data->activations > 0;
+-}
+-
+ static void sysmmu_unblock(struct sysmmu_drvdata *data)
+ {
+ 	writel(CTRL_ENABLE, data->sfrbase + REG_MMU_CTRL);
+@@ -388,7 +370,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+ 	unsigned short reg_status, reg_clear;
+ 	int ret = -ENOSYS;
+ 
+-	WARN_ON(!is_sysmmu_active(data));
++	WARN_ON(!data->active);
+ 
+ 	if (MMU_MAJ_VER(data->version) < 5) {
+ 		reg_status = REG_INT_STATUS;
+@@ -434,40 +416,19 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void __sysmmu_disable_nocount(struct sysmmu_drvdata *data)
++static void __sysmmu_disable(struct sysmmu_drvdata *data)
+ {
++	unsigned long flags;
++
+ 	clk_enable(data->clk_master);
+ 
++	spin_lock_irqsave(&data->lock, flags);
+ 	writel(CTRL_DISABLE, data->sfrbase + REG_MMU_CTRL);
+ 	writel(0, data->sfrbase + REG_MMU_CFG);
+-
+-	__sysmmu_disable_clocks(data);
+-}
+-
+-static bool __sysmmu_disable(struct sysmmu_drvdata *data)
+-{
+-	bool disabled;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&data->lock, flags);
+-
+-	disabled = set_sysmmu_inactive(data);
+-
+-	if (disabled) {
+-		data->pgtable = 0;
+-		data->domain = NULL;
+-
+-		__sysmmu_disable_nocount(data);
+-
+-		dev_dbg(data->sysmmu, "Disabled\n");
+-	} else  {
+-		dev_dbg(data->sysmmu, "%d times left to disable\n",
+-					data->activations);
+-	}
+-
++	data->active = false;
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 
+-	return disabled;
++	__sysmmu_disable_clocks(data);
+ }
+ 
+ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
+@@ -484,17 +445,19 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
+ 	writel(cfg, data->sfrbase + REG_MMU_CFG);
+ }
+ 
+-static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
++static void __sysmmu_enable(struct sysmmu_drvdata *data)
+ {
++	unsigned long flags;
++
+ 	__sysmmu_enable_clocks(data);
+ 
++	spin_lock_irqsave(&data->lock, flags);
+ 	writel(CTRL_BLOCK, data->sfrbase + REG_MMU_CTRL);
+-
+ 	__sysmmu_init_config(data);
+-
+ 	__sysmmu_set_ptbase(data, data->pgtable);
+-
+ 	writel(CTRL_ENABLE, data->sfrbase + REG_MMU_CTRL);
++	data->active = true;
++	spin_unlock_irqrestore(&data->lock, flags);
+ 
+ 	/*
+ 	 * SYSMMU driver keeps master's clock enabled only for the short
+@@ -505,48 +468,18 @@ static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
+ 	clk_disable(data->clk_master);
+ }
+ 
+-static int __sysmmu_enable(struct sysmmu_drvdata *data, phys_addr_t pgtable,
+-			   struct exynos_iommu_domain *domain)
+-{
+-	int ret = 0;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&data->lock, flags);
+-	if (set_sysmmu_active(data)) {
+-		data->pgtable = pgtable;
+-		data->domain = domain;
+-
+-		__sysmmu_enable_nocount(data);
+-
+-		dev_dbg(data->sysmmu, "Enabled\n");
+-	} else {
+-		ret = (pgtable == data->pgtable) ? 1 : -EBUSY;
+-
+-		dev_dbg(data->sysmmu, "already enabled\n");
+-	}
+-
+-	if (WARN_ON(ret < 0))
+-		set_sysmmu_inactive(data); /* decrement count */
+-
+-	spin_unlock_irqrestore(&data->lock, flags);
+-
+-	return ret;
+-}
+-
+ static void sysmmu_tlb_invalidate_flpdcache(struct sysmmu_drvdata *data,
+ 					    sysmmu_iova_t iova)
+ {
+ 	unsigned long flags;
+ 
+-
+ 	spin_lock_irqsave(&data->lock, flags);
+-	if (is_sysmmu_active(data) && data->version >= MAKE_MMU_VER(3, 3)) {
++	if (data->active && data->version >= MAKE_MMU_VER(3, 3)) {
+ 		clk_enable(data->clk_master);
+ 		__sysmmu_tlb_invalidate_entry(data, iova, 1);
+ 		clk_disable(data->clk_master);
+ 	}
+ 	spin_unlock_irqrestore(&data->lock, flags);
+-
+ }
+ 
+ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+@@ -555,7 +488,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&data->lock, flags);
+-	if (is_sysmmu_active(data)) {
++	if (data->active) {
+ 		unsigned int num_inv = 1;
+ 
+ 		clk_enable(data->clk_master);
+@@ -656,40 +589,55 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-
+ 	of_iommu_set_ops(dev->of_node, &exynos_iommu_ops);
+ 
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int exynos_sysmmu_suspend(struct device *dev)
+ {
+ 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
++	struct exynos_iommu_owner *owner;
+ 
+-	dev_dbg(dev, "suspend\n");
+-	if (is_sysmmu_active(data)) {
+-		__sysmmu_disable_nocount(data);
+-		pm_runtime_put(dev);
++	if (!data->master)
++		return 0;
++
++	owner = data->master->archdata.iommu;
++
++	mutex_lock(&owner->rpm_lock);
++	if (data->domain) {
++		dev_dbg(data->sysmmu, "saving state\n");
++		__sysmmu_disable(data);
+ 	}
++	mutex_unlock(&owner->rpm_lock);
++
+ 	return 0;
+ }
+ 
+ static int exynos_sysmmu_resume(struct device *dev)
+ {
+ 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
++	struct exynos_iommu_owner *owner;
+ 
+-	dev_dbg(dev, "resume\n");
+-	if (is_sysmmu_active(data)) {
+-		pm_runtime_get_sync(dev);
+-		__sysmmu_enable_nocount(data);
++	if (!data->master)
++		return 0;
++
++	owner = data->master->archdata.iommu;
++
++	mutex_lock(&owner->rpm_lock);
++	if (data->domain) {
++		dev_dbg(data->sysmmu, "restoring state\n");
++		__sysmmu_enable(data);
+ 	}
++	mutex_unlock(&owner->rpm_lock);
++
+ 	return 0;
+ }
+-#endif
+ 
+ static const struct dev_pm_ops sysmmu_pm_ops = {
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume)
++	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
+ };
+ 
+ static const struct of_device_id sysmmu_of_match[] __initconst = {
+@@ -793,9 +741,12 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
+ 	spin_lock_irqsave(&domain->lock, flags);
+ 
+ 	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
+-		if (__sysmmu_disable(data))
+-			data->master = NULL;
++		spin_lock(&data->lock);
++		__sysmmu_disable(data);
++		data->pgtable = 0;
++		data->domain = NULL;
+ 		list_del_init(&data->domain_node);
++		spin_unlock(&data->lock);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+@@ -829,31 +780,32 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+ 	struct sysmmu_drvdata *data, *next;
+ 	unsigned long flags;
+-	bool found = false;
+ 
+ 	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
+ 		return;
+ 
++	mutex_lock(&owner->rpm_lock);
++
++	list_for_each_entry(data, &owner->controllers, owner_node) {
++		if (pm_runtime_active(data->sysmmu))
++			__sysmmu_disable(data);
++	}
++
+ 	spin_lock_irqsave(&domain->lock, flags);
+ 	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
+-		if (data->master == dev) {
+-			if (__sysmmu_disable(data)) {
+-				data->master = NULL;
+-				list_del_init(&data->domain_node);
+-			}
+-			pm_runtime_put(data->sysmmu);
+-			found = true;
+-		}
++		spin_lock(&data->lock);
++		data->pgtable = 0;
++		data->domain = NULL;
++		list_del_init(&data->domain_node);
++		spin_unlock(&data->lock);
+ 	}
++	owner->domain = NULL;
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+-	owner->domain = NULL;
++	mutex_unlock(&owner->rpm_lock);
+ 
+-	if (found)
+-		dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n",
+-					__func__, &pagetable);
+-	else
+-		dev_err(dev, "%s: No IOMMU is attached\n", __func__);
++	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
++		&pagetable);
+ }
+ 
+ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+@@ -864,7 +816,6 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 	struct sysmmu_drvdata *data;
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+ 	unsigned long flags;
+-	int ret = -ENODEV;
+ 
+ 	if (!has_sysmmu(dev))
+ 		return -ENODEV;
+@@ -872,29 +823,30 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 	if (owner->domain)
+ 		exynos_iommu_detach_device(owner->domain, dev);
+ 
++	mutex_lock(&owner->rpm_lock);
++
++	spin_lock_irqsave(&domain->lock, flags);
+ 	list_for_each_entry(data, &owner->controllers, owner_node) {
+-		pm_runtime_get_sync(data->sysmmu);
+-		ret = __sysmmu_enable(data, pagetable, domain);
+-		if (ret >= 0) {
+-			data->master = dev;
+-
+-			spin_lock_irqsave(&domain->lock, flags);
+-			list_add_tail(&data->domain_node, &domain->clients);
+-			spin_unlock_irqrestore(&domain->lock, flags);
+-		}
++		spin_lock(&data->lock);
++		data->pgtable = pagetable;
++		data->domain = domain;
++		list_add_tail(&data->domain_node, &domain->clients);
++		spin_unlock(&data->lock);
+ 	}
++	owner->domain = iommu_domain;
++	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+-	if (ret < 0) {
+-		dev_err(dev, "%s: Failed to attach IOMMU with pgtable %pa\n",
+-					__func__, &pagetable);
+-		return ret;
++	list_for_each_entry(data, &owner->controllers, owner_node) {
++		if (pm_runtime_active(data->sysmmu))
++			__sysmmu_enable(data);
+ 	}
+ 
+-	owner->domain = iommu_domain;
+-	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa %s\n",
+-		__func__, &pagetable, (ret == 0) ? "" : ", again");
++	mutex_unlock(&owner->rpm_lock);
+ 
+-	return ret;
++	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
++		&pagetable);
++
++	return 0;
+ }
+ 
+ static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
+@@ -1265,10 +1217,21 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ 			return -ENOMEM;
+ 
+ 		INIT_LIST_HEAD(&owner->controllers);
++		mutex_init(&owner->rpm_lock);
+ 		dev->archdata.iommu = owner;
+ 	}
+ 
+ 	list_add_tail(&data->owner_node, &owner->controllers);
++	data->master = dev;
++
++	/*
++	 * SYSMMU will be runtime enabled via device link (dependency) to its
++	 * master device, so there are no direct calls to pm_runtime_get/put
++	 * in this driver.
++	 */
++	device_link_add(dev, data->sysmmu, DEVICE_LINK_AVAILABLE,
++			DEVICE_LINK_PM_RUNTIME);
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
