@@ -1,161 +1,182 @@
 From: zain wang <wzz@rock-chips.com>
-Subject: [PATCH v2 3/4] drm/bridge: analogix_dp: detect Sink PSR state after configuring the PSR
-Date: Fri, 30 Sep 2016 20:54:09 +0800
-Message-ID: <1475240049-16094-1-git-send-email-wzz@rock-chips.com>
+Subject: [PATCH v2 4/4] drm: bridge/analogix: switch Main-link and eDP PHY when enable/disable psr
+Date: Fri, 30 Sep 2016 20:54:24 +0800
+Message-ID: <1475240064-20515-1-git-send-email-wzz@rock-chips.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.130]:55446 "EHLO
+Received: from regular1.263xmail.com ([211.150.99.139]:56988 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932707AbcI3MyV (ORCPT
+        with ESMTP id S932707AbcI3Myl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 08:54:21 -0400
+        Fri, 30 Sep 2016 08:54:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, zain wang <wzz@rock-chips.com>
 
-From: Yakir Yang <ykk@rock-chips.com>
+turn off Main-link and power down eDP PHY when enable psr,
+turn on Main-link and power up eDP PHY when disable psr.
 
-Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
-function, or print the sink PSR error state if we failed to apply the
-requested PSR setting.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Zain Wang <wzz@rock-chips.com>
+Signed-off-by: zain wang <wzz@rock-chips.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- misc changes
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  6 ++++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 25 ++++++++++++++++++++--
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  8 ++++---
- 4 files changed, 34 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 124 ++++++++++++---------
+ 1 file changed, 70 insertions(+), 54 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 1bd190e..bf87891 100644
+index bf87891..58fa1c1 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -142,8 +142,7 @@ int analogix_dp_enable_psr(struct device *dev)
- 	psr_vsc.DB0 = 0;
- 	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
- 
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
- 
-@@ -168,8 +167,7 @@ int analogix_dp_disable_psr(struct device *dev)
- 	psr_vsc.DB0 = 0;
- 	psr_vsc.DB1 = 0;
- 
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 776c844..553c411 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,8 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
- 
-+#define DP_TIMEOUT_PSR_LOOP_MS			msecs_to_jiffies(300)
-+
- /* DP_MAX_LANE_COUNT */
- #define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
- #define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-@@ -248,8 +250,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc);
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc);
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg);
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index cd37ac0..9e1177c 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -992,10 +992,12 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
- 	writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
+@@ -120,57 +120,6 @@ static int analogix_dp_get_dpms_mode(struct analogix_dp_device *dp)
+ 	return mode;
  }
  
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc)
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc)
+-
+-int analogix_dp_enable_psr(struct device *dev)
+-{
+-	struct analogix_dp_device *dp = dev_get_drvdata(dev);
+-	struct edp_vsc_psr psr_vsc;
+-
+-	if (!dp->psr_support)
+-		return -EINVAL;
+-
+-	if (analogix_dp_get_dpms_mode(dp) != DRM_MODE_DPMS_ON)
+-		return -EBUSY;
+-
+-	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+-	memset(&psr_vsc, 0, sizeof(psr_vsc));
+-	psr_vsc.sdp_header.HB0 = 0;
+-	psr_vsc.sdp_header.HB1 = 0x7;
+-	psr_vsc.sdp_header.HB2 = 0x2;
+-	psr_vsc.sdp_header.HB3 = 0x8;
+-
+-	psr_vsc.DB0 = 0;
+-	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+-
+-	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+-}
+-EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+-
+-int analogix_dp_disable_psr(struct device *dev)
+-{
+-	struct analogix_dp_device *dp = dev_get_drvdata(dev);
+-	struct edp_vsc_psr psr_vsc;
+-
+-	if (!dp->psr_support)
+-		return -EINVAL;
+-
+-	if (analogix_dp_get_dpms_mode(dp) != DRM_MODE_DPMS_ON)
+-		return -EBUSY;
+-
+-	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+-	memset(&psr_vsc, 0, sizeof(psr_vsc));
+-	psr_vsc.sdp_header.HB0 = 0;
+-	psr_vsc.sdp_header.HB1 = 0x7;
+-	psr_vsc.sdp_header.HB2 = 0x2;
+-	psr_vsc.sdp_header.HB3 = 0x8;
+-
+-	psr_vsc.DB0 = 0;
+-	psr_vsc.DB1 = 0;
+-
+-	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+-}
+-EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+-
+ static bool analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
  {
-+	unsigned long timeout;
- 	unsigned int val;
-+	u8 sink;
+ 	unsigned char psr_version;
+@@ -191,12 +140,11 @@ static void analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
+ 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
  
- 	/* don't send info frame */
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-@@ -1036,6 +1038,25 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
- 	val |= IF_EN;
- 	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+ 	/* Main-Link transmitter remains active during PSR active states */
+-	psr_en = DP_PSR_MAIN_LINK_ACTIVE | DP_PSR_CRC_VERIFICATION;
++	psr_en = DP_PSR_CRC_VERIFICATION;
+ 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
+ 
+ 	/* Enable psr function */
+-	psr_en = DP_PSR_ENABLE | DP_PSR_MAIN_LINK_ACTIVE |
+-		 DP_PSR_CRC_VERIFICATION;
++	psr_en = DP_PSR_ENABLE | DP_PSR_CRC_VERIFICATION;
+ 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
+ 
+ 	analogix_dp_enable_psr_crc(dp);
+@@ -899,6 +847,74 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 		analogix_dp_enable_sink_psr(dp);
+ }
+ 
++int analogix_dp_enable_psr(struct device *dev)
++{
++	struct analogix_dp_device *dp = dev_get_drvdata(dev);
++	struct edp_vsc_psr psr_vsc;
 +
-+	timeout = jiffies + DP_TIMEOUT_PSR_LOOP_MS;
-+	while (time_before(jiffies, timeout)) {
-+		val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &sink);
-+		if (val != 1) {
-+			dev_err(dp->dev, "PSR_STATUS read failed ret=%d", val);
-+			return -EBUSY;
-+		}
++	if (!dp->psr_support)
++		return -EINVAL;
 +
-+		if ((vsc->DB1 && sink == DP_PSR_SINK_ACTIVE_RFB) ||
-+		    (!vsc->DB1 && sink == DP_PSR_SINK_INACTIVE))
-+			return 0;
++	if (analogix_dp_get_dpms_mode(dp) != DRM_MODE_DPMS_ON)
++		return -EBUSY;
 +
-+		usleep_range(1000, 1500);
++	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
++	memset(&psr_vsc, 0, sizeof(psr_vsc));
++	psr_vsc.sdp_header.HB0 = 0;
++	psr_vsc.sdp_header.HB1 = 0x7;
++	psr_vsc.sdp_header.HB2 = 0x2;
++	psr_vsc.sdp_header.HB3 = 0x8;
++
++	psr_vsc.DB0 = 0;
++	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
++
++	analogix_dp_send_psr_spd(dp, &psr_vsc);
++
++	/* Power down the eDP PHY */
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, true);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
++
++int analogix_dp_disable_psr(struct device *dev)
++{
++	struct analogix_dp_device *dp = dev_get_drvdata(dev);
++	struct edp_vsc_psr psr_vsc;
++	int ret;
++
++	if (!dp->psr_support)
++		return -EINVAL;
++
++	if (analogix_dp_get_dpms_mode(dp) != DRM_MODE_DPMS_ON)
++		return -EBUSY;
++
++	/* Power up the eDP PHY */
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, false);
++
++	ret = drm_dp_dpcd_writeb(&dp->aux, DP_SET_POWER, DP_SET_POWER_D0);
++	if (ret < 0) {
++		dev_err(dp->dev, "Failed to set DP Power0\n");
 +	}
 +
-+	dev_warn(dp->dev, "Failed to apply PSR, sink state was [%x]", sink);
++	analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
++				   dp->video_info.max_link_rate);
 +
-+	return -ETIMEDOUT;
- }
- 
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index e83be15..dc106d0 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -102,10 +102,10 @@ static void analogix_dp_psr_work(struct work_struct *work)
- 	struct rockchip_dp_device *dp =
- 				container_of(work, typeof(*dp), psr_work);
- 	struct drm_crtc *crtc = dp->encoder.crtc;
--	int psr_state = dp->psr_state;
-+	unsigned long flags;
-+	unsigned int psr_state;
- 	int vact_end;
- 	int ret;
--	unsigned long flags;
- 
- 	if (!crtc)
- 		return;
-@@ -120,11 +120,13 @@ static void analogix_dp_psr_work(struct work_struct *work)
- 	}
- 
- 	spin_lock_irqsave(&dp->psr_lock, flags);
-+	psr_state = dp->psr_state;
-+	spin_unlock_irqrestore(&dp->psr_lock, flags);
++	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
++	memset(&psr_vsc, 0, sizeof(psr_vsc));
++	psr_vsc.sdp_header.HB0 = 0;
++	psr_vsc.sdp_header.HB1 = 0x7;
++	psr_vsc.sdp_header.HB2 = 0x2;
++	psr_vsc.sdp_header.HB3 = 0x8;
 +
- 	if (psr_state == EDP_VSC_PSR_STATE_ACTIVE)
- 		analogix_dp_enable_psr(dp->dev);
- 	else
- 		analogix_dp_disable_psr(dp->dev);
--	spin_unlock_irqrestore(&dp->psr_lock, flags);
- }
- 
- static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
++	psr_vsc.DB0 = 0;
++	psr_vsc.DB1 = 0;
++
++	analogix_dp_send_psr_spd(dp, &psr_vsc);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
++
+ /*
+  * This function is a bit of a catch-all for panel preparation, hopefully
+  * simplifying the logic of functions that need to prepare/unprepare the panel
 -- 
 1.9.1
