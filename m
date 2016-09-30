@@ -1,79 +1,57 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 4/4] [media] exynos-gsc: do proper bytesperline and sizeimage calculation
-Date: Fri, 30 Sep 2016 17:16:44 -0400
-Message-ID: <1475270204-14005-5-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH 2/4] [media] exynos-gsc: don't clear format when freeing buffers with REQBUFS(0)
+Date: Fri, 30 Sep 2016 17:16:42 -0400
+Message-ID: <1475270204-14005-3-git-send-email-javier@osg.samsung.com>
 References: <1475270204-14005-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:40562
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933417AbcI3VRe (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 17:17:34 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1475270204-14005-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver don't take into account the differences between packed, semi
-planar and multi planar formats when calculating the pixel format bytes
-per lines and image size values. This makes GStreamer to fail when the
-following formats are used NV12, NV21, NV16, NV61, YV12, I420 and Y42B:
+User-space applications can use the VIDIOC_REQBUFS ioctl to determine if a
+memory mapped, user pointer or DMABUF based I/O is supported by a driver.
 
-"gst_video_frame_map_id: failed to map video frame plane 1"
+For example, GStreamer attempts to determine the I/O methods supported by
+the driver by doing many VIDIOC_REQBUFS ioctl calls with different memory
+types and count 0. And then the real VIDIOC_REQBUFS call with count == n
+is be made to allocate the buffers. But for count 0, the driver not only
+frees the buffers but also clears the format set before with VIDIOC_S_FMT.
 
-Nicolas suggested to use the logic found in the Exynos FIMC v4l2 driver
-since does this correctly. So this patch changes the bytes per line and
-image size calculation according to what's done in this media driver.
+This is a problem since STREAMON fails if a format isn't set but GStreamer
+first sets a format and then tries to determine the supported I/O methods,
+so the format will be cleared on REQBUFS(0), before the call to STREAMON.
 
-After this patch most supported formats work correctly. There are still
-issues with the NV21 and NV61 formats, but that seems to be a separate
-problem since NV12 and NV16 work and these formats use the same values.
+To avoid this issue, only free the buffers on VIDIOC_REQBUFS(0) but don't
+clear the format. Since is completely valid to set the format and then do
+different calls to REQBUFS before a call to STREAMON.
 
-So this can be fixed as a follow-up and shouldn't be a blocker for this
-change that improves the driver's support.
-
-Suggested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
 ---
 
- drivers/media/platform/exynos-gsc/gsc-core.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 8bb1d2be7234..a6c47deba3b7 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -451,12 +451,25 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
- 	else /* SD */
- 		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index 9f03b791b711..e2a16b52f87d 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -365,14 +365,8 @@ static int gsc_m2m_reqbufs(struct file *file, void *fh,
  
--
- 	for (i = 0; i < pix_mp->num_planes; ++i) {
--		int bpl = (pix_mp->width * fmt->depth[i]) >> 3;
--		pix_mp->plane_fmt[i].bytesperline = bpl;
--		pix_mp->plane_fmt[i].sizeimage = bpl * pix_mp->height;
-+		struct v4l2_plane_pix_format *plane_fmt = &pix_mp->plane_fmt[i];
-+		u32 bpl = plane_fmt->bytesperline;
-+
-+		if (fmt->num_comp == 1 && /* Packed */
-+		    (bpl == 0 || (bpl * 8 / fmt->depth[i]) < pix_mp->width))
-+			bpl = pix_mp->width * fmt->depth[i] / 8;
-+
-+		if (fmt->num_comp > 1 && /* Planar */
-+		    (bpl == 0 || bpl < pix_mp->width))
-+			bpl = pix_mp->width;
-+
-+		if (i != 0 && fmt->num_comp == 3)
-+			bpl /= 2;
+ 	max_cnt = (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) ?
+ 		gsc->variant->in_buf_cnt : gsc->variant->out_buf_cnt;
+-	if (reqbufs->count > max_cnt) {
++	if (reqbufs->count > max_cnt)
+ 		return -EINVAL;
+-	} else if (reqbufs->count == 0) {
+-		if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+-			gsc_ctx_state_lock_clear(GSC_SRC_FMT, ctx);
+-		else
+-			gsc_ctx_state_lock_clear(GSC_DST_FMT, ctx);
+-	}
  
-+		plane_fmt->bytesperline = bpl;
-+		plane_fmt->sizeimage = max(pix_mp->width * pix_mp->height *
-+					   fmt->depth[i] / 8,
-+					   plane_fmt->sizeimage);
- 		pr_debug("[%d]: bpl: %d, sizeimage: %d",
- 				i, bpl, pix_mp->plane_fmt[i].sizeimage);
- 	}
+ 	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
+ }
 -- 
 2.7.4
