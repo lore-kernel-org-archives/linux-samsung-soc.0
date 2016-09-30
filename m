@@ -1,74 +1,57 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: exynos-nocp: Select REGMAP_MMIO
-Date: Fri, 30 Sep 2016 23:11:02 +0900
-Message-ID: <CAJ0PZbS87NubKvYACd9NG4cb3LKP9mr9Sc=nSmdSEDUh7vFVbg@mail.gmail.com>
-References: <CGME20160920085823epcas1p1f0fed4f248efcccccbce71438c03a9a1@epcas1p1.samsung.com>
- <1474361863-2319-1-git-send-email-axel.lin@ingics.com> <57E101CE.4050502@samsung.com>
-Reply-To: myungjoo.ham@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35705 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932417AbcI3OLS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 10:11:18 -0400
-In-Reply-To: <57E101CE.4050502@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/4] [media] exynos-gsc: Cleanup and fixes
+Date: Fri, 30 Sep 2016 17:16:40 -0400
+Message-ID: <1475270204-14005-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Axel Lin <axel.lin@ingics.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-On Tue, Sep 20, 2016 at 6:30 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote=
-:
-> Hi,
->
-> On 2016=EB=85=84 09=EC=9B=94 20=EC=9D=BC 17:57, Axel Lin wrote:
->> This drvier uses devm_regmap_init_mmio(), so select REGMAP_MMIO to avoid
->> build failure.
->
-> s/drvier/driver
->
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
->>  drivers/devfreq/event/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconf=
-ig
->> index 0fdae86..cd94980 100644
->> --- a/drivers/devfreq/event/Kconfig
->> +++ b/drivers/devfreq/event/Kconfig
->> @@ -17,6 +17,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
->>       tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
->>       depends on ARCH_EXYNOS || COMPILE_TEST
->>       select PM_OPP
->> +     select REGMAP_MMIO
->>       help
->>         This add the devfreq-event driver for Exynos SoC. It provides No=
-C
->>         (Network on Chip) Probe counters to measure the bandwidth of AXI=
- bus.
->>
->
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Hello,
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+This patch series contains a cleanup and some fixes for the exynos-gsc
+driver. I found these issues when trying to use the driver with the
+GStreamer v4l2videoconvert element. I wasn't able to display to Exynos
+DRM/KMS driver and only a small set of formats were working correctly.
 
->
-> --
-> Best Regards,
-> Chanwoo Choi
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-s=
-oc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+After these patches, I'm able to display the captured frames to the
+Exynos DRM driver using kmssink or chain two v4l2videoconvert elements
+using the two GSC instances. Also, most supported formats are working.
+
+I've tested all supported formats with the following script:
+
+FORMATS="BGRx YUY2 UYVY YVYU Y42B NV16 NV61 YV12 NV21 NV12 I420"
+
+for IN in ${FORMATS}; do
+    for OUT in ${FORMATS}; do
+        gst-launch-1.0 videotestsrc num-buffers=30 ! video/x-raw,format=${IN} ! \
+        v4l2video$1convert ! video/x-raw,format=${OUT} ! videoconvert ! kmssink
+    done
+done
+
+There are though still two issues remaining after these patches:
+
+1) The NV21 and NV61 formats aren't show correctly (NV12 and NV16 works).
+2) The Y42B format works when used as input but no when used as output.
+
+But those can be addressed as a follow-up since I believe are not related,
+and the fixes in the series improve the support for most exposed formats.
+
+Best regards,
+Javier
 
 
+Javier Martinez Canillas (4):
+  [media] exynos-gsc: change spamming try_fmt log message to debug
+  [media] exynos-gsc: don't clear format when freeing buffers with
+    REQBUFS(0)
+  [media] exynos-gsc: fix supported RGB pixel format
+  [media] exynos-gsc: do proper bytesperline and sizeimage calculation
 
---=20
-MyungJoo Ham, Ph.D.
-Frontier CS Lab, S/W Center, Samsung Electronics
+ drivers/media/platform/exynos-gsc/gsc-core.c | 27 ++++++++++++++++++++-------
+ drivers/media/platform/exynos-gsc/gsc-m2m.c  |  8 +-------
+ 2 files changed, 21 insertions(+), 14 deletions(-)
+
+-- 
+2.7.4
