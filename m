@@ -1,169 +1,71 @@
-From: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v1 4/4] drm: bridge/analogix: switch Main-link and eDP PHY
- when enable/disable psr
-Date: Thu, 29 Sep 2016 22:46:40 +0800
-Message-ID: <1475160400-30782-5-git-send-email-wzz@rock-chips.com>
-References: <1475160400-30782-1-git-send-email-wzz@rock-chips.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] serial: samsung: add clock controls in
+ s3c24xx_serial_resume_noirq()
+Date: Fri, 30 Sep 2016 12:34:34 +0200
+Message-ID: <20160930103434.GA4713@kozik-lap>
+References: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1475160400-30782-1-git-send-email-wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Mika Kahola <mika.kahola-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yakir Yang <ykk-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35131 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbcI3Kej (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 30 Sep 2016 06:34:39 -0400
+Content-Disposition: inline
+In-Reply-To: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?utf-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-turn off Main-link and power down eDP PHY when enable psr,
-turn on Main-link and power up eDP PHY when disable psr.
+On Tue, Sep 27, 2016 at 10:43:54PM +0900, 남영민 wrote:
+> This patch adds clock controls in s3c24xx_serial_resume_noirq()
+> to set S3C64XX_UINTM register.
 
-Signed-off-by: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Code looks correct but the commit message is bogus. It does not bring
+any benefit over the code, not mentioning that it is quite cryptic (what
+does the "clock controls" mean?).
 
----
+Just describe here WHAT is the problem and WHY the fix is needed.
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 105 ++++++++++-----------
- 1 file changed, 52 insertions(+), 53 deletions(-)
+Best regards,
+Krzysztof
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 7177f5f..1bc98ab 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -98,56 +98,6 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
- 	return 0;
- }
- 
--int analogix_dp_enable_psr(struct device *dev)
--{
--	struct analogix_dp_device *dp = dev_get_drvdata(dev);
--	struct edp_vsc_psr psr_vsc;
--
--	if (!dp->psr_support)
--		return -EINVAL;
--
--	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
--		return -EBUSY;
--
--	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
--	memset(&psr_vsc, 0, sizeof(psr_vsc));
--	psr_vsc.sdp_header.HB0 = 0;
--	psr_vsc.sdp_header.HB1 = 0x7;
--	psr_vsc.sdp_header.HB2 = 0x2;
--	psr_vsc.sdp_header.HB3 = 0x8;
--
--	psr_vsc.DB0 = 0;
--	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
--
--	return analogix_dp_send_psr_spd(dp, &psr_vsc);
--}
--EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
--
--int analogix_dp_disable_psr(struct device *dev)
--{
--	struct analogix_dp_device *dp = dev_get_drvdata(dev);
--	struct edp_vsc_psr psr_vsc;
--
--	if (!dp->psr_support)
--		return -EINVAL;
--
--	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
--		return -EBUSY;
--
--	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
--	memset(&psr_vsc, 0, sizeof(psr_vsc));
--	psr_vsc.sdp_header.HB0 = 0;
--	psr_vsc.sdp_header.HB1 = 0x7;
--	psr_vsc.sdp_header.HB2 = 0x2;
--	psr_vsc.sdp_header.HB3 = 0x8;
--
--	psr_vsc.DB0 = 0;
--	psr_vsc.DB1 = 0;
--
--	return analogix_dp_send_psr_spd(dp, &psr_vsc);
--}
--EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
--
- static bool analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
- {
- 	unsigned char psr_version;
-@@ -168,12 +118,11 @@ static void analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
- 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
- 
- 	/* Main-Link transmitter remains active during PSR active states */
--	psr_en = DP_PSR_MAIN_LINK_ACTIVE | DP_PSR_CRC_VERIFICATION;
-+	psr_en = DP_PSR_CRC_VERIFICATION;
- 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
- 
- 	/* Enable psr function */
--	psr_en = DP_PSR_ENABLE | DP_PSR_MAIN_LINK_ACTIVE |
--		 DP_PSR_CRC_VERIFICATION;
-+	psr_en = DP_PSR_ENABLE | DP_PSR_CRC_VERIFICATION;
- 	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
- 
- 	analogix_dp_enable_psr_crc(dp);
-@@ -876,6 +825,56 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 		analogix_dp_enable_sink_psr(dp);
- }
- 
-+int analogix_dp_enable_psr(struct device *dev)
-+{
-+	struct analogix_dp_device *dp = dev_get_drvdata(dev);
-+	struct edp_vsc_psr psr_vsc;
-+
-+	if (!dp->psr_support)
-+		return -EINVAL;
-+
-+	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
-+		return -EBUSY;
-+
-+	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
-+	memset(&psr_vsc, 0, sizeof(psr_vsc));
-+	psr_vsc.sdp_header.HB0 = 0;
-+	psr_vsc.sdp_header.HB1 = 0x7;
-+	psr_vsc.sdp_header.HB2 = 0x2;
-+	psr_vsc.sdp_header.HB3 = 0x8;
-+
-+	psr_vsc.DB0 = 0;
-+	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
-+
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
-+}
-+EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
-+
-+int analogix_dp_disable_psr(struct device *dev)
-+{
-+	struct analogix_dp_device *dp = dev_get_drvdata(dev);
-+	struct edp_vsc_psr psr_vsc;
-+
-+	if (!dp->psr_support)
-+		return -EINVAL;
-+
-+	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
-+		return -EBUSY;
-+
-+	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
-+	memset(&psr_vsc, 0, sizeof(psr_vsc));
-+	psr_vsc.sdp_header.HB0 = 0;
-+	psr_vsc.sdp_header.HB1 = 0x7;
-+	psr_vsc.sdp_header.HB2 = 0x2;
-+	psr_vsc.sdp_header.HB3 = 0x8;
-+
-+	psr_vsc.DB0 = 0;
-+	psr_vsc.DB1 = 0;
-+
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
-+}
-+EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
-+
- /*
-  * This function is a bit of a catch-all for panel preparation, hopefully
-  * simplifying the logic of functions that need to prepare/unprepare the panel
--- 
-1.9.1
+> 
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> ---
+>  drivers/tty/serial/samsung.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index ae2095a..97f7b3b 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
+>  static int s3c24xx_serial_resume_noirq(struct device *dev)
+>  {
+>  	struct uart_port *port = s3c24xx_dev_to_port(dev);
+> +	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>  
+>  	if (port) {
+>  		/* restore IRQ mask */
+> @@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+>  				uintm &= ~S3C64XX_UINTM_TXD_MSK;
+>  			if (rx_enabled(port))
+>  				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+> +			clk_prepare_enable(ourport->clk);
+>  			wr_regl(port, S3C64XX_UINTM, uintm);
+> +			clk_disable_unprepare(ourport->clk);
+>  		}
+>  	}
+>  
+> -- 
+> 2.8.1
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
