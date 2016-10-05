@@ -1,97 +1,143 @@
-From: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
-Date: Wed, 5 Oct 2016 17:17:04 +0200
-Message-ID: <20161005171704.18fe1b9f@endymion>
-References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
- <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
+From: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
+Subject: Re: [PATCH v4 0/2] Exynos IOMMU: proper runtime PM support (use
+	device dependencies)
+Date: Thu, 6 Oct 2016 00:42:05 +0200
+Message-ID: <57F581BD.3070208@math.uni-bielefeld.de>
+References: <CGME20160929081238eucas1p1a064e5371ce549f860d6cff4bd43b557@eucas1p1.samsung.com>
+	<1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1470742581-12971-2-git-send-email-wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guan Xuetao <gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org>, Peter Korsgaard <jacmet-OfajU3CKLf1/SzgSGea1oA@public.gmane.org>, Sonic Zhang <sonic.zhang-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>Ale
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1475136751-31340-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue,  9 Aug 2016 13:36:17 +0200, Wolfram Sang wrote:
-> The core will do this for us now.
+Hello Marek,
+
+I have applied the new version onto 4.8.0 but I'm seeing this Oops on
+shutdown/reboot. However it only shows up with my non-debug config.
+
+
+> [  897.046373] Internal error: Oops: 80000005 [#1] PREEMPT SMP ARM
+> [  897.046652] Modules linked in: bridge stp llc bnep btrfs xor xor_neon zlib_inflate zlib_deflate raid6_pq s5p_mfc extcon_odroid_usbotg btusb btbcm btintel s5p_jpeg videobuf2_dma_contig v4l2_mem2mem videobuf2_memops videobuf2_v4l2 videobuf2_core
+> [  897.068174] CPU: 2 PID: 9437 Comm: reboot Not tainted 4.8.0-vanilla+ #2
+> [  897.074772] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [  897.080848] task: eea02100 task.stack: cb488000
+> [  897.085363] PC is at 0xb886c672
+> [  897.088489] LR is at device_shutdown+0x134/0x1c0
+> [  897.093087] pc : [<b886c672>]    lr : [<c0405b14>]    psr: 600a0073
+> [  897.093087] sp : cb489e28  ip : 00000000  fp : cb489e4c
+> [  897.104547] r10: 00000000  r9 : ee0cfe44  r8 : c0a39020
+> [  897.109752] r7 : c0a6d774  r6 : ee0cfe10  r5 : ee08b810  r4 : ee0cfe1c
+> [  897.116262] r3 : b886c673  r2 : 00000000  r1 : 00000002  r0 : ee0cfe10
+> [  897.122773] Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA Thumb  Segment none
+> [  897.130151] Control: 10c5387d  Table: 6a24404a  DAC: 00000051
+> [  897.135879] Process reboot (pid: 9437, stack limit = 0xcb488218)
+> [  897.141868] Stack: (0xcb489e28 to 0xcb48a000)
+> [  897.146209] 9e20:                   00000000 00000000 01234567 c0a09d4c 00000010 c0a09a88
+> [  897.154371] 9e40: cb489e5c cb489e50 c013eb5c c04059ec cb489e74 cb489e60 c013ec38 c013eb2c
+> [  897.162530] 9e60: 01234567 c0a02448 cb489fa4 cb489e78 c013ef08 c013ec30 eb87ca80 00c0d000
+> [  897.170698] 9e80: cb489ea4 cb489e90 c01c9660 c01c9434 ef026000 00000000 cb489eb4 cb489ea8
+> [  897.178855] 9ea0: c01c977c c01c961c cb489ec4 cb489eb8 c01c9798 c01c9760 cb489f3c cb489ec8
+> [  897.187014] 9ec0: c01eeaa4 c01c978c eb87ca80 00000000 ec421210 00c0d000 ed8af3c0 eefd5140
+> [  897.195173] 9ee0: ee84a140 eea11e40 cb489f14 cb489ef8 c022bc58 c016cfa0 ed8afa80 ee665c38
+> [  897.203333] 9f00: 00000000 eea11e50 cb489f24 cb489f18 c022be1c c022bc20 cb489f5c cb489f28
+> [  897.211492] 9f20: c020ce88 c022bdfc 00000020 00000000 cb489f54 eea024f8 c0a39f7c 00000000
+> [  897.219651] 9f40: eea02100 c0107ee4 cb488000 00000000 cb489f6c cb489f60 c020cf80 c020cd5c
+> [  897.227810] 9f60: cb489f8c cb489f70 c013aa40 c06dd2dc cb488010 c0107ee4 cb489fb0 00040800
+> [  897.235969] 9f80: 00000001 be966ce0 00bec008 00000058 c0107ee4 cb488000 00000000 cb489fa8
+> [  897.244129] 9fa0: c0107d20 c013ee04 00000001 be966ce0 fee1dead 28121969 01234567 00000010
+> [  897.252287] 9fc0: 00000001 be966ce0 00bec008 00000058 00000000 000230e4 00000000 00000000
+> [  897.260447] 9fe0: 00023030 be966cc4 00010e9c b6f3f290 200a0050 fee1dead 00000000 00000000
+> [  897.268603] Backtrace: 
+> [  897.271033] [<c04059e0>] (device_shutdown) from [<c013eb5c>] (kernel_restart_prepare+0x3c/0x40)
+> [  897.279715]  r9:c0a09a88 r8:00000010 r7:c0a09d4c r6:01234567 r5:00000000 r4:00000000
+> [  897.287439] [<c013eb20>] (kernel_restart_prepare) from [<c013ec38>] (kernel_restart+0x14/0x58)
+> [  897.296036] [<c013ec24>] (kernel_restart) from [<c013ef08>] (SyS_reboot+0x110/0x1f8)
+> [  897.303757]  r4:c0a02448 r3:01234567
+> [  897.307314] [<c013edf8>] (SyS_reboot) from [<c0107d20>] (ret_fast_syscall+0x0/0x3c)
+> [  897.314955]  r9:cb488000 r8:c0107ee4 r7:00000058 r6:00bec008 r5:be966ce0 r4:00000001
+> [  897.322680] Code: bad PC value
+> [  897.325940] ---[ end trace 861fd282a7bdc01e ]---
+
+
+The corresponding config:
+https://github.com/tobiasjakobi/odroid-environment/blob/master/sourcecode/system/vanilla-4.8.conf
+
+
+With best wishes,
+Tobias
+
+
+
+
+Marek Szyprowski wrote:
+> Hello,
 > 
-> Signed-off-by: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-amd756.c         | 5 +----
->  drivers/i2c/busses/i2c-at91.c           | 2 --
->  drivers/i2c/busses/i2c-axxia.c          | 8 +-------
->  drivers/i2c/busses/i2c-bcm-iproc.c      | 8 +-------
->  drivers/i2c/busses/i2c-bcm-kona.c       | 4 +---
->  drivers/i2c/busses/i2c-bfin-twi.c       | 4 +---
->  drivers/i2c/busses/i2c-brcmstb.c        | 4 +---
->  drivers/i2c/busses/i2c-cadence.c        | 4 +---
->  drivers/i2c/busses/i2c-cpm.c            | 4 +---
->  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 4 +---
->  drivers/i2c/busses/i2c-davinci.c        | 4 +---
->  drivers/i2c/busses/i2c-diolan-u2c.c     | 4 +---
->  drivers/i2c/busses/i2c-dln2.c           | 4 +---
->  drivers/i2c/busses/i2c-efm32.c          | 1 -
->  drivers/i2c/busses/i2c-exynos5.c        | 4 +---
->  drivers/i2c/busses/i2c-hix5hd2.c        | 4 +---
->  drivers/i2c/busses/i2c-i801.c           | 1 -
->  drivers/i2c/busses/i2c-ibm_iic.c        | 4 +---
->  drivers/i2c/busses/i2c-img-scb.c        | 4 +---
->  drivers/i2c/busses/i2c-imx.c            | 4 +---
->  drivers/i2c/busses/i2c-isch.c           | 4 +---
->  drivers/i2c/busses/i2c-ismt.c           | 4 +---
->  drivers/i2c/busses/i2c-jz4780.c         | 4 +---
->  drivers/i2c/busses/i2c-lpc2k.c          | 4 +---
->  drivers/i2c/busses/i2c-meson.c          | 1 -
->  drivers/i2c/busses/i2c-mpc.c            | 4 +---
->  drivers/i2c/busses/i2c-mt65xx.c         | 4 +---
->  drivers/i2c/busses/i2c-mxs.c            | 1 -
->  drivers/i2c/busses/i2c-nforce2.c        | 1 -
->  drivers/i2c/busses/i2c-nomadik.c        | 4 +---
->  drivers/i2c/busses/i2c-ocores.c         | 4 +---
->  drivers/i2c/busses/i2c-octeon.c         | 4 +---
->  drivers/i2c/busses/i2c-omap.c           | 4 +---
->  drivers/i2c/busses/i2c-piix4.c          | 1 -
->  drivers/i2c/busses/i2c-pmcmsp.c         | 4 +---
->  drivers/i2c/busses/i2c-pnx.c            | 4 +---
->  drivers/i2c/busses/i2c-puv3.c           | 5 +----
->  drivers/i2c/busses/i2c-pxa.c            | 4 +---
->  drivers/i2c/busses/i2c-rcar.c           | 4 +---
->  drivers/i2c/busses/i2c-riic.c           | 4 +---
->  drivers/i2c/busses/i2c-rk3x.c           | 4 +---
->  drivers/i2c/busses/i2c-s3c2410.c        | 1 -
->  drivers/i2c/busses/i2c-sh7760.c         | 4 +---
->  drivers/i2c/busses/i2c-sh_mobile.c      | 1 -
->  drivers/i2c/busses/i2c-sirf.c           | 4 +---
->  drivers/i2c/busses/i2c-st.c             | 4 +---
->  drivers/i2c/busses/i2c-stu300.c         | 5 +----
->  drivers/i2c/busses/i2c-tegra.c          | 4 +---
->  drivers/i2c/busses/i2c-uniphier-f.c     | 7 +------
->  drivers/i2c/busses/i2c-uniphier.c       | 7 +------
->  drivers/i2c/busses/i2c-wmt.c            | 4 +---
->  drivers/i2c/busses/i2c-xgene-slimpro.c  | 1 -
->  drivers/i2c/busses/i2c-xiic.c           | 1 -
->  drivers/i2c/busses/i2c-xlp9xx.c         | 4 +---
->  drivers/i2c/busses/i2c-xlr.c            | 4 +---
->  55 files changed, 44 insertions(+), 161 deletions(-)
-> (...)
-
-I like the idea.
-
-For i2c-amd756, i2c-diolan-u2c, i2c-i801, i2c-isch, i2c-ismt,
-i2c-nforce and i2c-piix4:
-
-Reviewed-by: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>
-
--- 
-Jean Delvare
-SUSE L3 Support
+> This patch series finally implements proper runtime PM support in Exynos
+> IOMMU driver. This has been achieved by using recently introduce device
+> links, which lets SYSMMU controller's runtime PM to follow master's device
+> runtime PM state (the device which actually performs DMA transaction).
+> The main idea behind this solution is an observation that any DMA activity
+> from master device can be done only when master device is active, thus when
+> master device is suspended SYSMMU controller device can also be suspended.
+> 
+> This patchset solves the situation that power domains are always enabled,
+> because all SYSMMU controllers (which belongs to those domains) are
+> permanently active (because existing driver was simplified and kept
+> SYSMMU device active all the time after initialization).
+> 
+> Patch requires fourth version of Rafeal's "Functional dependencies
+> between devices" patchset, which is available here:
+> https://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg1241473.html
+> 
+> If one wants to test this patchset, I've provided a branch with all needed
+> patches (some fixes for Exynos4 FIMC-IS driver are needed):
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.8-iommu-pm-v4
+> 
+> Patches are based on vanilla v4.8-rc8 kernel with Rafael's device
+> dependencies v4 patchset applied.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Changelog:
+> v4:
+> - rebased on top of v4 of device dependencies/links patchset, what resolved
+>   system hang on reboot
+> 
+> v3: http://www.spinics.net/lists/linux-samsung-soc/msg55256.html
+> - rebased on top of latest device dependencies/links patchset
+> - added proper locking between runtime pm, iommu_attach/detach and sysmmu
+>   enable/disable(added per iommu owner device's rpm lock)
+> 
+> v2: http://www.spinics.net/lists/arm-kernel/msg512082.html
+> - replaced PM notifiers with generic device dependencies/links developped
+>   by Rafael J. Wysocki
+> 
+> v1: http://www.spinics.net/lists/arm-kernel/msg509600.html
+> - initial version
+> 
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (2):
+>   iommu/exynos: Remove excessive, useless debug
+>   iommu/exynos: Add proper runtime pm support
+> 
+>  drivers/iommu/exynos-iommu.c | 228 ++++++++++++++++++-------------------------
+>  1 file changed, 94 insertions(+), 134 deletions(-)
+> 
