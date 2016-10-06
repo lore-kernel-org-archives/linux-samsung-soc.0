@@ -1,166 +1,61 @@
-From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
- 5422
-Date: Thu, 06 Oct 2016 18:29:40 +0200
-Message-ID: <1475771380.22019.5.camel@mniewoehner.de>
-References: <1472414695.3845.3.camel@mniewoehner.de>
-         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
-         <1472468730.4925.3.camel@mniewoehner.de>
-         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
-         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
-         <1475578687.1912.28.camel@mniewoehner.de>
-         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 2/2] iommu/exynos: Add proper runtime pm support
+Date: Thu, 6 Oct 2016 19:37:56 +0200
+Message-ID: <20161006173756.GK3296@wotan.suse.de>
+References: <1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
+	<CGME20160929081240eucas1p231c1ab5c5936886cbec6bc3f5267c940@eucas1p2.samsung.com>
+	<1475136751-31340-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sender163-mail.zoho.com ([74.201.84.163]:21408 "EHLO
-        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964874AbcJFQ3w (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Oct 2016 12:29:52 -0400
-In-Reply-To: <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1475136751-31340-3-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>Alim Akhtar <alim.akhtar@samsung.com>Pankaj Dubey <pankaj.dubey@samsung.com>
 
-SGkgVml2ZWssCk9uIERpLCAyMDE2LTEwLTA0IGF0IDE3OjMyICswNTMwLCBWaXZlayBHYXV0YW0g
-d3JvdGU6Cj4gSGkgTWljaGFlbCwKPiAKPiAKPiBPbiBUdWUsIE9jdCA0LCAyMDE2IGF0IDQ6Mjgg
-UE0sIE1pY2hhZWwgTmlld8O2aG5lciA8bGludXhAbW5pZXdvZWhuZXIuZGU+IHdyb3RlOgo+IAo+
-ID4gCj4gPiA+IAo+ID4gPiA+IAo+ID4gPiA+ID4gCj4gPiA+ID4gPiA+IAo+ID4gPiA+ID4gPiA+
-IAo+ID4gPiA+ID4gPiA+IFsxLl0gT25lIGxpbmUgc3VtbWFyeSBvZiB0aGUgcHJvYmxlbToKPiA+
-ID4gPiA+ID4gPiBEV0MzIFVTQiAzLjAgbm90IHdvcmtpbmcgb24gT2Ryb2lkLVhVNCB3aXRoIEV4
-eW5vcyA1NDIyCj4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gWzIuXSBGdWxsIGRlc2NyaXB0
-aW9uIG9mIHRoZSBwcm9ibGVtL3JlcG9ydDoKPiA+ID4gPiA+ID4gPiBObyB1c2IgMy4wIGRldmlj
-ZXMgYXJlIGJlaW5nIGRldGVjdGVkIHdoZW4gYXR0YWNoZWQgd2hpbGUgVVNCIDIuMAo+ID4gPiA+
-ID4gPiA+IGRldmljZXMgd29yayBvbiB0aGUgc2FtZSBwb3J0Lgo+ID4gPiA+ID4gPiA+IFVTQiAz
-LjAgd29ya3MgYWZ0ZXIgYXBwbHlpbmcgcGF0Y2hlcyBbOS4xXSBhbmQgWzkuMl0sIGJ1dCBzZWVt
-cwo+ID4gPiA+ID4gPiA+IHRvIGJlCj4gPiA+ID4gPiA+ID4gYnVnZ3kuIFRoZSB1c2IgaHViIGlz
-IHJlZGV0ZWN0ZWQgZXZlcnkgdGltZSBhbiB1c2IgZGV2aWNlIGlzCj4gPiA+ID4gPiA+ID4gYXR0
-YWNoZWQuCj4gCj4gW3NuaXBdCj4gCj4gPiAKPiA+ID4gCj4gPiA+ID4gCj4gPiA+ID4gPiAKPiA+
-ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gPiAKPiA+ID4gPiA+ID4gPiA+
-IFs5Ll0gT3RoZXIgbm90ZXMsIHBhdGNoZXMsIGZpeGVzLCB3b3JrYXJvdW5kczoKPiA+ID4gPiA+
-ID4gPiA+IFs5LjFdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE0LzQvMjgvMjM0Cj4gPiA+ID4g
-PiA+ID4gPiBbOS4yXSBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNS8yLzIvMjU5Cj4gPiA+IAo+
-ID4gPiBUaGVzZSBwYXRjaGVzIGFyZSByZXF1aXJlZCB0byBnZXQgVVNCIHN1cGVyLXNwZWVkIHdv
-cmtpbmcgb24gRXh5bm9zNTQyMC81ODAwLgo+ID4gPiBCdXQgdGhleSBkaWQgbm90IG1ha2UgdG8g
-dXBzdHJlYW0uIFRoZXJlIHdhcyByZXNpc3RhbmNlIG9uIGFkZGluZyBuZXcKPiA+ID4gcGh5X2Nh
-bGlicmF0ZSgpCj4gPiA+IGNhbGxiYWNrLgo+ID4gPiAKPiA+ID4gV2l0aG91dCB0aGVzZSBwYXRj
-aGVzIHRoZSBFeHlub3M1NDIwLzU4MDAgd2lsbCBlbnVtZXJhdGUgYWxsCj4gPiA+IHN1cGVyLXNw
-ZWVkIGNhcGFibGUgZGV2aWNlcwo+ID4gPiBhcyBoaWdoLXNwZWVkIGRldmljZXMuCj4gPiA+IExh
-c3QgdGltZSB3ZSBjaGVja2VkIHdpdGggZXh5bm9zNTQyeCBzbWRrIGJvYXJkcyBhbmQgcGVhY2gt
-KiBib2FyZHMsCj4gPiA+IHdlIGNvdWxkIGdldCB0aGUKPiA+ID4gU3VwZXIgLSBzcGVlZCBkZXZp
-Y2VzIHdvcmtpbmcuIEkgaGF2ZSBub3QgdGVzdGVkIG9kcm9pZCBhbnl0aW1lIHNvCj4gPiA+IGRv
-bid0IGhhdmUgbXVjaCBpZGVhIGFib3V0IHRoZQo+ID4gPiBpdHMgaW50cmljYWNpZXMuCj4gPiA+
-IEkgZ3Vlc3MgQW5hbmQgd2FzIGFibGUgdG8gdXNlIHRoZXNlIHBhdGNoZXMgdG8gZ2V0IGhpcyBr
-ZXJuZWwgd29ya2luZyBpbiBwYXN0Lgo+ID4gCj4gPiAKPiA+IFRoZSBwYXRjaGVzIGRvbid0IHdv
-cmsgYW55bW9yZSB3aXRoIDQuOC1yYyogLyA0LjguIFRoZXkgd29ya2VkIC0gYnV0IHZlcnkKPiA+
-IHVuc3RhYmxlIC0gd2l0aCA0LjcuCj4gPiAKPiA+IE9uZSBtb3JlIHByb2JsZW0gYXBwZWFyZWQg
-c2luY2Ugb25lIG9mIHRoZSA0LjgtUkNzOiByZWJvb3QgaGFuZ3Mgd2hlbiB0aGUgZHdjMwo+ID4g
-bW9kdWxlIGlzIGxvYWRlZC4gSWYgSSB1bmxvYWQgaXQgYmVmb3JlIHJlYm9vdCAvIHNodXRkb3du
-IGV2ZXJ5dGhpbmcgaXMgZmluZS4KPiA+IAo+ID4gCj4gPiA+IAo+ID4gPiAKPiA+ID4gV2hlbiB5
-b3UgaGF2ZSBhIGRvd25zdHJlYW0gb24tYm9hcmQgdXNiIGh1YiwgaWRlYWxseSBpdCBzaG91bGQg
-YmUgYWJsZQo+ID4gPiB0byBkZXRlY3QgdGhlIGRldmljZXMKPiA+ID4gYW5kIG5vdCByZXNldCBl
-dmVyeXRpbWUgeW91IGNvbm5lY3QgYSBuZXcgZGV2aWNlIChsaWtlIHlvdSBtZW50aW9uZWQgZWFy
-bGllcikuCj4gPiA+IFRoZXJlIGNhbiBiZSB0d28gcG9zc2libGUgcmVhc29ucyB3aHkgdGhlIGh1
-YiBrZWVwcyBnZXR0aW5nIHJlc2V0IGV2ZXIKPiA+ID4gYWZ0ZXIgYXBwbHlpbmcgdGhlIGFib3Zl
-Cj4gPiA+IG1lbnRpb25lZCBwYXRjaGVzOgo+ID4gPiAxKSB0aGUgY2xvY2sgcmF0ZXMgYXJlIG5v
-dCBwcm9wZXIuCj4gPiA+IDIpIHRoZSByZWd1bGF0b3IgbG9hZCBzZXR0aW5nIGlzIG5vdCBlbm91
-Z2ggdG8gZHJpdmUgdGhlIGh1Yi4KPiA+ID4gCj4gPiA+IEFuYW5kLCBjYW4geW91IHBsZWFzZSBw
-b2ludCBNaWNoYWVsIHRvIGFuIG9sZGVyIGtlcm5lbCB3aXRoIHdoaWNoIHlvdQo+ID4gPiBjb3Vs
-ZCB0ZXN0IHVzYiBvbiBvZHJvaWQgc3VjY2Vzc2Z1bGx5ID8KPiA+ID4gWW91IGNhbiBjb21wYXJl
-IHRoZSBjbG9ja3Mgd2l0aCBhbiBvbGRlciB2ZXJzaW9uIGFuZCBzZWUgaWYgdGhlcmUnYQo+ID4g
-PiBhbnkgZGlmZmVyZW5jZS4KPiA+ID4gCj4gPiA+IEFueSBwb3NzaWJpbGl0eSBvZiBhbnkgb3Ro
-ZXIgZnJhbWV3b3JrIChzdWNoIGFzLCBidXMtZnJlcSkgdHJpbW1pbmcKPiA+ID4gZG93biB0aGUg
-Y2xvY2sgLSByYXRlcyA/Cj4gPiAKPiA+IAo+ID4gIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
-IyMjIyMKPiA+ICMgdjQuNy41Cj4gPiAjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwo+
-ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9jbGsvY2xrX3N1bW1hcnkgfCBncmVwIHVz
-Ygo+ID4gwqBzY2xrX3VzYmgyMF9zY2FuX2Nsa8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgNDgwMDAwMDAwwqDC
-oMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoHNjbGtfdXNiaDIwwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoDDCoMKgwqDCoDQ4MDAwCj4gPiAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKg
-wqDCoMKgbW91dF91c2JkMzAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqAyNDAwMDAwMMKg
-wqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYmQzMDDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoDDCoMKgwqDCoDI0MDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDC
-oMKgwqDCoMKgwqDCoHNjbGtfdXNiZDMwMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKg
-wqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYnBoeTMwMMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAx
-wqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqBzY2xrX3VzYnBoeTMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDTC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqA0wqDCoMKgwqAyNDAwMAo+ID4gMDAwwqDCoMKgwqDCoMKg
-wqDCoMKgwqAwCj4gPiDCoMKgwqDCoG1vdXRfdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMcKg
-wqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91
-dF91c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDC
-oMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqBzY2xrX3VzYmQzMDEKPiA+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKg
-MjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91dF91c2Jw
-aHkzMDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgMcKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgc2Nsa191c2JwaHkzMDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgM8KgwqDCoMKgMjQwMDAKPiA+
-IDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgMTAwMDAwMDAwCj4gPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHVzYmQzMDDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqAxMDAwMDAwMDAKPiA+IAo+ID4g
-dXNiaDIwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAzwqDC
-oMKgMTAwMDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gCj4gPiAKPiA+IAo+ID4gIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKPiA+ICMgdjQuOC4wCj4gPiAjIyMjIyMjIyMjIyMj
-IyMjIyMjIyMjIyMjIyMjIyMjIwo+ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9jbGsv
-Y2xrX3N1bW1hcnkgfCBncmVwIHVzYgo+ID4gwqBzY2xrX3VzYmgyMF9zY2FuX2Nsa8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAwwqDCoMKgNDgwMDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoHNjbGtfdXNiaDIw
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoDQ4MDAwMDAwCj4gPiDCoMKgwqDC
-oMKgwqDCoMKgMAo+ID4gwqDCoMKgwqBtb3V0X3VzYmQzMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHC
-oMKgwqDCoDI0MDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDCoMKgwqDCoGRv
-dXRfdXNiZDMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAw
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKg
-wqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgc2Nsa191c2JkMzAwCj4gPiDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgMjQwMDAwMDDC
-oMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91dF91c2JwaHkzMDDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgMcKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgc2Nsa191c2JwaHkzMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqA0wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgNMKgwqDCoMKgMjQwMDAwMDAKPiA+IMKgwqDC
-oMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDCoG1vdXRfdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-McKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKg
-ZG91dF91c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKg
-wqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqBzY2xrX3VzYmQzMDEKPiA+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAw
-MMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYnBoeTMwMcKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAxwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqBzY2xrX3VzYnBoeTMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoDPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAzwqDCoMKgwqAyNDAwMDAwMAo+ID4gwqDC
-oMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgMcKgwqDCoDEwMDAwMDAwMAo+IAo+IFRoaXMgY2xvY2sgc2hvdWxkIGhhdmUgYmVl
-biAyMDBNSHouCj4gCj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgdXNiZDMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgMcKgwqDCoDEwMDAwMDAwMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2JoMgo+ID4gMMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgM8KgwqDCoDEwMDAwMDAwMMKgwqDCoMKgwqDCoMKg
-wqDCoMKgMAo+ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy91c2IvZGV2aWNlcwo+ID4g
-PDxzeXN0ZW0gaGFuZ3M+Pgo+ID4gCj4gCj4gVGhlIGNsb2NrcyBhcmUgc2FtZSBhY3Jvc3Mgd29y
-a2luZy9ub24td29ya2luZy4KPiBJcyBpdCBwb3NzaWJsZSB0byBiaXNlY3QgdGhlIGNvbW1pdCB0
-aGF0J3MgY2F1c2luZyBoYW5nIGZvciA0Ljh4ID8KCgpbYzQ5OWZmNzFmZjJhMjgxMzY2YzZlYzdh
-OTA0YzU0N2Q4MDZjYmNkMV0gdXNiOiBkd2MzOiBjb3JlOiByZS1mYWN0b3IgaW5pdCBhbmQgZXhp
-dCBwYXRocwpUaGlzIHBhdGNoIGNhdXNlcyBib3RoIHRoZSBoYW5nIG9uIHJlYm9vdCBhbmQgdGhl
-IGxzdXNiIGhhbmcuCgoKPiAKPiBBZGRpbmcgZmV3IG9mIHRoZSBmb2xrcyBmcm9tIFNhbXN1bmcg
-d2hvIGNhbiB0ZXN0IGR3YzMgdXNiIG9uIHNtZGsvcGVhY2ggYm9hcmRzLgo+ICtBbGltLCBQYW5r
-YWoKPiAKPiBIaSBBbGltLCBQYW5rYWosCj4gY2FuIHlvdSBwbGVhc2UgZ2l2ZSBhIHRyeSB3aXRo
-IDQuOCBrZXJuZWwgb24gcGVhY2gvc21kazU0MnggYm9hcmQgYW5kCj4gc2VlIGlmIGR3YzMgdXNi
-IHdvcmtzIG9yIG5vdC4KPiBZb3UgbWF5IG5lZWQgdG8gdGhlIHBhdGNoZXMgbWVudGlvbmVkIGlu
-IFs5LjFdIGFuZCBbOS4yXSBtZW50aW9uZWQgYWJvdmUuCj4gCj4gCj4gW3NuaXBdCj4gCj4gCj4g
-VGhhbmtzCj4gVml2ZWsKPiAKCkJlc3QgcmVnYXJkcwpNaWNoYWVs
+On Thu, Sep 29, 2016 at 10:12:31AM +0200, Marek Szyprowski wrote:
+> This patch uses recently introduced device links to track the runtime pm
+> state of the master's device. This way each SYSMMU controller is runtime
+> activated when its master's device is active 
+
+instead of?
+
+BTW what is the master device of a SYSMMU? I have no clue about these
+IOMMU devices here.
+
+> and can save/restore its state instead of being enabled all the time.
+
+I take it this means currently even if the master device is disabled
+(whatever that is) all SYSMMU controllers are kept enabled, is that right?
+The issue here is this wastes power? Or what is the issue?
+
+> This way SYSMMU controllers no
+> longer prevents respective power domains to be turned off when master's
+> device is not used.
+
+So when the master device is idle we want to also remove power from the
+controllers ? How much power does this save on a typical device in the
+market BTW ?
+
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c | 225 ++++++++++++++++++-------------------------
+>  1 file changed, 94 insertions(+), 131 deletions(-)
+
+I'm reviewing the device link patches now but since this is a demo of
+use of that I'll note the changes here are pretty large and it makes
+it terribly difficult for review. Is there any way this patch can be split
+up in to logical atomic pieces that only do one task upon change ?
+
+  Luis
