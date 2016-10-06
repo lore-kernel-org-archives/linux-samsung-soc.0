@@ -1,53 +1,57 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: Problem: "clk: max77686: Migrate to clk_hw based OF and
- registration APIs" breaks s3c-rtc on Odroid U3
-Date: Thu, 6 Oct 2016 13:28:20 +0200
-Message-ID: <57F63554.1050703@math.uni-bielefeld.de>
-References: <29925ac0-3c97-df1d-0700-de25f1191082@fivetechno.de>
+Subject: Re: [PATCH] exynos-drm: Fix error messages to print flags and size
+Date: Thu, 6 Oct 2016 15:09:31 +0200
+Message-ID: <57F64D0B.5050506@math.uni-bielefeld.de>
+References: <1470850236-9101-1-git-send-email-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55553 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56907 "EHLO
         smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755238AbcJFL22 (ORCPT
+        by vger.kernel.org with ESMTP id S932720AbcJFNJi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Oct 2016 07:28:28 -0400
-In-Reply-To: <29925ac0-3c97-df1d-0700-de25f1191082@fivetechno.de>
+        Thu, 6 Oct 2016 09:09:38 -0400
+In-Reply-To: <1470850236-9101-1-git-send-email-shuahkh@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org, stephen.boyd@linaro.org, krzk@kernel.org, javier@osg.samsung.com
-Cc: ldewangan@nvidia.com
+To: Shuah Khan <shuahkh@osg.samsung.com>, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello,
 
-I quickly went over the commit, and I don't see the 'num_clks' fields
-being initialized anywhere. So that's probably the reason why it's
-always zero and the check in of_clk_max77686_get() fails.
+I think this patch was never picked up. So just a short 'ping' from my side.
 
 With best wishes,
 Tobias
 
 
-Markus Reichl wrote:
-> Hi,
+Shuah Khan wrote:
+> Fix exynos_drm_gem_create() error messages to include flags and size when
+> flags and size are invalid.
 > 
-> since commit
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> [9b4cac33adc7716bb232b3a82a5ed0806286fe9a] clk: max77686: Migrate to clk_hw based OF and registration APIs
-> 
-> s3-rtc does not get it's source clock and fails:
-> 
-> [    1.963782] of_clk_max77686_get: invalid index 0
-> [    1.967460] ERROR: could not get clock /rtc@10070000:rtc_src(1)
-> [    1.973638] s3c-rtc 10070000.rtc: failed to find rtc source clock
-> 
-> 
-> Regards,
-> --
-> Markus Reichl
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index cdf9f1a..4c4cb0e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -231,12 +231,12 @@ struct exynos_drm_gem *exynos_drm_gem_create(struct drm_device *dev,
+>  	int ret;
+>  
+>  	if (flags & ~(EXYNOS_BO_MASK)) {
+> -		DRM_ERROR("invalid flags.\n");
+> +		DRM_ERROR("invalid GEM buffer flags: %u\n", flags);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+>  	if (!size) {
+> -		DRM_ERROR("invalid size.\n");
+> +		DRM_ERROR("invalid GEM buffer size: %lu\n", size);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
 > 
