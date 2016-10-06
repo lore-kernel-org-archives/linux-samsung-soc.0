@@ -1,160 +1,166 @@
-From: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
-Subject: Re: [PATCH v4 0/2] Exynos IOMMU: proper runtime PM support (use
-	device dependencies)
-Date: Thu, 6 Oct 2016 18:28:30 +0200
-Message-ID: <57F67BAE.2090505@math.uni-bielefeld.de>
-References: <CGME20160929081238eucas1p1a064e5371ce549f860d6cff4bd43b557@eucas1p1.samsung.com>
-	<1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
-	<57F581BD.3070208@math.uni-bielefeld.de>
+From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
+ 5422
+Date: Thu, 06 Oct 2016 18:29:40 +0200
+Message-ID: <1475771380.22019.5.camel@mniewoehner.de>
+References: <1472414695.3845.3.camel@mniewoehner.de>
+         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
+         <1472468730.4925.3.camel@mniewoehner.de>
+         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
+         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
+         <1475578687.1912.28.camel@mniewoehner.de>
+         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <57F581BD.3070208-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sender163-mail.zoho.com ([74.201.84.163]:21408 "EHLO
+        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964874AbcJFQ3w (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 6 Oct 2016 12:29:52 -0400
+In-Reply-To: <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>Alim Akhtar <alim.akhtar@samsung.com>Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hello again,
-
-
-Tobias Jakobi wrote:
-> Hello Marek,
-> 
-> I have applied the new version onto 4.8.0 but I'm seeing this Oops on
-> shutdown/reboot. However it only shows up with my non-debug config.
-sorry for the false alarm. That Oops on reboot was due to some other
-patch I had applied.
-
-
-With best wishes,
-Tobias
-
-
->> [  897.046373] Internal error: Oops: 80000005 [#1] PREEMPT SMP ARM
->> [  897.046652] Modules linked in: bridge stp llc bnep btrfs xor xor_neon zlib_inflate zlib_deflate raid6_pq s5p_mfc extcon_odroid_usbotg btusb btbcm btintel s5p_jpeg videobuf2_dma_contig v4l2_mem2mem videobuf2_memops videobuf2_v4l2 videobuf2_core
->> [  897.068174] CPU: 2 PID: 9437 Comm: reboot Not tainted 4.8.0-vanilla+ #2
->> [  897.074772] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [  897.080848] task: eea02100 task.stack: cb488000
->> [  897.085363] PC is at 0xb886c672
->> [  897.088489] LR is at device_shutdown+0x134/0x1c0
->> [  897.093087] pc : [<b886c672>]    lr : [<c0405b14>]    psr: 600a0073
->> [  897.093087] sp : cb489e28  ip : 00000000  fp : cb489e4c
->> [  897.104547] r10: 00000000  r9 : ee0cfe44  r8 : c0a39020
->> [  897.109752] r7 : c0a6d774  r6 : ee0cfe10  r5 : ee08b810  r4 : ee0cfe1c
->> [  897.116262] r3 : b886c673  r2 : 00000000  r1 : 00000002  r0 : ee0cfe10
->> [  897.122773] Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA Thumb  Segment none
->> [  897.130151] Control: 10c5387d  Table: 6a24404a  DAC: 00000051
->> [  897.135879] Process reboot (pid: 9437, stack limit = 0xcb488218)
->> [  897.141868] Stack: (0xcb489e28 to 0xcb48a000)
->> [  897.146209] 9e20:                   00000000 00000000 01234567 c0a09d4c 00000010 c0a09a88
->> [  897.154371] 9e40: cb489e5c cb489e50 c013eb5c c04059ec cb489e74 cb489e60 c013ec38 c013eb2c
->> [  897.162530] 9e60: 01234567 c0a02448 cb489fa4 cb489e78 c013ef08 c013ec30 eb87ca80 00c0d000
->> [  897.170698] 9e80: cb489ea4 cb489e90 c01c9660 c01c9434 ef026000 00000000 cb489eb4 cb489ea8
->> [  897.178855] 9ea0: c01c977c c01c961c cb489ec4 cb489eb8 c01c9798 c01c9760 cb489f3c cb489ec8
->> [  897.187014] 9ec0: c01eeaa4 c01c978c eb87ca80 00000000 ec421210 00c0d000 ed8af3c0 eefd5140
->> [  897.195173] 9ee0: ee84a140 eea11e40 cb489f14 cb489ef8 c022bc58 c016cfa0 ed8afa80 ee665c38
->> [  897.203333] 9f00: 00000000 eea11e50 cb489f24 cb489f18 c022be1c c022bc20 cb489f5c cb489f28
->> [  897.211492] 9f20: c020ce88 c022bdfc 00000020 00000000 cb489f54 eea024f8 c0a39f7c 00000000
->> [  897.219651] 9f40: eea02100 c0107ee4 cb488000 00000000 cb489f6c cb489f60 c020cf80 c020cd5c
->> [  897.227810] 9f60: cb489f8c cb489f70 c013aa40 c06dd2dc cb488010 c0107ee4 cb489fb0 00040800
->> [  897.235969] 9f80: 00000001 be966ce0 00bec008 00000058 c0107ee4 cb488000 00000000 cb489fa8
->> [  897.244129] 9fa0: c0107d20 c013ee04 00000001 be966ce0 fee1dead 28121969 01234567 00000010
->> [  897.252287] 9fc0: 00000001 be966ce0 00bec008 00000058 00000000 000230e4 00000000 00000000
->> [  897.260447] 9fe0: 00023030 be966cc4 00010e9c b6f3f290 200a0050 fee1dead 00000000 00000000
->> [  897.268603] Backtrace: 
->> [  897.271033] [<c04059e0>] (device_shutdown) from [<c013eb5c>] (kernel_restart_prepare+0x3c/0x40)
->> [  897.279715]  r9:c0a09a88 r8:00000010 r7:c0a09d4c r6:01234567 r5:00000000 r4:00000000
->> [  897.287439] [<c013eb20>] (kernel_restart_prepare) from [<c013ec38>] (kernel_restart+0x14/0x58)
->> [  897.296036] [<c013ec24>] (kernel_restart) from [<c013ef08>] (SyS_reboot+0x110/0x1f8)
->> [  897.303757]  r4:c0a02448 r3:01234567
->> [  897.307314] [<c013edf8>] (SyS_reboot) from [<c0107d20>] (ret_fast_syscall+0x0/0x3c)
->> [  897.314955]  r9:cb488000 r8:c0107ee4 r7:00000058 r6:00bec008 r5:be966ce0 r4:00000001
->> [  897.322680] Code: bad PC value
->> [  897.325940] ---[ end trace 861fd282a7bdc01e ]---
-> 
-> 
-> The corresponding config:
-> https://github.com/tobiasjakobi/odroid-environment/blob/master/sourcecode/system/vanilla-4.8.conf
-> 
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> 
-> 
-> Marek Szyprowski wrote:
->> Hello,
->>
->> This patch series finally implements proper runtime PM support in Exynos
->> IOMMU driver. This has been achieved by using recently introduce device
->> links, which lets SYSMMU controller's runtime PM to follow master's device
->> runtime PM state (the device which actually performs DMA transaction).
->> The main idea behind this solution is an observation that any DMA activity
->> from master device can be done only when master device is active, thus when
->> master device is suspended SYSMMU controller device can also be suspended.
->>
->> This patchset solves the situation that power domains are always enabled,
->> because all SYSMMU controllers (which belongs to those domains) are
->> permanently active (because existing driver was simplified and kept
->> SYSMMU device active all the time after initialization).
->>
->> Patch requires fourth version of Rafeal's "Functional dependencies
->> between devices" patchset, which is available here:
->> https://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg1241473.html
->>
->> If one wants to test this patchset, I've provided a branch with all needed
->> patches (some fixes for Exynos4 FIMC-IS driver are needed):
->> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.8-iommu-pm-v4
->>
->> Patches are based on vanilla v4.8-rc8 kernel with Rafael's device
->> dependencies v4 patchset applied.
->>
->> Best regards
->> Marek Szyprowski
->> Samsung R&D Institute Poland
->>
->>
->> Changelog:
->> v4:
->> - rebased on top of v4 of device dependencies/links patchset, what resolved
->>   system hang on reboot
->>
->> v3: http://www.spinics.net/lists/linux-samsung-soc/msg55256.html
->> - rebased on top of latest device dependencies/links patchset
->> - added proper locking between runtime pm, iommu_attach/detach and sysmmu
->>   enable/disable(added per iommu owner device's rpm lock)
->>
->> v2: http://www.spinics.net/lists/arm-kernel/msg512082.html
->> - replaced PM notifiers with generic device dependencies/links developped
->>   by Rafael J. Wysocki
->>
->> v1: http://www.spinics.net/lists/arm-kernel/msg509600.html
->> - initial version
->>
->>
->> Patch summary:
->>
->> Marek Szyprowski (2):
->>   iommu/exynos: Remove excessive, useless debug
->>   iommu/exynos: Add proper runtime pm support
->>
->>  drivers/iommu/exynos-iommu.c | 228 ++++++++++++++++++-------------------------
->>  1 file changed, 94 insertions(+), 134 deletions(-)
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+SGkgVml2ZWssCk9uIERpLCAyMDE2LTEwLTA0IGF0IDE3OjMyICswNTMwLCBWaXZlayBHYXV0YW0g
+d3JvdGU6Cj4gSGkgTWljaGFlbCwKPiAKPiAKPiBPbiBUdWUsIE9jdCA0LCAyMDE2IGF0IDQ6Mjgg
+UE0sIE1pY2hhZWwgTmlld8O2aG5lciA8bGludXhAbW5pZXdvZWhuZXIuZGU+IHdyb3RlOgo+IAo+
+ID4gCj4gPiA+IAo+ID4gPiA+IAo+ID4gPiA+ID4gCj4gPiA+ID4gPiA+IAo+ID4gPiA+ID4gPiA+
+IAo+ID4gPiA+ID4gPiA+IFsxLl0gT25lIGxpbmUgc3VtbWFyeSBvZiB0aGUgcHJvYmxlbToKPiA+
+ID4gPiA+ID4gPiBEV0MzIFVTQiAzLjAgbm90IHdvcmtpbmcgb24gT2Ryb2lkLVhVNCB3aXRoIEV4
+eW5vcyA1NDIyCj4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gWzIuXSBGdWxsIGRlc2NyaXB0
+aW9uIG9mIHRoZSBwcm9ibGVtL3JlcG9ydDoKPiA+ID4gPiA+ID4gPiBObyB1c2IgMy4wIGRldmlj
+ZXMgYXJlIGJlaW5nIGRldGVjdGVkIHdoZW4gYXR0YWNoZWQgd2hpbGUgVVNCIDIuMAo+ID4gPiA+
+ID4gPiA+IGRldmljZXMgd29yayBvbiB0aGUgc2FtZSBwb3J0Lgo+ID4gPiA+ID4gPiA+IFVTQiAz
+LjAgd29ya3MgYWZ0ZXIgYXBwbHlpbmcgcGF0Y2hlcyBbOS4xXSBhbmQgWzkuMl0sIGJ1dCBzZWVt
+cwo+ID4gPiA+ID4gPiA+IHRvIGJlCj4gPiA+ID4gPiA+ID4gYnVnZ3kuIFRoZSB1c2IgaHViIGlz
+IHJlZGV0ZWN0ZWQgZXZlcnkgdGltZSBhbiB1c2IgZGV2aWNlIGlzCj4gPiA+ID4gPiA+ID4gYXR0
+YWNoZWQuCj4gCj4gW3NuaXBdCj4gCj4gPiAKPiA+ID4gCj4gPiA+ID4gCj4gPiA+ID4gPiAKPiA+
+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gCj4gPiA+ID4gPiA+ID4gPiAKPiA+ID4gPiA+ID4gPiA+
+IFs5Ll0gT3RoZXIgbm90ZXMsIHBhdGNoZXMsIGZpeGVzLCB3b3JrYXJvdW5kczoKPiA+ID4gPiA+
+ID4gPiA+IFs5LjFdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE0LzQvMjgvMjM0Cj4gPiA+ID4g
+PiA+ID4gPiBbOS4yXSBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNS8yLzIvMjU5Cj4gPiA+IAo+
+ID4gPiBUaGVzZSBwYXRjaGVzIGFyZSByZXF1aXJlZCB0byBnZXQgVVNCIHN1cGVyLXNwZWVkIHdv
+cmtpbmcgb24gRXh5bm9zNTQyMC81ODAwLgo+ID4gPiBCdXQgdGhleSBkaWQgbm90IG1ha2UgdG8g
+dXBzdHJlYW0uIFRoZXJlIHdhcyByZXNpc3RhbmNlIG9uIGFkZGluZyBuZXcKPiA+ID4gcGh5X2Nh
+bGlicmF0ZSgpCj4gPiA+IGNhbGxiYWNrLgo+ID4gPiAKPiA+ID4gV2l0aG91dCB0aGVzZSBwYXRj
+aGVzIHRoZSBFeHlub3M1NDIwLzU4MDAgd2lsbCBlbnVtZXJhdGUgYWxsCj4gPiA+IHN1cGVyLXNw
+ZWVkIGNhcGFibGUgZGV2aWNlcwo+ID4gPiBhcyBoaWdoLXNwZWVkIGRldmljZXMuCj4gPiA+IExh
+c3QgdGltZSB3ZSBjaGVja2VkIHdpdGggZXh5bm9zNTQyeCBzbWRrIGJvYXJkcyBhbmQgcGVhY2gt
+KiBib2FyZHMsCj4gPiA+IHdlIGNvdWxkIGdldCB0aGUKPiA+ID4gU3VwZXIgLSBzcGVlZCBkZXZp
+Y2VzIHdvcmtpbmcuIEkgaGF2ZSBub3QgdGVzdGVkIG9kcm9pZCBhbnl0aW1lIHNvCj4gPiA+IGRv
+bid0IGhhdmUgbXVjaCBpZGVhIGFib3V0IHRoZQo+ID4gPiBpdHMgaW50cmljYWNpZXMuCj4gPiA+
+IEkgZ3Vlc3MgQW5hbmQgd2FzIGFibGUgdG8gdXNlIHRoZXNlIHBhdGNoZXMgdG8gZ2V0IGhpcyBr
+ZXJuZWwgd29ya2luZyBpbiBwYXN0Lgo+ID4gCj4gPiAKPiA+IFRoZSBwYXRjaGVzIGRvbid0IHdv
+cmsgYW55bW9yZSB3aXRoIDQuOC1yYyogLyA0LjguIFRoZXkgd29ya2VkIC0gYnV0IHZlcnkKPiA+
+IHVuc3RhYmxlIC0gd2l0aCA0LjcuCj4gPiAKPiA+IE9uZSBtb3JlIHByb2JsZW0gYXBwZWFyZWQg
+c2luY2Ugb25lIG9mIHRoZSA0LjgtUkNzOiByZWJvb3QgaGFuZ3Mgd2hlbiB0aGUgZHdjMwo+ID4g
+bW9kdWxlIGlzIGxvYWRlZC4gSWYgSSB1bmxvYWQgaXQgYmVmb3JlIHJlYm9vdCAvIHNodXRkb3du
+IGV2ZXJ5dGhpbmcgaXMgZmluZS4KPiA+IAo+ID4gCj4gPiA+IAo+ID4gPiAKPiA+ID4gV2hlbiB5
+b3UgaGF2ZSBhIGRvd25zdHJlYW0gb24tYm9hcmQgdXNiIGh1YiwgaWRlYWxseSBpdCBzaG91bGQg
+YmUgYWJsZQo+ID4gPiB0byBkZXRlY3QgdGhlIGRldmljZXMKPiA+ID4gYW5kIG5vdCByZXNldCBl
+dmVyeXRpbWUgeW91IGNvbm5lY3QgYSBuZXcgZGV2aWNlIChsaWtlIHlvdSBtZW50aW9uZWQgZWFy
+bGllcikuCj4gPiA+IFRoZXJlIGNhbiBiZSB0d28gcG9zc2libGUgcmVhc29ucyB3aHkgdGhlIGh1
+YiBrZWVwcyBnZXR0aW5nIHJlc2V0IGV2ZXIKPiA+ID4gYWZ0ZXIgYXBwbHlpbmcgdGhlIGFib3Zl
+Cj4gPiA+IG1lbnRpb25lZCBwYXRjaGVzOgo+ID4gPiAxKSB0aGUgY2xvY2sgcmF0ZXMgYXJlIG5v
+dCBwcm9wZXIuCj4gPiA+IDIpIHRoZSByZWd1bGF0b3IgbG9hZCBzZXR0aW5nIGlzIG5vdCBlbm91
+Z2ggdG8gZHJpdmUgdGhlIGh1Yi4KPiA+ID4gCj4gPiA+IEFuYW5kLCBjYW4geW91IHBsZWFzZSBw
+b2ludCBNaWNoYWVsIHRvIGFuIG9sZGVyIGtlcm5lbCB3aXRoIHdoaWNoIHlvdQo+ID4gPiBjb3Vs
+ZCB0ZXN0IHVzYiBvbiBvZHJvaWQgc3VjY2Vzc2Z1bGx5ID8KPiA+ID4gWW91IGNhbiBjb21wYXJl
+IHRoZSBjbG9ja3Mgd2l0aCBhbiBvbGRlciB2ZXJzaW9uIGFuZCBzZWUgaWYgdGhlcmUnYQo+ID4g
+PiBhbnkgZGlmZmVyZW5jZS4KPiA+ID4gCj4gPiA+IEFueSBwb3NzaWJpbGl0eSBvZiBhbnkgb3Ro
+ZXIgZnJhbWV3b3JrIChzdWNoIGFzLCBidXMtZnJlcSkgdHJpbW1pbmcKPiA+ID4gZG93biB0aGUg
+Y2xvY2sgLSByYXRlcyA/Cj4gPiAKPiA+IAo+ID4gIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
+IyMjIyMKPiA+ICMgdjQuNy41Cj4gPiAjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwo+
+ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9jbGsvY2xrX3N1bW1hcnkgfCBncmVwIHVz
+Ygo+ID4gwqBzY2xrX3VzYmgyMF9zY2FuX2Nsa8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgNDgwMDAwMDAwwqDC
+oMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoHNjbGtfdXNiaDIwwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoDDCoMKgwqDCoDQ4MDAwCj4gPiAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKg
+wqDCoMKgbW91dF91c2JkMzAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqAyNDAwMDAwMMKg
+wqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYmQzMDDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoDDCoMKgwqDCoDI0MDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHNjbGtfdXNiZDMwMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKg
+wqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYnBoeTMwMMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAx
+wqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqBzY2xrX3VzYnBoeTMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDTC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqA0wqDCoMKgwqAyNDAwMAo+ID4gMDAwwqDCoMKgwqDCoMKg
+wqDCoMKgwqAwCj4gPiDCoMKgwqDCoG1vdXRfdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMcKg
+wqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91
+dF91c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDC
+oMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqBzY2xrX3VzYmQzMDEKPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKg
+MjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91dF91c2Jw
+aHkzMDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgMcKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgc2Nsa191c2JwaHkzMDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgM8KgwqDCoMKgMjQwMDAKPiA+
+IDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgMTAwMDAwMDAwCj4gPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHVzYmQzMDDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqAxMDAwMDAwMDAKPiA+IAo+ID4g
+dXNiaDIwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAzwqDC
+oMKgMTAwMDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gCj4gPiAKPiA+IAo+ID4gIyMjIyMj
+IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKPiA+ICMgdjQuOC4wCj4gPiAjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjIyMjIyMjIwo+ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9jbGsv
+Y2xrX3N1bW1hcnkgfCBncmVwIHVzYgo+ID4gwqBzY2xrX3VzYmgyMF9zY2FuX2Nsa8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAwwqDCoMKgNDgwMDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoHNjbGtfdXNiaDIw
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoDQ4MDAwMDAwCj4gPiDCoMKgwqDC
+oMKgwqDCoMKgMAo+ID4gwqDCoMKgwqBtb3V0X3VzYmQzMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHC
+oMKgwqDCoDI0MDAwMDAwwqDCoMKgwqDCoMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDCoMKgwqDCoGRv
+dXRfdXNiZDMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAw
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKg
+wqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgc2Nsa191c2JkMzAwCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMMKgwqDCoMKgMjQwMDAwMDDC
+oMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgZG91dF91c2JwaHkzMDDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgMcKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgc2Nsa191c2JwaHkzMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqA0wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgNMKgwqDCoMKgMjQwMDAwMDAKPiA+IMKgwqDC
+oMKgwqDCoMKgwqAwCj4gPiDCoMKgwqDCoG1vdXRfdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+McKgwqDCoMKgMjQwMDAwMDDCoMKgwqDCoMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKg
+ZG91dF91c2JkMzAxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKg
+wqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqBzY2xrX3VzYmQzMDEKPiA+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAwwqDCoMKgwqAyNDAwMDAw
+MMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKgwqDCoMKgwqBkb3V0X3VzYnBoeTMwMcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDHCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAxwqDCoMKgwqAyNDAwMDAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgMAo+ID4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqBzY2xrX3VzYnBoeTMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoDPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAzwqDCoMKgwqAyNDAwMDAwMAo+ID4gwqDC
+oMKgwqDCoMKgwqDCoDAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgdXNiZDMwMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgMcKgwqDCoDEwMDAwMDAwMAo+IAo+IFRoaXMgY2xvY2sgc2hvdWxkIGhhdmUgYmVl
+biAyMDBNSHouCj4gCj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgdXNiZDMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgMcKgwqDCoDEwMDAwMDAwMAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2JoMgo+ID4gMMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgM8KgwqDCoDEwMDAwMDAwMMKgwqDCoMKgwqDCoMKg
+wqDCoMKgMAo+ID4gCj4gPiAkIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy91c2IvZGV2aWNlcwo+ID4g
+PDxzeXN0ZW0gaGFuZ3M+Pgo+ID4gCj4gCj4gVGhlIGNsb2NrcyBhcmUgc2FtZSBhY3Jvc3Mgd29y
+a2luZy9ub24td29ya2luZy4KPiBJcyBpdCBwb3NzaWJsZSB0byBiaXNlY3QgdGhlIGNvbW1pdCB0
+aGF0J3MgY2F1c2luZyBoYW5nIGZvciA0Ljh4ID8KCgpbYzQ5OWZmNzFmZjJhMjgxMzY2YzZlYzdh
+OTA0YzU0N2Q4MDZjYmNkMV0gdXNiOiBkd2MzOiBjb3JlOiByZS1mYWN0b3IgaW5pdCBhbmQgZXhp
+dCBwYXRocwpUaGlzIHBhdGNoIGNhdXNlcyBib3RoIHRoZSBoYW5nIG9uIHJlYm9vdCBhbmQgdGhl
+IGxzdXNiIGhhbmcuCgoKPiAKPiBBZGRpbmcgZmV3IG9mIHRoZSBmb2xrcyBmcm9tIFNhbXN1bmcg
+d2hvIGNhbiB0ZXN0IGR3YzMgdXNiIG9uIHNtZGsvcGVhY2ggYm9hcmRzLgo+ICtBbGltLCBQYW5r
+YWoKPiAKPiBIaSBBbGltLCBQYW5rYWosCj4gY2FuIHlvdSBwbGVhc2UgZ2l2ZSBhIHRyeSB3aXRo
+IDQuOCBrZXJuZWwgb24gcGVhY2gvc21kazU0MnggYm9hcmQgYW5kCj4gc2VlIGlmIGR3YzMgdXNi
+IHdvcmtzIG9yIG5vdC4KPiBZb3UgbWF5IG5lZWQgdG8gdGhlIHBhdGNoZXMgbWVudGlvbmVkIGlu
+IFs5LjFdIGFuZCBbOS4yXSBtZW50aW9uZWQgYWJvdmUuCj4gCj4gCj4gW3NuaXBdCj4gCj4gCj4g
+VGhhbmtzCj4gVml2ZWsKPiAKCkJlc3QgcmVnYXJkcwpNaWNoYWVs
