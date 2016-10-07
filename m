@@ -1,70 +1,58 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Fri, 7 Oct 2016 13:17:39 +0200
-Message-ID: <57F78453.4090201@math.uni-bielefeld.de>
-References: <CGME20160919105545eucas1p1026e435bbaeb1f5c866a9abcdd051464@eucas1p1.samsung.com>
- <1474282525-30441-1-git-send-email-m.szyprowski@samsung.com>
- <57F6926F.1070707@math.uni-bielefeld.de>
- <c1cf1a1f-2d1f-7f35-3e3b-f2de90959a24@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] mtd: s3c2410: make ecc mode configurable via
+ platform data
+Date: Fri, 7 Oct 2016 18:48:40 +0300
+Message-ID: <20161007154840.GA4222@kozik-lap>
+References: <1475711217-974-1-git-send-email-sergio.prado@e-labworks.com>
+ <1475711217-974-2-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <c1cf1a1f-2d1f-7f35-3e3b-f2de90959a24@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1475711217-974-2-git-send-email-sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hey Marek,
-
-
-Marek Szyprowski wrote:
-> Hi Tobias,
+On Wed, Oct 05, 2016 at 08:46:55PM -0300, Sergio Prado wrote:
+> Removing CONFIG_MTD_NAND_S3C2410_HWECC option and adding a ecc_mode
+> field in the drivers's platform data structure so it can be selectable
+> via platform data.
 > 
+> Also setting this field to NAND_ECC_SOFT in all boards using this
+> driver since none of them had CONFIG_MTD_NAND_S3C2410_HWECC enabled.
 > 
-> On 2016-10-06 20:05, Tobias Jakobi wrote:
->> Hello Marek,
->>
->> I'm using the patches from the v4.8-clocks-pm-v2 branch plus the ones
->> from the v4.8-clocks-pm-v2 branch on top of 4.8.0.
->>
->> I see some warnings on boot coming from driver core. It appears that the
->> warnings are actually meaningful, since IOMMUs stop working completly.
->> E.g. if I modprobe s5p-mfc later, firmware loading fails because
->> apparantly the IOMMU domain isn't online.
->>
->>> WARNING: CPU: 0 PID: 1 at drivers/base/core.c:356
->>> device_links_driver_bound+0x124/0x12c
->> I added some debug printk() to device_links_driver_bound(), to show the
->> link status. Apparantly it is always DEVICE_LINK_AVAILABLE.
-> 
-> Please note that some additional patches are needed to get IOMMU working
-> properly with both runtime-pm patches and deferred probe, which feature
-> in turn is needed to get it working after adding clocks-pm changes. I
-> will send such patch soon (as a new version of IOMMU deferred probe
-> support patches were posted a few days ago).
-I see. I thought that this was supposed to work with the patches in
-v4.8-clocks-pm-v2.
-
-I picked the patches in this range (endpoints included).
-- arm: dma-mapping: Don't override dma_ops in arch_setup_dma_ops()
-- clocks: exynos5433: add runtime pm support
-
-And this range in v4.8-iommu-pm-v4>
-- driver core: Add a wrapper around __device_release_driver()
-- iommu/exynos: Add proper runtime pm support
+> Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+> ---
+>  arch/arm/mach-s3c24xx/common-smdk.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-anubis.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c         |   1 +
+>  arch/arm/mach-s3c24xx/mach-bast.c              |   1 +
+>  arch/arm/mach-s3c24xx/mach-gta02.c             |   1 +
+>  arch/arm/mach-s3c24xx/mach-jive.c              |   1 +
+>  arch/arm/mach-s3c24xx/mach-mini2440.c          |   1 +
+>  arch/arm/mach-s3c24xx/mach-osiris.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-qt2410.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-rx1950.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-rx3715.c            |   1 +
+>  arch/arm/mach-s3c24xx/mach-vstms.c             |   1 +
+>  arch/arm/mach-s3c64xx/mach-hmt.c               |   1 +
+>  arch/arm/mach-s3c64xx/mach-mini6410.c          |   1 +
+>  arch/arm/mach-s3c64xx/mach-real6410.c          |   1 +
+>  drivers/mtd/nand/Kconfig                       |   9 --
+>  drivers/mtd/nand/s3c2410.c                     | 119 +++++++++++++------------
+>  include/linux/platform_data/mtd-nand-s3c2410.h |   6 +-
+>  18 files changed, 79 insertions(+), 70 deletions(-)
+>
 
 
-Anyway, looking forward to test the new patchset.
+Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
+Best regards,
+Krzysztof
 
-- Tobias
-
-
-> 
->> (...)
-> 
-> Best regards
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
