@@ -1,111 +1,41 @@
-From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
- 5422
-Date: Fri, 07 Oct 2016 22:26:02 +0200
-Message-ID: <1475871962.1697.12.camel@mniewoehner.de>
-References: <1472414695.3845.3.camel@mniewoehner.de>
-         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
-         <1472468730.4925.3.camel@mniewoehner.de>
-         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
-         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
-         <1475578687.1912.28.camel@mniewoehner.de>
-         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
-         <1475771380.22019.5.camel@mniewoehner.de> <87y420wqoy.fsf@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sender163-mail.zoho.com ([74.201.84.163]:21419 "EHLO
-        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754394AbcJGU0Q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 16:26:16 -0400
-In-Reply-To: <87y420wqoy.fsf@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/3] [media] exynos-gsc: Another round of cleanup and fixes
+Date: Fri,  7 Oct 2016 17:39:16 -0300
+Message-ID: <1475872759-17969-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-SGkgRmVsaXBlLAoKT24gRnIsIDIwMTYtMTAtMDcgYXQgMTA6NDIgKzAzMDAsIEZlbGlwZSBCYWxi
-aSB3cm90ZToKPiBIaSwKPiAKPiBNaWNoYWVsIE5pZXfDtmhuZXIgPGxpbnV4QG1uaWV3b2VobmVy
-LmRlPiB3cml0ZXM6Cj4gPiAKPiA+ID4gCj4gPiA+IFRoZSBjbG9ja3MgYXJlIHNhbWUgYWNyb3Nz
-IHdvcmtpbmcvbm9uLXdvcmtpbmcuCj4gPiA+IElzIGl0IHBvc3NpYmxlIHRvIGJpc2VjdCB0aGUg
-Y29tbWl0IHRoYXQncyBjYXVzaW5nIGhhbmcgZm9yIDQuOHggPwo+ID4gCj4gPiAKPiA+IFtjNDk5
-ZmY3MWZmMmEyODEzNjZjNmVjN2E5MDRjNTQ3ZDgwNmNiY2QxXSB1c2I6IGR3YzM6IGNvcmU6IHJl
-LWZhY3RvciBpbml0IGFuZCBleGl0IHBhdGhzCj4gPiBUaGlzIHBhdGNoIGNhdXNlcyBib3RoIHRo
-ZSBoYW5nIG9uIHJlYm9vdCBhbmQgdGhlIGxzdXNiIGhhbmcuCj4gCj4gSG93IHRvIHJlcHJvZHVj
-ZT8gV2h5IGRvbid0IHdlIHNlZSB0aGlzIG9uIHg4NiBhbmQgVEkgYm9hcmRzPyBJJ20KPiBndWVz
-c2luZyB0aGlzIGlzIGZhaWxlZCBiaXNlY3Rpb24sIGFzIEkgY2FuJ3Qgc2VlIGFueXRoaW5nIGlu
-IHRoYXQKPiBjb21taXQgdGhhdCB3b3VsZCBjYXVzZSByZWJvb3QgaGFuZy4gQWxzbywgdGhhdCBj
-b2RlIHBhdGggaXMgKk5PVCoKPiBleGVjdXRlZCB3aGVuIHlvdSBydW4gbHN1c2IuCj4gCgpJJ3Zl
-IHRlc3RlZCB0aGlzIHByb2NlZHVyZSBtdWx0aXBsZSB0aW1lcyB0byBiZSBzdXJlOgoKLSBjaGVj
-a291dMKgYzQ5OWZmNzEsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAotIHJ1biBsc3VzYiAtdiA9
-PiBsc3VzYiBoYW5ncywgY2FuJ3QgdGVybWluYXRlIHdpdGggY3RybC1jCi0gaGFyZCByZXNldCwg
-YWZ0ZXIgYm9vdCBydW4gcG93ZXJvZmYgb3IgcmVib290ID0+IGJvYXJkIGRvZXMgbm90IGNvbXBs
-ZXRlbHkgcG93ZXIgb2ZmIC8gcmVib290IChzZWUgbG9nIGJlbG93KQotIHJldmVydCBjNDk5ZmY3
-MSwgbXJwcm9wZXIsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAotIHJ1biBsc3VzYiAtdiA9PiBz
-aG93cyBmdWxsIG91dHB1dCwgbm90IGhhbmdpbmcKLSBydW4gcmVib290IG9yIHBvd2Vyb2ZmID0+
-IGJvYXJkIHBvd2VycyBvZmYgLyByZWJvb3RzIGp1c3QgZmluZQoKCmRtZXNnIHBvd2Vyb2ZmIG5v
-dCB3b3JraW5nOgouLi4KW8KgwqAxMjAuNzMzNTE5XSBzeXN0ZW1kLWpvdXJuYWxkWzE0NF06IHN5
-c3RlbWQtam91cm5hbGQgc3RvcHBlZCBhcyBwaWQgMTQ0wqDCoMKgwqDCoMKgwqAKW8KgwqAxMjAu
-NzQyNjYzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBTZW5kaW5nIFNJR0tJTEwgdG8gcmVtYWluaW5n
-IHByb2Nlc3Nlcy4uLsKgwqDCoApbwqDCoDEyMC43NjkyMTJdIHN5c3RlbWQtc2h1dGRvd25bMV06
-IFVubW91bnRpbmcgZmlsZSBzeXN0ZW1zLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAKW8KgwqAxMjAuNzczNzEzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBVbm1vdW50aW5n
-IC9zeXMva2VybmVsL2RlYnVnLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEy
-MC44MjcyMTFdIHN5c3RlbWQtc2h1dGRvd25bMV06IFVubW91bnRpbmcgL2Rldi9tcXVldWUuwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjA4MTY3Ml0g
-RVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRlZC4gT3B0czogKG51bGwpwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4wOTE2ODddIEVYVDQtZnMgKG1t
-Y2JsazFwMik6IHJlLW1vdW50ZWQuIE9wdHM6IChudWxsKcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMDk1NjA4XSBFWFQ0LWZzIChtbWNibGsxcDIpOiBy
-ZS1tb3VudGVkLiBPcHRzOiAobnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgClvCoMKgMTIxLjEwMTAxNF0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIGZpbGVzeXN0
-ZW1zIHVubW91bnRlZC7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAx
-MjEuMTA2NTIzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBEZWFjdGl2YXRpbmcgc3dhcHMuwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTEx
-NTg1XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBBbGwgc3dhcHMgZGVhY3RpdmF0ZWQuwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTE2NjYxXSBzeXN0
-ZW1kLXNodXRkb3duWzFdOiBEZXRhY2hpbmcgbG9vcCBkZXZpY2VzLsKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4xMjYzOTVdIHN5c3RlbWQtc2h1dGRv
-d25bMV06IEFsbCBsb29wIGRldmljZXMgZGV0YWNoZWQuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgClvCoMKgMTIxLjEzMDUyNV0gc3lzdGVtZC1zaHV0ZG93blsxXTogRGV0YWNo
-aW5nIERNIGRldmljZXMuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoApbwqDCoDEyMS4xMzU4MjRdIHN5c3RlbWQtc2h1dGRvd25bMV06IEFsbCBETSBkZXZpY2Vz
-IGRldGFjaGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAx
-MjEuMTY2MzI3XSBzeXN0ZW1kLXNodXRkb3duWzFdOiAvbGliL3N5c3RlbWQvc3lzdGVtLXNodXRk
-b3duIHN1Y2NlZWRlZC7CoMKgwqDCoMKgClvCoMKgMTIxLjE3MTczOV0gc3lzdGVtZC1zaHV0ZG93
-blsxXTogUG93ZXJpbmcgb2ZmLgoKPT4gYXQgdGhpcyBwb2ludCByZW1vdmluZyB0aGUgc2QgY2Fy
-ZCB3b3VsZCBzaG93IGEgbWVzc2FnZcKgCiJyZW1vdmVkIG1tYzAiIChub3Qgc3VyZSB3aGF0IHRo
-ZSByZWFsIG1lc3NhZ2Ugd2FzLi4uKSBzbyB0aGUgYm9hcmQgaXMgbm90IGNvbXBsZXRlbHkgb2Zm
-LgoKCmRtZXNnIHBvd2Vyb2ZmIHdvcmtpbmc6Ci4uLgpbwqDCoDEyMC43MzM1MTldIHN5c3RlbWQt
-am91cm5hbGRbMTQ0XTogc3lzdGVtZC1qb3VybmFsZCBzdG9wcGVkIGFzIHBpZCAxNDTCoMKgwqDC
-oMKgwqDCoApbwqDCoDEyMC43NDI2NjNdIHN5c3RlbWQtc2h1dGRvd25bMV06IFNlbmRpbmcgU0lH
-S0lMTCB0byByZW1haW5pbmcgcHJvY2Vzc2VzLi4uwqDCoMKgClvCoMKgMTIwLjc2OTIxMl0gc3lz
-dGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGluZyBmaWxlIHN5c3RlbXMuwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMC43NzM3MTNdIHN5c3RlbWQtc2h1dGRv
-d25bMV06IFVubW91bnRpbmcgL3N5cy9rZXJuZWwvZGVidWcuwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgClvCoMKgMTIwLjgyNzIxMV0gc3lzdGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGlu
-ZyAvZGV2L21xdWV1ZS7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAK
-W8KgwqAxMjEuMDgxNjcyXSBFWFQ0LWZzIChtbWNibGsxcDIpOiByZS1tb3VudGVkLiBPcHRzOiAo
-bnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjA5
-MTY4N10gRVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRlZC4gT3B0czogKG51bGwpwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4wOTU2MDhdIEVYVDQt
-ZnMgKG1tY2JsazFwMik6IHJlLW1vdW50ZWQuIE9wdHM6IChudWxsKcKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTAxMDE0XSBzeXN0ZW1kLXNodXRkb3du
-WzFdOiBBbGwgZmlsZXN5c3RlbXMgdW5tb3VudGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoApbwqDCoDEyMS4xMDY1MjNdIHN5c3RlbWQtc2h1dGRvd25bMV06IERlYWN0aXZh
-dGluZyBzd2Fwcy7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoApbwqDCoDEyMS4xMTE1ODVdIHN5c3RlbWQtc2h1dGRvd25bMV06IEFsbCBzd2FwcyBkZWFj
-dGl2YXRlZC7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDC
-oDEyMS4xMTY2NjFdIHN5c3RlbWQtc2h1dGRvd25bMV06IERldGFjaGluZyBsb29wIGRldmljZXMu
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjEyNjM5
-NV0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIGxvb3AgZGV2aWNlcyBkZXRhY2hlZC7CoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTMwNTI1XSBzeXN0ZW1kLXNo
-dXRkb3duWzFdOiBEZXRhY2hpbmcgRE0gZGV2aWNlcy7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjEzNTgyNF0gc3lzdGVtZC1zaHV0ZG93blsx
-XTogQWxsIERNIGRldmljZXMgZGV0YWNoZWQuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoApbwqDCoDEyMS4xNjYzMjddIHN5c3RlbWQtc2h1dGRvd25bMV06IC9saWIvc3lz
-dGVtZC9zeXN0ZW0tc2h1dGRvd24gc3VjY2VlZGVkLsKgwqDCoMKgwqAKW8KgwqAxMjEuMTcxNzM5
-XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBQb3dlcmluZyBvZmYuClvCoMKgMTIxLjE4MjMzMV0gcmVi
-b++/vQoKCgpCZXN0IHJlZ2FyZHMKTWljaGFlbA==
+Hello,
+
+This series contains another set of cleanup and fixes for the exynos-gsc
+driver. The patches are on top of the previous posted set [0], although
+there's no dependency and the patch-sets can be applied in any order.
+
+Patch 1/3 is a cleanup for the gsc_register_m2m_device() error path
+
+Patch 2/3 fixes a NULL pointer deference that happens when the driver
+module is removed due the video device node not being unregistered.
+
+Patch 3/3 fixes a warning due the driver not doing proper cleanup of
+the m2m source and destination queues.
+
+[0]: https://lkml.org/lkml/2016/9/30/413
+
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (3):
+  [media] exynos-gsc: don't release a non-dynamically allocated
+    video_device
+  [media] exynos-gsc: unregister video device node on driver removal
+  [media] exynos-gsc: cleanup m2m src and dst vb2 queues on STREAMOFF
+
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 30 ++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
