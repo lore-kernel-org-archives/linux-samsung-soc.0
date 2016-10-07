@@ -1,87 +1,111 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 7/8] PCI: exynos: Swap order of exynos_blk_writel() reg/val
- arguments
-Date: Fri, 07 Oct 2016 11:36:24 -0500
-Message-ID: <20161007163623.25314.27460.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161007163526.25314.29033.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
+ 5422
+Date: Fri, 07 Oct 2016 22:26:02 +0200
+Message-ID: <1475871962.1697.12.camel@mniewoehner.de>
+References: <1472414695.3845.3.camel@mniewoehner.de>
+         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
+         <1472468730.4925.3.camel@mniewoehner.de>
+         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
+         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
+         <1475578687.1912.28.camel@mniewoehner.de>
+         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
+         <1475771380.22019.5.camel@mniewoehner.de> <87y420wqoy.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S941018AbcJGQgd (ORCPT
+Received: from sender163-mail.zoho.com ([74.201.84.163]:21419 "EHLO
+        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754394AbcJGU0Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 12:36:33 -0400
-In-Reply-To: <20161007163526.25314.29033.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+        Fri, 7 Oct 2016 16:26:16 -0400
+In-Reply-To: <87y420wqoy.fsf@linux.intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Swap order of exynos_blk_writel() arguments to match the "dev, pos, val"
-order used by pci_write_config_word() and other drivers.  No functional
-change intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-exynos.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 463cbd6..4fb3ce7 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -127,7 +127,7 @@ static u32 exynos_blk_readl(struct exynos_pcie *exynos, u32 reg)
- 	return readl(exynos->block_base + reg);
- }
- 
--static void exynos_blk_writel(struct exynos_pcie *exynos, u32 val, u32 reg)
-+static void exynos_blk_writel(struct exynos_pcie *exynos, u32 reg, u32 val)
- {
- 	writel(val, exynos->block_base + reg);
- }
-@@ -186,23 +186,23 @@ static void exynos_pcie_deassert_core_reset(struct exynos_pcie *exynos)
- 	exynos_elb_writel(exynos, PCIE_NONSTICKY_RESET, 1);
- 	exynos_elb_writel(exynos, PCIE_APP_INIT_RESET, 1);
- 	exynos_elb_writel(exynos, PCIE_APP_INIT_RESET, 0);
--	exynos_blk_writel(exynos, 1, PCIE_PHY_MAC_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_MAC_RESET, 1);
- }
- 
- static void exynos_pcie_assert_phy_reset(struct exynos_pcie *exynos)
- {
--	exynos_blk_writel(exynos, 0, PCIE_PHY_MAC_RESET);
--	exynos_blk_writel(exynos, 1, PCIE_PHY_GLOBAL_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_MAC_RESET, 0);
-+	exynos_blk_writel(exynos, PCIE_PHY_GLOBAL_RESET, 1);
- }
- 
- static void exynos_pcie_deassert_phy_reset(struct exynos_pcie *exynos)
- {
--	exynos_blk_writel(exynos, 0, PCIE_PHY_GLOBAL_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_GLOBAL_RESET, 0);
- 	exynos_elb_writel(exynos, PCIE_PWR_RESET, 1);
--	exynos_blk_writel(exynos, 0, PCIE_PHY_COMMON_RESET);
--	exynos_blk_writel(exynos, 0, PCIE_PHY_CMN_REG);
--	exynos_blk_writel(exynos, 0, PCIE_PHY_TRSVREG_RESET);
--	exynos_blk_writel(exynos, 0, PCIE_PHY_TRSV_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_COMMON_RESET, 0);
-+	exynos_blk_writel(exynos, PCIE_PHY_CMN_REG, 0);
-+	exynos_blk_writel(exynos, PCIE_PHY_TRSVREG_RESET, 0);
-+	exynos_blk_writel(exynos, PCIE_PHY_TRSV_RESET, 0);
- }
- 
- static void exynos_pcie_power_on_phy(struct exynos_pcie *exynos)
-@@ -319,9 +319,9 @@ static int exynos_pcie_establish_link(struct exynos_pcie *exynos)
- 	exynos_pcie_init_phy(exynos);
- 
- 	/* pulse for common reset */
--	exynos_blk_writel(exynos, 1, PCIE_PHY_COMMON_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_COMMON_RESET, 1);
- 	udelay(500);
--	exynos_blk_writel(exynos, 0, PCIE_PHY_COMMON_RESET);
-+	exynos_blk_writel(exynos, PCIE_PHY_COMMON_RESET, 0);
- 
- 	exynos_pcie_deassert_core_reset(exynos);
- 	dw_pcie_setup_rc(pp);
+SGkgRmVsaXBlLAoKT24gRnIsIDIwMTYtMTAtMDcgYXQgMTA6NDIgKzAzMDAsIEZlbGlwZSBCYWxi
+aSB3cm90ZToKPiBIaSwKPiAKPiBNaWNoYWVsIE5pZXfDtmhuZXIgPGxpbnV4QG1uaWV3b2VobmVy
+LmRlPiB3cml0ZXM6Cj4gPiAKPiA+ID4gCj4gPiA+IFRoZSBjbG9ja3MgYXJlIHNhbWUgYWNyb3Nz
+IHdvcmtpbmcvbm9uLXdvcmtpbmcuCj4gPiA+IElzIGl0IHBvc3NpYmxlIHRvIGJpc2VjdCB0aGUg
+Y29tbWl0IHRoYXQncyBjYXVzaW5nIGhhbmcgZm9yIDQuOHggPwo+ID4gCj4gPiAKPiA+IFtjNDk5
+ZmY3MWZmMmEyODEzNjZjNmVjN2E5MDRjNTQ3ZDgwNmNiY2QxXSB1c2I6IGR3YzM6IGNvcmU6IHJl
+LWZhY3RvciBpbml0IGFuZCBleGl0IHBhdGhzCj4gPiBUaGlzIHBhdGNoIGNhdXNlcyBib3RoIHRo
+ZSBoYW5nIG9uIHJlYm9vdCBhbmQgdGhlIGxzdXNiIGhhbmcuCj4gCj4gSG93IHRvIHJlcHJvZHVj
+ZT8gV2h5IGRvbid0IHdlIHNlZSB0aGlzIG9uIHg4NiBhbmQgVEkgYm9hcmRzPyBJJ20KPiBndWVz
+c2luZyB0aGlzIGlzIGZhaWxlZCBiaXNlY3Rpb24sIGFzIEkgY2FuJ3Qgc2VlIGFueXRoaW5nIGlu
+IHRoYXQKPiBjb21taXQgdGhhdCB3b3VsZCBjYXVzZSByZWJvb3QgaGFuZy4gQWxzbywgdGhhdCBj
+b2RlIHBhdGggaXMgKk5PVCoKPiBleGVjdXRlZCB3aGVuIHlvdSBydW4gbHN1c2IuCj4gCgpJJ3Zl
+IHRlc3RlZCB0aGlzIHByb2NlZHVyZSBtdWx0aXBsZSB0aW1lcyB0byBiZSBzdXJlOgoKLSBjaGVj
+a291dMKgYzQ5OWZmNzEsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAotIHJ1biBsc3VzYiAtdiA9
+PiBsc3VzYiBoYW5ncywgY2FuJ3QgdGVybWluYXRlIHdpdGggY3RybC1jCi0gaGFyZCByZXNldCwg
+YWZ0ZXIgYm9vdCBydW4gcG93ZXJvZmYgb3IgcmVib290ID0+IGJvYXJkIGRvZXMgbm90IGNvbXBs
+ZXRlbHkgcG93ZXIgb2ZmIC8gcmVib290IChzZWUgbG9nIGJlbG93KQotIHJldmVydCBjNDk5ZmY3
+MSwgbXJwcm9wZXIsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAotIHJ1biBsc3VzYiAtdiA9PiBz
+aG93cyBmdWxsIG91dHB1dCwgbm90IGhhbmdpbmcKLSBydW4gcmVib290IG9yIHBvd2Vyb2ZmID0+
+IGJvYXJkIHBvd2VycyBvZmYgLyByZWJvb3RzIGp1c3QgZmluZQoKCmRtZXNnIHBvd2Vyb2ZmIG5v
+dCB3b3JraW5nOgouLi4KW8KgwqAxMjAuNzMzNTE5XSBzeXN0ZW1kLWpvdXJuYWxkWzE0NF06IHN5
+c3RlbWQtam91cm5hbGQgc3RvcHBlZCBhcyBwaWQgMTQ0wqDCoMKgwqDCoMKgwqAKW8KgwqAxMjAu
+NzQyNjYzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBTZW5kaW5nIFNJR0tJTEwgdG8gcmVtYWluaW5n
+IHByb2Nlc3Nlcy4uLsKgwqDCoApbwqDCoDEyMC43NjkyMTJdIHN5c3RlbWQtc2h1dGRvd25bMV06
+IFVubW91bnRpbmcgZmlsZSBzeXN0ZW1zLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAKW8KgwqAxMjAuNzczNzEzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBVbm1vdW50aW5n
+IC9zeXMva2VybmVsL2RlYnVnLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEy
+MC44MjcyMTFdIHN5c3RlbWQtc2h1dGRvd25bMV06IFVubW91bnRpbmcgL2Rldi9tcXVldWUuwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjA4MTY3Ml0g
+RVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRlZC4gT3B0czogKG51bGwpwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4wOTE2ODddIEVYVDQtZnMgKG1t
+Y2JsazFwMik6IHJlLW1vdW50ZWQuIE9wdHM6IChudWxsKcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMDk1NjA4XSBFWFQ0LWZzIChtbWNibGsxcDIpOiBy
+ZS1tb3VudGVkLiBPcHRzOiAobnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgClvCoMKgMTIxLjEwMTAxNF0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIGZpbGVzeXN0
+ZW1zIHVubW91bnRlZC7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAx
+MjEuMTA2NTIzXSBzeXN0ZW1kLXNodXRkb3duWzFdOiBEZWFjdGl2YXRpbmcgc3dhcHMuwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTEx
+NTg1XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBBbGwgc3dhcHMgZGVhY3RpdmF0ZWQuwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTE2NjYxXSBzeXN0
+ZW1kLXNodXRkb3duWzFdOiBEZXRhY2hpbmcgbG9vcCBkZXZpY2VzLsKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4xMjYzOTVdIHN5c3RlbWQtc2h1dGRv
+d25bMV06IEFsbCBsb29wIGRldmljZXMgZGV0YWNoZWQuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgClvCoMKgMTIxLjEzMDUyNV0gc3lzdGVtZC1zaHV0ZG93blsxXTogRGV0YWNo
+aW5nIERNIGRldmljZXMuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoApbwqDCoDEyMS4xMzU4MjRdIHN5c3RlbWQtc2h1dGRvd25bMV06IEFsbCBETSBkZXZpY2Vz
+IGRldGFjaGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAx
+MjEuMTY2MzI3XSBzeXN0ZW1kLXNodXRkb3duWzFdOiAvbGliL3N5c3RlbWQvc3lzdGVtLXNodXRk
+b3duIHN1Y2NlZWRlZC7CoMKgwqDCoMKgClvCoMKgMTIxLjE3MTczOV0gc3lzdGVtZC1zaHV0ZG93
+blsxXTogUG93ZXJpbmcgb2ZmLgoKPT4gYXQgdGhpcyBwb2ludCByZW1vdmluZyB0aGUgc2QgY2Fy
+ZCB3b3VsZCBzaG93IGEgbWVzc2FnZcKgCiJyZW1vdmVkIG1tYzAiIChub3Qgc3VyZSB3aGF0IHRo
+ZSByZWFsIG1lc3NhZ2Ugd2FzLi4uKSBzbyB0aGUgYm9hcmQgaXMgbm90IGNvbXBsZXRlbHkgb2Zm
+LgoKCmRtZXNnIHBvd2Vyb2ZmIHdvcmtpbmc6Ci4uLgpbwqDCoDEyMC43MzM1MTldIHN5c3RlbWQt
+am91cm5hbGRbMTQ0XTogc3lzdGVtZC1qb3VybmFsZCBzdG9wcGVkIGFzIHBpZCAxNDTCoMKgwqDC
+oMKgwqDCoApbwqDCoDEyMC43NDI2NjNdIHN5c3RlbWQtc2h1dGRvd25bMV06IFNlbmRpbmcgU0lH
+S0lMTCB0byByZW1haW5pbmcgcHJvY2Vzc2VzLi4uwqDCoMKgClvCoMKgMTIwLjc2OTIxMl0gc3lz
+dGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGluZyBmaWxlIHN5c3RlbXMuwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMC43NzM3MTNdIHN5c3RlbWQtc2h1dGRv
+d25bMV06IFVubW91bnRpbmcgL3N5cy9rZXJuZWwvZGVidWcuwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgClvCoMKgMTIwLjgyNzIxMV0gc3lzdGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGlu
+ZyAvZGV2L21xdWV1ZS7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAK
+W8KgwqAxMjEuMDgxNjcyXSBFWFQ0LWZzIChtbWNibGsxcDIpOiByZS1tb3VudGVkLiBPcHRzOiAo
+bnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjA5
+MTY4N10gRVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRlZC4gT3B0czogKG51bGwpwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDCoDEyMS4wOTU2MDhdIEVYVDQt
+ZnMgKG1tY2JsazFwMik6IHJlLW1vdW50ZWQuIE9wdHM6IChudWxsKcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTAxMDE0XSBzeXN0ZW1kLXNodXRkb3du
+WzFdOiBBbGwgZmlsZXN5c3RlbXMgdW5tb3VudGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoApbwqDCoDEyMS4xMDY1MjNdIHN5c3RlbWQtc2h1dGRvd25bMV06IERlYWN0aXZh
+dGluZyBzd2Fwcy7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoApbwqDCoDEyMS4xMTE1ODVdIHN5c3RlbWQtc2h1dGRvd25bMV06IEFsbCBzd2FwcyBkZWFj
+dGl2YXRlZC7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoApbwqDC
+oDEyMS4xMTY2NjFdIHN5c3RlbWQtc2h1dGRvd25bMV06IERldGFjaGluZyBsb29wIGRldmljZXMu
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjEyNjM5
+NV0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIGxvb3AgZGV2aWNlcyBkZXRhY2hlZC7CoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKW8KgwqAxMjEuMTMwNTI1XSBzeXN0ZW1kLXNo
+dXRkb3duWzFdOiBEZXRhY2hpbmcgRE0gZGV2aWNlcy7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgClvCoMKgMTIxLjEzNTgyNF0gc3lzdGVtZC1zaHV0ZG93blsx
+XTogQWxsIERNIGRldmljZXMgZGV0YWNoZWQuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoApbwqDCoDEyMS4xNjYzMjddIHN5c3RlbWQtc2h1dGRvd25bMV06IC9saWIvc3lz
+dGVtZC9zeXN0ZW0tc2h1dGRvd24gc3VjY2VlZGVkLsKgwqDCoMKgwqAKW8KgwqAxMjEuMTcxNzM5
+XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBQb3dlcmluZyBvZmYuClvCoMKgMTIxLjE4MjMzMV0gcmVi
+b++/vQoKCgpCZXN0IHJlZ2FyZHMKTWljaGFlbA==
