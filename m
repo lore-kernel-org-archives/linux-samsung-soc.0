@@ -1,94 +1,109 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v3 00/17] pinctrl: exynos/samsung: Add header with values
  used for configuration
-Date: Mon, 10 Oct 2016 02:49:01 +0900
-Message-ID: <CA+Ln22GgjF=wVzL3fF7xzvOZtJpiZjVcFTrvDQAu6T2RCfY89g@mail.gmail.com>
+Date: Sun, 9 Oct 2016 20:52:41 +0300
+Message-ID: <20161009175241.GA13098@kozik-lap>
 References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
- <CA+Ln22Eotn=dLyA8KYT_6Fnwvp1sTSxzP8DepAFB2P8EUMME6Q@mail.gmail.com> <20161009163910.GB9672@kozik-lap>
+ <CA+Ln22Eotn=dLyA8KYT_6Fnwvp1sTSxzP8DepAFB2P8EUMME6Q@mail.gmail.com>
+ <20161009163910.GB9672@kozik-lap>
+ <CA+Ln22GgjF=wVzL3fF7xzvOZtJpiZjVcFTrvDQAu6T2RCfY89g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161009163910.GB9672@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CA+Ln22GgjF=wVzL3fF7xzvOZtJpiZjVcFTrvDQAu6T2RCfY89g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2016-10-10 1:39 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Sun, Oct 09, 2016 at 04:04:11PM +0900, Tomasz Figa wrote:
->> Hi Krzysztof,
->>
->> 2016-09-04 20:04 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->> >
->> > Hi,
->> >
->> > Changes since v2
->> > ================
->> > 1. Combine separate patchsets into one. Previously I sent separately the fixes
->> >    and changes for S3C platforms.
->> > 2. Fix issues pointed during review.
->> > 3. Add review tags.
->> >
->> > Changes since v1
->> > ================
->> > 1. Follow Arnd's suggestion about moving the macros to common place.
->> > 2. Subjects: replace "GPIO" with "pinctrl".
->> > 3. There were some major changes here so I did not add Javier's
->> >    reviewed-by and tested-by tags.
->> >
->> > Merging
->> > =======
->> > Patches #1 and #2 should probably go through pinctrl tree. In that case I would
->> > appreciate a stable branch/tag so DTS could base on top of it.
->> >
->> > Goal
->> > ====
->> > Increase readability:
->> >         uart0_data: uart0-data {
->> >                 samsung,pins = "gpa0-0", "gpa0-1";
->> > -               samsung,pin-function = <2>;
->> > -               samsung,pin-pud = <0>;
->> > -               samsung,pin-drv = <0>;
->> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
->> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->> > +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
->>
->> I like the idea, thanks for cleaning this up. However I'd like to
->> bikeshed the prefix a bit. Since the properties are already prefixed
->> by "samsung,", I think it would make much more sense to also prefix
->> the generic values with "SAMSUNG_". Of course for soc/family-specific
->> values, the soc/family name prefix sounds right.
->
-> I am lost. Sorry, I don't get what kind of final prefixes you would like
-> to have.
->
-> SAMSUNG_EXYNOS4_PIN_DRV_LV1
-> SAMSUNG_EXYNOS5260_PIN_DRV_LV1
-> ?
+On Mon, Oct 10, 2016 at 02:49:01AM +0900, Tomasz Figa wrote:
+> 2016-10-10 1:39 GMT+09:00 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+> > On Sun, Oct 09, 2016 at 04:04:11PM +0900, Tomasz Figa wrote:
+> >> Hi Krzysztof,
+> >>
+> >> 2016-09-04 20:04 GMT+09:00 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+> >> >
+> >> > Hi,
+> >> >
+> >> > Changes since v2
+> >> > ================
+> >> > 1. Combine separate patchsets into one. Previously I sent separately the fixes
+> >> >    and changes for S3C platforms.
+> >> > 2. Fix issues pointed during review.
+> >> > 3. Add review tags.
+> >> >
+> >> > Changes since v1
+> >> > ================
+> >> > 1. Follow Arnd's suggestion about moving the macros to common place.
+> >> > 2. Subjects: replace "GPIO" with "pinctrl".
+> >> > 3. There were some major changes here so I did not add Javier's
+> >> >    reviewed-by and tested-by tags.
+> >> >
+> >> > Merging
+> >> > =======
+> >> > Patches #1 and #2 should probably go through pinctrl tree. In that case I would
+> >> > appreciate a stable branch/tag so DTS could base on top of it.
+> >> >
+> >> > Goal
+> >> > ====
+> >> > Increase readability:
+> >> >         uart0_data: uart0-data {
+> >> >                 samsung,pins = "gpa0-0", "gpa0-1";
+> >> > -               samsung,pin-function = <2>;
+> >> > -               samsung,pin-pud = <0>;
+> >> > -               samsung,pin-drv = <0>;
+> >> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> >> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> >> > +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> >>
+> >> I like the idea, thanks for cleaning this up. However I'd like to
+> >> bikeshed the prefix a bit. Since the properties are already prefixed
+> >> by "samsung,", I think it would make much more sense to also prefix
+> >> the generic values with "SAMSUNG_". Of course for soc/family-specific
+> >> values, the soc/family name prefix sounds right.
+> >
+> > I am lost. Sorry, I don't get what kind of final prefixes you would like
+> > to have.
+> >
+> > SAMSUNG_EXYNOS4_PIN_DRV_LV1
+> > SAMSUNG_EXYNOS5260_PIN_DRV_LV1
+> > ?
+> 
+> For SoC-specific definitions:
+> 
+> EXYNOS4_PIN_DRV_LV1
+> EXYNOS5260_PIN_DRV_LV1
 
-For SoC-specific definitions:
+ok... so no change needed in my patch.
 
-EXYNOS4_PIN_DRV_LV1
-EXYNOS5260_PIN_DRV_LV1
+> 
+> >
+> >> Similarly for rest of the value names, such as SAMSUNG_PIN_PUD instead
+> >> of SAMSUNG_PIN_PULL, which obviously sounds more like correct English,
+> >> however hurts the consistency and could confuse the people writing new
+> >> dts files.
+> >
+> > SAMSUNG_S3C64XX_PIN_PUD_NONE
+> > SAMSUNG_EXYNOS_PIN_PUD_NONE
+> 
+> For definitions common for the whole Samsung pinctrl driver:
+> 
+> SAMSUNG_PIN_PUD_NONE
 
->
->> Similarly for rest of the value names, such as SAMSUNG_PIN_PUD instead
->> of SAMSUNG_PIN_PULL, which obviously sounds more like correct English,
->> however hurts the consistency and could confuse the people writing new
->> dts files.
->
-> SAMSUNG_S3C64XX_PIN_PUD_NONE
-> SAMSUNG_EXYNOS_PIN_PUD_NONE
+These are not the same. The "none" is the same but rest is not.
 
-For definitions common for the whole Samsung pinctrl driver:
+> But actually I think I missed the fact that there is almost no common
+> definitions. Is that correct? Was that the missing part of my
+> understanding?
 
-SAMSUNG_PIN_PUD_NONE
-
-...
-
-But actually I think I missed the fact that there is almost no common
-definitions. Is that correct? Was that the missing part of my
-understanding?
+Yes. The only common definition for all Samsung SoCs would be the
+function of a pin. On the other hand this will bring inconsistency:
+everything prefixed with SoC except the function.
 
 Best regards,
-Tomasz
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
