@@ -1,89 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 00/17] pinctrl: exynos/samsung: Add header with values
- used for configuration
-Date: Sun, 9 Oct 2016 19:39:10 +0300
-Message-ID: <20161009163910.GB9672@kozik-lap>
-References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
- <CA+Ln22Eotn=dLyA8KYT_6Fnwvp1sTSxzP8DepAFB2P8EUMME6Q@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 1/2] host: ehci-exynos: Convert to use the SET_SYSTEM_SLEEP_PM_OPS
+Date: Sun, 9 Oct 2016 22:45:40 +0530
+Message-ID: <CANAwSgSr6-0x47=0P_NCiGCv=FSZR9dNT89JpY=9R_32U8HywQ@mail.gmail.com>
+References: <1476023655-3232-1-git-send-email-linux.amoon@gmail.com> <20161009163446.GA9672@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CA+Ln22Eotn=dLyA8KYT_6Fnwvp1sTSxzP8DepAFB2P8EUMME6Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161009163446.GA9672@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 09, 2016 at 04:04:11PM +0900, Tomasz Figa wrote:
-> Hi Krzysztof,
-> 
-> 2016-09-04 20:04 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> >
-> > Hi,
-> >
-> > Changes since v2
-> > ================
-> > 1. Combine separate patchsets into one. Previously I sent separately the fixes
-> >    and changes for S3C platforms.
-> > 2. Fix issues pointed during review.
-> > 3. Add review tags.
-> >
-> > Changes since v1
-> > ================
-> > 1. Follow Arnd's suggestion about moving the macros to common place.
-> > 2. Subjects: replace "GPIO" with "pinctrl".
-> > 3. There were some major changes here so I did not add Javier's
-> >    reviewed-by and tested-by tags.
-> >
-> > Merging
-> > =======
-> > Patches #1 and #2 should probably go through pinctrl tree. In that case I would
-> > appreciate a stable branch/tag so DTS could base on top of it.
-> >
-> > Goal
-> > ====
-> > Increase readability:
-> >         uart0_data: uart0-data {
-> >                 samsung,pins = "gpa0-0", "gpa0-1";
-> > -               samsung,pin-function = <2>;
-> > -               samsung,pin-pud = <0>;
-> > -               samsung,pin-drv = <0>;
-> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> > +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> 
-> I like the idea, thanks for cleaning this up. However I'd like to
-> bikeshed the prefix a bit. Since the properties are already prefixed
-> by "samsung,", I think it would make much more sense to also prefix
-> the generic values with "SAMSUNG_". Of course for soc/family-specific
-> values, the soc/family name prefix sounds right.
+Hi Krzysztof,
 
-I am lost. Sorry, I don't get what kind of final prefixes you would like
-to have.
+On 9 October 2016 at 22:04, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Sun, Oct 09, 2016 at 02:34:14PM +0000, Anand Moon wrote:
+>> Move the ehci-exynos system PM callbacks within #ifdef CONFIG_PM_SLEEP
+>> as to avoid them being build when not used. This also allows us to use the
+>> SET_SYSTEM_SLEEP_PM_OPS macro which simplifies the code.
+>>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  drivers/usb/host/ehci-exynos.c | 14 ++++++--------
+>>  1 file changed, 6 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+>> index 42e5b66..1899900 100644
+>> --- a/drivers/usb/host/ehci-exynos.c
+>> +++ b/drivers/usb/host/ehci-exynos.c
+>> @@ -251,7 +251,7 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>>       return 0;
+>>  }
+>>
+>> -#ifdef CONFIG_PM
+>> +#ifdef CONFIG_PM_SLEEP
+>
+> Does not look like an equivalent change. How will it behave in a config
+> with !SUSPEND && !HIBERNATE && PM?
+>
 
-SAMSUNG_EXYNOS4_PIN_DRV_LV1
-SAMSUNG_EXYNOS5260_PIN_DRV_LV1
-?
+[snip]
 
-> Similarly for rest of the value names, such as SAMSUNG_PIN_PUD instead
-> of SAMSUNG_PIN_PULL, which obviously sounds more like correct English,
-> however hurts the consistency and could confuse the people writing new
-> dts files.
+I just wanted to update suspend and resume callback to use
+SET_SYSTEM_SLEEP_PM_OPS
+as they are define under CONFIG_PM_SLEEP so I update above to avoid
+compilation warning/error.
 
-SAMSUNG_S3C64XX_PIN_PUD_NONE
-SAMSUNG_EXYNOS_PIN_PUD_NONE
+http://lxr.free-electrons.com/source/include/linux/pm.h#L321
 
-?
-
-Best regards,
-Krzysztof
+-Best Regards
+Anand Moon
