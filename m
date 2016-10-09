@@ -1,69 +1,83 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 00/17] pinctrl: exynos/samsung: Add header with values
- used for configuration
-Date: Sun, 9 Oct 2016 16:04:11 +0900
-Message-ID: <CA+Ln22Eotn=dLyA8KYT_6Fnwvp1sTSxzP8DepAFB2P8EUMME6Q@mail.gmail.com>
-References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH 2/2] host: ohci-exynos: Convert to use the
+ SET_SYSTEM_SLEEP_PM_OPS
+Date: Sun,  9 Oct 2016 14:34:15 +0000
+Message-ID: <1476023655-3232-2-git-send-email-linux.amoon@gmail.com>
+References: <1476023655-3232-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1472987060-28293-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1476023655-3232-1-git-send-email-linux.amoon@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Move the ohci-exynos system PM callbacks within #ifdef CONFIG_PM_SLEEP
+as to avoid them being build when not used. This also allows us to use the
+SET_SYSTEM_SLEEP_PM_OPS macro which simplifies the code.
 
-2016-09-04 20:04 GMT+09:00 Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
->
-> Hi,
->
-> Changes since v2
-> ================
-> 1. Combine separate patchsets into one. Previously I sent separately the fixes
->    and changes for S3C platforms.
-> 2. Fix issues pointed during review.
-> 3. Add review tags.
->
-> Changes since v1
-> ================
-> 1. Follow Arnd's suggestion about moving the macros to common place.
-> 2. Subjects: replace "GPIO" with "pinctrl".
-> 3. There were some major changes here so I did not add Javier's
->    reviewed-by and tested-by tags.
->
-> Merging
-> =======
-> Patches #1 and #2 should probably go through pinctrl tree. In that case I would
-> appreciate a stable branch/tag so DTS could base on top of it.
->
-> Goal
-> ====
-> Increase readability:
->         uart0_data: uart0-data {
->                 samsung,pins = "gpa0-0", "gpa0-1";
-> -               samsung,pin-function = <2>;
-> -               samsung,pin-pud = <0>;
-> -               samsung,pin-drv = <0>;
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/usb/host/ohci-exynos.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-I like the idea, thanks for cleaning this up. However I'd like to
-bikeshed the prefix a bit. Since the properties are already prefixed
-by "samsung,", I think it would make much more sense to also prefix
-the generic values with "SAMSUNG_". Of course for soc/family-specific
-values, the soc/family name prefix sounds right.
-
-Similarly for rest of the value names, such as SAMSUNG_PIN_PUD instead
-of SAMSUNG_PIN_PULL, which obviously sounds more like correct English,
-however hurts the consistency and could confuse the people writing new
-dts files.
-
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 2cd105b..1764baa 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -219,7 +219,7 @@ static void exynos_ohci_shutdown(struct platform_device *pdev)
+ 		hcd->driver->shutdown(hcd);
+ }
+ 
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ static int exynos_ohci_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+@@ -256,18 +256,16 @@ static int exynos_ohci_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#else
+-#define exynos_ohci_suspend	NULL
+-#define exynos_ohci_resume	NULL
+-#endif
+ 
+-static const struct ohci_driver_overrides exynos_overrides __initconst = {
+-	.extra_priv_size =	sizeof(struct exynos_ohci_hcd),
++static const struct dev_pm_ops exynos_ohci_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(exynos_ohci_suspend, exynos_ohci_resume)
+ };
++#endif /* CONFIG_PM_SLEEP */
+ 
+-static const struct dev_pm_ops exynos_ohci_pm_ops = {
+-	.suspend	= exynos_ohci_suspend,
+-	.resume		= exynos_ohci_resume,
++#define DEV_PM_OPS IS_ENABLED(CONFIG_PM_SLEEP) ? &exynos_ohci_pm_ops : NULL
++
++static const struct ohci_driver_overrides exynos_overrides __initconst = {
++	.extra_priv_size =	sizeof(struct exynos_ohci_hcd),
+ };
+ 
+ #ifdef CONFIG_OF
+@@ -285,7 +283,7 @@ static struct platform_driver exynos_ohci_driver = {
+ 	.shutdown	= exynos_ohci_shutdown,
+ 	.driver = {
+ 		.name	= "exynos-ohci",
+-		.pm	= &exynos_ohci_pm_ops,
++		.pm	= DEV_PM_OPS,
+ 		.of_match_table	= of_match_ptr(exynos_ohci_match),
+ 	}
+ };
+-- 
+2.7.4
