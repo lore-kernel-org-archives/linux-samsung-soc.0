@@ -1,64 +1,65 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 1/2] host: ehci-exynos: Convert to use the SET_SYSTEM_SLEEP_PM_OPS
-Date: Mon, 10 Oct 2016 19:46:10 +0530
-Message-ID: <CANAwSgTfnjmyHJv+MTr1ukcwjb8cu73564kFqb2u=5xtX-r7Tw@mail.gmail.com>
-References: <20161009163446.GA9672@kozik-lap> <Pine.LNX.4.44L0.1610091713490.1734-100000@netrider.rowland.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/8] PCI: exynos: Name private struct pointer "exynos"
+ consistently
+Date: Mon, 10 Oct 2016 19:49:42 +0300
+Message-ID: <20161010164942.GA3352@kozik-lap>
+References: <20161007163526.25314.29033.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20161008194144.GA2991@kozik-lap>
+ <20161010133644.GA30267@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36840 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752789AbcJJOQb (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Oct 2016 10:16:31 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1610091713490.1734-100000@netrider.rowland.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161010133644.GA30267@localhost>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-hi Alan/Krzysztof,
+On Mon, Oct 10, 2016 at 08:36:44AM -0500, Bjorn Helgaas wrote:
+> Hi Krzysztof,
+> 
+> Thanks a lot for taking the time to look these over.
+> 
+> On Sat, Oct 08, 2016 at 10:41:44PM +0300, Krzysztof Kozlowski wrote:
+> > On Fri, Oct 07, 2016 at 11:35:26AM -0500, Bjorn Helgaas wrote:
+> > > Use a device-specific name, "exynos", for struct exynos_pcie pointers
+> > > to hint that this is device-specific information.
+> > 
+> > I don't get it. "exynos_pcie" is already a exynos-device-specific name.
+> > There are a lot of changes but I don't see the real reason/benefit. What
+> > was your intention?
+> 
+> I'm looking across all the drivers in drivers/pci/host/, not just
+> exynos.  Many of them used "pcie" as name for pointers to the
+> device-specific struct, leading to things like "pcie->lut" or
+> "pcie->breg_base".  These *look* like they should be sort of generic,
+> but in fact they are device-specific.
+> 
+> My idea was to replace that "pcie" name with something
+> device-specific, and I started with the simplest possible name, e.g.,
+> "exynos".  Others pointed out that that for SoCs, that is often not
+> enough specific enough, and something like "exynos_pcie" is more
+> appropriate.
+> 
+> In the specific case of exynos, it already uses "exynos_pcie" in most
+> cases, so I tweaked this patch to use it in the few remaining places
+> where it didn't (the register accessor functions).
 
-On 10 October 2016 at 02:47, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Sun, 9 Oct 2016, Krzysztof Kozlowski wrote:
->
->> On Sun, Oct 09, 2016 at 02:34:14PM +0000, Anand Moon wrote:
->> > Move the ehci-exynos system PM callbacks within #ifdef CONFIG_PM_SLEEP
->> > as to avoid them being build when not used. This also allows us to use the
->> > SET_SYSTEM_SLEEP_PM_OPS macro which simplifies the code.
->> >
->> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->> > ---
->> >  drivers/usb/host/ehci-exynos.c | 14 ++++++--------
->> >  1 file changed, 6 insertions(+), 8 deletions(-)
->> >
->> > diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
->> > index 42e5b66..1899900 100644
->> > --- a/drivers/usb/host/ehci-exynos.c
->> > +++ b/drivers/usb/host/ehci-exynos.c
->> > @@ -251,7 +251,7 @@ static int exynos_ehci_remove(struct platform_device *pdev)
->> >     return 0;
->> >  }
->> >
->> > -#ifdef CONFIG_PM
->> > +#ifdef CONFIG_PM_SLEEP
->>
->> Does not look like an equivalent change. How will it behave in a config
->> with !SUSPEND && !HIBERNATE && PM?
->
-> It's hard to say what Anand originally had in mind.  To me, it looks
-> like it will behave exactly the same as before, the only difference
-> being that the object image will not contain unused exynos_ehci_suspend
-> and exynos_ehci_resume routines.  And the compiler won't issue a
-> warning at build time that the routines are unused.
->
-> Alan Stern
->
+Thanks for clarification, I am fine with it.
 
-Thanks for looking into this closely.
+> > > No functional change
+> > > intended.
+> > 
+> > Oh, but there is. Inline disappeared in first functions. Although I
+> > don't mind but this should be seprate from trivial rename.
+> 
+> I didn't think of "inline" as a functional change, but I split it out
+> into its own patch.  I'm embarrassed at how much churn this turned out
+> to be, so I didn't want to add more patches than I had to, but I did
+> split it out for you.
+> 
+> I repushed the branch.
 
-I will just send one line changes to use SET_SYSTEM_SLEEP_PM_OPS
-with better commit logs, if you people agree with this.
-
-Best Regards
--Anand Moon
+Thanks,
+Krzysztof
