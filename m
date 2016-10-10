@@ -1,65 +1,61 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/8] PCI: exynos: Name private struct pointer "exynos"
- consistently
-Date: Mon, 10 Oct 2016 19:49:42 +0300
-Message-ID: <20161010164942.GA3352@kozik-lap>
-References: <20161007163526.25314.29033.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20161008194144.GA2991@kozik-lap>
- <20161010133644.GA30267@localhost>
+Subject: Re: [PATCH] ASoC: samsung: Minor simplification in i2s_set_fmt()
+Date: Mon, 10 Oct 2016 20:05:28 +0300
+Message-ID: <20161010170528.GB3352@kozik-lap>
+References: <1476065045-13865-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34348 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752245AbcJJRFl (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 10 Oct 2016 13:05:41 -0400
+Received: by mail-lf0-f68.google.com with SMTP id p80so11119780lfp.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Oct 2016 10:05:40 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20161010133644.GA30267@localhost>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1476065045-13865-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, krzk@kernel.org, s.nawrocki@samsung.com, Michael McConville <mmcco@mykolab.com>
 
-On Mon, Oct 10, 2016 at 08:36:44AM -0500, Bjorn Helgaas wrote:
-> Hi Krzysztof,
+On Mon, Oct 10, 2016 at 04:04:05AM +0200, Tobias Jakobi wrote:
+> From: Michael McConville <mmcco@mykolab.com>
 > 
-> Thanks a lot for taking the time to look these over.
+> We can replace the if-statement with the simpler bit
+> toggle operation.
 > 
-> On Sat, Oct 08, 2016 at 10:41:44PM +0300, Krzysztof Kozlowski wrote:
-> > On Fri, Oct 07, 2016 at 11:35:26AM -0500, Bjorn Helgaas wrote:
-> > > Use a device-specific name, "exynos", for struct exynos_pcie pointers
-> > > to hint that this is device-specific information.
-> > 
-> > I don't get it. "exynos_pcie" is already a exynos-device-specific name.
-> > There are a lot of changes but I don't see the real reason/benefit. What
-> > was your intention?
+> Changes in v2:
+> - add proper commit header and description
 > 
-> I'm looking across all the drivers in drivers/pci/host/, not just
-> exynos.  Many of them used "pcie" as name for pointers to the
-> device-specific struct, leading to things like "pcie->lut" or
-> "pcie->breg_base".  These *look* like they should be sort of generic,
-> but in fact they are device-specific.
+> Signed-off-by: Michael McConville <mmcco@mykolab.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  sound/soc/samsung/i2s.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> My idea was to replace that "pcie" name with something
-> device-specific, and I started with the simplest possible name, e.g.,
-> "exynos".  Others pointed out that that for SoCs, that is often not
-> enough specific enough, and something like "exynos_pcie" is more
-> appropriate.
-> 
-> In the specific case of exynos, it already uses "exynos_pcie" in most
-> cases, so I tweaked this patch to use it in the few remaining places
-> where it didn't (the register accessor functions).
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 50635ee..1c484ac 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -627,10 +627,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+>  	case SND_SOC_DAIFMT_NB_NF:
+>  		break;
+>  	case SND_SOC_DAIFMT_NB_IF:
+> -		if (tmp & lrp_rlow)
+> -			tmp &= ~lrp_rlow;
+> -		else
+> -			tmp |= lrp_rlow;
+> +		tmp ^= lrp_rlow;
 
-Thanks for clarification, I am fine with it.
+It is late, full day of work... so I might be thinking slowly... but
+this does not look like proper replacement. Unless for specific values
+used in the driver this works? From mathematical point of view, imagine
+tmp=6 abd lrp_rlow=3.
 
-> > > No functional change
-> > > intended.
-> > 
-> > Oh, but there is. Inline disappeared in first functions. Although I
-> > don't mind but this should be seprate from trivial rename.
-> 
-> I didn't think of "inline" as a functional change, but I split it out
-> into its own patch.  I'm embarrassed at how much churn this turned out
-> to be, so I didn't want to add more patches than I had to, but I did
-> split it out for you.
-> 
-> I repushed the branch.
+This is not equal...
 
-Thanks,
+But... maybe it is late... :)
+
 Krzysztof
