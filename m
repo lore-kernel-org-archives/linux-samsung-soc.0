@@ -1,72 +1,57 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 3/3] mtd: s3c2410: parse the device configuration from
- OF node
-Date: Wed, 12 Oct 2016 11:01:05 +0200
-Message-ID: <20161012110105.49830f86@bbrezillon>
-References: <1475711217-974-1-git-send-email-sergio.prado@e-labworks.com>
- <1475711217-974-4-git-send-email-sergio.prado@e-labworks.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v2 02/10] PCI: designware: Simplify dw_pcie_readl_unroll(),
+ dw_pcie_writel_unroll()
+Date: Wed, 12 Oct 2016 08:17:59 -0500
+Message-ID: <20161012131758.26443.96419.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1475711217-974-4-git-send-email-sergio.prado@e-labworks.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, richard@nod.at, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, linux-mtd@lists.infradead.org, krzk@kernel.org, computersforpeace@gmail.com, dwmw2@infradead.org, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Joao Pinto <jpinto@synopsys.com>, Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sergio,
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-On Wed,  5 Oct 2016 20:46:57 -0300
-Sergio Prado <sergio.prado@e-labworks.com> wrote:
+dw_pcie_readl_unroll() and dw_pcie_writel_unroll() duplicate what
+dw_pcie_readl_rc() and dw_pcie_writel_rc() already do, so call them
+directly.
 
-> Allows configuring Samsung's s3c2410 memory controller using a
-> devicetree.
-> 
-> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> ---
->  drivers/mtd/nand/s3c2410.c                     | 171 ++++++++++++++++++++++---
->  include/linux/platform_data/mtd-nand-s3c2410.h |   1 +
->  2 files changed, 156 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> index 174ac9dc4265..352cf2656bc8 100644
-> --- a/drivers/mtd/nand/s3c2410.c
-> +++ b/drivers/mtd/nand/s3c2410.c
+[bhelgaas: reworked into patch series]
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pcie-designware.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-[...]
-
-> +
-> +static int s3c2410_nand_init_timings(struct s3c2410_nand_info *info,
-> +				     struct nand_chip *chip)
-> +{
-> +	struct s3c2410_platform_nand *pdata = info->platform;
-> +	const struct nand_sdr_timings *t;
-> +	int tacls, mode;
-> +
-> +	mode = onfi_get_async_timing_mode(chip);
-> +	if (mode == ONFI_TIMING_MODE_UNKNOWN)
-> +		mode = chip->onfi_timing_mode_default;
-> +
-> +	t = onfi_async_timing_mode_to_sdr_timings(mode);
-> +	if (IS_ERR(t))
-> +		return PTR_ERR(t);
-
-We recently introduced an method to automate timing selection and
-configuration [1]. Can you switch to this approach (the changes are in
-the nand/next branch [2] and should appear in 4.9-rc1)?
-
-Thanks,
-
-Boris
-
-[1]https://www.spinics.net/lists/arm-kernel/msg532007.html 
-[2]https://github.com/linux-nand/linux/tree/nand/next
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index b58f078..7ce4f75 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -161,10 +161,7 @@ static inline u32 dw_pcie_readl_unroll(struct pcie_port *pp, u32 index, u32 reg)
+ {
+ 	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
+ 
+-	if (pp->ops->readl_rc)
+-		return pp->ops->readl_rc(pp, pp->dbi_base + offset + reg);
+-
+-	return readl(pp->dbi_base + offset + reg);
++	return dw_pcie_readl_rc(pp, offset + reg);
+ }
+ 
+ static inline void dw_pcie_writel_unroll(struct pcie_port *pp, u32 index,
+@@ -172,10 +169,7 @@ static inline void dw_pcie_writel_unroll(struct pcie_port *pp, u32 index,
+ {
+ 	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
+ 
+-	if (pp->ops->writel_rc)
+-		pp->ops->writel_rc(pp, val, pp->dbi_base + offset + reg);
+-	else
+-		writel(val, pp->dbi_base + offset + reg);
++	dw_pcie_writel_rc(pp, val, offset + reg);
+ }
+ 
+ static int dw_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
