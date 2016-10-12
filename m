@@ -1,60 +1,50 @@
 From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v2 00/10] PCI: designware: Cleanups
-Date: Wed, 12 Oct 2016 11:04:01 -0500
-Message-ID: <20161012160401.GJ4308@localhost>
-References: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: Re: [PATCH v2 0/5] PCI: exynos: Cleanups
+Date: Wed, 12 Oct 2016 11:05:28 -0500
+Message-ID: <20161012160528.GN4308@localhost>
+References: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:59882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755670AbcJLQEO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Oct 2016 12:04:14 -0400
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Joao Pinto <jpinto@synopsys.com>, Pratyush Anand <pratyush.anand@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 08:17:41AM -0500, Bjorn Helgaas wrote:
-> [+cc exynos folks, since pcie_host_ops.readl_rc affects them]
-> 
+On Wed, Oct 12, 2016 at 08:37:07AM -0500, Bjorn Helgaas wrote:
 >   - Add local "dev" pointers to reduce repetition of things like
 >     "&pdev->dev".
 > 
->   - Remove platform drvdata because it appears unused (we called
->     platform_set_drvdata() but not platform_get_drvdata()).
+>   - Name private struct pointer consistently within driver.
 > 
-> Nothing here should change the behavior of the drivers.
+>   - Pass device-specific struct to internal functions for consistency.
+> 
+> Nothing here should change the behavior of the driver.
 > 
 > Changes from v1:
->   Split uninline of register accessors into a separate patch.
->   Add Kishon's *unroll() fix (v1 broke exynos).
+>   I dropped the following patches because they were a lot of churn for
+>   questionable benefit:
+>     PCI: exynos: Name private struct pointer "exynos" consistently
+>       (Instead of renaming *all* the pointers, I only renamed enough to
+>       make them consistent within this file.)
+>     PCI: exynos: Swap order of exynos_elb_writel() reg/val arguments
+>     PCI: exynos: Swap order of exynos_phy_writel() reg/val arguments
+>     PCI: exynos: Swap order of exynos_blk_writel() reg/val arguments
 > 
 > ---
 > 
-> Bjorn Helgaas (9):
->       PCI: designware: Rename dw_pcie_valid_config() to dw_pcie_valid_device()
->       PCI: designware: Simplify pcie_host_ops.readl_rc() and .writel_rc() interfaces
->       PCI: designware: Swap order of dw_pcie_writel_rc() reg/val arguments
->       PCI: designware: Export dw_pcie_readl_rc(), dw_pcie_writel_rc()
->       PCI: designware: Uninline register accessors
->       PCI: designware: Swap order of dw_pcie_writel_unroll() reg/val arguments
->       PCI: designware-plat: Remove redundant dw_plat_pcie.mem_base
->       PCI: designware-plat: Add local struct device pointers
->       PCI: designware-plat: Remove unused platform data
-> 
-> Kishon Vijay Abraham I (1):
->       PCI: designware: Simplify dw_pcie_readl_unroll(), dw_pcie_writel_unroll()
+> Bjorn Helgaas (5):
+>       PCI: exynos: Add local struct device pointers
+>       PCI: exynos: Uninline register accessors
+>       PCI: exynos: Name private struct pointer "exynos_pcie" consistently
+>       PCI: exynos: Pass device-specific struct to internal functions
+>       PCI: exynos: Reorder struct exynos_pcie
 > 
 > 
->  drivers/pci/host/pci-exynos.c           |   10 +--
->  drivers/pci/host/pcie-designware-plat.c |   25 +++-----
->  drivers/pci/host/pcie-designware.c      |  102 +++++++++++++++----------------
->  drivers/pci/host/pcie-designware.h      |    7 +-
->  4 files changed, 67 insertions(+), 77 deletions(-)
+>  drivers/pci/host/pci-exynos.c |  214 +++++++++++++++++++----------------------
+>  1 file changed, 100 insertions(+), 114 deletions(-)
 
-I applied these to pci/host-designware for v4.9.  I hope to ask Linus to
+I applied these to pci/host-exynos for v4.9.  I hope to ask Linus to
 pull them tomorrow, so if you see any issues, let me know soon.
