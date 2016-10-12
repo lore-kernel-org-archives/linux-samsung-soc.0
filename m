@@ -1,110 +1,72 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 1/4] PCI: designware: Fix compiler warning
-Date: Tue, 11 Oct 2016 08:50:50 -0500
-Message-ID: <20161011135050.GA26715@localhost>
-References: <1476190715-16884-1-git-send-email-kishon@ti.com>
- <1476190715-16884-2-git-send-email-kishon@ti.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 3/3] mtd: s3c2410: parse the device configuration from
+ OF node
+Date: Wed, 12 Oct 2016 11:01:05 +0200
+Message-ID: <20161012110105.49830f86@bbrezillon>
+References: <1475711217-974-1-git-send-email-sergio.prado@e-labworks.com>
+ <1475711217-974-4-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751537AbcJKNu6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Oct 2016 09:50:58 -0400
-Content-Disposition: inline
-In-Reply-To: <1476190715-16884-2-git-send-email-kishon@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1475711217-974-4-git-send-email-sergio.prado@e-labworks.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, richard@nod.at, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, linux-mtd@lists.infradead.org, krzk@kernel.org, computersforpeace@gmail.com, dwmw2@infradead.org, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-[+cc Jingoo, Kukjin, Krzysztof, linux-samsung-soc]
+Hi Sergio,
 
-On Tue, Oct 11, 2016 at 06:28:32PM +0530, Kishon Vijay Abraham I wrote:
-> Fix the following compilation warning in dw_pcie_readl_unroll()
-> and dw_pcie_writel_unroll() by just invoking dw_pcie_readl_rc() and
-> dw_pcie_writel_rc() respectively instead of adding redundant code.
+On Wed,  5 Oct 2016 20:46:57 -0300
+Sergio Prado <sergio.prado@e-labworks.com> wrote:
+
+> Allows configuring Samsung's s3c2410 memory controller using a
+> devicetree.
 > 
-> pcie-designware.c: In function 'dw_pcie_readl_unroll':
-> pcie-designware.c:165:32: warning: passing argument 2 of
->  'pp->ops->readl_rc' makes integer from pointer without a cast
->  [-Wint-conversion]
->    return pp->ops->readl_rc(pp, pp->dbi_base + offset + reg);
->                                 ^
-> pcie-designware.c:165:32: note: expected 'u32 {aka unsigned int}' but
->  argument is of type 'void *'
-> pcie-designware.c: In function 'dw_pcie_writel_unroll':
-> pcie-designware.c:176:31: warning: passing argument 3 of
->  'pp->ops->writel_rc' makes integer from pointer without a cast
->  [-Wint-conversion]
->    pp->ops->writel_rc(pp, val, pp->dbi_base + offset + reg);
->                                ^
-> drivers/pci/host/pcie-designware.c:176:31: note: expected 'u32
->  {aka unsigned int}' but argument is of type 'void *'
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
 > ---
->  drivers/pci/host/pcie-designware.c |   10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
+>  drivers/mtd/nand/s3c2410.c                     | 171 ++++++++++++++++++++++---
+>  include/linux/platform_data/mtd-nand-s3c2410.h |   1 +
+>  2 files changed, 156 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-> index 5ee8772..b8feea4 100644
-> --- a/drivers/pci/host/pcie-designware.c
-> +++ b/drivers/pci/host/pcie-designware.c
-> @@ -161,10 +161,7 @@ static inline u32 dw_pcie_readl_unroll(struct pcie_port *pp, u32 index, u32 reg)
->  {
->  	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
->  
-> -	if (pp->ops->readl_rc)
-> -		return pp->ops->readl_rc(pp, pp->dbi_base + offset + reg);
+> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> index 174ac9dc4265..352cf2656bc8 100644
+> --- a/drivers/mtd/nand/s3c2410.c
+> +++ b/drivers/mtd/nand/s3c2410.c
 
-I think this was worse than just a compiler warning, wasn't it?  I
-think I completely broke exynos (the only implementer of
-pp->ops->readl_rc) because we passed "pp->dbi_base + offset + reg" to
-exynos_pcie_readl_rc(), which then added pp->dbi_base again:
+[...]
 
-  val = readl(pp->dbi_base + reg);
+> +
+> +static int s3c2410_nand_init_timings(struct s3c2410_nand_info *info,
+> +				     struct nand_chip *chip)
+> +{
+> +	struct s3c2410_platform_nand *pdata = info->platform;
+> +	const struct nand_sdr_timings *t;
+> +	int tacls, mode;
+> +
+> +	mode = onfi_get_async_timing_mode(chip);
+> +	if (mode == ONFI_TIMING_MODE_UNKNOWN)
+> +		mode = chip->onfi_timing_mode_default;
+> +
+> +	t = onfi_async_timing_mode_to_sdr_timings(mode);
+> +	if (IS_ERR(t))
+> +		return PTR_ERR(t);
 
-I incorporated your patch to use dw_pcie_readl_rc() directly (thanks a
-lot for noticing that!) into pci/host-designware.
+We recently introduced an method to automate timing selection and
+configuration [1]. Can you switch to this approach (the changes are in
+the nand/next branch [2] and should appear in 4.9-rc1)?
 
-Then I rebased all the branches that were based on pci/host-designware
-and repushed everything:
+Thanks,
 
-  pci/host-designware
-  pci/host-armada
-  pci/host-artpec
-  pci/host-dra7xx
-  pci/host-exynos
-  pci/host-hisi
-  pci/host-imx6
-  pci/host-keystone
-  pci/host-layerscape
-  pci/host-qcom
-  pci/host-spear
+Boris
 
-> -	return readl(pp->dbi_base + offset + reg);
-> +	return dw_pcie_readl_rc(pp, offset + reg);
->  }
->  
->  static inline void dw_pcie_writel_unroll(struct pcie_port *pp, u32 index,
-> @@ -172,10 +169,7 @@ static inline void dw_pcie_writel_unroll(struct pcie_port *pp, u32 index,
->  {
->  	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
->  
-> -	if (pp->ops->writel_rc)
-> -		pp->ops->writel_rc(pp, val, pp->dbi_base + offset + reg);
-> -	else
-> -		writel(val, pp->dbi_base + offset + reg);
-> +	dw_pcie_writel_rc(pp, offset + reg, val);
->  }
->  
->  static int dw_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1]https://www.spinics.net/lists/arm-kernel/msg532007.html 
+[2]https://github.com/linux-nand/linux/tree/nand/next
