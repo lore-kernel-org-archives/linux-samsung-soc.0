@@ -1,49 +1,63 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2 00/10] PCI: designware: Cleanups
-Date: Wed, 12 Oct 2016 08:17:41 -0500
-Message-ID: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH v2 01/10] PCI: designware: Rename dw_pcie_valid_config() to
+ dw_pcie_valid_device()
+Date: Wed, 12 Oct 2016 08:17:50 -0500
+Message-ID: <20161012131750.26443.65705.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:59598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932266AbcJLNRz (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 12 Oct 2016 09:17:55 -0400
+In-Reply-To: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Joao Pinto <jpinto@synopsys.com>, Pratyush Anand <pratyush.anand@gmail.com>
 Cc: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-[+cc exynos folks, since pcie_host_ops.readl_rc affects them]
+Rename dw_pcie_valid_config() to dw_pcie_valid_device() and use the result
+directly as a boolean value instead of testing against 0.  No functional
+change intended.
 
-  - Add local "dev" pointers to reduce repetition of things like
-    "&pdev->dev".
-
-  - Remove platform drvdata because it appears unused (we called
-    platform_set_drvdata() but not platform_get_drvdata()).
-
-Nothing here should change the behavior of the drivers.
-
-Changes from v1:
-  Split uninline of register accessors into a separate patch.
-  Add Kishon's *unroll() fix (v1 broke exynos).
-
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
+ drivers/pci/host/pcie-designware.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Bjorn Helgaas (9):
-      PCI: designware: Rename dw_pcie_valid_config() to dw_pcie_valid_device()
-      PCI: designware: Simplify pcie_host_ops.readl_rc() and .writel_rc() interfaces
-      PCI: designware: Swap order of dw_pcie_writel_rc() reg/val arguments
-      PCI: designware: Export dw_pcie_readl_rc(), dw_pcie_writel_rc()
-      PCI: designware: Uninline register accessors
-      PCI: designware: Swap order of dw_pcie_writel_unroll() reg/val arguments
-      PCI: designware-plat: Remove redundant dw_plat_pcie.mem_base
-      PCI: designware-plat: Add local struct device pointers
-      PCI: designware-plat: Remove unused platform data
-
-Kishon Vijay Abraham I (1):
-      PCI: designware: Simplify dw_pcie_readl_unroll(), dw_pcie_writel_unroll()
-
-
- drivers/pci/host/pci-exynos.c           |   10 +--
- drivers/pci/host/pcie-designware-plat.c |   25 +++-----
- drivers/pci/host/pcie-designware.c      |  102 +++++++++++++++----------------
- drivers/pci/host/pcie-designware.h      |    7 +-
- 4 files changed, 67 insertions(+), 77 deletions(-)
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index 74da71e..b58f078 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -760,8 +760,8 @@ static int dw_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ 	return ret;
+ }
+ 
+-static int dw_pcie_valid_config(struct pcie_port *pp,
+-				struct pci_bus *bus, int dev)
++static int dw_pcie_valid_device(struct pcie_port *pp, struct pci_bus *bus,
++				int dev)
+ {
+ 	/* If there is no link, then there is no device */
+ 	if (bus->number != pp->root_bus_nr) {
+@@ -781,7 +781,7 @@ static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
+ {
+ 	struct pcie_port *pp = bus->sysdata;
+ 
+-	if (dw_pcie_valid_config(pp, bus, PCI_SLOT(devfn)) == 0) {
++	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn))) {
+ 		*val = 0xffffffff;
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 	}
+@@ -797,7 +797,7 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
+ {
+ 	struct pcie_port *pp = bus->sysdata;
+ 
+-	if (dw_pcie_valid_config(pp, bus, PCI_SLOT(devfn)) == 0)
++	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn)))
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+ 	if (bus->number == pp->root_bus_nr)
