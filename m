@@ -1,50 +1,60 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v2 0/5] PCI: exynos: Cleanups
-Date: Wed, 12 Oct 2016 11:05:28 -0500
-Message-ID: <20161012160528.GN4308@localhost>
-References: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 1/2] PM / devfreq: exynos-nocp: Select REGMAP_MMIO
+Date: Wed, 12 Oct 2016 22:08:28 +0200
+Message-ID: <4986321.Rq86MiW5qg@vostro.rjw.lan>
+References: <1474805638-30407-1-git-send-email-axel.lin@ingics.com> <9785239.FWYofzirS3@vostro.rjw.lan> <CAJ0PZbRCBeqbixQikCbc1F_AwGRHsCWEnh7MTYP3=zZ2LWEZBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:57064 "HELO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1756013AbcJLUBn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 12 Oct 2016 16:01:43 -0400
+In-Reply-To: <CAJ0PZbRCBeqbixQikCbc1F_AwGRHsCWEnh7MTYP3=zZ2LWEZBA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: myungjoo.ham@gmail.com
+Cc: Axel Lin <axel.lin@ingics.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-On Wed, Oct 12, 2016 at 08:37:07AM -0500, Bjorn Helgaas wrote:
->   - Add local "dev" pointers to reduce repetition of things like
->     "&pdev->dev".
+On Friday, September 30, 2016 10:46:04 PM MyungJoo Ham wrote:
+> On Thu, Sep 29, 2016 at 9:29 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > On Sunday, September 25, 2016 08:13:57 PM Axel Lin wrote:
+> >> This driver uses devm_regmap_init_mmio(), so select REGMAP_MMIO to avoid
+> >> build failure.
+> >>
+> >> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> >> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> >> ---
+> >> v2: fix typo in commit log and also add Chanwoo's Ack.
+> >> This one is a build fix, I think it should be for v4.8.
+> >>  drivers/devfreq/event/Kconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+> >> index 0fdae86..cd94980 100644
+> >> --- a/drivers/devfreq/event/Kconfig
+> >> +++ b/drivers/devfreq/event/Kconfig
+> >> @@ -17,6 +17,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
+> >>       tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
+> >>       depends on ARCH_EXYNOS || COMPILE_TEST
+> >>       select PM_OPP
+> >> +     select REGMAP_MMIO
+> >>       help
+> >>         This add the devfreq-event driver for Exynos SoC. It provides NoC
+> >>         (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
+> >>
+> >
+> > MyungJoo, I can apply this one and the [2/2] directly.  Should I do that?
+> >
+> > Thanks,
+> > Rafael
 > 
->   - Name private struct pointer consistently within driver.
 > 
->   - Pass device-specific struct to internal functions for consistency.
-> 
-> Nothing here should change the behavior of the driver.
-> 
-> Changes from v1:
->   I dropped the following patches because they were a lot of churn for
->   questionable benefit:
->     PCI: exynos: Name private struct pointer "exynos" consistently
->       (Instead of renaming *all* the pointers, I only renamed enough to
->       make them consistent within this file.)
->     PCI: exynos: Swap order of exynos_elb_writel() reg/val arguments
->     PCI: exynos: Swap order of exynos_phy_writel() reg/val arguments
->     PCI: exynos: Swap order of exynos_blk_writel() reg/val arguments
-> 
-> ---
-> 
-> Bjorn Helgaas (5):
->       PCI: exynos: Add local struct device pointers
->       PCI: exynos: Uninline register accessors
->       PCI: exynos: Name private struct pointer "exynos_pcie" consistently
->       PCI: exynos: Pass device-specific struct to internal functions
->       PCI: exynos: Reorder struct exynos_pcie
-> 
-> 
->  drivers/pci/host/pci-exynos.c |  214 +++++++++++++++++++----------------------
->  1 file changed, 100 insertions(+), 114 deletions(-)
+> Yes, sure. Those two fixes look good. Thanks.
 
-I applied these to pci/host-exynos for v4.9.  I hope to ask Linus to
-pull them tomorrow, so if you see any issues, let me know soon.
+OK, applied.
+
+Thanks,
+Rafael
