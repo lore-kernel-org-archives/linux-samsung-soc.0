@@ -1,45 +1,60 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2 5/5] PCI: exynos: Reorder struct exynos_pcie
-Date: Wed, 12 Oct 2016 08:37:53 -0500
-Message-ID: <20161012133753.28194.44548.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v2 00/10] PCI: designware: Cleanups
+Date: Wed, 12 Oct 2016 11:04:01 -0500
+Message-ID: <20161012160401.GJ4308@localhost>
+References: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20161012133428.28194.54006.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:59882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755670AbcJLQEO (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 12 Oct 2016 12:04:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20161012131616.26443.89407.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Joao Pinto <jpinto@synopsys.com>, Pratyush Anand <pratyush.anand@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
 
-Reorder struct exynos_pcie to put generic fields first.  No functional
-change intended.
+On Wed, Oct 12, 2016 at 08:17:41AM -0500, Bjorn Helgaas wrote:
+> [+cc exynos folks, since pcie_host_ops.readl_rc affects them]
+> 
+>   - Add local "dev" pointers to reduce repetition of things like
+>     "&pdev->dev".
+> 
+>   - Remove platform drvdata because it appears unused (we called
+>     platform_set_drvdata() but not platform_get_drvdata()).
+> 
+> Nothing here should change the behavior of the drivers.
+> 
+> Changes from v1:
+>   Split uninline of register accessors into a separate patch.
+>   Add Kishon's *unroll() fix (v1 broke exynos).
+> 
+> ---
+> 
+> Bjorn Helgaas (9):
+>       PCI: designware: Rename dw_pcie_valid_config() to dw_pcie_valid_device()
+>       PCI: designware: Simplify pcie_host_ops.readl_rc() and .writel_rc() interfaces
+>       PCI: designware: Swap order of dw_pcie_writel_rc() reg/val arguments
+>       PCI: designware: Export dw_pcie_readl_rc(), dw_pcie_writel_rc()
+>       PCI: designware: Uninline register accessors
+>       PCI: designware: Swap order of dw_pcie_writel_unroll() reg/val arguments
+>       PCI: designware-plat: Remove redundant dw_plat_pcie.mem_base
+>       PCI: designware-plat: Add local struct device pointers
+>       PCI: designware-plat: Remove unused platform data
+> 
+> Kishon Vijay Abraham I (1):
+>       PCI: designware: Simplify dw_pcie_readl_unroll(), dw_pcie_writel_unroll()
+> 
+> 
+>  drivers/pci/host/pci-exynos.c           |   10 +--
+>  drivers/pci/host/pcie-designware-plat.c |   25 +++-----
+>  drivers/pci/host/pcie-designware.c      |  102 +++++++++++++++----------------
+>  drivers/pci/host/pcie-designware.h      |    7 +-
+>  4 files changed, 67 insertions(+), 77 deletions(-)
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-exynos.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 829aa6b..f1c544b 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -29,13 +29,13 @@
- #define to_exynos_pcie(x)	container_of(x, struct exynos_pcie, pp)
- 
- struct exynos_pcie {
--	void __iomem		*elbi_base;
--	void __iomem		*phy_base;
--	void __iomem		*block_base;
-+	struct pcie_port	pp;
-+	void __iomem		*elbi_base;	/* DT 0th resource */
-+	void __iomem		*phy_base;	/* DT 1st resource */
-+	void __iomem		*block_base;	/* DT 2nd resource */
- 	int			reset_gpio;
- 	struct clk		*clk;
- 	struct clk		*bus_clk;
--	struct pcie_port	pp;
- };
- 
- /* PCIe ELBI registers */
+I applied these to pci/host-designware for v4.9.  I hope to ask Linus to
+pull them tomorrow, so if you see any issues, let me know soon.
