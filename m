@@ -1,111 +1,125 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] exynos-drm: Fix display manager failing to start without
- IOMMU problem
-Date: Wed, 12 Oct 2016 17:15:47 -0600
-Message-ID: <1b2c3b31-7127-af2f-18a2-f3a28567e28d@osg.samsung.com>
-References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
- <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
- <57ABB1ED.1080301@samsung.com> <57ABB31E.1070802@osg.samsung.com>
- <57AE0736.6020705@osg.samsung.com> <57AE0CCB.1010708@osg.samsung.com>
- <57B29925.4020600@samsung.com>
- <ce7a035c-f881-82ac-97f6-869442d1ed47@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:50441
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932827AbcJLXPv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Oct 2016 19:15:51 -0400
-In-Reply-To: <ce7a035c-f881-82ac-97f6-869442d1ed47@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [PATCH 01/10] mm: remove write/force parameters from __get_user_pages_locked()
+Date: Thu, 13 Oct 2016 01:20:11 +0100
+Message-ID: <20161013002020.3062-2-lstoakes@gmail.com>
+References: <20161013002020.3062-1-lstoakes@gmail.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20161013002020.3062-1-lstoakes@gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, adi-buildroot-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kvm@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cris-kernel@axis.com, linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org, linux-sh@vger.kerne
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/12/2016 05:11 PM, Shuah Khan wrote:
+This patch removes the write and force parameters from __get_user_pages_locked()
+to make the use of FOLL_FORCE explicit in callers as use of this flag can result
+in surprising behaviour (and hence bugs) within the mm subsystem.
 
-+ Fixing Krzysztof Kozlowski address.
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+---
+ mm/gup.c | 47 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
 
-> Hi Inki,
-> 
-> On 08/15/2016 10:40 PM, Inki Dae wrote:
-> 
->>>
->>> okay the very first commit that added IOMMU support
->>> introduced the code that rejects non-contig gem memory
->>> type without IOMMU.
->>>
->>> commit 0519f9a12d0113caab78980c48a7902d2bd40c2c
->>> Author: Inki Dae <inki.dae@samsung.com>
->>> Date:   Sat Oct 20 07:53:42 2012 -0700
->>>
->>>     drm/exynos: add iommu support for exynos drm framework
->>>
-> 
-> I haven't given up on this yet. I am still seeing the following failure:
-> 
-> Additional debug messages I added:
-> [   15.287403] exynos_drm_gem_create_ioctl() 1
-> [   15.287419] exynos_drm_gem_create() flags 1
-> 
-> [   15.311511] [drm:exynos_drm_framebuffer_init] *ERROR* Non-contiguous GEM memory is not supported.
-> 
-> Additional debug message I added:
-> [   15.318981] [drm:exynos_user_fb_create] *ERROR* failed to initialize framebuffer
-> 
-> This is what happens:
-> 
-> 1. exynos_drm_gem_create_ioctl() gets called with EXYNOS_BO_NONCONTIG request
-> 2. exynos_drm_gem_create(0 goes ahead and creates the GEM buffers
-> 3. exynos_user_fb_create() tries to associate GEM to fb and fails during
->    check_fb_gem_memory_type()
-> 
-> At this point, there is no recovery and lightdm fails
-> 
-> xf86-video-armsoc/src/drmmode_exynos/drmmode_exynos.c assumes contiguous
-> allocations are not supported in some exynos drm versions: The following
-> commit introduced this change:
-> 
-> https://git.linaro.org/arm/xorg/driver/xf86-video-armsoc.git/commitdiff/3be1f6273441fe95dd442f44064387322e16b7e9
-> 
-> excerpts from the diff:-       if (create_gem->buf_type == ARMSOC_BO_SCANOUT)
-> -               create_exynos.flags = EXYNOS_BO_CONTIG;
-> -       else
-> -               create_exynos.flags = EXYNOS_BO_NONCONTIG;
-> +
-> +       /* Contiguous allocations are not supported in some exynos drm versions.
-> +        * When they are supported all allocations are effectively contiguous
-> +        * anyway, so for simplicity we always request non contiguous buffers.
-> +        */
-> +       create_exynos.flags = EXYNOS_BO_NONCONTIG;
-> 
-> There might have been logic on exynos_drm that forced Contig when it coudn't
-> support NONCONTIG. At least, that is what this comment suggests. This assumption
-> doesn't appear to be a good one and not sure if this change was made to fix a bug.
-> 
-> After the IOMMU support, this assumption is no longer true. Hence, with IOMMU
-> support, latest kernels have a mismatch with the installed xf86-video-armsoc
-> 
-> This is what I am running into. This leads to the following question:
-> 
-> 1. How do we ensure exynos_drm kernel changes don't break user-space
->    specifically xf86-video-armsoc
-> 2. This seems to have gone undetected for a while. I see a change in
->    exynos_drm_gem_dumb_create() that is probably addressing this type
->    of breakage. Commit 122beea84bb90236b1ae545f08267af58591c21b adds
->    handling for IOMMU NONCONTIG case.
-> 
-> Anyway, I am interested in getting the exynos_drm kernel side code
-> and xf86-video-armsoc in sync to resolve the issue.
-> 
-> Could you recommend a going forward plan?
-> 
-> I can submit a patch to xf86-video-armsoc. I am also looking ahead to
-> see if we can avoid such breaks in the future by keeping kernel and
-> xf86-video-armsoc in sync.
-> 
-> thanks,
-> -- Shuah
-> 
+diff --git a/mm/gup.c b/mm/gup.c
+index 96b2b2f..ba83942 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -729,7 +729,6 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+ 						struct mm_struct *mm,
+ 						unsigned long start,
+ 						unsigned long nr_pages,
+-						int write, int force,
+ 						struct page **pages,
+ 						struct vm_area_struct **vmas,
+ 						int *locked, bool notify_drop,
+@@ -747,10 +746,6 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+ 
+ 	if (pages)
+ 		flags |= FOLL_GET;
+-	if (write)
+-		flags |= FOLL_WRITE;
+-	if (force)
+-		flags |= FOLL_FORCE;
+ 
+ 	pages_done = 0;
+ 	lock_dropped = false;
+@@ -846,9 +841,15 @@ long get_user_pages_locked(unsigned long start, unsigned long nr_pages,
+ 			   int write, int force, struct page **pages,
+ 			   int *locked)
+ {
++	unsigned int flags = FOLL_TOUCH;
++
++	if (write)
++		flags |= FOLL_WRITE;
++	if (force)
++		flags |= FOLL_FORCE;
++
+ 	return __get_user_pages_locked(current, current->mm, start, nr_pages,
+-				       write, force, pages, NULL, locked, true,
+-				       FOLL_TOUCH);
++				       pages, NULL, locked, true, flags);
+ }
+ EXPORT_SYMBOL(get_user_pages_locked);
+ 
+@@ -869,9 +870,15 @@ __always_inline long __get_user_pages_unlocked(struct task_struct *tsk, struct m
+ {
+ 	long ret;
+ 	int locked = 1;
++
++	if (write)
++		gup_flags |= FOLL_WRITE;
++	if (force)
++		gup_flags |= FOLL_FORCE;
++
+ 	down_read(&mm->mmap_sem);
+-	ret = __get_user_pages_locked(tsk, mm, start, nr_pages, write, force,
+-				      pages, NULL, &locked, false, gup_flags);
++	ret = __get_user_pages_locked(tsk, mm, start, nr_pages, pages, NULL,
++				      &locked, false, gup_flags);
+ 	if (locked)
+ 		up_read(&mm->mmap_sem);
+ 	return ret;
+@@ -963,9 +970,15 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+ 		int write, int force, struct page **pages,
+ 		struct vm_area_struct **vmas)
+ {
+-	return __get_user_pages_locked(tsk, mm, start, nr_pages, write, force,
+-				       pages, vmas, NULL, false,
+-				       FOLL_TOUCH | FOLL_REMOTE);
++	unsigned int flags = FOLL_TOUCH | FOLL_REMOTE;
++
++	if (write)
++		flags |= FOLL_WRITE;
++	if (force)
++		flags |= FOLL_FORCE;
++
++	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
++				       NULL, false, flags);
+ }
+ EXPORT_SYMBOL(get_user_pages_remote);
+ 
+@@ -979,9 +992,15 @@ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ 		int write, int force, struct page **pages,
+ 		struct vm_area_struct **vmas)
+ {
++	unsigned int flags = FOLL_TOUCH;
++
++	if (write)
++		flags |= FOLL_WRITE;
++	if (force)
++		flags |= FOLL_FORCE;
++
+ 	return __get_user_pages_locked(current, current->mm, start, nr_pages,
+-				       write, force, pages, vmas, NULL, false,
+-				       FOLL_TOUCH);
++				       pages, vmas, NULL, false, flags);
+ }
+ EXPORT_SYMBOL(get_user_pages);
+ 
+-- 
+2.10.0
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
