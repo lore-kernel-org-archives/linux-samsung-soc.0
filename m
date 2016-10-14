@@ -1,51 +1,55 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [patch] drm/exynos: fix a timeout loop
-Date: Thu, 13 Oct 2016 13:05:00 +0200
-Message-ID: <57FF6A5C.6060108@math.uni-bielefeld.de>
-References: <20161013102040.GA5576@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161013102040.GA5576@mwanda>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] clk: samsung: clk-exynos-audss: Fix module autoload
+Date: Fri, 14 Oct 2016 15:44:05 -0300
+Message-ID: <1476470645-22159-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gRGFuLAoKc29ycnkgZm9yIHRoZSBibHVuZGVyISBQYXRjaCBsb29rcyBnb29kIHRvIG1l
-LgoKUmV2aWV3ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxk
-LmRlPgoKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKCkRhbiBDYXJwZW50ZXIgd3JvdGU6Cj4g
-V2Ugd2VyZSB0cnlpbmcgdG8gcHJpbnQgYW4gZXJyb3IgbWVzc2FnZSBpZiB3ZSB0aW1lZCBvdXQg
-aGVyZSwgYnV0IHRoZQo+IGxvb3AgYWN0dWFsbHkgZW5kcyB3aXRoICJ0cmllcyIgc2V0IHRvIFVJ
-TlRfTUFYIGFuZCBub3QgemVyby4gIEZpeCB0aGlzCj4gYnkgY2hhbmdpbmcgZnJvbSB0cmllcy0t
-IHRvIC0tdHJpZXMuCj4gCj4gQSBmb3IgbG9vcCB3b3VsZCBhY3R1YWxseSBiZSB0aGUgbW9zdCBu
-YXR1cmFsIHdheSB0byBkbyB0aGlzLiAgTXkgZml4Cj4gbWVhbnMgd2Ugb25seSBsb29wIDk5IHRp
-bWVzIGluc3RlYWQgb2YgMTAwIGJ1dCB0aGF0J3MgcHJvYmFibHkgb2suCj4gCj4gRml4ZXM6IGE2
-OTYzOTRjNTIyNCAoJ2RybS9leHlub3M6IG1peGVyOiBzaW1wbGlmeSBsb29wIGluIHZwX3dpbl9y
-ZXNldCgpJykKPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9y
-YWNsZS5jb20+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gaW5kZXgg
-ZWRiMjBhMy4uZmNjN2U0ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
-Ywo+IEBAIC03MDEsNyArNzAxLDcgQEAgc3RhdGljIHZvaWQgdnBfd2luX3Jlc2V0KHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgpCj4gIAl1bnNpZ25lZCBpbnQgdHJpZXMgPSAxMDA7Cj4gIAo+ICAJ
-dnBfcmVnX3dyaXRlKHJlcywgVlBfU1JFU0VULCBWUF9TUkVTRVRfUFJPQ0VTU0lORyk7Cj4gLQl3
-aGlsZSAodHJpZXMtLSkgewo+ICsJd2hpbGUgKC0tdHJpZXMpIHsKPiAgCQkvKiB3YWl0aW5nIHVu
-dGlsIFZQX1NSRVNFVF9QUk9DRVNTSU5HIGlzIDAgKi8KPiAgCQlpZiAofnZwX3JlZ19yZWFkKHJl
-cywgVlBfU1JFU0VUKSAmIFZQX1NSRVNFVF9QUk9DRVNTSU5HKQo+ICAJCQlicmVhazsKPiAtLQo+
-IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
-ZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
-b21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
-Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+If the driver is built as a module, autoload won't work because the module
+alias information is not filled. So user-space can't match the registered
+device with the corresponding module.
+
+Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+
+Before this patch:
+
+$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+alias:          platform:exynos-audss-clk
+
+After this patch:
+
+$ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
+alias:          platform:exynos-audss-clk
+alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5420-audss-clock
+alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5410-audss-clock
+alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
+alias:          of:N*T*Csamsung,exynos5250-audss-clock
+alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
+alias:          of:N*T*Csamsung,exynos4210-audss-clock
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+
+ drivers/clk/samsung/clk-exynos-audss.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 51d152f735cc..17e68a724945 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -106,6 +106,7 @@ static const struct of_device_id exynos_audss_clk_of_match[] = {
+ 	},
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, exynos_audss_clk_of_match);
+ 
+ static void exynos_audss_clk_teardown(void)
+ {
+-- 
+2.7.4
+
