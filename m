@@ -1,78 +1,145 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: samsung: clk-exynos-audss: Fix module autoload
-Date: Sun, 16 Oct 2016 10:44:41 -0300
-Message-ID: <521c63ea-2564-1739-696f-bc9178eab838@osg.samsung.com>
-References: <1476470645-22159-1-git-send-email-javier@osg.samsung.com>
- <20161015172711.GA6465@kozik-lap>
+From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
+ 5422
+Date: Sun, 16 Oct 2016 16:19:57 +0200
+Message-ID: <1476627597.1752.3.camel@mniewoehner.de>
+References: <1472414695.3845.3.camel@mniewoehner.de>
+         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
+         <1472468730.4925.3.camel@mniewoehner.de>
+         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
+         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
+         <1475578687.1912.28.camel@mniewoehner.de>
+         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
+         <1475771380.22019.5.camel@mniewoehner.de> <87y420wqoy.fsf@linux.intel.com>
+         <1475871962.1697.12.camel@mniewoehner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:32770
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754399AbcJPNpi (ORCPT
+Received: from sender163-mail.zoho.com ([74.201.84.163]:21380 "EHLO
+        sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754284AbcJPOUr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Oct 2016 09:45:38 -0400
-In-Reply-To: <20161015172711.GA6465@kozik-lap>
+        Sun, 16 Oct 2016 10:20:47 -0400
+In-Reply-To: <1475871962.1697.12.camel@mniewoehner.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hello Krzysztof,
-
-On 10/15/2016 02:27 PM, Krzysztof Kozlowski wrote:
-> On Fri, Oct 14, 2016 at 03:44:05PM -0300, Javier Martinez Canillas wrote:
->> If the driver is built as a module, autoload won't work because the module
->> alias information is not filled. So user-space can't match the registered
->> device with the corresponding module.
->>
->> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
->>
->> Before this patch:
->>
->> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
->> alias:          platform:exynos-audss-clk
->>
->> After this patch:
->>
->> $ modinfo drivers/clk/samsung/clk-exynos-audss.ko | grep alias
->> alias:          platform:exynos-audss-clk
->> alias:          of:N*T*Csamsung,exynos5420-audss-clockC*
->> alias:          of:N*T*Csamsung,exynos5420-audss-clock
->> alias:          of:N*T*Csamsung,exynos5410-audss-clockC*
->> alias:          of:N*T*Csamsung,exynos5410-audss-clock
->> alias:          of:N*T*Csamsung,exynos5250-audss-clockC*
->> alias:          of:N*T*Csamsung,exynos5250-audss-clock
->> alias:          of:N*T*Csamsung,exynos4210-audss-clockC*
->> alias:          of:N*T*Csamsung,exynos4210-audss-clock
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> ---
->>
->>  drivers/clk/samsung/clk-exynos-audss.c | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> Indeed, this was missed by 4d252fd5719b thus I think it could be
-> mentioned as fix tag (just for reference...):
-> Fixes: 4d252fd5719b ("clk: samsung: Allow modular build of the Audio Subsystem CLKCON driver")
->
-
-Indeed. I missed that, sorry. I'll post a v2 including this information.
- 
-> Anyway, this fixes the issue, so:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-
-Thanks!
- 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+SGkgRmVsaXBlLApPbiBGcmksIDIwMTYtMTAtMDcgYXQgMjI6MjYgKzAyMDAsIE1pY2hhZWwgTmll
+d8O2aG5lciB3cm90ZToKPiBIaSBGZWxpcGUsCj4gCj4gT24gRnIsIDIwMTYtMTAtMDcgYXQgMTA6
+NDIgKzAzMDAsIEZlbGlwZSBCYWxiaSB3cm90ZToKPiA+IEhpLAo+ID4gCj4gPiBNaWNoYWVsIE5p
+ZXfDtmhuZXIgPGxpbnV4QG1uaWV3b2VobmVyLmRlPiB3cml0ZXM6Cj4gPiA+IAo+ID4gPiA+IAo+
+ID4gPiA+IFRoZSBjbG9ja3MgYXJlIHNhbWUgYWNyb3NzIHdvcmtpbmcvbm9uLXdvcmtpbmcuCj4g
+PiA+ID4gSXMgaXQgcG9zc2libGUgdG8gYmlzZWN0IHRoZSBjb21taXQgdGhhdCdzIGNhdXNpbmcg
+aGFuZyBmb3IgNC44eCA/Cj4gPiA+IAo+ID4gPiAKPiA+ID4gW2M0OTlmZjcxZmYyYTI4MTM2NmM2
+ZWM3YTkwNGM1NDdkODA2Y2JjZDFdIHVzYjogZHdjMzogY29yZTogcmUtZmFjdG9yIGluaXQgYW5k
+IGV4aXQgcGF0aHMKPiA+ID4gVGhpcyBwYXRjaCBjYXVzZXMgYm90aCB0aGUgaGFuZyBvbiByZWJv
+b3QgYW5kIHRoZSBsc3VzYiBoYW5nLgo+ID4gCj4gPiBIb3cgdG8gcmVwcm9kdWNlPyBXaHkgZG9u
+J3Qgd2Ugc2VlIHRoaXMgb24geDg2IGFuZCBUSSBib2FyZHM/IEknbQo+ID4gZ3Vlc3NpbmcgdGhp
+cyBpcyBmYWlsZWQgYmlzZWN0aW9uLCBhcyBJIGNhbid0IHNlZSBhbnl0aGluZyBpbiB0aGF0Cj4g
+PiBjb21taXQgdGhhdCB3b3VsZCBjYXVzZSByZWJvb3QgaGFuZy4gQWxzbywgdGhhdCBjb2RlIHBh
+dGggaXMgKk5PVCoKPiA+IGV4ZWN1dGVkIHdoZW4geW91IHJ1biBsc3VzYi4KPiA+IAo+IAo+IEkn
+dmUgdGVzdGVkIHRoaXMgcHJvY2VkdXJlIG11bHRpcGxlIHRpbWVzIHRvIGJlIHN1cmU6Cj4gCj4g
+LSBjaGVja291dMKgYzQ5OWZmNzEsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAo+IC0gcnVuIGxz
+dXNiIC12ID0+IGxzdXNiIGhhbmdzLCBjYW4ndCB0ZXJtaW5hdGUgd2l0aCBjdHJsLWMKPiAtIGhh
+cmQgcmVzZXQsIGFmdGVyIGJvb3QgcnVuIHBvd2Vyb2ZmIG9yIHJlYm9vdCA9PiBib2FyZCBkb2Vz
+IG5vdCBjb21wbGV0ZWx5IHBvd2VyIG9mZiAvIHJlYm9vdCAoc2VlIGxvZyBiZWxvdykKPiAtIHJl
+dmVydCBjNDk5ZmY3MSwgbXJwcm9wZXIsIGNvbXBpbGUsIGJvb3QgdGhlIG9kcm9pZAo+IC0gcnVu
+IGxzdXNiIC12ID0+IHNob3dzIGZ1bGwgb3V0cHV0LCBub3QgaGFuZ2luZwo+IC0gcnVuIHJlYm9v
+dCBvciBwb3dlcm9mZiA9PiBib2FyZCBwb3dlcnMgb2ZmIC8gcmVib290cyBqdXN0IGZpbmUKPiAK
+PiAKPiBkbWVzZyBwb3dlcm9mZiBub3Qgd29ya2luZzoKPiAuLi4KPiBbwqDCoDEyMC43MzM1MTld
+IHN5c3RlbWQtam91cm5hbGRbMTQ0XTogc3lzdGVtZC1qb3VybmFsZCBzdG9wcGVkIGFzIHBpZCAx
+NDTCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIwLjc0MjY2M10gc3lzdGVtZC1zaHV0ZG93blsxXTog
+U2VuZGluZyBTSUdLSUxMIHRvIHJlbWFpbmluZyBwcm9jZXNzZXMuLi7CoMKgwqAKPiBbwqDCoDEy
+MC43NjkyMTJdIHN5c3RlbWQtc2h1dGRvd25bMV06IFVubW91bnRpbmcgZmlsZSBzeXN0ZW1zLsKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBbwqDCoDEyMC43NzM3MTNd
+IHN5c3RlbWQtc2h1dGRvd25bMV06IFVubW91bnRpbmcgL3N5cy9rZXJuZWwvZGVidWcuwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjAuODI3MjExXSBzeXN0ZW1kLXNodXRk
+b3duWzFdOiBVbm1vdW50aW5nIC9kZXYvbXF1ZXVlLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjA4MTY3Ml0gRVhUNC1mcyAobW1jYmxrMXAyKTog
+cmUtbW91bnRlZC4gT3B0czogKG51bGwpwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoAo+IFvCoMKgMTIxLjA5MTY4N10gRVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRl
+ZC4gT3B0czogKG51bGwpwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+
+IFvCoMKgMTIxLjA5NTYwOF0gRVhUNC1mcyAobW1jYmxrMXAyKTogcmUtbW91bnRlZC4gT3B0czog
+KG51bGwpwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIx
+LjEwMTAxNF0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIGZpbGVzeXN0ZW1zIHVubW91bnRlZC7C
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBbwqDCoDEyMS4xMDY1MjNdIHN5
+c3RlbWQtc2h1dGRvd25bMV06IERlYWN0aXZhdGluZyBzd2Fwcy7CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjExMTU4NV0gc3lzdGVt
+ZC1zaHV0ZG93blsxXTogQWxsIHN3YXBzIGRlYWN0aXZhdGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjEuMTE2NjYxXSBzeXN0ZW1kLXNodXRk
+b3duWzFdOiBEZXRhY2hpbmcgbG9vcCBkZXZpY2VzLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjEyNjM5NV0gc3lzdGVtZC1zaHV0ZG93blsxXTog
+QWxsIGxvb3AgZGV2aWNlcyBkZXRhY2hlZC7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAKPiBbwqDCoDEyMS4xMzA1MjVdIHN5c3RlbWQtc2h1dGRvd25bMV06IERldGFjaGluZyBE
+TSBkZXZpY2VzLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAK
+PiBbwqDCoDEyMS4xMzU4MjRdIHN5c3RlbWQtc2h1dGRvd25bMV06IEFsbCBETSBkZXZpY2VzIGRl
+dGFjaGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBbwqDCoDEy
+MS4xNjYzMjddIHN5c3RlbWQtc2h1dGRvd25bMV06IC9saWIvc3lzdGVtZC9zeXN0ZW0tc2h1dGRv
+d24gc3VjY2VlZGVkLsKgwqDCoMKgwqAKPiBbwqDCoDEyMS4xNzE3MzldIHN5c3RlbWQtc2h1dGRv
+d25bMV06IFBvd2VyaW5nIG9mZi4KPiAKPiA9PiBhdCB0aGlzIHBvaW50IHJlbW92aW5nIHRoZSBz
+ZCBjYXJkIHdvdWxkIHNob3cgYSBtZXNzYWdlwqAKPiAicmVtb3ZlZCBtbWMwIiAobm90IHN1cmUg
+d2hhdCB0aGUgcmVhbCBtZXNzYWdlIHdhcy4uLikgc28gdGhlIGJvYXJkIGlzIG5vdCBjb21wbGV0
+ZWx5IG9mZi4KPiAKPiAKPiBkbWVzZyBwb3dlcm9mZiB3b3JraW5nOgo+IC4uLgo+IFvCoMKgMTIw
+LjczMzUxOV0gc3lzdGVtZC1qb3VybmFsZFsxNDRdOiBzeXN0ZW1kLWpvdXJuYWxkIHN0b3BwZWQg
+YXMgcGlkIDE0NMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjAuNzQyNjYzXSBzeXN0ZW1kLXNodXRk
+b3duWzFdOiBTZW5kaW5nIFNJR0tJTEwgdG8gcmVtYWluaW5nIHByb2Nlc3Nlcy4uLsKgwqDCoAo+
+IFvCoMKgMTIwLjc2OTIxMl0gc3lzdGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGluZyBmaWxlIHN5
+c3RlbXMuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIw
+Ljc3MzcxM10gc3lzdGVtZC1zaHV0ZG93blsxXTogVW5tb3VudGluZyAvc3lzL2tlcm5lbC9kZWJ1
+Zy7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBbwqDCoDEyMC44MjcyMTFdIHN5c3Rl
+bWQtc2h1dGRvd25bMV06IFVubW91bnRpbmcgL2Rldi9tcXVldWUuwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjEuMDgxNjcyXSBFWFQ0LWZzIChtbWNi
+bGsxcDIpOiByZS1tb3VudGVkLiBPcHRzOiAobnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjEuMDkxNjg3XSBFWFQ0LWZzIChtbWNibGsxcDIpOiBy
+ZS1tb3VudGVkLiBPcHRzOiAobnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgCj4gW8KgwqAxMjEuMDk1NjA4XSBFWFQ0LWZzIChtbWNibGsxcDIpOiByZS1tb3VudGVk
+LiBPcHRzOiAobnVsbCnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4g
+W8KgwqAxMjEuMTAxMDE0XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBBbGwgZmlsZXN5c3RlbXMgdW5t
+b3VudGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjEw
+NjUyM10gc3lzdGVtZC1zaHV0ZG93blsxXTogRGVhY3RpdmF0aW5nIHN3YXBzLsKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjEuMTExNTg1
+XSBzeXN0ZW1kLXNodXRkb3duWzFdOiBBbGwgc3dhcHMgZGVhY3RpdmF0ZWQuwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBbwqDCoDEyMS4xMTY2NjFdIHN5c3Rl
+bWQtc2h1dGRvd25bMV06IERldGFjaGluZyBsb29wIGRldmljZXMuwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqAxMjEuMTI2Mzk1XSBzeXN0ZW1kLXNodXRk
+b3duWzFdOiBBbGwgbG9vcCBkZXZpY2VzIGRldGFjaGVkLsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjEzMDUyNV0gc3lzdGVtZC1zaHV0ZG93blsxXTogRGV0
+YWNoaW5nIERNIGRldmljZXMuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoAo+IFvCoMKgMTIxLjEzNTgyNF0gc3lzdGVtZC1zaHV0ZG93blsxXTogQWxsIERNIGRl
+dmljZXMgZGV0YWNoZWQuwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+
+IFvCoMKgMTIxLjE2NjMyN10gc3lzdGVtZC1zaHV0ZG93blsxXTogL2xpYi9zeXN0ZW1kL3N5c3Rl
+bS1zaHV0ZG93biBzdWNjZWVkZWQuwqDCoMKgwqDCoAo+IFvCoMKgMTIxLjE3MTczOV0gc3lzdGVt
+ZC1zaHV0ZG93blsxXTogUG93ZXJpbmcgb2ZmLgo+IFvCoMKgMTIxLjE4MjMzMV0gcmVib++/vQo+
+IAo+IAo+IAo+IEJlc3QgcmVnYXJkcwo+IE1pY2hhZWwgTmlld8O2aG5lcgoKCkkgZGlkIHNvbWUg
+bW9yZSB0ZXN0cyB3aXRoIG5leHQtMjAxNjEwMTYuIFJldmVydGluZyAvIGNvbW1lbnRpbmcgb3V0
+Cm9uZSBwYXJ0IG9mIHlvdXIgcGF0Y2ggInNvbHZlcyIgdGhlIGxzdXNiIGhhbmcsIHRoZSByZWJv
+b3QgcHJvYmxlbQphbmQgYWxzbyB0aGUgImRlYm91bmNlIGZhaWxlZCIgbWVzc2FnZS4gWzFdCkFu
+b3RoZXIgInNvbHV0aW9uIiBpcyB0byBjYWxsIHBoeV9wb3dlcl9vZmYgYmVmb3JlIHBoeV9wb3dl
+cl9vbi4gWzJdCgpEaXNjbGFpbWVyOiBJIGhhdmUgbm8gaWRlYSB3aGF0IEkgd2FzIGRvaW5nIDst
+KSBUaGVzZSB3ZXJlIGp1c3Qgc29tZQpzaW1wbGUgdHJpYWwtYW5kLWVycm9yIGF0dGVtcHRzIHRo
+YXQgbWF5YmUgaGVscCB0byBmaW5kIHRoZSByZWFsCmNhdXNlIG9mIHRoZSBwcm9ibGVtcy4KClsx
+XQpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvZHdjMy9jb3JlLmMgYi9kcml2ZXJzL3VzYi9kd2Mz
+L2NvcmUuYwppbmRleCA3Mjg3YTc2Li41ZWY1ODlkIDEwMDY0NAotLS0gYS9kcml2ZXJzL3VzYi9k
+d2MzL2NvcmUuYworKysgYi9kcml2ZXJzL3VzYi9kd2MzL2NvcmUuYwpAQCAtNzI0LDYgKzcyNCw3
+IEBAIHN0YXRpYyBpbnQgZHdjM19jb3JlX2luaXQoc3RydWN0IGR3YzMgKmR3YykKwqAJLyogQWRq
+dXN0IEZyYW1lIExlbmd0aCAqLwrCoAlkd2MzX2ZyYW1lX2xlbmd0aF9hZGp1c3RtZW50KGR3Yyk7
+CsKgCisvKgrCoAl1c2JfcGh5X3NldF9zdXNwZW5kKGR3Yy0+dXNiMl9waHksIDApOwrCoAl1c2Jf
+cGh5X3NldF9zdXNwZW5kKGR3Yy0+dXNiM19waHksIDApOwrCoAlyZXQgPSBwaHlfcG93ZXJfb24o
+ZHdjLT51c2IyX2dlbmVyaWNfcGh5KTsKQEAgLTczMyw2ICs3MzQsNyBAQCBzdGF0aWMgaW50IGR3
+YzNfY29yZV9pbml0KHN0cnVjdCBkd2MzICpkd2MpCsKgCXJldCA9IHBoeV9wb3dlcl9vbihkd2Mt
+PnVzYjNfZ2VuZXJpY19waHkpOwrCoAlpZiAocmV0IDwgMCkKwqAJCWdvdG8gZXJyMzsKKyovCsKg
+CsKgCXJldCA9IGR3YzNfZXZlbnRfYnVmZmVyc19zZXR1cChkd2MpOwrCoAlpZiAocmV0KSB7Cgpb
+Ml0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2R3YzMvY29yZS5jIGIvZHJpdmVycy91c2IvZHdj
+My9jb3JlLmMKaW5kZXggNzI4N2E3Ni4uZjZjOGUxMyAxMDA2NDQKLS0tIGEvZHJpdmVycy91c2Iv
+ZHdjMy9jb3JlLmMKKysrIGIvZHJpdmVycy91c2IvZHdjMy9jb3JlLmMKQEAgLTcyNiw2ICs3MjYs
+OCBAQCBzdGF0aWMgaW50IGR3YzNfY29yZV9pbml0KHN0cnVjdCBkd2MzICpkd2MpCsKgCsKgwqDC
+oMKgwqDCoMKgwqB1c2JfcGh5X3NldF9zdXNwZW5kKGR3Yy0+dXNiMl9waHksIDApOwrCoMKgwqDC
+oMKgwqDCoMKgdXNiX3BoeV9zZXRfc3VzcGVuZChkd2MtPnVzYjNfcGh5LCAwKTsKK8KgwqDCoMKg
+wqDCoMKgcGh5X3Bvd2VyX29mZihkd2MtPnVzYjJfZ2VuZXJpY19waHkpOworwqDCoMKgwqDCoMKg
+wqBwaHlfcG93ZXJfb2ZmKGR3Yy0+dXNiM19nZW5lcmljX3BoeSk7CsKgwqDCoMKgwqDCoMKgwqBy
+ZXQgPSBwaHlfcG93ZXJfb24oZHdjLT51c2IyX2dlbmVyaWNfcGh5KTsKwqDCoMKgwqDCoMKgwqDC
+oGlmIChyZXQgPCAwKQrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdvdG8gZXJyMjsK
+CgpCZXN0IHJlZ2FyZHMKTWljaGFlbA==
