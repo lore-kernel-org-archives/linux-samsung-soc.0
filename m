@@ -1,60 +1,64 @@
-From: ayaka <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH v8 1/2] ARM: dts: Add TOPEET itop core board SCP package
  version
-Date: Tue, 18 Oct 2016 01:57:47 +0800
-Message-ID: <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
+Date: Mon, 17 Oct 2016 22:42:10 +0300
+Message-ID: <20161017194210.GA26723@kozik-lap>
 References: <1474300103-26659-1-git-send-email-ayaka@soulik.info>
  <1474300103-26659-2-git-send-email-ayaka@soulik.info>
  <20161017162759.GA25818@kozik-lap>
+ <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161017162759.GA25818@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ayaka <ayaka@soulik.info>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Tue, Oct 18, 2016 at 01:57:47AM +0800, ayaka wrote:
+> 
+> 
+> On 10/18/2016 12:27 AM, Krzysztof Kozlowski wrote:
+> >On Mon, Sep 19, 2016 at 11:48:22PM +0800, Randy Li wrote:
+> >>The TOPEET itop is a samsung exnynos 4412 core board, which have
+> >>two package versions. This patch add the support for SCP version.
+> >>
+> >>Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
+> >>PMIC. The future features are in the based board. Also MFC and
+> >>watchdog have been enabled.
+> >>
+> >>Signed-off-by: Randy Li <ayaka@soulik.info>
+> >>---
+> >>  arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 501 ++++++++++++++++++++++++
+> >>  1 file changed, 501 insertions(+)
+> >>  create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> >I wanted to apply it... but then I saw a bunch of checkpatch trivial issues.
+> >Really, after v8? The code must compile (v6 did not compile...), there
+> >should be no warnings from smatch, sparse and checkpatch (only the last
+> >one is applicable for DTS). Unless of course checkpatch would be
+> >wrong... but in this case it is correct. You did not follow coding
+> >style:
+> >
+> >WARNING: please, no spaces at the start of a line
+> >#134: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:109:
+> >+        devfreq = <&bus_leftbus>;$
+> >
+> >ERROR: code indent should use tabs where possible
+> >#135: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:110:
+> >+        status = "okay";$
+> Oh, it is a copy mistake, the copy operation makes the original tab becomes
+> spaces.
+> Should I send a new version to correct them?
 
+Yes, please send new version. The DTS (code) itself looked fine, so only
+the checkpatch issues are remaining.
 
-On 10/18/2016 12:27 AM, Krzysztof Kozlowski wrote:
-> On Mon, Sep 19, 2016 at 11:48:22PM +0800, Randy Li wrote:
->> The TOPEET itop is a samsung exnynos 4412 core board, which have
->> two package versions. This patch add the support for SCP version.
->>
->> Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
->> PMIC. The future features are in the based board. Also MFC and
->> watchdog have been enabled.
->>
->> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
->> ---
->>   arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 501 ++++++++++++++++++++++++
->>   1 file changed, 501 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-> I wanted to apply it... but then I saw a bunch of checkpatch trivial issues.
-> Really, after v8? The code must compile (v6 did not compile...), there
-> should be no warnings from smatch, sparse and checkpatch (only the last
-> one is applicable for DTS). Unless of course checkpatch would be
-> wrong... but in this case it is correct. You did not follow coding
-> style:
->
-> WARNING: please, no spaces at the start of a line
-> #134: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:109:
-> +        devfreq = <&bus_leftbus>;$
->
-> ERROR: code indent should use tabs where possible
-> #135: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:110:
-> +        status = "okay";$
-Oh, it is a copy mistake, the copy operation makes the original tab 
-becomes spaces.
-Should I send a new version to correct them?
->
->
-> Best regards,
-> Krzysztof
+BTW, why are you copying the files? Even if you have multiple trees
+(like product/vendor kernel and mainline) then you can easily move
+patches with cherry-pick, apply or am commands. Then finally just 'git
+format-patch -2 -v9' and 'git send-email'.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
