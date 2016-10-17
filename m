@@ -1,64 +1,92 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v8 1/2] ARM: dts: Add TOPEET itop core board SCP package
- version
-Date: Mon, 17 Oct 2016 22:42:10 +0300
-Message-ID: <20161017194210.GA26723@kozik-lap>
-References: <1474300103-26659-1-git-send-email-ayaka@soulik.info>
- <1474300103-26659-2-git-send-email-ayaka@soulik.info>
- <20161017162759.GA25818@kozik-lap>
- <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: exynos-drm: display manager fails to start without IOMMU problem
+Date: Mon, 17 Oct 2016 13:45:34 -0600
+Message-ID: <2173cc13-7c77-1a38-501d-2c0f522ff5d5@osg.samsung.com>
+References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
+ <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
+ <57ABB1ED.1080301@samsung.com> <57ABB31E.1070802@osg.samsung.com>
+ <57AE0736.6020705@osg.samsung.com> <57AE0CCB.1010708@osg.samsung.com>
+ <57B29925.4020600@samsung.com>
+ <ce7a035c-f881-82ac-97f6-869442d1ed47@osg.samsung.com>
+ <1b2c3b31-7127-af2f-18a2-f3a28567e28d@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ayaka <ayaka@soulik.info>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37533
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936484AbcJQTpr (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 17 Oct 2016 15:45:47 -0400
+In-Reply-To: <1b2c3b31-7127-af2f-18a2-f3a28567e28d@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On Tue, Oct 18, 2016 at 01:57:47AM +0800, ayaka wrote:
-> 
-> 
-> On 10/18/2016 12:27 AM, Krzysztof Kozlowski wrote:
-> >On Mon, Sep 19, 2016 at 11:48:22PM +0800, Randy Li wrote:
-> >>The TOPEET itop is a samsung exnynos 4412 core board, which have
-> >>two package versions. This patch add the support for SCP version.
-> >>
-> >>Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
-> >>PMIC. The future features are in the based board. Also MFC and
-> >>watchdog have been enabled.
-> >>
-> >>Signed-off-by: Randy Li <ayaka@soulik.info>
-> >>---
-> >>  arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 501 ++++++++++++++++++++++++
-> >>  1 file changed, 501 insertions(+)
-> >>  create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-> >I wanted to apply it... but then I saw a bunch of checkpatch trivial issues.
-> >Really, after v8? The code must compile (v6 did not compile...), there
-> >should be no warnings from smatch, sparse and checkpatch (only the last
-> >one is applicable for DTS). Unless of course checkpatch would be
-> >wrong... but in this case it is correct. You did not follow coding
-> >style:
-> >
-> >WARNING: please, no spaces at the start of a line
-> >#134: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:109:
-> >+        devfreq = <&bus_leftbus>;$
-> >
-> >ERROR: code indent should use tabs where possible
-> >#135: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:110:
-> >+        status = "okay";$
-> Oh, it is a copy mistake, the copy operation makes the original tab becomes
-> spaces.
-> Should I send a new version to correct them?
+Restarting the thread with a different subject line:
 
-Yes, please send new version. The DTS (code) itself looked fine, so only
-the checkpatch issues are remaining.
+I haven't given up on this yet. I am still seeing the following failure:
 
-BTW, why are you copying the files? Even if you have multiple trees
-(like product/vendor kernel and mainline) then you can easily move
-patches with cherry-pick, apply or am commands. Then finally just 'git
-format-patch -2 -v9' and 'git send-email'.
+Additional debug messages I added:
+[   15.287403] exynos_drm_gem_create_ioctl() 1
+[   15.287419] exynos_drm_gem_create() flags 1
 
-Best regards,
-Krzysztof
+[   15.311511] [drm:exynos_drm_framebuffer_init] *ERROR* Non-contiguous GEM memory is not supported.
+
+Additional debug message I added:
+[   15.318981] [drm:exynos_user_fb_create] *ERROR* failed to initialize framebuffer
+
+This is what happens:
+
+1. exynos_drm_gem_create_ioctl() gets called with EXYNOS_BO_NONCONTIG request
+2. exynos_drm_gem_create(0 goes ahead and creates the GEM buffers
+3. exynos_user_fb_create() tries to associate GEM to fb and fails during
+   check_fb_gem_memory_type()
+
+At this point, there is no recovery and lightdm fails
+
+xf86-video-armsoc/src/drmmode_exynos/drmmode_exynos.c assumes contiguous
+allocations are not supported in some exynos drm versions: The following
+commit introduced this change:
+
+https://git.linaro.org/arm/xorg/driver/xf86-video-armsoc.git/commitdiff/3be1f6273441fe95dd442f44064387322e16b7e9
+
+excerpts from the diff:-       if (create_gem->buf_type == ARMSOC_BO_SCANOUT)
+-               create_exynos.flags = EXYNOS_BO_CONTIG;
+-       else
+-               create_exynos.flags = EXYNOS_BO_NONCONTIG;
++
++       /* Contiguous allocations are not supported in some exynos drm versions.
++        * When they are supported all allocations are effectively contiguous
++        * anyway, so for simplicity we always request non contiguous buffers.
++        */
++       create_exynos.flags = EXYNOS_BO_NONCONTIG;
+
+There might have been logic on exynos_drm that forced Contig when it coudn't
+support NONCONTIG. At least, that is what this comment suggests. This assumption
+doesn't appear to be a good one and not sure if this change was made to fix a bug.
+
+After the IOMMU support, this assumption is no longer true. Hence, with IOMMU
+support, latest kernels have a mismatch with the installed xf86-video-armsoc
+
+This is what I am running into. This leads to the following question:
+
+1. How do we ensure exynos_drm kernel changes don't break user-space
+   specifically xf86-video-armsoc
+2. This seems to have gone undetected for a while. I see a change in
+   exynos_drm_gem_dumb_create() that is probably addressing this type
+   of breakage. Commit 122beea84bb90236b1ae545f08267af58591c21b adds
+   handling for IOMMU NONCONTIG case.
+
+Anyway, I am interested in getting the exynos_drm kernel side code
+and xf86-video-armsoc in sync to resolve the issue.
+
+Could you recommend a going forward plan?
+
+I can submit a patch to xf86-video-armsoc. I am also looking ahead to
+see if we can avoid such breaks in the future by keeping kernel and
+xf86-video-armsoc in sync.
+
+thanks,
+-- Shuah
