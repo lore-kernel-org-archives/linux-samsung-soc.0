@@ -1,40 +1,60 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Enable exynos-gsc driver as
- module
-Date: Mon, 17 Oct 2016 19:46:09 +0300
-Message-ID: <20161017164609.GB15435@kozik-lap>
-References: <1475677469-1524-1-git-send-email-javier@osg.samsung.com>
- <1475677469-1524-2-git-send-email-javier@osg.samsung.com>
+From: ayaka <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+Subject: Re: [PATCH v8 1/2] ARM: dts: Add TOPEET itop core board SCP package
+ version
+Date: Tue, 18 Oct 2016 01:57:47 +0800
+Message-ID: <0326b619-3af5-e4ef-2251-16e60105ef67@soulik.info>
+References: <1474300103-26659-1-git-send-email-ayaka@soulik.info>
+ <1474300103-26659-2-git-send-email-ayaka@soulik.info>
+ <20161017162759.GA25818@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36751 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030203AbcJQQrH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 12:47:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1475677469-1524-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161017162759.GA25818@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
-
-On Wed, Oct 05, 2016 at 11:24:29AM -0300, Javier Martinez Canillas wrote:
-> Exynos5 SoCs have a General SCALER (GSCALER) IP block that can be used
-> to do video streams scaling and color space conversions by hardware.
-> Enable support for its driver as a module so the GSCALER can be tested.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  1 file changed, 1 insertion(+)
 
 
 
-Thanks, applied.
+On 10/18/2016 12:27 AM, Krzysztof Kozlowski wrote:
+> On Mon, Sep 19, 2016 at 11:48:22PM +0800, Randy Li wrote:
+>> The TOPEET itop is a samsung exnynos 4412 core board, which have
+>> two package versions. This patch add the support for SCP version.
+>>
+>> Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
+>> PMIC. The future features are in the based board. Also MFC and
+>> watchdog have been enabled.
+>>
+>> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 501 ++++++++++++++++++++++++
+>>   1 file changed, 501 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> I wanted to apply it... but then I saw a bunch of checkpatch trivial issues.
+> Really, after v8? The code must compile (v6 did not compile...), there
+> should be no warnings from smatch, sparse and checkpatch (only the last
+> one is applicable for DTS). Unless of course checkpatch would be
+> wrong... but in this case it is correct. You did not follow coding
+> style:
+>
+> WARNING: please, no spaces at the start of a line
+> #134: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:109:
+> +        devfreq = <&bus_leftbus>;$
+>
+> ERROR: code indent should use tabs where possible
+> #135: FILE: arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi:110:
+> +        status = "okay";$
+Oh, it is a copy mistake, the copy operation makes the original tab 
+becomes spaces.
+Should I send a new version to correct them?
+>
+>
+> Best regards,
+> Krzysztof
 
-Best regards,
-Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
