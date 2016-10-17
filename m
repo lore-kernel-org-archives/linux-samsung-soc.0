@@ -1,167 +1,32 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos 5422
-Date: Mon, 17 Oct 2016 15:21:55 +0530
-Message-ID: <a4d744ae-d043-b652-3073-f29ebe76f865@codeaurora.org>
-References: <1472414695.3845.3.camel@mniewoehner.de>
- <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
- <1472468730.4925.3.camel@mniewoehner.de>
- <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
- <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
- <1475578687.1912.28.camel@mniewoehner.de>
- <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
- <1475771380.22019.5.camel@mniewoehner.de> <87y420wqoy.fsf@linux.intel.com>
- <1475871962.1697.12.camel@mniewoehner.de>
- <1476627597.1752.3.camel@mniewoehner.de> <874m4btn2m.fsf@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] crygpu/drm/exynos/exynos_hdmi - Unmap region obtained by of_iomap
+Date: Mon, 17 Oct 2016 16:39:22 +0530
+Message-ID: <1476702562-24422-1-git-send-email-arvind.yadav.cs@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <874m4btn2m.fsf@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>, =?UTF-8?Q?Michael_Niew=c3=b6hner?= <linux@mniewoehner.de>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
+To: airlied@linux.ie, krzk@kernel.org, kgene@kernel.org
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Free memory mapping, if hdmi_probe is not successful.
 
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-On 10/17/2016 01:38 PM, Felipe Balbi wrote:
-> Hi,
->
-> Michael Niewöhner <linux@mniewoehner.de> writes:
->> Hi Felipe,
->> On Fri, 2016-10-07 at 22:26 +0200, Michael Niewöhner wrote:
->>> Hi Felipe,
->>>
->>> On Fr, 2016-10-07 at 10:42 +0300, Felipe Balbi wrote:
->>>> Hi,
->>>>
->>>> Michael Niewöhner <linux@mniewoehner.de> writes:
->>>>>> The clocks are same across working/non-working.
->>>>>> Is it possible to bisect the commit that's causing hang for 4.8x ?
->>>>>
->>>>> [c499ff71ff2a281366c6ec7a904c547d806cbcd1] usb: dwc3: core: re-factor init and exit paths
->>>>> This patch causes both the hang on reboot and the lsusb hang.
->>>> How to reproduce? Why don't we see this on x86 and TI boards? I'm
->>>> guessing this is failed bisection, as I can't see anything in that
->>>> commit that would cause reboot hang. Also, that code path is *NOT*
->>>> executed when you run lsusb.
->>>>
->>> I've tested this procedure multiple times to be sure:
->>>
->>> - checkout c499ff71, compile, boot the odroid
->>> - run lsusb -v => lsusb hangs, can't terminate with ctrl-c
->>> - hard reset, after boot run poweroff or reboot => board does not completely power off / reboot (see log below)
->>> - revert c499ff71, mrproper, compile, boot the odroid
->>> - run lsusb -v => shows full output, not hanging
->>> - run reboot or poweroff => board powers off / reboots just fine
->>>
->>>
->>> dmesg poweroff not working:
->>> ...
->>> [  120.733519] systemd-journald[144]: systemd-journald stopped as pid 144
->>> [  120.742663] systemd-shutdown[1]: Sending SIGKILL to remaining processes...
->>> [  120.769212] systemd-shutdown[1]: Unmounting file systems.
->>> [  120.773713] systemd-shutdown[1]: Unmounting /sys/kernel/debug.
->>> [  120.827211] systemd-shutdown[1]: Unmounting /dev/mqueue.
->>> [  121.081672] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.091687] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.095608] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.101014] systemd-shutdown[1]: All filesystems unmounted.
->>> [  121.106523] systemd-shutdown[1]: Deactivating swaps.
->>> [  121.111585] systemd-shutdown[1]: All swaps deactivated.
->>> [  121.116661] systemd-shutdown[1]: Detaching loop devices.
->>> [  121.126395] systemd-shutdown[1]: All loop devices detached.
->>> [  121.130525] systemd-shutdown[1]: Detaching DM devices.
->>> [  121.135824] systemd-shutdown[1]: All DM devices detached.
->>> [  121.166327] systemd-shutdown[1]: /lib/systemd/system-shutdown succeeded.
->>> [  121.171739] systemd-shutdown[1]: Powering off.
->>>
->>> => at this point removing the sd card would show a message
->>> "removed mmc0" (not sure what the real message was...) so the board is not completely off.
->>>
->>>
->>> dmesg poweroff working:
->>> ...
->>> [  120.733519] systemd-journald[144]: systemd-journald stopped as pid 144
->>> [  120.742663] systemd-shutdown[1]: Sending SIGKILL to remaining processes...
->>> [  120.769212] systemd-shutdown[1]: Unmounting file systems.
->>> [  120.773713] systemd-shutdown[1]: Unmounting /sys/kernel/debug.
->>> [  120.827211] systemd-shutdown[1]: Unmounting /dev/mqueue.
->>> [  121.081672] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.091687] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.095608] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
->>> [  121.101014] systemd-shutdown[1]: All filesystems unmounted.
->>> [  121.106523] systemd-shutdown[1]: Deactivating swaps.
->>> [  121.111585] systemd-shutdown[1]: All swaps deactivated.
->>> [  121.116661] systemd-shutdown[1]: Detaching loop devices.
->>> [  121.126395] systemd-shutdown[1]: All loop devices detached.
->>> [  121.130525] systemd-shutdown[1]: Detaching DM devices.
->>> [  121.135824] systemd-shutdown[1]: All DM devices detached.
->>> [  121.166327] systemd-shutdown[1]: /lib/systemd/system-shutdown succeeded.
->>> [  121.171739] systemd-shutdown[1]: Powering off.
->>> [  121.182331] rebo�
->>>
->>>
->>>
->>> Best regards
->>> Michael Niewöhner
->>
->> I did some more tests with next-20161016. Reverting / commenting out
->> one part of your patch "solves" the lsusb hang, the reboot problem
->> and also the "debounce failed" message. [1]
->> Another "solution" is to call phy_power_off before phy_power_on. [2]
->>
->> Disclaimer: I have no idea what I was doing ;-) These were just some
->> simple trial-and-error attempts that maybe help to find the real
->> cause of the problems.
->>
->> [1]
->> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->> index 7287a76..5ef589d 100644
->> --- a/drivers/usb/dwc3/core.c
->> +++ b/drivers/usb/dwc3/core.c
->> @@ -724,6 +724,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
->>   	/* Adjust Frame Length */
->>   	dwc3_frame_length_adjustment(dwc);
->>   
->> +/*
->>   	usb_phy_set_suspend(dwc->usb2_phy, 0);
->>   	usb_phy_set_suspend(dwc->usb3_phy, 0);
->>   	ret = phy_power_on(dwc->usb2_generic_phy);
->> @@ -733,6 +734,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
->>   	ret = phy_power_on(dwc->usb3_generic_phy);
->>   	if (ret < 0)
->>   		goto err3;
->> +*/
->>   
->>   	ret = dwc3_event_buffers_setup(dwc);
->>   	if (ret) {
->>
->> [2]
->> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->> index 7287a76..f6c8e13 100644
->> --- a/drivers/usb/dwc3/core.c
->> +++ b/drivers/usb/dwc3/core.c
->> @@ -726,6 +726,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
->>   
->>          usb_phy_set_suspend(dwc->usb2_phy, 0);
->>          usb_phy_set_suspend(dwc->usb3_phy, 0);
->> +       phy_power_off(dwc->usb2_generic_phy);
->> +       phy_power_off(dwc->usb3_generic_phy);
-> This looks like a PHY driver bug to me. Which PHY driver are you using?
->
-
-The exynos5-usbdrd phy driver is used for exynos platforms.
-Looks like something is not right with the phy driver even
-after applying the phy_calibrate patches.
-
-Michael, are you using the last set of patches for phy calibration [1]?
-[1] https://lkml.org/lkml/2015/2/2/257.
-
-
-Thanks
-Vivek
-
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 2275efe..9b7857b 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1901,6 +1901,8 @@ err_disable_pm_runtime:
+ err_hdmiphy:
+ 	if (hdata->hdmiphy_port)
+ 		put_device(&hdata->hdmiphy_port->dev);
++	if (hdata->regs_hdmiphy)
++		iounmap(hdata->regs_hdmiphy);
+ err_ddc:
+ 	put_device(&hdata->ddc_adpt->dev);
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
