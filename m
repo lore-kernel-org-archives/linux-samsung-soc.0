@@ -1,73 +1,171 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 00/10] mm: adjust get_user_pages* functions to explicitly
- pass FOLL_* flags
-Date: Tue, 18 Oct 2016 17:30:50 +0200
-Message-ID: <20161018153050.GC13117@dhcp22.suse.cz>
-References: <20161013002020.3062-1-lstoakes@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v3 1/6] drm/bridge: analogix_dp: set psr
+ activate/deactivate when enable/disable bridge
+Date: Tue, 18 Oct 2016 11:52:16 -0400
+Message-ID: <CAOw6vb+peajznT3BkAZSG7f_7NRB08rTA8Vh_AufPSmwYjT0EQ@mail.gmail.com>
+References: <1476771283-11398-1-git-send-email-wzz@rock-chips.com> <1476771283-11398-2-git-send-email-wzz@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20161013002020.3062-1-lstoakes@gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Lorenzo Stoakes <lstoakes@gmail.com>
-Cc: linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, adi-buildroot-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kvm@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cris-kernel@axis.com, linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org, linux-sh@
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476771283-11398-2-git-send-email-wzz@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zain Wang <wzz@rock-chips.com>, Archit <architt@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu 13-10-16 01:20:10, Lorenzo Stoakes wrote:
-> This patch series adjusts functions in the get_user_pages* family such that
-> desired FOLL_* flags are passed as an argument rather than implied by flags.
-> 
-> The purpose of this change is to make the use of FOLL_FORCE explicit so it is
-> easier to grep for and clearer to callers that this flag is being used. The use
-> of FOLL_FORCE is an issue as it overrides missing VM_READ/VM_WRITE flags for the
-> VMA whose pages we are reading from/writing to, which can result in surprising
-> behaviour.
-> 
-> The patch series came out of the discussion around commit 38e0885, which
-> addressed a BUG_ON() being triggered when a page was faulted in with PROT_NONE
-> set but having been overridden by FOLL_FORCE. do_numa_page() was run on the
-> assumption the page _must_ be one marked for NUMA node migration as an actual
-> PROT_NONE page would have been dealt with prior to this code path, however
-> FOLL_FORCE introduced a situation where this assumption did not hold.
-> 
-> See https://marc.info/?l=linux-mm&m=147585445805166 for the patch proposal.
+On Tue, Oct 18, 2016 at 2:14 AM, Zain Wang <wzz@rock-chips.com> wrote:
+> From: zain wang <wzz@rock-chips.com>
+>
+> There's a race between when bridge_disable and when vop_crtc_disable are called.
+> If the flush timer triggers a new psr work between these, we will operate eDP
+> without power shutdowned by bridge_disable.
+> In this case, moving activate/deactivate to enable/disable bridge to avoid it.
+>
 
-I like this cleanup. Tracking FOLL_FORCE users was always a nightmare
-and the flag behavior is really subtle so we should better be explicit
-about it. I haven't gone through each patch separately but rather
-applied the whole series and checked the resulting diff. This all seems
-OK to me and feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
 
-I am wondering whether we can go further. E.g. it is not really clear to
-me whether we need an explicit FOLL_REMOTE when we can in fact check
-mm != current->mm and imply that. Maybe there are some contexts which
-wouldn't work, I haven't checked.
-
-Then I am also wondering about FOLL_TOUCH behavior.
-__get_user_pages_unlocked has only few callers which used to be
-get_user_pages_unlocked before 1e9877902dc7e ("mm/gup: Introduce
-get_user_pages_remote()"). To me a dropped FOLL_TOUCH seems
-unintentional. Now that get_user_pages_unlocked has gup_flags argument I
-guess we might want to get rid of the __g-u-p-u version altogether, no?
-
-__get_user_pages is quite low level and imho shouldn't be exported. It's
-only user - kvm - should rather pull those two functions to gup instead
-and export them. There is nothing really KVM specific in them.
-
-I also cannot say I would be entirely thrilled about get_user_pages_locked,
-we only have one user which can simply do lock g-u-p unlock AFAICS.
-
-I guess there is more work in that area and I do not want to impose all
-that work on you, but I couldn't resist once I saw you playing in that
-area ;) Definitely a good start!
--- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> ---
+>
+> Changes in v3:
+> - remove changes before.
+> - move psr activat/deactivate to enable/disable bridge.
+>
+> Changes in v2:
+> - add spin_lock to protect dpms_mode
+>
+>
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  4 ++--
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.c     | 30 ++++++++++++++++++++-----
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.h     |  4 ++--
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |  4 ----
+>  4 files changed, 28 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 8548e82..e5471e7 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -159,7 +159,7 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
+>                 return ret;
+>         }
+>
+> -       return 0;
+> +       return rockchip_drm_psr_activate(&dp->encoder);
+>  }
+>
+>  static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
+> @@ -168,7 +168,7 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
+>
+>         clk_disable_unprepare(dp->pclk);
+>
+> -       return 0;
+> +       return rockchip_drm_psr_deactivate(&dp->encoder);
+>  }
+>
+>  static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> index a553e18..4c379e9 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> @@ -57,6 +57,24 @@ out:
+>         return psr;
+>  }
+>
+> +static struct psr_drv *find_psr_by_encoder(struct drm_encoder *encoder)
+> +{
+> +       struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
+> +       struct psr_drv *psr;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
+> +       list_for_each_entry(psr, &drm_drv->psr_list, list) {
+> +               if (psr->encoder == encoder)
+> +                       goto out;
+> +       }
+> +       psr = ERR_PTR(-ENODEV);
+> +
+> +out:
+> +       spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
+> +       return psr;
+> +}
+> +
+>  static void psr_set_state_locked(struct psr_drv *psr, enum psr_state state)
+>  {
+>         /*
+> @@ -115,14 +133,14 @@ static void psr_flush_handler(unsigned long data)
+>
+>  /**
+>   * rockchip_drm_psr_activate - activate PSR on the given pipe
+> - * @crtc: CRTC to obtain the PSR encoder
+> + * @encoder: encoder to obtain the PSR encoder
+>   *
+>   * Returns:
+>   * Zero on success, negative errno on failure.
+>   */
+> -int rockchip_drm_psr_activate(struct drm_crtc *crtc)
+> +int rockchip_drm_psr_activate(struct drm_encoder *encoder)
+>  {
+> -       struct psr_drv *psr = find_psr_by_crtc(crtc);
+> +       struct psr_drv *psr = find_psr_by_encoder(encoder);
+>         unsigned long flags;
+>
+>         if (IS_ERR(psr))
+> @@ -138,14 +156,14 @@ EXPORT_SYMBOL(rockchip_drm_psr_activate);
+>
+>  /**
+>   * rockchip_drm_psr_deactivate - deactivate PSR on the given pipe
+> - * @crtc: CRTC to obtain the PSR encoder
+> + * @encoder: encoder to obtain the PSR encoder
+>   *
+>   * Returns:
+>   * Zero on success, negative errno on failure.
+>   */
+> -int rockchip_drm_psr_deactivate(struct drm_crtc *crtc)
+> +int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
+>  {
+> -       struct psr_drv *psr = find_psr_by_crtc(crtc);
+> +       struct psr_drv *psr = find_psr_by_encoder(encoder);
+>         unsigned long flags;
+>
+>         if (IS_ERR(psr))
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> index b420cf1..b1ea015 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> @@ -18,8 +18,8 @@
+>  void rockchip_drm_psr_flush_all(struct drm_device *dev);
+>  int rockchip_drm_psr_flush(struct drm_crtc *crtc);
+>
+> -int rockchip_drm_psr_activate(struct drm_crtc *crtc);
+> -int rockchip_drm_psr_deactivate(struct drm_crtc *crtc);
+> +int rockchip_drm_psr_activate(struct drm_encoder *encoder);
+> +int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
+>
+>  int rockchip_drm_psr_register(struct drm_encoder *encoder,
+>                         void (*psr_set)(struct drm_encoder *, bool enable));
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index c7eba30..1740a0b 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -566,8 +566,6 @@ static void vop_crtc_disable(struct drm_crtc *crtc)
+>
+>         WARN_ON(vop->event);
+>
+> -       rockchip_drm_psr_deactivate(&vop->crtc);
+> -
+>         /*
+>          * We need to make sure that all windows are disabled before we
+>          * disable that crtc. Otherwise we might try to scan from a destroyed
+> @@ -975,8 +973,6 @@ static void vop_crtc_enable(struct drm_crtc *crtc)
+>         clk_set_rate(vop->dclk, adjusted_mode->clock * 1000);
+>
+>         VOP_CTRL_SET(vop, standby, 0);
+> -
+> -       rockchip_drm_psr_activate(&vop->crtc);
+>  }
+>
+>  static bool vop_fs_irq_is_pending(struct vop *vop)
+> --
+> 1.9.1
+>
+>
