@@ -1,122 +1,185 @@
-From: Zain Wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH 6/6] drm: bridge/analogix: enable vop standby when entry PSR
-Date: Tue, 18 Oct 2016 14:22:36 +0800
-Message-ID: <1476771756-12045-1-git-send-email-wzz@rock-chips.com>
+From: Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux-zzFNMPX9jIaDjmgdnaGrkw@public.gmane.org>
+Subject: Re: PROBLEM: DWC3 USB 3.0 not working on Odroid-XU4 with Exynos
+ 5422
+Date: Tue, 18 Oct 2016 14:20:27 +0200
+Message-ID: <1476793227.1786.2.camel@mniewoehner.de>
+References: <1472414695.3845.3.camel@mniewoehner.de>
+         <87lgzgdof3.fsf@linux.intel.com> <57C41582.1030604@linux.intel.com>
+         <1472468730.4925.3.camel@mniewoehner.de>
+         <CANAwSgQMsK8YPxR==UXtR49kiJzYhkzvSCNwn8mDJfj-3wpa2w@mail.gmail.com>
+         <CAFp+6iGrS0DTP=KUKDvk3NwWB32+1uj-irKT6fn5XTcfk572Hg@mail.gmail.com>
+         <1475578687.1912.28.camel@mniewoehner.de>
+         <CAFp+6iGx-jf+xrdHF=0J3FK9dDBg54zESYNVo8bz2Qz6G4gEZg@mail.gmail.com>
+         <1475771380.22019.5.camel@mniewoehner.de> <87y420wqoy.fsf@linux.intel.com>
+         <1475871962.1697.12.camel@mniewoehner.de>
+         <1476627597.1752.3.camel@mniewoehner.de> <874m4btn2m.fsf@linux.intel.com>
+         <a4d744ae-d043-b652-3073-f29ebe76f865@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Mika Kahola <mika.kahola-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a4d744ae-d043-b652-3073-f29ebe76f865-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Hi,
+On Mon, 2016-10-17 at 15:21 +0530, Vivek Gautam wrote:
+> 
+> On 10/17/2016 01:38 PM, Felipe Balbi wrote:
+> > Hi,
+> > 
+> > Michael Niewöhner <linux-zzFNMPX9jIaDjmgdnaGrkw@public.gmane.org> writes:
+> > > Hi Felipe,
+> > > On Fri, 2016-10-07 at 22:26 +0200, Michael Niewöhner wrote:
+> > > > Hi Felipe,
+> > > > 
+> > > > On Fr, 2016-10-07 at 10:42 +0300, Felipe Balbi wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > Michael Niewöhner <linux-zzFNMPX9jIaDjmgdnaGrkw@public.gmane.org> writes:
+> > > > > > > The clocks are same across working/non-working.
+> > > > > > > Is it possible to bisect the commit that's causing hang for 4.8x ?
+> > > > > > 
+> > > > > > [c499ff71ff2a281366c6ec7a904c547d806cbcd1] usb: dwc3: core: re-factor init and exit paths
+> > > > > > This patch causes both the hang on reboot and the lsusb hang.
+> > > > > 
+> > > > > How to reproduce? Why don't we see this on x86 and TI boards? I'm
+> > > > > guessing this is failed bisection, as I can't see anything in that
+> > > > > commit that would cause reboot hang. Also, that code path is *NOT*
+> > > > > executed when you run lsusb.
+> > > > > 
+> > > > 
+> > > > I've tested this procedure multiple times to be sure:
+> > > > 
+> > > > - checkout c499ff71, compile, boot the odroid
+> > > > - run lsusb -v => lsusb hangs, can't terminate with ctrl-c
+> > > > - hard reset, after boot run poweroff or reboot => board does not completely power off / reboot (see log below)
+> > > > - revert c499ff71, mrproper, compile, boot the odroid
+> > > > - run lsusb -v => shows full output, not hanging
+> > > > - run reboot or poweroff => board powers off / reboots just fine
+> > > > 
+> > > > 
+> > > > dmesg poweroff not working:
+> > > > ...
+> > > > [  120.733519] systemd-journald[144]: systemd-journald stopped as pid 144
+> > > > [  120.742663] systemd-shutdown[1]: Sending SIGKILL to remaining processes...
+> > > > [  120.769212] systemd-shutdown[1]: Unmounting file systems.
+> > > > [  120.773713] systemd-shutdown[1]: Unmounting /sys/kernel/debug.
+> > > > [  120.827211] systemd-shutdown[1]: Unmounting /dev/mqueue.
+> > > > [  121.081672] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.091687] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.095608] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.101014] systemd-shutdown[1]: All filesystems unmounted.
+> > > > [  121.106523] systemd-shutdown[1]: Deactivating swaps.
+> > > > [  121.111585] systemd-shutdown[1]: All swaps deactivated.
+> > > > [  121.116661] systemd-shutdown[1]: Detaching loop devices.
+> > > > [  121.126395] systemd-shutdown[1]: All loop devices detached.
+> > > > [  121.130525] systemd-shutdown[1]: Detaching DM devices.
+> > > > [  121.135824] systemd-shutdown[1]: All DM devices detached.
+> > > > [  121.166327] systemd-shutdown[1]: /lib/systemd/system-shutdown succeeded.
+> > > > [  121.171739] systemd-shutdown[1]: Powering off.
+> > > > 
+> > > > => at this point removing the sd card would show a message
+> > > > "removed mmc0" (not sure what the real message was...) so the board is not completely off.
+> > > > 
+> > > > 
+> > > > dmesg poweroff working:
+> > > > ...
+> > > > [  120.733519] systemd-journald[144]: systemd-journald stopped as pid 144
+> > > > [  120.742663] systemd-shutdown[1]: Sending SIGKILL to remaining processes...
+> > > > [  120.769212] systemd-shutdown[1]: Unmounting file systems.
+> > > > [  120.773713] systemd-shutdown[1]: Unmounting /sys/kernel/debug.
+> > > > [  120.827211] systemd-shutdown[1]: Unmounting /dev/mqueue.
+> > > > [  121.081672] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.091687] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.095608] EXT4-fs (mmcblk1p2): re-mounted. Opts: (null)
+> > > > [  121.101014] systemd-shutdown[1]: All filesystems unmounted.
+> > > > [  121.106523] systemd-shutdown[1]: Deactivating swaps.
+> > > > [  121.111585] systemd-shutdown[1]: All swaps deactivated.
+> > > > [  121.116661] systemd-shutdown[1]: Detaching loop devices.
+> > > > [  121.126395] systemd-shutdown[1]: All loop devices detached.
+> > > > [  121.130525] systemd-shutdown[1]: Detaching DM devices.
+> > > > [  121.135824] systemd-shutdown[1]: All DM devices detached.
+> > > > [  121.166327] systemd-shutdown[1]: /lib/systemd/system-shutdown succeeded.
+> > > > [  121.171739] systemd-shutdown[1]: Powering off.
+> > > > [  121.182331] rebo�
+> > > > 
+> > > > 
+> > > > 
+> > > > Best regards
+> > > > Michael Niewöhner
+> > > 
+> > > I did some more tests with next-20161016. Reverting / commenting out
+> > > one part of your patch "solves" the lsusb hang, the reboot problem
+> > > and also the "debounce failed" message. [1]
+> > > Another "solution" is to call phy_power_off before phy_power_on. [2]
+> > > 
+> > > Disclaimer: I have no idea what I was doing ;-) These were just some
+> > > simple trial-and-error attempts that maybe help to find the real
+> > > cause of the problems.
+> > > 
+> > > [1]
+> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > index 7287a76..5ef589d 100644
+> > > --- a/drivers/usb/dwc3/core.c
+> > > +++ b/drivers/usb/dwc3/core.c
+> > > @@ -724,6 +724,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
+> > >   	/* Adjust Frame Length */
+> > >   	dwc3_frame_length_adjustment(dwc);
+> > >   
+> > > +/*
+> > >   	usb_phy_set_suspend(dwc->usb2_phy, 0);
+> > >   	usb_phy_set_suspend(dwc->usb3_phy, 0);
+> > >   	ret = phy_power_on(dwc->usb2_generic_phy);
+> > > @@ -733,6 +734,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
+> > >   	ret = phy_power_on(dwc->usb3_generic_phy);
+> > >   	if (ret < 0)
+> > >   		goto err3;
+> > > +*/
+> > >   
+> > >   	ret = dwc3_event_buffers_setup(dwc);
+> > >   	if (ret) {
+> > > 
+> > > [2]
+> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > index 7287a76..f6c8e13 100644
+> > > --- a/drivers/usb/dwc3/core.c
+> > > +++ b/drivers/usb/dwc3/core.c
+> > > @@ -726,6 +726,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
+> > >   
+> > >          usb_phy_set_suspend(dwc->usb2_phy, 0);
+> > >          usb_phy_set_suspend(dwc->usb3_phy, 0);
+> > > +       phy_power_off(dwc->usb2_generic_phy);
+> > > +       phy_power_off(dwc->usb3_generic_phy);
+> > 
+> > This looks like a PHY driver bug to me. Which PHY driver are you using?
+> > 
+> 
+> The exynos5-usbdrd phy driver is used for exynos platforms.
+> Looks like something is not right with the phy driver even
+> after applying the phy_calibrate patches.
+> 
+> Michael, are you using the last set of patches for phy calibration [1]?
+> [1] https://lkml.org/lkml/2015/2/2/257.
 
-make VOP standby when entry PSR to save some power.
+yes, I'm using the original LOS level patch.
+The phy patch doesn't apply to next, so I use this adapted patch:
+https://github.com/c0d3z3r0/linux/commit/8b7a0b2a19e235c308b9082a14ffe73477e2c9ed
 
-Signed-off-by: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 29 ++++++++++++++++++-------
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h     |  1 +
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 19 ++++++++++++++++
- 3 files changed, 41 insertions(+), 8 deletions(-)
+> 
+> 
+> Thanks
+> Vivek
+> 
 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 1c2d756..e0f3ed3 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -113,6 +113,13 @@ static void analogix_dp_psr_work(struct work_struct *work)
- 	if (!crtc)
- 		return;
- 
-+	spin_lock_irqsave(&dp->psr_lock, flags);
-+	psr_state = dp->psr_state;
-+	spin_unlock_irqrestore(&dp->psr_lock, flags);
-+
-+	if (psr_state != EDP_VSC_PSR_STATE_ACTIVE)
-+		rockchip_drm_vop_set_standby(crtc, false);
-+
- 	vact_end = crtc->mode.vtotal - crtc->mode.vsync_start + crtc->mode.vdisplay;
- 
- 	ret = rockchip_drm_wait_line_flag(dp->encoder.crtc, vact_end,
-@@ -122,14 +129,20 @@ static void analogix_dp_psr_work(struct work_struct *work)
- 		return;
- 	}
- 
--	spin_lock_irqsave(&dp->psr_lock, flags);
--	psr_state = dp->psr_state;
--	spin_unlock_irqrestore(&dp->psr_lock, flags);
--
--	if (psr_state == EDP_VSC_PSR_STATE_ACTIVE)
--		analogix_dp_enable_psr(dp->dev);
--	else
--		analogix_dp_disable_psr(dp->dev);
-+	if (psr_state == EDP_VSC_PSR_STATE_ACTIVE) {
-+		ret = analogix_dp_enable_psr(dp->dev);
-+		if (ret) {
-+			dev_err(dp->dev, "failed to enable psr\n");
-+			return;
-+		}
-+		rockchip_drm_vop_set_standby(crtc, true);
-+	} else {
-+		ret = analogix_dp_disable_psr(dp->dev);
-+		if (ret) {
-+			dev_err(dp->dev, "failed to disable psr\n");
-+			return;
-+		}
-+	}
- }
- 
- static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-index fb6226c..7149c69 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-@@ -74,5 +74,6 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
- 				    struct device *dev);
- int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
- 				unsigned int mstimeout);
-+void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled);
- 
- #endif /* _ROCKCHIP_DRM_DRV_H_ */
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 1740a0b..13eabda 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1478,6 +1478,25 @@ int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
- }
- EXPORT_SYMBOL(rockchip_drm_wait_line_flag);
- 
-+void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled)
-+{
-+	struct vop *vop = to_vop(crtc);
-+
-+	if (!crtc || !vop->is_enabled)
-+		return;
-+
-+	spin_lock(&vop->reg_lock);
-+
-+	if (enabled)
-+		VOP_CTRL_SET(vop, standby, 1);
-+	else
-+		VOP_CTRL_SET(vop, standby, 0);
-+
-+	spin_unlock(&vop->reg_lock);
-+
-+}
-+EXPORT_SYMBOL(rockchip_drm_vop_set_standby);
-+
- static int vop_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
--- 
-1.9.1
+
+Michael
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
