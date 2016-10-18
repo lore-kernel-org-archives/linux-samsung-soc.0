@@ -1,154 +1,145 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v3 5/6] drm: bridge/analogix: add fast link train for eDP
-Date: Tue, 18 Oct 2016 11:53:32 -0400
-Message-ID: <CAOw6vbJ9oTcd6QACD7UROpXVymqf7xeMnSWjGqq8TYHkLWmYQw@mail.gmail.com>
-References: <1476771741-11997-1-git-send-email-wzz@rock-chips.com>
+Subject: Re: [PATCH 6/6] drm: bridge/analogix: enable vop standby when entry PSR
+Date: Tue, 18 Oct 2016 11:54:56 -0400
+Message-ID: <CAOw6vbLL-_GisEmLnE9S7uQvLGnqvfi5+KAcW9PSVHVo7TdMMQ@mail.gmail.com>
+References: <1476771756-12045-1-git-send-email-wzz@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1476771741-11997-1-git-send-email-wzz@rock-chips.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Zain Wang <wzz@rock-chips.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Doug Anderson <dianders@chromium.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f182.google.com ([209.85.161.182]:36649 "EHLO
+        mail-yw0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964819AbcJRQDI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Oct 2016 12:03:08 -0400
+Received: by mail-yw0-f182.google.com with SMTP id u124so142506084ywg.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Oct 2016 09:03:07 -0700 (PDT)
+Received: from mail-yb0-f172.google.com (mail-yb0-f172.google.com. [209.85.213.172])
+        by smtp.gmail.com with ESMTPSA id n184sm613742ywn.24.2016.10.18.09.03.06
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Oct 2016 09:03:06 -0700 (PDT)
+Received: by mail-yb0-f172.google.com with SMTP id x128so23990352ybg.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Oct 2016 09:03:06 -0700 (PDT)
+In-Reply-To: <1476771756-12045-1-git-send-email-wzz@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Zain Wang <wzz@rock-chips.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, Archit <architt@codeaurora.org>
 
-T24gVHVlLCBPY3QgMTgsIDIwMTYgYXQgMjoyMiBBTSwgWmFpbiBXYW5nIDx3enpAcm9jay1jaGlw
-cy5jb20+IHdyb3RlOgo+IEZyb206IHphaW4gd2FuZyA8d3p6QHJvY2stY2hpcHMuY29tPgo+Cj4g
-d2Ugd291bGQgbWVldCBhIHNob3J0IGJsYWNrIHNjcmVlbiB3aGVuIGV4aXQgUFNSIHdpdGggdGhl
-IGZ1bGwgbGluawo+IHRyYWluaW5nLCBJbiB0aGlzIGNhc2UsIHdlIHNob3VsZCB1c2UgZmFzdCBs
-aW5rIHRyYWluIGluc3RlYWQgb2YgZnVsbAo+IGxpbmsgdHJhaW5pbmcuCj4KPiBTaWduZWQtb2Zm
-LWJ5OiB6YWluIHdhbmcgPHd6ekByb2NrLWNoaXBzLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgfCA4OSArKysrKysrKysrKysr
-KysrKysrKystCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBf
-Y29yZS5oIHwgIDEgKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDg2IGluc2VydGlvbnMoKyksIDQgZGVs
-ZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
-eC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2Fu
-YWxvZ2l4X2RwX2NvcmUuYwo+IGluZGV4IDU2MWI2NDQuLjA1MTY2MjEgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKPiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwo+IEBA
-IC0yMSw2ICsyMSw3IEBACj4gICNpbmNsdWRlIDxsaW51eC9ncGlvLmg+Cj4gICNpbmNsdWRlIDxs
-aW51eC9jb21wb25lbnQuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L3BoeS9waHkuaD4KPiArI2luY2x1
-ZGUgPGxpbnV4L2lvcG9sbC5oPgo+Cj4gICNpbmNsdWRlIDxkcm0vZHJtUC5oPgo+ICAjaW5jbHVk
-ZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+Cj4gQEAgLTM1LDYgKzM2LDggQEAKPgo+ICAjZGVm
-aW5lIHRvX2RwKG5tKSAgICAgIGNvbnRhaW5lcl9vZihubSwgc3RydWN0IGFuYWxvZ2l4X2RwX2Rl
-dmljZSwgbm0pCj4KPiArc3RhdGljIGNvbnN0IGludCBGQVNUX0xJTktfVkVSSUZJQ0FUSU9OID0g
-ZmFsc2U7CgovKiBTZXQgdGhpcyB0byB0cnVlIHRvIHZlcmlmeSBmYXN0IGxpbmsgdHJhaW5pbmcg
-c3VjY2VlZGVkICovCnN0YXRpYyBjb25zdCBib29sIHZlcmlmeV9mYXN0X3RyYWluaW5nID0gZmFs
-c2U7Cgo+ICsKPiAgc3RydWN0IGJyaWRnZV9pbml0IHsKPiAgICAgICAgIHN0cnVjdCBpMmNfY2xp
-ZW50ICpjbGllbnQ7Cj4gICAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGU7Cj4gQEAgLTI0
-NCw2ICsyNDcsNyBAQCBzdGF0aWMgaW50IGFuYWxvZ2l4X2RwX2xpbmtfc3RhcnQoc3RydWN0IGFu
-YWxvZ2l4X2RwX2RldmljZSAqZHApCj4gICAgICAgICAgICAgICAgIHVzbGVlcF9yYW5nZSg5MCwg
-MTIwKTsKPiAgICAgICAgIH0KPgo+ICsKCnJlbW92ZSBleHRyYSBsaW5lCgo+ICAgICAgICAgLyog
-U2V0IHRyYWluaW5nIHBhdHRlcm4gMSAqLwo+ICAgICAgICAgYW5hbG9naXhfZHBfc2V0X3RyYWlu
-aW5nX3BhdHRlcm4oZHAsIFRSQUlOSU5HX1BUTjEpOwo+Cj4gQEAgLTQ4MSw3ICs0ODUsNyBAQCBz
-dGF0aWMgaW50IGFuYWxvZ2l4X2RwX3Byb2Nlc3NfZXF1YWxpemVyX3RyYWluaW5nKHN0cnVjdCBh
-bmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICB7Cj4gICAgICAgICBpbnQgbGFuZSwgbGFuZV9jb3Vu
-dCwgcmV0dmFsOwo+ICAgICAgICAgdTMyIHJlZzsKPiAtICAgICAgIHU4IGxpbmtfYWxpZ24sIGxp
-bmtfc3RhdHVzWzJdLCBhZGp1c3RfcmVxdWVzdFsyXTsKPiArICAgICAgIHU4IGxpbmtfYWxpZ24s
-IGxpbmtfc3RhdHVzWzJdLCBhZGp1c3RfcmVxdWVzdFsyXSwgc3ByZWFkOwo+Cj4gICAgICAgICB1
-c2xlZXBfcmFuZ2UoNDAwLCA0MDEpOwo+Cj4gQEAgLTUyNCw2ICs1MjgsMTIgQEAgc3RhdGljIGlu
-dCBhbmFsb2dpeF9kcF9wcm9jZXNzX2VxdWFsaXplcl90cmFpbmluZyhzdHJ1Y3QgYW5hbG9naXhf
-ZHBfZGV2aWNlICpkcCkKPiAgICAgICAgICAgICAgICAgZGV2X2RiZyhkcC0+ZGV2LCAiZmluYWwg
-bGFuZSBjb3VudCA9ICUuMnhcbiIsCj4gICAgICAgICAgICAgICAgICAgICAgICAgZHAtPmxpbmtf
-dHJhaW4ubGFuZV9jb3VudCk7Cj4KPiArICAgICAgICAgICAgICAgZHJtX2RwX2RwY2RfcmVhZGIo
-JmRwLT5hdXgsIERQX01BWF9ET1dOU1BSRUFELCAmc3ByZWFkKTsKCmNoZWNrIHJldHVybiB2YWx1
-ZQoKPiArICAgICAgICAgICAgICAgZHAtPmZhc3RfdHJhaW5fc3VwcG9ydCA9IChzcHJlYWQgJgo+
-ICsgICAgICAgICAgICAgICAgICAgICAgIERQX05PX0FVWF9IQU5EU0hBS0VfTElOS19UUkFJTklO
-RykgPyB0cnVlIDogZmFsc2U7Cj4gKyAgICAgICAgICAgICAgIGRldl9kYmcoZHAtPmRldiwgImZh
-c3QgbGluayB0cmFpbmluZyAlc1xuIiwKPiArICAgICAgICAgICAgICAgICAgICAgICBkcC0+ZmFz
-dF90cmFpbl9zdXBwb3J0ID8gInN1cHBvcnRlZCIgOiAidW5zdXBwb3J0ZWQiKTsKPiArCj4gICAg
-ICAgICAgICAgICAgIC8qIHNldCBlbmhhbmNlZCBtb2RlIGlmIGF2YWlsYWJsZSAqLwo+ICAgICAg
-ICAgICAgICAgICBhbmFsb2dpeF9kcF9zZXRfZW5oYW5jZWRfbW9kZShkcCk7Cj4gICAgICAgICAg
-ICAgICAgIGRwLT5saW5rX3RyYWluLmx0X3N0YXRlID0gRklOSVNIRUQ7Cj4gQEAgLTY1NSw2ICs2
-NjUsNzUgQEAgc3RhdGljIGludCBhbmFsb2dpeF9kcF9zd19saW5rX3RyYWluaW5nKHN0cnVjdCBh
-bmFsb2dpeF9kcF9kZXZpY2UgKmRwKQo+ICAgICAgICAgcmV0dXJuIHJldHZhbDsKPiAgfQo+Cj4g
-K3N0YXRpYyBpbnQgYW5hbG9naXhfZHBfZnVsbF9saW5rX3RyYWluKHN0cnVjdCBhbmFsb2dpeF9k
-cF9kZXZpY2UgKmRwLAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgdTMyIGNvdW50LCB1MzIgYnd0eXBlKQo+ICt7Cj4gKyAgICAgICBhbmFsb2dpeF9kcF9pbml0
-X3RyYWluaW5nKGRwLCBjb3VudCwgYnd0eXBlKTsKPiArICAgICAgIHJldHVybiBhbmFsb2dpeF9k
-cF9zd19saW5rX3RyYWluaW5nKGRwKTsKPiArfQo+ICsKPiArc3RhdGljIGludCBhbmFsb2dpeF9k
-cF9mYXN0X2xpbmtfdHJhaW4oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHApCj4gK3sKPiAr
-ICAgICAgIGludCBsYW5lOwo+ICsgICAgICAgaW50IHJldHZhbDsKCmludCByZXQ7Cgo+ICsgICAg
-ICAgdTggbGlua19hbGlnbiwgbGlua19zdGF0dXNbMl07Cj4gKyAgICAgICBlbnVtIHBsbF9zdGF0
-dXMgc3RhdHVzOwo+ICsKPiArICAgICAgIGFuYWxvZ2l4X2RwX3Jlc2V0X21hY3JvKGRwKTsKPiAr
-Cj4gKyAgICAgICBhbmFsb2dpeF9kcF9zZXRfbGlua19iYW5kd2lkdGgoZHAsIGRwLT5saW5rX3Ry
-YWluLmxpbmtfcmF0ZSk7Cj4gKyAgICAgICBhbmFsb2dpeF9kcF9zZXRfbGFuZV9jb3VudChkcCwg
-ZHAtPmxpbmtfdHJhaW4ubGFuZV9jb3VudCk7Cj4gKwo+ICsgICAgICAgZm9yIChsYW5lID0gMDsg
-bGFuZSA8IGRwLT5saW5rX3RyYWluLmxhbmVfY291bnQ7IGxhbmUrKykgewo+ICsgICAgICAgICAg
-ICAgICBhbmFsb2dpeF9kcF9zZXRfbGFuZV9saW5rX3RyYWluaW5nKGRwLAo+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIGRwLT5saW5rX3RyYWluLnRyYWluaW5nX2xhbmVbbGFuZV0sIGxhbmUpOwo+
-ICsgICAgICAgfQo+ICsKPiArICAgICAgIHJldHZhbCA9IHJlYWR4X3BvbGxfdGltZW91dChhbmFs
-b2dpeF9kcF9nZXRfcGxsX2xvY2tfc3RhdHVzLCBkcCwgc3RhdHVzLAo+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyAhPSBQTExfVU5MT0NLRUQsCj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgMTIwLCAxMjAgKiBEUF9USU1FT1VUX0xPT1BfQ09V
-TlQpOwo+ICsKPiArICAgICAgIGlmIChyZXR2YWwpCj4gKyAgICAgICAgICAgICAgIHJldHVybiBy
-ZXR2YWw7Cj4gKwo+ICsgICAgICAgLyogc291cmNlIFNldCB0cmFpbmluZyBwYXR0ZXJuIDEgKi8K
-PiArICAgICAgIGFuYWxvZ2l4X2RwX3NldF90cmFpbmluZ19wYXR0ZXJuKGRwLCBUUkFJTklOR19Q
-VE4xKTsKPiArICAgICAgIHVzbGVlcF9yYW5nZSg1MDAsIDYwMCk7CgpBZGQgYSBjb21tZW50IHRv
-IHRoZXNlIHNsZWVwcyBleHBsYWluaW5nIHRoYXQgdGhlIHNwZWMgZGljdGF0ZXMgZWFjaAp0cmFp
-bmluZyBwYXR0ZXJuIG11c3QgYmUgb3V0cHV0IGZvciBtaW5pbXVtIDUwMHVzCgo+ICsKPiArICAg
-ICAgIGFuYWxvZ2l4X2RwX3NldF90cmFpbmluZ19wYXR0ZXJuKGRwLCBUUkFJTklOR19QVE4yKTsK
-PiArICAgICAgIHVzbGVlcF9yYW5nZSg1MDAsIDYwMCk7Cj4gKwo+ICsgICAgICAgLyogVE9ETzog
-ZW5oYW5jZWRfbW9kZT8qLwo+ICsgICAgICAgYW5hbG9naXhfZHBfc2V0X3RyYWluaW5nX3BhdHRl
-cm4oZHAsIERQX05PTkUpOwo+ICsKPiArICAgICAgIGlmIChGQVNUX0xJTktfVkVSSUZJQ0FUSU9O
-KSB7Cj4gKyAgICAgICAgICAgICAgIHJldHZhbCA9IGRybV9kcF9kcGNkX3JlYWRiKCZkcC0+YXV4
-LAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUF9MQU5FX0FM
-SUdOX1NUQVRVU19VUERBVEVELAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAmbGlua19hbGlnbik7Cj4gKyAgICAgICAgICAgICAgIGlmIChyZXR2YWwgPCAwKQo+
-ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXR2YWw7Cj4gKwo+ICsgICAgICAgICAg
-ICAgICByZXR2YWwgPSBkcm1fZHBfZHBjZF9yZWFkKCZkcC0+YXV4LCBEUF9MQU5FMF8xX1NUQVRV
-UywKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaW5rX3N0YXR1
-cywgMik7Cj4gKyAgICAgICAgICAgICAgIGlmIChyZXR2YWwgPCAwKQo+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIHJldHVybiByZXR2YWw7Cj4gKwo+ICsgICAgICAgICAgICAgICBpZiAoYW5hbG9n
-aXhfZHBfY2xvY2tfcmVjb3Zlcnlfb2sobGlua19zdGF0dXMsCj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkcC0+bGlua190cmFpbi5sYW5lX2NvdW50
-KSkgewo+ICsgICAgICAgICAgICAgICAgICAgICAgIGFuYWxvZ2l4X2RwX3JlZHVjZV9saW5rX3Jh
-dGUoZHApOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlPOwo+ICsgICAgICAg
-ICAgICAgICB9Cj4gKwo+ICsgICAgICAgICAgICAgICBpZiAoYW5hbG9naXhfZHBfY2hhbm5lbF9l
-cV9vayhsaW5rX3N0YXR1cywgbGlua19hbGlnbiwKPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgZHAtPmxpbmtfdHJhaW4ubGFuZV9jb3VudCkpIHsKPiArICAg
-ICAgICAgICAgICAgICAgICAgICBhbmFsb2dpeF9kcF9yZWR1Y2VfbGlua19yYXRlKGRwKTsKPiAr
-ICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTzsKPiArICAgICAgICAgICAgICAgfQo+
-ICsgICAgICAgfQo+ICsKPiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4gKwo+ICBzdGF0aWMgaW50
-IGFuYWxvZ2l4X2RwX3NldF9saW5rX3RyYWluKHN0cnVjdCBhbmFsb2dpeF9kcF9kZXZpY2UgKmRw
-LAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdTMyIGNvdW50LCB1MzIg
-Ynd0eXBlKQo+ICB7Cj4gQEAgLTY2MiwxMSArNzQxLDEzIEBAIHN0YXRpYyBpbnQgYW5hbG9naXhf
-ZHBfc2V0X2xpbmtfdHJhaW4oc3RydWN0IGFuYWxvZ2l4X2RwX2RldmljZSAqZHAsCj4gICAgICAg
-ICBpbnQgcmV0dmFsOwo+Cj4gICAgICAgICBmb3IgKGkgPSAwOyBpIDwgRFBfVElNRU9VVF9MT09Q
-X0NPVU5UOyBpKyspIHsKPiAtICAgICAgICAgICAgICAgYW5hbG9naXhfZHBfaW5pdF90cmFpbmlu
-ZyhkcCwgY291bnQsIGJ3dHlwZSk7Cj4gLSAgICAgICAgICAgICAgIHJldHZhbCA9IGFuYWxvZ2l4
-X2RwX3N3X2xpbmtfdHJhaW5pbmcoZHApOwo+ICsgICAgICAgICAgICAgICBpZiAoZHAtPmZhc3Rf
-dHJhaW5fc3VwcG9ydCkKPiArICAgICAgICAgICAgICAgICAgICAgICByZXR2YWwgPSBhbmFsb2dp
-eF9kcF9mYXN0X2xpbmtfdHJhaW4oZHApOwo+ICsgICAgICAgICAgICAgICBlbHNlCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgcmV0dmFsID0gYW5hbG9naXhfZHBfZnVsbF9saW5rX3RyYWluKGRw
-LCBjb3VudCwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBid3R5cGUpOwo+ICAgICAgICAgICAgICAgICBpZiAocmV0dmFs
-ID09IDApCj4gICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4gLQo+ICAgICAgICAgICAg
-ICAgICB1c2xlZXBfcmFuZ2UoMTAwLCAxMTApOwo+ICAgICAgICAgfQo+Cj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5oIGIvZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPiBpbmRleCBj
-ZGMwNTM1Li5iODYwMzliIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
-bG9naXgvYW5hbG9naXhfZHBfY29yZS5oCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
-bmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmgKPiBAQCAtMTcxLDYgKzE3MSw3IEBAIHN0cnVjdCBh
-bmFsb2dpeF9kcF9kZXZpY2Ugewo+ICAgICAgICAgaW50ICAgICAgICAgICAgICAgICAgICAgaHBk
-X2dwaW87Cj4gICAgICAgICBib29sICAgICAgICAgICAgICAgICAgICBmb3JjZV9ocGQ7Cj4gICAg
-ICAgICBib29sICAgICAgICAgICAgICAgICAgICBwc3Jfc3VwcG9ydDsKPiArICAgICAgIGJvb2wg
-ICAgICAgICAgICAgICAgICAgIGZhc3RfdHJhaW5fc3VwcG9ydDsKPgo+ICAgICAgICAgc3RydWN0
-IG11dGV4ICAgICAgICAgICAgcGFuZWxfbG9jazsKPiAgICAgICAgIGJvb2wgICAgICAgICAgICAg
-ICAgICAgIHBhbmVsX2lzX21vZGVzZXQ7Cj4gLS0KPiAxLjkuMQo+Cj4KPiAtLQo+IFRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1z
-YW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIu
-a2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5v
-cmcvbWFqb3Jkb21vLWluZm8uaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On Tue, Oct 18, 2016 at 2:22 AM, Zain Wang <wzz@rock-chips.com> wrote:
+> From: zain wang <wzz@rock-chips.com>
+>
+> make VOP standby when entry PSR to save some power.
+
+This is super racey and will cause bugs. Hopefully once you base it on
+the updated locking it won't be.
+
+I'll wait until then to review.
+
+Sean
+
+
+>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> ---
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 29 ++++++++++++++++++-------
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h     |  1 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 19 ++++++++++++++++
+>  3 files changed, 41 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 1c2d756..e0f3ed3 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -113,6 +113,13 @@ static void analogix_dp_psr_work(struct work_struct *work)
+>         if (!crtc)
+>                 return;
+>
+> +       spin_lock_irqsave(&dp->psr_lock, flags);
+> +       psr_state = dp->psr_state;
+> +       spin_unlock_irqrestore(&dp->psr_lock, flags);
+> +
+> +       if (psr_state != EDP_VSC_PSR_STATE_ACTIVE)
+> +               rockchip_drm_vop_set_standby(crtc, false);
+> +
+>         vact_end = crtc->mode.vtotal - crtc->mode.vsync_start + crtc->mode.vdisplay;
+>
+>         ret = rockchip_drm_wait_line_flag(dp->encoder.crtc, vact_end,
+> @@ -122,14 +129,20 @@ static void analogix_dp_psr_work(struct work_struct *work)
+>                 return;
+>         }
+>
+> -       spin_lock_irqsave(&dp->psr_lock, flags);
+> -       psr_state = dp->psr_state;
+> -       spin_unlock_irqrestore(&dp->psr_lock, flags);
+> -
+> -       if (psr_state == EDP_VSC_PSR_STATE_ACTIVE)
+> -               analogix_dp_enable_psr(dp->dev);
+> -       else
+> -               analogix_dp_disable_psr(dp->dev);
+> +       if (psr_state == EDP_VSC_PSR_STATE_ACTIVE) {
+> +               ret = analogix_dp_enable_psr(dp->dev);
+> +               if (ret) {
+> +                       dev_err(dp->dev, "failed to enable psr\n");
+> +                       return;
+> +               }
+> +               rockchip_drm_vop_set_standby(crtc, true);
+> +       } else {
+> +               ret = analogix_dp_disable_psr(dp->dev);
+> +               if (ret) {
+> +                       dev_err(dp->dev, "failed to disable psr\n");
+> +                       return;
+> +               }
+> +       }
+>  }
+>
+>  static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> index fb6226c..7149c69 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> @@ -74,5 +74,6 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+>                                     struct device *dev);
+>  int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
+>                                 unsigned int mstimeout);
+> +void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled);
+>
+>  #endif /* _ROCKCHIP_DRM_DRV_H_ */
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 1740a0b..13eabda 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -1478,6 +1478,25 @@ int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
+>  }
+>  EXPORT_SYMBOL(rockchip_drm_wait_line_flag);
+>
+> +void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled)
+> +{
+> +       struct vop *vop = to_vop(crtc);
+> +
+> +       if (!crtc || !vop->is_enabled)
+> +               return;
+> +
+> +       spin_lock(&vop->reg_lock);
+> +
+> +       if (enabled)
+> +               VOP_CTRL_SET(vop, standby, 1);
+> +       else
+> +               VOP_CTRL_SET(vop, standby, 0);
+> +
+> +       spin_unlock(&vop->reg_lock);
+> +
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_vop_set_standby);
+> +
+>  static int vop_bind(struct device *dev, struct device *master, void *data)
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+> --
+> 1.9.1
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
