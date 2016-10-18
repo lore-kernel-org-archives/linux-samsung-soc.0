@@ -1,43 +1,44 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9 1/2] ARM: dts: Add TOPEET itop core board SCP package
- version
-Date: Tue, 18 Oct 2016 20:34:14 +0300
-Message-ID: <20161018173414.GA30003@kozik-lap>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 2/2] ARM: dts: add TOPEET itop elite based board
+Date: Tue, 18 Oct 2016 20:37:48 +0300
+Message-ID: <20161018173748.GB30003@kozik-lap>
 References: <devicetree@vger.kernel.org>
  <1476811129-4450-1-git-send-email-ayaka@soulik.info>
- <1476811129-4450-2-git-send-email-ayaka@soulik.info>
+ <1476811129-4450-3-git-send-email-ayaka@soulik.info>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33862 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752675AbcJRRhz (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 18 Oct 2016 13:37:55 -0400
 Content-Disposition: inline
-In-Reply-To: <1476811129-4450-2-git-send-email-ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+In-Reply-To: <1476811129-4450-3-git-send-email-ayaka@soulik.info>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Randy Li <ayaka@soulik.info>
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
 
-On Wed, Oct 19, 2016 at 01:18:48AM +0800, Randy Li wrote:
-> The TOPEET itop is a samsung exnynos 4412 core board, which have
-> two package versions. This patch add the support for SCP version.
+On Wed, Oct 19, 2016 at 01:18:49AM +0800, Randy Li wrote:
+> The TOPEET itop exynos 4412 have three versions base board. The
+> Elite version is the cheap one without too much peripheral devices
+> on it.
 > 
-> Currently supported are USB3503A HSIC, USB OTG, eMMC, rtc and
-> PMIC. The future features are in the based board. Also MFC and
-> watchdog have been enabled.
+> Currently supported are serial console, wired networking(USB),
+> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
+> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
+> enabled.
 > 
-> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi | 501 ++++++++++++++++++++++++
->  1 file changed, 501 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> The FIMC is not used for camera currently, I enabled it just for a
+> colorspace converter.
+> 
+> Signed-off-by: Randy Li <ayaka@soulik.info>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-
-Thanks, applied, with minor changes in commit msg and fix in pin
-function (you used macro for pull up/down instead of function).
+Thanks, applied, with missing Rob's ack, minor changes in commit msg and
+fix in pin function (you used macro for pull up/down instead of
+function).
 
 Best regards,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
