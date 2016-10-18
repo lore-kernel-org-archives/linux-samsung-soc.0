@@ -1,185 +1,122 @@
-From: Zain Wang <wzz@rock-chips.com>
-Subject: [PATCH  v3 5/6] drm: bridge/analogix: add fast link train for eDP
-Date: Tue, 18 Oct 2016 14:22:21 +0800
-Message-ID: <1476771741-11997-1-git-send-email-wzz@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.131]:46575 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbcJRGWg (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 02:22:36 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Zain Wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH 6/6] drm: bridge/analogix: enable vop standby when entry PSR
+Date: Tue, 18 Oct 2016 14:22:36 +0800
+Message-ID: <1476771756-12045-1-git-send-email-wzz@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Mika Kahola <mika.kahola-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, zain wang <wzz@rock-chips.com>
 
-From: zain wang <wzz@rock-chips.com>
+From: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-we would meet a short black screen when exit PSR with the full link
-training, In this case, we should use fast link train instead of full
-link training.
+make VOP standby when entry PSR to save some power.
 
-Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 89 +++++++++++++++++++++-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  1 +
- 2 files changed, 86 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 29 ++++++++++++++++++-------
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h     |  1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 19 ++++++++++++++++
+ 3 files changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 561b644..0516621 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -21,6 +21,7 @@
- #include <linux/gpio.h>
- #include <linux/component.h>
- #include <linux/phy/phy.h>
-+#include <linux/iopoll.h>
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 1c2d756..e0f3ed3 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -113,6 +113,13 @@ static void analogix_dp_psr_work(struct work_struct *work)
+ 	if (!crtc)
+ 		return;
  
- #include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
-@@ -35,6 +36,8 @@
- 
- #define to_dp(nm)	container_of(nm, struct analogix_dp_device, nm)
- 
-+static const int FAST_LINK_VERIFICATION = false;
++	spin_lock_irqsave(&dp->psr_lock, flags);
++	psr_state = dp->psr_state;
++	spin_unlock_irqrestore(&dp->psr_lock, flags);
 +
- struct bridge_init {
- 	struct i2c_client *client;
- 	struct device_node *node;
-@@ -244,6 +247,7 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 		usleep_range(90, 120);
++	if (psr_state != EDP_VSC_PSR_STATE_ACTIVE)
++		rockchip_drm_vop_set_standby(crtc, false);
++
+ 	vact_end = crtc->mode.vtotal - crtc->mode.vsync_start + crtc->mode.vdisplay;
+ 
+ 	ret = rockchip_drm_wait_line_flag(dp->encoder.crtc, vact_end,
+@@ -122,14 +129,20 @@ static void analogix_dp_psr_work(struct work_struct *work)
+ 		return;
  	}
  
-+
- 	/* Set training pattern 1 */
- 	analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
- 
-@@ -481,7 +485,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- {
- 	int lane, lane_count, retval;
- 	u32 reg;
--	u8 link_align, link_status[2], adjust_request[2];
-+	u8 link_align, link_status[2], adjust_request[2], spread;
- 
- 	usleep_range(400, 401);
- 
-@@ -524,6 +528,12 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		dev_dbg(dp->dev, "final lane count = %.2x\n",
- 			dp->link_train.lane_count);
- 
-+		drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD, &spread);
-+		dp->fast_train_support = (spread &
-+			DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ? true : false;
-+		dev_dbg(dp->dev, "fast link training %s\n",
-+			dp->fast_train_support ? "supported" : "unsupported");
-+
- 		/* set enhanced mode if available */
- 		analogix_dp_set_enhanced_mode(dp);
- 		dp->link_train.lt_state = FINISHED;
-@@ -655,6 +665,75 @@ static int analogix_dp_sw_link_training(struct analogix_dp_device *dp)
- 	return retval;
+-	spin_lock_irqsave(&dp->psr_lock, flags);
+-	psr_state = dp->psr_state;
+-	spin_unlock_irqrestore(&dp->psr_lock, flags);
+-
+-	if (psr_state == EDP_VSC_PSR_STATE_ACTIVE)
+-		analogix_dp_enable_psr(dp->dev);
+-	else
+-		analogix_dp_disable_psr(dp->dev);
++	if (psr_state == EDP_VSC_PSR_STATE_ACTIVE) {
++		ret = analogix_dp_enable_psr(dp->dev);
++		if (ret) {
++			dev_err(dp->dev, "failed to enable psr\n");
++			return;
++		}
++		rockchip_drm_vop_set_standby(crtc, true);
++	} else {
++		ret = analogix_dp_disable_psr(dp->dev);
++		if (ret) {
++			dev_err(dp->dev, "failed to disable psr\n");
++			return;
++		}
++	}
  }
  
-+static int analogix_dp_full_link_train(struct analogix_dp_device *dp,
-+					    u32 count, u32 bwtype)
+ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+index fb6226c..7149c69 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+@@ -74,5 +74,6 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+ 				    struct device *dev);
+ int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
+ 				unsigned int mstimeout);
++void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled);
+ 
+ #endif /* _ROCKCHIP_DRM_DRV_H_ */
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 1740a0b..13eabda 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1478,6 +1478,25 @@ int rockchip_drm_wait_line_flag(struct drm_crtc *crtc, unsigned int line_num,
+ }
+ EXPORT_SYMBOL(rockchip_drm_wait_line_flag);
+ 
++void rockchip_drm_vop_set_standby(struct drm_crtc *crtc, bool enabled)
 +{
-+	analogix_dp_init_training(dp, count, bwtype);
-+	return analogix_dp_sw_link_training(dp);
++	struct vop *vop = to_vop(crtc);
++
++	if (!crtc || !vop->is_enabled)
++		return;
++
++	spin_lock(&vop->reg_lock);
++
++	if (enabled)
++		VOP_CTRL_SET(vop, standby, 1);
++	else
++		VOP_CTRL_SET(vop, standby, 0);
++
++	spin_unlock(&vop->reg_lock);
++
 +}
++EXPORT_SYMBOL(rockchip_drm_vop_set_standby);
 +
-+static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
-+{
-+	int lane;
-+	int retval;
-+	u8 link_align, link_status[2];
-+	enum pll_status status;
-+
-+	analogix_dp_reset_macro(dp);
-+
-+	analogix_dp_set_link_bandwidth(dp, dp->link_train.link_rate);
-+	analogix_dp_set_lane_count(dp, dp->link_train.lane_count);
-+
-+	for (lane = 0; lane < dp->link_train.lane_count; lane++) {
-+		analogix_dp_set_lane_link_training(dp,
-+			dp->link_train.training_lane[lane], lane);
-+	}
-+
-+	retval = readx_poll_timeout(analogix_dp_get_pll_lock_status, dp, status,
-+				    status != PLL_UNLOCKED,
-+				    120, 120 * DP_TIMEOUT_LOOP_COUNT);
-+
-+	if (retval)
-+		return retval;
-+
-+	/* source Set training pattern 1 */
-+	analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
-+	usleep_range(500, 600);
-+
-+	analogix_dp_set_training_pattern(dp, TRAINING_PTN2);
-+	usleep_range(500, 600);
-+
-+	/* TODO: enhanced_mode?*/
-+	analogix_dp_set_training_pattern(dp, DP_NONE);
-+
-+	if (FAST_LINK_VERIFICATION) {
-+		retval = drm_dp_dpcd_readb(&dp->aux,
-+					   DP_LANE_ALIGN_STATUS_UPDATED,
-+					   &link_align);
-+		if (retval < 0)
-+			return retval;
-+
-+		retval = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS,
-+					  link_status, 2);
-+		if (retval < 0)
-+			return retval;
-+
-+		if (analogix_dp_clock_recovery_ok(link_status,
-+						  dp->link_train.lane_count)) {
-+			analogix_dp_reduce_link_rate(dp);
-+			return -EIO;
-+		}
-+
-+		if (analogix_dp_channel_eq_ok(link_status, link_align,
-+					      dp->link_train.lane_count)) {
-+			analogix_dp_reduce_link_rate(dp);
-+			return -EIO;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int analogix_dp_set_link_train(struct analogix_dp_device *dp,
- 				      u32 count, u32 bwtype)
+ static int vop_bind(struct device *dev, struct device *master, void *data)
  {
-@@ -662,11 +741,13 @@ static int analogix_dp_set_link_train(struct analogix_dp_device *dp,
- 	int retval;
- 
- 	for (i = 0; i < DP_TIMEOUT_LOOP_COUNT; i++) {
--		analogix_dp_init_training(dp, count, bwtype);
--		retval = analogix_dp_sw_link_training(dp);
-+		if (dp->fast_train_support)
-+			retval = analogix_dp_fast_link_train(dp);
-+		else
-+			retval = analogix_dp_full_link_train(dp, count,
-+								  bwtype);
- 		if (retval == 0)
- 			break;
--
- 		usleep_range(100, 110);
- 	}
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index cdc0535..b86039b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -171,6 +171,7 @@ struct analogix_dp_device {
- 	int			hpd_gpio;
- 	bool                    force_hpd;
- 	bool			psr_support;
-+	bool			fast_train_support;
- 
- 	struct mutex		panel_lock;
- 	bool			panel_is_modeset;
+ 	struct platform_device *pdev = to_platform_device(dev);
 -- 
 1.9.1
