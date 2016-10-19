@@ -1,41 +1,63 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH V2] gpu/drm/exynos/exynos_hdmi - Unmap region obtained by
- of_iomap
-Date: Wed, 19 Oct 2016 15:34:16 +0530
-Message-ID: <1476871456-1098-1-git-send-email-arvind.yadav.cs@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 10/10] mm: replace access_process_vm() write parameter with gup_flags
+Date: Wed, 19 Oct 2016 22:10:46 +1100
+Message-ID: <87twc84mrt.fsf@concordia.ellerman.id.au>
+References: <20161013002020.3062-1-lstoakes@gmail.com> <20161013002020.3062-11-lstoakes@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, krzk@kernel.org, kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20161013002020.3062-11-lstoakes@gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: linux-mm@kvack.org
+Cc: linux-mips@linux-mips.org, linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, sparclinux@vger.kernel.org, linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, x86@kernel.org, Hugh Dickins <hughd@google.com>, linux-media@vger.kernel.org, Rik van Riel <riel@redhat.com>, intel-gfx@lists.freedesktop.org, adi-buildroot-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lorenzo Stoakes <lstoakes@gmail.com>, linux-cris-kernel@axis.com, Linus Torvalds <torvalds@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-alpha@vger.kernel.o
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJlZSBtZW1vcnkgbWFwcGluZywgaWYgaGRtaV9wcm9iZSBpcyBub3Qgc3VjY2Vzc2Z1bC4KClNp
-Z25lZC1vZmYtYnk6IEFydmluZCBZYWRhdiA8YXJ2aW5kLnlhZGF2LmNzQGdtYWlsLmNvbT4KLS0t
-CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCAgICA1ICsrKysrCiAxIGZp
-bGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRt
-aS5jCmluZGV4IDIyNzVlZmUuLmJhMjhkZWMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19o
-ZG1pLmMKQEAgLTE5MDEsNiArMTkwMSw4IEBAIGVycl9kaXNhYmxlX3BtX3J1bnRpbWU6CiBlcnJf
-aGRtaXBoeToKIAlpZiAoaGRhdGEtPmhkbWlwaHlfcG9ydCkKIAkJcHV0X2RldmljZSgmaGRhdGEt
-PmhkbWlwaHlfcG9ydC0+ZGV2KTsKKwlpZiAoaGRhdGEtPnJlZ3NfaGRtaXBoeSkKKwkJaW91bm1h
-cChoZGF0YS0+cmVnc19oZG1pcGh5KTsKIGVycl9kZGM6CiAJcHV0X2RldmljZSgmaGRhdGEtPmRk
-Y19hZHB0LT5kZXYpOwogCkBAIC0xOTIzLDYgKzE5MjUsOSBAQCBzdGF0aWMgaW50IGhkbWlfcmVt
-b3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJaWYgKGhkYXRhLT5oZG1pcGh5X3Bv
-cnQpCiAJCXB1dF9kZXZpY2UoJmhkYXRhLT5oZG1pcGh5X3BvcnQtPmRldik7CiAKKwlpZiAoaGRh
-dGEtPnJlZ3NfaGRtaXBoeSkKKwkJaW91bm1hcChoZGF0YS0+cmVnc19oZG1pcGh5KTsKKwogCXB1
-dF9kZXZpY2UoJmhkYXRhLT5kZGNfYWRwdC0+ZGV2KTsKIAogCXJldHVybiAwOwotLSAKMS43Ljku
-NQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Lorenzo Stoakes <lstoakes@gmail.com> writes:
+
+> diff --git a/arch/powerpc/kernel/ptrace32.c b/arch/powerpc/kernel/ptrace32.c
+> index f52b7db3..010b7b3 100644
+> --- a/arch/powerpc/kernel/ptrace32.c
+> +++ b/arch/powerpc/kernel/ptrace32.c
+> @@ -74,7 +74,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
+>  			break;
+>  
+>  		copied = access_process_vm(child, (u64)addrOthers, &tmp,
+> -				sizeof(tmp), 0);
+> +				sizeof(tmp), FOLL_FORCE);
+>  		if (copied != sizeof(tmp))
+>  			break;
+>  		ret = put_user(tmp, (u32 __user *)data);
+
+LGTM.
+
+> @@ -179,7 +179,8 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
+>  			break;
+>  		ret = 0;
+>  		if (access_process_vm(child, (u64)addrOthers, &tmp,
+> -					sizeof(tmp), 1) == sizeof(tmp))
+> +					sizeof(tmp),
+> +					FOLL_FORCE | FOLL_WRITE) == sizeof(tmp))
+>  			break;
+>  		ret = -EIO;
+>  		break;
+
+If you're respinning this anyway, can you format that as:
+
+		if (access_process_vm(child, (u64)addrOthers, &tmp, sizeof(tmp),
+				      FOLL_FORCE | FOLL_WRITE) == sizeof(tmp))
+  			break;
+
+I realise you probably deliberately didn't do that to make the diff clearer.
+
+Either way:
+
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+
+cheers
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
