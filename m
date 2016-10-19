@@ -1,54 +1,66 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9 2/2] ARM: dts: add TOPEET itop elite based board
-Date: Wed, 19 Oct 2016 08:51:24 +0300
-Message-ID: <CAJKOXPd4xWab2esbELgses+bG=PkJbc_Q_YzQcmeiCdKNaFvzg@mail.gmail.com>
-References: <devicetree@vger.kernel.org> <1476811129-4450-1-git-send-email-ayaka@soulik.info>
- <1476811129-4450-3-git-send-email-ayaka@soulik.info> <20161018173748.GB30003@kozik-lap>
- <58DB0A67-6C74-409B-80B2-9F02492D3A55@soulik.info>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 04/10] mm: replace get_user_pages_locked() write/force
+ parameters with gup_flags
+Date: Wed, 19 Oct 2016 09:32:00 +0200
+Message-ID: <20161019073200.GK29967@quack2.suse.cz>
+References: <20161013002020.3062-1-lstoakes@gmail.com>
+ <20161013002020.3062-5-lstoakes@gmail.com>
+ <20161018125425.GD29967@quack2.suse.cz>
+ <20161018135609.GA30025@lucifer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <58DB0A67-6C74-409B-80B2-9F02492D3A55-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ayaka <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20161018135609.GA30025@lucifer>
+Sender: owner-linux-mm@kvack.org
+To: Lorenzo Stoakes <lstoakes@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>, Hugh Dickins <hughd@google.com>, Dave Hansen <dave.hansen@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, adi-buildroot-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kvm@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cris-kernel@axis.com, linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org, linux-sh
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 19, 2016 at 4:15 AM, Ayaka <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org> wrote:
->
->
-> 從我的 iPad 傳送
->
->> Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> 於 2016年10月19日 上午1:37 寫道：
->>
->>> On Wed, Oct 19, 2016 at 01:18:49AM +0800, Randy Li wrote:
->>> The TOPEET itop exynos 4412 have three versions base board. The
->>> Elite version is the cheap one without too much peripheral devices
->>> on it.
->>>
->>> Currently supported are serial console, wired networking(USB),
->>> USB OTG in peripheral mode, USB host, SD storage, GPIO buttons,
->>> PWM beeper, ADC and LEDs. The WM8960 analog audio codec is also
->>> enabled.
->>>
->>> The FIMC is not used for camera currently, I enabled it just for a
->>> colorspace converter.
->>>
->>> Signed-off-by: Randy Li <ayaka-xPW3/0Ywev/iB9QmIjCX8w@public.gmane.org>
->>> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->>
->> Thanks, applied, with missing Rob's ack, minor changes in commit msg and
->> fix in pin function (you used macro for pull up/down instead of
->> function).
-> The last time I saw the other dts have applied that, but they are not now. A header file is also missed reported by kbuild, but I didn't meet that.
+On Tue 18-10-16 14:56:09, Lorenzo Stoakes wrote:
+> On Tue, Oct 18, 2016 at 02:54:25PM +0200, Jan Kara wrote:
+> > > @@ -1282,7 +1282,7 @@ long get_user_pages(unsigned long start, unsigned long nr_pages,
+> > >  			    int write, int force, struct page **pages,
+> > >  			    struct vm_area_struct **vmas);
+> > >  long get_user_pages_locked(unsigned long start, unsigned long nr_pages,
+> > > -		    int write, int force, struct page **pages, int *locked);
+> > > +		    unsigned int gup_flags, struct page **pages, int *locked);
+> >
+> > Hum, the prototype is inconsistent with e.g. __get_user_pages_unlocked()
+> > where gup_flags come after **pages argument. Actually it makes more sense
+> > to have it before **pages so that input arguments come first and output
+> > arguments second but I don't care that much. But it definitely should be
+> > consistent...
+> 
+> It was difficult to decide quite how to arrange parameters as there was
+> inconsitency with regards to parameter ordering already - for example
+> __get_user_pages() places its flags argument before pages whereas, as you note,
+> __get_user_pages_unlocked() puts them afterwards.
+> 
+> I ended up compromising by trying to match the existing ordering of the function
+> as much as I could by replacing write, force pairs with gup_flags in the same
+> location (with the exception of get_user_pages_unlocked() which I felt should
+> match __get_user_pages_unlocked() in signature) or if there was already a
+> gup_flags parameter as in the case of __get_user_pages_unlocked() I simply
+> removed the write, force pair and left the flags as the last parameter.
+> 
+> I am happy to rearrange parameters as needed, however I am not sure if it'd be
+> worthwhile for me to do so (I am keen to try to avoid adding too much noise here
+> :)
+> 
+> If we were to rearrange parameters for consistency I'd suggest adjusting
+> __get_user_pages_unlocked() to put gup_flags before pages and do the same with
+> get_user_pages_unlocked(), let me know what you think.
 
-I wonder why I didn't encounter the build error on my machine... This
-needs a follow up fix.
+Yeah, ok. If the inconsistency is already there, just leave it for now.
 
-Best regards,
-Krzysztof
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
