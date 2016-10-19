@@ -1,73 +1,85 @@
-From: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Subject: [PATCH v2 0/3] mtd: s3c2410: add device tree support
-Date: Wed, 19 Oct 2016 17:52:02 -0200
-Message-ID: <1476906725-22613-1-git-send-email-sergio.prado@e-labworks.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Subject: [PATCH v2 2/3] dt-bindings: mtd: add DT binding for s3c2410 flash controller
+Date: Wed, 19 Oct 2016 17:52:04 -0200
+Message-ID: <1476906725-22613-3-git-send-email-sergio.prado@e-labworks.com>
+References: <1476906725-22613-1-git-send-email-sergio.prado@e-labworks.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476906725-22613-1-git-send-email-sergio.prado@e-labworks.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux@armlinux.org.uk, linux@simtec.co.uk, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene@kernel.org, javier@osg.samsung.com, boris.brezillon@free-electrons.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Sergio Prado <sergio.prado@e-labworks.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series adds support for configuring Samsung's s3c2410 and
-compatible flash memory controller via devicetree.
+Adds the device tree bindings description for Samsung S3C2410 and
+compatible NAND flash controller.
 
-Tested on FriendlyARM mini2440, based on s3c2440 SoC.
-
-Patch 3 depends on patch 1.
-
-Changes since v1:
-- automate timing selection when booting with a device tree
-- make s3c24XX_nand_devtype_data structs "static const"
-- removing samsung,s3c6400-nand compatible since it is equivalent to
-  samsung,s3c2412-nand
-
-Changes since initial version:
-- patch converted to a patch series
-- read timings from nand_sdr_timings when booting with a device tree
-- naming improvements in the device tree binding
-  (s/nand/nand-controller/, s/_/-, s/children/child)
-- dropped property samsung,ignore_unset_ecc
-- remove @0 from nand device node
-- checking pdev->dev.of_node instead of using ifdef CONFIG_OF_MTD
-- preventing from parsing device tree properties twice
-- increment the nand controller child node refcount, since we
-  maintain a reference to it and its name field
-- using of_device_get_match_data() instead of of_match_device()
-  to make the code simpler
-- remove CONFIG_MTD_NAND_S3C2410_HWECC compile option so we can
-  select ECC mode using nand-ecc-mode property in the device tree
-
-Sergio Prado (3):
-  mtd: s3c2410: make ecc mode configurable via platform data
-  dt-bindings: mtd: add DT binding for s3c2410 flash controller
-  mtd: s3c2410: parse the device configuration from OF node
-
- .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  56 +++++
- arch/arm/mach-s3c24xx/common-smdk.c                |   1 +
- arch/arm/mach-s3c24xx/mach-anubis.c                |   1 +
- arch/arm/mach-s3c24xx/mach-at2440evb.c             |   1 +
- arch/arm/mach-s3c24xx/mach-bast.c                  |   1 +
- arch/arm/mach-s3c24xx/mach-gta02.c                 |   1 +
- arch/arm/mach-s3c24xx/mach-jive.c                  |   1 +
- arch/arm/mach-s3c24xx/mach-mini2440.c              |   1 +
- arch/arm/mach-s3c24xx/mach-osiris.c                |   1 +
- arch/arm/mach-s3c24xx/mach-qt2410.c                |   1 +
- arch/arm/mach-s3c24xx/mach-rx1950.c                |   1 +
- arch/arm/mach-s3c24xx/mach-rx3715.c                |   1 +
- arch/arm/mach-s3c24xx/mach-vstms.c                 |   1 +
- arch/arm/mach-s3c64xx/mach-hmt.c                   |   1 +
- arch/arm/mach-s3c64xx/mach-mini6410.c              |   1 +
- arch/arm/mach-s3c64xx/mach-real6410.c              |   1 +
- drivers/mtd/nand/Kconfig                           |   9 -
- drivers/mtd/nand/s3c2410.c                         | 274 +++++++++++++++------
- include/linux/platform_data/mtd-nand-s3c2410.h     |   7 +-
- 19 files changed, 275 insertions(+), 86 deletions(-)
+Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+---
+ .../devicetree/bindings/mtd/samsung-s3c2410.txt    | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
 
+diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+new file mode 100644
+index 000000000000..0040eb8895e0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+@@ -0,0 +1,56 @@
++* Samsung S3C2410 and compatible NAND flash controller
++
++Required properties:
++- compatible : The possible values are:
++	"samsung,s3c2410-nand"
++	"samsung,s3c2412-nand"
++	"samsung,s3c2440-nand"
++- reg : register's location and length.
++- #address-cells, #size-cells : see nand.txt
++- clocks : phandle to the nand controller clock
++- clock-names : must contain "nand"
++
++Optional child nodes:
++Child nodes representing the available nand chips.
++
++Optional child properties:
++- nand-ecc-mode : see nand.txt
++- nand-on-flash-bbt : see nand.txt
++
++Each child device node may optionally contain a 'partitions' sub-node,
++which further contains sub-nodes describing the flash partition mapping.
++See partition.txt for more detail.
++
++Example:
++
++nand-controller@4e000000 {
++	compatible = "samsung,s3c2440-nand";
++	reg = <0x4e000000 0x40>;
++
++	#address-cells = <1>;
++        #size-cells = <0>;
++
++	clocks = <&clocks HCLK_NAND>;
++	clock-names = "nand";
++
++	nand {
++		nand-ecc-mode = "soft";
++		nand-on-flash-bbt;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0 0x040000>;
++			};
++
++			partition@40000 {
++				label = "kernel";
++				reg = <0x040000 0x500000>;
++			};
++		};
++	};
++};
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
