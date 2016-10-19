@@ -1,103 +1,115 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: exynos-drm: display manager fails to start without IOMMU problem
-Date: Wed, 19 Oct 2016 18:23:50 +0200
-Message-ID: <58079E16.50302@math.uni-bielefeld.de>
-References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
- <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
- <57ABB1ED.1080301@samsung.com> <57ABB31E.1070802@osg.samsung.com>
- <57AE0736.6020705@osg.samsung.com> <57AE0CCB.1010708@osg.samsung.com>
- <57B29925.4020600@samsung.com>
- <ce7a035c-f881-82ac-97f6-869442d1ed47@osg.samsung.com>
- <1b2c3b31-7127-af2f-18a2-f3a28567e28d@osg.samsung.com>
- <2173cc13-7c77-1a38-501d-2c0f522ff5d5@osg.samsung.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] host: ehci-exynos: Convert to use the SET_SYSTEM_SLEEP_PM_OPS
+Date: Wed, 19 Oct 2016 22:13:54 +0530
+Message-ID: <CANAwSgTXo_=buNVnD+UjxYXo=bHbptGj+ZXivBiQA6LK+ZjNLg@mail.gmail.com>
+References: <1476023655-3232-1-git-send-email-linux.amoon@gmail.com>
+ <20161009163446.GA9672@kozik-lap> <CANAwSgSr6-0x47=0P_NCiGCv=FSZR9dNT89JpY=9R_32U8HywQ@mail.gmail.com>
+ <20161009172757.GA11916@kozik-lap> <CANAwSgS9tbhPK4jwoqR6G1=iKAo15H3Dizu3Lp03KMGbQ4aj9A@mail.gmail.com>
+ <20161009183933.GA15270@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2173cc13-7c77-1a38-501d-2c0f522ff5d5@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161009183933.GA15270@kozik-lap>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gU2h1YWgsCgpqdXN0IGEgc2hvcnQgbm90ZSB0aGF0IG1vcmUgbWlzbGVhZGluZyBjb21t
-ZW50cyBhYm91dCBkZWZhdWx0IGFsbG9jYXRpb24KZmxhZ3MgY2FuIGJlIGZvdW5kIGluIGxpYmRy
-bS4KCmh0dHBzOi8vY2dpdC5mcmVlZGVza3RvcC5vcmcvbWVzYS9kcm0vdHJlZS9leHlub3MvZXh5
-bm9zX2RybS5jCgpTZWUgZS5nLiB0aGUgY29tbWVudCBmb3IgZXh5bm9zX2JvX2NyZWF0ZSgpLgoK
-SW4gbXkgb3BpbmlvbiwgdGhlIHdob2xlIGFwcHJvYWNoIHRvIF9zZXRfIGEgYml0IHRvIGdldCBu
-b24tY29udGlnaW91cwptZW1vcnkgaXMgbWVzc2VkIHVwLiBJdCB3b3VsZCBtYWtlIG1vcmUgc2Vu
-c2UgdG8gbWUgdG8gc2V0IGEgYml0IHRvCnJlcXVlc3QgYW4gYWRkaXRpb25hbCBwcm9wZXJ0eSAo
-aGVyZSAiYmVpbmcgY29udGlndW91cyIpIG9mIHRoZSBtZW1vcnkuCgpBbnl3YXksIGNsZWFyaW5n
-IHVwIHRoaXMgc2l0dWF0aW9uIGlzIGhpZ2hseSBhcHByZWNpYXRlZCEKCk1vcmUgY29tbWVudHMg
-YmVsb3cuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgoKU2h1YWggS2hhbiB3cm90ZToKPiBS
-ZXN0YXJ0aW5nIHRoZSB0aHJlYWQgd2l0aCBhIGRpZmZlcmVudCBzdWJqZWN0IGxpbmU6Cj4gCj4g
-SSBoYXZlbid0IGdpdmVuIHVwIG9uIHRoaXMgeWV0LiBJIGFtIHN0aWxsIHNlZWluZyB0aGUgZm9s
-bG93aW5nIGZhaWx1cmU6Cj4gCj4gQWRkaXRpb25hbCBkZWJ1ZyBtZXNzYWdlcyBJIGFkZGVkOgo+
-IFsgICAxNS4yODc0MDNdIGV4eW5vc19kcm1fZ2VtX2NyZWF0ZV9pb2N0bCgpIDEKPiBbICAgMTUu
-Mjg3NDE5XSBleHlub3NfZHJtX2dlbV9jcmVhdGUoKSBmbGFncyAxCj4gCj4gWyAgIDE1LjMxMTUx
-MV0gW2RybTpleHlub3NfZHJtX2ZyYW1lYnVmZmVyX2luaXRdICpFUlJPUiogTm9uLWNvbnRpZ3Vv
-dXMgR0VNIG1lbW9yeSBpcyBub3Qgc3VwcG9ydGVkLgo+IAo+IEFkZGl0aW9uYWwgZGVidWcgbWVz
-c2FnZSBJIGFkZGVkOgo+IFsgICAxNS4zMTg5ODFdIFtkcm06ZXh5bm9zX3VzZXJfZmJfY3JlYXRl
-XSAqRVJST1IqIGZhaWxlZCB0byBpbml0aWFsaXplIGZyYW1lYnVmZmVyCj4gCj4gVGhpcyBpcyB3
-aGF0IGhhcHBlbnM6Cj4gCj4gMS4gZXh5bm9zX2RybV9nZW1fY3JlYXRlX2lvY3RsKCkgZ2V0cyBj
-YWxsZWQgd2l0aCBFWFlOT1NfQk9fTk9OQ09OVElHIHJlcXVlc3QKPiAyLiBleHlub3NfZHJtX2dl
-bV9jcmVhdGUoMCBnb2VzIGFoZWFkIGFuZCBjcmVhdGVzIHRoZSBHRU0gYnVmZmVycwo+IDMuIGV4
-eW5vc191c2VyX2ZiX2NyZWF0ZSgpIHRyaWVzIHRvIGFzc29jaWF0ZSBHRU0gdG8gZmIgYW5kIGZh
-aWxzIGR1cmluZwo+ICAgIGNoZWNrX2ZiX2dlbV9tZW1vcnlfdHlwZSgpCj4gCj4gQXQgdGhpcyBw
-b2ludCwgdGhlcmUgaXMgbm8gcmVjb3ZlcnkgYW5kIGxpZ2h0ZG0gZmFpbHMKPiAKPiB4Zjg2LXZp
-ZGVvLWFybXNvYy9zcmMvZHJtbW9kZV9leHlub3MvZHJtbW9kZV9leHlub3MuYyBhc3N1bWVzIGNv
-bnRpZ3VvdXMKPiBhbGxvY2F0aW9ucyBhcmUgbm90IHN1cHBvcnRlZCBpbiBzb21lIGV4eW5vcyBk
-cm0gdmVyc2lvbnM6IFRoZSBmb2xsb3dpbmcKPiBjb21taXQgaW50cm9kdWNlZCB0aGlzIGNoYW5n
-ZToKPiAKPiBodHRwczovL2dpdC5saW5hcm8ub3JnL2FybS94b3JnL2RyaXZlci94Zjg2LXZpZGVv
-LWFybXNvYy5naXQvY29tbWl0ZGlmZi8zYmUxZjYyNzM0NDFmZTk1ZGQ0NDJmNDQwNjQzODczMjJl
-MTZiN2U5Cj4gCj4gZXhjZXJwdHMgZnJvbSB0aGUgZGlmZjotICAgICAgIGlmIChjcmVhdGVfZ2Vt
-LT5idWZfdHlwZSA9PSBBUk1TT0NfQk9fU0NBTk9VVCkKPiAtICAgICAgICAgICAgICAgY3JlYXRl
-X2V4eW5vcy5mbGFncyA9IEVYWU5PU19CT19DT05USUc7Cj4gLSAgICAgICBlbHNlCj4gLSAgICAg
-ICAgICAgICAgIGNyZWF0ZV9leHlub3MuZmxhZ3MgPSBFWFlOT1NfQk9fTk9OQ09OVElHOwo+ICsK
-PiArICAgICAgIC8qIENvbnRpZ3VvdXMgYWxsb2NhdGlvbnMgYXJlIG5vdCBzdXBwb3J0ZWQgaW4g
-c29tZSBleHlub3MgZHJtIHZlcnNpb25zLgo+ICsgICAgICAgICogV2hlbiB0aGV5IGFyZSBzdXBw
-b3J0ZWQgYWxsIGFsbG9jYXRpb25zIGFyZSBlZmZlY3RpdmVseSBjb250aWd1b3VzCj4gKyAgICAg
-ICAgKiBhbnl3YXksIHNvIGZvciBzaW1wbGljaXR5IHdlIGFsd2F5cyByZXF1ZXN0IG5vbiBjb250
-aWd1b3VzIGJ1ZmZlcnMuCj4gKyAgICAgICAgKi8KPiArICAgICAgIGNyZWF0ZV9leHlub3MuZmxh
-Z3MgPSBFWFlOT1NfQk9fTk9OQ09OVElHOwo+IAo+IFRoZXJlIG1pZ2h0IGhhdmUgYmVlbiBsb2dp
-YyBvbiBleHlub3NfZHJtIHRoYXQgZm9yY2VkIENvbnRpZyB3aGVuIGl0IGNvdWRuJ3QKPiBzdXBw
-b3J0IE5PTkNPTlRJRy4gQXQgbGVhc3QsIHRoYXQgaXMgd2hhdCB0aGlzIGNvbW1lbnQgc3VnZ2Vz
-dHMuIFRoaXMgYXNzdW1wdGlvbgo+IGRvZXNuJ3QgYXBwZWFyIHRvIGJlIGEgZ29vZCBvbmUgYW5k
-IG5vdCBzdXJlIGlmIHRoaXMgY2hhbmdlIHdhcyBtYWRlIHRvIGZpeCBhIGJ1Zy4KPiAKPiBBZnRl
-ciB0aGUgSU9NTVUgc3VwcG9ydCwgdGhpcyBhc3N1bXB0aW9uIGlzIG5vIGxvbmdlciB0cnVlLiBI
-ZW5jZSwgd2l0aCBJT01NVQo+IHN1cHBvcnQsIGxhdGVzdCBrZXJuZWxzIGhhdmUgYSBtaXNtYXRj
-aCB3aXRoIHRoZSBpbnN0YWxsZWQgeGY4Ni12aWRlby1hcm1zb2MKPiAKPiBUaGlzIGlzIHdoYXQg
-SSBhbSBydW5uaW5nIGludG8uIFRoaXMgbGVhZHMgdG8gdGhlIGZvbGxvd2luZyBxdWVzdGlvbjoK
-PiAKPiAxLiBIb3cgZG8gd2UgZW5zdXJlIGV4eW5vc19kcm0ga2VybmVsIGNoYW5nZXMgZG9uJ3Qg
-YnJlYWsgdXNlci1zcGFjZQo+ICAgIHNwZWNpZmljYWxseSB4Zjg2LXZpZGVvLWFybXNvYwo+IDIu
-IFRoaXMgc2VlbXMgdG8gaGF2ZSBnb25lIHVuZGV0ZWN0ZWQgZm9yIGEgd2hpbGUuIEkgc2VlIGEg
-Y2hhbmdlIGluCj4gICAgZXh5bm9zX2RybV9nZW1fZHVtYl9jcmVhdGUoKSB0aGF0IGlzIHByb2Jh
-Ymx5IGFkZHJlc3NpbmcgdGhpcyB0eXBlCj4gICAgb2YgYnJlYWthZ2UuIENvbW1pdCAxMjJiZWVh
-ODRiYjkwMjM2YjFhZTU0NWYwODI2N2FmNTg1OTFjMjFiIGFkZHMKPiAgICBoYW5kbGluZyBmb3Ig
-SU9NTVUgTk9OQ09OVElHIGNhc2UuCkkgZG9uJ3QgdGhpbmsgdGhhdCB0aGlzIGNvbW1pdCBpcyBy
-ZWxhdGVkIHRvIHRoZSBpc3N1ZSwgc2luY2UgaXQgaXMgb25seQp1c2VkIGZvciB0aGUgZ2VuZXJp
-YyBkdW1iIGJ1ZmZlciBpb2N0bCwgd2hpbGUgYXJtc29jIGlzIHVzaW5nIGFuIEV4eW5vcwpzcGVj
-aWZpYyBpb2N0bC4KClNvIGluIHBhcnRpY3VsYXIgeW91IHNob3VsZG4ndCBzZWUgdGhlIGlzc3Vl
-IHdpdGgKeGY4Ni12aWRlby1tb2Rlc2V0dGluZy4gTWlnaHQgYmUgd29ydGggdHJ5aW5nIHRoYXQg
-b25lIG91dD8KCgo+IAo+IEFueXdheSwgSSBhbSBpbnRlcmVzdGVkIGluIGdldHRpbmcgdGhlIGV4
-eW5vc19kcm0ga2VybmVsIHNpZGUgY29kZQo+IGFuZCB4Zjg2LXZpZGVvLWFybXNvYyBpbiBzeW5j
-IHRvIHJlc29sdmUgdGhlIGlzc3VlLgo+IAo+IENvdWxkIHlvdSByZWNvbW1lbmQgYSBnb2luZyBm
-b3J3YXJkIHBsYW4/Cj4gCj4gSSBjYW4gc3VibWl0IGEgcGF0Y2ggdG8geGY4Ni12aWRlby1hcm1z
-b2MuIEkgYW0gYWxzbyBsb29raW5nIGFoZWFkIHRvCj4gc2VlIGlmIHdlIGNhbiBhdm9pZCBzdWNo
-IGJyZWFrcyBpbiB0aGUgZnV0dXJlIGJ5IGtlZXBpbmcga2VybmVsIGFuZAo+IHhmODYtdmlkZW8t
-YXJtc29jIGluIHN5bmMuCj4gCj4gdGhhbmtzLAo+IC0tIFNodWFoCj4gCj4gLS0KPiBUbyB1bnN1
-YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgt
-c2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
-Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
-b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+Hi Krzysztof,
+
+On 10 October 2016 at 00:09, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Sun, Oct 09, 2016 at 11:57:59PM +0530, Anand Moon wrote:
+>> hi Krzysztof,
+>>
+>> On 9 October 2016 at 22:57, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> > On Sun, Oct 09, 2016 at 10:45:40PM +0530, Anand Moon wrote:
+>> >> Hi Krzysztof,
+>> >>
+>> >> On 9 October 2016 at 22:04, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> >> > On Sun, Oct 09, 2016 at 02:34:14PM +0000, Anand Moon wrote:
+>> >> >> Move the ehci-exynos system PM callbacks within #ifdef CONFIG_PM_SLEEP
+>> >> >> as to avoid them being build when not used. This also allows us to use the
+>> >> >> SET_SYSTEM_SLEEP_PM_OPS macro which simplifies the code.
+>> >> >>
+>> >> >> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> >> >> ---
+>> >> >>  drivers/usb/host/ehci-exynos.c | 14 ++++++--------
+>> >> >>  1 file changed, 6 insertions(+), 8 deletions(-)
+>> >> >>
+>> >> >> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+>> >> >> index 42e5b66..1899900 100644
+>> >> >> --- a/drivers/usb/host/ehci-exynos.c
+>> >> >> +++ b/drivers/usb/host/ehci-exynos.c
+>> >> >> @@ -251,7 +251,7 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>> >> >>       return 0;
+>> >> >>  }
+>> >> >>
+>> >> >> -#ifdef CONFIG_PM
+>> >> >> +#ifdef CONFIG_PM_SLEEP
+>> >> >
+>> >> > Does not look like an equivalent change. How will it behave in a config
+>> >> > with !SUSPEND && !HIBERNATE && PM?
+>> >> >
+>> >>
+>> >> [snip]
+>> >>
+>> >> I just wanted to update suspend and resume callback to use
+>> >> SET_SYSTEM_SLEEP_PM_OPS
+>> >> as they are define under CONFIG_PM_SLEEP so I update above to avoid
+>> >> compilation warning/error.
+>> >
+>> Apologize: for not understanding your question.
+>>
+>> > First of all you did not answer to my question, so let me rephrase into
+>> > two:
+>> > 1. Is the code equivalent?
+>>
+>> No CONFIG_PM and CONFIG_PM_SLEEP are different options.
+>> But I could not disable CONFIG_PM_SLEEP option with either in exynos_defconfig
+>
+> So the code is not equivalent...
+
+I might be wrong, below is the kconfig option for PM_SLEEP
+
+ Symbol: PM_SLEEP [=y]
+ Type  : boolean
+    Defined at kernel/power/Kconfig
+     Depends on: SUSPEND [=y] || HIBERNATE_CALLBACKS [=n]
+     Selects: PM [=y]
+
+So we cannot set CONFIG_PM_SLEEP=n and CONFIG_PM=y
+
+I observed at many places were either CONFIG_PM or CONFIG_PM_SLEEP are used.
+
+So I would like to use SIMPLE_DEV_PM_OPS macro to set struct
+dev_pm_ops exynos_ohci_pm_ops to correct the code.
+
+Best Regards
+-Anand Moon
+
+>
+>>
+>> CONFIG_PM_SLEEP=n or
+>> # CONFIG_PM_SLEEP is not set
+>>
+>> > 2. What will be the output with !SUSPEND && !HIBERNATE && PM?
+>>
+>> #
+>> # Power management options
+>> #
+>> # CONFIG_SUSPEND is not set
+>> # CONFIG_HIBERNATION is not set
+>> # CONFIG_PM is not set
+>>
+>> When CONFIG_SUSPEND and CONFIG_HIBERNATION are not set
+>> CONFIG_PM is disabled and so is CONFIG_PM_SLEEP.
+>
+> In my config, the CONFIG_PM was enabled thus the code changes the
+> functionality... Maybe this was intented but I really don't get it from
+> the commit message or from your explanations here.
+>
+> Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
