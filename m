@@ -1,38 +1,39 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] mtd: s3c2410: parse the device configuration from
- OF node
-Date: Thu, 20 Oct 2016 20:57:45 +0300
-Message-ID: <20161020175745.GC7119@kozik-lap>
-References: <1476906725-22613-1-git-send-email-sergio.prado@e-labworks.com>
- <1476906725-22613-4-git-send-email-sergio.prado@e-labworks.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 00/10] mm: adjust get_user_pages* functions to explicitly
+ pass FOLL_* flags
+Date: Thu, 20 Oct 2016 21:26:47 +0200
+Message-ID: <20161020192646.GC27342@dhcp22.suse.cz>
+References: <20161013002020.3062-1-lstoakes@gmail.com>
+ <20161018153050.GC13117@dhcp22.suse.cz>
+ <20161019085815.GA22239@lucifer>
+ <20161019090727.GE7517@dhcp22.suse.cz>
+ <5807A427.7010200@linux.intel.com>
+ <20161019170127.GN24393@dhcp22.suse.cz>
+ <5807AC2B.4090208@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1476906725-22613-4-git-send-email-sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Cc: linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <5807AC2B.4090208@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, adi-buildroot-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kvm@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cris-kernel@axis.com, linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@linux-mips.org, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, linux-samsung-soc@vg
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 19, 2016 at 05:52:05PM -0200, Sergio Prado wrote:
-> Allows configuring Samsung's s3c2410 memory controller using a
-> devicetree.
+On Wed 19-10-16 10:23:55, Dave Hansen wrote:
+> On 10/19/2016 10:01 AM, Michal Hocko wrote:
+> > The question I had earlier was whether this has to be an explicit FOLL
+> > flag used by g-u-p users or we can just use it internally when mm !=
+> > current->mm
 > 
-> Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-> ---
->  drivers/mtd/nand/s3c2410.c                     | 155 ++++++++++++++++++++++---
->  include/linux/platform_data/mtd-nand-s3c2410.h |   1 +
->  2 files changed, 140 insertions(+), 16 deletions(-)
->
+> The reason I chose not to do that was that deferred work gets run under
+> a basically random 'current'.  If we just use 'mm != current->mm', then
+> the deferred work will sometimes have pkeys enforced and sometimes not,
+> basically randomly.
 
+OK, I see (async_pf_execute and ksm ). It makes more sense to me. Thanks
+for the clarification.
 
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Michal Hocko
+SUSE Labs
