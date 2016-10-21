@@ -1,38 +1,43 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property
-Date: Fri, 21 Oct 2016 17:05:54 +0300
-Message-ID: <1477058754-13866-1-git-send-email-krzk@kernel.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] PM / Domains: Restrict "samsung,power-domain" checks to
+ ARCH_EXYNOS
+Date: Fri, 21 Oct 2016 16:14:56 +0200
+Message-ID: <96efd5b7-5f62-8146-13de-44b5ff7dd496@samsung.com>
+References: <1477049656-27535-1-git-send-email-geert+renesas@glider.be>
+ <CAJZ5v0iOQyCwCuMBVcJjX1mMHFb=NkfXFf6yBNdswRw1HMYC=Q@mail.gmail.com>
+ <CGME20161021135818eucas1p265318ff4b1c4c83b52162ee5e59e40a3@eucas1p2.samsung.com>
+ <20161021135803.GB3289@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33190 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755675AbcJUOPD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 10:15:03 -0400
+In-reply-to: <20161021135803.GB3289@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, q@kozik-lap.samsung.com, Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-The samsung,power-domain property is obsolete since commit 0da658704136
-("ARM: dts: convert to generic power domain bindings for exynos DT").
-Replace it with generic one.
+On 10/21/2016 03:58 PM, Krzysztof Kozlowski wrote:
+> The samsung,power-domain was made deprecated (although not explicitly)
+> in January 2015 (0da658704136 ("ARM: dts: convert to generic power
+> domain bindings for exynos DT")) so how about:
+> 1. Printing a dev_warn() about usage of deprecated bindings.
+> 2. Complete removal in January 2017?
 
-Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I doubt anyone will ever use new mainline kernel with older dts/dtb
+so IMHO it makes sense to queue a patch removing support for the
+deprecated compatible just now and don't bother with a warning.
 
-diff --git a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-index 3938caacf11c..8346fb18a358 100644
---- a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-@@ -33,7 +33,7 @@ Required properties:
- - i80-if-timings: timing configuration for lcd i80 interface support.
- 
- Optional Properties:
--- samsung,power-domain: a phandle to DECON power domain node.
-+- power-domains: a phandle to DECON power domain node.
- - display-timings: timing settings for DECON, as described in document [1].
- 		Can be used in case timings cannot be provided otherwise
- 		or to override timings provided by the panel.
--- 
-2.7.4
+Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+arch/arm/boot/dts/exynos4415.dtsi
+would just need to be updated in same release, I can prepare a patch
+for these files.
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Sylwester
