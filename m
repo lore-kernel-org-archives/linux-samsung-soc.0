@@ -1,58 +1,36 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [RESEND][PATCH 2/2] PM / devfreq: exynos-ppmu: Remove unused mutex from struct exynos_ppmu
-Date: Fri, 21 Oct 2016 09:09:09 +0800
-Message-ID: <1477012149-9928-2-git-send-email-axel.lin@ingics.com>
-References: <1477012149-9928-1-git-send-email-axel.lin@ingics.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 00/17] pinctrl: exynos/samsung: Add header with values
+ used for configuration
+Date: Fri, 21 Oct 2016 11:02:56 +0200
+Message-ID: <CACRpkdb0ucqLNwJ=Go2ztec4+V+XWe7nBMjz=0GZa=3J2BiAYA@mail.gmail.com>
+References: <1472987060-28293-1-git-send-email-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33815 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752876AbcJUBJd (ORCPT
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:33852 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932423AbcJUJC6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 21:09:33 -0400
-Received: by mail-pf0-f195.google.com with SMTP id 128so6974667pfz.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Oct 2016 18:09:32 -0700 (PDT)
-In-Reply-To: <1477012149-9928-1-git-send-email-axel.lin@ingics.com>
+        Fri, 21 Oct 2016 05:02:58 -0400
+Received: by mail-qk0-f181.google.com with SMTP id f128so133974853qkb.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2016 02:02:57 -0700 (PDT)
+In-Reply-To: <1472987060-28293-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The mutex is not used at all, remove it.
+On Sun, Sep 4, 2016 at 1:04 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-This patch was sent on https://patchwork.kernel.org/patch/9341097/
- drivers/devfreq/event/exynos-ppmu.c | 3 ---
- 1 file changed, 3 deletions(-)
+>   pinctrl: dt-bindings: samsung: Add header with values used for
+>     configuration
+>   pinctrl: dt-bindings: samsung: Update documentation with new macros
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index f55cf0e..251692b 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -15,7 +15,6 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/suspend.h>
-@@ -34,7 +33,6 @@ struct exynos_ppmu {
- 	unsigned int num_events;
- 
- 	struct device *dev;
--	struct mutex lock;
- 
- 	struct exynos_ppmu_data ppmu;
- };
-@@ -463,7 +461,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
- 	if (!info)
- 		return -ENOMEM;
- 
--	mutex_init(&info->lock);
- 	info->dev = &pdev->dev;
- 
- 	/* Parse dt data to get resource */
--- 
-2.7.4
+These two:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please merge all of it through the Exynos tree and ARM SoC once
+you're done with the rewrite.
+
+Yours,
+Linus Walleij
