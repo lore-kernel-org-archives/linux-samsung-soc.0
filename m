@@ -1,60 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] PM / Domains: Restrict "samsung,power-domain" checks to ARCH_EXYNOS
-Date: Fri, 21 Oct 2016 16:39:19 +0200
-Message-ID: <CAMuHMdU5OoQtSKw3xCgWMEFa2wJpfwMpd3oFq3=j8zcpbxOhHw@mail.gmail.com>
-References: <1477049656-27535-1-git-send-email-geert+renesas@glider.be>
- <CAJZ5v0iOQyCwCuMBVcJjX1mMHFb=NkfXFf6yBNdswRw1HMYC=Q@mail.gmail.com>
- <CGME20161021135818eucas1p265318ff4b1c4c83b52162ee5e59e40a3@eucas1p2.samsung.com>
- <20161021135803.GB3289@kozik-lap> <96efd5b7-5f62-8146-13de-44b5ff7dd496@samsung.com>
- <cb15013d-9694-b27c-dd5e-8c916c2e9fb7@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [RFC] ARM: dts: exynos: Remove exynos4415.dtsi
+Date: Fri, 21 Oct 2016 12:28:14 -0300
+Message-ID: <465ede6d-32db-7c2b-622d-2e655e8f9ae2@osg.samsung.com>
+References: <CGME20161021141653eucas1p11801729a8cea77169d2639bbae6f0d6c@eucas1p1.samsung.com>
+ <1477059331-14586-1-git-send-email-krzk@kernel.org>
+ <c8576159-347c-42df-6a8d-8620ba4be8a1@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34245 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933290AbcJUOjU (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 10:39:20 -0400
-In-Reply-To: <cb15013d-9694-b27c-dd5e-8c916c2e9fb7@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c8576159-347c-42df-6a8d-8620ba4be8a1@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, q@kozik-lap.samsung.com, Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-Hi Javier,
 
-On Fri, Oct 21, 2016 at 4:18 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> On 10/21/2016 11:14 AM, Sylwester Nawrocki wrote:
->> On 10/21/2016 03:58 PM, Krzysztof Kozlowski wrote:
->>> The samsung,power-domain was made deprecated (although not explicitly)
->>> in January 2015 (0da658704136 ("ARM: dts: convert to generic power
->>> domain bindings for exynos DT")) so how about:
->>> 1. Printing a dev_warn() about usage of deprecated bindings.
->>> 2. Complete removal in January 2017?
+On 10/21/2016 11:33 AM, Sylwester Nawrocki wrote:
+> On 10/21/2016 04:15 PM, Krzysztof Kozlowski wrote:
+>> There are no boards in mainline using exynos4415.dtsi.  This is DTS
+>> was not tested for long.  I am also not aware of any popular out-of-tree
+>> boards using this (except consumer devices released by Samsung but those
+>> cannot use mainline).
 >>
->> I doubt anyone will ever use new mainline kernel with older dts/dtb
->> so IMHO it makes sense to queue a patch removing support for the
->> deprecated compatible just now and don't bother with a warning.
+>> Keeping Exynos4415 costs some useless effort so remove it.
 >>
->
-> FWIW I agree with you. I don't know of any Exynos machine that ships a DT
-> as read-only. Even consumer devices like the Exynos Chromebooks use a FIT
-> image (kernel + FDT bundled), so the DT can always be updated.
->
-> Removing the support for the deprecated property sound sensible to me.
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> It seems a sane thing to do, I don't know of any active platform that
+> uses Exynos4415.
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
 
-I'm happy to hear that!
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
