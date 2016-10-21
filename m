@@ -1,35 +1,30 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC] ARM: dts: exynos: Remove exynos4415.dtsi
-Date: Fri, 21 Oct 2016 16:33:52 +0200
-Message-ID: <c8576159-347c-42df-6a8d-8620ba4be8a1@samsung.com>
-References: <CGME20161021141653eucas1p11801729a8cea77169d2639bbae6f0d6c@eucas1p1.samsung.com>
- <1477059331-14586-1-git-send-email-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] dt-bindings: video: exynos7-decon: Remove obsolete
+ samsung,power-domain property
+Date: Fri, 21 Oct 2016 16:36:19 +0200
+Message-ID: <7e80b5ee-41a9-8c35-ff0d-e1b8b7a4e429@samsung.com>
+References: <CGME20161021140729eucas1p2db3ea45373ffa0490fb8b10bfa93ed74@eucas1p2.samsung.com>
+ <1477058754-13866-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1477059331-14586-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:36746 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933052AbcJUOg1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 10:36:27 -0400
+In-reply-to: <1477058754-13866-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/21/2016 04:15 PM, Krzysztof Kozlowski wrote:
-> There are no boards in mainline using exynos4415.dtsi.  This is DTS
-> was not tested for long.  I am also not aware of any popular out-of-tree
-> boards using this (except consumer devices released by Samsung but those
-> cannot use mainline).
+On 10/21/2016 04:05 PM, Krzysztof Kozlowski wrote:
+> The samsung,power-domain property is obsolete since commit 0da658704136
+> ("ARM: dts: convert to generic power domain bindings for exynos DT").
+> Replace it with generic one.
 > 
-> Keeping Exynos4415 costs some useless effort so remove it.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-It seems a sane thing to do, I don't know of any active platform that
-uses Exynos4415.
-
-Acked-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
