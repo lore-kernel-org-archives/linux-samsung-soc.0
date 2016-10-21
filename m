@@ -1,48 +1,59 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add entries for sound support on
- Odroid-XU board
-Date: Fri, 21 Oct 2016 11:30:31 +0200
-Message-ID: <a052c61f-8c8c-9732-0db5-ebc7b7966dd3@samsung.com>
-References: <CGME20160916112217eucas1p1694395dda2a1e8cdf562007ed8141542@eucas1p1.samsung.com>
- <1474024920-32744-1-git-send-email-s.nawrocki@samsung.com>
- <f4d204d8-b6b8-5173-c530-bfea1ec9ed7d@samsung.com>
- <71286ef8-4b7f-cfde-7bb9-9f3bd2289527@samsung.com>
- <20160917200017.GA13666@kozik-lap>
- <5fef2bec-adcf-0230-cd00-7fc29cbbcd32@samsung.com>
- <20160922184036.GA10000@kozik-lap> <20161017155421.GA11689@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] PM / Domains: Restrict "samsung,power-domain" checks to ARCH_EXYNOS
+Date: Fri, 21 Oct 2016 13:34:16 +0200
+Message-ID: <1477049656-27535-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:19809 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933452AbcJUJam (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51423 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754909AbcJULfC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 05:30:42 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFE00AE752X0Y50@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Oct 2016 10:30:34 +0100 (BST)
-In-reply-to: <20161017155421.GA11689@kozik-lap>
+        Fri, 21 Oct 2016 07:35:02 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 10/17/2016 05:54 PM, Krzysztof Kozlowski wrote:
-> I re-applied the patch. However I do not have Odroid XU board anymore
-> (Samsung R&D Institute Poland was kind enough to provide XU and U3
-> boards to me this year... but I had to give it back :( ) so I cannot
-> verify that it works... If it does not, then Sylwester you owe me
-> another bottle of good whisky!
+Currently the generic PM Domain code code checks for the presence of
+both (generic) "power-domains" and (Samsung Exynos legacy)
+"samsung,power-domain" properties in all device tree nodes representing
+devices.
 
-I verified your for-next branch on Odroid-XU and it boots and sound
-works.  I'm sorry, you're out of luck this time:)
+There are two issues with this:
+  1. This imposes a small boot-time penalty on all platforms using DT,
+  2. Platform-specific checks do not really belong in core framework
+     code.
 
-I'm considering setting up some basic boot tests with -next also
-on Odroid-XU here.
+While moving the check from platform-agnostic code to Samsung-specific
+code is non-trivial, the runtime overhead can be restricted to kernels
+including support for 32-bit Samsung Exynos platforms.
 
---
-Thanks,
-Sylwester
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+"samsung,power-domain" was only ever used in:
+  - arch/arm/boot/dts/exynos4415.dtsi: Unused?
+  - arch/arm/boot/dts/exynos3250.dtsi: CONFIG_ARCH_EXYNOS3
+  - arch/arm/boot/dts/exynos4.dtsi:    CONFIG_ARCH_EXYNOS4
+  - arch/arm/boot/dts/exynos4x12.dtsi: CONFIG_ARCH_EXYNOS4
+				       exynos4212.dtsi is unused?
+  - arch/arm/boot/dts/exynos5250.dtsi: CONFIG_ARCH_EXYNOS5
+  - arch/arm/boot/dts/exynos5420.dtsi: CONFIG_ARCH_EXYNOS5
+---
+ drivers/base/power/domain.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index e023066e421547c5..d94d6a4b9b527108 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1853,7 +1853,8 @@ int genpd_dev_pm_attach(struct device *dev)
+ 	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
+ 					"#power-domain-cells", 0, &pd_args);
+ 	if (ret < 0) {
+-		if (ret != -ENOENT)
++		if (ret != -ENOENT || !IS_ENABLED(CONFIG_ARCH_EXYNOS) ||
++		    IS_ENABLED(CONFIG_64BIT))
+ 			return ret;
+ 
+ 		/*
+-- 
+1.9.1
