@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH] PM / Domains: Restrict "samsung,power-domain" checks to
  ARCH_EXYNOS
-Date: Fri, 21 Oct 2016 16:58:03 +0300
-Message-ID: <20161021135803.GB3289@kozik-lap>
+Date: Fri, 21 Oct 2016 17:06:57 +0300
+Message-ID: <20161021140657.GC3289@kozik-lap>
 References: <1477049656-27535-1-git-send-email-geert+renesas@glider.be>
  <CAJZ5v0iOQyCwCuMBVcJjX1mMHFb=NkfXFf6yBNdswRw1HMYC=Q@mail.gmail.com>
 Mime-Version: 1.0
@@ -11,7 +11,7 @@ Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <CAJZ5v0iOQyCwCuMBVcJjX1mMHFb=NkfXFf6yBNdswRw1HMYC=Q@mail.gmail.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>, q@kozik-lap
+To: "Rafael J. Wysocki" <rafael@kernel.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
@@ -63,6 +63,9 @@ On Fri, Oct 21, 2016 at 02:29:05PM +0200, Rafael J. Wysocki wrote:
 > 
 > And imagine someone 5 years ahead from now looking at this code and
 > wondering why on Earth the check is here.
+
+Sorry for the noise, sending once again without bogus recipient added by
+mistake:
 
 I don't find the argument of performance penalty such important but for
 the sake of design, the samsung-specific code could be moved to
