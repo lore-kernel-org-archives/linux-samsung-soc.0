@@ -1,59 +1,54 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PM / Domains: Restrict "samsung,power-domain" checks to ARCH_EXYNOS
-Date: Fri, 21 Oct 2016 13:34:16 +0200
-Message-ID: <1477049656-27535-1-git-send-email-geert+renesas@glider.be>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [GIT PULL] Samsung fixes for 4.8
+Date: Fri, 21 Oct 2016 10:26:07 -0200
+Message-ID: <20161021102607.2df96630@vento.lan>
+References: <CGME20160916133335eucas1p2417ec5672f250c3eaca8e424293ce783@eucas1p2.samsung.com>
+        <8001c83d-0e3a-61cb-bf53-8c2b497bd0ed@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51423 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754909AbcJULfC (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:55646
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932726AbcJUM0N (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 07:35:02 -0400
+        Fri, 21 Oct 2016 08:26:13 -0400
+In-Reply-To: <8001c83d-0e3a-61cb-bf53-8c2b497bd0ed@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Currently the generic PM Domain code code checks for the presence of
-both (generic) "power-domains" and (Samsung Exynos legacy)
-"samsung,power-domain" properties in all device tree nodes representing
-devices.
+Em Fri, 16 Sep 2016 15:33:33 +0200
+Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
 
-There are two issues with this:
-  1. This imposes a small boot-time penalty on all platforms using DT,
-  2. Platform-specific checks do not really belong in core framework
-     code.
+> Hi Mauro,
+> 
+> The following changes since commit 7892a1f64a447b6f65fe2888688883b7c26d81d3:
+> 
+>   [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0 on success (2016-09-15 09:02:16 -0300)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git for-v4.9/media/fixes
+> 
+> for you to fetch changes up to 8beaa9d0595aa2ae1f63be364c80189e53cbfe15:
+> 
+>   exynos4-is: Clear I2C_ISP adapter's power.ignore_children flag (2016-09-16 15:25:55 +0200)
+> 
+> ----------------------------------------------------------------
+> Marek Szyprowski (1):
+>       s5p-mfc: fix failure path of s5p_mfc_alloc_memdev()
+> 
+> Sylwester Nawrocki (1):
+>       exynos4-is: Clear I2C_ISP adapter's power.ignore_children flag
 
-While moving the check from platform-agnostic code to Samsung-specific
-code is non-trivial, the runtime overhead can be restricted to kernels
-including support for 32-bit Samsung Exynos platforms.
+This patch didn't apply fine. Could you please rebase it?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-"samsung,power-domain" was only ever used in:
-  - arch/arm/boot/dts/exynos4415.dtsi: Unused?
-  - arch/arm/boot/dts/exynos3250.dtsi: CONFIG_ARCH_EXYNOS3
-  - arch/arm/boot/dts/exynos4.dtsi:    CONFIG_ARCH_EXYNOS4
-  - arch/arm/boot/dts/exynos4x12.dtsi: CONFIG_ARCH_EXYNOS4
-				       exynos4212.dtsi is unused?
-  - arch/arm/boot/dts/exynos5250.dtsi: CONFIG_ARCH_EXYNOS5
-  - arch/arm/boot/dts/exynos5420.dtsi: CONFIG_ARCH_EXYNOS5
----
- drivers/base/power/domain.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applying patch patches/0002-exynos4-is-Clear-I2C_ISP-adapter-s-power.ignore_chil.patch
+patching file drivers/media/platform/exynos4-is/fimc-is-i2c.c
+Hunk #1 NOT MERGED at 74-99, already applied at 101-104, already applied at 111.
+Applied patch patches/0002-exynos4-is-Clear-I2C_ISP-adapter-s-power.ignore_chil.patch (forced; needs refresh)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e023066e421547c5..d94d6a4b9b527108 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1853,7 +1853,8 @@ int genpd_dev_pm_attach(struct device *dev)
- 	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
- 					"#power-domain-cells", 0, &pd_args);
- 	if (ret < 0) {
--		if (ret != -ENOENT)
-+		if (ret != -ENOENT || !IS_ENABLED(CONFIG_ARCH_EXYNOS) ||
-+		    IS_ENABLED(CONFIG_64BIT))
- 			return ret;
- 
- 		/*
--- 
-1.9.1
+Thanks,
+Mauro
