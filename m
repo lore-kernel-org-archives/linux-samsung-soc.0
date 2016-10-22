@@ -1,113 +1,66 @@
-From: "Sricharan" <sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: RE: [PATCH v5 6/7] iommu/exynos: Add runtime pm support
-Date: Sat, 22 Oct 2016 11:20:12 +0530
-Message-ID: <000701d22c28$2da381d0$88ea8570$@codeaurora.org>
-References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>	<CGME20161020072335eucas1p209675d6fbf39e5045281e8023fa9d234@eucas1p2.samsung.com>
-	<1476948173-21093-7-git-send-email-m.szyprowski@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 1/3] mtd: s3c2410: make ecc mode configurable via
+ platform data
+Date: Sat, 22 Oct 2016 14:29:07 +0200
+Message-ID: <20161022142907.08a3eedf@bbrezillon>
+References: <1476999766-32526-1-git-send-email-sergio.prado@e-labworks.com>
+        <1476999766-32526-2-git-send-email-sergio.prado@e-labworks.com>
+        <20161021182710.GA17279@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1476948173-21093-7-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-us
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: 'Tomeu Vizoso' <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, 'Kevin Hilman' <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "'Rafael J. Wysocki'" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Krzysztof Kozlowski' <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Inki Dae' <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tobias Jakobi' <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "'Luis R. Rodriguez'" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Kukjin Kim' <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Lukas Wunner' <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161021182710.GA17279@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sergio Prado <sergio.prado@e-labworks.com>, kgene@kernel.org, javier@osg.samsung.com, linux@armlinux.org.uk, linux@simtec.co.uk, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Krzysztof,
 
->This patch adds runtime pm implementation, which is based on previous
->suspend/resume code. SYSMMU controller is now being enabled/disabled mainly
->from the runtime pm callbacks. System sleep callbacks relies on generic
->pm_runtime_force_suspend/pm_runtime_force_resume helpers. To ensure
->internal state consistency, additional lock for runtime pm transitions
->was introduced.
->
->Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->---
-> drivers/iommu/exynos-iommu.c | 45 +++++++++++++++++++++++++++++++++++---------
-> 1 file changed, 36 insertions(+), 9 deletions(-)
->
->diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->index a959443e6f33..5e6d7bbf9b70 100644
->--- a/drivers/iommu/exynos-iommu.c
->+++ b/drivers/iommu/exynos-iommu.c
->@@ -206,6 +206,7 @@ struct sysmmu_fault_info {
-> struct exynos_iommu_owner {
-> 	struct list_head controllers;	/* list of sysmmu_drvdata.owner_node */
-> 	struct iommu_domain *domain;	/* domain this device is attached */
->+	struct mutex rpm_lock;		/* for runtime pm of all sysmmus */
-> };
->
-> /*
->@@ -594,40 +595,46 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
-> 	return 0;
-> }
->
->-#ifdef CONFIG_PM_SLEEP
->-static int exynos_sysmmu_suspend(struct device *dev)
->+static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
-> {
-> 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-> 	struct device *master = data->master;
->
-> 	if (master) {
->-		pm_runtime_put(dev);
->+		struct exynos_iommu_owner *owner = master->archdata.iommu;
->+
->+		mutex_lock(&owner->rpm_lock);
-More of a device link question,
-To understand, i see that with device link + runtime, the supplier
-callbacks are not called for irqsafe clients, even if supplier is irqsafe.
-Why so ?
+On Fri, 21 Oct 2016 21:27:10 +0300
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> 		if (data->domain) {
-> 			dev_dbg(data->sysmmu, "saving state\n");
-> 			__sysmmu_disable(data);
-> 		}
->+		mutex_unlock(&owner->rpm_lock);
-> 	}
-> 	return 0;
-> }
->
->-static int exynos_sysmmu_resume(struct device *dev)
->+static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
-> {
-> 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-> 	struct device *master = data->master;
->
-> 	if (master) {
->-		pm_runtime_get_sync(dev);
->+		struct exynos_iommu_owner *owner = master->archdata.iommu;
->+
->+		mutex_lock(&owner->rpm_lock);
-> 		if (data->domain) {
-> 			dev_dbg(data->sysmmu, "restoring state\n");
-> 			__sysmmu_enable(data);
-> 		}
->+		mutex_unlock(&owner->rpm_lock);
-> 	}
-> 	return 0;
-> }
->-#endif
->
-> static const struct dev_pm_ops sysmmu_pm_ops = {
->-	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume)
->+	SET_RUNTIME_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume, NULL)
->+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->+				     pm_runtime_force_resume)
-> };
- Is this needed to be LATE_SYSTEM_SLEEP_PM_OPS with device links to take care
-  of the order ?
+> On Thu, Oct 20, 2016 at 07:42:44PM -0200, Sergio Prado wrote:
+> > Removing CONFIG_MTD_NAND_S3C2410_HWECC option and adding a ecc_mode
+> > field in the drivers's platform data structure so it can be selectable
+> > via platform data.
+> > 
+> > Also setting this field to NAND_ECC_SOFT in all boards using this
+> > driver since none of them had CONFIG_MTD_NAND_S3C2410_HWECC enabled.
+> > 
+> > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> > ---
+> >  arch/arm/mach-s3c24xx/common-smdk.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-anubis.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-at2440evb.c         |   1 +
+> >  arch/arm/mach-s3c24xx/mach-bast.c              |   1 +
+> >  arch/arm/mach-s3c24xx/mach-gta02.c             |   1 +
+> >  arch/arm/mach-s3c24xx/mach-jive.c              |   1 +
+> >  arch/arm/mach-s3c24xx/mach-mini2440.c          |   1 +
+> >  arch/arm/mach-s3c24xx/mach-osiris.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-qt2410.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-rx1950.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-rx3715.c            |   1 +
+> >  arch/arm/mach-s3c24xx/mach-vstms.c             |   1 +
+> >  arch/arm/mach-s3c64xx/mach-hmt.c               |   1 +
+> >  arch/arm/mach-s3c64xx/mach-mini6410.c          |   1 +
+> >  arch/arm/mach-s3c64xx/mach-real6410.c          |   1 +
+> >  drivers/mtd/nand/Kconfig                       |   9 --
+> >  drivers/mtd/nand/s3c2410.c                     | 119 +++++++++++++------------
+> >  include/linux/platform_data/mtd-nand-s3c2410.h |   6 +-
+> >  18 files changed, 79 insertions(+), 70 deletions(-)
+> >  
+> 
+> I acked this twice (v1 and v2)... and still you are ignoring them. I am
+> sorry, I am not gonna to ack this third time!
+> 
+> For v2 I acked also other patches but it it is not there as well...
+
+I'll collect your acks (and Rob ones) when applying the patches. BTW,
+how should I proceed with patch 1? Do you want an topic branch
+containing this patch?
 
 Regards,
- Sricharan
+
+Boris
