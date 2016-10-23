@@ -1,67 +1,83 @@
-From: <patientcentral@pancan.org>
-Subject: (unknown)
-Date: Sun, 23 Oct 2016 03:55:21 -0000
-Message-ID: <147719492174.5997.16832161802903610240@gauldalikt.no>
+From: "Sricharan" <sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: RE: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
+	control	runtime pm
+Date: Sun, 23 Oct 2016 15:19:52 +0530
+Message-ID: <001e01d22d12$d2a4e990$77eebcb0$@codeaurora.org>
+References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>	<CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
+	<1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_3055908206735_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 217022046163.aae-dsl.gauldalikt.no ([217.22.46.163]:44564 "HELO
-        gauldalikt.no" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S935899AbcJWDz1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Oct 2016 23:55:27 -0400
-Subject: 
-Content-Disposition: attachment
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1476948173-21093-8-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-us
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Tomeu Vizoso' <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, 'Kevin Hilman' <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "'Rafael J. Wysocki'" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Krzysztof Kozlowski' <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Inki Dae' <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tobias Jakobi' <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "'Luis R. Rodriguez'" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Kukjin Kim' <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Lukas Wunner' <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-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
-LdIBUEsFBgAAAAABAAEAWQAAACEKAAAAAA==
+Hi Marek,
+>This patch uses recently introduced device dependency links to track the
+>runtime pm state of the master's device. This way each SYSMMU controller
+>is set to runtime active only when its master's device is active and can
+>restore or save its state instead of being activated all the time when
+>attached to the given master device. This way SYSMMU controllers no longer
+>prevents respective power domains to be turned off when master's device
+>is not being used.
+>
+>Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>---
+> drivers/iommu/exynos-iommu.c | 16 ++++++++--------
+> 1 file changed, 8 insertions(+), 8 deletions(-)
+>
+>diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+>index 5e6d7bbf9b70..59b4f2ce4f5f 100644
+>--- a/drivers/iommu/exynos-iommu.c
+>+++ b/drivers/iommu/exynos-iommu.c
+>@@ -781,10 +781,6 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+> 	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
+> 		return;
+>
+>-	list_for_each_entry(data, &owner->controllers, owner_node) {
+>-		pm_runtime_put_sync(data->sysmmu);
+>-	}
+>-
+> 	mutex_lock(&owner->rpm_lock);
+>
+> 	list_for_each_entry(data, &owner->controllers, owner_node) {
+>@@ -848,10 +844,6 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+>
+> 	mutex_unlock(&owner->rpm_lock);
+>
+>-	list_for_each_entry(data, &owner->controllers, owner_node) {
+>-		pm_runtime_get_sync(data->sysmmu);
+>-	}
+>-
+> 	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
+> 		&pagetable);
+>
+>@@ -1232,6 +1224,14 @@ static int exynos_iommu_of_xlate(struct device *dev,
+>
+> 	list_add_tail(&data->owner_node, &owner->controllers);
+> 	data->master = dev;
+>+
+>+	/*
+>+	 * SYSMMU will be runtime activated via device link (dependency) to its
+>+	 * master device, so there are no direct calls to pm_runtime_get/put
+>+	 * in this driver.
+>+	 */
+>+	device_link_add(dev, data->sysmmu, DL_FLAG_PM_RUNTIME);
+>+
+  So in the case of master with multiple sids, this would be called multiple times
+  for the same master ?
+
+Regards,
+ Sricharan
