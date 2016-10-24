@@ -1,104 +1,319 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
- control runtime pm
-Date: Mon, 24 Oct 2016 14:39:15 +0200
-Message-ID: <bff28d5b-3b39-a5bb-b381-2d7626566a2d@samsung.com>
-References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
- <1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
- <001e01d22d12$d2a4e990$77eebcb0$@codeaurora.org>
- <7a69ca4e-e276-1bdc-edf2-b881a91f820a@samsung.com>
- <004a01d22df2$45ecd450$d1c67cf0$@codeaurora.org>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 3/3] mtd: s3c2410: parse the device configuration
+ from OF node
+Date: Mon, 24 Oct 2016 15:02:01 +0200
+Message-ID: <20161024150201.01952f67@bbrezillon>
+References: <1476999766-32526-1-git-send-email-sergio.prado@e-labworks.com>
+        <1476999766-32526-4-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <004a01d22df2$45ecd450$d1c67cf0$@codeaurora.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sricharan <sricharan@codeaurora.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Tomeu Vizoso' <tomeu.vizoso@collabora.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Kevin Hilman' <khilman@kernel.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Inki Dae' <inki.dae@samsung.com>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, "'Luis R. Rodriguez'" <mcgrof@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Mark Brown' <broonie@kernel.org>, 'Lukas Wunner' <lukas@wunner.de>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1476999766-32526-4-git-send-email-sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sricharan,
+On Thu, 20 Oct 2016 19:42:46 -0200
+Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org> wrote:
 
+> Allows configuring Samsung's s3c2410 memory controller using a
+> devicetree.
+> 
+> Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+> ---
+>  drivers/mtd/nand/s3c2410.c                     | 158 ++++++++++++++++++++++---
+>  include/linux/platform_data/mtd-nand-s3c2410.h |   1 +
+>  2 files changed, 143 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> index 371db0d48135..ec170be881bc 100644
+> --- a/drivers/mtd/nand/s3c2410.c
+> +++ b/drivers/mtd/nand/s3c2410.c
+> @@ -39,6 +39,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/clk.h>
+>  #include <linux/cpufreq.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+>  
+>  #include <linux/mtd/mtd.h>
+>  #include <linux/mtd/nand.h>
+> @@ -185,6 +187,22 @@ struct s3c2410_nand_info {
+>  #endif
+>  };
+>  
+> +struct s3c24XX_nand_devtype_data {
+> +	enum s3c_cpu_type type;
+> +};
+> +
+> +static const struct s3c24XX_nand_devtype_data s3c2410_nand_devtype_data = {
+> +	.type = TYPE_S3C2410,
+> +};
+> +
+> +static const struct s3c24XX_nand_devtype_data s3c2412_nand_devtype_data = {
+> +	.type = TYPE_S3C2412,
+> +};
+> +
+> +static const struct s3c24XX_nand_devtype_data s3c2440_nand_devtype_data = {
+> +	.type = TYPE_S3C2440,
+> +};
+> +
+>  /* conversion functions */
+>  
+>  static struct s3c2410_nand_mtd *s3c2410_nand_mtd_toours(struct mtd_info *mtd)
+> @@ -794,6 +812,30 @@ static int s3c2410_nand_add_partition(struct s3c2410_nand_info *info,
+>  	return -ENODEV;
+>  }
+>  
+> +static int s3c2410_nand_setup_data_interface(struct mtd_info *mtd,
+> +					     const struct nand_data_interface *conf,
+> +					     bool check_only)
+> +{
+> +	struct s3c2410_nand_info *info = s3c2410_nand_mtd_toinfo(mtd);
+> +	struct s3c2410_platform_nand *pdata = info->platform;
+> +	const struct nand_sdr_timings *timings;
+> +	int tacls;
+> +
+> +	timings = nand_get_sdr_timings(conf);
+> +	if (IS_ERR(timings))
+> +		return -ENOTSUPP;
+> +
+> +	tacls = timings->tCLS_min - timings->tWP_min;
+> +	if (tacls < 0)
+> +		tacls = 0;
+> +
+> +	pdata->tacls  = DIV_ROUND_UP(tacls, 1000);
+> +	pdata->twrph0 = DIV_ROUND_UP(timings->tWP_min, 1000);
+> +	pdata->twrph1 = DIV_ROUND_UP(timings->tCLH_min, 1000);
 
-On 2016-10-24 14:29, Sricharan wrote:
->>>> This patch uses recently introduced device dependency links to track the
->>>> runtime pm state of the master's device. This way each SYSMMU controller
->>>> is set to runtime active only when its master's device is active and can
->>>> restore or save its state instead of being activated all the time when
->>>> attached to the given master device. This way SYSMMU controllers no longer
->>>> prevents respective power domains to be turned off when master's device
->>>> is not being used.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>> drivers/iommu/exynos-iommu.c | 16 ++++++++--------
->>>> 1 file changed, 8 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
->>>> index 5e6d7bbf9b70..59b4f2ce4f5f 100644
->>>> --- a/drivers/iommu/exynos-iommu.c
->>>> +++ b/drivers/iommu/exynos-iommu.c
->>>> @@ -781,10 +781,6 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
->>>> 	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
->>>> 		return;
->>>>
->>>> -	list_for_each_entry(data, &owner->controllers, owner_node) {
->>>> -		pm_runtime_put_sync(data->sysmmu);
->>>> -	}
->>>> -
->>>> 	mutex_lock(&owner->rpm_lock);
->>>>
->>>> 	list_for_each_entry(data, &owner->controllers, owner_node) {
->>>> @@ -848,10 +844,6 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
->>>>
->>>> 	mutex_unlock(&owner->rpm_lock);
->>>>
->>>> -	list_for_each_entry(data, &owner->controllers, owner_node) {
->>>> -		pm_runtime_get_sync(data->sysmmu);
->>>> -	}
->>>> -
->>>> 	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
->>>> 		&pagetable);
->>>>
->>>> @@ -1232,6 +1224,14 @@ static int exynos_iommu_of_xlate(struct device *dev,
->>>>
->>>> 	list_add_tail(&data->owner_node, &owner->controllers);
->>>> 	data->master = dev;
->>>> +
->>>> +	/*
->>>> +	 * SYSMMU will be runtime activated via device link (dependency) to its
->>>> +	 * master device, so there are no direct calls to pm_runtime_get/put
->>>> +	 * in this driver.
->>>> +	 */
->>>> +	device_link_add(dev, data->sysmmu, DL_FLAG_PM_RUNTIME);
->>>> +
->>>     So in the case of master with multiple sids, this would be called multiple times
->>>     for the same master ?
->> I don't know what is "multiple sids" case, but if given SYSMMU master
->> device (supplier)
->> has multiple SYSMMU controllers (consumers), then links will be created
->> for each SYSMMU
->> controller. Please note that this code is based on vanilla v4.9-rc1,
->> which calls
->> of_xlate() callback only once for every iommu for given master device.
->> Your IOMMU
->> deferred probe patches change this, but I already posted a fix for
->> Exynos IOMMU driver
->> to handle such case.
->   By multiple sids, i meant iommus = <&phandle sid1 sid2 .. sidn> case,
->   so xlate would be called multiples for the same master without deferred
->   probing also. But the fix that you showed on the other thread would work
->   here as well or maybe if you dont have masters with multiple sids you wont
->   have any issues as well.
+You seem to only apply the timings in s3c2410_nand_setrate(), which is
+only called at probe time or on a cpufreq even, but the core can change
+timings at runtime (this is what happens each time you reset the chip).
 
-Exynos SYSMMU driver always use "#iommu-cells = <0>", so it doesn't support
-multiple sids. However there is a case with 2 SYSMMU controllers attached
-to the same master device: "iommus = <&sysmmu_mfc_l>, <&sysmmu_mfc_r>;".
+To support that you have 2 options:
+ - apply the timings in ->select_chip()
+ - apply the timings here
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * s3c2410_nand_init_chip - initialise a single instance of an chip
+>   * @info: The base NAND controller the chip is on.
+> @@ -808,9 +850,12 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+>  				   struct s3c2410_nand_mtd *nmtd,
+>  				   struct s3c2410_nand_set *set)
+>  {
+> +	struct device_node *np = info->device->of_node;
+>  	struct nand_chip *chip = &nmtd->chip;
+>  	void __iomem *regs = info->regs;
+>  
+> +	nand_set_flash_node(chip, set->of_node);
+> +
+>  	chip->write_buf    = s3c2410_nand_write_buf;
+>  	chip->read_buf     = s3c2410_nand_read_buf;
+>  	chip->select_chip  = s3c2410_nand_select_chip;
+> @@ -819,6 +864,13 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+>  	chip->options	   = set->options;
+>  	chip->controller   = &info->controller;
+>  
+> +	/*
+> +	 * let's keep behavior unchanged for legacy boards booting via pdata and
+> +	 * auto-detect timings only when booting with a device tree.
+> +	 */
+> +	if (np)
+> +		chip->setup_data_interface = s3c2410_nand_setup_data_interface;
+> +
+>  	switch (info->cpu_type) {
+>  	case TYPE_S3C2410:
+>  		chip->IO_ADDR_W = regs + S3C2410_NFDATA;
+> @@ -859,12 +911,9 @@ static void s3c2410_nand_init_chip(struct s3c2410_nand_info *info,
+>  	chip->ecc.mode = info->platform->ecc_mode;
+>  
+>  	/* If you use u-boot BBT creation code, specifying this flag will
+> -	 * let the kernel fish out the BBT from the NAND, and also skip the
+> -	 * full NAND scan that can take 1/2s or so. Little things... */
+> -	if (set->flash_bbt) {
+> +	 * let the kernel fish out the BBT from the NAND */
+> +	if (set->flash_bbt)
+>  		chip->bbt_options |= NAND_BBT_USE_FLASH;
+> -		chip->options |= NAND_SKIP_BBTSCAN;
+> -	}
+>  }
+>  
+>  /**
+> @@ -943,6 +992,77 @@ static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+> +		chip->options |= NAND_SKIP_BBTSCAN;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id s3c24xx_nand_dt_ids[] = {
+> +	{
+> +		.compatible = "samsung,s3c2410-nand",
+> +		.data = &s3c2410_nand_devtype_data,
+> +	}, {
+> +		.compatible = "samsung,s3c2412-nand", /* also compatible with s3c6400 */
+> +		.data = &s3c2412_nand_devtype_data,
+> +	}, {
+> +		.compatible = "samsung,s3c2440-nand",
+> +		.data = &s3c2440_nand_devtype_data,
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, s3c24xx_nand_dt_ids);
+> +
+> +static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
+> +{
+> +	const struct s3c24XX_nand_devtype_data *devtype_data;
+> +	struct s3c2410_platform_nand *pdata;
+> +	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
+> +	struct device_node *np = pdev->dev.of_node, *child;
+> +	struct s3c2410_nand_set *sets;
+> +
+> +	devtype_data = of_device_get_match_data(&pdev->dev);
+> +	if (!devtype_data)
+> +		return -ENODEV;
+> +
+> +	info->cpu_type = devtype_data->type;
+> +
+> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata)
+> +		return -ENOMEM;
+> +
+> +	pdev->dev.platform_data = pdata;
+> +
+> +	pdata->nr_sets = of_get_child_count(np);
+> +	if (!pdata->nr_sets)
+> +		return 0;
+> +
+> +	sets = devm_kzalloc(&pdev->dev, sizeof(*sets) * pdata->nr_sets, GFP_KERNEL);
+> +	if (!sets)
+> +		return -ENOMEM;
+> +
+> +	pdata->sets = sets;
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +
+> +		sets->name = (char *)child->name;
+> +		sets->of_node = child;
+> +		sets->nr_chips = 1;
+> +
+> +		of_node_get(child);
+> +
+> +		sets++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int s3c24xx_nand_probe_pdata(struct platform_device *pdev)
+> +{
+> +	struct s3c2410_nand_info *info = platform_get_drvdata(pdev);
+> +
+> +	info->cpu_type = platform_get_device_id(pdev)->driver_data;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -955,8 +1075,7 @@ static int s3c2410_nand_update_chip(struct s3c2410_nand_info *info,
+>  */
+>  static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  {
+> -	struct s3c2410_platform_nand *plat = to_nand_plat(pdev);
+> -	enum s3c_cpu_type cpu_type;
+> +	struct s3c2410_platform_nand *plat;
+>  	struct s3c2410_nand_info *info;
+>  	struct s3c2410_nand_mtd *nmtd;
+>  	struct s3c2410_nand_set *sets;
+> @@ -966,8 +1085,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  	int nr_sets;
+>  	int setno;
+>  
+> -	cpu_type = platform_get_device_id(pdev)->driver_data;
+> -
+>  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+>  	if (info == NULL) {
+>  		err = -ENOMEM;
+> @@ -989,6 +1106,16 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  
+>  	s3c2410_nand_clk_set_state(info, CLOCK_ENABLE);
+>  
+> +	if (pdev->dev.of_node)
+> +		err = s3c24xx_nand_probe_dt(pdev);
+> +	else
+> +		err = s3c24xx_nand_probe_pdata(pdev);
+> +
+> +	if (err)
+> +		goto exit_error;
+> +
+> +	plat = to_nand_plat(pdev);
+> +
+>  	/* allocate and map the resource */
+>  
+>  	/* currently we assume we have the one resource */
+> @@ -997,7 +1124,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  
+>  	info->device	= &pdev->dev;
+>  	info->platform	= plat;
+> -	info->cpu_type	= cpu_type;
+>  
+>  	info->regs = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(info->regs)) {
+> @@ -1007,12 +1133,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  
+>  	dev_dbg(&pdev->dev, "mapped registers at %p\n", info->regs);
+>  
+> -	/* initialise the hardware */
+> -
+> -	err = s3c2410_nand_inithw(info);
+> -	if (err != 0)
+> -		goto exit_error;
+> -
+>  	sets = (plat != NULL) ? plat->sets : NULL;
+>  	nr_sets = (plat != NULL) ? plat->nr_sets : 1;
+>  
+> @@ -1056,6 +1176,11 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+>  			sets++;
+>  	}
+>  
+> +	/* initialise the hardware */
+> +	err = s3c2410_nand_inithw(info);
+> +	if (err != 0)
+> +		goto exit_error;
+> +
+>  	err = s3c2410_nand_cpufreq_register(info);
+>  	if (err < 0) {
+>  		dev_err(&pdev->dev, "failed to init cpufreq support\n");
+> @@ -1156,6 +1281,7 @@ static int s3c24xx_nand_resume(struct platform_device *dev)
+>  	.id_table	= s3c24xx_driver_ids,
+>  	.driver		= {
+>  		.name	= "s3c24xx-nand",
+> +		.of_match_table = s3c24xx_nand_dt_ids,
+>  	},
+>  };
+>  
+> diff --git a/include/linux/platform_data/mtd-nand-s3c2410.h b/include/linux/platform_data/mtd-nand-s3c2410.h
+> index 729af13d1773..f01659026b26 100644
+> --- a/include/linux/platform_data/mtd-nand-s3c2410.h
+> +++ b/include/linux/platform_data/mtd-nand-s3c2410.h
+> @@ -40,6 +40,7 @@ struct s3c2410_nand_set {
+>  	char			*name;
+>  	int			*nr_map;
+>  	struct mtd_partition	*partitions;
+> +	struct device_node	*of_node;
+>  };
+>  
+>  struct s3c2410_platform_nand {
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
