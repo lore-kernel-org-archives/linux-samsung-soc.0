@@ -1,180 +1,86 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: s3c24xx_uda134x: Move global variables to driver's data
- structure
-Date: Tue, 25 Oct 2016 12:57:57 +0200
-Message-ID: <1477393077-10669-1-git-send-email-s.nawrocki@samsung.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [alsa-devel] [PATCH 1/3] ASoC: Drop
+ SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+Date: Tue, 25 Oct 2016 14:22:51 +0200
+Message-ID: <4abcead6-1f2a-e604-97f6-96e6f26ff9f0@metafoo.de>
+References: <1477392991-10604-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41630 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965722AbcJYK6I (ORCPT
+Received: from www381.your-server.de ([78.46.137.84]:33300 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751594AbcJYMXC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 06:58:08 -0400
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFL00R64NSSWLF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 25 Oct 2016 19:58:06 +0900 (KST)
+        Tue, 25 Oct 2016 08:23:02 -0400
+In-Reply-To: <1477392991-10604-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: krzk@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lgirdwood@gmail.com, krzk@kernel.org
 
-Gather all driver's private variables in common data structure
-and allocate the data structure dynamically.
+On 10/25/2016 12:56 PM, Sylwester Nawrocki wrote:
+> Since commit 194c7dea00c68c1b1f8ff26304fa937a006f66dd
+> "ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config"
+> custom DMA channels can be also specified in chan_names[] field of
+> struct snd_dmaengine_pcm_config.  This patch drops chan_name field
+> of struct snd_dmaengine_dai_dma_data and makes soc-generic-dmaengine-pcm
+> module using config->chan_names instead.  Remaining users of struct
+> snd_dmaengine_dai_dma_data::chan_name are updated to not require
+> that field.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Also unused ENFORCE_RATES symbol and local variable (leftovers
-from an erroneous rebase) are removed.
+Nice patch. One nice-to-have change request, can you split this into two
+patches, one which removes the last users and one patch which removes
+support for it from the framework?
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/s3c24xx_uda134x.c | 79 ++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 36 deletions(-)
+Having the new DMA map framework should also allow us to eventually remove
+the channel request in dmaengine_pcm_new() once all users of filter
+functions have gone.
 
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 7853fbe..81a7894 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -19,9 +19,15 @@
- #include <sound/s3c24xx_uda134x.h>
- 
- #include "regs-iis.h"
--
- #include "s3c24xx-i2s.h"
- 
-+struct s3c24xx_uda134x {
-+	struct clk *xtal;
-+	struct clk *pclk;
-+	struct mutex clk_lock;
-+	int clk_users;
-+};
-+
- /* #define ENFORCE_RATES 1 */
- /*
-   Unfortunately the S3C24XX in master mode has a limited capacity of
-@@ -36,15 +42,6 @@
-   possible an error will be returned.
- */
- 
--static struct clk *xtal;
--static struct clk *pclk;
--/* this is need because we don't have a place where to keep the
-- * pointers to the clocks in each substream. We get the clocks only
-- * when we are actually using them so we don't block stuff like
-- * frequency change or oscillator power-off */
--static int clk_users;
--static DEFINE_MUTEX(clk_lock);
--
- static unsigned int rates[33 * 2];
- #ifdef ENFORCE_RATES
- static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
-@@ -57,26 +54,24 @@
- static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--#ifdef ENFORCE_RATES
--	struct snd_pcm_runtime *runtime = substream->runtime;
--#endif
- 	int ret = 0;
- 
--	mutex_lock(&clk_lock);
-+	mutex_lock(&priv->clk_lock);
- 
--	if (clk_users == 0) {
--		xtal = clk_get(rtd->dev, "xtal");
--		if (IS_ERR(xtal)) {
-+	if (priv->clk_users == 0) {
-+		priv->xtal = clk_get(rtd->dev, "xtal");
-+		if (IS_ERR(priv->xtal)) {
- 			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
--			ret = PTR_ERR(xtal);
-+			ret = PTR_ERR(priv->xtal);
- 		} else {
--			pclk = clk_get(cpu_dai->dev, "iis");
--			if (IS_ERR(pclk)) {
-+			priv->pclk = clk_get(cpu_dai->dev, "iis");
-+			if (IS_ERR(priv->pclk)) {
- 				dev_err(rtd->dev, "%s cannot get pclk\n",
- 					__func__);
--				clk_put(xtal);
--				ret = PTR_ERR(pclk);
-+				clk_put(priv->xtal);
-+				ret = PTR_ERR(priv->pclk);
- 			}
- 		}
- 		if (!ret) {
-@@ -85,18 +80,19 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 			for (i = 0; i < 2; i++) {
- 				int fs = i ? 256 : 384;
- 
--				rates[i*33] = clk_get_rate(xtal) / fs;
-+				rates[i*33] = clk_get_rate(priv->xtal) / fs;
- 				for (j = 1; j < 33; j++)
--					rates[i*33 + j] = clk_get_rate(pclk) /
-+					rates[i*33 + j] = clk_get_rate(priv->pclk) /
- 						(j * fs);
- 			}
- 		}
- 	}
--	clk_users += 1;
--	mutex_unlock(&clk_lock);
-+	priv->clk_users += 1;
-+	mutex_unlock(&priv->clk_lock);
-+
- 	if (!ret) {
- #ifdef ENFORCE_RATES
--		ret = snd_pcm_hw_constraint_list(runtime, 0,
-+		ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
- 						 SNDRV_PCM_HW_PARAM_RATE,
- 						 &hw_constraints_rates);
- 		if (ret < 0)
-@@ -109,15 +105,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 
- static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
- {
--	mutex_lock(&clk_lock);
--	clk_users -= 1;
--	if (clk_users == 0) {
--		clk_put(xtal);
--		xtal = NULL;
--		clk_put(pclk);
--		pclk = NULL;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
-+
-+	mutex_lock(&priv->clk_lock);
-+	priv->clk_users -= 1;
-+	if (priv->clk_users == 0) {
-+		clk_put(priv->xtal);
-+		priv->xtal = NULL;
-+		clk_put(priv->pclk);
-+		priv->pclk = NULL;
- 	}
--	mutex_unlock(&clk_lock);
-+	mutex_unlock(&priv->clk_lock);
- }
- 
- static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
-@@ -228,10 +227,18 @@ static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
- static int s3c24xx_uda134x_probe(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = &snd_soc_s3c24xx_uda134x;
-+	struct s3c24xx_uda134x *priv;
- 	int ret;
- 
--	platform_set_drvdata(pdev, card);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	mutex_init(&priv->clk_lock);
-+
- 	card->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, card);
-+	snd_soc_card_set_drvdata(card, priv);
- 
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
- 	if (ret)
--- 
-1.9.1
+[...]
+> diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+> index 6cef397..f2d372d 100644
+> --- a/sound/soc/soc-generic-dmaengine-pcm.c
+> +++ b/sound/soc/soc-generic-dmaengine-pcm.c
+> @@ -263,7 +263,6 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+>  	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+>  	const struct snd_dmaengine_pcm_config *config = pcm->config;
+>  	struct device *dev = rtd->platform->dev;
+> -	struct snd_dmaengine_dai_dma_data *dma_data;
+>  	struct snd_pcm_substream *substream;
+>  	size_t prealloc_buffer_size;
+>  	size_t max_buffer_size;
+> @@ -284,12 +283,9 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+>  		if (!substream)
+>  			continue;
+>  
+> -		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+> -
+> -		if (!pcm->chan[i] &&
+> -		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
+> +		if (!pcm->chan[i] && config->chan_names[i])
+>  			pcm->chan[i] = dma_request_slave_channel(dev,
+> -				dma_data->chan_name);
+> +				config->chan_names[i]);
+
+I think this can be removed altogether. The only reason why we did the
+delayed request is because the name would have not been available when
+initially trying to request the channel when the PCM device is registered.
+
+>  
+>  		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+>  			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
+> @@ -359,9 +355,7 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+>  	const char *name;
+>  	struct dma_chan *chan;
+>  
+> -	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
+> -			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
+> -	    !dev->of_node)
+> +	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
+>  		return 0;
+>  
+>  	if (config && config->dma_dev) {
+> 
