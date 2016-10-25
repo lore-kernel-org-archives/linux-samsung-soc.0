@@ -1,116 +1,191 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 1/4] ASoC: samsung: Remove unneeded initialization of
- chan_name
-Date: Tue, 25 Oct 2016 17:08:38 +0200
-Message-ID: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 4/4] ASoC: samsung: s3c24xx-i2s: Debug/error trace cleanup
+Date: Tue, 25 Oct 2016 17:08:41 +0200
+Message-ID: <1477408121-24716-4-git-send-email-s.nawrocki@samsung.com>
+References: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38221 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:37577 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936330AbcJYPJA (ORCPT
+        with ESMTP id S934111AbcJYPJM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 11:09:00 -0400
+        Tue, 25 Oct 2016 11:09:12 -0400
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
  with ESMTP id <0OFL00Y05ZEN2190@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Oct 2016 00:08:57 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Oct 2016 00:09:10 +0900 (KST)
+In-reply-to: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
 Cc: krzk@kernel.org, lgirdwood@gmail.com, lars@metafoo.de, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch updates the I2S drivers to always use chan_names[] field
-of struct snd_dmaengine_pcm_config for specifying DMA channel names,
-rather than using struct snd_dmaengine_dai_dma_data.
+pr_err() are replaced with dev_err() so information about
+device the error logs refer to is also included.
 
-This allows us to subsequently drop the
-SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag, now when the last
-use of that flag is removed.
+pr_debug() at beginning of each function are removed
+as they are likely very rarely used and can always be
+added again when doing any serious debugging.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
 Changes since v1:
- - the framework user changes moved to a separate (this) patch.
+ - none.
 
- sound/soc/samsung/dmaengine.c   | 8 ++------
- sound/soc/samsung/i2s.c         | 3 ---
- sound/soc/samsung/s3c2412-i2s.c | 2 --
- sound/soc/samsung/s3c24xx-i2s.c | 2 --
- 4 files changed, 2 insertions(+), 13 deletions(-)
-
-diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
-index 9104c98..cda656e 100644
---- a/sound/soc/samsung/dmaengine.c
-+++ b/sound/soc/samsung/dmaengine.c
-@@ -37,12 +37,8 @@ int samsung_asoc_dma_platform_register(struct device *dev, dma_filter_fn filter,
- 	pcm_conf->prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config;
- 	pcm_conf->compat_filter_fn = filter;
-
--	if (dev->of_node) {
--		pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
--		pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
--	} else {
--		flags |= SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME;
--	}
-+	pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
-+	pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
-
- 	return devm_snd_dmaengine_pcm_register(dev, pcm_conf, flags);
- }
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 588aa01..e06aa31 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1305,8 +1305,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	}
- 	pri_dai->dma_playback.addr = regs_base + I2STXD;
- 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
--	pri_dai->dma_playback.chan_name = "tx";
--	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
- 	pri_dai->quirks = quirks;
-@@ -1326,7 +1324,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		sec_dai->lock = &pri_dai->spinlock;
- 		sec_dai->variant_regs = pri_dai->variant_regs;
- 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
--		sec_dai->dma_playback.chan_name = "tx-sec";
-
- 		if (!np) {
- 			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
-diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-index 3e89fbc..40331a0 100644
---- a/sound/soc/samsung/s3c2412-i2s.c
-+++ b/sound/soc/samsung/s3c2412-i2s.c
-@@ -35,12 +35,10 @@
- #include <linux/platform_data/asoc-s3c.h>
-
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_out = {
--	.chan_name	= "tx",
- 	.addr_width	= 4,
- };
-
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_in = {
--	.chan_name	= "rx",
- 	.addr_width	= 4,
- };
+ sound/soc/samsung/s3c24xx-i2s.c | 30 ++++--------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
 
 diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index c78a936..d59a47d 100644
+index 29196a9..7c7061b 100644
 --- a/sound/soc/samsung/s3c24xx-i2s.c
 +++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -33,12 +33,10 @@
- #include <linux/platform_data/asoc-s3c.h>
+@@ -54,8 +54,6 @@ static void s3c24xx_snd_txctrl(int on)
+ 	u32 iiscon;
+ 	u32 iismod;
 
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
--	.chan_name	= "tx",
- 	.addr_width	= 2,
- };
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+ 	iiscon  = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	iismod  = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+@@ -99,8 +97,6 @@ static void s3c24xx_snd_rxctrl(int on)
+ 	u32 iiscon;
+ 	u32 iismod;
 
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
--	.chan_name	= "rx",
- 	.addr_width	= 2,
- };
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+ 	iiscon  = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	iismod  = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+@@ -147,8 +143,6 @@ static int s3c24xx_snd_lrsync(void)
+ 	u32 iiscon;
+ 	int timeout = 50; /* 5ms */
 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	while (1) {
+ 		iiscon = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 		if (iiscon & S3C2410_IISCON_LRINDEX)
+@@ -167,8 +161,6 @@ static int s3c24xx_snd_lrsync(void)
+  */
+ static inline int s3c24xx_snd_is_clkmaster(void)
+ {
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	return (readl(s3c24xx_i2s.regs + S3C2410_IISMOD) & S3C2410_IISMOD_SLAVE) ? 0:1;
+ }
+
+@@ -180,8 +172,6 @@ static int s3c24xx_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
+ {
+ 	u32 iismod;
+
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params r: IISMOD: %x \n", iismod);
+
+@@ -209,6 +199,7 @@ static int s3c24xx_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
+
+ 	writel(iismod, s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params w: IISMOD: %x \n", iismod);
++
+ 	return 0;
+ }
+
+@@ -219,8 +210,6 @@ static int s3c24xx_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 iismod;
+
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
+
+ 	/* Working copies of register */
+@@ -242,6 +231,7 @@ static int s3c24xx_i2s_hw_params(struct snd_pcm_substream *substream,
+
+ 	writel(iismod, s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params w: IISMOD: %x\n", iismod);
++
+ 	return 0;
+ }
+
+@@ -250,8 +240,6 @@ static int s3c24xx_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ {
+ 	int ret = 0;
+
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+@@ -293,8 +281,6 @@ static int s3c24xx_i2s_set_sysclk(struct snd_soc_dai *cpu_dai,
+ {
+ 	u32 iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iismod &= ~S3C2440_IISMOD_MPLL;
+
+ 	switch (clk_id) {
+@@ -319,8 +305,6 @@ static int s3c24xx_i2s_set_clkdiv(struct snd_soc_dai *cpu_dai,
+ {
+ 	u32 reg;
+
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	switch (div_id) {
+ 	case S3C24XX_DIV_BCLK:
+ 		reg = readl(s3c24xx_i2s.regs + S3C2410_IISMOD) & ~S3C2410_IISMOD_FS_MASK;
+@@ -354,8 +338,6 @@ u32 s3c24xx_i2s_get_clockrate(void)
+
+ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	snd_soc_dai_init_dma_data(dai, &s3c24xx_i2s_pcm_stereo_out,
+ 					&s3c24xx_i2s_pcm_stereo_in);
+
+@@ -381,8 +363,6 @@ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
+ #ifdef CONFIG_PM
+ static int s3c24xx_i2s_suspend(struct snd_soc_dai *cpu_dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	s3c24xx_i2s.iiscon = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	s3c24xx_i2s.iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	s3c24xx_i2s.iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+@@ -395,7 +375,6 @@ static int s3c24xx_i2s_suspend(struct snd_soc_dai *cpu_dai)
+
+ static int s3c24xx_i2s_resume(struct snd_soc_dai *cpu_dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+ 	clk_prepare_enable(s3c24xx_i2s.iis_clk);
+
+ 	writel(s3c24xx_i2s.iiscon, s3c24xx_i2s.regs + S3C2410_IISCON);
+@@ -410,7 +389,6 @@ static int s3c24xx_i2s_resume(struct snd_soc_dai *cpu_dai)
+ #define s3c24xx_i2s_resume NULL
+ #endif
+
+-
+ #define S3C24XX_I2S_RATES \
+ 	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 | SNDRV_PCM_RATE_16000 | \
+ 	SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 | \
+@@ -465,14 +443,14 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+ 	ret = devm_snd_soc_register_component(&pdev->dev,
+ 			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
+ 	if (ret) {
+-		pr_err("failed to register the dai\n");
++		dev_err(&pdev->dev, "Failed to register the DAI\n");
+ 		return ret;
+ 	}
+
+ 	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
+ 						 NULL, NULL);
+ 	if (ret)
+-		pr_err("failed to register the dma: %d\n", ret);
++		dev_err(&pdev->dev, "Failed to register the DMA: %d\n", ret);
+
+ 	return ret;
+ }
 --
 1.9.1
