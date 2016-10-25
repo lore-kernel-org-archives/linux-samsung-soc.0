@@ -1,8 +1,8 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 Subject: Re: [PATCH] exynos-drm: Fix display manager failing to start without
  IOMMU problem
-Date: Tue, 25 Oct 2016 19:57:33 +0200
-Message-ID: <580F9D0D.7000104@math.uni-bielefeld.de>
+Date: Tue, 25 Oct 2016 12:53:13 -0600
+Message-ID: <936ed602-efe9-4752-23da-5d3d68899922@osg.samsung.com>
 References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4.samsung.com>
  <1470850251-9150-1-git-send-email-shuahkh@osg.samsung.com>
  <57ABB1ED.1080301@samsung.com> <57ABB31E.1070802@osg.samsung.com>
@@ -12,159 +12,203 @@ References: <CGME20160810214111epcas1p4dd2a581353b550a1992fc7695e846da7@epcas1p4
  <CAAQKjZMFOe7Aa5Hq5gbMj7=h2VfgXq5jgqbB1wqcZcYZ0ZKZxA@mail.gmail.com>
  <49780a7f-59a4-d2b0-380c-4bd330660ba2@osg.samsung.com>
  <fa4114e0-9382-0653-7dc6-a63f1312d616@osg.samsung.com>
+ <580F9D0D.7000104@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <fa4114e0-9382-0653-7dc6-a63f1312d616@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <daeinki@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <580F9D0D.7000104@math.uni-bielefeld.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <daeinki@gmail.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Dave Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gU2h1YWgsCgoKU2h1YWggS2hhbiB3cm90ZToKPiBPbiAxMC8xOS8yMDE2IDA0OjI3IFBN
-LCBTaHVhaCBLaGFuIHdyb3RlOgo+PiBPbiAxMC8xOS8yMDE2IDA4OjE2IEFNLCBJbmtpIERhZSB3
-cm90ZToKPj4+IEhpIFNodWFoLAo+Pj4KPj4+IDIwMTYtMTAtMTMgODoxMSBHTVQrMDk6MDAgU2h1
-YWggS2hhbiA8c2h1YWhraEBvc2cuc2Ftc3VuZy5jb20+Ogo+Pj4+IEhpIElua2ksCj4+Pj4KPj4+
-PiBPbiAwOC8xNS8yMDE2IDEwOjQwIFBNLCBJbmtpIERhZSB3cm90ZToKPj4+Pgo+Pj4+Pj4KPj4+
-Pj4+IG9rYXkgdGhlIHZlcnkgZmlyc3QgY29tbWl0IHRoYXQgYWRkZWQgSU9NTVUgc3VwcG9ydAo+
-Pj4+Pj4gaW50cm9kdWNlZCB0aGUgY29kZSB0aGF0IHJlamVjdHMgbm9uLWNvbnRpZyBnZW0gbWVt
-b3J5Cj4+Pj4+PiB0eXBlIHdpdGhvdXQgSU9NTVUuCj4+Pj4+Pgo+Pj4+Pj4gY29tbWl0IDA1MTlm
-OWExMmQwMTEzY2FhYjc4OTgwYzQ4YTc5MDJkMmJkNDBjMmMKPj4+Pj4+IEF1dGhvcjogSW5raSBE
-YWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+Pj4+Pj4gRGF0ZTogICBTYXQgT2N0IDIwIDA3OjUz
-OjQyIDIwMTIgLTA3MDAKPj4+Pj4+Cj4+Pj4+PiAgICAgZHJtL2V4eW5vczogYWRkIGlvbW11IHN1
-cHBvcnQgZm9yIGV4eW5vcyBkcm0gZnJhbWV3b3JrCj4+Pj4+Pgo+Pj4+Cj4+Pj4gSSBoYXZlbid0
-IGdpdmVuIHVwIG9uIHRoaXMgeWV0LiBJIGFtIHN0aWxsIHNlZWluZyB0aGUgZm9sbG93aW5nIGZh
-aWx1cmU6Cj4+Pj4KPj4+PiBBZGRpdGlvbmFsIGRlYnVnIG1lc3NhZ2VzIEkgYWRkZWQ6Cj4+Pj4g
-WyAgIDE1LjI4NzQwM10gZXh5bm9zX2RybV9nZW1fY3JlYXRlX2lvY3RsKCkgMQo+Pj4+IFsgICAx
-NS4yODc0MTldIGV4eW5vc19kcm1fZ2VtX2NyZWF0ZSgpIGZsYWdzIDEKPj4+Pgo+Pj4+IFsgICAx
-NS4zMTE1MTFdIFtkcm06ZXh5bm9zX2RybV9mcmFtZWJ1ZmZlcl9pbml0XSAqRVJST1IqIE5vbi1j
-b250aWd1b3VzIEdFTSBtZW1vcnkgaXMgbm90IHN1cHBvcnRlZC4KPj4+Pgo+Pj4+IEFkZGl0aW9u
-YWwgZGVidWcgbWVzc2FnZSBJIGFkZGVkOgo+Pj4+IFsgICAxNS4zMTg5ODFdIFtkcm06ZXh5bm9z
-X3VzZXJfZmJfY3JlYXRlXSAqRVJST1IqIGZhaWxlZCB0byBpbml0aWFsaXplIGZyYW1lYnVmZmVy
-Cj4+Pj4KPj4+PiBUaGlzIGlzIHdoYXQgaGFwcGVuczoKPj4+Pgo+Pj4+IDEuIGV4eW5vc19kcm1f
-Z2VtX2NyZWF0ZV9pb2N0bCgpIGdldHMgY2FsbGVkIHdpdGggRVhZTk9TX0JPX05PTkNPTlRJRyBy
-ZXF1ZXN0Cj4+Pj4gMi4gZXh5bm9zX2RybV9nZW1fY3JlYXRlKDAgZ29lcyBhaGVhZCBhbmQgY3Jl
-YXRlcyB0aGUgR0VNIGJ1ZmZlcnMKPj4+PiAzLiBleHlub3NfdXNlcl9mYl9jcmVhdGUoKSB0cmll
-cyB0byBhc3NvY2lhdGUgR0VNIHRvIGZiIGFuZCBmYWlscyBkdXJpbmcKPj4+PiAgICBjaGVja19m
-Yl9nZW1fbWVtb3J5X3R5cGUoKQo+Pj4+Cj4+Pj4gQXQgdGhpcyBwb2ludCwgdGhlcmUgaXMgbm8g
-cmVjb3ZlcnkgYW5kIGxpZ2h0ZG0gZmFpbHMKPj4+Pgo+Pj4+IHhmODYtdmlkZW8tYXJtc29jL3Ny
-Yy9kcm1tb2RlX2V4eW5vcy9kcm1tb2RlX2V4eW5vcy5jIGFzc3VtZXMgY29udGlndW91cwo+Pj4+
-IGFsbG9jYXRpb25zIGFyZSBub3Qgc3VwcG9ydGVkIGluIHNvbWUgZXh5bm9zIGRybSB2ZXJzaW9u
-czogVGhlIGZvbGxvd2luZwo+Pj4+IGNvbW1pdCBpbnRyb2R1Y2VkIHRoaXMgY2hhbmdlOgo+Pj4+
-Cj4+Pj4gaHR0cHM6Ly9naXQubGluYXJvLm9yZy9hcm0veG9yZy9kcml2ZXIveGY4Ni12aWRlby1h
-cm1zb2MuZ2l0L2NvbW1pdGRpZmYvM2JlMWY2MjczNDQxZmU5NWRkNDQyZjQ0MDY0Mzg3MzIyZTE2
-YjdlOQo+Pj4+Cj4+Pj4gZXhjZXJwdHMgZnJvbSB0aGUgZGlmZjotICAgICAgIGlmIChjcmVhdGVf
-Z2VtLT5idWZfdHlwZSA9PSBBUk1TT0NfQk9fU0NBTk9VVCkKPj4+PiAtICAgICAgICAgICAgICAg
-Y3JlYXRlX2V4eW5vcy5mbGFncyA9IEVYWU5PU19CT19DT05USUc7Cj4+Pj4gLSAgICAgICBlbHNl
-Cj4+Pj4gLSAgICAgICAgICAgICAgIGNyZWF0ZV9leHlub3MuZmxhZ3MgPSBFWFlOT1NfQk9fTk9O
-Q09OVElHOwo+Pj4+ICsKPj4+PiArICAgICAgIC8qIENvbnRpZ3VvdXMgYWxsb2NhdGlvbnMgYXJl
-IG5vdCBzdXBwb3J0ZWQgaW4gc29tZSBleHlub3MgZHJtIHZlcnNpb25zLgo+Pj4+ICsgICAgICAg
-ICogV2hlbiB0aGV5IGFyZSBzdXBwb3J0ZWQgYWxsIGFsbG9jYXRpb25zIGFyZSBlZmZlY3RpdmVs
-eSBjb250aWd1b3VzCj4+Pj4gKyAgICAgICAgKiBhbnl3YXksIHNvIGZvciBzaW1wbGljaXR5IHdl
-IGFsd2F5cyByZXF1ZXN0IG5vbiBjb250aWd1b3VzIGJ1ZmZlcnMuCj4+Pj4gKyAgICAgICAgKi8K
-Pj4+PiArICAgICAgIGNyZWF0ZV9leHlub3MuZmxhZ3MgPSBFWFlOT1NfQk9fTk9OQ09OVElHOwo+
-Pj4+Cj4+Pgo+Pj4gQWJvdmUgY29tbWVudCwgIkNvbnRpZ3VvdXMgYWxsb2NhdGlvbnMgYXJlIG5v
-dCBzdXBwb3J0ZWQgaW4gc29tZQo+Pj4gZXh5bm9zIGRybSB2ZXJzaW9ucy4iLCBzZWVtcyB3cm9u
-ZyBhc3N1bXB0aW9uLgo+Pj4gVGhlIHJvb3QgY2F1c2UsIGNvbnRpZ3VvdXMgYWxsb2NhdGlvbiBp
-cyBub3Qgc3VwcG9ydGVkLCB3b3VsZCBiZSB0aGF0Cj4+PiB0aGV5IHVzZWQgTGludXgga2VybmVs
-IHdoaWNoIGRpZG4ndCBoYXZlIENNQSByZWdpb24gZW5vdWdoIC0gYXMKPj4+IGRlZmF1bHQgMTZN
-Qiwgb3IgZGlkbid0IGRlY2xhcmUgQ01BIHJlZ2lvbiBlbm91Z2ggZm9yIHRoZSBETUEgZGV2aWNl
-Lgo+Pj4gU28gSSB0aGluayB0aGV5IHNob3VsZCBub3QgZm9yY2UgdG8gZmxhZyBFWFlOT1NfQk9f
-Tk9OQ09OVElHIGFuZCB0aGV5Cj4+PiBzaG91bGQgbWFuYWdlIHRoZSBlcnJvciBjYXNlIGlmIHRo
-ZSBhbGxvY2F0aW9uIGZhaWxlZC4KPj4KPj4gVGhpcyBhc3N1bXB0aW9uIGRvZXNuJ3Qgc291bmQg
-Y29ycmVjdCBhbmQgZm9yY2luZyBOT05DT05USUcgaXNuJ3QgcmlnaHQKPj4gZWl0aGVyLiAKPj4K
-Pj4+Cj4+Pj4gVGhlcmUgbWlnaHQgaGF2ZSBiZWVuIGxvZ2ljIG9uIGV4eW5vc19kcm0gdGhhdCBm
-b3JjZWQgQ29udGlnIHdoZW4gaXQgY291ZG4ndAo+Pj4+IHN1cHBvcnQgTk9OQ09OVElHLiBBdCBs
-ZWFzdCwgdGhhdCBpcyB3aGF0IHRoaXMgY29tbWVudCBzdWdnZXN0cy4gVGhpcyBhc3N1bXB0aW9u
-Cj4+Pj4gZG9lc24ndCBhcHBlYXIgdG8gYmUgYSBnb29kIG9uZSBhbmQgbm90IHN1cmUgaWYgdGhp
-cyBjaGFuZ2Ugd2FzIG1hZGUgdG8gZml4IGEgYnVnLgo+Pj4+Cj4+Pj4gQWZ0ZXIgdGhlIElPTU1V
-IHN1cHBvcnQsIHRoaXMgYXNzdW1wdGlvbiBpcyBubyBsb25nZXIgdHJ1ZS4gSGVuY2UsIHdpdGgg
-SU9NTVUKPj4+PiBzdXBwb3J0LCBsYXRlc3Qga2VybmVscyBoYXZlIGEgbWlzbWF0Y2ggd2l0aCB0
-aGUgaW5zdGFsbGVkIHhmODYtdmlkZW8tYXJtc29jCj4+Pj4KPj4+PiBUaGlzIGlzIHdoYXQgSSBh
-bSBydW5uaW5nIGludG8uIFRoaXMgbGVhZHMgdG8gdGhlIGZvbGxvd2luZyBxdWVzdGlvbjoKPj4+
-Pgo+Pj4+IDEuIEhvdyBkbyB3ZSBlbnN1cmUgZXh5bm9zX2RybSBrZXJuZWwgY2hhbmdlcyBkb24n
-dCBicmVhayB1c2VyLXNwYWNlCj4+Pj4gICAgc3BlY2lmaWNhbGx5IHhmODYtdmlkZW8tYXJtc29j
-Cj4+Pj4gMi4gVGhpcyBzZWVtcyB0byBoYXZlIGdvbmUgdW5kZXRlY3RlZCBmb3IgYSB3aGlsZS4g
-SSBzZWUgYSBjaGFuZ2UgaW4KPj4+PiAgICBleHlub3NfZHJtX2dlbV9kdW1iX2NyZWF0ZSgpIHRo
-YXQgaXMgcHJvYmFibHkgYWRkcmVzc2luZyB0aGlzIHR5cGUKPj4+PiAgICBvZiBicmVha2FnZS4g
-Q29tbWl0IDEyMmJlZWE4NGJiOTAyMzZiMWFlNTQ1ZjA4MjY3YWY1ODU5MWMyMWIgYWRkcwo+Pj4+
-ICAgIGhhbmRsaW5nIGZvciBJT01NVSBOT05DT05USUcgY2FzZS4KPj4+Cj4+PiBTZWVtcyB0aGlz
-IHBhdGNoIGhhcyBhIHByb2JsZW0uIFRoaXMgcGF0Y2ggZm9yY2VzIHRvIGZsYWcgTk9OQ09OVElH
-IGlmCj4+PiBpb21tdSBpcyBlbmFibGVkLiBUaGUgZmxhZyBzaG91bGQgYmUgZGVwZW5kIG9uIHRo
-ZSBhcmd1bWVudCBmcm9tCj4+PiB1c2VyLXNwYWNlLgo+Pj4gSS5lLiwgaWYgdXNlci1zcGFjZSBy
-ZXF1ZXN0ZWQgYSBnZW0gYWxsb2NhdGlvbiB3aXRoIENPTlRJRyBmbGFnLCB0aGVuCj4+PiBFeHlu
-b3MgZHJtIGRyaXZlciBzaG91bGQgYWxsb2NhdGUgY29udGlndW91cyBtZW1vcnkgZXZlbiB0aG91
-Z2ggaW9tbXUKPj4+IGlzIGVuYWJsZWQuCj4+Pgo+Pj4+Cj4+Pj4gQW55d2F5LCBJIGFtIGludGVy
-ZXN0ZWQgaW4gZ2V0dGluZyB0aGUgZXh5bm9zX2RybSBrZXJuZWwgc2lkZSBjb2RlCj4+Pj4gYW5k
-IHhmODYtdmlkZW8tYXJtc29jIGluIHN5bmMgdG8gcmVzb2x2ZSB0aGUgaXNzdWUuCj4+Pj4KPj4+
-PiBDb3VsZCB5b3UgcmVjb21tZW5kIGEgZ29pbmcgZm9yd2FyZCBwbGFuPwo+Pj4KPj4+IE15IG9w
-aW5pb24gYXJlLAo+Pj4KPj4+IDEuIERvIG5vdCBmb3JjZSB0byBmbGFnIEVYWU5PU19CT19OT05D
-T05USUcgYXQgeGY4Ni12aWRlby1hcm1zb2MKPiAKPiBPa2F5IG1vcmUgb24gdGhpcy4gSSBmaXhl
-ZCB4Zjg2LXZpZGVvLWFybXNvIHRvIGFzayBmb3IgRVhZTk9TX0JPX0NPTlRJRwo+IGZvciBBUk1T
-T0NfQk9fU0NBTk9VVCBhbmQgRVhZTk9TX0JPX05PTkNPTlRJRyBpbiBhbGwgb3RoZXIgY2FzZXMu
-Cj4gCj4gUmV2ZXJ0IG9mIHRoZSBjb21taXQ6IDNiZTFmNjI3MzQ0MWZlOTVkZDQ0MmY0NDA2NDM4
-NzMyMmUxNmI3ZTkKPiAKPiBXaXRoIHRoaXMgY2hhbmdlLCBub3cgZGlzcGxheSBtYW5hZ2VyIHN0
-YXJ0cyBqdXN0IGZpbmUuIEhvd2V2ZXIsIGl0IHR1cm5zCj4gb3V0IHhmODYtdmlkZW8tYXJtc29j
-IGlzIG9ic29sZXRlZCBpbiBmYXZvciBvZiB4Zjg2LXZpZGVvLW1vZGVzZXR0aW5nLiBUaGUKPiBs
-YXN0IHVwZGF0ZSB0byB4Zjg2LXZpZGVvLWFybXNvYyBnaXQgd2FzIDMgeWVhcnMgYWdvLgpJSVJD
-IHhmODYtdmlkZW8tYXJtc29jIHdhcyBjcmVhdGVkIHRvIGZhY2lsaXRhdGUgaW50ZWdyYXRpb24g
-d2l0aCB0aGUKcHJvcHJpZXRhcnkgTWFsaSB1c2Vyc3BhY2UgYmxvYi4gSSBkb24ndCB0aGluayB0
-aGF0IGNhbiBiZSBkb25lIHdpdGggdGhlCm1vZGVzZXR0aW5nIEREWC4KCgoKPiBJIGFtIG5vdCBz
-dXJlIHdoZXJlIHRvIHNlbmQgdGhlIGZpeCBhbmQgZG9lc24ndCBsb29rIGxpa2UgaXQgaXMgYmVp
-bmcKPiBtYWludGFpbmVkIGFjdGl2ZWx5LiBJIGNhbiBwdXJzdWUgaXQgZnVydGhlciBhbmQgdHJ5
-IHRvIGdldCB0aGlzIGludG8KPiB4Zjg2LXZpZGVvLWFybXNvYyBwcm92aWRlZCBJIGNhbiBmaW5k
-IHRoZSBtYWludGFpbmVyIGZvciB0aGlzIHNlZW1pbmdseQo+IGluYWN0aXZlIHByb2plY3QuCkkg
-d2FzIHdvbmRlcmluZyBpZiBhbnlvbmUgaGFzIGFjdHVhbGx5IGNvbXBsYWluZWQgYWJvdXQgdGhp
-cyBpc3N1ZT8KCgoKPiBJIGJyb3VnaHQgaW4gdGhlIGxhdGVzdCB4Zjg2LXZpZGVvLW1vZGVzZXR0
-aW5nIGJpdHMgZnJvbQo+IAo+IGh0dHBzOi8vY2dpdC5mcmVlZGVza3RvcC5vcmcveG9yZy9kcml2
-ZXIveGY4Ni12aWRlby1tb2Rlc2V0dGluZwo+IAo+IEkgcmVtb3ZlZCB4Zjg2LXZpZGVvLWFybXNv
-YyBhbmQgaW5zdGFsbGVkIHhmODYtdmlkZW8tbW9kZXNldHRpbmcgYW5kIHRoYXQKPiB3b3JrZWQg
-anVzdCBmaW5lLiB4Zjg2LXZpZGVvLW1vZGVzZXR0aW5nIHVzZXMgZHVtYl9jcmVhdGUgaW50ZXJm
-YWNlIGluc3RlYWQKPiBvZiBEUk1fSU9DVExfRVhZTk9TX0dFTV9DUkVBVEUuCj4gCj4gZHVtYl9j
-cmVhdGUgaW50ZXJmYWNlIGVsaW1pbmF0ZXMgdGhlIG5lZWQgZm9yIERSTV9JT0NUTF9FWFlOT1Nf
-R0VNX0NSRUFURQo+IGluIHVzZXJzcGFjZS4gbGliZHJtLTIuNC43MSBkb2VzIGNhbGwgRFJNX0lP
-Q1RMX0VYWU5PU19HRU1fQ1JFQVRFLgo+IAo+IFRoZSBxdWVzdGlvbiBpcyBkbyB3ZSBzdGlsbCBu
-ZWVkIHRvIGNvbnRpbnVlIHRvIHN1cHBvcnQgdGhlIGN1c3RvbSBnZW0KPiBjcmVhdGUgaW50ZXJm
-YWNlIERSTV9JT0NUTF9FWFlOT1NfR0VNX0NSRUFURT8KSSdkIHNheSB5ZXMuIFdpdGgganVzdCB0
-aGUgZHVtYl9jcmVhdGUgaW50ZXJmYWNlIGl0IGlzIG5vdCBwb3NzaWJsZSB0bwpjaGFuZ2UgdGhl
-IHR5cGUgb2YgYnVmZmVyIHlvdSBnZXQuIEFuZCBpZiB5b3Ugd2FudCB0byBzdXBwb3J0IGFueSBr
-aW5kCm9mIGh3IGFjY2VsZXJhdGlvbiBpbiB0aGUgRERYLCB5b3UgcHJvYmFibHkgd2FudCB0byBj
-b250cm9sIGF0IGxlYXN0IHRoZQpjYWNoaW5nIGJlaGF2aW91ciBvZiB0aGUgYnVmZmVyLgoKCgo+
-IFNvbWUgZHJtIGRyaXZlcnMgc2VlbSB0byBzdXBwb3J0IGl0IGFuZCBzb21lIGRvbid0LgpOb3Qg
-c3VyZSBJIHVuZGVyc3RhbmQgdGhpcy4gSSBkb24ndCB0aGluayBhbnkgb3RoZXIgRFJNIGRyaXZl
-ciBleGNlcHQKZm9yIGV4eW5vcyBzdXBwb3J0cyB0aGlzIGlvY3RsLiBCdXQgYWxsIGRyaXZlcnMg
-aGF2ZSB0aGVpciBvd24gaW9jdGxzIHRvCnJlcXVlc3QgbWVtb3J5IChEUk1fSU9DVExfRVROQVZJ
-Vl9HRU1fTkVXLCBEUk1fSU9DVExfVkM0X0NSRUFURV9CTywgZXRjLikKCgoKPiAgVW5mb3J0dW5h
-dGVseSwgaWYgdXNlcnNwYWNlIHJlcXVlc3RzIG5vbmNvbnRpZwo+IGZvciBzY2Fub3V0LCB3ZSB3
-aWxsIGNvbnRpbnVlIHRvIHNlZSBwcm9ibGVtcyB3aXRoIGRpc3BsYXkgbWFuYWdlciB3aGVuCj4g
-aW9tbXUgaXMgZGlzYWJsZWQuIGR1bWIgY3JlYXRlIGhpZGVzIGFsbCBvZiB0aGF0LCBhcmUgdGhl
-cmUgZ29vZCByZWFzb25zCj4gdG8gY29udGludWUgdG8gc3VwcG9ydCBpdCBpbiBleHlub3MgZHJt
-PwpJbiBhZGRpdGlvbiB0byB0aGUgc3R1ZmYgSSBzYWlkIGFib3ZlLCB5b3UgY2FuIHVzZSBpdCBm
-b3IgcmVuZGVyIG5vZGVzLgpUaGF0IGRvZXNuJ3Qgd29yayBmb3IgZHVtYl9jcmVhdGUuCgoKPiBF
-eHBvc2luZyBDT05USUcgYW5kIE5PTkNPTlRJRyB0byB1c2Vyc3BhY2UgYXBwZWFycyB0byBiZSBj
-YXVzaW5nIHByb2JsZW1zCj4gd2hlbiBleHlub3MgZHJtIGRldGVybWluZXMgaXQgY2FuJ3Qgc3Vw
-cG9ydCBub24tY29udGlnIEdFTSBidWZmZXJzIGluIGZiCj4gaW5pdCBhZnRlciB1c2Vyc3BhY2Ug
-YWxsb2NhdGVzIHRoZW0uCk1pZ2h0IGJlIG1pc3Npbmcgc29tZXRoaW5nIGhlcmUsIGJ1dCB0aGlz
-IHdob2xlIHRoaW5nIGp1c3QgbG9va3MgbGlrZSBhCmJ1ZyBpbiB4Zjg2LXZpZGVvLWFybXNvYy4g
-Tm8gbWF0dGVyIGZyb20gd2hpY2ggcGVyc3BlY3RpdmUgeW91IGxvb2ssIHRoZQpjb21taXQgdGhh
-dCBjaGFuZ2VkIGFsbCBhbGxvY2F0aW9ucyB0byBub25jb250aWcgd2FzIHBsYWluIHdyb25nLgoK
-TXkgZ3Vlc3M6IFRoaXMgd2FzIGRvbmUgdG8gcGFwZXIgb3ZlciBzb21lIGJ1ZyBpbiBzb21lIHZl
-bmRvciBrZXJuZWwgZm9yCmEgcHJvZHVjdCB1c2luZyBhbiBFeHlub3MgU29DLgoKCldpdGggYmVz
-dCB3aXNoZXMsClRvYmlhcwoKCgo+IAo+Pj4gMi4gRG8gbm90IGZvcmNlIHRvIGZsYWcgTk9OQ09O
-VElHIGF0IEV4eW5vcyBkcm0gZHJpdmVyIGV2ZW4gdGhvdWdoCj4+PiBpb21tdSBpcyBlbmFibGVk
-IGFuZCBmbGFnIGFsbG9jYXRpb24gdHlwZSB3aXRoIHRoZSBhcmd1bWVudCBmcm9tCj4+PiB1c2Vy
-LXNwYWNlLgo+Pj4KPiAKPiBleHlub3NfZHJtX2dlbV9kdW1iX2NyZWF0ZSgpIGRvZXNuJ3QgdGFr
-ZSBhbnkgZmxhZ3MsIHRoZXJlIGlzIG5vIG5lZWQKPiB0byBjaGFuZ2UgdGhlIGFib3ZlLgo+IAo+
-IHRoYW5rcywKPiAtLSBTaHVhaAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+On 10/25/2016 11:57 AM, Tobias Jakobi wrote:
+> Hello Shuah,
+> 
+> 
+> Shuah Khan wrote:
+>> On 10/19/2016 04:27 PM, Shuah Khan wrote:
+>>> On 10/19/2016 08:16 AM, Inki Dae wrote:
+>>>> Hi Shuah,
+>>>>
+>>>> 2016-10-13 8:11 GMT+09:00 Shuah Khan <shuahkh@osg.samsung.com>:
+>>>>> Hi Inki,
+>>>>>
+>>>>> On 08/15/2016 10:40 PM, Inki Dae wrote:
+>>>>>
+>>>>>>>
+>>>>>>> okay the very first commit that added IOMMU support
+>>>>>>> introduced the code that rejects non-contig gem memory
+>>>>>>> type without IOMMU.
+>>>>>>>
+>>>>>>> commit 0519f9a12d0113caab78980c48a7902d2bd40c2c
+>>>>>>> Author: Inki Dae <inki.dae@samsung.com>
+>>>>>>> Date:   Sat Oct 20 07:53:42 2012 -0700
+>>>>>>>
+>>>>>>>     drm/exynos: add iommu support for exynos drm framework
+>>>>>>>
+>>>>>
+>>>>> I haven't given up on this yet. I am still seeing the following failure:
+>>>>>
+>>>>> Additional debug messages I added:
+>>>>> [   15.287403] exynos_drm_gem_create_ioctl() 1
+>>>>> [   15.287419] exynos_drm_gem_create() flags 1
+>>>>>
+>>>>> [   15.311511] [drm:exynos_drm_framebuffer_init] *ERROR* Non-contiguous GEM memory is not supported.
+>>>>>
+>>>>> Additional debug message I added:
+>>>>> [   15.318981] [drm:exynos_user_fb_create] *ERROR* failed to initialize framebuffer
+>>>>>
+>>>>> This is what happens:
+>>>>>
+>>>>> 1. exynos_drm_gem_create_ioctl() gets called with EXYNOS_BO_NONCONTIG request
+>>>>> 2. exynos_drm_gem_create(0 goes ahead and creates the GEM buffers
+>>>>> 3. exynos_user_fb_create() tries to associate GEM to fb and fails during
+>>>>>    check_fb_gem_memory_type()
+>>>>>
+>>>>> At this point, there is no recovery and lightdm fails
+>>>>>
+>>>>> xf86-video-armsoc/src/drmmode_exynos/drmmode_exynos.c assumes contiguous
+>>>>> allocations are not supported in some exynos drm versions: The following
+>>>>> commit introduced this change:
+>>>>>
+>>>>> https://git.linaro.org/arm/xorg/driver/xf86-video-armsoc.git/commitdiff/3be1f6273441fe95dd442f44064387322e16b7e9
+>>>>>
+>>>>> excerpts from the diff:-       if (create_gem->buf_type == ARMSOC_BO_SCANOUT)
+>>>>> -               create_exynos.flags = EXYNOS_BO_CONTIG;
+>>>>> -       else
+>>>>> -               create_exynos.flags = EXYNOS_BO_NONCONTIG;
+>>>>> +
+>>>>> +       /* Contiguous allocations are not supported in some exynos drm versions.
+>>>>> +        * When they are supported all allocations are effectively contiguous
+>>>>> +        * anyway, so for simplicity we always request non contiguous buffers.
+>>>>> +        */
+>>>>> +       create_exynos.flags = EXYNOS_BO_NONCONTIG;
+>>>>>
+>>>>
+>>>> Above comment, "Contiguous allocations are not supported in some
+>>>> exynos drm versions.", seems wrong assumption.
+>>>> The root cause, contiguous allocation is not supported, would be that
+>>>> they used Linux kernel which didn't have CMA region enough - as
+>>>> default 16MB, or didn't declare CMA region enough for the DMA device.
+>>>> So I think they should not force to flag EXYNOS_BO_NONCONTIG and they
+>>>> should manage the error case if the allocation failed.
+>>>
+>>> This assumption doesn't sound correct and forcing NONCONTIG isn't right
+>>> either. 
+>>>
+>>>>
+>>>>> There might have been logic on exynos_drm that forced Contig when it coudn't
+>>>>> support NONCONTIG. At least, that is what this comment suggests. This assumption
+>>>>> doesn't appear to be a good one and not sure if this change was made to fix a bug.
+>>>>>
+>>>>> After the IOMMU support, this assumption is no longer true. Hence, with IOMMU
+>>>>> support, latest kernels have a mismatch with the installed xf86-video-armsoc
+>>>>>
+>>>>> This is what I am running into. This leads to the following question:
+>>>>>
+>>>>> 1. How do we ensure exynos_drm kernel changes don't break user-space
+>>>>>    specifically xf86-video-armsoc
+>>>>> 2. This seems to have gone undetected for a while. I see a change in
+>>>>>    exynos_drm_gem_dumb_create() that is probably addressing this type
+>>>>>    of breakage. Commit 122beea84bb90236b1ae545f08267af58591c21b adds
+>>>>>    handling for IOMMU NONCONTIG case.
+>>>>
+>>>> Seems this patch has a problem. This patch forces to flag NONCONTIG if
+>>>> iommu is enabled. The flag should be depend on the argument from
+>>>> user-space.
+>>>> I.e., if user-space requested a gem allocation with CONTIG flag, then
+>>>> Exynos drm driver should allocate contiguous memory even though iommu
+>>>> is enabled.
+>>>>
+>>>>>
+>>>>> Anyway, I am interested in getting the exynos_drm kernel side code
+>>>>> and xf86-video-armsoc in sync to resolve the issue.
+>>>>>
+>>>>> Could you recommend a going forward plan?
+>>>>
+>>>> My opinion are,
+>>>>
+>>>> 1. Do not force to flag EXYNOS_BO_NONCONTIG at xf86-video-armsoc
+>>
+>> Okay more on this. I fixed xf86-video-armso to ask for EXYNOS_BO_CONTIG
+>> for ARMSOC_BO_SCANOUT and EXYNOS_BO_NONCONTIG in all other cases.
+>>
+>> Revert of the commit: 3be1f6273441fe95dd442f44064387322e16b7e9
+>>
+>> With this change, now display manager starts just fine. However, it turns
+>> out xf86-video-armsoc is obsoleted in favor of xf86-video-modesetting. The
+>> last update to xf86-video-armsoc git was 3 years ago.
+> IIRC xf86-video-armsoc was created to facilitate integration with the
+> proprietary Mali userspace blob. I don't think that can be done with the
+> modesetting DDX.
+> 
+> 
+> 
+>> I am not sure where to send the fix and doesn't look like it is being
+>> maintained actively. I can pursue it further and try to get this into
+>> xf86-video-armsoc provided I can find the maintainer for this seemingly
+>> inactive project.
+> I was wondering if anyone has actually complained about this issue?
+
+I sent email to the last person that modified the xf86-video-armsoc.
+I will pursue fix to this.
+
+> 
+> 
+> 
+>> I brought in the latest xf86-video-modesetting bits from
+>>
+>> https://cgit.freedesktop.org/xorg/driver/xf86-video-modesetting
+>>
+>> I removed xf86-video-armsoc and installed xf86-video-modesetting and that
+>> worked just fine. xf86-video-modesetting uses dumb_create interface instead
+>> of DRM_IOCTL_EXYNOS_GEM_CREATE.
+>>
+>> dumb_create interface eliminates the need for DRM_IOCTL_EXYNOS_GEM_CREATE
+>> in userspace. libdrm-2.4.71 does call DRM_IOCTL_EXYNOS_GEM_CREATE.
+>>
+>> The question is do we still need to continue to support the custom gem
+>> create interface DRM_IOCTL_EXYNOS_GEM_CREATE?
+> I'd say yes. With just the dumb_create interface it is not possible to
+> change the type of buffer you get. And if you want to support any kind
+> of hw acceleration in the DDX, you probably want to control at least the
+> caching behaviour of the buffer.
+
+Right. Okay that makes sense.
+
+> 
+> 
+> 
+>> Some drm drivers seem to support it and some don't.
+> Not sure I understand this. I don't think any other DRM driver except
+> for exynos supports this ioctl. But all drivers have their own ioctls to
+> request memory (DRM_IOCTL_ETNAVIV_GEM_NEW, DRM_IOCTL_VC4_CREATE_BO, etc.)
+> 
+> 
+> 
+>>  Unfortunately, if userspace requests noncontig
+>> for scanout, we will continue to see problems with display manager when
+>> iommu is disabled. dumb create hides all of that, are there good reasons
+>> to continue to support it in exynos drm?
+> In addition to the stuff I said above, you can use it for render nodes.
+> That doesn't work for dumb_create.
+> 
+> 
+>> Exposing CONTIG and NONCONTIG to userspace appears to be causing problems
+>> when exynos drm determines it can't support non-contig GEM buffers in fb
+>> init after userspace allocates them.
+> Might be missing something here, but this whole thing just looks like a
+> bug in xf86-video-armsoc. No matter from which perspective you look, the
+> commit that changed all allocations to noncontig was plain wrong.
+> 
+> My guess: This was done to paper over some bug in some vendor kernel for
+> a product using an Exynos SoC.
+> 
+
+Yeah. The right fix in this case is fixing xf86-video-armsoc as you explained
+dump_create is too generic for some use-cases.
+
+thanks,
+-- Shuah
