@@ -1,23 +1,23 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: s3c24xx_uda134x: Move global variables to driver's data structure" to the asoc tree
-Date: Tue, 25 Oct 2016 20:24:06 +0100
-Message-ID: <E1bz7KQ-0004rl-Mv@debutante>
-References: <1470317928-25365-9-git-send-email-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: s3c24xx-i2s: Debug/error trace cleanup" to the asoc tree
+Date: Tue, 25 Oct 2016 20:26:46 +0100
+Message-ID: <E1bz7N0-00056b-GC@debutante>
+References: <1477392991-10604-3-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36434 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36510 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbcJYTYP (ORCPT
+        with ESMTP id S1759574AbcJYT0y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 15:24:15 -0400
-In-Reply-To: <1470317928-25365-9-git-send-email-s.nawrocki@samsung.com>
+        Tue, 25 Oct 2016 15:26:54 -0400
+In-Reply-To: <1477392991-10604-3-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lgirdwood@gmail.com, krzk@kernel.org
 
 The patch
 
-   ASoC: s3c24xx_uda134x: Move global variables to driver's data structure
+   ASoC: samsung: s3c24xx-i2s: Debug/error trace cleanup
 
 has been applied to the asoc tree at
 
@@ -42,169 +42,175 @@ to this mail.
 Thanks,
 Mark
 
->From 892ccf0f2173a9ede5448411e9475616fb21fb51 Mon Sep 17 00:00:00 2001
+>From 2ef9555bd13d00c63fdbe3cdca6ab0e2ded42695 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Tue, 25 Oct 2016 12:57:57 +0200
-Subject: [PATCH] ASoC: s3c24xx_uda134x: Move global variables to driver's data
- structure
+Date: Tue, 25 Oct 2016 17:08:41 +0200
+Subject: [PATCH] ASoC: samsung: s3c24xx-i2s: Debug/error trace cleanup
 
-Gather all driver's private variables in common data structure
-and allocate the data structure dynamically.
+pr_err() are replaced with dev_err() so information about
+device the error logs refer to is also included.
 
-Also unused ENFORCE_RATES symbol and local variable (leftovers
-from an erroneous rebase) are removed.
+pr_debug() at beginning of each function are removed
+as they are likely very rarely used and can always be
+added again when doing any serious debugging.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/s3c24xx_uda134x.c | 79 ++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 36 deletions(-)
+ sound/soc/samsung/s3c24xx-i2s.c | 30 ++++--------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 7853fbe6ccc9..81a78940967c 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -19,9 +19,15 @@
- #include <sound/s3c24xx_uda134x.h>
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index 29196a9933a6..7c7061bc0ded 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -54,8 +54,6 @@ static void s3c24xx_snd_txctrl(int on)
+ 	u32 iiscon;
+ 	u32 iismod;
  
- #include "regs-iis.h"
+-	pr_debug("Entered %s\n", __func__);
 -
- #include "s3c24xx-i2s.h"
+ 	iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+ 	iiscon  = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	iismod  = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+@@ -99,8 +97,6 @@ static void s3c24xx_snd_rxctrl(int on)
+ 	u32 iiscon;
+ 	u32 iismod;
  
-+struct s3c24xx_uda134x {
-+	struct clk *xtal;
-+	struct clk *pclk;
-+	struct mutex clk_lock;
-+	int clk_users;
-+};
-+
- /* #define ENFORCE_RATES 1 */
- /*
-   Unfortunately the S3C24XX in master mode has a limited capacity of
-@@ -36,15 +42,6 @@
-   possible an error will be returned.
- */
- 
--static struct clk *xtal;
--static struct clk *pclk;
--/* this is need because we don't have a place where to keep the
-- * pointers to the clocks in each substream. We get the clocks only
-- * when we are actually using them so we don't block stuff like
-- * frequency change or oscillator power-off */
--static int clk_users;
--static DEFINE_MUTEX(clk_lock);
+-	pr_debug("Entered %s\n", __func__);
 -
- static unsigned int rates[33 * 2];
- #ifdef ENFORCE_RATES
- static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
-@@ -57,26 +54,24 @@ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
- static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
+ 	iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+ 	iiscon  = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	iismod  = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+@@ -147,8 +143,6 @@ static int s3c24xx_snd_lrsync(void)
+ 	u32 iiscon;
+ 	int timeout = 50; /* 5ms */
+ 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	while (1) {
+ 		iiscon = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 		if (iiscon & S3C2410_IISCON_LRINDEX)
+@@ -167,8 +161,6 @@ static int s3c24xx_snd_lrsync(void)
+  */
+ static inline int s3c24xx_snd_is_clkmaster(void)
  {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--#ifdef ENFORCE_RATES
--	struct snd_pcm_runtime *runtime = substream->runtime;
--#endif
- 	int ret = 0;
- 
--	mutex_lock(&clk_lock);
-+	mutex_lock(&priv->clk_lock);
- 
--	if (clk_users == 0) {
--		xtal = clk_get(rtd->dev, "xtal");
--		if (IS_ERR(xtal)) {
-+	if (priv->clk_users == 0) {
-+		priv->xtal = clk_get(rtd->dev, "xtal");
-+		if (IS_ERR(priv->xtal)) {
- 			dev_err(rtd->dev, "%s cannot get xtal\n", __func__);
--			ret = PTR_ERR(xtal);
-+			ret = PTR_ERR(priv->xtal);
- 		} else {
--			pclk = clk_get(cpu_dai->dev, "iis");
--			if (IS_ERR(pclk)) {
-+			priv->pclk = clk_get(cpu_dai->dev, "iis");
-+			if (IS_ERR(priv->pclk)) {
- 				dev_err(rtd->dev, "%s cannot get pclk\n",
- 					__func__);
--				clk_put(xtal);
--				ret = PTR_ERR(pclk);
-+				clk_put(priv->xtal);
-+				ret = PTR_ERR(priv->pclk);
- 			}
- 		}
- 		if (!ret) {
-@@ -85,18 +80,19 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 			for (i = 0; i < 2; i++) {
- 				int fs = i ? 256 : 384;
- 
--				rates[i*33] = clk_get_rate(xtal) / fs;
-+				rates[i*33] = clk_get_rate(priv->xtal) / fs;
- 				for (j = 1; j < 33; j++)
--					rates[i*33 + j] = clk_get_rate(pclk) /
-+					rates[i*33 + j] = clk_get_rate(priv->pclk) /
- 						(j * fs);
- 			}
- 		}
- 	}
--	clk_users += 1;
--	mutex_unlock(&clk_lock);
-+	priv->clk_users += 1;
-+	mutex_unlock(&priv->clk_lock);
-+
- 	if (!ret) {
- #ifdef ENFORCE_RATES
--		ret = snd_pcm_hw_constraint_list(runtime, 0,
-+		ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
- 						 SNDRV_PCM_HW_PARAM_RATE,
- 						 &hw_constraints_rates);
- 		if (ret < 0)
-@@ -109,15 +105,18 @@ static int s3c24xx_uda134x_startup(struct snd_pcm_substream *substream)
- 
- static void s3c24xx_uda134x_shutdown(struct snd_pcm_substream *substream)
- {
--	mutex_lock(&clk_lock);
--	clk_users -= 1;
--	if (clk_users == 0) {
--		clk_put(xtal);
--		xtal = NULL;
--		clk_put(pclk);
--		pclk = NULL;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct s3c24xx_uda134x *priv = snd_soc_card_get_drvdata(rtd->card);
-+
-+	mutex_lock(&priv->clk_lock);
-+	priv->clk_users -= 1;
-+	if (priv->clk_users == 0) {
-+		clk_put(priv->xtal);
-+		priv->xtal = NULL;
-+		clk_put(priv->pclk);
-+		priv->pclk = NULL;
- 	}
--	mutex_unlock(&clk_lock);
-+	mutex_unlock(&priv->clk_lock);
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	return (readl(s3c24xx_i2s.regs + S3C2410_IISMOD) & S3C2410_IISMOD_SLAVE) ? 0:1;
  }
  
- static int s3c24xx_uda134x_hw_params(struct snd_pcm_substream *substream,
-@@ -228,10 +227,18 @@ static struct snd_soc_card snd_soc_s3c24xx_uda134x = {
- static int s3c24xx_uda134x_probe(struct platform_device *pdev)
+@@ -180,8 +172,6 @@ static int s3c24xx_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
  {
- 	struct snd_soc_card *card = &snd_soc_s3c24xx_uda134x;
-+	struct s3c24xx_uda134x *priv;
- 	int ret;
+ 	u32 iismod;
  
--	platform_set_drvdata(pdev, card);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	mutex_init(&priv->clk_lock);
-+
- 	card->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, card);
-+	snd_soc_card_set_drvdata(card, priv);
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params r: IISMOD: %x \n", iismod);
  
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+@@ -209,6 +199,7 @@ static int s3c24xx_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
+ 
+ 	writel(iismod, s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params w: IISMOD: %x \n", iismod);
++
+ 	return 0;
+ }
+ 
+@@ -219,8 +210,6 @@ static int s3c24xx_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 iismod;
+ 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
+ 
+ 	/* Working copies of register */
+@@ -242,6 +231,7 @@ static int s3c24xx_i2s_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	writel(iismod, s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	pr_debug("hw_params w: IISMOD: %x\n", iismod);
++
+ 	return 0;
+ }
+ 
+@@ -250,8 +240,6 @@ static int s3c24xx_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ {
+ 	int ret = 0;
+ 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+@@ -293,8 +281,6 @@ static int s3c24xx_i2s_set_sysclk(struct snd_soc_dai *cpu_dai,
+ {
+ 	u32 iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	iismod &= ~S3C2440_IISMOD_MPLL;
+ 
+ 	switch (clk_id) {
+@@ -319,8 +305,6 @@ static int s3c24xx_i2s_set_clkdiv(struct snd_soc_dai *cpu_dai,
+ {
+ 	u32 reg;
+ 
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	switch (div_id) {
+ 	case S3C24XX_DIV_BCLK:
+ 		reg = readl(s3c24xx_i2s.regs + S3C2410_IISMOD) & ~S3C2410_IISMOD_FS_MASK;
+@@ -354,8 +338,6 @@ EXPORT_SYMBOL_GPL(s3c24xx_i2s_get_clockrate);
+ 
+ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	snd_soc_dai_init_dma_data(dai, &s3c24xx_i2s_pcm_stereo_out,
+ 					&s3c24xx_i2s_pcm_stereo_in);
+ 
+@@ -381,8 +363,6 @@ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
+ #ifdef CONFIG_PM
+ static int s3c24xx_i2s_suspend(struct snd_soc_dai *cpu_dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+-
+ 	s3c24xx_i2s.iiscon = readl(s3c24xx_i2s.regs + S3C2410_IISCON);
+ 	s3c24xx_i2s.iismod = readl(s3c24xx_i2s.regs + S3C2410_IISMOD);
+ 	s3c24xx_i2s.iisfcon = readl(s3c24xx_i2s.regs + S3C2410_IISFCON);
+@@ -395,7 +375,6 @@ static int s3c24xx_i2s_suspend(struct snd_soc_dai *cpu_dai)
+ 
+ static int s3c24xx_i2s_resume(struct snd_soc_dai *cpu_dai)
+ {
+-	pr_debug("Entered %s\n", __func__);
+ 	clk_prepare_enable(s3c24xx_i2s.iis_clk);
+ 
+ 	writel(s3c24xx_i2s.iiscon, s3c24xx_i2s.regs + S3C2410_IISCON);
+@@ -410,7 +389,6 @@ static int s3c24xx_i2s_resume(struct snd_soc_dai *cpu_dai)
+ #define s3c24xx_i2s_resume NULL
+ #endif
+ 
+-
+ #define S3C24XX_I2S_RATES \
+ 	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 | SNDRV_PCM_RATE_16000 | \
+ 	SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 | \
+@@ -465,14 +443,14 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+ 	ret = devm_snd_soc_register_component(&pdev->dev,
+ 			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
+ 	if (ret) {
+-		pr_err("failed to register the dai\n");
++		dev_err(&pdev->dev, "Failed to register the DAI\n");
+ 		return ret;
+ 	}
+ 
+ 	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
+ 						 NULL, NULL);
  	if (ret)
+-		pr_err("failed to register the dma: %d\n", ret);
++		dev_err(&pdev->dev, "Failed to register the DMA: %d\n", ret);
+ 
+ 	return ret;
+ }
 -- 
 2.8.1
