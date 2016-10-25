@@ -1,59 +1,70 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk/samsung: Clear OF_POPULATED flag from clkout node in init
- callback
-Date: Tue, 25 Oct 2016 14:34:21 +0200
-Message-ID: <1477398861-2270-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161025123519eucas1p1f8d2efba82ebd101e8fa0697a5708a28@eucas1p1.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH 1/3] ASoC: Drop
+ SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+Date: Tue, 25 Oct 2016 15:39:29 +0200
+Message-ID: <298f24ca-8c11-6625-b5e4-41570a882c6e@samsung.com>
+References: <1477392991-10604-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20161025122302eucas1p220a7fdc6b412e42d83efe9bbf721a237@eucas1p2.samsung.com>
+ <4abcead6-1f2a-e604-97f6-96e6f26ff9f0@metafoo.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:33698 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753881AbcJYMfY (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40705 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935062AbcJYNjg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Oct 2016 08:35:24 -0400
+        Tue, 25 Oct 2016 09:39:36 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OFL00IOXV9W8I80@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Oct 2016 14:39:32 +0100 (BST)
+In-reply-to: <4abcead6-1f2a-e604-97f6-96e6f26ff9f0@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Lars-Peter Clausen <lars@metafoo.de>, broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lgirdwood@gmail.com, krzk@kernel.org
 
-The Exynos PMU node is an interrupt, clock and PMU (Power Management Unit)
-controller, and these functionalities are supported by different drivers
-that matches the same compatible strings.
+On 10/25/2016 02:22 PM, Lars-Peter Clausen wrote:
+> On 10/25/2016 12:56 PM, Sylwester Nawrocki wrote:
+<...>
+> Nice patch. One nice-to-have change request, can you split this into two
+> patches, one which removes the last users and one patch which removes
+> support for it from the framework?
 
-Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
-clocks") the OF core flags clock controllers registered with the
-CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
-compatible string as the interrupt controller will not be registered.
+OK, I've made such split, looks cleaner this way indeed.
 
-This prevents the PMU platform device to be registered so the Exynos PMU
-driver is never probed. This breaks (among other things) Suspend-to-RAM.
+> Having the new DMA map framework should also allow us to eventually remove
+> the channel request in dmaengine_pcm_new() once all users of filter
+> functions have gone.
 
-Fix this by clearing the OF_POPULATED flag in the clkout driver init
-callback, to allow the Exynos PMU platform driver to be probed. The patch
-is based on similar patch from Javier Martinez Canillas: b030485220ca
-"ARM: EXYNOS: Clear OF_POPULATED flag from PMU node in IRQ init callback".
+I've started working on removing all DMA filter uses from sound/soc/samsung,
+hopefully it's ready in coming or next kernel release.  I need to add couple
+more DMA map tables and support for DMA slave map to the PL080 controller.
 
-Fixes: 989eafd0b609 ("clk: core: Avoid double initialization of clocks")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> [...]
+>> @@ -284,12 +283,9 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+>>  		if (!substream)
+>>  			continue;
+>>  
+>> -		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+>> -
+>> -		if (!pcm->chan[i] &&
+>> -		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
+>> +		if (!pcm->chan[i] && config->chan_names[i])
+>>  			pcm->chan[i] = dma_request_slave_channel(dev,
+>> -				dma_data->chan_name);
+>> +				config->chan_names[i]);
+> 
+> I think this can be removed altogether. The only reason why we did the
+> delayed request is because the name would have not been available when
+> initially trying to request the channel when the PCM device is registered.
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 96fab6cfb202..57303cfec7d4 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -116,6 +116,12 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 
- 	register_syscore_ops(&exynos_clkout_syscore_ops);
- 
-+	/*
-+	 * Clear the OF_POPULATED flag set in of_irq_init so that
-+	 * later the Exynos PMU platform device won't be skipped.
-+	 */
-+	of_node_clear_flag(node, OF_POPULATED);
-+
- 	return;
- 
- err_clk_unreg:
--- 
-1.9.1
+Thanks for the hint, I will remove that call in v2.  I suspected it might
+not be necessary any more but was afraid a bit of introducing a breakage.
+
+Now the patch will be basically a revert of
+
+commit ea73b7ddf13548afd666373dc5e26ee7c812a3fe
+ASoC: dmaengine: Support custom channel names
