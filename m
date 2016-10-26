@@ -1,58 +1,70 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] mmc: s3cmci: Use DMA slave map rather than exported DMA filter
-Date: Wed, 26 Oct 2016 15:31:08 +0200
-Message-ID: <5765449.Er1VJf0Pit@wuerfel>
-References: <1477472907-5932-1-git-send-email-s.nawrocki@samsung.com> <4067826.3L3geWCA41@wuerfel> <11c41f92-5591-dd45-816f-6740da76b91f@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <11c41f92-5591-dd45-816f-6740da76b91f@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, sam.van.den.berge@telenet.be, linux-mmc@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] mmc: s3cmci: Use DMA slave map rather than exported DMA
+ filter
+Date: Wed, 26 Oct 2016 18:30:53 +0200
+Message-ID: <1477499453-22549-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:53702 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbcJZQbR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 26 Oct 2016 12:31:17 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org
+Cc: sam.van.den.berge@telenet.be, arnd@arndb.de, linux-mmc@vger.kernel.org, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wednesday, October 26, 2016 2:49:44 PM CEST Sylwester Nawrocki wrote:
-> On 10/26/2016 11:21 AM, Arnd Bergmann wrote:
-> > On Wednesday, October 26, 2016 11:08:27 AM CEST Sylwester Nawrocki wrote:
-> >> > @@ -1685,13 +1684,7 @@ static int s3cmci_probe(struct platform_device *pdev)
-> >> >         /* depending on the dma state, get a dma channel to use. */
-> >> >  
-> >> >         if (s3cmci_host_usedma(host)) {
-> >> > -               dma_cap_mask_t mask;
-> >> > -
-> >> > -               dma_cap_zero(mask);
-> >> > -               dma_cap_set(DMA_SLAVE, mask);
-> >> > -
-> >> > -               host->dma = dma_request_slave_channel_compat(mask,
-> >> > -                       s3c24xx_dma_filter, (void *)DMACH_SDI, &pdev->dev, "rx-tx");
-> >> > +               host->dma = dma_request_slave_channel(&pdev->dev, "rx-tx");
-> >> >                 if (!host->dma) {
-> >> >                         dev_err(&pdev->dev, "cannot get DMA channel.\n");
-> >> >                         ret = -EBUSY;
-> >
-> > Can you convert it to use dma_request_chan()+PTR_ERR_OR_ZERO() instead?
-> 
-> Thanks for your review. dma_request_chan() seems to be returning 
-> either valid pointer or ERR_PTR(), so it would be sufficient 
-> to use just PTR_ERR(host->dma) on error path?
+Support for DMA slave map has been added to the s3c24xx-dma
+controller in commit 34681d84a0f7cc22ded1413dc79eef8a2f23d9c3
+"dmaengine: s3c24xx: Add dma_slave_map for s3c2440 devices"
+This patch converts the s3cmci driver to also use it, so we can
+eventually get rid of the exported filter function once all
+related DMA clients are updated.
 
-Correct. You can use either
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v1:
+ - dma_request_chan() used instead of dma_request_slave_channel()
+   for better error handling.
 
-	if (IS_ERR(host->dma) {
-		ret = PTR_ERR(host->dma);
-		goto probe_free_gpio_wp;
-	}
+ drivers/mmc/host/s3cmci.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-or
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index c531dee..932a4b1 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -28,7 +28,6 @@
+ #include <mach/dma.h>
+ #include <mach/gpio-samsung.h>
 
-	ret = PTR_ERR_OR_ZERO(host->dma);
-	if (ret)
-		goto probe_free_gpio_wp;
+-#include <linux/platform_data/dma-s3c24xx.h>
+ #include <linux/platform_data/mmc-s3cmci.h>
 
-The two do exactly the same, I just find the second one slightly more
-intuitive, and I've seen a couple of spurious warnings caused by
-the first (that won't happen here).
+ #include "s3cmci.h"
+@@ -1682,19 +1681,13 @@ static int s3cmci_probe(struct platform_device *pdev)
+ 		gpio_direction_input(host->pdata->gpio_wprotect);
+ 	}
 
-	Arnd
+-	/* depending on the dma state, get a dma channel to use. */
++	/* Depending on the dma state, get a DMA channel to use. */
+
+ 	if (s3cmci_host_usedma(host)) {
+-		dma_cap_mask_t mask;
+-
+-		dma_cap_zero(mask);
+-		dma_cap_set(DMA_SLAVE, mask);
+-
+-		host->dma = dma_request_slave_channel_compat(mask,
+-			s3c24xx_dma_filter, (void *)DMACH_SDI, &pdev->dev, "rx-tx");
+-		if (!host->dma) {
++		host->dma = dma_request_chan(&pdev->dev, "rx-tx");
++		ret = PTR_ERR_OR_ZERO(host->dma);
++		if (ret) {
+ 			dev_err(&pdev->dev, "cannot get DMA channel.\n");
+-			ret = -EBUSY;
+ 			goto probe_free_gpio_wp;
+ 		}
+ 	}
+--
+1.9.1
