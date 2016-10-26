@@ -1,32 +1,33 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] mmc: s3cmci: Use DMA slave map rather than exported DMA filter
-Date: Wed, 26 Oct 2016 22:10:49 +0200
-Message-ID: <3846769.7mYrNMO473@wuerfel>
-References: <1477499453-22549-1-git-send-email-s.nawrocki@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: mtd: add DT binding for s3c2410
+ flash controller
+Date: Wed, 26 Oct 2016 18:19:12 -0500
+Message-ID: <20161026231912.z6yez3posjqkqtxu@rob-hp-laptop>
+References: <1476999766-32526-1-git-send-email-sergio.prado@e-labworks.com>
+ <1476999766-32526-3-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:49234 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933884AbcJZULD (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35213 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754307AbcJZXTO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 16:11:03 -0400
-In-Reply-To: <1477499453-22549-1-git-send-email-s.nawrocki@samsung.com>
+        Wed, 26 Oct 2016 19:19:14 -0400
+Content-Disposition: inline
+In-Reply-To: <1476999766-32526-3-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, sam.van.den.berge@telenet.be, linux-mmc@vger.kernel.org, b.zolnierkie@samsung.com
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux@armlinux.org.uk, linux@simtec.co.uk, boris.brezillon@free-electrons.com, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, mark.rutland@arm.com, devicetree@vger.kernel.org
 
-On Wednesday, October 26, 2016 6:30:53 PM CEST Sylwester Nawrocki wrote:
-> Support for DMA slave map has been added to the s3c24xx-dma
-> controller in commit 34681d84a0f7cc22ded1413dc79eef8a2f23d9c3
-> "dmaengine: s3c24xx: Add dma_slave_map for s3c2440 devices"
-> This patch converts the s3cmci driver to also use it, so we can
-> eventually get rid of the exported filter function once all
-> related DMA clients are updated.
+On Thu, Oct 20, 2016 at 07:42:45PM -0200, Sergio Prado wrote:
+> Adds the device tree bindings description for Samsung S3C2410 and
+> compatible NAND flash controller.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  .../devicetree/bindings/mtd/samsung-s3c2410.txt    | 56 ++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Rob Herring <robh@kernel.org>
