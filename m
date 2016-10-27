@@ -1,208 +1,72 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Pinctrl nodes missing for USB
-Date: Thu, 27 Oct 2016 17:19:11 +0530
-Message-ID: <CANAwSgQNXLo43+chXMRuRSpGvwt5RpNw5wefD6vBjpCaf++3MQ@mail.gmail.com>
-References: <CANAwSgQ=pp93tDAERQ1iaryY3_pVhTeun=RaTo9ws1UKtS1PhA@mail.gmail.com>
- <20161026165348.GA5600@kozik-lap>
- <CANAwSgSfRVDA_MXN9S+G0-u-mQNhPuPJ65FT_Y-ZH5nFpX4ptg@mail.gmail.com>
- <20161026175827.GA10224@kozik-lap>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 2/4] ASoC: Drop
+ SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+Date: Thu, 27 Oct 2016 15:23:05 +0100
+Message-ID: <20161027142305.GM25322@sirena.org.uk>
+References: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20161025150901epcas5p39c8cc9b980e71ee184fd831ad854a046@epcas5p3.samsung.com>
+ <1477408121-24716-2-git-send-email-s.nawrocki@samsung.com>
+ <a06af81c-32e0-69d9-1653-0154616b8dc3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20161026175827.GA10224@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <vivek.gautam@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x38akuY2VS0PywU3"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42378 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942652AbcJ0OX2 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 27 Oct 2016 10:23:28 -0400
+Content-Disposition: inline
+In-Reply-To: <a06af81c-32e0-69d9-1653-0154616b8dc3@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, krzk@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-Hi Krzysztof,
 
-On 26 October 2016 at 23:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Wed, Oct 26, 2016 at 11:15:51PM +0530, Anand Moon wrote:
->> Hi Krzysztof
->>
->> On 26 October 2016 at 22:23, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> > On Wed, Oct 26, 2016 at 05:56:54PM +0530, Anand Moon wrote:
->> >> Hi All,
->> >>
->> >> I have tried to enable CONFIG_DEBUG_PINCTRL=y on Odroid XU4.
->> >> Just to try to understand the feature.
->> >> Is this feature suppoted for USB nodes.
->> >>
->> >> Below is the output of failed to pase pinctrl for USB nodes via dts.
->> >
->> > I do not see any question here...
->> >
->> > Anyway the devices not instantiated from DT will have such warning and
->> > USB devices are not present in DT, from obvious reasons... However what
->> > surprises me is why pinctrl_dt_to_map() was called for USB devices?
->> >
->> > Best regards,
->> > Krzysztof
->> >
->> [snip]
->>
->> Sorry. I was just referring HK odroidxu3 dts for reference for dwc3 controller.
->>
->> https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/boot/dts/exynos5422-odroidxu3.dts#L525
->>
->> I am just trying to understand if such a configuration possible for
->> dwc3 controllers.
->
-> What do you mean by "configuration"? Which configuration?
+--x38akuY2VS0PywU3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am just elaborating what I have understood below.
+On Thu, Oct 27, 2016 at 01:21:21PM +0200, Sylwester Nawrocki wrote:
+> On 10/25/2016 05:08 PM, Sylwester Nawrocki wrote:
+> > Since commit 194c7dea00c68c1b1f8ff26304fa937a006f66dd
+> > "ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config"
+> > custom DMA channels can be also specified in chan_names[] field of
+> > struct snd_dmaengine_pcm_config.  This patch removes chan_name field
+> > of struct snd_dmaengine_dai_dma_data as it is now unused.
+> >=20
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>=20
+> I'm afraid this patch needs to be reverted :/ I didn't notice earlier
+> the Samsung AC97 controller has 3 substreams per a platform device and
+> this cannot be handled with struct snd_dmaengine_pcm_config, which
+> allows to specify up to 2 DMA channel names.
 
->
-> Best regards,
-> Krzysztof
->
-Adding Vivek Gautam +
+Can you send a revert patch with an explanation though...
 
-Apologize for my poor English and explanation of what I am trying to
-work on or understand the feature related to dwc3
+> The AC97 driver (sound/soc/samsung/ac97.c) seems to have been broken
+> for a long time as it currently doesn't have the channel names
+> specified at all [1].  It seems in order to fix it the best would
+> be to restore the feature the $subject patch removes.
 
-For some time I am trying to figure out the performance issue of USB
-3.0 on Odroid XU4 boards.
+=2E..if the driver just doesn't work and hasn't worked for a long time
+perhaps it's better to just drop the driver?
 
-[1] https://lkml.org/lkml/2015/2/2/259
+--x38akuY2VS0PywU3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Following above patch helps registration of USB storage device to
-"Super-Speed" ie
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-root@odroidcsh:/usr/src/odroidxu3-4.y-devel# lsusb -t
-/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    |__ Port 1: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 480M
-/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
-        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
-        |__ Port 2: Dev 4, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
-/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
-/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
-/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
+iQEcBAEBCAAGBQJYEg2IAAoJECTWi3JdVIfQwLUH/jsghczwE0b6coAkETEk3Lsw
+AhUf4Gm9YF02SCSOjrmPpvKQvq/ZmrEFddW01dPCYpF4k4WDS7oKaXr7udXg7yk/
+7kTBFsMrSqcqSSrGDFyj+sVskBoOs3Tq9KYiIt72CXCe0JLrMPoCdhoc2WH4fuqS
+/+koHrg3caeOE4ottc7M4WVjiVi5KPdQegzjmpiMvsBG3iSbpjtLmldcVCmWXGCg
+W1BOkS8qBzSf0lm8XZaEq3IJDJ6pBsuyBUakvIRLaETUJleclWbb/uynTEtaUtXZ
+ODD4HZLLhY+IKaw5GYR83soP08Ubb6KjyKU4CZHR089GiPDYFZEtibdGu7dYqd8=
+=RpQb
+-----END PGP SIGNATURE-----
 
-But the performance is not good enough to work on the storage device.
-we cannot compile whole kernel or source code on this drive attached.
-
-So did some investigation on this by comparing the dts nodes and driver.
-I was looking into some logic to do some "gpio_reset" which will help
-reset the driver.
-
-But after studying the driver code of OdroidXU4 Hardkernel,
-I tried to understand the requirement of gpio pin controlled by pinctrl.
-
-Sorry I am not an expert in the internal of the the pinctrl and
-internal gpio bus.
-So I have just for my understanding created this small patch to help
-elaborate this feature.
-
---------------------------------------------------------------------------------------------
-root@odroidcsh:/usr/src/odroidxu3-4.y-devel# git diff
-arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 246d298..03e90b6 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -560,6 +560,24 @@
-                samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-                samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-        };
-+
-+       b_sess0_irq: b-sess0-irq {
-+               samsung,pins = "gpx3-5";
-+               samsung,pin-function = <0xf>;
-+               samsung,pin-pud = <0>;
-+       };
-+
-+       b_sess1_irq: b-sess1-irq {
-+               samsung,pins = "gpx3-4";
-+               samsung,pin-function = <0xf>;
-+               samsung,pin-pud = <0>;
-+       };
-+
-+       id2_irq: id2-irq {
-+               samsung,pins = "gpx1-1";
-+               samsung,pin-function = <0xf>;
-+               samsung,pin-pud = <0>;
-+        };
- };
-
- &pinctrl_1 {
-@@ -569,6 +587,12 @@
-                samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-                samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-        };
-+
-+        id1_irq: id1-irq {
-+                samsung,pins = "gpc1-0";
-+                samsung,pin-function = <0xf>;
-+                samsung,pin-pud = <3>;
-+        };
- };
-
- &tmu_cpu0 {
-@@ -604,11 +628,23 @@
- /* usbdrd_dwc3_1 mode customized in each board */
-
- &usbdrd3_0 {
-+       samsung,bsess-gpio = <&gpx3 5 0xf>;
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&b_sess0_irq>;
-+       samsung,id-gpio = <&gpc1 0 0xf>;
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&id1_irq>;
-        vdd33-supply = <&ldo9_reg>;
-        vdd10-supply = <&ldo11_reg>;
- };
-
- &usbdrd3_1 {
-+       samsung,bsess-gpio = <&gpx3 4 0xf>;
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&b_sess1_irq>;
-+       samsung,id-gpio = <&gpx1 1 0xf>;
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&id2_irq>;
-        vdd33-supply = <&ldo9_reg>;
-        vdd10-supply = <&ldo11_reg>;
- };
---------------------------------------------------------------------------------------------
-Here is the core logic as I understood out of the driver code from
-OdroidXU3 Hardkernel.
-so we have samsung,bsess-gpio and samsung,id-gpio two gpio pins control
-by the exynos-dwc3 driver in the Odroid Hardkernel
-
-# drivers/usb/dwc3/dwc3-exynos.c
-
-tries to register interrupts on these gpio pin to control the flow via gpio-irq.
-Also It monitor the vbus controller changes
-
-Below irq to monitor id-gpio thread.
-
-https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/usb/dwc3/dwc3-exynos.c#L217
-
-Below irq to monitor bsess-gpio thread.
-
-https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/usb/dwc3/dwc3-exynos.c#L230
-
-Once again I am not an expert in this configuration, I am just trying
-to map the feature and the code.
-Please let me know If my understanding is wrong or the feature should
-work little bit different.
-
-I am poor in English to explain technically details.
-If any body have any other input on this please let me know.
-
--Best Regards
-Anand Moon
+--x38akuY2VS0PywU3--
