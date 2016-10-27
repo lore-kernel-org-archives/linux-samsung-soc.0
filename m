@@ -1,47 +1,208 @@
-From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
-Subject: =?UTF-8?B?UkU6IFtSRVNFTkRdW1BBVENIIDIvMl0gUE0gLyBkZXZmcmVx?=
- =?UTF-8?B?OiBleHlub3MtcHBtdTogUmVtb3ZlIHVudXNlZCBtdXRleCBm?=
- =?UTF-8?B?cm9tIHN0cnVjdCBleHlub3NfcHBtdQ==?=
-Date: Thu, 27 Oct 2016 00:29:01 +0000
-Message-ID: <52112573.489887.1477528141808.JavaMail.weblogic@ep2ml103c>
-References: <1477012149-9928-1-git-send-email-axel.lin@ingics.com>
- <CGME20161021010940epcas1p1bf0feb2d8401d44adbcbd7f399d30f64@epcas1p1.samsung.com>
-Reply-To: myungjoo.ham@samsung.com
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: Pinctrl nodes missing for USB
+Date: Thu, 27 Oct 2016 17:19:11 +0530
+Message-ID: <CANAwSgQNXLo43+chXMRuRSpGvwt5RpNw5wefD6vBjpCaf++3MQ@mail.gmail.com>
+References: <CANAwSgQ=pp93tDAERQ1iaryY3_pVhTeun=RaTo9ws1UKtS1PhA@mail.gmail.com>
+ <20161026165348.GA5600@kozik-lap>
+ <CANAwSgSfRVDA_MXN9S+G0-u-mQNhPuPJ65FT_Y-ZH5nFpX4ptg@mail.gmail.com>
+ <20161026175827.GA10224@kozik-lap>
 Mime-Version: 1.0
-Content-Type: multipart/related;
- boundary="----=_Part_489886_556071931.1477528141808"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52870 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932430AbcJ0A3E (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 20:29:04 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFO0328RK0EG070@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Oct 2016 09:29:02 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20161026175827.GA10224@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <vivek.gautam@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QXhlbCBMaW4=?= <axel.lin@ingics.com>, =?UTF-8?B?UmFmYWVsIEogLiBXeXNvY2tp?= <rafael.j.wysocki@intel.com>
-Cc: =?UTF-8?B?Q2hhbndvbyBDaG9p?= <cw00.choi@samsung.com>, =?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>, =?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?= <linux-pm@vger.kernel.org>, =?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?= <linux-samsung-soc@vger.kernel.org>
 
-------=_Part_489886_556071931.1477528141808
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"
+Hi Krzysztof,
 
-PiAtLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLS0NCj4gU2VuZGVyIDogQXhlbCBM
-aW4gPGF4ZWwubGluQGluZ2ljcy5jb20+DQo+IERhdGUgOiAyMDE2LTEwLTIxIDEwOjA5IChHTVQr
-OSkNCj4gVGl0bGUgOiBbUkVTRU5EXVtQQVRDSCAyLzJdIFBNIC8gZGV2ZnJlcTogZXh5bm9zLXBw
-bXU6IFJlbW92ZSB1bnVzZWQgbXV0ZXggZnJvbSBzdHJ1Y3QgZXh5bm9zX3BwbXUNCj4gIA0KPiBU
-aGUgbXV0ZXggaXMgbm90IHVzZWQgYXQgYWxsLCByZW1vdmUgaXQuDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBBeGVsIExpbiA8YXhlbC5saW5AaW5naWNzLmNvbT4NCj4gQWNrZWQtYnk6IENoYW53b28g
-Q2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcuY29tPg0KDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxt
-eXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCkJvdGggcGF0Y2hlcyBhcmUgc3RhY2tlZCBpbiBm
-b3ItNC45LXJjIGJyYW5jaC4NCg0KDQpUaGFua3MuDQoNCkNoZWVycywNCk15dW5nSm9vDQoNCj4g
-LS0tDQo+IA0KPiBUaGlzIHBhdGNoIHdhcyBzZW50IG9uIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
-bC5vcmcvcGF0Y2gvOTM0MTA5Ny8NCj4gIGRyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBt
-dS5jIHwgMyAtLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBtdS5jIGIvZHJpdmVycy9k
-ZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gDQo=
-------=_Part_489886_556071931.1477528141808--
+On 26 October 2016 at 23:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Wed, Oct 26, 2016 at 11:15:51PM +0530, Anand Moon wrote:
+>> Hi Krzysztof
+>>
+>> On 26 October 2016 at 22:23, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> > On Wed, Oct 26, 2016 at 05:56:54PM +0530, Anand Moon wrote:
+>> >> Hi All,
+>> >>
+>> >> I have tried to enable CONFIG_DEBUG_PINCTRL=y on Odroid XU4.
+>> >> Just to try to understand the feature.
+>> >> Is this feature suppoted for USB nodes.
+>> >>
+>> >> Below is the output of failed to pase pinctrl for USB nodes via dts.
+>> >
+>> > I do not see any question here...
+>> >
+>> > Anyway the devices not instantiated from DT will have such warning and
+>> > USB devices are not present in DT, from obvious reasons... However what
+>> > surprises me is why pinctrl_dt_to_map() was called for USB devices?
+>> >
+>> > Best regards,
+>> > Krzysztof
+>> >
+>> [snip]
+>>
+>> Sorry. I was just referring HK odroidxu3 dts for reference for dwc3 controller.
+>>
+>> https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/boot/dts/exynos5422-odroidxu3.dts#L525
+>>
+>> I am just trying to understand if such a configuration possible for
+>> dwc3 controllers.
+>
+> What do you mean by "configuration"? Which configuration?
+
+I am just elaborating what I have understood below.
+
+>
+> Best regards,
+> Krzysztof
+>
+Adding Vivek Gautam +
+
+Apologize for my poor English and explanation of what I am trying to
+work on or understand the feature related to dwc3
+
+For some time I am trying to figure out the performance issue of USB
+3.0 on Odroid XU4 boards.
+
+[1] https://lkml.org/lkml/2015/2/2/259
+
+Following above patch helps registration of USB storage device to
+"Super-Speed" ie
+
+root@odroidcsh:/usr/src/odroidxu3-4.y-devel# lsusb -t
+/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 480M
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
+        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
+        |__ Port 2: Dev 4, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
+/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
+/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
+
+But the performance is not good enough to work on the storage device.
+we cannot compile whole kernel or source code on this drive attached.
+
+So did some investigation on this by comparing the dts nodes and driver.
+I was looking into some logic to do some "gpio_reset" which will help
+reset the driver.
+
+But after studying the driver code of OdroidXU4 Hardkernel,
+I tried to understand the requirement of gpio pin controlled by pinctrl.
+
+Sorry I am not an expert in the internal of the the pinctrl and
+internal gpio bus.
+So I have just for my understanding created this small patch to help
+elaborate this feature.
+
+--------------------------------------------------------------------------------------------
+root@odroidcsh:/usr/src/odroidxu3-4.y-devel# git diff
+arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 246d298..03e90b6 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -560,6 +560,24 @@
+                samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+                samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+        };
++
++       b_sess0_irq: b-sess0-irq {
++               samsung,pins = "gpx3-5";
++               samsung,pin-function = <0xf>;
++               samsung,pin-pud = <0>;
++       };
++
++       b_sess1_irq: b-sess1-irq {
++               samsung,pins = "gpx3-4";
++               samsung,pin-function = <0xf>;
++               samsung,pin-pud = <0>;
++       };
++
++       id2_irq: id2-irq {
++               samsung,pins = "gpx1-1";
++               samsung,pin-function = <0xf>;
++               samsung,pin-pud = <0>;
++        };
+ };
+
+ &pinctrl_1 {
+@@ -569,6 +587,12 @@
+                samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+                samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+        };
++
++        id1_irq: id1-irq {
++                samsung,pins = "gpc1-0";
++                samsung,pin-function = <0xf>;
++                samsung,pin-pud = <3>;
++        };
+ };
+
+ &tmu_cpu0 {
+@@ -604,11 +628,23 @@
+ /* usbdrd_dwc3_1 mode customized in each board */
+
+ &usbdrd3_0 {
++       samsung,bsess-gpio = <&gpx3 5 0xf>;
++       pinctrl-names = "default";
++       pinctrl-0 = <&b_sess0_irq>;
++       samsung,id-gpio = <&gpc1 0 0xf>;
++       pinctrl-names = "default";
++       pinctrl-0 = <&id1_irq>;
+        vdd33-supply = <&ldo9_reg>;
+        vdd10-supply = <&ldo11_reg>;
+ };
+
+ &usbdrd3_1 {
++       samsung,bsess-gpio = <&gpx3 4 0xf>;
++       pinctrl-names = "default";
++       pinctrl-0 = <&b_sess1_irq>;
++       samsung,id-gpio = <&gpx1 1 0xf>;
++       pinctrl-names = "default";
++       pinctrl-0 = <&id2_irq>;
+        vdd33-supply = <&ldo9_reg>;
+        vdd10-supply = <&ldo11_reg>;
+ };
+--------------------------------------------------------------------------------------------
+Here is the core logic as I understood out of the driver code from
+OdroidXU3 Hardkernel.
+so we have samsung,bsess-gpio and samsung,id-gpio two gpio pins control
+by the exynos-dwc3 driver in the Odroid Hardkernel
+
+# drivers/usb/dwc3/dwc3-exynos.c
+
+tries to register interrupts on these gpio pin to control the flow via gpio-irq.
+Also It monitor the vbus controller changes
+
+Below irq to monitor id-gpio thread.
+
+https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/usb/dwc3/dwc3-exynos.c#L217
+
+Below irq to monitor bsess-gpio thread.
+
+https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/drivers/usb/dwc3/dwc3-exynos.c#L230
+
+Once again I am not an expert in this configuration, I am just trying
+to map the feature and the code.
+Please let me know If my understanding is wrong or the feature should
+work little bit different.
+
+I am poor in English to explain technically details.
+If any body have any other input on this please let me know.
+
+-Best Regards
+Anand Moon
