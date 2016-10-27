@@ -1,72 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/4] ASoC: Drop
- SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
-Date: Thu, 27 Oct 2016 15:23:05 +0100
-Message-ID: <20161027142305.GM25322@sirena.org.uk>
-References: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20161025150901epcas5p39c8cc9b980e71ee184fd831ad854a046@epcas5p3.samsung.com>
- <1477408121-24716-2-git-send-email-s.nawrocki@samsung.com>
- <a06af81c-32e0-69d9-1653-0154616b8dc3@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2] mmc: s3cmci: Use DMA slave map rather than exported
+ DMA filter
+Date: Thu, 27 Oct 2016 09:47:20 +0200
+Message-ID: <CAPDyKFr-m8thnPLpoyn_67AMcCs_fGYHZzc3Te-hpYOn1R7sRQ@mail.gmail.com>
+References: <1477499453-22549-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x38akuY2VS0PywU3"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42378 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942652AbcJ0OX2 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 10:23:28 -0400
-Content-Disposition: inline
-In-Reply-To: <a06af81c-32e0-69d9-1653-0154616b8dc3@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1477499453-22549-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, krzk@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sam.van.den.berge@telenet.be, Arnd Bergmann <arnd@arndb.de>, linux-mmc <linux-mmc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
+On 26 October 2016 at 18:30, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> Support for DMA slave map has been added to the s3c24xx-dma
+> controller in commit 34681d84a0f7cc22ded1413dc79eef8a2f23d9c3
+> "dmaengine: s3c24xx: Add dma_slave_map for s3c2440 devices"
+> This patch converts the s3cmci driver to also use it, so we can
+> eventually get rid of the exported filter function once all
+> related DMA clients are updated.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---x38akuY2VS0PywU3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied for next!
 
-On Thu, Oct 27, 2016 at 01:21:21PM +0200, Sylwester Nawrocki wrote:
-> On 10/25/2016 05:08 PM, Sylwester Nawrocki wrote:
-> > Since commit 194c7dea00c68c1b1f8ff26304fa937a006f66dd
-> > "ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config"
-> > custom DMA channels can be also specified in chan_names[] field of
-> > struct snd_dmaengine_pcm_config.  This patch removes chan_name field
-> > of struct snd_dmaengine_dai_dma_data as it is now unused.
-> >=20
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->=20
-> I'm afraid this patch needs to be reverted :/ I didn't notice earlier
-> the Samsung AC97 controller has 3 substreams per a platform device and
-> this cannot be handled with struct snd_dmaengine_pcm_config, which
-> allows to specify up to 2 DMA channel names.
+Kind regards
+Uffe
 
-Can you send a revert patch with an explanation though...
-
-> The AC97 driver (sound/soc/samsung/ac97.c) seems to have been broken
-> for a long time as it currently doesn't have the channel names
-> specified at all [1].  It seems in order to fix it the best would
-> be to restore the feature the $subject patch removes.
-
-=2E..if the driver just doesn't work and hasn't worked for a long time
-perhaps it's better to just drop the driver?
-
---x38akuY2VS0PywU3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJYEg2IAAoJECTWi3JdVIfQwLUH/jsghczwE0b6coAkETEk3Lsw
-AhUf4Gm9YF02SCSOjrmPpvKQvq/ZmrEFddW01dPCYpF4k4WDS7oKaXr7udXg7yk/
-7kTBFsMrSqcqSSrGDFyj+sVskBoOs3Tq9KYiIt72CXCe0JLrMPoCdhoc2WH4fuqS
-/+koHrg3caeOE4ottc7M4WVjiVi5KPdQegzjmpiMvsBG3iSbpjtLmldcVCmWXGCg
-W1BOkS8qBzSf0lm8XZaEq3IJDJ6pBsuyBUakvIRLaETUJleclWbb/uynTEtaUtXZ
-ODD4HZLLhY+IKaw5GYR83soP08Ubb6KjyKU4CZHR089GiPDYFZEtibdGu7dYqd8=
-=RpQb
------END PGP SIGNATURE-----
-
---x38akuY2VS0PywU3--
+> ---
+> Changes since v1:
+>  - dma_request_chan() used instead of dma_request_slave_channel()
+>    for better error handling.
+>
+>  drivers/mmc/host/s3cmci.c | 15 ++++-----------
+>  1 file changed, 4 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+> index c531dee..932a4b1 100644
+> --- a/drivers/mmc/host/s3cmci.c
+> +++ b/drivers/mmc/host/s3cmci.c
+> @@ -28,7 +28,6 @@
+>  #include <mach/dma.h>
+>  #include <mach/gpio-samsung.h>
+>
+> -#include <linux/platform_data/dma-s3c24xx.h>
+>  #include <linux/platform_data/mmc-s3cmci.h>
+>
+>  #include "s3cmci.h"
+> @@ -1682,19 +1681,13 @@ static int s3cmci_probe(struct platform_device *pdev)
+>                 gpio_direction_input(host->pdata->gpio_wprotect);
+>         }
+>
+> -       /* depending on the dma state, get a dma channel to use. */
+> +       /* Depending on the dma state, get a DMA channel to use. */
+>
+>         if (s3cmci_host_usedma(host)) {
+> -               dma_cap_mask_t mask;
+> -
+> -               dma_cap_zero(mask);
+> -               dma_cap_set(DMA_SLAVE, mask);
+> -
+> -               host->dma = dma_request_slave_channel_compat(mask,
+> -                       s3c24xx_dma_filter, (void *)DMACH_SDI, &pdev->dev, "rx-tx");
+> -               if (!host->dma) {
+> +               host->dma = dma_request_chan(&pdev->dev, "rx-tx");
+> +               ret = PTR_ERR_OR_ZERO(host->dma);
+> +               if (ret) {
+>                         dev_err(&pdev->dev, "cannot get DMA channel.\n");
+> -                       ret = -EBUSY;
+>                         goto probe_free_gpio_wp;
+>                 }
+>         }
+> --
+> 1.9.1
+>
