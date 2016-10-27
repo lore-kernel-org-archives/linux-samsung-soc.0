@@ -1,94 +1,172 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v4 0/3] mtd: s3c2410: add device tree support
-Date: Thu, 27 Oct 2016 18:12:25 +0200
-Message-ID: <20161027181225.3d5a6f04@bbrezillon>
-References: <1477526395-13103-1-git-send-email-sergio.prado@e-labworks.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: get access to DMA engine early to defer
+ probe properly
+Date: Thu, 27 Oct 2016 19:25:12 +0300
+Message-ID: <20161027162512.GA4527@kozik-lap>
+References: <CGME20161027103418eucas1p1628aa0c578b8470d537abaa92c6bf10c@eucas1p1.samsung.com>
+ <1477564442-19772-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from up.free-electrons.com ([163.172.77.33]:42975 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934485AbcJ0QM2 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34174 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932708AbcJ0QZT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 12:12:28 -0400
-In-Reply-To: <1477526395-13103-1-git-send-email-sergio.prado@e-labworks.com>
+        Thu, 27 Oct 2016 12:25:19 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y138so3477679wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Oct 2016 09:25:18 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1477564442-19772-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux@armlinux.org.uk, linux@simtec.co.uk, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Wed, 26 Oct 2016 21:59:52 -0200
-Sergio Prado <sergio.prado@e-labworks.com> wrote:
+On Thu, Oct 27, 2016 at 12:34:02PM +0200, Marek Szyprowski wrote:
+> ASoC Samsung sub-drivers tried to get access to their DMA engine
+> controllers as a last step in driver probe. If a DMA engine was not
+> available yet, samsung_asoc_dma_platform_register() function ended in
+> -EPROBE_DEFER, but the driver already registered its component to ASoC
+> core. This patch moves samsung_asoc_dma_platform_register() call before
+> registering any components, to the common place, where driver was gathering
+> all needed resources.
+> 
+> In case of Samsung Exynos i2s driver the issue was even worse. The driver
+> managed already to register its secondary DAI platform device before
+> even getting the DMA engine access. That together with -EPROBE_DEFER error
+> code from samsung_i2s_probe() immediately triggered another round of
+> deferred probe retry and in turn endless loop of driver probing.
+> 
+> This patch fixes broken boot on Odroid XU3 and other Exynos5422-based
+> boards.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  sound/soc/samsung/ac97.c        | 10 +++++-----
+>  sound/soc/samsung/i2s.c         | 19 ++++++++++---------
+>  sound/soc/samsung/pcm.c         | 19 ++++++++++---------
+>  sound/soc/samsung/s3c2412-i2s.c | 16 ++++++++--------
+>  sound/soc/samsung/s3c24xx-i2s.c | 14 +++++++-------
+>  sound/soc/samsung/spdif.c       | 14 +++++++-------
+>  6 files changed, 47 insertions(+), 45 deletions(-)
+> 
+> diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+> index 97d6700b1009..cbc0023c2bc8 100644
+> --- a/sound/soc/samsung/ac97.c
+> +++ b/sound/soc/samsung/ac97.c
+> @@ -383,11 +383,6 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+>  		goto err4;
+>  	}
+>  
+> -	ret = devm_snd_soc_register_component(&pdev->dev, &s3c_ac97_component,
+> -					 s3c_ac97_dai, ARRAY_SIZE(s3c_ac97_dai));
+> -	if (ret)
+> -		goto err5;
+> -
+>  	ret = samsung_asoc_dma_platform_register(&pdev->dev,
+>  						 ac97_pdata->dma_filter,
+>  						 NULL, NULL);
+> @@ -396,6 +391,11 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+>  		goto err5;
+>  	}
+>  
+> +	ret = devm_snd_soc_register_component(&pdev->dev, &s3c_ac97_component,
+> +					 s3c_ac97_dai, ARRAY_SIZE(s3c_ac97_dai));
+> +	if (ret)
+> +		goto err5;
+> +
+>  	return 0;
+>  err5:
+>  	free_irq(irq_res->start, NULL);
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 7e32cf4581f8..7825bff45ae3 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -1237,14 +1237,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  			dev_err(&pdev->dev, "Unable to get drvdata\n");
+>  			return -EFAULT;
+>  		}
+> -		ret = devm_snd_soc_register_component(&sec_dai->pdev->dev,
+> -						&samsung_i2s_component,
+> -						&sec_dai->i2s_dai_drv, 1);
+> +		ret = samsung_asoc_dma_platform_register(&pdev->dev,
+> +					sec_dai->filter, "tx-sec", NULL);
+>  		if (ret != 0)
+>  			return ret;
+>  
+> -		return samsung_asoc_dma_platform_register(&pdev->dev,
+> -					sec_dai->filter, "tx-sec", NULL);
+> +		return devm_snd_soc_register_component(&sec_dai->pdev->dev,
+> +						&samsung_i2s_component,
+> +						&sec_dai->i2s_dai_drv, 1);
+>  	}
+>  
+>  	pri_dai = i2s_alloc_dai(pdev, false);
+> @@ -1314,6 +1314,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  	if (quirks & QUIRK_PRI_6CHAN)
+>  		pri_dai->i2s_dai_drv.playback.channels_max = 6;
+>  
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter,
+> +						 NULL, NULL);
+> +	if (ret < 0)
+> +		goto err_disable_clk;
+> +
+>  	if (quirks & QUIRK_SEC_DAI) {
+>  		sec_dai = i2s_alloc_dai(pdev, true);
+>  		if (!sec_dai) {
+> @@ -1353,10 +1358,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		goto err_free_dai;
+>  
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter,
+> -						 NULL, NULL);
+> -	if (ret < 0)
+> -		goto err_free_dai;
+>  
+>  	pm_runtime_enable(&pdev->dev);
+>  
+> diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+> index 43e367a9acc3..c484985812ed 100644
+> --- a/sound/soc/samsung/pcm.c
+> +++ b/sound/soc/samsung/pcm.c
+> @@ -565,24 +565,25 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+>  	pcm->dma_capture = &s3c_pcm_stereo_in[pdev->id];
+>  	pcm->dma_playback = &s3c_pcm_stereo_out[pdev->id];
+>  
+> +	ret = samsung_asoc_dma_platform_register(&pdev->dev, filter,
+> +						 NULL, NULL);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
+> +		goto err5;
+> +	}
+> +
+>  	pm_runtime_enable(&pdev->dev);
+>  
+>  	ret = devm_snd_soc_register_component(&pdev->dev, &s3c_pcm_component,
+>  					 &s3c_pcm_dai[pdev->id], 1);
+>  	if (ret != 0) {
+>  		dev_err(&pdev->dev, "failed to get register DAI: %d\n", ret);
+> -		goto err5;
+> -	}
+> -
+> -	ret = samsung_asoc_dma_platform_register(&pdev->dev, filter,
+> -						 NULL, NULL);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
+> -		goto err5;
+> +		goto err6;
+>  	}
+>  
+>  	return 0;
+> -
+> +err6:
+> +	pm_runtime_disable(&pdev->dev);
 
-> This series adds support for configuring Samsung's s3c2410 and
-> compatible flash memory controller via devicetree.
-> 
-> Tested on FriendlyARM mini2440, based on s3c2440 SoC.
-> 
-> Patch 3 depends on patch 1.
+I see you are also cleaning the error path. Good... but this should be
+actually separate patch preceding this. It is not related to the bug
+you are fixing here.
 
-Applied.
+Beside that, looks good.
 
-Thanks,
-
-Boris
-
-> 
-> Changes since v3:
-> - apply the timings in the end of ->setup_data_interface so the
->   timings can be changed at runtime by the MTD core.
-> 
-> Changes since v2:
-> - conditionally assign chip->setup_data_interface to
->   s3c2410_nand_setup_data_interface if booting via device tree
-> 
-> Changes since v1:
-> - automate timing selection when booting with a device tree
-> - make s3c24XX_nand_devtype_data structs "static const"
-> - removing samsung,s3c6400-nand compatible since it is equivalent to
->   samsung,s3c2412-nand
-> 
-> Changes since initial version:
-> - patch converted to a patch series
-> - read timings from nand_sdr_timings when booting with a device tree
-> - naming improvements in the device tree binding
->   (s/nand/nand-controller/, s/_/-, s/children/child)
-> - dropped property samsung,ignore_unset_ecc
-> - remove @0 from nand device node
-> - checking pdev->dev.of_node instead of using ifdef CONFIG_OF_MTD
-> - preventing from parsing device tree properties twice
-> - increment the nand controller child node refcount, since we
->   maintain a reference to it and its name field
-> - using of_device_get_match_data() instead of of_match_device()
->   to make the code simpler
-> - remove CONFIG_MTD_NAND_S3C2410_HWECC compile option so we can
->   select ECC mode using nand-ecc-mode property in the device tree
-> 
-> Sergio Prado (3):
->   mtd: s3c2410: make ecc mode configurable via platform data
->   dt-bindings: mtd: add DT binding for s3c2410 flash controller
->   mtd: s3c2410: parse the device configuration from OF node
-> 
->  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  56 +++++
->  arch/arm/mach-s3c24xx/common-smdk.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-anubis.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-at2440evb.c             |   1 +
->  arch/arm/mach-s3c24xx/mach-bast.c                  |   1 +
->  arch/arm/mach-s3c24xx/mach-gta02.c                 |   1 +
->  arch/arm/mach-s3c24xx/mach-jive.c                  |   1 +
->  arch/arm/mach-s3c24xx/mach-mini2440.c              |   1 +
->  arch/arm/mach-s3c24xx/mach-osiris.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-qt2410.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-rx1950.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-rx3715.c                |   1 +
->  arch/arm/mach-s3c24xx/mach-vstms.c                 |   1 +
->  arch/arm/mach-s3c64xx/mach-hmt.c                   |   1 +
->  arch/arm/mach-s3c64xx/mach-mini6410.c              |   1 +
->  arch/arm/mach-s3c64xx/mach-real6410.c              |   1 +
->  drivers/mtd/nand/Kconfig                           |   9 -
->  drivers/mtd/nand/s3c2410.c                         | 277 +++++++++++++++------
->  include/linux/platform_data/mtd-nand-s3c2410.h     |   7 +-
->  19 files changed, 278 insertions(+), 86 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-> 
+Best regards,
+Krzysztof
