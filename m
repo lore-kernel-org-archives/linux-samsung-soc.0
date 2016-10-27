@@ -1,150 +1,94 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 2/4] ASoC: Drop
- SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
-Date: Thu, 27 Oct 2016 13:21:21 +0200
-Message-ID: <a06af81c-32e0-69d9-1653-0154616b8dc3@samsung.com>
-References: <1477408121-24716-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20161025150901epcas5p39c8cc9b980e71ee184fd831ad854a046@epcas5p3.samsung.com>
- <1477408121-24716-2-git-send-email-s.nawrocki@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v4 0/3] mtd: s3c2410: add device tree support
+Date: Thu, 27 Oct 2016 18:12:25 +0200
+Message-ID: <20161027181225.3d5a6f04@bbrezillon>
+References: <1477526395-13103-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26602 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936678AbcJ0Pe1 (ORCPT
+Received: from up.free-electrons.com ([163.172.77.33]:42975 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934485AbcJ0QM2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 11:34:27 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFP00872E7OHD40@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Oct 2016 12:21:24 +0100 (BST)
-In-reply-to: <1477408121-24716-2-git-send-email-s.nawrocki@samsung.com>
+        Thu, 27 Oct 2016 12:12:28 -0400
+In-Reply-To: <1477526395-13103-1-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Cc: krzk@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux@armlinux.org.uk, linux@simtec.co.uk, richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
 
-On 10/25/2016 05:08 PM, Sylwester Nawrocki wrote:
-> Since commit 194c7dea00c68c1b1f8ff26304fa937a006f66dd
-> "ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config"
-> custom DMA channels can be also specified in chan_names[] field of
-> struct snd_dmaengine_pcm_config.  This patch removes chan_name field
-> of struct snd_dmaengine_dai_dma_data as it is now unused.
+On Wed, 26 Oct 2016 21:59:52 -0200
+Sergio Prado <sergio.prado@e-labworks.com> wrote:
+
+> This series adds support for configuring Samsung's s3c2410 and
+> compatible flash memory controller via devicetree.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-I'm afraid this patch needs to be reverted :/ I didn't notice earlier
-the Samsung AC97 controller has 3 substreams per a platform device and
-this cannot be handled with struct snd_dmaengine_pcm_config, which
-allows to specify up to 2 DMA channel names.
-
-The AC97 driver (sound/soc/samsung/ac97.c) seems to have been broken
-for a long time as it currently doesn't have the channel names
-specified at all [1].  It seems in order to fix it the best would
-be to restore the feature the $subject patch removes.
-
-[1]
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/sound/soc/samsung/ac97.c#n40
-
->  include/sound/dmaengine_pcm.h         |  6 ------
->  sound/soc/soc-generic-dmaengine-pcm.c | 13 +------------
->  2 files changed, 1 insertion(+), 18 deletions(-)
+> Tested on FriendlyARM mini2440, based on s3c2440 SoC.
 > 
-> diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-> index 67be244..1c8f9e1 100644
-> --- a/include/sound/dmaengine_pcm.h
-> +++ b/include/sound/dmaengine_pcm.h
-> @@ -71,7 +71,6 @@ struct dma_chan *snd_dmaengine_pcm_request_channel(dma_filter_fn filter_fn,
->   * @slave_id: Slave requester id for the DMA channel.
->   * @filter_data: Custom DMA channel filter data, this will usually be used when
->   * requesting the DMA channel.
-> - * @chan_name: Custom channel name to use when requesting DMA channel.
->   * @fifo_size: FIFO size of the DAI controller in bytes
->   * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
->   */
-> @@ -81,7 +80,6 @@ struct snd_dmaengine_dai_dma_data {
->  	u32 maxburst;
->  	unsigned int slave_id;
->  	void *filter_data;
-> -	const char *chan_name;
->  	unsigned int fifo_size;
->  	unsigned int flags;
->  };
-> @@ -107,10 +105,6 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
->   * playback.
->   */
->  #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
-> -/*
-> - * The PCM streams have custom channel names specified.
-> - */
-> -#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
-> 
->  /**
->   * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
-> diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-> index 6cef397..17eb149 100644
-> --- a/sound/soc/soc-generic-dmaengine-pcm.c
-> +++ b/sound/soc/soc-generic-dmaengine-pcm.c
-> @@ -263,7 +263,6 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
->  	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
->  	const struct snd_dmaengine_pcm_config *config = pcm->config;
->  	struct device *dev = rtd->platform->dev;
-> -	struct snd_dmaengine_dai_dma_data *dma_data;
->  	struct snd_pcm_substream *substream;
->  	size_t prealloc_buffer_size;
->  	size_t max_buffer_size;
-> @@ -278,19 +277,11 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
->  		max_buffer_size = SIZE_MAX;
->  	}
-> 
-> -
->  	for (i = SNDRV_PCM_STREAM_PLAYBACK; i <= SNDRV_PCM_STREAM_CAPTURE; i++) {
->  		substream = rtd->pcm->streams[i].substream;
->  		if (!substream)
->  			continue;
-> 
-> -		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-> -
-> -		if (!pcm->chan[i] &&
-> -		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
-> -			pcm->chan[i] = dma_request_slave_channel(dev,
-> -				dma_data->chan_name);
-> -
->  		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
->  			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
->  				substream);
-> @@ -359,9 +350,7 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
->  	const char *name;
->  	struct dma_chan *chan;
-> 
-> -	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
-> -			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
-> -	    !dev->of_node)
-> +	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
->  		return 0;
+> Patch 3 depends on patch 1.
 
-I somehow messed up testing this patch series on a non-DT platform and
-missed the fact that standard "tx", "rx" DMA channel names will only
-be used for DT cases in the ASoC core.
+Applied.
 
-Perhaps it makes sense to change the above test to something like:
-
- if (((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || (!dev->of_node &&
-		     (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT))))
-	return 0;
-
-so when a platform gets converted to use the DMA slave map it can be
-treated similarly to a DT platform when SND_DMAENGINE_PCM_FLAG_COMPAT
-flag is not set.
-
-I'd either need a change as above or to also revert patch 1/4 :/
-
->  	if (config && config->dma_dev) {
-> --
-> 1.9.1
-
---
 Thanks,
-Sylwester
+
+Boris
+
+> 
+> Changes since v3:
+> - apply the timings in the end of ->setup_data_interface so the
+>   timings can be changed at runtime by the MTD core.
+> 
+> Changes since v2:
+> - conditionally assign chip->setup_data_interface to
+>   s3c2410_nand_setup_data_interface if booting via device tree
+> 
+> Changes since v1:
+> - automate timing selection when booting with a device tree
+> - make s3c24XX_nand_devtype_data structs "static const"
+> - removing samsung,s3c6400-nand compatible since it is equivalent to
+>   samsung,s3c2412-nand
+> 
+> Changes since initial version:
+> - patch converted to a patch series
+> - read timings from nand_sdr_timings when booting with a device tree
+> - naming improvements in the device tree binding
+>   (s/nand/nand-controller/, s/_/-, s/children/child)
+> - dropped property samsung,ignore_unset_ecc
+> - remove @0 from nand device node
+> - checking pdev->dev.of_node instead of using ifdef CONFIG_OF_MTD
+> - preventing from parsing device tree properties twice
+> - increment the nand controller child node refcount, since we
+>   maintain a reference to it and its name field
+> - using of_device_get_match_data() instead of of_match_device()
+>   to make the code simpler
+> - remove CONFIG_MTD_NAND_S3C2410_HWECC compile option so we can
+>   select ECC mode using nand-ecc-mode property in the device tree
+> 
+> Sergio Prado (3):
+>   mtd: s3c2410: make ecc mode configurable via platform data
+>   dt-bindings: mtd: add DT binding for s3c2410 flash controller
+>   mtd: s3c2410: parse the device configuration from OF node
+> 
+>  .../devicetree/bindings/mtd/samsung-s3c2410.txt    |  56 +++++
+>  arch/arm/mach-s3c24xx/common-smdk.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-anubis.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c             |   1 +
+>  arch/arm/mach-s3c24xx/mach-bast.c                  |   1 +
+>  arch/arm/mach-s3c24xx/mach-gta02.c                 |   1 +
+>  arch/arm/mach-s3c24xx/mach-jive.c                  |   1 +
+>  arch/arm/mach-s3c24xx/mach-mini2440.c              |   1 +
+>  arch/arm/mach-s3c24xx/mach-osiris.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-qt2410.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-rx1950.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-rx3715.c                |   1 +
+>  arch/arm/mach-s3c24xx/mach-vstms.c                 |   1 +
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |   1 +
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |   1 +
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |   1 +
+>  drivers/mtd/nand/Kconfig                           |   9 -
+>  drivers/mtd/nand/s3c2410.c                         | 277 +++++++++++++++------
+>  include/linux/platform_data/mtd-nand-s3c2410.h     |   7 +-
+>  19 files changed, 278 insertions(+), 86 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+> 
