@@ -1,60 +1,57 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ASoC: samsung: get access to DMA engine early to defer
- probe properly
-Date: Thu, 27 Oct 2016 18:45:31 +0200
-Message-ID: <d73fe5ed-a691-ead8-52c7-3fac510ef272@samsung.com>
-References: <CGME20161027103418eucas1p1628aa0c578b8470d537abaa92c6bf10c@eucas1p1.samsung.com>
- <1477564442-19772-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29415 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753982AbcJ0Qpi (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 12:45:38 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFP00KS0T7YOX10@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Oct 2016 17:45:34 +0100 (BST)
-In-reply-to: <1477564442-19772-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: [PATCH 1/3] ARM: dts: exynos: Document eMMC/SD/SDIO devices in Exynos5250 Snow board
+Date: Thu, 27 Oct 2016 14:11:41 -0300
+Message-ID: <1477588303-13681-1-git-send-email-javier@osg.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 10/27/2016 12:34 PM, Marek Szyprowski wrote:
-> ASoC Samsung sub-drivers tried to get access to their DMA engine
-> controllers as a last step in driver probe. If a DMA engine was not
-> available yet, samsung_asoc_dma_platform_register() function ended in
-> -EPROBE_DEFER, but the driver already registered its component to ASoC
-> core. This patch moves samsung_asoc_dma_platform_register() call before
-> registering any components, to the common place, where driver was gathering
-> all needed resources.
-> 
-> In case of Samsung Exynos i2s driver the issue was even worse. The driver
-> managed already to register its secondary DAI platform device before
-> even getting the DMA engine access. That together with -EPROBE_DEFER error
-> code from samsung_i2s_probe() immediately triggered another round of
-> deferred probe retry and in turn endless loop of driver probing.
-> 
-> This patch fixes broken boot on Odroid XU3 and other Exynos5422-based
-> boards.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+There's a cognitive load to figure out which mmc device node corresponds
+to the eMMC flash, uSD card and WiFI SDIO module on the Snow boards.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+So it's better to have comments in the DTS to make this more clear.
 
-It's worth to note that the endless re-probing loop happens randomly,
-not on every boot.  And the issue got uncovered by a commit which seems
-to be slightly changing scheduling of work on the main probe deferral
-workqueue and deferral of the amba devices [1], i.e. after this commit
-all probe deferral jobs are scheduled to a single system_wq workqueue.
-It seems concurrency change after the patch was significant enough
-to make deferred probing of one device to starve deferred probing
-of other device in that case.
+Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+---
 
-[1] commit 2c507e464f791327c94d17a0137f00b4717744fc
-    "device core: Remove deprecated create_singlethread_workqueue"
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+index d5d51916bb74..8f3a80430748 100644
+--- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+@@ -523,6 +523,7 @@
+ 	status = "okay";
+ };
+ 
++/* eMMC flash */
+ &mmc_0 {
+ 	status = "okay";
+ 	num-slots = <1>;
+@@ -536,6 +537,7 @@
+ 	cap-mmc-highspeed;
+ };
+ 
++/* uSD card */
+ &mmc_2 {
+ 	status = "okay";
+ 	num-slots = <1>;
+@@ -553,6 +555,8 @@
+ /*
+  * On Snow we've got SIP WiFi and so can keep drive strengths low to
+  * reduce EMI.
++ *
++ * WiFi SDIO module
+  */
+ &mmc_3 {
+ 	status = "okay";
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
