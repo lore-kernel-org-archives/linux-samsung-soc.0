@@ -1,92 +1,47 @@
-From: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Subject: [PATCH v4 2/3] dt-bindings: mtd: add DT binding for s3c2410 flash controller
-Date: Wed, 26 Oct 2016 21:59:54 -0200
-Message-ID: <1477526395-13103-3-git-send-email-sergio.prado@e-labworks.com>
-References: <1477526395-13103-1-git-send-email-sergio.prado@e-labworks.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1477526395-13103-1-git-send-email-sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, richard-/L3Ra7n9ekc@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
+Subject: =?UTF-8?B?UkU6IFtSRVNFTkRdW1BBVENIIDIvMl0gUE0gLyBkZXZmcmVx?=
+ =?UTF-8?B?OiBleHlub3MtcHBtdTogUmVtb3ZlIHVudXNlZCBtdXRleCBm?=
+ =?UTF-8?B?cm9tIHN0cnVjdCBleHlub3NfcHBtdQ==?=
+Date: Thu, 27 Oct 2016 00:29:01 +0000
+Message-ID: <52112573.489887.1477528141808.JavaMail.weblogic@ep2ml103c>
+References: <1477012149-9928-1-git-send-email-axel.lin@ingics.com>
+ <CGME20161021010940epcas1p1bf0feb2d8401d44adbcbd7f399d30f64@epcas1p1.samsung.com>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: multipart/related;
+ boundary="----=_Part_489886_556071931.1477528141808"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:52870 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932430AbcJ0A3E (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 26 Oct 2016 20:29:04 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OFO0328RK0EG070@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 27 Oct 2016 09:29:02 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?QXhlbCBMaW4=?= <axel.lin@ingics.com>, =?UTF-8?B?UmFmYWVsIEogLiBXeXNvY2tp?= <rafael.j.wysocki@intel.com>
+Cc: =?UTF-8?B?Q2hhbndvbyBDaG9p?= <cw00.choi@samsung.com>, =?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>, =?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?= <linux-pm@vger.kernel.org>, =?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?= <linux-samsung-soc@vger.kernel.org>
 
-Adds the device tree bindings description for Samsung S3C2410 and
-compatible NAND flash controller.
+------=_Part_489886_556071931.1477528141808
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
----
- .../devicetree/bindings/mtd/samsung-s3c2410.txt    | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-
-diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-new file mode 100644
-index 000000000000..0040eb8895e0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
-@@ -0,0 +1,56 @@
-+* Samsung S3C2410 and compatible NAND flash controller
-+
-+Required properties:
-+- compatible : The possible values are:
-+	"samsung,s3c2410-nand"
-+	"samsung,s3c2412-nand"
-+	"samsung,s3c2440-nand"
-+- reg : register's location and length.
-+- #address-cells, #size-cells : see nand.txt
-+- clocks : phandle to the nand controller clock
-+- clock-names : must contain "nand"
-+
-+Optional child nodes:
-+Child nodes representing the available nand chips.
-+
-+Optional child properties:
-+- nand-ecc-mode : see nand.txt
-+- nand-on-flash-bbt : see nand.txt
-+
-+Each child device node may optionally contain a 'partitions' sub-node,
-+which further contains sub-nodes describing the flash partition mapping.
-+See partition.txt for more detail.
-+
-+Example:
-+
-+nand-controller@4e000000 {
-+	compatible = "samsung,s3c2440-nand";
-+	reg = <0x4e000000 0x40>;
-+
-+	#address-cells = <1>;
-+        #size-cells = <0>;
-+
-+	clocks = <&clocks HCLK_NAND>;
-+	clock-names = "nand";
-+
-+	nand {
-+		nand-ecc-mode = "soft";
-+		nand-on-flash-bbt;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "u-boot";
-+				reg = <0 0x040000>;
-+			};
-+
-+			partition@40000 {
-+				label = "kernel";
-+				reg = <0x040000 0x500000>;
-+			};
-+		};
-+	};
-+};
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiAtLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLS0NCj4gU2VuZGVyIDogQXhlbCBM
+aW4gPGF4ZWwubGluQGluZ2ljcy5jb20+DQo+IERhdGUgOiAyMDE2LTEwLTIxIDEwOjA5IChHTVQr
+OSkNCj4gVGl0bGUgOiBbUkVTRU5EXVtQQVRDSCAyLzJdIFBNIC8gZGV2ZnJlcTogZXh5bm9zLXBw
+bXU6IFJlbW92ZSB1bnVzZWQgbXV0ZXggZnJvbSBzdHJ1Y3QgZXh5bm9zX3BwbXUNCj4gIA0KPiBU
+aGUgbXV0ZXggaXMgbm90IHVzZWQgYXQgYWxsLCByZW1vdmUgaXQuDQo+IA0KPiBTaWduZWQtb2Zm
+LWJ5OiBBeGVsIExpbiA8YXhlbC5saW5AaW5naWNzLmNvbT4NCj4gQWNrZWQtYnk6IENoYW53b28g
+Q2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcuY29tPg0KDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxt
+eXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCkJvdGggcGF0Y2hlcyBhcmUgc3RhY2tlZCBpbiBm
+b3ItNC45LXJjIGJyYW5jaC4NCg0KDQpUaGFua3MuDQoNCkNoZWVycywNCk15dW5nSm9vDQoNCj4g
+LS0tDQo+IA0KPiBUaGlzIHBhdGNoIHdhcyBzZW50IG9uIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
+bC5vcmcvcGF0Y2gvOTM0MTA5Ny8NCj4gIGRyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBt
+dS5jIHwgMyAtLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBtdS5jIGIvZHJpdmVycy9k
+ZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gDQo=
+------=_Part_489886_556071931.1477528141808--
