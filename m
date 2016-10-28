@@ -1,104 +1,113 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/2] ASoC: Revert
- "Drop SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag"
-Date: Fri, 28 Oct 2016 18:05:07 +0200
-Message-ID: <1477670708-471-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 2/2] ASoC: Revert
+ "samsung: Remove unneeded initialization of chan_name"
+Date: Fri, 28 Oct 2016 18:05:08 +0200
+Message-ID: <1477670708-471-2-git-send-email-s.nawrocki@samsung.com>
+References: <1477670708-471-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55318 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752947AbcJ1QFX (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46032 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755847AbcJ1QFt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Oct 2016 12:05:23 -0400
+        Fri, 28 Oct 2016 12:05:49 -0400
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OFR033OUM0UHQC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 29 Oct 2016 01:05:20 +0900 (KST)
+ with ESMTP id <0OFR015NIM1NCSC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 29 Oct 2016 01:05:47 +0900 (KST)
+In-reply-to: <1477670708-471-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: lars@metafoo.de, lgirdwood@gmail.com, alsa-devel@alsa-project.org, arnd@arndb.de, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This reverts commit c6644119a3f80ea644bde10009d5e1013b5aff29 and
-restores the ability to specify DMA channel names per DAI dma_data.
-Unfortunately the functionality removed in the patch being reverted
-cannot be entirely replaced by DMA channel names specified in
-struct snd_dmaengine_pcm_config as that doesn't cover devices with
-more than 2 DMA channels.
+This reverts commit cdaf9af1eaeb539e32bfd6da6310b41ad6c3ba23
+which breaks I2S support on non-DT platforms since default
+"tx", "rx" DMA channel names for playback and capture streams
+or custom channel names in struct snd_dmaengine_pcm_config
+are supported in the ASoC dmaengine module only for DT case.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- include/sound/dmaengine_pcm.h         |  6 ++++++
- sound/soc/soc-generic-dmaengine-pcm.c | 12 +++++++++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ sound/soc/samsung/dmaengine.c   | 8 ++++++--
+ sound/soc/samsung/i2s.c         | 3 +++
+ sound/soc/samsung/s3c2412-i2s.c | 2 ++
+ sound/soc/samsung/s3c24xx-i2s.c | 2 ++
+ 4 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-index 1c8f9e1..67be244 100644
---- a/include/sound/dmaengine_pcm.h
-+++ b/include/sound/dmaengine_pcm.h
-@@ -71,6 +71,7 @@ struct dma_chan *snd_dmaengine_pcm_request_channel(dma_filter_fn filter_fn,
-  * @slave_id: Slave requester id for the DMA channel.
-  * @filter_data: Custom DMA channel filter data, this will usually be used when
-  * requesting the DMA channel.
-+ * @chan_name: Custom channel name to use when requesting DMA channel.
-  * @fifo_size: FIFO size of the DAI controller in bytes
-  * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
-  */
-@@ -80,6 +81,7 @@ struct snd_dmaengine_dai_dma_data {
- 	u32 maxburst;
- 	unsigned int slave_id;
- 	void *filter_data;
-+	const char *chan_name;
- 	unsigned int fifo_size;
- 	unsigned int flags;
+diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
+index cda656e..9104c98 100644
+--- a/sound/soc/samsung/dmaengine.c
++++ b/sound/soc/samsung/dmaengine.c
+@@ -37,8 +37,12 @@ int samsung_asoc_dma_platform_register(struct device *dev, dma_filter_fn filter,
+ 	pcm_conf->prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config;
+ 	pcm_conf->compat_filter_fn = filter;
+ 
+-	pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
+-	pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
++	if (dev->of_node) {
++		pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
++		pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
++	} else {
++		flags |= SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME;
++	}
+ 
+ 	return devm_snd_dmaengine_pcm_register(dev, pcm_conf, flags);
+ }
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 7a9ee48..7e32cf4 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1304,6 +1304,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	}
+ 	pri_dai->dma_playback.addr = regs_base + I2STXD;
+ 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
++	pri_dai->dma_playback.chan_name = "tx";
++	pri_dai->dma_capture.chan_name = "rx";
+ 	pri_dai->dma_playback.addr_width = 4;
+ 	pri_dai->dma_capture.addr_width = 4;
+ 	pri_dai->quirks = quirks;
+@@ -1323,6 +1325,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		sec_dai->lock = &pri_dai->spinlock;
+ 		sec_dai->variant_regs = pri_dai->variant_regs;
+ 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
++		sec_dai->dma_playback.chan_name = "tx-sec";
+ 
+ 		if (!np) {
+ 			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
+diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+index 40331a0..3e89fbc 100644
+--- a/sound/soc/samsung/s3c2412-i2s.c
++++ b/sound/soc/samsung/s3c2412-i2s.c
+@@ -35,10 +35,12 @@
+ #include <linux/platform_data/asoc-s3c.h>
+ 
+ static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_out = {
++	.chan_name	= "tx",
+ 	.addr_width	= 4,
  };
-@@ -105,6 +107,10 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
-  * playback.
-  */
- #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
-+/*
-+ * The PCM streams have custom channel names specified.
-+ */
-+#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
  
- /**
-  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 17eb149..d537864 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -263,6 +263,7 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
- 	const struct snd_dmaengine_pcm_config *config = pcm->config;
- 	struct device *dev = rtd->platform->dev;
-+	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct snd_pcm_substream *substream;
- 	size_t prealloc_buffer_size;
- 	size_t max_buffer_size;
-@@ -282,6 +283,13 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 		if (!substream)
- 			continue;
+ static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_in = {
++	.chan_name	= "rx",
+ 	.addr_width	= 4,
+ };
  
-+		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-+
-+		if (!pcm->chan[i] &&
-+		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
-+			pcm->chan[i] = dma_request_slave_channel(dev,
-+				dma_data->chan_name);
-+
- 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
- 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
- 				substream);
-@@ -350,7 +358,9 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
- 	const char *name;
- 	struct dma_chan *chan;
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index d59a47d..c78a936 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -33,10 +33,12 @@
+ #include <linux/platform_data/asoc-s3c.h>
  
--	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
-+	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
-+			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
-+	    !dev->of_node)
- 		return 0;
+ static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
++	.chan_name	= "tx",
+ 	.addr_width	= 2,
+ };
  
- 	if (config && config->dma_dev) {
+ static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
++	.chan_name	= "rx",
+ 	.addr_width	= 2,
+ };
+ 
 -- 
 1.9.1
