@@ -1,49 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Drop AC97 drivers
-Date: Fri, 28 Oct 2016 18:57:47 +0100
-Message-ID: <20161028175747.zmurlr6xhyoxc2l5@sirena.org.uk>
-References: <1477671072-742-1-git-send-email-s.nawrocki@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: video: exynos7-decon: Remove obsolete
+ samsung,power-domain property
+Date: Sun, 30 Oct 2016 15:41:24 -0500
+Message-ID: <20161030204124.wwvv2qfshj7lvggx@rob-hp-laptop>
+References: <1477058754-13866-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lltzdekvgof4i3jy"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45816 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942481AbcJ1R6H (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Oct 2016 13:58:07 -0400
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1477671072-742-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1477058754-13866-1-git-send-email-krzk@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, krzk@kernel.org, alsa-devel@alsa-project.org, b.zolnierkie@samsung.com, linux-arm-kernel@lists.infradead.org
 
-
---lltzdekvgof4i3jy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 28, 2016 at 06:11:12PM +0200, Sylwester Nawrocki wrote:
-> The AC97 drivers are broken and it seems these have not been used
-> for a long time.  This patch removes the unused code, i.e. Samsung
-> SoC AC97 controller driver and related machine drivers:
-> ln2440sbc_alc650, smdk2443_wm9710, smdk_wm9713.
-
-This needs rebasing against some of the recent fixes, sorry.
-
---lltzdekvgof4i3jy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJYE5GbAAoJECTWi3JdVIfQDiAH/1WZqAyCIe9bAchPQZgaRpHA
-YI+aKovR5br1Bhhmvn3AWYEgJ70elM/sH2O8X0Q+q53pceA2lHPLuyImqz7AH6E9
-x0HiNrss9QaSp1Uhj338kD5MesvOKYN+hvM9ixot+3yv2s+43fszBT6uQo+YsqAG
-NJybmfGPKtueoM4QznQvrhrXtlsZOFuWJF5j+xyo6RZ/o3iUl+fxv0CvH3mJoThw
-+xD1fAiX8x/njpTDpHg0t38IaYwq2yLk8wHgazjV+4LZKRPEQT3l4ETBUtRtuaT6
-N38U8d4j4eDepUrzmxmTsQ3fRZzC7xBzwyGP6RDFSQ4f//pcajL8WKO+YD4hJxI=
-=SlXh
------END PGP SIGNATURE-----
-
---lltzdekvgof4i3jy--
+T24gRnJpLCBPY3QgMjEsIDIwMTYgYXQgMDU6MDU6NTRQTSArMDMwMCwgS3J6eXN6dG9mIEtvemxv
+d3NraSB3cm90ZToKPiBUaGUgc2Ftc3VuZyxwb3dlci1kb21haW4gcHJvcGVydHkgaXMgb2Jzb2xl
+dGUgc2luY2UgY29tbWl0IDBkYTY1ODcwNDEzNgo+ICgiQVJNOiBkdHM6IGNvbnZlcnQgdG8gZ2Vu
+ZXJpYyBwb3dlciBkb21haW4gYmluZGluZ3MgZm9yIGV4eW5vcyBEVCIpLgo+IFJlcGxhY2UgaXQg
+d2l0aCBnZW5lcmljIG9uZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tp
+IDxrcnprQGtlcm5lbC5vcmc+Cj4gLS0tCj4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9kaXNwbGF5L2V4eW5vcy9leHlub3M3LWRlY29uLnR4dCB8IDIgKy0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpZb3UgZGlkbid0IHNlbmQgdGhp
+cyBUbyBtZSwgc28gSSBhc3N1bWUgc29tZW9uZSBlbHNlIGlzIGFwcGx5aW5nIGl0LgoKQWNrZWQt
+Ynk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+Cl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
