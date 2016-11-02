@@ -1,15 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: s3c24xx-i2s.c merge fixup" to the asoc tree
-Date: Wed, 02 Nov 2016 10:48:25 -0600
-Message-ID: <E1c1yi9-0006CN-Tq@finisterre>
-References: <1478084676-30536-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: s2c24xx-i2s: remove redundant error message" to the asoc tree
+Date: Wed, 02 Nov 2016 10:49:20 -0600
+Message-ID: <E1c1yj2-0006Eq-P9@finisterre>
+References: <1478085107-30865-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38588 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38676 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756355AbcKBQs4 (ORCPT
+        with ESMTP id S1753107AbcKBQtk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Nov 2016 12:48:56 -0400
-In-Reply-To: <1478084676-30536-1-git-send-email-s.nawrocki@samsung.com>
+        Wed, 2 Nov 2016 12:49:40 -0400
+In-Reply-To: <1478085107-30865-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -17,7 +17,7 @@ Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.o
 
 The patch
 
-   ASoC: samsung: s3c24xx-i2s.c merge fixup
+   ASoC: samsung: s2c24xx-i2s: remove redundant error message
 
 has been applied to the asoc tree at
 
@@ -42,52 +42,39 @@ to this mail.
 Thanks,
 Mark
 
->From 6c9473c55e7bb93dd4086f74e8e727dd3350855d Mon Sep 17 00:00:00 2001
+>From 5d3c1f633ea2984602bbbfe84e3e858050cb36f3 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Wed, 2 Nov 2016 12:04:36 +0100
-Subject: [PATCH] ASoC: samsung: s3c24xx-i2s.c merge fixup
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 2 Nov 2016 12:11:47 +0100
+Subject: [PATCH] ASoC: samsung: s2c24xx-i2s: remove redundant error message
 
-This fixes a build error as below which appeared after merging
-branch fix/samsung and also proper error messages are restored.
-
-sound/soc/samsung/s3c24xx-i2s.c: In function ‘s3c24xx_iis_dev_probe’:
-sound/soc/samsung/s3c24xx-i2s.c:444:8: error: ‘pdata’ undeclared (first use in this function)
-sound/soc/samsung/s3c24xx-i2s.c:444:8: note: each undeclared identifier is reported only once for each function it appears in
+There is no need to report the resource request error in
+the driver as it is already handled within devm_ioremap_resource().
+While at it also drop a redundant variable initialization.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/s3c24xx-i2s.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ sound/soc/samsung/s3c24xx-i2s.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index c93169823c7c..07f5091b33e8 100644
+index 3b4bef9025a7..c93169823c7c 100644
 --- a/sound/soc/samsung/s3c24xx-i2s.c
 +++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -436,18 +436,17 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
- 	s3c24xx_i2s_pcm_stereo_out.addr = res->start + S3C2410_IISFIFO;
- 	s3c24xx_i2s_pcm_stereo_in.addr = res->start + S3C2410_IISFIFO;
+@@ -426,13 +426,9 @@ static const struct snd_soc_component_driver s3c24xx_i2s_component = {
+ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+-	int ret = 0;
++	int ret;
  
--	ret = samsung_asoc_dma_platform_register(&pdev->dev,
--						 pdata->dma_filter,
-+	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
- 						 NULL, NULL);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to register the DAI\n");
-+		dev_err(&pdev->dev, "Failed to register the DMA: %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
- 	if (ret)
--		pr_err("failed to register the dai\n");
-+		dev_err(&pdev->dev, "Failed to register the DAI\n");
- 
- 	return ret;
- }
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Can't get IO resource.\n");
+-		return -ENOENT;
+-	}
+ 	s3c24xx_i2s.regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(s3c24xx_i2s.regs))
+ 		return PTR_ERR(s3c24xx_i2s.regs);
 -- 
 2.10.1
