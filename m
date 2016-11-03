@@ -1,193 +1,59 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] iommu/exynos: Add support for page access protection bits
-Date: Thu, 03 Nov 2016 09:04:45 +0100
-Message-ID: <1478160285-14214-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161103080459eucas1p254076fdf45c72dbc09aee42fe6234c0d@eucas1p2.samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 09/13] mmc: dw_mmc: remove the "clock-freq-min-max" property
+Date: Thu, 03 Nov 2016 09:20:15 +0100
+Message-ID: <20823767.hqlyMd1aKN@diego>
+References: <20161103062135.10697-1-jh80.chung@samsung.com> <20161103062135.10697-10-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45171 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751214AbcKCIUW (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 3 Nov 2016 04:20:22 -0400
+In-Reply-To: <20161103062135.10697-10-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, krzk@kernel.org, shawn.lin@rock-chips.com
 
-This patch add support for page access protection bits. Till now this
-feature was disabled and Exynos SYSMMU always mapped pages as read/write.
-Now page access bits are set according to the protection bits provided
-in iommu_map(), so Exynos SYSMMU is able to detect incorrect access to
-mapped pages. Exynos SYSMMU earlier than v5 doesn't support write-only
-mappings, so pages with such protection bits are mapped as read/write.
+Hi Jaehoon,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 63 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 51 insertions(+), 12 deletions(-)
+Am Donnerstag, 3. November 2016, 15:21:31 schrieb Jaehoon Chung:
+> Remove the "clock-freq-min-max" property.
+> There is "max-frequency" property in drivers/mmc/core/host.c
+> It can be used for getting maximum frequency.
+> 
+> And minimum clock value is assigned to 100K by default.
+> Because MMC core should check the initial clock value from
+> 400K to 100K until finding correct value.
+> It's why Minimum value puts 100K by default.
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt |  3 ---
+>  drivers/mmc/host/dw_mmc.c                                  | 13
+> ++++--------- 2 files changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt index
+> 4e00e85..21c8251 100644
+> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> @@ -56,9 +56,6 @@ Optional properties:
+>    is specified and the ciu clock is specified then we'll try to set the ciu
+> clock to this at probe time.
+> 
+> -* clock-freq-min-max: Minimum and Maximum clock frequency for card output
+> -  clock(cclk_out). If it's not specified, max is 200MHZ and min is 400KHz
+> by default. -
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 30808e9..e249e2f 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -70,6 +70,36 @@
- #define SYSMMU_PG_ENT_SHIFT 0
- #define SYSMMU_V5_PG_ENT_SHIFT 4
- 
-+static const sysmmu_pte_t *LV1_PROT;
-+static const sysmmu_pte_t SYSMMU_LV1_PROT[] = {
-+	((0 << 15) | (0 << 10)), /* no access */
-+	((1 << 15) | (1 << 10)), /* IOMMU_READ only */
-+	((0 << 15) | (1 << 10)), /* IOMMU_WRITE not supported, use read/write */
-+	((0 << 15) | (1 << 10)), /* IOMMU_READ | IOMMU_WRITE */
-+};
-+static const sysmmu_pte_t SYSMMU_V5_LV1_PROT[] = {
-+	(0 << 4), /* no access */
-+	(1 << 4), /* IOMMU_READ only */
-+	(2 << 4), /* IOMMU_WRITE only */
-+	(3 << 4), /* IOMMU_READ | IOMMU_WRITE */
-+};
-+
-+static const sysmmu_pte_t *LV2_PROT;
-+static const sysmmu_pte_t SYSMMU_LV2_PROT[] = {
-+	((0 << 9) | (0 << 4)), /* no access */
-+	((1 << 9) | (1 << 4)), /* IOMMU_READ only */
-+	((0 << 9) | (1 << 4)), /* IOMMU_WRITE not supported, use read/write */
-+	((0 << 9) | (1 << 4)), /* IOMMU_READ | IOMMU_WRITE */
-+};
-+static const sysmmu_pte_t SYSMMU_V5_LV2_PROT[] = {
-+	(0 << 2), /* no access */
-+	(1 << 2), /* IOMMU_READ only */
-+	(2 << 2), /* IOMMU_WRITE only */
-+	(3 << 2), /* IOMMU_READ | IOMMU_WRITE */
-+};
-+
-+#define SYSMMU_SUPPORTED_PROT_BITS (IOMMU_READ | IOMMU_WRITE)
-+
- #define sect_to_phys(ent) (((phys_addr_t) ent) << PG_ENT_SHIFT)
- #define section_phys(sent) (sect_to_phys(*(sent)) & SECT_MASK)
- #define section_offs(iova) (iova & (SECT_SIZE - 1))
-@@ -97,16 +127,17 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
- #define SPAGES_PER_LPAGE (LPAGE_SIZE / SPAGE_SIZE)
- #define lv2table_base(sent) (sect_to_phys(*(sent) & 0xFFFFFFC0))
- 
--#define mk_lv1ent_sect(pa) ((pa >> PG_ENT_SHIFT) | 2)
-+#define mk_lv1ent_sect(pa, prot) ((pa >> PG_ENT_SHIFT) | LV1_PROT[prot] | 2)
- #define mk_lv1ent_page(pa) ((pa >> PG_ENT_SHIFT) | 1)
--#define mk_lv2ent_lpage(pa) ((pa >> PG_ENT_SHIFT) | 1)
--#define mk_lv2ent_spage(pa) ((pa >> PG_ENT_SHIFT) | 2)
-+#define mk_lv2ent_lpage(pa, prot) ((pa >> PG_ENT_SHIFT) | LV2_PROT[prot] | 1)
-+#define mk_lv2ent_spage(pa, prot) ((pa >> PG_ENT_SHIFT) | LV2_PROT[prot] | 2)
- 
- #define CTRL_ENABLE	0x5
- #define CTRL_BLOCK	0x7
- #define CTRL_DISABLE	0x0
- 
- #define CFG_LRU		0x1
-+#define CFG_EAP		(1 << 2)
- #define CFG_QOS(n)	((n & 0xF) << 7)
- #define CFG_ACGEN	(1 << 24) /* System MMU 3.3 only */
- #define CFG_SYSSEL	(1 << 22) /* System MMU 3.2 only */
-@@ -481,6 +512,8 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
- 	else
- 		cfg = CFG_QOS(15) | CFG_FLPDCACHE | CFG_ACGEN;
- 
-+	cfg |= CFG_EAP; /* enable access protection bits check */
-+
- 	writel(cfg, data->sfrbase + REG_MMU_CFG);
- }
- 
-@@ -652,10 +685,15 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 
- 	__sysmmu_get_version(data);
- 	if (PG_ENT_SHIFT < 0) {
--		if (MMU_MAJ_VER(data->version) < 5)
-+		if (MMU_MAJ_VER(data->version) < 5) {
- 			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
--		else
-+			LV1_PROT = SYSMMU_LV1_PROT;
-+			LV2_PROT = SYSMMU_LV2_PROT;
-+		} else {
- 			PG_ENT_SHIFT = SYSMMU_V5_PG_ENT_SHIFT;
-+			LV1_PROT = SYSMMU_V5_LV1_PROT;
-+			LV2_PROT = SYSMMU_V5_LV2_PROT;
-+		}
- 	}
- 
- 	pm_runtime_enable(dev);
-@@ -954,7 +992,7 @@ static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
- 
- static int lv1set_section(struct exynos_iommu_domain *domain,
- 			  sysmmu_pte_t *sent, sysmmu_iova_t iova,
--			  phys_addr_t paddr, short *pgcnt)
-+			  phys_addr_t paddr, int prot, short *pgcnt)
- {
- 	if (lv1ent_section(sent)) {
- 		WARN(1, "Trying mapping on 1MiB@%#08x that is mapped",
-@@ -973,7 +1011,7 @@ static int lv1set_section(struct exynos_iommu_domain *domain,
- 		*pgcnt = 0;
- 	}
- 
--	update_pte(sent, mk_lv1ent_sect(paddr));
-+	update_pte(sent, mk_lv1ent_sect(paddr, prot));
- 
- 	spin_lock(&domain->lock);
- 	if (lv1ent_page_zero(sent)) {
-@@ -991,13 +1029,13 @@ static int lv1set_section(struct exynos_iommu_domain *domain,
- }
- 
- static int lv2set_page(sysmmu_pte_t *pent, phys_addr_t paddr, size_t size,
--								short *pgcnt)
-+		       int prot, short *pgcnt)
- {
- 	if (size == SPAGE_SIZE) {
- 		if (WARN_ON(!lv2ent_fault(pent)))
- 			return -EADDRINUSE;
- 
--		update_pte(pent, mk_lv2ent_spage(paddr));
-+		update_pte(pent, mk_lv2ent_spage(paddr, prot));
- 		*pgcnt -= 1;
- 	} else { /* size == LPAGE_SIZE */
- 		int i;
-@@ -1013,7 +1051,7 @@ static int lv2set_page(sysmmu_pte_t *pent, phys_addr_t paddr, size_t size,
- 				return -EADDRINUSE;
- 			}
- 
--			*pent = mk_lv2ent_lpage(paddr);
-+			*pent = mk_lv2ent_lpage(paddr, prot);
- 		}
- 		dma_sync_single_for_device(dma_dev, pent_base,
- 					   sizeof(*pent) * SPAGES_PER_LPAGE,
-@@ -1061,13 +1099,14 @@ static int exynos_iommu_map(struct iommu_domain *iommu_domain,
- 	int ret = -ENOMEM;
- 
- 	BUG_ON(domain->pgtable == NULL);
-+	prot &= SYSMMU_SUPPORTED_PROT_BITS;
- 
- 	spin_lock_irqsave(&domain->pgtablelock, flags);
- 
- 	entry = section_entry(domain->pgtable, iova);
- 
- 	if (size == SECT_SIZE) {
--		ret = lv1set_section(domain, entry, iova, paddr,
-+		ret = lv1set_section(domain, entry, iova, paddr, prot,
- 				     &domain->lv2entcnt[lv1ent_offset(iova)]);
- 	} else {
- 		sysmmu_pte_t *pent;
-@@ -1078,7 +1117,7 @@ static int exynos_iommu_map(struct iommu_domain *iommu_domain,
- 		if (IS_ERR(pent))
- 			ret = PTR_ERR(pent);
- 		else
--			ret = lv2set_page(pent, paddr, size,
-+			ret = lv2set_page(pent, paddr, size, prot,
- 				       &domain->lv2entcnt[lv1ent_offset(iova)]);
- 	}
- 
--- 
-1.9.1
+I'd think devicetree people will protest about simply removing this property 
+without deprecating it first - to be backwards compatible with old devicetrees.
+
+Especially as this property was added already back in 2013, so has been in use 
+for quite some time.
+
+
+Heiko
