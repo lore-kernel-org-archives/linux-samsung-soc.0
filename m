@@ -1,146 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
-Date: Fri, 04 Nov 2016 10:45:53 +0100
-Message-ID: <1478252753-8231-1-git-send-email-s.nawrocki@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 10/13] ARM: dts: exynos: replace to "max-frequecy" instead
+ of "clock-freq-min-max"
+Date: Fri, 04 Nov 2016 19:21:30 +0900
+Message-ID: <ecf4fac2-0ab7-d4c4-69e3-d498ee5b601c@samsung.com>
+References: <20161103062135.10697-1-jh80.chung@samsung.com>
+ <20161103062135.10697-11-jh80.chung@samsung.com>
+ <CGME20161103184120epcas1p3e51865aa2ea7b6073bcb72f5cba5772f@epcas1p3.samsung.com>
+ <20161103184112.GB11071@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: krzk@kernel.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: sam.van.den.berge@telenet.be, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, b.zolnierkie@samsung.com
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <20161103184112.GB11071@kozik-lap>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, heiko@sntech.de, shawn.lin@rock-chips.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds DMA slave map tables for the remaining s3c24xx
-SoC types so the whole platform can be switched to the new API.
-A few devices for which there was no DMA support with current
-code are omitted from the tables.
+On 11/04/2016 03:41 AM, Krzysztof Kozlowski wrote:
+> On Thu, Nov 03, 2016 at 03:21:32PM +0900, Jaehoon Chung wrote:
+>> In drivers/mmc/core/host.c, there is "max-frequency" property.
+>> It should be same behavior. So Use the "max-frequency" instead of
+>> "clock-freq-min-max".
+>>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 2 +-
+>>  arch/arm/boot/dts/exynos3250-artik5.dtsi     | 2 +-
+>>  arch/arm/boot/dts/exynos3250-monk.dts        | 2 +-
+>>  arch/arm/boot/dts/exynos3250-rinato.dts      | 2 +-
+>>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> This looks totally independent to rest of patches so it can be applied
+> separately without any functional impact (except lack of minimum
+> frequency). Is that correct?
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/mach-s3c24xx/common.c | 76 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+You're right. I will split the patches. And will resend.
+Thanks!
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index f6c3f15..b59f4f4 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -345,10 +345,40 @@ struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
- 	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
- };
+Best Regards,
+Jaehoon Chung
 
-+static const struct dma_slave_map s3c2410_dma_slave_map[] = {
-+	{ "s3c2410-sdi", "rx-tx", (void *)DMACH_SDI },
-+	{ "s3c2410-spi.0", "rx", (void *)DMACH_SPI0_RX },
-+	{ "s3c2410-spi.0", "tx", (void *)DMACH_SPI0_TX },
-+	{ "s3c2410-spi.1", "rx", (void *)DMACH_SPI1_RX },
-+	{ "s3c2410-spi.1", "tx", (void *)DMACH_SPI1_TX },
-+	/*
-+	 * The DMA request source[1] (DMACH_UARTx_SRC2) are
-+	 * not used in the UART driver.
-+	 */
-+	{ "s3c2410-uart.0", "rx", (void *)DMACH_UART0 },
-+	{ "s3c2410-uart.0", "tx", (void *)DMACH_UART0 },
-+	{ "s3c2410-uart.1", "rx", (void *)DMACH_UART1 },
-+	{ "s3c2410-uart.1", "tx", (void *)DMACH_UART1 },
-+	{ "s3c2410-uart.2", "rx", (void *)DMACH_UART2 },
-+	{ "s3c2410-uart.2", "tx", (void *)DMACH_UART2 },
-+	{ "s3c24xx-iis", "rx", (void *)DMACH_I2S_IN },
-+	{ "s3c24xx-iis", "tx", (void *)DMACH_I2S_OUT },
-+	{ "s3c-hsudc", "rx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "tx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "rx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "tx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "rx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "tx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "rx3", (void *)DMACH_USB_EP4 },
-+	{ "s3c-hsudc", "tx3", (void *)DMACH_USB_EP4 }
-+};
-+
- static struct s3c24xx_dma_platdata s3c2410_dma_platdata = {
- 	.num_phy_channels = 4,
- 	.channels = s3c2410_dma_channels,
- 	.num_channels = DMACH_MAX,
-+	.slave_map = s3c2410_dma_slave_map,
-+	.slavecnt = ARRAY_SIZE(s3c2410_dma_slave_map),
- };
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
+> 
 
- struct platform_device s3c2410_device_dma = {
-@@ -388,10 +418,36 @@ struct platform_device s3c2410_device_dma = {
- 	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, 16 },
- };
-
-+static const struct dma_slave_map s3c2412_dma_slave_map[] = {
-+	{ "s3c2412-sdi", "rx-tx", (void *)DMACH_SDI },
-+	{ "s3c2412-spi.0", "rx", (void *)DMACH_SPI0_RX },
-+	{ "s3c2412-spi.0", "tx", (void *)DMACH_SPI0_TX },
-+	{ "s3c2412-spi.1", "rx", (void *)DMACH_SPI1_RX },
-+	{ "s3c2412-spi.1", "tx", (void *)DMACH_SPI1_TX },
-+	{ "s3c2440-uart.0", "rx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.0", "tx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.1", "rx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.1", "tx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.2", "rx", (void *)DMACH_UART2 },
-+	{ "s3c2440-uart.2", "tx", (void *)DMACH_UART2 },
-+	{ "s3c2412-iis", "rx", (void *)DMACH_I2S_IN },
-+	{ "s3c2412-iis", "tx", (void *)DMACH_I2S_OUT },
-+	{ "s3c-hsudc", "rx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "tx0", (void *)DMACH_USB_EP1 },
-+	{ "s3c-hsudc", "rx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "tx1", (void *)DMACH_USB_EP2 },
-+	{ "s3c-hsudc", "rx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "tx2", (void *)DMACH_USB_EP3 },
-+	{ "s3c-hsudc", "rx3", (void *)DMACH_USB_EP4 },
-+	{ "s3c-hsudc", "tx3", (void *)DMACH_USB_EP4 }
-+};
-+
- static struct s3c24xx_dma_platdata s3c2412_dma_platdata = {
- 	.num_phy_channels = 4,
- 	.channels = s3c2412_dma_channels,
- 	.num_channels = DMACH_MAX,
-+	.slave_map = s3c2412_dma_slave_map,
-+	.slavecnt = ARRAY_SIZE(s3c2412_dma_slave_map),
- };
-
- struct platform_device s3c2412_device_dma = {
-@@ -534,10 +590,30 @@ struct platform_device s3c2440_device_dma = {
- 	[DMACH_MIC_IN] = { S3C24XX_DMA_APB, true, 29 },
- };
-
-+static const struct dma_slave_map s3c2443_dma_slave_map[] = {
-+	{ "s3c2440-sdi", "rx-tx", (void *)DMACH_SDI },
-+	{ "s3c2443-spi.0", "rx", (void *)DMACH_SPI0_RX },
-+	{ "s3c2443-spi.0", "tx", (void *)DMACH_SPI0_TX },
-+	{ "s3c2443-spi.1", "rx", (void *)DMACH_SPI1_RX },
-+	{ "s3c2443-spi.1", "tx", (void *)DMACH_SPI1_TX },
-+	{ "s3c2440-uart.0", "rx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.0", "tx", (void *)DMACH_UART0 },
-+	{ "s3c2440-uart.1", "rx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.1", "tx", (void *)DMACH_UART1 },
-+	{ "s3c2440-uart.2", "rx", (void *)DMACH_UART2 },
-+	{ "s3c2440-uart.2", "tx", (void *)DMACH_UART2 },
-+	{ "s3c2440-uart.3", "rx", (void *)DMACH_UART3 },
-+	{ "s3c2440-uart.3", "tx", (void *)DMACH_UART3 },
-+	{ "s3c24xx-iis", "rx", (void *)DMACH_I2S_IN },
-+	{ "s3c24xx-iis", "tx", (void *)DMACH_I2S_OUT },
-+};
-+
- static struct s3c24xx_dma_platdata s3c2443_dma_platdata = {
- 	.num_phy_channels = 6,
- 	.channels = s3c2443_dma_channels,
- 	.num_channels = DMACH_MAX,
-+	.slave_map = s3c2443_dma_slave_map,
-+	.slavecnt = ARRAY_SIZE(s3c2443_dma_slave_map),
- };
-
- struct platform_device s3c2443_device_dma = {
---
-1.9.1
