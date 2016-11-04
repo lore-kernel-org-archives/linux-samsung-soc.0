@@ -1,57 +1,146 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH RESEND] iommu/exynos: Improve page fault debug message
-Date: Fri, 04 Nov 2016 08:58:09 +0100
-Message-ID: <1478246289-21525-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161104075817eucas1p2fe178b13386ff0e03592d2a2094c0ac0@eucas1p2.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
+Date: Fri, 04 Nov 2016 10:45:53 +0100
+Message-ID: <1478252753-8231-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: krzk@kernel.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: sam.van.den.berge@telenet.be, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add master device name to default IOMMU fault message to make easier to
-find which device triggered the fault. While at it, move printing some
-information (like page table base and first level entry addresses) to
-dev_dbg(), because those are typically not very useful for typical device
-driver user/developer not equipped with hardware debugging tools.
+This patch adds DMA slave map tables for the remaining s3c24xx
+SoC types so the whole platform can be switched to the new API.
+A few devices for which there was no DMA support with current
+code are omitted from the tables.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/iommu/exynos-iommu.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/mach-s3c24xx/common.c | 76 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 30808e9..47f0d67 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -368,13 +368,14 @@ static void show_fault_information(struct sysmmu_drvdata *data,
- {
- 	sysmmu_pte_t *ent;
- 
--	dev_err(data->sysmmu, "%s FAULT occurred at %#x (page table base: %pa)\n",
--		finfo->name, fault_addr, &data->pgtable);
-+	dev_err(data->sysmmu, "%s: %s FAULT occurred at %#x\n",
-+		dev_name(data->master), finfo->name, fault_addr);
-+	dev_dbg(data->sysmmu, "Page table base: %pa\n", &data->pgtable);
- 	ent = section_entry(phys_to_virt(data->pgtable), fault_addr);
--	dev_err(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
-+	dev_dbg(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
- 	if (lv1ent_page(ent)) {
- 		ent = page_entry(ent, fault_addr);
--		dev_err(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
-+		dev_dbg(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
- 	}
- }
- 
--- 
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index f6c3f15..b59f4f4 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -345,10 +345,40 @@ struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
+ 	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
+ };
+
++static const struct dma_slave_map s3c2410_dma_slave_map[] = {
++	{ "s3c2410-sdi", "rx-tx", (void *)DMACH_SDI },
++	{ "s3c2410-spi.0", "rx", (void *)DMACH_SPI0_RX },
++	{ "s3c2410-spi.0", "tx", (void *)DMACH_SPI0_TX },
++	{ "s3c2410-spi.1", "rx", (void *)DMACH_SPI1_RX },
++	{ "s3c2410-spi.1", "tx", (void *)DMACH_SPI1_TX },
++	/*
++	 * The DMA request source[1] (DMACH_UARTx_SRC2) are
++	 * not used in the UART driver.
++	 */
++	{ "s3c2410-uart.0", "rx", (void *)DMACH_UART0 },
++	{ "s3c2410-uart.0", "tx", (void *)DMACH_UART0 },
++	{ "s3c2410-uart.1", "rx", (void *)DMACH_UART1 },
++	{ "s3c2410-uart.1", "tx", (void *)DMACH_UART1 },
++	{ "s3c2410-uart.2", "rx", (void *)DMACH_UART2 },
++	{ "s3c2410-uart.2", "tx", (void *)DMACH_UART2 },
++	{ "s3c24xx-iis", "rx", (void *)DMACH_I2S_IN },
++	{ "s3c24xx-iis", "tx", (void *)DMACH_I2S_OUT },
++	{ "s3c-hsudc", "rx0", (void *)DMACH_USB_EP1 },
++	{ "s3c-hsudc", "tx0", (void *)DMACH_USB_EP1 },
++	{ "s3c-hsudc", "rx1", (void *)DMACH_USB_EP2 },
++	{ "s3c-hsudc", "tx1", (void *)DMACH_USB_EP2 },
++	{ "s3c-hsudc", "rx2", (void *)DMACH_USB_EP3 },
++	{ "s3c-hsudc", "tx2", (void *)DMACH_USB_EP3 },
++	{ "s3c-hsudc", "rx3", (void *)DMACH_USB_EP4 },
++	{ "s3c-hsudc", "tx3", (void *)DMACH_USB_EP4 }
++};
++
+ static struct s3c24xx_dma_platdata s3c2410_dma_platdata = {
+ 	.num_phy_channels = 4,
+ 	.channels = s3c2410_dma_channels,
+ 	.num_channels = DMACH_MAX,
++	.slave_map = s3c2410_dma_slave_map,
++	.slavecnt = ARRAY_SIZE(s3c2410_dma_slave_map),
+ };
+
+ struct platform_device s3c2410_device_dma = {
+@@ -388,10 +418,36 @@ struct platform_device s3c2410_device_dma = {
+ 	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, 16 },
+ };
+
++static const struct dma_slave_map s3c2412_dma_slave_map[] = {
++	{ "s3c2412-sdi", "rx-tx", (void *)DMACH_SDI },
++	{ "s3c2412-spi.0", "rx", (void *)DMACH_SPI0_RX },
++	{ "s3c2412-spi.0", "tx", (void *)DMACH_SPI0_TX },
++	{ "s3c2412-spi.1", "rx", (void *)DMACH_SPI1_RX },
++	{ "s3c2412-spi.1", "tx", (void *)DMACH_SPI1_TX },
++	{ "s3c2440-uart.0", "rx", (void *)DMACH_UART0 },
++	{ "s3c2440-uart.0", "tx", (void *)DMACH_UART0 },
++	{ "s3c2440-uart.1", "rx", (void *)DMACH_UART1 },
++	{ "s3c2440-uart.1", "tx", (void *)DMACH_UART1 },
++	{ "s3c2440-uart.2", "rx", (void *)DMACH_UART2 },
++	{ "s3c2440-uart.2", "tx", (void *)DMACH_UART2 },
++	{ "s3c2412-iis", "rx", (void *)DMACH_I2S_IN },
++	{ "s3c2412-iis", "tx", (void *)DMACH_I2S_OUT },
++	{ "s3c-hsudc", "rx0", (void *)DMACH_USB_EP1 },
++	{ "s3c-hsudc", "tx0", (void *)DMACH_USB_EP1 },
++	{ "s3c-hsudc", "rx1", (void *)DMACH_USB_EP2 },
++	{ "s3c-hsudc", "tx1", (void *)DMACH_USB_EP2 },
++	{ "s3c-hsudc", "rx2", (void *)DMACH_USB_EP3 },
++	{ "s3c-hsudc", "tx2", (void *)DMACH_USB_EP3 },
++	{ "s3c-hsudc", "rx3", (void *)DMACH_USB_EP4 },
++	{ "s3c-hsudc", "tx3", (void *)DMACH_USB_EP4 }
++};
++
+ static struct s3c24xx_dma_platdata s3c2412_dma_platdata = {
+ 	.num_phy_channels = 4,
+ 	.channels = s3c2412_dma_channels,
+ 	.num_channels = DMACH_MAX,
++	.slave_map = s3c2412_dma_slave_map,
++	.slavecnt = ARRAY_SIZE(s3c2412_dma_slave_map),
+ };
+
+ struct platform_device s3c2412_device_dma = {
+@@ -534,10 +590,30 @@ struct platform_device s3c2440_device_dma = {
+ 	[DMACH_MIC_IN] = { S3C24XX_DMA_APB, true, 29 },
+ };
+
++static const struct dma_slave_map s3c2443_dma_slave_map[] = {
++	{ "s3c2440-sdi", "rx-tx", (void *)DMACH_SDI },
++	{ "s3c2443-spi.0", "rx", (void *)DMACH_SPI0_RX },
++	{ "s3c2443-spi.0", "tx", (void *)DMACH_SPI0_TX },
++	{ "s3c2443-spi.1", "rx", (void *)DMACH_SPI1_RX },
++	{ "s3c2443-spi.1", "tx", (void *)DMACH_SPI1_TX },
++	{ "s3c2440-uart.0", "rx", (void *)DMACH_UART0 },
++	{ "s3c2440-uart.0", "tx", (void *)DMACH_UART0 },
++	{ "s3c2440-uart.1", "rx", (void *)DMACH_UART1 },
++	{ "s3c2440-uart.1", "tx", (void *)DMACH_UART1 },
++	{ "s3c2440-uart.2", "rx", (void *)DMACH_UART2 },
++	{ "s3c2440-uart.2", "tx", (void *)DMACH_UART2 },
++	{ "s3c2440-uart.3", "rx", (void *)DMACH_UART3 },
++	{ "s3c2440-uart.3", "tx", (void *)DMACH_UART3 },
++	{ "s3c24xx-iis", "rx", (void *)DMACH_I2S_IN },
++	{ "s3c24xx-iis", "tx", (void *)DMACH_I2S_OUT },
++};
++
+ static struct s3c24xx_dma_platdata s3c2443_dma_platdata = {
+ 	.num_phy_channels = 6,
+ 	.channels = s3c2443_dma_channels,
+ 	.num_channels = DMACH_MAX,
++	.slave_map = s3c2443_dma_slave_map,
++	.slavecnt = ARRAY_SIZE(s3c2443_dma_slave_map),
+ };
+
+ struct platform_device s3c2443_device_dma = {
+--
 1.9.1
