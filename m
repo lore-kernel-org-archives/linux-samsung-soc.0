@@ -1,15 +1,15 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 3/7] spi: s3c64xx: Do not use platform_data for DMA
+Subject: [PATCH RFC 5/7] ASoC: samsung: pcm: Do not use platform_data for DMA
  parameters
-Date: Fri, 04 Nov 2016 17:14:50 +0100
-Message-ID: <1478276094-19135-5-git-send-email-s.nawrocki@samsung.com>
+Date: Fri, 04 Nov 2016 17:14:52 +0100
+Message-ID: <1478276094-19135-7-git-send-email-s.nawrocki@samsung.com>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45476 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934706AbcKDQRR (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:54247 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936186AbcKDQR0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 12:17:17 -0400
+        Fri, 4 Nov 2016 12:17:26 -0400
 In-reply-to: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,71 +17,71 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dma
 Cc: vinod.koul@intel.com, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 All related platforms use either devicetree or the DMA slave
-map API for mapping DMA channels to DMA slaves so we can now
+map API for mapping DMA channels to slave devices so we can now
 stop using platform_data for passing DMA details.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/spi/spi-s3c64xx.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ sound/soc/samsung/pcm.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 3c09e94..28dfdce 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -341,27 +341,20 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--	dma_filter_fn filter = sdd->cntrlr_info->filter;
- 	struct device *dev = &sdd->pdev->dev;
--	dma_cap_mask_t mask;
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 43e367a..ccedab2 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -134,18 +134,22 @@ struct s3c_pcm_info {
+ static struct snd_dmaengine_dai_dma_data s3c_pcm_stereo_out[] = {
+ 	[0] = {
+ 		.addr_width	= 4,
++		.chan_name	= "tx",
+ 	},
+ 	[1] = {
+ 		.addr_width	= 4,
++		.chan_name	= "tx",
+ 	},
+ };
  
- 	if (is_polling(sdd))
- 		return 0;
+ static struct snd_dmaengine_dai_dma_data s3c_pcm_stereo_in[] = {
+ 	[0] = {
+ 		.addr_width	= 4,
++		.chan_name	= "rx",
+ 	},
+ 	[1] = {
+ 		.addr_width	= 4,
++		.chan_name	= "rx",
+ 	},
+ };
  
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--
- 	/* Acquire DMA channels */
--	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--			   sdd->cntrlr_info->dma_rx, dev, "rx");
-+	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
- 	if (!sdd->rx_dma.ch) {
- 		dev_err(dev, "Failed to get RX DMA channel\n");
- 		return -EBUSY;
- 	}
- 	spi->dma_rx = sdd->rx_dma.ch;
+@@ -488,7 +492,6 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 	struct s3c_pcm_info *pcm;
+ 	struct resource *mem_res;
+ 	struct s3c_audio_pdata *pcm_pdata;
+-	dma_filter_fn filter;
+ 	int ret;
  
--	sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--			   sdd->cntrlr_info->dma_tx, dev, "tx");
-+	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
- 	if (!sdd->tx_dma.ch) {
- 		dev_err(dev, "Failed to get TX DMA channel\n");
- 		dma_release_channel(sdd->rx_dma.ch);
-@@ -1091,11 +1084,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	/* Check for valid device index */
+@@ -555,13 +558,6 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 	s3c_pcm_stereo_in[pdev->id].addr = mem_res->start + S3C_PCM_RXFIFO;
+ 	s3c_pcm_stereo_out[pdev->id].addr = mem_res->start + S3C_PCM_TXFIFO;
  
- 	sdd->cur_bpw = 8;
- 
--	if (!sdd->pdev->dev.of_node && (!sci->dma_tx || !sci->dma_rx)) {
--		dev_warn(&pdev->dev, "Unable to get SPI tx/rx DMA data. Switching to poll mode\n");
--		sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
+-	filter = NULL;
+-	if (pcm_pdata) {
+-		s3c_pcm_stereo_in[pdev->id].filter_data = pcm_pdata->dma_capture;
+-		s3c_pcm_stereo_out[pdev->id].filter_data = pcm_pdata->dma_playback;
+-		filter = pcm_pdata->dma_filter;
 -	}
 -
- 	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
- 	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
+ 	pcm->dma_capture = &s3c_pcm_stereo_in[pdev->id];
+ 	pcm->dma_playback = &s3c_pcm_stereo_out[pdev->id];
  
-@@ -1205,9 +1193,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+@@ -574,7 +570,7 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 		goto err5;
+ 	}
  
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
- 					sdd->port_id, master->num_chipselect);
--	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\tDMA=[Rx-%p, Tx-%p]\n",
--					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
--					sci->dma_rx, sci->dma_tx);
-+	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\n",
-+					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1);
- 
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
+-	ret = samsung_asoc_dma_platform_register(&pdev->dev, filter,
++	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
+ 						 NULL, NULL);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
 -- 
 1.9.1
