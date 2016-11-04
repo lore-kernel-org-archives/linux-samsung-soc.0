@@ -1,60 +1,57 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/4] Add SCU device node support for Exynos4
-Date: Fri, 04 Nov 2016 08:33:34 +0100
-Message-ID: <b6a27e2f-a8d7-0ada-240b-923d95824b92@samsung.com>
-References: <CGME20161104033644epcas1p46d49c63576294d645c7fc131374bb49b@epcas1p4.samsung.com>
- <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RESEND] iommu/exynos: Improve page fault debug message
+Date: Fri, 04 Nov 2016 08:58:09 +0100
+Message-ID: <1478246289-21525-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161104075817eucas1p2fe178b13386ff0e03592d2a2094c0ac0@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57890 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753956AbcKDHdl (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 03:33:41 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OG300D8BX01E070@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2016 07:33:37 +0000 (GMT)
-In-reply-to: <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Pankaj,
+Add master device name to default IOMMU fault message to make easier to
+find which device triggered the fault. While at it, move printing some
+information (like page table base and first level entry addresses) to
+dev_dbg(), because those are typically not very useful for typical device
+driver user/developer not equipped with hardware debugging tools.
 
-On 2016-11-04 04:39, Pankaj Dubey wrote:
-> This patch series does some cleanup for Exynos4 SoC based boards.
-> We are currently statically mapping SCU SFRs in mach-exynos/exynos.c
-> which can be avoided and related dependencies can be removed by introduction
-> of SCU device node.
->    
-> This patch series is tested on Exynos4210 based Origen board for SMP boot.
->
-> Pankaj Dubey (4):
->    ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
->    ARM: dts: exynos: Add SCU device node to exynos4.dtsi
->    ARM: EXYNOS: Remove static mapping of SCU SFR
->    ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
->
->   arch/arm/boot/dts/exynos4.dtsi               |  5 +++
->   arch/arm/mach-exynos/common.h                |  5 ---
->   arch/arm/mach-exynos/exynos.c                | 22 -------------
->   arch/arm/mach-exynos/include/mach/map.h      |  2 --
->   arch/arm/mach-exynos/platsmp.c               | 49 +++++++---------------------
->   arch/arm/mach-exynos/pm.c                    | 14 ++++++--
->   arch/arm/mach-exynos/suspend.c               | 15 ++++++---
->   arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ---
->   8 files changed, 38 insertions(+), 78 deletions(-)
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/iommu/exynos-iommu.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Nice cleanup! Works fine on Exynos4412-based Odroid U3 (SMP boot and S2R).
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Best regards
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 30808e9..47f0d67 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -368,13 +368,14 @@ static void show_fault_information(struct sysmmu_drvdata *data,
+ {
+ 	sysmmu_pte_t *ent;
+ 
+-	dev_err(data->sysmmu, "%s FAULT occurred at %#x (page table base: %pa)\n",
+-		finfo->name, fault_addr, &data->pgtable);
++	dev_err(data->sysmmu, "%s: %s FAULT occurred at %#x\n",
++		dev_name(data->master), finfo->name, fault_addr);
++	dev_dbg(data->sysmmu, "Page table base: %pa\n", &data->pgtable);
+ 	ent = section_entry(phys_to_virt(data->pgtable), fault_addr);
+-	dev_err(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
++	dev_dbg(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
+ 	if (lv1ent_page(ent)) {
+ 		ent = page_entry(ent, fault_addr);
+-		dev_err(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
++		dev_dbg(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
+ 	}
+ }
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
