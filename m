@@ -1,65 +1,82 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 1/7] dma: pl08x: Add support for the DMA slave map
-Date: Fri, 04 Nov 2016 17:14:48 +0100
-Message-ID: <1478276094-19135-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 4/7] ASoC: samsung: i2s: Do not use platform_data for DMA
+ parameters
+Date: Fri, 04 Nov 2016 17:14:51 +0100
+Message-ID: <1478276094-19135-6-git-send-email-s.nawrocki@samsung.com>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60794 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:46927 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934706AbcKDQRH (ORCPT
+        with ESMTP id S936186AbcKDQRV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 12:17:07 -0400
+        Fri, 4 Nov 2016 12:17:21 -0400
 In-reply-to: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org
 Cc: vinod.koul@intel.com, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch add support for the new channel request API
-introduced in commit a8135d0d79e9d0ad3a4ff494fceeaae83
-"dmaengine: core: Introduce new, universal API to request a channel"
+All related platforms use either devicetree or the DMA slave
+map API for mapping DMA channels to slave devices so we can now
+stop using platform_data for passing DMA details.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/dma/amba-pl08x.c   | 3 +++
- include/linux/amba/pl08x.h | 4 ++++
- 2 files changed, 7 insertions(+)
+ sound/soc/samsung/i2s.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 939a7c3..d5c75c8 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2307,6 +2307,9 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
- 			ret = -EINVAL;
- 			goto out_no_platdata;
- 		}
-+	} else {
-+		pl08x->slave.filter.map = pl08x->pd->slave_map;
-+		pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 7e32cf4..95a9a3f 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -90,7 +90,6 @@ struct i2s_dai {
+ 	struct snd_dmaengine_dai_dma_data dma_playback;
+ 	struct snd_dmaengine_dai_dma_data dma_capture;
+ 	struct snd_dmaengine_dai_dma_data idma_playback;
+-	dma_filter_fn filter;
+ 	u32	quirks;
+ 	u32	suspend_i2smod;
+ 	u32	suspend_i2scon;
+@@ -1244,7 +1243,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 			return ret;
+ 
+ 		return samsung_asoc_dma_platform_register(&pdev->dev,
+-					sec_dai->filter, "tx-sec", NULL);
++						NULL, "tx-sec", NULL);
  	}
  
- 	/* By default, AHB1 only.  If dualmaster, from platform */
-diff --git a/include/linux/amba/pl08x.h b/include/linux/amba/pl08x.h
-index 27e9ec8..5308eae 100644
---- a/include/linux/amba/pl08x.h
-+++ b/include/linux/amba/pl08x.h
-@@ -84,6 +84,8 @@ struct pl08x_channel_data {
-  * running any DMA transfer and multiplexing can be recycled
-  * @lli_buses: buses which LLIs can be fetched from: PL08X_AHB1 | PL08X_AHB2
-  * @mem_buses: buses which memory can be accessed from: PL08X_AHB1 | PL08X_AHB2
-+ * @slave_map: DMA slave matching table
-+ * @slave_map_len: number of elements in @slave_map
-  */
- struct pl08x_platform_data {
- 	struct pl08x_channel_data *slave_channels;
-@@ -93,6 +95,8 @@ struct pl08x_platform_data {
- 	void (*put_xfer_signal)(const struct pl08x_channel_data *, int);
- 	u8 lli_buses;
- 	u8 mem_buses;
-+	const struct dma_slave_map *slave_map;
-+	int slave_map_len;
- };
+ 	pri_dai = i2s_alloc_dai(pdev, false);
+@@ -1262,10 +1261,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
  
- #ifdef CONFIG_AMBA_PL08X
+-		pri_dai->dma_playback.filter_data = i2s_pdata->dma_playback;
+-		pri_dai->dma_capture.filter_data = i2s_pdata->dma_capture;
+-		pri_dai->filter = i2s_pdata->dma_filter;
+-
+ 		if (&i2s_pdata->type)
+ 			i2s_cfg = &i2s_pdata->type.i2s;
+ 
+@@ -1327,11 +1322,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
+ 		sec_dai->dma_playback.chan_name = "tx-sec";
+ 
+-		if (!np) {
+-			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
+-			sec_dai->filter = i2s_pdata->dma_filter;
+-		}
+-
+ 		sec_dai->dma_playback.addr_width = 4;
+ 		sec_dai->addr = pri_dai->addr;
+ 		sec_dai->clk = pri_dai->clk;
+@@ -1353,7 +1343,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_free_dai;
+ 
+-	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter,
++	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
+ 						 NULL, NULL);
+ 	if (ret < 0)
+ 		goto err_free_dai;
 -- 
 1.9.1
