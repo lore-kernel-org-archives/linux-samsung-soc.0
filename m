@@ -1,47 +1,60 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 4/4] ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
-Date: Fri, 04 Nov 2016 09:09:24 +0530
-Message-ID: <1478230764-13748-5-git-send-email-pankaj.dubey@samsung.com>
-References: <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/4] Add SCU device node support for Exynos4
+Date: Fri, 04 Nov 2016 08:33:34 +0100
+Message-ID: <b6a27e2f-a8d7-0ada-240b-923d95824b92@samsung.com>
+References: <CGME20161104033644epcas1p46d49c63576294d645c7fc131374bb49b@epcas1p4.samsung.com>
+ <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35778 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932909AbcKDDg5 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57890 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753956AbcKDHdl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Nov 2016 23:36:57 -0400
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+        Fri, 4 Nov 2016 03:33:41 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OG300EYQM0UQP90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2016 12:36:39 +0900 (KST)
+ with ESMTP id <0OG300D8BX01E070@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2016 07:33:37 +0000 (GMT)
 In-reply-to: <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-As no more user of soc_is_exynos{4,5} we can safely remove them.
+Hi Pankaj,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h | 5 -----
- 1 file changed, 5 deletions(-)
+On 2016-11-04 04:39, Pankaj Dubey wrote:
+> This patch series does some cleanup for Exynos4 SoC based boards.
+> We are currently statically mapping SCU SFRs in mach-exynos/exynos.c
+> which can be avoided and related dependencies can be removed by introduction
+> of SCU device node.
+>    
+> This patch series is tested on Exynos4210 based Origen board for SMP boot.
+>
+> Pankaj Dubey (4):
+>    ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
+>    ARM: dts: exynos: Add SCU device node to exynos4.dtsi
+>    ARM: EXYNOS: Remove static mapping of SCU SFR
+>    ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
+>
+>   arch/arm/boot/dts/exynos4.dtsi               |  5 +++
+>   arch/arm/mach-exynos/common.h                |  5 ---
+>   arch/arm/mach-exynos/exynos.c                | 22 -------------
+>   arch/arm/mach-exynos/include/mach/map.h      |  2 --
+>   arch/arm/mach-exynos/platsmp.c               | 49 +++++++---------------------
+>   arch/arm/mach-exynos/pm.c                    | 14 ++++++--
+>   arch/arm/mach-exynos/suspend.c               | 15 ++++++---
+>   arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ---
+>   8 files changed, 38 insertions(+), 78 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9424a8a..d19064b 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -105,11 +105,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5800()	0
- #endif
- 
--#define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
--			  soc_is_exynos4412())
--#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
--			  soc_is_exynos5420() || soc_is_exynos5800())
--
- extern u32 cp15_save_diag;
- extern u32 cp15_save_power;
- 
+Nice cleanup! Works fine on Exynos4412-based Odroid U3 (SMP boot and S2R).
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Best regards
 -- 
-2.7.4
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
