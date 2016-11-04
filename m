@@ -1,58 +1,56 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [4/4] ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
-Date: Fri, 04 Nov 2016 19:01:02 +0530
-Message-ID: <581C8D96.4040507@samsung.com>
-References: <1478230764-13748-5-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161104133241epcas4p4808a1670bfe21ad445e6d54eb61b79a7@epcas4p4.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 10/13] ARM: dts: exynos: replace to "max-frequecy"
+ instead of "clock-freq-min-max"
+Date: Fri, 4 Nov 2016 17:04:47 +0200
+Message-ID: <20161104150447.GA4829@kozik-lap>
+References: <20161103062135.10697-1-jh80.chung@samsung.com>
+ <20161103184112.GB11071@kozik-lap>
+ <ecf4fac2-0ab7-d4c4-69e3-d498ee5b601c@samsung.com>
+ <4066252.a1W9ejEKHX@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32858 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761081AbcKDNcq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 09:32:46 -0400
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OG4018FSDMIXR70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2016 22:32:42 +0900 (KST)
-In-reply-to: <1478230764-13748-5-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4066252.a1W9ejEKHX@phil>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, shawn.lin@rock-chips.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com
 
-Hi Pankaj,
+On Fri, Nov 04, 2016 at 12:19:49PM +0100, Heiko Stuebner wrote:
+> Hi Jaehoon,
+> 
+> Am Freitag, 4. November 2016, 19:21:30 CET schrieb Jaehoon Chung:
+> > On 11/04/2016 03:41 AM, Krzysztof Kozlowski wrote:
+> > > On Thu, Nov 03, 2016 at 03:21:32PM +0900, Jaehoon Chung wrote:
+> > >> In drivers/mmc/core/host.c, there is "max-frequency" property.
+> > >> It should be same behavior. So Use the "max-frequency" instead of
+> > >> "clock-freq-min-max".
+> > >> 
+> > >> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> > >> ---
+> > >> 
+> > >>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 2 +-
+> > >>  arch/arm/boot/dts/exynos3250-artik5.dtsi     | 2 +-
+> > >>  arch/arm/boot/dts/exynos3250-monk.dts        | 2 +-
+> > >>  arch/arm/boot/dts/exynos3250-rinato.dts      | 2 +-
+> > >>  4 files changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > This looks totally independent to rest of patches so it can be applied
+> > > separately without any functional impact (except lack of minimum
+> > > frequency). Is that correct?
+> > 
+> > You're right. I will split the patches. And will resend.
+> > Thanks!
+> 
+> I think what Krzysztof was asking was just if he can simply pick up this patch 
+> alone, as it does not require any of the previous changes.
+> 
+> Same is true for the Rockchip patches I guess, so we could just take them 
+> individually into samsung/rockchip dts branches.
 
-On 11/04/2016 09:09 AM, Pankaj Dubey wrote:
-> As no more user of soc_is_exynos{4,5} we can safely remove them.
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
+Yes, I wanted to get exactly this information. I couldn't find it in
+cover letter.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-Also I have complied tested this series, looks good.
-
->   arch/arm/mach-exynos/common.h | 5 -----
->   1 file changed, 5 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 9424a8a..d19064b 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -105,11 +105,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
->   # define soc_is_exynos5800()	0
->   #endif
->
-> -#define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
-> -			  soc_is_exynos4412())
-> -#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
-> -			  soc_is_exynos5420() || soc_is_exynos5800())
-> -
->   extern u32 cp15_save_diag;
->   extern u32 cp15_save_power;
->
->
+Best regards,
+Krzysztof
