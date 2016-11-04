@@ -1,56 +1,59 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 10/13] ARM: dts: exynos: replace to "max-frequecy"
- instead of "clock-freq-min-max"
-Date: Fri, 4 Nov 2016 17:04:47 +0200
-Message-ID: <20161104150447.GA4829@kozik-lap>
-References: <20161103062135.10697-1-jh80.chung@samsung.com>
- <20161103184112.GB11071@kozik-lap>
- <ecf4fac2-0ab7-d4c4-69e3-d498ee5b601c@samsung.com>
- <4066252.a1W9ejEKHX@phil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4066252.a1W9ejEKHX@phil>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, shawn.lin@rock-chips.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel request API
+Date: Fri, 04 Nov 2016 17:14:46 +0100
+Message-ID: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49595 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934706AbcKDQPT (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 4 Nov 2016 12:15:19 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org
+Cc: vinod.koul@intel.com, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Fri, Nov 04, 2016 at 12:19:49PM +0100, Heiko Stuebner wrote:
-> Hi Jaehoon,
-> 
-> Am Freitag, 4. November 2016, 19:21:30 CET schrieb Jaehoon Chung:
-> > On 11/04/2016 03:41 AM, Krzysztof Kozlowski wrote:
-> > > On Thu, Nov 03, 2016 at 03:21:32PM +0900, Jaehoon Chung wrote:
-> > >> In drivers/mmc/core/host.c, there is "max-frequency" property.
-> > >> It should be same behavior. So Use the "max-frequency" instead of
-> > >> "clock-freq-min-max".
-> > >> 
-> > >> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> > >> ---
-> > >> 
-> > >>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 2 +-
-> > >>  arch/arm/boot/dts/exynos3250-artik5.dtsi     | 2 +-
-> > >>  arch/arm/boot/dts/exynos3250-monk.dts        | 2 +-
-> > >>  arch/arm/boot/dts/exynos3250-rinato.dts      | 2 +-
-> > >>  4 files changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > This looks totally independent to rest of patches so it can be applied
-> > > separately without any functional impact (except lack of minimum
-> > > frequency). Is that correct?
-> > 
-> > You're right. I will split the patches. And will resend.
-> > Thanks!
-> 
-> I think what Krzysztof was asking was just if he can simply pick up this patch 
-> alone, as it does not require any of the previous changes.
-> 
-> Same is true for the Rockchip patches I guess, so we could just take them 
-> individually into samsung/rockchip dts branches.
+This patch series aims to convert the s3c64xx platform to use
+the new universal DMA channel request API, i.e. this is only
+meaningful for non-dt systems using s3c64xx SoCs.
 
-Yes, I wanted to get exactly this information. I couldn't find it in
-cover letter.
+I'm sending the whole series as RFC since I didn't test it
+yet, I'm going to prepare smdk6410 for testing this series.
+It would be great if someone else could also test it,
+either SPI or sound functionality verification would be 
+useful.
 
-Best regards,
-Krzysztof
+Then we could queue the first two patches in this series
+for v4.10-rc1 and the remaining patches for subsequent
+release.
+
+The whole series can be pulled from git repository:
+ git://linuxtv.org/snawrocki/samsung.git 
+ branch: for-v4.10/dma/pl080-s3c64xx
+
+Thanks.
+
+Sylwester Nawrocki (7):
+  dma: pl08x: Add support for the DMA slave map
+  ARM: S3C64XX: Add DMA slave maps for PL080 devices
+  spi: s3c64xx: Do not use platform_data for DMA parameters
+  ASoC: samsung: i2s: Do not use platform_data for DMA parameters
+  ASoC: samsung: pcm: Do not use platform_data for DMA parameters
+  ARM: S3C64XX: Drop unused DMA fields from struct s3c64xx_spi_csinfo
+  ARM: S3C64XX: Drop initialization of unused struct s3c_audio_pdata
+    fields
+
+ arch/arm/mach-s3c64xx/dev-audio.c         | 19 ------------------
+ arch/arm/mach-s3c64xx/pl080.c             | 32 +++++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/devs.c              |  9 ---------
+ drivers/dma/amba-pl08x.c                  |  3 +++
+ drivers/spi/spi-s3c64xx.c                 | 21 ++++----------------
+ include/linux/amba/pl08x.h                |  4 ++++
+ include/linux/platform_data/asoc-s3c.h    |  5 -----
+ include/linux/platform_data/spi-s3c64xx.h |  3 ---
+ sound/soc/samsung/i2s.c                   | 14 ++------------
+ sound/soc/samsung/pcm.c                   | 14 +++++---------
+ 10 files changed, 50 insertions(+), 74 deletions(-)
+
+-- 
+1.9.1
