@@ -1,13 +1,15 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel request API
-Date: Fri, 04 Nov 2016 17:14:46 +0100
-Message-ID: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+Date: Fri, 04 Nov 2016 17:14:47 +0100
+Message-ID: <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49595 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934706AbcKDQPT (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:44001 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936186AbcKDQPY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 12:15:19 -0400
+        Fri, 4 Nov 2016 12:15:24 -0400
+In-reply-to: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org
@@ -18,7 +20,7 @@ the new universal DMA channel request API, i.e. this is only
 meaningful for non-dt systems using s3c64xx SoCs.
 
 I'm sending the whole series as RFC since I didn't test it
-yet, I'm going to prepare smdk6410 for testing this series.
+yet, I'm going to prepare smd6410 for testing this series.
 It would be great if someone else could also test it,
 either SPI or sound functionality verification would be 
 useful.
