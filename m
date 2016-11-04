@@ -1,82 +1,110 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 4/7] ASoC: samsung: i2s: Do not use platform_data for DMA
- parameters
-Date: Fri, 04 Nov 2016 17:14:51 +0100
-Message-ID: <1478276094-19135-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 7/7] ARM: S3C64XX: Drop initialization of unused struct
+ s3c_audio_pdata fields
+Date: Fri, 04 Nov 2016 17:14:54 +0100
+Message-ID: <1478276094-19135-9-git-send-email-s.nawrocki@samsung.com>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:46927 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936186AbcKDQRV (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47880 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936186AbcKDQRi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 12:17:21 -0400
+        Fri, 4 Nov 2016 12:17:38 -0400
 In-reply-to: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org
 Cc: vinod.koul@intel.com, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-All related platforms use either devicetree or the DMA slave
-map API for mapping DMA channels to slave devices so we can now
-stop using platform_data for passing DMA details.
+There is no drivers using these fields so remove them and remaining
+initializations.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ arch/arm/mach-s3c64xx/dev-audio.c      | 19 -------------------
+ include/linux/platform_data/asoc-s3c.h |  5 -----
+ 2 files changed, 24 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 7e32cf4..95a9a3f 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -90,7 +90,6 @@ struct i2s_dai {
- 	struct snd_dmaengine_dai_dma_data dma_playback;
- 	struct snd_dmaengine_dai_dma_data dma_capture;
- 	struct snd_dmaengine_dai_dma_data idma_playback;
--	dma_filter_fn filter;
- 	u32	quirks;
- 	u32	suspend_i2smod;
- 	u32	suspend_i2scon;
-@@ -1244,7 +1243,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 			return ret;
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index b577833..a3f39dd 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -58,9 +58,6 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
  
- 		return samsung_asoc_dma_platform_register(&pdev->dev,
--					sec_dai->filter, "tx-sec", NULL);
-+						NULL, "tx-sec", NULL);
- 	}
+ static struct s3c_audio_pdata i2s0_pdata = {
+ 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_playback = DMACH_I2S0_OUT,
+-	.dma_capture = DMACH_I2S0_IN,
+ };
  
- 	pri_dai = i2s_alloc_dai(pdev, false);
-@@ -1262,10 +1261,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
+ struct platform_device s3c64xx_device_iis0 = {
+@@ -80,9 +77,6 @@ struct platform_device s3c64xx_device_iis0 = {
  
--		pri_dai->dma_playback.filter_data = i2s_pdata->dma_playback;
--		pri_dai->dma_capture.filter_data = i2s_pdata->dma_capture;
--		pri_dai->filter = i2s_pdata->dma_filter;
--
- 		if (&i2s_pdata->type)
- 			i2s_cfg = &i2s_pdata->type.i2s;
+ static struct s3c_audio_pdata i2s1_pdata = {
+ 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_playback = DMACH_I2S1_OUT,
+-	.dma_capture = DMACH_I2S1_IN,
+ };
  
-@@ -1327,11 +1322,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
- 		sec_dai->dma_playback.chan_name = "tx-sec";
+ struct platform_device s3c64xx_device_iis1 = {
+@@ -102,9 +96,6 @@ struct platform_device s3c64xx_device_iis1 = {
  
--		if (!np) {
--			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
--			sec_dai->filter = i2s_pdata->dma_filter;
--		}
--
- 		sec_dai->dma_playback.addr_width = 4;
- 		sec_dai->addr = pri_dai->addr;
- 		sec_dai->clk = pri_dai->clk;
-@@ -1353,7 +1343,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_free_dai;
+ static struct s3c_audio_pdata i2sv4_pdata = {
+ 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_playback = DMACH_HSI_I2SV40_TX,
+-	.dma_capture = DMACH_HSI_I2SV40_RX,
+ 	.type = {
+ 		.i2s = {
+ 			.quirks = QUIRK_PRI_6CHAN,
+@@ -153,9 +144,6 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
  
--	ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter,
-+	ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
- 						 NULL, NULL);
- 	if (ret < 0)
- 		goto err_free_dai;
+ static struct s3c_audio_pdata s3c_pcm0_pdata = {
+ 	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_capture = DMACH_PCM0_RX,
+-	.dma_playback = DMACH_PCM0_TX,
+ };
+ 
+ struct platform_device s3c64xx_device_pcm0 = {
+@@ -175,9 +163,6 @@ struct platform_device s3c64xx_device_pcm0 = {
+ 
+ static struct s3c_audio_pdata s3c_pcm1_pdata = {
+ 	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_playback = DMACH_PCM1_TX,
+-	.dma_capture = DMACH_PCM1_RX,
+ };
+ 
+ struct platform_device s3c64xx_device_pcm1 = {
+@@ -209,10 +194,6 @@ static int s3c64xx_ac97_cfg_gpe(struct platform_device *pdev)
+ };
+ 
+ static struct s3c_audio_pdata s3c_ac97_pdata = {
+-	.dma_playback = DMACH_AC97_PCMOUT,
+-	.dma_filter = pl08x_filter_id,
+-	.dma_capture = DMACH_AC97_PCMIN,
+-	.dma_capture_mic = DMACH_AC97_MICIN,
+ };
+ 
+ static u64 s3c64xx_ac97_dmamask = DMA_BIT_MASK(32);
+diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+index 15bf56e..2d415f6 100644
+--- a/include/linux/platform_data/asoc-s3c.h
++++ b/include/linux/platform_data/asoc-s3c.h
+@@ -42,11 +42,6 @@ struct samsung_i2s {
+  */
+ struct s3c_audio_pdata {
+ 	int (*cfg_gpio)(struct platform_device *);
+-	dma_filter_fn dma_filter;
+-	void *dma_playback;
+-	void *dma_capture;
+-	void *dma_play_sec;
+-	void *dma_capture_mic;
+ 	union {
+ 		struct samsung_i2s i2s;
+ 	} type;
 -- 
 1.9.1
