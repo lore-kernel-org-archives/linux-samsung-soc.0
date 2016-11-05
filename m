@@ -1,32 +1,219 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC 4/7] ASoC: samsung: i2s: Do not use platform_data for DMA parameters
-Date: Sat, 5 Nov 2016 00:29:18 +0100
-Message-ID: <201611050029.18984.arnd@arndb.de>
-References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com> <1478276094-19135-6-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v7 1/2] soc: samsung: add exynos chipid driver support
+Date: Sat, 05 Nov 2016 17:33:46 +0530
+Message-ID: <1478347427-28409-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:53774 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbcKDXaS (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:39122 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754080AbcKEMAx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Nov 2016 19:30:18 -0400
-In-Reply-To: <1478276094-19135-6-git-send-email-s.nawrocki@samsung.com>
+        Sat, 5 Nov 2016 08:00:53 -0400
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OG6032P9417HB10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 05 Nov 2016 21:00:51 +0900 (KST)
+In-reply-to: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Friday 04 November 2016, Sylwester Nawrocki wrote:
-> -       ret = samsung_asoc_dma_platform_register(&pdev->dev, pri_dai->filter,
-> +       ret = samsung_asoc_dma_platform_register(&pdev->dev, NULL,
->                                                  NULL, NULL);
+Exynos SoCs have Chipid, for identification of product IDs
+and SoC revisions. This patch intends to provide initialization
+code for all these functionalities, at the same time it provides some
+sysfs entries for accessing these information to user-space.
 
-If we remove the filter argument from every caller here, maybe we should also
-change the prototype to not expect those three NULL arguments any more.
+This driver uses existing binding for exynos-chipid.
 
+CC: Grant Likely <grant.likely@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/soc/samsung/Kconfig         |   5 ++
+ drivers/soc/samsung/Makefile        |   1 +
+ drivers/soc/samsung/exynos-chipid.c | 148 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 154 insertions(+)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
 
-
-	Arnd
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 2455339..f9ab858 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -14,4 +14,9 @@ config EXYNOS_PM_DOMAINS
+ 	bool "Exynos PM domains" if COMPILE_TEST
+ 	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+ 
++config EXYNOS_CHIPID
++	bool "Exynos Chipid controller driver" if COMPILE_TEST
++	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
++	select SOC_BUS
++
+ endif
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 3619f2e..2a8a85e 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+ 					exynos5250-pmu.o exynos5420-pmu.o
+ obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
++obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+new file mode 100644
+index 0000000..9761e54
+--- /dev/null
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -0,0 +1,148 @@
++/*
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *	      http://www.samsung.com/
++ *
++ * EXYNOS - CHIP ID support
++ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
++
++#define EXYNOS3250_SOC_ID	0xE3472000
++#define EXYNOS4210_SOC_ID	0x43210000
++#define EXYNOS4212_SOC_ID	0x43220000
++#define EXYNOS4412_SOC_ID	0xE4412000
++#define EXYNOS4415_SOC_ID	0xE4415000
++#define EXYNOS5250_SOC_ID	0x43520000
++#define EXYNOS5260_SOC_ID	0xE5260000
++#define EXYNOS5410_SOC_ID	0xE5410000
++#define EXYNOS5420_SOC_ID	0xE5420000
++#define EXYNOS5440_SOC_ID	0xE5440000
++#define EXYNOS5800_SOC_ID	0xE5422000
++
++#define EXYNOS_SOC_MASK		0xFFFFF000
++
++#define EXYNOS4210_REV_0	0x0
++#define EXYNOS4210_REV_1_0	0x10
++#define EXYNOS4210_REV_1_1	0x11
++
++#define EXYNOS_SUBREV_MASK	(0xF << 4)
++#define EXYNOS_MAINREV_MASK	(0xF << 0)
++#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
++
++
++static const char * __init product_id_to_soc_id(unsigned int product_id)
++{
++	const char *soc_name;
++	unsigned int soc_id = product_id & EXYNOS_SOC_MASK;
++
++	switch (soc_id) {
++	case EXYNOS3250_SOC_ID:
++		soc_name = "EXYNOS3250";
++		break;
++	case EXYNOS4210_SOC_ID:
++		soc_name = "EXYNOS4210";
++		break;
++	case EXYNOS4212_SOC_ID:
++		soc_name = "EXYNOS4212";
++		break;
++	case EXYNOS4412_SOC_ID:
++		soc_name = "EXYNOS4412";
++		break;
++	case EXYNOS4415_SOC_ID:
++		soc_name = "EXYNOS4415";
++		break;
++	case EXYNOS5250_SOC_ID:
++		soc_name = "EXYNOS5250";
++		break;
++	case EXYNOS5260_SOC_ID:
++		soc_name = "EXYNOS5260";
++		break;
++	case EXYNOS5420_SOC_ID:
++		soc_name = "EXYNOS5420";
++		break;
++	case EXYNOS5440_SOC_ID:
++		soc_name = "EXYNOS5440";
++		break;
++	case EXYNOS5800_SOC_ID:
++		soc_name = "EXYNOS5800";
++		break;
++	default:
++		soc_name = "UNKNOWN";
++	}
++	return soc_name;
++}
++
++static const struct of_device_id of_exynos_chipid_ids[] = {
++	{
++		.compatible	= "samsung,exynos4210-chipid",
++	},
++	{},
++};
++
++/**
++ *  exynos_chipid_early_init: Early chipid initialization
++ */
++int __init exynos_chipid_early_init(void)
++{
++	struct soc_device_attribute *soc_dev_attr;
++	struct soc_device *soc_dev;
++	struct device_node *root;
++	struct device_node *np;
++	void __iomem *exynos_chipid_base;
++	const struct of_device_id *match;
++	u32 product_id;
++	u32 revision;
++
++	np = of_find_matching_node_and_match(NULL,
++			of_exynos_chipid_ids, &match);
++	if (!np)
++		return -ENODEV;
++
++	exynos_chipid_base = of_iomap(np, 0);
++
++	if (!exynos_chipid_base)
++		return PTR_ERR(exynos_chipid_base);
++
++	product_id  = __raw_readl(exynos_chipid_base);
++	revision = product_id & EXYNOS_REV_MASK;
++	iounmap(exynos_chipid_base);
++
++	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
++	if (!soc_dev_attr)
++		return -ENODEV;
++
++	soc_dev_attr->family = "Samsung Exynos";
++
++	root = of_find_node_by_path("/");
++	of_property_read_string(root, "model", &soc_dev_attr->machine);
++	of_node_put(root);
++
++	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
++	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
++
++
++	pr_info("Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
++			product_id_to_soc_id(product_id), revision);
++
++	soc_dev = soc_device_register(soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		kfree(soc_dev_attr->revision);
++		kfree_const(soc_dev_attr->soc_id);
++		kfree(soc_dev_attr);
++		return PTR_ERR(soc_dev);
++	}
++
++	return 0;
++}
++early_initcall(exynos_chipid_early_init);
+-- 
+2.7.4
