@@ -1,39 +1,145 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 6/6] ARM: dts: Extend the S3C RTC node with rtc_src clock
-Date: Mon, 7 Nov 2016 12:09:03 -0300
-Message-ID: <387864ed-b61b-14e9-1171-f9061fb4c322@osg.samsung.com>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 1/7] dma: pl08x: Add support for the DMA slave map
+Date: Mon, 07 Nov 2016 16:41:58 +0100
+Message-ID: <3d10d013-b18c-e10e-b596-d4d0f8b6e973@samsung.com>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-3-git-send-email-s.nawrocki@samsung.com>
+ <CGME20161104232724epcas3p38fcd78acf5b35aead87273edf8682693@epcas3p3.samsung.com>
+ <201611050026.49560.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:59702
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752814AbcKGPJL (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31310 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932213AbcKGPmF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 10:09:11 -0500
-In-Reply-To: <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
+        Mon, 7 Nov 2016 10:42:05 -0500
+In-reply-to: <201611050026.49560.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org, vinod.koul@intel.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, andi.shyti@samsung.com, javier@osg.samsung.com, broonie@kernel.org, kgene@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com
 
-Hello Pankaj,
-
-On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
-> Extend the S3C RTC node with rtc_src clock so it could be operational.
-> The rtc_src clock is provided by MAX8997.
+On 11/05/2016 12:26 AM, Arnd Bergmann wrote:
+> On Friday 04 November 2016, Sylwester Nawrocki wrote:
+>> +       } else {
+>> +               pl08x->slave.filter.map = pl08x->pd->slave_map;
+>> +               pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
+>>         }
 > 
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: devicetree@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
+> I think you miss the setup of the filter function here.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Oops, indeed, there was little chance it could work without that part.
 
-Best regards,
+> Filtering by string in this driver is a bit awkward, so I wonder if we
+> might want to go one step further here and pass the actual data (i.e. 
+> struct pl08x_channel_data) rather than the string here.
+
+Yeah, it didn't look to me terribly elegant too. Then a change as below?
+
+--------------8<-------------------
+diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
+index 8c88680..556ce74 100644
+--- a/arch/arm/mach-s3c64xx/pl080.c
++++ b/arch/arm/mach-s3c64xx/pl080.c
+@@ -118,22 +118,22 @@ static void pl08x_put_xfer_signal(const struct
+pl08x_channel_data *cd, int ch)
+ };
+
+ static const struct dma_slave_map s3c64xx_dma0_slave_map[] = {
+-       { "s3c6400-uart.0", "tx", (void *)"uart0_tx" },
+-       { "s3c6400-uart.0", "rx", (void *)"uart0_rx" },
+-       { "s3c6400-uart.1", "tx", (void *)"uart1_tx" },
+-       { "s3c6400-uart.1", "rx", (void *)"uart1_rx" },
+-       { "s3c6400-uart.2", "tx", (void *)"uart2_tx" },
+-       { "s3c6400-uart.2", "rx", (void *)"uart2_rx" },
+-       { "s3c6400-uart.3", "tx", (void *)"uart3_tx" },
+-       { "s3c6400-uart.3", "rx", (void *)"uart3_rx" },
+-       { "samsung-pcm.0", "tx", (void *)"pcm0_tx" },
+-       { "samsung-pcm.0", "rx", (void *)"pcm0_rx" },
+-       { "samsung-i2s.0", "tx", (void *)"i2s0_tx" },
+-       { "samsung-i2s.0", "rx", (void *)"i2s0_rx" },
+-       { "s3c6410-spi.0", "tx", (void *)"spi0_tx" },
+-       { "s3c6410-spi.0", "rx", (void *)"spi0_rx" },
+-       { "samsung-i2s.2", "tx", (void *)"i2s2_tx" },
+-       { "samsung-i2s.2", "rx", (void *)"i2s2_rx" },
++       { "s3c6400-uart.0", "tx", (void *)&s3c64xx_dma0_info[0] },
++       { "s3c6400-uart.0", "rx", (void *)&s3c64xx_dma0_info[1] },
++       { "s3c6400-uart.1", "tx", (void *)&s3c64xx_dma0_info[2] },
++       { "s3c6400-uart.1", "rx", (void *)&s3c64xx_dma0_info[3] },
++       { "s3c6400-uart.2", "tx", (void *)&s3c64xx_dma0_info[4] },
++       { "s3c6400-uart.2", "rx", (void *)&s3c64xx_dma0_info[5] },
++       { "s3c6400-uart.3", "tx", (void *)&s3c64xx_dma0_info[6] },
++       { "s3c6400-uart.3", "rx", (void *)&s3c64xx_dma0_info[7] },
++       { "samsung-pcm.0", "tx", (void *)&s3c64xx_dma0_info[8] },
++       { "samsung-pcm.0", "rx", (void *)&s3c64xx_dma0_info[9] },
++       { "samsung-i2s.0", "tx", (void *)&s3c64xx_dma0_info[10] },
++       { "samsung-i2s.0", "rx", (void *)&s3c64xx_dma0_info[11] },
++       { "s3c6410-spi.0", "tx", (void *)&s3c64xx_dma0_info[12] },
++       { "s3c6410-spi.0", "rx", (void *)&s3c64xx_dma0_info[13] },
++       { "samsung-i2s.2", "tx", (void *)&s3c64xx_dma0_info[14] },
++       { "samsung-i2s.2", "rx", (void *)&s3c64xx_dma0_info[15] },
+ };
+
+@@ -229,12 +229,12 @@ static AMBA_AHB_DEVICE(s3c64xx_dma0, "dma-pl080s.0", 0,
+ };
+
+ static const struct dma_slave_map s3c64xx_dma1_slave_map[] = {
+-       { "samsung-pcm.1", "tx", (void *)"pcm1_tx" },
+-       { "samsung-pcm.1", "rx", (void *)"pcm1_rx" },
+-       { "samsung-i2s.1", "tx", (void *)"i2s1_tx" },
+-       { "samsung-i2s.1", "rx", (void *)"i2s1_rx" },
+-       { "s3c6410-spi.1", "tx", (void *)"spi1_tx" },
+-       { "s3c6410-spi.1", "rx", (void *)"spi1_rx" },
++       { "samsung-pcm.1", "tx", (void *)&s3c64xx_dma1_info[0] },
++       { "samsung-pcm.1", "rx", (void *)&s3c64xx_dma1_info[1] },
++       { "samsung-i2s.1", "tx", (void *)&s3c64xx_dma1_info[2] },
++       { "samsung-i2s.1", "rx", (void *)&s3c64xx_dma1_info[3] },
++       { "s3c6410-spi.1", "tx", (void *)&s3c64xx_dma1_info[4] },
++       { "s3c6410-spi.1", "rx", (void *)&s3c64xx_dma1_info[5] },
+ };
+
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index d5c75c8..0d1eb2e 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -1793,6 +1793,23 @@ bool pl08x_filter_id(struct dma_chan *chan, void *chan_id)
+ }
+ EXPORT_SYMBOL_GPL(pl08x_filter_id);
+
++static bool pl08x_filter_fn(struct dma_chan *chan, void *chan_id)
++{
++       struct pl08x_dma_chan *plchan;
++
++       /* Reject channels for devices not bound to this driver */
++       if (chan->device->dev->driver != &pl08x_amba_driver.drv)
++               return false;
++
++       plchan = to_pl08x_chan(chan);
++
++       /* Check that the channel is not taken! */
++       if (plchan->cd == chan_id)
++               return true;
++
++       return false;
++}
++
+ /*
+  * Just check that the device is there and active
+  * TODO: turn this bit on/off depending on the number of physical channels
+@@ -2310,6 +2327,7 @@ static int pl08x_probe(struct amba_device *adev, const
+struct amba_id *id)
+        } else {
+                pl08x->slave.filter.map = pl08x->pd->slave_map;
+                pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
++               pl08x->slave.filter.fn = pl08x_filter_fn;
+        }
+
+        /* By default, AHB1 only.  If dualmaster, from platform */
+
+-------------->8-------------------
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Thanks,
+Sylwester
