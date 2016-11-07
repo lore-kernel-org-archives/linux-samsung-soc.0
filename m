@@ -1,78 +1,43 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/6] Add support for MAX8997 Clock Driver
-Date: Mon, 7 Nov 2016 19:27:34 +0200
-Message-ID: <20161107172734.GA4865@kozik-lap>
+Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+Date: Mon, 7 Nov 2016 19:41:58 +0200
+Message-ID: <20161107174158.GB4865@kozik-lap>
 References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36210 "EHLO
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34293 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932314AbcKGR1p (ORCPT
+        with ESMTP id S932540AbcKGRmE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 12:27:45 -0500
-Received: by mail-wm0-f65.google.com with SMTP id c17so17563963wmc.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2016 09:27:44 -0800 (PST)
+        Mon, 7 Nov 2016 12:42:04 -0500
 Content-Disposition: inline
-In-Reply-To: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, m.szyprowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 
-On Mon, Nov 07, 2016 at 03:39:30PM +0530, Pankaj Dubey wrote:
-> During recent test on Exynos4210 based Origen board, I observed
-> RTC1 probe is failing giving following error message:
+On Mon, Nov 07, 2016 at 03:39:33PM +0530, Pankaj Dubey wrote:
+> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+> accurate low frequency clock for MAX8997 internal circuit as well as
+> external circuit. This patch adds support for these two clocks.
 > 
-> [    2.195817] s3c-rtc 10070000.rtc: failed to find rtc source clock
-> [    2.200475] s3c-rtc: probe of 10070000.rtc failed with error -2
-> [    2.206597] i2c /dev entries driver
-> 
-> This is mainly because S3C-RTC expects two clocks "rtc" and "rtc_src".
-> In case of Origen board this second clock is supplied by MAX8997 clock
-> oscillator.
-> This patch series modified MAX8997 MFD driver for supporting regmap, and 
-> adds max8997-clk driver. Also it documentation where-ever required and
-> extends RTC node in exynos4210-origen.dts for supporting both clocks.
-> 
-> After this patch series, RTC is getting probed properly on Origen board.
-> 
-> This patch series is tested for SMP boot on Origen board.
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/clk/Kconfig                       | 10 ++++
+>  drivers/clk/Makefile                      |  1 +
+>  drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
 
-No need to re-invent the wheel:
-https://lkml.org/lkml/2016/6/17/57
-http://lists.infradead.org/pipermail/linux-arm-kernel/2016-June/437113.html
+You need to split the dt-bindings header into separate one so others
+could pull it.  Please also mention the dependencies between patches in
+cover letter, because it does not look like it could be applied as is.
 
-I won't be sending updates for these patches. Feel free to continue the
-work.
-
-BR,
+Best regards,
 Krzysztof
-
-> 
-> Pankaj Dubey (6):
->   mfd: max8997: Initialize max8997 register map
->   dt-bindings: clk: max8997: Add DT binding documentation
->   clk: Add driver for Maxim-8997 PMIC clocks
->   ARM: dts: Add clock provider specific properties to max8997 node
->   mfd: max8997: Add max8997-clk name in mfd_cell
->   ARM: dts: Extend the S3C RTC node with rtc_src clock
-> 
->  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 +++++++++++++
->  .../bindings/regulator/max8997-regulator.txt       |  3 +
->  arch/arm/boot/dts/exynos4210-origen.dts            |  6 +-
->  arch/arm/boot/dts/exynos4210-trats.dts             |  3 +-
->  drivers/clk/Kconfig                                | 10 +++
->  drivers/clk/Makefile                               |  1 +
->  drivers/clk/clk-max8997.c                          | 76 ++++++++++++++++++++++
->  drivers/mfd/max8997.c                              | 15 +++++
->  include/dt-bindings/clock/maxim,max8997.h          | 23 +++++++
->  include/linux/mfd/max8997-private.h                |  3 +
->  10 files changed, 182 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
->  create mode 100644 drivers/clk/clk-max8997.c
->  create mode 100644 include/dt-bindings/clock/maxim,max8997.h
-> 
-> -- 
-> 2.7.4
-> 
