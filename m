@@ -1,51 +1,142 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 6/6] ARM: dts: Extend the S3C RTC node with rtc_src clock
-Date: Mon, 7 Nov 2016 19:44:11 +0200
-Message-ID: <20161107174411.GC4865@kozik-lap>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: EXYNOS: Remove static mapping of SCU SFR
+Date: Mon, 7 Nov 2016 19:53:49 +0200
+Message-ID: <20161107175349.GD4865@kozik-lap>
+References: <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478230764-13748-4-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34809 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932550AbcKGRoU (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35904 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932679AbcKGRyC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 12:44:20 -0500
+        Mon, 7 Nov 2016 12:54:02 -0500
+Received: by mail-wm0-f68.google.com with SMTP id c17so17692142wmc.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2016 09:53:54 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
+In-Reply-To: <1478230764-13748-4-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com
 
-On Mon, Nov 07, 2016 at 03:39:36PM +0530, Pankaj Dubey wrote:
-> Extend the S3C RTC node with rtc_src clock so it could be operational.
-> The rtc_src clock is provided by MAX8997.
+On Fri, Nov 04, 2016 at 09:09:23AM +0530, Pankaj Dubey wrote:
+> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based boards.
+> Instead use mapping from device tree node of SCU.
 > 
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: devicetree@vger.kernel.org
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos4210-origen.dts | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm/mach-exynos/exynos.c                | 22 ----------------------
+>  arch/arm/mach-exynos/include/mach/map.h      |  2 --
+>  arch/arm/mach-exynos/platsmp.c               | 18 +++++++++++-------
+>  arch/arm/mach-exynos/pm.c                    | 14 +++++++++++---
+>  arch/arm/mach-exynos/suspend.c               | 15 +++++++++++----
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
+>  6 files changed, 33 insertions(+), 42 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-> index 6c7ef4e..4cac9b6 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -18,6 +18,7 @@
->  #include "exynos4210.dtsi"
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/clock/maxim,max8997.h>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 757fc11..fa08ef9 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -28,15 +28,6 @@
+>  
+>  #include "common.h"
+>  
+> -static struct map_desc exynos4_iodesc[] __initdata = {
+> -	{
+> -		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
+> -		.length		= SZ_8K,
+> -		.type		= MT_DEVICE,
+> -	},
+> -};
+> -
+>  static struct platform_device exynos_cpuidle = {
+>  	.name              = "exynos_cpuidle",
+>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> @@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+>  	return 1;
+>  }
+>  
+> -/*
+> - * exynos_map_io
+> - *
+> - * register the standard cpu IO areas
+> - */
+> -static void __init exynos_map_io(void)
+> -{
+> -	if (soc_is_exynos4())
+> -		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+> -}
+> -
+>  static void __init exynos_init_io(void)
+>  {
+>  	debug_ll_io_init();
+> @@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
+>  
+>  	/* detect cpu id and rev. */
+>  	s5p_init_cpu(S5P_VA_CHIPID);
+> -
+> -	exynos_map_io();
+>  }
+>  
+>  /*
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 5fb0040..0eef407 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -18,6 +18,4 @@
+>  
+>  #define EXYNOS_PA_CHIPID		0x10000000
+>  
+> -#define EXYNOS4_PA_COREPERI		0x10500000
+> -
+>  #endif /* __ASM_ARCH_MAP_H */
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index a5d6841..553d0d9 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -224,11 +224,6 @@ static void write_pen_release(int val)
+>  	sync_cache_w(&pen_release);
+>  }
+>  
+> -static void __iomem *scu_base_addr(void)
+> -{
+> -	return (void __iomem *)(S5P_VA_SCU);
+> -}
+> -
+>  static DEFINE_SPINLOCK(boot_lock);
+>  
+>  static void exynos_secondary_init(unsigned int cpu)
+> @@ -387,14 +382,23 @@ fail:
+>  
+>  static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+> +	struct device_node *np;
+> +	void __iomem *scu_base;
+>  	int i;
+>  
+>  	exynos_sysram_init();
+>  
+>  	exynos_set_delayed_reset_assertion(true);
+>  
+> -	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+> -		scu_enable(scu_base_addr());
+> +	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+> +		np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
+> +		scu_base = of_iomap(np, 0);
+> +		if (scu_base) {
+> +			scu_enable(scu_base);
+> +			iounmap(scu_base);
+> +		}
+> +		of_node_put(np);
 
-Just a nit: put the system-wide includes in alphabetical order, so
-clock, gpio and finally input. It helps reducing conflicting changes
-(when more people add includes in the same time).
+I do not like the duplication - this code appears in three places and
+they are the same. Could you split it into separate function?
 
-Beside that, looks good, but it requires a dt-bindings in separate patch
-so I could pull it.
+As you mentioned to Alim, in case of lack of node, it would be nice to notify the
+user (pr_err() etc).
 
 Best regards,
 Krzysztof
