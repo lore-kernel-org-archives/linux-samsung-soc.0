@@ -1,55 +1,78 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v7 1/2] soc: samsung: add exynos chipid driver support
-Date: Mon, 07 Nov 2016 09:32:43 +0100
-Message-ID: <1708820.kPMIhrYGr6@wuerfel>
-References: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com> <1478347427-28409-2-git-send-email-pankaj.dubey@samsung.com> <cafc255a-3bdb-7eb2-1092-545866752858@samsung.com>
+Date: Mon, 07 Nov 2016 09:35:19 +0100
+Message-ID: <2804574.ikPKivcpT9@wuerfel>
+References: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com> <1478347427-28409-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:56158 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.13]:57365 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbcKGIdi (ORCPT
+        with ESMTP id S1752406AbcKGIgC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 03:33:38 -0500
-In-Reply-To: <cafc255a-3bdb-7eb2-1092-545866752858@samsung.com>
+        Mon, 7 Nov 2016 03:36:02 -0500
+In-Reply-To: <1478347427-28409-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, geert+renesas@glider.be, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, geert+renesas@glider.be, Linus Walleij <linus.walleij@linaro.org>, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, m.szyprowski@samsung.com
 
-On Monday, November 7, 2016 8:35:47 AM CET Marek Szyprowski wrote:
-> This approach is a bit error prone. You have already missed Exynos5410
-> and early Exynos 4210 are not detected because of the incorrect SOC MASK.
-> IMHO you should replace above code and defines with a simple array,
-> where each ID is present only once, so it will be much easier to add
-> future SoCs:
+On Saturday, November 5, 2016 5:33:46 PM CET Pankaj Dubey wrote:
+> Exynos SoCs have Chipid, for identification of product IDs
+> and SoC revisions. This patch intends to provide initialization
+> code for all these functionalities, at the same time it provides some
+> sysfs entries for accessing these information to user-space.
 > 
-> static const struct exynos_soc_id {
->          const char *name;
->          unsigned int id;
->          unsigned int mask;
-> } soc_ids[] = {
->          { "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
->          { "EXYNOS4210", 0x43200000, 0xFFFE0000 },
->          { "EXYNOS4212", 0x43220000, 0xFFFE0000 },
->          { "EXYNOS4412", 0xE4412000, 0xFFFE0000 },
->          { "EXYNOS4415", 0xE4415000, 0xFFFE0000 },
->          { "EXYNOS5250", 0x43520000, 0xFFFFF000 },
->          { "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
->          { "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
->          { "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
->          { "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
->          { "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
-> };
-
-Good idea
-
+> This driver uses existing binding for exynos-chipid.
 > 
-> I'm also not sure about Exynos 4415, which has been scheduled for removal.
+> CC: Grant Likely <grant.likely@linaro.org>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/soc/samsung/Kconfig         |   5 ++
+>  drivers/soc/samsung/Makefile        |   1 +
+>  drivers/soc/samsung/exynos-chipid.c | 148 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 drivers/soc/samsung/exynos-chipid.c
+> 
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 2455339..f9ab858 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -14,4 +14,9 @@ config EXYNOS_PM_DOMAINS
+>  	bool "Exynos PM domains" if COMPILE_TEST
+>  	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+>  
+> +config EXYNOS_CHIPID
+> +	bool "Exynos Chipid controller driver" if COMPILE_TEST
+> +	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+> +	select SOC_BUS
+> +
 
-I'd vote for leaving it in the driver, and possibly adding other
-models even if we don't support them in the other drivers, if
-only for documentation purposes.
+Please add a help text.
+
+Why is this not enabled for ARM64 EXYNOS?
+
+> +	exynos_chipid_base = of_iomap(np, 0);
+> +
+> +	if (!exynos_chipid_base)
+> +		return PTR_ERR(exynos_chipid_base);
+> +
+> +	product_id  = __raw_readl(exynos_chipid_base);
+> +	revision = product_id & EXYNOS_REV_MASK;
+> +	iounmap(exynos_chipid_base);
+
+Never use __raw_readl/__raw_writel in device drivers, they are not endian
+safe, and we just removed all instances for Exynos a while back.
+
+> +	return 0;
+> +}
+> +early_initcall(exynos_chipid_early_init);
+> 
+
+Why is this early? Please add a code comment if it's really needed to be
+an early_initcall, otherwise make it a device_initcall.
 
 	Arnd
