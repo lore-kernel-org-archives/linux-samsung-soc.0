@@ -1,97 +1,45 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding documentation
-Date: Mon, 07 Nov 2016 15:39:32 +0530
-Message-ID: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 5/6] mfd: max8997: Add max8997-clk name in mfd_cell
+Date: Mon, 07 Nov 2016 15:39:35 +0530
+Message-ID: <1478513376-14307-6-git-send-email-pankaj.dubey@samsung.com>
 References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:41223 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751134AbcKGKGr (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 7 Nov 2016 05:06:47 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OG902MV7O330X00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 07 Nov 2016 19:06:45 +0900 (KST)
+In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Lee Jones <lee.jones@linaro.org>
 
-Add Device Tree binding documentation for the clocks
-outputs in the Maxim-8997 Power Management IC.
+This patch add max8997-clk in mfd_cell max8997_devs in order to probe
+max8997-clk device driver.
 
-CC: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-CC: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-CC: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+CC: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
- .../bindings/regulator/max8997-regulator.txt       |  3 ++
- 2 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
+ drivers/mfd/max8997.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-new file mode 100644
-index 0000000..d2e2a74
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-@@ -0,0 +1,44 @@
-+Binding for Maxim MAX8997 32k clock generator block
-+
-+This is a part of device tree bindings of MAX8997 multi-function device.
-+More information can be found in bindings/regulator/max8997-regulator.txt file.
-+
-+The MAX8997 contains two 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
-+
-+Following properties should be presend in main device node of the MFD chip.
-+
-+Required properties:
-+
-+- #clock-cells: from common clock binding; shall be set to 1.
-+
-+Optional properties:
-+- clock-output-names: From common clock binding.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. Following indices are allowed:
-+    - 0: 32khz_ap clock,
-+    - 1: 32khz_cp clock,
-+
-+Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
-+header and can be used in device tree sources.
-+
-+Example: Node of the MFD chip
-+
-+	max8997: max8997_pmic@66 {
-+		compatible = "maxim,max8997-pmic";
-+		reg = <0x66>;
-+		interrupt-parent = <&gpx0>;
-+		interrupts = <4 0>, <3 0>;
-+		#clock-cells = <1>;
-+		/* ... */
-+	};
-+
-+Example: Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clocks = <&max8997 MAX8997_CLK_AP>;
-+		clock-names = "my-clock";
-+	};
-diff --git a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-index 5c186a7..af1f9c0 100644
---- a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-@@ -6,6 +6,9 @@ interfaced to the host controller using a i2c interface. Each sub-block is
- addressed by the host system using different i2c slave address. This document
- describes the bindings for 'pmic' sub-block of max8997.
+diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+index bda9ec8..4b809f8 100644
+--- a/drivers/mfd/max8997.c
++++ b/drivers/mfd/max8997.c
+@@ -48,6 +48,7 @@ static const struct mfd_cell max8997_devs[] = {
+ 	{ .name = "max8997-muic", },
+ 	{ .name = "max8997-led", .id = 1 },
+ 	{ .name = "max8997-led", .id = 2 },
++	{ .name = "max8997-clk",},
+ };
  
-+Binding for the built-in 32k clock generator block is defined separately
-+in bindings/clk/maxim,max8997.txt file
-+
- Required properties:
- - compatible: Should be "maxim,max8997-pmic".
- - reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
+ #ifdef CONFIG_OF
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
