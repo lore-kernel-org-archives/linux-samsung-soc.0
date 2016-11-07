@@ -1,43 +1,51 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
-Date: Mon, 7 Nov 2016 19:41:58 +0200
-Message-ID: <20161107174158.GB4865@kozik-lap>
+Subject: Re: [PATCH 6/6] ARM: dts: Extend the S3C RTC node with rtc_src clock
+Date: Mon, 7 Nov 2016 19:44:11 +0200
+Message-ID: <20161107174411.GC4865@kozik-lap>
 References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34293 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932540AbcKGRmE (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34809 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932550AbcKGRoU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 12:42:04 -0500
+        Mon, 7 Nov 2016 12:44:20 -0500
 Content-Disposition: inline
-In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+In-Reply-To: <1478513376-14307-7-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 
-On Mon, Nov 07, 2016 at 03:39:33PM +0530, Pankaj Dubey wrote:
-> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
-> accurate low frequency clock for MAX8997 internal circuit as well as
-> external circuit. This patch adds support for these two clocks.
+On Mon, Nov 07, 2016 at 03:39:36PM +0530, Pankaj Dubey wrote:
+> Extend the S3C RTC node with rtc_src clock so it could be operational.
+> The rtc_src clock is provided by MAX8997.
 > 
-> CC: Michael Turquette <mturquette@baylibre.com>
 > CC: Rob Herring <robh+dt@kernel.org>
 > CC: devicetree@vger.kernel.org
-> CC: linux-clk@vger.kernel.org
 > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > ---
->  drivers/clk/Kconfig                       | 10 ++++
->  drivers/clk/Makefile                      |  1 +
->  drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
+>  arch/arm/boot/dts/exynos4210-origen.dts | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 6c7ef4e..4cac9b6 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -18,6 +18,7 @@
+>  #include "exynos4210.dtsi"
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+> +#include <dt-bindings/clock/maxim,max8997.h>
 
-You need to split the dt-bindings header into separate one so others
-could pull it.  Please also mention the dependencies between patches in
-cover letter, because it does not look like it could be applied as is.
+Just a nit: put the system-wide includes in alphabetical order, so
+clock, gpio and finally input. It helps reducing conflicting changes
+(when more people add includes in the same time).
+
+Beside that, looks good, but it requires a dt-bindings in separate patch
+so I could pull it.
 
 Best regards,
 Krzysztof
