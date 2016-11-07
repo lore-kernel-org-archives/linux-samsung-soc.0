@@ -1,51 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
-Date: Mon, 7 Nov 2016 12:01:29 -0300
-Message-ID: <63750c2f-35cb-91ab-276b-c788f51081cb@osg.samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: dts: Add clock provider specific properties to
+ max8997 node
+Date: Mon, 7 Nov 2016 12:07:32 -0300
+Message-ID: <ef27992b-87a0-6d18-35cc-83360e6d677a@osg.samsung.com>
 References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-5-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, thomas.ab@samsung.com, kgene@kernel.org, Michael Turquette <mturquette@baylibre.com>, krzk@kernel.org, Rob Herring <robh+dt@kernel.org>, myungjoo.ham@samsung.com, linux-clk@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1478513376-14307-5-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Pankaj,
 
 On 11/07/2016 07:09 AM, Pankaj Dubey wrote:
-> The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
-> accurate low frequency clock for MAX8997 internal circuit as well as
-> external circuit. This patch adds support for these two clocks.
+> This patch adds a label and #clock-cells property to device node of
+> max8997 PMIC to allow using it as a clock provider.
 > 
-> CC: Michael Turquette <mturquette@baylibre.com>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: devicetree@vger.kernel.org
-> CC: linux-clk@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> CC: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
+>  arch/arm/boot/dts/exynos4210-origen.dts | 3 ++-
+>  arch/arm/boot/dts/exynos4210-trats.dts  | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index cb3a255..6c7ef4e 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -147,11 +147,12 @@
+>  	pinctrl-0 = <&i2c0_bus>;
+>  	pinctrl-names = "default";
+>  
+> -	max8997_pmic@66 {
+> +	max8997: max8997_pmic@66 {
 
-What kernel version are you basing this on? The Maxim common clock code
-is going away for v4.9 and instead the clk-max77686 driver supports both
-77686 and 77802 clocks. See commit 8ad313fe4e00 ("clk: max77686: Combine
-Maxim max77686 and max77802 driver").
+The ePAPR says that the node name should be "somewhat generic, reflecting
+the function of the device and not its precise programming model". So I
+think this should be instead:
 
-Since the 8997 clock IP looks very similar to 77802 AFAICT, you should
-also extend the clk-max77686 driver to have 8997 support.
+        max8997: pmic@66 {
+
+[...]
+  
+> -	max8997_pmic@66 {
+> +	max8997: max8997_pmic@66 {
+
+Same here.
+
+The rest looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
