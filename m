@@ -1,131 +1,181 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 0/7] soc: renesas: Identify SoC and register with the
- SoC bus
-Date: Mon, 7 Nov 2016 10:35:31 +0100
-Message-ID: <CAMuHMdV4HG0aOr4Qp_OZXU=3jLeOJ2QaMKp09a3v4489ABbRcA@mail.gmail.com>
-References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yangbo Lu <yangbo.lu@nxp.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dirk Behme <dirk.behme@de.bosch.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 3/6] clk: Add driver for Maxim-8997 PMIC clocks
+Date: Mon, 07 Nov 2016 15:39:33 +0530
+Message-ID: <1478513376-14307-4-git-send-email-pankaj.dubey@samsung.com>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 31, 2016 at 12:30 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Some Renesas SoCs may exist in different revisions, providing slightly
-> different functionalities (e.g. R-Car H3 ES1.x and ES2.0), and behavior
-> (errate and quirks).  This needs to be catered for by drivers and/or
-> platform code.  The recently proposed soc_device_match() API seems like
-> a good fit to handle this.
->
-> This patch series implements the core infrastructure to provide SoC and
-> revision information through the SoC bus for Renesas ARM SoCs. It
-> consists of 7 patches:
->   - Patches 1-4 provide soc_device_match(), with some related fixes,
->   - Patches 5-7 implement identification of Renesas SoCs and
->     registration with the SoC bus,
->
-> Changes compared to v1:
->   - Add Acked-by,
->   - New patches:
->       - "[4/7] base: soc: Provide a dummy implementation of
->                soc_device_match()",
->       - "[5/7] ARM: shmobile: Document DT bindings for CCCR and PRR",
->       - "[6/7] arm64: dts: r8a7795: Add device node for PRR"
->         (more similar patches available, I'm not yet spamming you all
->          with them),
->   - Drop SoC families and family names; use fixed "Renesas" instead,
->   - Drop EMEV2, which doesn't have a chip ID register, and doesn't share
->     devices with other SoCs,
->   - Drop RZ/A1H and R-CAR M1A, which don't have chip ID registers (for
->     M1A: not accessible from the ARM core?),
->   - On arm, move "select SOC_BUS" from ARCH_RENESAS to Kconfig symbols
->     for SoCs that provide a chip ID register,
->   - Build renesas-soc only if SOC_BUS is enabled,
->   - Use "renesas,prr" and "renesas,cccr" device nodes in DT if
->     available, else fall back to hardcoded addresses for compatibility
->     with existing DTBs,
->   - Remove verification of product IDs; just print the ID instead,
->   - Don't register the SoC bus if the chip ID register is missing,
->   - Change R-Mobile APE6 fallback to use PRR instead of CCCR (it has
->     both).
->
-> Merge strategy:
->   - In theory, patches 1-4 should go through Greg's driver core tree.
->     But it's a hard dependency for all users.
->     If people agree, I can provide an immutable branch in my
->     renesas-drivers repository, to be merged by all interested parties.
->     So far I'm aware of Freescale/NXP, and Renesas.
+The MAX8997 PMIC has 32.786kHz crystal oscillator which provides an
+accurate low frequency clock for MAX8997 internal circuit as well as
+external circuit. This patch adds support for these two clocks.
 
-And Samsung.
-Shall I create the immutable branch now?
+CC: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+CC: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+CC: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/clk/Kconfig                       | 10 ++++
+ drivers/clk/Makefile                      |  1 +
+ drivers/clk/clk-max8997.c                 | 76 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/maxim,max8997.h | 23 ++++++++++
+ 4 files changed, 110 insertions(+)
+ create mode 100644 drivers/clk/clk-max8997.c
+ create mode 100644 include/dt-bindings/clock/maxim,max8997.h
 
-Thanks!
-
->   - Patches 5-7 obviously have to go through Simon's Renesas tree (after
->     merging the soc_device_match() core), and arm-soc.
->
-> Tested on (machine, soc_id, optional revision):
->     EMEV2 KZM9D Board, emev2
->     Genmai, r7s72100
->     APE6EVM, r8a73a4, ES1.0
->     armadillo 800 eva, r8a7740, ES2.0
->     bockw, r8a7778
->     marzen, r8a7779, ES1.0
->     Lager, r8a7790, ES1.0
->     Koelsch, r8a7791, ES1.0
->     Porter, r8a7791, ES3.0
->     Blanche, r8a7792, ES1.1
->     Gose, r8a7793, ES1.0
->     Alt, r8a7794, ES1.0
->     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.0
->     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.1
->     Renesas Salvator-X board based on r8a7796, r8a7796, ES1.0
->     KZM-A9-GT, sh73a0, ES2.0
->
-> For your convenience, this series (incl. more DT updates to add device
-> nodes for CCCR and PRR to all other Renesas ARM SoCs) is also available
-> in the topic/renesas-soc-id-v2 branch of my renesas-drivers git
-> repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-> Its first user is support for R-Car H3 ES2.0 in branch
-> topic/r8a7795-es2-v1-rebased2.
->
-> Thanks for your comments!
->
-> Arnd Bergmann (1):
->   base: soc: Introduce soc_device_match() interface
->
-> Geert Uytterhoeven (6):
->   base: soc: Early register bus when needed
->   base: soc: Check for NULL SoC device attributes
->   base: soc: Provide a dummy implementation of soc_device_match()
->   ARM: shmobile: Document DT bindings for CCCR and PRR
->   arm64: dts: r8a7795: Add device node for PRR
->   soc: renesas: Identify SoC and register with the SoC bus
->
->  Documentation/devicetree/bindings/arm/shmobile.txt |  26 +++++
->  arch/arm/mach-shmobile/Kconfig                     |   3 +
->  arch/arm64/Kconfig.platforms                       |   1 +
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   5 +
->  drivers/base/Kconfig                               |   1 +
->  drivers/base/soc.c                                 |  79 +++++++++++++
->  drivers/soc/renesas/Makefile                       |   2 +
->  drivers/soc/renesas/renesas-soc.c                  | 130 +++++++++++++++++++++
->  include/linux/sys_soc.h                            |   9 ++
->  9 files changed, 256 insertions(+)
->  create mode 100644 drivers/soc/renesas/renesas-soc.c
-
-Gr{oetje,eeting}s,
-
-                        Geert
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e2d9bd7..5339cbe 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -48,6 +48,16 @@ config COMMON_CLK_MAX77802
+ 	---help---
+ 	  This driver supports Maxim 77802 crystal oscillator clock.
+ 
++config COMMON_CLK_MAX8997
++	tristate "Clock driver for Maxim 8997 MFD"
++	depends on MFD_MAX8997
++	select COMMON_CLK_MAX_GEN
++	---help---
++	  This driver supports Maxim 8997 crystal oscillator clock.
++	  The 32.768kHz crystal oscillator clock provides an accurate
++	  low frequency clock for MAX8997 internal circuit as well as
++	  external circuit.
++
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK808/RK818"
+ 	depends on MFD_RK808
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3b6f9cf..1cfa9ab 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_MACH_LOONGSON32)		+= clk-ls1x.o
+ obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_COMMON_CLK_MAX77802)	+= clk-max77802.o
++obj-$(CONFIG_COMMON_CLK_MAX8997)	+= clk-max8997.o
+ obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+diff --git a/drivers/clk/clk-max8997.c b/drivers/clk/clk-max8997.c
+new file mode 100644
+index 0000000..9158354
+--- /dev/null
++++ b/drivers/clk/clk-max8997.c
+@@ -0,0 +1,76 @@
++/*
++ * clk-max8997.c - Clock driver for Maxim 8997
++ *
++ * Copyright (C) 2016 Samsung Electornics
++ * Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/max8997.h>
++#include <linux/mfd/max8997-private.h>
++#include <linux/clk-provider.h>
++#include <linux/mutex.h>
++#include <linux/clkdev.h>
++
++#include <dt-bindings/clock/maxim,max8997.h>
++#include "clk-max-gen.h"
++
++static struct clk_init_data max8997_clks_init[MAX8997_CLKS_NUM] = {
++	[MAX8997_CLK_AP] = {
++		.name = "32khz_ap",
++		.ops = &max_gen_clk_ops,
++	},
++	[MAX8997_CLK_CP] = {
++		.name = "32khz_cp",
++		.ops = &max_gen_clk_ops,
++	},
++};
++
++static int max8997_clk_probe(struct platform_device *pdev)
++{
++	struct max8997_dev *iodev = dev_get_drvdata(pdev->dev.parent);
++
++	return max_gen_clk_probe(pdev, iodev->regmap, MAX8997_REG_MAINCON1,
++				 max8997_clks_init, MAX8997_CLKS_NUM);
++}
++
++static int max8997_clk_remove(struct platform_device *pdev)
++{
++	return max_gen_clk_remove(pdev, MAX8997_CLKS_NUM);
++}
++
++static const struct platform_device_id max8997_clk_id[] = {
++	{ "max8997-clk", 0},
++	{ },
++};
++MODULE_DEVICE_TABLE(platform, max8997_clk_id);
++
++static struct platform_driver max8997_clk_driver = {
++	.driver = {
++		.name  = "max8997-clk",
++	},
++	.probe = max8997_clk_probe,
++	.remove = max8997_clk_remove,
++	.id_table = max8997_clk_id,
++};
++
++module_platform_driver(max8997_clk_driver);
++
++MODULE_DESCRIPTION("MAXIM 8997 Clock Driver");
++MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_LICENSE("GPL");
+diff --git a/include/dt-bindings/clock/maxim,max8997.h b/include/dt-bindings/clock/maxim,max8997.h
+new file mode 100644
+index 0000000..f2dd972
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max8997.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *	Author: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Maxim 8997 PMIC.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H
++#define _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H
++
++/* Fixed rate clocks. */
++
++#define MAX8997_CLK_AP		0
++#define MAX8997_CLK_CP		1
++
++/* Total number of clocks. */
++#define MAX8997_CLKS_NUM		(MAX8997_CLK_CP + 1)
++
++#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX8997_CLOCK_H */
+-- 
+2.7.4
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
