@@ -1,134 +1,131 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v7 2/2] ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
-Date: Mon, 07 Nov 2016 09:56:09 +0100
-Message-ID: <8265239.AocGIQzL5f@wuerfel>
-References: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com> <1478347427-28409-3-git-send-email-pankaj.dubey@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/7] soc: renesas: Identify SoC and register with the
+ SoC bus
+Date: Mon, 7 Nov 2016 10:35:31 +0100
+Message-ID: <CAMuHMdV4HG0aOr4Qp_OZXU=3jLeOJ2QaMKp09a3v4489ABbRcA@mail.gmail.com>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:63540 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbcKGI46 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 03:56:58 -0500
-In-Reply-To: <1478347427-28409-3-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yangbo Lu <yangbo.lu@nxp.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dirk Behme <dirk.behme@de.bosch.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, geert+renesas@glider.be, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, m.szyprowski@samsung.com
 
-On Saturday, November 5, 2016 5:33:47 PM CET Pankaj Dubey wrote:
-> This patch enables chipid driver for ARCH_EXYNOS and refactors
-> machine code for using chipid driver for identification of
-> SoC ID and SoC rev.
-> 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig                 |  1 +
->  arch/arm/mach-exynos/common.h                | 92 ----------------------------
->  arch/arm/mach-exynos/exynos.c                | 31 ----------
->  arch/arm/mach-exynos/firmware.c              | 10 +--
->  arch/arm/mach-exynos/include/mach/map.h      | 21 -------
->  arch/arm/mach-exynos/platsmp.c               | 22 ++++---
->  arch/arm/mach-exynos/pm.c                    | 41 ++++++++-----
->  arch/arm/plat-samsung/cpu.c                  | 14 -----
->  arch/arm/plat-samsung/include/plat/cpu.h     |  2 -
->  arch/arm/plat-samsung/include/plat/map-s5p.h |  2 -
->  10 files changed, 47 insertions(+), 189 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
+On Mon, Oct 31, 2016 at 12:30 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Some Renesas SoCs may exist in different revisions, providing slightly
+> different functionalities (e.g. R-Car H3 ES1.x and ES2.0), and behavior
+> (errate and quirks).  This needs to be catered for by drivers and/or
+> platform code.  The recently proposed soc_device_match() API seems like
+> a good fit to handle this.
+>
+> This patch series implements the core infrastructure to provide SoC and
+> revision information through the SoC bus for Renesas ARM SoCs. It
+> consists of 7 patches:
+>   - Patches 1-4 provide soc_device_match(), with some related fixes,
+>   - Patches 5-7 implement identification of Renesas SoCs and
+>     registration with the SoC bus,
+>
+> Changes compared to v1:
+>   - Add Acked-by,
+>   - New patches:
+>       - "[4/7] base: soc: Provide a dummy implementation of
+>                soc_device_match()",
+>       - "[5/7] ARM: shmobile: Document DT bindings for CCCR and PRR",
+>       - "[6/7] arm64: dts: r8a7795: Add device node for PRR"
+>         (more similar patches available, I'm not yet spamming you all
+>          with them),
+>   - Drop SoC families and family names; use fixed "Renesas" instead,
+>   - Drop EMEV2, which doesn't have a chip ID register, and doesn't share
+>     devices with other SoCs,
+>   - Drop RZ/A1H and R-CAR M1A, which don't have chip ID registers (for
+>     M1A: not accessible from the ARM core?),
+>   - On arm, move "select SOC_BUS" from ARCH_RENESAS to Kconfig symbols
+>     for SoCs that provide a chip ID register,
+>   - Build renesas-soc only if SOC_BUS is enabled,
+>   - Use "renesas,prr" and "renesas,cccr" device nodes in DT if
+>     available, else fall back to hardcoded addresses for compatibility
+>     with existing DTBs,
+>   - Remove verification of product IDs; just print the ID instead,
+>   - Don't register the SoC bus if the chip ID register is missing,
+>   - Change R-Mobile APE6 fallback to use PRR instead of CCCR (it has
+>     both).
+>
+> Merge strategy:
+>   - In theory, patches 1-4 should go through Greg's driver core tree.
+>     But it's a hard dependency for all users.
+>     If people agree, I can provide an immutable branch in my
+>     renesas-drivers repository, to be merged by all interested parties.
+>     So far I'm aware of Freescale/NXP, and Renesas.
 
-Nice code removal!
+And Samsung.
+Shall I create the immutable branch now?
 
-> -
->  static void __init exynos_init_io(void)
->  {
->  	debug_ll_io_init();
-> -
-> -	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
-> -
-> -	/* detect cpu id and rev. */
-> -	s5p_init_cpu(S5P_VA_CHIPID);
->  }
+Thanks!
 
-This is now the default for .map_io, so you can remove the rest of the
-function as well and do
+>   - Patches 5-7 obviously have to go through Simon's Renesas tree (after
+>     merging the soc_device_match() core), and arm-soc.
+>
+> Tested on (machine, soc_id, optional revision):
+>     EMEV2 KZM9D Board, emev2
+>     Genmai, r7s72100
+>     APE6EVM, r8a73a4, ES1.0
+>     armadillo 800 eva, r8a7740, ES2.0
+>     bockw, r8a7778
+>     marzen, r8a7779, ES1.0
+>     Lager, r8a7790, ES1.0
+>     Koelsch, r8a7791, ES1.0
+>     Porter, r8a7791, ES3.0
+>     Blanche, r8a7792, ES1.1
+>     Gose, r8a7793, ES1.0
+>     Alt, r8a7794, ES1.0
+>     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.0
+>     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.1
+>     Renesas Salvator-X board based on r8a7796, r8a7796, ES1.0
+>     KZM-A9-GT, sh73a0, ES2.0
+>
+> For your convenience, this series (incl. more DT updates to add device
+> nodes for CCCR and PRR to all other Renesas ARM SoCs) is also available
+> in the topic/renesas-soc-id-v2 branch of my renesas-drivers git
+> repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+> Its first user is support for R-Car H3 ES2.0 in branch
+> topic/r8a7795-es2-v1-rebased2.
+>
+> Thanks for your comments!
+>
+> Arnd Bergmann (1):
+>   base: soc: Introduce soc_device_match() interface
+>
+> Geert Uytterhoeven (6):
+>   base: soc: Early register bus when needed
+>   base: soc: Check for NULL SoC device attributes
+>   base: soc: Provide a dummy implementation of soc_device_match()
+>   ARM: shmobile: Document DT bindings for CCCR and PRR
+>   arm64: dts: r8a7795: Add device node for PRR
+>   soc: renesas: Identify SoC and register with the SoC bus
+>
+>  Documentation/devicetree/bindings/arm/shmobile.txt |  26 +++++
+>  arch/arm/mach-shmobile/Kconfig                     |   3 +
+>  arch/arm64/Kconfig.platforms                       |   1 +
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   5 +
+>  drivers/base/Kconfig                               |   1 +
+>  drivers/base/soc.c                                 |  79 +++++++++++++
+>  drivers/soc/renesas/Makefile                       |   2 +
+>  drivers/soc/renesas/renesas-soc.c                  | 130 +++++++++++++++++++++
+>  include/linux/sys_soc.h                            |   9 ++
+>  9 files changed, 256 insertions(+)
+>  create mode 100644 drivers/soc/renesas/renesas-soc.c
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 757fc11de30d..808872981f45 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -234,7 +234,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.l2c_aux_val	= 0x3c400001,
- 	.l2c_aux_mask	= 0xc20fffff,
- 	.smp		= smp_ops(exynos_smp_ops),
--	.map_io		= exynos_init_io,
- 	.init_early	= exynos_firmware_init,
- 	.init_irq	= exynos_init_irq,
- 	.init_machine	= exynos_dt_machine_init,
+Gr{oetje,eeting}s,
 
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index fd6da54..a9f8504e 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -44,7 +44,7 @@ static int exynos_do_idle(unsigned long mode)
->  		writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
->  			       sysram_ns_base_addr + 0x24);
->  		writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
-> -		if (soc_is_exynos3250()) {
-> +		if (of_machine_is_compatible("samsung,exynos3250")) {
->  			flush_cache_all();
->  			exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
->  				   SMC_POWERSTATE_IDLE, 0);
+                        Geert
 
-I'd rather not see a proliferation of many such checks. Please try
-to rework it to have fewer checks, e.g. by having a separate instance
-of "struct firmware_ops" for each incompatible variant and making the
-decision once.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->  
-> +static struct soc_device_attribute exynos4210_rev11[] = {
-> +	{ .soc_id = "EXYNOS4210", .revision = "11", },
-> +	{ },
-> +};
-> +
->  static void __iomem *cpu_boot_reg_base(void)
->  {
-> -	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-> +	if (soc_device_match(exynos4210_rev11))
->  		return pmu_base_addr + S5P_INFORM5;
->  	return sysram_base_addr;
->  }
-> @@ -182,9 +187,10 @@ static inline void __iomem *cpu_boot_reg(int cpu)
->  	boot_reg = cpu_boot_reg_base();
->  	if (!boot_reg)
->  		return IOMEM_ERR_PTR(-ENODEV);
-> -	if (soc_is_exynos4412())
-> +	if (of_machine_is_compatible("samsung,exynos4412"))
->  		boot_reg += 4*cpu;
-> -	else if (soc_is_exynos5420() || soc_is_exynos5800())
-> +	else if (of_machine_is_compatible("samsung,exynos5420") ||
-> +			of_machine_is_compatible("samsung,exynos5800"))
->  		boot_reg += 4;
->  	return boot_reg;
->  }
-
-Same here, it would be nicer to rework the code to compute the address
-once while called from a place where you already know this information
-and then store the register address.
-
->  
-> +static struct soc_device_attribute exynos4210_rev11[] = {
-> +	{ .soc_id = "EXYNOS4210", .revision = "11", },
-> +	{ },
-> +};
-> +
-> +static struct soc_device_attribute exynos4210_rev10[] = {
-> +	{ .soc_id = "EXYNOS4210", .revision = "10", },
-> +	{ },
-> +};
-
-Please use a single 'soc_device_attribute' table and make use
-of the .data field to encode the difference.
-
-	Arnd
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
