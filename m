@@ -1,66 +1,58 @@
 From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
-Date: Tue, 8 Nov 2016 14:44:45 +0000
-Message-ID: <20161108144445.GD1575@localhost.localdomain>
+Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080
+ devices
+Date: Tue, 8 Nov 2016 14:55:34 +0000
+Message-ID: <20161108145534.GE1575@localhost.localdomain>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
  <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
+ <20161108144445.GD1575@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:37535 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751479AbcKHO4U (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 8 Nov 2016 09:56:20 -0500
 Content-Disposition: inline
-In-Reply-To: <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, vinod.koul@intel.com, sbkim73@samsung.com, andi.shyti@samsung.com, javier@osg.samsung.com, broonie@kernel.org, kgene@kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ym0914@gmail.com
+In-Reply-To: <20161108144445.GD1575@localhost.localdomain>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Fri, Nov 04, 2016 at 05:14:49PM +0100, Sylwester Nawrocki wrote:
-> This patch adds DMA slave map tables to the pl080 devices's
-> platform_data in order to support the new channel request API.
-> A few devices for which there was no DMA support with current
-> code are omitted from the tables.
+On Tue, Nov 08, 2016 at 02:44:45PM +0000, Charles Keepax wrote:
+> On Fri, Nov 04, 2016 at 05:14:49PM +0100, Sylwester Nawrocki wrote:
+> > This patch adds DMA slave map tables to the pl080 devices's
+> > platform_data in order to support the new channel request API.
+> > A few devices for which there was no DMA support with current
+> > code are omitted from the tables.
+> > 
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > ---
+> >  arch/arm/mach-s3c64xx/pl080.c | 32 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 32 insertions(+)
+> > 
+> > diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
+> > index 89c5a62..8c88680 100644
+> > --- a/arch/arm/mach-s3c64xx/pl080.c
+> > +++ b/arch/arm/mach-s3c64xx/pl080.c
+> <snip>
+> > @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
+> >  	.put_xfer_signal = pl08x_put_xfer_signal,
+> >  	.slave_channels = s3c64xx_dma0_info,
+> >  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
+> > +	.slave_map = s3c64xx_dma0_slave_map,
+> > +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
+> >  };
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/mach-s3c64xx/pl080.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+> Here we add a .slavecnt but the pl08x_platform_data structure doesn't
+> contain that field. I can't see it on the branch you linked in
+> the cover letter either, is it added by a patch on another branch
+> I am missing?
 > 
-> diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
-> index 89c5a62..8c88680 100644
-> --- a/arch/arm/mach-s3c64xx/pl080.c
-> +++ b/arch/arm/mach-s3c64xx/pl080.c
-<snip>
-> @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
->  	.put_xfer_signal = pl08x_put_xfer_signal,
->  	.slave_channels = s3c64xx_dma0_info,
->  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
-> +	.slave_map = s3c64xx_dma0_slave_map,
-> +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
->  };
 
-Here we add a .slavecnt but the pl08x_platform_data structure doesn't
-contain that field. I can't see it on the branch you linked in
-the cover letter either, is it added by a patch on another branch
-I am missing?
-
-> @@ -224,6 +254,8 @@ struct pl08x_platform_data s3c64xx_dma1_plat_data = {
->  	.put_xfer_signal = pl08x_put_xfer_signal,
->  	.slave_channels = s3c64xx_dma1_info,
->  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma1_info),
-> +	.slave_map = s3c64xx_dma1_slave_map,
-> +	.slavecnt = ARRAY_SIZE(s3c64xx_dma1_slave_map),
->  };
-
-ditto.
+Ah I think I see it should be .slave_map_len here.
 
 Thanks,
 Charles
