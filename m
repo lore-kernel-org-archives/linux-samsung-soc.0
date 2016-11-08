@@ -1,51 +1,30 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel
- request API
-Date: Tue, 08 Nov 2016 17:02:43 +0100
-Message-ID: <fbb81b22-48f7-5948-a48e-2375e2414efb@samsung.com>
-References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
- <CGME20161108154037epcas4p34b3004ca2ffb63275be42edec4c91f6e@epcas4p3.samsung.com>
- <20161108153949.GF1575@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 0/3] ARM: exynos: Stuff for v4.10
+Date: Tue,  8 Nov 2016 20:26:26 +0200
+Message-ID: <1478629589-7520-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20859 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbcKHQCt (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:54084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752194AbcKHS0p (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 11:02:49 -0500
-In-reply-to: <20161108153949.GF1575@localhost.localdomain>
+        Tue, 8 Nov 2016 13:26:45 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 11/08/2016 04:39 PM, Charles Keepax wrote:
-> Hmm... fixing the bug I mentioned in my other email this still
-> seems to cause some problems with my SPI on Cragganmore:
-> 
-> [  200.210213] wm0010 spi0.0: I/O Error: rx-1 tx-1 res:rx-f tx-f len-2632
-> [  200.211275] wm0010 spi0.0: SPI transfer failed: -5
-> 
-> I am still looking into it, without your patches work the wm0010
-> comes up. A few other small things seem to have been broken in
-> mainline since last time I fired up this board as well which is
-> slowing me down a little (network seems to have stopped coming
-> up and one of the regulators on the SD card is spamming me with
-> warnings).
+Hi,
 
-Thanks for giving it a try.  Is it any better with a change as below?
+Two weeks ago it looked it will be very boring merge window for Samsung,
+but luckily it is not!
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index d5c75c8..d441c4b 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2310,6 +2310,7 @@ static int pl08x_probe(struct amba_device *adev, const
-struct amba_id *id)
-        } else {
-                pl08x->slave.filter.map = pl08x->pd->slave_map;
-                pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
-+               pl08x->slave.filter.fn = pl08x_filter_id;
-        }
+So far we got Exynos5433 and two boards on it. ARMv7 got one board
+using Exynos4412.
+
+I am pushing this patches early but expect another pull requests in few weeks.
+
+No order of pulling, no dependencies.
+
+
+Best regards,
+Krzysztof
