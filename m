@@ -1,104 +1,245 @@
-From: "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
-	control runtime pm
-Date: Mon, 7 Nov 2016 22:47:47 +0100
-Message-ID: <20161107214747.GJ1764@wotan.suse.de>
-References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
-	<1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1476948173-21093-8-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mark
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
+Date: Tue, 08 Nov 2016 08:44:23 +0530
+Message-ID: <1478574864-24683-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1478574864-24683-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:51176 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbcKHDL0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 7 Nov 2016 22:11:26 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OGA01ARUZIOPQA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Nov 2016 12:11:25 +0900 (KST)
+In-reply-to: <1478574864-24683-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Thu, Oct 20, 2016 at 09:22:53AM +0200, Marek Szyprowski wrote:
-> This patch uses recently introduced device dependency links to track the
-> runtime pm state of the master's device. This way each SYSMMU controller
-> is set to runtime active only when its master's device is active and can
-> restore or save its state instead of being activated all the time when
-> attached to the given master device. This way SYSMMU controllers no longer
-> prevents respective power domains to be turned off when master's device
-> is not being used.
+Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based
+boards. Instead use mapping from device tree node of SCU.
 
-Its unclear why you need this based on this commit log -- is this
-needed only on platforms that lack ACPI and use device tree ? If so
-why? If this issue is present also on systems that only use ACPI is
-this possibly due to an ACPI firmware bug  or the lack of some semantics
-in ACPI to express ordering in a better way? If the issue is device
-tree related only is this due to the lack of semantics in device tree
-to express some more complex dependency ?
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c                | 22 ----------------------
+ arch/arm/mach-exynos/firmware.c              | 17 +++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h      |  2 --
+ arch/arm/mach-exynos/platsmp.c               | 20 +++++++++++++-------
+ arch/arm/mach-exynos/pm.c                    |  4 +---
+ arch/arm/mach-exynos/suspend.c               |  5 -----
+ arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
+ 7 files changed, 31 insertions(+), 43 deletions(-)
 
-Has there been any review of the existing similar solutions out there
-such as the DRM / audio component framework? Would that help ?
-
-  Luis
-
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iommu/exynos-iommu.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 5e6d7bbf9b70..59b4f2ce4f5f 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -781,10 +781,6 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
->  	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
->  		return;
->  
-> -	list_for_each_entry(data, &owner->controllers, owner_node) {
-> -		pm_runtime_put_sync(data->sysmmu);
-> -	}
-> -
->  	mutex_lock(&owner->rpm_lock);
->  
->  	list_for_each_entry(data, &owner->controllers, owner_node) {
-> @@ -848,10 +844,6 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
->  
->  	mutex_unlock(&owner->rpm_lock);
->  
-> -	list_for_each_entry(data, &owner->controllers, owner_node) {
-> -		pm_runtime_get_sync(data->sysmmu);
-> -	}
-> -
->  	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
->  		&pagetable);
->  
-> @@ -1232,6 +1224,14 @@ static int exynos_iommu_of_xlate(struct device *dev,
->  
->  	list_add_tail(&data->owner_node, &owner->controllers);
->  	data->master = dev;
-> +
-> +	/*
-> +	 * SYSMMU will be runtime activated via device link (dependency) to its
-> +	 * master device, so there are no direct calls to pm_runtime_get/put
-> +	 * in this driver.
-> +	 */
-> +	device_link_add(dev, data->sysmmu, DL_FLAG_PM_RUNTIME);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 1.9.1
-> 
-> 
-
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 757fc11..fa08ef9 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -28,15 +28,6 @@
+ 
+ #include "common.h"
+ 
+-static struct map_desc exynos4_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
+-		.length		= SZ_8K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+ static struct platform_device exynos_cpuidle = {
+ 	.name              = "exynos_cpuidle",
+ #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+@@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 	return 1;
+ }
+ 
+-/*
+- * exynos_map_io
+- *
+- * register the standard cpu IO areas
+- */
+-static void __init exynos_map_io(void)
+-{
+-	if (soc_is_exynos4())
+-		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+-}
+-
+ static void __init exynos_init_io(void)
+ {
+ 	debug_ll_io_init();
+@@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
+ 
+ 	/* detect cpu id and rev. */
+ 	s5p_init_cpu(S5P_VA_CHIPID);
+-
+-	exynos_map_io();
+ }
+ 
+ /*
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index fd6da54..f33558e 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -18,6 +18,7 @@
+ #include <asm/cputype.h>
+ #include <asm/firmware.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ 
+ #include "common.h"
+@@ -141,8 +142,24 @@ static int exynos_suspend(void)
+ 	return cpu_suspend(0, exynos_cpu_suspend);
+ }
+ 
++static void exynos_scu_enable(void)
++{
++	struct device_node *np;
++	void __iomem *scu_base;
++
++	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
++	scu_base = of_iomap(np, 0);
++	of_node_put(np);
++	if (!scu_base) {
++		pr_err("%s failed to map scu_base\n", __func__);
++		return;
++	}
++}
++
+ static int exynos_resume(void)
+ {
++	exynos_scu_enable();
++
+ 	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
+ 
+ 	return 0;
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 5fb0040..0eef407 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -18,6 +18,4 @@
+ 
+ #define EXYNOS_PA_CHIPID		0x10000000
+ 
+-#define EXYNOS4_PA_COREPERI		0x10500000
+-
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index a5d6841..a0afa4b 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -224,11 +224,6 @@ static void write_pen_release(int val)
+ 	sync_cache_w(&pen_release);
+ }
+ 
+-static void __iomem *scu_base_addr(void)
+-{
+-	return (void __iomem *)(S5P_VA_SCU);
+-}
+-
+ static DEFINE_SPINLOCK(boot_lock);
+ 
+ static void exynos_secondary_init(unsigned int cpu)
+@@ -387,14 +382,25 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	struct device_node *np;
++	void __iomem *scu_base;
+ 	int i;
+ 
+ 	exynos_sysram_init();
+ 
+ 	exynos_set_delayed_reset_assertion(true);
+ 
+-	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+-		scu_enable(scu_base_addr());
++	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
++		np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
++		scu_base = of_iomap(np, 0);
++		of_node_put(np);
++		if (!scu_base) {
++			pr_err("%s failed to map scu_base\n", __func__);
++			return;
++		}
++		scu_enable(scu_base);
++		iounmap(scu_base);
++	}
+ 
+ 	/*
+ 	 * Write the address of secondary startup into the
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 487295f..b8c5565 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -18,6 +18,7 @@
+ #include <linux/cpu_pm.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+ #include <linux/soc/samsung/exynos-pmu.h>
+ 
+@@ -26,8 +27,6 @@
+ #include <asm/suspend.h>
+ #include <asm/cacheflush.h>
+ 
+-#include <mach/map.h>
+-
+ #include "common.h"
+ 
+ static inline void __iomem *exynos_boot_vector_addr(void)
+@@ -177,7 +176,6 @@ void exynos_enter_aftr(void)
+ 	cpu_suspend(0, exynos_aftr_finisher);
+ 
+ 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+-		scu_enable(S5P_VA_SCU);
+ 		if (call_firmware_op(resume) == -ENOSYS)
+ 			exynos_cpu_restore_register();
+ 	}
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 06332f6..6ccd466 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -34,8 +34,6 @@
+ #include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ 
+-#include <mach/map.h>
+-
+ #include <plat/pm-common.h>
+ 
+ #include "common.h"
+@@ -461,9 +459,6 @@ static void exynos_pm_resume(void)
+ 	/* For release retention */
+ 	exynos_pm_release_retention();
+ 
+-	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+-		scu_enable(S5P_VA_SCU);
+-
+ 	if (call_firmware_op(resume) == -ENOSYS
+ 	    && cpuid == ARM_CPU_PART_CORTEX_A9)
+ 		exynos_cpu_restore_register();
+diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
+index 0fe2828..512ed1f 100644
+--- a/arch/arm/plat-samsung/include/plat/map-s5p.h
++++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
+@@ -15,10 +15,6 @@
+ 
+ #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
+ 
+-#define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
+-#define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
+-#define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
+-
+ #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+ #define VA_VIC0			VA_VIC(0)
+ #define VA_VIC1			VA_VIC(1)
 -- 
-Luis Rodriguez, SUSE LINUX GmbH
-Maxfeldstrasse 5; D-90409 Nuernberg
+2.7.4
