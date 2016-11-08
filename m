@@ -1,72 +1,267 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] ARM64: dts: exynos: DT for v4.10
-Date: Tue,  8 Nov 2016 20:26:29 +0200
-Message-ID: <1478629589-7520-4-git-send-email-krzk@kernel.org>
-References: <1478629589-7520-1-git-send-email-krzk@kernel.org>
+Subject: Re: [RESPIN-PATCH v2 1/2] ARM: EXYNOS: Remove static mapping of SCU
+ SFR
+Date: Tue, 8 Nov 2016 21:04:46 +0200
+Message-ID: <20161108190446.GA4608@kozik-lap>
+References: <1478603984-504-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478603984-504-2-git-send-email-pankaj.dubey@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754223AbcKHS06 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32876 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752629AbcKHTEw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 13:26:58 -0500
-In-Reply-To: <1478629589-7520-1-git-send-email-krzk@kernel.org>
+        Tue, 8 Nov 2016 14:04:52 -0500
+Received: by mail-wm0-f67.google.com with SMTP id u144so24536894wmu.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Nov 2016 11:04:51 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1478603984-504-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com
 
-Hi,
+On Tue, Nov 08, 2016 at 04:49:43PM +0530, Pankaj Dubey wrote:
+> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based boards.
+> Instead use mapping from device tree node of SCU.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.h                |  1 +
+>  arch/arm/mach-exynos/exynos.c                | 22 ------------------
+>  arch/arm/mach-exynos/include/mach/map.h      |  2 --
+>  arch/arm/mach-exynos/platsmp.c               | 34 +++++++++++++++++++++-------
+>  arch/arm/mach-exynos/pm.c                    |  5 ++--
+>  arch/arm/mach-exynos/suspend.c               | 13 ++++-------
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
+>  7 files changed, 34 insertions(+), 47 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 9424a8a..dd5d8e8 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -161,6 +161,7 @@ extern void exynos_cpu_restore_register(void);
+>  extern void exynos_pm_central_suspend(void);
+>  extern int exynos_pm_central_resume(void);
+>  extern void exynos_enter_aftr(void);
+> +extern int exynos_scu_enable(void);
+>  
+>  extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
+>  
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 757fc11..fa08ef9 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -28,15 +28,6 @@
+>  
+>  #include "common.h"
+>  
+> -static struct map_desc exynos4_iodesc[] __initdata = {
+> -	{
+> -		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
+> -		.length		= SZ_8K,
+> -		.type		= MT_DEVICE,
+> -	},
+> -};
+> -
+>  static struct platform_device exynos_cpuidle = {
+>  	.name              = "exynos_cpuidle",
+>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> @@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+>  	return 1;
+>  }
+>  
+> -/*
+> - * exynos_map_io
+> - *
+> - * register the standard cpu IO areas
+> - */
+> -static void __init exynos_map_io(void)
+> -{
+> -	if (soc_is_exynos4())
+> -		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+> -}
+> -
+>  static void __init exynos_init_io(void)
+>  {
+>  	debug_ll_io_init();
+> @@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
+>  
+>  	/* detect cpu id and rev. */
+>  	s5p_init_cpu(S5P_VA_CHIPID);
+> -
+> -	exynos_map_io();
+>  }
+>  
+>  /*
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 5fb0040..0eef407 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -18,6 +18,4 @@
+>  
+>  #define EXYNOS_PA_CHIPID		0x10000000
+>  
+> -#define EXYNOS4_PA_COREPERI		0x10500000
+> -
+>  #endif /* __ASM_ARCH_MAP_H */
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index a5d6841..94405c7 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -168,6 +168,27 @@ int exynos_cluster_power_state(int cluster)
+>  		S5P_CORE_LOCAL_PWR_EN);
+>  }
+>  
+> +/**
+> + * exynos_scu_enable : enables SCU for Cortex-A9 based system
+> + * returns 0 on success else non-zero error code
+> + */
+> +int exynos_scu_enable(void)
+> +{
+> +	struct device_node *np;
+> +	void __iomem *scu_base;
+> +
+> +	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
+> +	scu_base = of_iomap(np, 0);
+> +	of_node_put(np);
+> +	if (!scu_base) {
+> +		pr_err("%s failed to map scu_base\n", __func__);
+> +		return -ENOMEM;
+> +	}
+> +	scu_enable(scu_base);
+> +	iounmap(scu_base);
+> +	return 0;
+> +}
+> +
+>  static void __iomem *cpu_boot_reg_base(void)
+>  {
+>  	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+> @@ -224,11 +245,6 @@ static void write_pen_release(int val)
+>  	sync_cache_w(&pen_release);
+>  }
+>  
+> -static void __iomem *scu_base_addr(void)
+> -{
+> -	return (void __iomem *)(S5P_VA_SCU);
+> -}
+> -
+>  static DEFINE_SPINLOCK(boot_lock);
+>  
+>  static void exynos_secondary_init(unsigned int cpu)
+> @@ -393,9 +409,11 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  
+>  	exynos_set_delayed_reset_assertion(true);
+>  
+> -	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+> -		scu_enable(scu_base_addr());
+> -
+> +	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+> +		/* if exynos_scu_enable fails, return */
+> +		if (exynos_scu_enable())
+> +			return;
 
-Exynos5433 + two boards using it. Mobile boards! :)
+Ohhh, someone (e.g. out-of-tree DTS) might be surprised with this.
+Please mention such change of behaviour in the commit log (describe the
+possible impact of this commit).
 
-I am really happy to push it. I know that it has been a lot of effort
-in Samsung to mainline this.
+> +	}
+>  	/*
+>  	 * Write the address of secondary startup into the
+>  	 * system-wide flags register. The boot monitor waits
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 487295f..23db2af 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/cpu_pm.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+
+Why do you need this include? Was it coming from mach/map.h?
+
+>  #include <linux/soc/samsung/exynos-regs-pmu.h>
+>  #include <linux/soc/samsung/exynos-pmu.h>
+>  
+> @@ -26,8 +27,6 @@
+>  #include <asm/suspend.h>
+>  #include <asm/cacheflush.h>
+>  
+> -#include <mach/map.h>
+> -
+>  #include "common.h"
+>  
+>  static inline void __iomem *exynos_boot_vector_addr(void)
+> @@ -177,7 +176,7 @@ void exynos_enter_aftr(void)
+>  	cpu_suspend(0, exynos_aftr_finisher);
+>  
+>  	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+> -		scu_enable(S5P_VA_SCU);
+> +		exynos_scu_enable();
+>  		if (call_firmware_op(resume) == -ENOSYS)
+>  			exynos_cpu_restore_register();
+>  	}
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index 06332f6..c73c857 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -34,8 +34,6 @@
+>  #include <asm/smp_scu.h>
+>  #include <asm/suspend.h>
+>  
+> -#include <mach/map.h>
+> -
+>  #include <plat/pm-common.h>
+>  
+>  #include "common.h"
+> @@ -461,12 +459,11 @@ static void exynos_pm_resume(void)
+>  	/* For release retention */
+>  	exynos_pm_release_retention();
+>  
+> -	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+> -		scu_enable(S5P_VA_SCU);
+> -
+> -	if (call_firmware_op(resume) == -ENOSYS
+> -	    && cpuid == ARM_CPU_PART_CORTEX_A9)
+> -		exynos_cpu_restore_register();
+> +	if (cpuid == ARM_CPU_PART_CORTEX_A9) {
+> +		exynos_scu_enable();
+> +		if (call_firmware_op(resume) == -ENOSYS)
+> +			exynos_cpu_restore_register();
+
+It does not look right. I think you changed the logic here. Previously
+if CPU != A9, then call_firmware_op() was executed. Now it won't be.
+
+BTW, don't respin patchset with the same version number. This is
+basically v3. To me, increasing version number is always welcomed. It
+makes dealign with patches easier.
 
 Best regards,
 Krzysztof
 
-
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.10
-
-for you to fetch changes up to 8ac46fc57df82efbc19194dddd335b6c7a960c31:
-
-  arm64: dts: exynos: Add dts file for Exynos5433-based TM2E board (2016-11-03 22:19:57 +0200)
-
-----------------------------------------------------------------
-Finally, I am really pleased to announce adding support for Exynos5433 ARMv8
-SoC along with two boards.  A lot of Samsung people contributed into this
-but the final work and commits were done by Chanwoo Choi.
-
-This means that for v4.10 we got:
-1. Exynos5433 DTSI.
-2. Two boards: TM2 and TM2E.  These are (almost fully) working mobile phones.
-
-----------------------------------------------------------------
-Chanwoo Choi (3):
-      arm64: dts: exynos: Add dtsi files for Samsung Exynos5433 64bit SoC
-      arm64: dts: exynos: Add dts file for Exynos5433-based TM2 board
-      arm64: dts: exynos: Add dts file for Exynos5433-based TM2E board
-
- .../bindings/arm/samsung/samsung-boards.txt        |    2 +
- arch/arm64/boot/dts/exynos/Makefile                |    5 +-
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  794 ++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  974 ++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |   41 +
- .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi |   23 +
- .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |   22 +
- arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     |  296 +++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 1356 ++++++++++++++++++++
- 9 files changed, 3512 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +	}
+>  
+>  early_wakeup:
+>  
+> diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
+> index 0fe2828..512ed1f 100644
+> --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
+> +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
+> @@ -15,10 +15,6 @@
+>  
+>  #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
+>  
+> -#define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
+> -#define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
+> -#define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
+> -
+>  #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+>  #define VA_VIC0			VA_VIC(0)
+>  #define VA_VIC1			VA_VIC(1)
+> -- 
+> 2.7.4
+> 
