@@ -1,69 +1,71 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel
- request API
-Date: Tue, 8 Nov 2016 15:39:49 +0000
-Message-ID: <20161108153949.GF1575@localhost.localdomain>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
+Date: Tue, 08 Nov 2016 16:53:40 +0100
+Message-ID: <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
+ <20161108144445.GD1575@localhost.localdomain>
+ <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
+ <20161108145534.GE1575@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51239 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752737AbcKHPkN (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20448 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbcKHPxw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 10:40:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
+        Tue, 8 Nov 2016 10:53:52 -0500
+In-reply-to: <20161108145534.GE1575@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Fri, Nov 04, 2016 at 05:14:47PM +0100, Sylwester Nawrocki wrote:
-> This patch series aims to convert the s3c64xx platform to use
-> the new universal DMA channel request API, i.e. this is only
-> meaningful for non-dt systems using s3c64xx SoCs.
-> 
-> I'm sending the whole series as RFC since I didn't test it
-> yet, I'm going to prepare smd6410 for testing this series.
-> It would be great if someone else could also test it,
-> either SPI or sound functionality verification would be 
-> useful.
-> 
-> Then we could queue the first two patches in this series
-> for v4.10-rc1 and the remaining patches for subsequent
-> release.
-> 
-> The whole series can be pulled from git repository:
->  git://linuxtv.org/snawrocki/samsung.git 
->  branch: for-v4.10/dma/pl080-s3c64xx
-> 
-> Thanks.
-> 
-> Sylwester Nawrocki (7):
->   dma: pl08x: Add support for the DMA slave map
->   ARM: S3C64XX: Add DMA slave maps for PL080 devices
->   spi: s3c64xx: Do not use platform_data for DMA parameters
->   ASoC: samsung: i2s: Do not use platform_data for DMA parameters
->   ASoC: samsung: pcm: Do not use platform_data for DMA parameters
->   ARM: S3C64XX: Drop unused DMA fields from struct s3c64xx_spi_csinfo
->   ARM: S3C64XX: Drop initialization of unused struct s3c_audio_pdata
->     fields
-> 
+On 11/08/2016 03:55 PM, Charles Keepax wrote:
+>>> diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
+>>> > > index 89c5a62..8c88680 100644
+>>> > > --- a/arch/arm/mach-s3c64xx/pl080.c
+>>> > > +++ b/arch/arm/mach-s3c64xx/pl080.c
+>> > <snip>
+>>> > > @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
+>>> > >  	.put_xfer_signal = pl08x_put_xfer_signal,
+>>> > >  	.slave_channels = s3c64xx_dma0_info,
+>>> > >  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
+>>> > > +	.slave_map = s3c64xx_dma0_slave_map,
+>>> > > +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
+>>> > >  };
+>> > 
+>> > Here we add a .slavecnt but the pl08x_platform_data structure doesn't
+>> > contain that field. I can't see it on the branch you linked in
+>> > the cover letter either, is it added by a patch on another branch
+>> > I am missing?
+>> > 
+> Ah I think I see it should be .slave_map_len here.
 
-Hmm... fixing the bug I mentioned in my other email this still
-seems to cause some problems with my SPI on Cragganmore:
+Yeah, sorry, I fixed it after getting report from the kbuild test
+but have forgotten to push changes to the git tree.
 
-[  200.210213] wm0010 spi0.0: I/O Error: rx-1 tx-1 res:rx-f tx-f len-2632
-[  200.211275] wm0010 spi0.0: SPI transfer failed: -5
+I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
+issue fixed and added initialization of the filer function.
 
-I am still looking into it, without your patches work the wm0010
-comes up. A few other small things seem to have been broken in
-mainline since last time I fired up this board as well which is
-slowing me down a little (network seems to have stopped coming
-up and one of the regulators on the SD card is spamming me with
-warnings).
+-------------------8<-------------------------
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index 939a7c3..d441c4b 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -2307,6 +2307,10 @@ static int pl08x_probe(struct amba_device *adev, const
+struct amba_id *id)
+                        ret = -EINVAL;
+                        goto out_no_platdata;
+                }
++       } else {
++               pl08x->slave.filter.map = pl08x->pd->slave_map;
++               pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
++               pl08x->slave.filter.fn = pl08x_filter_id;
+        }
+-------------------8<-------------------------
 
+--
 Thanks,
-Charles
+Sylwester
