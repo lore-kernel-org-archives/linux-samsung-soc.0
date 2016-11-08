@@ -1,165 +1,85 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: EXYNOS: Remove static mapping of SCU SFR
-Date: Tue, 08 Nov 2016 08:44:18 +0530
-Message-ID: <5821430A.5060007@samsung.com>
-References: <1478230764-13748-1-git-send-email-pankaj.dubey@samsung.com>
- <1478230764-13748-4-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161107175358epcas4p35857a8a830abc0203ff6f24cbc27ecf7@epcas4p3.samsung.com>
- <20161107175349.GD4865@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 0/2] Remove static mapping of SCU from mach-exynos
+Date: Tue, 08 Nov 2016 08:44:22 +0530
+Message-ID: <1478574864-24683-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55868 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbcKHDLR (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46593 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752225AbcKHDLZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 22:11:17 -0500
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
- by mailout4.samsung.com
+        Mon, 7 Nov 2016 22:11:25 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGA01JX3ZIQOM80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Nov 2016 12:11:14 +0900 (KST)
-In-reply-to: <20161107175349.GD4865@kozik-lap>
+ with ESMTP id <0OGA00VA0ZINLUB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Nov 2016 12:11:23 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Krzysztof,
+This patch series is part of patch series [1], which adds support of SCU
+device node for Cortex-A9 based Exynos4 SoC. First two patches of the same
+has been accepted and hence not included them in v2.
 
-On Monday 07 November 2016 11:23 PM, Krzysztof Kozlowski wrote:
-> On Fri, Nov 04, 2016 at 09:09:23AM +0530, Pankaj Dubey wrote:
->> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based boards.
->> Instead use mapping from device tree node of SCU.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>  arch/arm/mach-exynos/exynos.c                | 22 ----------------------
->>  arch/arm/mach-exynos/include/mach/map.h      |  2 --
->>  arch/arm/mach-exynos/platsmp.c               | 18 +++++++++++-------
->>  arch/arm/mach-exynos/pm.c                    | 14 +++++++++++---
->>  arch/arm/mach-exynos/suspend.c               | 15 +++++++++++----
->>  arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
->>  6 files changed, 33 insertions(+), 42 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index 757fc11..fa08ef9 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -28,15 +28,6 @@
->>  
->>  #include "common.h"
->>  
->> -static struct map_desc exynos4_iodesc[] __initdata = {
->> -	{
->> -		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
->> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
->> -		.length		= SZ_8K,
->> -		.type		= MT_DEVICE,
->> -	},
->> -};
->> -
->>  static struct platform_device exynos_cpuidle = {
->>  	.name              = "exynos_cpuidle",
->>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
->> @@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
->>  	return 1;
->>  }
->>  
->> -/*
->> - * exynos_map_io
->> - *
->> - * register the standard cpu IO areas
->> - */
->> -static void __init exynos_map_io(void)
->> -{
->> -	if (soc_is_exynos4())
->> -		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
->> -}
->> -
->>  static void __init exynos_init_io(void)
->>  {
->>  	debug_ll_io_init();
->> @@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
->>  
->>  	/* detect cpu id and rev. */
->>  	s5p_init_cpu(S5P_VA_CHIPID);
->> -
->> -	exynos_map_io();
->>  }
->>  
->>  /*
->> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
->> index 5fb0040..0eef407 100644
->> --- a/arch/arm/mach-exynos/include/mach/map.h
->> +++ b/arch/arm/mach-exynos/include/mach/map.h
->> @@ -18,6 +18,4 @@
->>  
->>  #define EXYNOS_PA_CHIPID		0x10000000
->>  
->> -#define EXYNOS4_PA_COREPERI		0x10500000
->> -
->>  #endif /* __ASM_ARCH_MAP_H */
->> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
->> index a5d6841..553d0d9 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -224,11 +224,6 @@ static void write_pen_release(int val)
->>  	sync_cache_w(&pen_release);
->>  }
->>  
->> -static void __iomem *scu_base_addr(void)
->> -{
->> -	return (void __iomem *)(S5P_VA_SCU);
->> -}
->> -
->>  static DEFINE_SPINLOCK(boot_lock);
->>  
->>  static void exynos_secondary_init(unsigned int cpu)
->> @@ -387,14 +382,23 @@ fail:
->>  
->>  static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->>  {
->> +	struct device_node *np;
->> +	void __iomem *scu_base;
->>  	int i;
->>  
->>  	exynos_sysram_init();
->>  
->>  	exynos_set_delayed_reset_assertion(true);
->>  
->> -	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
->> -		scu_enable(scu_base_addr());
->> +	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
->> +		np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
->> +		scu_base = of_iomap(np, 0);
->> +		if (scu_base) {
->> +			scu_enable(scu_base);
->> +			iounmap(scu_base);
->> +		}
->> +		of_node_put(np);
-> 
-> I do not like the duplication - this code appears in three places and
-> they are the same. Could you split it into separate function?
-> 
-OK, will do these changes in v2.
+This patch series does some cleanup for Exynos4 SoC based boards.
+We are currently statically mapping SCU SFRs in mach-exynos/exynos.c
+which can be avoided if map this from device node of SCU. 
 
-Only pm.c and suspend.c file's scu_enable can be moved to single place
-without introducing more dependencies between these mach files.
+This patch introduces exynos_scu_enable in firmware.c file,
+which will be called from exynos_resume, which in turn called by pm.c and
+suspend.c as firmware_ops.
 
-> As you mentioned to Alim, in case of lack of node, it would be nice to notify the
-> user (pr_err() etc).
-> 
-OK, will do these changes in v2.
+[1]: https://www.spinics.net/lists/arm-kernel/msg540498.html
 
 
-Thanks,
-Pankaj Dubey
+This patch series is prepared on Krzysztof's for-next
+(SHA_ID: b33c7bb9d59c3f4100d4)
 
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
-> 
+I have tested these patches on Exynos4210 based on Origen board for SMP boot.
+Patchset v1 was tested by Marek Szyprowski on Exynos4412-based Odroid U3
+for SMP boot and S2R.
+
+To confirm concern raised by Alim, I intentionally removed SCU device node
+from exynos4.dtsi and tested on Origen board, I can see code handles this
+case gracefully without any crash and system boot was fine. Of-course in such
+case only single core will be able to boot.
+
+Following boot message observed on Origen in case of missing SCU node
+-------------
+[    0.000864] CPU: Testing write buffer coherency: ok
+[    0.001068] CPU0: thread -1, cpu 0, socket 9, mpidr 80000900
+[    0.001456] exynos_smp_prepare_cpus failed to map scu_base
+[    0.001477] Setting up static identity map for 0x40100000 - 0x40100058
+[    1.120003] CPU1: failed to come online
+[    1.120059] Brought up 1 CPUs
+[    1.120068] SMP: Total of 1 processors activated (48.00 BogoMIPS).
+[    1.120076] CPU: All CPU(s) started in SVC mode.
+-------------
+
+Changes since v1:
+ - Address review comments from Krzysztof
+ - Moved scu_enable from pm.c and suspend.c to single place in firmware.c,
+   as both pm.c and suspend.c needs scu_enable during exynos_resume call. 
+ - Added error handling during scu_enable in platsmp.c.
+ - Added Reviewed-by tag from Alim.
+
+
+This patch series is tested on Exynos4210 based Origen board for SMP boot.
+
+Pankaj Dubey (2):
+  ARM: EXYNOS: Remove static mapping of SCU SFR
+  ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
+
+ arch/arm/mach-exynos/common.h                |  5 -----
+ arch/arm/mach-exynos/exynos.c                | 22 ----------------------
+ arch/arm/mach-exynos/firmware.c              | 17 +++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h      |  2 --
+ arch/arm/mach-exynos/platsmp.c               | 20 +++++++++++++-------
+ arch/arm/mach-exynos/pm.c                    |  4 +---
+ arch/arm/mach-exynos/suspend.c               |  5 -----
+ arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
+ 8 files changed, 31 insertions(+), 48 deletions(-)
+
+-- 
+2.7.4
