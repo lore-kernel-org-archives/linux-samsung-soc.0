@@ -1,267 +1,110 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RESPIN-PATCH v2 1/2] ARM: EXYNOS: Remove static mapping of SCU
- SFR
-Date: Tue, 8 Nov 2016 21:04:46 +0200
-Message-ID: <20161108190446.GA4608@kozik-lap>
-References: <1478603984-504-1-git-send-email-pankaj.dubey@samsung.com>
- <1478603984-504-2-git-send-email-pankaj.dubey@samsung.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH v4 2/2] iommu/exynos: Add proper runtime pm support
+Date: Tue, 8 Nov 2016 23:14:37 +0100
+Message-ID: <20161108221437.GC13978@wotan.suse.de>
+References: <1475136751-31340-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20160929081240eucas1p231c1ab5c5936886cbec6bc3f5267c940@eucas1p2.samsung.com>
+ <1475136751-31340-3-git-send-email-m.szyprowski@samsung.com>
+ <20161006173756.GK3296@wotan.suse.de>
+ <87aeb58b-bda0-93c5-e51d-ab9be0b9d518@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32876 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbcKHTEw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 14:04:52 -0500
-Received: by mail-wm0-f67.google.com with SMTP id u144so24536894wmu.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Nov 2016 11:04:51 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1478603984-504-2-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <87aeb58b-bda0-93c5-e51d-ab9be0b9d518@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Lukas Wunner <lukas@wunner.de>, Kevin Hilman <khilman@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lars-Peter Clausen <lars@metafoo.de>, Dmitry Torokhov <dmitry.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com
 
-On Tue, Nov 08, 2016 at 04:49:43PM +0530, Pankaj Dubey wrote:
-> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based boards.
-> Instead use mapping from device tree node of SCU.
+On Mon, Oct 10, 2016 at 03:32:06PM +0200, Marek Szyprowski wrote:
+> Hi Luis
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h                |  1 +
->  arch/arm/mach-exynos/exynos.c                | 22 ------------------
->  arch/arm/mach-exynos/include/mach/map.h      |  2 --
->  arch/arm/mach-exynos/platsmp.c               | 34 +++++++++++++++++++++-------
->  arch/arm/mach-exynos/pm.c                    |  5 ++--
->  arch/arm/mach-exynos/suspend.c               | 13 ++++-------
->  arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
->  7 files changed, 34 insertions(+), 47 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 9424a8a..dd5d8e8 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -161,6 +161,7 @@ extern void exynos_cpu_restore_register(void);
->  extern void exynos_pm_central_suspend(void);
->  extern int exynos_pm_central_resume(void);
->  extern void exynos_enter_aftr(void);
-> +extern int exynos_scu_enable(void);
->  
->  extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
->  
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 757fc11..fa08ef9 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -28,15 +28,6 @@
->  
->  #include "common.h"
->  
-> -static struct map_desc exynos4_iodesc[] __initdata = {
-> -	{
-> -		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
-> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
-> -		.length		= SZ_8K,
-> -		.type		= MT_DEVICE,
-> -	},
-> -};
-> -
->  static struct platform_device exynos_cpuidle = {
->  	.name              = "exynos_cpuidle",
->  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> @@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
->  	return 1;
->  }
->  
-> -/*
-> - * exynos_map_io
-> - *
-> - * register the standard cpu IO areas
-> - */
-> -static void __init exynos_map_io(void)
-> -{
-> -	if (soc_is_exynos4())
-> -		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
-> -}
-> -
->  static void __init exynos_init_io(void)
->  {
->  	debug_ll_io_init();
-> @@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
->  
->  	/* detect cpu id and rev. */
->  	s5p_init_cpu(S5P_VA_CHIPID);
-> -
-> -	exynos_map_io();
->  }
->  
->  /*
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 5fb0040..0eef407 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -18,6 +18,4 @@
->  
->  #define EXYNOS_PA_CHIPID		0x10000000
->  
-> -#define EXYNOS4_PA_COREPERI		0x10500000
-> -
->  #endif /* __ASM_ARCH_MAP_H */
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index a5d6841..94405c7 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -168,6 +168,27 @@ int exynos_cluster_power_state(int cluster)
->  		S5P_CORE_LOCAL_PWR_EN);
->  }
->  
-> +/**
-> + * exynos_scu_enable : enables SCU for Cortex-A9 based system
-> + * returns 0 on success else non-zero error code
-> + */
-> +int exynos_scu_enable(void)
-> +{
-> +	struct device_node *np;
-> +	void __iomem *scu_base;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
-> +	scu_base = of_iomap(np, 0);
-> +	of_node_put(np);
-> +	if (!scu_base) {
-> +		pr_err("%s failed to map scu_base\n", __func__);
-> +		return -ENOMEM;
-> +	}
-> +	scu_enable(scu_base);
-> +	iounmap(scu_base);
-> +	return 0;
-> +}
-> +
->  static void __iomem *cpu_boot_reg_base(void)
->  {
->  	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-> @@ -224,11 +245,6 @@ static void write_pen_release(int val)
->  	sync_cache_w(&pen_release);
->  }
->  
-> -static void __iomem *scu_base_addr(void)
-> -{
-> -	return (void __iomem *)(S5P_VA_SCU);
-> -}
-> -
->  static DEFINE_SPINLOCK(boot_lock);
->  
->  static void exynos_secondary_init(unsigned int cpu)
-> @@ -393,9 +409,11 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->  
->  	exynos_set_delayed_reset_assertion(true);
->  
-> -	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
-> -		scu_enable(scu_base_addr());
-> -
-> +	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-> +		/* if exynos_scu_enable fails, return */
-> +		if (exynos_scu_enable())
-> +			return;
-
-Ohhh, someone (e.g. out-of-tree DTS) might be surprised with this.
-Please mention such change of behaviour in the commit log (describe the
-possible impact of this commit).
-
-> +	}
->  	/*
->  	 * Write the address of secondary startup into the
->  	 * system-wide flags register. The boot monitor waits
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 487295f..23db2af 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -18,6 +18,7 @@
->  #include <linux/cpu_pm.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
-
-Why do you need this include? Was it coming from mach/map.h?
-
->  #include <linux/soc/samsung/exynos-regs-pmu.h>
->  #include <linux/soc/samsung/exynos-pmu.h>
->  
-> @@ -26,8 +27,6 @@
->  #include <asm/suspend.h>
->  #include <asm/cacheflush.h>
->  
-> -#include <mach/map.h>
-> -
->  #include "common.h"
->  
->  static inline void __iomem *exynos_boot_vector_addr(void)
-> @@ -177,7 +176,7 @@ void exynos_enter_aftr(void)
->  	cpu_suspend(0, exynos_aftr_finisher);
->  
->  	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-> -		scu_enable(S5P_VA_SCU);
-> +		exynos_scu_enable();
->  		if (call_firmware_op(resume) == -ENOSYS)
->  			exynos_cpu_restore_register();
->  	}
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 06332f6..c73c857 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -34,8 +34,6 @@
->  #include <asm/smp_scu.h>
->  #include <asm/suspend.h>
->  
-> -#include <mach/map.h>
-> -
->  #include <plat/pm-common.h>
->  
->  #include "common.h"
-> @@ -461,12 +459,11 @@ static void exynos_pm_resume(void)
->  	/* For release retention */
->  	exynos_pm_release_retention();
->  
-> -	if (cpuid == ARM_CPU_PART_CORTEX_A9)
-> -		scu_enable(S5P_VA_SCU);
-> -
-> -	if (call_firmware_op(resume) == -ENOSYS
-> -	    && cpuid == ARM_CPU_PART_CORTEX_A9)
-> -		exynos_cpu_restore_register();
-> +	if (cpuid == ARM_CPU_PART_CORTEX_A9) {
-> +		exynos_scu_enable();
-> +		if (call_firmware_op(resume) == -ENOSYS)
-> +			exynos_cpu_restore_register();
-
-It does not look right. I think you changed the logic here. Previously
-if CPU != A9, then call_firmware_op() was executed. Now it won't be.
-
-BTW, don't respin patchset with the same version number. This is
-basically v3. To me, increasing version number is always welcomed. It
-makes dealign with patches easier.
-
-Best regards,
-Krzysztof
-
-> +	}
->  
->  early_wakeup:
->  
-> diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-> index 0fe2828..512ed1f 100644
-> --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-> +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-> @@ -15,10 +15,6 @@
->  
->  #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
->  
-> -#define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
-> -#define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
-> -#define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
-> -
->  #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
->  #define VA_VIC0			VA_VIC(0)
->  #define VA_VIC1			VA_VIC(1)
-> -- 
-> 2.7.4
+> On 2016-10-06 19:37, Luis R. Rodriguez wrote:
+> > On Thu, Sep 29, 2016 at 10:12:31AM +0200, Marek Szyprowski wrote:
+> > > This patch uses recently introduced device links to track the runtime pm
+> > > state of the master's device. This way each SYSMMU controller is runtime
+> > > activated when its master's device is active
+> > instead of?
 > 
+> instead of keeping SYSMMU controller runtime active all the time.
+
+I thought Rafael's work was for suspend/resume, not for runtime suspend.
+Is it for both ? Because as far as I can tell this was painted to help
+with suspend/resume ?
+
+> > BTW what is the master device of a SYSMMU? I have no clue about these
+> > IOMMU devices here.
+> 
+> Here is a more detailed description of IOMMU hardware I wrote a few days ago
+> for Ulf:
+> http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1231006.html
+> 
+> In short: there is a SYSMMU controller and its master device - a device,
+> which performs DMA operations. That SYSMMU sits in between system memory
+> and the master device, so it performs mapping of DMA addresses to physical
+> memory addresses on each DMA operation.
+
+So you seek a run time power optimization ? Or a fix on suspend? Or both?
+
+> > > and can save/restore its state instead of being enabled all the time.
+> > I take it this means currently even if the master device is disabled
+> > (whatever that is) all SYSMMU controllers are kept enabled, is that right?
+> > The issue here is this wastes power? Or what is the issue?
+> 
+> Yes, the issue here is the fact that SYSMMU is kept active all the time,
+> what in turn prevent the power domain for turning off even if master device
+> doesn't do anything and is already suspended. This directly (some clocks
+> enabled) and in-directly (leakage current) causes power looses.
+
+Thanks for the confirmation so really the biggest concern here was run time PM.
+
+> > > This way SYSMMU controllers no
+> > > longer prevents respective power domains to be turned off when master's
+> > > device is not used.
+> > So when the master device is idle we want to also remove power from the
+> > controllers ? How much power does this save on a typical device in the
+> > market BTW ?
+> 
+> The main purpose of this patchset is to let power domains to be turned off,
+> because with the current code all domains are all the time turned on,
+> because
+> SYSMMU controllers prevent them from turning them off.
+
+I see.. I think the audio folks already addressed this with DAPM, but granted
+this was for audio. Then I was also referred to the DRM / Audio component
+framework, has this been looked into? v4l folks have v4l async stuff but
+its not clear if that help with run time PM. I'm mentioning these given it'd be
+silly to re-invent the wheel, additionally if we now have a generic solution
+everyone can jump on board with there is quite a bit of work we can do to
+dump a lot of old legacy crap.
+
+> If you want I can measure the power consumption of the idle board with all
+> domains enabled and disabled if you want to see the numbers. On the other
+> board
+> disabling most power domains in idle state (the clocks were already
+> disabled)
+> gave me about 20mA savings (at 3.7V), what is a significant value for the
+> battery powered device.
+
+Thanks, this means nothing to me, however it would be value-add to the commit log
+as anyone reviewing  this can understand what the goal / savings was for exactly.
+
+> > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > ---
+> > >   drivers/iommu/exynos-iommu.c | 225 ++++++++++++++++++-------------------------
+> > >   1 file changed, 94 insertions(+), 131 deletions(-)
+> > I'm reviewing the device link patches now but since this is a demo of
+> > use of that I'll note the changes here are pretty large and it makes
+> > it terribly difficult for review. Is there any way this patch can be split
+> > up in to logical atomic pieces that only do one task upon change ?
+> 
+> I will try to split it a bit, but I cannot promise that much can be done
+> to improve readability for someone not very familiar with the driver
+> internals.
+
+I've heard this before, I don't buy it but lets see!
+
+  Luis
