@@ -1,83 +1,44 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
- control runtime pm
-Date: Tue, 08 Nov 2016 08:27:12 +0100
-Message-ID: <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
-References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
- <1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
- <20161107214747.GJ1764@wotan.suse.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/5] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM for one pin-bank
+Date: Tue, 8 Nov 2016 10:34:25 +0100
+Message-ID: <CACRpkdZ3JmvbEkLK77V9x44WZ0tfmJWLv5CW7QkTM5-aw6M-4g@mail.gmail.com>
+References: <1478155149-28527-1-git-send-email-cw00.choi@samsung.com> <1478155149-28527-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53840 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750938AbcKHH1V (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 02:27:21 -0500
-In-reply-to: <20161107214747.GJ1764@wotan.suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478155149-28527-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, sw0312.kim@samsung.com, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Lukas Wunner <lukas@wunner.de>, Kevin Hilman <khilman@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lars-Peter Clausen <lars@metafoo.de>
 
-Hi Luis,
+On Thu, Nov 3, 2016 at 7:39 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
+> This patch supports the multiple IORESOURCE_MEM resources for one pin-bank.
+> In the pre-existing Exynos series, the registers of the gpio bank are included
+> in the one memory map. But, some gpio bank need to support the one more memory
+> map (IORESOURCE_MEM) because the registers of gpio bank are separated into
+> the different memory map.
+>
+> For example,
+> The both ALIVE and IMEM domain have the different memory base address.
+> The GFP[1-5] of exynos5433 are composed as following:
+> - ALIVE domain : WEINT_* registers
+> - IMEM domain  : CON/DAT/PUD/DRV/CONPDN/PUDPDN register
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-gpio@vger.kernel.org
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-On 2016-11-07 22:47, Luis R. Rodriguez wrote:
-> On Thu, Oct 20, 2016 at 09:22:53AM +0200, Marek Szyprowski wrote:
->> This patch uses recently introduced device dependency links to track the
->> runtime pm state of the master's device. This way each SYSMMU controller
->> is set to runtime active only when its master's device is active and can
->> restore or save its state instead of being activated all the time when
->> attached to the given master device. This way SYSMMU controllers no longer
->> prevents respective power domains to be turned off when master's device
->> is not being used.
-> Its unclear why you need this based on this commit log -- is this
-> needed only on platforms that lack ACPI and use device tree ?
+Patch applied with Krzysztof's review tag.
 
-Nope, it has nothing to device tree nor ACPI. The dependency is a direct
-result of the way the devices operate.
-
-> If so
-> why? If this issue is present also on systems that only use ACPI is
-> this possibly due to an ACPI firmware bug  or the lack of some semantics
-> in ACPI to express ordering in a better way? If the issue is device
-> tree related only is this due to the lack of semantics in device tree
-> to express some more complex dependency ?
-
-The main feature of device links that is used in this patch is enabling
-runtime pm dependency between Exynos SYSMMU controller (called it client
-device) and the device, for which it implements DMA address translation
-(called master device). The assumptions are following:
-1. master device driver is completely unaware of the Exynos SYSMMU presence,
-    IOMMU is transparently hooked up and managed by DMA-mapping framework
-2. SYSMMU belongs to the same power domain as it's master device
-3. SYSMMU is optional, master device can fully operate without it, with
-    simple DMA address translation (DMA address == physical address)
-4. Master device implements runtime pm, what in turn causes respective
-    power domain to be turned on/off
-5. DMA-mapping and IOMMU frameworks provides no calls to notify SYSMMU
-    when its master device is performing DMA operations, so SYSMMU has
-    to be runtime active
-6. Currently SYSMMU always sets its runtime pm status to active after
-    attaching to its master device to ensure proper hardware state. This
-    prevents power domain to be turned off, even when master device sets
-    its runtime pm status to suspended.
-7. Exynos SYSMMU has to be runtime active at the same time when its
-    master device is runtime active to it to perform DMA operations and
-    allow the power domain to be turned off, when master device is
-    runtime suspended.
-8. The terms of device links, Exynos SYSMMU is a 'consumer' and master
-    device is a 'supplier'.
-
-> Has there been any review of the existing similar solutions out there
-> such as the DRM / audio component framework? Would that help ?
-
-Nope, none of that solution deals with runtime pm.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Yours,
+Linus Walleij
