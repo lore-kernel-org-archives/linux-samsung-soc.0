@@ -1,48 +1,223 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 2/2] ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
-Date: Tue, 08 Nov 2016 08:44:24 +0530
-Message-ID: <1478574864-24683-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1478574864-24683-1-git-send-email-pankaj.dubey@samsung.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v7 1/2] soc: samsung: add exynos chipid driver support
+Date: Tue, 08 Nov 2016 08:56:26 +0530
+Message-ID: <582145E2.7010802@samsung.com>
+References: <1478347427-28409-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20161105120051epcas5p2edc77b9b0d2729725b626f88d555a4a0@epcas5p2.samsung.com>
+ <1478347427-28409-2-git-send-email-pankaj.dubey@samsung.com>
+ <cafc255a-3bdb-7eb2-1092-545866752858@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51176 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:53479 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752328AbcKHDL2 (ORCPT
+        with ESMTP id S1752289AbcKHDXZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Nov 2016 22:11:28 -0500
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+        Mon, 7 Nov 2016 22:23:25 -0500
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGA01ARUZIOPQA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Nov 2016 12:11:26 +0900 (KST)
-In-reply-to: <1478574864-24683-1-git-send-email-pankaj.dubey@samsung.com>
+ with ESMTP id <0OGB01FFD02ZB0A0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Nov 2016 12:23:23 +0900 (KST)
+In-reply-to: <cafc255a-3bdb-7eb2-1092-545866752858@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-As no more user of soc_is_exynos{4,5} we can safely remove them.
+Hi Marek,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm/mach-exynos/common.h | 5 -----
- 1 file changed, 5 deletions(-)
+On Monday 07 November 2016 01:05 PM, Marek Szyprowski wrote:
+> Hi Pankaj,
+> 
+> 
+> On 2016-11-05 13:03, Pankaj Dubey wrote:
+>> Exynos SoCs have Chipid, for identification of product IDs
+>> and SoC revisions. This patch intends to provide initialization
+>> code for all these functionalities, at the same time it provides some
+>> sysfs entries for accessing these information to user-space.
+>>
+>> This driver uses existing binding for exynos-chipid.
+>>
+>> CC: Grant Likely <grant.likely@linaro.org>
+>> CC: Rob Herring <robh+dt@kernel.org>
+>> CC: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>   drivers/soc/samsung/Kconfig         |   5 ++
+>>   drivers/soc/samsung/Makefile        |   1 +
+>>   drivers/soc/samsung/exynos-chipid.c | 148
+>> ++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 154 insertions(+)
+>>   create mode 100644 drivers/soc/samsung/exynos-chipid.c
+>>
+>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>> index 2455339..f9ab858 100644
+>> --- a/drivers/soc/samsung/Kconfig
+>> +++ b/drivers/soc/samsung/Kconfig
+>> @@ -14,4 +14,9 @@ config EXYNOS_PM_DOMAINS
+>>       bool "Exynos PM domains" if COMPILE_TEST
+>>       depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+>>   +config EXYNOS_CHIPID
+>> +    bool "Exynos Chipid controller driver" if COMPILE_TEST
+>> +    depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
+>> +    select SOC_BUS
+>> +
+>>   endif
+>> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+>> index 3619f2e..2a8a85e 100644
+>> --- a/drivers/soc/samsung/Makefile
+>> +++ b/drivers/soc/samsung/Makefile
+>> @@ -1,3 +1,4 @@
+>>   obj-$(CONFIG_EXYNOS_PMU)    += exynos-pmu.o exynos3250-pmu.o
+>> exynos4-pmu.o \
+>>                       exynos5250-pmu.o exynos5420-pmu.o
+>>   obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+>> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
+>> diff --git a/drivers/soc/samsung/exynos-chipid.c
+>> b/drivers/soc/samsung/exynos-chipid.c
+>> new file mode 100644
+>> index 0000000..9761e54
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/exynos-chipid.c
+>> @@ -0,0 +1,148 @@
+>> +/*
+>> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+>> + *          http://www.samsung.com/
+>> + *
+>> + * EXYNOS - CHIP ID support
+>> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/io.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/sys_soc.h>
+>> +
+>> +#define EXYNOS3250_SOC_ID    0xE3472000
+>> +#define EXYNOS4210_SOC_ID    0x43210000
+>> +#define EXYNOS4212_SOC_ID    0x43220000
+>> +#define EXYNOS4412_SOC_ID    0xE4412000
+>> +#define EXYNOS4415_SOC_ID    0xE4415000
+>> +#define EXYNOS5250_SOC_ID    0x43520000
+>> +#define EXYNOS5260_SOC_ID    0xE5260000
+>> +#define EXYNOS5410_SOC_ID    0xE5410000
+>> +#define EXYNOS5420_SOC_ID    0xE5420000
+>> +#define EXYNOS5440_SOC_ID    0xE5440000
+>> +#define EXYNOS5800_SOC_ID    0xE5422000
+>> +
+>> +#define EXYNOS_SOC_MASK        0xFFFFF000
+>> +
+>> +#define EXYNOS4210_REV_0    0x0
+>> +#define EXYNOS4210_REV_1_0    0x10
+>> +#define EXYNOS4210_REV_1_1    0x11
+> 
+> EXYNOS4210_REV* defines are not used at all in this driver.
+> 
+>> +
+>> +#define EXYNOS_SUBREV_MASK    (0xF << 4)
+>> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
+>> +#define EXYNOS_REV_MASK        (EXYNOS_SUBREV_MASK |
+>> EXYNOS_MAINREV_MASK)
+>> +
+>> +
+>> +static const char * __init product_id_to_soc_id(unsigned int product_id)
+>> +{
+>> +    const char *soc_name;
+>> +    unsigned int soc_id = product_id & EXYNOS_SOC_MASK;
+>> +
+>> +    switch (soc_id) {
+>> +    case EXYNOS3250_SOC_ID:
+>> +        soc_name = "EXYNOS3250";
+>> +        break;
+>> +    case EXYNOS4210_SOC_ID:
+>> +        soc_name = "EXYNOS4210";
+>> +        break;
+>> +    case EXYNOS4212_SOC_ID:
+>> +        soc_name = "EXYNOS4212";
+>> +        break;
+>> +    case EXYNOS4412_SOC_ID:
+>> +        soc_name = "EXYNOS4412";
+>> +        break;
+>> +    case EXYNOS4415_SOC_ID:
+>> +        soc_name = "EXYNOS4415";
+>> +        break;
+>> +    case EXYNOS5250_SOC_ID:
+>> +        soc_name = "EXYNOS5250";
+>> +        break;
+>> +    case EXYNOS5260_SOC_ID:
+>> +        soc_name = "EXYNOS5260";
+>> +        break;
+>> +    case EXYNOS5420_SOC_ID:
+>> +        soc_name = "EXYNOS5420";
+>> +        break;
+>> +    case EXYNOS5440_SOC_ID:
+>> +        soc_name = "EXYNOS5440";
+>> +        break;
+>> +    case EXYNOS5800_SOC_ID:
+>> +        soc_name = "EXYNOS5800";
+>> +        break;
+>> +    default:
+>> +        soc_name = "UNKNOWN";
+>> +    }
+>> +    return soc_name;
+>> +}
+> 
+> This approach is a bit error prone. You have already missed Exynos5410
+> and early Exynos 4210 are not detected because of the incorrect SOC MASK.
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9424a8a..d19064b 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -105,11 +105,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5800()	0
- #endif
- 
--#define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
--			  soc_is_exynos4412())
--#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
--			  soc_is_exynos5420() || soc_is_exynos5800())
--
- extern u32 cp15_save_diag;
- extern u32 cp15_save_power;
- 
--- 
-2.7.4
+Yes I missed to update Exynos4210 SoC Mask, thanks for pointing out.
+
+> IMHO you should replace above code and defines with a simple array,
+> where each ID is present only once, so it will be much easier to add
+> future SoCs:
+> 
+
+Well, this looks good to me as well. I will incorporate these changes in
+v2 as suggested by you and reuse your code, along with your
+Signed-off-by for this part :)
+
+> static const struct exynos_soc_id {
+>         const char *name;
+>         unsigned int id;
+>         unsigned int mask;
+> } soc_ids[] = {
+>         { "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
+>         { "EXYNOS4210", 0x43200000, 0xFFFE0000 },
+>         { "EXYNOS4212", 0x43220000, 0xFFFE0000 },
+>         { "EXYNOS4412", 0xE4412000, 0xFFFE0000 },
+>         { "EXYNOS4415", 0xE4415000, 0xFFFE0000 },
+>         { "EXYNOS5250", 0x43520000, 0xFFFFF000 },
+>         { "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
+>         { "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
+>         { "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
+>         { "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
+>         { "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
+> };
+> 
+> static const char * __init product_id_to_soc_id(unsigned int product_id)
+> {
+>         int i;
+> 
+>         for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+>                 if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
+>                         return soc_ids[i].name;
+>         return "UNKNOWN";
+> }
+> 
+> I'm also not sure about Exynos 4415, which has been scheduled for removal.
+> 
+
+As suggested by Arnd, I will keep entry for Exynos 4415 in the driver.
+
+
+Thanks,
+Pankaj Dubey
