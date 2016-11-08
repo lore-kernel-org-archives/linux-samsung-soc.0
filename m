@@ -1,174 +1,66 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 2/7] iommu/exynos: Remove dead code
-Date: Tue, 08 Nov 2016 14:29:19 +0100
-Message-ID: <1478611764-6473-3-git-send-email-m.szyprowski@samsung.com>
-References: <1478611764-6473-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20161108133015eucas1p234c8c7076bcda5020ae8b78e87a0203d@eucas1p2.samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
+Date: Tue, 8 Nov 2016 14:44:45 +0000
+Message-ID: <20161108144445.GD1575@localhost.localdomain>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1478611764-6473-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, vinod.koul@intel.com, sbkim73@samsung.com, andi.shyti@samsung.com, javier@osg.samsung.com, broonie@kernel.org, kgene@kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ym0914@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-__sysmmu_enable/disable functions were designed to do ref-count based
-operations, but current code always calls them only once, so the code for
-checking the conditions and invalid conditions can be simply removed
-without any influence to the driver operation.
+On Fri, Nov 04, 2016 at 05:14:49PM +0100, Sylwester Nawrocki wrote:
+> This patch adds DMA slave map tables to the pl080 devices's
+> platform_data in order to support the new channel request API.
+> A few devices for which there was no DMA support with current
+> code are omitted from the tables.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/mach-s3c64xx/pl080.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
+> index 89c5a62..8c88680 100644
+> --- a/arch/arm/mach-s3c64xx/pl080.c
+> +++ b/arch/arm/mach-s3c64xx/pl080.c
+<snip>
+> @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
+>  	.put_xfer_signal = pl08x_put_xfer_signal,
+>  	.slave_channels = s3c64xx_dma0_info,
+>  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
+> +	.slave_map = s3c64xx_dma0_slave_map,
+> +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
+>  };
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 65 ++++++++++++--------------------------------
- 1 file changed, 17 insertions(+), 48 deletions(-)
+Here we add a .slavecnt but the pl08x_platform_data structure doesn't
+contain that field. I can't see it on the branch you linked in
+the cover letter either, is it added by a patch on another branch
+I am missing?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 8ba0d60..4056228 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -460,9 +460,6 @@ static bool __sysmmu_disable(struct sysmmu_drvdata *data)
- 		__sysmmu_disable_nocount(data);
- 
- 		dev_dbg(data->sysmmu, "Disabled\n");
--	} else  {
--		dev_dbg(data->sysmmu, "%d times left to disable\n",
--					data->activations);
- 	}
- 
- 	spin_unlock_irqrestore(&data->lock, flags);
-@@ -508,29 +505,18 @@ static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
- static int __sysmmu_enable(struct sysmmu_drvdata *data, phys_addr_t pgtable,
- 			   struct exynos_iommu_domain *domain)
- {
--	int ret = 0;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&data->lock, flags);
- 	if (set_sysmmu_active(data)) {
- 		data->pgtable = pgtable;
- 		data->domain = domain;
--
- 		__sysmmu_enable_nocount(data);
--
- 		dev_dbg(data->sysmmu, "Enabled\n");
--	} else {
--		ret = (pgtable == data->pgtable) ? 1 : -EBUSY;
--
--		dev_dbg(data->sysmmu, "already enabled\n");
- 	}
--
--	if (WARN_ON(ret < 0))
--		set_sysmmu_inactive(data); /* decrement count */
--
- 	spin_unlock_irqrestore(&data->lock, flags);
- 
--	return ret;
-+	return 0;
- }
- 
- static void sysmmu_tlb_invalidate_flpdcache(struct sysmmu_drvdata *data,
-@@ -793,8 +779,8 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
- 	spin_lock_irqsave(&domain->lock, flags);
- 
- 	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
--		if (__sysmmu_disable(data))
--			data->master = NULL;
-+		__sysmmu_disable(data);
-+		data->master = NULL;
- 		list_del_init(&data->domain_node);
- 	}
- 
-@@ -829,31 +815,23 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
- 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
- 	struct sysmmu_drvdata *data, *next;
- 	unsigned long flags;
--	bool found = false;
- 
- 	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
- 		return;
- 
- 	spin_lock_irqsave(&domain->lock, flags);
- 	list_for_each_entry_safe(data, next, &domain->clients, domain_node) {
--		if (data->master == dev) {
--			if (__sysmmu_disable(data)) {
--				data->master = NULL;
--				list_del_init(&data->domain_node);
--			}
--			pm_runtime_put(data->sysmmu);
--			found = true;
--		}
-+		__sysmmu_disable(data);
-+		data->master = NULL;
-+		list_del_init(&data->domain_node);
-+		pm_runtime_put(data->sysmmu);
- 	}
- 	spin_unlock_irqrestore(&domain->lock, flags);
- 
- 	owner->domain = NULL;
- 
--	if (found)
--		dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n",
--					__func__, &pagetable);
--	else
--		dev_err(dev, "%s: No IOMMU is attached\n", __func__);
-+	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
-+		&pagetable);
- }
- 
- static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
-@@ -864,7 +842,6 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 	struct sysmmu_drvdata *data;
- 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
- 	unsigned long flags;
--	int ret = -ENODEV;
- 
- 	if (!has_sysmmu(dev))
- 		return -ENODEV;
-@@ -874,27 +851,19 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
- 
- 	list_for_each_entry(data, &owner->controllers, owner_node) {
- 		pm_runtime_get_sync(data->sysmmu);
--		ret = __sysmmu_enable(data, pagetable, domain);
--		if (ret >= 0) {
--			data->master = dev;
-+		__sysmmu_enable(data, pagetable, domain);
-+		data->master = dev;
- 
--			spin_lock_irqsave(&domain->lock, flags);
--			list_add_tail(&data->domain_node, &domain->clients);
--			spin_unlock_irqrestore(&domain->lock, flags);
--		}
--	}
--
--	if (ret < 0) {
--		dev_err(dev, "%s: Failed to attach IOMMU with pgtable %pa\n",
--					__func__, &pagetable);
--		return ret;
-+		spin_lock_irqsave(&domain->lock, flags);
-+		list_add_tail(&data->domain_node, &domain->clients);
-+		spin_unlock_irqrestore(&domain->lock, flags);
- 	}
- 
- 	owner->domain = iommu_domain;
--	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa %s\n",
--		__func__, &pagetable, (ret == 0) ? "" : ", again");
-+	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
-+		&pagetable);
- 
--	return ret;
-+	return 0;
- }
- 
- static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
--- 
-1.9.1
+> @@ -224,6 +254,8 @@ struct pl08x_platform_data s3c64xx_dma1_plat_data = {
+>  	.put_xfer_signal = pl08x_put_xfer_signal,
+>  	.slave_channels = s3c64xx_dma1_info,
+>  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma1_info),
+> +	.slave_map = s3c64xx_dma1_slave_map,
+> +	.slavecnt = ARRAY_SIZE(s3c64xx_dma1_slave_map),
+>  };
+
+ditto.
+
+Thanks,
+Charles
