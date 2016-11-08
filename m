@@ -1,30 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 0/3] ARM: exynos: Stuff for v4.10
-Date: Tue,  8 Nov 2016 20:26:26 +0200
-Message-ID: <1478629589-7520-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752194AbcKHS0p (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 13:26:45 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL 3/3] ARM: defconfig: Samsung defconfigs for v4.10
+Date: Tue,  8 Nov 2016 20:26:27 +0200
+Message-ID: <1478629589-7520-2-git-send-email-krzk@kernel.org>
+References: <1478629589-7520-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478629589-7520-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-Two weeks ago it looked it will be very boring merge window for Samsung,
-but luckily it is not!
-
-So far we got Exynos5433 and two boards on it. ARMv7 got one board
-using Exynos4412.
-
-I am pushing this patches early but expect another pull requests in few weeks.
-
-No order of pulling, no dependencies.
-
+Nothing special.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.10
+
+for you to fetch changes up to e471e9b4b13b59ee8cb7079018472c4dda46cb7a:
+
+  ARM: multi_v7_defconfig: Enable exynos-gsc driver as module (2016-10-17 19:43:29 +0300)
+
+----------------------------------------------------------------
+Samsung defconfig update for v4.10:
+1. Enable the Exynos gscaler driver on multi_v7 and exynos defconfigs.
+
+----------------------------------------------------------------
+Javier Martinez Canillas (2):
+      ARM: exynos_defconfig: Enable exynos-gsc driver as module
+      ARM: multi_v7_defconfig: Enable exynos-gsc driver as module
+
+ arch/arm/configs/exynos_defconfig   | 1 +
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 2 files changed, 2 insertions(+)
