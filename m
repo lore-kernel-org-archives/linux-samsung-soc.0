@@ -1,71 +1,51 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
-Date: Tue, 08 Nov 2016 16:53:40 +0100
-Message-ID: <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
+Subject: Re: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel
+ request API
+Date: Tue, 08 Nov 2016 17:02:43 +0100
+Message-ID: <fbb81b22-48f7-5948-a48e-2375e2414efb@samsung.com>
 References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
- <20161108144445.GD1575@localhost.localdomain>
- <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
- <20161108145534.GE1575@localhost.localdomain>
+ <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
+ <CGME20161108154037epcas4p34b3004ca2ffb63275be42edec4c91f6e@epcas4p3.samsung.com>
+ <20161108153949.GF1575@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20448 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20859 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbcKHPxw (ORCPT
+        with ESMTP id S1751786AbcKHQCt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Nov 2016 10:53:52 -0500
-In-reply-to: <20161108145534.GE1575@localhost.localdomain>
+        Tue, 8 Nov 2016 11:02:49 -0500
+In-reply-to: <20161108153949.GF1575@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On 11/08/2016 03:55 PM, Charles Keepax wrote:
->>> diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
->>> > > index 89c5a62..8c88680 100644
->>> > > --- a/arch/arm/mach-s3c64xx/pl080.c
->>> > > +++ b/arch/arm/mach-s3c64xx/pl080.c
->> > <snip>
->>> > > @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
->>> > >  	.put_xfer_signal = pl08x_put_xfer_signal,
->>> > >  	.slave_channels = s3c64xx_dma0_info,
->>> > >  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
->>> > > +	.slave_map = s3c64xx_dma0_slave_map,
->>> > > +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
->>> > >  };
->> > 
->> > Here we add a .slavecnt but the pl08x_platform_data structure doesn't
->> > contain that field. I can't see it on the branch you linked in
->> > the cover letter either, is it added by a patch on another branch
->> > I am missing?
->> > 
-> Ah I think I see it should be .slave_map_len here.
+On 11/08/2016 04:39 PM, Charles Keepax wrote:
+> Hmm... fixing the bug I mentioned in my other email this still
+> seems to cause some problems with my SPI on Cragganmore:
+> 
+> [  200.210213] wm0010 spi0.0: I/O Error: rx-1 tx-1 res:rx-f tx-f len-2632
+> [  200.211275] wm0010 spi0.0: SPI transfer failed: -5
+> 
+> I am still looking into it, without your patches work the wm0010
+> comes up. A few other small things seem to have been broken in
+> mainline since last time I fired up this board as well which is
+> slowing me down a little (network seems to have stopped coming
+> up and one of the regulators on the SD card is spamming me with
+> warnings).
 
-Yeah, sorry, I fixed it after getting report from the kbuild test
-but have forgotten to push changes to the git tree.
+Thanks for giving it a try.  Is it any better with a change as below?
 
-I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
-issue fixed and added initialization of the filer function.
-
--------------------8<-------------------------
 diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 939a7c3..d441c4b 100644
+index d5c75c8..d441c4b 100644
 --- a/drivers/dma/amba-pl08x.c
 +++ b/drivers/dma/amba-pl08x.c
-@@ -2307,6 +2307,10 @@ static int pl08x_probe(struct amba_device *adev, const
+@@ -2310,6 +2310,7 @@ static int pl08x_probe(struct amba_device *adev, const
 struct amba_id *id)
-                        ret = -EINVAL;
-                        goto out_no_platdata;
-                }
-+       } else {
-+               pl08x->slave.filter.map = pl08x->pd->slave_map;
-+               pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
+        } else {
+                pl08x->slave.filter.map = pl08x->pd->slave_map;
+                pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
 +               pl08x->slave.filter.fn = pl08x_filter_id;
         }
--------------------8<-------------------------
-
---
-Thanks,
-Sylwester
