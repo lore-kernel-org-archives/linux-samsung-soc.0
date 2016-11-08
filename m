@@ -1,74 +1,69 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
- control runtime pm
-Date: Tue, 8 Nov 2016 16:30:44 +0100
-Message-ID: <20161108153044.GA6983@wunner.de>
-References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
- <1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
- <20161107214747.GJ1764@wotan.suse.de>
- <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH RFC 0/7] DMA: S3C64XX: Conversion to the new channel
+ request API
+Date: Tue, 8 Nov 2016 15:39:49 +0000
+Message-ID: <20161108153949.GF1575@localhost.localdomain>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51239 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752737AbcKHPkN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 8 Nov 2016 10:40:13 -0500
 Content-Disposition: inline
-In-Reply-To: <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lars-Peter Clausen <lars@metafoo.de>
+In-Reply-To: <1478276094-19135-2-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Tue, Nov 08, 2016 at 08:27:12AM +0100, Marek Szyprowski wrote:
-> On 2016-11-07 22:47, Luis R. Rodriguez wrote:
-> > Has there been any review of the existing similar solutions out there
-> > such as the DRM / audio component framework? Would that help ?
+On Fri, Nov 04, 2016 at 05:14:47PM +0100, Sylwester Nawrocki wrote:
+> This patch series aims to convert the s3c64xx platform to use
+> the new universal DMA channel request API, i.e. this is only
+> meaningful for non-dt systems using s3c64xx SoCs.
 > 
-> Nope, none of that solution deals with runtime pm.
+> I'm sending the whole series as RFC since I didn't test it
+> yet, I'm going to prepare smd6410 for testing this series.
+> It would be great if someone else could also test it,
+> either SPI or sound functionality verification would be 
+> useful.
+> 
+> Then we could queue the first two patches in this series
+> for v4.10-rc1 and the remaining patches for subsequent
+> release.
+> 
+> The whole series can be pulled from git repository:
+>  git://linuxtv.org/snawrocki/samsung.git 
+>  branch: for-v4.10/dma/pl080-s3c64xx
+> 
+> Thanks.
+> 
+> Sylwester Nawrocki (7):
+>   dma: pl08x: Add support for the DMA slave map
+>   ARM: S3C64XX: Add DMA slave maps for PL080 devices
+>   spi: s3c64xx: Do not use platform_data for DMA parameters
+>   ASoC: samsung: i2s: Do not use platform_data for DMA parameters
+>   ASoC: samsung: pcm: Do not use platform_data for DMA parameters
+>   ARM: S3C64XX: Drop unused DMA fields from struct s3c64xx_spi_csinfo
+>   ARM: S3C64XX: Drop initialization of unused struct s3c_audio_pdata
+>     fields
+> 
 
-Well, they do.  Hybrid graphics laptops often have an HDA controller
-on the discrete GPU and I assume that's what Luis meant. There's code
-in drivers/gpu/vga/vga_switcheroo.c to make this (only sort of) work:
+Hmm... fixing the bug I mentioned in my other email this still
+seems to cause some problems with my SPI on Cragganmore:
 
-* When the GPU is powered up/down, the HDA controller's driver is
-  instructed to pm_runtime_get/put the HDA device (see call to
-  set_audio_state() in vga_switcheroo_set_dynamic_switch()).
+[  200.210213] wm0010 spi0.0: I/O Error: rx-1 tx-1 res:rx-f tx-f len-2632
+[  200.211275] wm0010 spi0.0: SPI transfer failed: -5
 
-* When a runtime PM ref is acquired on the HDA device, the
-  GPU is powered up (see vga_switcheroo_runtime_resume_hdmi_audio()).
-
-
-Unfortunately this is all fairly broken, e.g.:
-
-* If a runtime PM ref on the HDA device is held for more than 5 sec
-  (autosuspend delay of the GPU), the GPU will be powered down and
-  the HDA device will become inaccessible, regardless of the runtime
-  PM ref still being held (because vga_switcheroo_set_dynamic_switch()
-  doesn't check the refcount of the HDA device).
-
-* The DRM device is afforded direct-complete but the HDA device is not.
-  If the GPU is handled earlier by dpm_suspend(), then runtime PM will
-  have been disabled on the GPU and thus the HDA device will fail to
-  runtime resume before system sleep.
-
-Rafael's series allows representation of such inter-device dependencies
-in the PM core and can thus replace kludgy and broken "solutions" like
-the one above.
-
-There's one thing that I haven't understood myself though:  In an e-mail
-exchange in September Rafael has argued that the above-mentioned hybrid
-graphics use case "isn't a good [example] IMO.  That clearly is a case
-when two (or more) devices share power resources controlled by a single
-on/off switch.  Which is a clear use case for a PM domain."
-
-The same seems to apply to Marek's SYSMMU use case.  When applying device
-links to SYSMMU or hybrid graphics, we select one of the devices in the
-PM domain as master and have the other one depend on it as slave, i.e.
-a synthetic hierarchical relationship is established.
-
-I've responded to Rafael on September 18 that this can't be solved with
-a struct dev_pm_domain, but haven't received a reply since:
-https://lkml.org/lkml/2016/9/18/103
+I am still looking into it, without your patches work the wm0010
+comes up. A few other small things seem to have been broken in
+mainline since last time I fired up this board as well which is
+slowing me down a little (network seems to have stopped coming
+up and one of the regulators on the SD card is spamming me with
+warnings).
 
 Thanks,
-
-Lukas
+Charles
