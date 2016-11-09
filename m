@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 03/12] exynos-gsc: Make driver functional when CONFIG_PM is
- unset
-Date: Wed, 09 Nov 2016 15:23:52 +0100
-Message-ID: <1478701441-29107-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 05/12] exynos-gsc: Fixup clock management at ->remove()
+Date: Wed, 09 Nov 2016 15:23:54 +0100
+Message-ID: <1478701441-29107-6-git-send-email-m.szyprowski@samsung.com>
 References: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161109142408eucas1p1401c6b61321b52ea341a28ad063f4653@eucas1p1.samsung.com>
+ <CGME20161109142409eucas1p1984158008caee2ed6645bfa3666e8900@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
@@ -14,61 +13,39 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Ulf Hansson <ulf.hansson@linaro.org>
 
-The driver depended on CONFIG_PM to be functional. Let's remove that
-dependency, by enable the runtime PM resourses during ->probe() and
-update the device's runtime PM status to reflect this.
+To make sure the clock is fully gated in ->remove(), we first need to
+to bring the device into full power by invoking pm_runtime_get_sync().
+
+Then, let's both unprepare and disable the clock.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 [mszyprow: rebased onto v4.9-rc4]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index cb4e8bd..b5a99af 100644
+index 7e99fda..1d3bde3 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1072,7 +1072,7 @@ static int gsc_probe(struct platform_device *pdev)
- 		return PTR_ERR(gsc->clock);
- 	}
+@@ -1082,12 +1082,15 @@ static int gsc_remove(struct platform_device *pdev)
+ {
+ 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
  
--	ret = clk_prepare(gsc->clock);
-+	ret = clk_prepare_enable(gsc->clock);
- 	if (ret) {
- 		dev_err(&gsc->pdev->dev, "clock prepare failed for clock: %s\n",
- 			GSC_CLOCK_GATE_NAME);
-@@ -1095,24 +1095,23 @@ static int gsc_probe(struct platform_device *pdev)
- 		goto err_v4l2;
- 
- 	platform_set_drvdata(pdev, gsc);
--	pm_runtime_enable(dev);
--	ret = pm_runtime_get_sync(&pdev->dev);
--	if (ret < 0)
--		goto err_m2m;
++	pm_runtime_get_sync(&pdev->dev);
 +
-+	gsc_hw_set_sw_reset(gsc);
-+	gsc_wait_reset(gsc);
- 
- 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
- 
- 	dev_dbg(dev, "gsc-%d registered successfully\n", gsc->id);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
- 	return 0;
- 
--err_m2m:
--	gsc_unregister_m2m_device(gsc);
- err_v4l2:
+ 	gsc_unregister_m2m_device(gsc);
  	v4l2_device_unregister(&gsc->v4l2_dev);
- err_clk:
+ 
+ 	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
+-	pm_runtime_disable(&pdev->dev);
 -	clk_unprepare(gsc->clock);
 +	clk_disable_unprepare(gsc->clock);
- 	return ret;
- }
++
++	pm_runtime_put_noidle(&pdev->dev);
  
+ 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+ 	return 0;
 -- 
 1.9.1
