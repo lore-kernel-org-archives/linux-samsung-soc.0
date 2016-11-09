@@ -1,60 +1,65 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 07/12] exynos-gsc: Make system PM callbacks available for
- CONFIG_PM_SLEEP
-Date: Wed, 09 Nov 2016 15:23:56 +0100
-Message-ID: <1478701441-29107-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 12/12] exynos-gsc: Use of_device_get_match_data() helper
+Date: Wed, 09 Nov 2016 15:24:01 +0100
+Message-ID: <1478701441-29107-13-git-send-email-m.szyprowski@samsung.com>
 References: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161109142410eucas1p1ce029aa84c383de34c7b354e1633c783@eucas1p1.samsung.com>
+ <CGME20161109142412eucas1p17e8eeb9c289771e8a093d35d1fde28f7@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:10732 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754100AbcKIOYR (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:60632 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754107AbcKIOYU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 09:24:17 -0500
+        Wed, 9 Nov 2016 09:24:20 -0500
 In-reply-to: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+Replace open-coded driver data extraction code with generic helper.
 
-There are no need to set up the system PM callbacks unless they are
-being used. It also causes compiler warnings about unused functions.
-
-Silence the warnings by making them available for CONFIG_PM_SLEEP.
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[mszyprow: rebased onto v4.9-rc4]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 9ba1619..af6502c 100644
+index ac4c96c..664398c 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1166,6 +1166,7 @@ static int gsc_runtime_suspend(struct device *dev)
- }
- #endif
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <media/v4l2-ioctl.h>
  
-+#ifdef CONFIG_PM_SLEEP
- static int gsc_resume(struct device *dev)
- {
- 	struct gsc_dev *gsc = dev_get_drvdata(dev);
-@@ -1202,10 +1203,10 @@ static int gsc_suspend(struct device *dev)
- 
- 	return 0;
- }
-+#endif
- 
- static const struct dev_pm_ops gsc_pm_ops = {
--	.suspend		= gsc_suspend,
--	.resume			= gsc_resume,
-+	SET_SYSTEM_SLEEP_PM_OPS(gsc_suspend, gsc_resume)
- 	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
+ #include "gsc-core.h"
+@@ -975,24 +976,12 @@ static irqreturn_t gsc_irq_handler(int irq, void *priv)
  };
+ MODULE_DEVICE_TABLE(of, exynos_gsc_match);
  
+-static void *gsc_get_drv_data(struct platform_device *pdev)
+-{
+-	struct gsc_driverdata *driver_data = NULL;
+-	const struct of_device_id *match;
+-
+-	match = of_match_node(exynos_gsc_match, pdev->dev.of_node);
+-	if (match)
+-		driver_data = (struct gsc_driverdata *)match->data;
+-
+-	return driver_data;
+-}
+-
+ static int gsc_probe(struct platform_device *pdev)
+ {
+ 	struct gsc_dev *gsc;
+ 	struct resource *res;
+-	struct gsc_driverdata *drv_data = gsc_get_drv_data(pdev);
+ 	struct device *dev = &pdev->dev;
++	const struct gsc_driverdata *drv_data = of_device_get_match_data(dev);
+ 	int ret;
+ 
+ 	gsc = devm_kzalloc(dev, sizeof(struct gsc_dev), GFP_KERNEL);
 -- 
 1.9.1
