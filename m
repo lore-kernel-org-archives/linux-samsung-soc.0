@@ -1,56 +1,38 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/2] exynos-gsc: Enable driver on ARCH_EXYNOS
-Date: Wed, 9 Nov 2016 14:49:07 -0300
-Message-ID: <9b294d9b-8e02-7732-0fa1-d573cdabffc7@osg.samsung.com>
-References: <1478701778-29452-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161109142950eucas1p28aeab32587655ee249c1eefefcbb408d@eucas1p2.samsung.com>
- <1478701778-29452-2-git-send-email-m.szyprowski@samsung.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 00/13] mmc: dw_mmc: cleans the codes for dwmmc controller
+Date: Wed, 09 Nov 2016 19:55:21 +0100
+Message-ID: <1862686.MpoeR9Brjy@phil>
+References: <20161103062135.10697-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:41977
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751420AbcKIR5q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 12:57:46 -0500
-In-Reply-To: <1478701778-29452-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161103062135.10697-1-jh80.chung@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, krzk@kernel.org, shawn.lin@rock-chips.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hello Marek,
-
-On 11/09/2016 11:29 AM, Marek Szyprowski wrote:
-> This driver can be also used on Exynos5433, which is ARM64-based
-> platform, which selects only ARCH_EXYNOS symbol.
+Am Donnerstag, 3. November 2016, 15:21:22 CET schrieb Jaehoon Chung:
+> This patchset is modified the some minor fixing and cleaning code.
+> If needs to split the patches, i will re-send the patches.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/media/platform/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> * Major changes
+> - Use the cookie enum values like sdhci controller.
+> - Remove the unnecessary codes and use stop_abort() by default.
+> - Remove the obsoleted property "supports-highspeed"
+> - Remove the "clock-freq-min-max" property. Instead, use "max-frequency"
+> - Minimum clock value is set to 100K by default.
 > 
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 754edbf1..90ae790 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -266,7 +266,7 @@ config VIDEO_MX2_EMMAPRP
->  config VIDEO_SAMSUNG_EXYNOS_GSC
->  	tristate "Samsung Exynos G-Scaler driver"
->  	depends on VIDEO_DEV && VIDEO_V4L2
-> -	depends on ARCH_EXYNOS5 || COMPILE_TEST
-> +	depends on ARCH_EXYNOS || COMPILE_TEST
->  	depends on HAS_DMA
->  	select VIDEOBUF2_DMA_CONTIG
->  	select V4L2_MEM2MEM_DEV
-> 
+> Jaehoon Chung (13):
+>   mmc: dw_mmc: display the real register value on debugfs
+>   mmc: dw_mmc: fix the debug message for checking card's present
+>   mmc: dw_mmc: change the DW_MCI_FREQ_MIN from 400K to 100K
+>   mmc: dw_mmc: use the hold register when send stop command
+>   mmc: dw_mmc: call the dw_mci_prep_stop_abort() by default
+>   mmc: core: move the cookie's enum values from sdhci.h to mmc.h
+>   mmc: dw_mmc: use the cookie's enum values for post/pre_req()
+>   mmc: dw_mmc: remove the unnecessary mmc_data structure
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+patches 1-8 on rk3036, rk3288, rk3368 and rk3399 Rockchip platforms
+Tested-by: Heiko Stuebner <heiko@sntech.de>
