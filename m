@@ -1,77 +1,40 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/13] ARM: dts: exynos: replace to "max-frequecy"
- instead of "clock-freq-min-max"
-Date: Wed, 9 Nov 2016 22:10:29 +0200
-Message-ID: <20161109201029.GE23534@kozik-lap>
-References: <20161103062135.10697-1-jh80.chung@samsung.com>
- <20161103184112.GB11071@kozik-lap>
- <ecf4fac2-0ab7-d4c4-69e3-d498ee5b601c@samsung.com>
- <4066252.a1W9ejEKHX@phil>
- <CGME20161104150527epcas4p4004d2c3a8686cccef97760dacdb2892c@epcas4p4.samsung.com>
- <20161104150447.GA4829@kozik-lap>
- <72612112-3b79-8fd3-8be4-a8f60ab3b68a@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 0/7] soc: renesas: Identify SoC and register with the SoC bus
+Date: Wed, 09 Nov 2016 22:12:32 +0100
+Message-ID: <6723536.97ljqcB8tS@wuerfel>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be> <1626072.dpWPnWgGl9@wuerfel> <CAMuHMdVrdjqWruY=dBjWP=jZuZkc=aTBTMijOyTDfZFcaD_jsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <72612112-3b79-8fd3-8be4-a8f60ab3b68a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:52952 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754476AbcKIVN1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 9 Nov 2016 16:13:27 -0500
+In-Reply-To: <CAMuHMdVrdjqWruY=dBjWP=jZuZkc=aTBTMijOyTDfZFcaD_jsA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Dirk Behme <dirk.behme@de.bosch.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Yangbo Lu <yangbo.lu@nxp.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Nov 07, 2016 at 09:38:15AM +0900, Jaehoon Chung wrote:
-> On 11/05/2016 12:04 AM, Krzysztof Kozlowski wrote:
-> > On Fri, Nov 04, 2016 at 12:19:49PM +0100, Heiko Stuebner wrote:
-> >> Hi Jaehoon,
+On Wednesday, November 9, 2016 6:19:06 PM CET Geert Uytterhoeven wrote:
+> On Wed, Nov 9, 2016 at 5:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wednesday, November 9, 2016 2:34:33 PM CET Geert Uytterhoeven wrote:
+> >> > And Samsung.
+> >> > Shall I create the immutable branch now?
 > >>
-> >> Am Freitag, 4. November 2016, 19:21:30 CET schrieb Jaehoon Chung:
-> >>> On 11/04/2016 03:41 AM, Krzysztof Kozlowski wrote:
-> >>>> On Thu, Nov 03, 2016 at 03:21:32PM +0900, Jaehoon Chung wrote:
-> >>>>> In drivers/mmc/core/host.c, there is "max-frequency" property.
-> >>>>> It should be same behavior. So Use the "max-frequency" instead of
-> >>>>> "clock-freq-min-max".
-> >>>>>
-> >>>>> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >>>>> ---
-> >>>>>
-> >>>>>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 2 +-
-> >>>>>  arch/arm/boot/dts/exynos3250-artik5.dtsi     | 2 +-
-> >>>>>  arch/arm/boot/dts/exynos3250-monk.dts        | 2 +-
-> >>>>>  arch/arm/boot/dts/exynos3250-rinato.dts      | 2 +-
-> >>>>>  4 files changed, 4 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> This looks totally independent to rest of patches so it can be applied
-> >>>> separately without any functional impact (except lack of minimum
-> >>>> frequency). Is that correct?
-> >>>
-> >>> You're right. I will split the patches. And will resend.
-> >>> Thanks!
-> >>
-> >> I think what Krzysztof was asking was just if he can simply pick up this patch 
-> >> alone, as it does not require any of the previous changes.
-> >>
-> >> Same is true for the Rockchip patches I guess, so we could just take them 
-> >> individually into samsung/rockchip dts branches.
-> > 
-> > Yes, I wanted to get exactly this information. I couldn't find it in
-> > cover letter.
+> >> Arnd: are you happy with the new patches and changes?
+> >
+> > I still had some comments for patch 7, but that shouldn't stop
+> > you from creating a branch for the first three so everyone can
+> > build on top of that.
 > 
-> In drivers/mmc/core/host.c, there already is "max-frequency" property.
-> It's same functionality with "clock-freq-min-max". 
-> Minimum clock value can be fixed to 100K. because MMC core will check clock value from 400K to 100K.
-> But max-frequency can be difference.
-> If we can use "max-frequency" property, we don't need to use "clock-freq-min-max" property anymore.
-> I will resend the deprecated property instead of removing "clock-freq-min-max".
+> Thanks!
 > 
-> If you want to pick this, it's possible to pick. Then i will resend the patches without dt patches.
+> What about patch [4/7]?
+> Haven't you received it? Your address was in the To-line for all 7 patches.
 
-Thanks, applied.
+Ok, I see it now, looks good. That should be included as well then.
 
-Best regards,
-Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
