@@ -1,34 +1,61 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 11/13] ARM: dts: rockchip: replace to "max-frequency" instead of "clock-freq-min-max"
-Date: Wed, 09 Nov 2016 15:05:03 +0100
-Message-ID: <9130443.30mF7DGnI2@phil>
-References: <20161103062135.10697-1-jh80.chung@samsung.com> <20161103062135.10697-12-jh80.chung@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 09/12] exynos-gsc: Simplify system PM even more
+Date: Wed, 09 Nov 2016 15:23:58 +0100
+Message-ID: <1478701441-29107-10-git-send-email-m.szyprowski@samsung.com>
+References: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161109142411eucas1p2dc6769c2c713813ce3aaedf74189435d@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:48720 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751537AbcKIOFP (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:61095 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753968AbcKIOYN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 09:05:15 -0500
-In-Reply-To: <20161103062135.10697-12-jh80.chung@samsung.com>
+        Wed, 9 Nov 2016 09:24:13 -0500
+In-reply-to: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, ulf.hansson@linaro.org, robh+dt@kernel.org, krzk@kernel.org, shawn.lin@rock-chips.com
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Am Donnerstag, 3. November 2016, 15:21:33 CET schrieb Jaehoon Chung:
-> In drivers/mmc/core/host.c, there is "max-frequency" property.
-> It should be same behavior. So use the "max-frequency" instead of
-> "clock-freq-min-max".
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+System pm callbacks only ensures that device is runtime suspended/resumed,
+so remove them and use generic pm_runtime_force_suspend/resume helper.
 
-looks good, my veyron-pinky and rk3036-kylin still seem to work and hopefully 
-I haven't missed any spelling errors in the properties :-), so applied to my 
-dts32 branch for 4.10
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/exynos-gsc/gsc-core.c | 21 ++-------------------
+ 1 file changed, 2 insertions(+), 19 deletions(-)
 
-
-Thanks
-Heiko
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 4859727..1e8b216 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1166,26 +1166,9 @@ static int gsc_runtime_suspend(struct device *dev)
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int gsc_resume(struct device *dev)
+-{
+-	if (!pm_runtime_suspended(dev))
+-		return gsc_runtime_resume(dev);
+-
+-	return 0;
+-}
+-
+-static int gsc_suspend(struct device *dev)
+-{
+-	if (!pm_runtime_suspended(dev))
+-		return gsc_runtime_suspend(dev);
+-
+-	return 0;
+-}
+-#endif
+-
+ static const struct dev_pm_ops gsc_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(gsc_suspend, gsc_resume)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
+ 	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
+ };
+ 
+-- 
+1.9.1
