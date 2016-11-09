@@ -1,50 +1,60 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 00/12] media: Exynos GScaller driver fixes
-Date: Wed, 09 Nov 2016 15:23:49 +0100
-Message-ID: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161109142406eucas1p2c3c158d10fd96d97c57a32ab402acd2e@eucas1p2.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH 07/12] exynos-gsc: Make system PM callbacks available for
+ CONFIG_PM_SLEEP
+Date: Wed, 09 Nov 2016 15:23:56 +0100
+Message-ID: <1478701441-29107-8-git-send-email-m.szyprowski@samsung.com>
+References: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161109142410eucas1p1ce029aa84c383de34c7b354e1633c783@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:10732 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754100AbcKIOYR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 9 Nov 2016 09:24:17 -0500
+In-reply-to: <1478701441-29107-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi!
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-This is a collection of various fixes and cleanups for Exynos GScaller
-media driver. Most of them comes from the forgotten patchset posted long
-time ago by Ulf Hansson:
-https://www.mail-archive.com/linux-media@vger.kernel.org/msg80592.html
+There are no need to set up the system PM callbacks unless they are
+being used. It also causes compiler warnings about unused functions.
 
-While testing and rebasing them, I added some more cleanups. Tested on
-Exynos5422-based Odroid XU3 board.
+Silence the warnings by making them available for CONFIG_PM_SLEEP.
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[mszyprow: rebased onto v4.9-rc4]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/exynos-gsc/gsc-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-
-Patch summary:
-
-Marek Szyprowski (4):
-  exynos-gsc: Simplify system PM even more
-  exynos-gsc: Remove unused lclk_freqency entry
-  exynos-gsc: Add missing newline char in debug messages
-  exynos-gsc: Use of_device_get_match_data() helper
-
-Ulf Hansson (8):
-  exynos-gsc: Simplify clock management
-  exynos-gsc: Convert gsc_m2m_resume() from int to void
-  exynos-gsc: Make driver functional when CONFIG_PM is unset
-  exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
-  exynos-gsc: Fixup clock management at ->remove()
-  exynos-gsc: Do full clock gating at runtime PM suspend
-  exynos-gsc: Make system PM callbacks available for CONFIG_PM_SLEEP
-  exynos-gsc: Simplify system PM
-
- drivers/media/platform/exynos-gsc/gsc-core.c | 214 +++++++++------------------
- drivers/media/platform/exynos-gsc/gsc-core.h |   5 -
- 2 files changed, 73 insertions(+), 146 deletions(-)
-
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9ba1619..af6502c 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1166,6 +1166,7 @@ static int gsc_runtime_suspend(struct device *dev)
+ }
+ #endif
+ 
++#ifdef CONFIG_PM_SLEEP
+ static int gsc_resume(struct device *dev)
+ {
+ 	struct gsc_dev *gsc = dev_get_drvdata(dev);
+@@ -1202,10 +1203,10 @@ static int gsc_suspend(struct device *dev)
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static const struct dev_pm_ops gsc_pm_ops = {
+-	.suspend		= gsc_suspend,
+-	.resume			= gsc_resume,
++	SET_SYSTEM_SLEEP_PM_OPS(gsc_suspend, gsc_resume)
+ 	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
+ };
+ 
 -- 
 1.9.1
