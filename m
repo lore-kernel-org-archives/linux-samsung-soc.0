@@ -1,232 +1,130 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
-Date: Wed, 09 Nov 2016 17:45:54 +0530
-Message-ID: <1478693755-11953-2-git-send-email-pankaj.dubey@samsung.com>
-References: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/7] soc: renesas: Identify SoC and register with the
+ SoC bus
+Date: Wed, 9 Nov 2016 14:34:33 +0100
+Message-ID: <CAMuHMdUmpMpizZpq1V-sLA8Cf2q5oOgOVxGOvKXqTHvn+Mj7Tg@mail.gmail.com>
+References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be> <CAMuHMdV4HG0aOr4Qp_OZXU=3jLeOJ2QaMKp09a3v4489ABbRcA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42358 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753732AbcKIMNK (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36663 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932648AbcKINef (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Nov 2016 07:13:10 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGD01BR9J9NVA70@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Nov 2016 21:13:08 +0900 (KST)
-In-reply-to: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com>
+        Wed, 9 Nov 2016 08:34:35 -0500
+In-Reply-To: <CAMuHMdV4HG0aOr4Qp_OZXU=3jLeOJ2QaMKp09a3v4489ABbRcA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yangbo Lu <yangbo.lu@nxp.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dirk Behme <dirk.behme@de.bosch.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based
-boards. Instead use mapping from device tree node of SCU.
+Hi Arnd,
 
-NOTE: This patch has dependency on DT file of any such CORTEX-A9 SoC
-based boards, in the absence of SCU device node in DTS file, only single
-CPU will boot. So if you are using OUT-OF-TREE DTS file of CORTEX-A9 based
-Exynos SoC make sure to add SCU device node to DTS file for SMP boot.
+On Mon, Nov 7, 2016 at 10:35 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Oct 31, 2016 at 12:30 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> Some Renesas SoCs may exist in different revisions, providing slightly
+>> different functionalities (e.g. R-Car H3 ES1.x and ES2.0), and behavior
+>> (errate and quirks).  This needs to be catered for by drivers and/or
+>> platform code.  The recently proposed soc_device_match() API seems like
+>> a good fit to handle this.
+>>
+>> This patch series implements the core infrastructure to provide SoC and
+>> revision information through the SoC bus for Renesas ARM SoCs. It
+>> consists of 7 patches:
+>>   - Patches 1-4 provide soc_device_match(), with some related fixes,
+>>   - Patches 5-7 implement identification of Renesas SoCs and
+>>     registration with the SoC bus,
+>>
+>> Changes compared to v1:
+>>   - Add Acked-by,
+>>   - New patches:
+>>       - "[4/7] base: soc: Provide a dummy implementation of
+>>                soc_device_match()",
+>>       - "[5/7] ARM: shmobile: Document DT bindings for CCCR and PRR",
+>>       - "[6/7] arm64: dts: r8a7795: Add device node for PRR"
+>>         (more similar patches available, I'm not yet spamming you all
+>>          with them),
+>>   - Drop SoC families and family names; use fixed "Renesas" instead,
+>>   - Drop EMEV2, which doesn't have a chip ID register, and doesn't share
+>>     devices with other SoCs,
+>>   - Drop RZ/A1H and R-CAR M1A, which don't have chip ID registers (for
+>>     M1A: not accessible from the ARM core?),
+>>   - On arm, move "select SOC_BUS" from ARCH_RENESAS to Kconfig symbols
+>>     for SoCs that provide a chip ID register,
+>>   - Build renesas-soc only if SOC_BUS is enabled,
+>>   - Use "renesas,prr" and "renesas,cccr" device nodes in DT if
+>>     available, else fall back to hardcoded addresses for compatibility
+>>     with existing DTBs,
+>>   - Remove verification of product IDs; just print the ID instead,
+>>   - Don't register the SoC bus if the chip ID register is missing,
+>>   - Change R-Mobile APE6 fallback to use PRR instead of CCCR (it has
+>>     both).
+>>
+>> Merge strategy:
+>>   - In theory, patches 1-4 should go through Greg's driver core tree.
+>>     But it's a hard dependency for all users.
+>>     If people agree, I can provide an immutable branch in my
+>>     renesas-drivers repository, to be merged by all interested parties.
+>>     So far I'm aware of Freescale/NXP, and Renesas.
+>
+> And Samsung.
+> Shall I create the immutable branch now?
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm/mach-exynos/common.h                |  1 +
- arch/arm/mach-exynos/exynos.c                | 22 ------------------
- arch/arm/mach-exynos/include/mach/map.h      |  2 --
- arch/arm/mach-exynos/platsmp.c               | 34 +++++++++++++++++++++-------
- arch/arm/mach-exynos/pm.c                    |  4 +---
- arch/arm/mach-exynos/suspend.c               |  4 +---
- arch/arm/plat-samsung/include/plat/map-s5p.h |  4 ----
- 7 files changed, 29 insertions(+), 42 deletions(-)
+Arnd: are you happy with the new patches and changes?
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9424a8a..dd5d8e8 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -161,6 +161,7 @@ extern void exynos_cpu_restore_register(void);
- extern void exynos_pm_central_suspend(void);
- extern int exynos_pm_central_resume(void);
- extern void exynos_enter_aftr(void);
-+extern int exynos_scu_enable(void);
- 
- extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
- 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 757fc11..fa08ef9 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -28,15 +28,6 @@
- 
- #include "common.h"
- 
--static struct map_desc exynos4_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_COREPERI),
--		.length		= SZ_8K,
--		.type		= MT_DEVICE,
--	},
--};
--
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
- #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-@@ -99,17 +90,6 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 	return 1;
- }
- 
--/*
-- * exynos_map_io
-- *
-- * register the standard cpu IO areas
-- */
--static void __init exynos_map_io(void)
--{
--	if (soc_is_exynos4())
--		iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
--}
--
- static void __init exynos_init_io(void)
- {
- 	debug_ll_io_init();
-@@ -118,8 +98,6 @@ static void __init exynos_init_io(void)
- 
- 	/* detect cpu id and rev. */
- 	s5p_init_cpu(S5P_VA_CHIPID);
--
--	exynos_map_io();
- }
- 
- /*
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 5fb0040..0eef407 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -18,6 +18,4 @@
- 
- #define EXYNOS_PA_CHIPID		0x10000000
- 
--#define EXYNOS4_PA_COREPERI		0x10500000
--
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index a5d6841..94405c7 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -168,6 +168,27 @@ int exynos_cluster_power_state(int cluster)
- 		S5P_CORE_LOCAL_PWR_EN);
- }
- 
-+/**
-+ * exynos_scu_enable : enables SCU for Cortex-A9 based system
-+ * returns 0 on success else non-zero error code
-+ */
-+int exynos_scu_enable(void)
-+{
-+	struct device_node *np;
-+	void __iomem *scu_base;
-+
-+	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
-+	scu_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!scu_base) {
-+		pr_err("%s failed to map scu_base\n", __func__);
-+		return -ENOMEM;
-+	}
-+	scu_enable(scu_base);
-+	iounmap(scu_base);
-+	return 0;
-+}
-+
- static void __iomem *cpu_boot_reg_base(void)
- {
- 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-@@ -224,11 +245,6 @@ static void write_pen_release(int val)
- 	sync_cache_w(&pen_release);
- }
- 
--static void __iomem *scu_base_addr(void)
--{
--	return (void __iomem *)(S5P_VA_SCU);
--}
--
- static DEFINE_SPINLOCK(boot_lock);
- 
- static void exynos_secondary_init(unsigned int cpu)
-@@ -393,9 +409,11 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	exynos_set_delayed_reset_assertion(true);
- 
--	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
--		scu_enable(scu_base_addr());
--
-+	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-+		/* if exynos_scu_enable fails, return */
-+		if (exynos_scu_enable())
-+			return;
-+	}
- 	/*
- 	 * Write the address of secondary startup into the
- 	 * system-wide flags register. The boot monitor waits
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 487295f..c0b46c3 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -26,8 +26,6 @@
- #include <asm/suspend.h>
- #include <asm/cacheflush.h>
- 
--#include <mach/map.h>
--
- #include "common.h"
- 
- static inline void __iomem *exynos_boot_vector_addr(void)
-@@ -177,7 +175,7 @@ void exynos_enter_aftr(void)
- 	cpu_suspend(0, exynos_aftr_finisher);
- 
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
--		scu_enable(S5P_VA_SCU);
-+		exynos_scu_enable();
- 		if (call_firmware_op(resume) == -ENOSYS)
- 			exynos_cpu_restore_register();
- 	}
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 06332f6..73df9f3 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -34,8 +34,6 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- 
--#include <mach/map.h>
--
- #include <plat/pm-common.h>
- 
- #include "common.h"
-@@ -462,7 +460,7 @@ static void exynos_pm_resume(void)
- 	exynos_pm_release_retention();
- 
- 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
--		scu_enable(S5P_VA_SCU);
-+		exynos_scu_enable();
- 
- 	if (call_firmware_op(resume) == -ENOSYS
- 	    && cpuid == ARM_CPU_PART_CORTEX_A9)
-diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index 0fe2828..512ed1f 100644
---- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -15,10 +15,6 @@
- 
- #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
- 
--#define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
--#define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
--#define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
--
- #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
- #define VA_VIC0			VA_VIC(0)
- #define VA_VIC1			VA_VIC(1)
--- 
-2.7.4
+Thanks again!
+
+>>   - Patches 5-7 obviously have to go through Simon's Renesas tree (after
+>>     merging the soc_device_match() core), and arm-soc.
+>>
+>> Tested on (machine, soc_id, optional revision):
+>>     EMEV2 KZM9D Board, emev2
+>>     Genmai, r7s72100
+>>     APE6EVM, r8a73a4, ES1.0
+>>     armadillo 800 eva, r8a7740, ES2.0
+>>     bockw, r8a7778
+>>     marzen, r8a7779, ES1.0
+>>     Lager, r8a7790, ES1.0
+>>     Koelsch, r8a7791, ES1.0
+>>     Porter, r8a7791, ES3.0
+>>     Blanche, r8a7792, ES1.1
+>>     Gose, r8a7793, ES1.0
+>>     Alt, r8a7794, ES1.0
+>>     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.0
+>>     Renesas Salvator-X board based on r8a7795, r8a7795, ES1.1
+>>     Renesas Salvator-X board based on r8a7796, r8a7796, ES1.0
+>>     KZM-A9-GT, sh73a0, ES2.0
+>>
+>> For your convenience, this series (incl. more DT updates to add device
+>> nodes for CCCR and PRR to all other Renesas ARM SoCs) is also available
+>> in the topic/renesas-soc-id-v2 branch of my renesas-drivers git
+>> repository at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+>> Its first user is support for R-Car H3 ES2.0 in branch
+>> topic/r8a7795-es2-v1-rebased2.
+>>
+>> Thanks for your comments!
+>>
+>> Arnd Bergmann (1):
+>>   base: soc: Introduce soc_device_match() interface
+>>
+>> Geert Uytterhoeven (6):
+>>   base: soc: Early register bus when needed
+>>   base: soc: Check for NULL SoC device attributes
+>>   base: soc: Provide a dummy implementation of soc_device_match()
+>>   ARM: shmobile: Document DT bindings for CCCR and PRR
+>>   arm64: dts: r8a7795: Add device node for PRR
+>>   soc: renesas: Identify SoC and register with the SoC bus
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
