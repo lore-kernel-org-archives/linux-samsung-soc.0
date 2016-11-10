@@ -1,130 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
-Date: Thu, 10 Nov 2016 18:46:06 +0200
-Message-ID: <20161110164606.GA3613@kozik-lap>
-References: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com>
- <1478693755-11953-2-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161110115456epcas2p4524185a083cd7173e354f46b94be9183@epcas2p4.samsung.com>
- <5066943.nydi3GQ3KP@wuerfel>
- <a43af947-6002-bc65-f73b-02d57a78d6cb@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34542 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935077AbcKJQqM (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 11:46:12 -0500
-Received: by mail-wm0-f67.google.com with SMTP id g23so4277325wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2016 08:46:11 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <a43af947-6002-bc65-f73b-02d57a78d6cb@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2] dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property
+Date: Thu, 10 Nov 2016 18:50:49 +0200
+Message-ID: <1478796649-5159-1-git-send-email-krzk@kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, thomas.ab@samsung.com, krzk@kernel.org, Russell King <rmk+kernel@armlinux.org.uk>
 
-On Thu, Nov 10, 2016 at 06:07:54PM +0530, pankaj.dubey wrote:
-> So if CONFIG_SMP is disable then there is no sense of exynos_scu_enable
-> as well. So wow about using below patch?
-> 
-> --------------------------------------------------------
-> 
-> Subject: [PATCH] ARM: exynos: fix build fail due to exynos_scu_enable
-> 
-> Build failed if we disable CONFIG_SMP as shown below:
+The samsung,power-domain property is obsolete since commit 0da658704136
+("ARM: dts: convert to generic power domain bindings for exynos DT").
+Replace it with generic one.
 
-This is fine with me.
+Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-(...)
+---
 
-> Of-course your idea to move it in core SCU file is also good that we
-> lots of duplication in different architecture can be avoided.
-> 
-> In that case I can think of following patch:
-> 
-> [PATCH] ARM: scu: use SCU device node to enable SCU
-> 
-> Many platforms are duplicating code for enabling SCU, lets add
-> common code to enable SCU using SCU device node so the duplication in
-> each platform can be avoided.
-> 
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/include/asm/smp_scu.h |  2 ++
->  arch/arm/kernel/smp_scu.c      | 17 +++++++++++++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/arch/arm/include/asm/smp_scu.h b/arch/arm/include/asm/smp_scu.h
-> index bfe163c..e5e2492 100644
-> --- a/arch/arm/include/asm/smp_scu.h
-> +++ b/arch/arm/include/asm/smp_scu.h
-> @@ -38,8 +38,10 @@ static inline int scu_power_mode(void __iomem
-> *scu_base, unsigned int mode)
->  #endif
-> 
->  #if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
-> +int of_scu_enable(void);
->  void scu_enable(void __iomem *scu_base);
->  #else
-> +static inline int of_scu_enable(void) {return 0;}
->  static inline void scu_enable(void __iomem *scu_base) {}
->  #endif
-> 
-> diff --git a/arch/arm/kernel/smp_scu.c b/arch/arm/kernel/smp_scu.c
-> index 72f9241..7c16d16 100644
-> --- a/arch/arm/kernel/smp_scu.c
-> +++ b/arch/arm/kernel/smp_scu.c
-> @@ -34,6 +34,23 @@ unsigned int __init scu_get_core_count(void __iomem
-> *scu_base)
->  	return (ncores & 0x03) + 1;
->  }
-> 
-> +int of_scu_enable(void)
-> +{
-> +	struct device_node *np;
-> +	void __iomem *scu_base;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
-> +	scu_base = of_iomap(np, 0);
-> +	of_node_put(np);
-> +	if (!scu_base) {
-> +		pr_err("%s failed to map scu_base\n", __func__);
-> +		return -ENOMEM;
-> +	}
-> +	scu_enable(scu_base);
-> +	iounmap(scu_base);
-> +	return 0;
-> +}
-> +
->  /*
->   * Enable the SCU
->   */
-> -- 
-> 
-> 
-> Followed by cleanup in various architecture where this piece of code is
-> duplicated and all of them can call directly of_scu_enable()
+Changes since v1:
+1. Just add the acks/reviews.
 
-This looks better to me.
+I though it will be applied by Exynos DRM maintainer but there was no
+response.
+Dear Rob, could you pick it up?
+---
+ Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> 
-> Please let me know which one you will prefer for fixing build issue.
-> 
-> @Krzysztof, please let me know if I need to resubmit SCU series again
-> with fix or you will accept build fix patch on top of already taken patch.
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+index 3938caacf11c..8346fb18a358 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+@@ -33,7 +33,7 @@ Required properties:
+ - i80-if-timings: timing configuration for lcd i80 interface support.
+ 
+ Optional Properties:
+-- samsung,power-domain: a phandle to DECON power domain node.
++- power-domains: a phandle to DECON power domain node.
+ - display-timings: timing settings for DECON, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
+-- 
+2.7.4
 
-The code is already in my next/soc branch and I prefer to avoid
-rebasing/dropping commits so how about:
-1. Creating a generic wrapper which arm-soc will apply,
-2. Provide me a tag with it (by arm-soc folks),
-3. Fix the Exynos !SMP build on top of the tag (by using generic
-   approach).
-
-Arnd,
-Are you fine with this?
-
-Best regards,
-Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
