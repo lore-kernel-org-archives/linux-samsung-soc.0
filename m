@@ -1,93 +1,55 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 7/8] ARM: s3c64xx: Drop initialization of unused struct
- s3c_audio_pdata fields
-Date: Thu, 10 Nov 2016 16:17:55 +0100
-Message-ID: <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60021 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933884AbcKJPTj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 10:19:39 -0500
-In-reply-to: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 3/7] iommu/exynos: Simplify internal enable/disable
+	functions
+Date: Thu, 10 Nov 2016 17:40:03 +0100
+Message-ID: <20161110164003.GL2078@8bytes.org>
+References: <1478611764-6473-1-git-send-email-m.szyprowski@samsung.com>
+	<CGME20161108133016eucas1p27a25afd3a49bfc1e3e41c5a32e022f07@eucas1p2.samsung.com>
+	<1478611764-6473-4-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1478611764-6473-4-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Remove initialization of dma_{filter, playback, capture, capture_mic}
-fields where it is not used any more.
+On Tue, Nov 08, 2016 at 02:29:20PM +0100, Marek Szyprowski wrote:
+> Remove remaining leftovers of the ref-count related code in the
+> __sysmmu_enable/disable functions inline __sysmmu_enable/disable_nocount
+> to them. Suspend/resume callbacks now checks if master device is set for
+> given SYSMMU controller instead of relying on the activation count.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c | 104 ++++++++++++-------------------------------
+>  1 file changed, 29 insertions(+), 75 deletions(-)
+> 
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 4056228..f45b274 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -237,8 +237,8 @@ struct sysmmu_drvdata {
+>  	struct clk *aclk;		/* SYSMMU's aclk clock */
+>  	struct clk *pclk;		/* SYSMMU's pclk clock */
+>  	struct clk *clk_master;		/* master's device clock */
+> -	int activations;		/* number of calls to sysmmu_enable */
+>  	spinlock_t lock;		/* lock for modyfying state */
+> +	int active;			/* current status */
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/mach-s3c64xx/dev-audio.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+Any reason for this being int and not bool? You only assign true/false
+later.
 
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index b577833..a3f39dd 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -58,9 +58,6 @@ static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
- 
- static struct s3c_audio_pdata i2s0_pdata = {
- 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
--	.dma_filter = pl08x_filter_id,
--	.dma_playback = DMACH_I2S0_OUT,
--	.dma_capture = DMACH_I2S0_IN,
- };
- 
- struct platform_device s3c64xx_device_iis0 = {
-@@ -80,9 +77,6 @@ struct platform_device s3c64xx_device_iis0 = {
- 
- static struct s3c_audio_pdata i2s1_pdata = {
- 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
--	.dma_filter = pl08x_filter_id,
--	.dma_playback = DMACH_I2S1_OUT,
--	.dma_capture = DMACH_I2S1_IN,
- };
- 
- struct platform_device s3c64xx_device_iis1 = {
-@@ -102,9 +96,6 @@ struct platform_device s3c64xx_device_iis1 = {
- 
- static struct s3c_audio_pdata i2sv4_pdata = {
- 	.cfg_gpio = s3c64xx_i2s_cfg_gpio,
--	.dma_filter = pl08x_filter_id,
--	.dma_playback = DMACH_HSI_I2SV40_TX,
--	.dma_capture = DMACH_HSI_I2SV40_RX,
- 	.type = {
- 		.i2s = {
- 			.quirks = QUIRK_PRI_6CHAN,
-@@ -153,9 +144,6 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
- 
- static struct s3c_audio_pdata s3c_pcm0_pdata = {
- 	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
--	.dma_filter = pl08x_filter_id,
--	.dma_capture = DMACH_PCM0_RX,
--	.dma_playback = DMACH_PCM0_TX,
- };
- 
- struct platform_device s3c64xx_device_pcm0 = {
-@@ -175,9 +163,6 @@ struct platform_device s3c64xx_device_pcm0 = {
- 
- static struct s3c_audio_pdata s3c_pcm1_pdata = {
- 	.cfg_gpio = s3c64xx_pcm_cfg_gpio,
--	.dma_filter = pl08x_filter_id,
--	.dma_playback = DMACH_PCM1_TX,
--	.dma_capture = DMACH_PCM1_RX,
- };
- 
- struct platform_device s3c64xx_device_pcm1 = {
-@@ -209,10 +194,6 @@ static int s3c64xx_ac97_cfg_gpe(struct platform_device *pdev)
- };
- 
- static struct s3c_audio_pdata s3c_ac97_pdata = {
--	.dma_playback = DMACH_AC97_PCMOUT,
--	.dma_filter = pl08x_filter_id,
--	.dma_capture = DMACH_AC97_PCMIN,
--	.dma_capture_mic = DMACH_AC97_MICIN,
- };
- 
- static u64 s3c64xx_ac97_dmamask = DMA_BIT_MASK(32);
--- 
-1.9.1
+
+	Joerg
