@@ -1,49 +1,65 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH v2 0/7] soc: renesas: Identify SoC and register with the
  SoC bus
-Date: Thu, 10 Nov 2016 11:56:12 +0100
-Message-ID: <CAMuHMdWPk7zZKAHtxcYekS2Ot6j+M8dKJuFe87dxc7U6Z4Ti5w@mail.gmail.com>
+Date: Thu, 10 Nov 2016 11:59:00 +0100
+Message-ID: <CAPDyKFrD1wvOMvjvST15SREKK42dkyeJphaAZbeRJ9xAaj-Xeg@mail.gmail.com>
 References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
  <1626072.dpWPnWgGl9@wuerfel> <CAMuHMdVrdjqWruY=dBjWP=jZuZkc=aTBTMijOyTDfZFcaD_jsA@mail.gmail.com>
  <6723536.97ljqcB8tS@wuerfel> <CAMuHMdWox5ksj1xhJ6_n0wNA9j6veX0AzAE0V9Gs26Kvw5C_sw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36548 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754492AbcKJK4P (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 05:56:15 -0500
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <CAMuHMdWox5ksj1xhJ6_n0wNA9j6veX0AzAE0V9Gs26Kvw5C_sw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Dirk Behme <dirk.behme@de.bosch.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Yangbo Lu <yangbo.lu@nxp.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 10, 2016 at 10:22 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On 10 November 2016 at 10:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
+>
+> On Wed, Nov 9, 2016 at 10:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Wednesday, November 9, 2016 6:19:06 PM CET Geert Uytterhoeven wrote:
+>>> On Wed, Nov 9, 2016 at 5:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>> > On Wednesday, November 9, 2016 2:34:33 PM CET Geert Uytterhoeven wrote:
+>>> >> > And Samsung.
+>>> >> > Shall I create the immutable branch now?
+>>> >>
+>>> >> Arnd: are you happy with the new patches and changes?
+>>> >
+>>> > I still had some comments for patch 7, but that shouldn't stop
+>>> > you from creating a branch for the first three so everyone can
+>>> > build on top of that.
+>>>
+>>> Thanks!
+>>>
+>>> What about patch [4/7]?
+>>> Haven't you received it? Your address was in the To-line for all 7 patches.
+>>
+>> Ok, I see it now, looks good. That should be included as well then.
+>
 > Thanks, I've created the branch/tag :
 >
 >     git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
 >     branch soc-device-match
 >     signed tag soc-device-match-tag1
+>
+> In the mean time, Ulf has applied the first two patches to mmc/next, on top
+> of lots of MMC work :-(
 
-Tested by kbuild test robot:
+No worries! :-)
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
- soc-device-match
-    da65a1589dacc7ec44ea0557a14d70a39d991f32  base: soc: Provide a
-dummy implementation of soc_device_match()
-    elapsed time: 101m
-    configs tested: 85
+>
+> Ulf, as this is not only a dependency for Freescale/NXP (for sdhci-of-esdhc),
+> but also for Samsung and Renesas, would it still be possible to replace these
+> two commits
+>
+>     8b82c17a8ae533d6 base: soc: introduce soc_device_match() interface
+>     6fa350172b098f0f base: soc: Check for NULL SoC device attributes
+>
+> by a merge of soc-device-match-tag1?
 
-Gr{oetje,eeting}s,
+Yes, I will take care of it during the day.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
