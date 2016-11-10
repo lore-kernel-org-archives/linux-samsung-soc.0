@@ -1,93 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/8] ARM: s3c64xx: Add DMA slave maps for PL080 devices
-Date: Thu, 10 Nov 2016 16:17:50 +0100
-Message-ID: <1478791076-19528-3-git-send-email-s.nawrocki@samsung.com>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080
+ devices
+Date: Thu, 10 Nov 2016 15:18:16 +0000
+Message-ID: <20161110151816.GI1575@localhost.localdomain>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
+ <20161108144445.GD1575@localhost.localdomain>
+ <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
+ <20161108145534.GE1575@localhost.localdomain>
+ <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
+ <20161110110323.GG1575@localhost.localdomain>
+ <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38537 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933884AbcKJPSq (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60289 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933991AbcKJPSr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 10:18:46 -0500
-In-reply-to: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+        Thu, 10 Nov 2016 10:18:47 -0500
+Content-Disposition: inline
+In-Reply-To: <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-This patch adds DMA slave map tables to the pl080 devices's
-platform_data in order to support the new channel request API.
-A few devices for which there was no DMA support with current
-code are omitted in the tables.
+On Thu, Nov 10, 2016 at 04:10:56PM +0100, Sylwester Nawrocki wrote:
+> On 11/10/2016 12:03 PM, Charles Keepax wrote:
+> >> On Tue, Nov 08, 2016 at 04:53:40PM +0100, Sylwester Nawrocki wrote:
+> [...]
+> >> I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
+> >> issue fixed and added initialization of the filer function.
+> > 
+> > Apologies for the delay got somewhat swamped with internal stuff
+> > yesterday. Yeah using that branch it looks good to me, the SPI and
+> > I2S are both working fine. I can download code to the wm0010
+> > which should be a good work out of the SPI and play audio
+> > correctly so the I2S should be fine. So for the series:
+> > 
+> > Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> 
+> Great, thanks a lot!  I'm going to post the next iteration with
+> modified pl080 DMAC patches, addressing comments from Arnd.
+> I would be grateful if you could confirm it also works on your
+> platform.
+> 
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/mach-s3c64xx/pl080.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Yeah, no problem, I should be able to find time to test those as
+well.
 
-diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
-index 89c5a62..261820a 100644
---- a/arch/arm/mach-s3c64xx/pl080.c
-+++ b/arch/arm/mach-s3c64xx/pl080.c
-@@ -117,6 +117,25 @@ static void pl08x_put_xfer_signal(const struct pl08x_channel_data *cd, int ch)
- 	}
- };
- 
-+static const struct dma_slave_map s3c64xx_dma0_slave_map[] = {
-+	{ "s3c6400-uart.0", "tx", &s3c64xx_dma0_info[0] },
-+	{ "s3c6400-uart.0", "rx", &s3c64xx_dma0_info[1] },
-+	{ "s3c6400-uart.1", "tx", &s3c64xx_dma0_info[2] },
-+	{ "s3c6400-uart.1", "rx", &s3c64xx_dma0_info[3] },
-+	{ "s3c6400-uart.2", "tx", &s3c64xx_dma0_info[4] },
-+	{ "s3c6400-uart.2", "rx", &s3c64xx_dma0_info[5] },
-+	{ "s3c6400-uart.3", "tx", &s3c64xx_dma0_info[6] },
-+	{ "s3c6400-uart.3", "rx", &s3c64xx_dma0_info[7] },
-+	{ "samsung-pcm.0", "tx", &s3c64xx_dma0_info[8] },
-+	{ "samsung-pcm.0", "rx", &s3c64xx_dma0_info[9] },
-+	{ "samsung-i2s.0", "tx", &s3c64xx_dma0_info[10] },
-+	{ "samsung-i2s.0", "rx", &s3c64xx_dma0_info[11] },
-+	{ "s3c6410-spi.0", "tx", &s3c64xx_dma0_info[12] },
-+	{ "s3c6410-spi.0", "rx", &s3c64xx_dma0_info[13] },
-+	{ "samsung-i2s.2", "tx", &s3c64xx_dma0_info[14] },
-+	{ "samsung-i2s.2", "rx", &s3c64xx_dma0_info[15] },
-+};
-+
- struct pl08x_platform_data s3c64xx_dma0_plat_data = {
- 	.memcpy_channel = {
- 		.bus_id = "memcpy",
-@@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
- 	.put_xfer_signal = pl08x_put_xfer_signal,
- 	.slave_channels = s3c64xx_dma0_info,
- 	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
-+	.slave_map = s3c64xx_dma0_slave_map,
-+	.slave_map_len = ARRAY_SIZE(s3c64xx_dma0_slave_map),
- };
- 
- static AMBA_AHB_DEVICE(s3c64xx_dma0, "dma-pl080s.0", 0,
-@@ -207,6 +228,15 @@ static AMBA_AHB_DEVICE(s3c64xx_dma0, "dma-pl080s.0", 0,
- 	},
- };
- 
-+static const struct dma_slave_map s3c64xx_dma1_slave_map[] = {
-+	{ "samsung-pcm.1", "tx", &s3c64xx_dma1_info[0] },
-+	{ "samsung-pcm.1", "rx", &s3c64xx_dma1_info[1] },
-+	{ "samsung-i2s.1", "tx", &s3c64xx_dma1_info[2] },
-+	{ "samsung-i2s.1", "rx", &s3c64xx_dma1_info[3] },
-+	{ "s3c6410-spi.1", "tx", &s3c64xx_dma1_info[4] },
-+	{ "s3c6410-spi.1", "rx", &s3c64xx_dma1_info[5] },
-+};
-+
- struct pl08x_platform_data s3c64xx_dma1_plat_data = {
- 	.memcpy_channel = {
- 		.bus_id = "memcpy",
-@@ -224,6 +254,8 @@ struct pl08x_platform_data s3c64xx_dma1_plat_data = {
- 	.put_xfer_signal = pl08x_put_xfer_signal,
- 	.slave_channels = s3c64xx_dma1_info,
- 	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma1_info),
-+	.slave_map = s3c64xx_dma1_slave_map,
-+	.slave_map_len = ARRAY_SIZE(s3c64xx_dma1_slave_map),
- };
- 
- static AMBA_AHB_DEVICE(s3c64xx_dma1, "dma-pl080s.1", 0,
--- 
-1.9.1
+Thanks,
+Charles
