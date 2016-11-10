@@ -1,131 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
-Date: Thu, 10 Nov 2016 15:07:06 +0100
-Message-ID: <3268366.06J2EThgp2@wuerfel>
-References: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com> <5066943.nydi3GQ3KP@wuerfel> <a43af947-6002-bc65-f73b-02d57a78d6cb@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
+Date: Thu, 10 Nov 2016 16:10:56 +0100
+Message-ID: <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
+References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
+ <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
+ <20161108144445.GD1575@localhost.localdomain>
+ <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
+ <20161108145534.GE1575@localhost.localdomain>
+ <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
+ <20161110110323.GG1575@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.73]:62484 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932845AbcKJOHy (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52810 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933500AbcKJPLD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 09:07:54 -0500
-In-Reply-To: <a43af947-6002-bc65-f73b-02d57a78d6cb@samsung.com>
+        Thu, 10 Nov 2016 10:11:03 -0500
+In-reply-to: <20161110110323.GG1575@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: "pankaj.dubey" <pankaj.dubey@samsung.com>, thomas.ab@samsung.com, Russell King <rmk+kernel@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, geert+renesas@glider.be, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Thursday, November 10, 2016 6:07:54 PM CET pankaj.dubey wrote:
-> On Thursday 10 November 2016 05:24 PM, Arnd Bergmann wrote:
-> > On Wednesday, November 9, 2016 5:45:54 PM CET Pankaj Dubey wrote:
+On 11/10/2016 12:03 PM, Charles Keepax wrote:
+>> On Tue, Nov 08, 2016 at 04:53:40PM +0100, Sylwester Nawrocki wrote:
+[...]
+>> I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
+>> issue fixed and added initialization of the filer function.
 > 
-> Sorry, I missed this part and did not check with CONFIG_SMP disabled.
+> Apologies for the delay got somewhat swamped with internal stuff
+> yesterday. Yeah using that branch it looks good to me, the SPI and
+> I2S are both working fine. I can download code to the wm0010
+> which should be a good work out of the SPI and play audio
+> correctly so the I2S should be fine. So for the series:
 > 
-> > arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
-> > pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to `exynos_scu_enable'
-> > arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
-> > suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to `exynos_scu_enable'
-> > 
-> > Please fix. I have applied a patch locally (see below), but don't know
-> > if that is the best solution. As we seem to duplicate that code across
-> > several platforms, I wonder why we don't just put it into the core scu
-> > implementation.
-> > 
-> 
-> When I checked scu_enable declaration it is defined in
-> arch/arm/include/asm/smp_scu.h as:
-> 
-> #if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
-> void scu_enable(void __iomem *scu_base);
-> #else
-> static inline void scu_enable(void __iomem *scu_base) {}
-> #endif
-> 
-> So if CONFIG_SMP is disable then there is no sense of exynos_scu_enable
-> as well. So wow about using below patch?
-> 
-> --------------------------------------------------------
-> 
-> Subject: [PATCH] ARM: exynos: fix build fail due to exynos_scu_enable
-> 
-> Build failed if we disable CONFIG_SMP as shown below:
-> 
-> arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
-> pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to
-> `exynos_scu_enable'
-> arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
-> suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to
-> `exynos_scu_enable'
-> 
-> Since scu_enable is defined only in case CONFIG_SMP and CONFIG_HAVE_ARM_SCU
-> lets move exynos_scu_enable also under these two macros.
-> 
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index fb12d11..03fdb79 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -156,7 +156,12 @@ extern void exynos_cpu_restore_register(void);
->  extern void exynos_pm_central_suspend(void);
->  extern int exynos_pm_central_resume(void);
->  extern void exynos_enter_aftr(void);
-> +#if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
->  extern int exynos_scu_enable(void);
-> +#else
-> +static inline void exynos_scu_enable(void) {}
-> +#endif
+> Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Yes, I think that would work, but you can drop the CONFIG_HAVE_ARM_SCU
-check because of
+Great, thanks a lot!  I'm going to post the next iteration with
+modified pl080 DMAC patches, addressing comments from Arnd.
+I would be grateful if you could confirm it also works on your
+platform.
 
-menuconfig ARCH_EXYNOS
-        ....
-        select HAVE_ARM_SCU if SMP
-        ...
-
-> Of-course your idea to move it in core SCU file is also good that we
-> lots of duplication in different architecture can be avoided.
+> I do still need to revert these two patches to get the I2S to
+> work properly:
 > 
-> In that case I can think of following patch:
+> commit d70e861a3154833467023123e218e9b1ba558809
+> ASoC: samsung: Remove SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag
 > 
-> [PATCH] ARM: scu: use SCU device node to enable SCU
+> commit acde50a7bf1fd6ae0baa4402f0a02c4b1bd4c990
+> ASoC: dmaengine_pcm: Make FLAG_NO_RESIDUE internal
 > 
-> Many platforms are duplicating code for enabling SCU, lets add
-> common code to enable SCU using SCU device node so the duplication in
-> each platform can be avoided.
-> 
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
+> But that is clearly an unrelated issue, which I haven't found
+> time to look into yet as we don't use this platform that often
+> these days.
 
-That looks good too. I also checked the other callers of
-scu_enable(), and we have only three classes here:
+Thanks for reporting this, I will see if I can find time to look
+into this issue as well.
 
-a) of_iomap: berlin, exynos, mvebu, realview, rockchip, socfpga, sti, ux500, vexpress
-b) ioremap(scu_a9_get_base()): bcm63xx, bcm, hisi, zx
-c) iotable_init, scu_a9_get_base(): imx, omap4, tegra, zynq
-d) ioremap(constant): shmobile, spear13xx
-
-I checked that none of the ones in category c) actually use the address early,
-so we can easily change four into b).
-
-I also think that we need to keep both a) and b) because the output of
-scu_a9_get_base() might be incorrect in some chips, and not all dtb
-files have an SCU in them.
-
-If we make the common SCU setup check DT first and then fall back to
-scu_a9_get_base(), that means we have covered almost all cases, unless
-I'm missing a problem with that approach. It would be nice to
-check spear13xx and the Cortex-A9 based mach-shmobile variants
-(emev2, r8a7779, and sh73a0) to see if they could also share
-that implementation.
-
-	Arnd
+-- 
+Thanks,
+Sylwester
