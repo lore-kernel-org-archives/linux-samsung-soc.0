@@ -1,89 +1,79 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/8] spi: s3c64xx: Do not use platform_data for DMA parameters
-Date: Thu, 10 Nov 2016 16:17:51 +0100
-Message-ID: <1478791076-19528-4-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 8/8] ARM: s3c24xx: Drop unused struct s3c_audio_pdata entries
+Date: Thu, 10 Nov 2016 16:17:56 +0100
+Message-ID: <1478791076-19528-9-git-send-email-s.nawrocki@samsung.com>
 References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47400 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933838AbcKJPTE (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55365 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933884AbcKJPTp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 10:19:04 -0500
+        Thu, 10 Nov 2016 10:19:45 -0500
 In-reply-to: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-All related platforms use either devicetree or the DMA slave
-map API for mapping DMA channels to DMA slaves so we can now
-stop using platform_data for passing DMA details.
+The s3c24xx-iis driver is now converted to use the dma_slave_map API
+and the samsung-ac97 driver got removed from the tree so remove
+the unused platform data structure instances.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Tested-by: Andi Shyti <andi.shyti@samsung.com>
-Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Acked-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-s3c64xx.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ arch/arm/plat-samsung/devs.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 3c09e94..28dfdce 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -341,27 +341,20 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--	dma_filter_fn filter = sdd->cntrlr_info->filter;
- 	struct device *dev = &sdd->pdev->dev;
--	dma_cap_mask_t mask;
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index cf7b95f..03fac12 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -77,15 +77,6 @@
+ 	[1] = DEFINE_RES_IRQ(IRQ_S3C244X_AC97),
+ };
  
- 	if (is_polling(sdd))
- 		return 0;
- 
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
+-static struct s3c_audio_pdata s3c_ac97_pdata = {
+-#ifdef CONFIG_S3C24XX_DMAC
+-	.dma_filter = s3c24xx_dma_filter,
+-#endif
+-	.dma_playback = (void *)DMACH_PCM_OUT,
+-	.dma_capture = (void *)DMACH_PCM_IN,
+-	.dma_capture_mic = (void *)DMACH_MIC_IN,
+-};
 -
- 	/* Acquire DMA channels */
--	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--			   sdd->cntrlr_info->dma_rx, dev, "rx");
-+	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
- 	if (!sdd->rx_dma.ch) {
- 		dev_err(dev, "Failed to get RX DMA channel\n");
- 		return -EBUSY;
+ struct platform_device s3c_device_ac97 = {
+ 	.name		= "samsung-ac97",
+ 	.id		= -1,
+@@ -94,7 +85,6 @@ struct platform_device s3c_device_ac97 = {
+ 	.dev		= {
+ 		.dma_mask		= &samsung_device_dma_mask,
+ 		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-		.platform_data		= &s3c_ac97_pdata,
  	}
- 	spi->dma_rx = sdd->rx_dma.ch;
+ };
+ #endif /* CONFIG_CPU_S3C2440 */
+@@ -574,14 +564,6 @@ void __init s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	[0] = DEFINE_RES_MEM(S3C24XX_PA_IIS, S3C24XX_SZ_IIS),
+ };
  
--	sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--			   sdd->cntrlr_info->dma_tx, dev, "tx");
-+	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
- 	if (!sdd->tx_dma.ch) {
- 		dev_err(dev, "Failed to get TX DMA channel\n");
- 		dma_release_channel(sdd->rx_dma.ch);
-@@ -1091,11 +1084,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	sdd->cur_bpw = 8;
- 
--	if (!sdd->pdev->dev.of_node && (!sci->dma_tx || !sci->dma_rx)) {
--		dev_warn(&pdev->dev, "Unable to get SPI tx/rx DMA data. Switching to poll mode\n");
--		sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
--	}
+-static struct s3c_audio_pdata s3c_iis_platdata = {
+-#ifdef CONFIG_S3C24XX_DMAC
+-	.dma_filter = s3c24xx_dma_filter,
+-#endif
+-	.dma_playback = (void *)DMACH_I2S_OUT,
+-	.dma_capture = (void *)DMACH_I2S_IN,
+-};
 -
- 	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
- 	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
- 
-@@ -1205,9 +1193,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
- 					sdd->port_id, master->num_chipselect);
--	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\tDMA=[Rx-%p, Tx-%p]\n",
--					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
--					sci->dma_rx, sci->dma_tx);
-+	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\n",
-+					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1);
- 
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
+ struct platform_device s3c_device_iis = {
+ 	.name		= "s3c24xx-iis",
+ 	.id		= -1,
+@@ -590,7 +572,6 @@ struct platform_device s3c_device_iis = {
+ 	.dev		= {
+ 		.dma_mask		= &samsung_device_dma_mask,
+ 		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-		.platform_data		= &s3c_iis_platdata,
+ 	}
+ };
+ #endif /* CONFIG_PLAT_S3C24XX */
 -- 
 1.9.1
