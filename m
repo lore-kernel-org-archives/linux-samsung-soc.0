@@ -1,64 +1,54 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080 devices
-Date: Thu, 10 Nov 2016 16:10:56 +0100
-Message-ID: <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
-References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
- <20161108144445.GD1575@localhost.localdomain>
- <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
- <20161108145534.GE1575@localhost.localdomain>
- <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
- <20161110110323.GG1575@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request API
+Date: Thu, 10 Nov 2016 16:17:48 +0100
+Message-ID: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:52810 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933500AbcKJPLD (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44690 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933884AbcKJPSZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 10:11:03 -0500
-In-reply-to: <20161110110323.GG1575@localhost.localdomain>
+        Thu, 10 Nov 2016 10:18:25 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 11/10/2016 12:03 PM, Charles Keepax wrote:
->> On Tue, Nov 08, 2016 at 04:53:40PM +0100, Sylwester Nawrocki wrote:
-[...]
->> I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
->> issue fixed and added initialization of the filer function.
-> 
-> Apologies for the delay got somewhat swamped with internal stuff
-> yesterday. Yeah using that branch it looks good to me, the SPI and
-> I2S are both working fine. I can download code to the wm0010
-> which should be a good work out of the SPI and play audio
-> correctly so the I2S should be fine. So for the series:
-> 
-> Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+This patch series aims to convert the s3c64xx platform to use
+the new DMA channel request API, i.e. this is only meaningful 
+for non-dt systems using s3c64xx SoCs.
 
-Great, thanks a lot!  I'm going to post the next iteration with
-modified pl080 DMAC patches, addressing comments from Arnd.
-I would be grateful if you could confirm it also works on your
-platform.
+Presumably the first 2 or 4 patches in this series could be queued 
+for v4.10-rc1 and the remaining patches could be left for subsequent
+release, to avoid non-trivial conflict with patches already applied 
+in the ASoC tree.
 
-> I do still need to revert these two patches to get the I2S to
-> work properly:
-> 
-> commit d70e861a3154833467023123e218e9b1ba558809
-> ASoC: samsung: Remove SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag
-> 
-> commit acde50a7bf1fd6ae0baa4402f0a02c4b1bd4c990
-> ASoC: dmaengine_pcm: Make FLAG_NO_RESIDUE internal
-> 
-> But that is clearly an unrelated issue, which I haven't found
-> time to look into yet as we don't use this platform that often
-> these days.
+The whole series can be pulled from git repository:
+ git://linuxtv.org/snawrocki/samsung.git 
+ branch: for-v4.10/dma/pl080-s3c64xx-v2
 
-Thanks for reporting this, I will see if I can find time to look
-into this issue as well.
+Thanks.
+
+Sylwester Nawrocki (8):
+  dma: pl08x: Add support for the DMA slave map
+  ARM: s3c64xx: Add DMA slave maps for PL080 devices
+  spi: s3c64xx: Do not use platform_data for DMA parameters
+  ARM: s3c64xx: Drop unused DMA fields from struct s3c64xx_spi_csinfo
+  ASoC: samsung: i2s: Do not use platform_data for DMA parameters
+  ASoC: samsung: pcm: Do not use platform_data for DMA parameters
+  ARM: s3c64xx: Drop initialization of unused struct s3c_audio_pdata
+    fields
+  ARM: s3c24xx: Drop unused struct s3c_audio_pdata entries
+
+ arch/arm/mach-s3c64xx/dev-audio.c         | 19 --------------
+ arch/arm/mach-s3c64xx/pl080.c             | 32 +++++++++++++++++++++++
+ arch/arm/plat-samsung/devs.c              | 43 -------------------------------
+ drivers/dma/amba-pl08x.c                  | 11 ++++++++
+ drivers/spi/spi-s3c64xx.c                 | 21 +++------------
+ include/linux/amba/pl08x.h                |  4 +++
+ include/linux/platform_data/spi-s3c64xx.h |  3 ---
+ sound/soc/samsung/i2s.c                   | 14 ++--------
+ sound/soc/samsung/pcm.c                   | 14 ++++------
+ 9 files changed, 58 insertions(+), 103 deletions(-)
 
 -- 
-Thanks,
-Sylwester
+1.9.1
