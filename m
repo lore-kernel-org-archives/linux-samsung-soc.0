@@ -1,109 +1,68 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/4] s5p-mfc: Fix MFC context buffer size
-Date: Thu, 10 Nov 2016 11:31:21 +0100
-Message-ID: <1478773883-12083-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] s5p-mfc: Skip incomeplete frame
+Date: Thu, 10 Nov 2016 11:31:22 +0100
+Message-ID: <1478773883-12083-4-git-send-email-m.szyprowski@samsung.com>
 References: <1478773883-12083-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161110103135eucas1p19c34152fc71576793beab5a818a6bdf5@eucas1p1.samsung.com>
+ <CGME20161110103136eucas1p1e219ba97c554f47b1afee92a2da294b8@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:46070 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755037AbcKJKbk (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42737 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755043AbcKJKbk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 10 Nov 2016 05:31:40 -0500
 In-reply-to: <1478773883-12083-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Ingi Kim <ingi2.kim@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Donghwa Lee <dh09.lee@samsung.com>
 
-From: Ingi Kim <ingi2.kim@samsung.com>
+From: Donghwa Lee <dh09.lee@samsung.com>
 
-When video file was decoded by H/W MFCv8. It occured IOMMU page fault
-because of accessing abnormal memory of mfc ctx buf
+Currently, when incomplete frame is recieved in the middle of
+decoding, driver have treated it to error, so src/dst queue and
+clock are cleaned. Although it is obviously error case, it is need
+to maintain video decoding in case of necessity. This patch
+supports skip incomplete frame to next.
 
-So this patch supports buffer size of mfc context more.
-Relevant page fault error is below.
-
-[ 3524.617147] PAGE FAULT occurred at 0x10108000 by 11200000.sysmmu(Page table base: 0x6d86c000)
-[ 3524.624192]  Lv1 entry: 0x6c27d001
-[ 3524.627567]   Lv2 entry: 0x0
-[ 3524.630482] ------------[ cut here ]------------
-[ 3524.635020] kernel BUG at drivers/iommu/exynos-iommu.c:358!
-[ 3524.640567] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-[ 3524.646373] Modules linked in:
-[ 3524.649410] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.0.0-00001-g0ff9b87-dirty #18
-[ 3524.657117] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[ 3524.663184] task: c0e4aff0 ti: c0e3c000 task.ti: c0e3c000
-[ 3524.668566] PC is at exynos_sysmmu_irq+0x1b8/0x2c4
-[ 3524.673330] LR is at vprintk_emit+0x2b8/0x58c
-[ 3524.677657] pc : [<c037cc78>]    lr : [<c00704a4>]    psr: 600d0193
-[ 3524.677657] sp : c0e3dd90  ip : 00000000  fp : c0e3ddcc
-[ 3524.689092] r10: ee29a110  r9 : 00000000  r8 : ee29a128
-[ 3524.694292] r7 : ed812810  r6 : 10108000  r5 : ed86c000  r4 : 00000000
-[ 3524.700791] r3 : c0ec9bd8  r2 : 00000000  r1 : 00000000  r0 : ed82ff00
-[ 3524.707292] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-[ 3524.714656] Control: 10c5387d  Table: 6b08c06a  DAC: 00000015
-[ 3524.720375] Process swapper/0 (pid: 0, stack limit = 0xc0e3c210)
-[ 3524.726354] Stack: (0xc0e3dd90 to 0xc0e3e000)
-[ 3524.730689] dd80:                                     c0e3dd9c c0069d68 ee58c338 6d86c000
-[ 3524.738836] dda0: ee58c338 ee298c40 ee2915a0 0000003b c0e64ef4 c0e3c000 00000000 00000000
-[ 3524.746981] ddc0: c0e3de14 c0e3ddd0 c0071ef4 c037cacc ffffffff a00d0193 c0e3ddf4 ee291540
-[ 3524.755126] dde0: c0ec793c c0ec7928 7fffffff ee291540 ee2915a0 ee298c40 c0e64ef4 ee004660
-[ 3524.763272] de00: ee010800 c0e3df00 c0e3de34 c0e3de18 c0072138 c0071e9c 00020000 ee291540
-[ 3524.771418] de20: ee2915a0 00000016 c0e3de4c c0e3de38 c0075130 c00720f8 0000003b ee028300
-[ 3524.779563] de40: c0e3de64 c0e3de50 c0071450 c0075068 00000100 00000012 c0e3de8c c0e3de68
-[ 3524.787708] de60: c030d240 c0071420 c030d19c 00000016 00000000 00000016 00000000 00000001
-[ 3524.795854] de80: c0e3dea4 c0e3de90 c0071450 c030d1a8 00000092 c0e37a1c c0e3ded4 c0e3dea8
-[ 3524.804000] dea0: c0071790 c0071420 c0e3df00 f000200c 00000016 c0e440a8 c0e3df00 f0002000
-[ 3524.812145] dec0: c095bc8c 00000001 c0e3defc c0e3ded8 c0008730 c0071710 c0010d88 c0010d8c
-[ 3524.820290] dee0: 600d0013 ffffffff c0e3df34 c0ec7eb4 c0e3df54 c0e3df00 c0014780 c00086fc
-[ 3524.828436] df00: 00000001 00000000 00000000 c0020780 c0e3c000 c0e43530 00000000 00000000
-[ 3524.836581] df20: c0ec7eb4 c095bc8c 00000001 c0e3df54 c0e3df58 c0e3df48 c0010d88 c0010d8c
-[ 3524.844727] df40: 600d0013 ffffffff c0e3df94 c0e3df58 c0062690 c0010d50 c0ec75f0 00000001
-[ 3524.852872] df60: c0e3df84 c0e4353c c0e39580 c0e43e84 c0e3c000 00000002 c0e3df58 c0e38b88
-[ 3524.861018] df80: c0952b9c ffffffff c0e3dfac c0e3df98 c094d1b8 c00622d4 c0e3c000 c0e43e10
-[ 3524.869163] dfa0: c0e3dff4 c0e3dfb0 c0d86d30 c094d130 ffffffff ffffffff c0d866f0 00000000
-[ 3524.877309] dfc0: 00000000 c0df06d8 00000000 c0ee3f14 c0e434c0 c0df06d4 c0e4c20c 4000406a
-[ 3524.885454] dfe0: 410fc073 00000000 00000000 c0e3dff8 40008074 c0d86970 00000000 00000000
-[ 3524.893610] [<c037cc78>] (exynos_sysmmu_irq) from [<c0071ef4>] (handle_irq_event_percpu+0x64/0x25c)
-[ 3524.902615] [<c0071ef4>] (handle_irq_event_percpu) from [<c0072138>] (handle_irq_event+0x4c/0x6c)
-[ 3524.911454] [<c0072138>] (handle_irq_event) from [<c0075130>] (handle_level_irq+0xd4/0x14c)
-[ 3524.919773] [<c0075130>] (handle_level_irq) from [<c0071450>] (generic_handle_irq+0x3c/0x4c)
-[ 3524.928180] [<c0071450>] (generic_handle_irq) from [<c030d240>] (combiner_handle_cascade_irq+0xa4/0x110)
-[ 3524.937624] [<c030d240>] (combiner_handle_cascade_irq) from [<c0071450>] (generic_handle_irq+0x3c/0x4c)
-[ 3524.946981] [<c0071450>] (generic_handle_irq) from [<c0071790>] (__handle_domain_irq+0x8c/0xfc)
-[ 3524.955646] [<c0071790>] (__handle_domain_irq) from [<c0008730>] (gic_handle_irq+0x40/0x78)
-[ 3524.963966] [<c0008730>] (gic_handle_irq) from [<c0014780>] (__irq_svc+0x40/0x74)
-[ 3524.971412] Exception stack(0xc0e3df00 to 0xc0e3df48)
-[ 3524.976441] df00: 00000001 00000000 00000000 c0020780 c0e3c000 c0e43530 00000000 00000000
-[ 3524.984586] df20: c0ec7eb4 c095bc8c 00000001 c0e3df54 c0e3df58 c0e3df48 c0010d88 c0010d8c
-[ 3524.992729] df40: 600d0013 ffffffff
-[ 3524.996205] [<c0014780>] (__irq_svc) from [<c0010d8c>] (arch_cpu_idle+0x48/0x4c)
-[ 3525.003567] [<c0010d8c>] (arch_cpu_idle) from [<c0062690>] (cpu_startup_entry+0x3c8/0x4a4)
-[ 3525.011805] [<c0062690>] (cpu_startup_entry) from [<c094d1b8>] (rest_init+0x94/0x98)
-[ 3525.019516] [<c094d1b8>] (rest_init) from [<c0d86d30>] (start_kernel+0x3cc/0x3d8)
-[ 3525.026963] Code: e34c30ec e5932004 e3520000 ca000018 (e7f001f2)
-[ 3525.033028] ---[ end trace 71ed544f653b4d46 ]---
-
-Signed-off-by: Ingi Kim <ingi2.kim@samsung.com>
+Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
 Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/regs-mfc-v8.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/s5p-mfc/regs-mfc.h | 3 +++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c  | 7 +++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-index cc7cbec..4d1c375 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-@@ -90,7 +90,7 @@
- #define S5P_FIMV_E_H264_OPTIONS_V8		0xfb54
+diff --git a/drivers/media/platform/s5p-mfc/regs-mfc.h b/drivers/media/platform/s5p-mfc/regs-mfc.h
+index 6ccc3f8..57b7e0b 100644
+--- a/drivers/media/platform/s5p-mfc/regs-mfc.h
++++ b/drivers/media/platform/s5p-mfc/regs-mfc.h
+@@ -393,6 +393,9 @@
+ #define S5P_FIMV_REG_CLEAR_COUNT		0
  
- /* MFCv8 Context buffer sizes */
--#define MFC_CTX_BUF_SIZE_V8		(30 * SZ_1K)	/*  30KB */
-+#define MFC_CTX_BUF_SIZE_V8		(36 * SZ_1K)	/*  36KB */
- #define MFC_H264_DEC_CTX_BUF_SIZE_V8	(2 * SZ_1M)	/*  2MB */
- #define MFC_OTHER_DEC_CTX_BUF_SIZE_V8	(20 * SZ_1K)	/*  20KB */
- #define MFC_H264_ENC_CTX_BUF_SIZE_V8	(100 * SZ_1K)	/* 100KB */
+ /* Error handling defines */
++#define S5P_FIMV_ERR_NO_VALID_SEQ_HDR		67
++#define S5P_FIMV_ERR_INCOMPLETE_FRAME		124
++#define S5P_FIMV_ERR_TIMEOUT			140
+ #define S5P_FIMV_ERR_WARNINGS_START		145
+ #define S5P_FIMV_ERR_DEC_MASK			0xFFFF
+ #define S5P_FIMV_ERR_DEC_SHIFT			0
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 0a5b8f5..994a27b 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -641,8 +641,11 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 	case S5P_MFC_R2H_CMD_ERR_RET:
+ 		/* An error has occurred */
+ 		if (ctx->state == MFCINST_RUNNING &&
+-			s5p_mfc_hw_call(dev->mfc_ops, err_dec, err) >=
+-				dev->warn_start)
++			(s5p_mfc_hw_call(dev->mfc_ops, err_dec, err) >=
++				dev->warn_start ||
++				err == S5P_FIMV_ERR_NO_VALID_SEQ_HDR ||
++				err == S5P_FIMV_ERR_INCOMPLETE_FRAME ||
++				err == S5P_FIMV_ERR_TIMEOUT))
+ 			s5p_mfc_handle_frame(ctx, reason, err);
+ 		else
+ 			s5p_mfc_handle_error(dev, ctx, reason, err);
 -- 
 1.9.1
