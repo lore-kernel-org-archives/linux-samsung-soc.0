@@ -1,36 +1,32 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request
- API
-Date: Thu, 10 Nov 2016 20:42:10 +0200
-Message-ID: <20161110184210.GA11835@kozik-lap>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 13/13] Documentation: synopsys-dw-mshc: remove the unused
+ properties
+Date: Thu, 10 Nov 2016 12:47:17 -0600
+Message-ID: <20161110184717.vgkp2flyi26dmbfo@rob-hp-laptop>
+References: <20161103062135.10697-1-jh80.chung@samsung.com>
+ <20161103062135.10697-14-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34724 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755525AbcKJSmR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 13:42:17 -0500
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20161103062135.10697-14-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Thu, Nov 10, 2016 at 04:17:48PM +0100, Sylwester Nawrocki wrote:
-> This patch series aims to convert the s3c64xx platform to use
-> the new DMA channel request API, i.e. this is only meaningful 
-> for non-dt systems using s3c64xx SoCs.
+On Thu, Nov 03, 2016 at 03:21:35PM +0900, Jaehoon Chung wrote:
+> "support-highspeed" was the obsoleted property.
+> And "broken-cd" is not synopsys specific property.
+> It can be referred to mmc.txt binding Documentation.
 > 
-> Presumably the first 2 or 4 patches in this series could be queued 
-> for v4.10-rc1 and the remaining patches could be left for subsequent
-> release, to avoid non-trivial conflict with patches already applied 
-> in the ASoC tree.
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt | 5 -----
+>  1 file changed, 5 deletions(-)
 
-Sounds good to me. Should I put the ARM/s3c64xx commits on separate
-branch in case someone would like to pull a tag with it?
-
-Best regards,
-Krzysztof
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
