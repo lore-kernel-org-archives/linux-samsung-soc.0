@@ -1,54 +1,89 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080
- devices
-Date: Thu, 10 Nov 2016 15:18:16 +0000
-Message-ID: <20161110151816.GI1575@localhost.localdomain>
-References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
- <20161108144445.GD1575@localhost.localdomain>
- <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
- <20161108145534.GE1575@localhost.localdomain>
- <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
- <20161110110323.GG1575@localhost.localdomain>
- <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 3/8] spi: s3c64xx: Do not use platform_data for DMA parameters
+Date: Thu, 10 Nov 2016 16:17:51 +0100
+Message-ID: <1478791076-19528-4-git-send-email-s.nawrocki@samsung.com>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60289 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933991AbcKJPSr (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47400 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933838AbcKJPTE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 10:18:47 -0500
-Content-Disposition: inline
-In-Reply-To: <b654d5f7-7b67-7216-760f-d29e49a29296@samsung.com>
+        Thu, 10 Nov 2016 10:19:04 -0500
+In-reply-to: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Nov 10, 2016 at 04:10:56PM +0100, Sylwester Nawrocki wrote:
-> On 11/10/2016 12:03 PM, Charles Keepax wrote:
-> >> On Tue, Nov 08, 2016 at 04:53:40PM +0100, Sylwester Nawrocki wrote:
-> [...]
-> >> I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
-> >> issue fixed and added initialization of the filer function.
-> > 
-> > Apologies for the delay got somewhat swamped with internal stuff
-> > yesterday. Yeah using that branch it looks good to me, the SPI and
-> > I2S are both working fine. I can download code to the wm0010
-> > which should be a good work out of the SPI and play audio
-> > correctly so the I2S should be fine. So for the series:
-> > 
-> > Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> 
-> Great, thanks a lot!  I'm going to post the next iteration with
-> modified pl080 DMAC patches, addressing comments from Arnd.
-> I would be grateful if you could confirm it also works on your
-> platform.
-> 
+All related platforms use either devicetree or the DMA slave
+map API for mapping DMA channels to DMA slaves so we can now
+stop using platform_data for passing DMA details.
 
-Yeah, no problem, I should be able to find time to test those as
-well.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Andi Shyti <andi.shyti@samsung.com>
+Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-Thanks,
-Charles
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 3c09e94..28dfdce 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -341,27 +341,20 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-	dma_filter_fn filter = sdd->cntrlr_info->filter;
+ 	struct device *dev = &sdd->pdev->dev;
+-	dma_cap_mask_t mask;
+ 
+ 	if (is_polling(sdd))
+ 		return 0;
+ 
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-
+ 	/* Acquire DMA channels */
+-	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
+-			   sdd->cntrlr_info->dma_rx, dev, "rx");
++	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
+ 	if (!sdd->rx_dma.ch) {
+ 		dev_err(dev, "Failed to get RX DMA channel\n");
+ 		return -EBUSY;
+ 	}
+ 	spi->dma_rx = sdd->rx_dma.ch;
+ 
+-	sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
+-			   sdd->cntrlr_info->dma_tx, dev, "tx");
++	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
+ 	if (!sdd->tx_dma.ch) {
+ 		dev_err(dev, "Failed to get TX DMA channel\n");
+ 		dma_release_channel(sdd->rx_dma.ch);
+@@ -1091,11 +1084,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	sdd->cur_bpw = 8;
+ 
+-	if (!sdd->pdev->dev.of_node && (!sci->dma_tx || !sci->dma_rx)) {
+-		dev_warn(&pdev->dev, "Unable to get SPI tx/rx DMA data. Switching to poll mode\n");
+-		sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
+-	}
+-
+ 	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
+ 	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
+ 
+@@ -1205,9 +1193,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Slaves attached\n",
+ 					sdd->port_id, master->num_chipselect);
+-	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\tDMA=[Rx-%p, Tx-%p]\n",
+-					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1,
+-					sci->dma_rx, sci->dma_tx);
++	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\n",
++					mem_res, (FIFO_LVL_MASK(sdd) >> 1) + 1);
+ 
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ 	pm_runtime_put_autosuspend(&pdev->dev);
+-- 
+1.9.1
