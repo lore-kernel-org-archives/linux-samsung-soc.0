@@ -1,187 +1,59 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
-Date: Thu, 10 Nov 2016 18:07:54 +0530
-Message-ID: <a43af947-6002-bc65-f73b-02d57a78d6cb@samsung.com>
-References: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com>
- <1478693755-11953-2-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161110115456epcas2p4524185a083cd7173e354f46b94be9183@epcas2p4.samsung.com>
- <5066943.nydi3GQ3KP@wuerfel>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] arm64: dts: Add ARM PMU node for exynos7
+Date: Thu, 10 Nov 2016 13:37:30 +0000
+Message-ID: <4922ada9-2eb2-f0cf-e4b1-a74f4397f97c@arm.com>
+References: <1478748643-3081-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59862 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932595AbcKJMew (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:48760 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932825AbcKJNhe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 07:34:52 -0500
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGF02RFEEY1QW90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Nov 2016 21:34:49 +0900 (KST)
-In-reply-to: <5066943.nydi3GQ3KP@wuerfel>
+        Thu, 10 Nov 2016 08:37:34 -0500
+In-Reply-To: <1478748643-3081-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, thomas.ab@samsung.com, krzk@kernel.org, Russell King <rmk+kernel@armlinux.org.uk>
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org
 
-Hi Arnd,
+Hi Alim,
 
-On Thursday 10 November 2016 05:24 PM, Arnd Bergmann wrote:
-> On Wednesday, November 9, 2016 5:45:54 PM CET Pankaj Dubey wrote:
->> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based
->> boards. Instead use mapping from device tree node of SCU.
->>
->> NOTE: This patch has dependency on DT file of any such CORTEX-A9 SoC
->> based boards, in the absence of SCU device node in DTS file, only single
->> CPU will boot. So if you are using OUT-OF-TREE DTS file of CORTEX-A9 based
->> Exynos SoC make sure to add SCU device node to DTS file for SMP boot.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+On 10/11/16 03:30, Alim Akhtar wrote:
+> This patch adds ARM Performance Monitor Unit dt node for exynos7.
+> PMU provides various statistics on the operation of the CPU and
+> memory system at runtime, which are very useful when debugging or
+> profiling code. This enables the same.
 > 
-> With CONFIG_SMP disabled, I now get this build failure:
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi |    8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index e0d0d01..53ce4be 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -472,6 +472,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		arm-pmu {
+> +			compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
+> +			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
 
-Sorry, I missed this part and did not check with CONFIG_SMP disabled.
+Per Documentation/devicetree/bindings/arm/pmu.txt there should also be
+an "interrupt-affinity" property describing which SPI belongs to which core.
 
-> arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
-> pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to `exynos_scu_enable'
-> arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
-> suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to `exynos_scu_enable'
+Robin.
+
+> +		};
+> +
+>  		timer {
+>  			compatible = "arm,armv8-timer";
+>  			interrupts = <GIC_PPI 13
 > 
-> Please fix. I have applied a patch locally (see below), but don't know
-> if that is the best solution. As we seem to duplicate that code across
-> several platforms, I wonder why we don't just put it into the core scu
-> implementation.
-> 
-
-When I checked scu_enable declaration it is defined in
-arch/arm/include/asm/smp_scu.h as:
-
-#if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
-void scu_enable(void __iomem *scu_base);
-#else
-static inline void scu_enable(void __iomem *scu_base) {}
-#endif
-
-So if CONFIG_SMP is disable then there is no sense of exynos_scu_enable
-as well. So wow about using below patch?
-
---------------------------------------------------------
-
-Subject: [PATCH] ARM: exynos: fix build fail due to exynos_scu_enable
-
-Build failed if we disable CONFIG_SMP as shown below:
-
-arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
-pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to
-`exynos_scu_enable'
-arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
-suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to
-`exynos_scu_enable'
-
-Since scu_enable is defined only in case CONFIG_SMP and CONFIG_HAVE_ARM_SCU
-lets move exynos_scu_enable also under these two macros.
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index fb12d11..03fdb79 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -156,7 +156,12 @@ extern void exynos_cpu_restore_register(void);
- extern void exynos_pm_central_suspend(void);
- extern int exynos_pm_central_resume(void);
- extern void exynos_enter_aftr(void);
-+#if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
- extern int exynos_scu_enable(void);
-+#else
-+static inline void exynos_scu_enable(void) {}
-+#endif
-+
-
-------------------------------------------------------
-
-Of-course your idea to move it in core SCU file is also good that we
-lots of duplication in different architecture can be avoided.
-
-In that case I can think of following patch:
-
-[PATCH] ARM: scu: use SCU device node to enable SCU
-
-Many platforms are duplicating code for enabling SCU, lets add
-common code to enable SCU using SCU device node so the duplication in
-each platform can be avoided.
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/include/asm/smp_scu.h |  2 ++
- arch/arm/kernel/smp_scu.c      | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/arch/arm/include/asm/smp_scu.h b/arch/arm/include/asm/smp_scu.h
-index bfe163c..e5e2492 100644
---- a/arch/arm/include/asm/smp_scu.h
-+++ b/arch/arm/include/asm/smp_scu.h
-@@ -38,8 +38,10 @@ static inline int scu_power_mode(void __iomem
-*scu_base, unsigned int mode)
- #endif
-
- #if defined(CONFIG_SMP) && defined(CONFIG_HAVE_ARM_SCU)
-+int of_scu_enable(void);
- void scu_enable(void __iomem *scu_base);
- #else
-+static inline int of_scu_enable(void) {return 0;}
- static inline void scu_enable(void __iomem *scu_base) {}
- #endif
-
-diff --git a/arch/arm/kernel/smp_scu.c b/arch/arm/kernel/smp_scu.c
-index 72f9241..7c16d16 100644
---- a/arch/arm/kernel/smp_scu.c
-+++ b/arch/arm/kernel/smp_scu.c
-@@ -34,6 +34,23 @@ unsigned int __init scu_get_core_count(void __iomem
-*scu_base)
- 	return (ncores & 0x03) + 1;
- }
-
-+int of_scu_enable(void)
-+{
-+	struct device_node *np;
-+	void __iomem *scu_base;
-+
-+	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
-+	scu_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!scu_base) {
-+		pr_err("%s failed to map scu_base\n", __func__);
-+		return -ENOMEM;
-+	}
-+	scu_enable(scu_base);
-+	iounmap(scu_base);
-+	return 0;
-+}
-+
- /*
-  * Enable the SCU
-  */
--- 
-
-
-Followed by cleanup in various architecture where this piece of code is
-duplicated and all of them can call directly of_scu_enable()
-
-
-Please let me know which one you will prefer for fixing build issue.
-
-@Krzysztof, please let me know if I need to resubmit SCU series again
-with fix or you will accept build fix patch on top of already taken patch.
-
-Thanks,
-Pankaj Dubey
