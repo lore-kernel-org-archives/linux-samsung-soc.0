@@ -1,78 +1,124 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH RFC 2/7] ARM: S3C64XX: Add DMA slave maps for PL080
- devices
-Date: Thu, 10 Nov 2016 11:03:23 +0000
-Message-ID: <20161110110323.GG1575@localhost.localdomain>
-References: <1478276094-19135-1-git-send-email-s.nawrocki@samsung.com>
- <1478276094-19135-4-git-send-email-s.nawrocki@samsung.com>
- <20161108144445.GD1575@localhost.localdomain>
- <CGME20161108145620epcas2p4b8e2ec5ffdd4bf04ab3bf0728b46e3f2@epcas2p4.samsung.com>
- <20161108145534.GE1575@localhost.localdomain>
- <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Remove static mapping of SCU SFR
+Date: Thu, 10 Nov 2016 12:54:44 +0100
+Message-ID: <5066943.nydi3GQ3KP@wuerfel>
+References: <1478693755-11953-1-git-send-email-pankaj.dubey@samsung.com> <1478693755-11953-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:38367 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755305AbcKJLDx (ORCPT
+Received: from mout.kundenserver.de ([217.72.192.73]:56622 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755189AbcKJLzZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Nov 2016 06:03:53 -0500
-Content-Disposition: inline
-In-Reply-To: <f53d533d-163f-31f3-4efb-0e39d201589d@samsung.com>
+        Thu, 10 Nov 2016 06:55:25 -0500
+In-Reply-To: <1478693755-11953-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, thomas.ab@samsung.com, krzk@kernel.org, Russell King <rmk+kernel@armlinux.org.uk>
 
-On Tue, Nov 08, 2016 at 04:53:40PM +0100, Sylwester Nawrocki wrote:
-> On 11/08/2016 03:55 PM, Charles Keepax wrote:
-> >>> diff --git a/arch/arm/mach-s3c64xx/pl080.c b/arch/arm/mach-s3c64xx/pl080.c
-> >>> > > index 89c5a62..8c88680 100644
-> >>> > > --- a/arch/arm/mach-s3c64xx/pl080.c
-> >>> > > +++ b/arch/arm/mach-s3c64xx/pl080.c
-> >> > <snip>
-> >>> > > @@ -134,6 +153,8 @@ struct pl08x_platform_data s3c64xx_dma0_plat_data = {
-> >>> > >  	.put_xfer_signal = pl08x_put_xfer_signal,
-> >>> > >  	.slave_channels = s3c64xx_dma0_info,
-> >>> > >  	.num_slave_channels = ARRAY_SIZE(s3c64xx_dma0_info),
-> >>> > > +	.slave_map = s3c64xx_dma0_slave_map,
-> >>> > > +	.slavecnt = ARRAY_SIZE(s3c64xx_dma0_slave_map),
-> >>> > >  };
-> >> > 
-> >> > Here we add a .slavecnt but the pl08x_platform_data structure doesn't
-> >> > contain that field. I can't see it on the branch you linked in
-> >> > the cover letter either, is it added by a patch on another branch
-> >> > I am missing?
-> >> > 
-> > Ah I think I see it should be .slave_map_len here.
+On Wednesday, November 9, 2016 5:45:54 PM CET Pankaj Dubey wrote:
+> Lets remove static mapping of SCU SFR mainly used in CORTEX-A9 SoC based
+> boards. Instead use mapping from device tree node of SCU.
 > 
-> Yeah, sorry, I fixed it after getting report from the kbuild test
-> but have forgotten to push changes to the git tree.
+> NOTE: This patch has dependency on DT file of any such CORTEX-A9 SoC
+> based boards, in the absence of SCU device node in DTS file, only single
+> CPU will boot. So if you are using OUT-OF-TREE DTS file of CORTEX-A9 based
+> Exynos SoC make sure to add SCU device node to DTS file for SMP boot.
 > 
-> I pushed now to branch for-v4.10/dma/pl080-s3c64xx-v2 with this
-> issue fixed and added initialization of the filer function.
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Apologies for the delay got somewhat swamped with internal stuff
-yesterday. Yeah using that branch it looks good to me, the SPI and
-I2S are both working fine. I can download code to the wm0010
-which should be a good work out of the SPI and play audio
-correctly so the I2S should be fine. So for the series:
+With CONFIG_SMP disabled, I now get this build failure:
 
-Tested-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
+pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to `exynos_scu_enable'
+arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
+suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to `exynos_scu_enable'
+
+Please fix. I have applied a patch locally (see below), but don't know
+if that is the best solution. As we seem to duplicate that code across
+several platforms, I wonder why we don't just put it into the core scu
+implementation.
+
+	Arnd
 
 
-I do still need to revert these two patches to get the I2S to
-work properly:
+commit ad63b863bb78188fbe9608cfad629c86bd579dc0
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Thu Nov 10 12:51:43 2016 +0100
 
-commit d70e861a3154833467023123e218e9b1ba558809
-ASoC: samsung: Remove SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag
+    ARM: exynos: move exynos_scu_enable to main file
+    
+    arch/arm/mach-exynos/pm.o: In function `exynos_enter_aftr':
+    pm.c:(.text.exynos_enter_aftr+0xec): undefined reference to `exynos_scu_enable'
+    arch/arm/mach-exynos/suspend.o: In function `exynos_pm_resume':
+    suspend.c:(.text.exynos_pm_resume+0x78): undefined reference to `exynos_scu_enable'
+    
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-commit acde50a7bf1fd6ae0baa4402f0a02c4b1bd4c990
-ASoC: dmaengine_pcm: Make FLAG_NO_RESIDUE internal
-
-But that is clearly an unrelated issue, which I haven't found
-time to look into yet as we don't use this platform that often
-these days.
-
-Thanks,
-Charles
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index fa08ef99b4ad..784c6d47af17 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -39,6 +39,27 @@ static struct platform_device exynos_cpuidle = {
+ void __iomem *sysram_base_addr;
+ void __iomem *sysram_ns_base_addr;
+ 
++/**
++ * exynos_scu_enable : enables SCU for Cortex-A9 based system
++ * returns 0 on success else non-zero error code
++ */
++int exynos_scu_enable(void)
++{
++	struct device_node *np;
++	void __iomem *scu_base;
++
++	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
++	scu_base = of_iomap(np, 0);
++	of_node_put(np);
++	if (!scu_base) {
++		pr_err("%s failed to map scu_base\n", __func__);
++		return -ENOMEM;
++	}
++	scu_enable(scu_base);
++	iounmap(scu_base);
++	return 0;
++}
++
+ void __init exynos_sysram_init(void)
+ {
+ 	struct device_node *node;
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 94405c72d245..4ad376637a34 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -168,27 +168,6 @@ int exynos_cluster_power_state(int cluster)
+ 		S5P_CORE_LOCAL_PWR_EN);
+ }
+ 
+-/**
+- * exynos_scu_enable : enables SCU for Cortex-A9 based system
+- * returns 0 on success else non-zero error code
+- */
+-int exynos_scu_enable(void)
+-{
+-	struct device_node *np;
+-	void __iomem *scu_base;
+-
+-	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
+-	scu_base = of_iomap(np, 0);
+-	of_node_put(np);
+-	if (!scu_base) {
+-		pr_err("%s failed to map scu_base\n", __func__);
+-		return -ENOMEM;
+-	}
+-	scu_enable(scu_base);
+-	iounmap(scu_base);
+-	return 0;
+-}
+-
+ static void __iomem *cpu_boot_reg_base(void)
+ {
+ 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
