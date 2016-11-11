@@ -1,56 +1,65 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 04/12] exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
-Date: Fri, 11 Nov 2016 10:50:20 +0100
-Message-ID: <CAPDyKFoKUhdDuWQdDUwOFxGtt0iv8y_-1vRzS0-jGkyEbxrdHQ@mail.gmail.com>
-References: <1478701441-29107-5-git-send-email-m.szyprowski@samsung.com>
- <201611101146.cbVxBQXg%fengguang.wu@intel.com> <CAPDyKFqN=haG0HvpXgQr3nqfNUhhxRku8zbW1QJngPUyLDjokw@mail.gmail.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] arm64: dts: Add ARM PMU node for exynos7
+Date: Fri, 11 Nov 2016 18:31:21 +0530
+Message-ID: <5825C121.6050708@samsung.com>
+References: <1478748643-3081-1-git-send-email-alim.akhtar@samsung.com>
+ <CGME20161110133734epcas3p2b271260900216d3e3a4b2b8e133a327b@epcas3p2.samsung.com>
+ <4922ada9-2eb2-f0cf-e4b1-a74f4397f97c@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqN=haG0HvpXgQr3nqfNUhhxRku8zbW1QJngPUyLDjokw@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <4922ada9-2eb2-f0cf-e4b1-a74f4397f97c@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11 November 2016 at 10:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 10 November 2016 at 04:44, kbuild test robot <lkp@intel.com> wrote:
->> Hi Ulf,
+Hi Robin,
+
+On 11/10/2016 07:07 PM, Robin Murphy wrote:
+> Hi Alim,
+>
+> On 10/11/16 03:30, Alim Akhtar wrote:
+>> This patch adds ARM Performance Monitor Unit dt node for exynos7.
+>> PMU provides various statistics on the operation of the CPU and
+>> memory system at runtime, which are very useful when debugging or
+>> profiling code. This enables the same.
 >>
->> [auto build test ERROR on linuxtv-media/master]
->> [also build test ERROR on v4.9-rc4 next-20161109]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>   arch/arm64/boot/dts/exynos/exynos7.dtsi |    8 ++++++++
+>>   1 file changed, 8 insertions(+)
 >>
->> url:    https://github.com/0day-ci/linux/commits/Marek-Szyprowski/media-Exynos-GScaller-driver-fixes/20161110-000048
->> base:   git://linuxtv.org/media_tree.git master
->> config: openrisc-allyesconfig (attached as .config)
->> compiler: or32-linux-gcc (GCC) 4.5.1-or32-1.0rc1
->> reproduce:
->>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         make.cross ARCH=openrisc
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> index e0d0d01..53ce4be 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -472,6 +472,14 @@
+>>   			status = "disabled";
+>>   		};
 >>
->> Note: the linux-review/Marek-Szyprowski/media-Exynos-GScaller-driver-fixes/20161110-000048 HEAD 92b20676ac75659d1ea1d83b00e8028f45ea84e9 builds fine.
->>       It only hurts bisectibility.
->>
->> All errors (new ones prefixed by >>):
->>
->>    drivers/media/platform/exynos-gsc/gsc-core.c: In function 'gsc_resume':
->>>> drivers/media/platform/exynos-gsc/gsc-core.c:1183:3: error: implicit declaration of function 'gsc_runtime_resume'
->>    drivers/media/platform/exynos-gsc/gsc-core.c: In function 'gsc_suspend':
->>>> drivers/media/platform/exynos-gsc/gsc-core.c:1198:3: error: implicit declaration of function 'gsc_runtime_suspend'
+>> +		arm-pmu {
+>> +			compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
+>> +			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+>
+> Per Documentation/devicetree/bindings/arm/pmu.txt there should also be
+> an "interrupt-affinity" property describing which SPI belongs to which core.
+>
+Thanks for review, will resend after adding "interrupt-affinity" property.
+
+> Robin.
+>
+>> +		};
+>> +
+>>   		timer {
+>>   			compatible = "arm,armv8-timer";
+>>   			interrupts = <GIC_PPI 13
 >>
 >
-> Marek, to avoid the bisectibility issue, we could squash patch 4/12 with 6/12.
-
-Urgh, ignore this.
-
-What I meant was instead to squash these patches:
-[PATCH 04/12] exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
-[PATCH 07/12] exynos-gsc: Make system PM callbacks available for CONFIG_PM_SLEEP
-
-So, do you want to deal with it or you prefer me?
-
-Kind regards
-Uffe
+>
+>
+>
