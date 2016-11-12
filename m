@@ -1,65 +1,104 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] arm64: dts: Add ARM PMU node for exynos7
-Date: Fri, 11 Nov 2016 18:31:21 +0530
-Message-ID: <5825C121.6050708@samsung.com>
-References: <1478748643-3081-1-git-send-email-alim.akhtar@samsung.com>
- <CGME20161110133734epcas3p2b271260900216d3e3a4b2b8e133a327b@epcas3p2.samsung.com>
- <4922ada9-2eb2-f0cf-e4b1-a74f4397f97c@arm.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [RFC 00/17] clk: Add per-controller locks to fix deadlocks
+Date: Fri, 11 Nov 2016 18:38:44 -0800
+Message-ID: <20161112023844.GG5177@codeaurora.org>
+References: <1471354514-24224-1-git-send-email-k.kozlowski@samsung.com>
+ <20160909002432.GE13062@codeaurora.org>
+ <CGME20161104105318eucas1p2e9458dbe7039f2a81419fae8cf6bc4c8@eucas1p2.samsung.com>
+ <7933d51e-92a8-ca6d-84f0-70b22fe17568@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4922ada9-2eb2-f0cf-e4b1-a74f4397f97c@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, krzk@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <7933d51e-92a8-ca6d-84f0-70b22fe17568@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org, Charles Keepax <ckeep>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Robin,
+On 11/04, Marek Szyprowski wrote:
+> Hi Stephen,
+> 
+> Krzysztof has left Samsung, but we would like to continue this task, because
+> the ABBA dead-locks related to global prepare lock becomes more and more
+> problematic for us to workaround.
 
-On 11/10/2016 07:07 PM, Robin Murphy wrote:
-> Hi Alim,
->
-> On 10/11/16 03:30, Alim Akhtar wrote:
->> This patch adds ARM Performance Monitor Unit dt node for exynos7.
->> PMU provides various statistics on the operation of the CPU and
->> memory system at runtime, which are very useful when debugging or
->> profiling code. This enables the same.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>   arch/arm64/boot/dts/exynos/exynos7.dtsi |    8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> index e0d0d01..53ce4be 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> @@ -472,6 +472,14 @@
->>   			status = "disabled";
->>   		};
->>
->> +		arm-pmu {
->> +			compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
->> +			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
->
-> Per Documentation/devicetree/bindings/arm/pmu.txt there should also be
-> an "interrupt-affinity" property describing which SPI belongs to which core.
->
-Thanks for review, will resend after adding "interrupt-affinity" property.
+Hmm. Ok. Thanks for the info.
 
-> Robin.
->
->> +		};
->> +
->>   		timer {
->>   			compatible = "arm,armv8-timer";
->>   			interrupts = <GIC_PPI 13
->>
->
->
->
->
+> 
+> On 2016-09-09 02:24, Stephen Boyd wrote:
+> 
+> >So I'm not very fond of this design because the locking scheme is
+> >pretty much out of the hands of the framework and can be easily
+> >broken.
+> 
+> Well, switching from a single global lock to more granular locking
+> is always a good approach. Please note that the global lock sooner
+> or later became a serious bottleneck if one wants to make somehow
+> more aggressive power management and clock gating.
+
+I'm not so sure switching from a global lock to a more granular
+lock is _always_ a great idea. Sometimes simpler code is better,
+even if it doesn't scale to a million clk nodes. The largest
+systems I've seen only have clocks in the hundreds, and a
+majority of those aren't rate changing in parallel, so it's not
+like we're suffering from VFS type scalability problems here with
+tens of thousands of inodes.
+
+That isn't to say I don't agree there's a scalability problem
+here, but I'd like to actually see numbers to prove that there's
+some sort of scalability problem before making drastic changes.
+
+> 
+> >  I'm biased of course, because I'd prefer we go with my
+> >wwmutex design of per-clk locks[1]. Taking locks in any order
+> >works fine there, and we resolve quite a few long standing
+> >locking problems that we have while improving scalability. The
+> >problem there is that we don't get the recursive mutex design
+> >(maybe that's a benefit!).
+> 
+> Do you have any plan to continue working on your approach? per-clk
+> wwmutex looks like an overkill on the first glance, but that's probably
+> the only working solution if you want to get rid of recursive locks.
+> I'm still not really convinced that we really need wwmutex here,
+> especially if it is possible to guarantee the same order of locking
+> operations inside the clock core. This requires a bit of cooperation
+> from clock providers (with proper documentation and a list of
+> DO/DON'T it shouldn't be that hard).
+
+So far I haven't gotten around to resurrecting the wwmutex stuff.
+If you have interest in doing it that's great. Having a locking
+scheme with rules of DO/DON'T sounds brittle to me, unless it can
+be automated to find problems. I know that I'm not going to spend
+time policing that.
+
+> 
+> >Once a clk_op reenters the framework
+> >with consumer APIs and tries to grab the same lock we deadlock.
+> >This is why I've been slowly splitting consumers from providers
+> >so we can easily identify these cases. If we had something like
+> >coordinated clk rate switching, we could get rid of clk_ops
+> >reentering the framework and avoid this problem (and we really do
+> >need to do that).
+> 
+> I'm not sure that this makes really sense split consumers and
+> providers. You will get recursive calls to clk core anyway with
+> consumers calls if you are implementing i2c clock, for which an i2c
+> bus driver does it's own clock gating (i2c controller uses
+> consumer clk api).
+> 
+> 
+
+I suppose this is a different topic. Regardless of the recursive
+call or not, we can easily see that a clk consumer is also a clk
+provider and just knowing that is useful. Once we know that, we
+can look to see if they're calling clk consumer APIs from their
+provider callbacks which is not desired because it makes it
+impossible to get rid of the recursive lock design. If the lock
+is per-clock, then recursion doesn't happen when the provider is
+also a consumer. If it does, that's bad and lockdep should tell
+us.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
