@@ -1,156 +1,46 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 04/12 v2] exynos-gsc: Make PM callbacks available conditionally
-Date: Mon, 14 Nov 2016 11:27:32 +0100
-Message-ID: <1479119252-3225-1-git-send-email-m.szyprowski@samsung.com>
-References: <1478701441-29107-5-git-send-email-m.szyprowski@samsung.com>
- <CGME20161114102738eucas1p121baecdb3ff034812f098894d28f43ad@eucas1p1.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request API
+Date: Mon, 14 Nov 2016 12:52:01 +0100
+Message-ID: <b70c6454-9e42-26bf-4d09-98b087642014@samsung.com>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20161110184227epcas3p4831c8f0d0fb85cb0fd223a4887ed9398@epcas3p4.samsung.com>
+ <20161110184210.GA11835@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37118 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932751AbcKNK1n (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38957 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751222AbcKNLwH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 05:27:43 -0500
-In-reply-to: <1478701441-29107-5-git-send-email-m.szyprowski@samsung.com>
+        Mon, 14 Nov 2016 06:52:07 -0500
+In-reply-to: <20161110184210.GA11835@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+On 11/10/2016 07:42 PM, Krzysztof Kozlowski wrote:
+> On Thu, Nov 10, 2016 at 04:17:48PM +0100, Sylwester Nawrocki wrote:
+>> > This patch series aims to convert the s3c64xx platform to use
+>> > the new DMA channel request API, i.e. this is only meaningful 
+>> > for non-dt systems using s3c64xx SoCs.
+>> > 
+>> > Presumably the first 2 or 4 patches in this series could be queued 
+>> > for v4.10-rc1 and the remaining patches could be left for subsequent
+>> > release, to avoid non-trivial conflict with patches already applied 
+>> > in the ASoC tree.
+>
+> Sounds good to me. Should I put the ARM/s3c64xx commits on separate
+> branch in case someone would like to pull a tag with it?
 
-There are no need to set up the PM callbacks (runtime and system) unless
-they are being used. It also causes compiler warnings about unused
-functions.
+I think it makes sense to put first 4 patches from the series onto
+a separate branch, and the remaining ones would need to wait for
+next development cycle.
 
-Silence the warnings by making them available for CONFIG_PM (runtime
-callbacks) and CONFIG_PM_SLEEP (system sleep callbacks).
+But of course firstly we need some feedback and Ack on the first
+(DMA controller driver) patch.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[mszyprow: squashed two patches into one to avoid potential build break,
-changed patch subject and updated commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/exynos-gsc/gsc-core.c | 84 ++++++++++++++--------------
- 1 file changed, 43 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index b5a99af6d049..e75474f3f7f2 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -988,43 +988,6 @@ static void *gsc_get_drv_data(struct platform_device *pdev)
- 	return driver_data;
- }
- 
--static int gsc_m2m_suspend(struct gsc_dev *gsc)
--{
--	unsigned long flags;
--	int timeout;
--
--	spin_lock_irqsave(&gsc->slock, flags);
--	if (!gsc_m2m_pending(gsc)) {
--		spin_unlock_irqrestore(&gsc->slock, flags);
--		return 0;
--	}
--	clear_bit(ST_M2M_SUSPENDED, &gsc->state);
--	set_bit(ST_M2M_SUSPENDING, &gsc->state);
--	spin_unlock_irqrestore(&gsc->slock, flags);
--
--	timeout = wait_event_timeout(gsc->irq_queue,
--			     test_bit(ST_M2M_SUSPENDED, &gsc->state),
--			     GSC_SHUTDOWN_TIMEOUT);
--
--	clear_bit(ST_M2M_SUSPENDING, &gsc->state);
--	return timeout == 0 ? -EAGAIN : 0;
--}
--
--static void gsc_m2m_resume(struct gsc_dev *gsc)
--{
--	struct gsc_ctx *ctx;
--	unsigned long flags;
--
--	spin_lock_irqsave(&gsc->slock, flags);
--	/* Clear for full H/W setup in first run after resume */
--	ctx = gsc->m2m.ctx;
--	gsc->m2m.ctx = NULL;
--	spin_unlock_irqrestore(&gsc->slock, flags);
--
--	if (test_and_clear_bit(ST_M2M_SUSPENDED, &gsc->state))
--		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
--}
--
- static int gsc_probe(struct platform_device *pdev)
- {
- 	struct gsc_dev *gsc;
-@@ -1130,6 +1093,44 @@ static int gsc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int gsc_m2m_suspend(struct gsc_dev *gsc)
-+{
-+	unsigned long flags;
-+	int timeout;
-+
-+	spin_lock_irqsave(&gsc->slock, flags);
-+	if (!gsc_m2m_pending(gsc)) {
-+		spin_unlock_irqrestore(&gsc->slock, flags);
-+		return 0;
-+	}
-+	clear_bit(ST_M2M_SUSPENDED, &gsc->state);
-+	set_bit(ST_M2M_SUSPENDING, &gsc->state);
-+	spin_unlock_irqrestore(&gsc->slock, flags);
-+
-+	timeout = wait_event_timeout(gsc->irq_queue,
-+			     test_bit(ST_M2M_SUSPENDED, &gsc->state),
-+			     GSC_SHUTDOWN_TIMEOUT);
-+
-+	clear_bit(ST_M2M_SUSPENDING, &gsc->state);
-+	return timeout == 0 ? -EAGAIN : 0;
-+}
-+
-+static void gsc_m2m_resume(struct gsc_dev *gsc)
-+{
-+	struct gsc_ctx *ctx;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gsc->slock, flags);
-+	/* Clear for full H/W setup in first run after resume */
-+	ctx = gsc->m2m.ctx;
-+	gsc->m2m.ctx = NULL;
-+	spin_unlock_irqrestore(&gsc->slock, flags);
-+
-+	if (test_and_clear_bit(ST_M2M_SUSPENDED, &gsc->state))
-+		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
-+}
-+
- static int gsc_runtime_resume(struct device *dev)
- {
- 	struct gsc_dev *gsc = dev_get_drvdata(dev);
-@@ -1160,7 +1161,9 @@ static int gsc_runtime_suspend(struct device *dev)
- 	pr_debug("gsc%d: state: 0x%lx", gsc->id, gsc->state);
- 	return ret;
- }
-+#endif
- 
-+#ifdef CONFIG_PM_SLEEP
- static int gsc_resume(struct device *dev)
- {
- 	struct gsc_dev *gsc = dev_get_drvdata(dev);
-@@ -1197,12 +1200,11 @@ static int gsc_suspend(struct device *dev)
- 
- 	return 0;
- }
-+#endif
- 
- static const struct dev_pm_ops gsc_pm_ops = {
--	.suspend		= gsc_suspend,
--	.resume			= gsc_resume,
--	.runtime_suspend	= gsc_runtime_suspend,
--	.runtime_resume		= gsc_runtime_resume,
-+	SET_SYSTEM_SLEEP_PM_OPS(gsc_suspend, gsc_resume)
-+	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
- };
- 
- static struct platform_driver gsc_driver = {
 -- 
-1.9.1
+Thanks,
+Sylwester
