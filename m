@@ -1,72 +1,54 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding
- documentation
-Date: Mon, 14 Nov 2016 10:15:46 -0600
-Message-ID: <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARM: Drop fixed 200 Hz timer requirement from Exynos platforms
+Date: Mon, 14 Nov 2016 20:27:05 +0200
+Message-ID: <1479148025-469-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 07, 2016 at 03:39:32PM +0530, Pankaj Dubey wrote:
-> Add Device Tree binding documentation for the clocks
-> outputs in the Maxim-8997 Power Management IC.
-> 
-> CC: Michael Turquette <mturquette@baylibre.com>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: devicetree@vger.kernel.org
-> CC: linux-clk@vger.kernel.org
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
->  .../bindings/regulator/max8997-regulator.txt       |  3 ++
->  2 files changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-> new file mode 100644
-> index 0000000..d2e2a74
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-> @@ -0,0 +1,44 @@
-> +Binding for Maxim MAX8997 32k clock generator block
-> +
-> +This is a part of device tree bindings of MAX8997 multi-function device.
-> +More information can be found in bindings/regulator/max8997-regulator.txt file.
-> +
-> +The MAX8997 contains two 32.768khz clock outputs that can be controlled
-> +(gated/ungated) over I2C.
-> +
-> +Following properties should be presend in main device node of the MFD chip.
-> +
-> +Required properties:
-> +
-> +- #clock-cells: from common clock binding; shall be set to 1.
-> +
-> +Optional properties:
-> +- clock-output-names: From common clock binding.
-> +
-> +Each clock is assigned an identifier and client nodes can use this identifier
-> +to specify the clock which they consume. Following indices are allowed:
-> +    - 0: 32khz_ap clock,
-> +    - 1: 32khz_cp clock,
-> +
-> +Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
-> +header and can be used in device tree sources.
-> +
-> +Example: Node of the MFD chip
-> +
-> +	max8997: max8997_pmic@66 {
+All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
+200 Hz.  Unfortunately in case of multiplatform image this affects also
+other platforms when Exynos is selected.
 
-pmic@66 {
+This looks like an very old legacy code, dating back to initial
+upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
+driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
+unused plat-samsung/time.c").
 
-With that:
+Since then, this fixed 200 Hz spread everywhere, including out-of-tree
+Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
+was rather an effect of coincidence instead of conscious choice.  In
+fact Exynos can work with different timers.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
+A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
+other values.
+
+Reported-by: Lee Jones <lee.jones@linaro.org>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Testing on other Exynos platforms would be appreciated.
+---
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index b5d529fdffab..0d10e45f9175 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1497,7 +1497,7 @@ source kernel/Kconfig.preempt
+ config HZ_FIXED
+ 	int
+ 	default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
+-		ARCH_S5PV210 || ARCH_EXYNOS4
++		ARCH_S5PV210
+ 	default 128 if SOC_AT91RM9200
+ 	default 0
+ 
+-- 
+2.7.4
