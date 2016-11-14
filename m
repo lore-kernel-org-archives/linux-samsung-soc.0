@@ -1,35 +1,72 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 0/7] Exynos IOMMU: proper runtime PM support (use
-	device dependencies)
-Date: Mon, 14 Nov 2016 17:13:32 +0100
-Message-ID: <20161114161332.GB14829@8bytes.org>
-References: <CGME20161114100908eucas1p1658fdc7f8e9d528248542ccfda12c6e6@eucas1p1.samsung.com>
-	<1479118092-1365-1-git-send-email-m.szyprowski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding
+ documentation
+Date: Mon, 14 Nov 2016 10:15:46 -0600
+Message-ID: <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1479118092-1365-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+In-Reply-To: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, myungjoo.ham@samsung.com, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 14, 2016 at 11:08:05AM +0100, Marek Szyprowski wrote:
-> Joerg: I hope you can merge this version on top of Greg's driver-core-next
-> branch to iommu tree.
+On Mon, Nov 07, 2016 at 03:39:32PM +0530, Pankaj Dubey wrote:
+> Add Device Tree binding documentation for the clocks
+> outputs in the Maxim-8997 Power Management IC.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: devicetree@vger.kernel.org
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
+>  .../bindings/regulator/max8997-regulator.txt       |  3 ++
+>  2 files changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> new file mode 100644
+> index 0000000..d2e2a74
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+> @@ -0,0 +1,44 @@
+> +Binding for Maxim MAX8997 32k clock generator block
+> +
+> +This is a part of device tree bindings of MAX8997 multi-function device.
+> +More information can be found in bindings/regulator/max8997-regulator.txt file.
+> +
+> +The MAX8997 contains two 32.768khz clock outputs that can be controlled
+> +(gated/ungated) over I2C.
+> +
+> +Following properties should be presend in main device node of the MFD chip.
+> +
+> +Required properties:
+> +
+> +- #clock-cells: from common clock binding; shall be set to 1.
+> +
+> +Optional properties:
+> +- clock-output-names: From common clock binding.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. Following indices are allowed:
+> +    - 0: 32khz_ap clock,
+> +    - 1: 32khz_cp clock,
+> +
+> +Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
+> +header and can be used in device tree sources.
+> +
+> +Example: Node of the MFD chip
+> +
+> +	max8997: max8997_pmic@66 {
 
-Merged Greg's driver-core-next branch and applied these on-top,
-thanks Marek.
+pmic@66 {
 
+With that:
 
-	Joerg
+Acked-by: Rob Herring <robh@kernel.org>
