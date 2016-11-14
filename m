@@ -1,51 +1,56 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request API
-Date: Mon, 14 Nov 2016 12:59:23 +0100
-Message-ID: <31f2ed35-2838-8a9d-695c-df3d89ad4b18@samsung.com>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20161114101259epcas1p2ad701e7b99590a5e9f835a9fab44e409@epcas1p2.samsung.com>
- <20161114101101.GK1575@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39445 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbcKNL73 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 06:59:29 -0500
-In-reply-to: <20161114101101.GK1575@localhost.localdomain>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] s5p-mfc: Fix clock management in s5p_mfc_release function
+Date: Mon, 14 Nov 2016 15:09:26 +0100
+Message-ID: <1479132566-477-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161114140941eucas1p259a5ef794e4349614f6212cc251b6995@eucas1p2.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Luis de Bethencourt <luisbg@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On 11/14/2016 11:11 AM, Charles Keepax wrote:
->> The whole series can be pulled from git repository:
->> >  git://linuxtv.org/snawrocki/samsung.git 
->> >  branch: for-v4.10/dma/pl080-s3c64xx-v2
->
-> Tested this series again still looks good to me. The code on that
-> branch does differ from the code on the list by the following
-> diff however:
-> 
-> --- a/drivers/dma/amba-pl08x.c
-> +++ b/drivers/dma/amba-pl08x.c
-> @@ -2317,7 +2317,7 @@ static int pl08x_probe(struct amba_device
-> *adev, const struct amba_id *id)
->        } else {
->             pl08x->slave.filter.map = pl08x->pd->slave_map;
->             pl08x->slave.filter.mapcnt = pl08x->pd->slave_map_len;
-> -           pl08x->slave.filter.fn = pl08x_filter_id;
-> +           pl08x->slave.filter.fn = pl08x_filter_fn;
->        }
-> 
-> I tested the code from the list, rather than the branch.
+Clock control indirectly requires access to MFC device, so call it only
+if we are sure that the device exists in s5p_mfc_release function.
+s5p_mfc_remove() calls s5p_mfc_final_pm(), which releases all PM related
+resources, including clocks, so any call to clocks related functions
+is not valid after s5p_mfc_final_pm().
 
-Oops, I forgot to push the final branch again, it's corrected
-now.  Thanks for your time, hopefully there is no need to bother
-you with this series any more.
+Fixes: d695c12 ("[media] media: s5p-mfc fix invalid memory access from
+s5p_mfc_release()")
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 0c8a4616e827..a0a29194ccd1 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -940,10 +940,11 @@ static int s5p_mfc_release(struct file *file)
+ 	mfc_debug_enter();
+ 	if (dev)
+ 		mutex_lock(&dev->mfc_mutex);
+-	s5p_mfc_clock_on();
+ 	vb2_queue_release(&ctx->vq_src);
+ 	vb2_queue_release(&ctx->vq_dst);
+ 	if (dev) {
++		s5p_mfc_clock_on();
++
+ 		/* Mark context as idle */
+ 		clear_work_bit_irqsave(ctx);
+ 		/*
+@@ -965,9 +966,9 @@ static int s5p_mfc_release(struct file *file)
+ 			if (s5p_mfc_power_off() < 0)
+ 				mfc_err("Power off failed\n");
+ 		}
++		mfc_debug(2, "Shutting down clock\n");
++		s5p_mfc_clock_off();
+ 	}
+-	mfc_debug(2, "Shutting down clock\n");
+-	s5p_mfc_clock_off();
+ 	if (dev)
+ 		dev->ctx[ctx->num] = NULL;
+ 	s5p_mfc_dec_ctrls_delete(ctx);
 -- 
-Regards,
-Sylwester
+1.9.1
