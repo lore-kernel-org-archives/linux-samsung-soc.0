@@ -1,25 +1,48 @@
-From: =?utf-8?B?6Zm25q2m6JSa?= <taowuwei@163.com>
-Subject: Segnalazione libro a Mesogea by GEM s.r.l.
-Date: Mon, 14 Nov 2016 07:17:58 +0000
-Message-ID: <fdd3ea2cc1724260b663437f2be6b38a@www.mesogea.it>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v7 1/7] iommu/exynos: Remove excessive, useless debug
+Date: Mon, 14 Nov 2016 11:08:06 +0100
+Message-ID: <1479118092-1365-2-git-send-email-m.szyprowski@samsung.com>
+References: <1479118092-1365-1-git-send-email-m.szyprowski@samsung.com>
+	<CGME20161114100909eucas1p1de05334a584eda44d68c932f31487e20@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smartcmd0187.aruba.it ([62.149.158.87]:33516 "EHLO
-        smtpdb87.aruba.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751636AbcKNH0r (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Nov 2016 02:26:47 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1479118092-1365-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tobias Jakobi <tjakobi-o02PS0xoJP9W0yFyLvAVXMxlOr/tl8fh@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-★【澳门金沙集团】
-唯一的一家零污点，任何玩家都可以安心畅玩娱乐的线上娱乐城！不怕您赢钱，只怕您玩得不痛快！
-挑战超高水位！手机APP下注，滚球半场结算，日结现金一元投注、天天返水1.2%， 投注精彩赛事，把握机会，营造辉煌人生！VIP开户网址：http://www.5550237.com/?linux-samsung-soc@vger.kernel.org
-累计存款月月亿元红包大赠送，最高可获得88888元大礼！ 
-推广客服QQ；2751701152 微信：longyi1229aini
+Remove excessive, useless debug about skipping TLB invalidation, which
+is a normal situation when more aggressive power management is enabled.
 
-------------------------------------------
-                    老天，你让夏天和冬天同居了吗？！生出这种鬼天气！
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/iommu/exynos-iommu.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 30808e9..8ba0d60 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -578,9 +578,6 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+ 			sysmmu_unblock(data);
+ 		}
+ 		clk_disable(data->clk_master);
+-	} else {
+-		dev_dbg(data->master,
+-			"disabled. Skipping TLB invalidation @ %#x\n", iova);
+ 	}
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ }
+-- 
+1.9.1
