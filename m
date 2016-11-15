@@ -1,54 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ARM: Drop fixed 200 Hz timer requirement from Exynos platforms
-Date: Mon, 14 Nov 2016 20:27:05 +0200
-Message-ID: <1479148025-469-1-git-send-email-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 1/2] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM for one pin-bank
+Date: Tue, 15 Nov 2016 09:42:25 +0100
+Message-ID: <CACRpkdZoxdE7=tyQuUQ2Bc-OaYVB1K2+Ez84tsBz-9AXwBt_6A@mail.gmail.com>
+References: <1478680811-24835-1-git-send-email-cw00.choi@samsung.com> <1478680811-24835-2-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478680811-24835-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-200 Hz.  Unfortunately in case of multiplatform image this affects also
-other platforms when Exynos is selected.
+On Wed, Nov 9, 2016 at 9:40 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
-This looks like an very old legacy code, dating back to initial
-upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-unused plat-samsung/time.c").
+> This patch supports the multiple IORESOURCE_MEM resources for one pin-bank.
+> In the pre-existing Exynos series, the registers of the gpio bank are included
+> in the one memory map. But, some gpio bank need to support the one more memory
+> map (IORESOURCE_MEM) because the registers of gpio bank are separated into
+> the different memory map.
+>
+> For example,
+> The both ALIVE and IMEM domain have the different memory base address.
+> The GFP[1-5] of exynos5433 are composed as following:
+> - ALIVE domain : WEINT_* registers
+> - IMEM domain  : CON/DAT/PUD/DRV/CONPDN/PUDPDN register
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-was rather an effect of coincidence instead of conscious choice.  In
-fact Exynos can work with different timers.
+Patch applied.
 
-Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-other values.
-
-Reported-by: Lee Jones <lee.jones@linaro.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Testing on other Exynos platforms would be appreciated.
----
- arch/arm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index b5d529fdffab..0d10e45f9175 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1497,7 +1497,7 @@ source kernel/Kconfig.preempt
- config HZ_FIXED
- 	int
- 	default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
--		ARCH_S5PV210 || ARCH_EXYNOS4
-+		ARCH_S5PV210
- 	default 128 if SOC_AT91RM9200
- 	default 0
- 
--- 
-2.7.4
+Yours,
+Linus Walleij
