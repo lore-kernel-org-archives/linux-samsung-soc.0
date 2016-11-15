@@ -1,65 +1,75 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] iommu/exynos: Fix warnings from DMA-debug
-Date: Tue, 15 Nov 2016 11:01:09 +0100
-Message-ID: <1479204069-29552-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161115100127eucas1p102655ca6a67c33bb9e92c60bba7477a9@eucas1p1.samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH RESEND] phy: exynos-mipi-video: simplify check for coupled
+ phy status
+Date: Tue, 15 Nov 2016 19:03:32 +0530
+Message-ID: <582B0EAC.7070805@ti.com>
+References: <CGME20161107104844eucas1p2b5571119dff76e33d6ec038c359224f7@eucas1p2.samsung.com>
+ <1478515712-650-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:62026 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752603AbcKONdq (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 15 Nov 2016 08:33:46 -0500
+In-Reply-To: <1478515712-650-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Add a simple checks for dma_map_single() return value to make DMA-debug
-checker happly. Exynos IOMMU on Samsung Exynos SoCs always use device,
-which has linear DMA mapping ops (dma address is equal to physical memory
-address), so no failures are returned from dma_map_single().
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 30808e9..7b0bd86 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -763,6 +763,7 @@ static struct iommu_domain *exynos_iommu_domain_alloc(unsigned type)
- 				DMA_TO_DEVICE);
- 	/* For mapping page table entries we rely on dma == phys */
- 	BUG_ON(handle != virt_to_phys(domain->pgtable));
-+	BUG_ON(dma_mapping_error(dma_dev, handle));
- 
- 	spin_lock_init(&domain->lock);
- 	spin_lock_init(&domain->pgtablelock);
-@@ -909,6 +910,7 @@ static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
- 	}
- 
- 	if (lv1ent_fault(sent)) {
-+		dma_addr_t handle;
- 		sysmmu_pte_t *pent;
- 		bool need_flush_flpd_cache = lv1ent_zero(sent);
- 
-@@ -920,7 +922,9 @@ static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *domain,
- 		update_pte(sent, mk_lv1ent_page(virt_to_phys(pent)));
- 		kmemleak_ignore(pent);
- 		*pgcounter = NUM_LV2ENTRIES;
--		dma_map_single(dma_dev, pent, LV2TABLE_SIZE, DMA_TO_DEVICE);
-+		handle = dma_map_single(dma_dev, pent, LV2TABLE_SIZE,
-+					DMA_TO_DEVICE);
-+		BUG_ON(dma_mapping_error(dma_dev, handle));
- 
- 		/*
- 		 * If pre-fetched SLPD is a faulty SLPD in zero_l2_table,
--- 
-1.9.1
+On Monday 07 November 2016 04:18 PM, Marek Szyprowski wrote:
+> There is no need to access regmap of coupled phy to check its state - such
+> information is already in the phy device itself, so use it directly. This
+> let us to avoid possible access to registers of the device in the disabled
+> power domain if the coupled phy is already disabled.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+merged to phy -next.
+
+Thanks
+Kishon
+> ---
+>  drivers/phy/phy-exynos-mipi-video.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
+> index 8b851f7..6bee04c 100644
+> --- a/drivers/phy/phy-exynos-mipi-video.c
+> +++ b/drivers/phy/phy-exynos-mipi-video.c
+> @@ -229,19 +229,6 @@ struct exynos_mipi_video_phy {
+>  	spinlock_t slock;
+>  };
+>  
+> -static inline int __is_running(const struct exynos_mipi_phy_desc *data,
+> -			struct exynos_mipi_video_phy *state)
+> -{
+> -	u32 val;
+> -	int ret;
+> -
+> -	ret = regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
+> -	if (ret)
+> -		return 0;
+> -
+> -	return val & data->resetn_val;
+> -}
+> -
+>  static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+>  			   struct exynos_mipi_video_phy *state, unsigned int on)
+>  {
+> @@ -251,7 +238,7 @@ static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
+>  
+>  	/* disable in PMU sysreg */
+>  	if (!on && data->coupled_phy_id >= 0 &&
+> -	    !__is_running(state->phys[data->coupled_phy_id].data, state)) {
+> +	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
+>  		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
+>  			    &val);
+>  		val &= ~data->enable_val;
+> 
