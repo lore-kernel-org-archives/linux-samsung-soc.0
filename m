@@ -1,80 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 6/9] s5p-mfc: Kill all IS_ERR_OR_NULL in clocks management code
-Date: Wed, 16 Nov 2016 10:04:55 +0100
-Message-ID: <1479287098-30493-7-git-send-email-m.szyprowski@samsung.com>
-References: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161116090520eucas1p1014c941bfe4fbe11392f8d9028e6f4f1@eucas1p1.samsung.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
+ control runtime pm
+Date: Wed, 16 Nov 2016 10:30:55 +0100
+Message-ID: <20161116093055.GA11230@wunner.de>
+References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
+ <1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
+ <20161107214747.GJ1764@wotan.suse.de>
+ <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
+ <20161108153044.GA6983@wunner.de>
+ <CAJZ5v0i3_8AE_o7vx=5kyuc8+P0jFOvjTC3YB9gcJVyQ+pTSkA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:64098 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934742AbcKPJFb (ORCPT
+Received: from mailout1.hostsharing.net ([83.223.95.204]:53199 "EHLO
+        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbcKPJ3j (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 04:05:31 -0500
-In-reply-to: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
+        Wed, 16 Nov 2016 04:29:39 -0500
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0i3_8AE_o7vx=5kyuc8+P0jFOvjTC3YB9gcJVyQ+pTSkA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Tomasz Figa <tomasz.figa@gma>
 
-After commit "s5p-mfc: Fix clock management in s5p_mfc_release function"
-all clocks related functions are called only when MFC device is really
-available, so there is no additional check needed for NULL
-gate clocks. This patch simplifies the code and kills IS_ERR_OR_NULL
-macro usage.
+On Thu, Nov 10, 2016 at 12:56:14AM +0100, Rafael J. Wysocki wrote:
+> The idea, roughly, is that if there is a single on/off switch acting
+> on multiple devices, you can (a) set up a PM domain tracking all of
+> those device's runtime PM invocations and (b) maintaining a reference
+> counter of devices still not suspended.  This way it would only turn
+> the switch off when all of the devices in question had been suspended.
+> Analogously, it would turn the switch on before resuming the first
+> device in the domain.  Of course, that code isn't available as a
+> library, you would need to implement it (or use genpd, but chances are
+> it is too heavy weight for the job).
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+My understanding is that the hierarchy of struct generic_pm_domain
+is created by the platform on boot.  For an embedded platform, this
+is encoded in the device tree, but what about ACPI which doesn't
+know anything about struct generic_pm_domain?  I would have to lump
+devices into generic_pm_domains after the fact, after the platform
+has scanned the buses, but this seems to be forbidden according to
+this slide deck, which calls that a "layering violation":
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-index 11a918eb7564..b514584cf00d 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-@@ -91,16 +91,12 @@ void s5p_mfc_final_pm(struct s5p_mfc_dev *dev)
- 
- int s5p_mfc_clock_on(void)
- {
--	int ret = 0;
--
- 	atomic_inc(&clk_ref);
- 	mfc_debug(3, "+ %d\n", atomic_read(&clk_ref));
- 
- 	if (!pm->use_clock_gating)
- 		return 0;
--	if (!IS_ERR_OR_NULL(pm->clock_gate))
--		ret = clk_enable(pm->clock_gate);
--	return ret;
-+	return clk_enable(pm->clock_gate);
- }
- 
- void s5p_mfc_clock_off(void)
-@@ -110,8 +106,7 @@ void s5p_mfc_clock_off(void)
- 
- 	if (!pm->use_clock_gating)
- 		return;
--	if (!IS_ERR_OR_NULL(pm->clock_gate))
--		clk_disable(pm->clock_gate);
-+	clk_disable(pm->clock_gate);
- }
- 
- int s5p_mfc_power_on(void)
-@@ -122,14 +117,14 @@ int s5p_mfc_power_on(void)
- 	if (ret)
- 		return ret;
- 
--	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
-+	if (!pm->use_clock_gating)
- 		ret = clk_enable(pm->clock_gate);
- 	return ret;
- }
- 
- int s5p_mfc_power_off(void)
- {
--	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
-+	if (!pm->use_clock_gating)
- 		clk_disable(pm->clock_gate);
- 	return pm_runtime_put_sync(pm->device);
- }
--- 
-1.9.1
+https://events.linuxfoundation.org/images/stories/pdf/lcjp2012_wysocki.pdf
+
+(Quote: "Adding and Removing Devices [...] Supposed to be called by
+the platform (calling one of them from a device driver is a layering
+violation).")
+
+So it seems that using struct generic_pm_domain is never an option
+on ACPI, is that correct?
+
+Thanks,
+
+Lukas
