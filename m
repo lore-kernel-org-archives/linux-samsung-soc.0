@@ -1,109 +1,118 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: exynos: TM2 - add support for JPEG codec
- device
-Date: Wed, 16 Nov 2016 19:10:54 +0200
-Message-ID: <20161116171054.GB4192@kozik-lap>
+Subject: Re: [PATCH 3/3] arm64: dts: exynos: TM2 - add support for MFC video
+ codec device
+Date: Wed, 16 Nov 2016 19:14:55 +0200
+Message-ID: <20161116171455.GC4192@kozik-lap>
 References: <1479301889-11393-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161116131138eucas1p18c6a9d4469caff62cbd8a73cb443d5e0@eucas1p1.samsung.com>
- <1479301889-11393-3-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161116131138eucas1p193a3f9016a86086be901748212fa9597@eucas1p1.samsung.com>
+ <1479301889-11393-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35118 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932162AbcKPRK7 (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36053 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbcKPRPB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 12:10:59 -0500
-Received: by mail-wm0-f67.google.com with SMTP id a20so13184379wme.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2016 09:10:58 -0800 (PST)
+        Wed, 16 Nov 2016 12:15:01 -0500
+Received: by mail-wm0-f68.google.com with SMTP id m203so13156727wma.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Nov 2016 09:15:00 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1479301889-11393-3-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1479301889-11393-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Wed, Nov 16, 2016 at 02:11:28PM +0100, Marek Szyprowski wrote:
-> This patch adds device nodes for JPEG codec device to Exynos
-> 5433 SoC dtsi and proper initial clock configuration to TM2 dts.
+On Wed, Nov 16, 2016 at 02:11:29PM +0100, Marek Szyprowski wrote:
+> This patch adds device nodes for MFC video codec device to Exynos 5433
+
+BTW, you are mixing in various commit messages and titles the Exynos5433
+with "Exynos 5433" (with space). Can we stick to one? :)
+
+> SoC dtsi and proper initial clock configuration to TM2 dts.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 11 +++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 25 +++++++++++++++++++++++++
->  2 files changed, 36 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts |  5 ++++
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 34 +++++++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index 5ff5c30..2e76b30 100644
+> index 2e76b30..93efbeb 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
 > +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -916,6 +916,17 @@
->  				 <&cmu_top CLK_ACLK_GSCL_333>;
+> @@ -927,6 +927,11 @@
+>  				 <&cmu_top CLK_MOUT_BUS_PLL_USER>;
 >  };
 >  
-> +&cmu_mscl {
+> +&cmu_mfc {
 
-If resubmitting, please put it in alphabetical order.
+Alphabetical order.
 
-> +	assigned-clocks = <&cmu_mscl CLK_MOUT_ACLK_MSCL_400_USER>,
-> +			  <&cmu_mscl CLK_MOUT_SCLK_JPEG_USER>,
-> +			  <&cmu_mscl CLK_MOUT_SCLK_JPEG>,
-> +			  <&cmu_top CLK_MOUT_SCLK_JPEG_A>;
-> +	assigned-clock-parents = <&cmu_top CLK_ACLK_MSCL_400>,
-> +				 <&cmu_top CLK_SCLK_JPEG_MSCL>,
-> +				 <&cmu_mscl CLK_MOUT_SCLK_JPEG_USER>,
-> +				 <&cmu_top CLK_MOUT_BUS_PLL_USER>;
+> +	assigned-clocks = <&cmu_mfc CLK_MOUT_ACLK_MFC_400_USER>;
+> +	assigned-clock-parents = <&cmu_top CLK_ACLK_MFC_400>;
 > +};
 > +
 >  &spi_1 {
 >  	cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
 >  	status = "okay";
 > diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 8ecde41..68127ab 100644
+> index 68127ab..31bffe1 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -849,6 +849,21 @@
->  			iommus = <&sysmmu_gscl2>;
+> @@ -864,6 +864,20 @@
+>  			iommus = <&sysmmu_jpeg>;
 >  		};
 >  
-> +		jpeg: codec@15020000 {
-> +			compatible = "samsung,exynos5433-jpeg";
-> +			reg = <0x15020000 0x10000>;
-> +			interrupts = <GIC_SPI 411 0>;
+> +		mfc: codec@152E0000 {
+> +			compatible = "samsung,exynos5433-mfc";
+> +			reg = <0x152E0000 0x10000>;
+> +			interrupts = <GIC_SPI 358 0>;
 
-IRQ_TYPE_LEVEL_HIGH (or any different valid type)
+IRQ type.
 
+> +			clocks = <&cmu_mfc CLK_PCLK_MFC>,
+> +				 <&cmu_mfc CLK_ACLK_MFC>,
+> +				 <&cmu_mfc CLK_ACLK_XIU_MFCX>;
 > +			clock-names = "pclk",
 > +				      "aclk",
-> +				      "aclk_xiu",
-> +				      "sclk";
+> +				      "aclk_xiu";
 
-These could be put in one line.
+Let's keep it consistent with other, so first clock-names, then clocks.
+And clock-names can be squashed (like in other places).
 
 Best regards,
 Krzysztof
 
-> +			clocks = <&cmu_mscl CLK_PCLK_JPEG>,
-> +				 <&cmu_mscl CLK_ACLK_JPEG>,
-> +				 <&cmu_mscl CLK_ACLK_XIU_MSCLX>,
-> +				 <&cmu_mscl CLK_SCLK_JPEG>;
-> +			iommus = <&sysmmu_jpeg>;
+
+> +			iommus = <&sysmmu_mfc_0>, <&sysmmu_mfc_1>;
+> +			iommu-names = "left", "right";
 > +		};
 > +
 >  		sysmmu_decon0x: sysmmu@0x13a00000 {
 >  			compatible = "samsung,exynos-sysmmu";
 >  			reg = <0x13a00000 0x1000>;
-> @@ -899,6 +914,16 @@
+> @@ -924,6 +938,26 @@
 >  			#iommu-cells = <0>;
 >  		};
 >  
-> +		sysmmu_jpeg: sysmmu@0x15060000 {
+> +		sysmmu_mfc_0: sysmmu@0x15200000 {
 > +			compatible = "samsung,exynos-sysmmu";
-> +			reg = <0x15060000 0x1000>;
-> +			interrupts = <GIC_SPI 408 0>;
+> +			reg = <0x15200000 0x1000>;
+> +			interrupts = <0 352 0>;
 > +			clock-names = "pclk", "aclk";
-> +			clocks = <&cmu_mscl CLK_PCLK_SMMU_JPEG>,
-> +				 <&cmu_mscl CLK_ACLK_SMMU_JPEG>;
+> +			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_0>,
+> +				 <&cmu_mfc CLK_ACLK_SMMU_MFC_0>;
+> +			#iommu-cells = <0>;
+> +		};
+> +
+> +		sysmmu_mfc_1: sysmmu@0x15210000 {
+> +			compatible = "samsung,exynos-sysmmu";
+> +			reg = <0x15210000 0x1000>;
+> +			interrupts = <0 354 0>;
+> +			clock-names = "pclk", "aclk";
+> +			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_1>,
+> +				 <&cmu_mfc CLK_ACLK_SMMU_MFC_1>;
 > +			#iommu-cells = <0>;
 > +		};
 > +
