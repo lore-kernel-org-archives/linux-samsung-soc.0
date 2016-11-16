@@ -1,69 +1,80 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 9/9] s5p-mfc: Add support for MFC v8 available in Exynos 5433
- SoCs
-Date: Wed, 16 Nov 2016 10:04:58 +0100
-Message-ID: <1479287098-30493-10-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 6/9] s5p-mfc: Kill all IS_ERR_OR_NULL in clocks management code
+Date: Wed, 16 Nov 2016 10:04:55 +0100
+Message-ID: <1479287098-30493-7-git-send-email-m.szyprowski@samsung.com>
 References: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161116090523eucas1p12a4b95363e9d2b0a823141a2f1c226e1@eucas1p1.samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+ <CGME20161116090520eucas1p1014c941bfe4fbe11392f8d9028e6f4f1@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64098 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934742AbcKPJFb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 16 Nov 2016 04:05:31 -0500
 In-reply-to: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos5433 SoC has MFC v8 hardware module, but it has more complex clock
-hierarchy, so a new compatible has been added.
+After commit "s5p-mfc: Fix clock management in s5p_mfc_release function"
+all clocks related functions are called only when MFC device is really
+available, so there is no additional check needed for NULL
+gate clocks. This patch simplifies the code and kills IS_ERR_OR_NULL
+macro usage.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- Documentation/devicetree/bindings/media/s5p-mfc.txt |  1 +
- drivers/media/platform/s5p-mfc/s5p_mfc.c            | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-index 92c94f5ecbf1..2c901286d818 100644
---- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -12,6 +12,7 @@ Required properties:
- 	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
- 	(c) "samsung,mfc-v7" for MFC v7 present in Exynos5420 SoC
- 	(d) "samsung,mfc-v8" for MFC v8 present in Exynos5800 SoC
-+	(e) "samsung,exynos5433-mfc" for MFC v8 present in Exynos5433 SoC
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+index 11a918eb7564..b514584cf00d 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+@@ -91,16 +91,12 @@ void s5p_mfc_final_pm(struct s5p_mfc_dev *dev)
  
-   - reg : Physical base address of the IP registers and length of memory
- 	  mapped region.
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index fa674e8e09a8..d11a2405b3d2 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1530,6 +1530,17 @@ static int s5p_mfc_resume(struct device *dev)
- 	.num_clocks	= 1,
- };
+ int s5p_mfc_clock_on(void)
+ {
+-	int ret = 0;
+-
+ 	atomic_inc(&clk_ref);
+ 	mfc_debug(3, "+ %d\n", atomic_read(&clk_ref));
  
-+static struct s5p_mfc_variant mfc_drvdata_v8_5433 = {
-+	.version	= MFC_VERSION_V8,
-+	.version_bit	= MFC_V8_BIT,
-+	.port_num	= MFC_NUM_PORTS_V8,
-+	.buf_size	= &buf_size_v8,
-+	.buf_align	= &mfc_buf_align_v8,
-+	.fw_name[0]     = "s5p-mfc-v8.fw",
-+	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
-+	.num_clocks	= 3,
-+};
-+
- static const struct of_device_id exynos_mfc_match[] = {
- 	{
- 		.compatible = "samsung,mfc-v5",
-@@ -1543,6 +1554,9 @@ static int s5p_mfc_resume(struct device *dev)
- 	}, {
- 		.compatible = "samsung,mfc-v8",
- 		.data = &mfc_drvdata_v8,
-+	}, {
-+		.compatible = "samsung,exynos5433-mfc",
-+		.data = &mfc_drvdata_v8_5433,
- 	},
- 	{},
- };
+ 	if (!pm->use_clock_gating)
+ 		return 0;
+-	if (!IS_ERR_OR_NULL(pm->clock_gate))
+-		ret = clk_enable(pm->clock_gate);
+-	return ret;
++	return clk_enable(pm->clock_gate);
+ }
+ 
+ void s5p_mfc_clock_off(void)
+@@ -110,8 +106,7 @@ void s5p_mfc_clock_off(void)
+ 
+ 	if (!pm->use_clock_gating)
+ 		return;
+-	if (!IS_ERR_OR_NULL(pm->clock_gate))
+-		clk_disable(pm->clock_gate);
++	clk_disable(pm->clock_gate);
+ }
+ 
+ int s5p_mfc_power_on(void)
+@@ -122,14 +117,14 @@ int s5p_mfc_power_on(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
++	if (!pm->use_clock_gating)
+ 		ret = clk_enable(pm->clock_gate);
+ 	return ret;
+ }
+ 
+ int s5p_mfc_power_off(void)
+ {
+-	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
++	if (!pm->use_clock_gating)
+ 		clk_disable(pm->clock_gate);
+ 	return pm_runtime_put_sync(pm->device);
+ }
 -- 
 1.9.1
