@@ -1,9 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 5/9] s5p-mfc: Remove dead conditional code
-Date: Wed, 16 Nov 2016 10:04:54 +0100
-Message-ID: <1479287098-30493-6-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 8/9] s5p-mfc: Rework clock handling
+Date: Wed, 16 Nov 2016 10:04:57 +0100
+Message-ID: <1479287098-30493-9-git-send-email-m.szyprowski@samsung.com>
 References: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161116090520eucas1p151e1da5cba8c5b85f9fe63e77650c091@eucas1p1.samsung.com>
+ <CGME20161116090522eucas1p2110bfe357718cfb5aebd750201a1b22e@eucas1p2.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
@@ -11,159 +11,254 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CONFIG_PM is always enabled on Exynos platforms, so remove dead code
-related to early development of MFC driver on platform without PM support.
+This patch changes the code for handling clocks. Now clocks are defined
+per each device variant, what is a preparation for adding support for
+Exynos 5433 MFC V8, which has more clocks than all previous versions.
+Also use devm_clk_get() to simplify cleanup path.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 22 ------------------
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  1 -
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     | 30 +++++--------------------
- 3 files changed, 5 insertions(+), 48 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        |  8 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  9 ++-
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     | 98 ++++++++++---------------
+ 3 files changed, 56 insertions(+), 59 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 30ceae7eabc5..72af819a4f47 100644
+index 72af819a4f47..fa674e8e09a8 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1404,31 +1404,9 @@ static int s5p_mfc_resume(struct device *dev)
- }
- #endif
- 
--#ifdef CONFIG_PM
--static int s5p_mfc_runtime_suspend(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct s5p_mfc_dev *m_dev = platform_get_drvdata(pdev);
--
--	atomic_set(&m_dev->pm.power, 0);
--	return 0;
--}
--
--static int s5p_mfc_runtime_resume(struct device *dev)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct s5p_mfc_dev *m_dev = platform_get_drvdata(pdev);
--
--	atomic_set(&m_dev->pm.power, 1);
--	return 0;
--}
--#endif
--
- /* Power management */
- static const struct dev_pm_ops s5p_mfc_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(s5p_mfc_suspend, s5p_mfc_resume)
--	SET_RUNTIME_PM_OPS(s5p_mfc_runtime_suspend, s5p_mfc_runtime_resume,
--			   NULL)
+@@ -1433,6 +1433,8 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.buf_size	= &buf_size_v5,
+ 	.buf_align	= &mfc_buf_align_v5,
+ 	.fw_name[0]	= "s5p-mfc.fw",
++	.clk_names	= {"mfc", "sclk_mfc"},
++	.num_clocks	= 2,
+ 	.use_clock_gating = true,
  };
  
- static struct s5p_mfc_buf_size_v5 mfc_buf_size_v5 = {
+@@ -1466,6 +1468,8 @@ static int s5p_mfc_resume(struct device *dev)
+ 	 * for init buffer command
+ 	 */
+ 	.fw_name[1]     = "s5p-mfc-v6-v2.fw",
++	.clk_names	= {"mfc"},
++	.num_clocks	= 1,
+ };
+ 
+ static struct s5p_mfc_buf_size_v6 mfc_buf_size_v7 = {
+@@ -1493,6 +1497,8 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.buf_size	= &buf_size_v7,
+ 	.buf_align	= &mfc_buf_align_v7,
+ 	.fw_name[0]     = "s5p-mfc-v7.fw",
++	.clk_names	= {"mfc", "sclk_mfc"},
++	.num_clocks	= 2,
+ };
+ 
+ static struct s5p_mfc_buf_size_v6 mfc_buf_size_v8 = {
+@@ -1520,6 +1526,8 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.buf_size	= &buf_size_v8,
+ 	.buf_align	= &mfc_buf_align_v8,
+ 	.fw_name[0]     = "s5p-mfc-v8.fw",
++	.clk_names	= {"mfc"},
++	.num_clocks	= 1,
+ };
+ 
+ static const struct of_device_id exynos_mfc_match[] = {
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index c068ee3ece6e..58b15c212dd2 100644
+index 58b15c212dd2..ab23236aa942 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -200,7 +200,6 @@ struct s5p_mfc_pm {
- 	struct clk	*clock;
+@@ -104,6 +104,8 @@ static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
+ #define S5P_MFC_R2H_CMD_ENC_BUFFER_FUL_RET	16
+ #define S5P_MFC_R2H_CMD_ERR_RET			32
+ 
++#define MFC_MAX_CLOCKS		4
++
+ #define mfc_read(dev, offset)		readl(dev->regs_base + (offset))
+ #define mfc_write(dev, data, offset)	writel((data), dev->regs_base + \
+ 								(offset))
+@@ -197,9 +199,12 @@ struct s5p_mfc_buf {
+  * struct s5p_mfc_pm - power management data structure
+  */
+ struct s5p_mfc_pm {
+-	struct clk	*clock;
  	struct clk	*clock_gate;
++	const char	**clk_names;
++	struct clk	*clocks[MFC_MAX_CLOCKS];
++	int		num_clocks;
  	bool		use_clock_gating;
--	atomic_t	power;
++
  	struct device	*device;
  };
  
+@@ -235,6 +240,8 @@ struct s5p_mfc_variant {
+ 	struct s5p_mfc_buf_size *buf_size;
+ 	struct s5p_mfc_buf_align *buf_align;
+ 	char	*fw_name[MFC_FW_MAX_VERSIONS];
++	const char	*clk_names[MFC_MAX_CLOCKS];
++	int		num_clocks;
+ 	bool		use_clock_gating;
+ };
+ 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-index 818c04646061..11a918eb7564 100644
+index 796dac85746a..eb85cedc5ef3 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-@@ -21,14 +21,9 @@
- #define MFC_GATE_CLK_NAME	"mfc"
- #define MFC_SCLK_NAME		"sclk_mfc"
+@@ -18,56 +18,42 @@
+ #include "s5p_mfc_debug.h"
+ #include "s5p_mfc_pm.h"
  
--#define CLK_DEBUG
+-#define MFC_GATE_CLK_NAME	"mfc"
+-#define MFC_SCLK_NAME		"sclk_mfc"
 -
  static struct s5p_mfc_pm *pm;
  static struct s5p_mfc_dev *p_dev;
--
--#ifdef CLK_DEBUG
  static atomic_t clk_ref;
--#endif
  
  int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
  {
-@@ -64,14 +59,10 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
+-	int ret = 0;
++	int i;
+ 
+ 	pm = &dev->pm;
+ 	p_dev = dev;
+-	pm->use_clock_gating = dev->variant->use_clock_gating;
+-	pm->clock_gate = clk_get(&dev->plat_dev->dev, MFC_GATE_CLK_NAME);
+-	if (IS_ERR(pm->clock_gate)) {
+-		mfc_err("Failed to get clock-gating control\n");
+-		ret = PTR_ERR(pm->clock_gate);
+-		goto err_g_ip_clk;
+-	}
+ 
+-	if (dev->variant->version != MFC_VERSION_V6) {
+-		pm->clock = clk_get(&dev->plat_dev->dev, MFC_SCLK_NAME);
+-		if (IS_ERR(pm->clock)) {
+-			mfc_info("Failed to get MFC special clock control\n");
+-			pm->clock = NULL;
++	pm->num_clocks = dev->variant->num_clocks;
++	pm->clk_names = dev->variant->clk_names;
++	pm->device = &dev->plat_dev->dev;
++	pm->clock_gate = NULL;
++
++	/* clock control */
++	for (i = 0; i < pm->num_clocks; i++) {
++		pm->clocks[i] = devm_clk_get(pm->device, pm->clk_names[i]);
++		if (IS_ERR(pm->clocks[i])) {
++			mfc_err("Failed to get clock: %s\n",
++				pm->clk_names[i]);
++			return PTR_ERR(pm->clocks[i]);
  		}
  	}
  
--	atomic_set(&pm->power, 0);
--#ifdef CONFIG_PM
- 	pm->device = &dev->plat_dev->dev;
- 	pm_runtime_enable(pm->device);
--#endif
--#ifdef CLK_DEBUG
- 	atomic_set(&clk_ref, 0);
--#endif
+-	pm->device = &dev->plat_dev->dev;
++	if (dev->variant->use_clock_gating)
++		pm->clock_gate = pm->clocks[0];
 +
+ 	pm_runtime_enable(pm->device);
+ 	atomic_set(&clk_ref, 0);
+-
  	return 0;
- 
- err_s_clk:
-@@ -95,18 +86,16 @@ void s5p_mfc_final_pm(struct s5p_mfc_dev *dev)
- 	clk_unprepare(pm->clock_gate);
- 	clk_put(pm->clock_gate);
- 	pm->clock_gate = NULL;
--#ifdef CONFIG_PM
- 	pm_runtime_disable(pm->device);
--#endif
+-
+-	clk_put(pm->clock_gate);
+-	pm->clock_gate = NULL;
+-err_g_ip_clk:
+-	return ret;
  }
  
- int s5p_mfc_clock_on(void)
+ void s5p_mfc_final_pm(struct s5p_mfc_dev *dev)
  {
- 	int ret = 0;
--#ifdef CLK_DEBUG
-+
+-	if (dev->variant->version != MFC_VERSION_V6 &&
+-	    pm->clock) {
+-		clk_put(pm->clock);
+-		pm->clock = NULL;
+-	}
+-	clk_put(pm->clock_gate);
+-	pm->clock_gate = NULL;
+ 	pm_runtime_disable(pm->device);
+ }
+ 
+@@ -76,8 +62,6 @@ int s5p_mfc_clock_on(void)
  	atomic_inc(&clk_ref);
  	mfc_debug(3, "+ %d\n", atomic_read(&clk_ref));
--#endif
-+
- 	if (!pm->use_clock_gating)
- 		return 0;
- 	if (!IS_ERR_OR_NULL(pm->clock_gate))
-@@ -116,10 +105,9 @@ int s5p_mfc_clock_on(void)
  
- void s5p_mfc_clock_off(void)
- {
--#ifdef CLK_DEBUG
- 	atomic_dec(&clk_ref);
- 	mfc_debug(3, "- %d\n", atomic_read(&clk_ref));
--#endif
-+
- 	if (!pm->use_clock_gating)
- 		return;
- 	if (!IS_ERR_OR_NULL(pm->clock_gate))
-@@ -130,13 +118,10 @@ int s5p_mfc_power_on(void)
- {
- 	int ret = 0;
- 
--#ifdef CONFIG_PM
- 	ret = pm_runtime_get_sync(pm->device);
- 	if (ret)
- 		return ret;
--#else
--	atomic_set(&pm->power, 1);
--#endif
-+
- 	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
- 		ret = clk_enable(pm->clock_gate);
- 	return ret;
-@@ -146,12 +131,7 @@ int s5p_mfc_power_off(void)
- {
- 	if (!pm->use_clock_gating && !IS_ERR_OR_NULL(pm->clock_gate))
- 		clk_disable(pm->clock_gate);
--#ifdef CONFIG_PM
- 	return pm_runtime_put_sync(pm->device);
--#else
--	atomic_set(&pm->power, 0);
--	return 0;
--#endif
+-	if (!pm->use_clock_gating)
+-		return 0;
+ 	return clk_enable(pm->clock_gate);
  }
  
+@@ -86,50 +70,48 @@ void s5p_mfc_clock_off(void)
+ 	atomic_dec(&clk_ref);
+ 	mfc_debug(3, "- %d\n", atomic_read(&clk_ref));
  
+-	if (!pm->use_clock_gating)
+-		return;
+ 	clk_disable(pm->clock_gate);
+ }
+ 
+ int s5p_mfc_power_on(void)
+ {
+-	int ret;
++	int i, ret = 0;
+ 
+ 	ret = pm_runtime_get_sync(pm->device);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+-	ret = clk_prepare_enable(pm->clock_gate);
+-	if (ret)
+-		goto err_pm;
+-
+-	if (pm->clock) {
+-		ret = clk_prepare_enable(pm->clock);
+-		if (ret)
+-			goto err_gate;
++	/* clock control */
++	for (i = 0; i < pm->num_clocks; i++) {
++		ret = clk_prepare_enable(pm->clocks[i]);
++		if (ret < 0) {
++			mfc_err("clock prepare failed for clock: %s\n",
++				pm->clk_names[i]);
++			i++;
++			goto err;
++		}
+ 	}
+ 
+-	if (pm->use_clock_gating)
+-		clk_disable(pm->clock_gate);
+-	return 0;
++	/* prepare for software clock gating */
++	clk_disable(pm->clock_gate);
+ 
+-err_gate:
+-	clk_disable_unprepare(pm->clock_gate);
+-err_pm:
+-	pm_runtime_put_sync(pm->device);
++	return 0;
++err:
++	while (--i > 0)
++		clk_disable_unprepare(pm->clocks[i]);
++	pm_runtime_put(pm->device);
+ 	return ret;
+-
+ }
+ 
+ int s5p_mfc_power_off(void)
+ {
+-	if (pm->clock)
+-		clk_disable_unprepare(pm->clock);
++	int i;
++
++	/* finish software clock gating */
++	clk_enable(pm->clock_gate);
+ 
+-	if (pm->use_clock_gating)
+-		clk_unprepare(pm->clock_gate);
+-	else
+-		clk_disable_unprepare(pm->clock_gate);
++	for (i = 0; i < pm->num_clocks; i++)
++		clk_disable_unprepare(pm->clocks[i]);
+ 
+ 	return pm_runtime_put_sync(pm->device);
+ }
 -- 
 1.9.1
