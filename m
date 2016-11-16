@@ -1,48 +1,120 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request API
-Date: Wed, 16 Nov 2016 13:58:28 +0100
-Message-ID: <80c362ab-5b37-dc0e-7b45-db0d51adcb13@samsung.com>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20161116031720epcas2p2f0c9017fe5e256a2d69f076af2a3f308@epcas2p2.samsung.com>
- <20161116032620.GV3000@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/5] arm64: dts: exynos: Move FSYS CMU configuration from
+ Exynos5433 dtsi to TM2 dts
+Date: Wed, 16 Nov 2016 14:06:53 +0100
+Message-ID: <1479301615-11240-4-git-send-email-m.szyprowski@samsung.com>
+References: <1479301615-11240-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161116130708eucas1p15ac7edddb555cc2b55bb28142ce9656e@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:15071 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbcKPM6e (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26673 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752745AbcKPNHQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 07:58:34 -0500
-In-reply-to: <20161116032620.GV3000@localhost>
+        Wed, 16 Nov 2016 08:07:16 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OGQ001IZKFXAI60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Nov 2016 13:07:09 +0000 (GMT)
+In-reply-to: <1479301615-11240-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>, arnd@arndb.de, krzk@kernel.org
-Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 11/16/2016 04:26 AM, Vinod Koul wrote:
-> On Thu, Nov 10, 2016 at 04:17:48PM +0100, Sylwester Nawrocki wrote:
->> This patch series aims to convert the s3c64xx platform to use
->> the new DMA channel request API, i.e. this is only meaningful 
->> for non-dt systems using s3c64xx SoCs.
->>
->> Presumably the first 2 or 4 patches in this series could be queued 
->> for v4.10-rc1 and the remaining patches could be left for subsequent
->> release, to avoid non-trivial conflict with patches already applied 
->> in the ASoC tree.
-> 
-> I am fine with dma patch (expect the subsystem tag) and others except arm
-> ones have acks, so I think we can merge this for v4.10-rc1. I cna create a
-> immutable tag and people can merge into their tree in case they have
-> dependencies.
-> 
-> Btw need acks on ARM patches before I can apply
+Move initial FSYS CMU (related to USB 3.0 devices) clocks configuration
+from generic exynos5433.dtsi file to exynos5433-tm2.dts, as this is
+a board specific item.
 
-Great, then we an Ack for these 2 patches:
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 13 +++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 28 ---------------------------
+ 2 files changed, 13 insertions(+), 28 deletions(-)
 
-ARM: s3c64xx: Add DMA slave maps for PL080 devices
-ARM: s3c64xx: Drop unused DMA fields from struct s3c64xx_spi_csinfo
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index 9ea3f32..b7b2482 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -892,6 +892,19 @@
+ 	status = "okay";
+ };
+ 
++&cmu_fsys {
++	assigned-clocks = <&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
++		<&cmu_top CLK_MOUT_SCLK_USBDRD30>,
++		<&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_USER>,
++		<&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_USER>,
++		<&cmu_top CLK_DIV_SCLK_USBDRD30>;
++	assigned-clock-parents = <&cmu_top CLK_SCLK_USBDRD30_FSYS>,
++		<&cmu_top CLK_MOUT_BUS_PLL_USER>,
++		<&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_PHY>,
++		<&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_PHY>;
++	assigned-clock-rates = <0>, <0>, <0>, <0>, <66700000>;
++};
++
+ &spi_1 {
+ 	cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index a80eb4c..ab29352 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1134,14 +1134,6 @@
+ 			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
+ 				<&cmu_fsys CLK_SCLK_USBDRD30>;
+ 			clock-names = "usbdrd30", "usbdrd30_susp_clk";
+-			assigned-clocks =
+-				<&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
+-				<&cmu_top CLK_MOUT_SCLK_USBDRD30>,
+-				<&cmu_top CLK_DIV_SCLK_USBDRD30>;
+-			assigned-clock-parents =
+-				<&cmu_top CLK_SCLK_USBDRD30_FSYS>,
+-				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
+-			assigned-clock-rates = <0>, <0>, <66700000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -1165,12 +1157,6 @@
+ 				<&cmu_fsys CLK_SCLK_USBDRD30>;
+ 			clock-names = "phy", "ref", "phy_utmi", "phy_pipe",
+ 					"itp";
+-			assigned-clocks =
+-				<&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_USER>,
+-				<&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_USER>;
+-			assigned-clock-parents =
+-				<&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_PHY>,
+-				<&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_PHY>;
+ 			#phy-cells = <1>;
+ 			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			status = "disabled";
+@@ -1185,12 +1171,6 @@
+ 				<&cmu_fsys CLK_SCLK_USBHOST30>;
+ 			clock-names = "phy", "ref", "phy_utmi", "phy_pipe",
+ 					"itp";
+-			assigned-clocks =
+-				<&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_USER>,
+-				<&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_USER>;
+-			assigned-clock-parents =
+-				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_PHY>,
+-				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_PHY>;
+ 			#phy-cells = <1>;
+ 			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			status = "disabled";
+@@ -1201,14 +1181,6 @@
+ 			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
+ 				<&cmu_fsys CLK_SCLK_USBHOST30>;
+ 			clock-names = "usbdrd30", "usbdrd30_susp_clk";
+-			assigned-clocks =
+-				<&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
+-				<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+-				<&cmu_top CLK_DIV_SCLK_USBHOST30>;
+-			assigned-clock-parents =
+-				<&cmu_top CLK_SCLK_USBHOST30_FSYS>,
+-				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
+-			assigned-clock-rates = <0>, <0>, <66700000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
 -- 
-Thanks,
-Sylwester
+1.9.1
