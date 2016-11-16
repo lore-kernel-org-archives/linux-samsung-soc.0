@@ -1,60 +1,63 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/9] media: Exynos MFC driver improvements
-Date: Wed, 16 Nov 2016 10:04:49 +0100
-Message-ID: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161116090517eucas1p195d48a2b5a1fd0146c40537b70a05048@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57066 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbcKPJFW (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 04:05:22 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/9] s5p-mfc: Set DMA_ATTR_ALLOC_SINGLE_PAGES
+Date: Wed, 16 Nov 2016 10:04:50 +0100
+Message-ID: <1479287098-30493-2-git-send-email-m.szyprowski@samsung.com>
+References: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161116090517eucas1p1e9f8ba968ead194a4be0ea631ab25d26@eucas1p1.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Douglas Anderson <dianders@chromium.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi!
+From: Douglas Anderson <dianders@chromium.org>
 
-This is another collection of patches for Exynos MFC codec driver.
-It includes rebase of some improvements posted some time ago (which never
-got merged due to various reasons), huge rework of clock handling code
-and addition of Exynos 5433 variant support.
+We do video allocation all the time and we need it to be fast.  Plus TLB
+efficiency isn't terribly important for video.
 
-Patches were tested on Odroid U3 and XU3 as well as TM2 boards (Exynos
-4412, 5422 and 5433).
+That means we want to set DMA_ATTR_ALLOC_SINGLE_PAGES.
 
-Patches are based on git://linuxtv.org/snawrocki/samsung.git for-v4.10/media/next
-branch.
+See also the previous change (commit 14d3ae2efeed "ARM: dma-mapping: Use
+DMA_ATTR_ALLOC_SINGLE_PAGES hint to optimize allocation").
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+[mszyprow: rebased patch onto v4.9-rc1 and adapted changes to latest videbuf2
+ changes, this simplifies code changes to only set proper dma attribute flag
+ and comment the reason for it, added commit id of arch/arm/mm patch]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-
-Patch summary:
-
-Douglas Anderson (1):
-  s5p-mfc: Set DMA_ATTR_ALLOC_SINGLE_PAGES
-
-Marek Szyprowski (8):
-  s5p-mfc: Use printk_ratelimited for reporting ioctl errors
-  s5p-mfc: Remove special clock rate management
-  s5p-mfc: Ensure that clock is disabled before turning power off
-  s5p-mfc: Remove dead conditional code
-  s5p-mfc: Kill all IS_ERR_OR_NULL in clocks management code
-  s5p-mfc: Don't keep clock prepared all the time
-  s5p-mfc: Rework clock handling
-  s5p-mfc: Add support for MFC v8 available in Exynos 5433 SoCs
-
- .../devicetree/bindings/media/s5p-mfc.txt          |   1 +
- drivers/media/platform/s5p-mfc/s5p_mfc.c           |  61 +++++----
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  10 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_debug.h     |   6 +
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c        | 139 ++++++++-------------
- 7 files changed, 103 insertions(+), 118 deletions(-)
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 27b375e75555..a0a29194ccd1 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -851,6 +851,11 @@ static int s5p_mfc_open(struct file *file)
+ 		ret = -ENOENT;
+ 		goto err_queue_init;
+ 	}
++	/*
++	 * We'll do mostly sequential access, so sacrifice TLB efficiency for
++	 * faster allocation.
++	 */
++	q->dma_attrs = DMA_ATTR_ALLOC_SINGLE_PAGES;
+ 	q->mem_ops = &vb2_dma_contig_memops;
+ 	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+ 	ret = vb2_queue_init(q);
+@@ -881,6 +886,12 @@ static int s5p_mfc_open(struct file *file)
+ 	 * will keep the value of bytesused intact.
+ 	 */
+ 	q->allow_zero_bytesused = 1;
++
++	/*
++	 * We'll do mostly sequential access, so sacrifice TLB efficiency for
++	 * faster allocation.
++	 */
++	q->dma_attrs = DMA_ATTR_ALLOC_SINGLE_PAGES;
+ 	q->mem_ops = &vb2_dma_contig_memops;
+ 	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+ 	ret = vb2_queue_init(q);
 -- 
 1.9.1
