@@ -1,38 +1,34 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 9/9] s5p-mfc: Add support for MFC v8 available in Exynos
- 5433 SoCs
-Date: Wed, 16 Nov 2016 19:18:24 +0200
-Message-ID: <20161116171824.GA4983@kozik-lap>
-References: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161116090523eucas1p12a4b95363e9d2b0a823141a2f1c226e1@eucas1p1.samsung.com>
- <1479287098-30493-10-git-send-email-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request API
+Date: Wed, 16 Nov 2016 18:31:13 +0100
+Message-ID: <2b33d23d-b7c5-6e6d-454f-755c86ddd5eb@samsung.com>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+ <20161116032620.GV3000@localhost>
+ <CGME20161116170345epcas4p4615ed113ee5031ad4b6778996d69fb20@epcas4p4.samsung.com>
+ <20161116170337.GA4124@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33587 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752899AbcKPRSa (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36183 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752805AbcKPRbT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Nov 2016 12:18:30 -0500
-Content-Disposition: inline
-In-Reply-To: <1479287098-30493-10-git-send-email-m.szyprowski@samsung.com>
+        Wed, 16 Nov 2016 12:31:19 -0500
+In-reply-to: <20161116170337.GA4124@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: arnd@arndb.de, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Wed, Nov 16, 2016 at 10:04:58AM +0100, Marek Szyprowski wrote:
-> Exynos5433 SoC has MFC v8 hardware module, but it has more complex clock
-> hierarchy, so a new compatible has been added.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/media/s5p-mfc.txt |  1 +
->  drivers/media/platform/s5p-mfc/s5p_mfc.c            | 14 ++++++++++++++
->  2 files changed, 15 insertions(+)
-> 
+On 11/16/2016 06:03 PM, Krzysztof Kozlowski wrote:
+> As I understood, everything won't be applied because ASoC tree already
+> contains some work around this?
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Yes, sorry, I didn't coordinate this work very well, there are some patches
+for the pcm and the i2s driver already in the ASoC tree which would conflict
+with this series. I'd suggest to ignore patches 5/8...8/8 for now.
 
-Best regards,
-Krzysztof
+-- 
+Thanks,
+Sylwester
