@@ -1,42 +1,60 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 0/8] DMA: s3c64xx: Conversion to the new channel request
- API
-Date: Wed, 16 Nov 2016 08:56:20 +0530
-Message-ID: <20161116032620.GV3000@localhost>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/9] media: Exynos MFC driver improvements
+Date: Wed, 16 Nov 2016 10:04:49 +0100
+Message-ID: <1479287098-30493-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161116090517eucas1p195d48a2b5a1fd0146c40537b70a05048@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:32359 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752445AbcKPDQ5 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57066 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbcKPJFW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Nov 2016 22:16:57 -0500
-Content-Disposition: inline
-In-Reply-To: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+        Wed, 16 Nov 2016 04:05:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, arnd@arndb.de
-Cc: krzk@kernel.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-On Thu, Nov 10, 2016 at 04:17:48PM +0100, Sylwester Nawrocki wrote:
-> This patch series aims to convert the s3c64xx platform to use
-> the new DMA channel request API, i.e. this is only meaningful 
-> for non-dt systems using s3c64xx SoCs.
-> 
-> Presumably the first 2 or 4 patches in this series could be queued 
-> for v4.10-rc1 and the remaining patches could be left for subsequent
-> release, to avoid non-trivial conflict with patches already applied 
-> in the ASoC tree.
+Hi!
 
-I am fine with dma patch (expect the subsystem tag) and others except arm
-ones have acks, so I think we can merge this for v4.10-rc1. I cna create a
-immutable tag and people can merge into their tree in case they have
-dependencies.
+This is another collection of patches for Exynos MFC codec driver.
+It includes rebase of some improvements posted some time ago (which never
+got merged due to various reasons), huge rework of clock handling code
+and addition of Exynos 5433 variant support.
 
-Btw need acks on ARM patches before I can apply
+Patches were tested on Odroid U3 and XU3 as well as TM2 boards (Exynos
+4412, 5422 and 5433).
 
-Thanks
+Patches are based on git://linuxtv.org/snawrocki/samsung.git for-v4.10/media/next
+branch.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Douglas Anderson (1):
+  s5p-mfc: Set DMA_ATTR_ALLOC_SINGLE_PAGES
+
+Marek Szyprowski (8):
+  s5p-mfc: Use printk_ratelimited for reporting ioctl errors
+  s5p-mfc: Remove special clock rate management
+  s5p-mfc: Ensure that clock is disabled before turning power off
+  s5p-mfc: Remove dead conditional code
+  s5p-mfc: Kill all IS_ERR_OR_NULL in clocks management code
+  s5p-mfc: Don't keep clock prepared all the time
+  s5p-mfc: Rework clock handling
+  s5p-mfc: Add support for MFC v8 available in Exynos 5433 SoCs
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   1 +
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |  61 +++++----
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  10 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_debug.h     |   6 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c        | 139 ++++++++-------------
+ 7 files changed, 103 insertions(+), 118 deletions(-)
 
 -- 
-~Vinod
+1.9.1
