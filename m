@@ -1,63 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: Drop fixed 200 Hz timer requirement from Exynos
- platforms
-Date: Thu, 17 Nov 2016 12:40:41 -0300
-Message-ID: <6f15ef88-aa9e-4a3c-4a75-1d3216d734d5@osg.samsung.com>
-References: <1479148025-469-1-git-send-email-krzk@kernel.org>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 2/2] clk/samsung: exynos5433: Add documentation for audio
+ block parent clocks
+Date: Thu, 17 Nov 2016 21:53:20 +0900
+Message-ID: <CAGTfZH16kXhhCiXXvjReUDD0Exh2BxKQgoT_RgN7k_grRXfiyw@mail.gmail.com>
+References: <CGME20161117085106eucas1p13370631ebbc7ec93effef606d80ac310@eucas1p1.samsung.com>
+ <1479372648-11242-1-git-send-email-m.szyprowski@samsung.com> <1479372648-11242-2-git-send-email-m.szyprowski@samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1479148025-469-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36737 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933798AbcKQRIm (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 17 Nov 2016 12:08:42 -0500
+Received: by mail-qk0-f196.google.com with SMTP id h201so27163713qke.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2016 09:08:41 -0800 (PST)
+In-Reply-To: <1479372648-11242-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Krzysztof,
+Hi Marek,
 
-On 11/14/2016 03:27 PM, Krzysztof Kozlowski wrote:
-> All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-> 200 Hz.  Unfortunately in case of multiplatform image this affects also
-> other platforms when Exynos is selected.
-> 
-> This looks like an very old legacy code, dating back to initial
-> upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-> driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-> unused plat-samsung/time.c").
-> 
-> Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-> Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-> was rather an effect of coincidence instead of conscious choice.  In
-> fact Exynos can work with different timers.
-> 
-> Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-> A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-> other values.
-> 
-> Reported-by: Lee Jones <lee.jones@linaro.org>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+2016-11-17 17:50 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Audio block requires access to two parent clocks: audio PLL and oscillator,
+> so add this information to device tree bindings documentation.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> 
-> Testing on other Exynos platforms would be appreciated.
+>  Documentation/devicetree/bindings/clock/exynos5433-clock.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> index ffff67a0e9cd..1dc80f8811fe 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> @@ -104,6 +104,10 @@ Required Properties:
+>                 - sclk_decon_tv_vclk_disp
+>                 - aclk_disp_333
+>
+> +       Input clocks for audio clock controller:
+> +               - oscclk
+> +               - fout_aud_pll
+> +
+>         Input clocks for bus0 clock controller:
+>                 - aclk_bus0_400
+>
+> @@ -297,6 +301,9 @@ Example 2: Examples of clock controller nodes are listed below.
+>                 compatible = "samsung,exynos5433-cmu-aud";
+>                 reg = <0x114c0000 0x0b04>;
+>                 #clock-cells = <1>;
+> +
+> +               clock-names = "oscclk", "fout_aud_pll";
+> +               clocks = <&xxti>, <&cmu_top CLK_FOUT_AUD_PLL>;
+>         };
+>
+>         cmu_bus0: clock-controller@13600000 {
 
-I tested this patch on an Exynos5800 Peach Pi Chromebook with different
-HZ values (100/200/250/300/500/1000), and found no issues.
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Best regards,
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Best Regards,
+Chanwoo Choi
