@@ -1,96 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid
- boards.
-Date: Fri, 18 Nov 2016 08:01:48 +0100
-Message-ID: <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
-References: <CGME20161117184159epcas3p14fa4fc3d41c34083fce11a70f560b6f8@epcas3p1.samsung.com>
- <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] arm64: dts: exynos: add the mshc_2 node for supporting T-Flash
+Date: Fri, 18 Nov 2016 16:12:24 +0900
+Message-ID: <20161118071224.12876-1-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32364 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbcKRHBz (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34488 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbcKRHM3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 02:01:55 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OGT00D6MSV3UL40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Nov 2016 07:01:51 +0000 (GMT)
-In-reply-to: <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
+        Fri, 18 Nov 2016 02:12:29 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi Markus,
+Add the mshc_2 node for supporting T-flash.
 
+And it needs to add the "mshc*" aliases. Because dwmmc driver should be
+assigned to "ctrl_id" after parsing to "mshc".
+If there is no aliases for mshc, then it might be set to the wrong
+capabilities.
 
-On 2016-11-17 16:09, Markus Reichl wrote:
-> Odroid-X, -X2, -XU3 and -XU4 have SOC-ADC routed to an external connector.
-> Enable the ADC for use as iio-device.
->
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-> ---
-> Tested on X, XU3 and XU4.
-> ---
->   arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  5 +++++
->   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 11 +++++++++++
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-exynos4412-odroid-common.dtsi is also used on Odroid U3, which doesn't have
-ADC pins on the external connector, so please move ADC node to
-exynos4412-odroidx.dts, which is used on X and X2.
-
->   2 files changed, 16 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 8aa19ba..6f26b3d 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -478,6 +478,11 @@
->   	};
->   };
->   
-> +&adc {
-> +	vdd-supply = <&ldo10_reg>;
-> +	status = "okay";
-> +};
-> +
->   &i2c_1 {
->   	status = "okay";
->   	max98090: max98090@10 {
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 246d298..a8e1986 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -147,6 +147,11 @@
->   	};
->   };
->   
-> +&adc {
-> +	vdd-supply = <&ldo4_reg>;
-> +	status = "okay";
-> +};
-> +
->   &bus_wcore {
->   	devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
->   			<&nocp_mem1_0>, <&nocp_mem1_1>;
-> @@ -293,6 +298,12 @@
->   				regulator-max-microvolt = <1800000>;
->   			};
->   
-> +			ldo4_reg: LDO4 {
-> +				regulator-name = "vdd_adc";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +			};
-> +
->   			ldo5_reg: LDO5 {
->   				regulator-name = "vdd_ldo5";
->   				regulator-min-microvolt = <1800000>;
-
-Best regards
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index 9ea3f32..75dab01 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -42,6 +42,8 @@
+ 		spi2 = &spi_2;
+ 		spi3 = &spi_3;
+ 		spi4 = &spi_4;
++		mshc0 = &mshc_0;
++		mshc2 = &mshc_2;
+ 	};
+ 
+ 	chosen {
+@@ -661,6 +663,23 @@
+ 	assigned-clock-rates = <800000000>;
+ };
+ 
++&mshc_2 {
++	status = "okay";
++	num-slots = <1>;
++	cap-sd-highspeed;
++	disable-wp;
++	cd-gpios = <&gpa2 4 0>;
++	cd-inverted;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	fifo-depth = <0x80>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++};
++
+ &pinctrl_alive {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&initial_alive>;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.10.1
