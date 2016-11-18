@@ -1,65 +1,96 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-Date: Fri, 18 Nov 2016 09:46:47 +0100
-Message-ID: <22757093.ejshJp9T7L@wuerfel>
-References: <1479453418-25314-1-git-send-email-krzk@kernel.org>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: Re: [PATCH] ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid
+ boards.
+Date: Fri, 18 Nov 2016 10:15:05 +0100
+Message-ID: <78b9b754-49ad-526a-222c-9f75eef3899f@fivetechno.de>
+References: <CGME20161117184159epcas3p14fa4fc3d41c34083fce11a70f560b6f8@epcas3p1.samsung.com>
+ <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
+ <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:63591 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752724AbcKRIrk (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:33566 "EHLO
+        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752495AbcKRJPT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 03:47:40 -0500
-In-Reply-To: <1479453418-25314-1-git-send-email-krzk@kernel.org>
+        Fri, 18 Nov 2016 04:15:19 -0500
+In-Reply-To: <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Friday, November 18, 2016 9:16:58 AM CET Krzysztof Kozlowski wrote:
-> All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-> 200 Hz.  Unfortunately in case of multiplatform image this affects also
-> other platforms when Exynos is enabled.
+Hi Marek,
+
+Am 18.11.2016 um 08:01 schrieb Marek Szyprowski:
+> Hi Markus,
 > 
-> This looks like an very old legacy code, dating back to initial
-> upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-> driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-> unused plat-samsung/time.c").
 > 
-> Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-> Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-> was rather an effect of coincidence instead of conscious choice.
+> On 2016-11-17 16:09, Markus Reichl wrote:
+>> Odroid-X, -X2, -XU3 and -XU4 have SOC-ADC routed to an external connector.
+>> Enable the ADC for use as iio-device.
+>>
+>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+>> ---
+>> Tested on X, XU3 and XU4.
+>> ---
+>>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  5 +++++
+>>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 11 +++++++++++
 > 
-> Exynos uses its own MCT or arch timer and can work with all HZ values.
-> Older platforms use newer Samsung PWM timer driver which should handle
-> down to 100 Hz.
-> 
-> Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-> A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-> other values.
-> 
-> Reported-by: Lee Jones <lee.jones@linaro.org>
-> [Dropping 200_HZ from S3C/S5P suggested by Arnd]
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> exynos4412-odroid-common.dtsi is also used on Odroid U3, which doesn't have
+> ADC pins on the external connector, so please move ADC node to
+> exynos4412-odroidx.dts, which is used on X and X2.
 > 
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Yes, will send V2.
 
-Maybe add a paragraph about the specific problem:
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>> index 8aa19ba..6f26b3d 100644
+>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>> @@ -478,6 +478,11 @@
+>>       };
+>>   };
+>>   +&adc {
+>> +    vdd-supply = <&ldo10_reg>;
+>> +    status = "okay";
+>> +};
+>> +
+>>   &i2c_1 {
+>>       status = "okay";
+>>       max98090: max98090@10 {
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> index 246d298..a8e1986 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> @@ -147,6 +147,11 @@
+>>       };
+>>   };
+>>   +&adc {
+>> +    vdd-supply = <&ldo4_reg>;
+>> +    status = "okay";
+>> +};
+>> +
+>>   &bus_wcore {
+>>       devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
+>>               <&nocp_mem1_0>, <&nocp_mem1_1>;
+>> @@ -293,6 +298,12 @@
+>>                   regulator-max-microvolt = <1800000>;
+>>               };
+>>   +            ldo4_reg: LDO4 {
+>> +                regulator-name = "vdd_adc";
+>> +                regulator-min-microvolt = <1800000>;
+>> +                regulator-max-microvolt = <1800000>;
+>> +            };
+>> +
+>>               ldo5_reg: LDO5 {
+>>                   regulator-name = "vdd_ldo5";
+>>                   regulator-min-microvolt = <1800000>;
+> 
+> Best regards
 
-"On s3c24xx, the PWM counter is only 16 bit wide, and with the
-typical 12MHz input clock that overflows every 5.5ms. This works
-with HZ=200 or higher but not with HZ=100 which needs a 10ms
-interval between ticks. On Later chips (S3C64xx, S5P and EXYNOS),
-the counter is 32 bits and does not have this problem.
-The new samsung_pwm_timer driver solves the problem by scaling
-the input clock by a factor of 50 on s3c24xx, which makes it
-less accurate but allows HZ=100 as well as CONFIG_NO_HZ with
-fewer wakeups".
-
-	Arnd
+Thanks for looking at,
+--
+Markus
