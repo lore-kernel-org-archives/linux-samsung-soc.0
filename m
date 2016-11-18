@@ -1,52 +1,96 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: Drop fixed 200 Hz timer requirement from Exynos
- platforms
-Date: Fri, 18 Nov 2016 08:47:49 +0200
-Message-ID: <20161118064749.GA2122@kozik-lap>
-References: <1479148025-469-1-git-send-email-krzk@kernel.org>
- <3145378.USf2WOPoV2@wuerfel>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid
+ boards.
+Date: Fri, 18 Nov 2016 08:01:48 +0100
+Message-ID: <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
+References: <CGME20161117184159epcas3p14fa4fc3d41c34083fce11a70f560b6f8@epcas3p1.samsung.com>
+ <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32984 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbcKRGrz (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32364 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbcKRHBz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 01:47:55 -0500
-Content-Disposition: inline
-In-Reply-To: <3145378.USf2WOPoV2@wuerfel>
+        Fri, 18 Nov 2016 02:01:55 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OGT00D6MSV3UL40@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Nov 2016 07:01:51 +0000 (GMT)
+In-reply-to: <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Markus Reichl <m.reichl@fivetechno.de>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Thu, Nov 17, 2016 at 01:35:45PM +0100, Arnd Bergmann wrote:
-> On Monday, November 14, 2016 8:27:05 PM CET Krzysztof Kozlowski wrote:
-> > @@ -1497,7 +1497,7 @@ source kernel/Kconfig.preempt
-> >  config HZ_FIXED
-> >         int
-> >         default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
-> > -               ARCH_S5PV210 || ARCH_EXYNOS4
-> > +               ARCH_S5PV210
-> >         default 128 if SOC_AT91RM9200
-> >         default 0
-> 
-> After further research, I've concluded that we should also drop the
-> settings for ARCH_S5PV210 and ARCH_S3C24XX here.
-> 
-> ARCH_S5PV210 behaves exactly like EXYNOS here, it has 32-bit timers
-> so there won't be any overflow with 100Hz.
-> 
-> For ARCH_S3C24XX, it the requirement was that HZ_100 could not
-> be used with the old arch/arm/plat-samsung/time.c code that would
-> overflow its 16-bit counter.
-> However, the new drivers/clocksource/samsung_pwm_timer.c configures
-> the clock divider to '50' instead of '6', so there is no longer
-> a 16-bit overflow before the 100Hz tick, it now overflows every
-> 3.7ms for the typical 12MHz clock.
+Hi Markus,
 
-I can send an updated version however testing would be nice... I know
-Sylwester has a S3C6410 platform running, maybe S3C24xx as well.
 
-Best regards,
-Krzysztof
+On 2016-11-17 16:09, Markus Reichl wrote:
+> Odroid-X, -X2, -XU3 and -XU4 have SOC-ADC routed to an external connector.
+> Enable the ADC for use as iio-device.
+>
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+> ---
+> Tested on X, XU3 and XU4.
+> ---
+>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  5 +++++
+>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 11 +++++++++++
+
+exynos4412-odroid-common.dtsi is also used on Odroid U3, which doesn't have
+ADC pins on the external connector, so please move ADC node to
+exynos4412-odroidx.dts, which is used on X and X2.
+
+>   2 files changed, 16 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index 8aa19ba..6f26b3d 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -478,6 +478,11 @@
+>   	};
+>   };
+>   
+> +&adc {
+> +	vdd-supply = <&ldo10_reg>;
+> +	status = "okay";
+> +};
+> +
+>   &i2c_1 {
+>   	status = "okay";
+>   	max98090: max98090@10 {
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 246d298..a8e1986 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -147,6 +147,11 @@
+>   	};
+>   };
+>   
+> +&adc {
+> +	vdd-supply = <&ldo4_reg>;
+> +	status = "okay";
+> +};
+> +
+>   &bus_wcore {
+>   	devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
+>   			<&nocp_mem1_0>, <&nocp_mem1_1>;
+> @@ -293,6 +298,12 @@
+>   				regulator-max-microvolt = <1800000>;
+>   			};
+>   
+> +			ldo4_reg: LDO4 {
+> +				regulator-name = "vdd_adc";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +			};
+> +
+>   			ldo5_reg: LDO5 {
+>   				regulator-name = "vdd_ldo5";
+>   				regulator-min-microvolt = <1800000>;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
