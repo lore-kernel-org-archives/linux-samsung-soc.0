@@ -1,83 +1,30 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2] ARM: Drop fixed 200 Hz timer requirement from Samsung
- platforms
-Date: Fri, 18 Nov 2016 13:17:41 +0000
-Message-ID: <20161118131741.GB2301@dell.home>
-References: <1479453418-25314-1-git-send-email-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFT] ARM: dts: exynos: Fix invalid GIC interrupt flags in audio
+ block of Exynos5410
+Date: Fri, 18 Nov 2016 14:45:01 +0100
+Message-ID: <64c5dabd-666d-056d-b761-20350bd3372c@samsung.com>
+References: <CGME20161118125944epcas5p16ff6afeb8e4d286adecad6d1344734de@epcas5p1.samsung.com>
+ <1479473964-9085-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1479453418-25314-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1479473964-9085-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 18 Nov 2016, Krzysztof Kozlowski wrote:
+On 11/18/2016 01:59 PM, Krzysztof Kozlowski wrote:
+> Recently added audio block of Exynos5410 missed global fixup of GIC
+> interrupt flags.  Interrupt of type IRQ_TYPE_NONE is not allowed for GIC
+> interrupts so use level high.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-> All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-> 200 Hz.  Unfortunately in case of multiplatform image this affects also
-> other platforms when Exynos is enabled.
-> 
-> This looks like an very old legacy code, dating back to initial
-> upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-> driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-> unused plat-samsung/time.c").
-> 
-> Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-> Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-> was rather an effect of coincidence instead of conscious choice.
-> 
-> Exynos uses its own MCT or arch timer and can work with all HZ values.
-> Older platforms use newer Samsung PWM timer driver which should handle
-> down to 100 Hz.
-> 
-> Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-> A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-> other values.
-> 
-> Reported-by: Lee Jones <lee.jones@linaro.org>
+Tested-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
-> [Dropping 200_HZ from S3C/S5P suggested by Arnd]
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
-> Tested on Exynos5422 and Exynos5800 (by Javier). It would be
-> appreciated if anyone could test it on S3C24xx or S5PV210.
-> 
-> Changes since v1:
-> 1. Add Javier's tested-by.
-> 2. Drop HZ_FIXED also from ARCH_S5PV210 and ARCH_S3C24XX after Arnd
->    suggestions and analysis.
-> ---
->  arch/arm/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index b5d529fdffab..ced2e08a9d08 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1496,8 +1496,7 @@ source kernel/Kconfig.preempt
->  
->  config HZ_FIXED
->  	int
-> -	default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
-> -		ARCH_S5PV210 || ARCH_EXYNOS4
-> +	default 200 if ARCH_EBSA110
->  	default 128 if SOC_AT91RM9200
->  	default 0
->  
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
