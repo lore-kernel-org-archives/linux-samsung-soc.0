@@ -1,84 +1,41 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3] ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-Date: Fri, 18 Nov 2016 13:15:12 +0200
-Message-ID: <1479467712-5218-1-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH RESEND] clk/samsung: exynos5433: mark some clocks as
+ critical
+Date: Fri, 18 Nov 2016 13:18:19 +0200
+Message-ID: <20161118111819.GB2392@kozik-lap>
+References: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752301AbcKRLPl (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34889 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752345AbcKRLSZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 06:15:41 -0500
+        Fri, 18 Nov 2016 06:18:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-200 Hz.  Unfortunately in case of multiplatform image this affects also
-other platforms when Exynos is enabled.
+On Fri, Nov 18, 2016 at 11:04:18AM +0100, Marek Szyprowski wrote:
+> Some parent clocks of the Exynos5433 CMUs must be always enabled to access
+> any register in the given CMU or devices connected to it. For the time
+> being, until a proper solution based on runtime PM is applied, mark those
+> clocks as critical (instead of ignore unused) to prevent disabling them.
+> 
+> Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+> Resend reason: corrected reported by tag.
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 
-This looks like an very old legacy code, dating back to initial
-upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-unused plat-samsung/time.c").
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-was rather an effect of coincidence instead of conscious choice.
-
-On S3C24xx, the PWM counter is only 16 bit wide, and with the
-typical 12MHz input clock that overflows every 5.5ms.  This works
-with HZ=200 or higher but not with HZ=100 which needs a 10ms
-interval between ticks.  On Later chips (S3C64xx, S5P and EXYNOS),
-the counter is 32 bits and does not have this problem.
-
-The new samsung_pwm_timer driver solves the problem by scaling the input
-clock by a factor of 50 on S3C24xx, which makes it less accurate but
-allows HZ=100 as well as CONFIG_NO_HZ with fewer wakeups.
-
-Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-other values.
-
-Reported-by: Lee Jones <lee.jones@linaro.org>
-[Dropping of 200_HZ from S3C/S5P was suggested by Arnd]
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-[Tested on Exynos5800]
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Kukjin Kim <kgene@kernel.org>
-[Tested on S3C2440]
-Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
----
-
-Changes since v2:
-1. Extend message.
-2. Add Kukjin's ack.
-3. Add Sylwester's tested-by.
-
-Changes since v1:
-1. Add Javier's tested-by.
-2. Drop HZ_FIXED also from ARCH_S5PV210 and ARCH_S3C24XX after Arnd
-   suggestions and analysis.
----
- arch/arm/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index b5d529fdffab..ced2e08a9d08 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1496,8 +1496,7 @@ source kernel/Kconfig.preempt
- 
- config HZ_FIXED
- 	int
--	default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
--		ARCH_S5PV210 || ARCH_EXYNOS4
-+	default 200 if ARCH_EBSA110
- 	default 128 if SOC_AT91RM9200
- 	default 0
- 
--- 
-2.7.4
+Best regards,
+Krzysztof
