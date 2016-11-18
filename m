@@ -1,26 +1,24 @@
-From: Kukjin Kim <kgene.kim@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v2] ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-Date: Fri, 18 Nov 2016 16:57:40 +0900
-Message-ID: <B51DA93E-0875-4BAA-B492-EFB116B8ACF9@gmail.com>
+Date: Fri, 18 Nov 2016 09:46:47 +0100
+Message-ID: <22757093.ejshJp9T7L@wuerfel>
 References: <1479453418-25314-1-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36147 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbcKRH5p (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.130]:63591 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752724AbcKRIrk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 02:57:45 -0500
+        Fri, 18 Nov 2016 03:47:40 -0500
 In-Reply-To: <1479453418-25314-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2016. 11. 18. 16:16 Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
+On Friday, November 18, 2016 9:16:58 AM CET Krzysztof Kozlowski wrote:
 > All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
 > 200 Hz.  Unfortunately in case of multiplatform image this affects also
 > other platforms when Exynos is enabled.
@@ -47,38 +45,21 @@ Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier 
 > Reported-by: Arnd Bergmann <arnd@arndb.de>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > Cc: Kukjin Kim <kgene@kernel.org>
-
-Acked-by: Kukjin Kim <kgene@kernel.org>
-
 > Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
-> ---
-> 
-> Tested on Exynos5422 and Exynos5800 (by Javier). It would be
-> appreciated if anyone could test it on S3C24xx or S5PV210.
-> 
-> Changes since v1:
-> 1. Add Javier's tested-by.
-> 2. Drop HZ_FIXED also from ARCH_S5PV210 and ARCH_S3C24XX after Arnd
->   suggestions and analysis.
-> ---
-> arch/arm/Kconfig | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index b5d529fdffab..ced2e08a9d08 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1496,8 +1496,7 @@ source kernel/Kconfig.preempt
-> 
-> config HZ_FIXED
->    int
-> -    default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
-> -        ARCH_S5PV210 || ARCH_EXYNOS4
-> +    default 200 if ARCH_EBSA110
->    default 128 if SOC_AT91RM9200
->    default 0
-> 
-> -- 
-> 2.7.4
-> 
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+Maybe add a paragraph about the specific problem:
+
+"On s3c24xx, the PWM counter is only 16 bit wide, and with the
+typical 12MHz input clock that overflows every 5.5ms. This works
+with HZ=200 or higher but not with HZ=100 which needs a 10ms
+interval between ticks. On Later chips (S3C64xx, S5P and EXYNOS),
+the counter is 32 bits and does not have this problem.
+The new samsung_pwm_timer driver solves the problem by scaling
+the input clock by a factor of 50 on s3c24xx, which makes it
+less accurate but allows HZ=100 as well as CONFIG_NO_HZ with
+fewer wakeups".
+
+	Arnd
