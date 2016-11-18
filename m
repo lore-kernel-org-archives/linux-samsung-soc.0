@@ -1,30 +1,25 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/3] ARM: defconfig: Samsung defconfigs for v4.10
-Date: Thu, 17 Nov 2016 17:51:08 -0800
-Message-ID: <20161118015108.GN8578@localhost>
+Subject: Re: [GIT PULL 1/3] ARM: dts: exynos: DT for v4.10
+Date: Thu, 17 Nov 2016 17:53:14 -0800
+Message-ID: <20161118015314.GO8578@localhost>
 References: <1478629589-7520-1-git-send-email-krzk@kernel.org>
- <1478629589-7520-2-git-send-email-krzk@kernel.org>
+ <1478629589-7520-3-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33409 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbcKRHzc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 02:55:32 -0500
-Received: by mail-pg0-f66.google.com with SMTP id 3so19973617pgd.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2016 23:55:31 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1478629589-7520-2-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1478629589-7520-3-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 08, 2016 at 08:26:27PM +0200, Krzysztof Kozlowski wrote:
+Hi,
+
+On Tue, Nov 08, 2016 at 08:26:28PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> Nothing special.
+> Hurray! New board! ... Exynos4415 slowly is going away.
 > 
 > Best regards,
 > Krzysztof
@@ -36,15 +31,19 @@ On Tue, Nov 08, 2016 at 08:26:27PM +0200, Krzysztof Kozlowski wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.10
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.10
 > 
-> for you to fetch changes up to e471e9b4b13b59ee8cb7079018472c4dda46cb7a:
+> for you to fetch changes up to 05a3589f46f913fbe91704f12fdca46a0eb0a27b:
 > 
->   ARM: multi_v7_defconfig: Enable exynos-gsc driver as module (2016-10-17 19:43:29 +0300)
+>   ARM: dts: exynos: Add SCU device node to exynos4.dtsi (2016-11-05 17:39:50 +0200)
 > 
 > ----------------------------------------------------------------
-> Samsung defconfig update for v4.10:
-> 1. Enable the Exynos gscaler driver on multi_v7 and exynos defconfigs.
+> Samsung DeviceTree update for v4.10:
+> 1. Add TOPEET itop core and Elite boards, based on Exynos4412.
+> 2. Remove the Exynos4415 DTSI. We did not have any mainlined boards
+>    using it. I am also not aware of any popular out-of-tree boards using it.
+> 3. Add Snoop Control Unit node for Exynos4.
+> 4. Minor cleanups.
 
 Merged, thanks.
 
