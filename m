@@ -1,96 +1,120 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [PATCH] ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid
- boards.
-Date: Fri, 18 Nov 2016 10:15:05 +0100
-Message-ID: <78b9b754-49ad-526a-222c-9f75eef3899f@fivetechno.de>
-References: <CGME20161117184159epcas3p14fa4fc3d41c34083fce11a70f560b6f8@epcas3p1.samsung.com>
- <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
- <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:33566 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752495AbcKRJPT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 04:15:19 -0500
-In-Reply-To: <7d1ec37a-a693-7a4d-9f61-4c2c543a0096@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk/samsung: exynos5433: mark some clocks as critical
+Date: Fri, 18 Nov 2016 10:14:13 +0100
+Message-ID: <1479460453-23620-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Marek,
+Some parent clocks of the Exynos5433 CMUs must be always enabled to access
+any register in the given CMU or devices connected to it. For the time
+being, until a proper solution based on runtime PM is applied, mark those
+clocks as critical (instead of ignore unused) to prevent disabling them.
 
-Am 18.11.2016 um 08:01 schrieb Marek Szyprowski:
-> Hi Markus,
-> 
-> 
-> On 2016-11-17 16:09, Markus Reichl wrote:
->> Odroid-X, -X2, -XU3 and -XU4 have SOC-ADC routed to an external connector.
->> Enable the ADC for use as iio-device.
->>
->> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
->> ---
->> Tested on X, XU3 and XU4.
->> ---
->>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  5 +++++
->>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 11 +++++++++++
-> 
-> exynos4412-odroid-common.dtsi is also used on Odroid U3, which doesn't have
-> ADC pins on the external connector, so please move ADC node to
-> exynos4412-odroidx.dts, which is used on X and X2.
-> 
+Reported-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-Yes, will send V2.
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index a8bb60b1f804..f096bd7df40c 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -543,7 +543,7 @@
+ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+ 	/* ENABLE_ACLK_TOP */
+ 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
+-			ENABLE_ACLK_TOP, 30, 0, 0),
++			ENABLE_ACLK_TOP, 30, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_IMEM_SSX_266, "aclk_imem_ssx_266",
+ 			"div_aclk_imem_sssx_266", ENABLE_ACLK_TOP,
+ 			29, CLK_IGNORE_UNUSED, 0),
+@@ -555,25 +555,25 @@
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_266",
+ 			ENABLE_ACLK_TOP, 24,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_200",
+ 			ENABLE_ACLK_TOP, 23,
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_PERIC_66, "aclk_peric_66", "div_aclk_peric_66_b",
+ 			ENABLE_ACLK_TOP, 22,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_PERIS_66, "aclk_peris_66", "div_aclk_peris_66_b",
+ 			ENABLE_ACLK_TOP, 21,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_MSCL_400, "aclk_mscl_400", "div_aclk_mscl_400",
+ 			ENABLE_ACLK_TOP, 19,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_FSYS_200, "aclk_fsys_200", "div_aclk_fsys_200",
+ 			ENABLE_ACLK_TOP, 18,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_GSCL_111, "aclk_gscl_111", "div_aclk_gscl_111",
+ 			ENABLE_ACLK_TOP, 15,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
+ 			ENABLE_ACLK_TOP, 14,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -582,7 +582,7 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+ 			ENABLE_ACLK_TOP, 12,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+ 			ENABLE_ACLK_TOP, 11,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -591,7 +591,7 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+ 			ENABLE_ACLK_TOP, 9,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+ 			ENABLE_ACLK_TOP, 8,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -600,19 +600,19 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+ 			ENABLE_ACLK_TOP, 6,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
+ 			ENABLE_ACLK_TOP, 5,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_MFC_400, "aclk_mfc_400", "div_aclk_mfc_400",
+ 			ENABLE_ACLK_TOP, 3,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_G2D_266, "aclk_g2d_266", "div_aclk_g2d_266",
+ 			ENABLE_ACLK_TOP, 2,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_G2D_400, "aclk_g2d_400", "div_aclk_g2d_400",
+ 			ENABLE_ACLK_TOP, 0,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 
+ 	/* ENABLE_SCLK_TOP_MSCL */
+ 	GATE(CLK_SCLK_JPEG_MSCL, "sclk_jpeg_mscl", "div_sclk_jpeg",
+@@ -1385,7 +1385,7 @@ static void __init exynos5433_cmu_cpif_init(struct device_node *np)
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_DISP_333, "aclk_disp_333", "div_aclk_disp_333",
+ 			ENABLE_ACLK_MIF3, 1,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_CPIF_200, "aclk_cpif_200", "div_aclk_cpif_200",
+ 			ENABLE_ACLK_MIF3, 0,
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+-- 
+1.9.1
 
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> index 8aa19ba..6f26b3d 100644
->> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> @@ -478,6 +478,11 @@
->>       };
->>   };
->>   +&adc {
->> +    vdd-supply = <&ldo10_reg>;
->> +    status = "okay";
->> +};
->> +
->>   &i2c_1 {
->>       status = "okay";
->>       max98090: max98090@10 {
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index 246d298..a8e1986 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -147,6 +147,11 @@
->>       };
->>   };
->>   +&adc {
->> +    vdd-supply = <&ldo4_reg>;
->> +    status = "okay";
->> +};
->> +
->>   &bus_wcore {
->>       devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
->>               <&nocp_mem1_0>, <&nocp_mem1_1>;
->> @@ -293,6 +298,12 @@
->>                   regulator-max-microvolt = <1800000>;
->>               };
->>   +            ldo4_reg: LDO4 {
->> +                regulator-name = "vdd_adc";
->> +                regulator-min-microvolt = <1800000>;
->> +                regulator-max-microvolt = <1800000>;
->> +            };
->> +
->>               ldo5_reg: LDO5 {
->>                   regulator-name = "vdd_ldo5";
->>                   regulator-min-microvolt = <1800000>;
-> 
-> Best regards
-
-Thanks for looking at,
---
-Markus
