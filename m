@@ -1,76 +1,52 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH] ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid
- boards.
-Date: Thu, 17 Nov 2016 16:09:35 +0100
-Message-ID: <1cb894be-469a-714f-cfb8-6a1feac47e87@fivetechno.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: Drop fixed 200 Hz timer requirement from Exynos
+ platforms
+Date: Fri, 18 Nov 2016 08:47:49 +0200
+Message-ID: <20161118064749.GA2122@kozik-lap>
+References: <1479148025-469-1-git-send-email-krzk@kernel.org>
+ <3145378.USf2WOPoV2@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:44420 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755167AbcKQSlm (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32984 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbcKRGrz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Nov 2016 13:41:42 -0500
+        Fri, 18 Nov 2016 01:47:55 -0500
+Content-Disposition: inline
+In-Reply-To: <3145378.USf2WOPoV2@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Odroid-X, -X2, -XU3 and -XU4 have SOC-ADC routed to an external connector.
-Enable the ADC for use as iio-device.
+On Thu, Nov 17, 2016 at 01:35:45PM +0100, Arnd Bergmann wrote:
+> On Monday, November 14, 2016 8:27:05 PM CET Krzysztof Kozlowski wrote:
+> > @@ -1497,7 +1497,7 @@ source kernel/Kconfig.preempt
+> >  config HZ_FIXED
+> >         int
+> >         default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
+> > -               ARCH_S5PV210 || ARCH_EXYNOS4
+> > +               ARCH_S5PV210
+> >         default 128 if SOC_AT91RM9200
+> >         default 0
+> 
+> After further research, I've concluded that we should also drop the
+> settings for ARCH_S5PV210 and ARCH_S3C24XX here.
+> 
+> ARCH_S5PV210 behaves exactly like EXYNOS here, it has 32-bit timers
+> so there won't be any overflow with 100Hz.
+> 
+> For ARCH_S3C24XX, it the requirement was that HZ_100 could not
+> be used with the old arch/arm/plat-samsung/time.c code that would
+> overflow its 16-bit counter.
+> However, the new drivers/clocksource/samsung_pwm_timer.c configures
+> the clock divider to '50' instead of '6', so there is no longer
+> a 16-bit overflow before the 100Hz tick, it now overflows every
+> 3.7ms for the typical 12MHz clock.
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
----
-Tested on X, XU3 and XU4.
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  5 +++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 11 +++++++++++
- 2 files changed, 16 insertions(+)
+I can send an updated version however testing would be nice... I know
+Sylwester has a S3C6410 platform running, maybe S3C24xx as well.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 8aa19ba..6f26b3d 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -478,6 +478,11 @@
- 	};
- };
- 
-+&adc {
-+	vdd-supply = <&ldo10_reg>;
-+	status = "okay";
-+};
-+
- &i2c_1 {
- 	status = "okay";
- 	max98090: max98090@10 {
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 246d298..a8e1986 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -147,6 +147,11 @@
- 	};
- };
- 
-+&adc {
-+	vdd-supply = <&ldo4_reg>;
-+	status = "okay";
-+};
-+
- &bus_wcore {
- 	devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
- 			<&nocp_mem1_0>, <&nocp_mem1_1>;
-@@ -293,6 +298,12 @@
- 				regulator-max-microvolt = <1800000>;
- 			};
- 
-+			ldo4_reg: LDO4 {
-+				regulator-name = "vdd_adc";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
- 			ldo5_reg: LDO5 {
- 				regulator-name = "vdd_ldo5";
- 				regulator-min-microvolt = <1800000>;
--- 
-2.1.4
+Best regards,
+Krzysztof
