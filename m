@@ -1,25 +1,26 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/3] ARM: dts: exynos: DT for v4.10
-Date: Thu, 17 Nov 2016 17:53:14 -0800
-Message-ID: <20161118015314.GO8578@localhost>
+Subject: Re: [GIT PULL 2/3] ARM64: dts: exynos: DT for v4.10
+Date: Thu, 17 Nov 2016 17:59:54 -0800
+Message-ID: <20161118015954.GP8578@localhost>
 References: <1478629589-7520-1-git-send-email-krzk@kernel.org>
- <1478629589-7520-3-git-send-email-krzk@kernel.org>
+ <1478629589-7520-4-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1478629589-7520-3-git-send-email-krzk@kernel.org>
+In-Reply-To: <1478629589-7520-4-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Tue, Nov 08, 2016 at 08:26:28PM +0200, Krzysztof Kozlowski wrote:
+On Tue, Nov 08, 2016 at 08:26:29PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> Hurray! New board! ... Exynos4415 slowly is going away.
+> Exynos5433 + two boards using it. Mobile boards! :)
+> 
+> I am really happy to push it. I know that it has been a lot of effort
+> in Samsung to mainline this.
 > 
 > Best regards,
 > Krzysztof
@@ -31,21 +32,23 @@ On Tue, Nov 08, 2016 at 08:26:28PM +0200, Krzysztof Kozlowski wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.10
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.10
 > 
-> for you to fetch changes up to 05a3589f46f913fbe91704f12fdca46a0eb0a27b:
+> for you to fetch changes up to 8ac46fc57df82efbc19194dddd335b6c7a960c31:
 > 
->   ARM: dts: exynos: Add SCU device node to exynos4.dtsi (2016-11-05 17:39:50 +0200)
+>   arm64: dts: exynos: Add dts file for Exynos5433-based TM2E board (2016-11-03 22:19:57 +0200)
 > 
 > ----------------------------------------------------------------
-> Samsung DeviceTree update for v4.10:
-> 1. Add TOPEET itop core and Elite boards, based on Exynos4412.
-> 2. Remove the Exynos4415 DTSI. We did not have any mainlined boards
->    using it. I am also not aware of any popular out-of-tree boards using it.
-> 3. Add Snoop Control Unit node for Exynos4.
-> 4. Minor cleanups.
+> Finally, I am really pleased to announce adding support for Exynos5433 ARMv8
+> SoC along with two boards.  A lot of Samsung people contributed into this
+> but the final work and commits were done by Chanwoo Choi.
+> 
+> This means that for v4.10 we got:
+> 1. Exynos5433 DTSI.
+> 2. Two boards: TM2 and TM2E.  These are (almost fully) working mobile phones.
 
-Merged, thanks.
+Awesome! Looks like TM2 is a Tizen reference board? Great to see the support,
+even if it's taken a while.
 
 
 -Olof
