@@ -1,124 +1,83 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH RESEND] clk/samsung: exynos5433: mark some clocks as critical
-Date: Fri, 18 Nov 2016 11:04:18 +0100
-Message-ID: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: exynos: add the mshc_2 node for supporting
+ T-Flash
+Date: Fri, 18 Nov 2016 11:38:09 +0100
+Message-ID: <26cc8cc3-0a91-e253-5a10-8e080c3e486f@samsung.com>
+References: <CGME20161118071238epcas4p222702d2c716bf2d7cd9c9354ab99a189@epcas4p2.samsung.com>
+ <20161118071224.12876-1-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20161118071224.12876-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some parent clocks of the Exynos5433 CMUs must be always enabled to access
-any register in the given CMU or devices connected to it. For the time
-being, until a proper solution based on runtime PM is applied, mark those
-clocks as critical (instead of ignore unused) to prevent disabling them.
+Dear Jaehoon,
 
-Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-Resend reason: corrected reported by tag.
----
- drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index a8bb60b1f804..f096bd7df40c 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -543,7 +543,7 @@
- static const struct samsung_gate_clock top_gate_clks[] __initconst = {
- 	/* ENABLE_ACLK_TOP */
- 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
--			ENABLE_ACLK_TOP, 30, 0, 0),
-+			ENABLE_ACLK_TOP, 30, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_IMEM_SSX_266, "aclk_imem_ssx_266",
- 			"div_aclk_imem_sssx_266", ENABLE_ACLK_TOP,
- 			29, CLK_IGNORE_UNUSED, 0),
-@@ -555,25 +555,25 @@
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_266",
- 			ENABLE_ACLK_TOP, 24,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_200",
- 			ENABLE_ACLK_TOP, 23,
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_PERIC_66, "aclk_peric_66", "div_aclk_peric_66_b",
- 			ENABLE_ACLK_TOP, 22,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_PERIS_66, "aclk_peris_66", "div_aclk_peris_66_b",
- 			ENABLE_ACLK_TOP, 21,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_MSCL_400, "aclk_mscl_400", "div_aclk_mscl_400",
- 			ENABLE_ACLK_TOP, 19,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_FSYS_200, "aclk_fsys_200", "div_aclk_fsys_200",
- 			ENABLE_ACLK_TOP, 18,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_GSCL_111, "aclk_gscl_111", "div_aclk_gscl_111",
- 			ENABLE_ACLK_TOP, 15,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
- 			ENABLE_ACLK_TOP, 14,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -582,7 +582,7 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
- 			ENABLE_ACLK_TOP, 12,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
- 			ENABLE_ACLK_TOP, 11,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -591,7 +591,7 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
- 			ENABLE_ACLK_TOP, 9,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
- 			ENABLE_ACLK_TOP, 8,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -600,19 +600,19 @@
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
- 			ENABLE_ACLK_TOP, 6,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
- 			ENABLE_ACLK_TOP, 5,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_MFC_400, "aclk_mfc_400", "div_aclk_mfc_400",
- 			ENABLE_ACLK_TOP, 3,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_G2D_266, "aclk_g2d_266", "div_aclk_g2d_266",
- 			ENABLE_ACLK_TOP, 2,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_G2D_400, "aclk_g2d_400", "div_aclk_g2d_400",
- 			ENABLE_ACLK_TOP, 0,
--			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
- 
- 	/* ENABLE_SCLK_TOP_MSCL */
- 	GATE(CLK_SCLK_JPEG_MSCL, "sclk_jpeg_mscl", "div_sclk_jpeg",
-@@ -1385,7 +1385,7 @@ static void __init exynos5433_cmu_cpif_init(struct device_node *np)
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_DISP_333, "aclk_disp_333", "div_aclk_disp_333",
- 			ENABLE_ACLK_MIF3, 1,
--			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
-+			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_ACLK_CPIF_200, "aclk_cpif_200", "div_aclk_cpif_200",
- 			ENABLE_ACLK_MIF3, 0,
- 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+On 2016-11-18 08:12, Jaehoon Chung wrote:
+> Add the mshc_2 node for supporting T-flash.
+>
+> And it needs to add the "mshc*" aliases. Because dwmmc driver should be
+> assigned to "ctrl_id" after parsing to "mshc".
+> If there is no aliases for mshc, then it might be set to the wrong
+> capabilities.
+>
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> index 9ea3f32..75dab01 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> @@ -42,6 +42,8 @@
+>   		spi2 = &spi_2;
+>   		spi3 = &spi_3;
+>   		spi4 = &spi_4;
+> +		mshc0 = &mshc_0;
+> +		mshc2 = &mshc_2;
+>   	};
+>   
+>   	chosen {
+> @@ -661,6 +663,23 @@
+>   	assigned-clock-rates = <800000000>;
+>   };
+>   
+> +&mshc_2 {
+> +	status = "okay";
+> +	num-slots = <1>;
+> +	cap-sd-highspeed;
+> +	disable-wp;
+> +	cd-gpios = <&gpa2 4 0>;
+
+cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
+
+> +	cd-inverted;
+> +	card-detect-delay = <200>;
+> +	samsung,dw-mshc-ciu-div = <3>;
+> +	samsung,dw-mshc-sdr-timing = <0 4>;
+> +	samsung,dw-mshc-ddr-timing = <0 2>;
+> +	fifo-depth = <0x80>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
+> +	bus-width = <4>;
+> +};
+> +
+>   &pinctrl_alive {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&initial_alive>;
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
