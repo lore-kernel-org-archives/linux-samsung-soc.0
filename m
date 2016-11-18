@@ -1,83 +1,99 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: exynos: add the mshc_2 node for supporting
- T-Flash
-Date: Fri, 18 Nov 2016 11:38:09 +0100
-Message-ID: <26cc8cc3-0a91-e253-5a10-8e080c3e486f@samsung.com>
-References: <CGME20161118071238epcas4p222702d2c716bf2d7cd9c9354ab99a189@epcas4p2.samsung.com>
- <20161118071224.12876-1-jh80.chung@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] ARM: Drop fixed 200 Hz timer requirement from Samsung
+ platforms
+Date: Fri, 18 Nov 2016 11:43:14 +0100
+Message-ID: <8dfbb04f-d377-b51a-3010-481a5f977507@samsung.com>
+References: <1479453418-25314-1-git-send-email-krzk@kernel.org>
+ <CGME20161118084812epcas4p496b847251f6919e5edc4801a247e0857@epcas4p4.samsung.com>
+ <22757093.ejshJp9T7L@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20161118071224.12876-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49428 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbcKRKnX (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 18 Nov 2016 05:43:23 -0500
+In-reply-to: <22757093.ejshJp9T7L@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Dear Jaehoon,
+On 11/18/2016 09:46 AM, Arnd Bergmann wrote:
+> On Friday, November 18, 2016 9:16:58 AM CET Krzysztof Kozlowski wrote:
+>> > All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
+>> > 200 Hz.  Unfortunately in case of multiplatform image this affects also
+>> > other platforms when Exynos is enabled.
+>> > 
+>> > This looks like an very old legacy code, dating back to initial
+>> > upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
+>> > driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
+>> > unused plat-samsung/time.c").
+>> > 
+>> > Since then, this fixed 200 Hz spread everywhere, including out-of-tree
+>> > Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
+>> > was rather an effect of coincidence instead of conscious choice.
+>> > 
+>> > Exynos uses its own MCT or arch timer and can work with all HZ values.
+>> > Older platforms use newer Samsung PWM timer driver which should handle
+>> > down to 100 Hz.
+>> > 
+>> > Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
+>> > A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
+>> > other values.
+>> > 
+>> > Reported-by: Lee Jones <lee.jones@linaro.org>
+>> > [Dropping 200_HZ from S3C/S5P suggested by Arnd]
+>> > Reported-by: Arnd Bergmann <arnd@arndb.de>
+>> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> > Cc: Kukjin Kim <kgene@kernel.org>
+>> > Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> > 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Maybe add a paragraph about the specific problem:
+> 
+> "On s3c24xx, the PWM counter is only 16 bit wide, and with the
+> typical 12MHz input clock that overflows every 5.5ms. This works
+> with HZ=200 or higher but not with HZ=100 which needs a 10ms
+> interval between ticks. On Later chips (S3C64xx, S5P and EXYNOS),
+> the counter is 32 bits and does not have this problem.
+> The new samsung_pwm_timer driver solves the problem by scaling
+> the input clock by a factor of 50 on s3c24xx, which makes it
+> less accurate but allows HZ=100 as well as CONFIG_NO_HZ with
+> fewer wakeups".
 
+I've tested on S3C2440 SoC based board and I didn't notice any
+issues with HZ=100.
 
-On 2016-11-18 08:12, Jaehoon Chung wrote:
-> Add the mshc_2 node for supporting T-flash.
->
-> And it needs to add the "mshc*" aliases. Because dwmmc driver should be
-> assigned to "ctrl_id" after parsing to "mshc".
-> If there is no aliases for mshc, then it might be set to the wrong
-> capabilities.
->
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index 9ea3f32..75dab01 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -42,6 +42,8 @@
->   		spi2 = &spi_2;
->   		spi3 = &spi_3;
->   		spi4 = &spi_4;
-> +		mshc0 = &mshc_0;
-> +		mshc2 = &mshc_2;
->   	};
->   
->   	chosen {
-> @@ -661,6 +663,23 @@
->   	assigned-clock-rates = <800000000>;
->   };
->   
-> +&mshc_2 {
-> +	status = "okay";
-> +	num-slots = <1>;
-> +	cap-sd-highspeed;
-> +	disable-wp;
-> +	cd-gpios = <&gpa2 4 0>;
+Clock frequencies look a bit different because AFAIU MPLL
+clock is mostly used as a root clock. The 12 MHz oscillator clock
+is used a root clock for the MPLL.
 
-cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
+refclk:    12000 kHz
+mpll:     405000 kHz
+upll:      48000 kHz
+fclk:     405000 kHz
+hclk:     101250 kHz
+pclk:      50625 kHz
 
-> +	cd-inverted;
-> +	card-detect-delay = <200>;
-> +	samsung,dw-mshc-ciu-div = <3>;
-> +	samsung,dw-mshc-sdr-timing = <0 4>;
-> +	samsung,dw-mshc-ddr-timing = <0 2>;
-> +	fifo-depth = <0x80>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
-> +	bus-width = <4>;
-> +};
-> +
->   &pinctrl_alive {
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&initial_alive>;
+So frequency of the timer block's source clock (PCLK) is 50.625 MHz.
+This is further divided by 50 in the prescaler as you pointed out.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+So the 16-bit is clocked with 1012500 Hz clock. I added some printks
+to verify this.
+
+Here is boot log for HZ=200: http://pastebin.com/JuWZdYwh
+and HZ=100 http://pastebin.com/HnDnBfhc
+
+samsung_clocksource_init:351 pclk: 50625000, timer clock_rate: 1012500
+sched_clock: 16 bits at 1012kHz, resolution 987ns, wraps every 32362962ns
+
+I just don't understand why the log says timer overflow is every 32.362 ms
+and not twice this value (65536 * 1/1012500).
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Sylwester
