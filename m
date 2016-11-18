@@ -1,30 +1,53 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFT] ARM: dts: exynos: Fix invalid GIC interrupt flags in audio
- block of Exynos5410
-Date: Fri, 18 Nov 2016 14:45:01 +0100
-Message-ID: <64c5dabd-666d-056d-b761-20350bd3372c@samsung.com>
-References: <CGME20161118125944epcas5p16ff6afeb8e4d286adecad6d1344734de@epcas5p1.samsung.com>
- <1479473964-9085-1-git-send-email-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.10
+Date: Fri, 18 Nov 2016 19:07:58 +0100
+Message-ID: <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
+References: <CGME20161118180800eucas1p24f5dce538660811ac7284ec0d122d563@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1479473964-9085-1-git-send-email-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59929 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbcKRSIF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 18 Nov 2016 13:08:05 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 11/18/2016 01:59 PM, Krzysztof Kozlowski wrote:
-> Recently added audio block of Exynos5410 missed global fixup of GIC
-> interrupt flags.  Interrupt of type IRQ_TYPE_NONE is not allowed for GIC
-> interrupts so use level high.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Tested-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.10-exynos5433
+
+for you to fetch changes up to 37bf4ab84be2ae00f116436eb2c876a0ca953a64:
+
+  clk: exynos5433: Mark some clocks as critical (2016-11-18 13:55:51 +0100)
+
+----------------------------------------------------------------
+Exynos5433 SoC related fixes:
+ - addition of missing documentation and DT properties for the CMU_AUD
+   block source clocks,
+ - correction of CMU_FSYS parent clock definition,
+ - marking as critical clocks which have to be enabled in order
+   to access control registers of child CMUs.
+
+----------------------------------------------------------------
+Marek Szyprowski (3):
+      clk: exynos5433: Fix parent clocks for FSYS block
+      clk: exynos5433: Add documentation for the audio block parent clocks
+      clk: exynos5433: Mark some clocks as critical
+
+ .../bindings/clock/exynos5433-clock.txt       | 13 ++++++--
+ drivers/clk/samsung/clk-exynos5433.c          | 30 +++++++++----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Sylwester
