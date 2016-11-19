@@ -1,36 +1,59 @@
-From: zain wang <wzz@rock-chips.com>
-Subject: [PATCH] drm/panel: simple: add 8bit-bps for Sharp lq123p1jx31
-Date: Sat, 19 Nov 2016 10:27:16 +0800
-Message-ID: <1479522436-7752-1-git-send-email-wzz@rock-chips.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Topic dts arm64 for v4.10
+Date: Fri, 18 Nov 2016 18:00:37 -0800
+Message-ID: <20161119020037.GI2543@localhost>
+References: <1479473075-9787-1-git-send-email-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.138]:48757 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752079AbcKSC1n (ORCPT
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35442 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751713AbcKSCrQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 21:27:43 -0500
+        Fri, 18 Nov 2016 21:47:16 -0500
+Received: by mail-pf0-f194.google.com with SMTP id i88so14466407pfk.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2016 18:47:16 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1479473075-9787-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, zain wang <wzz@rock-chips.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Sharp lq123p1jx31 support 8bit bps.
+On Fri, Nov 18, 2016 at 02:44:34PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Topic branch with a GIC interrupt fix and cleanup. No conflicts expected.
+> No dependencies.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-gic-flags-4.10
+> 
+> for you to fetch changes up to 86bb573d0b2a8e876a12d1348bd0b6e377c1043e:
+> 
+>   arm64: dts: exynos: Use human-friendly symbols for interrupt properties in exynos7 (2016-11-03 22:40:39 +0200)
+> 
+> ----------------------------------------------------------------
+> Topic branch with DT arm64 changes for v4.10.
+> 
+> Fix invalid GIC interrupt flags - type IRQ_TYPE_NONE is not allowed for GIC
+> interrupts.  Although this was working but with error messages like:
+>         genirq: Setting trigger mode 0 for irq 16 failed
+> 
+> Use level high interrupt instead of type none.  The choice of level high was
+> rather an arbitrary decision hoping it will work on each platform.  Tests shown
+> no issues so far.
 
-Signed-off-by: zain wang <wzz@rock-chips.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 1 +
- 1 file changed, 1 insertion(+)
+Merged, thanks.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 113db3c..6b0c026 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1409,6 +1409,7 @@ static const struct drm_display_mode sharp_lq123p1jx31_mode = {
- static const struct panel_desc sharp_lq123p1jx31 = {
- 	.modes = &sharp_lq123p1jx31_mode,
- 	.num_modes = 1,
-+	.bpc = 8,
- 	.size = {
- 		.width = 259,
- 		.height = 173,
--- 
-1.9.1
+
+-Olof
