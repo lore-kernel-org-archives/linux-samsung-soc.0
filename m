@@ -1,102 +1,76 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/2] ARM: dts: exynos: Topic dts for v4.10
-Date: Fri, 18 Nov 2016 18:02:48 -0800
-Message-ID: <20161119020248.GJ2543@localhost>
-References: <1479473075-9787-1-git-send-email-krzk@kernel.org>
- <1479473075-9787-2-git-send-email-krzk@kernel.org>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v5 7/7] iommu/exynos: Use device dependency links to
+ control runtime pm
+Date: Sat, 19 Nov 2016 12:11:57 +0100
+Message-ID: <20161119111157.GA364@wunner.de>
+References: <1476948173-21093-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161020072336eucas1p24a2b020f69b6ae1f55e1760e6e0e94f9@eucas1p2.samsung.com>
+ <1476948173-21093-8-git-send-email-m.szyprowski@samsung.com>
+ <20161107214747.GJ1764@wotan.suse.de>
+ <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36012 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbcKSCrW (ORCPT
+Received: from mailout1.hostsharing.net ([83.223.95.204]:33273 "EHLO
+        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752496AbcKSLKh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Nov 2016 21:47:22 -0500
-Received: by mail-pg0-f68.google.com with SMTP id x23so22204190pgx.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Nov 2016 18:47:21 -0800 (PST)
+        Sat, 19 Nov 2016 06:10:37 -0500
 Content-Disposition: inline
-In-Reply-To: <1479473075-9787-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <4bc652ce-6cf9-f4df-4793-e126cf81079d@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lars-Peter Clausen <lars@metafoo.de>
 
-On Fri, Nov 18, 2016 at 02:44:35PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
+On Tue, Nov 08, 2016 at 08:27:12AM +0100, Marek Szyprowski wrote:
+> On 2016-11-07 22:47, Luis R. Rodriguez wrote:
+> > If so
+> > why? If this issue is present also on systems that only use ACPI is
+> > this possibly due to an ACPI firmware bug  or the lack of some semantics
+> > in ACPI to express ordering in a better way? If the issue is device
+> > tree related only is this due to the lack of semantics in device tree
+> > to express some more complex dependency ?
 > 
-> 
-> Topic branch with a GIC interrupt fixes and cleanup (human-friendly symbols).
-> 
-> Possible rather trivial conflicts:
-> 
-> diff --cc arch/arm/boot/dts/exynos4x12.dtsi
-> index 0074f566cd3b,505f047e81c6..85a7122658f1
-> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> @@@ -147,9 -147,10 +147,10 @@@
->                 };
->   
->                 fimc_is: fimc-is@12000000 {
->  -                      compatible = "samsung,exynos4212-fimc-is", "simple-bus";
->  +                      compatible = "samsung,exynos4212-fimc-is";
->                         reg = <0x12000000 0x260000>;
-> -                       interrupts = <0 90 0>, <0 95 0>;
-> +                       interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
->                         power-domains = <&pd_isp>;
->                         clocks = <&clock CLK_FIMC_LITE0>,
->                                  <&clock CLK_FIMC_LITE1>, <&clock CLK_PPMUISPX>,
-> 
-> diff --cc arch/arm/boot/dts/exynos5410.dtsi
-> index 9a91685d8890,2501249d97aa..bb90bbdbe2d9
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@@ -190,58 -181,8 +190,58 @@@
->                 pinctrl_3: pinctrl@03860000 {
->                         compatible = "samsung,exynos5410-pinctrl";
->                         reg = <0x03860000 0x1000>;
-> -                       interrupts = <0 47 0>;
-> +                       interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
->                 };
->  +
->  +              amba {
->  +                      #address-cells = <1>;
->  +                      #size-cells = <1>;
->  +                      compatible = "simple-bus";
->  +                      interrupt-parent = <&gic>;
->  +                      ranges;
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-gic-flags-4.10
-> 
-> for you to fetch changes up to 04a886727ca7e841afa2fbc5d87aff81ae256dbf:
-> 
->   ARM: dts: exynos: Use human-friendly symbols for interrupt properties in exynos5440 (2016-11-03 22:44:56 +0200)
-> 
-> ----------------------------------------------------------------
-> Topic branch with DT changes for v4.10.
-> 
-> Fix invalid GIC interrupt flags - type IRQ_TYPE_NONE is not allowed for GIC
-> interrupts.  Although this was working but with error messages like:
-> 	genirq: Setting trigger mode 0 for irq 16 failed
-> 
-> Use level high interrupt instead of type none.  The choice of level high was
-> rather an arbitrary decision hoping it will work on each platform.  Tests shown
-> no issues so far.
+> The main feature of device links that is used in this patch is enabling
+> runtime pm dependency between Exynos SYSMMU controller (called it client
+> device) and the device, for which it implements DMA address translation
+> (called master device). The assumptions are following:
+> 1. master device driver is completely unaware of the Exynos SYSMMU presence,
+>    IOMMU is transparently hooked up and managed by DMA-mapping framework
+> 2. SYSMMU belongs to the same power domain as it's master device
+> 3. SYSMMU is optional, master device can fully operate without it, with
+>    simple DMA address translation (DMA address == physical address)
+> 4. Master device implements runtime pm, what in turn causes respective
+>    power domain to be turned on/off
+> 5. DMA-mapping and IOMMU frameworks provides no calls to notify SYSMMU
+>    when its master device is performing DMA operations, so SYSMMU has
+>    to be runtime active
+> 6. Currently SYSMMU always sets its runtime pm status to active after
+>    attaching to its master device to ensure proper hardware state. This
+>    prevents power domain to be turned off, even when master device sets
+>    its runtime pm status to suspended.
+> 7. Exynos SYSMMU has to be runtime active at the same time when its
+>    master device is runtime active to it to perform DMA operations and
+>    allow the power domain to be turned off, when master device is
+>    runtime suspended.
+> 8. The terms of device links, Exynos SYSMMU is a 'consumer' and master
+>    device is a 'supplier'.
 
-Merged, thanks. FYI, you could have based this on the previous DT branch
-if you wanted to not expose the conflicts, but simple ones like these
-(in particular that we can resolve in our own tree) are OK to expose too.
+You seem to have mixed up the consumer and supplier in point 8 above.
+Your code is such that the SYSMMU is the supplier and the master device
+is the consumer:
 
+	device_link_add(dev, data->sysmmu, DL_FLAG_PM_RUNTIME);
 
--Olof
+Prototype of device_link_add:
+
+	struct device_link *device_link_add(struct device *consumer,
+				            struct device *supplier,
+					    u32 flags);
+
+Your code is correct, only point 8 above is wrong.
+
+Best regards,
+
+Lukas
