@@ -1,225 +1,49 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: commit 4dd1837d7589f468ed109556513f476e7a7f9121 breaks build
-Date: Sun, 20 Nov 2016 17:22:48 +0000
-Message-ID: <20161120172248.GW1041@n2100.armlinux.org.uk>
-References: <58310EC6.4020402@math.uni-bielefeld.de>
- <20161120113007.GS1041@n2100.armlinux.org.uk>
- <58318C6A.50104@math.uni-bielefeld.de>
- <20161120123422.GT1041@n2100.armlinux.org.uk>
- <58319D70.7030106@math.uni-bielefeld.de>
- <20161120132502.GV1041@n2100.armlinux.org.uk>
- <alpine.LFD.2.20.1611201131300.1814@knanqh.ubzr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41906 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752145AbcKTRXh (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Nov 2016 12:23:37 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.20.1611201131300.1814@knanqh.ubzr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFT v2 0/5] ASoC: samsung: Minor cleanup for old machines
+Date: Sun, 20 Nov 2016 21:24:50 +0200
+Message-ID: <1479669895-19124-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, viro@zeniv.linux.org.uk, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Nov 20, 2016 at 12:03:50PM -0500, Nicolas Pitre wrote:
-> On Sun, 20 Nov 2016, Russell King - ARM Linux wrote:
-> 
-> > On Sun, Nov 20, 2016 at 01:56:16PM +0100, Tobias Jakobi wrote:
-> > > Hey Russell,
-> > > 
-> > > thanks for the quick reply and looking into this!
-> > > 
-> > > Added Nicolas Pitre to Cc since the ksym trim stuff came from him.
-> > 
-> > Arnd's patch "kbuild: provide include/asm/asm-prototypes.h for ARM" fixes
-> > it, but I think it's a mixture of fixes, and partially dependent on some
-> > other patches.  I don't know what the status of his patch is, but my
-> > feeling is that it consists of more than a single fix, and needs
-> > splitting.  Certainly the asm-prototypes.h is not relevant to this
-> > problem, but the rest of it seems to be.
-> 
-> Well... the problem for the current breakage was identified a while ago:
-> 
-> https://lkml.org/lkml/2016/2/10/686
-> 
-> I'm surprised that Al didn't fold my patch into his.  Now that this has 
-> hit mainline, CONFIG_TRIM_UNUSED_KSYMS is now broken on ARM.
-> 
-> And I don't see how the asm-prototypes.h is going to fix it either (if 
-> anything, at the moment it looks like it might be another source of 
-> breakage).
-> 
-> So I think the folowing patch should go into mainline:
 
-... which looks the same as Arnd's patch with the following changes:
+Hi,
 
-- no asm-prototypes.h
-- adding asm/export.h to each file using EXPORT_SYMBOL() instead of
-   bitops.h
-- not touching:
-	arch/arm/lib/csumpartialcopy.S
-	arch/arm/lib/csumpartialcopygeneric.S
-	arch/arm/lib/csumpartialcopyuser.S
 
-other than that, it's doing the same thing.
+Few patches removing dead code (machines not supported).
 
-I think Arnd's changes to the csumpartial code are unnecessary, and
-yours is, although larger, puts the asm/export.h include in the right
-place.  So please drop yours into the patch system so we can move
-forward fixing some of the problems created during the last merge
-window.
 
-> ----- >8
-> >From 3225f625c116a350c54f361df491bf3e1c6d32b3 Mon Sep 17 00:00:00 2001
-> From: Nicolas Pitre <nicolas.pitre@linaro.org>
-> Date: Wed, 10 Feb 2016 17:40:04 -0500
-> Subject: [PATCH] ARM: don't use assembler macro arguments with EXPORT_SYMBOL()
-> 
-> Committ 4dd1837d75 ("arm: move exports to definitions") added
-> EXPORT_SYMBOL(\name) to bitops.h. Here \name is an assembler macro
-> argument which is not subject to preprocessor substitutions. And the
-> assembler doesn't handle preprocessor macros either. That has the effect
-> of breaking CONFIG_TRIM_UNUSED_KSYMS=y.
-> 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> 
-> diff --git a/arch/arm/lib/bitops.h b/arch/arm/lib/bitops.h
-> index df06638b32..7d807cfd8e 100644
-> --- a/arch/arm/lib/bitops.h
-> +++ b/arch/arm/lib/bitops.h
-> @@ -1,6 +1,5 @@
->  #include <asm/assembler.h>
->  #include <asm/unwind.h>
-> -#include <asm/export.h>
->  
->  #if __LINUX_ARM_ARCH__ >= 6
->  	.macro	bitop, name, instr
-> @@ -26,7 +25,6 @@ UNWIND(	.fnstart	)
->  	bx	lr
->  UNWIND(	.fnend		)
->  ENDPROC(\name		)
-> -EXPORT_SYMBOL(\name	)
->  	.endm
->  
->  	.macro	testop, name, instr, store
-> @@ -57,7 +55,6 @@ UNWIND(	.fnstart	)
->  2:	bx	lr
->  UNWIND(	.fnend		)
->  ENDPROC(\name		)
-> -EXPORT_SYMBOL(\name	)
->  	.endm
->  #else
->  	.macro	bitop, name, instr
-> @@ -77,7 +74,6 @@ UNWIND(	.fnstart	)
->  	ret	lr
->  UNWIND(	.fnend		)
->  ENDPROC(\name		)
-> -EXPORT_SYMBOL(\name	)
->  	.endm
->  
->  /**
-> @@ -106,6 +102,5 @@ UNWIND(	.fnstart	)
->  	ret	lr
->  UNWIND(	.fnend		)
->  ENDPROC(\name		)
-> -EXPORT_SYMBOL(\name	)
->  	.endm
->  #endif
-> diff --git a/arch/arm/lib/changebit.S b/arch/arm/lib/changebit.S
-> index f402786217..1cfdb138d2 100644
-> --- a/arch/arm/lib/changebit.S
-> +++ b/arch/arm/lib/changebit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->                  .text
->  
->  bitop	_change_bit, eor
-> +
-> +EXPORT_SYMBOL(_change_bit)
-> diff --git a/arch/arm/lib/clearbit.S b/arch/arm/lib/clearbit.S
-> index f6b75fb64d..e901ca5af0 100644
-> --- a/arch/arm/lib/clearbit.S
-> +++ b/arch/arm/lib/clearbit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->                  .text
->  
->  bitop	_clear_bit, bic
-> +
-> +EXPORT_SYMBOL(_clear_bit)
-> diff --git a/arch/arm/lib/setbit.S b/arch/arm/lib/setbit.S
-> index 618fedae4b..3c8b11240f 100644
-> --- a/arch/arm/lib/setbit.S
-> +++ b/arch/arm/lib/setbit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->  		.text
->  
->  bitop	_set_bit, orr
-> +
-> +EXPORT_SYMBOL(_set_bit)
-> diff --git a/arch/arm/lib/testchangebit.S b/arch/arm/lib/testchangebit.S
-> index 4becdc3a59..e3d19b87fb 100644
-> --- a/arch/arm/lib/testchangebit.S
-> +++ b/arch/arm/lib/testchangebit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->                  .text
->  
->  testop	_test_and_change_bit, eor, str
-> +
-> +EXPORT_SYMBOL(_test_and_change_bit)
-> diff --git a/arch/arm/lib/testclearbit.S b/arch/arm/lib/testclearbit.S
-> index 918841dcce..d247e6f70f 100644
-> --- a/arch/arm/lib/testclearbit.S
-> +++ b/arch/arm/lib/testclearbit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->                  .text
->  
->  testop	_test_and_clear_bit, bicne, strne
-> +
-> +EXPORT_SYMBOL(_test_and_clear_bit)
-> diff --git a/arch/arm/lib/testsetbit.S b/arch/arm/lib/testsetbit.S
-> index 8d1b2fe9e4..76800ff601 100644
-> --- a/arch/arm/lib/testsetbit.S
-> +++ b/arch/arm/lib/testsetbit.S
-> @@ -9,7 +9,10 @@
->   */
->  #include <linux/linkage.h>
->  #include <asm/assembler.h>
-> +#include <asm/export.h>
->  #include "bitops.h"
->                  .text
->  
->  testop	_test_and_set_bit, orreq, streq
-> +
-> +EXPORT_SYMBOL(_test_and_set_bit)
+Changes since v1:
+1. Squash two smdk_wm8580 changes into patch #2.  Now num_dai_links
+   is always equal to two, so remove also SEC_PLAYBACK dai_link.
+   (suggested by Lars-Peter Clausen).
+
+
+The second patch ([RFT v2 2/5] ASoC: samsung: smdk_wm8580: Remove old platforms and
+drop mach-types usage) requires testing. I hope I understood the code
+correctly.
+
+The last ARM patch is independent. I will take it through samsung-soc
+tree. I put it here for reference.
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (5):
+  ASoC: samsung: Remove non-existing MACH dependencies
+  ASoC: samsung: smdk_wm8580: Remove old platforms and drop mach-types
+    usage
+  ASoC: samsung: Enable COMPILE_TEST for SmartQ and WM8580
+  ASoC: samsung: Enable COMPILE_TEST for entire Samsung ASoc
+  ARM: s5pv210_defconfig: Remove old MACHs
+
+ arch/arm/configs/s5pv210_defconfig |  4 ----
+ sound/soc/samsung/Kconfig          |  8 +++++---
+ sound/soc/samsung/smdk_wm8580.c    | 28 ++--------------------------
+ 3 files changed, 7 insertions(+), 33 deletions(-)
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.7.4
