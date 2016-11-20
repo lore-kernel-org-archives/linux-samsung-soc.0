@@ -1,118 +1,50 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v2 2/5] ASoC: samsung: smdk_wm8580: Remove old platforms and drop mach-types usage
-Date: Sun, 20 Nov 2016 21:24:52 +0200
-Message-ID: <1479669895-19124-3-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 3/5] ASoC: samsung: Enable COMPILE_TEST for SmartQ and WM8580
+Date: Sun, 20 Nov 2016 21:24:53 +0200
+Message-ID: <1479669895-19124-4-git-send-email-krzk@kernel.org>
 References: <1479669895-19124-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:55142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752782AbcKTTZ0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 20 Nov 2016 14:25:26 -0500
 In-Reply-To: <1479669895-19124-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-MACH_SMDKC100, MACH_SMDKV210 and MACH_SMDKC110 are no longer supported
-so we can drop the dead code.  After this the driver no longer
-differentiates between machines (S3C24xx machines are not supported by
-it) so there is no need to override I2S device id in cpu_dai_name and
-SEC_PLAYBACK dai_link can be removed as well.
+The I2S sound drivers for SmartQ board and WM8580 codec can be compile
+tested to increase build coverage.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ sound/soc/samsung/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Not tested. The driver did not override .platform_name which looks
-suspicious to me. However I did not want to add changes which could have
-some visible impact on output code.
-
-Changes since v1:
-1. Squash two smdk_wm8580 patches and use ARRAY_SIZE(smdk_dai), after
-   suggestion from Lars-Peter Clausen.
-2. Remove also SEC_PLAYBACK dai_link.
----
- sound/soc/samsung/smdk_wm8580.c | 30 +++---------------------------
- 1 file changed, 3 insertions(+), 27 deletions(-)
-
-diff --git a/sound/soc/samsung/smdk_wm8580.c b/sound/soc/samsung/smdk_wm8580.c
-index 548bfd993788..de724ce7b955 100644
---- a/sound/soc/samsung/smdk_wm8580.c
-+++ b/sound/soc/samsung/smdk_wm8580.c
-@@ -14,8 +14,6 @@
- #include <sound/soc.h>
- #include <sound/pcm_params.h>
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index ea0fa9971a0c..426ef1c7b265 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -49,7 +49,7 @@ config SND_SOC_SAMSUNG_JIVE_WM8750
  
--#include <asm/mach-types.h>
--
- #include "../codecs/wm8580.h"
- #include "i2s.h"
+ config SND_SOC_SAMSUNG_SMDK_WM8580
+ 	tristate "SoC I2S Audio support for WM8580 on SMDK"
+-	depends on MACH_SMDK6410
++	depends on MACH_SMDK6410 || COMPILE_TEST
+ 	depends on I2C
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_I2S
+@@ -109,7 +109,8 @@ config SND_SOC_SAMSUNG_RX1950_UDA1380
  
-@@ -147,7 +145,6 @@ static int smdk_wm8580_init_paiftx(struct snd_soc_pcm_runtime *rtd)
- enum {
- 	PRI_PLAYBACK = 0,
- 	PRI_CAPTURE,
--	SEC_PLAYBACK,
- };
+ config SND_SOC_SMARTQ
+ 	tristate "SoC I2S Audio support for SmartQ board"
+-	depends on MACH_SMARTQ && I2C
++	depends on MACH_SMARTQ || COMPILE_TEST
++	depends on I2C
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8750
  
- #define SMDK_DAI_FMT (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | \
-@@ -157,7 +154,7 @@ static struct snd_soc_dai_link smdk_dai[] = {
- 	[PRI_PLAYBACK] = { /* Primary Playback i/f */
- 		.name = "WM8580 PAIF RX",
- 		.stream_name = "Playback",
--		.cpu_dai_name = "samsung-i2s.0",
-+		.cpu_dai_name = "samsung-i2s.2",
- 		.codec_dai_name = "wm8580-hifi-playback",
- 		.platform_name = "samsung-i2s.0",
- 		.codec_name = "wm8580.0-001b",
-@@ -167,7 +164,7 @@ static struct snd_soc_dai_link smdk_dai[] = {
- 	[PRI_CAPTURE] = { /* Primary Capture i/f */
- 		.name = "WM8580 PAIF TX",
- 		.stream_name = "Capture",
--		.cpu_dai_name = "samsung-i2s.0",
-+		.cpu_dai_name = "samsung-i2s.2",
- 		.codec_dai_name = "wm8580-hifi-capture",
- 		.platform_name = "samsung-i2s.0",
- 		.codec_name = "wm8580.0-001b",
-@@ -175,23 +172,13 @@ static struct snd_soc_dai_link smdk_dai[] = {
- 		.init = smdk_wm8580_init_paiftx,
- 		.ops = &smdk_ops,
- 	},
--	[SEC_PLAYBACK] = { /* Sec_Fifo Playback i/f */
--		.name = "Sec_FIFO TX",
--		.stream_name = "Playback",
--		.cpu_dai_name = "samsung-i2s-sec",
--		.codec_dai_name = "wm8580-hifi-playback",
--		.platform_name = "samsung-i2s-sec",
--		.codec_name = "wm8580.0-001b",
--		.dai_fmt = SMDK_DAI_FMT,
--		.ops = &smdk_ops,
--	},
- };
- 
- static struct snd_soc_card smdk = {
- 	.name = "SMDK-I2S",
- 	.owner = THIS_MODULE,
- 	.dai_link = smdk_dai,
--	.num_links = 2,
-+	.num_links = ARRAY_SIZE(smdk_dai),
- 
- 	.dapm_widgets = smdk_wm8580_dapm_widgets,
- 	.num_dapm_widgets = ARRAY_SIZE(smdk_wm8580_dapm_widgets),
-@@ -204,17 +191,6 @@ static struct platform_device *smdk_snd_device;
- static int __init smdk_audio_init(void)
- {
- 	int ret;
--	char *str;
--
--	if (machine_is_smdkc100()
--			|| machine_is_smdkv210() || machine_is_smdkc110()) {
--		smdk.num_links = 3;
--	} else if (machine_is_smdk6410()) {
--		str = (char *)smdk_dai[PRI_PLAYBACK].cpu_dai_name;
--		str[strlen(str) - 1] = '2';
--		str = (char *)smdk_dai[PRI_CAPTURE].cpu_dai_name;
--		str[strlen(str) - 1] = '2';
--	}
- 
- 	smdk_snd_device = platform_device_alloc("soc-audio", -1);
- 	if (!smdk_snd_device)
 -- 
 2.7.4
