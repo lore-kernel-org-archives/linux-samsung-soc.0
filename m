@@ -1,36 +1,70 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 5/5] ARM: s5pv210_defconfig: Remove old MACHs
-Date: Sun, 20 Nov 2016 21:24:55 +0200
-Message-ID: <1479669895-19124-6-git-send-email-krzk@kernel.org>
-References: <1479669895-19124-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1479669895-19124-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv2] arm64: dts: exynos: add the mshc_2 node for supporting
+ T-Flash
+Date: Mon, 21 Nov 2016 13:58:39 +0900
+Message-ID: <20161121045839.1444-1-jh80.chung@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44100 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751428AbcKUE6n (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 20 Nov 2016 23:58:43 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 
-Remove non-existing MACH symbols from S5PV210 defconfig.
+Add the mshc_2 node for supporting T-flash.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+And it needs to add the "mshc*" aliases. Because dwmmc driver should be
+assigned to "ctrl_id" after parsing to "mshc".
+If there is no aliases for mshc, then it might be set to the wrong
+capabilities.
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- arch/arm/configs/s5pv210_defconfig | 4 ----
- 1 file changed, 4 deletions(-)
+Changelog on V2:
+- Changed from 0 to GPIO_ACTIVE_HIGH
 
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index fa989902236d..c51f0f02012b 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -9,10 +9,6 @@ CONFIG_ARCH_S5PV210=y
- CONFIG_S3C_LOWLEVEL_UART_PORT=1
- CONFIG_S3C_DEV_FB=y
- CONFIG_S5PV210_SETUP_FB_24BPP=y
--CONFIG_MACH_AQUILA=y
--CONFIG_MACH_GONI=y
--CONFIG_MACH_SMDKC110=y
--CONFIG_MACH_SMDKV210=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_VMSPLIT_2G=y
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index ce41781..88cb6c1 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -45,6 +45,8 @@
+ 		spi2 = &spi_2;
+ 		spi3 = &spi_3;
+ 		spi4 = &spi_4;
++		mshc0 = &mshc_0;
++		mshc2 = &mshc_2;
+ 	};
+ 
+ 	chosen {
+@@ -715,6 +717,23 @@
+ 	assigned-clock-rates = <800000000>;
+ };
+ 
++&mshc_2 {
++	status = "okay";
++	num-slots = <1>;
++	cap-sd-highspeed;
++	disable-wp;
++	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
++	cd-inverted;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	fifo-depth = <0x80>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++};
++
+ &pinctrl_alive {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&initial_alive>;
 -- 
-2.7.4
+2.10.1
