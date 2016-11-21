@@ -1,70 +1,42 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCHv2] arm64: dts: exynos: add the mshc_2 node for supporting
- T-Flash
-Date: Mon, 21 Nov 2016 13:58:39 +0900
-Message-ID: <20161121045839.1444-1-jh80.chung@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44100 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbcKUE6n (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Nov 2016 23:58:43 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
+Date: Mon, 21 Nov 2016 15:01:57 +0900
+Message-ID: <CA+Ln22GyRwywcxdO4Gp67d8TfpjfNzaE0z25=WW9GWibjGkDuQ@mail.gmail.com>
+References: <1479453418-25314-1-git-send-email-krzk@kernel.org> <22757093.ejshJp9T7L@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <22757093.ejshJp9T7L@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 
-Add the mshc_2 node for supporting T-flash.
+2016-11-18 17:46 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> Maybe add a paragraph about the specific problem:
+>
+> "On s3c24xx, the PWM counter is only 16 bit wide, and with the
+> typical 12MHz input clock that overflows every 5.5ms. This works
+> with HZ=200 or higher but not with HZ=100 which needs a 10ms
+> interval between ticks. On Later chips (S3C64xx, S5P and EXYNOS),
+> the counter is 32 bits and does not have this problem.
+> The new samsung_pwm_timer driver solves the problem by scaling
+> the input clock by a factor of 50 on s3c24xx, which makes it
+> less accurate but allows HZ=100 as well as CONFIG_NO_HZ with
+> fewer wakeups".
 
-And it needs to add the "mshc*" aliases. Because dwmmc driver should be
-assigned to "ctrl_id" after parsing to "mshc".
-If there is no aliases for mshc, then it might be set to the wrong
-capabilities.
+One thing to correct here is that the typical clock is PCLK, which is
+derived from one of the PLLs and AFAIR is between 33-66 MHz on
+s3c24xx. Technically you can drive the PWM block from an external
+clock (12 MHz for some board-file based boards), but for simplicity
+this functionality was omitted in the new PWM timer driver used for DT
+boards (which worked fine with the PWM driven by PCLK).
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
-Changelog on V2:
-- Changed from 0 to GPIO_ACTIVE_HIGH
+Also I'm wondering if the divisor we use right now for 16-bit timers
+isn't too small, since it gives us a really short wraparound time,
+which means getting more timer interrupts for longer intervals, kind
+of defeating the benefit of tickless mode. However, AFAICT it doesn't
+affect the HZ problem.
 
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index ce41781..88cb6c1 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -45,6 +45,8 @@
- 		spi2 = &spi_2;
- 		spi3 = &spi_3;
- 		spi4 = &spi_4;
-+		mshc0 = &mshc_0;
-+		mshc2 = &mshc_2;
- 	};
- 
- 	chosen {
-@@ -715,6 +717,23 @@
- 	assigned-clock-rates = <800000000>;
- };
- 
-+&mshc_2 {
-+	status = "okay";
-+	num-slots = <1>;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	cd-gpios = <&gpa2 4 GPIO_ACTIVE_HIGH>;
-+	cd-inverted;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	fifo-depth = <0x80>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+};
-+
- &pinctrl_alive {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&initial_alive>;
--- 
-2.10.1
+Best regards.
+Tomasz
