@@ -1,28 +1,30 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: PM / devfreq: exynos-bus: need for suspend OPP?
-Date: Tue, 22 Nov 2016 00:06:03 +0900
-Message-ID: <CAJ0PZbT6FDC382Z7N8ky+MX2auekCGSOuES8O3L3FtnGc6XOWw@mail.gmail.com>
-References: <5832F792.4010308@math.uni-bielefeld.de> <7d5d2c7c-6ebb-b4c1-5f3f-f794c249ca36@fivetechno.de>
-Reply-To: myungjoo.ham@gmail.com
+Date: Mon, 21 Nov 2016 16:16:24 +0100
+Message-ID: <58330FC8.5090606@math.uni-bielefeld.de>
+References: <5832F792.4010308@math.uni-bielefeld.de>
+ <7d5d2c7c-6ebb-b4c1-5f3f-f794c249ca36@fivetechno.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35832 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753755AbcKUPGU (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:54139 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752814AbcKUPQ2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Nov 2016 10:06:20 -0500
-Received: by mail-it0-f67.google.com with SMTP id b123so15512091itb.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Nov 2016 07:06:19 -0800 (PST)
+        Mon, 21 Nov 2016 10:16:28 -0500
 In-Reply-To: <7d5d2c7c-6ebb-b4c1-5f3f-f794c249ca36@fivetechno.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Markus Reichl <m.reichl@fivetechno.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
 
-On Mon, Nov 21, 2016 at 11:48 PM, Markus Reichl <m.reichl@fivetechno.de> wrote:
+Hello Markus,
+
+
+Markus Reichl wrote:
 > Hi Tobias,
->
+> 
 > Am 21.11.2016 um 14:33 schrieb Tobias Jakobi:
 >> Hello everyone,
 >>
@@ -54,39 +56,37 @@ On Mon, Nov 21, 2016 at 11:48 PM, Markus Reichl <m.reichl@fivetechno.de> wrote:
 >>
 >> I'm not saying that it does. This just came to my mind during some
 >> recent discussion.
->
+> 
 > Made a test with
-> # echo performance > /sys/class/devfreq/bus_leftbus/governor
-> # echo performance > /sys/class/devfreq/bus_dmc/governor
+> # echo performance > /sys/class/devfreq/bus_leftbus/governor 
+> # echo performance > /sys/class/devfreq/bus_dmc/governor 
 > just before reboot.
->
+> 
 > 20 out of 20 reboots worked.
->
+> 
 > With devfreq simple_ondemand governor around 50% reboots hung.
->
+thanks for the tests. I assume by 'reboots hung' you mean that the boot
+process doesn't even reach u-boot?
+
+- Tobias
+
+
 > This could support your thoughts above.
->
+> 
 > Servus,
 > --
 > Markus
-
-Either in each device driver (just implemented in the suspend/resume callback)
-or in subsystem code, we may need to handle the inconsistency after resume.
-
-This is normally because the BL0 bootloader of the CPU simply resets the values
-at wake-up. I think recent Exynos series don't do that anymore, but
-4412 might be
-the one before such improvement.
-
-You may make it stable by first implementing suspend/resume callback
-correctly for them.
-
-Adding such feature at devfreq subsystem isn't bad as long as it incurs
-minimal changes (no new extern functions are required for that)
-and does not affect those who do not need it or shouldn't do it.
-(recent attempts were not satisfying those criteria)
-
-
-
-Cheers,
-MyungJoo
+>>
+>>
+>> With best wishes,
+>> Tobias
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
