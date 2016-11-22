@@ -1,108 +1,45 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: remove the cd-gpios property for eMMC of
- odroid-xu3/4
-Date: Tue, 22 Nov 2016 17:19:30 +0900
-Message-ID: <00c4e163-98ed-fcc5-2248-22c697967032@samsung.com>
-References: <20161121071032.10183-1-jh80.chung@samsung.com>
- <CGME20161121170629epcas3p4ef4f3b98d44d31f456d75c33715f6b4a@epcas3p4.samsung.com>
- <20161121170605.GA8181@kozik-lap>
- <9ecce088-b91d-d51a-5a19-33476961d2ea@samsung.com>
- <7e072e61-0a14-ebee-03ac-2eff4f029848@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: commit 4dd1837d7589f468ed109556513f476e7a7f9121 breaks build
+Date: Tue, 22 Nov 2016 12:11:41 +0100
+Message-ID: <11556597.ehuL0N36ia@wuerfel>
+References: <58310EC6.4020402@math.uni-bielefeld.de> <alpine.LFD.2.20.1611201131300.1814@knanqh.ubzr> <20161120172248.GW1041@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <7e072e61-0a14-ebee-03ac-2eff4f029848@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com, jy0922.shim@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:61994 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932708AbcKVLMM (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 22 Nov 2016 06:12:12 -0500
+In-Reply-To: <20161120172248.GW1041@n2100.armlinux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, viro@zeniv.linux.org.uk, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 11/22/2016 04:51 PM, Andrzej Hajda wrote:
-> On 22.11.2016 02:24, Jaehoon Chung wrote:
->> On 11/22/2016 02:06 AM, Krzysztof Kozlowski wrote:
->>> On Mon, Nov 21, 2016 at 04:10:32PM +0900, Jaehoon Chung wrote:
->>>> Odroid-xu3/4 didn't need to use the cd-gpios for detecting card.
->>>> Because Host controller has the CDETECT register through SDx_CDN line.
->>>> Host controller can know whether card is inserted or not with this
->>>> register.
->>>>
->>>> When i have checked the Odroid-xu3/4, they are using CDETECT register.
->>>> (Not using exteranl cd-gpio.)
->>> Makes sense. Just one question: the sd0_cd pinctrl setting should stay,
->>> right?
->> Right, It needs to use SD0_CD function.
->> I have tested on Odroid-XU3/XU4.
->>
->> Tested with the below cases.
->>
->> 1) On boot with SD-card (without eMMC)
->> - Inserted eMMC : Detected
->> - Removed eMMC : Detected
->>
->> 2) On boot with Sd-card (with eMMC)
->> - Detected
->>
->> 3) On boot with eMMC 
->> - Detected
+On Sunday, November 20, 2016 5:22:48 PM CET Russell King - ARM Linux wrote:
+> - not touching:
+>         arch/arm/lib/csumpartialcopy.S
+>         arch/arm/lib/csumpartialcopygeneric.S
+>         arch/arm/lib/csumpartialcopyuser.S
 > 
-> I suspect that MMC device (or its parts) should be always awake to keep
-> working CDETECT register. With cd-gpio it should be possible to power it
-> off when unused but still having detection working, am I right? I am not
-> familiar enough with the code to be certain that it improves PM but it
-> could be the case.
+> other than that, it's doing the same thing.
+> 
+> I think Arnd's changes to the csumpartial code are unnecessary, and
+> yours is, although larger, puts the asm/export.h include in the right
+> place.  So please drop yours into the patch system so we can move
+> forward fixing some of the problems created during the last merge
+> window.
 
-CDETECT register is used only "card is present or not". not needs to keep power..
+Right, the csumpartialcopy*.S changes are no longer needed after
+commit cc6acc11cad1 ("kbuild: be more careful about matching
+preprocessed asm ___EXPORT_SYMBOL") solves the problem more
+generally.
 
-> 
-> My other question is about polling thread, original patch was developed
-> to avoid polling thread which caused occasional hangs, crashes and
-> unnecessary work. Since then lot of mmc code changed and I do not follow
-> these changes. So my question is if this patch will not re-enable polling?
+I've submitted a new version of my patch, now just adding the
+one header file that is needed to get MODVERSIONS back working,
+plus the second patch for mmiocpy/mmioset to partially revert
+Al's original change.
 
-This patch didn't use polling scheme. It just uses the CDETECT register for detecting.
-And Host controller has enabled the Card detect bit at INTMSK register.
-(For interrupt handling)
-
-Best Regards,
-Jaehoon Chung
-
-> 
-> Regards
-> Andrzej
-> 
->>
->> Best Regards,
->> Jaehoon Chung
->>
->>> Best regards,
->>> Krzysztof
->>>
->>>> Fixes: fb1aeedb61ad ("ARM: dts: add mmc detect gpio for exynos5422-odroidxu3")
->>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>>> ---
->>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
->>>>  1 file changed, 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> index 9e63328..05b9afdd 100644
->>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->>>> @@ -510,7 +510,6 @@
->>>>  &mmc_0 {
->>>>  	status = "okay";
->>>>  	mmc-pwrseq = <&emmc_pwrseq>;
->>>> -	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
->>>>  	card-detect-delay = <200>;
->>>>  	samsung,dw-mshc-ciu-div = <3>;
->>>>  	samsung,dw-mshc-sdr-timing = <0 4>;
->>>> -- 
->>>> 2.10.1
->>>>
->>>
->>>
->>
->>
-> 
-> 
-> 
+	Arnd
