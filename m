@@ -1,82 +1,36 @@
-From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos: remove the cd-gpios property for eMMC of
- odroid-xu3/4
-Date: Tue, 22 Nov 2016 10:24:21 +0900
-Message-ID: <9ecce088-b91d-d51a-5a19-33476961d2ea@samsung.com>
-References: <20161121071032.10183-1-jh80.chung@samsung.com>
- <CGME20161121170629epcas3p4ef4f3b98d44d31f456d75c33715f6b4a@epcas3p4.samsung.com>
- <20161121170605.GA8181@kozik-lap>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.10
+Date: Mon, 21 Nov 2016 17:28:27 -0800
+Message-ID: <20161122012827.GA25626@codeaurora.org>
+References: <CGME20161118180800eucas1p24f5dce538660811ac7284ec0d122d563@eucas1p2.samsung.com>
+ <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20161121170605.GA8181@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11/22/2016 02:06 AM, Krzysztof Kozlowski wrote:
-> On Mon, Nov 21, 2016 at 04:10:32PM +0900, Jaehoon Chung wrote:
->> Odroid-xu3/4 didn't need to use the cd-gpios for detecting card.
->> Because Host controller has the CDETECT register through SDx_CDN line.
->> Host controller can know whether card is inserted or not with this
->> register.
->>
->> When i have checked the Odroid-xu3/4, they are using CDETECT register.
->> (Not using exteranl cd-gpio.)
+On 11/18, Sylwester Nawrocki wrote:
 > 
-> Makes sense. Just one question: the sd0_cd pinctrl setting should stay,
-> right?
-
-Right, It needs to use SD0_CD function.
-I have tested on Odroid-XU3/XU4.
-
-Tested with the below cases.
-
-1) On boot with SD-card (without eMMC)
-- Inserted eMMC : Detected
-- Removed eMMC : Detected
-
-2) On boot with Sd-card (with eMMC)
-- Detected
-
-3) On boot with eMMC 
-- Detected
-
-Best Regards,
-Jaehoon Chung
-
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 > 
-> Best regards,
-> Krzysztof
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 > 
->> Fixes: fb1aeedb61ad ("ARM: dts: add mmc detect gpio for exynos5422-odroidxu3")
->> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> index 9e63328..05b9afdd 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
->> @@ -510,7 +510,6 @@
->>  &mmc_0 {
->>  	status = "okay";
->>  	mmc-pwrseq = <&emmc_pwrseq>;
->> -	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
->>  	card-detect-delay = <200>;
->>  	samsung,dw-mshc-ciu-div = <3>;
->>  	samsung,dw-mshc-sdr-timing = <0 4>;
->> -- 
->> 2.10.1
->>
+> are available in the git repository at:
 > 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.10-exynos5433
 > 
+> for you to fetch changes up to 37bf4ab84be2ae00f116436eb2c876a0ca953a64:
+> 
+>   clk: exynos5433: Mark some clocks as critical (2016-11-18 13:55:51 +0100)
 > 
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks. Pulled into clk-next.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
