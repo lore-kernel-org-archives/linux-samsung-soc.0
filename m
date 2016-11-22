@@ -1,36 +1,58 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.10
-Date: Mon, 21 Nov 2016 17:28:27 -0800
-Message-ID: <20161122012827.GA25626@codeaurora.org>
-References: <CGME20161118180800eucas1p24f5dce538660811ac7284ec0d122d563@eucas1p2.samsung.com>
- <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Tue, 22 Nov 2016 14:48:05 +0900
+Message-ID: <1479793685-5074-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36610 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbcKVFsI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 22 Nov 2016 00:48:08 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OH101U154419K40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Nov 2016 14:48:05 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On 11/18, Sylwester Nawrocki wrote:
-> 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.10-exynos5433
-> 
-> for you to fetch changes up to 37bf4ab84be2ae00f116436eb2c876a0ca953a64:
-> 
->   clk: exynos5433: Mark some clocks as critical (2016-11-18 13:55:51 +0100)
-> 
+Hi Dave,
 
-Thanks. Pulled into clk-next.
+   No critial patch but it make sure to unmap the region
+   if HDMI probing failed, and it includes two trivial fixups.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+   Please kindly let me know if there is any problem.
+
+Thanks,
+Inki Dae
+
+The following changes since commit c2ee69d83b2b14d68ad7ee1773fc1d40e97f201d:
+
+  Merge tag 'drm-intel-fixes-2016-11-17' of ssh://git.freedesktop.org/git/drm-intel into drm-fixes (2016-11-18 10:33:28 +1000)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos exynos-drm-fixes
+
+for you to fetch changes up to 0260e20f4bf3f4f70240fed70726c7eb19a99fd5:
+
+  drm/exynos: gsc: fix spelling mistakes (2016-11-21 14:03:49 +0900)
+
+----------------------------------------------------------------
+Arvind Yadav (1):
+      gpu/drm/exynos/exynos_hdmi - Unmap region obtained by of_iomap
+
+Colin Ian King (1):
+      drm/exynos: gsc: fix spelling mistakes
+
+Shuah Khan (1):
+      exynos-drm: Fix error messages to print flags and size
+
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.c  | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c  | 2 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 5 +++++
+ 4 files changed, 9 insertions(+), 4 deletions(-)
