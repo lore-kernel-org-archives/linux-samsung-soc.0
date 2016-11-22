@@ -1,47 +1,141 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: PM / devfreq: exynos-bus: need for suspend OPP?
-Date: Tue, 22 Nov 2016 21:39:09 +0900
-Message-ID: <CAJ0PZbSMzpr76X8swG7YDFagphjBrE+Fb41pP3cu6=bucFeGSQ@mail.gmail.com>
-References: <5832F792.4010308@math.uni-bielefeld.de> <7d5d2c7c-6ebb-b4c1-5f3f-f794c249ca36@fivetechno.de>
- <CAJ0PZbT6FDC382Z7N8ky+MX2auekCGSOuES8O3L3FtnGc6XOWw@mail.gmail.com>
- <58331166.1010403@math.uni-bielefeld.de> <CAJ0PZbSpNFC+0GzNMS=Q2O3qn2=gdxYt=mK=DEMBSBCBXMz-RA@mail.gmail.com>
- <58337215.3090503@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36709 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbcKVMj0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Nov 2016 07:39:26 -0500
-Received: by mail-io0-f195.google.com with SMTP id k19so10662812iod.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2016 04:39:26 -0800 (PST)
-In-Reply-To: <58337215.3090503@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: smdk_wm8580: Remove old platforms and drop mach-types usage" to the asoc tree
+Date: Tue, 22 Nov 2016 17:26:31 +0000
+Message-ID: <E1c9Epz-0005o0-BN@debutante>
+References: <1479669895-19124-3-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479669895-19124-3-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Markus Reichl <m.reichl@fivetechno.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Nov 22, 2016 at 7:15 AM, Tobias Jakobi
-<tjakobi@math.uni-bielefeld.de> wrote:
-> OK, I don't think this is as easy implementable as MyungJoo implied.
->
-> - exynos_bus_suspend() and exynos_bus_resume() are not called during
-> shutdown/reboot.
+The patch
 
-You don't need them at shutdown/reboot. probe() is going to be called
-afterwards anyway.
+   ASoC: samsung: smdk_wm8580: Remove old platforms and drop mach-types usage
 
->
-> - devfreq_suspend_device() and devfreq_resume_device() have to be called
-> from driver code.
+has been applied to the asoc tree at
 
-Yes. That's the limitation.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-The easiest way is to fix the freq/volt at device driver.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Unless devfreq manages struct device directly at subsystem, it won't
-be easy to manage device's suspend/resume directly.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-MyungJoo
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From cd9e2b62768c21c051c585f9d4935b4fa6e9603e Mon Sep 17 00:00:00 2001
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sun, 20 Nov 2016 21:24:52 +0200
+Subject: [PATCH] ASoC: samsung: smdk_wm8580: Remove old platforms and drop
+ mach-types usage
+
+MACH_SMDKC100, MACH_SMDKV210 and MACH_SMDKC110 are no longer supported
+so we can drop the dead code.  After this the driver no longer
+differentiates between machines (S3C24xx machines are not supported by
+it) so there is no need to override I2S device id in cpu_dai_name and
+SEC_PLAYBACK dai_link can be removed as well.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/smdk_wm8580.c | 30 +++---------------------------
+ 1 file changed, 3 insertions(+), 27 deletions(-)
+
+diff --git a/sound/soc/samsung/smdk_wm8580.c b/sound/soc/samsung/smdk_wm8580.c
+index 548bfd993788..de724ce7b955 100644
+--- a/sound/soc/samsung/smdk_wm8580.c
++++ b/sound/soc/samsung/smdk_wm8580.c
+@@ -14,8 +14,6 @@
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
+ 
+-#include <asm/mach-types.h>
+-
+ #include "../codecs/wm8580.h"
+ #include "i2s.h"
+ 
+@@ -147,7 +145,6 @@ static int smdk_wm8580_init_paiftx(struct snd_soc_pcm_runtime *rtd)
+ enum {
+ 	PRI_PLAYBACK = 0,
+ 	PRI_CAPTURE,
+-	SEC_PLAYBACK,
+ };
+ 
+ #define SMDK_DAI_FMT (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | \
+@@ -157,7 +154,7 @@ static struct snd_soc_dai_link smdk_dai[] = {
+ 	[PRI_PLAYBACK] = { /* Primary Playback i/f */
+ 		.name = "WM8580 PAIF RX",
+ 		.stream_name = "Playback",
+-		.cpu_dai_name = "samsung-i2s.0",
++		.cpu_dai_name = "samsung-i2s.2",
+ 		.codec_dai_name = "wm8580-hifi-playback",
+ 		.platform_name = "samsung-i2s.0",
+ 		.codec_name = "wm8580.0-001b",
+@@ -167,7 +164,7 @@ static struct snd_soc_dai_link smdk_dai[] = {
+ 	[PRI_CAPTURE] = { /* Primary Capture i/f */
+ 		.name = "WM8580 PAIF TX",
+ 		.stream_name = "Capture",
+-		.cpu_dai_name = "samsung-i2s.0",
++		.cpu_dai_name = "samsung-i2s.2",
+ 		.codec_dai_name = "wm8580-hifi-capture",
+ 		.platform_name = "samsung-i2s.0",
+ 		.codec_name = "wm8580.0-001b",
+@@ -175,23 +172,13 @@ static struct snd_soc_dai_link smdk_dai[] = {
+ 		.init = smdk_wm8580_init_paiftx,
+ 		.ops = &smdk_ops,
+ 	},
+-	[SEC_PLAYBACK] = { /* Sec_Fifo Playback i/f */
+-		.name = "Sec_FIFO TX",
+-		.stream_name = "Playback",
+-		.cpu_dai_name = "samsung-i2s-sec",
+-		.codec_dai_name = "wm8580-hifi-playback",
+-		.platform_name = "samsung-i2s-sec",
+-		.codec_name = "wm8580.0-001b",
+-		.dai_fmt = SMDK_DAI_FMT,
+-		.ops = &smdk_ops,
+-	},
+ };
+ 
+ static struct snd_soc_card smdk = {
+ 	.name = "SMDK-I2S",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = smdk_dai,
+-	.num_links = 2,
++	.num_links = ARRAY_SIZE(smdk_dai),
+ 
+ 	.dapm_widgets = smdk_wm8580_dapm_widgets,
+ 	.num_dapm_widgets = ARRAY_SIZE(smdk_wm8580_dapm_widgets),
+@@ -204,17 +191,6 @@ static struct platform_device *smdk_snd_device;
+ static int __init smdk_audio_init(void)
+ {
+ 	int ret;
+-	char *str;
+-
+-	if (machine_is_smdkc100()
+-			|| machine_is_smdkv210() || machine_is_smdkc110()) {
+-		smdk.num_links = 3;
+-	} else if (machine_is_smdk6410()) {
+-		str = (char *)smdk_dai[PRI_PLAYBACK].cpu_dai_name;
+-		str[strlen(str) - 1] = '2';
+-		str = (char *)smdk_dai[PRI_CAPTURE].cpu_dai_name;
+-		str[strlen(str) - 1] = '2';
+-	}
+ 
+ 	smdk_snd_device = platform_device_alloc("soc-audio", -1);
+ 	if (!smdk_snd_device)
+-- 
+2.10.2
