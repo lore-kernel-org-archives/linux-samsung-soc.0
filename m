@@ -1,41 +1,33 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: remove the cd-gpios property for eMMC
- of odroid-xu3/4
-Date: Wed, 23 Nov 2016 19:20:46 +0200
-Message-ID: <20161123172046.GB4408@kozik-lap>
-References: <20161121071032.10183-1-jh80.chung@samsung.com>
- <CGME20161121170629epcas3p4ef4f3b98d44d31f456d75c33715f6b4a@epcas3p4.samsung.com>
- <20161121170605.GA8181@kozik-lap>
- <9ecce088-b91d-d51a-5a19-33476961d2ea@samsung.com>
- <7e072e61-0a14-ebee-03ac-2eff4f029848@samsung.com>
- <00c4e163-98ed-fcc5-2248-22c697967032@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: exynos: enable hs400 mode for eMMC for TM2
+Date: Wed, 23 Nov 2016 19:29:26 +0200
+Message-ID: <20161123172926.GA32567@kozik-lap>
+References: <20161123074334.27784-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <00c4e163-98ed-fcc5-2248-22c697967032@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com, jy0922.shim@samsung.com
+In-Reply-To: <20161123074334.27784-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 22, 2016 at 05:19:30PM +0900, Jaehoon Chung wrote:
-> On 11/22/2016 04:51 PM, Andrzej Hajda wrote:
-> > On 22.11.2016 02:24, Jaehoon Chung wrote:
-> >> On 11/22/2016 02:06 AM, Krzysztof Kozlowski wrote:
-> >>> On Mon, Nov 21, 2016 at 04:10:32PM +0900, Jaehoon Chung wrote:
-> >>>> Odroid-xu3/4 didn't need to use the cd-gpios for detecting card.
-> >>>> Because Host controller has the CDETECT register through SDx_CDN line.
-> >>>> Host controller can know whether card is inserted or not with this
-> >>>> register.
-> >>>>
-> >>>> When i have checked the Odroid-xu3/4, they are using CDETECT register.
-> >>>> (Not using exteranl cd-gpio.)
-> >>> Makes sense. Just one question: the sd0_cd pinctrl setting should stay,
-> >>> right?
-
-Thanks, applied with removal of Fixes tag because commit description did
-not mention any issue, error or wrong behavior to fix.
+On Wed, Nov 23, 2016 at 04:43:34PM +0900, Jaehoon Chung wrote:
+> TM2 can support the HS400 mode, but eMMC is working as the lowest mode.
+> This patch added the properties for HS400 and other modes.
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+Thanks, applied.
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
