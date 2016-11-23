@@ -1,62 +1,42 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] soc_device_match() interface for matching against soc_bus attributes
-Date: Wed, 23 Nov 2016 13:32:56 +0100
-Message-ID: <1479904376-12453-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: arm@kernel.org
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms+renesas@verge.net.au>, Krzysztof Kozlowski <krzk@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Yangbo Lu <yangbo.lu@nxp.com>, lf Hansson <ulf.hansson@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 0/4] PM / devfreq: draft for OPP suspend impl
+Date: Wed, 23 Nov 2016 14:51:23 +0100
+Message-ID: <1479909087-22659-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58235 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936535AbcKWNvk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 23 Nov 2016 08:51:40 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, m.reichl@fivetechno.de, myungjoo.ham@gmail.com, cw00.choi@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-	Hi Olof, Kevin, Arnd,
+Hello everyone,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+this is a (rought) draft for the idea discussed here:
+http://www.spinics.net/lists/linux-samsung-soc/msg56311.html
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+The series is not tested, I don't know if it's even doing what it's supposed to. It's just to show what I have in mind.
 
-are available in the git repository at:
+Code is obviously inspired by CPUFreq.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/soc-device-match-tag1
+With best wishes,
+Tobias
 
-for you to fetch changes up to da65a1589dacc7ec44ea0557a14d70a39d991f32:
+Tobias Jakobi (4):
+  PM / devfreq: Add DevFreq subsystem suspend/resume
+  PM / devfreq: suspend subsystem on system suspend/hibernate
+  PM / devfreq: exynos-bus: add support for suspend OPP
+  ARM: dts: exynos4x12: add suspend OPP for DMC and leftbus
 
-  base: soc: Provide a dummy implementation of soc_device_match() (2016-11-10 10:10:37 +0100)
+ arch/arm/boot/dts/exynos4x12.dtsi |  2 ++
+ drivers/base/power/main.c         |  3 ++
+ drivers/devfreq/devfreq.c         | 75 +++++++++++++++++++++++++++++++++++++++
+ drivers/devfreq/exynos-bus.c      |  8 +++++
+ include/linux/devfreq.h           | 10 ++++++
+ 5 files changed, 98 insertions(+)
 
-----------------------------------------------------------------
-soc_device_match() interface for matching against soc_bus attributes
-
-This provides core infrastructure as a dependency for several users
-(Freescale/NXP, Samsung, Renesas).
-
-Its core parts have been acked by Greg, and the fixes by Arnd and/or
-Greg (the last fix only received an informal ack, that's why I hadn't
-added the ack).
-
-This has already been pulled by Ulf, and is present in mmc/next, as a
-dependency for a Freescale/NXP driver update.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      base: soc: Introduce soc_device_match() interface
-
-Geert Uytterhoeven (3):
-      base: soc: Early register bus when needed
-      base: soc: Check for NULL SoC device attributes
-      base: soc: Provide a dummy implementation of soc_device_match()
-
- drivers/base/Kconfig    |  1 +
- drivers/base/soc.c      | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/sys_soc.h |  9 ++++++
- 3 files changed, 89 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+2.7.3
