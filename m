@@ -1,39 +1,62 @@
-From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] arm64: dts: exynos: enable hs400 mode for eMMC for TM2
-Date: Wed, 23 Nov 2016 16:43:34 +0900
-Message-ID: <20161123074334.27784-1-jh80.chung@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] soc_device_match() interface for matching against soc_bus attributes
+Date: Wed, 23 Nov 2016 13:32:56 +0100
+Message-ID: <1479904376-12453-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: arm@kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms+renesas@verge.net.au>, Krzysztof Kozlowski <krzk@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Yangbo Lu <yangbo.lu@nxp.com>, lf Hansson <ulf.hansson@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-TM2 can support the HS400 mode, but eMMC is working as the lowest mode.
-This patch added the properties for HS400 and other modes.
+	Hi Olof, Kevin, Arnd,
 
-Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 3 +++
- 1 file changed, 3 insertions(+)
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index 88cb6c1..f21bdc2 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -701,6 +701,9 @@
- &mshc_0 {
- 	status = "okay";
- 	num-slots = <1>;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
- 	non-removable;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
--- 
-2.10.1
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/soc-device-match-tag1
+
+for you to fetch changes up to da65a1589dacc7ec44ea0557a14d70a39d991f32:
+
+  base: soc: Provide a dummy implementation of soc_device_match() (2016-11-10 10:10:37 +0100)
+
+----------------------------------------------------------------
+soc_device_match() interface for matching against soc_bus attributes
+
+This provides core infrastructure as a dependency for several users
+(Freescale/NXP, Samsung, Renesas).
+
+Its core parts have been acked by Greg, and the fixes by Arnd and/or
+Greg (the last fix only received an informal ack, that's why I hadn't
+added the ack).
+
+This has already been pulled by Ulf, and is present in mmc/next, as a
+dependency for a Freescale/NXP driver update.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      base: soc: Introduce soc_device_match() interface
+
+Geert Uytterhoeven (3):
+      base: soc: Early register bus when needed
+      base: soc: Check for NULL SoC device attributes
+      base: soc: Provide a dummy implementation of soc_device_match()
+
+ drivers/base/Kconfig    |  1 +
+ drivers/base/soc.c      | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sys_soc.h |  9 ++++++
+ 3 files changed, 89 insertions(+)
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
