@@ -1,66 +1,45 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: PM / devfreq: exynos-bus: need for suspend OPP?
-Date: Wed, 23 Nov 2016 14:55:03 +0100
-Message-ID: <58359FB7.4010406@math.uni-bielefeld.de>
-References: <5832F792.4010308@math.uni-bielefeld.de>
- <7d5d2c7c-6ebb-b4c1-5f3f-f794c249ca36@fivetechno.de>
- <CAJ0PZbT6FDC382Z7N8ky+MX2auekCGSOuES8O3L3FtnGc6XOWw@mail.gmail.com>
- <58331166.1010403@math.uni-bielefeld.de>
- <CAJ0PZbSpNFC+0GzNMS=Q2O3qn2=gdxYt=mK=DEMBSBCBXMz-RA@mail.gmail.com>
- <58337215.3090503@math.uni-bielefeld.de>
- <CAJ0PZbSMzpr76X8swG7YDFagphjBrE+Fb41pP3cu6=bucFeGSQ@mail.gmail.com>
+From: Niklas Cassel <niklas.cassel@axis.com>
+Subject: [PATCH 2/4] ARM: dts: exynos: specify snps,dwmac in compatible string for gmac
+Date: Wed, 23 Nov 2016 15:24:51 +0100
+Message-ID: <1479911091-19812-1-git-send-email-niklass@axis.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58264 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935089AbcKWNzE (ORCPT
+Received: from bes.se.axis.com ([195.60.68.10]:56858 "EHLO bes.se.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756519AbcKWOZe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Nov 2016 08:55:04 -0500
-In-Reply-To: <CAJ0PZbSMzpr76X8swG7YDFagphjBrE+Fb41pP3cu6=bucFeGSQ@mail.gmail.com>
+        Wed, 23 Nov 2016 09:25:34 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@gmail.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Markus Reichl <m.reichl@fivetechno.de>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Niklas Cassel <niklass@axis.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello again,
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-I've just send a draft for the patch(set) I have in mind.
+devicetree binding for stmmac states:
+- compatible: Should be "snps,dwmac-<ip_version>", "snps,dwmac"
+	For backwards compatibility: "st,spear600-gmac" is also supported.
 
-It's still in bad shape and I would appreciate some comments from the
-guys more versed with the DevFreq subsystem than me. In particular I'm
-not sure how exactly the various components (exynos-bus, devfreq,
-devfreq-event, governor) work together.
+No functional change intended.
 
-- Tobias
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-MyungJoo Ham wrote:
-> On Tue, Nov 22, 2016 at 7:15 AM, Tobias Jakobi
-> <tjakobi@math.uni-bielefeld.de> wrote:
->> OK, I don't think this is as easy implementable as MyungJoo implied.
->>
->> - exynos_bus_suspend() and exynos_bus_resume() are not called during
->> shutdown/reboot.
-> 
-> You don't need them at shutdown/reboot. probe() is going to be called
-> afterwards anyway.
-> 
->>
->> - devfreq_suspend_device() and devfreq_resume_device() have to be called
->> from driver code.
-> 
-> Yes. That's the limitation.
-> 
-> The easiest way is to fix the freq/volt at device driver.
-> 
-> Unless devfreq manages struct device directly at subsystem, it won't
-> be easy to manage device's suspend/resume directly.
-> 
-> 
-> MyungJoo
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 97c9f0e38526..2a2e570bbee6 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -197,7 +197,7 @@
+ 	};
+ 
+ 	gmac: ethernet@00230000 {
+-		compatible = "snps,dwmac-3.70a";
++		compatible = "snps,dwmac-3.70a", "snps,dwmac";
+ 		reg = <0x00230000 0x8000>;
+ 		interrupt-parent = <&gic>;
+ 		interrupts = <GIC_SPI 31 4>;
+-- 
+2.1.4
