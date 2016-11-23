@@ -1,33 +1,73 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: exynos: enable hs400 mode for eMMC for TM2
-Date: Wed, 23 Nov 2016 19:29:26 +0200
-Message-ID: <20161123172926.GA32567@kozik-lap>
-References: <20161123074334.27784-1-jh80.chung@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] ARM: Drop fixed 200 Hz timer requirement from Samsung
+ platforms
+Date: Wed, 23 Nov 2016 19:37:39 +0200
+Message-ID: <20161123173739.GA9228@kozik-lap>
+References: <1479467712-5218-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161123074334.27784-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <1479467712-5218-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 23, 2016 at 04:43:34PM +0900, Jaehoon Chung wrote:
-> TM2 can support the HS400 mode, but eMMC is working as the lowest mode.
-> This patch added the properties for HS400 and other modes.
+On Fri, Nov 18, 2016 at 01:15:12PM +0200, Krzysztof Kozlowski wrote:
+> All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
+> 200 Hz.  Unfortunately in case of multiplatform image this affects also
+> other platforms when Exynos is enabled.
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> This looks like an very old legacy code, dating back to initial
+> upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
+> driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
+> unused plat-samsung/time.c").
+> 
+> Since then, this fixed 200 Hz spread everywhere, including out-of-tree
+> Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
+> was rather an effect of coincidence instead of conscious choice.
+> 
+> On S3C24xx, the PWM counter is only 16 bit wide, and with the
+> typical 12MHz input clock that overflows every 5.5ms.  This works
+> with HZ=200 or higher but not with HZ=100 which needs a 10ms
+> interval between ticks.  On Later chips (S3C64xx, S5P and EXYNOS),
+> the counter is 32 bits and does not have this problem.
+> 
+> The new samsung_pwm_timer driver solves the problem by scaling the input
+> clock by a factor of 50 on S3C24xx, which makes it less accurate but
+> allows HZ=100 as well as CONFIG_NO_HZ with fewer wakeups.
+> 
+> Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
+> A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
+> other values.
+> 
+> Reported-by: Lee Jones <lee.jones@linaro.org>
+> [Dropping of 200_HZ from S3C/S5P was suggested by Arnd]
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> [Tested on Exynos5800]
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Acked-by: Kukjin Kim <kgene@kernel.org>
+> [Tested on S3C2440]
+> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-Thanks, applied.
+> Changes since v2:
+> 1. Extend message.
+> 2. Add Kukjin's ack.
+> 3. Add Sylwester's tested-by.
+> 
+> Changes since v1:
+> 1. Add Javier's tested-by.
+> 2. Drop HZ_FIXED also from ARCH_S5PV210 and ARCH_S3C24XX after Arnd
+>    suggestions and analysis.
+> ---
+>  arch/arm/Kconfig | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
 
-Best regards,
+Applied,
 Krzysztof
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
