@@ -1,73 +1,88 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] ARM: Drop fixed 200 Hz timer requirement from Samsung
- platforms
-Date: Wed, 23 Nov 2016 19:37:39 +0200
-Message-ID: <20161123173739.GA9228@kozik-lap>
-References: <1479467712-5218-1-git-send-email-krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC 2/4] PM / devfreq: suspend subsystem on system
+ suspend/hibernate
+Date: Thu, 24 Nov 2016 10:35:08 +0900
+Message-ID: <583643CC.1050504@samsung.com>
+References: <1479909087-22659-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20161123135214epcas2p2f8456e0bbaa844132a84efea1293187b@epcas2p2.samsung.com>
+ <1479909087-22659-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1479467712-5218-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49605 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935138AbcKXBgB (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 23 Nov 2016 20:36:01 -0500
+In-reply-to: <1479909087-22659-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, m.reichl@fivetechno.de, myungjoo.ham@gmail.com
 
-On Fri, Nov 18, 2016 at 01:15:12PM +0200, Krzysztof Kozlowski wrote:
-> All Samsung platforms, including the Exynos, are selecting HZ_FIXED with
-> 200 Hz.  Unfortunately in case of multiplatform image this affects also
-> other platforms when Exynos is enabled.
-> 
-> This looks like an very old legacy code, dating back to initial
-> upstreaming of S3C24xx.  Probably it was required for s3c24xx timer
-> driver, which was removed in commit ad38bdd15d5b ("ARM: SAMSUNG: Remove
-> unused plat-samsung/time.c").
-> 
-> Since then, this fixed 200 Hz spread everywhere, including out-of-tree
-> Samsung kernels (SoC vendor's and Tizen's).  I believe this choice
-> was rather an effect of coincidence instead of conscious choice.
-> 
-> On S3C24xx, the PWM counter is only 16 bit wide, and with the
-> typical 12MHz input clock that overflows every 5.5ms.  This works
-> with HZ=200 or higher but not with HZ=100 which needs a 10ms
-> interval between ticks.  On Later chips (S3C64xx, S5P and EXYNOS),
-> the counter is 32 bits and does not have this problem.
-> 
-> The new samsung_pwm_timer driver solves the problem by scaling the input
-> clock by a factor of 50 on S3C24xx, which makes it less accurate but
-> allows HZ=100 as well as CONFIG_NO_HZ with fewer wakeups.
-> 
-> Few perf mem and sched tests on Odroid XU3 board (Exynos5422, 4x Cortex
-> A7, 4x Cortex A15) show no regressions when switching from 200 Hz to
-> other values.
-> 
-> Reported-by: Lee Jones <lee.jones@linaro.org>
-> [Dropping of 200_HZ from S3C/S5P was suggested by Arnd]
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> [Tested on Exynos5800]
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Kukjin Kim <kgene@kernel.org>
-> [Tested on S3C2440]
-> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. Extend message.
-> 2. Add Kukjin's ack.
-> 3. Add Sylwester's tested-by.
-> 
-> Changes since v1:
-> 1. Add Javier's tested-by.
-> 2. Drop HZ_FIXED also from ARCH_S5PV210 and ARCH_S3C24XX after Arnd
->    suggestions and analysis.
-> ---
->  arch/arm/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
+Hi Tobias,
 
-Applied,
-Krzysztof
+Looks good to me.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Best Regards,
+Chanwoo Choi
+
+On 2016년 11월 23일 22:51, Tobias Jakobi wrote:
+> On the Exynos4412 SoC the DevFreq subsystem adjusts frequency
+> of the various internal busses and corresponding voltages.
+> 
+> E.g. the clock of the DMC (dynamic memory controller) bus
+> together with the voltage of the MIF regulator are controlled
+> by this.
+> 
+> If DMC activity is low and DevFreq has set a lower OPP, the
+> following can happen.
+> 
+> If the system is restarted or goes into a suspend/resume-cycle,
+> the first-stage (BL0) bootloader takes over, which also
+> initializes clocks to default values. Since the PMIC is an
+> external component and not part of the SoC, the BL0 doesn't
+> set any default voltages. Upon setting the default clocks
+> for the DMC bus, the BL0 hangs because the corresponding
+> voltage is too low.
+> 
+> To fix this, we make sure to only go into suspend with a 'safe'
+> DevFreq configuration.
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/base/power/main.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 5a94dfa..9cd7e06 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -32,6 +32,7 @@
+>  #include <trace/events/power.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpuidle.h>
+> +#include <linux/devfreq.h>
+>  #include <linux/timer.h>
+>  
+>  #include "../base.h"
+> @@ -943,6 +944,7 @@ void dpm_resume(pm_message_t state)
+>  	dpm_show_time(starttime, state, NULL);
+>  
+>  	cpufreq_resume();
+> +	devfreq_resume();
+>  	trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>  }
+>  
+> @@ -1582,6 +1584,7 @@ int dpm_suspend(pm_message_t state)
+>  	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+>  	might_sleep();
+>  
+> +	devfreq_suspend();
+>  	cpufreq_suspend();
+>  
+>  	mutex_lock(&dpm_list_mtx);
+> 
