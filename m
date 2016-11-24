@@ -1,103 +1,99 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] ARM: dts: exynos: Enable SPI on 4412 based odroid-X and
- -X2 boards.
-Date: Thu, 24 Nov 2016 15:38:04 +0100
-Message-ID: <5836FB4C.4000306@math.uni-bielefeld.de>
-References: <5ffdcde0-547f-3da6-2371-c0b0cab69b6b@fivetechno.de>
- <5836F958.1090901@math.uni-bielefeld.de>
- <a9d86208-03c1-fc6c-3fa3-b701e7269fd8@fivetechno.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC 4/4] ARM: dts: exynos4x12: add suspend OPP for DMC and leftbus
+Date: Fri, 25 Nov 2016 08:44:12 +0900
+Message-ID: <58377B4C.5010503@samsung.com>
+References: <1479909087-22659-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CGME20161123135415epcas4p235d175ffdbbba89e261482b1e7f0e358@epcas4p2.samsung.com>
+ <1479909087-22659-5-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <58364560.4030904@samsung.com> <5836F8C6.4080708@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60929 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935450AbcKXOiI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45143 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbcKXXoR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 09:38:08 -0500
-In-Reply-To: <a9d86208-03c1-fc6c-3fa3-b701e7269fd8@fivetechno.de>
+        Thu, 24 Nov 2016 18:44:17 -0500
+In-reply-to: <5836F8C6.4080708@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, m.reichl@fivetechno.de, myungjoo.ham@gmail.com
 
-Ah sorry, I didn't look carefully and thought you moved the node from
-the U3 to the X DTS. Mea culpa! :(
+Hi Tobias,
 
-- Tobias
-
-
-Markus Reichl wrote:
-> Hi Tobias,
+On 2016년 11월 24일 23:27, Tobias Jakobi wrote:
+> Hello Chanwoo,
 > 
-> Am 24.11.2016 um 15:29 schrieb Tobias Jakobi:
->> Hey Markus,
+> since exynos-bus is not only used for the Exynos4 platform, could you
+> maybe check if we need to apply this elsewhere?
+
+Sure, I'll review and test your patches on following boards:
+- exynos4412-u3/exynos5422-xu3/exynos3250-rinato.
+
+Regards,
+Chanwoo Choi
+
+> 
+> I see in the exynos5422-odroidxu3-common.dtsi that bus_wcore adjusts the
+> INT voltage. But MyungJoo mentioned that on newer platform the BL0 might
+> be "smarter", so we don't need this.
+> 
+> With best wishes,
+> Tobias
+> 
+> 
+> Chanwoo Choi wrote:
+>> Hi Tobias,
 >>
->> you should probably mention why the node was removed from the U3 dts. I
->> guess this is due to the SPI not being routed anywhere there?
-> 
-> I put the node into exynos4412-odroid-common, so it will be there
-> on X, X2 and U3.
-> We need it on U3, too, because on U3+ SPI is routed to an external connector.
-> (Presently we do not separate between U3 and U3+. They are different only with
-> SPI and USB-OTG).
-> 
-> Thanks for looking at,
-> --
-> Markus
-> 
+>> Looks good to me.
+>> Because the bus_dmc (MIF) and bus_leftbus (INT) are parent devfreq device.
 >>
->> - Tobias
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 >>
->> Markus Reichl wrote:
->>> Odroid-X and -X2 have SPI_1 routed to an external connector.
->>> Enable SPI_1 on X and -X2.
->>>
->>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>> On 2016년 11월 23일 22:51, Tobias Jakobi wrote:
+>>> TODO: write desc
+>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 >>> ---
->>> Tested on X, U3.
->>> ---
->>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 8 ++++++++
->>>  arch/arm/boot/dts/exynos4412-odroidu3.dts       | 7 -------
->>>  2 files changed, 8 insertions(+), 7 deletions(-)
+>>>  arch/arm/boot/dts/exynos4x12.dtsi | 2 ++
+>>>  1 file changed, 2 insertions(+)
 >>>
->>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> index 7dc1009..c919405 100644
->>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> @@ -559,6 +559,14 @@
->>>  	status = "okay";
->>>  };
+>>> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+>>> index d5cb433..a00a8b0 100644
+>>> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+>>> @@ -375,6 +375,7 @@
+>>>  		opp@400000000 {
+>>>  			opp-hz = /bits/ 64 <400000000>;
+>>>  			opp-microvolt = <1050000>;
+>>> +			opp-suspend;
+>>>  		};
+>>>  	};
 >>>  
->>> +&spi_1 {
->>> +	pinctrl-names = "default";
->>> +	pinctrl-0 = <&spi1_bus>;
->>> +	num-cs = <1>;
->>> +	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
->>> +	status = "okay";
->>> +};
->>> +
->>>  &tmu {
->>>  	vtmu-supply = <&ldo10_reg>;
->>>  	status = "okay";
->>> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
->>> index fc14da5..4bd215f 100644
->>> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
->>> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
->>> @@ -124,10 +124,3 @@
->>>  		"Speakers", "SPKL",
->>>  		"Speakers", "SPKR";
->>>  };
->>> -
->>> -&spi_1 {
->>> -	pinctrl-names = "default";
->>> -	pinctrl-0 = <&spi1_bus>;
->>> -	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
->>> -	status = "okay";
->>> -};
+>>> @@ -463,6 +464,7 @@
+>>>  		opp@200000000 {
+>>>  			opp-hz = /bits/ 64 <200000000>;
+>>>  			opp-microvolt = <1000000>;
+>>> +			opp-suspend;
+>>>  		};
+>>>  	};
+>>>  
 >>>
 >>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
