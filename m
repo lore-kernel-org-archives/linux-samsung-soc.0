@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] arm64: dts: exynos: DT for v4.10, second round
-Date: Thu, 24 Nov 2016 08:08:29 +0200
-Message-ID: <1479967709-6619-4-git-send-email-krzk@kernel.org>
+Subject: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
+Date: Thu, 24 Nov 2016 08:08:27 +0200
+Message-ID: <1479967709-6619-2-git-send-email-krzk@kernel.org>
 References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1479967709-6619-1-git-send-email-krzk@kernel.org>
@@ -12,53 +12,102 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On top of previous pull/tag.
+This contains previous dts branch because SCU node in dts is needed
+prior to removing it from mach code.
+
+Below you will find full pull request and one stripped from dependency.
+
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit 8ac46fc57df82efbc19194dddd335b6c7a960c31:
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
-  arm64: dts: exynos: Add dts file for Exynos5433-based TM2E board (2016-11-03 22:19:57 +0200)
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.10-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.10
 
-for you to fetch changes up to 2a4c744fcb1549023478e4b9e724d268d8202158:
+for you to fetch changes up to c689de56c0a7c8387ea00509f94fa483ae61d979:
 
-  arm64: dts: exynos: Enable HS400 mode for eMMC for TM2 (2016-11-23 19:27:56 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree arm64 second update for v4.10:
-1. Add Performance Monitor Unit to Exynos7.
-2. Add MFC, JPEG and Gscaler to Exynos5433 based TM2 board.
-3. Cleanups and fixes for recently added TM2 and TM2E boards.
+  ARM: Drop fixed 200 Hz timer requirement from Samsung platforms (2016-11-23 19:34:55 +0200)
 
 ----------------------------------------------------------------
-Alim Akhtar (1):
-      arm64: dts: Add ARM PMU node for exynos7
+Samsung mach/soc update for v4.10:
+1. Use SCU mapping from Device Tree instead of statically mapped one.
+2. Drop fixed requirement for HZ=200 on Samsung platforms.
 
-Jaehoon Chung (2):
-      arm64: dts: exynos: Add the mshc_2 node for supporting T-Flash
-      arm64: dts: exynos: Enable HS400 mode for eMMC for TM2
+----------------------------------------------------------------
+Javier Martinez Canillas (1):
+      ARM: dts: exynos: Document eMMC/SD/SDIO devices in Snow and Peach boards
 
-Marek Szyprowski (8):
-      arm64: dts: exynos: Fix IRQ type flags for Exynos5433 SoC
-      arm64: dts: exynos: Fix FSYS CMU parent clocks in Exynos5433 SoC
-      arm64: dts: exynos: Add missing parent clocks to audio block in Exynos5433 SoC
-      arm64: dts: exynos: Move FSYS CMU configuration from Exynos5433 dtsi to TM2 dts
-      arm64: dts: exynos: TM2 - remove unused UART3 and set clocks directly on CMU
-      arm64: dts: exynos: TM2 - add support for GScaler devices
-      arm64: dts: exynos: TM2 - add support for JPEG codec device
-      arm64: dts: exynos: TM2 - add support for MFC video codec device
+Krzysztof Kozlowski (3):
+      ARM: dts: exynos: Remove exynos4415.dtsi
+      Merge tag 'samsung-dt-4.10' into next/soc
+      ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
+
+Pankaj Dubey (4):
+      ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
+      ARM: dts: exynos: Add SCU device node to exynos4.dtsi
+      ARM: EXYNOS: Remove static mapping of SCU SFR
+      ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
+
+Randy Li (2):
+      ARM: dts: exynos: Add TOPEET itop core board SCP package version
+      ARM: dts: exynos: Add TOPEET itop elite based board
+
+Sylwester Nawrocki (3):
+      ARM: dts: exynos: Remove "simple-bus" compatible from fimc-is node
+      ARM: dts: exynos: Add entries for sound support on Odroid-XU board
+      ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
+
+ .../bindings/arm/samsung/samsung-boards.txt        |   3 +
+ arch/arm/Kconfig                                   |   3 +-
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   5 +
+ arch/arm/boot/dts/exynos4412-itop-elite.dts        | 240 ++++++++
+ arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    | 501 ++++++++++++++++
+ arch/arm/boot/dts/exynos4415-pinctrl.dtsi          | 575 ------------------
+ arch/arm/boot/dts/exynos4415.dtsi                  | 650 ---------------------
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |   4 +
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  69 +++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |   9 +
+ arch/arm/boot/dts/exynos5410.dtsi                  |  59 ++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   3 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   3 +
+ arch/arm/mach-exynos/common.h                      |   6 +-
+ arch/arm/mach-exynos/exynos.c                      |  22 -
+ arch/arm/mach-exynos/include/mach/map.h            |   2 -
+ arch/arm/mach-exynos/platsmp.c                     |  65 +--
+ arch/arm/mach-exynos/pm.c                          |   4 +-
+ arch/arm/mach-exynos/suspend.c                     |   4 +-
+ arch/arm/mach-s3c24xx/common.c                     |  76 +++
+ arch/arm/plat-samsung/include/plat/map-s5p.h       |   4 -
+ 23 files changed, 1004 insertions(+), 1306 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos4415-pinctrl.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos4415.dtsi
+
+
+Pull request details for Soc only:
+##################################
+----------------------------------------------------------------
+Samsung mach/soc update for v4.10:
+1. Use SCU mapping from Device Tree instead of statically mapped one.
+2. Drop fixed requirement for HZ=200 on Samsung platforms.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
+
+Pankaj Dubey (3):
+      ARM: EXYNOS: Remove static mapping of SCU SFR
+      ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
+      ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
 
 Sylwester Nawrocki (1):
-      arm64: dts: exynos: Assign parent clock of the clkout clock for TM2 board
-
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  22 +-
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  85 +++++-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 286 ++++++++++++++-------
- arch/arm64/boot/dts/exynos/exynos7.dtsi            |  18 +-
- 4 files changed, 306 insertions(+), 105 deletions(-)
+      ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
