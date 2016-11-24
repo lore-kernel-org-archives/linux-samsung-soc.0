@@ -1,79 +1,94 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/3] ARM: dts: exynos: DT for v4.10, second round
-Date: Thu, 24 Nov 2016 08:08:28 +0200
-Message-ID: <1479967709-6619-3-git-send-email-krzk@kernel.org>
-References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1479967709-6619-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH] drm/exynos/gsc: fix the hardware limitations
+Date: Thu, 24 Nov 2016 16:51:36 +0900
+Message-ID: <1479973896-26902-1-git-send-email-hoegeun.kwon@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:39013 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756809AbcKXHvm (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 24 Nov 2016 02:51:42 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OH400G5FZ64YK20@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Nov 2016 16:51:40 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, hoegeun.kwon@samsung.com
 
-Hi,
+The maximum size of input or output rotation is 2047 x 2047.
+Fixed an error on limitations.
 
-On top of previous pull/tag.
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c | 11 +++++++++--
+ include/uapi/drm/exynos_drm.h           |  2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-Possible trivial conflict:
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@@ -197,10 -188,10 +197,10 @@@
-        };
-  
-        gmac: ethernet@00230000 {
--               compatible = "snps,dwmac-3.70a";
-+               compatible = "snps,dwmac-3.70a", "snps,dwmac";
-                reg = <0x00230000 0x8000>;
-                interrupt-parent = <&gic>;
- -              interrupts = <0 31 4>;
- +              interrupts = <GIC_SPI 31 4>;
-                interrupt-names = "macirq";
-                phy-mode = "sgmii";
-                clocks = <&clock CLK_GMAC0>;
-
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 05a3589f46f913fbe91704f12fdca46a0eb0a27b:
-
-  ARM: dts: exynos: Add SCU device node to exynos4.dtsi (2016-11-05 17:39:50 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.10-2
-
-for you to fetch changes up to 79700041b37f0aca5da3ea27858ad6c42f99a474:
-
-  ARM: dts: exynos: Remove the cd-gpios property for eMMC of Odroid XU3/4 (2016-11-23 19:17:11 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree second update for v4.10:
-1. Cleanups in MSHC nodes.
-2. Enable ADC on Odroid boards.
-3. Fix interrupt flags on recently added DMA sound nodes in Exynos5410.
-
-----------------------------------------------------------------
-Jaehoon Chung (2):
-      ARM: dts: exynos: Replace "clock-freq-min-max" with "max-frequency"
-      ARM: dts: exynos: Remove the cd-gpios property for eMMC of Odroid XU3/4
-
-Krzysztof Kozlowski (1):
-      ARM: dts: exynos: Fix invalid GIC interrupt flags in audio block of Exynos5410
-
-Markus Reichl (1):
-      ARM: dts: exynos: Add ADCs on 4412 and 5422 based odroid boards.
-
-Niklas Cassel (1):
-      ARM: dts: exynos: Specify snps, dwmac in compatible string for gmac
-
- arch/arm/boot/dts/exynos3250-artik5-eval.dts       |  2 +-
- arch/arm/boot/dts/exynos3250-artik5.dtsi           |  2 +-
- arch/arm/boot/dts/exynos3250-monk.dts              |  2 +-
- arch/arm/boot/dts/exynos3250-rinato.dts            |  2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts           |  5 +++++
- arch/arm/boot/dts/exynos5410.dtsi                  |  4 ++--
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 12 +++++++++++-
- arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
- 8 files changed, 23 insertions(+), 8 deletions(-)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index bef5798..36e05ae 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -71,6 +71,7 @@
+ #define GSC_CROP_MIN	32
+ #define GSC_SCALE_MAX	4224
+ #define GSC_SCALE_MIN	32
++#define GSC_ROT_MAX	2047
+ #define GSC_COEF_RATIO	7
+ #define GSC_COEF_PHASE	9
+ #define GSC_COEF_ATTR	16
+@@ -1371,6 +1372,8 @@ static int gsc_init_prop_list(struct exynos_drm_ippdrv *ippdrv)
+ 	prop_list->scale_max.vsize = GSC_SCALE_MAX;
+ 	prop_list->scale_min.hsize = GSC_SCALE_MIN;
+ 	prop_list->scale_min.vsize = GSC_SCALE_MIN;
++	prop_list->rot_max.hsize = GSC_ROT_MAX;
++	prop_list->rot_max.vsize = GSC_ROT_MAX;
+ 
+ 	return 0;
+ }
+@@ -1444,7 +1447,9 @@ static int gsc_ippdrv_check_property(struct device *dev,
+ 				if ((pos->h < pp->crop_min.hsize) ||
+ 					(sz->vsize > pp->crop_max.hsize) ||
+ 					(pos->w < pp->crop_min.vsize) ||
+-					(sz->hsize > pp->crop_max.vsize)) {
++					(sz->hsize > pp->crop_max.vsize) ||
++					(pos->h > pp->rot_max.hsize) ||
++					(pos->w > pp->rot_max.vsize)) {
+ 					DRM_ERROR("out of crop size.\n");
+ 					goto err_property;
+ 				}
+@@ -1465,7 +1470,9 @@ static int gsc_ippdrv_check_property(struct device *dev,
+ 				if ((pos->h < pp->scale_min.hsize) ||
+ 					(sz->vsize > pp->scale_max.hsize) ||
+ 					(pos->w < pp->scale_min.vsize) ||
+-					(sz->hsize > pp->scale_max.vsize)) {
++					(sz->hsize > pp->scale_max.vsize) ||
++					(pos->h > pp->rot_max.hsize) ||
++					(pos->w > pp->rot_max.vsize)) {
+ 					DRM_ERROR("out of scale size.\n");
+ 					goto err_property;
+ 				}
+diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
+index cb3e9f9..d5d5518 100644
+--- a/include/uapi/drm/exynos_drm.h
++++ b/include/uapi/drm/exynos_drm.h
+@@ -192,6 +192,7 @@ enum drm_exynos_planer {
+  * @crop_max: crop max resolution.
+  * @scale_min: scale min resolution.
+  * @scale_max: scale max resolution.
++ * @rot_max: rotation max resolution.
+  */
+ struct drm_exynos_ipp_prop_list {
+ 	__u32	version;
+@@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
+ 	struct drm_exynos_sz	crop_max;
+ 	struct drm_exynos_sz	scale_min;
+ 	struct drm_exynos_sz	scale_max;
++	struct drm_exynos_sz	rot_max;
+ };
+ 
+ /**
+-- 
+1.9.1
