@@ -1,94 +1,83 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH] drm/exynos/gsc: fix the hardware limitations
-Date: Thu, 24 Nov 2016 16:51:36 +0900
-Message-ID: <1479973896-26902-1-git-send-email-hoegeun.kwon@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39013 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756809AbcKXHvm (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 02:51:42 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OH400G5FZ64YK20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 Nov 2016 16:51:40 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos/gsc: fix the hardware limitations
+Date: Thu, 24 Nov 2016 17:12:41 +0900
+Message-ID: <5836A0F9.8070705@samsung.com>
+References: <CGME20161124075140epcas1p3817fa30557dab14ac56f6b122aa59cee@epcas1p3.samsung.com>
+ <1479973896-26902-1-git-send-email-hoegeun.kwon@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1479973896-26902-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, hoegeun.kwon@samsung.com
 
-The maximum size of input or output rotation is 2047 x 2047.
-Fixed an error on limitations.
-
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 11 +++++++++--
- include/uapi/drm/exynos_drm.h           |  2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index bef5798..36e05ae 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -71,6 +71,7 @@
- #define GSC_CROP_MIN	32
- #define GSC_SCALE_MAX	4224
- #define GSC_SCALE_MIN	32
-+#define GSC_ROT_MAX	2047
- #define GSC_COEF_RATIO	7
- #define GSC_COEF_PHASE	9
- #define GSC_COEF_ATTR	16
-@@ -1371,6 +1372,8 @@ static int gsc_init_prop_list(struct exynos_drm_ippdrv *ippdrv)
- 	prop_list->scale_max.vsize = GSC_SCALE_MAX;
- 	prop_list->scale_min.hsize = GSC_SCALE_MIN;
- 	prop_list->scale_min.vsize = GSC_SCALE_MIN;
-+	prop_list->rot_max.hsize = GSC_ROT_MAX;
-+	prop_list->rot_max.vsize = GSC_ROT_MAX;
- 
- 	return 0;
- }
-@@ -1444,7 +1447,9 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 				if ((pos->h < pp->crop_min.hsize) ||
- 					(sz->vsize > pp->crop_max.hsize) ||
- 					(pos->w < pp->crop_min.vsize) ||
--					(sz->hsize > pp->crop_max.vsize)) {
-+					(sz->hsize > pp->crop_max.vsize) ||
-+					(pos->h > pp->rot_max.hsize) ||
-+					(pos->w > pp->rot_max.vsize)) {
- 					DRM_ERROR("out of crop size.\n");
- 					goto err_property;
- 				}
-@@ -1465,7 +1470,9 @@ static int gsc_ippdrv_check_property(struct device *dev,
- 				if ((pos->h < pp->scale_min.hsize) ||
- 					(sz->vsize > pp->scale_max.hsize) ||
- 					(pos->w < pp->scale_min.vsize) ||
--					(sz->hsize > pp->scale_max.vsize)) {
-+					(sz->hsize > pp->scale_max.vsize) ||
-+					(pos->h > pp->rot_max.hsize) ||
-+					(pos->w > pp->rot_max.vsize)) {
- 					DRM_ERROR("out of scale size.\n");
- 					goto err_property;
- 				}
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index cb3e9f9..d5d5518 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -192,6 +192,7 @@ enum drm_exynos_planer {
-  * @crop_max: crop max resolution.
-  * @scale_min: scale min resolution.
-  * @scale_max: scale max resolution.
-+ * @rot_max: rotation max resolution.
-  */
- struct drm_exynos_ipp_prop_list {
- 	__u32	version;
-@@ -210,6 +211,7 @@ struct drm_exynos_ipp_prop_list {
- 	struct drm_exynos_sz	crop_max;
- 	struct drm_exynos_sz	scale_min;
- 	struct drm_exynos_sz	scale_max;
-+	struct drm_exynos_sz	rot_max;
- };
- 
- /**
--- 
-1.9.1
+CgoyMDE264WEIDEx7JuUIDI07J28IDE2OjUx7JeQIEhvZWdldW4gS3dvbiDsnbQo6rCAKSDsk7Qg
+6riAOgo+IFRoZSBtYXhpbXVtIHNpemUgb2YgaW5wdXQgb3Igb3V0cHV0IHJvdGF0aW9uIGlzIDIw
+NDcgeCAyMDQ3Lgo+IEZpeGVkIGFuIGVycm9yIG9uIGxpbWl0YXRpb25zLgoKWW91IHdvdWxkIG5l
+ZWQgdG8gY29uc2lkZXIgb3RoZXIgU29DIC0gRXh5bm9zNTI1MC81MjUwLzU0MTAvNTQyMC81NDMz
+IGJlY2F1c2Ugb3RoZXIgaGF2ZSBkaWZmZXJlbnQgcm90YXRpb24gbGltaXRhdGlvbnMgbGlrZSBi
+ZWxvdywKCkV4eW5vczUyNTAKTWF4aW11bSBzaXplIDogMjA0OHgyMDQ4IGZvciBUaWxlIE1vZGUg
+b3IgUm90YXRpb24KCkV4eW5vczU0MTAvNTQyMApNYXhpbXVtIHNpemUgOiAyMDE2eDIwMTYgZm9y
+IFRpbGUgbW9kZSBvciBSb3RhdGlvbgoKSW4gY2FzZSBvZiBFeHlub3M1NDMzLCBpdCBzZWVtcyBt
+b3JlIGNvbXBsaWNhdGVkLiBSZWZlciB0byBDaGFwdGVyIDQ1LjUuNCBTaXplIENvbnN0cmFpbnRz
+IG9mIFRSTSBkb2N1bWVudC4KClRoYW5rcy4KCj4gCj4gU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBL
+d29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9nc2MuYyB8IDExICsrKysrKysrKy0tCj4gIGluY2x1ZGUvdWFwaS9k
+cm0vZXh5bm9zX2RybS5oICAgICAgICAgICB8ICAyICsrCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTEg
+aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2dzYy5jCj4gaW5kZXggYmVmNTc5OC4uMzZlMDVhZSAxMDA2NDQKPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMKPiBAQCAtNzEsNiArNzEsNyBAQAo+ICAjZGVm
+aW5lIEdTQ19DUk9QX01JTgkzMgo+ICAjZGVmaW5lIEdTQ19TQ0FMRV9NQVgJNDIyNAo+ICAjZGVm
+aW5lIEdTQ19TQ0FMRV9NSU4JMzIKPiArI2RlZmluZSBHU0NfUk9UX01BWAkyMDQ3Cj4gICNkZWZp
+bmUgR1NDX0NPRUZfUkFUSU8JNwo+ICAjZGVmaW5lIEdTQ19DT0VGX1BIQVNFCTkKPiAgI2RlZmlu
+ZSBHU0NfQ09FRl9BVFRSCTE2Cj4gQEAgLTEzNzEsNiArMTM3Miw4IEBAIHN0YXRpYyBpbnQgZ3Nj
+X2luaXRfcHJvcF9saXN0KHN0cnVjdCBleHlub3NfZHJtX2lwcGRydiAqaXBwZHJ2KQo+ICAJcHJv
+cF9saXN0LT5zY2FsZV9tYXgudnNpemUgPSBHU0NfU0NBTEVfTUFYOwo+ICAJcHJvcF9saXN0LT5z
+Y2FsZV9taW4uaHNpemUgPSBHU0NfU0NBTEVfTUlOOwo+ICAJcHJvcF9saXN0LT5zY2FsZV9taW4u
+dnNpemUgPSBHU0NfU0NBTEVfTUlOOwo+ICsJcHJvcF9saXN0LT5yb3RfbWF4LmhzaXplID0gR1ND
+X1JPVF9NQVg7Cj4gKwlwcm9wX2xpc3QtPnJvdF9tYXgudnNpemUgPSBHU0NfUk9UX01BWDsKPiAg
+Cj4gIAlyZXR1cm4gMDsKPiAgfQo+IEBAIC0xNDQ0LDcgKzE0NDcsOSBAQCBzdGF0aWMgaW50IGdz
+Y19pcHBkcnZfY2hlY2tfcHJvcGVydHkoc3RydWN0IGRldmljZSAqZGV2LAo+ICAJCQkJaWYgKChw
+b3MtPmggPCBwcC0+Y3JvcF9taW4uaHNpemUpIHx8Cj4gIAkJCQkJKHN6LT52c2l6ZSA+IHBwLT5j
+cm9wX21heC5oc2l6ZSkgfHwKPiAgCQkJCQkocG9zLT53IDwgcHAtPmNyb3BfbWluLnZzaXplKSB8
+fAo+IC0JCQkJCShzei0+aHNpemUgPiBwcC0+Y3JvcF9tYXgudnNpemUpKSB7Cj4gKwkJCQkJKHN6
+LT5oc2l6ZSA+IHBwLT5jcm9wX21heC52c2l6ZSkgfHwKPiArCQkJCQkocG9zLT5oID4gcHAtPnJv
+dF9tYXguaHNpemUpIHx8Cj4gKwkJCQkJKHBvcy0+dyA+IHBwLT5yb3RfbWF4LnZzaXplKSkgewo+
+ICAJCQkJCURSTV9FUlJPUigib3V0IG9mIGNyb3Agc2l6ZS5cbiIpOwo+ICAJCQkJCWdvdG8gZXJy
+X3Byb3BlcnR5Owo+ICAJCQkJfQo+IEBAIC0xNDY1LDcgKzE0NzAsOSBAQCBzdGF0aWMgaW50IGdz
+Y19pcHBkcnZfY2hlY2tfcHJvcGVydHkoc3RydWN0IGRldmljZSAqZGV2LAo+ICAJCQkJaWYgKChw
+b3MtPmggPCBwcC0+c2NhbGVfbWluLmhzaXplKSB8fAo+ICAJCQkJCShzei0+dnNpemUgPiBwcC0+
+c2NhbGVfbWF4LmhzaXplKSB8fAo+ICAJCQkJCShwb3MtPncgPCBwcC0+c2NhbGVfbWluLnZzaXpl
+KSB8fAo+IC0JCQkJCShzei0+aHNpemUgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSkgewo+ICsJCQkJ
+CShzei0+aHNpemUgPiBwcC0+c2NhbGVfbWF4LnZzaXplKSB8fAo+ICsJCQkJCShwb3MtPmggPiBw
+cC0+cm90X21heC5oc2l6ZSkgfHwKPiArCQkJCQkocG9zLT53ID4gcHAtPnJvdF9tYXgudnNpemUp
+KSB7Cj4gIAkJCQkJRFJNX0VSUk9SKCJvdXQgb2Ygc2NhbGUgc2l6ZS5cbiIpOwo+ICAJCQkJCWdv
+dG8gZXJyX3Byb3BlcnR5Owo+ICAJCQkJfQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJt
+L2V4eW5vc19kcm0uaCBiL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4gaW5kZXggY2Iz
+ZTlmOS4uZDVkNTUxOCAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0u
+aAo+ICsrKyBiL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4gQEAgLTE5Miw2ICsxOTIs
+NyBAQCBlbnVtIGRybV9leHlub3NfcGxhbmVyIHsKPiAgICogQGNyb3BfbWF4OiBjcm9wIG1heCBy
+ZXNvbHV0aW9uLgo+ICAgKiBAc2NhbGVfbWluOiBzY2FsZSBtaW4gcmVzb2x1dGlvbi4KPiAgICog
+QHNjYWxlX21heDogc2NhbGUgbWF4IHJlc29sdXRpb24uCj4gKyAqIEByb3RfbWF4OiByb3RhdGlv
+biBtYXggcmVzb2x1dGlvbi4KPiAgICovCj4gIHN0cnVjdCBkcm1fZXh5bm9zX2lwcF9wcm9wX2xp
+c3Qgewo+ICAJX191MzIJdmVyc2lvbjsKPiBAQCAtMjEwLDYgKzIxMSw3IEBAIHN0cnVjdCBkcm1f
+ZXh5bm9zX2lwcF9wcm9wX2xpc3Qgewo+ICAJc3RydWN0IGRybV9leHlub3Nfc3oJY3JvcF9tYXg7
+Cj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19zeglzY2FsZV9taW47Cj4gIAlzdHJ1Y3QgZHJtX2V4eW5v
+c19zeglzY2FsZV9tYXg7Cj4gKwlzdHJ1Y3QgZHJtX2V4eW5vc19zeglyb3RfbWF4Owo+ICB9Owo+
+ICAKPiAgLyoqCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
