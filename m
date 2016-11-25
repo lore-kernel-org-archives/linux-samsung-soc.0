@@ -1,26 +1,39 @@
-From: SAVELIEVA COSTA <deng4920@gmail.com>
-Subject: INFO
-Date: Fri, 25 Nov 2016 12:12:03 +0000 (UTC)
-Message-ID: <1422042367.206538.1480075923342@mail.yahoo.com>
-References: <1394287665.1540632.1479983100585.ref@mail.yahoo.com> <1394287665.1540632.1479983100585@mail.yahoo.com>
-Reply-To: SAVELIEVA COSTA <costa.savelieva@yandex.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
+ platform device PM
+Date: Fri, 25 Nov 2016 10:12:09 -0300
+Message-ID: <dce8ffa9-7392-774c-c3b9-791aa5a2ffb0@osg.samsung.com>
+References: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nm40-vm7.bullet.mail.ne1.yahoo.com ([98.138.229.183]:48455 "EHLO
-        nm40-vm7.bullet.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753397AbcKYMXO (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Nov 2016 07:23:14 -0500
-In-Reply-To: <1394287665.1540632.1479983100585@mail.yahoo.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Marek,
 
+On 11/25/2016 06:39 AM, Marek Szyprowski wrote:
+> Exynos AUDSS clock driver has beem already converted to platform driver, so
 
-Did you receive my last e-mail =E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=
-=A6
+s/beem/been
 
-You=E2=80=99re sincerely,
-Savelieva Costa=20
+> remove the dependency on the syscore ops - the last remaining non-platform
+> driver feature. Platform device's system sleep PM provides all needed
+> infrastructure for replacing syscore-based PM, so do it now.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+
+The patch looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
