@@ -1,45 +1,101 @@
-From: Shailendra Verma <shailendra.v@samsung.com>
-Subject: [PATCH] Media: Platform: Exynos-gsc: - Fix for error handling
-Date: Fri, 25 Nov 2016 10:11:47 +0530
-Message-ID: <1480048907-19870-1-git-send-email-shailendra.v@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
-Cc: vidushi.koul@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with platform
+ device PM
+Date: Fri, 25 Nov 2016 10:39:54 +0100
+Message-ID: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:60981 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753144AbcKYJkQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 25 Nov 2016 04:40:16 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-The File handle is not yet added in the vfd list.So no need to call
-v4l2_fh_del(&ctx->fh) if it fails to create control.
+Exynos AUDSS clock driver has beem already converted to platform driver, so
+remove the dependency on the syscore ops - the last remaining non-platform
+driver feature. Platform device's system sleep PM provides all needed
+infrastructure for replacing syscore-based PM, so do it now.
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos-gsc/gsc-m2m.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos-audss.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index 9f03b79..5ea97c1 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -664,8 +664,8 @@ static int gsc_m2m_open(struct file *file)
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 17e68a724945..cb7df358a27d 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -44,7 +44,7 @@
+ 	{ ASS_CLK_GATE, 0 },
+ };
  
- error_ctrls:
- 	gsc_ctrls_delete(ctx);
--error_fh:
- 	v4l2_fh_del(&ctx->fh);
-+error_fh:
- 	v4l2_fh_exit(&ctx->fh);
- 	kfree(ctx);
- unlock:
+-static int exynos_audss_clk_suspend(void)
++static int exynos_audss_clk_suspend(struct device *dev)
+ {
+ 	int i;
+ 
+@@ -54,18 +54,15 @@ static int exynos_audss_clk_suspend(void)
+ 	return 0;
+ }
+ 
+-static void exynos_audss_clk_resume(void)
++static int exynos_audss_clk_resume(struct device *dev)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(reg_save); i++)
+ 		writel(reg_save[i][1], reg_base + reg_save[i][0]);
+-}
+ 
+-static struct syscore_ops exynos_audss_clk_syscore_ops = {
+-	.suspend	= exynos_audss_clk_suspend,
+-	.resume		= exynos_audss_clk_resume,
+-};
++	return 0;
++}
+ #endif /* CONFIG_PM_SLEEP */
+ 
+ struct exynos_audss_clk_drvdata {
+@@ -251,9 +248,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		goto unregister;
+ 	}
+ 
+-#ifdef CONFIG_PM_SLEEP
+-	register_syscore_ops(&exynos_audss_clk_syscore_ops);
+-#endif
+ 	return 0;
+ 
+ unregister:
+@@ -267,10 +261,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ static int exynos_audss_clk_remove(struct platform_device *pdev)
+ {
+-#ifdef CONFIG_PM_SLEEP
+-	unregister_syscore_ops(&exynos_audss_clk_syscore_ops);
+-#endif
+-
+ 	of_clk_del_provider(pdev->dev.of_node);
+ 
+ 	exynos_audss_clk_teardown();
+@@ -281,10 +271,16 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct dev_pm_ops exynos_audss_clk_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_audss_clk_suspend,
++				     exynos_audss_clk_resume)
++};
++
+ static struct platform_driver exynos_audss_clk_driver = {
+ 	.driver	= {
+ 		.name = "exynos-audss-clk",
+ 		.of_match_table = exynos_audss_clk_of_match,
++		.pm = &exynos_audss_clk_pm_ops,
+ 	},
+ 	.probe = exynos_audss_clk_probe,
+ 	.remove = exynos_audss_clk_remove,
 -- 
-1.7.9.5
+1.9.1
