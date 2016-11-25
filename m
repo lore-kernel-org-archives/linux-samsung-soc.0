@@ -1,35 +1,34 @@
-From: "Mr. Piyush Gupta" <dsbbank@zoho.com>
-Subject: GOOD DAY FRIEND
-Date: Thu, 24 Nov 2016 11:50:08 -0500
-Message-ID: <70c3f100af2548a27a52fbece528eac6@localhost>
-Reply-To: infopiyush@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 130-182-172-163.rev.cloud.scaleway.com ([163.172.182.130]:35858
-        "EHLO mail.dealer.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750857AbcKYB2q (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Nov 2016 20:28:46 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] Media: Platform: Exynos4-is: - Fix for error handling
+Date: Fri, 25 Nov 2016 10:09:31 +0530
+Message-ID: <1480048771-19745-1-git-send-email-shailendra.v@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: vidushi.koul@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The File handle is not yet added in the vfd list.So no need to call 
+v4l2_fh_del(&ctx->fh) if it fails to create control.
 
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-m2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index 6028e4f..d8724fe 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -663,8 +663,8 @@ static int fimc_m2m_open(struct file *file)
+ 	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+ error_c:
+ 	fimc_ctrls_delete(ctx);
+-error_fh:
+ 	v4l2_fh_del(&ctx->fh);
++error_fh:
+ 	v4l2_fh_exit(&ctx->fh);
+ 	kfree(ctx);
+ unlock:
 -- 
-Dear Friend,
-
-Good Day, I am Mr. Piyush Gupta as a  (DBSHK) banker, I have funds worth 
-of $25.500,000.00 to secretly secure and transfer in to your account of 
-my late client who dead with next of kin, which i will like to invest in 
-profitable business in your country.
-
-Please if you are interested to help me without betrayed me, do and 
-write me for more details. Here is my Email: infopiyushg@gmail.com
-
-Regards,
-Mr. Piyush Gupta.
-(DBSHK)
-Hong Kong.
+1.7.9.5
