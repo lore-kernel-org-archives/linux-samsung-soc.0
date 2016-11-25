@@ -1,33 +1,56 @@
-From: Sergio Prado <sergio.prado@e-labworks.com>
-Subject: [PATCH 0/2] usb: ohci: s3c2410: add device tree support
-Date: Fri, 25 Nov 2016 12:47:27 -0200
-Message-ID: <1480085249-25014-1-git-send-email-sergio.prado@e-labworks.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:35825 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754599AbcKYOsK (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Nov 2016 09:48:10 -0500
-Received: by mail-qk0-f193.google.com with SMTP id n204so5215709qke.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Nov 2016 06:48:02 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Subject: [PATCH 1/2] dt-bindings: usb: add DT binding for s3c2410 USB OHCI controller
+Date: Fri, 25 Nov 2016 12:47:28 -0200
+Message-ID: <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
+References: <1480085249-25014-1-git-send-email-sergio.prado@e-labworks.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1480085249-25014-1-git-send-email-sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org, mark.rutland@arm.com, stern@rowland.harvard.edu, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Sergio Prado <sergio.prado@e-labworks.com>
 
-This series adds support for configuring Samsung's s3c2410 and
-compatible USB OHCI controller via devicetree.
+Adds the device tree bindings description for Samsung S3C2410 and
+compatible USB OHCI controller.
 
-Tested on FriendlyARM mini2440, based on s3c2440 SoC.
-
-Sergio Prado (2):
-  dt-bindings: usb: add DT binding for s3c2410 USB OHCI controller
-  usb: ohci: s3c2410: allow probing from device tree
-
+Signed-off-by: Sergio Prado <sergio.prado-1e4yhPs3/ABSwrhanM7KvQ@public.gmane.org>
+---
  .../devicetree/bindings/usb/s3c2410-usb.txt        | 22 ++++++++++++++++++++++
- drivers/usb/host/ohci-s3c2410.c                    |  8 ++++++++
- 2 files changed, 30 insertions(+)
+ 1 file changed, 22 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/usb/s3c2410-usb.txt
 
+diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+new file mode 100644
+index 000000000000..e45b38ce2986
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+@@ -0,0 +1,22 @@
++Samsung S3C2410 and compatible SoC USB controller
++
++OHCI
++
++Required properties:
++ - compatible: should be "samsung,s3c2410-ohci" for USB host controller
++ - reg: address and lenght of the controller memory mapped region
++ - interrupts: interrupt number for the USB OHCI controller
++ - clocks: Should reference the bus and host clocks
++ - clock-names: Should contain two strings
++		"usb-bus-host" for the USB bus clock
++		"usb-host" for the USB host clock
++
++Example:
++
++usb0: ohci@49000000 {
++	compatible = "samsung,s3c2410-ohci";
++	reg = <0x49000000 0x100>;
++	interrupts = <0 0 26 3>;
++	clocks = <&clocks UCLK>, <&clocks HCLK_USBH>;
++	clock-names = "usb-bus-host", "usb-host";
++};
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
