@@ -1,71 +1,73 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: add DT binding for s3c2410 USB
- OHCI controller
-Date: Sun, 27 Nov 2016 18:32:58 +0200
-Message-ID: <20161127163258.GA4423@kozik-lap>
+Subject: Re: [PATCH 2/2] usb: ohci: s3c2410: allow probing from device tree
+Date: Sun, 27 Nov 2016 18:36:30 +0200
+Message-ID: <20161127163630.GB4423@kozik-lap>
 References: <1480085249-25014-1-git-send-email-sergio.prado@e-labworks.com>
- <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
+ <1480085249-25014-3-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34702 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753149AbcK0QdF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Nov 2016 11:33:05 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1480085249-25014-3-git-send-email-sergio.prado@e-labworks.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: gregkh@linuxfoundation.org, robh+dt@kernel.org, mark.rutland@arm.com, stern@rowland.harvard.edu, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, javier@osg.samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 25, 2016 at 12:47:28PM -0200, Sergio Prado wrote:
-> Adds the device tree bindings description for Samsung S3C2410 and
-> compatible USB OHCI controller.
+On Fri, Nov 25, 2016 at 12:47:29PM -0200, Sergio Prado wrote:
+> Allows configuring Samsung's s3c2410 USB OHCI controller using a
+> devicetree.
 > 
 > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
 > ---
->  .../devicetree/bindings/usb/s3c2410-usb.txt        | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+>  drivers/usb/host/ohci-s3c2410.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-> new file mode 100644
-> index 000000000000..e45b38ce2986
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-> @@ -0,0 +1,22 @@
-> +Samsung S3C2410 and compatible SoC USB controller
+> diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+> index 7a1919ca543a..d8e03a801f2e 100644
+> --- a/drivers/usb/host/ohci-s3c2410.c
+> +++ b/drivers/usb/host/ohci-s3c2410.c
+> @@ -457,6 +457,13 @@ static int ohci_hcd_s3c2410_drv_resume(struct device *dev)
+>  	.resume		= ohci_hcd_s3c2410_drv_resume,
+>  };
+>  
+> +static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
+> +	{ .compatible = "samsung,s3c2410-ohci" },
+> +	{ /* sentinel */ }
+> +};
 > +
-> +OHCI
-> +
-> +Required properties:
-> + - compatible: should be "samsung,s3c2410-ohci" for USB host controller
-> + - reg: address and lenght of the controller memory mapped region
 
-s/lenght/length/
+A nit, usually MODULE_DEVICE_TABLE comes right after the table, without
+a blank line.
 
+Beside that:
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
 
-> + - interrupts: interrupt number for the USB OHCI controller
-> + - clocks: Should reference the bus and host clocks
-> + - clock-names: Should contain two strings
-> +		"usb-bus-host" for the USB bus clock
-> +		"usb-host" for the USB host clock
+> +MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
 > +
-> +Example:
-> +
-> +usb0: ohci@49000000 {
-> +	compatible = "samsung,s3c2410-ohci";
-> +	reg = <0x49000000 0x100>;
-> +	interrupts = <0 0 26 3>;
-> +	clocks = <&clocks UCLK>, <&clocks HCLK_USBH>;
-> +	clock-names = "usb-bus-host", "usb-host";
-> +};
+>  static struct platform_driver ohci_hcd_s3c2410_driver = {
+>  	.probe		= ohci_hcd_s3c2410_drv_probe,
+>  	.remove		= ohci_hcd_s3c2410_drv_remove,
+> @@ -464,6 +471,7 @@ static int ohci_hcd_s3c2410_drv_resume(struct device *dev)
+>  	.driver		= {
+>  		.name	= "s3c2410-ohci",
+>  		.pm	= &ohci_hcd_s3c2410_pm_ops,
+> +		.of_match_table	= ohci_hcd_s3c2410_dt_ids,
+>  	},
+>  };
+>  
 > -- 
 > 1.9.1
 > 
