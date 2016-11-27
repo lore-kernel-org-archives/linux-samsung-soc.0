@@ -1,20 +1,71 @@
-From: Mrs Julie Leach <info@nbrc.ac.in>
-Subject: Xmas Offer
-Date: Sat, 26 Nov 2016 12:26:08 +0200
-Message-ID: <201611260949.uAQ9iA68013727__3706.88792686469$1480208965$gmane$org@mx1.nbrc.ac.in>
-Reply-To: julieleach913@gmail.com
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: usb: add DT binding for s3c2410 USB
+ OHCI controller
+Date: Sun, 27 Nov 2016 18:32:58 +0200
+Message-ID: <20161127163258.GA4423@kozik-lap>
+References: <1480085249-25014-1-git-send-email-sergio.prado@e-labworks.com>
+ <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx1.nbrc.ac.in ([14.139.62.4]:50672 "EHLO mx1.nbrc.ac.in"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752381AbcK0BJU (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34702 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753149AbcK0QdF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 26 Nov 2016 20:09:20 -0500
-Content-Description: Mail message body
+        Sun, 27 Nov 2016 11:33:05 -0500
+Content-Disposition: inline
+In-Reply-To: <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <info@nbrc.ac.in>
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: gregkh@linuxfoundation.org, robh+dt@kernel.org, mark.rutland@arm.com, stern@rowland.harvard.edu, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-You are a recipient to Mrs Julie Leach Donation of $3 million USD. Contact ( julieleach93@gmail.com ) for claims.
+On Fri, Nov 25, 2016 at 12:47:28PM -0200, Sergio Prado wrote:
+> Adds the device tree bindings description for Samsung S3C2410 and
+> compatible USB OHCI controller.
+> 
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  .../devicetree/bindings/usb/s3c2410-usb.txt        | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> new file mode 100644
+> index 000000000000..e45b38ce2986
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> @@ -0,0 +1,22 @@
+> +Samsung S3C2410 and compatible SoC USB controller
+> +
+> +OHCI
+> +
+> +Required properties:
+> + - compatible: should be "samsung,s3c2410-ohci" for USB host controller
+> + - reg: address and lenght of the controller memory mapped region
+
+s/lenght/length/
+
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
+> + - interrupts: interrupt number for the USB OHCI controller
+> + - clocks: Should reference the bus and host clocks
+> + - clock-names: Should contain two strings
+> +		"usb-bus-host" for the USB bus clock
+> +		"usb-host" for the USB host clock
+> +
+> +Example:
+> +
+> +usb0: ohci@49000000 {
+> +	compatible = "samsung,s3c2410-ohci";
+> +	reg = <0x49000000 0x100>;
+> +	interrupts = <0 0 26 3>;
+> +	clocks = <&clocks UCLK>, <&clocks HCLK_USBH>;
+> +	clock-names = "usb-bus-host", "usb-host";
+> +};
+> -- 
+> 1.9.1
+> 
