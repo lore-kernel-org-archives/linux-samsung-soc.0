@@ -1,64 +1,83 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Samsung SoC related updates
-Date: Mon, 28 Nov 2016 12:49:48 +0100
-Message-ID: <4a805660-e4e3-f7f5-6f1d-b57aa5deeba5@samsung.com>
-References: <CGME20161128114949eucas1p179e1d91456cf977b8d0a92828703faf2@eucas1p1.samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH] ARM: dts: exynos: Cleanup exynos4412-odroidx2.dts and enable
+ sound on odroid-x.
+Date: Mon, 28 Nov 2016 13:48:06 +0100
+Message-ID: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:27905 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753751AbcK1Ltz (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:54466 "EHLO
+        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754466AbcK1MsT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 06:49:55 -0500
+        Mon, 28 Nov 2016 07:48:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: LMML <linux-media@vger.kernel.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Mauro,
+Odroid-X2 differs from Odroid-X only in RAM and prime CPU.
+Remove doubled nodes from exynos4412-odroidx2.dts and move
+sound node to exynos4412-odroidx.dts to enable sound on both boards.
 
-this change set adds support for the Exynos5433 SoC variant 
-of the MFC subsystem, it also includes related clean up 
-and fixes/improvements.
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+ arch/arm/boot/dts/exynos4412-odroidx.dts  | 13 +++++++++++++
+ arch/arm/boot/dts/exynos4412-odroidx2.dts | 24 ------------------------
+ 2 files changed, 13 insertions(+), 24 deletions(-)
 
-The following changes since commit 36f94a5cf0f9afb527f18166ae56bd3cc7204f63:
-
-  Merge tag 'v4.9-rc5' into patchwork (2016-11-16 16:42:27 -0200)
-
-are available in the git repository at:
-
-
-  git://linuxtv.org/snawrocki/samsung.git for-v4.10/media/next-2
-
-for you to fetch changes up to d9f2586c6c302d4db39c5aa92b803dcd30b06f4e:
-
-  s5p-mfc: Add support for MFC v8 available in Exynos 5433 SoCs (2016-11-17 12:11:26 +0100)
-
-----------------------------------------------------------------
-Douglas Anderson (1):
-      s5p-mfc: Set DMA_ATTR_ALLOC_SINGLE_PAGES
-
-Marek Szyprowski (8):
-      s5p-mfc: Use printk_ratelimited for reporting ioctl errors
-      s5p-mfc: Remove special clock rate management
-      s5p-mfc: Ensure that clock is disabled before turning power off
-      s5p-mfc: Remove dead conditional code
-      s5p-mfc: Kill all IS_ERR_OR_NULL in clocks management code
-      s5p-mfc: Don't keep clock prepared all the time
-      s5p-mfc: Rework clock handling
-      s5p-mfc: Add support for MFC v8 available in Exynos 5433 SoCs
-
- .../devicetree/bindings/media/s5p-mfc.txt     |   1 +
- drivers/media/platform/s5p-mfc/s5p_mfc.c      |  61 +++++---
- .../media/platform/s5p-mfc/s5p_mfc_common.h   |  10 +-
- .../media/platform/s5p-mfc/s5p_mfc_debug.h    |   6 +
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c  |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c  |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c   | 139 ++++++-----------
- 7 files changed, 103 insertions(+), 118 deletions(-)
-
---
-Thanks, 
-Sylwester
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 153a75f..46b931e 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -100,3 +100,16 @@
+ &serial_3 {
+ 	status = "okay";
+ };
++
++&sound {
++	simple-audio-card,name = "Odroid-X";
++	simple-audio-card,widgets =
++		"Headphone", "Headphone Jack",
++		"Microphone", "Mic Jack",
++		"Microphone", "DMIC";
++	simple-audio-card,routing =
++		"Headphone Jack", "HPL",
++		"Headphone Jack", "HPR",
++		"IN1", "Mic Jack",
++		"Mic Jack", "MICBIAS";
++};
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
+index d6e92eb..d867b2e 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
+@@ -23,27 +23,3 @@
+ 		reg = <0x40000000 0x7FF00000>;
+ 	};
+ };
+-
+-/* VDDQ for MSHC (eMMC card) */
+-&buck8_reg {
+-	regulator-name = "BUCK8_VDDQ_MMC4_2.8V";
+-	regulator-min-microvolt = <2800000>;
+-	regulator-max-microvolt = <2800000>;
+-};
+-
+-&mshc_0 {
+-	vqmmc-supply = <&buck8_reg>;
+-};
+-
+-&sound {
+-	simple-audio-card,name = "Odroid-X2";
+-	simple-audio-card,widgets =
+-		"Headphone", "Headphone Jack",
+-		"Microphone", "Mic Jack",
+-		"Microphone", "DMIC";
+-	simple-audio-card,routing =
+-		"Headphone Jack", "HPL",
+-		"Headphone Jack", "HPR",
+-		"IN1", "Mic Jack",
+-		"Mic Jack", "MICBIAS";
+-};
+-- 
+2.1.4
