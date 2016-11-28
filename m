@@ -1,83 +1,60 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH] ARM: dts: exynos: Cleanup exynos4412-odroidx2.dts and enable
- sound on odroid-x.
-Date: Mon, 28 Nov 2016 13:48:06 +0100
-Message-ID: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [GIT PULL] Samsung fixes for 4.8
+Date: Mon, 28 Nov 2016 16:29:25 -0300
+Message-ID: <d56c3d6d-6cbf-2f98-80d8-c72cd20f3957@osg.samsung.com>
+References: <CGME20160916133335eucas1p2417ec5672f250c3eaca8e424293ce783@eucas1p2.samsung.com>
+ <8001c83d-0e3a-61cb-bf53-8c2b497bd0ed@samsung.com>
+ <20161021102607.2df96630@vento.lan>
+ <70cc3f35-e661-c76f-8620-dfeb74030183@samsung.com>
+ <20161116124600.66e4c9e4@vento.lan>
+ <d9d745c8-3128-c637-1fa7-c46606fca2af@samsung.com>
+ <20161116131932.7c2908e3@vento.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:54466 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754466AbcK1MsT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 07:48:19 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20161116131932.7c2908e3@vento.lan>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Odroid-X2 differs from Odroid-X only in RAM and prime CPU.
-Remove doubled nodes from exynos4412-odroidx2.dts and move
-sound node to exynos4412-odroidx.dts to enable sound on both boards.
+Hello Mauro,
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
----
- arch/arm/boot/dts/exynos4412-odroidx.dts  | 13 +++++++++++++
- arch/arm/boot/dts/exynos4412-odroidx2.dts | 24 ------------------------
- 2 files changed, 13 insertions(+), 24 deletions(-)
+On 11/16/2016 12:19 PM, Mauro Carvalho Chehab wrote:
+> Em Wed, 16 Nov 2016 16:08:19 +0100
+> Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
+> 
+>> On 11/16/2016 03:46 PM, Mauro Carvalho Chehab wrote:
+>>>>>> Marek Szyprowski (1):  
+>>>>>>>>>       s5p-mfc: fix failure path of s5p_mfc_alloc_memdev()    
+>>>>>
+>>>>> Mauro, this patch seems to had slipped through the cracks, I can't see it
+>>>>> in neither media fixes nor the master branch. Could you please check it?  
+>>>
+>>> The patch seems to be on my tree:  
+>>
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 153a75f..46b931e 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -100,3 +100,16 @@
- &serial_3 {
- 	status = "okay";
- };
-+
-+&sound {
-+	simple-audio-card,name = "Odroid-X";
-+	simple-audio-card,widgets =
-+		"Headphone", "Headphone Jack",
-+		"Microphone", "Mic Jack",
-+		"Microphone", "DMIC";
-+	simple-audio-card,routing =
-+		"Headphone Jack", "HPL",
-+		"Headphone Jack", "HPR",
-+		"IN1", "Mic Jack",
-+		"Mic Jack", "MICBIAS";
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-index d6e92eb..d867b2e 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-@@ -23,27 +23,3 @@
- 		reg = <0x40000000 0x7FF00000>;
- 	};
- };
--
--/* VDDQ for MSHC (eMMC card) */
--&buck8_reg {
--	regulator-name = "BUCK8_VDDQ_MMC4_2.8V";
--	regulator-min-microvolt = <2800000>;
--	regulator-max-microvolt = <2800000>;
--};
--
--&mshc_0 {
--	vqmmc-supply = <&buck8_reg>;
--};
--
--&sound {
--	simple-audio-card,name = "Odroid-X2";
--	simple-audio-card,widgets =
--		"Headphone", "Headphone Jack",
--		"Microphone", "Mic Jack",
--		"Microphone", "DMIC";
--	simple-audio-card,routing =
--		"Headphone Jack", "HPL",
--		"Headphone Jack", "HPR",
--		"IN1", "Mic Jack",
--		"Mic Jack", "MICBIAS";
--};
+This patch is indeed in your tree as commit:
+
+https://git.linuxtv.org/media_tree.git/commit/?id=3467c9a7e7f9
+
+and also in present in the media/v4.9-2 tag.
+
+But the patch never made to mainline. In fact, I don't see any of the
+patches in the media/v4.9-2 tag to be merged in v4.9-rc7.
+
+>> Oops, sorry, I didn't check it properly. Would be nice to see that
+>> patch also in linux-next.
+> 
+> I'll likely add all patches at linux-next today, after handling more
+> patches.
+> 
+> Thanks,
+> Mauro
+
+Best regards,
 -- 
-2.1.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
