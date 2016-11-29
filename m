@@ -1,64 +1,82 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [GIT PULL] Samsung fixes for 4.8
-Date: Mon, 28 Nov 2016 17:44:14 -0200
-Message-ID: <20161128174414.1ab8cb7e@vento.lan>
-References: <CGME20160916133335eucas1p2417ec5672f250c3eaca8e424293ce783@eucas1p2.samsung.com>
-        <8001c83d-0e3a-61cb-bf53-8c2b497bd0ed@samsung.com>
-        <20161021102607.2df96630@vento.lan>
-        <70cc3f35-e661-c76f-8620-dfeb74030183@samsung.com>
-        <20161116124600.66e4c9e4@vento.lan>
-        <d9d745c8-3128-c637-1fa7-c46606fca2af@samsung.com>
-        <20161116131932.7c2908e3@vento.lan>
-        <d56c3d6d-6cbf-2f98-80d8-c72cd20f3957@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH] arm64: dts: exynos: Add support for s6e3ha2 panel device for
+ TM2
+Date: Tue, 29 Nov 2016 15:16:22 +0900
+Message-ID: <1480400182-4485-1-git-send-email-hoegeun.kwon@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:40918
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751015AbcK1ToX (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35992 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752706AbcK2GQ0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Nov 2016 14:44:23 -0500
-In-Reply-To: <d56c3d6d-6cbf-2f98-80d8-c72cd20f3957@osg.samsung.com>
+        Tue, 29 Nov 2016 01:16:26 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, hoegeun.kwon@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Em Mon, 28 Nov 2016 16:29:25 -0300
-Javier Martinez Canillas <javier@osg.samsung.com> escreveu:
+From: Hyungwon Hwang <human.hwang@samsung.com>
 
-> Hello Mauro,
-> 
-> On 11/16/2016 12:19 PM, Mauro Carvalho Chehab wrote:
-> > Em Wed, 16 Nov 2016 16:08:19 +0100
-> > Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
-> >   
-> >> On 11/16/2016 03:46 PM, Mauro Carvalho Chehab wrote:  
-> >>>>>> Marek Szyprowski (1):    
-> >>>>>>>>>       s5p-mfc: fix failure path of s5p_mfc_alloc_memdev()      
-> >>>>>
-> >>>>> Mauro, this patch seems to had slipped through the cracks, I can't see it
-> >>>>> in neither media fixes nor the master branch. Could you please check it?    
-> >>>
-> >>> The patch seems to be on my tree:    
-> >>  
-> 
-> This patch is indeed in your tree as commit:
-> 
-> https://git.linuxtv.org/media_tree.git/commit/?id=3467c9a7e7f9
-> 
-> and also in present in the media/v4.9-2 tag.
-> 
-> But the patch never made to mainline. In fact, I don't see any of the
-> patches in the media/v4.9-2 tag to be merged in v4.9-rc7.
+This patch adds the Panel Device Tree node for s6e3ha2 display
+controller to Exynos5433 SoC dts.
 
-It is part of a group of 187 patches for Kernel 4.10. There aren't
-anything there that fixes a regression on 4.8 or 4.9. So, no
-hush.
+Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 35 +++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-I double-checked and all the patches at media/v4.9-2 are there at
-media master. So, should be sent to 4.10.
-
-Regards,
-Mauro
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index db879f4..d27f27d 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -252,11 +252,46 @@
+ 			reg = <1>;
+ 
+ 			dsi_out: endpoint {
++				remote-endpoint = <&dsi_in>;
+ 				samsung,burst-clock-frequency = <512000000>;
+ 				samsung,esc-clock-frequency = <16000000>;
+ 			};
+ 		};
+ 	};
++
++	panel@0 {
++		compatible = "samsung,s6e3ha2";
++		reg = <0>;
++		vdd3-supply = <&ldo27_reg>;
++		vci-supply = <&ldo28_reg>;
++		reset-gpios = <&gpg0 0 0>;
++		panel-en-gpios = <&gpf1 5 0>;
++		te-gpios = <&gpf1 3 1>;
++		power-on-delay= <5>;
++		init-delay = <120>;
++		panel-width-mm = <71>;
++		panel-height-mm = <125>;
++
++		display-timings {
++			timing-0 {
++				clock-frequency = <14874444>;
++				hactive = <1440>;
++				vactive = <2560>;
++				hfront-porch = <1>;
++				hback-porch = <1>;
++				hsync-len = <1>;
++				vfront-porch = <1>;
++				vback-porch = <15>;
++				vsync-len = <1>;
++			};
++		};
++
++		port {
++			dsi_in: endpoint {
++				remote-endpoint = <&dsi_out>;
++			};
++		};
++	};
+ };
+ 
+ &hsi2c_0 {
+-- 
+1.9.1
