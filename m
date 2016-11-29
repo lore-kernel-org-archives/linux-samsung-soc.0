@@ -1,59 +1,40 @@
-From: <carmen.croonquist@alfredadler.edu>
-Subject: (unknown)
-Date: Tue, 29 Nov 2016 10:12:29 -0000
-Message-ID: <148041434992.31657.10613885818469941004@sefiber.dk>
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [GIT PULL] exynos-drm-fixes
+Date: Tue, 29 Nov 2016 23:20:44 +0900
+Message-ID: <CAAQKjZPWXQDugJpqkDQLoKB1+8h45wd+2OuXXCWdsyNC8SyS-g@mail.gmail.com>
+References: <1479793685-5074-1-git-send-email-inki.dae@samsung.com> <CAPM=9tzxgJ5q2oqg9WOojiNTTEb6VVVeYSktew-UrgPUwFFf2w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="MESSAGE_08773203777_linux-samsung-soc.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 2E203CDC.rev.sefiber.dk ([46.32.60.220]:35502 "HELO sefiber.dk"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1757027AbcK2KMe (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34451 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756357AbcK2OV0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 05:12:34 -0500
-Content-Disposition: attachment
-Subject: 
+        Tue, 29 Nov 2016 09:21:26 -0500
+Received: by mail-qt0-f196.google.com with SMTP id l20so15707368qta.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Nov 2016 06:21:25 -0800 (PST)
+In-Reply-To: <CAPM=9tzxgJ5q2oqg9WOojiNTTEb6VVVeYSktew-UrgPUwFFf2w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-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
-AAAAAAEAAQBLAAAAYAgAAAAA
+2016-11-25 8:59 GMT+09:00 Dave Airlie <airlied@gmail.com>:
+>>    No critial patch but it make sure to unmap the region
+>>    if HDMI probing failed, and it includes two trivial fixups.
+>>
+>
+> I've cherry-picked the hdmi fix, but I think the other two patches
+> should go in -next
+> at this stage,
+
+Thanks,
+Inki Dae
+
+>
+> Thanks,
+> Dave.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
