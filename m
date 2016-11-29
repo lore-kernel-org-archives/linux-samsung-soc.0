@@ -1,106 +1,59 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Add support for s6e3ha2 panel device
- for TM2
-Date: Tue, 29 Nov 2016 08:12:27 +0100
-Message-ID: <7914f81f-0d6e-7c5d-d2f1-8dedb99d8e1e@samsung.com>
-References: <CGME20161129061631epcas2p2936042c69a654dc4b4a509d57063e4fc@epcas2p2.samsung.com>
- <1480400182-4485-1-git-send-email-hoegeun.kwon@samsung.com>
+From: <carmen.croonquist@alfredadler.edu>
+Subject: (unknown)
+Date: Tue, 29 Nov 2016 10:12:29 -0000
+Message-ID: <148041434992.31657.10613885818469941004@sefiber.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="MESSAGE_08773203777_linux-samsung-soc.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:50244 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753347AbcK2HMd (ORCPT
+Received: from 2E203CDC.rev.sefiber.dk ([46.32.60.220]:35502 "HELO sefiber.dk"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1757027AbcK2KMe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Nov 2016 02:12:33 -0500
-In-reply-to: <1480400182-4485-1-git-send-email-hoegeun.kwon@samsung.com>
+        Tue, 29 Nov 2016 05:12:34 -0500
+Content-Disposition: attachment
+Subject: 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Hyungwon Hwang <human.hwang@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Hi Hyungwon,
-
-
-On 2016-11-29 07:16, Hoegeun Kwon wrote:
-> From: Hyungwon Hwang <human.hwang@samsung.com>
->
-> This patch adds the Panel Device Tree node for s6e3ha2 display
-> controller to Exynos5433 SoC dts.
->
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 35 +++++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-
-Please send an updated driver with dt binding description first, then 
-this patch.
-
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index db879f4..d27f27d 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -252,11 +252,46 @@
->   			reg = <1>;
->   
->   			dsi_out: endpoint {
-> +				remote-endpoint = <&dsi_in>;
->   				samsung,burst-clock-frequency = <512000000>;
->   				samsung,esc-clock-frequency = <16000000>;
->   			};
->   		};
->   	};
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6e3ha2";
-> +		reg = <0>;
-> +		vdd3-supply = <&ldo27_reg>;
-> +		vci-supply = <&ldo28_reg>;
-> +		reset-gpios = <&gpg0 0 0>;
-
-Typically reset gpio is used with GPIO_ACTIVE_LOW flag, so handling this 
-pin should be changed in the panel driver.
-
-> +		panel-en-gpios = <&gpf1 5 0>;
-
-This should be renamed to "enable-gpios", as pointed in 
-https://patchwork.kernel.org/patch/5714111/
-
-> +		te-gpios = <&gpf1 3 1>;
-> +		power-on-delay= <5>;
-> +		init-delay = <120>;
-> +		panel-width-mm = <71>;
-> +		panel-height-mm = <125>;
-> +
-> +		display-timings {
-> +			timing-0 {
-> +				clock-frequency = <14874444>;
-> +				hactive = <1440>;
-> +				vactive = <2560>;
-> +				hfront-porch = <1>;
-> +				hback-porch = <1>;
-> +				hsync-len = <1>;
-> +				vfront-porch = <1>;
-> +				vback-porch = <15>;
-> +				vsync-len = <1>;
-> +			};
-> +		};
-> +
-> +		port {
-> +			dsi_in: endpoint {
-> +				remote-endpoint = <&dsi_out>;
-> +			};
-> +		};
-> +	};
->   };
->   
->   &hsi2c_0 {
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+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
+AAAAAAEAAQBLAAAAYAgAAAAA
