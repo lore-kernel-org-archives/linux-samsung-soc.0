@@ -1,65 +1,20 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/5] iommu/exynos: Add default_domain check in
-	iommu_attach_device
-Date: Tue, 29 Nov 2016 17:48:23 +0100
-Message-ID: <20161129164823.GD13850@8bytes.org>
-References: <1479986420-30859-1-git-send-email-m.szyprowski@samsung.com>
-	<1479986420-30859-5-git-send-email-m.szyprowski@samsung.com>
+From: Lopez Omar <olopez@artba.org>
+Subject: Donation
+Date: Tue, 29 Nov 2016 20:54:57 +0100
+Message-ID: <4e6d983c-8451-4e76-ba84-48bc15e6d5f1@artbavs04.artba.org>
+Reply-To: g_mackenzie@rogers.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1479986420-30859-5-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from artbavs04.artba.org ([50.241.138.188]:44993 "EHLO
+        artbavs04.artba.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755356AbcK2U6v (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 29 Nov 2016 15:58:51 -0500
+Content-Description: Mail message body
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 24, 2016 at 12:20:19PM +0100, Marek Szyprowski wrote:
-> This patch adds default_domain check before calling
-> exynos_iommu_detach_device. This path was intended only to cope with
-> default domains, which are automatically attached by the iommu core, so
-> return error if user tries to attach device, which is already attached
-> to other (non-default) domain.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iommu/exynos-iommu.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 426b1534d4d3..63d9358a6d9c 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -859,8 +859,17 @@ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
->  	if (!has_sysmmu(dev))
->  		return -ENODEV;
->  
-> -	if (owner->domain)
-> +	if (owner->domain) {
-> +		struct iommu_group *group = iommu_group_get(dev);
-> +
-> +		if (!group ||
-> +		    owner->domain != iommu_group_default_domain(group)) {
-> +			iommu_group_put(group);
-> +			return -EINVAL;
-> +		}
-> +		iommu_group_put(group);
->  		exynos_iommu_detach_device(owner->domain, dev);
-> +	}
-
-Does this fix any actual bug? The iommu core should take care that the
-above never happens. See __iommu_attach_group() function for details.
-
-
-
-	Joerg
+Hello, My name is Gloria C. Mackenzie, i have a Monetary Donation to make for less privilege and yourself and your organization, am writing you with a friend's email, please contact me on g_mackenzie@rogers.com
