@@ -1,28 +1,35 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: add DT binding for s3c2410 USB
- OHCI controller
-Date: Wed, 30 Nov 2016 15:53:31 -0600
-Message-ID: <20161130215331.v3mcm4zyojlagynz@rob-hp-laptop>
-References: <1480085249-25014-1-git-send-email-sergio.prado@e-labworks.com>
- <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] Platform: Exynos4-is: Clean up file handle in open() error
+ path.
+Date: Thu, 01 Dec 2016 10:10:22 +0530
+Message-ID: <1480567222-12829-1-git-send-email-shailendra.v@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1480085249-25014-2-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: gregkh@linuxfoundation.org, mark.rutland@arm.com, stern@rowland.harvard.edu, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: vidushi.koul@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 25, 2016 at 12:47:28PM -0200, Sergio Prado wrote:
-> Adds the device tree bindings description for Samsung S3C2410 and
-> compatible USB OHCI controller.
-> 
-> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> ---
->  .../devicetree/bindings/usb/s3c2410-usb.txt        | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+The File handle is not yet added in the vfd list.So no need to call 
+v4l2_fh_del(&ctx->fh) if it fails to create control.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-m2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index 6028e4f..d8724fe 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -663,8 +663,8 @@ static int fimc_m2m_open(struct file *file)
+ 	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+ error_c:
+ 	fimc_ctrls_delete(ctx);
+-error_fh:
+ 	v4l2_fh_del(&ctx->fh);
++error_fh:
+ 	v4l2_fh_exit(&ctx->fh);
+ 	kfree(ctx);
+ unlock:
+-- 
+1.7.9.5
