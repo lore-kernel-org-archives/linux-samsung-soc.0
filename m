@@ -1,127 +1,107 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
-Date: Thu, 1 Dec 2016 20:34:04 +0200
-Message-ID: <20161201183404.GA2134@kozik-lap>
-References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
- <1479967709-6619-2-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1479967709-6619-2-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: Add DT bindings documentation for TM2 sound subsystem" to the asoc tree
+Date: Thu, 01 Dec 2016 21:54:49 +0000
+Message-ID: <E1cCZJZ-0000uP-Ru@debutante>
+References: <1470752514-11409-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48390 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753817AbcLAVzC (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 1 Dec 2016 16:55:02 -0500
+In-Reply-To: <1470752514-11409-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, k.kozlowski@samsung.com
 
-On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> This contains previous dts branch because SCU node in dts is needed
-> prior to removing it from mach code.
-> 
-> Below you will find full pull request and one stripped from dependency.
-> 
+The patch
 
-Hi Arnd, Kevin and Olof,
+   ASoC: samsung: Add DT bindings documentation for TM2 sound subsystem
 
-What about this pull from the set?
+has been applied to the asoc tree at
 
-Best regards,
-Krzysztof
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.10
-> 
-> for you to fetch changes up to c689de56c0a7c8387ea00509f94fa483ae61d979:
-> 
->   ARM: Drop fixed 200 Hz timer requirement from Samsung platforms (2016-11-23 19:34:55 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc update for v4.10:
-> 1. Use SCU mapping from Device Tree instead of statically mapped one.
-> 2. Drop fixed requirement for HZ=200 on Samsung platforms.
-> 
-> ----------------------------------------------------------------
-> Javier Martinez Canillas (1):
->       ARM: dts: exynos: Document eMMC/SD/SDIO devices in Snow and Peach boards
-> 
-> Krzysztof Kozlowski (3):
->       ARM: dts: exynos: Remove exynos4415.dtsi
->       Merge tag 'samsung-dt-4.10' into next/soc
->       ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-> 
-> Pankaj Dubey (4):
->       ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
->       ARM: dts: exynos: Add SCU device node to exynos4.dtsi
->       ARM: EXYNOS: Remove static mapping of SCU SFR
->       ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
-> 
-> Randy Li (2):
->       ARM: dts: exynos: Add TOPEET itop core board SCP package version
->       ARM: dts: exynos: Add TOPEET itop elite based board
-> 
-> Sylwester Nawrocki (3):
->       ARM: dts: exynos: Remove "simple-bus" compatible from fimc-is node
->       ARM: dts: exynos: Add entries for sound support on Odroid-XU board
->       ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
-> 
->  .../bindings/arm/samsung/samsung-boards.txt        |   3 +
->  arch/arm/Kconfig                                   |   3 +-
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos4.dtsi                     |   5 +
->  arch/arm/boot/dts/exynos4412-itop-elite.dts        | 240 ++++++++
->  arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi    | 501 ++++++++++++++++
->  arch/arm/boot/dts/exynos4415-pinctrl.dtsi          | 575 ------------------
->  arch/arm/boot/dts/exynos4415.dtsi                  | 650 ---------------------
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   2 +-
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi      |   4 +
->  arch/arm/boot/dts/exynos5410-odroidxu.dts          |  69 +++
->  arch/arm/boot/dts/exynos5410-pinctrl.dtsi          |   9 +
->  arch/arm/boot/dts/exynos5410.dtsi                  |  59 ++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         |   3 +
->  arch/arm/boot/dts/exynos5800-peach-pi.dts          |   3 +
->  arch/arm/mach-exynos/common.h                      |   6 +-
->  arch/arm/mach-exynos/exynos.c                      |  22 -
->  arch/arm/mach-exynos/include/mach/map.h            |   2 -
->  arch/arm/mach-exynos/platsmp.c                     |  65 +--
->  arch/arm/mach-exynos/pm.c                          |   4 +-
->  arch/arm/mach-exynos/suspend.c                     |   4 +-
->  arch/arm/mach-s3c24xx/common.c                     |  76 +++
->  arch/arm/plat-samsung/include/plat/map-s5p.h       |   4 -
->  23 files changed, 1004 insertions(+), 1306 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-elite.dts
->  create mode 100644 arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos4415-pinctrl.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos4415.dtsi
-> 
-> 
-> Pull request details for Soc only:
-> ##################################
-> ----------------------------------------------------------------
-> Samsung mach/soc update for v4.10:
-> 1. Use SCU mapping from Device Tree instead of statically mapped one.
-> 2. Drop fixed requirement for HZ=200 on Samsung platforms.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (1):
->       ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-> 
-> Pankaj Dubey (3):
->       ARM: EXYNOS: Remove static mapping of SCU SFR
->       ARM: EXYNOS: Remove unused soc_is_exynos{4,5}
->       ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
-> 
-> Sylwester Nawrocki (1):
->       ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
-> 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 48a760279ba31c59b8cfb14c5be9ed1c8e191038 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 2 Nov 2016 17:02:37 +0100
+Subject: [PATCH] ASoC: samsung: Add DT bindings documentation for TM2 sound
+ subsystem
+
+This patch adds DT binding documentation for Exnos5433 based TM2
+and TM2E boards sound subsystem.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../bindings/sound/samsung,tm2-audio.txt           | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+new file mode 100644
+index 000000000000..94442e5673b3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+@@ -0,0 +1,38 @@
++Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
++
++Required properties:
++
++ - compatible		 : "samsung,tm2-audio"
++ - model		 : the user-visible name of this sound complex
++ - audio-codec		 : the phandle of the wm5110 audio codec node,
++			   as described in ../mfd/arizona.txt
++ - i2s-controller	 : the phandle of the I2S controller
++ - audio-amplifier	 : the phandle of the MAX98504 amplifier
++ - samsung,audio-routing : a list of the connections between audio components;
++			   each entry is a pair of strings, the first being the
++			   connection's sink, the second being the connection's
++			   source; valid names for sources and sinks are the
++			   WM5110's and MAX98504's pins and the jacks on the
++			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
++			   Headset Mic
++ - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
++
++
++Example:
++
++sound {
++	compatible = "samsung,tm2-audio";
++	audio-codec = <&wm5110>;
++	i2s-controller = <&i2s0>;
++	audio-amplifier = <&max98504>;
++	mic-bias-gpios = <&gpr3 2 0>;
++	model = "wm5110";
++	samsung,audio-routing =
++		"HP", "HPOUT1L",
++		"HP", "HPOUT1R",
++		"SPK", "SPKOUT",
++		"SPKOUT", "HPOUT2L",
++		"SPKOUT", "HPOUT2R",
++		"Main Mic", "MICBIAS2",
++		"IN1R", "Main Mic";
++};
+-- 
+2.10.2
