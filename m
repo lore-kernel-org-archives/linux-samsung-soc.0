@@ -1,262 +1,61 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/5] arm64: dts: exynos5433: Add bus dt node using VDD_INT for
+Subject: [PATCH 2/5] PM / devfreq: exynos-bus: Add the detailed correlation for
  Exynos5433
-Date: Fri, 02 Dec 2016 16:18:06 +0900
-Message-ID: <1480663087-4590-5-git-send-email-cw00.choi@samsung.com>
+Date: Fri, 02 Dec 2016 16:18:04 +0900
+Message-ID: <1480663087-4590-3-git-send-email-cw00.choi@samsung.com>
 References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
-Exynos5433 has the following AMBA AXI buses to translate data
-between DRAM and sub-blocks.
+This patch adds the detailed corrleation between sub-blocks and VDD_INT power
+line for Exynos5433. VDD_INT provided the power source to INT (Internal) block.
 
-Following list specify the detailed correlation between sub-block and clock:
-- CLK_ACLK_G2D_{400|266}  : Bus clock for G2D
-- CLK_ACLK_MSCL_400       : Bus clock for MSCL (Mobile Scaler)
-- CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
-- CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
-- CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
-- CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Effective Video Codec)
-- CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
-- CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
-- CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
-
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 208 +++++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
- 2 files changed, 209 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+ Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-new file mode 100644
-index 000000000000..b1e1d9c622e1
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-@@ -0,0 +1,208 @@
-+/*
-+ * Samsung's Exynos5433 SoC Memory interface and AMBA bus device tree source
-+ *
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ * Chanwoo Choi <cw00.choi@samsung.com>
-+ *
-+ * Samsung's Exynos5433 SoC Memory interface and AMBA buses are listed
-+ * as device tree nodes are listed in this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/ {
-+	/* INT (Internal) block using VDD_INT */
-+	bus_g2d_400: bus_g2d_400 {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_G2D_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_g2d_400_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_mscl: bus_mscl {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_MSCL_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_g2d_400_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_jpeg: bus_jpeg {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_SCLK_JPEG_MSCL>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_g2d_400_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_mfc: bus_mfc {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_MFC_400>;
-+
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_g2d_400_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_g2d_266: bus_g2d_266 {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_G2D_266>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_g2d_266_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_gscl: bus_gscl {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_GSCL_333>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_gscl_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_hevc: bus_hevc {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_HEVC_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_hevc_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_bus0: bus_bus0 {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_BUS0_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_hevc_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_bus1: bus_bus1 {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_top CLK_ACLK_BUS1_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_hevc_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_bus2: bus_bus2 {
-+		compatible = "samsung,exynos-bus";
-+		clocks = <&cmu_mif CLK_ACLK_BUS2_400>;
-+		clock-names = "bus";
-+		operating-points-v2 = <&bus_bus2_opp_table>;
-+		status ="disable";
-+	};
-+
-+	bus_g2d_400_opp_table: opp_table2 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@267000000 {
-+			opp-hz = /bits/ 64 <267000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp@200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <975000>;
-+		};
-+		opp@160000000 {
-+			opp-hz = /bits/ 64 <160000000>;
-+			opp-microvolt = <962500>;
-+		};
-+		opp@134000000 {
-+			opp-hz = /bits/ 64 <134000000>;
-+			opp-microvolt = <950000>;
-+		};
-+		opp@100000000 {
-+			opp-hz = /bits/ 64 <100000000>;
-+			opp-microvolt = <937500>;
-+		};
-+	};
-+
-+	bus_g2d_266_opp_table: opp_table3 {
-+		compatible = "operating-points-v2";
-+
-+		opp@267000000 {
-+			opp-hz = /bits/ 64 <267000000>;
-+		};
-+		opp@200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+		};
-+		opp@160000000 {
-+			opp-hz = /bits/ 64 <160000000>;
-+		};
-+		opp@134000000 {
-+			opp-hz = /bits/ 64 <134000000>;
-+		};
-+		opp@100000000 {
-+			opp-hz = /bits/ 64 <100000000>;
-+		};
-+	};
-+
-+	bus_gscl_opp_table: opp_table4 {
-+		compatible = "operating-points-v2";
-+
-+		opp@333000000 {
-+			opp-hz = /bits/ 64 <333000000>;
-+		};
-+		opp@222000000 {
-+			opp-hz = /bits/ 64 <222000000>;
-+		};
-+		opp@166500000 {
-+			opp-hz = /bits/ 64 <166500000>;
-+		};
-+	};
-+
-+	bus_hevc_opp_table: opp_table5 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@267000000 {
-+			opp-hz = /bits/ 64 <267000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@160000000 {
-+			opp-hz = /bits/ 64 <160000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@134000000 {
-+			opp-hz = /bits/ 64 <134000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp@100000000 {
-+			opp-hz = /bits/ 64 <100000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+	};
-+
-+	bus_bus2_opp_table: opp_table6 {
-+		compatible = "operating-points-v2";
-+
-+		opp@400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+		};
-+		opp@200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+		};
-+		opp@134000000 {
-+			opp-hz = /bits/ 64 <134000000>;
-+		};
-+		opp@100000000 {
-+			opp-hz = /bits/ 64 <100000000>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 8c4ee84d5232..68f764e5851c 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1482,5 +1482,6 @@
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+index d3ec8e676b6b..d085ef90d27c 100644
+--- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -123,6 +123,20 @@ Detailed correlation between sub-blocks and power line according to Exynos SoC:
+ 		|--- FSYS
+ 		|--- FSYS2
  
-+#include "exynos5433-bus.dtsi"
- #include "exynos5433-pinctrl.dtsi"
- #include "exynos5433-tmu.dtsi"
++- In case of Exynos5433, there is VDD_INT power line as following:
++	VDD_INT |--- G2D (parent device)
++		|--- MSCL
++		|--- GSCL
++		|--- JPEG
++		|--- MFC
++		|--- HEVC
++		|--- BUS0
++		|--- BUS1
++		|--- BUS2
++		|--- PERIS (Fixed clock rate)
++		|--- PERIC (Fixed clock rate)
++		|--- FSYS  (Fixed clock rate)
++
+ Example1:
+ 	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
+ 	power line (regulator). The MIF (Memory Interface) AXI bus is used to
 -- 
 1.9.1
