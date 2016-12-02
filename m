@@ -1,58 +1,64 @@
-From: zain wang <wzz@rock-chips.com>
-Subject: [PATCH] drm/bridge: analogix: Don't return -EINVAL when panel not support PSR in PSR functions
-Date: Fri,  2 Dec 2016 10:32:22 +0800
-Message-ID: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.134]:41823 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752480AbcLBCdB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Dec 2016 21:33:01 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/bridge: analogix: Don't return -EINVAL when panel not
+ support PSR in PSR functions
+Date: Fri, 2 Dec 2016 09:24:11 +0530
+Message-ID: <b9e49431-5680-8a03-557a-b9c5b8307737@codeaurora.org>
+References: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: zain wang <wzz@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, dianders@chromium.org, dri-devel@lists.freedesktop.org, Tomasz Figa <tfiga@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, zain wang <wzz@rock-chips.com>
 
-We will ignored PSR setting if panel not support it. So, in this case, we should
-return from analogix_dp_enable/disable_psr() without any error code.
-Let's retrun 0 instead of -EINVAL when panel not support PSR in
-analogix_dp_enable/disable_psr().
-
-Signed-off-by: zain wang <wzz@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 6e0447f..0cb3695 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -112,7 +112,7 @@ int analogix_dp_enable_psr(struct device *dev)
- 	struct edp_vsc_psr psr_vsc;
- 
- 	if (!dp->psr_support)
--		return -EINVAL;
-+		return 0;
- 
- 	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
- 	memset(&psr_vsc, 0, sizeof(psr_vsc));
-@@ -135,7 +135,7 @@ int analogix_dp_disable_psr(struct device *dev)
- 	struct edp_vsc_psr psr_vsc;
- 
- 	if (!dp->psr_support)
--		return -EINVAL;
-+		return 0;
- 
- 	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
- 	memset(&psr_vsc, 0, sizeof(psr_vsc));
-@@ -878,6 +878,8 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 	dp->psr_support = analogix_dp_detect_sink_psr(dp);
- 	if (dp->psr_support)
- 		analogix_dp_enable_sink_psr(dp);
-+	else
-+		dev_warn(dp->dev, "Sink not support PSR\n");
- }
- 
- /*
--- 
-1.9.1
+SGksCgpPbiAxMi8wMi8yMDE2IDA4OjAyIEFNLCB6YWluIHdhbmcgd3JvdGU6Cj4gV2Ugd2lsbCBp
+Z25vcmVkIFBTUiBzZXR0aW5nIGlmIHBhbmVsIG5vdCBzdXBwb3J0IGl0LiBTbywgaW4gdGhpcyBj
+YXNlLCB3ZSBzaG91bGQKPiByZXR1cm4gZnJvbSBhbmFsb2dpeF9kcF9lbmFibGUvZGlzYWJsZV9w
+c3IoKSB3aXRob3V0IGFueSBlcnJvciBjb2RlLgo+IExldCdzIHJldHJ1biAwIGluc3RlYWQgb2Yg
+LUVJTlZBTCB3aGVuIHBhbmVsIG5vdCBzdXBwb3J0IFBTUiBpbgo+IGFuYWxvZ2l4X2RwX2VuYWJs
+ZS9kaXNhYmxlX3BzcigpLgo+Cj4gU2lnbmVkLW9mZi1ieTogemFpbiB3YW5nIDx3enpAcm9jay1j
+aGlwcy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9n
+aXhfZHBfY29yZS5jIHwgNiArKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
+KSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdl
+L2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5h
+bG9naXgvYW5hbG9naXhfZHBfY29yZS5jCj4gaW5kZXggNmUwNDQ3Zi4uMGNiMzY5NSAxMDA2NDQK
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUu
+Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29y
+ZS5jCj4gQEAgLTExMiw3ICsxMTIsNyBAQCBpbnQgYW5hbG9naXhfZHBfZW5hYmxlX3BzcihzdHJ1
+Y3QgZGV2aWNlICpkZXYpCj4gIAlzdHJ1Y3QgZWRwX3ZzY19wc3IgcHNyX3ZzYzsKPgo+ICAJaWYg
+KCFkcC0+cHNyX3N1cHBvcnQpCj4gLQkJcmV0dXJuIC1FSU5WQUw7Cj4gKwkJcmV0dXJuIDA7CgpM
+b29raW5nIGF0IHRoZSByb2NrY2hpcCBhbmFsb2dpeCBkcCBjb2RlLCBpbiBhbmFsb2dpeF9kcF9w
+c3Jfc2V0LCB0aGUgd29ya2VyIHRoYXQgY2FsbHMKYW5hbG9naXhfZHBfZW5hYmxlL2Rpc2FibGVf
+cHNyIGlzbid0IGV2ZW4gaWYgcHNyIGlzbid0IGVuYWJsZWQuIFNvLCB0aGUgYnJpZGdlIGZ1bmNz
+CnNob3VsZG4ndCBiZSBjYWxsZWQgaW4gdGhlIGZpcnN0IHBsYWNlLiBJIHRoaW5rIHRoZSBlcnJv
+ciBoYW5kbGluZyBpcyBmaW5lIHRvIGhhdmUKaGVyZS4KCj4KPiAgCS8qIFByZXBhcmUgVlNDIHBh
+Y2tldCBhcyBwZXIgRURQIDEuNCBzcGVjLCBUYWJsZSA2LjkgKi8KPiAgCW1lbXNldCgmcHNyX3Zz
+YywgMCwgc2l6ZW9mKHBzcl92c2MpKTsKPiBAQCAtMTM1LDcgKzEzNSw3IEBAIGludCBhbmFsb2dp
+eF9kcF9kaXNhYmxlX3BzcihzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gIAlzdHJ1Y3QgZWRwX3ZzY19w
+c3IgcHNyX3ZzYzsKPgo+ICAJaWYgKCFkcC0+cHNyX3N1cHBvcnQpCj4gLQkJcmV0dXJuIC1FSU5W
+QUw7Cj4gKwkJcmV0dXJuIDA7Cj4KPiAgCS8qIFByZXBhcmUgVlNDIHBhY2tldCBhcyBwZXIgRURQ
+IDEuNCBzcGVjLCBUYWJsZSA2LjkgKi8KPiAgCW1lbXNldCgmcHNyX3ZzYywgMCwgc2l6ZW9mKHBz
+cl92c2MpKTsKPiBAQCAtODc4LDYgKzg3OCw4IEBAIHN0YXRpYyB2b2lkIGFuYWxvZ2l4X2RwX2Nv
+bW1pdChzdHJ1Y3QgYW5hbG9naXhfZHBfZGV2aWNlICpkcCkKPiAgCWRwLT5wc3Jfc3VwcG9ydCA9
+IGFuYWxvZ2l4X2RwX2RldGVjdF9zaW5rX3BzcihkcCk7Cj4gIAlpZiAoZHAtPnBzcl9zdXBwb3J0
+KQo+ICAJCWFuYWxvZ2l4X2RwX2VuYWJsZV9zaW5rX3BzcihkcCk7Cj4gKwllbHNlCj4gKwkJZGV2
+X3dhcm4oZHAtPmRldiwgIlNpbmsgbm90IHN1cHBvcnQgUFNSXG4iKTsKClRoaXMgZG9lc24ndCBz
+ZWVtIGJlbmVmaWNpYWwgZWl0aGVyLiBUaGVyZSBzZWVtcyB0byBiZSBhIGRlYnVnCnByaW50IGFs
+cmVhZHkgaW4gYW5hbG9naXhfZHBfZGV0ZWN0X3NpbmtfcHNyIHdoaWNoIHJlcG9ydHMgUFNSCnJl
+bGF0ZWQgaW5mby4KCkFyY2hpdAoKPiAgfQo+Cj4gIC8qCj4KCi0tIApRdWFsY29tbSBJbm5vdmF0
+aW9uIENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiBDb2RlIEF1cm9yYSBGb3J1bSwKYSBMaW51
+eCBGb3VuZGF0aW9uIENvbGxhYm9yYXRpdmUgUHJvamVjdApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
