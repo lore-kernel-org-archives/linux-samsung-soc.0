@@ -1,67 +1,118 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/5] arm64: dts: exynos5433: Add PPMU dt node
-Date: Fri, 02 Dec 2016 16:18:05 +0900
-Message-ID: <1480663087-4590-4-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 5/5] arm64: dts: exynos5433: Add support of bus frequency using
+ VDD_INT on TM2
+Date: Fri, 02 Dec 2016 16:18:07 +0900
+Message-ID: <1480663087-4590-6-git-send-email-cw00.choi@samsung.com>
 References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1480663087-4590-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:34278 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755292AbcLBHSU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 2 Dec 2016 02:18:20 -0500
+In-reply-to: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch adds PPMU (Platform Performance Monitoring Unit) Device-tree node
-to measure the utilization of each IP in Exynos SoC.
+This patch adds the bus Device-tree nodes for INT (Internal) block
+to enable the bus frequency scaling.
 
-- PPMU_D{0|1}_CPU are used to measure the utilization of MIF (Memory Interface)
-  block with VDD_MIF power source.
-- PPMU_D{0|1}_GENERAL are used to measure the utilization of INT(Internal)
-  block with VDD_INT power source.
-
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 72 +++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 64226d5ae471..8c4ee84d5232 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -599,6 +599,30 @@
- 			clock-names = "fin_pll", "mct";
- 		};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index c08589970134..7b37aae336b1 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -170,6 +170,58 @@
+ 	};
+ };
  
-+		ppmu_d0_cpu: ppmu@10480000 {
-+			compatible = "samsung,exynos-ppmu-v2";
-+			reg = <0x10480000 0x2000>;
-+			status = "disabled";
-+		};
++&bus_g2d_400 {
++	devfreq-events = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
++	vdd-supply = <&buck4_reg>;
++	exynos,saturation-ratio = <10>;
++	status = "okay";
++};
 +
-+		ppmu_d0_general: ppmu@10490000 {
-+			compatible = "samsung,exynos-ppmu-v2";
-+			reg = <0x10490000 0x2000>;
-+			status = "disabled";
-+		};
++&bus_mscl {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
 +
-+		ppmu_d1_cpu: ppmu@104b0000 {
-+			compatible = "samsung,exynos-ppmu-v2";
-+			reg = <0x104b0000 0x2000>;
-+			status = "disabled";
-+		};
++&bus_jpeg {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
 +
-+		ppmu_d1_general: ppmu@104c0000 {
-+			compatible = "samsung,exynos-ppmu-v2";
-+			reg = <0x104c0000 0x2000>;
-+			status = "disabled";
-+		};
++&bus_mfc {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
 +
- 		pinctrl_alive: pinctrl@10580000 {
- 			compatible = "samsung,exynos5433-pinctrl";
- 			reg = <0x10580000 0x1a20>, <0x11090000 0x100>;
++&bus_g2d_266 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_gscl {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_hevc {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_bus0 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_bus1 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_bus2 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
+ &cmu_aud {
+ 	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
+ 	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+@@ -794,6 +846,26 @@
+ 	bus-width = <4>;
+ };
+ 
++&ppmu_d0_general {
++	status = "okay";
++
++	events {
++		ppmu_event0_d0_general: ppmu-event0-d0-general {
++			event-name = "ppmu-event0-d0-general";
++		};
++	};
++};
++
++&ppmu_d1_general {
++	status = "okay";
++
++	events {
++		ppmu_event0_d1_general: ppmu-event0-d1-general {
++		       event-name = "ppmu-event0-d1-general";
++	       };
++       };
++};
++
+ &pinctrl_alive {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&initial_alive>;
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
