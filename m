@@ -1,61 +1,48 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/5] PM / devfreq: exynos-bus: Add the detailed correlation for
- Exynos5433
-Date: Fri, 02 Dec 2016 16:18:04 +0900
-Message-ID: <1480663087-4590-3-git-send-email-cw00.choi@samsung.com>
-References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+From: Joao Pinto <Joao.Pinto@synopsys.com>
+Subject: Re: [RFC PATCH] PCI: designware: add host_init() error handling
+Date: Fri, 2 Dec 2016 10:32:43 +0000
+Message-ID: <f2c8ebba-e51a-5f47-2d96-c75f7e086c0e@synopsys.com>
+References: <1480593077-15402-1-git-send-email-srinivas.kandagatla@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay.synopsys.com ([198.182.60.111]:35516 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753678AbcLBKdE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 2 Dec 2016 05:33:04 -0500
+In-Reply-To: <1480593077-15402-1-git-send-email-srinivas.kandagatla@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Murali Karicheri <m-karicheri2@ti.com>, Minghuan Lian <minghuan.Lian@freescale.com>, Mingkai Hu <mingkai.hu@freescale.com>, Roy Zang <tie-fei.zang@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Pratyush Anand <pratyush.anand@gmail.com>, Stanimir Varbanov <svarbanov@mm-sol.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch adds the detailed corrleation between sub-blocks and VDD_INT power
-line for Exynos5433. VDD_INT provided the power source to INT (Internal) block.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Hi Srinivas,
 
-diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-index d3ec8e676b6b..d085ef90d27c 100644
---- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -123,6 +123,20 @@ Detailed correlation between sub-blocks and power line according to Exynos SoC:
- 		|--- FSYS
- 		|--- FSYS2
- 
-+- In case of Exynos5433, there is VDD_INT power line as following:
-+	VDD_INT |--- G2D (parent device)
-+		|--- MSCL
-+		|--- GSCL
-+		|--- JPEG
-+		|--- MFC
-+		|--- HEVC
-+		|--- BUS0
-+		|--- BUS1
-+		|--- BUS2
-+		|--- PERIS (Fixed clock rate)
-+		|--- PERIC (Fixed clock rate)
-+		|--- FSYS  (Fixed clock rate)
-+
- Example1:
- 	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
- 	power line (regulator). The MIF (Memory Interface) AXI bus is used to
--- 
-1.9.1
+Às 11:51 AM de 12/1/2016, Srinivas Kandagatla escreveu:
+>  drivers/pci/host/pci-dra7xx.c           |  4 +++-
+>  drivers/pci/host/pci-exynos.c           |  4 +++-
+>  drivers/pci/host/pci-imx6.c             |  4 +++-
+>  drivers/pci/host/pci-keystone.c         |  4 +++-
+>  drivers/pci/host/pci-layerscape.c       | 12 ++++++++----
+>  drivers/pci/host/pcie-armada8k.c        |  4 +++-
+>  drivers/pci/host/pcie-designware-plat.c |  4 +++-
+>  drivers/pci/host/pcie-designware.c      |  4 +++-
+>  drivers/pci/host/pcie-designware.h      |  2 +-
+>  drivers/pci/host/pcie-qcom.c            |  6 ++++--
+>  drivers/pci/host/pcie-spear13xx.c       |  4 +++-
+>  11 files changed, 37 insertions(+), 15 deletions(-)
+> 
+
+Thanks for the patch!
+
+In my opinion your idea is good but only qcom driver is able to detect failure
+in the specific host init routine, all others have a 'return 0' even if
+something not well init. I would recomend that we take this issue a bit further
+and add the error checking to all specific pci drivers in order to make them as
+robust as qcom'.
+
+Thanks,
+Joao
