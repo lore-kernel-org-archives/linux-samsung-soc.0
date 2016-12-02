@@ -1,34 +1,67 @@
-From: Shailendra Verma <shailendra.v@samsung.com>
-Subject: [PATCH] exynos-gsc: Clean up file handle in open() error path.
-Date: Fri, 02 Dec 2016 10:15:27 +0530
-Message-ID: <1480653927-6850-1-git-send-email-shailendra.v@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Junghak Sung <jh1009.sung@samsung.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
-Cc: vidushi.koul@samsung.com
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/5] arm64: dts: Enable bus frequency scaling on
+ Exynos5433-based TM2 board
+Date: Fri, 02 Dec 2016 16:18:02 +0900
+Message-ID: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The File handle is not yet added in the vfd list.So no need to call
-v4l2_fh_del(&ctx->fh) if it fails to create control.
+This patches add the AMBA bus Device-tree node unsing VDD_INT
+to enable the bus frequency scaling on Exynos5433-based TM2 board.
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
----
- drivers/media/platform/exynos-gsc/gsc-m2m.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There are two kind of bus device with devfreq framework.
+- Parent bus device  : Change the frequency/voltage according to bus's utilization.
+- Passive bus device : Change only frequency according to the new level
+                       of parent bus device.
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index 9f03b79..5ea97c1 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -664,8 +664,8 @@ static int gsc_m2m_open(struct file *file)
- 
- error_ctrls:
- 	gsc_ctrls_delete(ctx);
--error_fh:
- 	v4l2_fh_del(&ctx->fh);
-+error_fh:
- 	v4l2_fh_exit(&ctx->fh);
- 	kfree(ctx);
- unlock:
+The VDD_INT regulator provides the power source to INT (Internal) block as
+following. The sub-blocks in the INT block share the one power source.
+       VDD_INT |--- G2D (parent device)
+               |--- MSCL
+               |--- GSCL
+               |--- JPEG
+               |--- MFC
+               |--- HEVC
+               |--- BUS0
+               |--- BUS1
+               |--- BUS2
+               |--- PERIS (Fixed clock rate)
+               |--- PERIC (Fixed clock rate)
+               |--- FSYS  (Fixed clock rate)
+
+Each sub-block has the bus clock as following:
+ - CLK_ACLK_G2D_{400|266} : Bus clock for G2D
+ - CLK_ACLK_MSCL_400      : Bus clock for MSCL (Mobile Scaler)
+ - CLK_ACLK_GSCL_333      : Bus clock for GSCL (General Scaler)
+ - CLK_SCLK_JPEG_MSCL     : Bus clock for JPEG
+ - CLK_ACLK_MFC_400       : Bus clock for MFC (Multi Format Codec)
+ - CLK_ACLK_HEVC_400      : Bus clock for HEVC (High Effective Video Codec)
+ - CLK_ACLK_BUS0_400      : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
+ - CLK_ACLK_BUS1_400      : NoC's bus clock for MFC/HEVC/G3D
+ - CLK_ACLK_BUS2_400      : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
+
+Chanwoo Choi (5):
+  clk: samsung: exynos5433: Set NoC (Network On Chip) clocks as critical
+  PM / devfreq: exynos-bus: Add the detailed correlation for Exynos5433
+  arm64: dts: exynos5433: Add PPMU dt node
+  arm64: dts: exynos5433: Add bus dt node using VDD_INT for Exynos5433
+  arm64: dts: exynos5433: Add support of bus frequency using VDD_INT on TM2
+
+ .../devicetree/bindings/devfreq/exynos-bus.txt     |  14 ++
+ arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 208 +++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  72 +++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  25 +++
+ drivers/clk/samsung/clk-exynos5433.c               |   8 +-
+ 5 files changed, 323 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+
 -- 
-1.7.9.5
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
