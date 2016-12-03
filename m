@@ -1,154 +1,78 @@
-From: csmanjuvijay@gmail.com
-Subject: [PATCH v2] USB: OHCI: ohci-s3c2410: remove useless functions
-Date: Sat,  3 Dec 2016 03:46:55 +0000
-Message-ID: <1480736815-24335-1-git-send-email-csmanjuvijay@gmail.com>
-References: <1480542166-7032-1-git-send-email-csmanjuvijay@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
+Date: Sat, 3 Dec 2016 19:03:47 +0200
+Message-ID: <20161203170347.GA3553@kozik-lap>
+References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
+ <1479967709-6619-2-git-send-email-krzk@kernel.org>
+ <20161201183404.GA2134@kozik-lap>
+ <57568492.9hbg5JCdec@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1480542166-7032-1-git-send-email-csmanjuvijay@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: csmanjuvijay@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:34010 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751488AbcLCRE1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 3 Dec 2016 12:04:27 -0500
+Content-Disposition: inline
+In-Reply-To: <57568492.9hbg5JCdec@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-From: Manjunath Goudar <csmanjuvijay@gmail.com>
+On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
+> On Thursday, December 1, 2016 8:34:04 PM CET Krzysztof Kozlowski wrote:
+> > On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
+> > > Hi,
+> > > 
+> > > This contains previous dts branch because SCU node in dts is needed
+> > > prior to removing it from mach code.
+> > > 
+> > > Below you will find full pull request and one stripped from dependency.
+> > > 
+> > 
+> > Hi Arnd, Kevin and Olof,
+> > 
+> > What about this pull from the set?
+> > 
+> 
+> Sorry, I initially deferred it and then didn't get back to it.
+> 
+> The dependency on the .dts changes made me a bit nervous about
+> taking it, mostly because the changelog fails to explain the
+> exact dependencies.
+> 
+> This breaks compatibility with existing .dtb files, right?
 
-The ohci_hcd_s3c2410_drv_probe and ohci_hcd_s3c2410_drv_remove
-functions are removed as these are useless functions except calling
-usb_hcd_s3c2410_probe and usb_hcd_s3c2410_remove functions.
+No, strictly speaking not. There was no dt-bindings change here, no DT
+properties for SCU before. We are converting our drivers to DTB so this
+is the same as before when switching for pinctrl, clocks or all other
+drivers to DT.
 
-The usb_hcd_s3c2410_probe function renamed to ohci_hcd_s3c2410_drv_probe
-and usb_hcd_s3c2410_remove function renamed to ohci_hcd_s3c2410_drv_remove
-for proper naming.
+We are not braking DTB ABI because there was no ABI around it before.
+Otherwise, one would say that lack of SCU DT node was an ABI. That is
+wrong, because DT should describe the hardware and SCU is in hardware.
 
-Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+> What I'd like to see here is an explanation about:
+> 
+> - what the upside of breaking compatibility is
 
----
-Changelog v1 -> v2:
-Removed checkpatch.pl warnings and errors cleanup code which is not related
-to this patch.
- 
- drivers/usb/host/ohci-s3c2410.c | 39 ++++++++++++++-------------------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+DTBs which do not have SCU are not proper because they skip that part of
+hardware. However we are breaking them in the way the SMP won't work
+there. It is not an ABI break, as I mentioned above.
 
-diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-index d8e03a8..b006b93 100644
---- a/drivers/usb/host/ohci-s3c2410.c
-+++ b/drivers/usb/host/ohci-s3c2410.c
-@@ -43,6 +43,8 @@ static const char hcd_name[] = "ohci-s3c2410";
- static struct clk *clk;
- static struct clk *usb_clk;
- 
-+static struct hc_driver __read_mostly ohci_s3c2410_hc_driver;
-+
- /* forward definitions */
- 
- static void s3c2410_hcd_oc(struct s3c2410_hcd_info *info, int port_oc);
-@@ -321,26 +323,29 @@ static void s3c2410_hcd_oc(struct s3c2410_hcd_info *info, int port_oc)
- /* may be called with controller, bus, and devices active */
- 
- /*
-- * usb_hcd_s3c2410_remove - shutdown processing for HCD
-+ * ohci_hcd_s3c2410_remove - shutdown processing for HCD
-  * @dev: USB Host Controller being removed
-  * Context: !in_interrupt()
-  *
-- * Reverses the effect of usb_hcd_3c2410_probe(), first invoking
-+ * Reverses the effect of ohci_hcd_3c2410_probe(), first invoking
-  * the HCD's stop() method.  It is always called from a thread
-  * context, normally "rmmod", "apmd", or something similar.
-  *
- */
- 
--static void
--usb_hcd_s3c2410_remove(struct usb_hcd *hcd, struct platform_device *dev)
-+static int
-+ohci_hcd_s3c2410_remove(struct platform_device *dev)
- {
-+	struct usb_hcd *hcd = platform_get_drvdata(dev);
-+
- 	usb_remove_hcd(hcd);
- 	s3c2410_stop_hc(dev);
- 	usb_put_hcd(hcd);
-+	return 0;
- }
- 
- /**
-- * usb_hcd_s3c2410_probe - initialize S3C2410-based HCDs
-+ * ohci_hcd_s3c2410_probe - initialize S3C2410-based HCDs
-  * Context: !in_interrupt()
-  *
-  * Allocates basic resources for this USB host controller, and
-@@ -348,8 +353,7 @@ usb_hcd_s3c2410_remove(struct usb_hcd *hcd, struct platform_device *dev)
-  * through the hotplug entry's driver_data.
-  *
-  */
--static int usb_hcd_s3c2410_probe(const struct hc_driver *driver,
--				  struct platform_device *dev)
-+static int ohci_hcd_s3c2410_probe(struct platform_device *dev)
- {
- 	struct usb_hcd *hcd = NULL;
- 	struct s3c2410_hcd_info *info = dev_get_platdata(&dev->dev);
-@@ -358,7 +362,7 @@ static int usb_hcd_s3c2410_probe(const struct hc_driver *driver,
- 	s3c2410_usb_set_power(info, 1, 1);
- 	s3c2410_usb_set_power(info, 2, 1);
- 
--	hcd = usb_create_hcd(driver, &dev->dev, "s3c24xx");
-+	hcd = usb_create_hcd(&ohci_s3c2410_hc_driver, &dev->dev, "s3c24xx");
- 	if (hcd == NULL)
- 		return -ENOMEM;
- 
-@@ -404,21 +408,6 @@ static int usb_hcd_s3c2410_probe(const struct hc_driver *driver,
- 
- /*-------------------------------------------------------------------------*/
- 
--static struct hc_driver __read_mostly ohci_s3c2410_hc_driver;
--
--static int ohci_hcd_s3c2410_drv_probe(struct platform_device *pdev)
--{
--	return usb_hcd_s3c2410_probe(&ohci_s3c2410_hc_driver, pdev);
--}
--
--static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
--{
--	struct usb_hcd *hcd = platform_get_drvdata(pdev);
--
--	usb_hcd_s3c2410_remove(hcd, pdev);
--	return 0;
--}
--
- #ifdef CONFIG_PM
- static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
- {
-@@ -465,8 +454,8 @@ static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
- MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
- 
- static struct platform_driver ohci_hcd_s3c2410_driver = {
--	.probe		= ohci_hcd_s3c2410_drv_probe,
--	.remove		= ohci_hcd_s3c2410_drv_remove,
-+	.probe		= ohci_hcd_s3c2410_probe,
-+	.remove		= ohci_hcd_s3c2410_remove,
- 	.shutdown	= usb_hcd_platform_shutdown,
- 	.driver		= {
- 		.name	= "s3c2410-ohci",
--- 
-2.7.4
+> - what exactly stops working with an old dtb
+> - why we don't keep a fallback for handling old dtb files
+
+What is the point for it? This is not an ABI break. Even if it was,
+Samsung guys don't care for ABI breaks at all (and in fact we wanted to
+mark the platform experimental...).
+
+> It would also be helpful to have a separate pull request for
+> the commits require the new dtb, and the stuff that is unrelated.
+
+I can do that but the pull will be small.
+
+Best regards,
+Krzysztof
