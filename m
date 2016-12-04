@@ -1,78 +1,76 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
-Date: Sat, 3 Dec 2016 19:03:47 +0200
-Message-ID: <20161203170347.GA3553@kozik-lap>
-References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
- <1479967709-6619-2-git-send-email-krzk@kernel.org>
- <20161201183404.GA2134@kozik-lap>
- <57568492.9hbg5JCdec@wuerfel>
+From: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH 0/2] Device links documentation
+Date: Sun, 4 Dec 2016 13:10:04 +0100
+Message-ID: <cover.1480849144.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:34010 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbcLCRE1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 3 Dec 2016 12:04:27 -0500
-Content-Disposition: inline
-In-Reply-To: <57568492.9hbg5JCdec@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Silvio Fricke <silvio.fricke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Hanjun Guo <guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, g@mail.linuxfoundation.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Dmitry Torokhov <dmitry.toro>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
-> On Thursday, December 1, 2016 8:34:04 PM CET Krzysztof Kozlowski wrote:
-> > On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
-> > > Hi,
-> > > 
-> > > This contains previous dts branch because SCU node in dts is needed
-> > > prior to removing it from mach code.
-> > > 
-> > > Below you will find full pull request and one stripped from dependency.
-> > > 
-> > 
-> > Hi Arnd, Kevin and Olof,
-> > 
-> > What about this pull from the set?
-> > 
-> 
-> Sorry, I initially deferred it and then didn't get back to it.
-> 
-> The dependency on the .dts changes made me a bit nervous about
-> taking it, mostly because the changelog fails to explain the
-> exact dependencies.
-> 
-> This breaks compatibility with existing .dtb files, right?
+Here's my suggestion for initial documentation on the device links
+feature that's queued for 4.10 on Greg KH's driver-core-next branch.
+Please let me know if you have any additions or corrections.
 
-No, strictly speaking not. There was no dt-bindings change here, no DT
-properties for SCU before. We are converting our drivers to DTB so this
-is the same as before when switching for pinctrl, clocks or all other
-drivers to DT.
+To read this in rendered form:
+http://wunner.de/kernel-doc/core-api/device_link.html
 
-We are not braking DTB ABI because there was no ABI around it before.
-Otherwise, one would say that lack of SCU DT node was an ABI. That is
-wrong, because DT should describe the hardware and SCU is in hardware.
+Patch [2/2] could go in via driver-core-next, but patch [1/2] would
+need to go in via docs-next (because the core-api directory doesn't
+exist yet in driver-core-next).
 
-> What I'd like to see here is an explanation about:
-> 
-> - what the upside of breaking compatibility is
+@Jonathan Corbet:  Is core-api the right place to put this? An
+alternative would be Documentation/driver-api, but unlike core-api
+it contains less prose text but mostly just bare API docs gleaned
+from kernel-doc.
 
-DTBs which do not have SCU are not proper because they skip that part of
-hardware. However we are breaking them in the way the SMP won't work
-there. It is not an ABI break, as I mentioned above.
 
-> - what exactly stops working with an old dtb
-> - why we don't keep a fallback for handling old dtb files
+To render the documentation oneself, the device links patches need
+to be merged from driver-core-next into docs-next.  Here's a branch
+which contains all the necessary bits:
+https://github.com/l1k/linux/commits/device_links_docs_v1
 
-What is the point for it? This is not an ABI break. Even if it was,
-Samsung guys don't care for ABI breaks at all (and in fact we wanted to
-mark the platform experimental...).
+(The build is currently broken for docs-next, one needs to remove
+80211.xml from Documentation/DocBook/Makefile and for some reason
+$BUILDDIR/cec.h.rst is not found on the first build, but only on
+the second build.)
 
-> It would also be helpful to have a separate pull request for
-> the commits require the new dtb, and the stuff that is unrelated.
 
-I can do that but the pull will be small.
+About half of the documentation was distilled from the mailing list
+discussion initiated by Luis Rodriguez after KS/LPC:
+https://lkml.org/lkml/2016/11/7/790
+https://lkml.org/lkml/2016/11/7/795
+https://lkml.org/lkml/2016/11/8/899
 
-Best regards,
-Krzysztof
+The other half is based on the first draft I posted in September:
+https://lkml.org/lkml/2016/9/27/215
+
+Thanks,
+
+Lukas
+
+
+Lukas Wunner (2):
+  Documentation/core-api/device_link: Add initial documentation
+  driver core: Silence device links sphinx warning
+
+ Documentation/core-api/device_link.rst | 279 +++++++++++++++++++++++++++++++++
+ Documentation/core-api/index.rst       |   8 +
+ drivers/base/core.c                    |   4 +-
+ include/linux/device.h                 |   1 +
+ 4 files changed, 290 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/core-api/device_link.rst
+
+-- 
+2.10.2
