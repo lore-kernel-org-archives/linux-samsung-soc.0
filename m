@@ -1,77 +1,42 @@
-From: Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: Re: [RFC PATCH] PCI: designware: add host_init() error handling
-Date: Mon, 5 Dec 2016 10:24:33 +0000
-Message-ID: <05a1f59e-b5da-7a6a-149e-7e9037deb7bd@synopsys.com>
-References: <1480593077-15402-1-git-send-email-srinivas.kandagatla@linaro.org>
- <f2c8ebba-e51a-5f47-2d96-c75f7e086c0e@synopsys.com>
- <d416f9b3-20d9-0339-a4d2-9a4ba0669633@linaro.org>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH 0/2] Device links documentation
+Date: Mon, 5 Dec 2016 10:03:37 -0200
+Message-ID: <20161205100243.65b54d63@vento.lan>
+References: <cover.1480849144.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <d416f9b3-20d9-0339-a4d2-9a4ba0669633@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc: Roy Zang <tie-fei.zang@freescale.com>, linux-samsung-soc@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Jose Abreu <Jose.Abreu@synopsys.com>, linux-arm-msm@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>, Murali Karicheri <m-karicheri2@ti.com>, Mingkai Hu <mingkai.hu@freescale.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, linux-kernel@vger.kernel.org, Stanimir Varbanov <svarbanov@mm-sol.com>, Minghuan Lian <minghuan.Lian@freescale.com>, linuxppc-dev@lists.ozlabs.org, Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1480849144.git.lukas@wunner.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, Silvio Fricke <silvio.fricke@gmail.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-=C0s 11:51 AM de 12/2/2016, Srinivas Kandagatla escreveu:
-> =
+Hi Lukas,
 
-> =
+Em Sun, 4 Dec 2016 13:10:04 +0100
+Lukas Wunner <lukas@wunner.de> escreveu:
 
-> On 02/12/16 10:32, Joao Pinto wrote:
->>
->> Hi Srinivas,
->>
->> =C0s 11:51 AM de 12/1/2016, Srinivas Kandagatla escreveu:
->>>  drivers/pci/host/pci-dra7xx.c           |  4 +++-
->>>  drivers/pci/host/pci-exynos.c           |  4 +++-
->>>  drivers/pci/host/pci-imx6.c             |  4 +++-
->>>  drivers/pci/host/pci-keystone.c         |  4 +++-
->>>  drivers/pci/host/pci-layerscape.c       | 12 ++++++++----
->>>  drivers/pci/host/pcie-armada8k.c        |  4 +++-
->>>  drivers/pci/host/pcie-designware-plat.c |  4 +++-
->>>  drivers/pci/host/pcie-designware.c      |  4 +++-
->>>  drivers/pci/host/pcie-designware.h      |  2 +-
->>>  drivers/pci/host/pcie-qcom.c            |  6 ++++--
->>>  drivers/pci/host/pcie-spear13xx.c       |  4 +++-
->>>  11 files changed, 37 insertions(+), 15 deletions(-)
->>>
->>
->> Thanks for the patch!
->>
->> In my opinion your idea is good but only qcom driver is able to detect f=
-ailure
->> in the specific host init routine, all others have a 'return 0' even if
->> something not well init. I would recomend that we take this issue a bit =
-further
->> and add the error checking to all specific pci drivers in order to make =
-them as
->> robust as qcom'.
-> I totally agree with you, I can give this a go in next version.
+> Here's my suggestion for initial documentation on the device links
+> feature that's queued for 4.10 on Greg KH's driver-core-next branch.
+> Please let me know if you have any additions or corrections.
+> 
+> To read this in rendered form:
+> http://wunner.de/kernel-doc/core-api/device_link.html
+> 
+> Patch [2/2] could go in via driver-core-next, but patch [1/2] would
+> need to go in via docs-next (because the core-api directory doesn't
+> exist yet in driver-core-next).
+>
+> @Jonathan Corbet:  Is core-api the right place to put this? An
+> alternative would be Documentation/driver-api, but unlike core-api
+> it contains less prose text but mostly just bare API docs gleaned
+> from kernel-doc.
 
-Sure, but I think it would be better to finish now since we are on top of t=
-he
-task. I can help you if you need.
+Just my 2 cents here, but, IMHO, this belongs to driver-api.
+Yeah, it contains less prose, with is, IMHO, something that should
+be improved ;)
 
-Thanks Joao
-
-> =
-
-> Thanks,
-> srini
-> =
-
->>
->> Thanks,
->> Joao
->>
+Regards,
+Mauro
