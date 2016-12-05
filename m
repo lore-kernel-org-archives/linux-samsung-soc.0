@@ -1,47 +1,148 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 2/2] driver core: Silence device links sphinx warning
-Date: Mon, 5 Dec 2016 14:59:49 +0100
-Message-ID: <20161205135949.GB30013@kroah.com>
-References: <cover.1480849144.git.lukas@wunner.de>
-	<a1c7a93ee8ef057fb70aa3abeed38daf989444fc.1480849144.git.lukas@wunner.de>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH] drm/bridge: analogix: Don't return -EINVAL when panel not
+ support PSR in PSR functions
+Date: Mon, 5 Dec 2016 12:28:01 -0500
+Message-ID: <CAOw6vbLv_q8XPj4_A7Yx1HaVVkdUTeq9=EHAjtJd7bOge2C21Q@mail.gmail.com>
+References: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
+ <b9e49431-5680-8a03-557a-b9c5b8307737@codeaurora.org> <CAOw6vbJTRLu6mTWXWNBmhhgxmkK-szgnUY_bZ+es5PKnjetiXw@mail.gmail.com>
+ <85f3e098-9566-751e-f201-dddda973f77a@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <a1c7a93ee8ef057fb70aa3abeed38daf989444fc.1480849144.git.lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Hanjun Guo <guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>Tomeu Vizoso <tom>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f181.google.com ([209.85.161.181]:34542 "EHLO
+        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752434AbcLER2Z (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 5 Dec 2016 12:28:25 -0500
+Received: by mail-yw0-f181.google.com with SMTP id t125so256830646ywc.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Dec 2016 09:28:24 -0800 (PST)
+Received: from mail-yw0-f173.google.com (mail-yw0-f173.google.com. [209.85.161.173])
+        by smtp.gmail.com with ESMTPSA id i137sm7064005ywg.48.2016.12.05.09.28.22
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Dec 2016 09:28:23 -0800 (PST)
+Received: by mail-yw0-f173.google.com with SMTP id t125so256830106ywc.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Dec 2016 09:28:22 -0800 (PST)
+In-Reply-To: <85f3e098-9566-751e-f201-dddda973f77a@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Archit Taneja <architt@codeaurora.org>
+Cc: zain wang <wzz@rock-chips.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-On Sun, Dec 04, 2016 at 01:10:04PM +0100, Lukas Wunner wrote:
-> Silence this warning emitted by sphinx:
-> include/linux/device.h:938: warning: No description found for parameter 'links'
-> 
-> While at it, fix typos in comments of device links code.
-> 
-> Cc: Rafael J. Wysocki <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> Cc: Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>
-> Cc: Silvio Fricke <silvio.fricke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-> ---
->  drivers/base/core.c    | 4 ++--
->  include/linux/device.h | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
+On Sun, Dec 4, 2016 at 10:13 PM, Archit Taneja <architt@codeaurora.org> wrote:
+>
+>
+> On 12/02/2016 09:33 PM, Sean Paul wrote:
+>>
+>> On Thu, Dec 1, 2016 at 10:54 PM, Archit Taneja <architt@codeaurora.org>
+>> wrote:
+>>>
+>>> Hi,
+>>>
+>>> On 12/02/2016 08:02 AM, zain wang wrote:
+>>>>
+>>>>
+>>>> We will ignored PSR setting if panel not support it. So, in this case,
+>>>> we
+>>>> should
+>>>> return from analogix_dp_enable/disable_psr() without any error code.
+>>>> Let's retrun 0 instead of -EINVAL when panel not support PSR in
+>>>> analogix_dp_enable/disable_psr().
+>>>>
+>>>> Signed-off-by: zain wang <wzz@rock-chips.com>
+>>>> ---
+>>>>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++++--
+>>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> index 6e0447f..0cb3695 100644
+>>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> @@ -112,7 +112,7 @@ int analogix_dp_enable_psr(struct device *dev)
+>>>>         struct edp_vsc_psr psr_vsc;
+>>>>
+>>>>         if (!dp->psr_support)
+>>>> -               return -EINVAL;
+>>>> +               return 0;
+>>>
+>>>
+>>>
+>>> Looking at the rockchip analogix dp code, in analogix_dp_psr_set, the
+>>> worker
+>>> that calls
+>>> analogix_dp_enable/disable_psr isn't even if psr isn't enabled. So, the
+>>> bridge funcs
+>>> shouldn't be called in the first place. I think the error handling is
+>>> fine
+>>> to have
+>>> here.
+>>>
+>>
+>> Hi Archit,
+>>
+>> This was my first impression, too, and the complexity of the various
+>> psr abstraction layers don't help :)
+>>
+>> However, this code path will be hit if the source supports psr, but
+>> the sink doesn't. The rockchip_drm_psr code doesn't know if the sink
+>> supports psr, so it will end up calling this.
+>
+>
+> Okay, thanks for the explanation. The dev_warn() below still seems
+> unnecessary, right?
+>
 
-I'll take this patch now to keep the warnings from showing up in
-4.10-rc1.
+Yeah, one could make a case for dev_info (disclaimer: I have a high
+tolerance for noisy logs), but a warning does seem excessive.
 
-thanks,
+Sean
 
-greg k-h
+> Archit
+>
+>
+>>
+>> Sean
+>>
+>>
+>>>>
+>>>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+>>>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
+>>>> @@ -135,7 +135,7 @@ int analogix_dp_disable_psr(struct device *dev)
+>>>>         struct edp_vsc_psr psr_vsc;
+>>>>
+>>>>         if (!dp->psr_support)
+>>>> -               return -EINVAL;
+>>>> +               return 0;
+>>>>
+>>>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+>>>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
+>>>> @@ -878,6 +878,8 @@ static void analogix_dp_commit(struct
+>>>> analogix_dp_device *dp)
+>>>>         dp->psr_support = analogix_dp_detect_sink_psr(dp);
+>>>>         if (dp->psr_support)
+>>>>                 analogix_dp_enable_sink_psr(dp);
+>>>> +       else
+>>>> +               dev_warn(dp->dev, "Sink not support PSR\n");
+>>>
+>>>
+>>>
+>>> This doesn't seem beneficial either. There seems to be a debug
+>>> print already in analogix_dp_detect_sink_psr which reports PSR
+>>> related info.
+>>>
+>>> Archit
+>>>
+>>>>  }
+>>>>
+>>>>  /*
+>>>>
+>>>
+>>> --
+>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>>> a Linux Foundation Collaborative Project
+>
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
