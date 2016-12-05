@@ -1,74 +1,121 @@
-From: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH 2/2] driver core: Silence device links sphinx warning
-Date: Sun, 4 Dec 2016 13:10:04 +0100
-Message-ID: <a1c7a93ee8ef057fb70aa3abeed38daf989444fc.1480849144.git.lukas@wunner.de>
-References: <cover.1480849144.git.lukas@wunner.de>
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/bridge: analogix: Don't return -EINVAL when panel not
+ support PSR in PSR functions
+Date: Mon, 5 Dec 2016 08:43:38 +0530
+Message-ID: <85f3e098-9566-751e-f201-dddda973f77a@codeaurora.org>
+References: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
+ <b9e49431-5680-8a03-557a-b9c5b8307737@codeaurora.org>
+ <CAOw6vbJTRLu6mTWXWNBmhhgxmkK-szgnUY_bZ+es5PKnjetiXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <cover.1480849144.git.lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Silvio Fricke <silvio.fricke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Hanjun Guo <guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, g@mail.linuxfoundation.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Dmitry Torokhov <dmitry.toro>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59116 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbcLEDNs (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 4 Dec 2016 22:13:48 -0500
+In-Reply-To: <CAOw6vbJTRLu6mTWXWNBmhhgxmkK-szgnUY_bZ+es5PKnjetiXw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: zain wang <wzz@rock-chips.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
-Silence this warning emitted by sphinx:
-include/linux/device.h:938: warning: No description found for parameter 'links'
 
-While at it, fix typos in comments of device links code.
 
-Cc: Rafael J. Wysocki <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>
-Cc: Silvio Fricke <silvio.fricke-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
----
- drivers/base/core.c    | 4 ++--
- include/linux/device.h | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+On 12/02/2016 09:33 PM, Sean Paul wrote:
+> On Thu, Dec 1, 2016 at 10:54 PM, Archit Taneja <architt@codeaurora.org> wrote:
+>> Hi,
+>>
+>> On 12/02/2016 08:02 AM, zain wang wrote:
+>>>
+>>> We will ignored PSR setting if panel not support it. So, in this case, we
+>>> should
+>>> return from analogix_dp_enable/disable_psr() without any error code.
+>>> Let's retrun 0 instead of -EINVAL when panel not support PSR in
+>>> analogix_dp_enable/disable_psr().
+>>>
+>>> Signed-off-by: zain wang <wzz@rock-chips.com>
+>>> ---
+>>>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++++--
+>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> index 6e0447f..0cb3695 100644
+>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> @@ -112,7 +112,7 @@ int analogix_dp_enable_psr(struct device *dev)
+>>>         struct edp_vsc_psr psr_vsc;
+>>>
+>>>         if (!dp->psr_support)
+>>> -               return -EINVAL;
+>>> +               return 0;
+>>
+>>
+>> Looking at the rockchip analogix dp code, in analogix_dp_psr_set, the worker
+>> that calls
+>> analogix_dp_enable/disable_psr isn't even if psr isn't enabled. So, the
+>> bridge funcs
+>> shouldn't be called in the first place. I think the error handling is fine
+>> to have
+>> here.
+>>
+>
+> Hi Archit,
+>
+> This was my first impression, too, and the complexity of the various
+> psr abstraction layers don't help :)
+>
+> However, this code path will be hit if the source supports psr, but
+> the sink doesn't. The rockchip_drm_psr code doesn't know if the sink
+> supports psr, so it will end up calling this.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index d0c9df5..8c25e68 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -172,7 +172,7 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
-  *
-  * The supplier device is required to be registered when this function is called
-  * and NULL will be returned if that is not the case.  The consumer device need
-- * not be registerd, however.
-+ * not be registered, however.
-  */
- struct device_link *device_link_add(struct device *consumer,
- 				    struct device *supplier, u32 flags)
-@@ -225,7 +225,7 @@ struct device_link *device_link_add(struct device *consumer,
- 	INIT_LIST_HEAD(&link->c_node);
- 	link->flags = flags;
- 
--	/* Deterine the initial link state. */
-+	/* Determine the initial link state. */
- 	if (flags & DL_FLAG_STATELESS) {
- 		link->status = DL_STATE_NONE;
- 	} else {
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 3896af4..87edfdf 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -813,6 +813,7 @@ struct dev_links_info {
-  * 		on.  This shrinks the "Board Support Packages" (BSPs) and
-  * 		minimizes board-specific #ifdefs in drivers.
-  * @driver_data: Private pointer for driver specific info.
-+ * @links:	Links to suppliers and consumers of this device.
-  * @power:	For device power management.
-  * 		See Documentation/power/admin-guide/devices.rst for details.
-  * @pm_domain:	Provide callbacks that are executed during system suspend,
+Okay, thanks for the explanation. The dev_warn() below still seems
+unnecessary, right?
+
+Archit
+
+>
+> Sean
+>
+>
+>>>
+>>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+>>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
+>>> @@ -135,7 +135,7 @@ int analogix_dp_disable_psr(struct device *dev)
+>>>         struct edp_vsc_psr psr_vsc;
+>>>
+>>>         if (!dp->psr_support)
+>>> -               return -EINVAL;
+>>> +               return 0;
+>>>
+>>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
+>>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
+>>> @@ -878,6 +878,8 @@ static void analogix_dp_commit(struct
+>>> analogix_dp_device *dp)
+>>>         dp->psr_support = analogix_dp_detect_sink_psr(dp);
+>>>         if (dp->psr_support)
+>>>                 analogix_dp_enable_sink_psr(dp);
+>>> +       else
+>>> +               dev_warn(dp->dev, "Sink not support PSR\n");
+>>
+>>
+>> This doesn't seem beneficial either. There seems to be a debug
+>> print already in analogix_dp_detect_sink_psr which reports PSR
+>> related info.
+>>
+>> Archit
+>>
+>>>  }
+>>>
+>>>  /*
+>>>
+>>
+>> --
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+
 -- 
-2.10.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
