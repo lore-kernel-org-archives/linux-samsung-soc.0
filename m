@@ -1,121 +1,77 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH] drm/bridge: analogix: Don't return -EINVAL when panel not
- support PSR in PSR functions
-Date: Mon, 5 Dec 2016 08:43:38 +0530
-Message-ID: <85f3e098-9566-751e-f201-dddda973f77a@codeaurora.org>
-References: <1480645942-29912-1-git-send-email-wzz@rock-chips.com>
- <b9e49431-5680-8a03-557a-b9c5b8307737@codeaurora.org>
- <CAOw6vbJTRLu6mTWXWNBmhhgxmkK-szgnUY_bZ+es5PKnjetiXw@mail.gmail.com>
+From: Joao Pinto <Joao.Pinto@synopsys.com>
+Subject: Re: [RFC PATCH] PCI: designware: add host_init() error handling
+Date: Mon, 5 Dec 2016 10:24:33 +0000
+Message-ID: <05a1f59e-b5da-7a6a-149e-7e9037deb7bd@synopsys.com>
+References: <1480593077-15402-1-git-send-email-srinivas.kandagatla@linaro.org>
+ <f2c8ebba-e51a-5f47-2d96-c75f7e086c0e@synopsys.com>
+ <d416f9b3-20d9-0339-a4d2-9a4ba0669633@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59116 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbcLEDNs (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Dec 2016 22:13:48 -0500
-In-Reply-To: <CAOw6vbJTRLu6mTWXWNBmhhgxmkK-szgnUY_bZ+es5PKnjetiXw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <d416f9b3-20d9-0339-a4d2-9a4ba0669633@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: Roy Zang <tie-fei.zang@freescale.com>, linux-samsung-soc@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Jose Abreu <Jose.Abreu@synopsys.com>, linux-arm-msm@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>, Murali Karicheri <m-karicheri2@ti.com>, Mingkai Hu <mingkai.hu@freescale.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <Richard.Zhu@freescale.com>, linux-kernel@vger.kernel.org, Stanimir Varbanov <svarbanov@mm-sol.com>, Minghuan Lian <minghuan.Lian@freescale.com>, linuxppc-dev@lists.ozlabs.org, Lucas Stach <l.stach@pengutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: zain wang <wzz@rock-chips.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, Doug Anderson <dianders@chromium.org>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org
 
+=C0s 11:51 AM de 12/2/2016, Srinivas Kandagatla escreveu:
+> =
 
+> =
 
-On 12/02/2016 09:33 PM, Sean Paul wrote:
-> On Thu, Dec 1, 2016 at 10:54 PM, Archit Taneja <architt@codeaurora.org> wrote:
->> Hi,
+> On 02/12/16 10:32, Joao Pinto wrote:
 >>
->> On 12/02/2016 08:02 AM, zain wang wrote:
->>>
->>> We will ignored PSR setting if panel not support it. So, in this case, we
->>> should
->>> return from analogix_dp_enable/disable_psr() without any error code.
->>> Let's retrun 0 instead of -EINVAL when panel not support PSR in
->>> analogix_dp_enable/disable_psr().
->>>
->>> Signed-off-by: zain wang <wzz@rock-chips.com>
->>> ---
->>>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++++--
->>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index 6e0447f..0cb3695 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -112,7 +112,7 @@ int analogix_dp_enable_psr(struct device *dev)
->>>         struct edp_vsc_psr psr_vsc;
->>>
->>>         if (!dp->psr_support)
->>> -               return -EINVAL;
->>> +               return 0;
+>> Hi Srinivas,
 >>
+>> =C0s 11:51 AM de 12/1/2016, Srinivas Kandagatla escreveu:
+>>>  drivers/pci/host/pci-dra7xx.c           |  4 +++-
+>>>  drivers/pci/host/pci-exynos.c           |  4 +++-
+>>>  drivers/pci/host/pci-imx6.c             |  4 +++-
+>>>  drivers/pci/host/pci-keystone.c         |  4 +++-
+>>>  drivers/pci/host/pci-layerscape.c       | 12 ++++++++----
+>>>  drivers/pci/host/pcie-armada8k.c        |  4 +++-
+>>>  drivers/pci/host/pcie-designware-plat.c |  4 +++-
+>>>  drivers/pci/host/pcie-designware.c      |  4 +++-
+>>>  drivers/pci/host/pcie-designware.h      |  2 +-
+>>>  drivers/pci/host/pcie-qcom.c            |  6 ++++--
+>>>  drivers/pci/host/pcie-spear13xx.c       |  4 +++-
+>>>  11 files changed, 37 insertions(+), 15 deletions(-)
+>>>
 >>
->> Looking at the rockchip analogix dp code, in analogix_dp_psr_set, the worker
->> that calls
->> analogix_dp_enable/disable_psr isn't even if psr isn't enabled. So, the
->> bridge funcs
->> shouldn't be called in the first place. I think the error handling is fine
->> to have
->> here.
+>> Thanks for the patch!
 >>
->
-> Hi Archit,
->
-> This was my first impression, too, and the complexity of the various
-> psr abstraction layers don't help :)
->
-> However, this code path will be hit if the source supports psr, but
-> the sink doesn't. The rockchip_drm_psr code doesn't know if the sink
-> supports psr, so it will end up calling this.
+>> In my opinion your idea is good but only qcom driver is able to detect f=
+ailure
+>> in the specific host init routine, all others have a 'return 0' even if
+>> something not well init. I would recomend that we take this issue a bit =
+further
+>> and add the error checking to all specific pci drivers in order to make =
+them as
+>> robust as qcom'.
+> I totally agree with you, I can give this a go in next version.
 
-Okay, thanks for the explanation. The dev_warn() below still seems
-unnecessary, right?
+Sure, but I think it would be better to finish now since we are on top of t=
+he
+task. I can help you if you need.
 
-Archit
+Thanks Joao
 
->
-> Sean
->
->
->>>
->>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
->>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
->>> @@ -135,7 +135,7 @@ int analogix_dp_disable_psr(struct device *dev)
->>>         struct edp_vsc_psr psr_vsc;
->>>
->>>         if (!dp->psr_support)
->>> -               return -EINVAL;
->>> +               return 0;
->>>
->>>         /* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
->>>         memset(&psr_vsc, 0, sizeof(psr_vsc));
->>> @@ -878,6 +878,8 @@ static void analogix_dp_commit(struct
->>> analogix_dp_device *dp)
->>>         dp->psr_support = analogix_dp_detect_sink_psr(dp);
->>>         if (dp->psr_support)
->>>                 analogix_dp_enable_sink_psr(dp);
->>> +       else
->>> +               dev_warn(dp->dev, "Sink not support PSR\n");
->>
->>
->> This doesn't seem beneficial either. There seems to be a debug
->> print already in analogix_dp_detect_sink_psr which reports PSR
->> related info.
->>
->> Archit
->>
->>>  }
->>>
->>>  /*
->>>
->>
->> --
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
->> a Linux Foundation Collaborative Project
+> =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Thanks,
+> srini
+> =
+
+>>
+>> Thanks,
+>> Joao
+>>
