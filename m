@@ -1,144 +1,136 @@
 From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/5] arm64: dts: exynos5433: Add bus dt node using
- VDD_INT for Exynos5433
-Date: Tue, 6 Dec 2016 21:21:04 +0200
-Message-ID: <20161206192104.GB12683@kozik-lap>
+Subject: Re: [PATCH 5/5] arm64: dts: exynos5433: Add support of bus frequency
+ using VDD_INT on TM2
+Date: Tue, 6 Dec 2016 21:24:50 +0200
+Message-ID: <20161206192450.GC12683@kozik-lap>
 References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
- <1480663087-4590-5-git-send-email-cw00.choi@samsung.com>
+ <1480663087-4590-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1480663087-4590-5-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1480663087-4590-6-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 02, 2016 at 04:18:06PM +0900, Chanwoo Choi wrote:
-> This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
-> Exynos5433 has the following AMBA AXI buses to translate data
-> between DRAM and sub-blocks.
-> 
-> Following list specify the detailed correlation between sub-block and clock:
-> - CLK_ACLK_G2D_{400|266}  : Bus clock for G2D
-> - CLK_ACLK_MSCL_400       : Bus clock for MSCL (Mobile Scaler)
-> - CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
-> - CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
-> - CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
-> - CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Effective Video Codec)
-> - CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
-> - CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
-> - CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
+On Fri, Dec 02, 2016 at 04:18:07PM +0900, Chanwoo Choi wrote:
+> This patch adds the bus Device-tree nodes for INT (Internal) block
+> to enable the bus frequency scaling.
 > 
 > Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 208 +++++++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
->  2 files changed, 209 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 72 +++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-> new file mode 100644
-> index 000000000000..b1e1d9c622e1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-> @@ -0,0 +1,208 @@
-> +/*
-> + * Samsung's Exynos5433 SoC Memory interface and AMBA bus device tree source
-> + *
-> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-> + * Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + *
-> + * Samsung's Exynos5433 SoC Memory interface and AMBA buses are listed
-> + * as device tree nodes are listed in this file.
-
-This duplicates the introduction line and does not make sense.
-
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> index c08589970134..7b37aae336b1 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> @@ -170,6 +170,58 @@
+>  	};
+>  };
+>  
+> +&bus_g2d_400 {
+> +	devfreq-events = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
+> +	vdd-supply = <&buck4_reg>;
+> +	exynos,saturation-ratio = <10>;
+> +	status = "okay";
+> +};
 > +
-> +/ {
-
-Shouldn't these be under soc node? It looks like property of SoC itself.
-
-> +	/* INT (Internal) block using VDD_INT */
-> +	bus_g2d_400: bus_g2d_400 {
-
-In node name, the dash '-' is preferred. The name should describe
-general class of device so probably this should be just "bus"... but I
-don't see a way how to do it reasonable anyway.
-
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_G2D_400>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +		status ="disable";
-
-Hm?
-
-
-> +	};
+> +&bus_mscl {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
 > +
-> +	bus_mscl: bus_mscl {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_MSCL_400>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_jpeg: bus_jpeg {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_SCLK_JPEG_MSCL>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_mfc: bus_mfc {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_MFC_400>;
-> +
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_g2d_266: bus_g2d_266 {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_G2D_266>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_g2d_266_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_gscl: bus_gscl {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_GSCL_333>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_gscl_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_hevc: bus_hevc {
-> +		compatible = "samsung,exynos-bus";
-> +		clocks = <&cmu_top CLK_ACLK_HEVC_400>;
-> +		clock-names = "bus";
-> +		operating-points-v2 = <&bus_hevc_opp_table>;
-> +		status ="disable";
-> +	};
-> +
-> +	bus_bus0: bus_bus0 {
+> +&bus_jpeg {
 
-bus, bus, bus, bus, jackpot! Let's try to find better name and label for
-these. :)
+Except the first entry (which is a parent), are there any objections to
+order these nodes alphabetically? This also applies to the previously
+patch.
+
+Beside that nit, looks good. I will have to wait anyway to next merge
+window, so for the reference:
+
+Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 Best regards,
 Krzysztof
+
+
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_mfc {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_g2d_266 {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_gscl {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_hevc {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_bus0 {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_bus1 {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+> +&bus_bus2 {
+> +	devfreq = <&bus_g2d_400>;
+> +	status = "okay";
+> +};
+> +
+>  &cmu_aud {
+>  	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
+>  	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+> @@ -794,6 +846,26 @@
+>  	bus-width = <4>;
+>  };
+>  
+> +&ppmu_d0_general {
+> +	status = "okay";
+> +
+> +	events {
+> +		ppmu_event0_d0_general: ppmu-event0-d0-general {
+> +			event-name = "ppmu-event0-d0-general";
+> +		};
+> +	};
+> +};
+> +
+> +&ppmu_d1_general {
+> +	status = "okay";
+> +
+> +	events {
+> +		ppmu_event0_d1_general: ppmu-event0-d1-general {
+> +		       event-name = "ppmu-event0-d1-general";
+> +	       };
+> +       };
+> +};
+> +
+>  &pinctrl_alive {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&initial_alive>;
+> -- 
+> 1.9.1
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
