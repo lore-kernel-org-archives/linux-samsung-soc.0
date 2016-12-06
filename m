@@ -1,79 +1,50 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 2/2] driver core: Silence device links sphinx warning
-Date: Mon, 5 Dec 2016 23:21:21 +0100
-Message-ID: <CAJZ5v0gVyQYm3YEjyhC5FeSV-qnj9UMG=-7uO4Ni6PhwqmrO_w@mail.gmail.com>
-References: <cover.1480849144.git.lukas@wunner.de> <a1c7a93ee8ef057fb70aa3abeed38daf989444fc.1480849144.git.lukas@wunner.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Tue, 06 Dec 2016 09:15:02 +0900
+Message-ID: <1480983302-5550-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:36693 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbcLEWVX (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Dec 2016 17:21:23 -0500
-In-Reply-To: <a1c7a93ee8ef057fb70aa3abeed38daf989444fc.1480849144.git.lukas@wunner.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, Silvio Fricke <silvio.fricke@gmail.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.>
 
-On Sun, Dec 4, 2016 at 1:10 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> Silence this warning emitted by sphinx:
-> include/linux/device.h:938: warning: No description found for parameter 'links'
->
-> While at it, fix typos in comments of device links code.
->
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Silvio Fricke <silvio.fricke@gmail.com>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-and thanks for fixing these!
-
-[Adds note to self to spellcheck patches next time.]
-
-> ---
->  drivers/base/core.c    | 4 ++--
->  include/linux/device.h | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d0c9df5..8c25e68 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -172,7 +172,7 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
->   *
->   * The supplier device is required to be registered when this function is called
->   * and NULL will be returned if that is not the case.  The consumer device need
-> - * not be registerd, however.
-> + * not be registered, however.
->   */
->  struct device_link *device_link_add(struct device *consumer,
->                                     struct device *supplier, u32 flags)
-> @@ -225,7 +225,7 @@ struct device_link *device_link_add(struct device *consumer,
->         INIT_LIST_HEAD(&link->c_node);
->         link->flags = flags;
->
-> -       /* Deterine the initial link state. */
-> +       /* Determine the initial link state. */
->         if (flags & DL_FLAG_STATELESS) {
->                 link->status = DL_STATE_NONE;
->         } else {
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 3896af4..87edfdf 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -813,6 +813,7 @@ struct dev_links_info {
->   *             on.  This shrinks the "Board Support Packages" (BSPs) and
->   *             minimizes board-specific #ifdefs in drivers.
->   * @driver_data: Private pointer for driver specific info.
-> + * @links:     Links to suppliers and consumers of this device.
->   * @power:     For device power management.
->   *             See Documentation/power/admin-guide/devices.rst for details.
->   * @pm_domain: Provide callbacks that are executed during system suspend,
-> --
-> 2.10.2
->
+SGkgRGF2ZSwKCiAgIFNvcnJ5IGZvciBsYXRlLiBKdXN0IHJlZmFjdG9yaW5nIEhETUkgZHJpdmVy
+IGJ5IHVzaW5nIGluZm9mcmFtZSBoZWxwZXIKICAgZnVuY3Rpb24sIGZpeGluZyBHU0MgS2NvbmZp
+ZyBkZXBlbmRlbmN5IGlzc3VlIGFuZCBpbmNsdWRpbmcgdHJpdmlhbAogICBjbGVhbnVwcy4KCiAg
+IFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgpUaGFu
+a3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGYwM2VlNDZi
+ZTk0MDFlMzQzNGY1MmJiMTVlOTJkMWU2NDBmNzY0Mzg6CgogIEJhY2ttZXJnZSB0YWcgJ3Y0Ljkt
+cmM4JyBpbnRvIGRybS1uZXh0ICgyMDE2LTEyLTA1IDE3OjExOjQ4ICsxMDAwKQoKYXJlIGF2YWls
+YWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgoKICBnaXQ6Ly9naXQua2VybmVsLm9yZy9w
+dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zIGV4eW5vcy1kcm0tbmV4
+dAoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDRlNzc1MjQ5MjY5MjEzYTJkODgyNWQ3
+Zjg3OGU0MmU5OWEyYjYwODA6CgogIGRybS9leHlub3M6IFVzZSBWSURFT19TQU1TVU5HX0VYWU5P
+U19HU0M9biBhcyBHU0MgS2NvbmZpZyBkZXBlbmRlbmN5ICgyMDE2LTEyLTA1IDIyOjA4OjU5ICsw
+OTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQpBbmRyemVqIEhhamRhICgxKToKICAgICAgZHJtL2V4eW5vcy9oZG1pOiBy
+ZWZhY3RvciBpbmZvZnJhbWUgY29kZQoKQ29saW4gSWFuIEtpbmcgKDEpOgogICAgICBkcm0vZXh5
+bm9zOiBnc2M6IGZpeCBzcGVsbGluZyBtaXN0YWtlcwoKSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFz
+ICgxKToKICAgICAgZHJtL2V4eW5vczogVXNlIFZJREVPX1NBTVNVTkdfRVhZTk9TX0dTQz1uIGFz
+IEdTQyBLY29uZmlnIGRlcGVuZGVuY3kKClNodWFoIEtoYW4gKDEpOgogICAgICBleHlub3MtZHJt
+OiBGaXggZXJyb3IgbWVzc2FnZXMgdG8gcHJpbnQgZmxhZ3MgYW5kIHNpemUKCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZ2VtLmMgIHwgICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZ3NjLmMgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
+LmMgICAgIHwgMTQxICsrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvcmVncy1oZG1pLmggICAgICAgfCAgIDIgKwogNiBmaWxlcyBjaGFuZ2VkLCA0
+NyBpbnNlcnRpb25zKCspLCAxMDYgZGVsZXRpb25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
