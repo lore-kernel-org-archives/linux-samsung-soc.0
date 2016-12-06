@@ -1,67 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
- CLAA070WP03XG panel
-Date: Tue, 6 Dec 2016 16:46:25 +0100
-Message-ID: <20161206154625.GA28534@ulmo.ba.sec>
-References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
- <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+Subject: Re: [PATCH] drm/panel: simple: add 8bit-bps for Sharp lq123p1jx31
+Date: Tue, 6 Dec 2016 16:54:58 +0100
+Message-ID: <20161206155458.GB28946@ulmo.ba.sec>
+References: <1479522436-7752-1-git-send-email-wzz@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33105 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752820AbcLFPsj (ORCPT
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:35539 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbcLFPzC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 10:48:39 -0500
+        Tue, 6 Dec 2016 10:55:02 -0500
 Content-Disposition: inline
-In-Reply-To: <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+In-Reply-To: <1479522436-7752-1-git-send-email-wzz@rock-chips.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Randy Li <ayaka@soulik.info>
-Cc: dri-devel@lists.freedesktop.org, linux@armlinux.org.uk, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, airlied@linux.ie, a.hajda@samsung.com, devicetree@vger.kernel.org
+To: zain wang <wzz@rock-chips.com>
+Cc: Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 
 
---a8Wt8u1KmwUX3Y2C
+--dTy3Mrz/UPE2dbVg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
-> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
-> supported by the simple panel driver.
+On Sat, Nov 19, 2016 at 10:27:16AM +0800, zain wang wrote:
+> Sharp lq123p1jx31 support 8bit bps.
 >=20
-> Signed-off-by: Randy Li <ayaka@soulik.info>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
 > ---
->  .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++=
-++++++
->  2 files changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/chung=
-hwa,claa070wp03xg.txt
+>  drivers/gpu/drm/panel/panel-simple.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Applied, thanks.
 
 Thierry
 
---a8Wt8u1KmwUX3Y2C
+--dTy3Mrz/UPE2dbVg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYRt1OAAoJEN0jrNd/PrOhP4AP/2dSeLvsFL70tC23vFmNGVBV
-sxsTAX6hVjcKNi9Texg+mCZo5dPIApBBrsLtuNMdW08IYuaZOe4oTY/EXhNvzCuP
-ZV2C0F6uVScxD42RpdPO5D1NagcFxBALZ01d8oLg0J7drLsUCHBHofsFVO/C2PvJ
-sTEgtR2SHpBl+wPc6ph8xV/C9kqE04wLnKIRZQ5v620tY64qPB4cWrPN6RY26SuW
-i4kq7gpNY6InD5wJnPPoQOaJYcvKrWO3hqGSDO2sUzCT2aAhgzRXeED26Fia2Vpe
-PHNcRZxQENovdHdlwoQDgy4L0JIduWeS5yKgt6m1+dl/JQSrTUHO2LwAHeAtMdQN
-U0w7rO1UJEt6vUjGIC5vP5ri0FU9EYH93s/LOA/UFZ2ljaLhZUycxc0X6Lv5gMqK
-PWTZzNC11wOFNJVaQbyK2uCNuYU4pd7rauNeiOczBU3zNcJ+j+kpoE6scvB681vb
-c4zLQh9p54H+2q7v/aYyvhjW5gsM6R+YeBM54Cs3nnpC4Fr4pjYg6g/IQSXq/h+4
-ZiXBRh3RJkNmKLm0INTmg9RuxTuwpemlJktY/2e8nQdYnMqoJk9sCmidrzcCi767
-i9CAn6twfzC0bmqHfwI8vX4I+LZjdjYXud/CLUF1Qjn/WncyAXkmqosJFOANJpQl
-73lyuHM8us9OuM5kP4zD
-=PHIE
+iQIcBAABCAAGBQJYRt9SAAoJEN0jrNd/PrOhwOsP/3AjlJYVOrP2AfHJ+0hFZ7d1
+vha/Xa3GEmRfLqPzL0zKIUdrH2pEqU9UBXeEo3onSB1GWXO2EdDtrGYcCMnfIz5T
+bM+ja9Lx2UH3Lsrj/UhMtF4/Ud3yocG8142UF7Mh7rmBiLCctKc2s6eooZ+wT+TJ
+dpO5Xf5NlSpe8hWEU5/6Tl0ZQxB1cc3Zkgi6bV+DIO+fDBNKDdjdACsUjF5P6hcD
+2Ot2MVP+kenfL9BqL38BghQ4eP/27u5GBe5xTdw7i2GYcAi40Dus2ewR8iW+KP9P
+fQ1V9z7ncipzkXzdQuOqBGnM8sd/cMPUHzxcA6Rr9otMrohp0Klmmw50dNAQPnWn
+jzgdh1Hr6FkEAn5i6EjkBD/Bk8VVTXZMmQjmCSz3yxYZ+0DMyf4T+lab3dJfWiwC
+XXDV/OXYilrbcMeCLtNr60MyBj5RNQHYFrj3A2Q1T5ewYJa5LSkZgqV8j0UWmCWa
+GdeYGJQzmn1Nftf2DwN1uz79CMV+EpdQJvHyeo4gnPPY3bkU14B/Lsf3RCHoHtxo
+fVULTls1CJ9yBiIuUuN8/h0UlYrWZgAYvZMMIwHUdSBlG2ZpAtyncEwAkYQOrzpL
+Dg+51zs5ODH/7C/cdOaYcX10ME9g7QRj8PHp2N4lkSfe/mB6YCRpk8uZi1H4FYCl
+oY3M5yWEQjUtrk8Y9L97
+=q/Ms
 -----END PGP SIGNATURE-----
 
---a8Wt8u1KmwUX3Y2C--
+--dTy3Mrz/UPE2dbVg--
