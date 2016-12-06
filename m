@@ -1,41 +1,78 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Cleanup exynos4412-odroidx2.dts and
- enable sound on odroid-x.
-Date: Tue, 6 Dec 2016 18:55:19 +0200
-Message-ID: <20161206165519.GA8008@kozik-lap>
-References: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/5] arm64: dts: exynos5433: Add PPMU dt node
+Date: Tue, 6 Dec 2016 21:07:56 +0200
+Message-ID: <20161206190756.GA12683@kozik-lap>
+References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+ <1480663087-4590-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33224 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753647AbcLFQz3 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 11:55:29 -0500
-Received: by mail-wm0-f68.google.com with SMTP id u144so22577245wmu.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Dec 2016 08:55:28 -0800 (PST)
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1480663087-4590-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Mon, Nov 28, 2016 at 01:48:06PM +0100, Markus Reichl wrote:
-> Odroid-X2 differs from Odroid-X only in RAM and prime CPU.
-> Remove doubled nodes from exynos4412-odroidx2.dts and move
-> sound node to exynos4412-odroidx.dts to enable sound on both boards.
+On Fri, Dec 02, 2016 at 04:18:05PM +0900, Chanwoo Choi wrote:
+> This patch adds PPMU (Platform Performance Monitoring Unit) Device-tree node
+> to measure the utilization of each IP in Exynos SoC.
 > 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+> - PPMU_D{0|1}_CPU are used to measure the utilization of MIF (Memory Interface)
+>   block with VDD_MIF power source.
+> - PPMU_D{0|1}_GENERAL are used to measure the utilization of INT(Internal)
+>   block with VDD_INT power source.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  arch/arm/boot/dts/exynos4412-odroidx.dts  | 13 +++++++++++++
->  arch/arm/boot/dts/exynos4412-odroidx2.dts | 24 ------------------------
->  2 files changed, 13 insertions(+), 24 deletions(-)
->
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 64226d5ae471..8c4ee84d5232 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -599,6 +599,30 @@
+>  			clock-names = "fin_pll", "mct";
+>  		};
+>  
+> +		ppmu_d0_cpu: ppmu@10480000 {
+> +			compatible = "samsung,exynos-ppmu-v2";
+> +			reg = <0x10480000 0x2000>;
+> +			status = "disabled";
 
-Looks correct. I won't be pushing anything more for v4.10 so I will
-apply this for v4.11 after merge window. For the reference:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Why these are disabled? They have some external dependencies?
 
 Best regards,
 Krzysztof
+
+> +		};
+> +
+> +		ppmu_d0_general: ppmu@10490000 {
+> +			compatible = "samsung,exynos-ppmu-v2";
+> +			reg = <0x10490000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_d1_cpu: ppmu@104b0000 {
+> +			compatible = "samsung,exynos-ppmu-v2";
+> +			reg = <0x104b0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_d1_general: ppmu@104c0000 {
+> +			compatible = "samsung,exynos-ppmu-v2";
+> +			reg = <0x104c0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+>  		pinctrl_alive: pinctrl@10580000 {
+>  			compatible = "samsung,exynos5433-pinctrl";
+>  			reg = <0x10580000 0x1a20>, <0x11090000 0x100>;
+> -- 
+> 1.9.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
