@@ -1,71 +1,65 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v2] drm/bridge: analogix: Don't return -EINVAL when panel
- not support PSR in PSR functions
-Date: Wed, 7 Dec 2016 08:46:32 +0530
-Message-ID: <5be43224-8360-2899-c75f-0fba57e812c6@codeaurora.org>
-References: <1481072253-8917-1-git-send-email-wzz@rock-chips.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 3/5] arm64: dts: exynos5433: Add PPMU dt node
+Date: Wed, 07 Dec 2016 13:12:49 +0900
+Message-ID: <58478C41.5090500@samsung.com>
+References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+ <1480663087-4590-4-git-send-email-cw00.choi@samsung.com>
+ <CGME20161206190841epcas1p33b8c4f39ff4ff396a5602231a2ffc59c@epcas1p3.samsung.com>
+ <20161206190756.GA12683@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47196 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbcLGDQm (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Dec 2016 22:16:42 -0500
-In-Reply-To: <1481072253-8917-1-git-send-email-wzz@rock-chips.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20161206190756.GA12683@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: zain wang <wzz@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mika Kahola <mika.kahola@intel.com>, =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>, Tomasz Figa <tfiga@chromium.org>, dianders@chromium.org, Thierry Reding <treding@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 
-
-
-On 12/07/2016 06:27 AM, zain wang wrote:
-> We will ignored PSR setting if panel not support it. So, in this case, we should
-> return from analogix_dp_enable/disable_psr() without any error code.
-> Let's retrun 0 instead of -EINVAL when panel not support PSR in
-> analogix_dp_enable/disable_psr().
-
-Thanks. Pushed to drm-misc after wrapping the commit
-message text.
-
-Archit
-
->
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> ---
->
-> Changes in v2:
-> - Remove dev_warn if panel not support PSR.
->
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index 6e0447f..eb9bf87 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -112,7 +112,7 @@ int analogix_dp_enable_psr(struct device *dev)
->  	struct edp_vsc_psr psr_vsc;
->
->  	if (!dp->psr_support)
-> -		return -EINVAL;
-> +		return 0;
->
->  	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
->  	memset(&psr_vsc, 0, sizeof(psr_vsc));
-> @@ -135,7 +135,7 @@ int analogix_dp_disable_psr(struct device *dev)
->  	struct edp_vsc_psr psr_vsc;
->
->  	if (!dp->psr_support)
-> -		return -EINVAL;
-> +		return 0;
->
->  	/* Prepare VSC packet as per EDP 1.4 spec, Table 6.9 */
->  	memset(&psr_vsc, 0, sizeof(psr_vsc));
->
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+T24gMjAxNuuFhCAxMuyblCAwN+ydvCAwNDowNywgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
+PiBPbiBGcmksIERlYyAwMiwgMjAxNiBhdCAwNDoxODowNVBNICswOTAwLCBDaGFud29vIENob2kg
+d3JvdGU6Cj4+IFRoaXMgcGF0Y2ggYWRkcyBQUE1VIChQbGF0Zm9ybSBQZXJmb3JtYW5jZSBNb25p
+dG9yaW5nIFVuaXQpIERldmljZS10cmVlIG5vZGUKPj4gdG8gbWVhc3VyZSB0aGUgdXRpbGl6YXRp
+b24gb2YgZWFjaCBJUCBpbiBFeHlub3MgU29DLgo+Pgo+PiAtIFBQTVVfRHswfDF9X0NQVSBhcmUg
+dXNlZCB0byBtZWFzdXJlIHRoZSB1dGlsaXphdGlvbiBvZiBNSUYgKE1lbW9yeSBJbnRlcmZhY2Up
+Cj4+ICAgYmxvY2sgd2l0aCBWRERfTUlGIHBvd2VyIHNvdXJjZS4KPj4gLSBQUE1VX0R7MHwxfV9H
+RU5FUkFMIGFyZSB1c2VkIHRvIG1lYXN1cmUgdGhlIHV0aWxpemF0aW9uIG9mIElOVChJbnRlcm5h
+bCkKPj4gICBibG9jayB3aXRoIFZERF9JTlQgcG93ZXIgc291cmNlLgo+Pgo+PiBTaWduZWQtb2Zm
+LWJ5OiBDaGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBhcmNo
+L2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kgfCAyNCArKysrKysrKysrKysr
+KysrKysrKysrKysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCspCj4+Cj4+IGRp
+ZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kgYi9h
+cmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kKPj4gaW5kZXggNjQyMjZk
+NWFlNDcxLi44YzRlZTg0ZDUyMzIgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
+ZXh5bm9zL2V4eW5vczU0MzMuZHRzaQo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5v
+cy9leHlub3M1NDMzLmR0c2kKPj4gQEAgLTU5OSw2ICs1OTksMzAgQEAKPj4gIAkJCWNsb2NrLW5h
+bWVzID0gImZpbl9wbGwiLCAibWN0IjsKPj4gIAkJfTsKPj4gIAo+PiArCQlwcG11X2QwX2NwdTog
+cHBtdUAxMDQ4MDAwMCB7Cj4+ICsJCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zLXBwbXUt
+djIiOwo+PiArCQkJcmVnID0gPDB4MTA0ODAwMDAgMHgyMDAwPjsKPj4gKwkJCXN0YXR1cyA9ICJk
+aXNhYmxlZCI7Cj4gCj4gV2h5IHRoZXNlIGFyZSBkaXNhYmxlZD8gVGhleSBoYXZlIHNvbWUgZXh0
+ZXJuYWwgZGVwZW5kZW5jaWVzPwoKVGhlcmUgaXMgbm8gYW55IGRlcGVuZGVuY3kuIElmIHlvdSB3
+YW50IHRvIHJlbWFpbiBpdCBhbHdheXMgZW5hYmxlZCwKSSdtIE9LLgoKQmVzdCBSZWdhcmRzLApD
+aGFud29vIENob2kKCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo+IAo+PiArCQl9Owo+
+PiArCj4+ICsJCXBwbXVfZDBfZ2VuZXJhbDogcHBtdUAxMDQ5MDAwMCB7Cj4+ICsJCQljb21wYXRp
+YmxlID0gInNhbXN1bmcsZXh5bm9zLXBwbXUtdjIiOwo+PiArCQkJcmVnID0gPDB4MTA0OTAwMDAg
+MHgyMDAwPjsKPj4gKwkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4+ICsJCX07Cj4+ICsKPj4gKwkJ
+cHBtdV9kMV9jcHU6IHBwbXVAMTA0YjAwMDAgewo+PiArCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5n
+LGV4eW5vcy1wcG11LXYyIjsKPj4gKwkJCXJlZyA9IDwweDEwNGIwMDAwIDB4MjAwMD47Cj4+ICsJ
+CQlzdGF0dXMgPSAiZGlzYWJsZWQiOwo+PiArCQl9Owo+PiArCj4+ICsJCXBwbXVfZDFfZ2VuZXJh
+bDogcHBtdUAxMDRjMDAwMCB7Cj4+ICsJCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zLXBw
+bXUtdjIiOwo+PiArCQkJcmVnID0gPDB4MTA0YzAwMDAgMHgyMDAwPjsKPj4gKwkJCXN0YXR1cyA9
+ICJkaXNhYmxlZCI7Cj4+ICsJCX07Cj4+ICsKPj4gIAkJcGluY3RybF9hbGl2ZTogcGluY3RybEAx
+MDU4MDAwMCB7Cj4+ICAJCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTQzMy1waW5jdHJs
+IjsKPj4gIAkJCXJlZyA9IDwweDEwNTgwMDAwIDB4MWEyMD4sIDwweDExMDkwMDAwIDB4MTAwPjsK
+Pj4gLS0gCj4+IDEuOS4xCj4+Cj4gCj4gCj4gCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgt
+YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
+L21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
