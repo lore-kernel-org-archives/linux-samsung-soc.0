@@ -1,117 +1,48 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 4/5] arm64: dts: exynos5433: Add bus dt node using VDD_INT
- for Exynos5433
-Date: Wed, 07 Dec 2016 20:17:48 +0900
-Message-ID: <5847EFDC.8050702@samsung.com>
-References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
- <1480663087-4590-5-git-send-email-cw00.choi@samsung.com>
- <CGME20161206192211epcas1p3d93e8b202e8b579f9632f49fc23ce0dc@epcas1p3.samsung.com>
- <20161206192104.GB12683@kozik-lap>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
+ CLAA070WP03XG panel
+Date: Wed, 7 Dec 2016 15:55:55 +0100
+Message-ID: <20161207145555.kdg7azcrpnwnb2r6@phenom.ffwll.local>
+References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
+ <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+ <20161206154625.GA28534@ulmo.ba.sec>
+ <2C9FE0C5-F521-48CD-B274-66128312CA75@soulik.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20161206192104.GB12683@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2C9FE0C5-F521-48CD-B274-66128312CA75@soulik.info>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ayaka <ayaka@soulik.info>
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNuuFhCAxMuyblCAwN+ydvCAwNDoyMSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBPbiBGcmksIERlYyAwMiwgMjAxNiBhdCAwNDoxODowNlBNICswOTAwLCBDaGFud29vIENob2kg
-d3JvdGU6Cj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgYnVzIG5vZGVzIHVzaW5nIFZERF9JTlQgZm9y
-IEV4eW5vczU0MzMgU29DLgo+PiBFeHlub3M1NDMzIGhhcyB0aGUgZm9sbG93aW5nIEFNQkEgQVhJ
-IGJ1c2VzIHRvIHRyYW5zbGF0ZSBkYXRhCj4+IGJldHdlZW4gRFJBTSBhbmQgc3ViLWJsb2Nrcy4K
-Pj4KPj4gRm9sbG93aW5nIGxpc3Qgc3BlY2lmeSB0aGUgZGV0YWlsZWQgY29ycmVsYXRpb24gYmV0
-d2VlbiBzdWItYmxvY2sgYW5kIGNsb2NrOgo+PiAtIENMS19BQ0xLX0cyRF97NDAwfDI2Nn0gIDog
-QnVzIGNsb2NrIGZvciBHMkQKPj4gLSBDTEtfQUNMS19NU0NMXzQwMCAgICAgICA6IEJ1cyBjbG9j
-ayBmb3IgTVNDTCAoTW9iaWxlIFNjYWxlcikKPj4gLSBDTEtfQUNMS19HU0NMXzMzMyAgICAgICA6
-IEJ1cyBjbG9jayBmb3IgR1NDTCAoR2VuZXJhbCBTY2FsZXIpCj4+IC0gQ0xLX1NDTEtfSlBFR19N
-U0NMICAgICAgOiBCdXMgY2xvY2sgZm9yIEpQRUcKPj4gLSBDTEtfQUNMS19NRkNfNDAwICAgICAg
-ICA6IEJ1cyBjbG9jayBmb3IgTUZDIChNdWx0aSBGb3JtYXQgQ29kZWMpCj4+IC0gQ0xLX0FDTEtf
-SEVWQ180MDAgICAgICAgOiBCdXMgY2xvY2sgZm9yIEhFVkMgKEhpZ2ggRWZmZWN0aXZlIFZpZGVv
-IENvZGVjKQo+PiAtIENMS19BQ0xLX0JVUzBfNDAwICAgICAgIDogTm9DKE5ldHdvcmsgT24gQ2hp
-cCkncyBidXMgY2xvY2sgZm9yIFBFUklDL1BFUklTL0ZTWVMvTVNDTAo+PiAtIENMS19BQ0xLX0JV
-UzFfNDAwICAgICAgIDogTm9DJ3MgYnVzIGNsb2NrIGZvciBNRkMvSEVWQy9HM0QKPj4gLSBDTEtf
-QUNMS19CVVMyXzQwMCAgICAgICA6IE5vQydzIGJ1cyBjbG9jayBmb3IgR1NDTC9ESVNQL0cyRC9D
-QU0wL0NBTTEvSVNQCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9p
-QHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5v
-czU0MzMtYnVzLmR0c2kgfCAyMDggKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiAgYXJjaC9h
-cm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpICAgICB8ICAgMSArCj4+ICAyIGZp
-bGVzIGNoYW5nZWQsIDIwOSBpbnNlcnRpb25zKCspCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJj
-aC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy1idXMuZHRzaQo+Pgo+PiBkaWZmIC0t
-Z2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy1idXMuZHRzaSBiL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtYnVzLmR0c2kKPj4gbmV3IGZpbGUg
-bW9kZSAxMDA2NDQKPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iMWUxZDljNjIyZTEKPj4gLS0tIC9k
-ZXYvbnVsbAo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLWJ1
-cy5kdHNpCj4+IEBAIC0wLDAgKzEsMjA4IEBACj4+ICsvKgo+PiArICogU2Ftc3VuZydzIEV4eW5v
-czU0MzMgU29DIE1lbW9yeSBpbnRlcmZhY2UgYW5kIEFNQkEgYnVzIGRldmljZSB0cmVlIHNvdXJj
-ZQo+PiArICoKPj4gKyAqIENvcHlyaWdodCAoYykgMjAxNiBTYW1zdW5nIEVsZWN0cm9uaWNzIENv
-LiwgTHRkLgo+PiArICogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+Cj4+ICsg
-Kgo+PiArICogU2Ftc3VuZydzIEV4eW5vczU0MzMgU29DIE1lbW9yeSBpbnRlcmZhY2UgYW5kIEFN
-QkEgYnVzZXMgYXJlIGxpc3RlZAo+PiArICogYXMgZGV2aWNlIHRyZWUgbm9kZXMgYXJlIGxpc3Rl
-ZCBpbiB0aGlzIGZpbGUuCj4gCj4gVGhpcyBkdXBsaWNhdGVzIHRoZSBpbnRyb2R1Y3Rpb24gbGlu
-ZSBhbmQgZG9lcyBub3QgbWFrZSBzZW5zZS4KCkknbGwgcmVtb3ZlIGl0LgoKPiAKPj4gKyAqCj4+
-ICsgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUg
-aXQgYW5kL29yIG1vZGlmeQo+PiArICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMKPj4gKyAqIHB1Ymxpc2hlZCBieSB0aGUg
-RnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLgo+PiArICovCj4+ICsKPj4gKy8gewo+IAo+IFNob3Vs
-ZG4ndCB0aGVzZSBiZSB1bmRlciBzb2Mgbm9kZT8gSXQgbG9va3MgbGlrZSBwcm9wZXJ0eSBvZiBT
-b0MgaXRzZWxmLgoKT0suIE1vdmUgdG8gdGhlbSB1bmRlciBTb0MuCi0gIi8geyIgLT4gIiZzb2Mg
-eyIKCj4gCj4+ICsJLyogSU5UIChJbnRlcm5hbCkgYmxvY2sgdXNpbmcgVkREX0lOVCAqLwo+PiAr
-CWJ1c19nMmRfNDAwOiBidXNfZzJkXzQwMCB7Cj4gCj4gSW4gbm9kZSBuYW1lLCB0aGUgZGFzaCAn
-LScgaXMgcHJlZmVycmVkLiBUaGUgbmFtZSBzaG91bGQgZGVzY3JpYmUKPiBnZW5lcmFsIGNsYXNz
-IG9mIGRldmljZSBzbyBwcm9iYWJseSB0aGlzIHNob3VsZCBiZSBqdXN0ICJidXMiLi4uIGJ1dCBJ
-Cj4gZG9uJ3Qgc2VlIGEgd2F5IGhvdyB0byBkbyBpdCByZWFzb25hYmxlIGFueXdheS4KCkknbGwg
-Y2hhbmdlIHRoZW0gYXMgZm9sbG93aW5nIHdpdGggJ2J1c1gnLgoKVGhlIGVhY2ggZHQgbm9kZSBo
-YXMgdGhlIHVuaXF1ZSBudW1iZXIoJ1gnKQpiZWNhdXNlIGVhY2ggZHQgbm9kZSBkb2VzIG5vdCBo
-YXZlIHRoZSBiYXNlIGFkZHJlc3MKYW5kIHRoZW4gbmVlZCB0byBpZGVudGlmeSBvbmVzZWxmLgoK
-CWJ1c19nMmRfNDAwOiBidXMwIHsKCWJ1c19nMmRfMjY2OiBidXMxIHsKCWJ1c19nc2NsOiBidXMy
-IHsKCWJ1c19oZXZjOiBidXMzIHsKCWJ1c19qcGVnOiBidXM0IHsKCWJ1c19tZmM6IGJ1czUgewoJ
-YnVzX21zY2w6IGJ1czYgewoJYnVzX25vYzA6IGJ1czcgewoJYnVzX25vYzE6IGJ1czggewoJYnVz
-X25vYzI6IGJ1czkgewoKPiAKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1idXMi
-Owo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfRzJEXzQwMD47Cj4+ICsJCWNsb2Nr
-LW5hbWVzID0gImJ1cyI7Cj4+ICsJCW9wZXJhdGluZy1wb2ludHMtdjIgPSA8JmJ1c19nMmRfNDAw
-X29wcF90YWJsZT47Cj4+ICsJCXN0YXR1cyA9ImRpc2FibGUiOwo+IAo+IEhtPwoKSSdsbCBmaXgg
-aXQuIGRpc2FibGUgLT4gZGlzYWJsZWQKCj4gCj4gCj4+ICsJfTsKPj4gKwo+PiArCWJ1c19tc2Ns
-OiBidXNfbXNjbCB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtYnVzIjsKPj4g
-KwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19BQ0xLX01TQ0xfNDAwPjsKPj4gKwkJY2xvY2stbmFt
-ZXMgPSAiYnVzIjsKPj4gKwkJb3BlcmF0aW5nLXBvaW50cy12MiA9IDwmYnVzX2cyZF80MDBfb3Bw
-X3RhYmxlPjsKPj4gKwkJc3RhdHVzID0iZGlzYWJsZSI7Cj4+ICsJfTsKPj4gKwo+PiArCWJ1c19q
-cGVnOiBidXNfanBlZyB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtYnVzIjsK
-Pj4gKwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19TQ0xLX0pQRUdfTVNDTD47Cj4+ICsJCWNsb2Nr
-LW5hbWVzID0gImJ1cyI7Cj4+ICsJCW9wZXJhdGluZy1wb2ludHMtdjIgPSA8JmJ1c19nMmRfNDAw
-X29wcF90YWJsZT47Cj4+ICsJCXN0YXR1cyA9ImRpc2FibGUiOwo+PiArCX07Cj4+ICsKPj4gKwli
-dXNfbWZjOiBidXNfbWZjIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1idXMi
-Owo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfTUZDXzQwMD47Cj4+ICsKPj4gKwkJ
-Y2xvY2stbmFtZXMgPSAiYnVzIjsKPj4gKwkJb3BlcmF0aW5nLXBvaW50cy12MiA9IDwmYnVzX2cy
-ZF80MDBfb3BwX3RhYmxlPjsKPj4gKwkJc3RhdHVzID0iZGlzYWJsZSI7Cj4+ICsJfTsKPj4gKwo+
-PiArCWJ1c19nMmRfMjY2OiBidXNfZzJkXzI2NiB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3Vu
-ZyxleHlub3MtYnVzIjsKPj4gKwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19BQ0xLX0cyRF8yNjY+
-Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYyID0g
-PCZidXNfZzJkXzI2Nl9vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
-Owo+PiArCj4+ICsJYnVzX2dzY2w6IGJ1c19nc2NsIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1z
-dW5nLGV4eW5vcy1idXMiOwo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfR1NDTF8z
-MzM+Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYy
-ID0gPCZidXNfZ3NjbF9vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
-Owo+PiArCj4+ICsJYnVzX2hldmM6IGJ1c19oZXZjIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1z
-dW5nLGV4eW5vcy1idXMiOwo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfSEVWQ180
-MDA+Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYy
-ID0gPCZidXNfaGV2Y19vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
-Owo+PiArCj4+ICsJYnVzX2J1czA6IGJ1c19idXMwIHsKPiAKPiBidXMsIGJ1cywgYnVzLCBidXMs
-IGphY2twb3QhIExldCdzIHRyeSB0byBmaW5kIGJldHRlciBuYW1lIGFuZCBsYWJlbCBmb3IKPiB0
-aGVzZS4gOikKCkknbGwgY2hhbmdlIHRoZSBuYW1lIHdpdGggJ25vYycgcHJlZml4IGJlY2F1c2Ug
-dGhpcyBidXMgaXMgdXNlZApmb3IgTm9DIChOZXR3b3JrIE9uIENoaXApJ3MgYnVzIGNsb2NrIGFz
-IGNvbW1pdCBtc2cuCi0gb2xkIDogYnVzX2J1czAKLSBuZXcgOiBidXNfbm9jMAoKCkJlc3QgUmVn
-YXJkcywKQ2hhbndvbyBDaG9pCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Wed, Dec 07, 2016 at 08:57:23AM +0800, Ayaka wrote:
+> 
+> 
+> 從我的 iPad 傳送
+> 
+> > Thierry Reding <thierry.reding@gmail.com> 於 2016年12月6日 下午11:46 寫道：
+> > 
+> >> On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
+> >> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
+> >> supported by the simple panel driver.
+> >> 
+> >> Signed-off-by: Randy Li <ayaka@soulik.info>
+> >> ---
+> >> .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
+> >> drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+> >> 2 files changed, 34 insertions(+)
+> >> create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+> > 
+> > Applied, thanks.
+> Wait, it is RFC, not pass the test.
+
+Well 2 months of silence, it's reasonable to assume that this works for
+you ... I guess you need to supply a fixup patch asap ;-)
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
