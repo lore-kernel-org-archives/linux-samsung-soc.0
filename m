@@ -1,81 +1,80 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH 3/5] arm64: dts: exynos5433: Add PPMU dt node
-Date: Wed, 07 Dec 2016 14:54:33 +0900
-Message-ID: <5847A419.9050801@samsung.com>
+Date: Wed, 7 Dec 2016 08:13:03 +0200
+Message-ID: <CAJKOXPe=D8F9WQU_A-arqygALT7ehG-a3W5gZmaC11B-jV-i9A@mail.gmail.com>
 References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
- <1480663087-4590-4-git-send-email-cw00.choi@samsung.com>
- <CGME20161206190841epcas1p33b8c4f39ff4ff396a5602231a2ffc59c@epcas1p3.samsung.com>
- <20161206190756.GA12683@kozik-lap> <58478C41.5090500@samsung.com>
+ <1480663087-4590-4-git-send-email-cw00.choi@samsung.com> <CGME20161206190841epcas1p33b8c4f39ff4ff396a5602231a2ffc59c@epcas1p3.samsung.com>
+ <20161206190756.GA12683@kozik-lap> <58478C41.5090500@samsung.com> <5847A419.9050801@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <58478C41.5090500-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <5847A419.9050801-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2016년 12월 07일 13:12, Chanwoo Choi wrote:
-> On 2016년 12월 07일 04:07, Krzysztof Kozlowski wrote:
->> On Fri, Dec 02, 2016 at 04:18:05PM +0900, Chanwoo Choi wrote:
->>> This patch adds PPMU (Platform Performance Monitoring Unit) Device-tree node
->>> to measure the utilization of each IP in Exynos SoC.
+On Wed, Dec 7, 2016 at 7:54 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On 2016년 12월 07일 13:12, Chanwoo Choi wrote:
+>> On 2016년 12월 07일 04:07, Krzysztof Kozlowski wrote:
+>>> On Fri, Dec 02, 2016 at 04:18:05PM +0900, Chanwoo Choi wrote:
+>>>> This patch adds PPMU (Platform Performance Monitoring Unit) Device-tree node
+>>>> to measure the utilization of each IP in Exynos SoC.
+>>>>
+>>>> - PPMU_D{0|1}_CPU are used to measure the utilization of MIF (Memory Interface)
+>>>>   block with VDD_MIF power source.
+>>>> - PPMU_D{0|1}_GENERAL are used to measure the utilization of INT(Internal)
+>>>>   block with VDD_INT power source.
+>>>>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>> ---
+>>>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 24 ++++++++++++++++++++++++
+>>>>  1 file changed, 24 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>>> index 64226d5ae471..8c4ee84d5232 100644
+>>>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>>> @@ -599,6 +599,30 @@
+>>>>                     clock-names = "fin_pll", "mct";
+>>>>             };
+>>>>
+>>>> +           ppmu_d0_cpu: ppmu@10480000 {
+>>>> +                   compatible = "samsung,exynos-ppmu-v2";
+>>>> +                   reg = <0x10480000 0x2000>;
+>>>> +                   status = "disabled";
 >>>
->>> - PPMU_D{0|1}_CPU are used to measure the utilization of MIF (Memory Interface)
->>>   block with VDD_MIF power source.
->>> - PPMU_D{0|1}_GENERAL are used to measure the utilization of INT(Internal)
->>>   block with VDD_INT power source.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 24 ++++++++++++++++++++++++
->>>  1 file changed, 24 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>> index 64226d5ae471..8c4ee84d5232 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>> @@ -599,6 +599,30 @@
->>>  			clock-names = "fin_pll", "mct";
->>>  		};
->>>  
->>> +		ppmu_d0_cpu: ppmu@10480000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x10480000 0x2000>;
->>> +			status = "disabled";
+>>> Why these are disabled? They have some external dependencies?
 >>
->> Why these are disabled? They have some external dependencies?
-> 
-> There is no any dependency. If you want to remain it always enabled,
-> I'm OK.
+>> There is no any dependency. If you want to remain it always enabled,
+>> I'm OK.
+>
+> One more comment. Each PPMU has the four events which is used for devfreq driver
+> to get the utilization. If I remove the 'status = "disabled"' from exynos5433.dtsi,
+> first probe of PPMU device is fail on case1.
+>
+> Case1. Disable PPMU device and then enable it on exynos5433-tm2.dts
+> [    2.560126] exynos-ppmu: new PPMU device registered 10490000.ppmu (ppmu-event0-d0-general)
+> [    2.565957] exynos-ppmu: new PPMU device registered 104c0000.ppmu (ppmu-event0-d1-general)
+>
+> Case2. Enable PPMU device always. First probe is failed and then second probe is successful.
+> [    2.898781] exynos-ppmu 10480000.ppmu: failed to get child node of devfreq-event devices
+> [    2.899077] exynos-ppmu 10480000.ppmu: failed to parse exynos ppmu dt node
+> [    2.899289] exynos-ppmu 10480000.ppmu: failed to parse devicetree for resource
+> [    2.899602] exynos-ppmu: probe of 10480000.ppmu failed with error -22
+> [    2.905364] exynos-ppmu: new PPMU device registered 10490000.ppmu (ppmu-event0-d0-general)
+> [    2.913535] exynos-ppmu 104b0000.ppmu: failed to get child node of devfreq-event devices
+> [    2.921402] exynos-ppmu 104b0000.ppmu: failed to parse exynos ppmu dt node
+> [    2.928250] exynos-ppmu 104b0000.ppmu: failed to parse devicetree for resource
+> [    2.935571] exynos-ppmu: probe of 104b0000.ppmu failed with error -22
+> [    2.942144] exynos-ppmu: new PPMU device registered 104c0000.ppmu (ppmu-event0-d1-general)
 
-One more comment. Each PPMU has the four events which is used for devfreq driver
-to get the utilization. If I remove the 'status = "disabled"' from exynos5433.dtsi,
-first probe of PPMU device is fail on case1.
+I got it, so leaving it as disabled makes sense. For the reference:
+Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Case1. Disable PPMU device and then enable it on exynos5433-tm2.dts
-[    2.560126] exynos-ppmu: new PPMU device registered 10490000.ppmu (ppmu-event0-d0-general)
-[    2.565957] exynos-ppmu: new PPMU device registered 104c0000.ppmu (ppmu-event0-d1-general)
-
-Case2. Enable PPMU device always. First probe is failed and then second probe is successful.
-[    2.898781] exynos-ppmu 10480000.ppmu: failed to get child node of devfreq-event devices
-[    2.899077] exynos-ppmu 10480000.ppmu: failed to parse exynos ppmu dt node
-[    2.899289] exynos-ppmu 10480000.ppmu: failed to parse devicetree for resource
-[    2.899602] exynos-ppmu: probe of 10480000.ppmu failed with error -22
-[    2.905364] exynos-ppmu: new PPMU device registered 10490000.ppmu (ppmu-event0-d0-general)
-[    2.913535] exynos-ppmu 104b0000.ppmu: failed to get child node of devfreq-event devices
-[    2.921402] exynos-ppmu 104b0000.ppmu: failed to parse exynos ppmu dt node
-[    2.928250] exynos-ppmu 104b0000.ppmu: failed to parse devicetree for resource
-[    2.935571] exynos-ppmu: probe of 104b0000.ppmu failed with error -22
-[    2.942144] exynos-ppmu: new PPMU device registered 104c0000.ppmu (ppmu-event0-d1-general)
-
-
-Best Regards,
-Chanwoo Choi
-
-[snip]
-
+Best regards,
+Krzysztof
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
