@@ -1,387 +1,117 @@
-From: Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: Re: [PATCH v2] PCI: designware: add host_init error handling
-Date: Wed, 7 Dec 2016 11:01:19 +0000
-Message-ID: <71f0b4e3-6e1a-5c52-50cd-70b69044baea@synopsys.com>
-References: <1481106769-1404-1-git-send-email-srinivas.kandagatla@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 4/5] arm64: dts: exynos5433: Add bus dt node using VDD_INT
+ for Exynos5433
+Date: Wed, 07 Dec 2016 20:17:48 +0900
+Message-ID: <5847EFDC.8050702@samsung.com>
+References: <1480663087-4590-1-git-send-email-cw00.choi@samsung.com>
+ <1480663087-4590-5-git-send-email-cw00.choi@samsung.com>
+ <CGME20161206192211epcas1p3d93e8b202e8b579f9632f49fc23ce0dc@epcas1p3.samsung.com>
+ <20161206192104.GB12683@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:36725 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751905AbcLGLBa (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 06:01:30 -0500
-In-Reply-To: <1481106769-1404-1-git-send-email-srinivas.kandagatla@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20161206192104.GB12683@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Murali Karicheri <m-karicheri2@ti.com>, Minghuan Lian <minghuan.Lian@freescale.com>, Mingkai Hu <mingkai.hu@freescale.com>, Roy Zang <tie-fei.zang@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Stanimir Varbanov <svarbanov@mm-sol.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-
-Hi Srinivas!
-
-Thanks for the update!
-
-Acked-By: Joao Pinto <jpinto@synopsys.com>
-
-Às 10:32 AM de 12/7/2016, Srinivas Kandagatla escreveu:
-> This patch add support to return value from host_init() callback from drivers,
-> so that the designware libary can handle or pass it to proper place. Issue with
-> void return type is that errors or error handling within host_init() callback
-> are never know to designware code, which could go ahead and access registers
-> even in error cases.
-> 
-> Typical case in qcom controller driver is to turn off clks in case of errors,
-> if designware code continues to read/write register when clocks are turned off
-> the board would reboot/lockup.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Currently designware code does not have a way return errors generated
-> as part of host_init() callback in controller drivers. This is an issue
-> with controller drivers like qcom which turns off the clocks in error
-> handling path. As the dw core is un aware of this would continue to
-> access registers which faults resulting in board reboots/hangs.
-> 
-> There are two ways to solve this issue,
-> one is remove error handling in the qcom controller host_init() function
-> other is to handle error and pass back to dw core code which would then
-> pass back to controller driver as part of dw_pcie_host_init() return value.
-> 
-> Second option seems more sensible and correct way to fix the issue,
-> this patch does the same.
-> 
-> As part of this change to host_init() return type I had to patch other
-> ihost controller drivers which use dw core. Most of the changes to other drivers
-> are to return proper error codes to upper layer.
-> Only compile tested drivers.
-> 
-> Changes since RFC:
-> 	- Add error handling to other drivers as suggested by Joao Pinto
-> 
->  drivers/pci/host/pci-dra7xx.c           | 10 ++++++++--
->  drivers/pci/host/pci-exynos.c           | 10 ++++++++--
->  drivers/pci/host/pci-imx6.c             | 10 ++++++++--
->  drivers/pci/host/pci-keystone.c         | 10 ++++++++--
->  drivers/pci/host/pci-layerscape.c       | 22 +++++++++++++---------
->  drivers/pci/host/pcie-armada8k.c        |  4 +++-
->  drivers/pci/host/pcie-designware-plat.c | 10 ++++++++--
->  drivers/pci/host/pcie-designware.c      |  4 +++-
->  drivers/pci/host/pcie-designware.h      |  2 +-
->  drivers/pci/host/pcie-qcom.c            |  5 +++--
->  drivers/pci/host/pcie-spear13xx.c       | 10 ++++++++--
->  11 files changed, 71 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
-> index 9595fad..811f0f9 100644
-> --- a/drivers/pci/host/pci-dra7xx.c
-> +++ b/drivers/pci/host/pci-dra7xx.c
-> @@ -127,9 +127,10 @@ static void dra7xx_pcie_enable_interrupts(struct dra7xx_pcie *dra7xx)
->  				   LEG_EP_INTERRUPTS);
->  }
->  
-> -static void dra7xx_pcie_host_init(struct pcie_port *pp)
-> +static int dra7xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pp);
-> +	int ret;
->  
->  	pp->io_base &= DRA7XX_CPU_TO_BUS_ADDR;
->  	pp->mem_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> @@ -138,10 +139,15 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
->  
->  	dw_pcie_setup_rc(pp);
->  
-> -	dra7xx_pcie_establish_link(dra7xx);
-> +	ret = dra7xx_pcie_establish_link(dra7xx);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
->  	dra7xx_pcie_enable_interrupts(dra7xx);
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops dra7xx_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-> index f1c544b..c116fd9 100644
-> --- a/drivers/pci/host/pci-exynos.c
-> +++ b/drivers/pci/host/pci-exynos.c
-> @@ -458,12 +458,18 @@ static int exynos_pcie_link_up(struct pcie_port *pp)
->  	return 0;
->  }
->  
-> -static void exynos_pcie_host_init(struct pcie_port *pp)
-> +static int exynos_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-> +	int ret;
-> +
-> +	ret = exynos_pcie_establish_link(exynos_pcie);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -	exynos_pcie_establish_link(exynos_pcie);
->  	exynos_pcie_enable_interrupts(exynos_pcie);
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops exynos_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
-> index c8cefb0..1251e92 100644
-> --- a/drivers/pci/host/pci-imx6.c
-> +++ b/drivers/pci/host/pci-imx6.c
-> @@ -550,18 +550,24 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  	return ret;
->  }
->  
-> -static void imx6_pcie_host_init(struct pcie_port *pp)
-> +static int imx6_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct imx6_pcie *imx6_pcie = to_imx6_pcie(pp);
-> +	int ret;
->  
->  	imx6_pcie_assert_core_reset(imx6_pcie);
->  	imx6_pcie_init_phy(imx6_pcie);
->  	imx6_pcie_deassert_core_reset(imx6_pcie);
->  	dw_pcie_setup_rc(pp);
-> -	imx6_pcie_establish_link(imx6_pcie);
-> +	ret = imx6_pcie_establish_link(imx6_pcie);
-> +
-> +	if (ret < 0)
-> +		return ret;
->  
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
->  }
->  
->  static int imx6_pcie_link_up(struct pcie_port *pp)
-> diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-> index 043c19a..4067a75 100644
-> --- a/drivers/pci/host/pci-keystone.c
-> +++ b/drivers/pci/host/pci-keystone.c
-> @@ -260,12 +260,16 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
->  	return 0;
->  }
->  
-> -static void __init ks_pcie_host_init(struct pcie_port *pp)
-> +static int __init ks_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pp);
->  	u32 val;
-> +	int ret;
-> +
-> +	ret = ks_pcie_establish_link(ks_pcie);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -	ks_pcie_establish_link(ks_pcie);
->  	ks_dw_pcie_setup_rc_app_regs(ks_pcie);
->  	ks_pcie_setup_interrupts(ks_pcie);
->  	writew(PCI_IO_RANGE_TYPE_32 | (PCI_IO_RANGE_TYPE_32 << 8),
-> @@ -287,6 +291,8 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
->  	 */
->  	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
->  			"Asynchronous external abort");
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops keystone_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
-> index 6537079..60c8b84 100644
-> --- a/drivers/pci/host/pci-layerscape.c
-> +++ b/drivers/pci/host/pci-layerscape.c
-> @@ -103,30 +103,32 @@ static int ls1021_pcie_link_up(struct pcie_port *pp)
->  	return 1;
->  }
->  
-> -static void ls1021_pcie_host_init(struct pcie_port *pp)
-> +static int ls1021_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct device *dev = pp->dev;
->  	struct ls_pcie *pcie = to_ls_pcie(pp);
->  	u32 index[2];
-> +	int ret;
->  
->  	pcie->scfg = syscon_regmap_lookup_by_phandle(dev->of_node,
->  						     "fsl,pcie-scfg");
->  	if (IS_ERR(pcie->scfg)) {
->  		dev_err(dev, "No syscfg phandle specified\n");
-> -		pcie->scfg = NULL;
-> -		return;
-> +		return PTR_ERR(pcie->scfg);
->  	}
->  
-> -	if (of_property_read_u32_array(dev->of_node,
-> -				       "fsl,pcie-scfg", index, 2)) {
-> -		pcie->scfg = NULL;
-> -		return;
-> -	}
-> +	ret = of_property_read_u32_array(dev->of_node,
-> +				       "fsl,pcie-scfg", index, 2);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	pcie->index = index[1];
->  
->  	dw_pcie_setup_rc(pp);
->  
->  	ls_pcie_drop_msg_tlp(pcie);
-> +
-> +	return 0;
->  }
->  
->  static int ls_pcie_link_up(struct pcie_port *pp)
-> @@ -144,7 +146,7 @@ static int ls_pcie_link_up(struct pcie_port *pp)
->  	return 1;
->  }
->  
-> -static void ls_pcie_host_init(struct pcie_port *pp)
-> +static int ls_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct ls_pcie *pcie = to_ls_pcie(pp);
->  
-> @@ -153,6 +155,8 @@ static void ls_pcie_host_init(struct pcie_port *pp)
->  	ls_pcie_clear_multifunction(pcie);
->  	ls_pcie_drop_msg_tlp(pcie);
->  	iowrite32(0, pcie->pp.dbi_base + PCIE_DBI_RO_WR_EN);
-> +
-> +	return 0;
->  }
->  
->  static int ls_pcie_msi_host_init(struct pcie_port *pp,
-> diff --git a/drivers/pci/host/pcie-armada8k.c b/drivers/pci/host/pcie-armada8k.c
-> index 0ac0f18..29bdd8b 100644
-> --- a/drivers/pci/host/pcie-armada8k.c
-> +++ b/drivers/pci/host/pcie-armada8k.c
-> @@ -134,12 +134,14 @@ static void armada8k_pcie_establish_link(struct armada8k_pcie *pcie)
->  		dev_err(pp->dev, "Link not up after reconfiguration\n");
->  }
->  
-> -static void armada8k_pcie_host_init(struct pcie_port *pp)
-> +static int armada8k_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct armada8k_pcie *pcie = to_armada8k_pcie(pp);
->  
->  	dw_pcie_setup_rc(pp);
->  	armada8k_pcie_establish_link(pcie);
-> +
-> +	return 0;
->  }
->  
->  static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
-> diff --git a/drivers/pci/host/pcie-designware-plat.c b/drivers/pci/host/pcie-designware-plat.c
-> index 1a02038..e01adbb 100644
-> --- a/drivers/pci/host/pcie-designware-plat.c
-> +++ b/drivers/pci/host/pcie-designware-plat.c
-> @@ -35,13 +35,19 @@ static irqreturn_t dw_plat_pcie_msi_irq_handler(int irq, void *arg)
->  	return dw_handle_msi_irq(pp);
->  }
->  
-> -static void dw_plat_pcie_host_init(struct pcie_port *pp)
-> +static int dw_plat_pcie_host_init(struct pcie_port *pp)
->  {
-> +	int ret;
-> +
->  	dw_pcie_setup_rc(pp);
-> -	dw_pcie_wait_for_link(pp);
-> +	ret = dw_pcie_wait_for_link(pp);
-> +	if (ret)
-> +		return ret;
->  
->  	if (IS_ENABLED(CONFIG_PCI_MSI))
->  		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops dw_plat_pcie_host_ops = {
-> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-> index bed1999..4a81b72 100644
-> --- a/drivers/pci/host/pcie-designware.c
-> +++ b/drivers/pci/host/pcie-designware.c
-> @@ -638,7 +638,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  	}
->  
->  	if (pp->ops->host_init)
-> -		pp->ops->host_init(pp);
-> +		ret = pp->ops->host_init(pp);
-> +			if (ret < 0)
-> +				goto error;
->  
->  	pp->root_bus_nr = pp->busn->start;
->  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
-> index a567ea2..eacf18f 100644
-> --- a/drivers/pci/host/pcie-designware.h
-> +++ b/drivers/pci/host/pcie-designware.h
-> @@ -63,7 +63,7 @@ struct pcie_host_ops {
->  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
->  			unsigned int devfn, int where, int size, u32 val);
->  	int (*link_up)(struct pcie_port *pp);
-> -	void (*host_init)(struct pcie_port *pp);
-> +	int (*host_init)(struct pcie_port *pp);
->  	void (*msi_set_irq)(struct pcie_port *pp, int irq);
->  	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
->  	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
-> diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
-> index 3593640..7d5fb38 100644
-> --- a/drivers/pci/host/pcie-qcom.c
-> +++ b/drivers/pci/host/pcie-qcom.c
-> @@ -429,7 +429,7 @@ static int qcom_pcie_link_up(struct pcie_port *pp)
->  	return !!(val & PCI_EXP_LNKSTA_DLLLA);
->  }
->  
-> -static void qcom_pcie_host_init(struct pcie_port *pp)
-> +static int qcom_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct qcom_pcie *pcie = to_qcom_pcie(pp);
->  	int ret;
-> @@ -455,12 +455,13 @@ static void qcom_pcie_host_init(struct pcie_port *pp)
->  	if (ret)
->  		goto err;
->  
-> -	return;
-> +	return ret;
->  err:
->  	qcom_ep_reset_assert(pcie);
->  	phy_power_off(pcie->phy);
->  err_deinit:
->  	pcie->ops->deinit(pcie);
-> +	return ret;
->  }
->  
->  static int qcom_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
-> diff --git a/drivers/pci/host/pcie-spear13xx.c b/drivers/pci/host/pcie-spear13xx.c
-> index 3cf197b..2408f80 100644
-> --- a/drivers/pci/host/pcie-spear13xx.c
-> +++ b/drivers/pci/host/pcie-spear13xx.c
-> @@ -174,12 +174,18 @@ static int spear13xx_pcie_link_up(struct pcie_port *pp)
->  	return 0;
->  }
->  
-> -static void spear13xx_pcie_host_init(struct pcie_port *pp)
-> +static int spear13xx_pcie_host_init(struct pcie_port *pp)
->  {
->  	struct spear13xx_pcie *spear13xx_pcie = to_spear13xx_pcie(pp);
-> +	int ret;
-> +
-> +	ret = spear13xx_pcie_establish_link(spear13xx_pcie);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -	spear13xx_pcie_establish_link(spear13xx_pcie);
->  	spear13xx_pcie_enable_interrupts(spear13xx_pcie);
-> +
-> +	return 0;
->  }
->  
->  static struct pcie_host_ops spear13xx_pcie_host_ops = {
-> 
+T24gMjAxNuuFhCAxMuyblCAwN+ydvCAwNDoyMSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
+PiBPbiBGcmksIERlYyAwMiwgMjAxNiBhdCAwNDoxODowNlBNICswOTAwLCBDaGFud29vIENob2kg
+d3JvdGU6Cj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgYnVzIG5vZGVzIHVzaW5nIFZERF9JTlQgZm9y
+IEV4eW5vczU0MzMgU29DLgo+PiBFeHlub3M1NDMzIGhhcyB0aGUgZm9sbG93aW5nIEFNQkEgQVhJ
+IGJ1c2VzIHRvIHRyYW5zbGF0ZSBkYXRhCj4+IGJldHdlZW4gRFJBTSBhbmQgc3ViLWJsb2Nrcy4K
+Pj4KPj4gRm9sbG93aW5nIGxpc3Qgc3BlY2lmeSB0aGUgZGV0YWlsZWQgY29ycmVsYXRpb24gYmV0
+d2VlbiBzdWItYmxvY2sgYW5kIGNsb2NrOgo+PiAtIENMS19BQ0xLX0cyRF97NDAwfDI2Nn0gIDog
+QnVzIGNsb2NrIGZvciBHMkQKPj4gLSBDTEtfQUNMS19NU0NMXzQwMCAgICAgICA6IEJ1cyBjbG9j
+ayBmb3IgTVNDTCAoTW9iaWxlIFNjYWxlcikKPj4gLSBDTEtfQUNMS19HU0NMXzMzMyAgICAgICA6
+IEJ1cyBjbG9jayBmb3IgR1NDTCAoR2VuZXJhbCBTY2FsZXIpCj4+IC0gQ0xLX1NDTEtfSlBFR19N
+U0NMICAgICAgOiBCdXMgY2xvY2sgZm9yIEpQRUcKPj4gLSBDTEtfQUNMS19NRkNfNDAwICAgICAg
+ICA6IEJ1cyBjbG9jayBmb3IgTUZDIChNdWx0aSBGb3JtYXQgQ29kZWMpCj4+IC0gQ0xLX0FDTEtf
+SEVWQ180MDAgICAgICAgOiBCdXMgY2xvY2sgZm9yIEhFVkMgKEhpZ2ggRWZmZWN0aXZlIFZpZGVv
+IENvZGVjKQo+PiAtIENMS19BQ0xLX0JVUzBfNDAwICAgICAgIDogTm9DKE5ldHdvcmsgT24gQ2hp
+cCkncyBidXMgY2xvY2sgZm9yIFBFUklDL1BFUklTL0ZTWVMvTVNDTAo+PiAtIENMS19BQ0xLX0JV
+UzFfNDAwICAgICAgIDogTm9DJ3MgYnVzIGNsb2NrIGZvciBNRkMvSEVWQy9HM0QKPj4gLSBDTEtf
+QUNMS19CVVMyXzQwMCAgICAgICA6IE5vQydzIGJ1cyBjbG9jayBmb3IgR1NDTC9ESVNQL0cyRC9D
+QU0wL0NBTTEvSVNQCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9p
+QHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5v
+czU0MzMtYnVzLmR0c2kgfCAyMDggKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiAgYXJjaC9h
+cm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy5kdHNpICAgICB8ICAgMSArCj4+ICAyIGZp
+bGVzIGNoYW5nZWQsIDIwOSBpbnNlcnRpb25zKCspCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJj
+aC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy1idXMuZHRzaQo+Pgo+PiBkaWZmIC0t
+Z2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy1idXMuZHRzaSBiL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtYnVzLmR0c2kKPj4gbmV3IGZpbGUg
+bW9kZSAxMDA2NDQKPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5iMWUxZDljNjIyZTEKPj4gLS0tIC9k
+ZXYvbnVsbAo+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLWJ1
+cy5kdHNpCj4+IEBAIC0wLDAgKzEsMjA4IEBACj4+ICsvKgo+PiArICogU2Ftc3VuZydzIEV4eW5v
+czU0MzMgU29DIE1lbW9yeSBpbnRlcmZhY2UgYW5kIEFNQkEgYnVzIGRldmljZSB0cmVlIHNvdXJj
+ZQo+PiArICoKPj4gKyAqIENvcHlyaWdodCAoYykgMjAxNiBTYW1zdW5nIEVsZWN0cm9uaWNzIENv
+LiwgTHRkLgo+PiArICogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+Cj4+ICsg
+Kgo+PiArICogU2Ftc3VuZydzIEV4eW5vczU0MzMgU29DIE1lbW9yeSBpbnRlcmZhY2UgYW5kIEFN
+QkEgYnVzZXMgYXJlIGxpc3RlZAo+PiArICogYXMgZGV2aWNlIHRyZWUgbm9kZXMgYXJlIGxpc3Rl
+ZCBpbiB0aGlzIGZpbGUuCj4gCj4gVGhpcyBkdXBsaWNhdGVzIHRoZSBpbnRyb2R1Y3Rpb24gbGlu
+ZSBhbmQgZG9lcyBub3QgbWFrZSBzZW5zZS4KCkknbGwgcmVtb3ZlIGl0LgoKPiAKPj4gKyAqCj4+
+ICsgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUg
+aXQgYW5kL29yIG1vZGlmeQo+PiArICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
+ZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMKPj4gKyAqIHB1Ymxpc2hlZCBieSB0aGUg
+RnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLgo+PiArICovCj4+ICsKPj4gKy8gewo+IAo+IFNob3Vs
+ZG4ndCB0aGVzZSBiZSB1bmRlciBzb2Mgbm9kZT8gSXQgbG9va3MgbGlrZSBwcm9wZXJ0eSBvZiBT
+b0MgaXRzZWxmLgoKT0suIE1vdmUgdG8gdGhlbSB1bmRlciBTb0MuCi0gIi8geyIgLT4gIiZzb2Mg
+eyIKCj4gCj4+ICsJLyogSU5UIChJbnRlcm5hbCkgYmxvY2sgdXNpbmcgVkREX0lOVCAqLwo+PiAr
+CWJ1c19nMmRfNDAwOiBidXNfZzJkXzQwMCB7Cj4gCj4gSW4gbm9kZSBuYW1lLCB0aGUgZGFzaCAn
+LScgaXMgcHJlZmVycmVkLiBUaGUgbmFtZSBzaG91bGQgZGVzY3JpYmUKPiBnZW5lcmFsIGNsYXNz
+IG9mIGRldmljZSBzbyBwcm9iYWJseSB0aGlzIHNob3VsZCBiZSBqdXN0ICJidXMiLi4uIGJ1dCBJ
+Cj4gZG9uJ3Qgc2VlIGEgd2F5IGhvdyB0byBkbyBpdCByZWFzb25hYmxlIGFueXdheS4KCkknbGwg
+Y2hhbmdlIHRoZW0gYXMgZm9sbG93aW5nIHdpdGggJ2J1c1gnLgoKVGhlIGVhY2ggZHQgbm9kZSBo
+YXMgdGhlIHVuaXF1ZSBudW1iZXIoJ1gnKQpiZWNhdXNlIGVhY2ggZHQgbm9kZSBkb2VzIG5vdCBo
+YXZlIHRoZSBiYXNlIGFkZHJlc3MKYW5kIHRoZW4gbmVlZCB0byBpZGVudGlmeSBvbmVzZWxmLgoK
+CWJ1c19nMmRfNDAwOiBidXMwIHsKCWJ1c19nMmRfMjY2OiBidXMxIHsKCWJ1c19nc2NsOiBidXMy
+IHsKCWJ1c19oZXZjOiBidXMzIHsKCWJ1c19qcGVnOiBidXM0IHsKCWJ1c19tZmM6IGJ1czUgewoJ
+YnVzX21zY2w6IGJ1czYgewoJYnVzX25vYzA6IGJ1czcgewoJYnVzX25vYzE6IGJ1czggewoJYnVz
+X25vYzI6IGJ1czkgewoKPiAKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1idXMi
+Owo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfRzJEXzQwMD47Cj4+ICsJCWNsb2Nr
+LW5hbWVzID0gImJ1cyI7Cj4+ICsJCW9wZXJhdGluZy1wb2ludHMtdjIgPSA8JmJ1c19nMmRfNDAw
+X29wcF90YWJsZT47Cj4+ICsJCXN0YXR1cyA9ImRpc2FibGUiOwo+IAo+IEhtPwoKSSdsbCBmaXgg
+aXQuIGRpc2FibGUgLT4gZGlzYWJsZWQKCj4gCj4gCj4+ICsJfTsKPj4gKwo+PiArCWJ1c19tc2Ns
+OiBidXNfbXNjbCB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtYnVzIjsKPj4g
+KwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19BQ0xLX01TQ0xfNDAwPjsKPj4gKwkJY2xvY2stbmFt
+ZXMgPSAiYnVzIjsKPj4gKwkJb3BlcmF0aW5nLXBvaW50cy12MiA9IDwmYnVzX2cyZF80MDBfb3Bw
+X3RhYmxlPjsKPj4gKwkJc3RhdHVzID0iZGlzYWJsZSI7Cj4+ICsJfTsKPj4gKwo+PiArCWJ1c19q
+cGVnOiBidXNfanBlZyB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtYnVzIjsK
+Pj4gKwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19TQ0xLX0pQRUdfTVNDTD47Cj4+ICsJCWNsb2Nr
+LW5hbWVzID0gImJ1cyI7Cj4+ICsJCW9wZXJhdGluZy1wb2ludHMtdjIgPSA8JmJ1c19nMmRfNDAw
+X29wcF90YWJsZT47Cj4+ICsJCXN0YXR1cyA9ImRpc2FibGUiOwo+PiArCX07Cj4+ICsKPj4gKwli
+dXNfbWZjOiBidXNfbWZjIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1idXMi
+Owo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfTUZDXzQwMD47Cj4+ICsKPj4gKwkJ
+Y2xvY2stbmFtZXMgPSAiYnVzIjsKPj4gKwkJb3BlcmF0aW5nLXBvaW50cy12MiA9IDwmYnVzX2cy
+ZF80MDBfb3BwX3RhYmxlPjsKPj4gKwkJc3RhdHVzID0iZGlzYWJsZSI7Cj4+ICsJfTsKPj4gKwo+
+PiArCWJ1c19nMmRfMjY2OiBidXNfZzJkXzI2NiB7Cj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3Vu
+ZyxleHlub3MtYnVzIjsKPj4gKwkJY2xvY2tzID0gPCZjbXVfdG9wIENMS19BQ0xLX0cyRF8yNjY+
+Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYyID0g
+PCZidXNfZzJkXzI2Nl9vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
+Owo+PiArCj4+ICsJYnVzX2dzY2w6IGJ1c19nc2NsIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1z
+dW5nLGV4eW5vcy1idXMiOwo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfR1NDTF8z
+MzM+Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYy
+ID0gPCZidXNfZ3NjbF9vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
+Owo+PiArCj4+ICsJYnVzX2hldmM6IGJ1c19oZXZjIHsKPj4gKwkJY29tcGF0aWJsZSA9ICJzYW1z
+dW5nLGV4eW5vcy1idXMiOwo+PiArCQljbG9ja3MgPSA8JmNtdV90b3AgQ0xLX0FDTEtfSEVWQ180
+MDA+Owo+PiArCQljbG9jay1uYW1lcyA9ICJidXMiOwo+PiArCQlvcGVyYXRpbmctcG9pbnRzLXYy
+ID0gPCZidXNfaGV2Y19vcHBfdGFibGU+Owo+PiArCQlzdGF0dXMgPSJkaXNhYmxlIjsKPj4gKwl9
+Owo+PiArCj4+ICsJYnVzX2J1czA6IGJ1c19idXMwIHsKPiAKPiBidXMsIGJ1cywgYnVzLCBidXMs
+IGphY2twb3QhIExldCdzIHRyeSB0byBmaW5kIGJldHRlciBuYW1lIGFuZCBsYWJlbCBmb3IKPiB0
+aGVzZS4gOikKCkknbGwgY2hhbmdlIHRoZSBuYW1lIHdpdGggJ25vYycgcHJlZml4IGJlY2F1c2Ug
+dGhpcyBidXMgaXMgdXNlZApmb3IgTm9DIChOZXR3b3JrIE9uIENoaXApJ3MgYnVzIGNsb2NrIGFz
+IGNvbW1pdCBtc2cuCi0gb2xkIDogYnVzX2J1czAKLSBuZXcgOiBidXNfbm9jMAoKCkJlc3QgUmVn
+YXJkcywKQ2hhbndvbyBDaG9pCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
+QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
