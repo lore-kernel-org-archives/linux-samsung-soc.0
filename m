@@ -1,50 +1,75 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add Patchwork URL to Samsung Exynos entry
-Date: Thu, 8 Dec 2016 18:38:30 +0200
-Message-ID: <20161208163830.GA5238@kozik-lap>
-References: <1481131115-11143-1-git-send-email-krzk@kernel.org>
- <F4BA1C22-7E6C-4791-9B0D-37B3F647E0EB@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Correct clocks for Exynos4 I2S
+ module
+Date: Thu, 8 Dec 2016 18:42:17 +0200
+Message-ID: <20161208164217.GB5238@kozik-lap>
+References: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34068 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753207AbcLHQm1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Dec 2016 11:42:27 -0500
+Received: by mail-wm0-f66.google.com with SMTP id g23so4660205wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Dec 2016 08:42:27 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <F4BA1C22-7E6C-4791-9B0D-37B3F647E0EB@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Thu, Dec 08, 2016 at 11:24:43AM +0900, Kukjin Kim wrote:
-> 2016. 12. 8. 02:18 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Thu, Dec 08, 2016 at 12:01:53PM +0100, Marek Szyprowski wrote:
+> "iis", "i2s_opclk0" and "i2s_opclk1" are standard clocks for Exynos4 I2S
+> hardware module, so they should be defined in .dtsi file not in the random
+> board .dts file.
 > 
-> > I use Patchwork for handling incoming patches. Put its address here so
-> > submitters could know what is in the queue.
-> 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> > MAINTAINERS | 1 +
-> > 1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 191887bdc49b..ec5137c39572 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1689,6 +1689,7 @@ M:    Krzysztof Kozlowski <krzk@kernel.org>
-> > R:    Javier Martinez Canillas <javier@osg.samsung.com>
-> > L:    linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > L:    linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> > +Q:    https://patchwork.kernel.org/project/linux-samsung-soc/list/
-> 
-> to use http would be better instead of https?
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi                  | 6 ++++--
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ----
 
-I think HTTPS is the preferred way. HTTP is insecure, easy to eavesdrop
-so whenever it is possible we should choose HTTPS.
-> 
-> then,
-> 
-> Acked-by: Kukjin Kim <kgene@kernel.org>
+Please update also exynos4412-itop-elite.dts
 
-Thanks!
-
-Best regards,
+Beside that looks good.
 Krzysztof
+
+>  2 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index c64737b..23d85601 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -64,8 +64,10 @@
+>  	i2s0: i2s@03830000 {
+>  		compatible = "samsung,s5pv210-i2s";
+>  		reg = <0x03830000 0x100>;
+> -		clocks = <&clock_audss EXYNOS_I2S_BUS>;
+> -		clock-names = "iis";
+> +		clocks = <&clock_audss EXYNOS_I2S_BUS>,
+> +			 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
+> +			 <&clock_audss EXYNOS_SCLK_I2S>;
+> +		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+>  		#clock-cells = <1>;
+>  		clock-output-names = "i2s_cdclk0";
+>  		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index 8aa19ba..7815efd 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -503,10 +503,6 @@
+>  	pinctrl-0 = <&i2s0_bus>;
+>  	pinctrl-names = "default";
+>  	status = "okay";
+> -	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+> -		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
+> -		 <&clock_audss EXYNOS_SCLK_I2S>;
+> -	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+>  };
+>  
+>  &mixer {
+> -- 
+> 1.9.1
+> 
