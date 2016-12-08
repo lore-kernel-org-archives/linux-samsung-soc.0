@@ -1,52 +1,90 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/5] arm64: dts: exynos5433: Add bus dt node using
- VDD_INT for Exynos5433
-Date: Thu, 8 Dec 2016 19:52:43 +0200
-Message-ID: <20161208175243.GA9451@kozik-lap>
-References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
- <1481173091-9728-5-git-send-email-cw00.choi@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
+Date: Thu, 8 Dec 2016 10:25:35 -0800
+Message-ID: <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
+References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
+ <1479967709-6619-2-git-send-email-krzk@kernel.org> <20161201183404.GA2134@kozik-lap>
+ <57568492.9hbg5JCdec@wuerfel> <20161203170347.GA3553@kozik-lap> <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34966 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751139AbcLHRwt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 12:52:49 -0500
-Content-Disposition: inline
-In-Reply-To: <1481173091-9728-5-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <dubepankaj1980@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 08, 2016 at 01:58:10PM +0900, Chanwoo Choi wrote:
-> This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
-> Exynos5433 has the following AMBA AXI buses to translate data
-> between DRAM and sub-blocks.
-> 
-> Following list specify the detailed correlation between sub-block and clock:
-> - CLK_ACLK_G2D_{400|266}  : Bus clock for G2D (2D graphic engine)
-> - CLK_ACLK_MSCL_400       : Bus clock for MSCL (Memory to memory Scaler)
-> - CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
-> - CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
-> - CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
-> - CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Efficient Video Codec)
-> - CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
-> - CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
-> - CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 197 +++++++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
->  2 files changed, 198 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+On Thu, Dec 8, 2016 at 7:28 AM, Pankaj Dubey <dubepankaj1980@gmail.com> wrote:
+> On 3 December 2016 at 22:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
+>>> On Thursday, December 1, 2016 8:34:04 PM CET Krzysztof Kozlowski wrote:
+>>> > On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
+>>> > > Hi,
+>>> > >
+>>> > > This contains previous dts branch because SCU node in dts is needed
+>>> > > prior to removing it from mach code.
+>>> > >
+>>> > > Below you will find full pull request and one stripped from dependency.
+>>> > >
+>>> >
+>>> > Hi Arnd, Kevin and Olof,
+>>> >
+>>> > What about this pull from the set?
+>>> >
+>>>
+>>> Sorry, I initially deferred it and then didn't get back to it.
+>>>
+>>> The dependency on the .dts changes made me a bit nervous about
+>>> taking it, mostly because the changelog fails to explain the
+>>> exact dependencies.
+>>>
+>>> This breaks compatibility with existing .dtb files, right?
+>>
+>> No, strictly speaking not. There was no dt-bindings change here, no DT
+>> properties for SCU before. We are converting our drivers to DTB so this
+>> is the same as before when switching for pinctrl, clocks or all other
+>> drivers to DT.
+>>
+>> We are not braking DTB ABI because there was no ABI around it before.
+>> Otherwise, one would say that lack of SCU DT node was an ABI. That is
+>> wrong, because DT should describe the hardware and SCU is in hardware.
+>>
+>>> What I'd like to see here is an explanation about:
+>>>
+>>> - what the upside of breaking compatibility is
+>>
+>> DTBs which do not have SCU are not proper because they skip that part of
+>> hardware. However we are breaking them in the way the SMP won't work
+>> there. It is not an ABI break, as I mentioned above.
+>>
+>>> - what exactly stops working with an old dtb
+>>> - why we don't keep a fallback for handling old dtb files
+>>
+>> What is the point for it? This is not an ABI break. Even if it was,
+>> Samsung guys don't care for ABI breaks at all (and in fact we wanted to
+>> mark the platform experimental...).
+>>
+>>> It would also be helpful to have a separate pull request for
+>>> the commits require the new dtb, and the stuff that is unrelated.
+>>
+>> I can do that but the pull will be small.
+>>
+>
+> Arnd,
+>
+> Any update on this? Intention of this change is to improve
+> Exynos SoC's DT support in mainline kernel. This will help in removing static
+> mapping from exynos machine files and simplify mach-exynos code-base.
 
-For the reference:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Adding the SCU nodes now makes sense. So does using them if they're available.
 
-I'll queue it for v4.11, after this merge window.
+Given the prevalence of exynos systems with DTS already out there, it
+would make sense to give an overlap of making the kernel work without
+the SCU in DT for a period of time.
 
-Best regards,
-Krzysztof
+This isn't like the old days of when we were mass-converting things
+and breakage was expected. We're well into a steady state here, so
+being nicer to downstream users is likely the right thing to do here.
+
+
+-Olof
