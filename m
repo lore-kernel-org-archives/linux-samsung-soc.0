@@ -1,60 +1,213 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix initial clocks configuration
- on Odroid X/X2/U3 boards
-Date: Thu, 8 Dec 2016 19:13:57 +0200
-Message-ID: <20161208171357.GA8082@kozik-lap>
-References: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
- <1481194914-20490-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20161208164434epcas4p4a7c6c5045d38140b0dca501276206a2c@epcas4p4.samsung.com>
- <20161208164421.GC5238@kozik-lap>
- <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RESEND-PATCH] ARM: EXYNOS: remove smp hook from machine
+ descriptor
+Date: Thu, 8 Dec 2016 19:33:49 +0200
+Message-ID: <20161208173349.GA8522@kozik-lap>
+References: <1481166135-1588-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36728 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932708AbcLHROD (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 12:14:03 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1481166135-1588-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
 
-On Thu, Dec 08, 2016 at 06:07:02PM +0100, Sylwester Nawrocki wrote:
-> On 12/08/2016 05:44 PM, Krzysztof Kozlowski wrote:
-> > On Thu, Dec 08, 2016 at 12:01:54PM +0100, Marek Szyprowski wrote:
-> >> Move assigned clocks properties from sound node to audio subsystem clock
-> >> controller node. This way clocks topology and rates are set just after
-> >> probing audio clocks controller. Leaving those properties under sound
-> >> node doesn't guarantee to configure them before they are being used
-> >> (for example i2s hardware module can be probed in parallel and it also
-> >> require proper audio clocks configuration).
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
-> >>  1 file changed, 10 insertions(+), 10 deletions(-)
-> >
-> > Looks correct, for the reference:
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > Does this fixes any encountered issue (real one)? I wonder whether this
-> > should go to fixes or not.
+On Thu, Dec 08, 2016 at 08:32:15AM +0530, Pankaj Dubey wrote:
+> Use CPU_METHOD_OF_DECLARE() for smp_ops instead of using it
+> via machine descriptor.
 > 
-> With current code there is no issues, and in fact there should be no
-> such timing dependencies in DT to rely on.  However, the binding convention
-> is to put assigned-clock* properties in a node of a device they belong
-> to and in this case the 'clock_audss' is more appropriate than the 'sound'
-> node.  This patch doesn't fix any bug with current code but it might save
-> us some trouble with future changes.
->
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> 
+> Resending as I missed to include samsung mailing list.
+> 
+>  arch/arm/boot/dts/exynos3250.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos4210.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos4212.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos4412.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos5250.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos5260.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos5410.dtsi      | 1 +
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 1 +
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 1 +
+>  arch/arm/boot/dts/exynos5440.dtsi      | 1 +
+>  arch/arm/mach-exynos/common.h          | 2 --
+>  arch/arm/mach-exynos/exynos.c          | 1 -
+>  arch/arm/mach-exynos/platsmp.c         | 2 ++
+>  13 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index ba17ee1..f28f669 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -53,6 +53,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 7f3a18c..6dfd98d 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -35,6 +35,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@900 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+> index 5389011..3e8982e 100644
+> --- a/arch/arm/boot/dts/exynos4212.dtsi
+> +++ b/arch/arm/boot/dts/exynos4212.dtsi
+> @@ -25,6 +25,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@A00 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index 40beede..faf2fb8 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -25,6 +25,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@A00 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index b6d7444..580897c 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -52,6 +52,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+> index 5818718..1af6e76 100644
+> --- a/arch/arm/boot/dts/exynos5260.dtsi
+> +++ b/arch/arm/boot/dts/exynos5260.dtsi
+> @@ -32,6 +32,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 2b6adaf..b092cdc 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -33,6 +33,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> index 5c052d7..a587704 100644
+> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> @@ -24,6 +24,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> index bf3c6f1..7fcdfd0 100644
+> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> @@ -23,6 +23,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu0: cpu@100 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+> index 2a2e570..0a958e8 100644
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -50,6 +50,7 @@
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		enable-method = "samsung,exynos-smp";
+>  
+>  		cpu@0 {
+>  			device_type = "cpu";
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index fb12d11..051e1ab 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -143,8 +143,6 @@ static inline void exynos_pm_init(void) {}
+>  extern void exynos_cpu_resume(void);
+>  extern void exynos_cpu_resume_ns(void);
+>  
+> -extern const struct smp_operations exynos_smp_ops;
+> -
+>  extern void exynos_cpu_power_down(int cpu);
+>  extern void exynos_cpu_power_up(int cpu);
+>  extern int  exynos_cpu_power_state(int cpu);
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index fa08ef9..f0a766e 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -211,7 +211,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+>  	/* Maintainer: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> */
+>  	.l2c_aux_val	= 0x3c400001,
+>  	.l2c_aux_mask	= 0xc20fffff,
+> -	.smp		= smp_ops(exynos_smp_ops),
+>  	.map_io		= exynos_init_io,
+>  	.init_early	= exynos_firmware_init,
+>  	.init_irq	= exynos_init_irq,
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 94405c7..43eec10 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -474,3 +474,5 @@ const struct smp_operations exynos_smp_ops __initconst = {
+>  	.cpu_die		= exynos_cpu_die,
+>  #endif
+>  };
+> +
+> +CPU_METHOD_OF_DECLARE(exynos_smp, "samsung,exynos-smp", &exynos_smp_ops);
 
-Thanks for explanation. I am not planning any pull requests for this
-cycle so the patch will have to wait till the end of 4.10-rc1
-merge window.
+Three issues:
+1. This has to be documented. Checkpatch did not complain about it?
+2. I think this breaks the ABI with existing DTBs because now the
+   enable-method of cpus becomes mandatory. But the
+   Documentation/devicetree/bindings/arm/cpus.txt is saying that:
+   "On ARM 32-bit systems this property is optional and can be one of"
+
+3. Please split DTS changes to separate patches. This is, by the way,
+   connected with #2 above: if there was no ABI break, then the DTS
+   could go to separate branch easily.
 
 Best regards,
 Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
