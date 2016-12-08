@@ -1,58 +1,117 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/5] PM / devfreq: exynos-bus: Add the detailed correlation
- for Exynos5433
-Date: Thu, 08 Dec 2016 13:58:08 +0900
-Message-ID: <1481173091-9728-3-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 5/5] arm64: dts: exynos5433: Add support of bus frequency
+ using VDD_INT on TM2
+Date: Thu, 08 Dec 2016 13:58:11 +0900
+Message-ID: <1481173091-9728-6-git-send-email-cw00.choi@samsung.com>
 References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1481173091-9728-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:58916 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932636AbcLHE6X (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 7 Dec 2016 23:58:23 -0500
+In-reply-to: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch adds the detailed corrleation between sub-blocks and VDD_INT power
-line for Exynos5433. VDD_INT provided the power source to INT (Internal) block.
+This patch adds the bus Device-tree nodes for INT (Internal) block
+to enable the bus frequency scaling.
 
-Cc: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 70 +++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-index d3ec8e676b6b..d6107770face 100644
---- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -123,6 +123,21 @@ Detailed correlation between sub-blocks and power line according to Exynos SoC:
- 		|--- FSYS
- 		|--- FSYS2
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index c08589970134..451788642b21 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -170,6 +170,58 @@
+ 	};
+ };
  
-+- In case of Exynos5433, there is VDD_INT power line as following:
-+	VDD_INT |--- G2D_400 (parent device)
-+		|--- G2D_266
-+		|--- GSCL
-+		|--- JPEG
-+		|--- HEVC
-+		|--- MFC
-+		|--- MSCL
-+		|--- NoC0
-+		|--- NoC1
-+		|--- NoC2
-+		|--- PERIS (Fixed clock rate)
-+		|--- PERIC (Fixed clock rate)
-+		|--- FSYS  (Fixed clock rate)
++&bus_g2d_400 {
++	devfreq-events = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
++	vdd-supply = <&buck4_reg>;
++	exynos,saturation-ratio = <10>;
++	status = "okay";
++};
 +
- Example1:
- 	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
- 	power line (regulator). The MIF (Memory Interface) AXI bus is used to
++&bus_g2d_266 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_gscl {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_hevc {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_jpeg {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_mfc {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_mscl {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_noc0 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_noc1 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
++&bus_noc2 {
++	devfreq = <&bus_g2d_400>;
++	status = "okay";
++};
++
+ &cmu_aud {
+ 	assigned-clocks = <&cmu_aud CLK_MOUT_AUD_PLL_USER>;
+ 	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+@@ -794,6 +846,24 @@
+ 	bus-width = <4>;
+ };
+ 
++&ppmu_d0_general {
++	status = "okay";
++	events {
++		ppmu_event0_d0_general: ppmu-event0-d0-general {
++			event-name = "ppmu-event0-d0-general";
++		};
++	};
++};
++
++&ppmu_d1_general {
++	status = "okay";
++	events {
++		ppmu_event0_d1_general: ppmu-event0-d1-general {
++		       event-name = "ppmu-event0-d1-general";
++	       };
++       };
++};
++
+ &pinctrl_alive {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&initial_alive>;
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
