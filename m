@@ -1,64 +1,87 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] ARM: dts: exynos: Correct clocks for Exynos4 I2S module
-Date: Thu, 08 Dec 2016 12:01:53 +0100
-Message-ID: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45739 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751487AbcLHLfc (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 06:35:32 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OHV00HU05C48560@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Dec 2016 20:02:28 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <dubepankaj1980@gmail.com>
+Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
+Date: Thu, 8 Dec 2016 20:58:02 +0530
+Message-ID: <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
+References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
+ <1479967709-6619-2-git-send-email-krzk@kernel.org> <20161201183404.GA2134@kozik-lap>
+ <57568492.9hbg5JCdec@wuerfel> <20161203170347.GA3553@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161203170347.GA3553@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-"iis", "i2s_opclk0" and "i2s_opclk1" are standard clocks for Exynos4 I2S
-hardware module, so they should be defined in .dtsi file not in the random
-board .dts file.
+On 3 December 2016 at 22:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
+>> On Thursday, December 1, 2016 8:34:04 PM CET Krzysztof Kozlowski wrote:
+>> > On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
+>> > > Hi,
+>> > >
+>> > > This contains previous dts branch because SCU node in dts is needed
+>> > > prior to removing it from mach code.
+>> > >
+>> > > Below you will find full pull request and one stripped from dependency.
+>> > >
+>> >
+>> > Hi Arnd, Kevin and Olof,
+>> >
+>> > What about this pull from the set?
+>> >
+>>
+>> Sorry, I initially deferred it and then didn't get back to it.
+>>
+>> The dependency on the .dts changes made me a bit nervous about
+>> taking it, mostly because the changelog fails to explain the
+>> exact dependencies.
+>>
+>> This breaks compatibility with existing .dtb files, right?
+>
+> No, strictly speaking not. There was no dt-bindings change here, no DT
+> properties for SCU before. We are converting our drivers to DTB so this
+> is the same as before when switching for pinctrl, clocks or all other
+> drivers to DT.
+>
+> We are not braking DTB ABI because there was no ABI around it before.
+> Otherwise, one would say that lack of SCU DT node was an ABI. That is
+> wrong, because DT should describe the hardware and SCU is in hardware.
+>
+>> What I'd like to see here is an explanation about:
+>>
+>> - what the upside of breaking compatibility is
+>
+> DTBs which do not have SCU are not proper because they skip that part of
+> hardware. However we are breaking them in the way the SMP won't work
+> there. It is not an ABI break, as I mentioned above.
+>
+>> - what exactly stops working with an old dtb
+>> - why we don't keep a fallback for handling old dtb files
+>
+> What is the point for it? This is not an ABI break. Even if it was,
+> Samsung guys don't care for ABI breaks at all (and in fact we wanted to
+> mark the platform experimental...).
+>
+>> It would also be helpful to have a separate pull request for
+>> the commits require the new dtb, and the stuff that is unrelated.
+>
+> I can do that but the pull will be small.
+>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi                  | 6 ++++--
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ----
- 2 files changed, 4 insertions(+), 6 deletions(-)
+Arnd,
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index c64737b..23d85601 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -64,8 +64,10 @@
- 	i2s0: i2s@03830000 {
- 		compatible = "samsung,s5pv210-i2s";
- 		reg = <0x03830000 0x100>;
--		clocks = <&clock_audss EXYNOS_I2S_BUS>;
--		clock-names = "iis";
-+		clocks = <&clock_audss EXYNOS_I2S_BUS>,
-+			 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
-+			 <&clock_audss EXYNOS_SCLK_I2S>;
-+		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- 		#clock-cells = <1>;
- 		clock-output-names = "i2s_cdclk0";
- 		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 8aa19ba..7815efd 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -503,10 +503,6 @@
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
--	clocks = <&clock_audss EXYNOS_I2S_BUS>,
--		 <&clock_audss EXYNOS_DOUT_AUD_BUS>,
--		 <&clock_audss EXYNOS_SCLK_I2S>;
--	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- };
- 
- &mixer {
--- 
-1.9.1
+Any update on this? Intention of this change is to improve
+Exynos SoC's DT support in mainline kernel. This will help in removing static
+mapping from exynos machine files and simplify mach-exynos code-base.
+
+Thanks,
+Pankaj Dubey
+
+> Best regards,
+> Krzysztof
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
