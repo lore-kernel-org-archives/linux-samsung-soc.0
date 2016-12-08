@@ -1,90 +1,103 @@
-From: Olof Johansson <olof@lixom.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
-Date: Thu, 8 Dec 2016 10:25:35 -0800
-Message-ID: <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
+Date: Thu, 8 Dec 2016 20:46:11 +0200
+Message-ID: <20161208184611.GA11463@kozik-lap>
 References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
- <1479967709-6619-2-git-send-email-krzk@kernel.org> <20161201183404.GA2134@kozik-lap>
- <57568492.9hbg5JCdec@wuerfel> <20161203170347.GA3553@kozik-lap> <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
+ <1479967709-6619-2-git-send-email-krzk@kernel.org>
+ <20161201183404.GA2134@kozik-lap>
+ <57568492.9hbg5JCdec@wuerfel>
+ <20161203170347.GA3553@kozik-lap>
+ <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
+ <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <dubepankaj1980@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33777 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752475AbcLHSqR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 8 Dec 2016 13:46:17 -0500
+Content-Disposition: inline
+In-Reply-To: <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Pankaj Dubey <dubepankaj1980@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Dec 8, 2016 at 7:28 AM, Pankaj Dubey <dubepankaj1980@gmail.com> wrote:
-> On 3 December 2016 at 22:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
->>> On Thursday, December 1, 2016 8:34:04 PM CET Krzysztof Kozlowski wrote:
->>> > On Thu, Nov 24, 2016 at 08:08:27AM +0200, Krzysztof Kozlowski wrote:
->>> > > Hi,
->>> > >
->>> > > This contains previous dts branch because SCU node in dts is needed
->>> > > prior to removing it from mach code.
->>> > >
->>> > > Below you will find full pull request and one stripped from dependency.
->>> > >
->>> >
->>> > Hi Arnd, Kevin and Olof,
->>> >
->>> > What about this pull from the set?
->>> >
->>>
->>> Sorry, I initially deferred it and then didn't get back to it.
->>>
->>> The dependency on the .dts changes made me a bit nervous about
->>> taking it, mostly because the changelog fails to explain the
->>> exact dependencies.
->>>
->>> This breaks compatibility with existing .dtb files, right?
->>
->> No, strictly speaking not. There was no dt-bindings change here, no DT
->> properties for SCU before. We are converting our drivers to DTB so this
->> is the same as before when switching for pinctrl, clocks or all other
->> drivers to DT.
->>
->> We are not braking DTB ABI because there was no ABI around it before.
->> Otherwise, one would say that lack of SCU DT node was an ABI. That is
->> wrong, because DT should describe the hardware and SCU is in hardware.
->>
->>> What I'd like to see here is an explanation about:
->>>
->>> - what the upside of breaking compatibility is
->>
->> DTBs which do not have SCU are not proper because they skip that part of
->> hardware. However we are breaking them in the way the SMP won't work
->> there. It is not an ABI break, as I mentioned above.
->>
->>> - what exactly stops working with an old dtb
->>> - why we don't keep a fallback for handling old dtb files
->>
->> What is the point for it? This is not an ABI break. Even if it was,
->> Samsung guys don't care for ABI breaks at all (and in fact we wanted to
->> mark the platform experimental...).
->>
->>> It would also be helpful to have a separate pull request for
->>> the commits require the new dtb, and the stuff that is unrelated.
->>
->> I can do that but the pull will be small.
->>
->
-> Arnd,
->
-> Any update on this? Intention of this change is to improve
-> Exynos SoC's DT support in mainline kernel. This will help in removing static
-> mapping from exynos machine files and simplify mach-exynos code-base.
+On Thu, Dec 08, 2016 at 10:25:35AM -0800, Olof Johansson wrote:
+> On Thu, Dec 8, 2016 at 7:28 AM, Pankaj Dubey <dubepankaj1980@gmail.com> wrote:
+> > On 3 December 2016 at 22:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >> On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
+> >>>
+> >>> Sorry, I initially deferred it and then didn't get back to it.
+> >>>
+> >>> The dependency on the .dts changes made me a bit nervous about
+> >>> taking it, mostly because the changelog fails to explain the
+> >>> exact dependencies.
+> >>>
+> >>> This breaks compatibility with existing .dtb files, right?
+> >>
+> >> No, strictly speaking not. There was no dt-bindings change here, no DT
+> >> properties for SCU before. We are converting our drivers to DTB so this
+> >> is the same as before when switching for pinctrl, clocks or all other
+> >> drivers to DT.
+> >>
+> >> We are not braking DTB ABI because there was no ABI around it before.
+> >> Otherwise, one would say that lack of SCU DT node was an ABI. That is
+> >> wrong, because DT should describe the hardware and SCU is in hardware.
+> >>
+> >>> What I'd like to see here is an explanation about:
+> >>>
+> >>> - what the upside of breaking compatibility is
+> >>
+> >> DTBs which do not have SCU are not proper because they skip that part of
+> >> hardware. However we are breaking them in the way the SMP won't work
+> >> there. It is not an ABI break, as I mentioned above.
+> >>
+> >>> - what exactly stops working with an old dtb
+> >>> - why we don't keep a fallback for handling old dtb files
+> >>
+> >> What is the point for it? This is not an ABI break. Even if it was,
+> >> Samsung guys don't care for ABI breaks at all (and in fact we wanted to
+> >> mark the platform experimental...).
+> >>
+> >>> It would also be helpful to have a separate pull request for
+> >>> the commits require the new dtb, and the stuff that is unrelated.
+> >>
+> >> I can do that but the pull will be small.
+> >>
+> >
+> > Arnd,
+> >
+> > Any update on this? Intention of this change is to improve
+> > Exynos SoC's DT support in mainline kernel. This will help in removing static
+> > mapping from exynos machine files and simplify mach-exynos code-base.
+> 
+> Adding the SCU nodes now makes sense. So does using them if they're available.
+> 
+> Given the prevalence of exynos systems with DTS already out there, it
+> would make sense to give an overlap of making the kernel work without
+> the SCU in DT for a period of time.
+> 
+> This isn't like the old days of when we were mass-converting things
+> and breakage was expected. We're well into a steady state here, so
+> being nicer to downstream users is likely the right thing to do here.
 
-Adding the SCU nodes now makes sense. So does using them if they're available.
+I think that either we treat this as an ABI break, or just "being
+nice to downstream".
 
-Given the prevalence of exynos systems with DTS already out there, it
-would make sense to give an overlap of making the kernel work without
-the SCU in DT for a period of time.
+In the first case, not breaking things would be a valid reason. But I
+believe this is not an ABI break. ABI is about an interface, not about
+being nice. The SCU should be defined by downstream users because this
+is the description of the hardware. In the same time, kernel did not
+document as an interface something like "there should be no SCU node
+defined" so creating a requirement of SCU is not an breakage of existing
+interface.
 
-This isn't like the old days of when we were mass-converting things
-and breakage was expected. We're well into a steady state here, so
-being nicer to downstream users is likely the right thing to do here.
+The second case then, being nice to downstream. Do we want to be nice or
+do we want to push them to mainline? Okay, it is never black or white...
+yet we should rather encourage downstream to mainline and creating
+compatibility periods is rather opposite of that.
 
-
--Olof
+Best regards,
+Krzysztof
