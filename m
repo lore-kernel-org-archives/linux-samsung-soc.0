@@ -1,195 +1,72 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RESEND-PATCH] ARM: EXYNOS: remove smp hook from machine descriptor
-Date: Thu, 08 Dec 2016 08:32:15 +0530
-Message-ID: <1481166135-1588-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38608 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbcLHC7t (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Dec 2016 21:59:49 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 0/5] arm64: dts: Enable bus frequency scaling on
+ Exynos5433-based TM2 board
+Date: Thu, 08 Dec 2016 13:58:06 +0900
+Message-ID: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: arnd@arndb.de, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Use CPU_METHOD_OF_DECLARE() for smp_ops instead of using it
-via machine descriptor.
+This patches add the AMBA bus Device-tree node unsing VDD_INT
+to enable the bus frequency scaling on Exynos5433-based TM2 board.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
+There are two kind of bus device with devfreq framework.
+- Parent bus device  : Change the frequency/voltage according to bus's utilization.
+- Passive bus device : Change only frequency according to the new level
+                       of parent bus device.
 
-Resending as I missed to include samsung mailing list.
+The VDD_INT regulator provides the power source to INT (Internal) block as
+following. The sub-blocks in the INT block share the one power source.
+	VDD_INT |--- G2D_400 (parent device)
+		|--- G2D_266
+		|--- GSCL
+		|--- JPEG
+		|--- HEVC
+		|--- MFC
+		|--- MSCL
+		|--- NoC0
+		|--- NoC1
+		|--- NoC2
+		|--- PERIS (Fixed clock rate)
+		|--- PERIC (Fixed clock rate)
+		|--- FSYS  (Fixed clock rate)
 
- arch/arm/boot/dts/exynos3250.dtsi      | 1 +
- arch/arm/boot/dts/exynos4210.dtsi      | 1 +
- arch/arm/boot/dts/exynos4212.dtsi      | 1 +
- arch/arm/boot/dts/exynos4412.dtsi      | 1 +
- arch/arm/boot/dts/exynos5250.dtsi      | 1 +
- arch/arm/boot/dts/exynos5260.dtsi      | 1 +
- arch/arm/boot/dts/exynos5410.dtsi      | 1 +
- arch/arm/boot/dts/exynos5420-cpus.dtsi | 1 +
- arch/arm/boot/dts/exynos5422-cpus.dtsi | 1 +
- arch/arm/boot/dts/exynos5440.dtsi      | 1 +
- arch/arm/mach-exynos/common.h          | 2 --
- arch/arm/mach-exynos/exynos.c          | 1 -
- arch/arm/mach-exynos/platsmp.c         | 2 ++
- 13 files changed, 12 insertions(+), 3 deletions(-)
+Each sub-block has the bus clock as following:
+ - CLK_ACLK_G2D_{400|266} : Bus clock for G2D (2D graphic engine)
+ - CLK_ACLK_MSCL_400      : Bus clock for MSCL (Memory to memory Scaler)
+ - CLK_ACLK_GSCL_333      : Bus clock for GSCL (General Scaler)
+ - CLK_SCLK_JPEG_MSCL     : Bus clock for JPEG
+ - CLK_ACLK_MFC_400       : Bus clock for MFC (Multi Format Codec)
+ - CLK_ACLK_HEVC_400      : Bus clock for HEVC (High Effective Video Codec)
+ - CLK_ACLK_BUS0_400      : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
+ - CLK_ACLK_BUS1_400      : NoC's bus clock for MFC/HEVC/G3D
+ - CLK_ACLK_BUS2_400      : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index ba17ee1..f28f669 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -53,6 +53,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 7f3a18c..6dfd98d 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -35,6 +35,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@900 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 5389011..3e8982e 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -25,6 +25,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@A00 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 40beede..faf2fb8 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -25,6 +25,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@A00 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index b6d7444..580897c 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -52,6 +52,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 5818718..1af6e76 100644
---- a/arch/arm/boot/dts/exynos5260.dtsi
-+++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -32,6 +32,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 2b6adaf..b092cdc 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -33,6 +33,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-index 5c052d7..a587704 100644
---- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-@@ -24,6 +24,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-index bf3c6f1..7fcdfd0 100644
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -23,6 +23,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu0: cpu@100 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 2a2e570..0a958e8 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -50,6 +50,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "samsung,exynos-smp";
- 
- 		cpu@0 {
- 			device_type = "cpu";
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index fb12d11..051e1ab 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -143,8 +143,6 @@ static inline void exynos_pm_init(void) {}
- extern void exynos_cpu_resume(void);
- extern void exynos_cpu_resume_ns(void);
- 
--extern const struct smp_operations exynos_smp_ops;
--
- extern void exynos_cpu_power_down(int cpu);
- extern void exynos_cpu_power_up(int cpu);
- extern int  exynos_cpu_power_state(int cpu);
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index fa08ef9..f0a766e 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -211,7 +211,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.l2c_aux_val	= 0x3c400001,
- 	.l2c_aux_mask	= 0xc20fffff,
--	.smp		= smp_ops(exynos_smp_ops),
- 	.map_io		= exynos_init_io,
- 	.init_early	= exynos_firmware_init,
- 	.init_irq	= exynos_init_irq,
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 94405c7..43eec10 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -474,3 +474,5 @@ const struct smp_operations exynos_smp_ops __initconst = {
- 	.cpu_die		= exynos_cpu_die,
- #endif
- };
-+
-+CPU_METHOD_OF_DECLARE(exynos_smp, "samsung,exynos-smp", &exynos_smp_ops);
+Changes from v1:
+- Remove duplicate description of exynos5433-bus.dtsi
+- Move the bus device-tree node under the 'soc'
+- Modify the node name of bus from 'bus_xxx_xxx' to 'bus[number]'
+- Reorder the bus device-tree node alpabetically
+- Change the node name from 'bus_busX' to 'bus_nocX'
+- Fix minor issue
+- Add reviewed-by tag of Krzysztof Kozlowski for patch3/5
+
+Chanwoo Choi (5):
+  clk: samsung: exynos5433: Set NoC (Network On Chip) clocks as critical
+  PM / devfreq: exynos-bus: Add the detailed correlation for Exynos5433
+  arm64: dts: exynos5433: Add PPMU dt node
+  arm64: dts: exynos5433: Add bus dt node using VDD_INT for Exynos5433
+  arm64: dts: exynos5433: Add support of bus frequency using VDD_INT on TM2
+
+ .../devicetree/bindings/devfreq/exynos-bus.txt     |  15 ++
+ arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 197 +++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  70 ++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  25 +++
+ drivers/clk/samsung/clk-exynos5433.c               |   8 +-
+ 5 files changed, 311 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+
 -- 
-2.7.4
+1.9.1
