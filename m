@@ -1,46 +1,73 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: Fix initial audio clocks
- configuration on Exynos4 boards
-Date: Fri, 9 Dec 2016 16:30:27 +0200
-Message-ID: <20161209143027.GC10080@kozik-lap>
-References: <1481268131-1264-1-git-send-email-m.szyprowski@samsung.com>
- <1481268131-1264-2-git-send-email-m.szyprowski@samsung.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: mainline boot: 179 boots: 1 failed, 168 passed with 10 offline (v4.9-rc8-78-g318c8932ddec)
+Date: Fri, 09 Dec 2016 15:03:16 -0800
+Message-ID: <m2h96caeob.fsf@baylibre.com>
+References: <5849e989.0209c20a.75a7.6441@mx.google.com>
+        <m2shpyarc8.fsf@baylibre.com> <20161209125802.GA4229@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:33029 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933542AbcLIOae (ORCPT
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:33443 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751987AbcLIXDS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 09:30:34 -0500
-Received: by mail-wj0-f193.google.com with SMTP id kp2so2737451wjc.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2016 06:30:33 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1481268131-1264-2-git-send-email-m.szyprowski@samsung.com>
+        Fri, 9 Dec 2016 18:03:18 -0500
+Received: by mail-pf0-f180.google.com with SMTP id d2so5313549pfd.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2016 15:03:18 -0800 (PST)
+In-Reply-To: <20161209125802.GA4229@kozik-lap> (Krzysztof Kozlowski's message
+        of "Fri, 9 Dec 2016 14:58:02 +0200")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 09, 2016 at 08:22:11AM +0100, Marek Szyprowski wrote:
-> Move assigned clocks properties from sound node to audio subsystem clock
-> controller node. This way clocks topology and rates are set just after
-> probing audio clocks controller. Leaving those properties under
-> sound node doesn't guarantee to configure them before they are being used
-> (for example i2s hardware module can be probed in parallel and it also
-> require proper audio clocks configuration).
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Changelog:
-> v2:
-> - added changes for exynos4412-itop-elite board
-> ---
->  arch/arm/boot/dts/exynos4412-itop-elite.dts     | 21 ++++++++++-----------
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
->  2 files changed, 20 insertions(+), 21 deletions(-)
-> 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-Best regards,
-Krzysztof
+> On Thu, Dec 08, 2016 at 04:17:27PM -0800, Kevin Hilman wrote:
+>> + Exynos maintainers (for new regresion on exynos5250-snow)
+>> 
+>> kernelci.org bot <bot@kernelci.org> writes:
+>> 
+>> > mainline boot: 179 boots: 1 failed, 168 passed with 10 offline (v4.9-rc8-78-g318c8932ddec)
+>> >
+>> > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
+>> > Full Build Summary: https://kernelci.org/build/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
+>> >
+>> > Tree: mainline
+>> > Branch: local/master
+>> > Git Describe: v4.9-rc8-78-g318c8932ddec
+>> > Git Commit: 318c8932ddec5c1c26a4af0f3c053784841c598e
+>> > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>> > Tested: 57 unique boards, 21 SoC families, 29 builds out of 207
+>> >
+>> > Boot Regressions Detected:
+>> >
+>> > arm:
+>> >
+>> >     multi_v7_defconfig+CONFIG_SMP=n:
+>> >         exynos5250-snow:
+>> >             lab-collabora: new failure (last pass: v4.9-rc8-51-gbc3913a5378c)
+>> >
+>> > Boot Failure Detected:
+>> >
+>> > arm:
+>> >
+>> >     multi_v7_defconfig+CONFIG_SMP=n
+>> >         exynos5250-snow: 1 failed lab
+>
+> Nothing was happening recently around Exynos code (at least mach/dts).
+> Was the 318c8932ddec5c1c26a4af0f3c053784841c598e pointed out by bisect?
+
+The bisect[1] pointed to this, but that doesn't smell right, and I
+wasn't able to dig into it any further:
+
+2513940989fa2c56d0aeb4f5792d22804d92ab4c is the first bad commit
+commit 2513940989fa2c56d0aeb4f5792d22804d92ab4c
+Author: Michael Ellerman <mpe@ellerman.id.au>
+Date:   Fri Nov 25 09:45:28 2016 +1100
+
+Full bisect log is here[1].
+
+Kevin
+
+[1] https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/171/console
