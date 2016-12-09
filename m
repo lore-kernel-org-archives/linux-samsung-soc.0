@@ -1,103 +1,397 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/3] ARM: exynos: Soc/mach for v4.10
-Date: Thu, 8 Dec 2016 20:46:11 +0200
-Message-ID: <20161208184611.GA11463@kozik-lap>
-References: <1479967709-6619-1-git-send-email-krzk@kernel.org>
- <1479967709-6619-2-git-send-email-krzk@kernel.org>
- <20161201183404.GA2134@kozik-lap>
- <57568492.9hbg5JCdec@wuerfel>
- <20161203170347.GA3553@kozik-lap>
- <CAGcde9HwfPbw6NMEmcTfn+Df+-AkyyrP3u=7NUyT1XDVbCjtqg@mail.gmail.com>
- <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v2] PCI: designware: add host_init error handling
+Date: Fri, 09 Dec 2016 09:04:31 +0900
+Message-ID: <2e505caa-0d3a-7800-e73f-fd177ca196a4@samsung.com>
+References: <CGME20161207103322epcas3p104e9848fa94310f2b368c3555531128b@epcas3p1.samsung.com>
+ <1481106769-1404-1-git-send-email-srinivas.kandagatla@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33777 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752475AbcLHSqR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Dec 2016 13:46:17 -0500
-Content-Disposition: inline
-In-Reply-To: <CAOesGMicc8xEvxn1k6Te20rTEv36it0PZmnXyhhn+U+oh7jdeQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <1481106769-1404-1-git-send-email-srinivas.kandagatla@linaro.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Murali Karicheri <m-karicheri2@ti.com>, Minghuan Lian <minghuan.Lian@freescale.com>, Mingkai Hu <mingkai.hu@freescale.com>, Roy Zang <tie-fei.zang@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Stanimir Varbanov <svarbanov@mm-sol.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@list
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Pankaj Dubey <dubepankaj1980@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Dec 08, 2016 at 10:25:35AM -0800, Olof Johansson wrote:
-> On Thu, Dec 8, 2016 at 7:28 AM, Pankaj Dubey <dubepankaj1980@gmail.com> wrote:
-> > On 3 December 2016 at 22:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >> On Fri, Dec 02, 2016 at 10:52:57PM +0100, Arnd Bergmann wrote:
-> >>>
-> >>> Sorry, I initially deferred it and then didn't get back to it.
-> >>>
-> >>> The dependency on the .dts changes made me a bit nervous about
-> >>> taking it, mostly because the changelog fails to explain the
-> >>> exact dependencies.
-> >>>
-> >>> This breaks compatibility with existing .dtb files, right?
-> >>
-> >> No, strictly speaking not. There was no dt-bindings change here, no DT
-> >> properties for SCU before. We are converting our drivers to DTB so this
-> >> is the same as before when switching for pinctrl, clocks or all other
-> >> drivers to DT.
-> >>
-> >> We are not braking DTB ABI because there was no ABI around it before.
-> >> Otherwise, one would say that lack of SCU DT node was an ABI. That is
-> >> wrong, because DT should describe the hardware and SCU is in hardware.
-> >>
-> >>> What I'd like to see here is an explanation about:
-> >>>
-> >>> - what the upside of breaking compatibility is
-> >>
-> >> DTBs which do not have SCU are not proper because they skip that part of
-> >> hardware. However we are breaking them in the way the SMP won't work
-> >> there. It is not an ABI break, as I mentioned above.
-> >>
-> >>> - what exactly stops working with an old dtb
-> >>> - why we don't keep a fallback for handling old dtb files
-> >>
-> >> What is the point for it? This is not an ABI break. Even if it was,
-> >> Samsung guys don't care for ABI breaks at all (and in fact we wanted to
-> >> mark the platform experimental...).
-> >>
-> >>> It would also be helpful to have a separate pull request for
-> >>> the commits require the new dtb, and the stuff that is unrelated.
-> >>
-> >> I can do that but the pull will be small.
-> >>
-> >
-> > Arnd,
-> >
-> > Any update on this? Intention of this change is to improve
-> > Exynos SoC's DT support in mainline kernel. This will help in removing static
-> > mapping from exynos machine files and simplify mach-exynos code-base.
+Hi Srinivas,
+
+
+On 12/07/2016 07:32 PM, Srinivas Kandagatla wrote:
+> This patch add support to return value from host_init() callback from drivers,
+> so that the designware libary can handle or pass it to proper place. Issue with
+> void return type is that errors or error handling within host_init() callback
+> are never know to designware code, which could go ahead and access registers
+> even in error cases.
 > 
-> Adding the SCU nodes now makes sense. So does using them if they're available.
+> Typical case in qcom controller driver is to turn off clks in case of errors,
+> if designware code continues to read/write register when clocks are turned off
+> the board would reboot/lockup.
+
+Added the comment for minor thing.
+I agreed this approach.
+
 > 
-> Given the prevalence of exynos systems with DTS already out there, it
-> would make sense to give an overlap of making the kernel work without
-> the SCU in DT for a period of time.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Currently designware code does not have a way return errors generated
+> as part of host_init() callback in controller drivers. This is an issue
+> with controller drivers like qcom which turns off the clocks in error
+> handling path. As the dw core is un aware of this would continue to
+> access registers which faults resulting in board reboots/hangs.
 > 
-> This isn't like the old days of when we were mass-converting things
-> and breakage was expected. We're well into a steady state here, so
-> being nicer to downstream users is likely the right thing to do here.
+> There are two ways to solve this issue,
+> one is remove error handling in the qcom controller host_init() function
+> other is to handle error and pass back to dw core code which would then
+> pass back to controller driver as part of dw_pcie_host_init() return value.
+> 
+> Second option seems more sensible and correct way to fix the issue,
+> this patch does the same.
+> 
+> As part of this change to host_init() return type I had to patch other
+> ihost controller drivers which use dw core. Most of the changes to other drivers
+> are to return proper error codes to upper layer.
+> Only compile tested drivers.
+> 
+> Changes since RFC:
+> 	- Add error handling to other drivers as suggested by Joao Pinto
+> 
+>  drivers/pci/host/pci-dra7xx.c           | 10 ++++++++--
+>  drivers/pci/host/pci-exynos.c           | 10 ++++++++--
+>  drivers/pci/host/pci-imx6.c             | 10 ++++++++--
+>  drivers/pci/host/pci-keystone.c         | 10 ++++++++--
+>  drivers/pci/host/pci-layerscape.c       | 22 +++++++++++++---------
+>  drivers/pci/host/pcie-armada8k.c        |  4 +++-
+>  drivers/pci/host/pcie-designware-plat.c | 10 ++++++++--
+>  drivers/pci/host/pcie-designware.c      |  4 +++-
+>  drivers/pci/host/pcie-designware.h      |  2 +-
+>  drivers/pci/host/pcie-qcom.c            |  5 +++--
+>  drivers/pci/host/pcie-spear13xx.c       | 10 ++++++++--
+>  11 files changed, 71 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
+> index 9595fad..811f0f9 100644
+> --- a/drivers/pci/host/pci-dra7xx.c
+> +++ b/drivers/pci/host/pci-dra7xx.c
+> @@ -127,9 +127,10 @@ static void dra7xx_pcie_enable_interrupts(struct dra7xx_pcie *dra7xx)
+>  				   LEG_EP_INTERRUPTS);
+>  }
+>  
+> -static void dra7xx_pcie_host_init(struct pcie_port *pp)
+> +static int dra7xx_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pp);
+> +	int ret;
+>  
+>  	pp->io_base &= DRA7XX_CPU_TO_BUS_ADDR;
+>  	pp->mem_base &= DRA7XX_CPU_TO_BUS_ADDR;
+> @@ -138,10 +139,15 @@ static void dra7xx_pcie_host_init(struct pcie_port *pp)
+>  
+>  	dw_pcie_setup_rc(pp);
+>  
+> -	dra7xx_pcie_establish_link(dra7xx);
+> +	ret = dra7xx_pcie_establish_link(dra7xx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	if (IS_ENABLED(CONFIG_PCI_MSI))
+>  		dw_pcie_msi_init(pp);
+>  	dra7xx_pcie_enable_interrupts(dra7xx);
+> +
+> +	return 0;
+>  }
+>  
+>  static struct pcie_host_ops dra7xx_pcie_host_ops = {
+> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+> index f1c544b..c116fd9 100644
+> --- a/drivers/pci/host/pci-exynos.c
+> +++ b/drivers/pci/host/pci-exynos.c
+> @@ -458,12 +458,18 @@ static int exynos_pcie_link_up(struct pcie_port *pp)
+>  	return 0;
+>  }
+>  
+> -static void exynos_pcie_host_init(struct pcie_port *pp)
+> +static int exynos_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
+> +	int ret;
+> +
+> +	ret = exynos_pcie_establish_link(exynos_pcie);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	exynos_pcie_establish_link(exynos_pcie);
+>  	exynos_pcie_enable_interrupts(exynos_pcie);
+> +
+> +	return 0;
+>  }
+>  
+>  static struct pcie_host_ops exynos_pcie_host_ops = {
+> diff --git a/drivers/pci/host/pci-imx6.c b/drivers/pci/host/pci-imx6.c
+> index c8cefb0..1251e92 100644
+> --- a/drivers/pci/host/pci-imx6.c
+> +++ b/drivers/pci/host/pci-imx6.c
+> @@ -550,18 +550,24 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+>  	return ret;
+>  }
+>  
+> -static void imx6_pcie_host_init(struct pcie_port *pp)
+> +static int imx6_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct imx6_pcie *imx6_pcie = to_imx6_pcie(pp);
+> +	int ret;
+>  
+>  	imx6_pcie_assert_core_reset(imx6_pcie);
+>  	imx6_pcie_init_phy(imx6_pcie);
+>  	imx6_pcie_deassert_core_reset(imx6_pcie);
+>  	dw_pcie_setup_rc(pp);
+> -	imx6_pcie_establish_link(imx6_pcie);
+> +	ret = imx6_pcie_establish_link(imx6_pcie);
+> +
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	if (IS_ENABLED(CONFIG_PCI_MSI))
+>  		dw_pcie_msi_init(pp);
+> +
+> +	return 0;
+>  }
+>  
+>  static int imx6_pcie_link_up(struct pcie_port *pp)
+> diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
+> index 043c19a..4067a75 100644
+> --- a/drivers/pci/host/pci-keystone.c
+> +++ b/drivers/pci/host/pci-keystone.c
+> @@ -260,12 +260,16 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
+>  	return 0;
+>  }
+>  
+> -static void __init ks_pcie_host_init(struct pcie_port *pp)
+> +static int __init ks_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pp);
+>  	u32 val;
+> +	int ret;
+> +
+> +	ret = ks_pcie_establish_link(ks_pcie);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	ks_pcie_establish_link(ks_pcie);
+>  	ks_dw_pcie_setup_rc_app_regs(ks_pcie);
+>  	ks_pcie_setup_interrupts(ks_pcie);
+>  	writew(PCI_IO_RANGE_TYPE_32 | (PCI_IO_RANGE_TYPE_32 << 8),
+> @@ -287,6 +291,8 @@ static void __init ks_pcie_host_init(struct pcie_port *pp)
+>  	 */
+>  	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
+>  			"Asynchronous external abort");
+> +
+> +	return 0;
+>  }
+>  
+>  static struct pcie_host_ops keystone_pcie_host_ops = {
+> diff --git a/drivers/pci/host/pci-layerscape.c b/drivers/pci/host/pci-layerscape.c
+> index 6537079..60c8b84 100644
+> --- a/drivers/pci/host/pci-layerscape.c
+> +++ b/drivers/pci/host/pci-layerscape.c
+> @@ -103,30 +103,32 @@ static int ls1021_pcie_link_up(struct pcie_port *pp)
+>  	return 1;
+>  }
+>  
+> -static void ls1021_pcie_host_init(struct pcie_port *pp)
+> +static int ls1021_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct device *dev = pp->dev;
+>  	struct ls_pcie *pcie = to_ls_pcie(pp);
+>  	u32 index[2];
+> +	int ret;
+>  
+>  	pcie->scfg = syscon_regmap_lookup_by_phandle(dev->of_node,
+>  						     "fsl,pcie-scfg");
+>  	if (IS_ERR(pcie->scfg)) {
+>  		dev_err(dev, "No syscfg phandle specified\n");
+> -		pcie->scfg = NULL;
+> -		return;
+> +		return PTR_ERR(pcie->scfg);
+>  	}
+>  
+> -	if (of_property_read_u32_array(dev->of_node,
+> -				       "fsl,pcie-scfg", index, 2)) {
+> -		pcie->scfg = NULL;
+> -		return;
+> -	}
+> +	ret = of_property_read_u32_array(dev->of_node,
+> +				       "fsl,pcie-scfg", index, 2);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	pcie->index = index[1];
+>  
+>  	dw_pcie_setup_rc(pp);
+>  
+>  	ls_pcie_drop_msg_tlp(pcie);
+> +
+> +	return 0;
+>  }
+>  
+>  static int ls_pcie_link_up(struct pcie_port *pp)
+> @@ -144,7 +146,7 @@ static int ls_pcie_link_up(struct pcie_port *pp)
+>  	return 1;
+>  }
+>  
+> -static void ls_pcie_host_init(struct pcie_port *pp)
+> +static int ls_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct ls_pcie *pcie = to_ls_pcie(pp);
+>  
+> @@ -153,6 +155,8 @@ static void ls_pcie_host_init(struct pcie_port *pp)
+>  	ls_pcie_clear_multifunction(pcie);
+>  	ls_pcie_drop_msg_tlp(pcie);
+>  	iowrite32(0, pcie->pp.dbi_base + PCIE_DBI_RO_WR_EN);
+> +
+> +	return 0;
+>  }
+>  
+>  static int ls_pcie_msi_host_init(struct pcie_port *pp,
+> diff --git a/drivers/pci/host/pcie-armada8k.c b/drivers/pci/host/pcie-armada8k.c
+> index 0ac0f18..29bdd8b 100644
+> --- a/drivers/pci/host/pcie-armada8k.c
+> +++ b/drivers/pci/host/pcie-armada8k.c
+> @@ -134,12 +134,14 @@ static void armada8k_pcie_establish_link(struct armada8k_pcie *pcie)
+>  		dev_err(pp->dev, "Link not up after reconfiguration\n");
+>  }
+>  
+> -static void armada8k_pcie_host_init(struct pcie_port *pp)
+> +static int armada8k_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct armada8k_pcie *pcie = to_armada8k_pcie(pp);
+>  
+>  	dw_pcie_setup_rc(pp);
+>  	armada8k_pcie_establish_link(pcie);
 
-I think that either we treat this as an ABI break, or just "being
-nice to downstream".
+If my understanding is right, 
+armada8k_pcie_establish_link can change to return value when Linkup is failed.
 
-In the first case, not breaking things would be a valid reason. But I
-believe this is not an ABI break. ABI is about an interface, not about
-being nice. The SCU should be defined by downstream users because this
-is the description of the hardware. In the same time, kernel did not
-document as an interface something like "there should be no SCU node
-defined" so creating a requirement of SCU is not an breakage of existing
-interface.
+Because there also is the checking "dw_pcie_link_up()".
 
-The second case then, being nice to downstream. Do we want to be nice or
-do we want to push them to mainline? Okay, it is never black or white...
-yet we should rather encourage downstream to mainline and creating
-compatibility periods is rather opposite of that.
+> +
+> +	return 0;
+>  }
+>  
+>  static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
+> diff --git a/drivers/pci/host/pcie-designware-plat.c b/drivers/pci/host/pcie-designware-plat.c
+> index 1a02038..e01adbb 100644
+> --- a/drivers/pci/host/pcie-designware-plat.c
+> +++ b/drivers/pci/host/pcie-designware-plat.c
+> @@ -35,13 +35,19 @@ static irqreturn_t dw_plat_pcie_msi_irq_handler(int irq, void *arg)
+>  	return dw_handle_msi_irq(pp);
+>  }
+>  
+> -static void dw_plat_pcie_host_init(struct pcie_port *pp)
+> +static int dw_plat_pcie_host_init(struct pcie_port *pp)
+>  {
+> +	int ret;
+> +
+>  	dw_pcie_setup_rc(pp);
+> -	dw_pcie_wait_for_link(pp);
+> +	ret = dw_pcie_wait_for_link(pp);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (IS_ENABLED(CONFIG_PCI_MSI))
+>  		dw_pcie_msi_init(pp);
+> +
+> +	return 0;
+>  }
+>  
+>  static struct pcie_host_ops dw_plat_pcie_host_ops = {
+> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+> index bed1999..4a81b72 100644
+> --- a/drivers/pci/host/pcie-designware.c
+> +++ b/drivers/pci/host/pcie-designware.c
+> @@ -638,7 +638,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>  	}
+>  
+>  	if (pp->ops->host_init)
+> -		pp->ops->host_init(pp);
+> +		ret = pp->ops->host_init(pp);
+> +			if (ret < 0)
+> +				goto error;
 
-Best regards,
-Krzysztof
+Maybe..you need to check the indent at here? :)
+And how about adding the dev_dbg() for knowing what is failed.
+
+
+Best Regards,
+Jaehoon Chung
+
+>  
+>  	pp->root_bus_nr = pp->busn->start;
+>  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
+> index a567ea2..eacf18f 100644
+> --- a/drivers/pci/host/pcie-designware.h
+> +++ b/drivers/pci/host/pcie-designware.h
+> @@ -63,7 +63,7 @@ struct pcie_host_ops {
+>  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
+>  			unsigned int devfn, int where, int size, u32 val);
+>  	int (*link_up)(struct pcie_port *pp);
+> -	void (*host_init)(struct pcie_port *pp);
+> +	int (*host_init)(struct pcie_port *pp);
+>  	void (*msi_set_irq)(struct pcie_port *pp, int irq);
+>  	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
+>  	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
+> diff --git a/drivers/pci/host/pcie-qcom.c b/drivers/pci/host/pcie-qcom.c
+> index 3593640..7d5fb38 100644
+> --- a/drivers/pci/host/pcie-qcom.c
+> +++ b/drivers/pci/host/pcie-qcom.c
+> @@ -429,7 +429,7 @@ static int qcom_pcie_link_up(struct pcie_port *pp)
+>  	return !!(val & PCI_EXP_LNKSTA_DLLLA);
+>  }
+>  
+> -static void qcom_pcie_host_init(struct pcie_port *pp)
+> +static int qcom_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pp);
+>  	int ret;
+> @@ -455,12 +455,13 @@ static void qcom_pcie_host_init(struct pcie_port *pp)
+>  	if (ret)
+>  		goto err;
+>  
+> -	return;
+> +	return ret;
+>  err:
+>  	qcom_ep_reset_assert(pcie);
+>  	phy_power_off(pcie->phy);
+>  err_deinit:
+>  	pcie->ops->deinit(pcie);
+> +	return ret;
+>  }
+>  
+>  static int qcom_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+> diff --git a/drivers/pci/host/pcie-spear13xx.c b/drivers/pci/host/pcie-spear13xx.c
+> index 3cf197b..2408f80 100644
+> --- a/drivers/pci/host/pcie-spear13xx.c
+> +++ b/drivers/pci/host/pcie-spear13xx.c
+> @@ -174,12 +174,18 @@ static int spear13xx_pcie_link_up(struct pcie_port *pp)
+>  	return 0;
+>  }
+>  
+> -static void spear13xx_pcie_host_init(struct pcie_port *pp)
+> +static int spear13xx_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct spear13xx_pcie *spear13xx_pcie = to_spear13xx_pcie(pp);
+> +	int ret;
+> +
+> +	ret = spear13xx_pcie_establish_link(spear13xx_pcie);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	spear13xx_pcie_establish_link(spear13xx_pcie);
+>  	spear13xx_pcie_enable_interrupts(spear13xx_pcie);
+> +
+> +	return 0;
+>  }
+>  
+>  static struct pcie_host_ops spear13xx_pcie_host_ops = {
+> 
