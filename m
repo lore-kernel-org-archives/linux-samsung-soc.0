@@ -1,121 +1,61 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: move exynos_pm_init into pm.c and remove
- init_late hook
-Date: Fri, 09 Dec 2016 16:01:17 +0530
-Message-ID: <1481279477-16463-1-git-send-email-pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: mainline boot: 179 boots: 1 failed, 168 passed with 10 offline
+ (v4.9-rc8-78-g318c8932ddec)
+Date: Fri, 9 Dec 2016 14:58:02 +0200
+Message-ID: <20161209125802.GA4229@kozik-lap>
+References: <5849e989.0209c20a.75a7.6441@mx.google.com>
+ <m2shpyarc8.fsf@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58343 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932349AbcLIK3A (ORCPT
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:33643 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752430AbcLIM6J (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 05:29:00 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OHW015WHYGAK210@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Dec 2016 19:28:58 +0900 (KST)
+        Fri, 9 Dec 2016 07:58:09 -0500
+Received: by mail-wj0-f195.google.com with SMTP id kp2so2403650wjc.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2016 04:58:08 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <m2shpyarc8.fsf@baylibre.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-We can safely move exynos_pm_init into pm.c as late_initcall and remove
-init_late hook from exynos.c. This will remove extern declarations from
-common.h and move PM specific operations in pm.c rather being scattered
-across many files.
+On Thu, Dec 08, 2016 at 04:17:27PM -0800, Kevin Hilman wrote:
+> + Exynos maintainers (for new regresion on exynos5250-snow)
+> 
+> kernelci.org bot <bot@kernelci.org> writes:
+> 
+> > mainline boot: 179 boots: 1 failed, 168 passed with 10 offline (v4.9-rc8-78-g318c8932ddec)
+> >
+> > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
+> > Full Build Summary: https://kernelci.org/build/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
+> >
+> > Tree: mainline
+> > Branch: local/master
+> > Git Describe: v4.9-rc8-78-g318c8932ddec
+> > Git Commit: 318c8932ddec5c1c26a4af0f3c053784841c598e
+> > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> > Tested: 57 unique boards, 21 SoC families, 29 builds out of 207
+> >
+> > Boot Regressions Detected:
+> >
+> > arm:
+> >
+> >     multi_v7_defconfig+CONFIG_SMP=n:
+> >         exynos5250-snow:
+> >             lab-collabora: new failure (last pass: v4.9-rc8-51-gbc3913a5378c)
+> >
+> > Boot Failure Detected:
+> >
+> > arm:
+> >
+> >     multi_v7_defconfig+CONFIG_SMP=n
+> >         exynos5250-snow: 1 failed lab
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h  |  6 ------
- arch/arm/mach-exynos/exynos.c  | 10 ----------
- arch/arm/mach-exynos/suspend.c | 13 ++++++++++---
- 3 files changed, 10 insertions(+), 19 deletions(-)
+Nothing was happening recently around Exynos code (at least mach/dts).
+Was the 318c8932ddec5c1c26a4af0f3c053784841c598e pointed out by bisect?
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index fb12d11..cfd55ba 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -134,12 +134,6 @@ void exynos_clear_boot_flag(unsigned int cpu, unsigned int mode);
- 
- extern u32 exynos_get_eint_wake_mask(void);
- 
--#ifdef CONFIG_PM_SLEEP
--extern void __init exynos_pm_init(void);
--#else
--static inline void exynos_pm_init(void) {}
--#endif
--
- extern void exynos_cpu_resume(void);
- extern void exynos_cpu_resume_ns(void);
- 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index fa08ef9..040ea66 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -58,15 +58,6 @@ void __init exynos_sysram_init(void)
- 	}
- }
- 
--static void __init exynos_init_late(void)
--{
--	if (of_machine_is_compatible("samsung,exynos5440"))
--		/* to be supported later */
--		return;
--
--	exynos_pm_init();
--}
--
- static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 					int depth, void *data)
- {
-@@ -216,7 +207,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_early	= exynos_firmware_init,
- 	.init_irq	= exynos_init_irq,
- 	.init_machine	= exynos_dt_machine_init,
--	.init_late	= exynos_init_late,
- 	.dt_compat	= exynos_dt_compat,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 73df9f3..f318b08 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -698,21 +698,25 @@ static const struct of_device_id exynos_pmu_of_device_ids[] __initconst = {
- 
- static struct syscore_ops exynos_pm_syscore_ops;
- 
--void __init exynos_pm_init(void)
-+static int __init exynos_pm_init(void)
- {
- 	const struct of_device_id *match;
- 	struct device_node *np;
- 	u32 tmp;
- 
-+	if (of_machine_is_compatible("samsung,exynos5440"))
-+		/* to be supported later */
-+		return 0;
-+
- 	np = of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
- 	if (!np) {
- 		pr_err("Failed to find PMU node\n");
--		return;
-+		return -ENODEV;
- 	}
- 
- 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
- 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
--		return;
-+		return -ENODEV;
- 	}
- 
- 	pm_data = (const struct exynos_pm_data *) match->data;
-@@ -727,4 +731,7 @@ void __init exynos_pm_init(void)
- 
- 	register_syscore_ops(&exynos_pm_syscore_ops);
- 	suspend_set_ops(&exynos_suspend_ops);
-+
-+	return 0;
- }
-+late_initcall(exynos_pm_init);
--- 
-2.7.4
+Best regads,
+Krzysztof
