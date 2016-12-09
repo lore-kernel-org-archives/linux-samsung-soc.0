@@ -1,249 +1,121 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [RESEND-PATCH] ARM: EXYNOS: remove smp hook from machine descriptor
-Date: Fri, 09 Dec 2016 14:42:36 +0530
-Message-ID: <fbc36736-ce7c-3eed-2833-c2e45ea02ce5@samsung.com>
-References: <1481166135-1588-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161208173359epcas2p4ee51a2589fba2bc67418d4e82661bea2@epcas2p4.samsung.com>
- <20161208173349.GA8522@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: move exynos_pm_init into pm.c and remove
+ init_late hook
+Date: Fri, 09 Dec 2016 16:01:17 +0530
+Message-ID: <1481279477-16463-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56713 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:58343 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932173AbcLIJKV (ORCPT
+        with ESMTP id S932349AbcLIK3A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 04:10:21 -0500
-In-reply-to: <20161208173349.GA8522@kozik-lap>
+        Fri, 9 Dec 2016 05:29:00 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OHW015WHYGAK210@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Dec 2016 19:28:58 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, arnd@arndb.de, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Krzysztof,
+We can safely move exynos_pm_init into pm.c as late_initcall and remove
+init_late hook from exynos.c. This will remove extern declarations from
+common.h and move PM specific operations in pm.c rather being scattered
+across many files.
 
-On Thursday 08 December 2016 11:03 PM, Krzysztof Kozlowski wrote:
-> On Thu, Dec 08, 2016 at 08:32:15AM +0530, Pankaj Dubey wrote:
->> Use CPU_METHOD_OF_DECLARE() for smp_ops instead of using it
->> via machine descriptor.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>
->> Resending as I missed to include samsung mailing list.
->>
->>  arch/arm/boot/dts/exynos3250.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos4210.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos4212.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos4412.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos5250.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos5260.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos5410.dtsi      | 1 +
->>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 1 +
->>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 1 +
->>  arch/arm/boot/dts/exynos5440.dtsi      | 1 +
->>  arch/arm/mach-exynos/common.h          | 2 --
->>  arch/arm/mach-exynos/exynos.c          | 1 -
->>  arch/arm/mach-exynos/platsmp.c         | 2 ++
->>  13 files changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->> index ba17ee1..f28f669 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -53,6 +53,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
->> index 7f3a18c..6dfd98d 100644
->> --- a/arch/arm/boot/dts/exynos4210.dtsi
->> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->> @@ -35,6 +35,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@900 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
->> index 5389011..3e8982e 100644
->> --- a/arch/arm/boot/dts/exynos4212.dtsi
->> +++ b/arch/arm/boot/dts/exynos4212.dtsi
->> @@ -25,6 +25,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@A00 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
->> index 40beede..faf2fb8 100644
->> --- a/arch/arm/boot/dts/exynos4412.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412.dtsi
->> @@ -25,6 +25,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@A00 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index b6d7444..580897c 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -52,6 +52,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
->> index 5818718..1af6e76 100644
->> --- a/arch/arm/boot/dts/exynos5260.dtsi
->> +++ b/arch/arm/boot/dts/exynos5260.dtsi
->> @@ -32,6 +32,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
->> index 2b6adaf..b092cdc 100644
->> --- a/arch/arm/boot/dts/exynos5410.dtsi
->> +++ b/arch/arm/boot/dts/exynos5410.dtsi
->> @@ -33,6 +33,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
->> index 5c052d7..a587704 100644
->> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
->> @@ -24,6 +24,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
->> index bf3c6f1..7fcdfd0 100644
->> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
->> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
->> @@ -23,6 +23,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu0: cpu@100 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
->> index 2a2e570..0a958e8 100644
->> --- a/arch/arm/boot/dts/exynos5440.dtsi
->> +++ b/arch/arm/boot/dts/exynos5440.dtsi
->> @@ -50,6 +50,7 @@
->>  	cpus {
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->> +		enable-method = "samsung,exynos-smp";
->>  
->>  		cpu@0 {
->>  			device_type = "cpu";
->> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
->> index fb12d11..051e1ab 100644
->> --- a/arch/arm/mach-exynos/common.h
->> +++ b/arch/arm/mach-exynos/common.h
->> @@ -143,8 +143,6 @@ static inline void exynos_pm_init(void) {}
->>  extern void exynos_cpu_resume(void);
->>  extern void exynos_cpu_resume_ns(void);
->>  
->> -extern const struct smp_operations exynos_smp_ops;
->> -
->>  extern void exynos_cpu_power_down(int cpu);
->>  extern void exynos_cpu_power_up(int cpu);
->>  extern int  exynos_cpu_power_state(int cpu);
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index fa08ef9..f0a766e 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -211,7 +211,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
->>  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
->>  	.l2c_aux_val	= 0x3c400001,
->>  	.l2c_aux_mask	= 0xc20fffff,
->> -	.smp		= smp_ops(exynos_smp_ops),
->>  	.map_io		= exynos_init_io,
->>  	.init_early	= exynos_firmware_init,
->>  	.init_irq	= exynos_init_irq,
->> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
->> index 94405c7..43eec10 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -474,3 +474,5 @@ const struct smp_operations exynos_smp_ops __initconst = {
->>  	.cpu_die		= exynos_cpu_die,
->>  #endif
->>  };
->> +
->> +CPU_METHOD_OF_DECLARE(exynos_smp, "samsung,exynos-smp", &exynos_smp_ops);
-> 
-> Three issues:
-> 1. This has to be documented. Checkpatch did not complain about it?
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/common.h  |  6 ------
+ arch/arm/mach-exynos/exynos.c  | 10 ----------
+ arch/arm/mach-exynos/suspend.c | 13 ++++++++++---
+ 3 files changed, 10 insertions(+), 19 deletions(-)
 
-No it didn't.
-
-> 2. I think this breaks the ABI with existing DTBs because now the
->    enable-method of cpus becomes mandatory. But the
->    Documentation/devicetree/bindings/arm/cpus.txt is saying that:
->    "On ARM 32-bit systems this property is optional and can be one of"
-> 
-
-I am not very sure that this is an ABI break, as other platforms (e.g
-hisilicon,hip01-smp) also adopted this as some later stage and they also
-removed smp hook support from their machine files when they adopted to
-this enable-method in DTS files.
-
-If we want to keep older DTBs keep working with new Kernel image, then I
-need to drop patch from mach-exynos and keep smp_ops hook in machine
-descriptor as it is to keep supporting older DTBs. I can see some
-platforms have adopted this way as well.
-
-Surely I will add new bindings details in
-Documentation/devicetree/bindings/arm/cpus.txt file. I am not sure why
-checkpatch did not complain about this?
-
-> 3. Please split DTS changes to separate patches. This is, by the way,
->    connected with #2 above: if there was no ABI break, then the DTS
->    could go to separate branch easily.
-> 
-
-Since I am not sure if this will considered as ABI break or not, I just
-looked how this was handled in other platforms, I can see some platforms
-have clubbed DTS change along with mach files, and some have done in
-separate patch as well. So I will look for suggestion from you for this
-how we can go for exynos platform?
-
-
-Thanks,
-Pankaj Dubey
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index fb12d11..cfd55ba 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -134,12 +134,6 @@ void exynos_clear_boot_flag(unsigned int cpu, unsigned int mode);
+ 
+ extern u32 exynos_get_eint_wake_mask(void);
+ 
+-#ifdef CONFIG_PM_SLEEP
+-extern void __init exynos_pm_init(void);
+-#else
+-static inline void exynos_pm_init(void) {}
+-#endif
+-
+ extern void exynos_cpu_resume(void);
+ extern void exynos_cpu_resume_ns(void);
+ 
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index fa08ef9..040ea66 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -58,15 +58,6 @@ void __init exynos_sysram_init(void)
+ 	}
+ }
+ 
+-static void __init exynos_init_late(void)
+-{
+-	if (of_machine_is_compatible("samsung,exynos5440"))
+-		/* to be supported later */
+-		return;
+-
+-	exynos_pm_init();
+-}
+-
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 					int depth, void *data)
+ {
+@@ -216,7 +207,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.init_early	= exynos_firmware_init,
+ 	.init_irq	= exynos_init_irq,
+ 	.init_machine	= exynos_dt_machine_init,
+-	.init_late	= exynos_init_late,
+ 	.dt_compat	= exynos_dt_compat,
+ 	.dt_fixup	= exynos_dt_fixup,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 73df9f3..f318b08 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -698,21 +698,25 @@ static const struct of_device_id exynos_pmu_of_device_ids[] __initconst = {
+ 
+ static struct syscore_ops exynos_pm_syscore_ops;
+ 
+-void __init exynos_pm_init(void)
++static int __init exynos_pm_init(void)
+ {
+ 	const struct of_device_id *match;
+ 	struct device_node *np;
+ 	u32 tmp;
+ 
++	if (of_machine_is_compatible("samsung,exynos5440"))
++		/* to be supported later */
++		return 0;
++
+ 	np = of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+ 	if (!np) {
+ 		pr_err("Failed to find PMU node\n");
+-		return;
++		return -ENODEV;
+ 	}
+ 
+ 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
+ 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
+-		return;
++		return -ENODEV;
+ 	}
+ 
+ 	pm_data = (const struct exynos_pm_data *) match->data;
+@@ -727,4 +731,7 @@ void __init exynos_pm_init(void)
+ 
+ 	register_syscore_ops(&exynos_pm_syscore_ops);
+ 	suspend_set_ops(&exynos_suspend_ops);
++
++	return 0;
+ }
++late_initcall(exynos_pm_init);
+-- 
+2.7.4
