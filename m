@@ -1,44 +1,205 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v8 3/8] ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-Date: Sat, 10 Dec 2016 18:38:38 +0530
-Message-ID: <1481375323-29724-4-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v8 4/8] ARM: EXYNOS: refactor firmware specific routines
+Date: Sat, 10 Dec 2016 18:38:39 +0530
+Message-ID: <1481375323-29724-5-git-send-email-pankaj.dubey@samsung.com>
 References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50780 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbcLJNGW (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:50948 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752971AbcLJNGZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Dec 2016 08:06:22 -0500
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+        Sat, 10 Dec 2016 08:06:25 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OHZ0235C0ED59A0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 22:06:21 +0900 (KST)
+ with ESMTP id <0OHZ01LMM0EMG690@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 22:06:22 +0900 (KST)
 In-reply-to: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-This patch enables exynos_chipid driver for ARCH_EXYNOS
-based SoC.
+To remove dependency on soc_is_exynosMMMM macros and remove multiple
+checks for such macros lets refactor code in firmware.c file.
+SoC specific firmware_ops are separated and registered during
+exynos_firmware_init based on matching machine compatible.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-exynos/firmware.c | 100 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 75 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 72f4eac..e6aa5c2 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -53,6 +53,7 @@ config ARCH_BRCMSTB
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index fd6da54..525fbd9 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -35,6 +35,25 @@ static void exynos_save_cp15(void)
+ 	     : : "cc");
+ }
  
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
-+	select EXYNOS_CHIPID
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
++static int exynos3250_do_idle(unsigned long mode)
++{
++	switch (mode) {
++	case FW_DO_IDLE_AFTR:
++		writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
++			       sysram_ns_base_addr + 0x24);
++		writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
++		flush_cache_all();
++		exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
++				SMC_POWERSTATE_IDLE, 0);
++		exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
++				SMC_POWERSTATE_IDLE, 0);
++		break;
++	case FW_DO_IDLE_SLEEP:
++		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++	}
++	return 0;
++}
++
+ static int exynos_do_idle(unsigned long mode)
+ {
+ 	switch (mode) {
+@@ -44,14 +63,7 @@ static int exynos_do_idle(unsigned long mode)
+ 		writel_relaxed(virt_to_phys(exynos_cpu_resume_ns),
+ 			       sysram_ns_base_addr + 0x24);
+ 		writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+-		if (soc_is_exynos3250()) {
+-			flush_cache_all();
+-			exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+-				   SMC_POWERSTATE_IDLE, 0);
+-			exynos_smc(SMC_CMD_SHUTDOWN, OP_TYPE_CLUSTER,
+-				   SMC_POWERSTATE_IDLE, 0);
+-		} else
+-			exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
++		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+ 		break;
+ 	case FW_DO_IDLE_SLEEP:
+ 		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+@@ -59,28 +71,25 @@ static int exynos_do_idle(unsigned long mode)
+ 	return 0;
+ }
+ 
+-static int exynos_cpu_boot(int cpu)
++static int exynos4412_cpu_boot(int cpu)
+ {
+ 	/*
+-	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
+-	 * because Exynos3250 removes WFE in secure mode.
+-	 */
+-	if (soc_is_exynos3250())
+-		return 0;
+-
+-	/*
+ 	 * The second parameter of SMC_CMD_CPU1BOOT command means CPU id.
+ 	 * But, Exynos4212 has only one secondary CPU so second parameter
+ 	 * isn't used for informing secure firmware about CPU id.
+ 	 */
+-	if (soc_is_exynos4212())
+-		cpu = 0;
++	cpu = 0;
++	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
++	return 0;
++}
+ 
++static int exynos_cpu_boot(int cpu)
++{
+ 	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
+ 	return 0;
+ }
+ 
+-static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
++static int exynos4412_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ {
+ 	void __iomem *boot_reg;
+ 
+@@ -94,14 +103,24 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 	 * additional offset for every CPU, with Exynos4412 being the only
+ 	 * exception.
+ 	 */
+-	if (soc_is_exynos4412())
+-		boot_reg += 4 * cpu;
++	boot_reg += 4 * cpu;
++	writel_relaxed(boot_addr, boot_reg);
++	return 0;
++}
++
++static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
++{
++	void __iomem *boot_reg;
+ 
++	if (!sysram_ns_base_addr)
++		return -ENODEV;
++
++	boot_reg = sysram_ns_base_addr + 0x1c;
+ 	writel_relaxed(boot_addr, boot_reg);
+ 	return 0;
+ }
+ 
+-static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
++static int exynos4412_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
+ {
+ 	void __iomem *boot_reg;
+ 
+@@ -109,10 +128,19 @@ static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
+ 		return -ENODEV;
+ 
+ 	boot_reg = sysram_ns_base_addr + 0x1c;
++	boot_reg += 4 * cpu;
++	*boot_addr = readl_relaxed(boot_reg);
++	return 0;
++}
++
++static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
++{
++	void __iomem *boot_reg;
+ 
+-	if (soc_is_exynos4412())
+-		boot_reg += 4 * cpu;
++	if (!sysram_ns_base_addr)
++		return -ENODEV;
+ 
++	boot_reg = sysram_ns_base_addr + 0x1c;
+ 	*boot_addr = readl_relaxed(boot_reg);
+ 	return 0;
+ }
+@@ -148,6 +176,23 @@ static int exynos_resume(void)
+ 	return 0;
+ }
+ 
++static const struct firmware_ops exynos3250_firmware_ops = {
++	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos3250_do_idle : NULL,
++	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
++	.get_cpu_boot_addr	= exynos_get_cpu_boot_addr,
++	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
++	.resume			= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_resume : NULL,
++};
++
++static const struct firmware_ops exynos4412_firmware_ops = {
++	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
++	.set_cpu_boot_addr	= exynos4412_set_cpu_boot_addr,
++	.get_cpu_boot_addr	= exynos4412_get_cpu_boot_addr,
++	.cpu_boot		= exynos4412_cpu_boot,
++	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
++	.resume			= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_resume : NULL,
++};
++
+ static const struct firmware_ops exynos_firmware_ops = {
+ 	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+@@ -212,7 +257,12 @@ void __init exynos_firmware_init(void)
+ 
+ 	pr_info("Running under secure firmware.\n");
+ 
+-	register_firmware_ops(&exynos_firmware_ops);
++	if (of_machine_is_compatible("samsung,exynos3250"))
++		register_firmware_ops(&exynos3250_firmware_ops);
++	else if (of_machine_is_compatible("samsung,exynos4412"))
++		register_firmware_ops(&exynos4412_firmware_ops);
++	else
++		register_firmware_ops(&exynos_firmware_ops);
+ 
+ 	/*
+ 	 * Exynos 4 SoCs (based on Cortex A9 and equipped with L2C-310),
 -- 
 2.7.4
