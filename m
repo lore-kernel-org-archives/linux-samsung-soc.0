@@ -1,167 +1,189 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: move exynos_pm_init into pm.c and remove
- init_late hook
-Date: Sat, 10 Dec 2016 14:03:53 +0200
-Message-ID: <20161210120353.GA27666@kozik-lap>
-References: <1481279477-16463-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161210105515epcas3p104b06c6a5c7d1d5f1f90a40cac39af8e@epcas3p1.samsung.com>
- <20161210105507.GA24432@kozik-lap>
- <7f79c71e-3094-842e-4fba-af367999d01d@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v8 1/8] soc: samsung: add exynos chipid driver support
+Date: Sat, 10 Dec 2016 18:38:36 +0530
+Message-ID: <1481375323-29724-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:32913 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751570AbcLJMD7 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50780 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752323AbcLJNGU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Dec 2016 07:03:59 -0500
-Received: by mail-wm0-f66.google.com with SMTP id u144so1660478wmu.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Dec 2016 04:03:59 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <7f79c71e-3094-842e-4fba-af367999d01d@samsung.com>
+        Sat, 10 Dec 2016 08:06:20 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OHZ0235C0ED59A0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 22:06:18 +0900 (KST)
+In-reply-to: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Sat, Dec 10, 2016 at 04:57:55PM +0530, pankaj.dubey wrote:
-> Hi Krzysztof,
-> 
-> On Saturday 10 December 2016 04:25 PM, Krzysztof Kozlowski wrote:
-> > On Fri, Dec 09, 2016 at 04:01:17PM +0530, Pankaj Dubey wrote:
-> >> We can safely move exynos_pm_init into pm.c as late_initcall and remove
-> >> init_late hook from exynos.c. This will remove extern declarations from
-> >> common.h and move PM specific operations in pm.c rather being scattered
-> >> across many files.
-> >>
-> >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> >> ---
-> >>  arch/arm/mach-exynos/common.h  |  6 ------
-> >>  arch/arm/mach-exynos/exynos.c  | 10 ----------
-> >>  arch/arm/mach-exynos/suspend.c | 13 ++++++++++---
-> >>  3 files changed, 10 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> >> index fb12d11..cfd55ba 100644
-> >> --- a/arch/arm/mach-exynos/common.h
-> >> +++ b/arch/arm/mach-exynos/common.h
-> >> @@ -134,12 +134,6 @@ void exynos_clear_boot_flag(unsigned int cpu, unsigned int mode);
-> >>  
-> >>  extern u32 exynos_get_eint_wake_mask(void);
-> >>  
-> >> -#ifdef CONFIG_PM_SLEEP
-> >> -extern void __init exynos_pm_init(void);
-> >> -#else
-> >> -static inline void exynos_pm_init(void) {}
-> >> -#endif
-> >> -
-> >>  extern void exynos_cpu_resume(void);
-> >>  extern void exynos_cpu_resume_ns(void);
-> >>  
-> >> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> >> index fa08ef9..040ea66 100644
-> >> --- a/arch/arm/mach-exynos/exynos.c
-> >> +++ b/arch/arm/mach-exynos/exynos.c
-> >> @@ -58,15 +58,6 @@ void __init exynos_sysram_init(void)
-> >>  	}
-> >>  }
-> >>  
-> >> -static void __init exynos_init_late(void)
-> >> -{
-> >> -	if (of_machine_is_compatible("samsung,exynos5440"))
-> >> -		/* to be supported later */
-> >> -		return;
-> >> -
-> >> -	exynos_pm_init();
-> >> -}
-> >> -
-> >>  static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
-> >>  					int depth, void *data)
-> >>  {
-> >> @@ -216,7 +207,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
-> >>  	.init_early	= exynos_firmware_init,
-> >>  	.init_irq	= exynos_init_irq,
-> >>  	.init_machine	= exynos_dt_machine_init,
-> >> -	.init_late	= exynos_init_late,
-> >>  	.dt_compat	= exynos_dt_compat,
-> >>  	.dt_fixup	= exynos_dt_fixup,
-> >>  MACHINE_END
-> >> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> >> index 73df9f3..f318b08 100644
-> >> --- a/arch/arm/mach-exynos/suspend.c
-> >> +++ b/arch/arm/mach-exynos/suspend.c
-> >> @@ -698,21 +698,25 @@ static const struct of_device_id exynos_pmu_of_device_ids[] __initconst = {
-> >>  
-> >>  static struct syscore_ops exynos_pm_syscore_ops;
-> >>  
-> >> -void __init exynos_pm_init(void)
-> >> +static int __init exynos_pm_init(void)
-> >>  {
-> >>  	const struct of_device_id *match;
-> >>  	struct device_node *np;
-> >>  	u32 tmp;
-> >>  
-> >> +	if (of_machine_is_compatible("samsung,exynos5440"))
-> >> +		/* to be supported later */
-> >> +		return 0;
-> >> +
-> >>  	np = of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
-> >>  	if (!np) {
-> >>  		pr_err("Failed to find PMU node\n");
-> >> -		return;
-> >> +		return -ENODEV;
-> >>  	}
-> >>  
-> >>  	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
-> >>  		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-> >> -		return;
-> >> +		return -ENODEV;
-> >>  	}
-> >>  
-> >>  	pm_data = (const struct exynos_pm_data *) match->data;
-> >> @@ -727,4 +731,7 @@ void __init exynos_pm_init(void)
-> >>  
-> >>  	register_syscore_ops(&exynos_pm_syscore_ops);
-> >>  	suspend_set_ops(&exynos_suspend_ops);
-> >> +
-> >> +	return 0;
-> >>  }
-> >> +late_initcall(exynos_pm_init);
-> > 
-> > No. This does not look like multiplatform friendly. Also, basically you are
-> > reverting 559ba237999d7 without clear explanation of revert itself.
-> > 
-> 
-> Thanks for review.
-> 
-> I could not understand why this change is not multi-platform friendly,
-> would you please elaborate more on this.
+Exynos SoCs have Chipid, for identification of product IDs and SoC revisions.
+This patch intends to provide initialization code for all these functionalities,
+at the same time it provides some sysfs entries for accessing these information
+to user-space.
 
-This late_initcall will be executed on every platform, including
-non-exynos one. There is a of_find_matching_node_and_match() check so it
-should be safe but all other platforms will see this ugly error "Failed
-to find PMU node".
+This driver uses existing binding for exynos-chipid.
 
-> Well I missed to check history of this file before sending this patch,
-> as I could not sense any issue as such, we are calling exynos_pm_init
-> from exynos_init_late which is infact gets called as part of
-> late_initcall itself. I have tested this with multi_v7_defconfig.
-> 
-> When Thomasz submitted this patch 559ba237999d7 basically there were two
-> arch_initcalls as "exynos_pm_drvinit" and "exynos_pm_drvinit", the
-> second one he renamed to exynos_pm_init. At the same time he removed
-> arch_initcall and made provision so that it can be called from
-> exynos_init_late. Probably he did because there were two arch_initcalls.
-> Still I am not sure why he did not opt to convert one of them from
-> arch_initcall to late_initcall.. how this change affects multiplatform?
-> 
-> As far as intention of this patch, slowly I wanted to reduce dependency
-> of common.h from pm.c and suspend.c so that one day all these
-> functionalities which are tightly coupled with machine files can be
-> loosen and these files can reside along with pmu driver in
-> "drivers/soc/samsung/".
+CC: Grant Likely <grant.likely@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+[m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/soc/samsung/Kconfig         |   5 ++
+ drivers/soc/samsung/Makefile        |   1 +
+ drivers/soc/samsung/exynos-chipid.c | 116 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
 
-I fully support such goal.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 2455339..f9ab858 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -14,4 +14,9 @@ config EXYNOS_PM_DOMAINS
+ 	bool "Exynos PM domains" if COMPILE_TEST
+ 	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+ 
++config EXYNOS_CHIPID
++	bool "Exynos Chipid controller driver" if COMPILE_TEST
++	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
++	select SOC_BUS
++
+ endif
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 3619f2e..2a8a85e 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
+ 					exynos5250-pmu.o exynos5420-pmu.o
+ obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
++obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+new file mode 100644
+index 0000000..cf0128b
+--- /dev/null
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -0,0 +1,116 @@
++/*
++ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
++ *	      http://www.samsung.com/
++ *
++ * EXYNOS - CHIP ID support
++ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
++
++#define EXYNOS_SUBREV_MASK	(0xF << 4)
++#define EXYNOS_MAINREV_MASK	(0xF << 0)
++#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
++
++static const struct exynos_soc_id {
++	const char *name;
++	unsigned int id;
++	unsigned int mask;
++} soc_ids[] = {
++	{ "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
++	{ "EXYNOS4210", 0x43200000, 0xFFFE0000 },
++	{ "EXYNOS4212", 0x43220000, 0xFFFE0000 },
++	{ "EXYNOS4412", 0xE4412000, 0xFFFE0000 },
++	{ "EXYNOS5250", 0x43520000, 0xFFFFF000 },
++	{ "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
++	{ "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
++	{ "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
++	{ "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
++	{ "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
++	{ "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
++	{ "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
++};
++
++static const char * __init product_id_to_soc_id(unsigned int product_id)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
++		if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
++			return soc_ids[i].name;
++	return "UNKNOWN";
++}
++
++static const struct of_device_id of_exynos_chipid_ids[] = {
++	{
++		.compatible	= "samsung,exynos4210-chipid",
++	},
++	{},
++};
++
++/**
++ *  exynos_chipid_early_init: Early chipid initialization
++ */
++int __init exynos_chipid_early_init(void)
++{
++	struct soc_device_attribute *soc_dev_attr;
++	struct soc_device *soc_dev;
++	struct device_node *root;
++	struct device_node *np;
++	void __iomem *exynos_chipid_base;
++	const struct of_device_id *match;
++	u32 product_id;
++	u32 revision;
++
++	np = of_find_matching_node_and_match(NULL,
++			of_exynos_chipid_ids, &match);
++	if (!np)
++		return -ENODEV;
++
++	exynos_chipid_base = of_iomap(np, 0);
++
++	if (!exynos_chipid_base)
++		return PTR_ERR(exynos_chipid_base);
++
++	product_id  = readl_relaxed(exynos_chipid_base);
++	revision = product_id & EXYNOS_REV_MASK;
++	iounmap(exynos_chipid_base);
++
++	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
++	if (!soc_dev_attr)
++		return -ENODEV;
++
++	soc_dev_attr->family = "Samsung Exynos";
++
++	root = of_find_node_by_path("/");
++	of_property_read_string(root, "model", &soc_dev_attr->machine);
++	of_node_put(root);
++
++	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
++	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
++
++
++	pr_info("Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
++			product_id_to_soc_id(product_id), revision);
++
++	soc_dev = soc_device_register(soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		kfree(soc_dev_attr->revision);
++		kfree_const(soc_dev_attr->soc_id);
++		kfree(soc_dev_attr);
++		return PTR_ERR(soc_dev);
++	}
++
++	return 0;
++}
++early_initcall(exynos_chipid_early_init);
+-- 
+2.7.4
