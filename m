@@ -1,142 +1,44 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v8 0/8] Introducing Exynos ChipId driver
-Date: Sat, 10 Dec 2016 18:38:35 +0530
-Message-ID: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v8 3/8] ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+Date: Sat, 10 Dec 2016 18:38:38 +0530
+Message-ID: <1481375323-29724-4-git-send-email-pankaj.dubey@samsung.com>
+References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56284 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752123AbcLJNGS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50780 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752847AbcLJNGW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Dec 2016 08:06:18 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
+        Sat, 10 Dec 2016 08:06:22 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OHZ02QTP0EGIU90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 22:06:16 +0900 (KST)
+ with ESMTP id <0OHZ0235C0ED59A0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 22:06:21 +0900 (KST)
+In-reply-to: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Each Exynos SoC has ChipID block which can give information about SoC's
-product Id and revision number.
+This patch enables exynos_chipid driver for ARCH_EXYNOS
+based SoC.
 
-This patch series introduces Exynos Chipid SoC driver. At the same time
-it reduces dependency of mach-exynos files from plat-samsung, by removing
-soc_is_exynosMMMM and samsung_rev API. Instead of it now we can use
-soc_device_match API proposed by Arnd and getting discussed in thread [1].
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-Until now we are using static mapping of Exynos Chipid and using this static
-mapping to know about SoC name and revision via soc_is_exynosMMMM macro. This
-is quite cumbersome and every time new ARMv7 based Exynos SoC supports lands in
-mainline a bunch of such new macros needs to be added. Quite long back during
-support of Exynos5260 it has been discussed to solve this problem.
-
-To solve this issue this patchset replaces use of soc_is_exynosMMMM by either
-of_machine_is_compatible or soc_device_match depending upon usecase.
-
-I have tested this patch series on Exynos4210 based Origen board for normal SMP
-boot.
-
-
-Although I submitted this series as a whole of 8 patchsets, following are dependency
-details among the patches.
-
-Patch 1/8 can be taken without any dependency on other patches.
-Patch 2/8 and 3/8 has dependency on 1/8 and can be taken along with 1/8.
-Patch 4/8 has no dependency and can be taken without chipid driver patch 1/8.
-Patch 5/8 has depency on 1/8
-Patch 6/8 has no dependency and can be taken without any other patches.
-Patch 7/8 has dependency on 6/8 and 1/8
-Patch 8/8 has dependency on rest of patches
-
-[1]: https://patchwork.kernel.org/patch/9361389/
-
-Revision 7 and it's discussion can be found here:
- - https://www.spinics.net/lists/arm-kernel/msg540790.html
-
-Revision 6 and it's discussion can be found here:
- - https://lkml.org/lkml/2016/5/25/101
-
-Revision 5 and it's discussion can be found here:
- - http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310046.html
-
-Revision 4 and it's discussion can be found here:
- - https://lkml.org/lkml/2014/12/3/115
-
-Changes since v7:
- - Added ARM64 based Exynos7 and Exynos5433 support in chipid driver.
- - Removed Exynos4415 support from chipid driver, as exynos4415 has been removed from tree
- - Added patch to enable chipid driver for ARM64 based Exynos platform
- - Addressed review comments from Arnd for firmware.c, platsmp.c and pm.c files/
- - Splitted changes in firmware.c, platsmp.c and pm.c in separate patches 
-   for better code review
- - Included suggested code improvement in exynos-chipid.c from Marek Szyprowski
-
-Chances since v6:
- - Removed platform driver from chipid, instead use early_init to register soc_device
- - Removed export functions from exynos chipid driver
- - Replace soc_is_exynosMMMM via either of_machine_is_compatible or soc_device_match in
-   files in arm/mach-exynos folder
- - This patchset depends on the following patch series by Geert Uytterhoeven. This series
-   includes patch which introduces soc_device_match.
-   http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1261739.html
- - Rebased on latest krzk/for-next branch and retested.
-
-Change since v5:
- - Addressed Rob's review comments.
- - Rebased on latest krzk/for-next branch and retested.
-
-Changes since v4:
- - Removed custom sysfs entries as they were not providing any new information
-   as pointed out by Arnd.
- - Removed functions exporting product_id and revision, instead we will export
-   exynos_chipid_info structure. It will be helpfull when we need to provide more
-   fields of chipid outside of chipid, as commented by Yadwinder
- - Converted all funcions as __init. 
-
-Change since v3: 
- - This patch set contains 5/6 and 6/6 patch from v3 series.
- - Made EXYNOS_CHIPID config option non-user selectable,
-   as suggested by Tomasz Figa.
- - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
-   suggested by Tomasz Figa.
- - Made local variables static in chipid driver.
- - Added existing SoC's product id's.
- - Added platform driver support.
-
-Changes since v2:
- - Reorganized patches as suggested by Tomasz Figa.
- - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
-
-Pankaj Dubey (8):
-  soc: samsung: add exynos chipid driver support
-  ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-  ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-  ARM: EXYNOS: refactor firmware specific routines
-  ARM: EXYNOS: refactor power management specific routines
-  ARM: EXYNOS: remove secondary startup initialization from
-    smp_prepare_cpus
-  ARM: EXYNOS: refactor smp specific code and routines
-  ARM: EXYNOS: refactor of mach-exynos to use chipid information
-
- arch/arm/mach-exynos/Kconfig                 |   1 +
- arch/arm/mach-exynos/common.h                |  92 ---------
- arch/arm/mach-exynos/exynos.c                |  38 ----
- arch/arm/mach-exynos/firmware.c              | 100 +++++++---
- arch/arm/mach-exynos/include/mach/map.h      |  21 ---
- arch/arm/mach-exynos/platsmp.c               | 267 +++++++++++++++++++++------
- arch/arm/mach-exynos/pm.c                    | 185 ++++++++++++++++---
- arch/arm/plat-samsung/cpu.c                  |  14 --
- arch/arm/plat-samsung/include/plat/cpu.h     |   2 -
- arch/arm/plat-samsung/include/plat/map-s5p.h |   2 -
- arch/arm64/Kconfig.platforms                 |   1 +
- drivers/soc/samsung/Kconfig                  |   5 +
- drivers/soc/samsung/Makefile                 |   1 +
- drivers/soc/samsung/exynos-chipid.c          | 116 ++++++++++++
- 14 files changed, 563 insertions(+), 282 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
- create mode 100644 drivers/soc/samsung/exynos-chipid.c
-
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 72f4eac..e6aa5c2 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -53,6 +53,7 @@ config ARCH_BRCMSTB
+ 
+ config ARCH_EXYNOS
+ 	bool "ARMv8 based Samsung Exynos SoC family"
++	select EXYNOS_CHIPID
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
 -- 
 2.7.4
