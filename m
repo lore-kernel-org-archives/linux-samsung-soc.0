@@ -1,105 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ASoC: samsung: Remove tests of member address
-Date: Sat, 10 Dec 2016 11:51:11 +0200
-Message-ID: <1481363471-21364-1-git-send-email-krzk@kernel.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 0/3] Add enable method support for Exynos SoCs
+Date: Sat, 10 Dec 2016 16:15:59 +0530
+Message-ID: <1481366762-26413-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751359AbcLJJvg (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:52029 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752924AbcLJKnh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Dec 2016 04:51:36 -0500
+        Sat, 10 Dec 2016 05:43:37 -0500
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OHY01TOITSMBT60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 Dec 2016 19:43:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-The driver was checking for non-NULL address of struct's members:
- - s3c_audio_pdata->type (union),
- - s3c_audio_pdata->type.i2s (embedded struct).
+Lets use CPU_METHOD_OF_DECLARE() for smp_ops instead of using it
+via machine descriptor. To keep compatibility of older DTBs lets not 
+remove smp_ops hooks from machnine_descriptor.
 
-This is pointless as these will be always non-NULL.  The 's3c_audio_pdata'
-is always initialized in static memory so it will be zeroed.
-Additionally the 'type' member was an union with only one member.
+Changes since v1:
+ - Dropped code removing smp_ops hooks from exynos.c
+ - Separated patch into three patches separating change in .c, .dtsi
+   and updated binding Documentation.
 
-It is safe to reorganize the structures to get rid of useless union and
-checks for addresses to fix the coccinelle warning:
-	>> sound/soc/samsung/i2s.c:1270:2-4: ERROR: test of a variable/field address
+Pankaj Dubey (3):
+  Documentation: bindings: Add binding doc for exynos enable method
+  ARM: EXYNOS: dts: add enable-method property for cpus node
+  ARM: EXYNOS: add CPU_METHOD_OF_DECLARE for exynos SoCs
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ arch/arm/boot/dts/exynos3250.dtsi              | 1 +
+ arch/arm/boot/dts/exynos4210.dtsi              | 1 +
+ arch/arm/boot/dts/exynos4212.dtsi              | 1 +
+ arch/arm/boot/dts/exynos4412.dtsi              | 1 +
+ arch/arm/boot/dts/exynos5250.dtsi              | 1 +
+ arch/arm/boot/dts/exynos5260.dtsi              | 1 +
+ arch/arm/boot/dts/exynos5410.dtsi              | 1 +
+ arch/arm/boot/dts/exynos5420-cpus.dtsi         | 1 +
+ arch/arm/boot/dts/exynos5422-cpus.dtsi         | 1 +
+ arch/arm/boot/dts/exynos5440.dtsi              | 1 +
+ arch/arm/mach-exynos/platsmp.c                 | 2 ++
+ 12 files changed, 13 insertions(+)
 
----
-
-Not tested on the hardware.
----
- arch/arm/mach-s3c64xx/dev-audio.c      |  4 +---
- include/linux/platform_data/asoc-s3c.h |  6 ++----
- sound/soc/samsung/i2s.c                | 10 ++--------
- 3 files changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index b57783371d52..247dcc0b691e 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -106,9 +106,7 @@ static struct s3c_audio_pdata i2sv4_pdata = {
- 	.dma_playback = DMACH_HSI_I2SV40_TX,
- 	.dma_capture = DMACH_HSI_I2SV40_RX,
- 	.type = {
--		.i2s = {
--			.quirks = QUIRK_PRI_6CHAN,
--		},
-+		.quirks = QUIRK_PRI_6CHAN,
- 	},
- };
- 
-diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
-index 15bf56ee8af7..90641a5daaf0 100644
---- a/include/linux/platform_data/asoc-s3c.h
-+++ b/include/linux/platform_data/asoc-s3c.h
-@@ -18,7 +18,7 @@
- 
- extern void s3c64xx_ac97_setup_gpio(int);
- 
--struct samsung_i2s {
-+struct samsung_i2s_type {
- /* If the Primary DAI has 5.1 Channels */
- #define QUIRK_PRI_6CHAN		(1 << 0)
- /* If the I2S block has a Stereo Overlay Channel */
-@@ -47,7 +47,5 @@ struct s3c_audio_pdata {
- 	void *dma_capture;
- 	void *dma_play_sec;
- 	void *dma_capture_mic;
--	union {
--		struct samsung_i2s i2s;
--	} type;
-+	struct samsung_i2s_type type;
- };
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index e00974bc5616..d55326289a4a 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1218,7 +1218,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- {
- 	struct i2s_dai *pri_dai, *sec_dai = NULL;
- 	struct s3c_audio_pdata *i2s_pdata = pdev->dev.platform_data;
--	struct samsung_i2s *i2s_cfg = NULL;
- 	struct resource *res;
- 	u32 regs_base, quirks = 0, idma_addr = 0;
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1267,13 +1266,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		pri_dai->dma_capture.filter_data = i2s_pdata->dma_capture;
- 		pri_dai->filter = i2s_pdata->dma_filter;
- 
--		if (&i2s_pdata->type)
--			i2s_cfg = &i2s_pdata->type.i2s;
--
--		if (i2s_cfg) {
--			quirks = i2s_cfg->quirks;
--			idma_addr = i2s_cfg->idma_addr;
--		}
-+		quirks = i2s_pdata->type.quirks;
-+		idma_addr = i2s_pdata->type.idma_addr;
- 	} else {
- 		quirks = i2s_dai_data->quirks;
- 		if (of_property_read_u32(np, "samsung,idma-addr",
 -- 
 2.7.4
