@@ -1,73 +1,105 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: mainline boot: 179 boots: 1 failed, 168 passed with 10 offline (v4.9-rc8-78-g318c8932ddec)
-Date: Fri, 09 Dec 2016 15:03:16 -0800
-Message-ID: <m2h96caeob.fsf@baylibre.com>
-References: <5849e989.0209c20a.75a7.6441@mx.google.com>
-        <m2shpyarc8.fsf@baylibre.com> <20161209125802.GA4229@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ASoC: samsung: Remove tests of member address
+Date: Sat, 10 Dec 2016 11:51:11 +0200
+Message-ID: <1481363471-21364-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:33443 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751987AbcLIXDS (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:39586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751359AbcLJJvg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Dec 2016 18:03:18 -0500
-Received: by mail-pf0-f180.google.com with SMTP id d2so5313549pfd.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Dec 2016 15:03:18 -0800 (PST)
-In-Reply-To: <20161209125802.GA4229@kozik-lap> (Krzysztof Kozlowski's message
-        of "Fri, 9 Dec 2016 14:58:02 +0200")
+        Sat, 10 Dec 2016 04:51:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+The driver was checking for non-NULL address of struct's members:
+ - s3c_audio_pdata->type (union),
+ - s3c_audio_pdata->type.i2s (embedded struct).
 
-> On Thu, Dec 08, 2016 at 04:17:27PM -0800, Kevin Hilman wrote:
->> + Exynos maintainers (for new regresion on exynos5250-snow)
->> 
->> kernelci.org bot <bot@kernelci.org> writes:
->> 
->> > mainline boot: 179 boots: 1 failed, 168 passed with 10 offline (v4.9-rc8-78-g318c8932ddec)
->> >
->> > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
->> > Full Build Summary: https://kernelci.org/build/mainline/kernel/v4.9-rc8-78-g318c8932ddec/
->> >
->> > Tree: mainline
->> > Branch: local/master
->> > Git Describe: v4.9-rc8-78-g318c8932ddec
->> > Git Commit: 318c8932ddec5c1c26a4af0f3c053784841c598e
->> > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->> > Tested: 57 unique boards, 21 SoC families, 29 builds out of 207
->> >
->> > Boot Regressions Detected:
->> >
->> > arm:
->> >
->> >     multi_v7_defconfig+CONFIG_SMP=n:
->> >         exynos5250-snow:
->> >             lab-collabora: new failure (last pass: v4.9-rc8-51-gbc3913a5378c)
->> >
->> > Boot Failure Detected:
->> >
->> > arm:
->> >
->> >     multi_v7_defconfig+CONFIG_SMP=n
->> >         exynos5250-snow: 1 failed lab
->
-> Nothing was happening recently around Exynos code (at least mach/dts).
-> Was the 318c8932ddec5c1c26a4af0f3c053784841c598e pointed out by bisect?
+This is pointless as these will be always non-NULL.  The 's3c_audio_pdata'
+is always initialized in static memory so it will be zeroed.
+Additionally the 'type' member was an union with only one member.
 
-The bisect[1] pointed to this, but that doesn't smell right, and I
-wasn't able to dig into it any further:
+It is safe to reorganize the structures to get rid of useless union and
+checks for addresses to fix the coccinelle warning:
+	>> sound/soc/samsung/i2s.c:1270:2-4: ERROR: test of a variable/field address
 
-2513940989fa2c56d0aeb4f5792d22804d92ab4c is the first bad commit
-commit 2513940989fa2c56d0aeb4f5792d22804d92ab4c
-Author: Michael Ellerman <mpe@ellerman.id.au>
-Date:   Fri Nov 25 09:45:28 2016 +1100
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Full bisect log is here[1].
+---
 
-Kevin
+Not tested on the hardware.
+---
+ arch/arm/mach-s3c64xx/dev-audio.c      |  4 +---
+ include/linux/platform_data/asoc-s3c.h |  6 ++----
+ sound/soc/samsung/i2s.c                | 10 ++--------
+ 3 files changed, 5 insertions(+), 15 deletions(-)
 
-[1] https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/171/console
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index b57783371d52..247dcc0b691e 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -106,9 +106,7 @@ static struct s3c_audio_pdata i2sv4_pdata = {
+ 	.dma_playback = DMACH_HSI_I2SV40_TX,
+ 	.dma_capture = DMACH_HSI_I2SV40_RX,
+ 	.type = {
+-		.i2s = {
+-			.quirks = QUIRK_PRI_6CHAN,
+-		},
++		.quirks = QUIRK_PRI_6CHAN,
+ 	},
+ };
+ 
+diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+index 15bf56ee8af7..90641a5daaf0 100644
+--- a/include/linux/platform_data/asoc-s3c.h
++++ b/include/linux/platform_data/asoc-s3c.h
+@@ -18,7 +18,7 @@
+ 
+ extern void s3c64xx_ac97_setup_gpio(int);
+ 
+-struct samsung_i2s {
++struct samsung_i2s_type {
+ /* If the Primary DAI has 5.1 Channels */
+ #define QUIRK_PRI_6CHAN		(1 << 0)
+ /* If the I2S block has a Stereo Overlay Channel */
+@@ -47,7 +47,5 @@ struct s3c_audio_pdata {
+ 	void *dma_capture;
+ 	void *dma_play_sec;
+ 	void *dma_capture_mic;
+-	union {
+-		struct samsung_i2s i2s;
+-	} type;
++	struct samsung_i2s_type type;
+ };
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index e00974bc5616..d55326289a4a 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1218,7 +1218,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct i2s_dai *pri_dai, *sec_dai = NULL;
+ 	struct s3c_audio_pdata *i2s_pdata = pdev->dev.platform_data;
+-	struct samsung_i2s *i2s_cfg = NULL;
+ 	struct resource *res;
+ 	u32 regs_base, quirks = 0, idma_addr = 0;
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -1267,13 +1266,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		pri_dai->dma_capture.filter_data = i2s_pdata->dma_capture;
+ 		pri_dai->filter = i2s_pdata->dma_filter;
+ 
+-		if (&i2s_pdata->type)
+-			i2s_cfg = &i2s_pdata->type.i2s;
+-
+-		if (i2s_cfg) {
+-			quirks = i2s_cfg->quirks;
+-			idma_addr = i2s_cfg->idma_addr;
+-		}
++		quirks = i2s_pdata->type.quirks;
++		idma_addr = i2s_pdata->type.idma_addr;
+ 	} else {
+ 		quirks = i2s_dai_data->quirks;
+ 		if (of_property_read_u32(np, "samsung,idma-addr",
+-- 
+2.7.4
