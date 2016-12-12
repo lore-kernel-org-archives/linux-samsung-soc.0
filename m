@@ -1,39 +1,114 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/7] ARM: EXYNOS: Constify list of retention registers
-Date: Mon, 12 Dec 2016 14:39:19 +0100
-Message-ID: <10896763.srQzQduvXa@amdc3058>
-References: <1481377658-22603-1-git-send-email-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49358 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbcLLNjY (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 08:39:24 -0500
-In-reply-to: <1481377658-22603-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] media: platform: exynos4-is: constify v4l2_subdev_* structures
+Date: Mon, 12 Dec 2016 23:33:57 +0530
+Message-ID: <1481565837-20467-1-git-send-email-bhumirks@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: julia.lawall@lip6.fr, kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Simtec Linux Team <linux@simtec.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+v4l2_subdev_{core/pad/video}_ops structures are stored in the
+fields of the v4l2_subdev_ops structure which are of type const.
+Also, v4l2_subdev_ops structure is passed to a function
+having its argument of type const. As these structures are never
+modified, so declare them as const.
+Done using Coccinelle:(one of the scripts used)
 
-Hi,
+@r1 disable optional_qualifier @
+identifier i;
+position p;
+@@
+static struct v4l2_subdev_ops i@p = {...};
 
-On Saturday, December 10, 2016 03:47:32 PM Krzysztof Kozlowski wrote:
-> The list of retention registers (release_ret_regs field of struct
-> exynos_pm_data and arrays with values) are not modified and can be made
-> const to improve the const safeness.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+@ok1@
+identifier r1.i;
+position p;
+expression e1;
+@@
+v4l2_subdev_init(e1,&i@p)
 
-for patches #1-7
+@bad@
+position p!={r1.p,ok1.p};
+identifier r1.i;
+@@
+i@p
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+@depends on !bad disable optional_qualifier@
+identifier r1.i;
+@@
++const
+struct v4l2_subdev_ops i;
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+File size before:
+   text	   data	    bss	    dec	    hex	filename
+  16830	   1064	      0	  17894	   45e6 platform/exynos4-is/fimc-capture.o
+   7787	    704	     20	   8511	   213f platform/exynos4-is/mipi-csis.o
+
+File size after:
+   text	   data	    bss	    dec	    hex	filename
+  17022	    880	      0	  17902	   45ee platform/exynos4-is/fimc-capture.o
+   8299	    192	     20	   8511	   213f platform/exynos4-is/mipi-csis.o
+
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-capture.c | 4 ++--
+ drivers/media/platform/exynos4-is/mipi-csis.c    | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index 964f4a6..a5e729c 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -1695,7 +1695,7 @@ static int fimc_subdev_set_selection(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static struct v4l2_subdev_pad_ops fimc_subdev_pad_ops = {
++static const struct v4l2_subdev_pad_ops fimc_subdev_pad_ops = {
+ 	.enum_mbus_code = fimc_subdev_enum_mbus_code,
+ 	.get_selection = fimc_subdev_get_selection,
+ 	.set_selection = fimc_subdev_set_selection,
+@@ -1703,7 +1703,7 @@ static int fimc_subdev_set_selection(struct v4l2_subdev *sd,
+ 	.set_fmt = fimc_subdev_set_fmt,
+ };
+ 
+-static struct v4l2_subdev_ops fimc_subdev_ops = {
++static const struct v4l2_subdev_ops fimc_subdev_ops = {
+ 	.pad = &fimc_subdev_pad_ops,
+ };
+ 
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
+index befd9fc..f819b29 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -649,23 +649,23 @@ static int s5pcsis_log_status(struct v4l2_subdev *sd)
+ 	return 0;
+ }
+ 
+-static struct v4l2_subdev_core_ops s5pcsis_core_ops = {
++static const struct v4l2_subdev_core_ops s5pcsis_core_ops = {
+ 	.s_power = s5pcsis_s_power,
+ 	.log_status = s5pcsis_log_status,
+ };
+ 
+-static struct v4l2_subdev_pad_ops s5pcsis_pad_ops = {
++static const struct v4l2_subdev_pad_ops s5pcsis_pad_ops = {
+ 	.enum_mbus_code = s5pcsis_enum_mbus_code,
+ 	.get_fmt = s5pcsis_get_fmt,
+ 	.set_fmt = s5pcsis_set_fmt,
+ };
+ 
+-static struct v4l2_subdev_video_ops s5pcsis_video_ops = {
++static const struct v4l2_subdev_video_ops s5pcsis_video_ops = {
+ 	.s_rx_buffer = s5pcsis_s_rx_buffer,
+ 	.s_stream = s5pcsis_s_stream,
+ };
+ 
+-static struct v4l2_subdev_ops s5pcsis_subdev_ops = {
++static const struct v4l2_subdev_ops s5pcsis_subdev_ops = {
+ 	.core = &s5pcsis_core_ops,
+ 	.pad = &s5pcsis_pad_ops,
+ 	.video = &s5pcsis_video_ops,
+-- 
+1.9.1
