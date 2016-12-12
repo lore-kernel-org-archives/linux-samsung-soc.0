@@ -1,67 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/7] ARM: s3c24xx: Constify few integer tables
-Date: Sat, 10 Dec 2016 15:47:34 +0200
-Message-ID: <1481377658-22603-3-git-send-email-krzk@kernel.org>
-References: <1481377658-22603-1-git-send-email-krzk@kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ASoC: samsung: Remove tests of member address
+Date: Mon, 12 Dec 2016 14:35:41 +0100
+Message-ID: <2863148.52BcI6omVF@amdc3058>
+References: <1481363471-21364-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1481377658-22603-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Simtec Linux Team <linux@simtec.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:46641 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751798AbcLLNfq (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 12 Dec 2016 08:35:46 -0500
+In-reply-to: <1481363471-21364-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-These arrays are not modified so they can be made const.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-s3c24xx/bast-irq.c         | 4 ++--
- arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/arch/arm/mach-s3c24xx/bast-irq.c b/arch/arm/mach-s3c24xx/bast-irq.c
-index 2bb08961e934..ad8f4cd7c327 100644
---- a/arch/arm/mach-s3c24xx/bast-irq.c
-+++ b/arch/arm/mach-s3c24xx/bast-irq.c
-@@ -44,7 +44,7 @@
- /* table of ISA irq nos to the relevant mask... zero means
-  * the irq is not implemented
- */
--static unsigned char bast_pc104_irqmasks[] = {
-+static const unsigned char bast_pc104_irqmasks[] = {
- 	0,   /* 0 */
- 	0,   /* 1 */
- 	0,   /* 2 */
-@@ -63,7 +63,7 @@ static unsigned char bast_pc104_irqmasks[] = {
- 	0,   /* 15 */
- };
- 
--static unsigned char bast_pc104_irqs[] = { 3, 5, 7, 10 };
-+static const unsigned char bast_pc104_irqs[] = { 3, 5, 7, 10 };
- 
- static void
- bast_pc104_mask(struct irq_data *data)
-diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-index 65e5f9cb650f..b7970f1fa3d5 100644
---- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-@@ -249,7 +249,7 @@ static int s3c2410_calc_bank(struct s3c_cpufreq_config *cfg,
- 	return 0;
- }
- 
--static unsigned int tacc_tab[] = {
-+static const unsigned int tacc_tab[] = {
- 	[0]	= 1,
- 	[1]	= 2,
- 	[2]	= 3,
--- 
-2.7.4
+On Saturday, December 10, 2016 11:51:11 AM Krzysztof Kozlowski wrote:
+> The driver was checking for non-NULL address of struct's members:
+>  - s3c_audio_pdata->type (union),
+>  - s3c_audio_pdata->type.i2s (embedded struct).
+> 
+> This is pointless as these will be always non-NULL.  The 's3c_audio_pdata'
+> is always initialized in static memory so it will be zeroed.
+> Additionally the 'type' member was an union with only one member.
+> 
+> It is safe to reorganize the structures to get rid of useless union and
+> checks for addresses to fix the coccinelle warning:
+> 	>> sound/soc/samsung/i2s.c:1270:2-4: ERROR: test of a variable/field address
+> 
+> Reported-by: kbuild test robot <fengguang.wu@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
