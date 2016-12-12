@@ -1,41 +1,34 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ASoC: samsung: Remove tests of member address
-Date: Mon, 12 Dec 2016 14:35:41 +0100
-Message-ID: <2863148.52BcI6omVF@amdc3058>
-References: <1481363471-21364-1-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH 1/7] ARM: EXYNOS: Constify list of retention registers
+Date: Mon, 12 Dec 2016 14:39:19 +0100
+Message-ID: <10896763.srQzQduvXa@amdc3058>
+References: <1481377658-22603-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46641 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751798AbcLLNfq (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:49358 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbcLLNjY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Dec 2016 08:35:46 -0500
-In-reply-to: <1481363471-21364-1-git-send-email-krzk@kernel.org>
+        Mon, 12 Dec 2016 08:39:24 -0500
+In-reply-to: <1481377658-22603-1-git-send-email-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Simtec Linux Team <linux@simtec.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
 Hi,
 
-On Saturday, December 10, 2016 11:51:11 AM Krzysztof Kozlowski wrote:
-> The driver was checking for non-NULL address of struct's members:
->  - s3c_audio_pdata->type (union),
->  - s3c_audio_pdata->type.i2s (embedded struct).
+On Saturday, December 10, 2016 03:47:32 PM Krzysztof Kozlowski wrote:
+> The list of retention registers (release_ret_regs field of struct
+> exynos_pm_data and arrays with values) are not modified and can be made
+> const to improve the const safeness.
 > 
-> This is pointless as these will be always non-NULL.  The 's3c_audio_pdata'
-> is always initialized in static memory so it will be zeroed.
-> Additionally the 'type' member was an union with only one member.
-> 
-> It is safe to reorganize the structures to get rid of useless union and
-> checks for addresses to fix the coccinelle warning:
-> 	>> sound/soc/samsung/i2s.c:1270:2-4: ERROR: test of a variable/field address
-> 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+for patches #1-7
 
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
