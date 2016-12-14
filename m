@@ -1,95 +1,40 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] media: platform: exynos4-is: constify v4l2_subdev_ops
- strcutures
-Date: Wed, 14 Dec 2016 09:25:47 +0530
-Message-ID: <1481687747-28785-1-git-send-email-bhumirks@gmail.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH 0/2] Add support for the S6E3HA2 panel on TM2 board
+Date: Wed, 14 Dec 2016 15:04:03 +0900
+Message-ID: <1481695445-13088-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: julia.lawall@lip6.fr, kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Check for v4l2_subdev_ops structures that are only passed as an
-argument to the function v4l2_subdev_init. This argument is of type
-const, so v4l2_subdev_ops structures having this property can also  be
-declared const.
-Done using Coccinelle:
-
-@r1 disable optional_qualifier @
-identifier i;
-position p;
-@@
-static struct v4l2_subdev_ops i@p = {...};
-
-@ok1@
-identifier r1.i;
-position p;
-@@
-v4l2_subdev_init(...,&i@p)
-
-@bad@
-position p!={r1.p,ok1.p};
-identifier r1.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r1.i;
-@@
-+const
-struct v4l2_subdev_ops i;
-
-Before and after size details:
-
-   text	   data	    bss	    dec	    hex	filename
-   6743	    152	     20	   6915	   1b03	platform/exynos4-is/fimc-isp.o
-   6807	     88	     20	   6915	   1b03	platform/exynos4-is/fimc-isp.o
-
-  15653	    392	     36	  16081	   3ed1	platform/exynos4-is/fimc-lite.o
-  15717	    308	     36	  16061	   3ebd	platform/exynos4-is/fimc-lite.o
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/media/platform/exynos4-is/fimc-isp.c  | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
-index 8efe916..fd793d3 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -433,7 +433,7 @@ static void fimc_isp_subdev_unregistered(struct v4l2_subdev *sd)
- 	.s_power = fimc_isp_subdev_s_power,
- };
- 
--static struct v4l2_subdev_ops fimc_is_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_is_subdev_ops = {
- 	.core = &fimc_is_core_ops,
- 	.video = &fimc_is_subdev_video_ops,
- 	.pad = &fimc_is_subdev_pad_ops,
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index b91abf1..18b6aaa 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1361,7 +1361,7 @@ static void fimc_lite_subdev_unregistered(struct v4l2_subdev *sd)
- 	.log_status = fimc_lite_log_status,
- };
- 
--static struct v4l2_subdev_ops fimc_lite_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_lite_subdev_ops = {
- 	.core = &fimc_lite_core_ops,
- 	.video = &fimc_lite_subdev_video_ops,
- 	.pad = &fimc_lite_subdev_pad_ops,
--- 
-1.9.1
+UHVycG9zZSBvZiB0aGlzIHBhdGNoIGlzIGFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIEFNT0xFRCBw
+YW5lbCBvbgp0aGUgVE0yIGJvYXJkLiBUaGUgZmlyc3QgcGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBT
+NkUzSEEyIHBhbmVsCmRldmljZSB0cmVlIGRvY3VtZW50IGFuZCBkcml2ZXIsIHRoZSBzZWNvbmQg
+cGF0Y2ggYWRkIHN1cHBvcnQgZm9yClM2RTNIQTIgcGFuZWwgZGV2aWNlIHRyZWUuCgpIb2VnZXVu
+IEt3b24gKDEpOgogIGRybS9wYW5lbDogQWRkIHN1cHBvcnQgZm9yIFM2RTNIQTIgcGFuZWwgZHJp
+dmVyIG9uIFRNMiBib2FyZAoKSHl1bmd3b24gSHdhbmcgKDEpOgogIGFybTY0OiBkdHM6IGV4eW5v
+czogQWRkIHN1cHBvcnQgZm9yIFM2RTNIQTIgcGFuZWwgZGV2aWNlIG9uIFRNMiBib2FyZAoKIC4u
+Li9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcsczZlM2hhMi50eHQgICAgIHwgIDUyICsr
+CiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMgICAgICB8ICAz
+MyArCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICB8
+ICAgNiArCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAg
+ICB8ICAgMSArCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMg
+ICAgICB8IDc1NiArKysrKysrKysrKysrKysrKysrKysKIDUgZmlsZXMgY2hhbmdlZCwgODQ4IGlu
+c2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0CiBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jCgotLSAK
+MS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
