@@ -1,171 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Add missing CPU frequencies for Exynos5422/5800
-Date: Wed, 14 Dec 2016 20:20:40 +0200
-Message-ID: <20161214182040.GA5292@kozik-lap>
-References: <5220084.l31t5oJbsy@amdc3058>
- <26ffeee4-ff43-b3d3-3267-5fcbc50e2974@osg.samsung.com>
+From: hoegeun kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH 1/2] drm/panel: Add support for S6E3HA2 panel driver on TM2
+ board
+Date: Thu, 15 Dec 2016 10:53:40 +0900
+Message-ID: <ddc3c06d-94fc-f90d-75d5-c662777916bb@samsung.com>
+References: <1481695445-13088-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20161214060522epcas2p49bd0d7ca0f8fc370e91e0de199f4c788@epcas2p4.samsung.com>
+ <1481695445-13088-2-git-send-email-hoegeun.kwon@samsung.com>
+ <583d4da7-a3c5-f84f-ba11-1bb1e6890e9b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <26ffeee4-ff43-b3d3-3267-5fcbc50e2974@osg.samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Thomas Abraham <thomas.ab@samsung.com>, Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <583d4da7-a3c5-f84f-ba11-1bb1e6890e9b@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, thierry.reding@gmail.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 13, 2016 at 04:18:05PM -0300, Javier Martinez Canillas wrote:
-> Hello Bartlomiej,
-> 
-> On 12/13/2016 01:52 PM, Bartlomiej Zolnierkiewicz wrote:
-> > Add missing 2000MHz & 1900MHz OPPs (for A15 cores) and 1400MHz OPP
-> > (for A7 cores).  Also update common Odroid-XU3 Lite/XU3/XU4 thermal
-> > cooling maps to account for new OPPs.
-> > 
-> > Since new OPPs are not available on all Exynos5422/5800 boards modify
-> > dts files for Odroid-XU3 Lite (limited to 1.8 GHz / 1.3 GHz) & Peach
-> > Pi (limited to 2.0 GHz / 1.3 GHz) accordingly.
-> > 
-> > Tested on Odroid-XU3 and XU3 Lite.
-> > 
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Cc: Andreas Faerber <afaerber@suse.de>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Ben Gamari <ben@smart-cactus.org>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   14 +++++++-------
-> >  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts    |   17 +++++++++++++++++
-> >  arch/arm/boot/dts/exynos5800-peach-pi.dts          |    4 ++++
-> >  arch/arm/boot/dts/exynos5800.dtsi                  |   15 +++++++++++++++
-> >  4 files changed, 43 insertions(+), 7 deletions(-)
-> > 
-> > Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > ===================================================================
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2016-12-13 15:59:33.779763261 +0100
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi	2016-12-13 15:59:33.775763261 +0100
-> > @@ -118,7 +118,7 @@
-> >  				/*
-> >  				 * When reaching cpu_alert3, reduce CPU
-> >  				 * by 2 steps. On Exynos5422/5800 that would
-> > -				 * be: 1600 MHz and 1100 MHz.
-> > +				 * (usually) be: 1800 MHz and 1200 MHz.
-> >  				 */
-> >  				map3 {
-> >  					trip = <&cpu_alert3>;
-> > @@ -131,16 +131,16 @@
-> >  
-> >  				/*
-> >  				 * When reaching cpu_alert4, reduce CPU
-> > -				 * further, down to 600 MHz (11 steps for big,
-> > -				 * 7 steps for LITTLE).
-> > +				 * further, down to 600 MHz (13 steps for big,
-> > +				 * 8 steps for LITTLE).
-> >  				 */
-> > -				map5 {
-> > +				cooling_map5: map5 {
-> >  					trip = <&cpu_alert4>;
-> > -					cooling-device = <&cpu0 3 7>;
-> > +					cooling-device = <&cpu0 3 8>;
-> >  				};
-> > -				map6 {
-> > +				cooling_map6: map6 {
-> >  					trip = <&cpu_alert4>;
-> > -					cooling-device = <&cpu4 3 11>;
-> > +					cooling-device = <&cpu4 3 13>;
-> >  				};
-> >  			};
-> >  		};
-> > Index: b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-> > ===================================================================
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts	2016-12-13 15:59:33.779763261 +0100
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts	2016-12-13 15:59:33.775763261 +0100
-> > @@ -21,6 +21,23 @@
-> >  	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
-> >  };
-> >  
-> > +&cluster_a15_opp_table {
-> > +	/delete-node/opp@2000000000;
-> > +	/delete-node/opp@1900000000;
-> > +};
-> > +
-> > +&cluster_a7_opp_table {
-> > +	/delete-node/opp@1400000000;
-> > +};
-> > +
-> 
-> I think that a comment in the DTS why these operating points aren't available
-> in this board will make more clear why the nodes are being deleted.
-> 
-> > +&cooling_map5 {
-> > +	cooling-device = <&cpu0 3 7>;
-> > +};
-> > +
-> > +&cooling_map6 {
-> > +	cooling-device = <&cpu4 3 11>;
-> > +};
-> > +
-> >  &pwm {
-> >  	/*
-> >  	 * PWM 0 -- fan
-> > Index: b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> > ===================================================================
-> > --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts	2016-12-13 15:59:33.779763261 +0100
-> > +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts	2016-12-13 15:59:33.779763261 +0100
-> > @@ -146,6 +146,10 @@
-> >  	vdd-supply = <&ldo9_reg>;
-> >  };
-> >  
-> > +&cluster_a7_opp_table {
-> > +	/delete-property/opp@1400000000;
-> > +};
-> > +
-> >  &cpu0 {
-> >  	cpu-supply = <&buck2_reg>;
-> >  };
-> > Index: b/arch/arm/boot/dts/exynos5800.dtsi
-> > ===================================================================
-> > --- a/arch/arm/boot/dts/exynos5800.dtsi	2016-12-13 15:59:33.779763261 +0100
-> > +++ b/arch/arm/boot/dts/exynos5800.dtsi	2016-12-13 15:59:33.779763261 +0100
-> > @@ -24,6 +24,16 @@
-> >  };
-> >  
-> >  &cluster_a15_opp_table {
-> > +	opp@2000000000 {
-> > +		opp-hz = /bits/ 64 <2000000000>;
-> > +		opp-microvolt = <1250000>;
-> > +		clock-latency-ns = <140000>;
-> > +	};
-> > +	opp@1900000000 {
-> > +		opp-hz = /bits/ 64 <1900000000>;
-> > +		opp-microvolt = <1250000>;
-> > +		clock-latency-ns = <140000>;
-> > +	};
-> >  	opp@1700000000 {
-> >  		opp-microvolt = <1250000>;
-> >  	};
-> > @@ -85,6 +95,11 @@
-> >  };
-> >
-> 
-> AFAIK Thomas restricted the maximum OPP, because for A15 freqs > 1.8GHz the
-> INT rail would need to be scaled up as well since there's a maximum voltage
-> difference between the ARM and INT rails before the system becomes unstable:
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/276766.html
-> https://lkml.org/lkml/2014/5/2/419
-
-The choice of skipping > 1.8 GHz could be also made because of missing
-ASV which is important to detect the BIN2 of Exynos5422. The BIN2 is
-capped to 1.8/1.3.
-
-Anyway this shouldn't be limiting us now because we have all data
-statically coded in DTS - in mainline boards, only Odroid XU3-lite
-uses BIN2.
-
-Beside comments from Javier, I would be happy to see high frequencies
-Tested-by on Peach Pi/Pit. AFAIR, we did not have these in SRPOL. :)
-
-Best regards,
-Krzysztof
+CgpPbiAxMi8xNC8yMDE2IDExOjE0IFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDE0LjEy
+LjIwMTYgMDc6MDQsIEhvZWdldW4gS3dvbiB3cm90ZToKPj4gVGhpcyBwYXRjaCBhZGQgc3VwcG9y
+dCBmb3IgTUlQSS1EU0kgYmFzZWQgUzZFM0hBMiBBTU9MRUQgcGFuZWwKPj4gZHJpdmVyLiBUaGlz
+IHBhbmVsIGhhcyAxNDQweDI1NjAgcmVzb2x1dGlvbiBpbiA1LjctaW5jaCBwaHlzaWNhbAo+PiBw
+YW5lbCBpbiB0aGUgVE0yIGRldmljZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogRG9uZ2h3YSBMZWUg
+PGRoMDkubGVlQHNhbXN1bmcuY29tPgo+PiBTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8
+aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8
+aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgo+IEhpIEhvZWdldW4gS3dvbiwKPgo+IElzIHRoZXJl
+IGEgcmVhc29uIHRvIHVwc3RyZWFtIG9ic29sZXRlIGRyaXZlcj8gQ3VycmVudCB2ZXJzaW9uIG9m
+IHRoZQo+IGRyaXZlciBpcyBhdmFpbGFibGUgYXQgWzFdLiBJdCBkaWZmZXJzIHNpZ25pZmljYW50
+bHkgYW5kIGNvbnRhaW5zCj4gbXVsdGlwbGUgZml4ZXMgYW5kIGltcHJvdmVtZW50cy4gSSBndWVz
+cyBpdCBzdGlsbCByZXF1aXJlcyBzb21lCj4gcG9saXNoaW5nIGJ1dCBpdCBpcyBiZXR0ZXIgYmFz
+ZSBmb3Igc3RhcnQuCj4KPiBbMV06Cj4gaHR0cHM6Ly9yZXZpZXcudGl6ZW4ub3JnL2dpdC8/cD1w
+bGF0Zm9ybS9rZXJuZWwvbGludXgtZXh5bm9zLmdpdDthPWJsb2I7Zj1kcml2ZXJzL2dwdS9kcm0v
+cGFuZWwvcGFuZWwtczZlM2hhMi5jO2hiPXJlZnMvaGVhZHMvdGl6ZW4KPgo+IFJlZ2FyZHMKPiBB
+bmRyemVqCgpIaSBBbmRyemVqIEhhamRhLAoKVGhlIGN1cnJlbnQgZHJpdmVyIGZvY3VzIG9uIGJh
+c2ljIGZ1bmN0aW9uYWxpdHkuIFRoZXJlZm9yZSwgVlIgYW5kIEhNVAptb2RlcyBpbiBbMV0gaGF2
+ZSBiZWVuIHJlbW92ZWQgZnJvbSB0aGUgcGF0Y2guIFZSIGFuZCBITVQgbW9kZXMKYXJlIGFkZGVk
+IGFmdGVyIHRoZSBiYXNpYyBmdW5jdGlvbnMgYXJlIHJlZmxlY3RlZC4KCkJlc3QgUmVnYXJkcywK
+SG9lZ2V1biBLd29uCgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
