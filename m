@@ -1,26 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] media: platform: s3c-camif: constify v4l2_subdev_ops
- structures
-Date: Thu, 15 Dec 2016 11:34:38 +0100
-Message-ID: <91f5f6ee-d5b0-ff6b-a254-dfcc5f6d6fb1@samsung.com>
-References: <CGME20161214111230epcas2p3c17ddece4633cdd49ee7759b8215da23@epcas2p3.samsung.com>
- <1481713870-7513-1-git-send-email-bhumirks@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5/8] linux: drop __bitwise__ everywhere
+Date: Thu, 15 Dec 2016 03:51:46 -0800
+Message-ID: <20161215115146.GB22750@kroah.com>
+References: <1481778865-27667-1-git-send-email-mst@redhat.com>
+ <1481778865-27667-6-git-send-email-mst@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1481713870-7513-1-git-send-email-bhumirks@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Bhumika Goyal <bhumirks@gmail.com>, linux-media@vger.kernel.org
-Cc: julia.lawall@lip6.fr, mchehab@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <1481778865-27667-6-git-send-email-mst@redhat.com>
+Sender: owner-linux-mm@kvack.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Russell King <linux@armlinux.org.uk>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Jiri Slaby <jslaby@suse.com>, Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Jason Wang <jasowang@redhat.com>, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, Davi
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/14/2016 12:11 PM, Bhumika Goyal wrote:
-> Check for v4l2_subdev_ops structures that are only passed as an
-> argument to the function v4l2_subdev_init. This argument is of type
-> const, so v4l2_subdev_ops structures having this property can also  be
-> declared const.
+On Thu, Dec 15, 2016 at 07:15:20AM +0200, Michael S. Tsirkin wrote:
+> __bitwise__ used to mean "yes, please enable sparse checks
+> unconditionally", but now that we dropped __CHECK_ENDIAN__
+> __bitwise is exactly the same.
+> There aren't many users, replace it by __bitwise everywhere.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/gpio-cfg.h    | 2 +-
+>  drivers/md/dm-cache-block-types.h                | 6 +++---
+>  drivers/net/ethernet/sun/sunhme.h                | 2 +-
+>  drivers/net/wireless/intel/iwlwifi/iwl-fw-file.h | 4 ++--
+>  include/linux/mmzone.h                           | 2 +-
+>  include/linux/serial_core.h                      | 4 ++--
+>  include/linux/types.h                            | 4 ++--
+>  include/scsi/iscsi_proto.h                       | 2 +-
+>  include/target/target_core_base.h                | 2 +-
+>  include/uapi/linux/virtio_types.h                | 6 +++---
+>  net/ieee802154/6lowpan/6lowpan_i.h               | 2 +-
+>  net/mac80211/ieee80211_i.h                       | 4 ++--
+>  12 files changed, 20 insertions(+), 20 deletions(-)
 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+for include/linux/serial_core.h:
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
