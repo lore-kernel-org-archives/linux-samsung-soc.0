@@ -1,8 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/7] PM / devfreq: exynos-ppmu: Show the registred device for
- ppmu device
-Date: Thu, 15 Dec 2016 18:30:40 +0900
-Message-ID: <1481794243-5046-5-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 3/7] PM / devfreq: exynos-bus: Print the real clock rate of bus
+Date: Thu, 15 Dec 2016 18:30:39 +0900
+Message-ID: <1481794243-5046-4-git-send-email-cw00.choi@samsung.com>
 References: <1481794243-5046-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1481794243-5046-1-git-send-email-cw00.choi@samsung.com>
@@ -11,8 +10,8 @@ To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
 Cc: rjw@rjwysocki.net, chanwoo@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch just adds the simple log to show the PPMU device's registration
-during the kernel booting.
+This patch shows the real clock rate after calling clk_set_rate()
+to debug it.
 
 Cc: Kukjin Kim <kgene@kernel.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
@@ -20,31 +19,34 @@ Cc: Javier Martinez Canillas <javier@osg.samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/devfreq/exynos-bus.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index fb3706faf5bd..9b5294d0bff4 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -591,7 +591,7 @@ static int exynos_ppmu_parse_dt(struct platform_device *pdev,
- 	info->ppmu.clk = devm_clk_get(dev, "ppmu");
- 	if (IS_ERR(info->ppmu.clk)) {
- 		info->ppmu.clk = NULL;
--		dev_warn(dev, "cannot get PPMU clock\n");
-+		dev_dbg(dev, "cannot get PPMU clock\n");
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 9af86f46fbec..e0d1f4ac1740 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -147,8 +147,8 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
  	}
+ 	bus->curr_freq = new_freq;
  
- 	ret = of_get_devfreq_events(np, info);
-@@ -643,6 +643,9 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
- 				"failed to add devfreq-event device\n");
- 			return PTR_ERR(edev[i]);
- 		}
-+
-+		pr_info("exynos-ppmu: new PPMU device registered %s (%s)\n",
-+			dev_name(&pdev->dev), desc[i].name);
- 	}
+-	dev_dbg(dev, "Set the frequency of bus (%lukHz -> %lukHz)\n",
+-			old_freq/1000, new_freq/1000);
++	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
++			old_freq, new_freq, clk_get_rate(bus->clk));
+ out:
+ 	mutex_unlock(&bus->lock);
  
- 	clk_prepare_enable(info->ppmu.clk);
+@@ -241,8 +241,8 @@ static int exynos_bus_passive_target(struct device *dev, unsigned long *freq,
+ 	*freq = new_freq;
+ 	bus->curr_freq = new_freq;
+ 
+-	dev_dbg(dev, "Set the frequency of bus (%lukHz -> %lukHz)\n",
+-			old_freq/1000, new_freq/1000);
++	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
++			old_freq, new_freq, clk_get_rate(bus->clk));
+ out:
+ 	mutex_unlock(&bus->lock);
+ 
 -- 
 1.9.1
