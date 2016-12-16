@@ -1,84 +1,93 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] serial: samsung: Simplify DMA engine initialization code
-Date: Fri, 16 Dec 2016 10:56:53 +0100
-Message-ID: <1481882213-10856-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH] dmaengine: pl330: Fix runtime PM support for terminated
+ transfers
+Date: Fri, 16 Dec 2016 11:39:11 +0100
+Message-ID: <1481884751-21411-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36368 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760295AbcLPJ5N (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40039 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757063AbcLPKjl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Dec 2016 04:57:13 -0500
+        Fri, 16 Dec 2016 05:39:41 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>
 
-dma_request_slave_channel_compat() requires filter function and mask, which
-are not needed on device tree based platforms, so simplify the code by
-calling the more appropriate dma_request_chan() function. This additionally
-gives us proper error handling, because the new function returns error
-codes instead of NULL on failure.
+PL330 DMA engine driver is leaking a runtime reference after any terminated
+DMA transactions. This patch fixes this issue by tracking runtime PM state
+of the device and making additional call to pm_runtime_put() in terminate_all
+callback if needed.
 
+Fixes: ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/tty/serial/samsung.c | 17 ++++++-----------
- drivers/tty/serial/samsung.h |  4 ----
- 2 files changed, 6 insertions(+), 15 deletions(-)
+ drivers/dma/pl330.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f44615fa474d..a9b309ba24a4 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -859,7 +859,6 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
- static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- {
- 	struct s3c24xx_uart_dma	*dma = p->dma;
--	dma_cap_mask_t mask;
- 	unsigned long flags;
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 030fe05ed43b..9f3dbc8c63d2 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -448,6 +448,9 @@ struct dma_pl330_chan {
  
- 	/* Default slave configuration parameters */
-@@ -876,21 +875,17 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
- 	else
- 		dma->tx_conf.dst_maxburst = 1;
- 
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
-+	dma->rx_chan = dma_request_chan(p->port.dev, "rx");
- 
--	dma->rx_chan = dma_request_slave_channel_compat(mask, dma->fn,
--					dma->rx_param, p->port.dev, "rx");
--	if (!dma->rx_chan)
--		return -ENODEV;
-+	if (IS_ERR(dma->rx_chan))
-+		return PTR_ERR(dma->rx_chan);
- 
- 	dmaengine_slave_config(dma->rx_chan, &dma->rx_conf);
- 
--	dma->tx_chan = dma_request_slave_channel_compat(mask, dma->fn,
--					dma->tx_param, p->port.dev, "tx");
--	if (!dma->tx_chan) {
-+	dma->tx_chan = dma_request_chan(p->port.dev, "tx");
-+	if (IS_ERR(dma->tx_chan)) {
- 		dma_release_channel(dma->rx_chan);
--		return -ENODEV;
-+		return PTR_ERR(dma->tx_chan);
- 	}
- 
- 	dmaengine_slave_config(dma->tx_chan, &dma->tx_conf);
-diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
-index a04acef1cb20..965199b6c16f 100644
---- a/drivers/tty/serial/samsung.h
-+++ b/drivers/tty/serial/samsung.h
-@@ -44,10 +44,6 @@ struct s3c24xx_serial_drv_data {
+ 	/* for cyclic capability */
+ 	bool cyclic;
++
++	/* for runtime pm tracking */
++	bool active;
  };
  
- struct s3c24xx_uart_dma {
--	dma_filter_fn			fn;
--	void				*rx_param;
--	void				*tx_param;
--
- 	unsigned int			rx_chan_id;
- 	unsigned int			tx_chan_id;
+ struct pl330_dmac {
+@@ -2031,6 +2034,7 @@ static void pl330_tasklet(unsigned long data)
+ 		_stop(pch->thread);
+ 		spin_unlock(&pch->thread->dmac->lock);
+ 		power_down = true;
++		pch->active = false;
+ 	} else {
+ 		/* Make sure the PL330 Channel thread is active */
+ 		spin_lock(&pch->thread->dmac->lock);
+@@ -2050,6 +2054,7 @@ static void pl330_tasklet(unsigned long data)
+ 			desc->status = PREP;
+ 			list_move_tail(&desc->node, &pch->work_list);
+ 			if (power_down) {
++				pch->active = true;
+ 				spin_lock(&pch->thread->dmac->lock);
+ 				_start(pch->thread);
+ 				spin_unlock(&pch->thread->dmac->lock);
+@@ -2164,6 +2169,7 @@ static int pl330_terminate_all(struct dma_chan *chan)
+ 	unsigned long flags;
+ 	struct pl330_dmac *pl330 = pch->dmac;
+ 	LIST_HEAD(list);
++	bool power_down = false;
  
+ 	pm_runtime_get_sync(pl330->ddma.dev);
+ 	spin_lock_irqsave(&pch->lock, flags);
+@@ -2174,6 +2180,8 @@ static int pl330_terminate_all(struct dma_chan *chan)
+ 	pch->thread->req[0].desc = NULL;
+ 	pch->thread->req[1].desc = NULL;
+ 	pch->thread->req_running = -1;
++	power_down = pch->active;
++	pch->active = false;
+ 
+ 	/* Mark all desc done */
+ 	list_for_each_entry(desc, &pch->submitted_list, node) {
+@@ -2191,6 +2199,8 @@ static int pl330_terminate_all(struct dma_chan *chan)
+ 	list_splice_tail_init(&pch->completed_list, &pl330->desc_pool);
+ 	spin_unlock_irqrestore(&pch->lock, flags);
+ 	pm_runtime_mark_last_busy(pl330->ddma.dev);
++	if (power_down)
++		pm_runtime_put_autosuspend(pl330->ddma.dev);
+ 	pm_runtime_put_autosuspend(pl330->ddma.dev);
+ 
+ 	return 0;
+@@ -2350,6 +2360,7 @@ static void pl330_issue_pending(struct dma_chan *chan)
+ 		 * updated on work_list emptiness status.
+ 		 */
+ 		WARN_ON(list_empty(&pch->submitted_list));
++		pch->active = true;
+ 		pm_runtime_get_sync(pch->dmac->ddma.dev);
+ 	}
+ 	list_splice_tail_init(&pch->submitted_list, &pch->work_list);
 -- 
 1.9.1
