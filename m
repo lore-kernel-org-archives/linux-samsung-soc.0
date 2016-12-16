@@ -1,31 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] serial: samsung: Simplify DMA engine initialization code
-Date: Fri, 16 Dec 2016 11:50:33 +0100
-Message-ID: <4075921b-ab30-7527-e96a-5bdfdc5893e3@samsung.com>
-References: <CGME20161216095843epcas1p45f9de00cb1c809931da69ffab0c83279@epcas1p4.samsung.com>
- <1481882213-10856-1-git-send-email-m.szyprowski@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 0/2] s5p-mfc fix for using reserved memory
+Date: Fri, 16 Dec 2016 17:18:33 +0530
+Message-ID: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60526 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759552AbcLPKun (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Dec 2016 05:50:43 -0500
-In-reply-to: <1481882213-10856-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: javier@osg.samsung.com, mchehab@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, krzk@kernel.org, jtp.park@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, hans.verkuil@cisco.com, mchehab@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On 12/16/2016 10:56 AM, Marek Szyprowski wrote:
-> dma_request_slave_channel_compat() requires filter function and mask, which
-> are not needed on device tree based platforms, so simplify the code by
-> calling the more appropriate dma_request_chan() function. This additionally
-> gives us proper error handling, because the new function returns error
-> codes instead of NULL on failure.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
+and we try to use reserved memory for MFC, reqbufs fails with below
+mentioned error
+---------------------------------------------------------------------------
+V4L2 Codec decoding example application
+Kamil Debski <k.debski@samsung.com>
+Copyright 2012 Samsung Electronics Co., Ltd.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Opening MFC.
+(mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
+bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
+42.339165] Remapping memory failed, error: -6
+
+MFC Open Success.
+(main.c:main:711): Successfully opened all necessary files and devices
+(mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
+size=4194304 (requested=4194304)
+(mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
+(requested 2)
+
+[App] Out buf phy : 0x00000000, virt : 0xffffffff
+Output Length is = 0x300000
+Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
+-------------------------------------------------------------------------
+This is because the device requesting for memory is mfc0.left not the parent mfc0.
+Hence setting of alloc_devs need to be done only if IOMMU is enabled
+and in that case both the left and right device is treated as mfc0 only.
+Also we need to populate vb2_queue's dev pointer with mfc dev pointer.
+
+Smitha T Murthy (2):
+  media: s5p-mfc: convert drivers to use the new vb2_queue dev field
+  media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
+
+ drivers/media/platform/s5p-mfc/s5p_mfc.c     |  2 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 ++++++++++-------
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 18 +++++++++++-------
+ 3 files changed, 23 insertions(+), 14 deletions(-)
+
+-- 
+2.7.4
