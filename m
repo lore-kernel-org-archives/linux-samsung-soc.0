@@ -1,11 +1,14 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 0/2] s5p-mfc fix for using reserved memory
-Date: Fri, 16 Dec 2016 17:18:33 +0530
-Message-ID: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH 1/2] media: s5p-mfc: convert drivers to use the new vb2_queue
+ dev field
+Date: Fri, 16 Dec 2016 17:18:34 +0530
+Message-ID: <1481888915-19624-2-git-send-email-pankaj.dubey@samsung.com>
+References: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,13 +19,16 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: javier@osg.samsung.com, mchehab@osg.samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, krzk@kernel.org, jtp.park@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, hans.verkuil@cisco.com, mchehab@kernel.org
+Cc: javier@osg.samsung.com, mchehab@osg.samsung.com, Smitha T Murthy <smitha.t@samsung.com>, krzk@kernel.org, jtp.park@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, hans.verkuil@cisco.com, Pankaj Dubey <pankaj.dubey@samsung.com>, mchehab@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
-and we try to use reserved memory for MFC, reqbufs fails with below
-mentioned error
----------------------------------------------------------------------------
+From: Smitha T Murthy <smitha.t@samsung.com>
+
+commit 2548fee63d9e ("[media] media/platform: convert drivers to use the new
+vb2_queue dev field") has missed to set dev pointer of vb2_queue which will be
+used in reqbufs of mfc driver. Without this change following error is observed:
+
+---------------------------------------------------------------
 V4L2 Codec decoding example application
 Kamil Debski <k.debski@samsung.com>
 Copyright 2012 Samsung Electronics Co., Ltd.
@@ -42,20 +48,34 @@ size=4194304 (requested=4194304)
 [App] Out buf phy : 0x00000000, virt : 0xffffffff
 Output Length is = 0x300000
 Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
--------------------------------------------------------------------------
-This is because the device requesting for memory is mfc0.left not the parent mfc0.
-Hence setting of alloc_devs need to be done only if IOMMU is enabled
-and in that case both the left and right device is treated as mfc0 only.
-Also we need to populate vb2_queue's dev pointer with mfc dev pointer.
+-------------------------------------------------------
 
-Smitha T Murthy (2):
-  media: s5p-mfc: convert drivers to use the new vb2_queue dev field
-  media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
+Signed-off-by: Smitha T Murthy <smitha.t@samsung.com>
+[pankaj.dubey: debugging issue and formatting commit message]
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/media/platform/s5p-mfc/s5p_mfc.c     |  2 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 ++++++++++-------
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 18 +++++++++++-------
- 3 files changed, 23 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 0a5b8f5..6ea8246 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -838,6 +838,7 @@ static int s5p_mfc_open(struct file *file)
+ 	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+ 	q->drv_priv = &ctx->fh;
+ 	q->lock = &dev->mfc_mutex;
++	q->dev = &dev->plat_dev->dev;
+ 	if (vdev == dev->vfd_dec) {
+ 		q->io_modes = VB2_MMAP;
+ 		q->ops = get_dec_queue_ops();
+@@ -861,6 +862,7 @@ static int s5p_mfc_open(struct file *file)
+ 	q->io_modes = VB2_MMAP;
+ 	q->drv_priv = &ctx->fh;
+ 	q->lock = &dev->mfc_mutex;
++	q->dev = &dev->plat_dev->dev;
+ 	if (vdev == dev->vfd_dec) {
+ 		q->io_modes = VB2_MMAP;
+ 		q->ops = get_dec_queue_ops();
 -- 
 2.7.4
