@@ -1,159 +1,66 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v8 0/8] Introducing Exynos ChipId driver
-Date: Fri, 16 Dec 2016 14:11:04 +0100
-Message-ID: <7504d7e6-4f1e-52c9-a526-33af47ab5d99@samsung.com>
-References: <CGME20161210130616epcas1p2ce44d503ae03854e7b36b4d37d54900a@epcas1p2.samsung.com>
- <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH] Documentation: dt: Explicitly mark Samsung Exynos SoC bindings
+ as unstable
+Date: Fri, 16 Dec 2016 15:14:36 +0100
+Message-ID: <1481897676-13578-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:22788 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755566AbcLPNLg (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Dec 2016 08:11:36 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIA005434MPWO20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Dec 2016 13:11:13 +0000 (GMT)
-In-reply-to: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com
 
-Hi Pankaj
+Samsung Exynos SoCs and boards related bindings evolved since the initial
+introduction, but initially the bindings were minimal and a bit incomplete
+(they never described all the hardware modules available in the SoCs).
+Since then some significant (not fully compatible) changes have been
+already committed a few times (like gpio replaced by pinctrl, display ddc,
+mfc reserved memory, some core clocks added to various hardware modules,
+added more required nodes).
 
+On the other side there are no boards which have device tree embedded in
+the bootloader. Device tree blob is always compiled from the kernel tree
+and updated together with the kernel image.
 
-On 2016-12-10 14:08, Pankaj Dubey wrote:
-> Each Exynos SoC has ChipID block which can give information about SoC's
-> product Id and revision number.
->
-> This patch series introduces Exynos Chipid SoC driver. At the same time
-> it reduces dependency of mach-exynos files from plat-samsung, by removing
-> soc_is_exynosMMMM and samsung_rev API. Instead of it now we can use
-> soc_device_match API proposed by Arnd and getting discussed in thread [1].
->
-> Until now we are using static mapping of Exynos Chipid and using this static
-> mapping to know about SoC name and revision via soc_is_exynosMMMM macro. This
-> is quite cumbersome and every time new ARMv7 based Exynos SoC supports lands in
-> mainline a bunch of such new macros needs to be added. Quite long back during
-> support of Exynos5260 it has been discussed to solve this problem.
->
-> To solve this issue this patchset replaces use of soc_is_exynosMMMM by either
-> of_machine_is_compatible or soc_device_match depending upon usecase.
->
-> I have tested this patch series on Exynos4210 based Origen board for normal SMP
-> boot.
->
->
-> Although I submitted this series as a whole of 8 patchsets, following are dependency
-> details among the patches.
->
-> Patch 1/8 can be taken without any dependency on other patches.
-> Patch 2/8 and 3/8 has dependency on 1/8 and can be taken along with 1/8.
-> Patch 4/8 has no dependency and can be taken without chipid driver patch 1/8.
-> Patch 5/8 has depency on 1/8
-> Patch 6/8 has no dependency and can be taken without any other patches.
-> Patch 7/8 has dependency on 6/8 and 1/8
-> Patch 8/8 has dependency on rest of patches
+Thus to avoid further adding a bunch of workarounds for old/missing
+bindings and allow to make cleanup of the existing code and device tree
+files, lets mark Samsung Exynos SoC platform bindings as unstable. This
+means that bindings can may change at any time and users should use the
+dtb file compiled from the same kernel source tree as the kernel image.
 
-Which kernel should I use as a base for applying those patches? I wanted 
-to test them,
-but I got conflicts both for v4.9 and current linux-next (next-20161216).
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ Documentation/devicetree/bindings/arm/samsung/exynos.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos.txt
 
-> [1]: https://patchwork.kernel.org/patch/9361389/
->
-> Revision 7 and it's discussion can be found here:
->   - https://www.spinics.net/lists/arm-kernel/msg540790.html
->
-> Revision 6 and it's discussion can be found here:
->   - https://lkml.org/lkml/2016/5/25/101
->
-> Revision 5 and it's discussion can be found here:
->   - http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310046.html
->
-> Revision 4 and it's discussion can be found here:
->   - https://lkml.org/lkml/2014/12/3/115
->
-> Changes since v7:
->   - Added ARM64 based Exynos7 and Exynos5433 support in chipid driver.
->   - Removed Exynos4415 support from chipid driver, as exynos4415 has been removed from tree
->   - Added patch to enable chipid driver for ARM64 based Exynos platform
->   - Addressed review comments from Arnd for firmware.c, platsmp.c and pm.c files/
->   - Splitted changes in firmware.c, platsmp.c and pm.c in separate patches
->     for better code review
->   - Included suggested code improvement in exynos-chipid.c from Marek Szyprowski
->
-> Chances since v6:
->   - Removed platform driver from chipid, instead use early_init to register soc_device
->   - Removed export functions from exynos chipid driver
->   - Replace soc_is_exynosMMMM via either of_machine_is_compatible or soc_device_match in
->     files in arm/mach-exynos folder
->   - This patchset depends on the following patch series by Geert Uytterhoeven. This series
->     includes patch which introduces soc_device_match.
->     http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1261739.html
->   - Rebased on latest krzk/for-next branch and retested.
->
-> Change since v5:
->   - Addressed Rob's review comments.
->   - Rebased on latest krzk/for-next branch and retested.
->
-> Changes since v4:
->   - Removed custom sysfs entries as they were not providing any new information
->     as pointed out by Arnd.
->   - Removed functions exporting product_id and revision, instead we will export
->     exynos_chipid_info structure. It will be helpfull when we need to provide more
->     fields of chipid outside of chipid, as commented by Yadwinder
->   - Converted all funcions as __init.
->
-> Change since v3:
->   - This patch set contains 5/6 and 6/6 patch from v3 series.
->   - Made EXYNOS_CHIPID config option non-user selectable,
->     as suggested by Tomasz Figa.
->   - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
->     suggested by Tomasz Figa.
->   - Made local variables static in chipid driver.
->   - Added existing SoC's product id's.
->   - Added platform driver support.
->
-> Changes since v2:
->   - Reorganized patches as suggested by Tomasz Figa.
->   - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
->
-> Pankaj Dubey (8):
->    soc: samsung: add exynos chipid driver support
->    ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
->    ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
->    ARM: EXYNOS: refactor firmware specific routines
->    ARM: EXYNOS: refactor power management specific routines
->    ARM: EXYNOS: remove secondary startup initialization from
->      smp_prepare_cpus
->    ARM: EXYNOS: refactor smp specific code and routines
->    ARM: EXYNOS: refactor of mach-exynos to use chipid information
->
->   arch/arm/mach-exynos/Kconfig                 |   1 +
->   arch/arm/mach-exynos/common.h                |  92 ---------
->   arch/arm/mach-exynos/exynos.c                |  38 ----
->   arch/arm/mach-exynos/firmware.c              | 100 +++++++---
->   arch/arm/mach-exynos/include/mach/map.h      |  21 ---
->   arch/arm/mach-exynos/platsmp.c               | 267 +++++++++++++++++++++------
->   arch/arm/mach-exynos/pm.c                    | 185 ++++++++++++++++---
->   arch/arm/plat-samsung/cpu.c                  |  14 --
->   arch/arm/plat-samsung/include/plat/cpu.h     |   2 -
->   arch/arm/plat-samsung/include/plat/map-s5p.h |   2 -
->   arch/arm64/Kconfig.platforms                 |   1 +
->   drivers/soc/samsung/Kconfig                  |   5 +
->   drivers/soc/samsung/Makefile                 |   1 +
->   drivers/soc/samsung/exynos-chipid.c          | 116 ++++++++++++
->   14 files changed, 563 insertions(+), 282 deletions(-)
->   delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
->   create mode 100644 drivers/soc/samsung/exynos-chipid.c
->
-
-Best regards
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos.txt b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
+new file mode 100644
+index 000000000000..0c606f4c6e85
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
+@@ -0,0 +1,12 @@
++Samsung Exynos SoC Family Device Tree Bindings
++---------------------------------------------------------------
++
++Work in progress statement:
++
++Device tree files and bindings applying to Samsung Exynos SoCs and boards are
++considered "unstable". Any Samsung Exynos device tree binding may change at any
++time. Be sure to use a device tree binary and a kernel image generated from the
++same source tree.
++
++Please refer to Documentation/devicetree/bindings/ABI.txt for a definition of a
++stable binding/ABI.
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
