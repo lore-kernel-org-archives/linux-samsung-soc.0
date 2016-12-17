@@ -1,45 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] Documentation: dt: Explicitly mark Samsung Exynos SoC
- bindings as unstable
-Date: Sat, 17 Dec 2016 21:37:46 +0200
-Message-ID: <20161217193746.GA8980@kozik-lap>
-References: <1481897676-13578-1-git-send-email-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v8 6/8] ARM: EXYNOS: remove secondary startup
+ initialization from smp_prepare_cpus
+Date: Sun, 18 Dec 2016 07:06:27 +0900
+Message-ID: <CAGTfZH2WiaKBrZqv6GsLiScs--A=tfer6H7PS6Ok+ADi20e9NA@mail.gmail.com>
+References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
+ <1481375323-29724-7-git-send-email-pankaj.dubey@samsung.com> <20161217184806.GB30265@kozik-lap>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f195.google.com ([209.85.210.195]:35926 "EHLO
-        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751932AbcLQThx (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:32819 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757136AbcLQWGs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 17 Dec 2016 14:37:53 -0500
-Content-Disposition: inline
-In-Reply-To: <1481897676-13578-1-git-send-email-m.szyprowski@samsung.com>
+        Sat, 17 Dec 2016 17:06:48 -0500
+Received: by mail-qt0-f193.google.com with SMTP id n6so14987149qtd.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 Dec 2016 14:06:48 -0800 (PST)
+In-Reply-To: <20161217184806.GB30265@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, geert+renesas@glider.be, Marek Szyprowski <m.szyprowski@samsung.com>, javier@osg.samsung.com, Kukjin Kim <kgene@kernel.org>, thomas.ab@samsung.com
 
-On Fri, Dec 16, 2016 at 03:14:36PM +0100, Marek Szyprowski wrote:
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
-> 
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
-> 
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings and allow to make cleanup of the existing code and device tree
-> files, lets mark Samsung Exynos SoC platform bindings as unstable. This
-> means that bindings can may change at any time and users should use the
-> dtb file compiled from the same kernel source tree as the kernel image.
+Hi Krzysztof,
 
-I agree but please re-send it after merge window. This is not the best
-time to start discussions about it.
+2016-12-18 3:48 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Sat, Dec 10, 2016 at 06:38:41PM +0530, Pankaj Dubey wrote:
+>> We are taking care of setting secondary cpu boot address in
+>> exynos_boot_secondary just before sending ipi to secondary CPUs,
+>> so we can safely remove this setting from smp_prepare_cpus.
+>
+> Indeed setting boot address is doubled. However between them, the power
+> is turned on and Exynos3250 is being restarted.
+>
+> It would be nice to test it on Exynos3250 (Artik5 or Gear2?) and some of
+> Exynos4 family. Beside that looks good to me, I just want to see some
+> tested-by.
 
-Best regards,
-Krzysztof
+I'll test it on Exynos3250(gear2,artik5) and Exynos4(trats2) on Monday
+and send the test result.
+
+Best Regards,
+Chanwoo Choi
+
+[snip]
