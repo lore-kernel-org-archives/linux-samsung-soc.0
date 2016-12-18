@@ -1,46 +1,37 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v8 6/8] ARM: EXYNOS: remove secondary startup
- initialization from smp_prepare_cpus
-Date: Sun, 18 Dec 2016 07:06:27 +0900
-Message-ID: <CAGTfZH2WiaKBrZqv6GsLiScs--A=tfer6H7PS6Ok+ADi20e9NA@mail.gmail.com>
-References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
- <1481375323-29724-7-git-send-email-pankaj.dubey@samsung.com> <20161217184806.GB30265@kozik-lap>
-Reply-To: cwchoi00@gmail.com
+From: Robie Basak <robie@justgohome.co.uk>
+Subject: Regression: CONFIG_IP_MULTICAST must now be defined in
+ exynos_defconfig
+Date: Sun, 18 Dec 2016 13:19:12 +0000
+Message-ID: <20161218131912.GG4624@mal.justgohome.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:32819 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757136AbcLQWGs (ORCPT
+Received: from b-painless.mh.aa.net.uk ([81.187.30.52]:37501 "EHLO
+        b-painless.mh.aa.net.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753059AbcLROCb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 17 Dec 2016 17:06:48 -0500
-Received: by mail-qt0-f193.google.com with SMTP id n6so14987149qtd.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 Dec 2016 14:06:48 -0800 (PST)
-In-Reply-To: <20161217184806.GB30265@kozik-lap>
+        Sun, 18 Dec 2016 09:02:31 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, geert+renesas@glider.be, Marek Szyprowski <m.szyprowski@samsung.com>, javier@osg.samsung.com, Kukjin Kim <kgene@kernel.org>, thomas.ab@samsung.com
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Nikolay Borisov <kernel@kyup.com>
 
-Hi Krzysztof,
+Kukjin/Krzysztof,
 
-2016-12-18 3:48 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Sat, Dec 10, 2016 at 06:38:41PM +0530, Pankaj Dubey wrote:
->> We are taking care of setting secondary cpu boot address in
->> exynos_boot_secondary just before sending ipi to secondary CPUs,
->> so we can safely remove this setting from smp_prepare_cpus.
->
-> Indeed setting boot address is doubled. However between them, the power
-> is turned on and Exynos3250 is being restarted.
->
-> It would be nice to test it on Exynos3250 (Artik5 or Gear2?) and some of
-> Exynos4 family. Beside that looks good to me, I just want to see some
-> tested-by.
+Nikolay's commit dcd87999d ("igmp: net: Move igmp namespace init to
+correct file") regressed exynos_defconfig for me. In userspace (Ubuntu
+14.04), I used libnss-mdns with v4.2(.x), but this commit stopped me
+from being able to resolve local names (eg. "foo.local") published using
+mDNS from elsewhere on the network in v4.9.
 
-I'll test it on Exynos3250(gear2,artik5) and Exynos4(trats2) on Monday
-and send the test result.
+It looks like the commit adds extra conditional code based on
+CONFIG_IP_MULTICAST. It turned out that exynos_defconfig doesn't have
+CONFIG_IP_MULTICAST defined. Defining it solved my problem.
 
-Best Regards,
-Chanwoo Choi
+I'm using a Samsung ARM Chromebook.
 
-[snip]
+I can define CONFIG_IP_MULTICAST myself easily enough, but shouldn't
+this be defined in exynos_defconfig anyway?
+
+Robie
