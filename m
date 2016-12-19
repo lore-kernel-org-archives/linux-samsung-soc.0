@@ -1,148 +1,134 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3] arm: dts: exynos: Enable DMA support for UART modules on
- Exynos5 SoCs
-Date: Mon, 19 Dec 2016 11:00:48 +0100
-Message-ID: <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
-References: <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33288 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932235AbcLSKBJ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 05:01:09 -0500
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIF01NGLFTJ1K30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2016 19:01:07 +0900 (KST)
-In-reply-to: <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC v2 0/7] PM / devfreq: draft for OPP suspend impl (even
+ draftier)
+Date: Mon, 19 Dec 2016 20:18:19 +0900
+Message-ID: <5857C1FB.2040101@samsung.com>
+References: <CGME20161219021836epcas1p37f8c12ca0bc7a404fc206f81331811bb@epcas1p3.samsung.com>
+ <1482113787-28422-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1482113787-28422-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, m.reichl@fivetechno.de, myungjoo.ham@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-UART modules can use DMA for offloading data transfers and reducing
-interrupts, so enable this feature for Exynos5 boards. Tested on
-Google ChromeBook Snow (Exynos5250), Odroid XU (Exynos5410) and Odroid
-XU3 (Exynos5422) boards.
+Hi Tobias,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v3:
-- added Exynos5410
-- fixed serial 1/2 again, in v2 they were incorrectly swaped as a result
-  of my hurry in patch posting
+On 2016년 12월 19일 11:16, Tobias Jakobi wrote:
+> Hello everyone,
+> 
+> this is v2 of the RFC. You can find the first version here:
+> https://www.spinics.net/lists/linux-samsung-soc/msg56331.html
+> 
+> I'm still unhappy with this approach, for multiple reasons:
+> - the global boolean -- cpufreq also has it, but I have the feeling that we don't need it here.
 
-v2:
-- added Exynos5250
-- fixed copy/paste typo for serial 2 and 3
----
- arch/arm/boot/dts/exynos5250.dtsi | 8 ++++++++
- arch/arm/boot/dts/exynos5410.dtsi | 8 ++++++++
- arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
- 3 files changed, 24 insertions(+)
+> - keeping track of which device was suspended looks convoluted -- some reference counting would definitely help here.
+> - the bus driver (here exynos_bus) sets suspend_freq, but devfreq core actually uses it.
+> - returning -EBUSY from devfreq_{suspend,resume}_device() requires handling this in the device drivers -- again refcounting could solve this.
+> - rather a question: do we need the restore on resume -- or should be just wait for the next update through the governor?
+> - like Chanwoo already suggested, move setting suspend freq to devfreq_suspend_device().
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index b6d7444..0e04460 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1043,21 +1043,29 @@
- &serial_0 {
- 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 13>, <&pdma0 14>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_1 {
- 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 15>, <&pdma1 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_2 {
- 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 15>, <&pdma0 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_3 {
- 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 17>, <&pdma1 18>;
-+	dma-names = "rx", "tx";
- };
- 
- #include "exynos5250-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 2b6adaf..7eab4bc 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -340,21 +340,29 @@
- &serial_0 {
- 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 13>, <&pdma0 14>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_1 {
- 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 15>, <&pdma1 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_2 {
- 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 15>, <&pdma0 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_3 {
- 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 17>, <&pdma1 18>;
-+	dma-names = "rx", "tx";
- };
- 
- &sss {
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 906a1a4..0154c2e 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1406,21 +1406,29 @@
- &serial_0 {
- 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 13>, <&pdma0 14>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_1 {
- 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 15>, <&pdma1 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_2 {
- 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma0 15>, <&pdma0 16>;
-+	dma-names = "rx", "tx";
- };
- 
- &serial_3 {
- 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
- 	clock-names = "uart", "clk_uart_baud0";
-+	dmas = <&pdma1 17>, <&pdma1 18>;
-+	dma-names = "rx", "tx";
- };
- 
- &sss {
+I want to separate the two subject as following:
+- subject1 : Where should devfreq set the suspend-freq for device.
+- subject2 : How can devfreq support the duplicate call of devfreq_{suspend,resume}_device().
+
+For subject1:
+I explain why devfreq need to set the supend-freq in devfreq_suspend_device().
+Following explanation do not include the refcount of suspend and bit operation.
+
+The devfreq has two case to enter the suspend mode for devfreq instance as following:
+case 1. Some device driver call the 'devfreq_suspend/resume_device()' directly regardless the sequence of suspend mode (echo mem > /sys/power/state).
+case 2. The system enter the suspend mode by using 'echo mem > /sys/power/state' command.
+
+When setting suspend frequency in the devfreq_suspend/resume_device(),
+this suggestion can cover all cases for suspend freq setting.
+
+I make the separate function[1] to set the frequency.
+[1] https://git.kernel.org/cgit/linux/kernel/git/chanwoo/linux.git/commit/?h=devfreq-test&id=8851e989ccaf0ee23a4278724227e879f8752625
+
+	devfreq_suspend_device(struct devfreq *devfreq) {
+		/* Enter the suspend mode */
+		devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_SUSPEND, NULL);
+
+		/* Set the suspend-freq */
+		devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
+	}
+
+	devfreq_resume_device(struct devfreq *devfreq) {
+		/* Set the resume freq */
+		devfreq_set_target(devfreq, devfreq->resume_freq, 0);
+
+		/* Wakeup from suspend mode */
+		devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_RESUME, NULL);
+	}
+
+And,
+devfreq_suspend() call the devfreq_suspend_device() for all registered devfreq instance.
+
+	void devfreq_suspend(void)
+	{
+		mutex_lock(&devfreq_list_lock);
+
+		list_for_each_entry(devfreq, &devfreq_list, node) {
+			ret = devfreq_suspend_device(devfreq);
+			if (ret < 0)
+				dev_warn(&devfreq->dev, "%s: governor suspend failed\n", __func__);
+		}
+
+		mutex_unlock(&devfreq_list_lock);
+	}
+
+	void devfreq_resume(void)
+	{
+		mutex_lock(&devfreq_list_lock);
+
+		list_for_each_entry(devfreq, &devfreq_list, node) {
+			ret = devfreq_resume_device(devfreq);
+			if (ret < 0)
+				dev_warn(&devfreq->dev, "%s: governor resume failed\n", __func__);
+		}
+
+		mutex_unlock(&devfreq_list_lock);
+	}
+
+
+For subject2:
+- subject2 : How can devfreq support the duplicate call of devfreq_{suspend,resume}_device().
+devfreq_{suspend,resume}_device() have to check whether devfreq device is already suspended or not
+with refcount or enum devfreq_flag_bits.
+
+If devfreq_{suspend,resume}_device() support it, devfreq_suspend/resume() don't need to consider duplicate call.
+
+> 
+> Concerning refcounting, I'm a bit unsure what we wanna count here? Usually we count usage. If usage goes from zero to one, we do something (alloc), and when it goes back from one to zero (free).
+> If we keep the current semantics however we have to count number of suspends. That's kinda unintuitive if you ask me.
+> 
+> With best wishes,
+> Tobias
+> 
+> Tobias Jakobi (7):
+>   PM / devfreq: Replace 'stop_polling' boolean with flags
+>   PM / devfreq: Track suspend state of DevFreq devices
+>   PM / devfreq: Add DevFreq subsystem suspend/resume
+>   PM / devfreq: Suspend subsystem on system suspend/hibernate
+>   PM / devfreq: exynos-bus: add support for suspend OPP
+>   ARM: dts: exynos4x12: add suspend OPP for DMC and leftbus
+>   ARM: dts: exynos4x12: add suspend OPP for DMC and leftbus for Prime
+> 
+>  arch/arm/boot/dts/exynos4412-prime.dtsi |   2 +
+>  arch/arm/boot/dts/exynos4x12.dtsi       |   2 +
+>  drivers/base/power/main.c               |   3 +
+>  drivers/devfreq/devfreq.c               | 170 ++++++++++++++++++++++++++++++--
+>  drivers/devfreq/exynos-bus.c            |   8 ++
+>  include/linux/devfreq.h                 |  14 ++-
+>  6 files changed, 188 insertions(+), 11 deletions(-)
+> 
+
+
 -- 
-1.9.1
+Regards,
+Chanwoo Choi
