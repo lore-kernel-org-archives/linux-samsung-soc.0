@@ -1,58 +1,88 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v8 1/8] soc: samsung: add exynos chipid driver support
-Date: Mon, 19 Dec 2016 18:59:08 +0530
-Message-ID: <9b64f5c0-e289-9091-c784-ae4bfad3caf5@samsung.com>
-References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
- <1481375323-29724-2-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161219120000epcas1p1904dfec707de0ce20341279f354d74dc@epcas1p1.samsung.com>
- <ceba534d-108d-9ac4-d29c-c2a55af49849@fivetechno.de>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add missing CPU frequencies for Exynos5422/5800
+Date: Mon, 19 Dec 2016 19:05:27 +0530
+Message-ID: <5857E21F.2080903@samsung.com>
+References: <5220084.l31t5oJbsy@amdc3058>
+ <CGME20161213191823epcas5p346582b73ad9b401d9e773a1b076f1f61@epcas5p3.samsung.com>
+ <26ffeee4-ff43-b3d3-3267-5fcbc50e2974@osg.samsung.com>
+ <2340115.HEG9AYUCMD@amdc3058>
+ <CAD=FV=W6R8cNuR+gTnNRF6d-TNgzUeYTwuCp27efoMsd0YOH3g@mail.gmail.com>
+ <20161216073720.GA3489@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37234 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752668AbcLSN0i (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 08:26:38 -0500
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIF00IVYPCCOD90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2016 22:26:36 +0900 (KST)
-In-reply-to: <ceba534d-108d-9ac4-d29c-c2a55af49849@fivetechno.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20161216073720.GA3489@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Doug Anderson <dianders@chromium.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Arjun K V <arjun.kv@samsung.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Andreas Faerber <afaerber@suse.de>, Thomas Abraham <thomas.ab@samsung.com>, Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Markus,
+Hi,
 
-On Monday 19 December 2016 05:29 PM, Markus Reichl wrote:
-> Hi Pankaj,
-> 
-> tested your patches 1/8 and 2/8 + Javiers diff for verbose output: 
-> https://www.spinics.net/lists/linux-samsung-soc/msg56576.html
-> 
-> on Odroid U3:
-> [    0.080178] Exynos: CPU[UNKNOWN] CPU_REV[0x20] PKG_ID[0x602d058] AUX_INFO[0x0] 
-> on Odroid X:
-> [    0.080169] Exynos: CPU[UNKNOWN] CPU_REV[0x11] PKG_ID[0x1b0f6008] AUX_INFO[0x0] 
-> 
-> XU4:	 [    0.080039] Exynos: CPU[EXYNOS5800] CPU_REV[0x1] PKG_ID[0x1c04832a] AUX_INFO[0x43] 
-> XU3:	 [    0.080034] Exynos: CPU[EXYNOS5800] CPU_REV[0x1] PKG_ID[0x1604832a] AUX_INFO[0x43] 
-> XU3-lite:[    0.080033] Exynos: CPU[EXYNOS5800] CPU_REV[0x1] PKG_ID[0x5a12832a] AUX_INFO[0x13000054] 
-> 
-> Regards,
-> --
-> Markus Reichl
+On 12/16/2016 01:07 PM, Krzysztof Kozlowski wrote:
+> On Thu, Dec 15, 2016 at 04:52:58PM -0800, Doug Anderson wrote:
+>>> [ I added Arjun to Cc:, maybe he can help in explaining this issue
+>>>    (unfortunately Inderpal's email is no longer working). ]
+>>>
+>>> Please also note that on Exynos5422/5800 SoCs the same ARM rail
+>>> voltage is used for 1.9 GHz & 2.0 GHz OPPs as for the 1.8 GHz one.
+>>> IOW if the problem exists it is already present in the mainline
+>>> kernel.
+>>
+>> Interesting.  In the ChromeOS tree I see significantly higher voltages
+>> needed...  Note that one might naively look at
+>> <https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/cpufreq/exynos5420-cpufreq.c#178>.
+>>
+>> 1362500, /* L0  2100 */
+>> 1312500, /* L1  2000 */
+>>
+>> ..but, amazingly enough those voltages aren't used at all.  Surprise!
+>>
+>> I believe that the above numbers are actually not used and the ASV
+>> numbers are used instead.  See
+>> <https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/arch/arm/mach-exynos/include/mach/asv-exynos542x.h#452>
+>>
+>> { 2100000,
+>> 1350000, 1350000, 1350000, 1350000, 1350000,
+>> 1337500, 1325000, 1312500, 1300000, 1287500,
+>> 1275000, 1262500, 1250000, 1237500 },
+>>
+>> I believe that interpretation there is: some bins of the CPU can run
+>> at 2.1 GHz just fine at 1.25 V but others need up to 1.35V.
+>
+> That is definitely the case. One could just look at vendors ASV table
+> (for 1.9 GHz):
+> { 1900000, 1300000, 1287500, 1262500, 1237500, 1225000, 1212500,
+>                      1200000, 1187500, 1175000, 1162500, 1150000,
+> 		             1137500, 1125000, 1112500, 1112500},
+>
+> The theoretical difference is up to 1.875V! From my experiments I saw
+> BIN1 chips which should be the same... but some working on 1.2V, some on
+> 1.225V (@1.9 GHz). I didn't see any requiring higher voltages but that
+> does not mean that there aren't such...
+>
+>> ...so if you're running at 2.1 GHz at 1.25V then perhaps you're just
+>> running on a CPU from a nice bin?
+>
+> Would be nice to see a dump of PKG_ID and AUX_INFO chipid registers
+> along with name of tested board. Because the "Tested on XU3" is not
+> sufficient.
+>
+I agree, we should be dumping PKG_ID and other chip info to know on 
+which BIN sample this patch is tested on...
+As far as Peach-{pit/pi} boards are concerns, this is what I can remember:
+1> 5420 (PIT) -> max recommended target frequency is 1800 MHz for A15
+2> 5800 (PI)-> max recommended target frequency can go upto 2000 MHz, 
+with INT rail locking.
+INT rail locking schemes never made to mainline, so to be safer side 
+instead of bumping the clock and voltages better to keep it at safer 
+range for pit and pi, probably thats why it was kept at 1800MHz.
+I am not sure if the same limitation applies to Odroid-XU3 samples.
 
-Thanks for testing and letting us know.
 
-Hopefully this driver will be of more use in near future, as Javiers
-pointed out it can help us to select better ASV tables based on PKG_ID
-and AUX_INFO. Even though these fields are not part of the driver in my
-patch, it can be extended as per need.
-
-Thanks,
-Pankaj Dubey
+> Best regards,
+> Krzysztof
+>
+>
+>
