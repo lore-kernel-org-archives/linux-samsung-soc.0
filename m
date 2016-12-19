@@ -1,7 +1,7 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH 4/4] PCI: exynos: remove the duplicated codes
-Date: Mon, 19 Dec 2016 17:17:40 +0900
-Message-ID: <20161219081740.5457-5-jh80.chung@samsung.com>
+Subject: [PATCH 3/4] PCI: exynos: Use the bitops API to operate the bit shifting
+Date: Mon, 19 Dec 2016 17:17:39 +0900
+Message-ID: <20161219081740.5457-4-jh80.chung@samsung.com>
 References: <20161219081740.5457-1-jh80.chung@samsung.com>
 Return-path: <linux-pci-owner@vger.kernel.org>
 In-reply-to: <20161219081740.5457-1-jh80.chung@samsung.com>
@@ -10,56 +10,84 @@ To: linux-pci@vger.kernel.org
 Cc: helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Removed the duplicated codes.
-It can use the more simply than now.
+Just use the bitops api to operate the bit.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- drivers/pci/host/pci-exynos.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/pci/host/pci-exynos.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index d705bfe..33562cf 100644
+index d64e8f1..d705bfe 100644
 --- a/drivers/pci/host/pci-exynos.c
 +++ b/drivers/pci/host/pci-exynos.c
-@@ -116,30 +116,24 @@ static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
- {
- 	u32 val;
+@@ -40,19 +40,19 @@ struct exynos_pcie {
  
--	if (on) {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	if (on)
- 		val |= PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
--	} else {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	else
- 		val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
--	}
-+	exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
- }
+ /* PCIe ELBI registers */
+ #define PCIE_IRQ_PULSE			0x000
+-#define IRQ_INTA_ASSERT			(0x1 << 0)
+-#define IRQ_INTB_ASSERT			(0x1 << 2)
+-#define IRQ_INTC_ASSERT			(0x1 << 4)
+-#define IRQ_INTD_ASSERT			(0x1 << 6)
++#define IRQ_INTA_ASSERT			BIT(0)
++#define IRQ_INTB_ASSERT			BIT(2)
++#define IRQ_INTC_ASSERT			BIT(4)
++#define IRQ_INTD_ASSERT			BIT(6)
+ #define PCIE_IRQ_LEVEL			0x004
+ #define PCIE_IRQ_SPECIAL		0x008
+ #define PCIE_IRQ_EN_PULSE		0x00c
+ #define PCIE_IRQ_EN_LEVEL		0x010
+-#define IRQ_MSI_ENABLE			(0x1 << 2)
++#define IRQ_MSI_ENABLE			BIT(2)
+ #define PCIE_IRQ_EN_SPECIAL		0x014
+ #define PCIE_PWR_RESET			0x018
+ #define PCIE_CORE_RESET			0x01c
+-#define PCIE_CORE_RESET_ENABLE		(0x1 << 0)
++#define PCIE_CORE_RESET_ENABLE		BIT(0)
+ #define PCIE_STICKY_RESET		0x020
+ #define PCIE_NONSTICKY_RESET		0x024
+ #define PCIE_APP_INIT_RESET		0x028
+@@ -61,7 +61,7 @@ struct exynos_pcie {
+ #define PCIE_ELBI_LTSSM_ENABLE		0x1
+ #define PCIE_ELBI_SLV_AWMISC		0x11c
+ #define PCIE_ELBI_SLV_ARMISC		0x120
+-#define PCIE_ELBI_SLV_DBI_ENABLE	(0x1 << 21)
++#define PCIE_ELBI_SLV_DBI_ENABLE	BIT(21)
  
- static void exynos_pcie_sideband_dbi_r_mode(struct exynos_pcie *ep, bool on)
- {
- 	u32 val;
+ /* PCIe Purple registers */
+ #define PCIE_PHY_GLOBAL_RESET		0x000
+@@ -79,27 +79,27 @@ struct exynos_pcie {
+ #define PCIE_PHY_DCC_FEEDBACK		0x014
+ #define PCIE_PHY_PLL_DIV_1		0x05c
+ #define PCIE_PHY_COMMON_POWER		0x064
+-#define PCIE_PHY_COMMON_PD_CMN		(0x1 << 3)
++#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
+ #define PCIE_PHY_TRSV0_EMP_LVL		0x084
+ #define PCIE_PHY_TRSV0_DRV_LVL		0x088
+ #define PCIE_PHY_TRSV0_RXCDR		0x0ac
+ #define PCIE_PHY_TRSV0_POWER		0x0c4
+-#define PCIE_PHY_TRSV0_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV0_LVCC		0x0dc
+ #define PCIE_PHY_TRSV1_EMP_LVL		0x144
+ #define PCIE_PHY_TRSV1_RXCDR		0x16c
+ #define PCIE_PHY_TRSV1_POWER		0x184
+-#define PCIE_PHY_TRSV1_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV1_LVCC		0x19c
+ #define PCIE_PHY_TRSV2_EMP_LVL		0x204
+ #define PCIE_PHY_TRSV2_RXCDR		0x22c
+ #define PCIE_PHY_TRSV2_POWER		0x244
+-#define PCIE_PHY_TRSV2_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV2_LVCC		0x25c
+ #define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
+ #define PCIE_PHY_TRSV3_RXCDR		0x2ec
+ #define PCIE_PHY_TRSV3_POWER		0x304
+-#define PCIE_PHY_TRSV3_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV3_LVCC		0x31c
  
--	if (on) {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	if (on)
- 		val |= PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
--	} else {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	else
- 		val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
--	}
-+	exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
- }
- 
- static void exynos_pcie_assert_core_reset(struct exynos_pcie *ep)
+ static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
 -- 
 2.10.2
