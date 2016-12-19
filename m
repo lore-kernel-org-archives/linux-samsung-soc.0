@@ -1,74 +1,148 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] arm: dts: exynos: Enable DMA support for UART modules
- on Exynos5 SoCs
-Date: Mon, 19 Dec 2016 10:55:15 +0100
-Message-ID: <0799b741-1c83-3b48-e428-68d3058f1206@samsung.com>
-References: <1481891254-7992-1-git-send-email-m.szyprowski@samsung.com>
- <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161216165113epcas5p19adefff709f4fc3df43e63feae911141@epcas5p1.samsung.com>
- <20161216165059.GA3428@kozik-lap>
- <da1ecfbc-d4f4-57f1-fd22-ab09a63233f8@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3] arm: dts: exynos: Enable DMA support for UART modules on
+ Exynos5 SoCs
+Date: Mon, 19 Dec 2016 11:00:48 +0100
+Message-ID: <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
+References: <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19362 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754906AbcLSJzU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:33288 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932235AbcLSKBJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Dec 2016 04:55:20 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout1.w1.samsung.com
+        Mon, 19 Dec 2016 05:01:09 -0500
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIF004G9FK56Q10@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2016 09:55:17 +0000 (GMT)
-In-reply-to: <da1ecfbc-d4f4-57f1-fd22-ab09a63233f8@samsung.com>
+ with ESMTP id <0OIF01NGLFTJ1K30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2016 19:01:07 +0900 (KST)
+In-reply-to: <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi All,
+UART modules can use DMA for offloading data transfers and reducing
+interrupts, so enable this feature for Exynos5 boards. Tested on
+Google ChromeBook Snow (Exynos5250), Odroid XU (Exynos5410) and Odroid
+XU3 (Exynos5422) boards.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v3:
+- added Exynos5410
+- fixed serial 1/2 again, in v2 they were incorrectly swaped as a result
+  of my hurry in patch posting
 
-On 2016-12-19 07:37, Marek Szyprowski wrote:
-> Hi Krzysztof,
->
->
-> On 2016-12-16 17:50, Krzysztof Kozlowski wrote:
->> On Fri, Dec 16, 2016 at 01:39:00PM +0100, Marek Szyprowski wrote:
->>> UART modules can use DMA for offloading data transfers and reducing
->>> interrupts, so enable this feature for Exynos5 boards. Tested on
->>> Google ChromeBook Snow (Exynos5250) and Odroid XU3 (Exynos5422) boards.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>> v2:
->>> - added Exynos5250
->>> - fixed copy/paste typo for serial 2 and 3
->>> ---
->>>   arch/arm/boot/dts/exynos5250.dtsi | 8 ++++++++
->>>   arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
->>>   2 files changed, 16 insertions(+)
->>>
->> On Exynos4412 enabling DMA for serial exposed some interesting bugs so I
->> assume here the fun will start after applying? :)
->
-> Enabling DMA on Exynos4412 already exposed bugs, which finally were fixed
-> and now it works really fine there. I don't expect any issues after 
-> enabling
-> it on Exynos5250/5422.
->
->> Looks good, what about Exynos5410?
->
-> Exynos5410 will be handled separately, because it needs more patches - 
-> PL3310
-> DMA controllers are not yet defined nor clocks for them.
+v2:
+- added Exynos5250
+- fixed copy/paste typo for serial 2 and 3
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 8 ++++++++
+ arch/arm/boot/dts/exynos5410.dtsi | 8 ++++++++
+ arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
+ 3 files changed, 24 insertions(+)
 
-Huh, I didn't notice that this has been already in -next. I will updated the
-patch to cover Exynos5410 too.
-
-Best regards
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index b6d7444..0e04460 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -1043,21 +1043,29 @@
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 13>, <&pdma0 14>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_1 {
+ 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 15>, <&pdma1 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_2 {
+ 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 15>, <&pdma0 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_3 {
+ 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 17>, <&pdma1 18>;
++	dma-names = "rx", "tx";
+ };
+ 
+ #include "exynos5250-pinctrl.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+index 2b6adaf..7eab4bc 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -340,21 +340,29 @@
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 13>, <&pdma0 14>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_1 {
+ 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 15>, <&pdma1 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_2 {
+ 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 15>, <&pdma0 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_3 {
+ 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 17>, <&pdma1 18>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &sss {
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 906a1a4..0154c2e 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1406,21 +1406,29 @@
+ &serial_0 {
+ 	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 13>, <&pdma0 14>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_1 {
+ 	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 15>, <&pdma1 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_2 {
+ 	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma0 15>, <&pdma0 16>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &serial_3 {
+ 	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+ 	clock-names = "uart", "clk_uart_baud0";
++	dmas = <&pdma1 17>, <&pdma1 18>;
++	dma-names = "rx", "tx";
+ };
+ 
+ &sss {
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
