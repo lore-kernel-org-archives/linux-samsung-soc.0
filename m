@@ -1,32 +1,82 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] clk: samsung: exynos5433: Set NoC (Network On Chip)
- clocks as critical
-Date: Tue, 20 Dec 2016 11:47:06 +0100
-Message-ID: <662a6608-e6c7-fc1b-6bea-47548640913d@samsung.com>
-References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161208050020epcas2p444709cd01b75a3e49ca60ae41338e017@epcas2p4.samsung.com>
- <1481173091-9728-2-git-send-email-cw00.choi@samsung.com>
- <58521D0F.5040704@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/2] s5p-mfc fix for using reserved memory
+Date: Tue, 20 Dec 2016 12:58:08 +0100
+Message-ID: <ea03c72a-a0f4-46e6-bd29-474549a0f145@samsung.com>
+References: <CGME20161216115004epcas1p276eddca803dcafe3470e223386b86da0@epcas1p2.samsung.com>
+ <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <58521D0F.5040704-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:12407 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752329AbcLTL6P (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 20 Dec 2016 06:58:15 -0500
+In-reply-to: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
 
-On 12/15/2016 05:33 AM, Chanwoo Choi wrote:
-> Could you please review this patch?
+Hi Pankaj
 
-Chanwoo, the patch looks good to me, I'm going to queue it after
-v4.10-rc1 is released.
 
+On 2016-12-16 12:48, Pankaj Dubey wrote:
+> It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
+> and we try to use reserved memory for MFC, reqbufs fails with below
+> mentioned error
+> ---------------------------------------------------------------------------
+> V4L2 Codec decoding example application
+> Kamil Debski <k.debski@samsung.com>
+> Copyright 2012 Samsung Electronics Co., Ltd.
+>
+> Opening MFC.
+> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
+> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
+> 42.339165] Remapping memory failed, error: -6
+>
+> MFC Open Success.
+> (main.c:main:711): Successfully opened all necessary files and devices
+> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
+> size=4194304 (requested=4194304)
+> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
+> (requested 2)
+>
+> [App] Out buf phy : 0x00000000, virt : 0xffffffff
+> Output Length is = 0x300000
+> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
+> -------------------------------------------------------------------------
+> This is because the device requesting for memory is mfc0.left not the parent mfc0.
+> Hence setting of alloc_devs need to be done only if IOMMU is enabled
+> and in that case both the left and right device is treated as mfc0 only.
+> Also we need to populate vb2_queue's dev pointer with mfc dev pointer.
+
+I also got this issue but Your solution is imho not the proper approach.
+Too much hacking in the driver, while the issue is in the core. ARM64 
+requires
+to call arch_setup_dma_ops() for each device that will be used for 
+dma-mapping.
+So the issue is in drivers/of/of_reserved_mem.c - in
+of_reserved_mem_device_init_by_idx() function, which should ensure that
+arch_setup_dma_ops() is called also for the virtual devices for reserved 
+memory.
+
+s5p-mfc driver however still requires some patching for 
+dma-mapping/iommu glue
+used on ARM64 architecture.
+
+> Smitha T Murthy (2):
+>    media: s5p-mfc: convert drivers to use the new vb2_queue dev field
+>    media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
+>
+>   drivers/media/platform/s5p-mfc/s5p_mfc.c     |  2 ++
+>   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 ++++++++++-------
+>   drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 18 +++++++++++-------
+>   3 files changed, 23 insertions(+), 14 deletions(-)
+>
+
+Best regards
 -- 
-Thanks,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
