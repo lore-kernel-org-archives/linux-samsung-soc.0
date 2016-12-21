@@ -1,99 +1,45 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 0/2] s5p-mfc fix for using reserved memory
-Date: Wed, 21 Dec 2016 11:14:39 +0530
-Message-ID: <57a75b39-95bf-16f2-54fb-7c7e032a2eb7@samsung.com>
-References: <CGME20161216115004epcas1p276eddca803dcafe3470e223386b86da0@epcas1p2.samsung.com>
- <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
- <ea03c72a-a0f4-46e6-bd29-474549a0f145@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48068 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbcLUFmP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 00:42:15 -0500
-In-reply-to: <ea03c72a-a0f4-46e6-bd29-474549a0f145@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] of: reserved_mem: set dma_ops for devices using reserved mem
+Date: Wed, 21 Dec 2016 11:14:31 +0530
+Message-ID: <1482299071-22637-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
 
-Hi Marek,
+From: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-On Tuesday 20 December 2016 05:28 PM, Marek Szyprowski wrote:
-> Hi Pankaj
-> 
-> 
-> On 2016-12-16 12:48, Pankaj Dubey wrote:
->> It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
->> and we try to use reserved memory for MFC, reqbufs fails with below
->> mentioned error
->> ---------------------------------------------------------------------------
->>
->> V4L2 Codec decoding example application
->> Kamil Debski <k.debski@samsung.com>
->> Copyright 2012 Samsung Electronics Co., Ltd.
->>
->> Opening MFC.
->> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
->> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
->> 42.339165] Remapping memory failed, error: -6
->>
->> MFC Open Success.
->> (main.c:main:711): Successfully opened all necessary files and devices
->> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
->> size=4194304 (requested=4194304)
->> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
->> (requested 2)
->>
->> [App] Out buf phy : 0x00000000, virt : 0xffffffff
->> Output Length is = 0x300000
->> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
->> -------------------------------------------------------------------------
->> This is because the device requesting for memory is mfc0.left not the
->> parent mfc0.
->> Hence setting of alloc_devs need to be done only if IOMMU is enabled
->> and in that case both the left and right device is treated as mfc0 only.
->> Also we need to populate vb2_queue's dev pointer with mfc dev pointer.
-> 
-> I also got this issue but Your solution is imho not the proper approach.
-> Too much hacking in the driver, while the issue is in the core. ARM64
-> requires
-> to call arch_setup_dma_ops() for each device that will be used for
-> dma-mapping.
-> So the issue is in drivers/of/of_reserved_mem.c - in
-> of_reserved_mem_device_init_by_idx() function, which should ensure that
-> arch_setup_dma_ops() is called also for the virtual devices for reserved
-> memory.
-> 
-> s5p-mfc driver however still requires some patching for
-> dma-mapping/iommu glue
-> used on ARM64 architecture.
-> 
+For some IPs, there may be virtual child devices created and for them its
+necessary to set the dma_ops if it's using reserved memory else it will call
+the dummy dma_ops during buffer operations for the child devices which will
+lead to memory mapping failure.
 
-Thanks for review and suggestion.
-Our initial investigation pointed out issue due to change in vb2_queue
-dev field by commit 2548fee63d9e ("[media] media/platform: convert
-drivers to use the new vb2_queue dev field"), where only for mfc q->dev
-pointer was not set.
+Signed-off-by: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/of/of_reserved_mem.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-But I think you are right, and of_reserved_mem_device_init_by_idx should
-take care of setting dma_ops for devices which calls this function. So I
-will be submitting new change soon to fix this issue after testing it.
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index 366d8c3..d507c35 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -354,6 +354,10 @@ int of_reserved_mem_device_init_by_idx(struct device *dev,
+ 		mutex_lock(&of_rmem_assigned_device_mutex);
+ 		list_add(&rd->list, &of_rmem_assigned_device_list);
+ 		mutex_unlock(&of_rmem_assigned_device_mutex);
++		/* ensure that dma_ops is set for virtual devices
++		 * using reserved memory
++		 */
++		of_dma_configure(dev, np);
+ 
+ 		dev_info(dev, "assigned reserved memory node %s\n", rmem->name);
+ 	} else {
+-- 
+2.7.4
 
-Thanks,
-Pankaj Dubey
-
->> Smitha T Murthy (2):
->>    media: s5p-mfc: convert drivers to use the new vb2_queue dev field
->>    media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
->>
->>   drivers/media/platform/s5p-mfc/s5p_mfc.c     |  2 ++
->>   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 ++++++++++-------
->>   drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 18 +++++++++++-------
->>   3 files changed, 23 insertions(+), 14 deletions(-)
->>
-> 
-> Best regards
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
