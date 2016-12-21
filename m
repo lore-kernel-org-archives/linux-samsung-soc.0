@@ -1,48 +1,99 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] Documentation: dt: Explicitly mark Samsung Exynos SoC
- bindings as unstable
-Date: Tue, 20 Dec 2016 21:36:29 -0600
-Message-ID: <20161221033629.xny3xnwhvkgcdlv7@rob-hp-laptop>
-References: <1481897676-13578-1-git-send-email-m.szyprowski@samsung.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 0/2] s5p-mfc fix for using reserved memory
+Date: Wed, 21 Dec 2016 11:14:39 +0530
+Message-ID: <57a75b39-95bf-16f2-54fb-7c7e032a2eb7@samsung.com>
+References: <CGME20161216115004epcas1p276eddca803dcafe3470e223386b86da0@epcas1p2.samsung.com>
+ <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
+ <ea03c72a-a0f4-46e6-bd29-474549a0f145@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34974 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752700AbcLUDge (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:48068 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751031AbcLUFmP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Dec 2016 22:36:34 -0500
-Content-Disposition: inline
-In-Reply-To: <1481897676-13578-1-git-send-email-m.szyprowski@samsung.com>
+        Wed, 21 Dec 2016 00:42:15 -0500
+In-reply-to: <ea03c72a-a0f4-46e6-bd29-474549a0f145@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
 
-On Fri, Dec 16, 2016 at 03:14:36PM +0100, Marek Szyprowski wrote:
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
+Hi Marek,
+
+On Tuesday 20 December 2016 05:28 PM, Marek Szyprowski wrote:
+> Hi Pankaj
 > 
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
 > 
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings and allow to make cleanup of the existing code and device tree
-> files, lets mark Samsung Exynos SoC platform bindings as unstable. This
-> means that bindings can may change at any time and users should use the
-> dtb file compiled from the same kernel source tree as the kernel image.
+> On 2016-12-16 12:48, Pankaj Dubey wrote:
+>> It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
+>> and we try to use reserved memory for MFC, reqbufs fails with below
+>> mentioned error
+>> ---------------------------------------------------------------------------
+>>
+>> V4L2 Codec decoding example application
+>> Kamil Debski <k.debski@samsung.com>
+>> Copyright 2012 Samsung Electronics Co., Ltd.
+>>
+>> Opening MFC.
+>> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
+>> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
+>> 42.339165] Remapping memory failed, error: -6
+>>
+>> MFC Open Success.
+>> (main.c:main:711): Successfully opened all necessary files and devices
+>> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
+>> size=4194304 (requested=4194304)
+>> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
+>> (requested 2)
+>>
+>> [App] Out buf phy : 0x00000000, virt : 0xffffffff
+>> Output Length is = 0x300000
+>> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
+>> -------------------------------------------------------------------------
+>> This is because the device requesting for memory is mfc0.left not the
+>> parent mfc0.
+>> Hence setting of alloc_devs need to be done only if IOMMU is enabled
+>> and in that case both the left and right device is treated as mfc0 only.
+>> Also we need to populate vb2_queue's dev pointer with mfc dev pointer.
+> 
+> I also got this issue but Your solution is imho not the proper approach.
+> Too much hacking in the driver, while the issue is in the core. ARM64
+> requires
+> to call arch_setup_dma_ops() for each device that will be used for
+> dma-mapping.
+> So the issue is in drivers/of/of_reserved_mem.c - in
+> of_reserved_mem_device_init_by_idx() function, which should ensure that
+> arch_setup_dma_ops() is called also for the virtual devices for reserved
+> memory.
+> 
+> s5p-mfc driver however still requires some patching for
+> dma-mapping/iommu glue
+> used on ARM64 architecture.
+> 
 
-I'd like this to be more explicit about which bindings in particular are 
-not considered stable (or which ones are). "exynos" covers lots of 
-things.
+Thanks for review and suggestion.
+Our initial investigation pointed out issue due to change in vb2_queue
+dev field by commit 2548fee63d9e ("[media] media/platform: convert
+drivers to use the new vb2_queue dev field"), where only for mfc q->dev
+pointer was not set.
 
-I'll still complain if commit messages don't say explicitly that the 
-commit breaks compatibility and why that is okay.
+But I think you are right, and of_reserved_mem_device_init_by_idx should
+take care of setting dma_ops for devices which calls this function. So I
+will be submitting new change soon to fix this issue after testing it.
 
-Rob
+Thanks,
+Pankaj Dubey
+
+>> Smitha T Murthy (2):
+>>    media: s5p-mfc: convert drivers to use the new vb2_queue dev field
+>>    media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
+>>
+>>   drivers/media/platform/s5p-mfc/s5p_mfc.c     |  2 ++
+>>   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 ++++++++++-------
+>>   drivers/media/platform/s5p-mfc/s5p_mfc_enc.c | 18 +++++++++++-------
+>>   3 files changed, 23 insertions(+), 14 deletions(-)
+>>
+> 
+> Best regards
