@@ -1,45 +1,34 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] of: reserved_mem: set dma_ops for devices using reserved mem
-Date: Wed, 21 Dec 2016 11:14:31 +0530
-Message-ID: <1482299071-22637-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [1/4] PCI: exynos: replace to one register accessor from each
+ accessors
+Date: Wed, 21 Dec 2016 11:44:49 +0530
+Message-ID: <0a2c20a6-f44c-3a2b-3115-0cc51e83a947@samsung.com>
+References: <20161219081740.5457-2-jh80.chung@samsung.com>
+ <CGME20161221061214epcas3p3033a93bbda1c9f4247a676750a10cdb1@epcas3p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:58342 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757389AbcLUGMR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 21 Dec 2016 01:12:17 -0500
+In-reply-to: <20161219081740.5457-2-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
+Cc: helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com
 
-From: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Hi Jaehoon,
 
-For some IPs, there may be virtual child devices created and for them its
-necessary to set the dma_ops if it's using reserved memory else it will call
-the dummy dma_ops during buffer operations for the child devices which will
-lead to memory mapping failure.
+On Monday 19 December 2016 01:47 PM, Jaehoon Chung wrote:
+> There is no reason to maintain *_blk/phy/elbi_* as register accessors.
+> It can be replaced to one register accessor.
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
 
-Signed-off-by: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/of/of_reserved_mem.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Looks fine. Nice cleanup :)
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 366d8c3..d507c35 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -354,6 +354,10 @@ int of_reserved_mem_device_init_by_idx(struct device *dev,
- 		mutex_lock(&of_rmem_assigned_device_mutex);
- 		list_add(&rd->list, &of_rmem_assigned_device_list);
- 		mutex_unlock(&of_rmem_assigned_device_mutex);
-+		/* ensure that dma_ops is set for virtual devices
-+		 * using reserved memory
-+		 */
-+		of_dma_configure(dev, np);
- 
- 		dev_info(dev, "assigned reserved memory node %s\n", rmem->name);
- 	} else {
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
