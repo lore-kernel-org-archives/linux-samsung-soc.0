@@ -1,88 +1,46 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Add audio power domain support to Exynos542x
- SoCs
-Date: Thu, 22 Dec 2016 15:17:44 +0100
-Message-ID: <1482416264-12169-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161222141755epcas5p4549c18c84aa823c553bb33a12eb82ee2@epcas5p4.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48597 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936591AbcLVOSA (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2016 09:18:00 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIL02HV8BPX2E20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 Dec 2016 23:17:57 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: ayaka <ayaka@soulik.info>
+Subject: Re: [RFC PATCH v3 2/2] drm/panel: Add support for Chunghwa
+ CLAA070WP03XG panel
+Date: Thu, 22 Dec 2016 22:17:23 +0800
+Message-ID: <ee10292d-2939-7664-67db-5879d558c24f@soulik.info>
+References: <1474311771-23321-1-git-send-email-ayaka@soulik.info>
+ <1474311771-23321-3-git-send-email-ayaka@soulik.info>
+ <20161206154625.GA28534@ulmo.ba.sec>
+ <2C9FE0C5-F521-48CD-B274-66128312CA75@soulik.info>
+ <20161207145555.kdg7azcrpnwnb2r6@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161207145555.kdg7azcrpnwnb2r6@phenom.ffwll.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Audio power domain includes following hardware modules: Pin controller
-for GPZ bank, AudioSS clock controller, PL330 ADMA device and Exynos I2S
-controller.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Currently this domain will not be turned off, because pinctrl and clock
-controller don't support runtime PM and PL330 ADMA requires irq-safe runtime
-PM. Separate patches for those devices/subsystems will be posted to get
-proper runtime PM available and finally let this power domain to be turned
-off.
----
- arch/arm/boot/dts/exynos5420.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 0154c2e..d9ebc33 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -188,6 +188,7 @@
- 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MAU_EPLL>,
- 				 <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
- 			clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
-+			power-domains = <&mau_pd>;
- 		};
- 
- 		mfc: codec@11000000 {
-@@ -317,6 +318,12 @@
- 			clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
- 		};
- 
-+		mau_pd: power-domain@100440E0 {
-+			compatible = "samsung,exynos4210-pd";
-+			reg = <0x100440E0 0x20>;
-+			#power-domain-cells = <0>;
-+		};
-+
- 		pinctrl_0: pinctrl@13400000 {
- 			compatible = "samsung,exynos5420-pinctrl";
- 			reg = <0x13400000 0x1000>;
-@@ -351,6 +358,7 @@
- 			compatible = "samsung,exynos5420-pinctrl";
- 			reg = <0x03860000 0x1000>;
- 			interrupts = <0 47 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&mau_pd>;
- 		};
- 
- 		amba {
-@@ -369,6 +377,7 @@
- 				#dma-cells = <1>;
- 				#dma-channels = <6>;
- 				#dma-requests = <16>;
-+				power-domains = <&mau_pd>;
- 			};
- 
- 			pdma0: pdma@121A0000 {
-@@ -441,6 +450,7 @@
- 			samsung,idma-addr = <0x03000000>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s0_bus>;
-+			power-domains = <&mau_pd>;
- 			status = "disabled";
- 		};
- 
--- 
-1.9.1
+On 12/07/2016 10:55 PM, Daniel Vetter wrote:
+> On Wed, Dec 07, 2016 at 08:57:23AM +0800, Ayaka wrote:
+>>
+>> 從我的 iPad 傳送
+>>
+>>> Thierry Reding <thierry.reding@gmail.com> 於 2016年12月6日 下午11:46 寫道：
+>>>
+>>>> On Tue, Sep 20, 2016 at 03:02:51AM +0800, Randy Li wrote:
+>>>> The Chunghwa CLAA070WP03XG is a 7" 1280x800 panel, which can be
+>>>> supported by the simple panel driver.
+>>>>
+>>>> Signed-off-by: Randy Li <ayaka@soulik.info>
+>>>> ---
+>>>> .../display/panel/chunghwa,claa070wp03xg.txt       |  7 ++++++
+>>>> drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+>>>> 2 files changed, 34 insertions(+)
+>>>> create mode 100644 Documentation/devicetree/bindings/display/panel/chunghwa,claa070wp03xg.txt
+>>> Applied, thanks.
+>> Wait, it is RFC, not pass the test.
+> Well 2 months of silence, it's reasonable to assume that this works for
+> you ... I guess you need to supply a fixup patch asap ;-)
+Sorry, my exynos 4412 board is broken, I will order one and fix this 
+problem, please don't merge this patch until somebody confirm that it is 
+adjusted to correct parameter.
+> -Daniel
