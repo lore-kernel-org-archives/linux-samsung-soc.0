@@ -1,215 +1,91 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v8 1/8] soc: samsung: add exynos chipid driver support
-Date: Wed, 21 Dec 2016 15:08:31 +0100
-Message-ID: <10428d31-62de-a897-b566-7057b8b27933@samsung.com>
-References: <1481375323-29724-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161210130628epcas3p3fc47057b3d75f7ea6be06bb6abbd0d58@epcas3p3.samsung.com>
- <1481375323-29724-2-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
+Date: Thu, 22 Dec 2016 10:44:30 +0100
+Message-ID: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19988 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752026AbcLUOIh (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47842 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750792AbcLVJoo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Dec 2016 09:08:37 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIJ00481GMARU70@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2016 14:08:34 +0000 (GMT)
-In-reply-to: <1481375323-29724-2-git-send-email-pankaj.dubey@samsung.com>
+        Thu, 22 Dec 2016 04:44:44 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, arnd@arndb.de, geert+renesas@glider.be, m.szyprowski@samsung.com, javier@osg.samsung.com, kgene@kernel.org, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 10.12.2016 14:08, Pankaj Dubey wrote:
-> Exynos SoCs have Chipid, for identification of product IDs and SoC revisions.
-> This patch intends to provide initialization code for all these functionalities,
-> at the same time it provides some sysfs entries for accessing these information
-> to user-space.
->
-> This driver uses existing binding for exynos-chipid.
->
-> CC: Grant Likely <grant.likely@linaro.org>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/soc/samsung/Kconfig         |   5 ++
->  drivers/soc/samsung/Makefile        |   1 +
->  drivers/soc/samsung/exynos-chipid.c | 116 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 122 insertions(+)
->  create mode 100644 drivers/soc/samsung/exynos-chipid.c
->
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index 2455339..f9ab858 100644
-> --- a/drivers/soc/samsung/Kconfig
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -14,4 +14,9 @@ config EXYNOS_PM_DOMAINS
->  	bool "Exynos PM domains" if COMPILE_TEST
->  	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
->  
-> +config EXYNOS_CHIPID
-> +	bool "Exynos Chipid controller driver" if COMPILE_TEST
-> +	depends on (ARM && ARCH_EXYNOS) || ((ARM || ARM64) && COMPILE_TEST)
-> +	select SOC_BUS
-> +
->  endif
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 3619f2e..2a8a85e 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -1,3 +1,4 @@
->  obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
->  					exynos5250-pmu.o exynos5420-pmu.o
->  obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
-> +obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
-> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-> new file mode 100644
-> index 0000000..cf0128b
-> --- /dev/null
-> +++ b/drivers/soc/samsung/exynos-chipid.c
-> @@ -0,0 +1,116 @@
-> +/*
-> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-> + *	      http://www.samsung.com/
-> + *
-> + * EXYNOS - CHIP ID support
-> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/sys_soc.h>
-> +
-> +#define EXYNOS_SUBREV_MASK	(0xF << 4)
-> +#define EXYNOS_MAINREV_MASK	(0xF << 0)
-> +#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
-> +
-> +static const struct exynos_soc_id {
-> +	const char *name;
-> +	unsigned int id;
-> +	unsigned int mask;
-> +} soc_ids[] = {
-> +	{ "EXYNOS3250", 0xE3472000, 0xFFFFF000 },
-> +	{ "EXYNOS4210", 0x43200000, 0xFFFE0000 },
-> +	{ "EXYNOS4212", 0x43220000, 0xFFFE0000 },
-> +	{ "EXYNOS4412", 0xE4412000, 0xFFFE0000 },
-> +	{ "EXYNOS5250", 0x43520000, 0xFFFFF000 },
-> +	{ "EXYNOS5260", 0xE5260000, 0xFFFFF000 },
-> +	{ "EXYNOS5410", 0xE5410000, 0xFFFFF000 },
-> +	{ "EXYNOS5420", 0xE5420000, 0xFFFFF000 },
-> +	{ "EXYNOS5440", 0xE5440000, 0xFFFFF000 },
-> +	{ "EXYNOS5800", 0xE5422000, 0xFFFFF000 },
-> +	{ "EXYNOS7420", 0xE7420000, 0xFFFFF000 },
-> +	{ "EXYNOS5433", 0xE5433000, 0xFFFFF000 },
+Some parent clocks of the Exynos542x clock blocks, which have separate
+power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
+enabled to access any register related to power management unit or devices
+connected to it. For the time being, until a proper solution based on
+runtime PM is applied, mark those clocks as critical (instead of ignore
+unused or even no flags) to prevent disabling them.
 
-I wonder why there are different masks in case of Exynos42*?
-In specs I have access to mask is always 0xFFFFF000.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-
-> +};
-> +
-> +static const char * __init product_id_to_soc_id(unsigned int product_id)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
-> +		if ((product_id & soc_ids[i].mask) == soc_ids[i].id)
-> +			return soc_ids[i].name;
-> +	return "UNKNOWN";
-> +}
-> +
-> +static const struct of_device_id of_exynos_chipid_ids[] = {
-> +	{
-> +		.compatible	= "samsung,exynos4210-chipid",
-> +	},
-> +	{},
-> +};
-> +
-> +/**
-> + *  exynos_chipid_early_init: Early chipid initialization
-> + */
-> +int __init exynos_chipid_early_init(void)
-> +{
-> +	struct soc_device_attribute *soc_dev_attr;
-> +	struct soc_device *soc_dev;
-> +	struct device_node *root;
-> +	struct device_node *np;
-> +	void __iomem *exynos_chipid_base;
-> +	const struct of_device_id *match;
-> +	u32 product_id;
-> +	u32 revision;
-> +
-> +	np = of_find_matching_node_and_match(NULL,
-> +			of_exynos_chipid_ids, &match);
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	exynos_chipid_base = of_iomap(np, 0);
-> +
-> +	if (!exynos_chipid_base)
-> +		return PTR_ERR(exynos_chipid_base);
-> +
-> +	product_id  = readl_relaxed(exynos_chipid_base);
-> +	revision = product_id & EXYNOS_REV_MASK;
-> +	iounmap(exynos_chipid_base);
-> +
-> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +	if (!soc_dev_attr)
-> +		return -ENODEV;
-> +
-> +	soc_dev_attr->family = "Samsung Exynos";
-> +
-> +	root = of_find_node_by_path("/");
-> +	of_property_read_string(root, "model", &soc_dev_attr->machine);
-> +	of_node_put(root);
-> +
-> +	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
-> +	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
-> +
-> +
-> +	pr_info("Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
-> +			product_id_to_soc_id(product_id), revision);
-
-I wonder if it wouldn't be good to log numeric value of whole PRO_ID
-register, this way we will have also useful log for chips not know to
-soc_ids array.
-It will show also some missing bits: masked bits, package_information
-and reserved bit. Btw. package_information can be used to distinguish
-S5PC210 and S5PV310.
-And small optimization, you can reuse soc_dev_attr->soc_id instead of
-calling the same function again.
-And finally all log could be moved after soc_device_register, this way
-you can use:
-    struc device *dev = soc_device_to_device(soc_dev);
-    dev_info(dev, ...);
-
-Regards
-Andrzej
-
-> +
-> +	soc_dev = soc_device_register(soc_dev_attr);
-> +	if (IS_ERR(soc_dev)) {
-> +		kfree(soc_dev_attr->revision);
-> +		kfree_const(soc_dev_attr->soc_id);
-> +		kfree(soc_dev_attr);
-> +		return PTR_ERR(soc_dev);
-> +	}
-> +
-> +	return 0;
-> +}
-> +early_initcall(exynos_chipid_early_init);
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 8c8b495cbf0d..cdc092a1d9ef 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+-				GATE_BUS_TOP, 27, 0, 0),
++				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
+ 
+ 	GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
+-			GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
++			GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
+ 			GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
+ 
+ 	GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
+ 			GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
+-			GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
++			GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
+ 			GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
+ 			GATE_BUS_TOP, 5, 0, 0),
+ 	GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
+-			GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
++			GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
+ 			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
+@@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(0, "aclk166", "mout_user_aclk166",
+ 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
+-			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
++			GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+ 			GATE_BUS_TOP, 16, 0, 0),
+ 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
+ 			GATE_BUS_TOP, 17, 0, 0),
+ 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
+-			GATE_BUS_TOP, 18, 0, 0),
++			GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
+ 			GATE_BUS_TOP, 28, 0, 0),
+ 	GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
+ 			GATE_BUS_TOP, 29, 0, 0),
+ 
+ 	GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
+-			SRC_MASK_TOP2, 24, 0, 0),
++			SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
+ 
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+ 			SRC_MASK_TOP7, 20, 0, 0),
+-- 
+1.9.1
