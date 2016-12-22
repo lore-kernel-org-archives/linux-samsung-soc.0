@@ -1,91 +1,187 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-Date: Thu, 22 Dec 2016 10:44:30 +0100
-Message-ID: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [v3] arm: dts: exynos: Enable DMA support for UART modules on
+ Exynos5 SoCs
+Date: Thu, 22 Dec 2016 16:44:01 +0530
+Message-ID: <585BB579.9040403@samsung.com>
+References: <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161222111557epcas4p3dd75d80c6a61b35c9477d5bd9bad75e3@epcas4p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47842 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750792AbcLVJoo (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60872 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755467AbcLVLQL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2016 04:44:44 -0500
+        Thu, 22 Dec 2016 06:16:11 -0500
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OIL01D943AM1YB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Dec 2016 20:15:58 +0900 (KST)
+In-reply-to: <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Some parent clocks of the Exynos542x clock blocks, which have separate
-power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
-enabled to access any register related to power management unit or devices
-connected to it. For the time being, until a proper solution based on
-runtime PM is applied, mark those clocks as critical (instead of ignore
-unused or even no flags) to prevent disabling them.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On 12/19/2016 03:30 PM, Marek Szyprowski wrote:
+> UART modules can use DMA for offloading data transfers and reducing
+> interrupts, so enable this feature for Exynos5 boards. Tested on
+> Google ChromeBook Snow (Exynos5250), Odroid XU (Exynos5410) and Odroid
+> XU3 (Exynos5422) boards.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v3:
+> - added Exynos5410
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 8c8b495cbf0d..cdc092a1d9ef 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
- 				GATE_BUS_TOP, 24, 0, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
--				GATE_BUS_TOP, 27, 0, 0),
-+				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- };
- 
- static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
-@@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
- 
- 	GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
--			GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
-+			GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
- 			GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
- 
- 	GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
- 			GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
--			GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
-+			GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
- 			GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
- 			GATE_BUS_TOP, 5, 0, 0),
- 	GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
--			GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
-+			GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
- 			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
-@@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	GATE(0, "aclk166", "mout_user_aclk166",
- 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
--			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
-+			GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
- 			GATE_BUS_TOP, 16, 0, 0),
- 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
- 			GATE_BUS_TOP, 17, 0, 0),
- 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
--			GATE_BUS_TOP, 18, 0, 0),
-+			GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
- 			GATE_BUS_TOP, 28, 0, 0),
- 	GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
- 			GATE_BUS_TOP, 29, 0, 0),
- 
- 	GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
--			SRC_MASK_TOP2, 24, 0, 0),
-+			SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
- 
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
- 			SRC_MASK_TOP7, 20, 0, 0),
--- 
-1.9.1
+make failed with this patch with below error:
+   DTC     arch/arm/boot/dts/exynos5410-odroidxu.dtb
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[1]: *** [arch/arm/boot/dts/exynos5410-odroidxu.dtb] Error 2
+make: *** [dtbs] Error 2
+-------------------------------------
+
+I tried building against linux-next with tag v4.9.
+
+69973b8 Linux 4.9
+2e4333c Merge branch 'upstream' of 
+git://git.linux-mips.org/pub/scm/ralf/upstream-linus
+ba73515 MIPS: Lantiq: Fix mask of GPE frequency
+
+Let me know if I am missing other patches.
+
+> - fixed serial 1/2 again, in v2 they were incorrectly swaped as a result
+>    of my hurry in patch posting
+>
+> v2:
+> - added Exynos5250
+> - fixed copy/paste typo for serial 2 and 3
+> ---
+>   arch/arm/boot/dts/exynos5250.dtsi | 8 ++++++++
+>   arch/arm/boot/dts/exynos5410.dtsi | 8 ++++++++
+>   arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
+>   3 files changed, 24 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index b6d7444..0e04460 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -1043,21 +1043,29 @@
+>   &serial_0 {
+>   	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 13>, <&pdma0 14>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_1 {
+>   	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 15>, <&pdma1 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_2 {
+>   	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 15>, <&pdma0 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_3 {
+>   	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 17>, <&pdma1 18>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   #include "exynos5250-pinctrl.dtsi"
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 2b6adaf..7eab4bc 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -340,21 +340,29 @@
+>   &serial_0 {
+>   	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 13>, <&pdma0 14>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_1 {
+>   	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 15>, <&pdma1 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_2 {
+>   	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 15>, <&pdma0 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_3 {
+>   	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 17>, <&pdma1 18>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &sss {
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 906a1a4..0154c2e 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -1406,21 +1406,29 @@
+>   &serial_0 {
+>   	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 13>, <&pdma0 14>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_1 {
+>   	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 15>, <&pdma1 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_2 {
+>   	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma0 15>, <&pdma0 16>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &serial_3 {
+>   	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+>   	clock-names = "uart", "clk_uart_baud0";
+> +	dmas = <&pdma1 17>, <&pdma1 18>;
+> +	dma-names = "rx", "tx";
+>   };
+>
+>   &sss {
+>
