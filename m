@@ -1,93 +1,134 @@
-From: hoegeun kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH 1/2] drm/panel: Add support for S6E3HA2 panel driver on TM2
- board
-Date: Fri, 23 Dec 2016 14:18:46 +0900
-Message-ID: <199a2789-bf1a-963e-bbe8-f242239dff70@samsung.com>
-References: <1481695445-13088-1-git-send-email-hoegeun.kwon@samsung.com>
- <1481695445-13088-2-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20161219185609epcas1p474536f74eb9055ff06fa0de04efade26@epcas1p4.samsung.com>
- <20161219185553.bxizmi2yegk5ca6b@rob-hp-laptop>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] dmaengine: pl330: Fix runtime PM support for terminated
+ transfers
+Date: Fri, 23 Dec 2016 10:52:28 +0100
+Message-ID: <6b2f2e51-3fac-02d7-5827-b08b97c894c0@samsung.com>
+References: <1481884751-21411-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161223023344epcas2p19d61e2e9749b2a5d2a910bef89a08616@epcas2p1.samsung.com>
+ <20161223023324.GA3860@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20161219185553.bxizmi2yegk5ca6b@rob-hp-laptop>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:63077 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758273AbcLWJwd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 23 Dec 2016 04:52:33 -0500
+In-reply-to: <20161223023324.GA3860@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>
 
-CgpPbiAxMi8yMC8yMDE2IDAzOjU1IEFNLCBSb2IgSGVycmluZyB3cm90ZToKPiBPbiBXZWQsIERl
-YyAxNCwgMjAxNiBhdCAwMzowNDowNFBNICswOTAwLCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4+IFRo
-aXMgcGF0Y2ggYWRkIHN1cHBvcnQgZm9yIE1JUEktRFNJIGJhc2VkIFM2RTNIQTIgQU1PTEVEIHBh
-bmVsCj4+IGRyaXZlci4gVGhpcyBwYW5lbCBoYXMgMTQ0MHgyNTYwIHJlc29sdXRpb24gaW4gNS43
-LWluY2ggcGh5c2ljYWwKPj4gcGFuZWwgaW4gdGhlIFRNMiBkZXZpY2UuCj4+Cj4+IFNpZ25lZC1v
-ZmYtYnk6IERvbmdod2EgTGVlIDxkaDA5LmxlZUBzYW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1i
-eTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgo+PiBTaWduZWQtb2Zm
-LWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAg
-Li4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEyLnR4dCAgICAgfCAgNTIg
-KysKPj4gICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
-ICB8ICAgNiArCj4+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlICAgICAgICAgICAg
-ICAgICAgICAgfCAgIDEgKwo+PiAgIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5n
-LXM2ZTNoYTIuYyAgICAgIHwgNzU2ICsrKysrKysrKysrKysrKysrKysrKwo+PiAgIDQgZmlsZXMg
-Y2hhbmdlZCwgODE1IGluc2VydGlvbnMoKykKPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEy
-LnR4dAo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwt
-c2Ftc3VuZy1zNmUzaGEyLmMKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcsczZlM2hhMi50eHQgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIu
-dHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLjFmNDFmMjQKPj4g
-LS0tIC9kZXYvbnVsbAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-ZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0Cj4+IEBAIC0wLDAgKzEsNTIgQEAKPj4g
-K1NhbXN1bmcgUzZFM0hBMiA1LjciIDE0NDB4MjU2MCBBTU9MRUQgcGFuZWwKPj4gKwo+PiArUmVx
-dWlyZWQgcHJvcGVydGllczoKPj4gKyAgLSBjb21wYXRpYmxlOiAic2Ftc3VuZyxzNmUzaGEyIgo+
-PiArICAtIHJlZzogdGhlIHZpcnR1YWwgY2hhbm5lbCBudW1iZXIgb2YgYSBEU0kgcGVyaXBoZXJh
-bAo+PiArICAtIHZkZDMtc3VwcGx5OiBjb3JlIHZvbHRhZ2Ugc3VwcGx5Cj4+ICsgIC0gdmNpLXN1
-cHBseTogdm9sdGFnZSBzdXBwbHkgZm9yIGFuYWxvZyBjaXJjdWl0cwo+PiArICAtIHJlc2V0LWdw
-aW9zOiBhIEdQSU8gc3BlYyBmb3IgdGhlIHJlc2V0IHBpbgo+PiArICAtIGVuYWJsZS1ncGlvczog
-YSBHUElPIHNwZWMgZm9yIHRoZSBwYW5lbCBlbmFibGUgcGluCj4+ICsgIC0gdGUtZ3Bpb3M6IGEg
-R1BJTyBzcGVjIGZvciB0aGUgdGVhcmluZyBlZmZlY3Qgc3luY2hyb25pemF0aW9uIHNpZ25hbCBn
-cGlvIHBpbgo+IE5lZWQgdG8gc3BlY2lmeSB0aGUgR1BJT3MgYXMgYWN0aXZlIGhpZ2ggb3IgbG93
-LgoKSGkgUm9iIEhlcnJpbmcsCgpUaGFua3MgZm9yIHBvaW50IG91dC4gSSB3aWxsIGFkZCAiKGFj
-dGl2ZSBoaWdoIG9yIGxvdykiIGFmdGVyIHRoZSAKZGVzY3JpcHRpb24gb2YgdGhlIEdQSU9zLgoK
-Pj4gKwo+PiArT3B0aW9uYWwgcHJvcGVydGllczoKPj4gKyAgLSBkaXNwbGF5LXRpbWluZ3M6IHRp
-bWluZ3MgZm9yIHRoZSBjb25uZWN0ZWQgcGFuZWwgYXMgZGVzY3JpYmVkIGJ5IFsxXQo+PiArCj4+
-ICtUaGUgZGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gb25lICdwb3J0JyBjaGlsZCBub2RlIHdpdGgg
-b25lIGNoaWxkCj4+ICsnZW5kcG9pbnQnIG5vZGUsIGFjY29yZGluZyB0byB0aGUgYmluZGluZ3Mg
-ZGVmaW5lZCBpbiBbMl0uIFRoaXMKPj4gK25vZGUgc2hvdWxkIGRlc2NyaWJlIHBhbmVsJ3Mgdmlk
-ZW8gYnVzLgo+PiArCj4+ICtbMV06IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
-aXNwbGF5L3BhbmVsL2Rpc3BsYXktdGltaW5nLnR4dAo+PiArWzJdOiBEb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQKPj4gKwo+PiArRXhh
-bXBsZToKPj4gKwo+PiArCXBhbmVsQDAgewo+PiArCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZl
-M2hhMiI7Cj4+ICsJCXJlZyA9IDwwPjsKPiByZWcgZG9lc24ndCByZWFsbHkgd29yayBoZXJlIHVu
-bGVzcyB0aGlzIG5vZGUgaXMgYSBjaGlsZCBvZiB0aGUgRFNJCj4gY29udHJvbGxlciBub2RlLiBC
-dXQgaWYgaXQgaXMgYSBjaGlsZCBub2RlLCB0aGVuIHlvdSBkb24ndCBuZWVkIHRoZSBPRgo+IGdy
-YXBoLgoKVGhlIHJlZyB2YWx1ZSBpcyB1c2VkIGluIHZpcnR1YWwgY2hpbGQgcGFuZWwgbm9kZSBz
-byBJIHRoaW5rIHRoZSByZWcgCnZhbHVlIGlzIG5lZWRlZC4KUGxlYXNlIHJlZmVyIHRvIHRoZSBk
-b2N1bWVudCBiZWxvdy4KRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-bWlwaS1kc2ktYnVzLnR4dAoKQmVzdCBSZWdhcmRzLApIb2VnZXVuIEt3b24KCj4+ICsJCXZkZDMt
-c3VwcGx5ID0gPCZsZG8yN19yZWc+Owo+PiArCQl2Y2ktc3VwcGx5ID0gPCZsZG8yOF9yZWc+Owo+
-PiArCQlyZXNldC1ncGlvcyA9IDwmZ3BnMCAwIEdQSU9fQUNUSVZFX0hJR0g+Owo+PiArCQllbmFi
-bGUtZ3Bpb3MgPSA8JmdwZjEgNSBHUElPX0FDVElWRV9ISUdIPjsKPj4gKwkJdGUtZ3Bpb3MgPSA8
-JmdwZjEgMyBHUElPX0FDVElWRV9ISUdIPjsKPj4gKwo+PiArCQlkaXNwbGF5LXRpbWluZ3Mgewo+
-PiArCQkJdGltaW5nLTAgewo+PiArCQkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwwPjsKPj4gKwkJCQlo
-YWN0aXZlID0gPDE0NDA+Owo+PiArCQkJCXZhY3RpdmUgPSA8MjU2MD47Cj4+ICsJCQkJaGZyb250
-LXBvcmNoID0gPDE+Owo+PiArCQkJCWhiYWNrLXBvcmNoID0gPDE+Owo+PiArCQkJCWhzeW5jLWxl
-biA9IDwxPjsKPj4gKwkJCQl2ZnJvbnQtcG9yY2ggPSA8MT47Cj4+ICsJCQkJdmJhY2stcG9yY2gg
-PSA8MTU+Owo+PiArCQkJCXZzeW5jLWxlbiA9IDwxPjsKPj4gKwkJCX07Cj4+ICsJCX07Cj4+ICsK
-Pj4gKwkJcG9ydCB7Cj4+ICsJCQlkc2lfaW46IGVuZHBvaW50IHsKPj4gKwkJCQlyZW1vdGUtZW5k
-cG9pbnQgPSA8JmRzaV9vdXQ+Owo+PiArCQkJfTsKPj4gKwkJfTsKPj4gKwl9Owo+IF9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxp
-bmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Krzysztof,
+
+
+On 2016-12-23 03:33, Krzysztof Kozlowski wrote:
+> On Fri, Dec 16, 2016 at 11:39:11AM +0100, Marek Szyprowski wrote:
+>> PL330 DMA engine driver is leaking a runtime reference after any terminated
+>> DMA transactions. This patch fixes this issue by tracking runtime PM state
+>> of the device and making additional call to pm_runtime_put() in terminate_all
+>> callback if needed.
+>>
+>> Fixes: ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/dma/pl330.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+>> index 030fe05ed43b..9f3dbc8c63d2 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -448,6 +448,9 @@ struct dma_pl330_chan {
+>>   
+>>   	/* for cyclic capability */
+>>   	bool cyclic;
+>> +
+>> +	/* for runtime pm tracking */
+>> +	bool active;
+>>   };
+>>   
+>>   struct pl330_dmac {
+>> @@ -2031,6 +2034,7 @@ static void pl330_tasklet(unsigned long data)
+>>   		_stop(pch->thread);
+>>   		spin_unlock(&pch->thread->dmac->lock);
+>>   		power_down = true;
+>> +		pch->active = false;
+>>   	} else {
+>>   		/* Make sure the PL330 Channel thread is active */
+>>   		spin_lock(&pch->thread->dmac->lock);
+>> @@ -2050,6 +2054,7 @@ static void pl330_tasklet(unsigned long data)
+>>   			desc->status = PREP;
+>>   			list_move_tail(&desc->node, &pch->work_list);
+>>   			if (power_down) {
+>> +				pch->active = true;
+> It's been a while since I was playign with the driver so I don't
+> remember everything... but I can't get the logic behind this.
+>
+> The device is marked as inactive and scheduled to power down. But you
+> mark chanel as active.
+
+Please look 3 lines further. The channel is started again (because this
+is cyclic request), so setting active to true is justified. Even power_down
+is then set to false.
+
+> Maybe it is correct but for me it is unreadable.
+>
+> I understand that you wanted to mark the device as active at some point,
+> in case transfer was terminated?
+
+Frankly, I have no idea how to explain it more clear. Cyclic transfers are
+automatically restarted, so the above logic simply keeps pch->active in sync
+with hardware operations.
+
+>
+> Best regards,
+> Krzysztof
+>
+>>   				spin_lock(&pch->thread->dmac->lock);
+>>   				_start(pch->thread);
+>>   				spin_unlock(&pch->thread->dmac->lock);
+>> @@ -2164,6 +2169,7 @@ static int pl330_terminate_all(struct dma_chan *chan)
+>>   	unsigned long flags;
+>>   	struct pl330_dmac *pl330 = pch->dmac;
+>>   	LIST_HEAD(list);
+>> +	bool power_down = false;
+>>   
+>>   	pm_runtime_get_sync(pl330->ddma.dev);
+>>   	spin_lock_irqsave(&pch->lock, flags);
+>> @@ -2174,6 +2180,8 @@ static int pl330_terminate_all(struct dma_chan *chan)
+>>   	pch->thread->req[0].desc = NULL;
+>>   	pch->thread->req[1].desc = NULL;
+>>   	pch->thread->req_running = -1;
+>> +	power_down = pch->active;
+>> +	pch->active = false;
+>>   
+>>   	/* Mark all desc done */
+>>   	list_for_each_entry(desc, &pch->submitted_list, node) {
+>> @@ -2191,6 +2199,8 @@ static int pl330_terminate_all(struct dma_chan *chan)
+>>   	list_splice_tail_init(&pch->completed_list, &pl330->desc_pool);
+>>   	spin_unlock_irqrestore(&pch->lock, flags);
+>>   	pm_runtime_mark_last_busy(pl330->ddma.dev);
+>> +	if (power_down)
+>> +		pm_runtime_put_autosuspend(pl330->ddma.dev);
+>>   	pm_runtime_put_autosuspend(pl330->ddma.dev);
+>>   
+>>   	return 0;
+>> @@ -2350,6 +2360,7 @@ static void pl330_issue_pending(struct dma_chan *chan)
+>>   		 * updated on work_list emptiness status.
+>>   		 */
+>>   		WARN_ON(list_empty(&pch->submitted_list));
+>> +		pch->active = true;
+>>   		pm_runtime_get_sync(pch->dmac->ddma.dev);
+>>   	}
+>>   	list_splice_tail_init(&pch->submitted_list, &pch->work_list);
+>> -- 
+>> 1.9.1
+>>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
