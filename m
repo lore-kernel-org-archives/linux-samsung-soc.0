@@ -1,399 +1,93 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] dmaengine: pl330: Don't require irq-safe runtime PM
-Date: Fri, 23 Dec 2016 04:48:32 +0200
-Message-ID: <20161223024832.GA4178@kozik-lap>
-References: <1482408689-21971-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161222121159epcas1p2e64486c51ae3b824f35ffb082d04f178@epcas1p2.samsung.com>
- <1482408689-21971-4-git-send-email-m.szyprowski@samsung.com>
+From: hoegeun kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH 1/2] drm/panel: Add support for S6E3HA2 panel driver on TM2
+ board
+Date: Fri, 23 Dec 2016 14:18:46 +0900
+Message-ID: <199a2789-bf1a-963e-bbe8-f242239dff70@samsung.com>
+References: <1481695445-13088-1-git-send-email-hoegeun.kwon@samsung.com>
+ <1481695445-13088-2-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20161219185609epcas1p474536f74eb9055ff06fa0de04efade26@epcas1p4.samsung.com>
+ <20161219185553.bxizmi2yegk5ca6b@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36188 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752549AbcLWCsj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Dec 2016 21:48:39 -0500
-Content-Disposition: inline
-In-Reply-To: <1482408689-21971-4-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20161219185553.bxizmi2yegk5ca6b@rob-hp-laptop>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-On Thu, Dec 22, 2016 at 01:11:29PM +0100, Marek Szyprowski wrote:
-> This patch replaces irq-safe runtime pm with non-irq-safe version.
-> 
-> Till now non-irq-safe runtime PM implementation was only possible by calling
-> pm_runtime_get/put functions from alloc/free_chan_resources. All other DMA
-> engine API functions cannot be called from a context, which allows sleeping.
-> Such implementation in practice resulted in keeping PL330 DMA controller
-> device active almost all the time, because most of the slave device drivers
-> (DMA engine clients) acquired DMA channel in their probe() function and
-> released it during driver removal.
-
-I think that is not accurate (unless something changed recently and I
-missed it)... The runtime PM in pl330 was infact suspending device when
-the queue was empty. It was working during the regular work of DMA and
-slave devices.
-
-Maybe your recent fix changed this?
-
-> This patch provides a new approach.
-
-Please say why this approach is better because the previous one - was
-suspending the dma channel when not used. Otherwise, it would make no
-sense of implement the irq-safe runtime PM at the beginning!
-
-Of course, a change from irq-safe to non-irq-safe is a good reason to
-implement changes. But that was not mentioned in the first paragraph at
-all.
-
-> The main assumption for it is an
-> observation that there can be only one slave device using each DMA channel.
-
-Wait, observation, real requirement or assumption?
-
-Later in the code I see adding such requirement.
-
-> Using recently introduced device dependencies (links) infrastructure one can
-> ensure proper runtime PM state of PL330 DMA controller. In this approach in
-> pl330_alloc_chan_resources() function a new dependency is being created
-> between PL330 DMA controller device (as supplier) and given slave device
-> (as consumer). This way PL330 DMA controller device runtime active counter
-> is increased when the slave device is resumed and decreased the same time
-> when given slave device is put to suspend. This way it has been ensured to
-> keep PL330 DMA controller runtime active if there is an active used of any
-> of its DMA channels. Slave device pointer is initially stored in per-channel
-> data in of_dma_xlate callback. This is similar to what has been already
-> implemented in Exynos IOMMU driver in commit 2f5f44f205cc958b
-> ("iommu/exynos: Use device dependency links to control runtime pm").
-
-Sounds convincing... Interesting approach!
-
-My doubts are:
-1. What with more then one slave device? (assumption?)
-2. If slave device does not implement runtime PM, then pl330 will be
-   active all the time?
-3. If slave device implements runtime PM in a way that it's enabled in
-   probe and released in remove, then pl330 will be active all the time?
-
-> 
-> If one requests memory-to-memory chanel, runtime active counter is
-> increased unconditionally. This might be a drawback of this approach, but
-> PL330 is not really used for memory-to-memory operations due to poor
-> performance in such operations compared to CPU.
-> 
-> Introducing non-irq-safe runtime power management finally allows to turn
-> audio power domain off on Exynos5 SoCs.
-
-... and actually any domain which contained pl330 device so this is nice
-benefit!
-
-> 
-> Removal of irq-safe runtime pm is based on the revert of the following
-> commits:
-> 1. "dmaengine: pl330: fix runtime pm support" commit <no stable id yet>
-> 2. "dmaengine: pl330: Fix hang on dmaengine_terminate_all on certain boards"
->    commit 81cc6edc08705ac0146fe6ac14a0982a31ce6f3d
-> 3. "ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12"
->    commit ae43b3289186480f81c78bb63d788a85a3631f47
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/dma/pl330.c | 133 +++++++++++++++++++++++++++-------------------------
->  1 file changed, 70 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 3c80e71..2cffbb4 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -268,9 +268,6 @@ enum pl330_byteswap {
->  
->  #define NR_DEFAULT_DESC	16
->  
-> -/* Delay for runtime PM autosuspend, ms */
-> -#define PL330_AUTOSUSPEND_DELAY 20
-> -
->  /* Populated by the PL330 core driver for DMA API driver's info */
->  struct pl330_config {
->  	u32	periph_id;
-> @@ -449,7 +446,8 @@ struct dma_pl330_chan {
->  	bool cyclic;
->  
->  	/* for runtime pm tracking */
-> -	bool active;
-> +	struct device *slave;
-> +	struct device_link *slave_link;
->  };
->  
->  struct pl330_dmac {
-> @@ -2015,7 +2013,6 @@ static void pl330_tasklet(unsigned long data)
->  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
->  	struct dma_pl330_desc *desc, *_dt;
->  	unsigned long flags;
-> -	bool power_down = false;
->  
->  	spin_lock_irqsave(&pch->lock, flags);
->  
-> @@ -2030,18 +2027,10 @@ static void pl330_tasklet(unsigned long data)
->  	/* Try to submit a req imm. next to the last completed cookie */
->  	fill_queue(pch);
->  
-> -	if (list_empty(&pch->work_list)) {
-> -		spin_lock(&pch->thread->dmac->lock);
-> -		_stop(pch->thread);
-> -		spin_unlock(&pch->thread->dmac->lock);
-> -		power_down = true;
-> -		pch->active = false;
-> -	} else {
-> -		/* Make sure the PL330 Channel thread is active */
-> -		spin_lock(&pch->thread->dmac->lock);
-> -		_start(pch->thread);
-> -		spin_unlock(&pch->thread->dmac->lock);
-> -	}
-> +	/* Make sure the PL330 Channel thread is active */
-> +	spin_lock(&pch->thread->dmac->lock);
-> +	_start(pch->thread);
-> +	spin_unlock(&pch->thread->dmac->lock);
->  
->  	while (!list_empty(&pch->completed_list)) {
->  		struct dmaengine_desc_callback cb;
-> @@ -2054,13 +2043,6 @@ static void pl330_tasklet(unsigned long data)
->  		if (pch->cyclic) {
->  			desc->status = PREP;
->  			list_move_tail(&desc->node, &pch->work_list);
-> -			if (power_down) {
-> -				pch->active = true;
-> -				spin_lock(&pch->thread->dmac->lock);
-> -				_start(pch->thread);
-> -				spin_unlock(&pch->thread->dmac->lock);
-> -				power_down = false;
-> -			}
->  		} else {
->  			desc->status = FREE;
->  			list_move_tail(&desc->node, &pch->dmac->desc_pool);
-> @@ -2075,12 +2057,6 @@ static void pl330_tasklet(unsigned long data)
->  		}
->  	}
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> -
-> -	/* If work list empty, power down */
-> -	if (power_down) {
-> -		pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
-> -		pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
-> -	}
->  }
->  
->  bool pl330_filter(struct dma_chan *chan, void *param)
-> @@ -2113,14 +2089,63 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
->  	if (chan_id >= pl330->num_peripherals)
->  		return NULL;
->  
-> +	if (!pl330->peripherals[chan_id].slave)
-> +		pl330->peripherals[chan_id].slave = slave;
-> +	else if (pl330->peripherals[chan_id].slave != slave) {
-> +		dev_err(pl330->ddma.dev,
-> +			"Can't use same channel with multiple slave devices!\n");
-> +		return NULL;
-> +	}
-
-This could be nicely split into separate patch.
-
-Best regards,
-Krzysztof
-
-> +
->  	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
->  }
->  
-> +static int pl330_add_slave_link(struct pl330_dmac *pl330,
-> +				struct dma_pl330_chan *pch)
-> +{
-> +	struct device_link *link;
-> +	int i;
-> +
-> +	if (pch->slave_link)
-> +		return 0;
-> +
-> +	link = device_link_add(pch->slave, pl330->ddma.dev,
-> +				       DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
-> +	if (!link)
-> +		return -ENODEV;
-> +
-> +	for (i = 0; i < pl330->num_peripherals; i++)
-> +		if (pl330->peripherals[i].slave == pch->slave)
-> +			pl330->peripherals[i].slave_link = link;
-> +	return 0;
-> +}
-> +
-> +static void pl330_del_slave_link(struct pl330_dmac *pl330,
-> +				 struct dma_pl330_chan *pch)
-> +{
-> +	struct device_link *link = pch->slave_link;
-> +	int i, count = 0;
-> +
-> +	for (i = 0; i < pl330->num_peripherals; i++)
-> +		if (pl330->peripherals[i].slave == pch->slave &&
-> +		    pl330->peripherals[i].thread)
-> +			count++;
-> +
-> +	if (count > 0)
-> +		return;
-> +
-> +	device_link_del(link);
-> +	for (i = 0; i < pl330->num_peripherals; i++)
-> +		if (pl330->peripherals[i].slave == pch->slave)
-> +			pch->slave_link = NULL;
-> +}
-> +
->  static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  {
->  	struct dma_pl330_chan *pch = to_pchan(chan);
->  	struct pl330_dmac *pl330 = pch->dmac;
->  	unsigned long flags;
-> +	int ret = 0;
->  
->  	spin_lock_irqsave(&pch->lock, flags);
->  
-> @@ -2137,6 +2162,14 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  
-> +	if (pch->slave)
-> +		ret = pl330_add_slave_link(pl330, pch);
-> +	else
-> +		ret = pm_runtime_get_sync(pl330->ddma.dev);
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	return 1;
->  }
->  
-> @@ -2171,9 +2204,7 @@ static int pl330_terminate_all(struct dma_chan *chan)
->  	unsigned long flags;
->  	struct pl330_dmac *pl330 = pch->dmac;
->  	LIST_HEAD(list);
-> -	bool power_down = false;
->  
-> -	pm_runtime_get_sync(pl330->ddma.dev);
->  	spin_lock_irqsave(&pch->lock, flags);
->  	spin_lock(&pl330->lock);
->  	_stop(pch->thread);
-> @@ -2182,8 +2213,6 @@ static int pl330_terminate_all(struct dma_chan *chan)
->  	pch->thread->req[0].desc = NULL;
->  	pch->thread->req[1].desc = NULL;
->  	pch->thread->req_running = -1;
-> -	power_down = pch->active;
-> -	pch->active = false;
->  
->  	/* Mark all desc done */
->  	list_for_each_entry(desc, &pch->submitted_list, node) {
-> @@ -2200,10 +2229,6 @@ static int pl330_terminate_all(struct dma_chan *chan)
->  	list_splice_tail_init(&pch->work_list, &pl330->desc_pool);
->  	list_splice_tail_init(&pch->completed_list, &pl330->desc_pool);
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> -	pm_runtime_mark_last_busy(pl330->ddma.dev);
-> -	if (power_down)
-> -		pm_runtime_put_autosuspend(pl330->ddma.dev);
-> -	pm_runtime_put_autosuspend(pl330->ddma.dev);
->  
->  	return 0;
->  }
-> @@ -2221,7 +2246,6 @@ static int pl330_pause(struct dma_chan *chan)
->  	struct pl330_dmac *pl330 = pch->dmac;
->  	unsigned long flags;
->  
-> -	pm_runtime_get_sync(pl330->ddma.dev);
->  	spin_lock_irqsave(&pch->lock, flags);
->  
->  	spin_lock(&pl330->lock);
-> @@ -2229,8 +2253,6 @@ static int pl330_pause(struct dma_chan *chan)
->  	spin_unlock(&pl330->lock);
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> -	pm_runtime_mark_last_busy(pl330->ddma.dev);
-> -	pm_runtime_put_autosuspend(pl330->ddma.dev);
->  
->  	return 0;
->  }
-> @@ -2238,11 +2260,11 @@ static int pl330_pause(struct dma_chan *chan)
->  static void pl330_free_chan_resources(struct dma_chan *chan)
->  {
->  	struct dma_pl330_chan *pch = to_pchan(chan);
-> +	struct pl330_dmac *pl330 = pch->dmac;
->  	unsigned long flags;
->  
->  	tasklet_kill(&pch->task);
->  
-> -	pm_runtime_get_sync(pch->dmac->ddma.dev);
->  	spin_lock_irqsave(&pch->lock, flags);
->  
->  	pl330_release_channel(pch->thread);
-> @@ -2252,19 +2274,20 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
->  		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> -	pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
-> -	pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
-> +
-> +	if (pch->slave)
-> +		pl330_del_slave_link(pl330, pch);
-> +	else
-> +		pm_runtime_put(pl330->ddma.dev);
->  }
->  
->  static int pl330_get_current_xferred_count(struct dma_pl330_chan *pch,
->  					   struct dma_pl330_desc *desc)
->  {
->  	struct pl330_thread *thrd = pch->thread;
-> -	struct pl330_dmac *pl330 = pch->dmac;
->  	void __iomem *regs = thrd->dmac->base;
->  	u32 val, addr;
->  
-> -	pm_runtime_get_sync(pl330->ddma.dev);
->  	val = addr = 0;
->  	if (desc->rqcfg.src_inc) {
->  		val = readl(regs + SA(thrd->id));
-> @@ -2273,8 +2296,6 @@ static int pl330_get_current_xferred_count(struct dma_pl330_chan *pch,
->  		val = readl(regs + DA(thrd->id));
->  		addr = desc->px.dst_addr;
->  	}
-> -	pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
-> -	pm_runtime_put_autosuspend(pl330->ddma.dev);
->  
->  	/* If DMAMOV hasn't finished yet, SAR/DAR can be zero */
->  	if (!val)
-> @@ -2360,16 +2381,6 @@ static void pl330_issue_pending(struct dma_chan *chan)
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&pch->lock, flags);
-> -	if (list_empty(&pch->work_list)) {
-> -		/*
-> -		 * Warn on nothing pending. Empty submitted_list may
-> -		 * break our pm_runtime usage counter as it is
-> -		 * updated on work_list emptiness status.
-> -		 */
-> -		WARN_ON(list_empty(&pch->submitted_list));
-> -		pch->active = true;
-> -		pm_runtime_get_sync(pch->dmac->ddma.dev);
-> -	}
->  	list_splice_tail_init(&pch->submitted_list, &pch->work_list);
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  
-> @@ -2987,11 +2998,7 @@ static int __maybe_unused pl330_resume(struct device *dev)
->  		pcfg->data_buf_dep, pcfg->data_bus_width / 8, pcfg->num_chan,
->  		pcfg->num_peri, pcfg->num_events);
->  
-> -	pm_runtime_irq_safe(&adev->dev);
-> -	pm_runtime_use_autosuspend(&adev->dev);
-> -	pm_runtime_set_autosuspend_delay(&adev->dev, PL330_AUTOSUSPEND_DELAY);
-> -	pm_runtime_mark_last_busy(&adev->dev);
-> -	pm_runtime_put_autosuspend(&adev->dev);
-> +	pm_runtime_put(&adev->dev);
->  
->  	return 0;
->  probe_err3:
-> -- 
-> 1.9.1
-> 
+CgpPbiAxMi8yMC8yMDE2IDAzOjU1IEFNLCBSb2IgSGVycmluZyB3cm90ZToKPiBPbiBXZWQsIERl
+YyAxNCwgMjAxNiBhdCAwMzowNDowNFBNICswOTAwLCBIb2VnZXVuIEt3b24gd3JvdGU6Cj4+IFRo
+aXMgcGF0Y2ggYWRkIHN1cHBvcnQgZm9yIE1JUEktRFNJIGJhc2VkIFM2RTNIQTIgQU1PTEVEIHBh
+bmVsCj4+IGRyaXZlci4gVGhpcyBwYW5lbCBoYXMgMTQ0MHgyNTYwIHJlc29sdXRpb24gaW4gNS43
+LWluY2ggcGh5c2ljYWwKPj4gcGFuZWwgaW4gdGhlIFRNMiBkZXZpY2UuCj4+Cj4+IFNpZ25lZC1v
+ZmYtYnk6IERvbmdod2EgTGVlIDxkaDA5LmxlZUBzYW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1i
+eTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgo+PiBTaWduZWQtb2Zm
+LWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAg
+Li4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEyLnR4dCAgICAgfCAgNTIg
+KysKPj4gICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
+ICB8ICAgNiArCj4+ICAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlICAgICAgICAgICAg
+ICAgICAgICAgfCAgIDEgKwo+PiAgIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5n
+LXM2ZTNoYTIuYyAgICAgIHwgNzU2ICsrKysrKysrKysrKysrKysrKysrKwo+PiAgIDQgZmlsZXMg
+Y2hhbmdlZCwgODE1IGluc2VydGlvbnMoKykKPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEy
+LnR4dAo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwt
+c2Ftc3VuZy1zNmUzaGEyLmMKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcsczZlM2hhMi50eHQgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIu
+dHh0Cj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLjFmNDFmMjQKPj4g
+LS0tIC9kZXYvbnVsbAo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+ZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0Cj4+IEBAIC0wLDAgKzEsNTIgQEAKPj4g
+K1NhbXN1bmcgUzZFM0hBMiA1LjciIDE0NDB4MjU2MCBBTU9MRUQgcGFuZWwKPj4gKwo+PiArUmVx
+dWlyZWQgcHJvcGVydGllczoKPj4gKyAgLSBjb21wYXRpYmxlOiAic2Ftc3VuZyxzNmUzaGEyIgo+
+PiArICAtIHJlZzogdGhlIHZpcnR1YWwgY2hhbm5lbCBudW1iZXIgb2YgYSBEU0kgcGVyaXBoZXJh
+bAo+PiArICAtIHZkZDMtc3VwcGx5OiBjb3JlIHZvbHRhZ2Ugc3VwcGx5Cj4+ICsgIC0gdmNpLXN1
+cHBseTogdm9sdGFnZSBzdXBwbHkgZm9yIGFuYWxvZyBjaXJjdWl0cwo+PiArICAtIHJlc2V0LWdw
+aW9zOiBhIEdQSU8gc3BlYyBmb3IgdGhlIHJlc2V0IHBpbgo+PiArICAtIGVuYWJsZS1ncGlvczog
+YSBHUElPIHNwZWMgZm9yIHRoZSBwYW5lbCBlbmFibGUgcGluCj4+ICsgIC0gdGUtZ3Bpb3M6IGEg
+R1BJTyBzcGVjIGZvciB0aGUgdGVhcmluZyBlZmZlY3Qgc3luY2hyb25pemF0aW9uIHNpZ25hbCBn
+cGlvIHBpbgo+IE5lZWQgdG8gc3BlY2lmeSB0aGUgR1BJT3MgYXMgYWN0aXZlIGhpZ2ggb3IgbG93
+LgoKSGkgUm9iIEhlcnJpbmcsCgpUaGFua3MgZm9yIHBvaW50IG91dC4gSSB3aWxsIGFkZCAiKGFj
+dGl2ZSBoaWdoIG9yIGxvdykiIGFmdGVyIHRoZSAKZGVzY3JpcHRpb24gb2YgdGhlIEdQSU9zLgoK
+Pj4gKwo+PiArT3B0aW9uYWwgcHJvcGVydGllczoKPj4gKyAgLSBkaXNwbGF5LXRpbWluZ3M6IHRp
+bWluZ3MgZm9yIHRoZSBjb25uZWN0ZWQgcGFuZWwgYXMgZGVzY3JpYmVkIGJ5IFsxXQo+PiArCj4+
+ICtUaGUgZGV2aWNlIG5vZGUgY2FuIGNvbnRhaW4gb25lICdwb3J0JyBjaGlsZCBub2RlIHdpdGgg
+b25lIGNoaWxkCj4+ICsnZW5kcG9pbnQnIG5vZGUsIGFjY29yZGluZyB0byB0aGUgYmluZGluZ3Mg
+ZGVmaW5lZCBpbiBbMl0uIFRoaXMKPj4gK25vZGUgc2hvdWxkIGRlc2NyaWJlIHBhbmVsJ3Mgdmlk
+ZW8gYnVzLgo+PiArCj4+ICtbMV06IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
+aXNwbGF5L3BhbmVsL2Rpc3BsYXktdGltaW5nLnR4dAo+PiArWzJdOiBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQKPj4gKwo+PiArRXhh
+bXBsZToKPj4gKwo+PiArCXBhbmVsQDAgewo+PiArCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZl
+M2hhMiI7Cj4+ICsJCXJlZyA9IDwwPjsKPiByZWcgZG9lc24ndCByZWFsbHkgd29yayBoZXJlIHVu
+bGVzcyB0aGlzIG5vZGUgaXMgYSBjaGlsZCBvZiB0aGUgRFNJCj4gY29udHJvbGxlciBub2RlLiBC
+dXQgaWYgaXQgaXMgYSBjaGlsZCBub2RlLCB0aGVuIHlvdSBkb24ndCBuZWVkIHRoZSBPRgo+IGdy
+YXBoLgoKVGhlIHJlZyB2YWx1ZSBpcyB1c2VkIGluIHZpcnR1YWwgY2hpbGQgcGFuZWwgbm9kZSBz
+byBJIHRoaW5rIHRoZSByZWcgCnZhbHVlIGlzIG5lZWRlZC4KUGxlYXNlIHJlZmVyIHRvIHRoZSBk
+b2N1bWVudCBiZWxvdy4KRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
+bWlwaS1kc2ktYnVzLnR4dAoKQmVzdCBSZWdhcmRzLApIb2VnZXVuIEt3b24KCj4+ICsJCXZkZDMt
+c3VwcGx5ID0gPCZsZG8yN19yZWc+Owo+PiArCQl2Y2ktc3VwcGx5ID0gPCZsZG8yOF9yZWc+Owo+
+PiArCQlyZXNldC1ncGlvcyA9IDwmZ3BnMCAwIEdQSU9fQUNUSVZFX0hJR0g+Owo+PiArCQllbmFi
+bGUtZ3Bpb3MgPSA8JmdwZjEgNSBHUElPX0FDVElWRV9ISUdIPjsKPj4gKwkJdGUtZ3Bpb3MgPSA8
+JmdwZjEgMyBHUElPX0FDVElWRV9ISUdIPjsKPj4gKwo+PiArCQlkaXNwbGF5LXRpbWluZ3Mgewo+
+PiArCQkJdGltaW5nLTAgewo+PiArCQkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwwPjsKPj4gKwkJCQlo
+YWN0aXZlID0gPDE0NDA+Owo+PiArCQkJCXZhY3RpdmUgPSA8MjU2MD47Cj4+ICsJCQkJaGZyb250
+LXBvcmNoID0gPDE+Owo+PiArCQkJCWhiYWNrLXBvcmNoID0gPDE+Owo+PiArCQkJCWhzeW5jLWxl
+biA9IDwxPjsKPj4gKwkJCQl2ZnJvbnQtcG9yY2ggPSA8MT47Cj4+ICsJCQkJdmJhY2stcG9yY2gg
+PSA8MTU+Owo+PiArCQkJCXZzeW5jLWxlbiA9IDwxPjsKPj4gKwkJCX07Cj4+ICsJCX07Cj4+ICsK
+Pj4gKwkJcG9ydCB7Cj4+ICsJCQlkc2lfaW46IGVuZHBvaW50IHsKPj4gKwkJCQlyZW1vdGUtZW5k
+cG9pbnQgPSA8JmRzaV9vdXQ+Owo+PiArCQkJfTsKPj4gKwkJfTsKPj4gKwl9Owo+IF9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxp
+bmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
