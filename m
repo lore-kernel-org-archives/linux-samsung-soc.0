@@ -1,35 +1,96 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/4] PCI: exynos: replace to one register accessor from
- each accessors
-Date: Sat, 24 Dec 2016 11:27:04 +0200
-Message-ID: <20161224092704.GB4858@kozik-lap>
-References: <20161219081740.5457-1-jh80.chung@samsung.com>
- <20161219081740.5457-2-jh80.chung@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 0/9] Runtime PM for Exynos pin controller driver
+Date: Sat, 24 Dec 2016 15:40:36 +0530
+Message-ID: <CANAwSgRQuoriU923XT1B_0CVX2rzOR+8j2YHLMYRUu3gGySEBw@mail.gmail.com>
+References: <CGME20161223122513epcas1p394d93d72d2d32c8910aafd1f6cc6b5e2@epcas1p3.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:32804 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753300AbcLXJ1N (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36723 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751420AbcLXKLC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 24 Dec 2016 04:27:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20161219081740.5457-2-jh80.chung@samsung.com>
+        Sat, 24 Dec 2016 05:11:02 -0500
+In-Reply-To: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Dec 19, 2016 at 05:17:37PM +0900, Jaehoon Chung wrote:
-> There is no reason to maintain *_blk/phy/elbi_* as register accessors.
-> It can be replaced to one register accessor.
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
->  drivers/pci/host/pci-exynos.c | 214 +++++++++++++++++++-----------------------
->  1 file changed, 97 insertions(+), 117 deletions(-)
+Hi Marek
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+On 23 December 2016 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> This patchset is a next step to add support for audio power domain on
+> Exynos5 SoCs.
+>
+> Audio power domain on Exynos5 SoCs contains following hardware modules:
+> 1. clock controller
+> 2. pin controller
+> 3. PL330 DMA controller
+> 4. I2S audio controller
+>
+> Till now it was assumed that pin controller is located in the "always on"
+> power domain and lacked runtime power management. This patch finally
+> removes such assumption and adds runtime pm support and awareness to this
+> driver. To achieve this, some changes in the Exynos platform support code
+> were needed, like moving pad retention control to the pin controller driver.
+> Some cleanup to the pin controller driver has been also done while changing
+> the code. This new feature requires some additional information in the
+> device tree, what is handled by patches 1,2 and 9.
+>
+> Please note that patches are ordered in such a way that the changes can be
+> bisected, so the properties are added to dts before the code requiring them.
+>
+> The other patches related to enabling full support for audio power domain
+> can be found here:
+> 1. PL330 ADMA controller non-irqsafe runtime PM:
+>    https://www.spinics.net/lists/arm-kernel/msg550008.html
+> 2. Runtime PM for clock controllers (Exynos Audio subsystem will be added
+>    in v4 soon): https://www.spinics.net/lists/arm-kernel/msg538122.html
+>
+> Patches are based on linux-next from 2016.12.22.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+>
+> Patch summary:
+>
+> Marek Szyprowski (9):
+>   ARM: dts: exynos: Add PMU syscon to pinctrl nodes
+>   ARM: dts: exynos: Add pinctrl sleep state for 542x i2s module
+>   pinctrl: samsung: Remove dead code
+>   pinctrl: samsung: Use generic of_device_get_match_data helper
+>   pinctrl: samsung: Move retention control from mach-exynos to the
+>     pinctrl driver
+>   pinctrl: samsung: Replace syscore ops with standard platform device
+>     pm_ops
+>   pinctrl: samsung: Add property to mark pad state as suitable for power
+>     down
+>   pinctrl: samsung: Add runtime PM support
+>   ARM: dts: exynos: Add audio power domain support to Exynos542x SoCs
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |  12 ++
+>  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   3 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   3 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  11 ++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  18 ++-
+>  arch/arm/mach-exynos/suspend.c                     |  64 ---------
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           | 148 +++++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c          | 126 ++++++++----------
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          |  15 +++
+>  11 files changed, 271 insertions(+), 135 deletions(-)
+>
 
-Best regards,
-Krzysztof
+Is their core configuration missing to enable audio through HDMI on
+Odroid Boards.
+I could not get the sound working on Odroid XU4.
+.
+-Best Regards
+Anand Moon
