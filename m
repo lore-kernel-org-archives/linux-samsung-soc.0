@@ -1,137 +1,85 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 8/9] pinctrl: samsung: Add runtime PM support
-Date: Sun, 25 Dec 2016 21:26:47 +0200
-Message-ID: <20161225192647.omy6qnd6pe4aaoud@kozik-lap>
-References: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161223122542epcas1p444c9d8c91c2983f9934e68a6bb882726@epcas1p4.samsung.com>
- <1482495889-6201-9-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1482495889-6201-9-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC PATCH 0/6] Support the PCIe for TM2(exynos5433)
+Date: Mon, 26 Dec 2016 14:20:23 +0900
+Message-ID: <20161226052029.10552-1-jh80.chung@samsung.com>
+References: <CGME20161226052030epcas1p45f543765960d14ccf9cd40c2b9cca84b@epcas1p4.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:43512 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbcLZFUf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 26 Dec 2016 00:20:35 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 
-On Fri, Dec 23, 2016 at 01:24:48PM +0100, Marek Szyprowski wrote:
-> This patch adds runtime power management support to Samsung pin controller
-> driver. It uses recently introduced property to mark some pin states as
-> suitable for power off. When all pins for given controller are set to this
-> special state, the controller is able to enter runtime suspend state. This
-> in turn might allow to turn respective power domain off to reduce power
-> consumption.
-> 
-> This patch moves saving driver state to runtime pm callbacks and implements
-> system sleep suspend/resume callbacks with pm_runtime_force_suspend/resume
-> helpers to keep the runtime pm state consistent with the hardware both
-> during runtime and system sleep transitions.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 24 ++++++++++++++++++++++--
->  drivers/pinctrl/samsung/pinctrl-samsung.h |  1 +
->  2 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 301169d2b6e1..c741e93d65b8 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -28,6 +28,7 @@
->  #include <linux/gpio.h>
->  #include <linux/irqdomain.h>
->  #include <linux/of_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/spinlock.h>
->  
->  #include "../core.h"
-> @@ -378,6 +379,17 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
->  		shift -= 32;
->  		reg += 4;
->  	}
-> +	if (func->rpm_active) {
-> +		if (!(bank->rpm_map & (1 << pin_offset))) {
-> +			bank->rpm_map |= 1 << pin_offset;
-> +			pm_runtime_get_sync(drvdata->dev);
-> +		}
-> +	} else {
-> +		if ((bank->rpm_map & (1 << pin_offset))) {
-> +			bank->rpm_map &= ~(1 << pin_offset);
-> +			pm_runtime_put(drvdata->dev);
-> +		}
-> +	}
->  
->  	spin_lock_irqsave(&bank->slock, flags);
->  
-> @@ -427,6 +439,8 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
->  	if (cfg_type >= PINCFG_TYPE_NUM || !type->fld_width[cfg_type])
->  		return -EINVAL;
->  
-> +	pm_runtime_get_sync(drvdata->dev);
-> +
->  	width = type->fld_width[cfg_type];
->  	cfg_reg = type->reg_offset[cfg_type];
->  
-> @@ -449,6 +463,8 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
->  
->  	spin_unlock_irqrestore(&bank->slock, flags);
->  
-> +	pm_runtime_put(drvdata->dev);
-> +
->  	return 0;
->  }
->  
-> @@ -1096,6 +1112,8 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
->  		ctrl->retention_init(drvdata);
->  
->  	platform_set_drvdata(pdev, drvdata);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
->  
->  	return 0;
->  }
-> @@ -1242,8 +1260,10 @@ static int samsung_pinctrl_resume(struct device *dev)
->  MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
->  
->  static const struct dev_pm_ops samsung_pinctrl_pm_ops = {
-> -	SET_LATE_SYSTEM_SLEEP_PM_OPS(samsung_pinctrl_suspend,
-> -				     samsung_pinctrl_resume)
-> +	SET_RUNTIME_PM_OPS(samsung_pinctrl_suspend,
-> +			   samsung_pinctrl_resume, NULL)
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				     pm_runtime_force_resume)
->  };
->  
->  static struct platform_driver samsung_pinctrl_driver = {
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> index edeafa00abd3..ccb24ec46796 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -172,6 +172,7 @@ struct samsung_pin_bank {
+This patchset is for supporting PCIe exynos5433.
+TM2(exynos5433) supports the PCIe for WiFi. In driver/pci/host/, there is pci-exynos.c.
+But i can't touch anything. The below reasons are why i added the new file.
+1. Don't have the exynos5440 TRM
+- I can't check anything for exynso5440.
+- So i can't touch anything for using PHY generic framework.
+2. Can't test the exynos5440 board.
+- If used the phy generic framework, can't ensure whether it's working fine or not.
+3. There is no maintiain for exynos5440.
+- i don't know anywhere pci-exynos5440 is used.
 
-A nit:
-Missing kernel doc update.
+As i know, Bjorn(PCIe Maintainer) agreed about adding the new file.
 
-It took me a while to understand the logic behind the rpm_active (the
-code is simple but logic was not that easy to see) but it looks good and
-sensible. I didn't find any issues with that approach except the usage
-of DT configuration as a "notification" mechanism.
+So i added the new pci-exynos5433 file in driver/pci/host/.
+And adds the phy-exynos-pcie.c for using PHY generic framework.
+When use the PHY generic framework, controlling pcie is more easier than now.
 
-For this itself:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+There are future works,
+      - Supporting MSI
+      - If possible, combine the one file to pci-exynos.c
 
-Best regards,
-Krzysztof
+This is based on httt://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git (for-next branch)
+(Because PCI git repository doesn't snycrhonize yet.)
 
+The below is working messesage
 
->  	const char	*name;
->  
->  	u32		pin_base;
-> +	u32		rpm_map;
->  	void		*soc_priv;
->  	struct device_node *of_node;
->  	struct samsung_pinctrl_drv_data *drvdata;
-> -- 
-> 1.9.1
-> 
+[    0.817081] OF: PCI: host bridge /soc/pcie@15700000 ranges:
+[    0.817264] OF: PCI:   No bus range found for /soc/pcie@15700000, using [bus 00-ff]
+[    0.821377] OF: PCI:    IO 0x0c001000..0x0c010fff -> 0x00000000
+[    0.827270] OF: PCI:   MEM 0x0c011000..0x0ffffffe -> 0x0c011000
+[    0.934306] exynos5433-pcie 156b0000.pcie: link up
+[    0.934649] exynos5433-pcie 156b0000.pcie: PCI host bridge to bus 0000:00
+[    0.934867] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.935045] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    0.935243] pci_bus 0000:00: root bus resource [mem 0x0c011000-0x0ffffffe]
+[    0.953719] pci 0000:00:00.0: BAR 8: assigned [mem 0x0c200000-0x0c7fffff]
+[    0.953941] pci 0000:01:00.0: BAR 2: assigned [mem 0x0c400000-0x0c7fffff 64bit]
+[    0.956672] pci 0000:01:00.0: BAR 0: assigned [mem 0x0c200000-0x0c207fff 64bit]
+[    0.963959] pci 0000:00:00.0: PCI bridge to [bus 01]
+[    0.968368] pci 0000:00:00.0:   bridge window [mem 0x0c200000-0x0c7fffff]
+[    0.975241] pcieport 0000:00:00.0: of_irq_parse_pci() failed with rc=-22
+[    0.982124] pcieport 0000:00:00.0: Signaling PME through PCIe PME interrupt
+
+Jaehoon Chung (6):
+  phy: exynos-pcie: Add support for Exynos PCIe phy
+  Documetation: samsung-phy: add the exynos-pcie-phy binding
+  ARM64: dts: exynos5433: add the pcie_phy node for PCIe
+  PCI: exynos5433: Add new exynos pci host controller for Exynos5433
+  Documentation: pci: add the exynos5433-pcie binding
+  ARM64: exynos: add the pcie node for TM2
+
+ .../devicetree/bindings/pci/exynos5433-pcie.txt    |  36 +++
+ .../devicetree/bindings/phy/samsung-phy.txt        |  21 ++
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |   7 +
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  11 +-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  37 +++
+ drivers/pci/host/Kconfig                           |   9 +
+ drivers/pci/host/Makefile                          |   1 +
+ drivers/pci/host/pci-exynos5433.c                  | 338 +++++++++++++++++++++
+ drivers/phy/Kconfig                                |   9 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-exynos-pcie.c                      | 227 ++++++++++++++
+ 11 files changed, 695 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
+ create mode 100644 drivers/pci/host/pci-exynos5433.c
+ create mode 100644 drivers/phy/phy-exynos-pcie.c
+
+-- 
+2.10.2
