@@ -1,117 +1,59 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC PATCH 6/6] ARM64: exynos: add the pcie node for TM2
-Date: Mon, 26 Dec 2016 14:20:29 +0900
-Message-ID: <20161226052029.10552-7-jh80.chung@samsung.com>
+From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 3/6] ARM64: dts: exynos5433: add the pcie_phy node for PCIe
+Date: Mon, 26 Dec 2016 14:20:26 +0900
+Message-ID: <20161226052029.10552-4-jh80.chung@samsung.com>
 References: <20161226052029.10552-1-jh80.chung@samsung.com>
- <CGME20161226052031epcas1p43a300fe9e59c2af410c48861cd8554d1@epcas1p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20161226052029.10552-1-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
+ <CGME20161226052031epcas5p451b1352d6c8c5205a69246c2994b9506@epcas5p4.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20161226052029.10552-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add the Exxynos5433 pcie node for TM2.
-This pcie device is used for supporting WiFi.
+To use the generic PHY framework, adds the pcie_phy node.
 
-And some gpios are already requested from pinctrl. so it doesn't need to
-initialize.
-GPJ2-0 is used for supplying to WiFi PCIe chip.
-
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  7 +++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 11 +++++++++--
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 23 ++++++++++++++++++++++
- 3 files changed, 39 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-index ad71247..3e8b728 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-@@ -183,6 +183,13 @@
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
-+
-+	pcie_wlanen: pcie-wlanen {
-+		samsung,pins = "gpj2-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
- };
- 
- &pinctrl_finger {
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index f21bdc2..c84a2ad 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -737,6 +737,15 @@
- 	bus-width = <4>;
- };
- 
-+&pcie {
-+	assigned-clocks = <&cmu_fsys CLK_MOUT_SCLK_PCIE_100_USER>,
-+			<&cmu_top CLK_MOUT_SCLK_PCIE_100>;
-+	assigned-clock-parents = <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
-+			<&cmu_top CLK_MOUT_BUS_PLL_USER>;
-+	assigned-clock-rates = <0>, <100000000>;
-+	status = "okay";
-+};
-+
- &pinctrl_alive {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&initial_alive>;
-@@ -836,7 +845,6 @@
- 	pinctrl-0 = <&initial_ese>;
- 
- 	initial_ese: initial-state {
--		PIN(IN, gpj2-0, DOWN, LV1);
- 		PIN(IN, gpj2-1, DOWN, LV1);
- 		PIN(IN, gpj2-2, DOWN, LV1);
- 	};
-@@ -851,7 +859,6 @@
- 		PIN(IN, gpr3-1, DOWN, LV1);
- 		PIN(IN, gpr3-2, DOWN, LV1);
- 		PIN(IN, gpr3-3, DOWN, LV1);
--		PIN(IN, gpr3-7, NONE, LV1);
- 	};
- };
- 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 2a15f18..da287f4 100644
+index 64226d5..2a15f18 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1457,6 +1457,29 @@
- 			samsung,fsys-sysreg = <&syscon_fsys>;
- 			status = "okay";
+@@ -805,6 +805,11 @@
+ 			reg = <0x145f0000 0x1038>;
+ 		};
+ 
++		syscon_fsys: syscon@156f0000 {
++			compatible = "syscon";
++			reg = <0x156f0000 0x1044>;
++		};
++
+ 		gsc_0: video-scaler@13C00000 {
+ 			compatible = "samsung,exynos5433-gsc";
+ 			reg = <0x13c00000 0x1000>;
+@@ -1443,6 +1448,15 @@
+ 				status = "disabled";
+ 			};
  		};
 +
-+		pcie: pcie@15700000 {
-+			compatible = "samsung,exynos5433-pcie", "snps,dw-pcie";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "intr";
-+			clocks = <&cmu_fsys CLK_PCIE>,
-+			       <&cmu_fsys CLK_PCLK_PCIE_PHY>;
-+			clock-names = "pcie", "pcie_bus";
-+			num-lanes = <1>;
-+			pinctrl-names = "default";
-+			phys = <&pcie_phy>;
-+			phy-names = "pcie-phy";
-+			pinctrl-0 = <&pcie_bus &pcie_wlanen>;
-+			reg = <0x156b0000 0x1000>, <0x15700000 0x1000>,
-+			    <0x0c000000 0x1000>;
-+			reg-names = "elbi", "dbi", "config";
-+			ranges = <0x81000000 0 0	  0x0c001000 0 0x00010000
-+				  0x82000000 0 0x0c011000 0x0c011000 0 0x3feefff>;
-+			status = "disabled";
++		pcie_phy: pcie-phy@15680000 {
++			#phy-cells = <0>;
++			compatible = "samsung,exynos5433-pcie-phy";
++			reg = <0x15680000 0x1000>;
++			samsung,pmureg-phandle = <&pmu_system_controller>;
++			samsung,fsys-sysreg = <&syscon_fsys>;
++			status = "okay";
 +		};
  	};
  
  	timer: timer {
 -- 
 2.10.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
