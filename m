@@ -1,60 +1,83 @@
 From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH 0/4] PCI: exynos: cleans the minor things
-Date: Mon, 26 Dec 2016 08:52:58 -0500
-Message-ID: <000001d25f7f$5f0d2cf0$1d2786d0$@gmail.com>
-References: <20161219081614.5403-1-jh80.chung@samsung.com> <4494696.ZtEANGFldV@amdc3058>
+Subject: Re: [PATCH] PCI: exynos: refactor exynos pcie driver
+Date: Mon, 26 Dec 2016 09:43:31 -0500
+Message-ID: <000201d25f86$6ee20bd0$4ca62370$@gmail.com>
+References: <CGME20161223105411epcas1p3727f726e757ec6c6d7bff04a9af40077@epcas1p3.samsung.com> <1482490587-13611-1-git-send-email-pankaj.dubey@samsung.com> <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35676 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbcLZNxC (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Dec 2016 08:53:02 -0500
-In-Reply-To: <4494696.ZtEANGFldV@amdc3058>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
 Content-Language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+Cc: krzk@kernel.org, kgene@kernel.org, bhelgaas@google.com, alim.akhtar@samsung.com, sanath@samsung.com, 'Niyas Ahmed S T' <niyas.ahmed@samsung.com>, 'CPGS' <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday, December 20, 2016 12:36 PM, Bartlomiej Zolnierkiewicz wrote:
+Jaehoon Chung wtote:
 > 
-> Hi,
+> Hi Pankaj,
 > 
-> On Monday, December 19, 2016 05:16:10 PM Jaehoon Chung wrote:
-> > Current pci-exnoys.c is used for only EXYNOS5440.
-> > Even if there is no use-case, just cleans the codes for maintaining.
+> On 12/23/2016 07:56 PM, Pankaj Dubey wrote:
+> > From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
 > >
-> > In future, I will upstream for Exynso5433(TM2).
-> > Before sending patches for exynos5433, i want to reuse the some codse in
-> pic-exynos.c.
-> > This patch is for perparing it.
+> > Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
+> > This patch does refactoring of Exynos PCIe driver to extend support
+> > for other Exynos SoC.
 > >
-> > My Final goal is to apply the pcie-exynos5433 into v4.11.
-> >
-> > Jaehoon Chung (4):
-> >   PCI: exynos: replace to one register accessor from each accessors
-> >   PCI: exynos: Remove the unnecessary variables
-> >   PCI: exynos: Use the bitops API to operate the bit shifting
-> >   PCI: exynos: remove the duplicated codes
-> >
-> >  drivers/pci/host/pci-exynos.c | 260 +++++++++++++++++++----------------
-> -------
-> >  1 file changed, 116 insertions(+), 144 deletions(-)
+> > Following are the main changes done via this patch:
+> > 1) It adds separate structs for memory, clock resources.
+> > 2) It add exynos_pcie_ops struct which will allow us to support the
+> > differences in resources in different Exynos SoC.
 > 
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> It's nice to me for reusing this file.
+> but after considering too many times, i decided not to use this file.
+> 
+> I'm not sure what block base is..actually this pci-exynos.c is really
+> black-box.
+> (No one maintains this file, even Samsung didn't care.)
+> Who is using this?
+> If Someone can share the information about exynos5440, i can refactor
+> everything.
+> Otherwise, there are two solution..
+> 
+> One is "adding the new pci-exynos.c" likes pci-exynos5433.c
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+As Bjorn mentioned earlier, I agree with this option.
+
+> Other is "refactor this file" under assuming the each register's usage.
+
+But, if possible, I prefer this option.
+I am not sure that it cannot make the code dirty.
+Maybe, you need to discuss with hardware design engineers.
+
+> 
+> I want to use the PHY generic Framework for EXYNOS PCIe.
+> 
+> If you or other guys really want to use the pci-exynos.c for other exynos,
+> I will rework with PHY generic framework. Then i will resend the my
+> patches as V2.
+
+When I submitted the pci-exynos.c, there was no PHY generic framework.
+But, currently, using PHY generic framework is mandatory, as other PCIe host
+driver did.
+I think that we should use PHY generic framework for new SoCs.
+
+> 
+> One more thing..Does anyone know what the usage of block base is?
+> Can i use that register as "syscon"?
+
+'Block' is very specific registers for 5440.
+Other Exynos SoCs do not use that registers.
+Actually, it is not the same with 'syscon'.
+But, you can assume 'block' as 'syscon'.
 
 Best regards,
 Jingoo Han
 
 > 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
+> Best Regards,
+> Jaehoon Chung
+> 
+[.....]
