@@ -1,53 +1,37 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC PATCH 2/6] Documetation: samsung-phy: add the exynos-pcie-phy
- binding
-Date: Mon, 26 Dec 2016 14:20:25 +0900
-Message-ID: <20161226052029.10552-3-jh80.chung@samsung.com>
-References: <20161226052029.10552-1-jh80.chung@samsung.com>
- <CGME20161226052030epcas1p40f87c865223a9ad8cd0cd1d6e4d54b32@epcas1p4.samsung.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20161226052029.10552-1-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/9] ARM: dts: exynos: Add PMU syscon to pinctrl nodes
+Date: Mon, 26 Dec 2016 14:36:15 +0900
+Message-ID: <CA+Ln22E2ybpbw-p__90g_Ndun158L-uBwxNYF+TjhwmNK6dH5w@mail.gmail.com>
+References: <CGME20161223122516epcas5p41c9d3f1e805293ee7f000d614452ba6f@epcas5p4.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com> <1482495889-6201-2-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1482495889-6201-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
-This is for using generic PHY framework.
+Hi Marek,
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
- .../devicetree/bindings/phy/samsung-phy.txt         | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+2016-12-23 21:24 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Access to PMU regmap is needed to properly release pad retention after
+> suspend/resume cycle.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi | 2 ++
+>  arch/arm/boot/dts/exynos4210.dtsi | 3 +++
+>  arch/arm/boot/dts/exynos4x12.dtsi | 3 +++
+>  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++++
+>  5 files changed, 17 insertions(+)
+>
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 9872ba8..eb1085e 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -191,3 +191,24 @@ Example:
- 		usbdrdphy0 = &usb3_phy0;
- 		usbdrdphy1 = &usb3_phy1;
- 	};
-+
-+Samsung Exynos SoC series PCIe PHY controller
-+--------------------------------------------------
-+Required properties:
-+- compatible : Should be set to "samsung,exynos5433-pcie-phy"
-+- #phy-cells : must be zero
-+- reg : a list of registers usd by phy driver
-+
-+Optional properites:
-+-samsung,pmureg-phandle	- handle to syscon used to control PMU registers
-+-samsung,fsys-sysreg	- handle to syscon used to control the system registers
-+
-+Example:
-+	pcie_phy: pcie-phy@15680000 {
-+		#phy-cells = <0>;
-+		compatible = "samsung,exynos5433-pcie-phy";
-+		reg = <0x15680000 0x1000>;
-+		samsung,pmureg-phandle = <&pmu_system_controller>;
-+		samsung,fsys-sysreg = <&syscon_fsys>;
-+		status = "okay";
-+	};
--- 
-2.10.2
+I think the change makes sense, but we should also update binding
+documentation. Also will the driver continue to work correctly if the
+property is not present?
+
+Best regards,
+Tomasz
