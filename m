@@ -1,57 +1,131 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v2 2/2] arm64: dts: exynos: Add support for S6E3HA2 panel
- device on TM2 board
-Date: Tue, 27 Dec 2016 18:05:48 +0900
-Message-ID: <1482829548-20842-3-git-send-email-hoegeun.kwon@samsung.com>
-References: <1482829548-20842-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20161227090607epcas5p21735964568c072bbf862d7fd1b94b6f2@epcas5p2.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 5/9] pinctrl: samsung: Move retention control from
+ mach-exynos to the pinctrl driver
+Date: Tue, 27 Dec 2016 11:12:26 +0100
+Message-ID: <5d09e29f-5796-cce6-75d5-ed5a0145092f@samsung.com>
+References: <CGME20161223122531epcas1p4b8fad6664dad3408acb7a1b9f140884a@epcas1p4.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+ <1482495889-6201-6-git-send-email-m.szyprowski@samsung.com>
+ <CA+Ln22HQPHF_Vj0kS834SH=4=hcNOpe_vL8P3fbS-jFhQLVyXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1482829548-20842-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CA+Ln22HQPHF_Vj0kS834SH=4=hcNOpe_vL8P3fbS-jFhQLVyXA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgoKVGhpcyBwYXRj
-aCBhZGQgdGhlIHBhbmVsIGRldmljZSB0cmVlIG5vZGUgZm9yIFM2RTNIQTIgZGlzcGxheQpjb250
-cm9sbGVyIHRvIFRNMiBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4u
-aHdhbmdAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
-c2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1
-bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5n
-LmNvbT4KLS0tCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMg
-fCAzMyArKysrKysrKysrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAzMyBpbnNl
-cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9z
-NTQzMy10bTIuZHRzIGIvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIu
-ZHRzCmluZGV4IGRiODc5ZjQuLjRhZDIzMzIgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtNjQvYm9vdC9k
-dHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cworKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4
-eW5vcy9leHlub3M1NDMzLXRtMi5kdHMKQEAgLTI1MiwxMSArMjUyLDQ0IEBACiAJCQlyZWcgPSA8
-MT47CiAKIAkJCWRzaV9vdXQ6IGVuZHBvaW50IHsKKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRz
-aV9pbj47CiAJCQkJc2Ftc3VuZyxidXJzdC1jbG9jay1mcmVxdWVuY3kgPSA8NTEyMDAwMDAwPjsK
-IAkJCQlzYW1zdW5nLGVzYy1jbG9jay1mcmVxdWVuY3kgPSA8MTYwMDAwMDA+OwogCQkJfTsKIAkJ
-fTsKIAl9OworCisJcGFuZWxAMCB7CisJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmUzaGEyIjsK
-KwkJcmVnID0gPDA+OworCQl2ZGQzLXN1cHBseSA9IDwmbGRvMjdfcmVnPjsKKwkJdmNpLXN1cHBs
-eSA9IDwmbGRvMjhfcmVnPjsKKwkJcmVzZXQtZ3Bpb3MgPSA8JmdwZzAgMCBHUElPX0FDVElWRV9I
-SUdIPjsKKwkJZW5hYmxlLWdwaW9zID0gPCZncGYxIDUgR1BJT19BQ1RJVkVfSElHSD47CisJCXRl
-LWdwaW9zID0gPCZncGYxIDMgR1BJT19BQ1RJVkVfSElHSD47CisJCXBvd2VyLW9uLWRlbGF5ID0g
-PDEyMD47CisJCXJlc2V0LWRlbGF5ID0gPDU+OworCisJCWRpc3BsYXktdGltaW5ncyB7CisJCQl0
-aW1pbmctMCB7CisJCQkJY2xvY2stZnJlcXVlbmN5ID0gPDE0ODc0NDQ0PjsKKwkJCQloYWN0aXZl
-ID0gPDE0NDA+OworCQkJCXZhY3RpdmUgPSA8MjU2MD47CisJCQkJaGZyb250LXBvcmNoID0gPDE+
-OworCQkJCWhiYWNrLXBvcmNoID0gPDE+OworCQkJCWhzeW5jLWxlbiA9IDwxPjsKKwkJCQl2ZnJv
-bnQtcG9yY2ggPSA8MT47CisJCQkJdmJhY2stcG9yY2ggPSA8MTU+OworCQkJCXZzeW5jLWxlbiA9
-IDwxPjsKKwkJCX07CisJCX07CisKKwkJcG9ydCB7CisJCQlkc2lfaW46IGVuZHBvaW50IHsKKwkJ
-CQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+OworCQkJfTsKKwkJfTsKKwl9OwogfTsKIAog
-JmhzaTJjXzAgewotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hi Tomasz,
+
+
+On 2016-12-26 06:55, Tomasz Figa wrote:
+> 2016-12-23 21:24 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+>> Pad retention control after suspend/resume cycle should be done from pin
+>> controller driver instead of PMU (power management unit) driver to avoid
+>> possible ordering and logical dependencies. Till now it worked fine only
+>> because PMU driver registered its sys_ops after pin controller.
+>>
+>> This patch moves pad retention control from PMU driver to Exynos pin
+>> controller driver. This is a preparation for adding new features to Exynos
+>> pin controller driver, like runtime power management and suspending
+>> individual pin controllers, which might be a part of some power domain.
+>>
+> It looks like this change will essentially break the compatibility
+> with DTBs that don't have the pmu syscon specified in pin controller
+> nodes.
+>
+> On the other hand, moving this code to where it actually belongs
+> really makes sense, so maybe we could just avoid the need of having
+> this property, by looking up the PMU manually, by hardcoded string or
+> so, if the proper property is not present?
+
+Well, once again the topic of mythical device tree compatibility appearch.
+
+There are imho following possibilities:
+
+1. https://patchwork.kernel.org/patch/9477963/ ("Explicitly mark Samsung
+    Exynos SoC bindings as unstable"), simply apply this approach and ignore
+    users, who don't update their device tree blobs (are there any??).
+
+2. Switch to syscon_regmap_lookup_by_compatible() lookup and hardcode PMU
+    compatible id for all Exynos SoCs in the pin control driver. Then maybe,
+    while unifying the code, switch other Exynos drivers to this approach
+    and remove PMU phandles from device tree to make the code a bit more
+    consistent across drivers and easier to understand.
+
+3. Mixed approach, which combines drawbacks of both approaches. Additional
+    dead code for handling mythical compatibility and harder to understand
+    relations between the drivers.
+
+
+> [...]
+>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> index 1baf19eecabf..b7bd2e12a269 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> @@ -43,6 +43,10 @@ Required Properties:
+>>                  };
+>>          };
+>>
+>> +- samsung,pmu-syscon: Phandle to the PMU system controller, to let driver
+>> +  to control pad retention after system suspend/resume cycle (only for Exynos
+>> +  SoC series).
+>> +
+> Ah, here it is. I think adding relevant binding documentation at the
+> beginning of the series would make it much easier for reviewers to
+> understand the change.
+
+I already pointed that patches are ordered to make the changes 
+bisectable, what
+usually means that new properties are added first, before being required 
+by the
+drivers.
+
+>
+>>   - Pin banks as child nodes: Pin banks of the controller are represented by child
+>>     nodes of the controller node. Bank name is taken from name of the node. Each
+>>     bank node must contain following properties:
+> [...]
+>
+>> +static void exynos_retention_audio_off(struct samsung_pinctrl_drv_data *drvdata)
+>> +{
+>> +       if (!IS_ERR(pmu_regs))
+> nit: Negated conditions make the code more difficult to read. Also it
+> would be consistent with exynos_retention_off() to just bail out if
+> (IS_ERR(pmu_regs)).
+>
+>> +               regmap_write(pmu_regs, S5P_PAD_RET_MAUDIO_OPTION,
+>> +                            EXYNOS_WAKEUP_FROM_LOWPWR);
+>> +}
+> [...]
+>
+>> @@ -1139,15 +1146,15 @@ static void samsung_pinctrl_suspend_dev(
+>>
+>>          if (drvdata->suspend)
+>>                  drvdata->suspend(drvdata);
+>> +       if (drvdata->retention_on)
+>> +               drvdata->retention_on(drvdata);
+>> +
+> nit: Unnecessary blank line.
+>
+> Best regards,
+> Tomasz
+>
+>
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
