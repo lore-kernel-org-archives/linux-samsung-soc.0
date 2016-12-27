@@ -1,122 +1,140 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC PATCH 5/6] Documentation: pci: add the exynos5433-pcie binding
-Date: Wed, 28 Dec 2016 08:03:41 +0900
-Message-ID: <d723ec48-af3c-6012-4f76-e8e73ad9af58@samsung.com>
+Subject: Re: [RFC PATCH 6/6] ARM64: exynos: add the pcie node for TM2
+Date: Wed, 28 Dec 2016 08:05:52 +0900
+Message-ID: <3b9ff8a3-fca9-10be-2133-283e70a7fb50@samsung.com>
 References: <20161226052029.10552-1-jh80.chung@samsung.com>
- <CGME20161226052031epcas5p4f151c41189f7b3811979ca1e10aab1be@epcas5p4.samsung.com>
- <20161226052029.10552-6-jh80.chung@samsung.com>
- <20161227161916.nb6yf3n2kmkzkeg2@kozik-lap>
+ <CGME20161226052031epcas1p43a300fe9e59c2af410c48861cd8554d1@epcas1p4.samsung.com>
+ <20161226052029.10552-7-jh80.chung@samsung.com>
+ <20161227163200.6noed454fmtgozrv@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43604 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753878AbcL0XEZ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Dec 2016 18:04:25 -0500
-In-reply-to: <20161227161916.nb6yf3n2kmkzkeg2@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20161227163200.6noed454fmtgozrv@kozik-lap>
+Sender: linux-pci-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/28/2016 01:19 AM, Krzysztof Kozlowski wrote:
-> On Mon, Dec 26, 2016 at 02:20:28PM +0900, Jaehoon Chung wrote:
+On 12/28/2016 01:32 AM, Krzysztof Kozlowski wrote:
+> On Mon, Dec 26, 2016 at 02:20:29PM +0900, Jaehoon Chung wrote:
+>> Add the Exxynos5433 pcie node for TM2.
+>> This pcie device is used for supporting WiFi.
+>>
+>> And some gpios are already requested from pinctrl. so it doesn't need to
+>> initialize.
+>> GPJ2-0 is used for supplying to WiFi PCIe chip.
+>>
 >> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 >> ---
->>  .../devicetree/bindings/pci/exynos5433-pcie.txt    | 36 ++++++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
+>>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  7 +++++++
+>>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 11 +++++++++--
+>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 23 ++++++++++++++++++++++
+>>  3 files changed, 39 insertions(+), 2 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt b/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
->> new file mode 100644
->> index 0000000..932a847
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
->> @@ -0,0 +1,36 @@
->> +* Samsung Exynos5433 PCIe interface
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>> index ad71247..3e8b728 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>> @@ -183,6 +183,13 @@
+>>  		interrupt-controller;
+>>  		#interrupt-cells = <2>;
+>>  	};
 >> +
->> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+>> +	pcie_wlanen: pcie-wlanen {
+>> +		samsung,pins = "gpj2-0";
+>> +		samsung,pin-function = <0>;
+>> +		samsung,pin-pud = <3>;
+>> +		samsung,pin-drv = <3>;
+>> +	};
+>>  };
+>>  
+>>  &pinctrl_finger {
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> index f21bdc2..c84a2ad 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> @@ -737,6 +737,15 @@
+>>  	bus-width = <4>;
+>>  };
+>>  
+>> +&pcie {
+>> +	assigned-clocks = <&cmu_fsys CLK_MOUT_SCLK_PCIE_100_USER>,
+>> +			<&cmu_top CLK_MOUT_SCLK_PCIE_100>;
+>> +	assigned-clock-parents = <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
+>> +			<&cmu_top CLK_MOUT_BUS_PLL_USER>;
+>> +	assigned-clock-rates = <0>, <100000000>;
+>> +	status = "okay";
+>> +};
+>> +
+>>  &pinctrl_alive {
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&initial_alive>;
+>> @@ -836,7 +845,6 @@
+>>  	pinctrl-0 = <&initial_ese>;
+>>  
+>>  	initial_ese: initial-state {
+>> -		PIN(IN, gpj2-0, DOWN, LV1);
+>>  		PIN(IN, gpj2-1, DOWN, LV1);
+>>  		PIN(IN, gpj2-2, DOWN, LV1);
+>>  	};
+>> @@ -851,7 +859,6 @@
+>>  		PIN(IN, gpr3-1, DOWN, LV1);
+>>  		PIN(IN, gpr3-2, DOWN, LV1);
+>>  		PIN(IN, gpr3-3, DOWN, LV1);
+>> -		PIN(IN, gpr3-7, NONE, LV1);
+>>  	};
+>>  };
+>>  
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> index 2a15f18..da287f4 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> @@ -1457,6 +1457,29 @@
+>>  			samsung,fsys-sysreg = <&syscon_fsys>;
+>>  			status = "okay";
+>>  		};
+>> +
+>> +		pcie: pcie@15700000 {
+>> +			compatible = "samsung,exynos5433-pcie", "snps,dw-pcie";
+>> +			#address-cells = <3>;
+>> +			#size-cells = <2>;
+>> +			device_type = "pci";
+>> +			interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "intr";
+>> +			clocks = <&cmu_fsys CLK_PCIE>,
+>> +			       <&cmu_fsys CLK_PCLK_PCIE_PHY>;
 > 
-> Synopsys.
+> Here and in the 'reg' property - indentation looks weird. Tabs+spaces
+> but not aligned. Either you use spaces to align... or just don't care
+> and use tabs. I prefer consistency and below the 'ranges' property is
+> aligned.
 
 Will fix.
 
 > 
->> +and thus inherits all the common properties defined in designware-pcie.txt.
->> +
->> +Required properties:
->> +- compatible: "samsung,exynos5433-pcie"
->> +- reg: base addresses and lengths of the pcie controller,
->> +	the phy controller, additional register for the phy controller.
+>> +			clock-names = "pcie", "pcie_bus";
+>> +			num-lanes = <1>;
+>> +			pinctrl-names = "default";
+>> +			phys = <&pcie_phy>;
+>> +			phy-names = "pcie-phy";
+>> +			pinctrl-0 = <&pcie_bus &pcie_wlanen>;
+>> +			reg = <0x156b0000 0x1000>, <0x15700000 0x1000>,
+>> +			    <0x0c000000 0x1000>;
+>> +			reg-names = "elbi", "dbi", "config";
 > 
-> You mentioned three regs but the example contains four of them. Is the
-> config comming from snps,dw-pcie?
+> This does not match the bindings documentation.
 
-Oops..It's my mistake. Just needs to put three reg.
-Elbi : External local Bus interface register.
-Dbi : Data bus interface register.(Control register.)
-Config : for configuration space.
+This is right. Bindings documentation is wrong. :)
 
-"config" can be removed. Because it's not Exynos specific, synopsys's Required property.
-
-> 
->> +- reg-names: Must be "elbi", "phy" and "dbi" for each regs
-> 
-> Again, three here, four in example.
-
-Will fix.
-
-> 
->> +- interrupt-names: Must be "intr" for legacy interrupt pin.
->> +
->> +Other common properites refer to
->> +	Documentation/devicetree/binding/pci/designware-pcie.txt
->> +
->> +Example:
->> +
->> +	pcie: pcie@15700000 {
->> +		compatible ="samsung,exynos5433-pcie", "snps,dw-pcie";
->                             ^
-> 			    space needed
->> +		#address-cells = <3>;
->> +		#size-cells = <2>;
->> +		device_type = "pci";
->> +		interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
->> +		interrupt-names = "intr";
->> +		clocks = <&cmu_fsys CLK_PCIE>, <&cmu_fsys CLK_PCLK_PCIE_PHY>;
->> +		clock-names = "pcie", "pcie_bus";
->> +		num-lanes = <1>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pcie_bus>;
->> +		reg = <0x156b0000 0x1000>, <0x15680000 0x1000>,
->> +		    <0x15700000 0x1000>, <0x0c000000 0x1000>;
-> 
-> Indentation here looks wrong. You indented it with spaces after tabs...
-> but not to align with line before.
-
-Will fix.
+And I will put the prefix as "dts" on subject, according to your other comment.
 
 Best Regards,
 Jaehoon Chung
 
 > 
-> Beside that, fine with me:
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
 > Best regards,
 > Krzysztof
-> 
-> 
->> +		reg-names = "elbi", "phy", "dbi", "config";
->> +		ranges = <0x81000000 0 0	  0x0c001000 0 0x00010000
->> +			  0x82000000 0 0x0c011000 0x0c011000 0 0x3feefff>;
->> +		status = "disabled";
->> +	};
->> -- 
->> 2.10.2
->>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-pci" in
 > the body of a message to majordomo@vger.kernel.org
