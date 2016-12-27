@@ -1,70 +1,98 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC PATCH 3/6] ARM64: dts: exynos5433: add the pcie_phy node
- for PCIe
-Date: Tue, 27 Dec 2016 18:11:34 +0200
-Message-ID: <20161227161134.ds67t5byucphwkjg@kozik-lap>
+Subject: Re: [RFC PATCH 5/6] Documentation: pci: add the exynos5433-pcie
+ binding
+Date: Tue, 27 Dec 2016 18:19:16 +0200
+Message-ID: <20161227161916.nb6yf3n2kmkzkeg2@kozik-lap>
 References: <20161226052029.10552-1-jh80.chung@samsung.com>
- <CGME20161226052031epcas5p451b1352d6c8c5205a69246c2994b9506@epcas5p4.samsung.com>
- <20161226052029.10552-4-jh80.chung@samsung.com>
+ <CGME20161226052031epcas5p4f151c41189f7b3811979ca1e10aab1be@epcas5p4.samsung.com>
+ <20161226052029.10552-6-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33858 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752721AbcL0Q1q (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 27 Dec 2016 11:27:46 -0500
 Content-Disposition: inline
-In-Reply-To: <20161226052029.10552-4-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
+In-Reply-To: <20161226052029.10552-6-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 26, 2016 at 02:20:26PM +0900, Jaehoon Chung wrote:
-> To use the generic PHY framework, adds the pcie_phy node.
-> 
+On Mon, Dec 26, 2016 at 02:20:28PM +0900, Jaehoon Chung wrote:
 > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../devicetree/bindings/pci/exynos5433-pcie.txt    | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 64226d5..2a15f18 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -805,6 +805,11 @@
->  			reg = <0x145f0000 0x1038>;
->  		};
->  
-> +		syscon_fsys: syscon@156f0000 {
-> +			compatible = "syscon";
-> +			reg = <0x156f0000 0x1044>;
-> +		};
+> diff --git a/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt b/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
+> new file mode 100644
+> index 0000000..932a847
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/exynos5433-pcie.txt
+> @@ -0,0 +1,36 @@
+> +* Samsung Exynos5433 PCIe interface
 > +
->  		gsc_0: video-scaler@13C00000 {
->  			compatible = "samsung,exynos5433-gsc";
->  			reg = <0x13c00000 0x1000>;
-> @@ -1443,6 +1448,15 @@
->  				status = "disabled";
->  			};
->  		};
+> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+
+Synopsys.
+
+> +and thus inherits all the common properties defined in designware-pcie.txt.
 > +
-> +		pcie_phy: pcie-phy@15680000 {
-> +			#phy-cells = <0>;
-> +			compatible = "samsung,exynos5433-pcie-phy";
+> +Required properties:
+> +- compatible: "samsung,exynos5433-pcie"
+> +- reg: base addresses and lengths of the pcie controller,
+> +	the phy controller, additional register for the phy controller.
 
-Mostly we use the convention of compatible being first property.
+You mentioned three regs but the example contains four of them. Is the
+config comming from snps,dw-pcie?
 
-> +			reg = <0x15680000 0x1000>;
-> +			samsung,pmureg-phandle = <&pmu_system_controller>;
-> +			samsung,fsys-sysreg = <&syscon_fsys>;
-> +			status = "okay";
+> +- reg-names: Must be "elbi", "phy" and "dbi" for each regs
 
-Why do you need to put status=okay here?
+Again, three here, four in example.
+
+> +- interrupt-names: Must be "intr" for legacy interrupt pin.
+> +
+> +Other common properites refer to
+> +	Documentation/devicetree/binding/pci/designware-pcie.txt
+> +
+> +Example:
+> +
+> +	pcie: pcie@15700000 {
+> +		compatible ="samsung,exynos5433-pcie", "snps,dw-pcie";
+                            ^
+			    space needed
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		device_type = "pci";
+> +		interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "intr";
+> +		clocks = <&cmu_fsys CLK_PCIE>, <&cmu_fsys CLK_PCLK_PCIE_PHY>;
+> +		clock-names = "pcie", "pcie_bus";
+> +		num-lanes = <1>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pcie_bus>;
+> +		reg = <0x156b0000 0x1000>, <0x15680000 0x1000>,
+> +		    <0x15700000 0x1000>, <0x0c000000 0x1000>;
+
+Indentation here looks wrong. You indented it with spaces after tabs...
+but not to align with line before.
+
+Beside that, fine with me:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
 
-> +		};
->  	};
->  
->  	timer: timer {
+
+> +		reg-names = "elbi", "phy", "dbi", "config";
+> +		ranges = <0x81000000 0 0	  0x0c001000 0 0x00010000
+> +			  0x82000000 0 0x0c011000 0x0c011000 0 0x3feefff>;
+> +		status = "disabled";
+> +	};
 > -- 
 > 2.10.2
 > 
