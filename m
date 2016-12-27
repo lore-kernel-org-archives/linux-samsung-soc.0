@@ -1,37 +1,90 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 6/6] ARM64: exynos: add the pcie node for TM2
-Date: Tue, 27 Dec 2016 18:33:28 +0200
-Message-ID: <CAJKOXPcx-epK2=ug_ZtOGx5w755CN1xe7A+SgyS+rVFxG5ggcg@mail.gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC PATCH 3/6] ARM64: dts: exynos5433: add the pcie_phy node for
+ PCIe
+Date: Wed, 28 Dec 2016 07:57:30 +0900
+Message-ID: <43872be0-191e-2b6d-adcc-3ce0b88b44c7@samsung.com>
 References: <20161226052029.10552-1-jh80.chung@samsung.com>
- <CGME20161226052031epcas1p43a300fe9e59c2af410c48861cd8554d1@epcas1p4.samsung.com>
- <20161226052029.10552-7-jh80.chung@samsung.com> <20161227163200.6noed454fmtgozrv@kozik-lap>
+ <CGME20161226052031epcas5p451b1352d6c8c5205a69246c2994b9506@epcas5p4.samsung.com>
+ <20161226052029.10552-4-jh80.chung@samsung.com>
+ <20161227161134.ds67t5byucphwkjg@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161227163200.6noed454fmtgozrv@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, kishon-l0cyMroinI0@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:48077 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbcL0W5p (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 27 Dec 2016 17:57:45 -0500
+In-reply-to: <20161227161134.ds67t5byucphwkjg@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com
 
-On Tue, Dec 27, 2016 at 6:32 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, Dec 26, 2016 at 02:20:29PM +0900, Jaehoon Chung wrote:
->> Add the Exxynos5433 pcie node for TM2.
->> This pcie device is used for supporting WiFi.
+On 12/28/2016 01:11 AM, Krzysztof Kozlowski wrote:
+> On Mon, Dec 26, 2016 at 02:20:26PM +0900, Jaehoon Chung wrote:
+>> To use the generic PHY framework, adds the pcie_phy node.
 >>
->> And some gpios are already requested from pinctrl. so it doesn't need to
->> initialize.
->> GPJ2-0 is used for supplying to WiFi PCIe chip.
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 >> ---
+>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> index 64226d5..2a15f18 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> @@ -805,6 +805,11 @@
+>>  			reg = <0x145f0000 0x1038>;
+>>  		};
+>>  
+>> +		syscon_fsys: syscon@156f0000 {
+>> +			compatible = "syscon";
+>> +			reg = <0x156f0000 0x1044>;
+>> +		};
+>> +
+>>  		gsc_0: video-scaler@13C00000 {
+>>  			compatible = "samsung,exynos5433-gsc";
+>>  			reg = <0x13c00000 0x1000>;
+>> @@ -1443,6 +1448,15 @@
+>>  				status = "disabled";
+>>  			};
+>>  		};
+>> +
+>> +		pcie_phy: pcie-phy@15680000 {
+>> +			#phy-cells = <0>;
+>> +			compatible = "samsung,exynos5433-pcie-phy";
+> 
+> Mostly we use the convention of compatible being first property.
+> 
+>> +			reg = <0x15680000 0x1000>;
+>> +			samsung,pmureg-phandle = <&pmu_system_controller>;
+>> +			samsung,fsys-sysreg = <&syscon_fsys>;
+>> +			status = "okay";
+> 
+> Why do you need to put status=okay here?
 
+Not need. Will remove.
 
-Ahhh, and one more comment - please add missing 'dts' prefix in the subject.
+Best Regards,
+Jaehoon Chung
 
-BR,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Best regards,
+> Krzysztof
+> 
+>> +		};
+>>  	};
+>>  
+>>  	timer: timer {
+>> -- 
+>> 2.10.2
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
