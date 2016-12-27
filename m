@@ -1,43 +1,65 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 6/9] pinctrl: samsung: Replace syscore ops with standard
- platform device pm_ops
-Date: Tue, 27 Dec 2016 11:17:45 +0100
-Message-ID: <742a6c77-3ae9-ce5f-984d-4da3cc790865@samsung.com>
-References: <CGME20161223122535epcas1p475bc33007e9ea9b206dec6d10d019d7f@epcas1p4.samsung.com>
- <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
- <1482495889-6201-7-git-send-email-m.szyprowski@samsung.com>
- <CA+Ln22G80htJ6Va4hSD7ML3=h5QKUhdHm9X3Znnj1KBjyOrROw@mail.gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] PCI: exynos: refactor exynos pcie driver
+Date: Tue, 27 Dec 2016 19:18:33 +0900
+Message-ID: <a4200793-19dd-3727-505c-5840a8ec72bb@samsung.com>
+References: <CGME20161223105411epcas1p3727f726e757ec6c6d7bff04a9af40077@epcas1p3.samsung.com>
+ <1482490587-13611-1-git-send-email-pankaj.dubey@samsung.com>
+ <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
+ <5860E6F7.2090703@samsung.com>
+ <79b89c49-a9de-3daa-9afa-b8f36304a226@samsung.com>
+ <5861CE23.9060202@samsung.com>
+ <6de4bc5b-05fb-793f-d3ab-b1c6ee19cfeb@samsung.com>
+ <58620B5A.1060900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:25769 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752920AbcL0KRw (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:40947 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbcL0KSh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Dec 2016 05:17:52 -0500
-In-reply-to: <CA+Ln22G80htJ6Va4hSD7ML3=h5QKUhdHm9X3Znnj1KBjyOrROw@mail.gmail.com>
+        Tue, 27 Dec 2016 05:18:37 -0500
+In-reply-to: <58620B5A.1060900@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+Cc: krzk@kernel.org, kgene@kernel.org, jingoohan1@gmail.com, bhelgaas@google.com, sanath@samsung.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, CPGS <cpgs@samsung.com>
 
-Hi Krzysztof,
+Dear Alim,
 
+On 12/27/2016 03:34 PM, Alim Akhtar wrote:
+> Hi Jaehoon,
+> 
+[snip]
+>>
+>> Ah. Right..And i'm doing the refactoring to reuse the current pci-exynos.c.
+> There is a nice refactoring patch posted by Pankaj recently @
+> https://lkml.org/lkml/2016/12/23/73
+> I would suggest you to rebase your work on this top.
 
-On 2016-12-26 06:57, Tomasz Figa wrote:
-> 2016-12-23 21:24 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
->> Once the dependency on PMU driver (for pad retention control) has been
->> removed, there is no reason to use syscore_ops based suspend/resume.
-> Does it also hold true for other platforms using this driver? I.e.
-> s3c24xx, s3c64xx and s5pv210?
+Well, i don't think so. Pankaj's patch might be good way..but i can't agree about a few point.
+If based on Pankaj's patch, it's more complex..
 
-I've checked and I didn't find any code related to retention control in
-s3c24xx and 23c64xx, but you are right that I need to add support for
-s5pv210 (retention is controlled via S5P_OTHERS register). Thanks for
-pointing this.
+why put the ops callback for getting clock and mem resource?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+If PHY generic framework is used, it's unnecessary. because it needs to get elbi and dbi resources.
+clock resources("pcie" and "pcie_bus") are general things.
+
+If Pankaj's patch is applied, also need to make the exynos5433_pcie_* callback functions?
+It doesn't make sense.
+
+I want to know maintainer's opinion..we can just touch a little for supporting All Exynos SoCs.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+>> Maybe..Today or Tomorrow..I will send the patches..At that time, could you also check them?
+>> Any comments might be helpful to me! :)
+>>
+> Will wait for you patches :-)
+> 
+>> Best Regards,
+>> Jaehoon Chung
+>>
+[snip]
