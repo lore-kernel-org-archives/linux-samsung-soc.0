@@ -1,135 +1,59 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-Date: Tue, 27 Dec 2016 09:14:09 +0100
-Message-ID: <35dcf8f3-13e2-bc38-64b2-69a42b1f8d9c@samsung.com>
+Date: Tue, 27 Dec 2016 17:24:36 +0900
+Message-ID: <58622544.406@samsung.com>
 References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
  <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
  <CAGTfZH3CuFNSHwhWzYeU+JE0UyyTqWRA3k2tvCprPcYUMBSYbQ@mail.gmail.com>
+ <35dcf8f3-13e2-bc38-64b2-69a42b1f8d9c@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17155 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbcL0IPG (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Dec 2016 03:15:06 -0500
-In-reply-to: <CAGTfZH3CuFNSHwhWzYeU+JE0UyyTqWRA3k2tvCprPcYUMBSYbQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <35dcf8f3-13e2-bc38-64b2-69a42b1f8d9c@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, cwchoi00@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: cwchoi00@gmail.com
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Dear Chanwoo,
+Dear Marek,
 
+On 2016년 12월 27일 17:14, Marek Szyprowski wrote:
+> Dear Chanwoo,
+> 
+> 
+> On 2016-12-23 18:00, Chanwoo Choi wrote:
+>> Dear Marek,
+>>
+>> I have a question. I agree some clocks should be always on with CLK_IS_CRITICAL.
+>> CLK_ACLK333 is only used on exynos5420.dtsi. So, I understand to add
+>> CLK_IS_CRITICAL flag to CLK_ACLK333.
+>>
+>> Except for CLK_ACLK333, the remaining clocks with CLK_IS_CRITICAL were
+>> not used on mainline kernel (arch/arm/boot/dts/*). It means that the
+>> remaining clocks might be ON before applying this patch. So,
+>> CLK_IGNORE_UNUSED might be enough to maintain their ON state.
+>>
+>> If we don't add the CLK_IGNORE_UNUSED flag to clocks except for
+>> CLK_ACLK333, are there any problem?
+>> But, if bootloader don't turn on these clocks, this patch is necessary.
+> 
+> Please note that CLK_IGNORE_UNUSED doesn't protect clock from turning off as
+> a result of turn off operation on one of the child-clocks. This patch fixes
 
-On 2016-12-23 18:00, Chanwoo Choi wrote:
-> Dear Marek,
->
-> I have a question. I agree some clocks should be always on with CLK_IS_CRITICAL.
-> CLK_ACLK333 is only used on exynos5420.dtsi. So, I understand to add
-> CLK_IS_CRITICAL flag to CLK_ACLK333.
->
-> Except for CLK_ACLK333, the remaining clocks with CLK_IS_CRITICAL were
-> not used on mainline kernel (arch/arm/boot/dts/*). It means that the
-> remaining clocks might be ON before applying this patch. So,
-> CLK_IGNORE_UNUSED might be enough to maintain their ON state.
->
-> If we don't add the CLK_IGNORE_UNUSED flag to clocks except for
-> CLK_ACLK333, are there any problem?
-> But, if bootloader don't turn on these clocks, this patch is necessary.
-
-Please note that CLK_IGNORE_UNUSED doesn't protect clock from turning off as
-a result of turn off operation on one of the child-clocks. This patch fixes
-the boot hang caused by changes in SYSMMU driver, which resulted in turning
-off some clocks for G2D domain. Similar issues might happen for other 
-domains
-depending on the probe order. Till now it worked only by a luck, because
-there was child clock enabled early enough, which protected one of those
-clocks from turning off.
+Right. It was my mistake that I thought the 'aclk_*' clocks are leaf clock.
 
 
->
-> Best Regards,
-> Chanwoo Choi
->
-> 2016-12-22 18:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
->> Some parent clocks of the Exynos542x clock blocks, which have separate
->> power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
->> enabled to access any register related to power management unit or devices
->> connected to it. For the time being, until a proper solution based on
->> runtime PM is applied, mark those clocks as critical (instead of ignore
->> unused or even no flags) to prevent disabling them.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
->>   1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 8c8b495cbf0d..cdc092a1d9ef 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->>          GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
->>                                  GATE_BUS_TOP, 24, 0, 0),
->>          GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
->> -                               GATE_BUS_TOP, 27, 0, 0),
->> +                               GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
->>   };
->>
->>   static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->> @@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->>          GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
->>
->>          GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
->> -                       GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
->> +                       GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
->>          GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
->>                          GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
->>
->>          GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
->>                          GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
->>          GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
->> -                       GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
->> +                       GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
->>          GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
->>                          GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
->>          GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
->>                          GATE_BUS_TOP, 5, 0, 0),
->>          GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
->> -                       GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
->> +                       GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
->>          GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
->>                          GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
->>          GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
->> @@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->>          GATE(0, "aclk166", "mout_user_aclk166",
->>                          GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
->>          GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
->> -                       GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
->> +                       GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
->>          GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
->>                          GATE_BUS_TOP, 16, 0, 0),
->>          GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
->>                          GATE_BUS_TOP, 17, 0, 0),
->>          GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
->> -                       GATE_BUS_TOP, 18, 0, 0),
->> +                       GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
->>          GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
->>                          GATE_BUS_TOP, 28, 0, 0),
->>          GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
->>                          GATE_BUS_TOP, 29, 0, 0),
->>
->>          GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
->> -                       SRC_MASK_TOP2, 24, 0, 0),
->> +                       SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
->>
->>          GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
->>                          SRC_MASK_TOP7, 20, 0, 0),
->> --
+> the boot hang caused by changes in SYSMMU driver, which resulted in turning
+> off some clocks for G2D domain. Similar issues might happen for other domains
+> depending on the probe order. Till now it worked only by a luck, because
+> there was child clock enabled early enough, which protected one of those
+> clocks from turning off.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+This patch makes sense.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Regards,
+Chanwoo Choi
+
+[snip]
