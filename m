@@ -1,33 +1,24 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
 Subject: Re: [PATCH] PCI: exynos: refactor exynos pcie driver
-Date: Tue, 27 Dec 2016 08:57:23 +0530
-Message-ID: <CAGcde9GvJPqxrH83AvEqnUVXTvxRPeWxGSsLp7z6+d-5ZV=5Bw@mail.gmail.com>
+Date: Tue, 27 Dec 2016 09:51:01 +0530
+Message-ID: <CAGcde9EsO39B4CsPH2KrC=tJM4+SFaO4+P8frHTGB_13eBujqQ@mail.gmail.com>
 References: <CGME20161223105411epcas1p3727f726e757ec6c6d7bff04a9af40077@epcas1p3.samsung.com>
- <1482490587-13611-1-git-send-email-pankaj.dubey@samsung.com>
- <003f01d25d4b$96875e70$c3961b50$@gmail.com>
+ <1482490587-13611-1-git-send-email-pankaj.dubey@samsung.com> <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <003f01d25d4b$96875e70$c3961b50$@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jingoo Han <jingoohan1@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-pci@vger.kernel.org, Niyas Ahmed S T <niyas.ahmed@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, jh80.chung@samsung.com, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, bhelgaas@google.com, sanath@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pci@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, bhelgaas@google.com, Alim Akhtar <alim.akhtar@samsung.com>, sanath@samsung.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jingoo,
+Hi Jaehoon,
 
-On 24 December 2016 at 00:07, Jingoo Han <jingoohan1@gmail.com> wrote:
-> On Friday, December 23, 2016 5:56 AM, Pankaj Dubey wrote:
->>
+On 26 December 2016 at 14:32, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi Pankaj,
+>
+> On 12/23/2016 07:56 PM, Pankaj Dubey wrote:
 >> From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
 >>
 >> Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
@@ -36,668 +27,82 @@ On 24 December 2016 at 00:07, Jingoo Han <jingoohan1@gmail.com> wrote:
 >>
 >> Following are the main changes done via this patch:
 >> 1) It adds separate structs for memory, clock resources.
->
-> What is the reason to separate structs for these?
-> Please add the reason to this commit message.
-> It will be helpful.
->
-
-As we know current driver only supports exynos5440 specific PCIe controller,
-We also know for sure that different variant of Exynos SoC will have different
-hardware resources such as iomem, clks, regmap handles etc. for PCIe
-controller, so our intention behind separating these resources was to make
-exynos_pcie struct simple instead of making it complex. All data structs will be
-shared by all Exynos SoCs but different exynos_pcie_ops will give them freedom
-to use them as per SoC need.
-
-We have refactored current driver in such a way that, even with very minimal
-information about exynos5440 we can add support for new SoC's PCIe controller
-with maximum core reuse.
-
 >> 2) It add exynos_pcie_ops struct which will allow us to support the
 >> differences in resources in different Exynos SoC.
 >
+> It's nice to me for reusing this file.
+> but after considering too many times, i decided not to use this file.
+>
 
-Thanks for review. Please let us know if you have any other concern, and it
-would be great if you can review this patch more thoroughly.
+It would be better if we redesign/modify existing driver to support new single
+driver for all Exynos SoC.
+
+For this we can have internal discussion and design it so that it
+becomes suitable
+for other Exynos SoC PCIe controllers.
+
+> I'm not sure what block base is..actually this pci-exynos.c is really black-box.
+
+I saw Jingoo already explained about block base, so it may or may not be used in
+other exynos. If it is used they can reuse this variable and related
+code, if not the
+implementation of exynos_pcie_ops hooks should be written in such a way that
+ignores (do not initializes/uses) block_base.
+
+> (No one maintains this file, even Samsung didn't care.)
+> Who is using this?
+
+I feel now we we (you and me) will care for it, at least we have use
+case for this now :)
+
+> If Someone can share the information about exynos5440, i can refactor everything.
+> Otherwise, there are two solution..
+>
+
+We also do not have access to exynos5440 hardware, but we do have access
+to exynos5440 UM, so we can see some details of these SFRs. Based on
+our understanding
+we refactored this code for making it more suitable for other SoC.
+
+Regarding phy_base and block_base as they are phy related it need to
+be replaced with phy driver, so for this we can reuse your RFC patch
+of pcie-phy. Even phy driver design should be
+such that it can support multiple Exynos SoC PCIe-Phy.
+
+> One is "adding the new pci-exynos.c" likes pci-exynos5433.c
+
+I know exynos5433 and exynos7 SoC have similar PCIe controller, although they
+may share comparatively less similarity with exynos5440. If start
+adding new file for
+each SoC we may end of lot of code duplication.
+
+> Other is "refactor this file" under assuming the each register's usage.
+>
+
+IMHO, this would be good design decision.
+
+We have separate various resources of exynos_pcie struct such as iomem
+and clks for
+the timebeing, and these resources can be managed via exynos_pcie_ops
+which can have different implementation for different SoCs, we have
+freedom to handle these resources per SoC. If some SoCs share similar
+PCIe controller h/w design, code will be reused.
+
+> I want to use the PHY generic Framework for EXYNOS PCIe.
+>
+> If you or other guys really want to use the pci-exynos.c for other exynos,
+> I will rework with PHY generic framework. Then i will resend the my patches as V2.
+>
+> One more thing..Does anyone know what the usage of block base is?
+> Can i use that register as "syscon"?
+>
+
+I think this is not exactly syscon, as it only be used in pcie-phy,
+so we can use this as child device of phy-device.
+
+> Best Regards,
+> Jaehoon Chung
+>
 
 Thanks,
-Pankaj
-
-> Good. I have no objection.
->
-> Best regards,
-> Jingoo Han
->
->>
->> No functional change intended.
->>
->> Signed-off-by: Niyas Ahmed S T <niyas.ahmed@samsung.com>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->> This patch set is prepared on top of Krzysztof's for-next and
->> PCIe driver cleanup patch [1] by Jaehoon Chung.
->>
->> [1]: https://lkml.org/lkml/2016/12/19/44
->>
->>
->>  drivers/pci/host/pci-exynos.c | 346 ++++++++++++++++++++++++++-----------
->> -----
->>  1 file changed, 217 insertions(+), 129 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
->> index 33562cf..2dc54f7 100644
->> --- a/drivers/pci/host/pci-exynos.c
->> +++ b/drivers/pci/host/pci-exynos.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/interrupt.h>
->>  #include <linux/kernel.h>
->>  #include <linux/init.h>
->> +#include <linux/of_device.h>
->>  #include <linux/of_gpio.h>
->>  #include <linux/pci.h>
->>  #include <linux/platform_device.h>
->> @@ -28,16 +29,6 @@
->>
->>  #define to_exynos_pcie(x)    container_of(x, struct exynos_pcie, pp)
->>
->> -struct exynos_pcie {
->> -     struct pcie_port        pp;
->> -     void __iomem            *elbi_base;     /* DT 0th resource */
->> -     void __iomem            *phy_base;      /* DT 1st resource */
->> -     void __iomem            *block_base;    /* DT 2nd resource */
->> -     int                     reset_gpio;
->> -     struct clk              *clk;
->> -     struct clk              *bus_clk;
->> -};
->> -
->>  /* PCIe ELBI registers */
->>  #define PCIE_IRQ_PULSE                       0x000
->>  #define IRQ_INTA_ASSERT                      BIT(0)
->> @@ -102,6 +93,122 @@ struct exynos_pcie {
->>  #define PCIE_PHY_TRSV3_PD_TSV                BIT(7)
->>  #define PCIE_PHY_TRSV3_LVCC          0x31c
->>
->> +struct exynos_pcie_mem_res {
->> +     void __iomem *elbi_base; /* DT 0th resource: PCIE CTRL */
->> +     void __iomem *phy_base; /* DT 1st resource: PHY CTRL */
->> +     void __iomem *block_base; /* DT 2nd resource: PHY ADDITIONAL CTRL
->> */
->> +};
->> +
->> +struct exynos_pcie_clk_res {
->> +     struct clk *clk;
->> +     struct clk *bus_clk;
->> +};
->> +
->> +struct exynos_pcie {
->> +     struct pcie_port                pp;
->> +     struct exynos_pcie_mem_res      *mem_res;
->> +     struct exynos_pcie_clk_res      *clk_res;
->> +     const struct exynos_pcie_ops    *ops;
->> +     int                             reset_gpio;
->> +};
->> +
->> +struct exynos_pcie_ops {
->> +     int (*get_mem_resources)(struct platform_device *pdev,
->> +                     struct exynos_pcie *ep);
->> +     int (*get_clk_resources)(struct exynos_pcie *ep);
->> +     int (*init_clk_resources)(struct exynos_pcie *ep);
->> +     void (*deinit_clk_resources)(struct exynos_pcie *ep);
->> +};
->> +
->> +static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
->> +                                             struct exynos_pcie *ep)
->> +{
->> +     struct resource *res;
->> +     struct device *dev = ep->pp.dev;
->> +
->> +     ep->mem_res = devm_kzalloc(dev, sizeof(*ep->mem_res), GFP_KERNEL);
->> +     if (!ep->mem_res)
->> +             return -ENOMEM;
->> +
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +     ep->mem_res->elbi_base = devm_ioremap_resource(dev, res);
->> +     if (IS_ERR(ep->mem_res->elbi_base))
->> +             return PTR_ERR(ep->mem_res->elbi_base);
->> +
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->> +     ep->mem_res->phy_base = devm_ioremap_resource(dev, res);
->> +     if (IS_ERR(ep->mem_res->phy_base))
->> +             return PTR_ERR(ep->mem_res->phy_base);
->> +
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
->> +     ep->mem_res->block_base = devm_ioremap_resource(dev, res);
->> +     if (IS_ERR(ep->mem_res->block_base))
->> +             return PTR_ERR(ep->mem_res->block_base);
->> +
->> +     return 0;
->> +}
->> +
->> +static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
->> +{
->> +     struct device *dev = ep->pp.dev;
->> +
->> +     ep->clk_res = devm_kzalloc(dev, sizeof(*ep->clk_res), GFP_KERNEL);
->> +     if (!ep->clk_res)
->> +             return -ENOMEM;
->> +
->> +     ep->clk_res->clk = devm_clk_get(dev, "pcie");
->> +     if (IS_ERR(ep->clk_res->clk)) {
->> +             dev_err(dev, "Failed to get pcie rc clock\n");
->> +             return PTR_ERR(ep->clk_res->clk);
->> +     }
->> +
->> +     ep->clk_res->bus_clk = devm_clk_get(dev, "pcie_bus");
->> +     if (IS_ERR(ep->clk_res->bus_clk)) {
->> +             dev_err(dev, "Failed to get pcie bus clock\n");
->> +             return PTR_ERR(ep->clk_res->bus_clk);
->> +     }
->> +
->> +     return 0;
->> +}
->> +
->> +static int exynos5440_pcie_init_clk_resources(struct exynos_pcie *ep)
->> +{
->> +     struct device *dev = ep->pp.dev;
->> +     int ret;
->> +
->> +     ret = clk_prepare_enable(ep->clk_res->clk);
->> +     if (ret) {
->> +             dev_err(dev, "cannot enable pcie rc clock");
->> +             return ret;
->> +     }
->> +
->> +     ret = clk_prepare_enable(ep->clk_res->bus_clk);
->> +     if (ret) {
->> +             dev_err(dev, "cannot enable pcie bus clock");
->> +             goto err_bus_clk;
->> +     }
->> +
->> +     return 0;
->> +
->> +err_bus_clk:
->> +     clk_disable_unprepare(ep->clk_res->clk);
->> +
->> +     return ret;
->> +}
->> +
->> +static void exynos5440_pcie_deinit_clk_resources(struct exynos_pcie *ep)
->> +{
->> +     clk_disable_unprepare(ep->clk_res->bus_clk);
->> +     clk_disable_unprepare(ep->clk_res->clk);
->> +}
->> +
->> +static const struct exynos_pcie_ops exynos5440_pcie_ops = {
->> +     .get_mem_resources      = exynos5440_pcie_get_mem_resources,
->> +     .get_clk_resources      = exynos5440_pcie_get_clk_resources,
->> +     .init_clk_resources     = exynos5440_pcie_init_clk_resources,
->> +     .deinit_clk_resources   = exynos5440_pcie_deinit_clk_resources,
->> +};
->> +
->>  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
->>  {
->>       writel(val, base + reg);
->> @@ -116,155 +223,155 @@ static void exynos_pcie_sideband_dbi_w_mode(struct
->> exynos_pcie *ep, bool on)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base,
->> PCIE_ELBI_SLV_AWMISC);
->>       if (on)
->>               val |= PCIE_ELBI_SLV_DBI_ENABLE;
->>       else
->>               val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val,
->> PCIE_ELBI_SLV_AWMISC);
->>  }
->>
->>  static void exynos_pcie_sideband_dbi_r_mode(struct exynos_pcie *ep, bool
->> on)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base,
->> PCIE_ELBI_SLV_ARMISC);
->>       if (on)
->>               val |= PCIE_ELBI_SLV_DBI_ENABLE;
->>       else
->>               val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val,
->> PCIE_ELBI_SLV_ARMISC);
->>  }
->>
->>  static void exynos_pcie_assert_core_reset(struct exynos_pcie *ep)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_CORE_RESET);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base, PCIE_CORE_RESET);
->>       val &= ~PCIE_CORE_RESET_ENABLE;
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_CORE_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 0, PCIE_PWR_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 0, PCIE_STICKY_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 0, PCIE_NONSTICKY_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val, PCIE_CORE_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 0, PCIE_PWR_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 0, PCIE_STICKY_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 0, PCIE_NONSTICKY_RESET);
->>  }
->>
->>  static void exynos_pcie_deassert_core_reset(struct exynos_pcie *ep)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_CORE_RESET);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base, PCIE_CORE_RESET);
->>       val |= PCIE_CORE_RESET_ENABLE;
->>
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_CORE_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 1, PCIE_STICKY_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 1, PCIE_NONSTICKY_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 1, PCIE_APP_INIT_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 0, PCIE_APP_INIT_RESET);
->> -     exynos_pcie_writel(ep->block_base, 1, PCIE_PHY_MAC_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val, PCIE_CORE_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 1, PCIE_STICKY_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 1, PCIE_NONSTICKY_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 1, PCIE_APP_INIT_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 0, PCIE_APP_INIT_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 1, PCIE_PHY_MAC_RESET);
->>  }
->>
->>  static void exynos_pcie_assert_phy_reset(struct exynos_pcie *ep)
->>  {
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_MAC_RESET);
->> -     exynos_pcie_writel(ep->block_base, 1, PCIE_PHY_GLOBAL_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0, PCIE_PHY_MAC_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 1,
->> PCIE_PHY_GLOBAL_RESET);
->>  }
->>
->>  static void exynos_pcie_deassert_phy_reset(struct exynos_pcie *ep)
->>  {
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_GLOBAL_RESET);
->> -     exynos_pcie_writel(ep->elbi_base, 1, PCIE_PWR_RESET);
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_COMMON_RESET);
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_CMN_REG);
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_TRSVREG_RESET);
->> -     exynos_pcie_writel(ep->block_base, 0, PCIE_PHY_TRSV_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0,
->> PCIE_PHY_GLOBAL_RESET);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, 1, PCIE_PWR_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0,
->> PCIE_PHY_COMMON_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0, PCIE_PHY_CMN_REG);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0,
->> PCIE_PHY_TRSVREG_RESET);
->> +     exynos_pcie_writel(ep->mem_res->block_base, 0, PCIE_PHY_TRSV_RESET);
->>  }
->>
->>  static void exynos_pcie_power_on_phy(struct exynos_pcie *ep)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_COMMON_POWER);
->>       val &= ~PCIE_PHY_COMMON_PD_CMN;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_COMMON_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV0_POWER);
->>       val &= ~PCIE_PHY_TRSV0_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV0_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV1_POWER);
->>       val &= ~PCIE_PHY_TRSV1_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV1_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV2_POWER);
->>       val &= ~PCIE_PHY_TRSV2_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV2_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV3_POWER);
->>       val &= ~PCIE_PHY_TRSV3_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV3_POWER);
->>  }
->>
->>  static void exynos_pcie_power_off_phy(struct exynos_pcie *ep)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_COMMON_POWER);
->>       val |= PCIE_PHY_COMMON_PD_CMN;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_COMMON_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV0_POWER);
->>       val |= PCIE_PHY_TRSV0_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV0_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV1_POWER);
->>       val |= PCIE_PHY_TRSV1_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV1_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV2_POWER);
->>       val |= PCIE_PHY_TRSV2_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV2_POWER);
->>
->> -     val = exynos_pcie_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
->> +     val = exynos_pcie_readl(ep->mem_res->phy_base,
->> PCIE_PHY_TRSV3_POWER);
->>       val |= PCIE_PHY_TRSV3_PD_TSV;
->> -     exynos_pcie_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, val,
->> PCIE_PHY_TRSV3_POWER);
->>  }
->>
->>  static void exynos_pcie_init_phy(struct exynos_pcie *ep)
->>  {
->>       /* DCC feedback control off */
->> -     exynos_pcie_writel(ep->phy_base, 0x29, PCIE_PHY_DCC_FEEDBACK);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x29,
->> PCIE_PHY_DCC_FEEDBACK);
->>
->>       /* set TX/RX impedance */
->> -     exynos_pcie_writel(ep->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
->>
->>       /* set 50Mhz PHY clock */
->> -     exynos_pcie_writel(ep->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
->> -     exynos_pcie_writel(ep->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
->>
->>       /* set TX Differential output for lane 0 */
->> -     exynos_pcie_writel(ep->phy_base, 0x7f, PCIE_PHY_TRSV0_DRV_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x7f,
->> PCIE_PHY_TRSV0_DRV_LVL);
->>
->>       /* set TX Pre-emphasis Level Control for lane 0 to minimum */
->> -     exynos_pcie_writel(ep->phy_base, 0x0, PCIE_PHY_TRSV0_EMP_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x0,
->> PCIE_PHY_TRSV0_EMP_LVL);
->>
->>       /* set RX clock and data recovery bandwidth */
->> -     exynos_pcie_writel(ep->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
->> -     exynos_pcie_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV0_RXCDR);
->> -     exynos_pcie_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV1_RXCDR);
->> -     exynos_pcie_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV2_RXCDR);
->> -     exynos_pcie_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV3_RXCDR);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x82,
->> PCIE_PHY_TRSV0_RXCDR);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x82,
->> PCIE_PHY_TRSV1_RXCDR);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x82,
->> PCIE_PHY_TRSV2_RXCDR);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x82,
->> PCIE_PHY_TRSV3_RXCDR);
->>
->>       /* change TX Pre-emphasis Level Control for lanes */
->> -     exynos_pcie_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV0_EMP_LVL);
->> -     exynos_pcie_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV1_EMP_LVL);
->> -     exynos_pcie_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV2_EMP_LVL);
->> -     exynos_pcie_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV3_EMP_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x39,
->> PCIE_PHY_TRSV0_EMP_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x39,
->> PCIE_PHY_TRSV1_EMP_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x39,
->> PCIE_PHY_TRSV2_EMP_LVL);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x39,
->> PCIE_PHY_TRSV3_EMP_LVL);
->>
->>       /* set LVCC */
->> -     exynos_pcie_writel(ep->phy_base, 0x20, PCIE_PHY_TRSV0_LVCC);
->> -     exynos_pcie_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV1_LVCC);
->> -     exynos_pcie_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV2_LVCC);
->> -     exynos_pcie_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV3_LVCC);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0x20,
->> PCIE_PHY_TRSV0_LVCC);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0xa0,
->> PCIE_PHY_TRSV1_LVCC);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0xa0,
->> PCIE_PHY_TRSV2_LVCC);
->> +     exynos_pcie_writel(ep->mem_res->phy_base, 0xa0,
->> PCIE_PHY_TRSV3_LVCC);
->>  }
->>
->>  static void exynos_pcie_assert_reset(struct exynos_pcie *exynos_pcie)
->> @@ -295,25 +402,27 @@ static int exynos_pcie_establish_link(struct
->> exynos_pcie *exynos_pcie)
->>       exynos_pcie_init_phy(exynos_pcie);
->>
->>       /* pulse for common reset */
->> -     exynos_pcie_writel(exynos_pcie->block_base, 1,
->> PCIE_PHY_COMMON_RESET);
->> +     exynos_pcie_writel(exynos_pcie->mem_res->block_base, 1,
->> +                             PCIE_PHY_COMMON_RESET);
->>       udelay(500);
->> -     exynos_pcie_writel(exynos_pcie->block_base, 0,
->> PCIE_PHY_COMMON_RESET);
->> +     exynos_pcie_writel(exynos_pcie->mem_res->block_base, 0,
->> +                             PCIE_PHY_COMMON_RESET);
->>
->>       exynos_pcie_deassert_core_reset(exynos_pcie);
->>       dw_pcie_setup_rc(pp);
->>       exynos_pcie_assert_reset(exynos_pcie);
->>
->>       /* assert LTSSM enable */
->> -     exynos_pcie_writel(exynos_pcie->elbi_base, PCIE_ELBI_LTSSM_ENABLE,
->> -                       PCIE_APP_LTSSM_ENABLE);
->> +     exynos_pcie_writel(exynos_pcie->mem_res->elbi_base,
->> +                     PCIE_ELBI_LTSSM_ENABLE, PCIE_APP_LTSSM_ENABLE);
->>
->>       /* check if the link is up or not */
->>       if (!dw_pcie_wait_for_link(pp))
->>               return 0;
->>
->> -     while (exynos_pcie_readl(exynos_pcie->phy_base,
->> +     while (exynos_pcie_readl(exynos_pcie->mem_res->phy_base,
->>                               PCIE_PHY_PLL_LOCKED) == 0) {
->> -             val = exynos_pcie_readl(exynos_pcie->block_base,
->> +             val = exynos_pcie_readl(exynos_pcie->mem_res->block_base,
->>                               PCIE_PHY_PLL_LOCKED);
->>               dev_info(dev, "PLL Locked: 0x%x\n", val);
->>       }
->> @@ -325,8 +434,8 @@ static void exynos_pcie_clear_irq_pulse(struct
->> exynos_pcie *ep)
->>  {
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_IRQ_PULSE);
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_IRQ_PULSE);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base, PCIE_IRQ_PULSE);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val, PCIE_IRQ_PULSE);
->>  }
->>
->>  static void exynos_pcie_enable_irq_pulse(struct exynos_pcie *ep)
->> @@ -336,7 +445,7 @@ static void exynos_pcie_enable_irq_pulse(struct
->> exynos_pcie *ep)
->>       /* enable INTX interrupt */
->>       val = IRQ_INTA_ASSERT | IRQ_INTB_ASSERT |
->>               IRQ_INTC_ASSERT | IRQ_INTD_ASSERT;
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_IRQ_EN_PULSE);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val, PCIE_IRQ_EN_PULSE);
->>  }
->>
->>  static irqreturn_t exynos_pcie_irq_handler(int irq, void *arg)
->> @@ -363,9 +472,9 @@ static void exynos_pcie_msi_init(struct exynos_pcie
->> *ep)
->>       dw_pcie_msi_init(pp);
->>
->>       /* enable MSI interrupt */
->> -     val = exynos_pcie_readl(ep->elbi_base, PCIE_IRQ_EN_LEVEL);
->> +     val = exynos_pcie_readl(ep->mem_res->elbi_base, PCIE_IRQ_EN_LEVEL);
->>       val |= IRQ_MSI_ENABLE;
->> -     exynos_pcie_writel(ep->elbi_base, val, PCIE_IRQ_EN_LEVEL);
->> +     exynos_pcie_writel(ep->mem_res->elbi_base, val, PCIE_IRQ_EN_LEVEL);
->>  }
->>
->>  static void exynos_pcie_enable_interrupts(struct exynos_pcie *exynos_pcie)
->> @@ -425,7 +534,8 @@ static int exynos_pcie_link_up(struct pcie_port *pp)
->>       struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
->>       u32 val;
->>
->> -     val = exynos_pcie_readl(exynos_pcie->elbi_base,
->> PCIE_ELBI_RDLH_LINKUP);
->> +     val = exynos_pcie_readl(exynos_pcie->mem_res->elbi_base,
->> +                                     PCIE_ELBI_RDLH_LINKUP);
->>       if (val == PCIE_ELBI_LTSSM_ENABLE)
->>               return 1;
->>
->> @@ -503,7 +613,6 @@ static int __init exynos_pcie_probe(struct
->> platform_device *pdev)
->>       struct exynos_pcie *exynos_pcie;
->>       struct pcie_port *pp;
->>       struct device_node *np = dev->of_node;
->> -     struct resource *res;
->>       int ret;
->>
->>       exynos_pcie = devm_kzalloc(dev, sizeof(*exynos_pcie), GFP_KERNEL);
->> @@ -513,59 +622,37 @@ static int __init exynos_pcie_probe(struct
->> platform_device *pdev)
->>       pp = &exynos_pcie->pp;
->>       pp->dev = dev;
->>
->> -     exynos_pcie->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
->> -
->> -     exynos_pcie->clk = devm_clk_get(dev, "pcie");
->> -     if (IS_ERR(exynos_pcie->clk)) {
->> -             dev_err(dev, "Failed to get pcie rc clock\n");
->> -             return PTR_ERR(exynos_pcie->clk);
->> -     }
->> -     ret = clk_prepare_enable(exynos_pcie->clk);
->> -     if (ret)
->> -             return ret;
->> +     exynos_pcie->ops = (const struct exynos_pcie_ops *)
->> +                             of_device_get_match_data(dev);
->>
->> -     exynos_pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
->> -     if (IS_ERR(exynos_pcie->bus_clk)) {
->> -             dev_err(dev, "Failed to get pcie bus clock\n");
->> -             ret = PTR_ERR(exynos_pcie->bus_clk);
->> -             goto fail_clk;
->> -     }
->> -     ret = clk_prepare_enable(exynos_pcie->bus_clk);
->> -     if (ret)
->> -             goto fail_clk;
->> +     exynos_pcie->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
->>
->> -     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> -     exynos_pcie->elbi_base = devm_ioremap_resource(dev, res);
->> -     if (IS_ERR(exynos_pcie->elbi_base)) {
->> -             ret = PTR_ERR(exynos_pcie->elbi_base);
->> -             goto fail_bus_clk;
->> +     if (exynos_pcie->ops && exynos_pcie->ops->get_mem_resources) {
->> +             ret = exynos_pcie->ops->get_mem_resources(pdev, exynos_pcie);
->> +             if (ret)
->> +                     return ret;
->>       }
->>
->> -     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->> -     exynos_pcie->phy_base = devm_ioremap_resource(dev, res);
->> -     if (IS_ERR(exynos_pcie->phy_base)) {
->> -             ret = PTR_ERR(exynos_pcie->phy_base);
->> -             goto fail_bus_clk;
->> -     }
->> +     if (exynos_pcie->ops && exynos_pcie->ops->get_clk_resources) {
->> +             ret = exynos_pcie->ops->get_clk_resources(exynos_pcie);
->> +             if (ret)
->> +                     return ret;
->>
->> -     res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
->> -     exynos_pcie->block_base = devm_ioremap_resource(dev, res);
->> -     if (IS_ERR(exynos_pcie->block_base)) {
->> -             ret = PTR_ERR(exynos_pcie->block_base);
->> -             goto fail_bus_clk;
->> +             ret = exynos_pcie->ops->init_clk_resources(exynos_pcie);
->> +             if (ret)
->> +                     return ret;
->>       }
->>
->>       ret = exynos_add_pcie_port(exynos_pcie, pdev);
->>       if (ret < 0)
->> -             goto fail_bus_clk;
->> +             goto fail_probe;
->>
->>       platform_set_drvdata(pdev, exynos_pcie);
->>       return 0;
->>
->> -fail_bus_clk:
->> -     clk_disable_unprepare(exynos_pcie->bus_clk);
->> -fail_clk:
->> -     clk_disable_unprepare(exynos_pcie->clk);
->> +fail_probe:
->> +     if (exynos_pcie->ops && exynos_pcie->ops->deinit_clk_resources)
->> +             exynos_pcie->ops->deinit_clk_resources(exynos_pcie);
->>       return ret;
->>  }
->>
->> @@ -573,14 +660,15 @@ static int __exit exynos_pcie_remove(struct
->> platform_device *pdev)
->>  {
->>       struct exynos_pcie *exynos_pcie = platform_get_drvdata(pdev);
->>
->> -     clk_disable_unprepare(exynos_pcie->bus_clk);
->> -     clk_disable_unprepare(exynos_pcie->clk);
->> +     if (exynos_pcie->ops && exynos_pcie->ops->deinit_clk_resources)
->> +             exynos_pcie->ops->deinit_clk_resources(exynos_pcie);
->>
->>       return 0;
->>  }
->>
->>  static const struct of_device_id exynos_pcie_of_match[] = {
->> -     { .compatible = "samsung,exynos5440-pcie", },
->> +     {       .compatible = "samsung,exynos5440-pcie",
->> +             .data = &exynos5440_pcie_ops },
->>       {},
->>  };
->>
->> --
->> 2.7.4
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Pankaj Dubey
