@@ -1,108 +1,352 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH] PCI: exynos: refactor exynos pcie driver
-Date: Tue, 27 Dec 2016 09:51:01 +0530
-Message-ID: <CAGcde9EsO39B4CsPH2KrC=tJM4+SFaO4+P8frHTGB_13eBujqQ@mail.gmail.com>
-References: <CGME20161223105411epcas1p3727f726e757ec6c6d7bff04a9af40077@epcas1p3.samsung.com>
- <1482490587-13611-1-git-send-email-pankaj.dubey@samsung.com> <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
+From: Vivek Gautam <vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [RFC PATCH 1/6] phy: exynos-pcie: Add support for Exynos PCIe phy
+Date: Tue, 27 Dec 2016 11:23:56 +0530
+Message-ID: <CAFp+6iH0q9TNvPgv3_Nexm-vE6TBB_eQHXCwniO-Yn=fq+WWMg@mail.gmail.com>
+References: <CGME20161226052030epcas5p4ea673fc4ee5c0b2664e80f53d4758553@epcas5p4.samsung.com>
+ <20161226052029.10552-1-jh80.chung@samsung.com> <20161226052029.10552-2-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <e1f37a59-b633-7b9d-cc79-dbbb00a24cda@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pci@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, bhelgaas@google.com, Alim Akhtar <alim.akhtar@samsung.com>, sanath@samsung.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, CPGS <cpgs@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161226052029.10552-2-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, robh+dt <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kishon <kishon-l0cyMroinI0@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, catalin.marinas-5wv7dgnIgG8@public.gmane.org, CPGS <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Jaehoon,
 
-On 26 December 2016 at 14:32, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Hi Pankaj,
+
+On Mon, Dec 26, 2016 at 10:50 AM, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch supports to use Generic Phy framework for Exynos PCIe phy.
+> When Exynos that supported the pcie want to use the PCIe,
+> it needs to control the phy resgister.
+> But it should be more complex to control in their own PCIe device drivers.
 >
-> On 12/23/2016 07:56 PM, Pankaj Dubey wrote:
->> From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
->>
->> Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
->> This patch does refactoring of Exynos PCIe driver to extend support
->> for other Exynos SoC.
->>
->> Following are the main changes done via this patch:
->> 1) It adds separate structs for memory, clock resources.
->> 2) It add exynos_pcie_ops struct which will allow us to support the
->> differences in resources in different Exynos SoC.
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/phy/Kconfig           |   9 ++
+>  drivers/phy/Makefile          |   1 +
+>  drivers/phy/phy-exynos-pcie.c | 227 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 237 insertions(+)
+>  create mode 100644 drivers/phy/phy-exynos-pcie.c
 >
-> It's nice to me for reusing this file.
-> but after considering too many times, i decided not to use this file.
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index fe00f91..94b0433 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -341,6 +341,15 @@ config PHY_EXYNOS5_USBDRD
+>           This driver provides PHY interface for USB 3.0 DRD controller
+>           present on Exynos5 SoC series.
 >
+> +config PHY_EXYNOS_PCIE
+> +       bool "Exynos PCIe PHY driver"
 
-It would be better if we redesign/modify existing driver to support new single
-driver for all Exynos SoC.
+Is there a reason for this not being 'tristate' ?
 
-For this we can have internal discussion and design it so that it
-becomes suitable
-for other Exynos SoC PCIe controllers.
+> +       depends on ARCH_EXYNOS && OF
+> +       depends on PCI_EXYNOS5433
+> +       select GENERIC_PHY
+> +       help
+> +         Enable PCIe PHY support for Exynos SoC series.
 
-> I'm not sure what block base is..actually this pci-exynos.c is really black-box.
+If this driver is for Exynos5433, then same should come in this help
+text as well.
 
-I saw Jingoo already explained about block base, so it may or may not be used in
-other exynos. If it is used they can reuse this variable and related
-code, if not the
-implementation of exynos_pcie_ops hooks should be written in such a way that
-ignores (do not initializes/uses) block_base.
+> +         This driver provides PHY interface for Exynos PCIe controller.
+> +
+>  config PHY_PISTACHIO_USB
+>         tristate "IMG Pistachio USB2.0 PHY driver"
+>         depends on MACH_PISTACHIO
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index a534cf5..586344d 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -38,6 +38,7 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2) += phy-exynos4x12-usb2.o
+>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)  += phy-exynos5250-usb2.o
+>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)     += phy-s5pv210-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)       += phy-exynos5-usbdrd.o
+> +obj-$(CONFIG_PHY_EXYNOS_PCIE)  += phy-exynos-pcie.o
+>  obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)    += phy-qcom-apq8064-sata.o
+>  obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
+>  obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)   += phy-rockchip-inno-usb2.o
+> diff --git a/drivers/phy/phy-exynos-pcie.c b/drivers/phy/phy-exynos-pcie.c
+> new file mode 100644
+> index 0000000..0f5eefd
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos-pcie.c
+> @@ -0,0 +1,227 @@
+> +/*
+> + * Samsung EXYNOS SoC series PCIe PHY driver
+> + *
+> + * Phy provider for PCIe controller on Exynos SoC series
+> + *
+> + * Copyright (C) 2016 Samsung Electronics Co., Ltd.
+> + * Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
 
-> (No one maintains this file, even Samsung didn't care.)
-> Who is using this?
+nit: It's good to have these includes in alphabetical order.
 
-I feel now we we (you and me) will care for it, at least we have use
-case for this now :)
+> +
+> +#define PCIE_EXYNOS5433_PMU_PHY_OFFSET         0x730
+> +#define PCIE_PHY_OFFSET(x)             ((x) * 0x4)
+> +
+> +/* Sysreg Fsys register offset and bit for Exynos5433 */
+> +#define PCIE_PHY_MAC_RESET             0x208
+> +#define PCIE_MAC_RESET_MASK            0xFF
+> +#define PCIE_MAC_RESET                 BIT(4)
+> +#define PCIE_L1SUB_CM_CON              0x1010
+> +#define PCIE_REFCLK_GATING_EN          BIT(0)
+> +#define PCIE_PHY_COMMON_RESET          0x1020
+> +#define PCIE_PHY_RESET                 BIT(0)
+> +#define PCIE_PHY_GLOBAL_RESET          0x1040
+> +#define PCIE_GLOBAL_RESET              BIT(0)
+> +#define PCIE_REFCLK                    BIT(1)
+> +#define PCIE_REFCLK_MASK               0x16
+> +#define PCIE_APP_REQ_EXIT_L1_MODE      BIT(5)
+> +
+> +enum exynos_pcie_phy_data_type {
+> +       PCIE_PHY_TYPE_EXYNOS5433,
+> +};
+> +
+> +struct exynos_pcie_phy_data {
+> +       enum exynos_pcie_phy_data_type  ctrl_type;
 
-> If Someone can share the information about exynos5440, i can refactor everything.
-> Otherwise, there are two solution..
+Why do we need this controller type ?
+If there are changes in the IP between different version,
+then you can as well use different compatibles.
+
+> +       u32     pmureg_offset; /* PMU_REG offset */
+
+Please use top comments.
+
+> +       struct phy_ops  *ops;
+> +};
+> +
+> +/* for Exynos pcie phy */
+> +struct exynos_pcie_phy {
+> +       const struct exynos_pcie_phy_data *drv_data;
+> +       struct regmap *pmureg;
+> +       struct regmap *fsysreg;
+> +       void __iomem *phy_base;
+
+just 'base' ?
+
+> +};
+> +
+> +static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
+> +{
+> +       writel(val, base + offset);
+> +}
+> +
+> +static int exynos_pcie_phy_init(struct phy *phy)
+> +{
+> +       struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> +
+> +       if (ep->fsysreg) {
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_COMMON_RESET,
+> +                               PCIE_PHY_RESET, 1);
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_MAC_RESET,
+> +                               PCIE_MAC_RESET, 0);
+> +               /* PHY refclk 24MHz */
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_GLOBAL_RESET,
+> +                               PCIE_REFCLK_MASK, PCIE_REFCLK);
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_GLOBAL_RESET,
+> +                               PCIE_GLOBAL_RESET, 0);
+> +       }
+> +
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x11, PCIE_PHY_OFFSET(0x3));
+> +
+> +       /* band gap reference on */
+> +       exynos_pcie_phy_writel(ep->phy_base, 0, PCIE_PHY_OFFSET(0x20));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0, PCIE_PHY_OFFSET(0x4b));
+> +
+> +       /* jitter tunning */
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x34, PCIE_PHY_OFFSET(0x4));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x02, PCIE_PHY_OFFSET(0x7));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x41, PCIE_PHY_OFFSET(0x21));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x7F, PCIE_PHY_OFFSET(0x14));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xC0, PCIE_PHY_OFFSET(0x15));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x61, PCIE_PHY_OFFSET(0x36));
+> +
+> +       /* D0 uninit.. */
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x44, PCIE_PHY_OFFSET(0x3D));
+> +
+> +       /* 24MHz */
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x94, PCIE_PHY_OFFSET(0x8));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xA7, PCIE_PHY_OFFSET(0x9));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x93, PCIE_PHY_OFFSET(0xA));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x6B, PCIE_PHY_OFFSET(0xC));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xA5, PCIE_PHY_OFFSET(0xF));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x34, PCIE_PHY_OFFSET(0x16));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xA3, PCIE_PHY_OFFSET(0x17));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xA7, PCIE_PHY_OFFSET(0x1A));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x71, PCIE_PHY_OFFSET(0x23));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x4C, PCIE_PHY_OFFSET(0x24));
+> +
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x0E, PCIE_PHY_OFFSET(0x26));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x14, PCIE_PHY_OFFSET(0x7));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x48, PCIE_PHY_OFFSET(0x43));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x44, PCIE_PHY_OFFSET(0x44));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x03, PCIE_PHY_OFFSET(0x45));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0xA7, PCIE_PHY_OFFSET(0x48));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x13, PCIE_PHY_OFFSET(0x54));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0x04, PCIE_PHY_OFFSET(0x31));
+> +       exynos_pcie_phy_writel(ep->phy_base, 0, PCIE_PHY_OFFSET(0x32));
+> +
+> +       if (ep->fsysreg) {
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_COMMON_RESET,
+> +                               PCIE_PHY_RESET, 0);
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_MAC_RESET,
+> +                               PCIE_MAC_RESET_MASK, PCIE_MAC_RESET);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int exynos_pcie_phy_power_on(struct phy *phy)
+> +{
+> +       struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> +
+> +       if (ep->pmureg) {
+> +               if (regmap_update_bits(ep->pmureg, ep->drv_data->pmureg_offset,
+> +                                       BIT(0), 1))
+> +                       dev_warn(&phy->dev, "Failed to update regmap bit.\n");
+> +       }
+> +
+> +       if (ep->fsysreg) {
+> +               regmap_update_bits(ep->fsysreg, PCIE_PHY_GLOBAL_RESET,
+> +                               PCIE_APP_REQ_EXIT_L1_MODE, 0);
+> +               regmap_update_bits(ep->fsysreg, PCIE_L1SUB_CM_CON,
+> +                               PCIE_REFCLK_GATING_EN, 0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static struct phy_ops exynos_phy_ops = {
+
+const ?
+
+> +       .init   = exynos_pcie_phy_init,
+> +       .power_on = exynos_pcie_phy_power_on,
+> +};
+> +
+> +static const struct exynos_pcie_phy_data exynos5433_pcie_phy_data = {
+> +       .ctrl_type      = PCIE_PHY_TYPE_EXYNOS5433,
+> +       .pmureg_offset  = PCIE_EXYNOS5433_PMU_PHY_OFFSET,
+> +       .ops            = &exynos_phy_ops,
+> +};
+> +
+> +static const struct of_device_id exynos_pcie_phy_match[] = {
+> +       {
+> +               .compatible = "samsung,exynos5433-pcie-phy",
+> +               .data = &exynos5433_pcie_phy_data,
+> +       },
+> +       {}
+
+missing comma after braces.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_pcie_phy_match);
+> +
+> +static int exynos_pcie_phy_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct exynos_pcie_phy *exynos_phy;
+> +       struct phy *generic_phy;
+> +       struct phy_provider *phy_provider;
+> +       struct resource *res;
+> +       const struct exynos_pcie_phy_data *drv_data;
+> +       const struct of_device_id *match;
+> +
+> +       exynos_phy = devm_kzalloc(dev, sizeof(*exynos_phy), GFP_KERNEL);
+> +       if (!exynos_phy)
+> +               return -ENOMEM;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       exynos_phy->phy_base = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(exynos_phy->phy_base))
+> +               return PTR_ERR(exynos_phy->phy_base);
+> +
+> +       exynos_phy->pmureg = syscon_regmap_lookup_by_phandle(np,
+> +                       "samsung,pmureg-phandle");
+> +       if (IS_ERR(exynos_phy->pmureg)) {
+> +               dev_warn(&pdev->dev, "pmureg syscon regmap lookup failed.\n");
+> +               exynos_phy->pmureg = NULL;
+> +       }
+
+Is this really optional ? There should be a failure path for IP versions that
+require this compulsorily.
+
+> +
+> +       match = of_match_node(exynos_pcie_phy_match, pdev->dev.of_node);
+> +       drv_data = match->data;
+
+Please use of_device_get_match_data().
+
+> +       exynos_phy->drv_data = drv_data;
+> +
+> +       exynos_phy->fsysreg = syscon_regmap_lookup_by_phandle(np,
+> +                       "samsung,fsys-sysreg");
+> +       if (IS_ERR(exynos_phy->fsysreg)) {
+> +               dev_warn(&pdev->dev, "Fsysreg syscon regmap lookup failed.\n");
+> +               exynos_phy->fsysreg = NULL;
+> +       }
+
+Same here, is this optional ?
+
+> +
+> +       generic_phy = devm_phy_create(dev, dev->of_node, drv_data->ops);
+> +       if (IS_ERR(generic_phy)) {
+> +               dev_err(dev, "failed to create PHY\n");
+> +               return PTR_ERR(generic_phy);
+> +       }
+> +
+> +       phy_set_drvdata(generic_phy, exynos_phy);
+> +       phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +
+> +       return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +static struct platform_driver exynos_pcie_phy_driver = {
+> +       .probe  = exynos_pcie_phy_probe,
+> +       .driver = {
+> +               .of_match_table = exynos_pcie_phy_match,
+> +               .name           = "exynos_pcie_phy",
+> +       }
+> +};
+> +module_platform_driver(exynos_pcie_phy_driver);
+> --
+> 2.10.2
 >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-We also do not have access to exynos5440 hardware, but we do have access
-to exynos5440 UM, so we can see some details of these SFRs. Based on
-our understanding
-we refactored this code for making it more suitable for other SoC.
 
-Regarding phy_base and block_base as they are phy related it need to
-be replaced with phy driver, so for this we can reuse your RFC patch
-of pcie-phy. Even phy driver design should be
-such that it can support multiple Exynos SoC PCIe-Phy.
-
-> One is "adding the new pci-exynos.c" likes pci-exynos5433.c
-
-I know exynos5433 and exynos7 SoC have similar PCIe controller, although they
-may share comparatively less similarity with exynos5440. If start
-adding new file for
-each SoC we may end of lot of code duplication.
-
-> Other is "refactor this file" under assuming the each register's usage.
->
-
-IMHO, this would be good design decision.
-
-We have separate various resources of exynos_pcie struct such as iomem
-and clks for
-the timebeing, and these resources can be managed via exynos_pcie_ops
-which can have different implementation for different SoCs, we have
-freedom to handle these resources per SoC. If some SoCs share similar
-PCIe controller h/w design, code will be reused.
-
-> I want to use the PHY generic Framework for EXYNOS PCIe.
->
-> If you or other guys really want to use the pci-exynos.c for other exynos,
-> I will rework with PHY generic framework. Then i will resend the my patches as V2.
->
-> One more thing..Does anyone know what the usage of block base is?
-> Can i use that register as "syscon"?
->
-
-I think this is not exactly syscon, as it only be used in pcie-phy,
-so we can use this as child device of phy-device.
-
-> Best Regards,
-> Jaehoon Chung
->
-
-Thanks,
-Pankaj Dubey
+Thanks
+Vivek
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
