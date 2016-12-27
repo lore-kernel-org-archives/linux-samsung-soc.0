@@ -1,73 +1,70 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] ARM, ARM64: dts: drop "arm,
- amba-bus" in favor of "simple-bus" part 3
-Date: Wed, 28 Dec 2016 00:51:26 +0900
-Message-ID: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH 3/6] ARM64: dts: exynos5433: add the pcie_phy node
+ for PCIe
+Date: Tue, 27 Dec 2016 18:11:34 +0200
+Message-ID: <20161227161134.ds67t5byucphwkjg@kozik-lap>
+References: <20161226052029.10552-1-jh80.chung@samsung.com>
+ <CGME20161226052031epcas5p451b1352d6c8c5205a69246c2994b9506@epcas5p4.samsung.com>
+ <20161226052029.10552-4-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: David Brown <david.brown@linaro.org>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, linux-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161226052029.10552-4-jh80.chung@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, kishon@ti.com, will.deacon@arm.com, catalin.marinas@arm.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tree-wide replacement was done by commit 2ef7d5f342c1 ("ARM, ARM64:
-dts: drop "arm,amba-bus" in favor of "simple-bus"), then the 2nd
-round by commit 15b7cc78f095 ("arm64: dts: drop "arm,amba-bus" in
-favor of "simple-bus" part 2").
+On Mon, Dec 26, 2016 at 02:20:26PM +0900, Jaehoon Chung wrote:
+> To use the generic PHY framework, adds the pcie_phy node.
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 64226d5..2a15f18 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -805,6 +805,11 @@
+>  			reg = <0x145f0000 0x1038>;
+>  		};
+>  
+> +		syscon_fsys: syscon@156f0000 {
+> +			compatible = "syscon";
+> +			reg = <0x156f0000 0x1044>;
+> +		};
+> +
+>  		gsc_0: video-scaler@13C00000 {
+>  			compatible = "samsung,exynos5433-gsc";
+>  			reg = <0x13c00000 0x1000>;
+> @@ -1443,6 +1448,15 @@
+>  				status = "disabled";
+>  			};
+>  		};
+> +
+> +		pcie_phy: pcie-phy@15680000 {
+> +			#phy-cells = <0>;
+> +			compatible = "samsung,exynos5433-pcie-phy";
 
-Here, some new users have appeared for Linux v4.10-rc1.  Eliminate
-them now.
+Mostly we use the convention of compatible being first property.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> +			reg = <0x15680000 0x1000>;
+> +			samsung,pmureg-phandle = <&pmu_system_controller>;
+> +			samsung,fsys-sysreg = <&syscon_fsys>;
+> +			status = "okay";
 
-Hi Arnd, Olof,
+Why do you need to put status=okay here?
 
-Can you pick this up for v4.10 fixes?
+Best regards,
+Krzysztof
 
-If we carry arm,amba-bus until the release, we will need to
-take more time to deprecate it.
-
-
- arch/arm/boot/dts/qcom-mdm9615.dtsi        | 2 +-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-index 5ae4ec5..c852b69 100644
---- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
-+++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-@@ -357,7 +357,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 64226d5..135890c 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1367,7 +1367,7 @@
- 		};
- 
- 		amba {
--			compatible = "arm,amba-bus";
-+			compatible = "simple-bus";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
--- 
-2.7.4
+> +		};
+>  	};
+>  
+>  	timer: timer {
+> -- 
+> 2.10.2
+> 
