@@ -1,9 +1,9 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH 2/4] Documetation: samsung-phy: add the exynos-pcie-phy binding
-Date: Wed, 28 Dec 2016 19:34:52 +0900
-Message-ID: <20161228103454.26467-3-jh80.chung@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: exynos5440: support the phy-pcie node for pcie
+Date: Wed, 28 Dec 2016 19:34:54 +0900
+Message-ID: <20161228103454.26467-5-jh80.chung@samsung.com>
 References: <20161228103454.26467-1-jh80.chung@samsung.com>
- <CGME20161228103455epcas5p2acc54945d70ac45b2ce2cd4f6ad4b875@epcas5p2.samsung.com>
+ <CGME20161228103455epcas5p2cd50c2389ac3dd49eecb3218ff1dbb16@epcas5p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20161228103454.26467-1-jh80.chung@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,34 +11,22 @@ To: linux-pci@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
-This is for using generic PHY framework.
+Add phy-pcie node for using Exynos5440 pcie.
+And some properies are changed to generic usage.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- .../devicetree/bindings/phy/samsung-phy.txt        | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm/boot/dts/exynos5440.dtsi | 44 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 34 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 9872ba8..1cbc15f 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -191,3 +191,26 @@ Example:
- 		usbdrdphy0 = &usb3_phy0;
- 		usbdrdphy1 = &usb3_phy1;
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 2a2e570..deb2504 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -290,11 +290,34 @@
+ 		clock-names = "usbhost";
  	};
-+
-+Samsung Exynos SoC series PCIe PHY controller
-+--------------------------------------------------
-+Required properties:
-+- compatible : Should be set to "samsung,exynos5440-pcie-phy"
-+- #phy-cells : Must be zero
-+- reg : a register used by phy driver.
-+
-+Required properies for child node:
-+- reg : a block register used by phy driver.
-+
-+Example:
+ 
 +	pcie_phy0: pcie-phy@270000 {
 +		#phy-cells = <0>;
 +		compatible = "samsung,exynos5440-pcie-phy";
@@ -50,5 +38,64 @@ index 9872ba8..1cbc15f 100644
 +			reg = <0x271000 0x40>;
 +		};
 +	};
++
++	pcie_phy1: pcie-phy@272000 {
++		#phy-cells = <0>;
++		compatible = "samsung,exynos5440-pcie-phy";
++		reg = <0x272000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		block@271040 {
++			reg = <0x271040 0x40>;
++		};
++	};
++
+ 	pcie_0: pcie@290000 {
+ 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+-		reg = <0x290000 0x1000
+-			0x270000 0x1000
+-			0x271000 0x40>;
++		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
++		reg-names = "elbi", "config";
+ 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+@@ -303,8 +326,9 @@
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+-		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
+-			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
++		pyhs = <&pcie_phy0>;
++		phys = "pcie-phy";
++		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
+ 			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+@@ -315,9 +339,8 @@
+ 
+ 	pcie_1: pcie@2a0000 {
+ 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+-		reg = <0x2a0000 0x1000
+-			0x272000 0x1000
+-			0x271040 0x40>;
++		reg = <0x2a0000 0x1000>, <0x60000000 0x1000>;
++		reg-names = "elbi", "config";
+ 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+@@ -326,8 +349,9 @@
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+-		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
+-			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
++		pyhs = <&pcie_phy1>;
++		phys = "pcie-phy";
++		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
+ 			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
 -- 
 2.10.2
