@@ -1,38 +1,50 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Cleanup exynos4412-odroidx2.dts and
- enable sound on odroid-x.
-Date: Wed, 28 Dec 2016 19:31:01 +0200
-Message-ID: <20161228173101.hbiveyxnniyyvez3@kozik-lap>
-References: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35021 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750976AbcL1Rbp (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Dec 2016 12:31:45 -0500
-Received: by mail-lf0-f68.google.com with SMTP id x140so16122355lfa.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Dec 2016 09:31:06 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <d56c0228-d39b-87e8-3a5f-e8577f3a91e4@fivetechno.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [RESEND v2] dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property
+Date: Wed, 28 Dec 2016 19:50:25 +0200
+Message-ID: <20161228175025.5581-1-krzk@kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Mon, Nov 28, 2016 at 01:48:06PM +0100, Markus Reichl wrote:
-> Odroid-X2 differs from Odroid-X only in RAM and prime CPU.
-> Remove doubled nodes from exynos4412-odroidx2.dts and move
-> sound node to exynos4412-odroidx.dts to enable sound on both boards.
-> 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-> ---
->  arch/arm/boot/dts/exynos4412-odroidx.dts  | 13 +++++++++++++
->  arch/arm/boot/dts/exynos4412-odroidx2.dts | 24 ------------------------
->  2 files changed, 13 insertions(+), 24 deletions(-)
-> 
-Thanks, applied.
+The samsung,power-domain property is obsolete since commit 0da658704136
+("ARM: dts: convert to generic power domain bindings for exynos DT").
+Replace it with generic one.
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+---
+
+Changes since v1:
+1. Just add the acks/reviews.
+
+I though it will be applied by Exynos DRM maintainer but there was no
+response.
+Dear Rob, could you pick it up?
+---
+ Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+index 3938caacf11c..8346fb18a358 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+@@ -33,7 +33,7 @@ Required properties:
+ - i80-if-timings: timing configuration for lcd i80 interface support.
+ 
+ Optional Properties:
+-- samsung,power-domain: a phandle to DECON power domain node.
++- power-domains: a phandle to DECON power domain node.
+ - display-timings: timing settings for DECON, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
+-- 
+2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
