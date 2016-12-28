@@ -1,50 +1,38 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [RESEND v2] dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property
-Date: Wed, 28 Dec 2016 19:50:25 +0200
-Message-ID: <20161228175025.5581-1-krzk@kernel.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 7/8] ARM: s3c64xx: Drop initialization of unused struct
+ s3c_audio_pdata fields
+Date: Wed, 28 Dec 2016 19:53:44 +0200
+Message-ID: <20161228175344.3krz2hqrem56ypg6@kozik-lap>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+ <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35422 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751731AbcL1RyB (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 28 Dec 2016 12:54:01 -0500
+Content-Disposition: inline
+In-Reply-To: <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: krzk@kernel.org, vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-The samsung,power-domain property is obsolete since commit 0da658704136
-("ARM: dts: convert to generic power domain bindings for exynos DT").
-Replace it with generic one.
+On Thu, Nov 10, 2016 at 04:17:55PM +0100, Sylwester Nawrocki wrote:
+> Remove initialization of dma_{filter, playback, capture, capture_mic}
+> fields where it is not used any more.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/mach-s3c64xx/dev-audio.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+>
 
-Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sylwester,
 
----
+This and 8/8 should be safe to apply, right?
 
-Changes since v1:
-1. Just add the acks/reviews.
-
-I though it will be applied by Exynos DRM maintainer but there was no
-response.
-Dear Rob, could you pick it up?
----
- Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-index 3938caacf11c..8346fb18a358 100644
---- a/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-+++ b/Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
-@@ -33,7 +33,7 @@ Required properties:
- - i80-if-timings: timing configuration for lcd i80 interface support.
- 
- Optional Properties:
--- samsung,power-domain: a phandle to DECON power domain node.
-+- power-domains: a phandle to DECON power domain node.
- - display-timings: timing settings for DECON, as described in document [1].
- 		Can be used in case timings cannot be provided otherwise
- 		or to override timings provided by the panel.
--- 
-2.9.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+BR,
+Krzysztof
