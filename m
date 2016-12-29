@@ -1,33 +1,31 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/5] clk: samsung: exynos5433: Set NoC (Network On Chip)
- clocks as critical
-Date: Thu, 29 Dec 2016 16:16:25 +0100
-Message-ID: <8e25bb24-b5a5-6ae8-5c4c-3f25161deb4a@samsung.com>
-References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
- <CGME20161208050020epcas2p444709cd01b75a3e49ca60ae41338e017@epcas2p4.samsung.com>
- <1481173091-9728-2-git-send-email-cw00.choi@samsung.com>
- <58521D0F.5040704@samsung.com>
- <662a6608-e6c7-fc1b-6bea-47548640913d@samsung.com>
+Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
+ platform device PM
+Date: Thu, 29 Dec 2016 16:18:02 +0100
+Message-ID: <9b4c95cf-4f8b-8b70-a609-4c487fe36bb8@samsung.com>
+References: <CGME20161125095119epcas2p1d9f9ba31fbb556ff714f4330ad746ed5@epcas2p1.samsung.com>
+ <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48488 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbcL2PQf (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:36500 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752311AbcL2PSP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 10:16:35 -0500
-In-reply-to: <662a6608-e6c7-fc1b-6bea-47548640913d@samsung.com>
+        Thu, 29 Dec 2016 10:18:15 -0500
+In-reply-to: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, tomasz.figa@gmail.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 12/20/2016 11:47 AM, Sylwester Nawrocki wrote:
-> On 12/15/2016 05:33 AM, Chanwoo Choi wrote:
->> Could you please review this patch?
->
-> Chanwoo, the patch looks good to me, I'm going to queue it after
-> v4.10-rc1 is released.
+On 11/25/2016 10:39 AM, Marek Szyprowski wrote:
+> Exynos AUDSS clock driver has beem already converted to platform driver, so
+> remove the dependency on the syscore ops - the last remaining non-platform
+> driver feature. Platform device's system sleep PM provides all needed
+> infrastructure for replacing syscore-based PM, so do it now.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 Applied, thanks.
