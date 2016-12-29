@@ -1,141 +1,44 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] spi: s3c64xx: Don't request/release DMA channels for each SPI
- transfer
-Date: Thu, 29 Dec 2016 13:19:31 +0100
-Message-ID: <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161229121937eucas1p11cd0bb98b21699b0f773ecaeb7c29d26@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARM: s3c2410_defconfig: Fix invalid values for NF_CT_PROTO_*
+Date: Thu, 29 Dec 2016 14:41:05 +0200
+Message-ID: <20161229124105.8391-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:35837 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752654AbcL2MTm (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:46022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752474AbcL2MlW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 07:19:42 -0500
+        Thu, 29 Dec 2016 07:41:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Requesting a DMA channel might be a time consuming operation, so there is
-no need to acquire and release DMA channel for each SPI transfer.
-DMA channels can be requested during driver probe and kept all the time,
-also because there are no shared nor dynamically allocated channels on
-Samsung S3C/S5P/Exynos platforms.
+NF_CT_PROTO_DCCP/SCTP/UDPLITE were switched from tristate to boolean so
+defconfig needs to be adjusted to silence warnings:
+	warning: symbol value 'm' invalid for NF_CT_PROTO_DCCP
+	warning: symbol value 'm' invalid for NF_CT_PROTO_SCTP
+	warning: symbol value 'm' invalid for NF_CT_PROTO_UDPLITE
 
-While moving dma_requrest_slave_channel calls, lets switch to
-dma_request_slave_channel_reason(), which returns error codes on failure,
-which can be properly propagated to the caller (this for example defers
-SPI probe when DMA controller is not yet available).
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++-----------------------
- 1 file changed, 29 insertions(+), 28 deletions(-)
+ arch/arm/configs/s3c2410_defconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 28dfdce4beae..849ee82483e4 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -341,43 +341,16 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--	struct device *dev = &sdd->pdev->dev;
- 
- 	if (is_polling(sdd))
- 		return 0;
- 
--	/* Acquire DMA channels */
--	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
--	if (!sdd->rx_dma.ch) {
--		dev_err(dev, "Failed to get RX DMA channel\n");
--		return -EBUSY;
--	}
- 	spi->dma_rx = sdd->rx_dma.ch;
--
--	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
--	if (!sdd->tx_dma.ch) {
--		dev_err(dev, "Failed to get TX DMA channel\n");
--		dma_release_channel(sdd->rx_dma.ch);
--		return -EBUSY;
--	}
- 	spi->dma_tx = sdd->tx_dma.ch;
- 
- 	return 0;
- }
- 
--static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
--{
--	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--
--	/* Free DMA channels */
--	if (!is_polling(sdd)) {
--		dma_release_channel(sdd->rx_dma.ch);
--		dma_release_channel(sdd->tx_dma.ch);
--	}
--
--	return 0;
--}
--
- static bool s3c64xx_spi_can_dma(struct spi_master *master,
- 				struct spi_device *spi,
- 				struct spi_transfer *xfer)
-@@ -1094,7 +1067,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
--	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
- 	master->num_chipselect = sci->num_cs;
- 	master->dma_alignment = 8;
- 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
-@@ -1161,6 +1133,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (!is_polling(sdd)) {
-+		/* Acquire DMA channels */
-+		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
-+								  "rx");
-+		if (IS_ERR(sdd->rx_dma.ch)) {
-+			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
-+			ret = PTR_ERR(sdd->rx_dma.ch);
-+			goto err_disable_io_clk;
-+		}
-+		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
-+								  "tx");
-+		if (IS_ERR(sdd->tx_dma.ch)) {
-+			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
-+			ret = PTR_ERR(sdd->tx_dma.ch);
-+			goto err_release_tx_dma;
-+		}
-+	}
-+
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
-@@ -1206,6 +1196,12 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->rx_dma.ch);
-+err_release_tx_dma:
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->tx_dma.ch);
-+err_disable_io_clk:
- 	clk_disable_unprepare(sdd->ioclk);
- err_disable_src_clk:
- 	clk_disable_unprepare(sdd->src_clk);
-@@ -1226,6 +1222,11 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 
- 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
- 
-+	if (!is_polling(sdd)) {
-+		dma_release_channel(sdd->rx_dma.ch);
-+		dma_release_channel(sdd->tx_dma.ch);
-+	}
-+
- 	clk_disable_unprepare(sdd->ioclk);
- 
- 	clk_disable_unprepare(sdd->src_clk);
+diff --git a/arch/arm/configs/s3c2410_defconfig b/arch/arm/configs/s3c2410_defconfig
+index 4364040ed696..1e6c48dd7b11 100644
+--- a/arch/arm/configs/s3c2410_defconfig
++++ b/arch/arm/configs/s3c2410_defconfig
+@@ -86,9 +86,9 @@ CONFIG_IPV6_TUNNEL=m
+ CONFIG_NETFILTER=y
+ CONFIG_NF_CONNTRACK=m
+ CONFIG_NF_CONNTRACK_EVENTS=y
+-CONFIG_NF_CT_PROTO_DCCP=m
+-CONFIG_NF_CT_PROTO_SCTP=m
+-CONFIG_NF_CT_PROTO_UDPLITE=m
++CONFIG_NF_CT_PROTO_DCCP=y
++CONFIG_NF_CT_PROTO_SCTP=y
++CONFIG_NF_CT_PROTO_UDPLITE=y
+ CONFIG_NF_CONNTRACK_AMANDA=m
+ CONFIG_NF_CONNTRACK_FTP=m
+ CONFIG_NF_CONNTRACK_H323=m
 -- 
-1.9.1
+2.9.3
