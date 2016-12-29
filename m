@@ -1,274 +1,65 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/5] ASoC: samsung: i2s: Ensure proper runtime PM state of I2S
- device
-Date: Thu, 29 Dec 2016 12:34:04 +0100
-Message-ID: <1483011247-21613-3-git-send-email-m.szyprowski@samsung.com>
-References: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161229113426eucas1p2bc05fb68efd45e6af3ae7a2b8be5e481@eucas1p2.samsung.com>
+Subject: [PATCH 0/5] Runtime PM support for Exynos I2S driver
+Date: Thu, 29 Dec 2016 12:34:02 +0100
+Message-ID: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161229113425eucas1p2f95b915a9a66df3e3ff8431b5625b926@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43977 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbcL2Leb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35877 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751315AbcL2Lea (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 06:34:31 -0500
+        Thu, 29 Dec 2016 06:34:30 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIY00FLL2TG4B00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2016 11:34:28 +0000 (GMT)
-In-reply-to: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
+ with ESMTP id <0OIY00BVL2TES400@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2016 11:34:27 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-This patch adds calls to pm_runtime_get/put to ensure that any access to
-I2S registers is done with proper (active) runtime PM state of I2S device.
-Till now the driver enabled runtime PM, but didn't manage the state during
-driver operation. The driver worked fine only because the runtime PM
-callbacks managed device clock, which was enabled all the time because of
-the additional enable call in the driver's probe function.
+Exynos I2S audio controller was missing proper runtime PM implementation
+and this patchset addresses this issue.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- sound/soc/samsung/i2s.c | 54 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 46 insertions(+), 8 deletions(-)
+This patchset is a another step to add support for audio power domain on
+Exynos5 SoCs.
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index ce4e70ef5568..2aa800b99938 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -477,6 +477,9 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 	unsigned int rsrc_mask = 1 << i2s_regs->rclksrc_off;
- 	u32 mod, mask, val = 0;
- 	unsigned long flags;
-+	int ret = 0;
-+
-+	pm_runtime_get_sync(dai->dev);
- 
- 	spin_lock_irqsave(i2s->lock, flags);
- 	mod = readl(i2s->addr + I2SMOD);
-@@ -501,7 +504,8 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 					&& (mod & cdcon_mask))))) {
- 			dev_err(&i2s->pdev->dev,
- 				"%s:%d Other DAI busy\n", __func__, __LINE__);
--			return -EAGAIN;
-+			ret = -EAGAIN;
-+			goto err;
- 		}
- 
- 		if (dir == SND_SOC_CLOCK_IN)
-@@ -529,7 +533,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 				} else {
- 					i2s->rclk_srcrate =
- 						clk_get_rate(i2s->op_clk);
--					return 0;
-+					goto done;
- 				}
- 			}
- 
-@@ -540,8 +544,10 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 				i2s->op_clk = clk_get(&i2s->pdev->dev,
- 						"i2s_opclk0");
- 
--			if (WARN_ON(IS_ERR(i2s->op_clk)))
--				return PTR_ERR(i2s->op_clk);
-+			if (WARN_ON(IS_ERR(i2s->op_clk))) {
-+				ret = PTR_ERR(i2s->op_clk);
-+				goto err;
-+			}
- 
- 			clk_prepare_enable(i2s->op_clk);
- 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
-@@ -555,12 +561,13 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 				|| (clk_id && !(mod & rsrc_mask))) {
- 			dev_err(&i2s->pdev->dev,
- 				"%s:%d Other DAI busy\n", __func__, __LINE__);
--			return -EAGAIN;
-+			ret = -EAGAIN;
-+			goto err;
- 		} else {
- 			/* Call can't be on the active DAI */
- 			i2s->op_clk = other->op_clk;
- 			i2s->rclk_srcrate = other->rclk_srcrate;
--			return 0;
-+			goto done;
- 		}
- 
- 		if (clk_id == 1)
-@@ -568,7 +575,8 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 		break;
- 	default:
- 		dev_err(&i2s->pdev->dev, "We don't serve that!\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err;
- 	}
- 
- 	spin_lock_irqsave(i2s->lock, flags);
-@@ -576,8 +584,13 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 	mod = (mod & ~mask) | val;
- 	writel(mod, i2s->addr + I2SMOD);
- 	spin_unlock_irqrestore(i2s->lock, flags);
-+done:
-+	pm_runtime_put(dai->dev);
- 
- 	return 0;
-+err:
-+	pm_runtime_put(dai->dev);
-+	return ret;
- }
- 
- static int i2s_set_fmt(struct snd_soc_dai *dai,
-@@ -646,6 +659,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 		return -EINVAL;
- 	}
- 
-+	pm_runtime_get_sync(dai->dev);
- 	spin_lock_irqsave(i2s->lock, flags);
- 	mod = readl(i2s->addr + I2SMOD);
- 	/*
-@@ -655,6 +669,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 	if (any_active(i2s) &&
- 		((mod & (sdf_mask | lrp_rlow | mod_slave)) != tmp)) {
- 		spin_unlock_irqrestore(i2s->lock, flags);
-+		pm_runtime_put(dai->dev);
- 		dev_err(&i2s->pdev->dev,
- 				"%s:%d Other DAI busy\n", __func__, __LINE__);
- 		return -EAGAIN;
-@@ -664,6 +679,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 	mod |= tmp;
- 	writel(mod, i2s->addr + I2SMOD);
- 	spin_unlock_irqrestore(i2s->lock, flags);
-+	pm_runtime_put(dai->dev);
- 
- 	return 0;
- }
-@@ -675,6 +691,8 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	u32 mod, mask = 0, val = 0;
- 	unsigned long flags;
- 
-+	WARN_ON(!pm_runtime_active(dai->dev));
-+
- 	if (!is_secondary(i2s))
- 		mask |= (MOD_DC2_EN | MOD_DC1_EN);
- 
-@@ -763,6 +781,8 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
- 
-+	pm_runtime_get_sync(dai->dev);
-+
- 	spin_lock_irqsave(&lock, flags);
- 
- 	i2s->mode |= DAI_OPENED;
-@@ -800,6 +820,8 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
- 	i2s->bfs = 0;
- 
- 	spin_unlock_irqrestore(&lock, flags);
-+
-+	pm_runtime_put(dai->dev);
- }
- 
- static int config_setup(struct i2s_dai *i2s)
-@@ -874,6 +896,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		pm_runtime_get_sync(dai->dev);
- 		spin_lock_irqsave(i2s->lock, flags);
- 
- 		if (config_setup(i2s)) {
-@@ -902,6 +925,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 		}
- 
- 		spin_unlock_irqrestore(i2s->lock, flags);
-+		pm_runtime_put(dai->dev);
- 		break;
- 	}
- 
-@@ -916,13 +940,16 @@ static int i2s_set_clkdiv(struct snd_soc_dai *dai,
- 
- 	switch (div_id) {
- 	case SAMSUNG_I2S_DIV_BCLK:
-+		pm_runtime_get_sync(dai->dev);
- 		if ((any_active(i2s) && div && (get_bfs(i2s) != div))
- 			|| (other && other->bfs && (other->bfs != div))) {
-+			pm_runtime_put(dai->dev);
- 			dev_err(&i2s->pdev->dev,
- 				"%s:%d Other DAI busy\n", __func__, __LINE__);
- 			return -EAGAIN;
- 		}
- 		i2s->bfs = div;
-+		pm_runtime_put(dai->dev);
- 		break;
- 	default:
- 		dev_err(&i2s->pdev->dev,
-@@ -941,6 +968,8 @@ static int i2s_set_clkdiv(struct snd_soc_dai *dai,
- 	snd_pcm_sframes_t delay;
- 	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
- 
-+	WARN_ON(!pm_runtime_active(dai->dev));
-+
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
- 		delay = FIC_RXCOUNT(reg);
- 	else if (is_secondary(i2s))
-@@ -984,6 +1013,8 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
- 
-+	pm_runtime_get_sync(dai->dev);
-+
- 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
- 		snd_soc_dai_init_dma_data(dai, &other->sec_dai->dma_playback,
- 					   NULL);
-@@ -1016,6 +1047,7 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	if (!is_opened(other))
- 		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
- 				0, SND_SOC_CLOCK_IN);
-+	pm_runtime_put(dai->dev);
- 
- 	return 0;
- }
-@@ -1025,6 +1057,8 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- 	struct i2s_dai *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned long flags;
- 
-+	pm_runtime_get_sync(dai->dev);
-+
- 	if (!is_secondary(i2s)) {
- 		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
- 			spin_lock_irqsave(i2s->lock, flags);
-@@ -1033,6 +1067,8 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- 		}
- 	}
- 
-+	pm_runtime_put(dai->dev);
-+
- 	return 0;
- }
- 
-@@ -1328,7 +1364,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, pri_dai);
- 
--
-+	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
- 	ret = i2s_register_clock_provider(pdev);
-@@ -1351,10 +1387,12 @@ static int samsung_i2s_remove(struct platform_device *pdev)
- 	pri_dai->sec_dai = NULL;
- 	sec_dai->pri_dai = NULL;
- 
-+	pm_runtime_get_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	i2s_unregister_clock_provider(pdev);
- 	clk_disable_unprepare(pri_dai->clk);
-+	pm_runtime_put_noidle(&pdev->dev);
- 
- 	return 0;
- }
+Audio power domain on Exynos5 SoCs contains following hardware modules:
+1. clock controller
+2. pin controller
+3. PL330 DMA controller
+4. I2S audio controller
+
+The other patches related to enabling full support for audio power domain
+can be found here:
+1. PL330 ADMA controller non-irqsafe runtime PM:
+   https://www.spinics.net/lists/arm-kernel/msg550008.html
+2. Runtime PM for clock controllers (Exynos Audio subsystem will be added
+   in v4 soon): https://www.spinics.net/lists/arm-kernel/msg538122.html
+3. Runtime PM support for pin controller:
+   https://www.spinics.net/lists/linux-samsung-soc/msg56674.html
+
+Patches are based on linux-next from 2016.12.24. Tested on Odroid U3
+(Exynos4412), Odroid XU3 (Exynos5422) and TM2 (Exynos5433) boards.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (5):
+  ASoC: samsung: i2s: Remove virtual device for secondary DAI
+  ASoC: samsung: i2s: Ensure proper runtime PM state of I2S device
+  ASoC: samsung: i2s: Move saving and restoring regs to runtime pm
+    operations
+  ASoC: samsung: i2s: Let runtime PM operations to control op_clk too
+  ASoC: samsung: i2s: Provide I2S device for registered clocks
+
+ sound/soc/samsung/i2s.c | 193 +++++++++++++++++++++++-------------------------
+ 1 file changed, 92 insertions(+), 101 deletions(-)
+
 -- 
 1.9.1
