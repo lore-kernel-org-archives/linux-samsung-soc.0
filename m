@@ -1,65 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 4/5] ASoC: samsung: i2s: Let runtime PM operations to control
- op_clk too
-Date: Thu, 29 Dec 2016 12:34:06 +0100
-Message-ID: <1483011247-21613-5-git-send-email-m.szyprowski@samsung.com>
-References: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161229113427eucas1p20e91adee0da640e2a5847d53f3c6e443@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 7/8] ARM: s3c64xx: Drop initialization of unused struct
+ s3c_audio_pdata fields
+Date: Thu, 29 Dec 2016 13:43:46 +0200
+Message-ID: <20161229114346.hmq4bzzc3w2ylr3d@kozik-lap>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+ <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
+ <20161228175344.3krz2hqrem56ypg6@kozik-lap>
+ <CGME20161229103055epcas1p1dc69aec56d462e8c1605fe9e47ded562@epcas1p1.samsung.com>
+ <0bb15f0e-7033-4cb3-5aba-0bb61fdfc467@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:53688 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752120AbcL2Lec (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36128 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbcL2Lnw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 06:34:32 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OIY00CKE2THJE00@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2016 11:34:29 +0000 (GMT)
-In-reply-to: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
+        Thu, 29 Dec 2016 06:43:52 -0500
+Content-Disposition: inline
+In-Reply-To: <0bb15f0e-7033-4cb3-5aba-0bb61fdfc467@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-This patch adds handling of parent operational clock to runtime PM
-callbacks. This way it is ensured that when I2S module is in runtime
-suspended state, all its parent clocks are disabled and unprepared.
+On Thu, Dec 29, 2016 at 11:30:49AM +0100, Sylwester Nawrocki wrote:
+> On 12/28/2016 06:53 PM, Krzysztof Kozlowski wrote:
+> > On Thu, Nov 10, 2016 at 04:17:55PM +0100, Sylwester Nawrocki wrote:
+> >> Remove initialization of dma_{filter, playback, capture, capture_mic}
+> >> fields where it is not used any more.
+> >>
+> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> ---
+> >>  arch/arm/mach-s3c64xx/dev-audio.c | 19 -------------------
+> >>  1 file changed, 19 deletions(-)
+> >>
+> > Sylwester,
+> > 
+> > This and 8/8 should be safe to apply, right?
+> 
+> Yes, I think both patches can be applied safely now.
+> Thanks for getting back to this.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- sound/soc/samsung/i2s.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks, applied both.
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 47a5650aaa66..07728b93f56e 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -546,6 +546,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 
- 			if (WARN_ON(IS_ERR(i2s->op_clk))) {
- 				ret = PTR_ERR(i2s->op_clk);
-+				i2s->op_clk = NULL;
- 				goto err;
- 			}
- 
-@@ -1121,6 +1122,8 @@ static int i2s_runtime_suspend(struct device *dev)
- 	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
- 	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
- 
-+	if (i2s->op_clk)
-+		clk_disable_unprepare(i2s->op_clk);
- 	clk_disable_unprepare(i2s->clk);
- 
- 	return 0;
-@@ -1131,6 +1134,8 @@ static int i2s_runtime_resume(struct device *dev)
- 	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 
- 	clk_prepare_enable(i2s->clk);
-+	if (i2s->op_clk)
-+		clk_prepare_enable(i2s->op_clk);
- 
- 	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
- 	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
--- 
-1.9.1
+Best regards,
+Krzysztof
