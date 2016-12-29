@@ -1,41 +1,51 @@
-From: Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH 1/4] pinctrl: dt-bindings: samsung: add drive strength
- macros for Exynos5433
-Date: Thu, 29 Dec 2016 22:41:04 +0900
-Message-ID: <20161229134104.gq2spgtpwbkx7mpd@jack.zhora.eu>
+From: Andi Shyti <andi@smida.it>
+Subject: Re: [PATCH 4/4] ARM64: dts: exynos5433: remove unused code
+Date: Thu, 29 Dec 2016 22:41:46 +0900
+Message-ID: <20161229134146.kolvpxrdo2epfav4@jack.zhora.eu>
 References: <20161229084211.20442-1-andi.shyti@samsung.com>
- <CGME20161229084221epcas5p43926b87dccbee0db4045faa5ddca565d@epcas5p4.samsung.com>
- <20161229084211.20442-2-andi.shyti@samsung.com>
- <20161229115059.ncvtakz32vhcfsij@kozik-lap>
+ <CGME20161229084222epcas5p41dacaeed3e2d4f10b07eee3930f7531c@epcas5p4.samsung.com>
+ <20161229084211.20442-5-andi.shyti@samsung.com>
+ <20161229115421.pq52ab57e53xntoz@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20161229115059.ncvtakz32vhcfsij@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20161229115421.pq52ab57e53xntoz@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Andi Shyti <andi.shyti@samsung.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-> >  #define EXYNOS5420_PIN_DRV_LV3		2
-> >  #define EXYNOS5420_PIN_DRV_LV4		3
+> >  #include <dt-bindings/pinctrl/samsung.h>
 > >  
-> > +/* Drive strengths for Exynos5433 */
-> > +#define EXYNOS5433_PIN_DRV_LV1		0
-> > +#define EXYNOS5433_PIN_DRV_LV2		1
-> > +#define EXYNOS5433_PIN_DRV_LV3		2
-> > +#define EXYNOS5433_PIN_DRV_LV4		3
+> > -#define PIN_PULL_NONE		0
+> > -#define PIN_PULL_DOWN		1
+> > -#define PIN_PULL_UP		3
+> > -
+> > -#define PIN_DRV_LV1		0
+> > -#define PIN_DRV_LV2		2
+> > -#define PIN_DRV_LV3		1
+> > -#define PIN_DRV_LV4		3
+> > -
+> > -#define PIN_IN			0
+> > -#define PIN_OUT			1
+> > -#define PIN_FUNC1		2
+> > -
 > 
-> Same values as existing. No need to re-define these.
+> This should be squashed with 3/4 because logically it is strictly
+> related to it and splitting it does not bring any benefits. Actually
+> while looking at 3/4 I was surprised to see them not removed.
 
-Yes, I was in doubt when I prepared this patch as on one hand it
-didn't look right to use EXYNOS5420_* for exynos5433, on the other
-hand it didn't look right to duplicate the macros.
-
-In anycase this values need to be fixed as Chanwoo wrote in the
-other mail.
+Yes, right :)
 
 Thanks,
 Andi
