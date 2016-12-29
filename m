@@ -1,57 +1,41 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/2] ARM: add Exynos4412 Prime SoC support
-Date: Thu, 29 Dec 2016 14:36:49 +0100
-Message-ID: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
-References: <CGME20161229133722epcas5p1e138af585fea93a42962f3a7414a081f@epcas5p1.samsung.com>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH 1/4] pinctrl: dt-bindings: samsung: add drive strength
+ macros for Exynos5433
+Date: Thu, 29 Dec 2016 22:41:04 +0900
+Message-ID: <20161229134104.gq2spgtpwbkx7mpd@jack.zhora.eu>
+References: <20161229084211.20442-1-andi.shyti@samsung.com>
+ <CGME20161229084221epcas5p43926b87dccbee0db4045faa5ddca565d@epcas5p4.samsung.com>
+ <20161229084211.20442-2-andi.shyti@samsung.com>
+ <20161229115059.ncvtakz32vhcfsij@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Ben Gamari <ben@smart-cactus.org>, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Thomas Abraham <thomas.ab@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161229115059.ncvtakz32vhcfsij@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Krzysztof,
 
-This patchset adds support for Exynos4412 Prime SoC (it supports
-additional 1704MHz & 1600MHz CPU OPPs and 1500MHz CPU OPP is just
-a regular non-turbo OPP on this SoC).
+> >  #define EXYNOS5420_PIN_DRV_LV3		2
+> >  #define EXYNOS5420_PIN_DRV_LV4		3
+> >  
+> > +/* Drive strengths for Exynos5433 */
+> > +#define EXYNOS5433_PIN_DRV_LV1		0
+> > +#define EXYNOS5433_PIN_DRV_LV2		1
+> > +#define EXYNOS5433_PIN_DRV_LV3		2
+> > +#define EXYNOS5433_PIN_DRV_LV4		3
+> 
+> Same values as existing. No need to re-define these.
 
-ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so their
-board files are updated accordingly.
+Yes, I was in doubt when I prepared this patch as on one hand it
+didn't look right to use EXYNOS5420_* for exynos5433, on the other
+hand it didn't look right to duplicate the macros.
 
-This patchset brings 21% CPU performance increase on affected
-boards (as tested on ODROID-U3 board).
+In anycase this values need to be fixed as Chanwoo wrote in the
+other mail.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (2):
-  clk: samsung: exynos4412: add cpu clock configuration data for
-    Exynos4412 Prime
-  ARM: dts: Add CPU OPPs for Exynos4412 Prime
-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
- arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
- arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
- drivers/clk/samsung/clk-exynos4.c               |  4 +++
- 6 files changed, 52 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
-
--- 
-1.9.1
+Thanks,
+Andi
