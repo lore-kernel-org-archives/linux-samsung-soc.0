@@ -1,66 +1,40 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [1/4] pinctrl: dt-bindings: samsung: add drive strength macros for
- Exynos5433
-Date: Thu, 29 Dec 2016 18:39:31 +0900
-Message-ID: <b855ad96-9dd6-9cc3-2353-576d1bd302d8@samsung.com>
-References: <20161229084211.20442-2-andi.shyti@samsung.com>
- <CGME20161229093931epcas1p11b118da454a0dbf3a798ba406f35ce54@epcas1p1.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 7/8] ARM: s3c64xx: Drop initialization of unused struct
+ s3c_audio_pdata fields
+Date: Thu, 29 Dec 2016 11:30:49 +0100
+Message-ID: <0bb15f0e-7033-4cb3-5aba-0bb61fdfc467@samsung.com>
+References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
+ <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
+ <20161228175344.3krz2hqrem56ypg6@kozik-lap>
+ <CGME20161229103055epcas1p1dc69aec56d462e8c1605fe9e47ded562@epcas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33124 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbcL2Jjf (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:58428 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752380AbcL2KbC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 04:39:35 -0500
-In-reply-to: <20161229084211.20442-2-andi.shyti@samsung.com>
+        Thu, 29 Dec 2016 05:31:02 -0500
+In-reply-to: <20161228175344.3krz2hqrem56ypg6@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On 12/29/2016 05:42 PM, Andi Shyti wrote:
-> Commit 5db7e3bb87df ("pinctrl: dt-bindings: samsung: Add header with
-> values used for configuration") has added a header file for defining the
-> pinctrl values in order to avoid hardcoded settings in the Exynos
-> DTS related files.
+On 12/28/2016 06:53 PM, Krzysztof Kozlowski wrote:
+> On Thu, Nov 10, 2016 at 04:17:55PM +0100, Sylwester Nawrocki wrote:
+>> Remove initialization of dma_{filter, playback, capture, capture_mic}
+>> fields where it is not used any more.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  arch/arm/mach-s3c64xx/dev-audio.c | 19 -------------------
+>>  1 file changed, 19 deletions(-)
+>>
+> Sylwester,
 > 
-> Extend samsung.h to the Exynos5433 for drive strength values
-> which are strictly related to the particular SoC and may defer
-> from others.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  include/dt-bindings/pinctrl/samsung.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
-> index 6276eb785e2b..58868313d64b 100644
-> --- a/include/dt-bindings/pinctrl/samsung.h
-> +++ b/include/dt-bindings/pinctrl/samsung.h
-> @@ -45,6 +45,12 @@
->  #define EXYNOS5420_PIN_DRV_LV3		2
->  #define EXYNOS5420_PIN_DRV_LV4		3
->  
-> +/* Drive strengths for Exynos5433 */
-> +#define EXYNOS5433_PIN_DRV_LV1		0
-> +#define EXYNOS5433_PIN_DRV_LV2		1
-> +#define EXYNOS5433_PIN_DRV_LV3		2
-> +#define EXYNOS5433_PIN_DRV_LV4		3
+> This and 8/8 should be safe to apply, right?
 
-Well, i'm not sure..but you needs to compare the other Exynos5 series.
-it's difference bit Offset. Did you check it?
-
-I didn't check pinctrl file..if it doesn't apply any exynos5433 pinctrl for drv_strength.
-it will work wrong..
-
-Best Regards,
-Jaehoon Chung
-
-> +
->  #define EXYNOS_PIN_FUNC_INPUT		0
->  #define EXYNOS_PIN_FUNC_OUTPUT		1
->  #define EXYNOS_PIN_FUNC_2		2
-> 
-> 
+Yes, I think both patches can be applied safely now.
+Thanks for getting back to this.
