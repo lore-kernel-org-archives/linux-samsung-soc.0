@@ -1,104 +1,101 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/4] pinctrl: dt-bindings: samsung: add drive strength
- macros for Exynos5433
-Date: Thu, 29 Dec 2016 19:33:53 +0900
-Message-ID: <6bf77b57-c2a4-2dff-9763-1cd1bfa23b9d@samsung.com>
-References: <20161229084211.20442-1-andi.shyti@samsung.com>
- <CGME20161229084221epcas5p43926b87dccbee0db4045faa5ddca565d@epcas5p4.samsung.com>
- <20161229084211.20442-2-andi.shyti@samsung.com>
- <37b86cdb-b5e9-a5fa-fbb1-46e8d8c90cd8@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/5] ASoC: samsung: i2s: Move saving and restoring regs to
+ runtime pm operations
+Date: Thu, 29 Dec 2016 12:34:05 +0100
+Message-ID: <1483011247-21613-4-git-send-email-m.szyprowski@samsung.com>
+References: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161229113427eucas1p166db5239bd7b17ebaba8b248f06cffe8@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37953 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752380AbcL2Kd6 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35877 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751839AbcL2Leb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 05:33:58 -0500
-In-reply-to: <37b86cdb-b5e9-a5fa-fbb1-46e8d8c90cd8@samsung.com>
+        Thu, 29 Dec 2016 06:34:31 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OIY00ELZ2TG6400@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2016 11:34:28 +0000 (GMT)
+In-reply-to: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Andi,
+This patch moves saving and restoring I2S registers to runtime PM
+operations, what prepares the driver to operate with audio power domain.
+When support for audio power domain is enabled and the domain is being
+turned off, the I2S module will loose its context (registers), so runtime
+callbacks have to handle it. System sleep suspend/resume operation are
+implemented on top of runtime PM operations with generic
+pm_runtime_force_suspend/resume helpers.
 
-On 2016년 12월 29일 18:17, Chanwoo Choi wrote:
-> Hi Andi,
-> 
-> On 2016년 12월 29일 17:42, Andi Shyti wrote:
->> Commit 5db7e3bb87df ("pinctrl: dt-bindings: samsung: Add header with
->> values used for configuration") has added a header file for defining the
->> pinctrl values in order to avoid hardcoded settings in the Exynos
->> DTS related files.
->>
->> Extend samsung.h to the Exynos5433 for drive strength values
->> which are strictly related to the particular SoC and may defer
->> from others.
->>
->> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->> ---
->>  include/dt-bindings/pinctrl/samsung.h | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
->> index 6276eb785e2b..58868313d64b 100644
->> --- a/include/dt-bindings/pinctrl/samsung.h
->> +++ b/include/dt-bindings/pinctrl/samsung.h
->> @@ -45,6 +45,12 @@
->>  #define EXYNOS5420_PIN_DRV_LV3		2
->>  #define EXYNOS5420_PIN_DRV_LV4		3
->>  
->> +/* Drive strengths for Exynos5433 */
->> +#define EXYNOS5433_PIN_DRV_LV1		0
->> +#define EXYNOS5433_PIN_DRV_LV2		1
->> +#define EXYNOS5433_PIN_DRV_LV3		2
->> +#define EXYNOS5433_PIN_DRV_LV4		3
-> 
-> Exynos5433 has the same value with EXYNOS5420. So, I'd like you to use the EXYNOS5420_PIN_DRV_LVx instead of separate the definitions.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ sound/soc/samsung/i2s.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-I found the problem to handle the *_DRV register of Exynos5433. Because Exynos5433 has the different width length of *_DRV (PINCFG_TYPE_DRV) bitfields from Exynos542x as following. When I was sending the exynos5433 pinctrl patches, I was missing this issue.
-
-Exynos5422/Exynos5410 have two different bitfields in the same register to set the DRV_LVx as following:
-(n=0 to 7)
-[2n+1:2n] : 2bits
- 0x0 = 1x,
- 0x1 = 2x,
- 0x2 = 3x,
- 0x3 = 4x,
-
-[n+16:16]
- 0x0 = Fast Slew Rate,
- 0x1 = Slow Slew Rate,
-
-But, Exynos5433 has the following value for PIN_DRV_LVx without additional bitfields to separate 'Fast Slew Rate' and 'Slow Slew Rate'. Just exynos5433 defines the 'Fast Slew Rate(0x0 ~ 0x5)' and 'Slow Slew Rate (0x8 ~ 0xF)'.
-(n=0 to 7)
-[4n+3:4n] : 4 bits
-0x0 = Fast Slew Rate 1x
-0x1 = Fast Slew Rate 2x
-0x2 = Fast Slew Rate 3x
-0x3 = Fast Slew Rate 4x
-0x4 = Fast Slew Rate 5x
-0x5 = Fast Slew Rate 6x
-0x8 = Slow Slew Rate 1x
-0x9 = Slow Slew Rate 2x
-0xA = Slow Slew Rate 3x
-0xB = Slow Slew Rate 4x
-0xC = Slow Slew Rate 5x
-0xF = Slow Slew Rate 6x
-
-So, before this patch, we have to fix it to support the DRV reigster of Exynos5433.
-I'll fix it.
-
-> 
->> +
->>  #define EXYNOS_PIN_FUNC_INPUT		0
->>  #define EXYNOS_PIN_FUNC_OUTPUT		1
->>  #define EXYNOS_PIN_FUNC_2		2
->>
-> 
-
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 2aa800b99938..47a5650aaa66 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -983,24 +983,12 @@ static int i2s_set_clkdiv(struct snd_soc_dai *dai,
+ #ifdef CONFIG_PM
+ static int i2s_suspend(struct snd_soc_dai *dai)
+ {
+-	struct i2s_dai *i2s = to_info(dai);
+-
+-	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
+-	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
+-	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
+-
+-	return 0;
++	return pm_runtime_force_suspend(dai->dev);
+ }
+ 
+ static int i2s_resume(struct snd_soc_dai *dai)
+ {
+-	struct i2s_dai *i2s = to_info(dai);
+-
+-	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
+-	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
+-	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
+-
+-	return 0;
++	return pm_runtime_force_resume(dai->dev);
+ }
+ #else
+ #define i2s_suspend NULL
+@@ -1129,6 +1117,10 @@ static int i2s_runtime_suspend(struct device *dev)
+ {
+ 	struct i2s_dai *i2s = dev_get_drvdata(dev);
+ 
++	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
++	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
++	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
++
+ 	clk_disable_unprepare(i2s->clk);
+ 
+ 	return 0;
+@@ -1140,6 +1132,10 @@ static int i2s_runtime_resume(struct device *dev)
+ 
+ 	clk_prepare_enable(i2s->clk);
+ 
++	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
++	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
++	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
++
+ 	return 0;
+ }
+ #endif /* CONFIG_PM */
+@@ -1516,6 +1512,8 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ static const struct dev_pm_ops samsung_i2s_pm = {
+ 	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
+ 				i2s_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
+ };
+ 
+ static struct platform_driver samsung_i2s_driver = {
 -- 
-Regards,
-Chanwoo Choi
+1.9.1
