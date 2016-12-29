@@ -1,50 +1,50 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] arm: dts: exynos: Enable DMA support for UART modules
- on Exynos5 SoCs
-Date: Thu, 29 Dec 2016 16:09:25 +0200
-Message-ID: <20161229140925.lhjytmbfv5cvbufe@kozik-lap>
-References: <1481891940-10385-1-git-send-email-m.szyprowski@samsung.com>
- <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Add missing CPU frequencies for
+ Exynos5422/5800
+Date: Thu, 29 Dec 2016 16:17:07 +0200
+Message-ID: <20161229141707.qjrtjz7dik6a7l5s@kozik-lap>
+References: <10512254.nyUcL0zgTP@amdc3058>
+ <CAD=FV=Wo273T20fe8D2v5Pn1HYR==7PHtr7WZGwzFPRspAYPzg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36437 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbcL2OJd (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 09:09:33 -0500
-Received: by mail-lf0-f68.google.com with SMTP id t196so15723843lff.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Dec 2016 06:09:32 -0800 (PST)
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1482141648-21294-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAD=FV=Wo273T20fe8D2v5Pn1HYR==7PHtr7WZGwzFPRspAYPzg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Andreas Faerber <afaerber@suse.de>, Thomas Abraham <thomas.ab@samsung.com>, Ben Gamari <ben@smart-cactus.org>, Arjun K V <arjun.kv@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Dec 19, 2016 at 11:00:48AM +0100, Marek Szyprowski wrote:
-> UART modules can use DMA for offloading data transfers and reducing
-> interrupts, so enable this feature for Exynos5 boards. Tested on
-> Google ChromeBook Snow (Exynos5250), Odroid XU (Exynos5410) and Odroid
-> XU3 (Exynos5422) boards.
+On Thu, Dec 15, 2016 at 04:54:30PM -0800, Doug Anderson wrote:
+> > Index: b/arch/arm/boot/dts/exynos5800.dtsi
+> > ===================================================================
+> > --- a/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.365955950 +0100
+> > +++ b/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.361955949 +0100
+> > @@ -24,6 +24,16 @@
+> >  };
+> >
+> >  &cluster_a15_opp_table {
+> > +       opp@2000000000 {
+> > +               opp-hz = /bits/ 64 <2000000000>;
+> > +               opp-microvolt = <1250000>;
+> > +               clock-latency-ns = <140000>;
+> > +       };
+> > +       opp@1900000000 {
+> > +               opp-hz = /bits/ 64 <1900000000>;
+> > +               opp-microvolt = <1250000>;
+> > +               clock-latency-ns = <140000>;
+> > +       };
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v3:
-> - added Exynos5410
-> - fixed serial 1/2 again, in v2 they were incorrectly swaped as a result
->   of my hurry in patch posting
-> 
-> v2:
-> - added Exynos5250
-> - fixed copy/paste typo for serial 2 and 3
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 8 ++++++++
->  arch/arm/boot/dts/exynos5410.dtsi | 8 ++++++++
->  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
->  3 files changed, 24 insertions(+)
+> I don't think the voltages you listed are high enough for all peach pi
+> boards for A15 at 1.9 GHz and 2.0 GHz, at least based on the research
+> I did.  See my response to v1.
 
-Thanks, applied.
+I wanted to apply this but saw this remaining issue. Javier tested it
+on Peach Pi so is this concern still valid?
+
+Bartlomiej,
+When sending dts patches please stick to the common subsystem prefix
+(git log --oneline arch/arm/boot/dts/exynos*).
 
 Best regards,
 Krzysztof
