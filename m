@@ -1,59 +1,141 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/4] ARM64: dts: exynos5433: remove unused code
-Date: Thu, 29 Dec 2016 13:54:21 +0200
-Message-ID: <20161229115421.pq52ab57e53xntoz@kozik-lap>
-References: <20161229084211.20442-1-andi.shyti@samsung.com>
- <CGME20161229084222epcas5p41dacaeed3e2d4f10b07eee3930f7531c@epcas5p4.samsung.com>
- <20161229084211.20442-5-andi.shyti@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] spi: s3c64xx: Don't request/release DMA channels for each SPI
+ transfer
+Date: Thu, 29 Dec 2016 13:19:31 +0100
+Message-ID: <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161229121937eucas1p11cd0bb98b21699b0f773ecaeb7c29d26@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36403 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752565AbcL2Ly2 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:35837 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752654AbcL2MTm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 06:54:28 -0500
-Content-Disposition: inline
-In-Reply-To: <20161229084211.20442-5-andi.shyti@samsung.com>
+        Thu, 29 Dec 2016 07:19:42 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
+To: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Thu, Dec 29, 2016 at 05:42:11PM +0900, Andi Shyti wrote:
-> Because the pinctrl DTS is using the samsung.h macros, the
-> previously pin defines are anused. Remove them.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 13 -------------
->  1 file changed, 13 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-> index 9afed9fcf7e1..3c821e5c241e 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-> @@ -14,19 +14,6 @@
->  
->  #include <dt-bindings/pinctrl/samsung.h>
->  
-> -#define PIN_PULL_NONE		0
-> -#define PIN_PULL_DOWN		1
-> -#define PIN_PULL_UP		3
-> -
-> -#define PIN_DRV_LV1		0
-> -#define PIN_DRV_LV2		2
-> -#define PIN_DRV_LV3		1
-> -#define PIN_DRV_LV4		3
-> -
-> -#define PIN_IN			0
-> -#define PIN_OUT			1
-> -#define PIN_FUNC1		2
-> -
+Requesting a DMA channel might be a time consuming operation, so there is
+no need to acquire and release DMA channel for each SPI transfer.
+DMA channels can be requested during driver probe and kept all the time,
+also because there are no shared nor dynamically allocated channels on
+Samsung S3C/S5P/Exynos platforms.
 
-This should be squashed with 3/4 because logically it is strictly
-related to it and splitting it does not bring any benefits. Actually
-while looking at 3/4 I was surprised to see them not removed.
+While moving dma_requrest_slave_channel calls, lets switch to
+dma_request_slave_channel_reason(), which returns error codes on failure,
+which can be properly propagated to the caller (this for example defers
+SPI probe when DMA controller is not yet available).
 
-Best regards,
-Krzysztof
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 28dfdce4beae..849ee82483e4 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -341,43 +341,16 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-	struct device *dev = &sdd->pdev->dev;
+ 
+ 	if (is_polling(sdd))
+ 		return 0;
+ 
+-	/* Acquire DMA channels */
+-	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
+-	if (!sdd->rx_dma.ch) {
+-		dev_err(dev, "Failed to get RX DMA channel\n");
+-		return -EBUSY;
+-	}
+ 	spi->dma_rx = sdd->rx_dma.ch;
+-
+-	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
+-	if (!sdd->tx_dma.ch) {
+-		dev_err(dev, "Failed to get TX DMA channel\n");
+-		dma_release_channel(sdd->rx_dma.ch);
+-		return -EBUSY;
+-	}
+ 	spi->dma_tx = sdd->tx_dma.ch;
+ 
+ 	return 0;
+ }
+ 
+-static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
+-{
+-	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-
+-	/* Free DMA channels */
+-	if (!is_polling(sdd)) {
+-		dma_release_channel(sdd->rx_dma.ch);
+-		dma_release_channel(sdd->tx_dma.ch);
+-	}
+-
+-	return 0;
+-}
+-
+ static bool s3c64xx_spi_can_dma(struct spi_master *master,
+ 				struct spi_device *spi,
+ 				struct spi_transfer *xfer)
+@@ -1094,7 +1067,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
+ 	master->prepare_message = s3c64xx_spi_prepare_message;
+ 	master->transfer_one = s3c64xx_spi_transfer_one;
+-	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
+ 	master->num_chipselect = sci->num_cs;
+ 	master->dma_alignment = 8;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+@@ -1161,6 +1133,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (!is_polling(sdd)) {
++		/* Acquire DMA channels */
++		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "rx");
++		if (IS_ERR(sdd->rx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
++			ret = PTR_ERR(sdd->rx_dma.ch);
++			goto err_disable_io_clk;
++		}
++		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "tx");
++		if (IS_ERR(sdd->tx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
++			ret = PTR_ERR(sdd->tx_dma.ch);
++			goto err_release_tx_dma;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -1206,6 +1196,12 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->rx_dma.ch);
++err_release_tx_dma:
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->tx_dma.ch);
++err_disable_io_clk:
+ 	clk_disable_unprepare(sdd->ioclk);
+ err_disable_src_clk:
+ 	clk_disable_unprepare(sdd->src_clk);
+@@ -1226,6 +1222,11 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
++	if (!is_polling(sdd)) {
++		dma_release_channel(sdd->rx_dma.ch);
++		dma_release_channel(sdd->tx_dma.ch);
++	}
++
+ 	clk_disable_unprepare(sdd->ioclk);
+ 
+ 	clk_disable_unprepare(sdd->src_clk);
+-- 
+1.9.1
