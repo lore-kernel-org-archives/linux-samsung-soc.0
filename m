@@ -1,47 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 7/8] ARM: s3c64xx: Drop initialization of unused struct
- s3c_audio_pdata fields
-Date: Thu, 29 Dec 2016 13:43:46 +0200
-Message-ID: <20161229114346.hmq4bzzc3w2ylr3d@kozik-lap>
-References: <1478791076-19528-1-git-send-email-s.nawrocki@samsung.com>
- <1478791076-19528-8-git-send-email-s.nawrocki@samsung.com>
- <20161228175344.3krz2hqrem56ypg6@kozik-lap>
- <CGME20161229103055epcas1p1dc69aec56d462e8c1605fe9e47ded562@epcas1p1.samsung.com>
- <0bb15f0e-7033-4cb3-5aba-0bb61fdfc467@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] pinctrl: dt-bindings: samsung: add drive strength
+ macros for Exynos5433
+Date: Thu, 29 Dec 2016 13:50:59 +0200
+Message-ID: <20161229115059.ncvtakz32vhcfsij@kozik-lap>
+References: <20161229084211.20442-1-andi.shyti@samsung.com>
+ <CGME20161229084221epcas5p43926b87dccbee0db4045faa5ddca565d@epcas5p4.samsung.com>
+ <20161229084211.20442-2-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36128 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbcL2Lnw (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 06:43:52 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <0bb15f0e-7033-4cb3-5aba-0bb61fdfc467@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20161229084211.20442-2-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, vinod.koul@intel.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, broonie@kernel.org, ckeepax@opensource.wolfsonmicro.com, ym0914@gmail.com, arnd@arndb.de, javier@osg.samsung.com, andi.shyti@samsung.com, sbkim73@samsung.com
 
-On Thu, Dec 29, 2016 at 11:30:49AM +0100, Sylwester Nawrocki wrote:
-> On 12/28/2016 06:53 PM, Krzysztof Kozlowski wrote:
-> > On Thu, Nov 10, 2016 at 04:17:55PM +0100, Sylwester Nawrocki wrote:
-> >> Remove initialization of dma_{filter, playback, capture, capture_mic}
-> >> fields where it is not used any more.
-> >>
-> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> ---
-> >>  arch/arm/mach-s3c64xx/dev-audio.c | 19 -------------------
-> >>  1 file changed, 19 deletions(-)
-> >>
-> > Sylwester,
-> > 
-> > This and 8/8 should be safe to apply, right?
+On Thu, Dec 29, 2016 at 05:42:08PM +0900, Andi Shyti wrote:
+> Commit 5db7e3bb87df ("pinctrl: dt-bindings: samsung: Add header with
+> values used for configuration") has added a header file for defining the
+> pinctrl values in order to avoid hardcoded settings in the Exynos
+> DTS related files.
 > 
-> Yes, I think both patches can be applied safely now.
-> Thanks for getting back to this.
+> Extend samsung.h to the Exynos5433 for drive strength values
+> which are strictly related to the particular SoC and may defer
+> from others.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  include/dt-bindings/pinctrl/samsung.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
+> index 6276eb785e2b..58868313d64b 100644
+> --- a/include/dt-bindings/pinctrl/samsung.h
+> +++ b/include/dt-bindings/pinctrl/samsung.h
+> @@ -45,6 +45,12 @@
+>  #define EXYNOS5420_PIN_DRV_LV3		2
+>  #define EXYNOS5420_PIN_DRV_LV4		3
+>  
+> +/* Drive strengths for Exynos5433 */
+> +#define EXYNOS5433_PIN_DRV_LV1		0
+> +#define EXYNOS5433_PIN_DRV_LV2		1
+> +#define EXYNOS5433_PIN_DRV_LV3		2
+> +#define EXYNOS5433_PIN_DRV_LV4		3
 
-Thanks, applied both.
+Same values as existing. No need to re-define these.
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
