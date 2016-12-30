@@ -1,76 +1,52 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: exynos5433: Add bus dt node using
- VDD_INT for Exynos5433
-Date: Sat, 31 Dec 2016 00:08:43 +0900
-Message-ID: <CAGTfZH0Q4UmbVH3SnuvGJ5-wSSPvgn7PANtAQuA5Lnz5qOL1fw@mail.gmail.com>
-References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
- <1481173091-9728-5-git-send-email-cw00.choi@samsung.com> <CGME20161208175257epcas2p333f794a00f433dd8312a5faa088a5f34@epcas2p3.samsung.com>
- <20161208175243.GA9451@kozik-lap> <5865B165.3010203@samsung.com> <20161230145155.ecobfvtspviehlos@kozik-lap>
-Reply-To: cwchoi00@gmail.com
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] pinctrl: samsung: Fix the width of
+ PINCFG_TYPE_DRV bitfields for Exynos5433
+Date: Fri, 30 Dec 2016 17:09:32 +0200
+Message-ID: <20161230150932.q7kadv4ouhdrkqea@kozik-lap>
+References: <CGME20161230041426epcas1p1f827d3cee8b607d81e9921b412ddf301@epcas1p1.samsung.com>
+ <20161230041421.24448-1-andi.shyti@samsung.com>
+ <20161230041421.24448-2-andi.shyti@samsung.com>
+ <CACRpkdbR3x14h38Gg7qpeWnswwD9qsS0zDUrrXCEJH-AdEB+cQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33318 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754194AbcL3PJF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Dec 2016 10:09:05 -0500
-In-Reply-To: <20161230145155.ecobfvtspviehlos@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbR3x14h38Gg7qpeWnswwD9qsS0zDUrrXCEJH-AdEB+cQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, javier@osg.samsung.com, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-2016-12-30 23:51 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Fri, Dec 30, 2016 at 09:59:17AM +0900, Chanwoo Choi wrote:
->> Hi Krzysztof,
->>
->> On 2016=EB=85=84 12=EC=9B=94 09=EC=9D=BC 02:52, Krzysztof Kozlowski wrot=
-e:
->> > On Thu, Dec 08, 2016 at 01:58:10PM +0900, Chanwoo Choi wrote:
->> >> This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
->> >> Exynos5433 has the following AMBA AXI buses to translate data
->> >> between DRAM and sub-blocks.
->> >>
->> >> Following list specify the detailed correlation between sub-block and=
- clock:
->> >> - CLK_ACLK_G2D_{400|266}  : Bus clock for G2D (2D graphic engine)
->> >> - CLK_ACLK_MSCL_400       : Bus clock for MSCL (Memory to memory Scal=
-er)
->> >> - CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
->> >> - CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
->> >> - CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
->> >> - CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Efficient Video =
-Codec)
->> >> - CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERI=
-C/PERIS/FSYS/MSCL
->> >> - CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
->> >> - CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CA=
-M1/ISP
->> >>
->> >> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> >> ---
->> >>  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 197 +++++++++++++++=
-++++++++++
->> >>  arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
->> >>  2 files changed, 198 insertions(+)
->> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
->> >
->> > For the reference:
->> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> >
->> > I'll queue it for v4.11, after this merge window.
->>
->> Could you please pick this patch3/4/5?
->> These patches were already reviewed by you.
->
-> Not yet. I wanted to apply them few days ago but arm64 build is broken
-> in 4.10-rc1 so I cannot auto-build them in my system. The arm64 is fixed
-> already so I will apply them on top of 4.10-rc2 (when released).
+On Fri, Dec 30, 2016 at 02:28:52PM +0100, Linus Walleij wrote:
+> On Fri, Dec 30, 2016 at 5:14 AM, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> 
+> > From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >
+> > This patch fixes the wrong width of PINCFG_TYPE_DRV bitfields for Exynos5433
+> > because PINCFG_TYPE_DRV of Exynos5433 has 4bit fields in the *_DRV
+> > registers. Usually, other Exynos have 2bit field for PINCFG_TYPE_DRV.
+> >
+> > Fixes: 3c5ecc9ed353 ("pinctrl: exynos: Add support for Exynos5433")
+> > Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> > Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> > Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> Nominally I think you should sign this off too Andi, as you are in the delivery
+> path.
+> 
+> Patch applied for fixes.
 
-OK. Thanks for reply.
+That has to be signed by Andi... otherwise the chain is broken (and
+there could be changes added inside).
 
---=20
-Best Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
