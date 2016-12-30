@@ -1,69 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-Date: Thu, 29 Dec 2016 17:23:34 +0100
-Message-ID: <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
- <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
- <CGME20161229150623epcas1p2b2f0fbb6f9ddd11caffdc93487e2cf77@epcas1p2.samsung.com>
- <1840714.lHhVv9oNko@amdc3058>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 4/5] arm64: dts: exynos5433: Add bus dt node using
+ VDD_INT for Exynos5433
+Date: Fri, 30 Dec 2016 09:59:17 +0900
+Message-ID: <5865B165.3010203@samsung.com>
+References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
+ <1481173091-9728-5-git-send-email-cw00.choi@samsung.com>
+ <CGME20161208175257epcas2p333f794a00f433dd8312a5faa088a5f34@epcas2p3.samsung.com>
+ <20161208175243.GA9451@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44879 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752776AbcL2QXq (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Dec 2016 11:23:46 -0500
-In-reply-to: <1840714.lHhVv9oNko@amdc3058>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20161208175243.GA9451@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Thomas Abraham <thomas.ab@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 12/29/2016 04:06 PM, Bartlomiej Zolnierkiewicz wrote:
->>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
->>>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
->>>  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
->>>  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
->>>  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
->>>  5 files changed, 48 insertions(+), 5 deletions(-)
->>>  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
->>>
->> Looks okay. Is the clock patch needed for this?
-> Yep.
+Hi Krzysztof,
 
-I applied the clock patch and here is a stable tag if it needs
-to be pulled as a dependency.
+On 2016년 12월 09일 02:52, Krzysztof Kozlowski wrote:
+> On Thu, Dec 08, 2016 at 01:58:10PM +0900, Chanwoo Choi wrote:
+>> This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
+>> Exynos5433 has the following AMBA AXI buses to translate data
+>> between DRAM and sub-blocks.
+>>
+>> Following list specify the detailed correlation between sub-block and clock:
+>> - CLK_ACLK_G2D_{400|266}  : Bus clock for G2D (2D graphic engine)
+>> - CLK_ACLK_MSCL_400       : Bus clock for MSCL (Memory to memory Scaler)
+>> - CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
+>> - CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
+>> - CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
+>> - CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Efficient Video Codec)
+>> - CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
+>> - CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
+>> - CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 197 +++++++++++++++++++++++++
+>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
+>>  2 files changed, 198 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+> 
+> For the reference:
+> Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> 
+> I'll queue it for v4.11, after this merge window.
 
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-exynos4-pll
-
-for you to fetch changes up to c369596f895be88d09f4165b223fa31c64aaefd4:
-
-  clk: samsung: Add CPU clk configuration data for Exynos4412 Prime (2016-12-29
-16:34:06 +0100)
-
-----------------------------------------------------------------
-Addition of the CPU clock configuration data for Exynos4412
-Prime SoC variant.
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      clk: samsung: Add CPU clk configuration data for Exynos4412 Prime
-
- drivers/clk/samsung/clk-exynos4.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Could you please pick this patch3/4/5?
+These patches were already reviewed by you.
 
 -- 
 Regards,
-Sylwester
+Chanwoo Choi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
