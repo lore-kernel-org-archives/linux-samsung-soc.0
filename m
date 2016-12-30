@@ -1,63 +1,36 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/4] PCI: exynos: use the PHY generic framework
-Date: Fri, 30 Dec 2016 17:56:13 +0200
-Message-ID: <20161230155613.jpwzytnh4osz76c6@kozik-lap>
-References: <CGME20161228103455epcas1p1c762bc59add0011beff1d4ff697b5c8d@epcas1p1.samsung.com>
- <20161228103454.26467-1-jh80.chung@samsung.com>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2 3/4] ARM64: dts: exynos5433: use macros for pinctrl
+ configuration on Exynos5433
+Date: Sat, 31 Dec 2016 05:28:43 +0900
+Message-ID: <20161230202843.qac5fziejog2yghh@jack.zhora.eu>
+References: <CGME20161230041427epcas1p1151d6e28fac143c63efaf4f7c8ed432d@epcas1p1.samsung.com>
+ <20161230041421.24448-1-andi.shyti@samsung.com>
+ <20161230041421.24448-4-andi.shyti@samsung.com>
+ <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161228103454.26467-1-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
+In-Reply-To: <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 28, 2016 at 07:34:50PM +0900, Jaehoon Chung wrote:
-> This patch is for using PHY generic framework.
-> When Exynos5440 had upstreamed, there was no PHY subsytem.
-> Now the using PHY framework is mandantory.
-> In future, Exynos variant should be supported in pci-exynos.c
-> 
-> Theses pathces based on the below patches
->
+Hi Linus,
 
-Aren't you breaking DTB ABI here? If yes, then I don't mind but please
-put it in the commit message.  Also order the patches in a way
-preserving bisectability.
+> > Use the macros defined in include/dt-bindings/pinctrl/samsung.h
+> > instead of hardcoded values.
+> >
+> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> 
+> These look fine, but that this and the other DTS patch through ARM SoC.
+> 
+> If you also need the headerfile patch (patch 2) to go through ARM SoC
+> that is fine,
+> I can take it out of pinctrl if you want.
 
-Best regards,
-Krzysztof
+yes, sure... no problem from my side :)
 
-> - Jaehoon's patches
-> http://patchwork.ozlabs.org/patch/706998/
-> http://patchwork.ozlabs.org/patch/706997/
-> http://patchwork.ozlabs.org/patch/706995/
-> http://patchwork.ozlabs.org/patch/706994/
-> 
-> - Srinivas's patch
-> http://patchwork.ozlabs.org/patch/703530/
-> 
-> - Pankaj's patch
-> http://patchwork.ozlabs.org/patch/708414/
-> 
-> Jaehoon Chung (4):
->   phy: exynos-pcie: Add support for Exynos PCIe phy
->   Documetation: samsung-phy: add the exynos-pcie-phy binding
->   Documetation: binding: modify the exynos5440 pcie binding
->   ARM: dts: exynos5440: support the phy-pcie node for pcie
-> 
->  .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 ++-
->  .../devicetree/bindings/phy/samsung-phy.txt        |  23 ++
->  arch/arm/boot/dts/exynos5440.dtsi                  |  44 +++-
->  drivers/pci/host/pci-exynos.c                      | 198 ++------------
->  drivers/phy/Kconfig                                |   9 +
->  drivers/phy/Makefile                               |   1 +
->  drivers/phy/phy-exynos-pcie.c                      | 289 +++++++++++++++++++++
->  7 files changed, 395 insertions(+), 198 deletions(-)
->  create mode 100644 drivers/phy/phy-exynos-pcie.c
-> 
-> -- 
-> 2.10.2
-> 
+Thanks,
+Andi
