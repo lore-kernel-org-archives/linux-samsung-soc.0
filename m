@@ -1,76 +1,38 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v3 2/2] arm64: dts: exynos: Add support for S6E3HA2 panel
- device on TM2 board
-Date: Fri, 30 Dec 2016 15:58:28 +0900
-Message-ID: <1483081108-32055-3-git-send-email-hoegeun.kwon@samsung.com>
-References: <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20161230065853epcas5p3e2056666d15fa2b132701bfaed3caea8@epcas5p3.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 5/9] pinctrl: samsung: Move retention control from
+ mach-exynos to the pinctrl driver
+Date: Fri, 30 Dec 2016 10:19:23 +0100
+Message-ID: <CACRpkdYHxCmvtnCRD3E2+Ct7yzUeg6tkEKr46nK8ATJPqfPcjg@mail.gmail.com>
+References: <CGME20161223122531epcas1p4b8fad6664dad3408acb7a1b9f140884a@epcas1p4.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com> <1482495889-6201-6-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1482495889-6201-6-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Hyungwon Hwang <human.hwang@samsung.com>
+On Fri, Dec 23, 2016 at 1:24 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-This patch add the panel device tree node for S6E3HA2 display
-controller to TM2 dts.
+> Pad retention control after suspend/resume cycle should be done from pin
+> controller driver instead of PMU (power management unit) driver to avoid
+> possible ordering and logical dependencies. Till now it worked fine only
+> because PMU driver registered its sys_ops after pin controller.
+>
+> This patch moves pad retention control from PMU driver to Exynos pin
+> controller driver. This is a preparation for adding new features to Exynos
+> pin controller driver, like runtime power management and suspending
+> individual pin controllers, which might be a part of some power domain.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Clear and elegant.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index db879f4..7434b22 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -252,11 +252,42 @@
- 			reg = <1>;
- 
- 			dsi_out: endpoint {
-+				remote-endpoint = <&panel_in>;
- 				samsung,burst-clock-frequency = <512000000>;
- 				samsung,esc-clock-frequency = <16000000>;
- 			};
- 		};
- 	};
-+
-+	panel@0 {
-+		compatible = "samsung,s6e3ha2";
-+		reg = <0>;
-+		vdd3-supply = <&ldo27_reg>;
-+		vci-supply = <&ldo28_reg>;
-+		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-+		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-+		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
-+
-+		display-timings {
-+			timing-0 {
-+				clock-frequency = <14874444>;
-+				hactive = <1440>;
-+				vactive = <2560>;
-+				hfront-porch = <1>;
-+				hback-porch = <1>;
-+				hsync-len = <1>;
-+				vfront-porch = <1>;
-+				vback-porch = <15>;
-+				vsync-len = <1>;
-+			};
-+		};
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&dsi_out>;
-+			};
-+		};
-+	};
- };
- 
- &hsi2c_0 {
--- 
-1.9.1
+I will need an ACK from some ARM SoC person on this so they are
+aware that we rip code out of mach-* to pinctrl.
+
+Yours,
+Linus Walleij
