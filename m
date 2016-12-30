@@ -1,87 +1,34 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver bind
-Date: Fri, 30 Dec 2016 10:57:46 +0100
-Message-ID: <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v2 2/8] PM / devfreq: exynos-ppmu: Use the regmap
+ interface to handle the registers
+Date: Fri, 30 Dec 2016 19:25:42 +0900
+Message-ID: <CAJ0PZbSpub+=iY_s_rGEY6eympHer2+EVuM-VZkbEF0o0hVVQA@mail.gmail.com>
+References: <CGME20161228115654epcas1p1752ca85fc1cb3757a9b460584abcb7cc@epcas1p1.samsung.com>
+ <1482926212-19223-1-git-send-email-cw00.choi@samsung.com> <1482926212-19223-3-git-send-email-cw00.choi@samsung.com>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1482926212-19223-3-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, chanwoo@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW5hbG9naXhfZHBfYmluZCgpIGNhbiBiZSBjYWxsZWQgZnJvbSBjb21wb25lbnQgZnJhbWV3b3Jr
-LCB3aGljaCBkb2Vzbid0Cmd1YXJhbnRlZSBwcm9wZXIgcnVudGltZSBQTSBzdGF0ZSBvZiB0aGUg
-ZGV2aWNlIGR1cmluZyBiaW5kIG9wZXJhdGlvbiwKc28gZW5zdXJlIHRoYXQgZGV2aWNlIGlzIHJ1
-bnRpbWUgYWN0aXZlIGJlZm9yZSBkb2luZyBhbnkgcmVnaXN0ZXIgYWNjZXNzLgpUaGlzIGVuc3Vy
-ZXMgdGhhdCB0aGUgcG93ZXIgZG9tYWluLCB0byB3aGljaCBEUCBtb2R1bGUgYmVsb25ncywgaXMg
-dHVybmVkCm9uLiBXaGlsZSBhdCBpdCwgYWxzbyBmaXggdGhlIHVuYmFsYW5jZWQgY2FsbCB0byBw
-aHlfcG93ZXJfb24oKSBpbgphbmFsb2dpeF9kcF9iaW5kKCkgZnVuY3Rpb24uCgpUaGlzIHBhdGNo
-IHNvbHZlcyB0aGUgZm9sbG93aW5nIGtlcm5lbCBvb3BzIG9uIFNhbXN1bmcgRXh5bm9zNTI1MCBT
-bm93CmJvYXJkOgoKVW5oYW5kbGVkIGZhdWx0OiBpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQgKDB4
-NDA2KSBhdCAweDAwMDAwMDAwCnBnZCA9IGMwMDA0MDAwClswMDAwMDAwMF0gKnBnZD0wMDAwMDAw
-MApJbnRlcm5hbCBlcnJvcjogOiA0MDYgWyMxXSBQUkVFTVBUIFNNUCBBUk0KTW9kdWxlcyBsaW5r
-ZWQgaW46CkNQVTogMCBQSUQ6IDc1IENvbW06IGt3b3JrZXIvMDoyIE5vdCB0YWludGVkIDQuOS4w
-ICMxMDQ2CkhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVuZWQgRGV2aWNlIFRy
-ZWUpCldvcmtxdWV1ZTogZXZlbnRzIGRlZmVycmVkX3Byb2JlX3dvcmtfZnVuYwp0YXNrOiBlZTI3
-MjMwMCB0YXNrLnN0YWNrOiBlZTMxMjAwMApQQyBpcyBhdCBhbmFsb2dpeF9kcF9lbmFibGVfc3df
-ZnVuY3Rpb24rMHgxOC8weDJjCkxSIGlzIGF0IGFuYWxvZ2l4X2RwX2luaXRfZHArMHgyYy8weDUw
-Ci4uLgpbPGMwM2ZjYjM4Pl0gKGFuYWxvZ2l4X2RwX2VuYWJsZV9zd19mdW5jdGlvbikgZnJvbSBb
-PGMwM2ZhOWM0Pl0gKGFuYWxvZ2l4X2RwX2luaXRfZHArMHgyYy8weDUwKQpbPGMwM2ZhOWM0Pl0g
-KGFuYWxvZ2l4X2RwX2luaXRfZHApIGZyb20gWzxjMDNmYWI2Yz5dIChhbmFsb2dpeF9kcF9iaW5k
-KzB4MTg0LzB4NDJjKQpbPGMwM2ZhYjZjPl0gKGFuYWxvZ2l4X2RwX2JpbmQpIGZyb20gWzxjMDNm
-ZGI4ND5dIChjb21wb25lbnRfYmluZF9hbGwrMHhmMC8weDIxOCkKWzxjMDNmZGI4ND5dIChjb21w
-b25lbnRfYmluZF9hbGwpIGZyb20gWzxjMDNlZDY0Yz5dIChleHlub3NfZHJtX2xvYWQrMHgxMzQv
-MHgyMDApCls8YzAzZWQ2NGM+XSAoZXh5bm9zX2RybV9sb2FkKSBmcm9tIFs8YzAzZDUwNTg+XSAo
-ZHJtX2Rldl9yZWdpc3RlcisweGEwLzB4ZDApCls8YzAzZDUwNTg+XSAoZHJtX2Rldl9yZWdpc3Rl
-cikgZnJvbSBbPGMwM2Q2NmI4Pl0gKGRybV9wbGF0Zm9ybV9pbml0KzB4NTgvMHhiMCkKWzxjMDNk
-NjZiOD5dIChkcm1fcGxhdGZvcm1faW5pdCkgZnJvbSBbPGMwM2ZlMGM0Pl0gKHRyeV90b19icmlu
-Z191cF9tYXN0ZXIrMHgxNGMvMHgxODgpCls8YzAzZmUwYzQ+XSAodHJ5X3RvX2JyaW5nX3VwX21h
-c3RlcikgZnJvbSBbPGMwM2ZlMTg4Pl0gKGNvbXBvbmVudF9hZGQrMHg4OC8weDEzOCkKWzxjMDNm
-ZTE4OD5dIChjb21wb25lbnRfYWRkKSBmcm9tIFs8YzA0MDNhMzg+XSAocGxhdGZvcm1fZHJ2X3By
-b2JlKzB4NTAvMHhiMCkKWzxjMDQwM2EzOD5dIChwbGF0Zm9ybV9kcnZfcHJvYmUpIGZyb20gWzxj
-MDQwMjQ3MD5dIChkcml2ZXJfcHJvYmVfZGV2aWNlKzB4MWYwLzB4MmE4KQpbPGMwNDAyNDcwPl0g
-KGRyaXZlcl9wcm9iZV9kZXZpY2UpIGZyb20gWzxjMDQwMGE1ND5dIChidXNfZm9yX2VhY2hfZHJ2
-KzB4NDQvMHg4YykKWzxjMDQwMGE1ND5dIChidXNfZm9yX2VhY2hfZHJ2KSBmcm9tIFs8YzA0MDIx
-Zjg+XSAoX19kZXZpY2VfYXR0YWNoKzB4OWMvMHgxMDApCls8YzA0MDIxZjg+XSAoX19kZXZpY2Vf
-YXR0YWNoKSBmcm9tIFs8YzA0MDE4ZTg+XSAoYnVzX3Byb2JlX2RldmljZSsweDg0LzB4OGMpCls8
-YzA0MDE4ZTg+XSAoYnVzX3Byb2JlX2RldmljZSkgZnJvbSBbPGMwNDAxZDFjPl0gKGRlZmVycmVk
-X3Byb2JlX3dvcmtfZnVuYysweDYwLzB4OGMpCls8YzA0MDFkMWM+XSAoZGVmZXJyZWRfcHJvYmVf
-d29ya19mdW5jKSBmcm9tIFs8YzAxMmZjMTQ+XSAocHJvY2Vzc19vbmVfd29yaysweDEyMC8weDMx
-OCkKWzxjMDEyZmMxND5dIChwcm9jZXNzX29uZV93b3JrKSBmcm9tIFs8YzAxMmZlMzQ+XSAocHJv
-Y2Vzc19zY2hlZHVsZWRfd29ya3MrMHgyOC8weDM4KQpbPGMwMTJmZTM0Pl0gKHByb2Nlc3Nfc2No
-ZWR1bGVkX3dvcmtzKSBmcm9tIFs8YzAxMzAwNDg+XSAod29ya2VyX3RocmVhZCsweDIwNC8weDRh
-YykKWzxjMDEzMDA0OD5dICh3b3JrZXJfdGhyZWFkKSBmcm9tIFs8YzAxMzUyYzQ+XSAoa3RocmVh
-ZCsweGQ4LzB4ZjQpCls8YzAxMzUyYzQ+XSAoa3RocmVhZCkgZnJvbSBbPGMwMTA3OTc4Pl0gKHJl
-dF9mcm9tX2ZvcmsrMHgxNC8weDNjKQpDb2RlOiBlNTkwMzVmMCBlNTkzNTAxOCBmNTdmZjA0ZiBl
-M2M1NTAwMSAoZjU3ZmYwNGUpCi0tLVsgZW5kIHRyYWNlIDNkMWQwZDg3Nzk2ZGUzNDQgXS0tLQoK
-U2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvYW5hbG9naXgvYW5hbG9naXhfZHBfY29yZS5j
-IHwgNyArKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYwppbmRleCBl
-YjliZjg3ODZjMjQuLjE4ZWVmZGNiZjFiYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9hbmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMKQEAgLTEzODIsNiArMTM4Miw3IEBAIGlu
-dCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2Ug
-KmRybV9kZXYsCiAKIAlwbV9ydW50aW1lX2VuYWJsZShkZXYpOwogCisJcG1fcnVudGltZV9nZXRf
-c3luYyhkZXYpOwogCXBoeV9wb3dlcl9vbihkcC0+cGh5KTsKIAogCWFuYWxvZ2l4X2RwX2luaXRf
-ZHAoZHApOwpAQCAtMTQxNCw5ICsxNDE1LDE1IEBAIGludCBhbmFsb2dpeF9kcF9iaW5kKHN0cnVj
-dCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAJCWdvdG8gZXJyX2Rp
-c2FibGVfcG1fcnVudGltZTsKIAl9CiAKKwlwaHlfcG93ZXJfb2ZmKGRwLT5waHkpOworCXBtX3J1
-bnRpbWVfcHV0KGRldik7CisKIAlyZXR1cm4gMDsKIAogZXJyX2Rpc2FibGVfcG1fcnVudGltZToK
-KworCXBoeV9wb3dlcl9vZmYoZHAtPnBoeSk7CisJcG1fcnVudGltZV9wdXQoZGV2KTsKIAlwbV9y
-dW50aW1lX2Rpc2FibGUoZGV2KTsKIAogCXJldHVybiByZXQ7Ci0tIAoxLjkuMQoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, Dec 28, 2016 at 8:56 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch uses the regmap interface to read and write the registers for exynos
+> PPMU device instead of the legacy memory map functions.
+>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 326 ++++++++++++++++++++++++++----------
+>  1 file changed, 237 insertions(+), 89 deletions(-)
+>
