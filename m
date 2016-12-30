@@ -1,228 +1,60 @@
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 1/4] pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV
- bitfields for Exynos5433
-Date: Fri, 30 Dec 2016 13:14:18 +0900
-Message-ID: <20161230041421.24448-2-andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH v2 2/4] pinctrl: dt-bindings: samsung: add drive strength
+ macros for Exynos5433
+Date: Fri, 30 Dec 2016 13:14:19 +0900
+Message-ID: <20161230041421.24448-3-andi.shyti@samsung.com>
 References: <20161230041421.24448-1-andi.shyti@samsung.com>
- <CGME20161230041426epcas1p1f827d3cee8b607d81e9921b412ddf301@epcas1p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20161230041421.24448-1-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+ <CGME20161230041427epcas1p1e4d0dd5e7f9928664c664b7850dbd87a@epcas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:60652 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753420AbcL3EOd (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 29 Dec 2016 23:14:33 -0500
+In-reply-to: <20161230041421.24448-1-andi.shyti@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Commit 5db7e3bb87df ("pinctrl: dt-bindings: samsung: Add header with
+values used for configuration") has added a header file for defining the
+pinctrl values in order to avoid hardcoded settings in the Exynos
+DTS related files.
 
-This patch fixes the wrong width of PINCFG_TYPE_DRV bitfields for Exynos5433
-because PINCFG_TYPE_DRV of Exynos5433 has 4bit fields in the *_DRV
-registers. Usually, other Exynos have 2bit field for PINCFG_TYPE_DRV.
+Extend samsung.h to the Exynos5433 for drive strength values
+which are strictly related to the particular SoC and may defer
+from others.
 
-Fixes: 3c5ecc9ed353 ("pinctrl: exynos: Add support for Exynos5433")
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 91 ++++++++++++++++++--------------
- drivers/pinctrl/samsung/pinctrl-exynos.h | 31 +++++++++++
- 2 files changed, 82 insertions(+), 40 deletions(-)
+ include/dt-bindings/pinctrl/samsung.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 12f7d1eb65bc..07409fde02b2 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -56,6 +56,17 @@ static const struct samsung_pin_bank_type bank_type_alive = {
- 	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
- };
+diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
+index 6276eb785e2b..e0ebb20ffdd3 100644
+--- a/include/dt-bindings/pinctrl/samsung.h
++++ b/include/dt-bindings/pinctrl/samsung.h
+@@ -45,6 +45,20 @@
+ #define EXYNOS5420_PIN_DRV_LV3		2
+ #define EXYNOS5420_PIN_DRV_LV4		3
  
-+/* Exynos5433 has the 4bit widths for PINCFG_TYPE_DRV bitfields. */
-+static const struct samsung_pin_bank_type exynos5433_bank_type_off = {
-+	.fld_width = { 4, 1, 2, 4, 2, 2, },
-+	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
-+};
++/* Drive strengths for Exynos5433 */
++#define EXYNOS5433_PIN_DRV_FAST_SR1	0
++#define EXYNOS5433_PIN_DRV_FAST_SR2	1
++#define EXYNOS5433_PIN_DRV_FAST_SR3	2
++#define EXYNOS5433_PIN_DRV_FAST_SR4	3
++#define EXYNOS5433_PIN_DRV_FAST_SR5	4
++#define EXYNOS5433_PIN_DRV_FAST_SR6	5
++#define EXYNOS5433_PIN_DRV_SLOW_SR1	8
++#define EXYNOS5433_PIN_DRV_SLOW_SR2	9
++#define EXYNOS5433_PIN_DRV_SLOW_SR3	0xa
++#define EXYNOS5433_PIN_DRV_SLOW_SR4	0xb
++#define EXYNOS5433_PIN_DRV_SLOW_SR5	0xc
++#define EXYNOS5433_PIN_DRV_SLOW_SR6	0xf
 +
-+static const struct samsung_pin_bank_type exynos5433_bank_type_alive = {
-+	.fld_width = { 4, 1, 2, 4, },
-+	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
-+};
-+
- static void exynos_irq_mask(struct irq_data *irqd)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -1335,82 +1346,82 @@ const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
- 
- /* pin banks of exynos5433 pin-controller - ALIVE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
--	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
- };
- 
- /* pin banks of exynos5433 pin-controller - AUD */
- static const struct samsung_pin_bank_data exynos5433_pin_banks1[] = {
--	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
--	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
- };
- 
- /* pin banks of exynos5433 pin-controller - CPIF */
- static const struct samsung_pin_bank_data exynos5433_pin_banks2[] = {
--	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - eSE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks3[] = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FINGER */
- static const struct samsung_pin_bank_data exynos5433_pin_banks4[] = {
--	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FSYS */
- static const struct samsung_pin_bank_data exynos5433_pin_banks5[] = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
--	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
--	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
- };
- 
- /* pin banks of exynos5433 pin-controller - IMEM */
- static const struct samsung_pin_bank_data exynos5433_pin_banks6[] = {
--	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - NFC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks7[] = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - PERIC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks8[] = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
--	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
--	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
--	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
--	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
--	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
--	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
--	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
--	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
--	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
--	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
--	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
- };
- 
- /* pin banks of exynos5433 pin-controller - TOUCH */
- static const struct samsung_pin_bank_data exynos5433_pin_banks9[] = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
- };
- 
- /*
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index 5821525a2c84..a473092fb8d2 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -90,6 +90,37 @@
- 		.pctl_res_idx   = pctl_idx,             \
- 	}						\
- 
-+#define EXYNOS5433_PIN_BANK_EINTG(pins, reg, id, offs)		\
-+	{							\
-+		.type		= &exynos5433_bank_type_off,	\
-+		.pctl_offset	= reg,				\
-+		.nr_pins	= pins,				\
-+		.eint_type	= EINT_TYPE_GPIO,		\
-+		.eint_offset	= offs,				\
-+		.name		= id				\
-+	}
-+
-+#define EXYNOS5433_PIN_BANK_EINTW(pins, reg, id, offs)		\
-+	{							\
-+		.type		= &exynos5433_bank_type_alive,	\
-+		.pctl_offset	= reg,				\
-+		.nr_pins	= pins,				\
-+		.eint_type	= EINT_TYPE_WKUP,		\
-+		.eint_offset	= offs,				\
-+		.name		= id				\
-+	}
-+
-+#define EXYNOS5433_PIN_BANK_EINTW_EXT(pins, reg, id, offs, pctl_idx) \
-+	{							\
-+		.type           = &exynos5433_bank_type_alive,	\
-+		.pctl_offset    = reg,				\
-+		.nr_pins        = pins,				\
-+		.eint_type      = EINT_TYPE_WKUP,		\
-+		.eint_offset    = offs,				\
-+		.name           = id,				\
-+		.pctl_res_idx   = pctl_idx,			\
-+	}							\
-+
- /**
-  * struct exynos_weint_data: irq specific data for all the wakeup interrupts
-  * generated by the external wakeup interrupt controller.
+ #define EXYNOS_PIN_FUNC_INPUT		0
+ #define EXYNOS_PIN_FUNC_OUTPUT		1
+ #define EXYNOS_PIN_FUNC_2		2
 -- 
 2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
