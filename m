@@ -1,78 +1,63 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL] ARM: exynos: Late mach/soc for v4.10
-Date: Fri, 30 Dec 2016 17:53:12 +0200
-Message-ID: <20161230155312.oupgyip7wtqwcuy2@kozik-lap>
-References: <1482003132-8844-1-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH 0/4] PCI: exynos: use the PHY generic framework
+Date: Fri, 30 Dec 2016 17:56:13 +0200
+Message-ID: <20161230155613.jpwzytnh4osz76c6@kozik-lap>
+References: <CGME20161228103455epcas1p1c762bc59add0011beff1d4ff697b5c8d@epcas1p1.samsung.com>
+ <20161228103454.26467-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34846 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754300AbcL3PxS (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Dec 2016 10:53:18 -0500
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1482003132-8844-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20161228103454.26467-1-jh80.chung@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Sat, Dec 17, 2016 at 09:32:12PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
+On Wed, Dec 28, 2016 at 07:34:50PM +0900, Jaehoon Chung wrote:
+> This patch is for using PHY generic framework.
+> When Exynos5440 had upstreamed, there was no PHY subsytem.
+> Now the using PHY framework is mandantory.
+> In future, Exynos variant should be supported in pci-exynos.c
 > 
-> 
-> After our discussions about not-breaking out-of-tree DTB with SCU
-> change in DeviceTree, I prepared an updated pull request without
-> the questioned changes.
-> 
-> Ten days ago I prepared a tag, pushed it... and apparently forgot to send pull
-> request. At least, I don't have such email in my outbox. Dunno.
-> 
-> So let's send it now, better late then never. With just few commits (without
-> the DT SCU changes). These were sitting in the next for very long.
-> 
+> Theses pathces based on the below patches
+>
 
-Any comments on this? I guess it won't come as late-late-4.10, so can
-you pull it for v4.11?
+Aren't you breaking DTB ABI here? If yes, then I don't mind but please
+put it in the commit message.  Also order the patches in a way
+preserving bisectability.
 
 Best regards,
 Krzysztof
 
-
-> Best regards,
-> Krzysztof
+> - Jaehoon's patches
+> http://patchwork.ozlabs.org/patch/706998/
+> http://patchwork.ozlabs.org/patch/706997/
+> http://patchwork.ozlabs.org/patch/706995/
+> http://patchwork.ozlabs.org/patch/706994/
 > 
+> - Srinivas's patch
+> http://patchwork.ozlabs.org/patch/703530/
 > 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> - Pankaj's patch
+> http://patchwork.ozlabs.org/patch/708414/
 > 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> Jaehoon Chung (4):
+>   phy: exynos-pcie: Add support for Exynos PCIe phy
+>   Documetation: samsung-phy: add the exynos-pcie-phy binding
+>   Documetation: binding: modify the exynos5440 pcie binding
+>   ARM: dts: exynos5440: support the phy-pcie node for pcie
 > 
-> are available in the git repository at:
+>  .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 ++-
+>  .../devicetree/bindings/phy/samsung-phy.txt        |  23 ++
+>  arch/arm/boot/dts/exynos5440.dtsi                  |  44 +++-
+>  drivers/pci/host/pci-exynos.c                      | 198 ++------------
+>  drivers/phy/Kconfig                                |   9 +
+>  drivers/phy/Makefile                               |   1 +
+>  drivers/phy/phy-exynos-pcie.c                      | 289 +++++++++++++++++++++
+>  7 files changed, 395 insertions(+), 198 deletions(-)
+>  create mode 100644 drivers/phy/phy-exynos-pcie.c
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.10-2
+> -- 
+> 2.10.2
 > 
-> for you to fetch changes up to da6b21e97e39d42f90ab490ce7b54a0fe2c3fe35:
-> 
->   ARM: Drop fixed 200 Hz timer requirement from Samsung platforms (2016-12-07 18:42:11 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc update for v4.10:
-> 1. Minor cleanup in smp_operations.
-> 2. Another step in switching s3c24xx to new DMA API.
-> 3. Drop fixed requirement for HZ=200 on Samsung platforms.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (1):
->       ARM: Drop fixed 200 Hz timer requirement from Samsung platforms
-> 
-> Pankaj Dubey (1):
->       ARM: EXYNOS: Remove smp_init_cpus hook from platsmp.c
-> 
-> Sylwester Nawrocki (1):
->       ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
-> 
->  arch/arm/Kconfig               |  3 +-
->  arch/arm/mach-exynos/platsmp.c | 31 -----------------
->  arch/arm/mach-s3c24xx/common.c | 76 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 77 insertions(+), 33 deletions(-)
