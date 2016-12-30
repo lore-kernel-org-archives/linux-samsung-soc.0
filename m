@@ -1,108 +1,48 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/4] clk: samsung: Add support for runtime PM
-Date: Fri, 30 Dec 2016 14:33:34 +0100
-Message-ID: <1483104816-20885-3-git-send-email-m.szyprowski@samsung.com>
-References: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161230133345eucas1p22d8435055ed43b8c91cc3264d22467dd@eucas1p2.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
+Date: Fri, 30 Dec 2016 16:47:19 +0200
+Message-ID: <20161230144719.amcn3q4vn6wgxnon@kozik-lap>
+References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
+ <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
+ <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
+ <CGME20161229150623epcas1p2b2f0fbb6f9ddd11caffdc93487e2cf77@epcas1p2.samsung.com>
+ <1840714.lHhVv9oNko@amdc3058>
+ <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33253 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754318AbcL3Or0 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 30 Dec 2016 09:47:26 -0500
+Content-Disposition: inline
+In-Reply-To: <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Thomas Abraham <thomas.ab@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch adds struct device pointer to samsung_clk_provider and forwarding it
-to clk_register_* functions, so drivers can register clocks, which use runtime
-pm feature.
+On Thu, Dec 29, 2016 at 05:23:34PM +0100, Sylwester Nawrocki wrote:
+> On 12/29/2016 04:06 PM, Bartlomiej Zolnierkiewicz wrote:
+> >>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >>> ---
+> >>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
+> >>>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
+> >>>  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
+> >>>  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
+> >>>  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
+> >>>  5 files changed, 48 insertions(+), 5 deletions(-)
+> >>>  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
+> >>>
+> >> Looks okay. Is the clock patch needed for this?
+> > Yep.
+> 
+> I applied the clock patch and here is a stable tag if it needs
+> to be pulled as a dependency.
+>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-pll.c |  2 +-
- drivers/clk/samsung/clk.c     | 12 ++++++------
- drivers/clk/samsung/clk.h     |  1 +
- 3 files changed, 8 insertions(+), 7 deletions(-)
+Thanks, merged!
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 9617825daabb..f5249a7e545d 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -1345,7 +1345,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	pll->lock_reg = base + pll_clk->lock_offset;
- 	pll->con_reg = base + pll_clk->con_offset;
- 
--	clk = clk_register(NULL, &pll->hw);
-+	clk = clk_register(ctx->dev, &pll->hw);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to register pll clock %s : %ld\n",
- 			__func__, pll_clk->name, PTR_ERR(clk));
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index b7d87d6db9dc..e6923714f024 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -143,7 +143,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_rate(NULL, list->name,
-+		clk = clk_register_fixed_rate(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->fixed_rate);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -172,7 +172,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
- 	unsigned int idx;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_fixed_factor(NULL, list->name,
-+		clk = clk_register_fixed_factor(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->mult, list->div);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -193,7 +193,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_mux(NULL, list->name, list->parent_names,
-+		clk = clk_register_mux(ctx->dev, list->name, list->parent_names,
- 			list->num_parents, list->flags,
- 			ctx->reg_base + list->offset,
- 			list->shift, list->width, list->mux_flags, &ctx->lock);
-@@ -226,13 +226,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
- 		if (list->table)
--			clk = clk_register_divider_table(NULL, list->name,
-+			clk = clk_register_divider_table(ctx->dev, list->name,
- 				list->parent_name, list->flags,
- 				ctx->reg_base + list->offset,
- 				list->shift, list->width, list->div_flags,
- 				list->table, &ctx->lock);
- 		else
--			clk = clk_register_divider(NULL, list->name,
-+			clk = clk_register_divider(ctx->dev, list->name,
- 				list->parent_name, list->flags,
- 				ctx->reg_base + list->offset, list->shift,
- 				list->width, list->div_flags, &ctx->lock);
-@@ -264,7 +264,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk = clk_register_gate(NULL, list->name, list->parent_name,
-+		clk = clk_register_gate(ctx->dev, list->name, list->parent_name,
- 				list->flags, ctx->reg_base + list->offset,
- 				list->bit_idx, list->gate_flags, &ctx->lock);
- 		if (IS_ERR(clk)) {
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index da3bdebabf1e..9263d8a27c6b 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -26,6 +26,7 @@
-  */
- struct samsung_clk_provider {
- 	void __iomem *reg_base;
-+	struct device *dev;
- 	struct clk_onecell_data clk_data;
- 	spinlock_t lock;
- };
--- 
-1.9.1
-
+BR,
+Krzysztof
