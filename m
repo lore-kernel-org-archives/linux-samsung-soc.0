@@ -1,36 +1,50 @@
-From: Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2 3/4] ARM64: dts: exynos5433: use macros for pinctrl
- configuration on Exynos5433
-Date: Sat, 31 Dec 2016 05:28:43 +0900
-Message-ID: <20161230202843.qac5fziejog2yghh@jack.zhora.eu>
-References: <CGME20161230041427epcas1p1151d6e28fac143c63efaf4f7c8ed432d@epcas1p1.samsung.com>
- <20161230041421.24448-1-andi.shyti@samsung.com>
- <20161230041421.24448-4-andi.shyti@samsung.com>
- <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: s3c64xx: Don't request/release DMA channels for
+ each SPI transfer
+Date: Sat, 31 Dec 2016 18:26:15 +0000
+Message-ID: <20161231182615.tuukfj5fa4wwkwvj@sirena.org.uk>
+References: <CGME20161229121937eucas1p11cd0bb98b21699b0f773ecaeb7c29d26@eucas1p1.samsung.com>
+ <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oqusqpokiiwc2g7t"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51266 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754706AbcLaS00 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 31 Dec 2016 13:26:26 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
+In-Reply-To: <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Linus,
 
-> > Use the macros defined in include/dt-bindings/pinctrl/samsung.h
-> > instead of hardcoded values.
-> >
-> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> 
-> These look fine, but that this and the other DTS patch through ARM SoC.
-> 
-> If you also need the headerfile patch (patch 2) to go through ARM SoC
-> that is fine,
-> I can take it out of pinctrl if you want.
+--oqusqpokiiwc2g7t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-yes, sure... no problem from my side :)
+On Thu, Dec 29, 2016 at 01:19:31PM +0100, Marek Szyprowski wrote:
+> Requesting a DMA channel might be a time consuming operation, so there is
+> no need to acquire and release DMA channel for each SPI transfer.
 
-Thanks,
-Andi
+This doesn't apply against current code, please check and resend.
+
+--oqusqpokiiwc2g7t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhn+EYACgkQJNaLcl1U
+h9D+mAf/R4mZuFtpT8CgxdVrya27EEOoc3h0A980GgeT1xCad/DA9xQSAbGH0LLn
+PNkDOCjfBcxIAwll47QkYai6ChW0nV0F1m+JhvspqvS0L5ub1nIGygTqHGNc26Zs
+pUmZTEpBCSr4X5u8jkViZL0urfE+A6AvN8TbbMdeZCRB0pFcS4CeB89ncVlbOm5J
+KxqOTPtQEjgfpbXpWtmpYh3C8NVmkVQGiIA4rMbV42Bm3wvRs7B7/FpOCgWvitu/
+pQYqnMm6XHHLH3QzGSIxRo/lBjd43pe2ego9dDE9nnL+EUC6Unksaj9QYFMlOiA9
+0YmILqwJ8LGK/29II7lbPmWLUZSyKQ==
+=mrLv
+-----END PGP SIGNATURE-----
+
+--oqusqpokiiwc2g7t--
