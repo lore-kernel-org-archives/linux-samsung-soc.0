@@ -1,15 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Move saving and restoring regs to runtime pm operations" to the asoc tree
-Date: Sat, 31 Dec 2016 19:19:22 +0000
-Message-ID: <E1cNPBa-0003xo-DF@debutante>
-References: <1483011247-21613-4-git-send-email-m.szyprowski@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Ensure proper runtime PM state of I2S device" to the asoc tree
+Date: Sat, 31 Dec 2016 19:19:25 +0000
+Message-ID: <E1cNPBd-0003zv-AH@debutante>
+References: <1483011247-21613-3-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52000 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52020 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754690AbcLaTT2 (ORCPT
+        with ESMTP id S1754690AbcLaTTb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Dec 2016 14:19:28 -0500
-In-Reply-To: <1483011247-21613-4-git-send-email-m.szyprowski@samsung.com>
+        Sat, 31 Dec 2016 14:19:31 -0500
+In-Reply-To: <1483011247-21613-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -17,7 +17,7 @@ Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-
 
 The patch
 
-   ASoC: samsung: i2s: Move saving and restoring regs to runtime pm operations
+   ASoC: samsung: i2s: Ensure proper runtime PM state of I2S device
 
 has been applied to the asoc tree at
 
@@ -42,87 +42,260 @@ to this mail.
 Thanks,
 Mark
 
->From e7e52dfc68a2160570c7ec51415e391961160edb Mon Sep 17 00:00:00 2001
+>From dc938ddb56283a0b71d987e7ecd4be90390985d6 Mon Sep 17 00:00:00 2001
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 29 Dec 2016 12:34:05 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Move saving and restoring regs to runtime
- pm operations
+Date: Thu, 29 Dec 2016 12:34:04 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Ensure proper runtime PM state of I2S
+ device
 
-This patch moves saving and restoring I2S registers to runtime PM
-operations, what prepares the driver to operate with audio power domain.
-When support for audio power domain is enabled and the domain is being
-turned off, the I2S module will loose its context (registers), so runtime
-callbacks have to handle it. System sleep suspend/resume operation are
-implemented on top of runtime PM operations with generic
-pm_runtime_force_suspend/resume helpers.
+This patch adds calls to pm_runtime_get/put to ensure that any access to
+I2S registers is done with proper (active) runtime PM state of I2S device.
+Till now the driver enabled runtime PM, but didn't manage the state during
+driver operation. The driver worked fine only because the runtime PM
+callbacks managed device clock, which was enabled all the time because of
+the additional enable call in the driver's probe function.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ sound/soc/samsung/i2s.c | 54 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 46 insertions(+), 8 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 8d8965e7107c..df3fae862665 100644
+index 10b19a4afe86..8d8965e7107c 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -983,24 +983,12 @@ i2s_delay(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- #ifdef CONFIG_PM
- static int i2s_suspend(struct snd_soc_dai *dai)
- {
--	struct i2s_dai *i2s = to_info(dai);
--
--	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
--	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
--	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
--
--	return 0;
-+	return pm_runtime_force_suspend(dai->dev);
- }
- 
- static int i2s_resume(struct snd_soc_dai *dai)
- {
--	struct i2s_dai *i2s = to_info(dai);
--
--	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
--	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
--	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
--
--	return 0;
-+	return pm_runtime_force_resume(dai->dev);
- }
- #else
- #define i2s_suspend NULL
-@@ -1129,6 +1117,10 @@ static int i2s_runtime_suspend(struct device *dev)
- {
- 	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 
-+	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
-+	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
-+	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
+@@ -477,6 +477,9 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 	unsigned int rsrc_mask = 1 << i2s_regs->rclksrc_off;
+ 	u32 mod, mask, val = 0;
+ 	unsigned long flags;
++	int ret = 0;
 +
- 	clk_disable_unprepare(i2s->clk);
++	pm_runtime_get_sync(dai->dev);
+ 
+ 	spin_lock_irqsave(i2s->lock, flags);
+ 	mod = readl(i2s->addr + I2SMOD);
+@@ -501,7 +504,8 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 					&& (mod & cdcon_mask))))) {
+ 			dev_err(&i2s->pdev->dev,
+ 				"%s:%d Other DAI busy\n", __func__, __LINE__);
+-			return -EAGAIN;
++			ret = -EAGAIN;
++			goto err;
+ 		}
+ 
+ 		if (dir == SND_SOC_CLOCK_IN)
+@@ -529,7 +533,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 				} else {
+ 					i2s->rclk_srcrate =
+ 						clk_get_rate(i2s->op_clk);
+-					return 0;
++					goto done;
+ 				}
+ 			}
+ 
+@@ -540,8 +544,10 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 				i2s->op_clk = clk_get(&i2s->pdev->dev,
+ 						"i2s_opclk0");
+ 
+-			if (WARN_ON(IS_ERR(i2s->op_clk)))
+-				return PTR_ERR(i2s->op_clk);
++			if (WARN_ON(IS_ERR(i2s->op_clk))) {
++				ret = PTR_ERR(i2s->op_clk);
++				goto err;
++			}
+ 
+ 			clk_prepare_enable(i2s->op_clk);
+ 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
+@@ -555,12 +561,13 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 				|| (clk_id && !(mod & rsrc_mask))) {
+ 			dev_err(&i2s->pdev->dev,
+ 				"%s:%d Other DAI busy\n", __func__, __LINE__);
+-			return -EAGAIN;
++			ret = -EAGAIN;
++			goto err;
+ 		} else {
+ 			/* Call can't be on the active DAI */
+ 			i2s->op_clk = other->op_clk;
+ 			i2s->rclk_srcrate = other->rclk_srcrate;
+-			return 0;
++			goto done;
+ 		}
+ 
+ 		if (clk_id == 1)
+@@ -568,7 +575,8 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 		break;
+ 	default:
+ 		dev_err(&i2s->pdev->dev, "We don't serve that!\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err;
+ 	}
+ 
+ 	spin_lock_irqsave(i2s->lock, flags);
+@@ -576,8 +584,13 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 	mod = (mod & ~mask) | val;
+ 	writel(mod, i2s->addr + I2SMOD);
+ 	spin_unlock_irqrestore(i2s->lock, flags);
++done:
++	pm_runtime_put(dai->dev);
  
  	return 0;
-@@ -1140,6 +1132,10 @@ static int i2s_runtime_resume(struct device *dev)
++err:
++	pm_runtime_put(dai->dev);
++	return ret;
+ }
  
- 	clk_prepare_enable(i2s->clk);
+ static int i2s_set_fmt(struct snd_soc_dai *dai,
+@@ -646,6 +659,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
  
-+	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
-+	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
-+	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
++	pm_runtime_get_sync(dai->dev);
+ 	spin_lock_irqsave(i2s->lock, flags);
+ 	mod = readl(i2s->addr + I2SMOD);
+ 	/*
+@@ -655,6 +669,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	if (any_active(i2s) &&
+ 		((mod & (sdf_mask | lrp_rlow | mod_slave)) != tmp)) {
+ 		spin_unlock_irqrestore(i2s->lock, flags);
++		pm_runtime_put(dai->dev);
+ 		dev_err(&i2s->pdev->dev,
+ 				"%s:%d Other DAI busy\n", __func__, __LINE__);
+ 		return -EAGAIN;
+@@ -664,6 +679,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	mod |= tmp;
+ 	writel(mod, i2s->addr + I2SMOD);
+ 	spin_unlock_irqrestore(i2s->lock, flags);
++	pm_runtime_put(dai->dev);
+ 
+ 	return 0;
+ }
+@@ -675,6 +691,8 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	u32 mod, mask = 0, val = 0;
+ 	unsigned long flags;
+ 
++	WARN_ON(!pm_runtime_active(dai->dev));
++
+ 	if (!is_secondary(i2s))
+ 		mask |= (MOD_DC2_EN | MOD_DC1_EN);
+ 
+@@ -763,6 +781,8 @@ static int i2s_startup(struct snd_pcm_substream *substream,
+ 	struct i2s_dai *other = get_other_dai(i2s);
+ 	unsigned long flags;
+ 
++	pm_runtime_get_sync(dai->dev);
++
+ 	spin_lock_irqsave(&lock, flags);
+ 
+ 	i2s->mode |= DAI_OPENED;
+@@ -800,6 +820,8 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	i2s->bfs = 0;
+ 
+ 	spin_unlock_irqrestore(&lock, flags);
++
++	pm_runtime_put(dai->dev);
+ }
+ 
+ static int config_setup(struct i2s_dai *i2s)
+@@ -874,6 +896,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		pm_runtime_get_sync(dai->dev);
+ 		spin_lock_irqsave(i2s->lock, flags);
+ 
+ 		if (config_setup(i2s)) {
+@@ -902,6 +925,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 		}
+ 
+ 		spin_unlock_irqrestore(i2s->lock, flags);
++		pm_runtime_put(dai->dev);
+ 		break;
+ 	}
+ 
+@@ -916,13 +940,16 @@ static int i2s_set_clkdiv(struct snd_soc_dai *dai,
+ 
+ 	switch (div_id) {
+ 	case SAMSUNG_I2S_DIV_BCLK:
++		pm_runtime_get_sync(dai->dev);
+ 		if ((any_active(i2s) && div && (get_bfs(i2s) != div))
+ 			|| (other && other->bfs && (other->bfs != div))) {
++			pm_runtime_put(dai->dev);
+ 			dev_err(&i2s->pdev->dev,
+ 				"%s:%d Other DAI busy\n", __func__, __LINE__);
+ 			return -EAGAIN;
+ 		}
+ 		i2s->bfs = div;
++		pm_runtime_put(dai->dev);
+ 		break;
+ 	default:
+ 		dev_err(&i2s->pdev->dev,
+@@ -941,6 +968,8 @@ i2s_delay(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ 	snd_pcm_sframes_t delay;
+ 	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
+ 
++	WARN_ON(!pm_runtime_active(dai->dev));
++
+ 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+ 		delay = FIC_RXCOUNT(reg);
+ 	else if (is_secondary(i2s))
+@@ -984,6 +1013,8 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	struct i2s_dai *other = get_other_dai(i2s);
+ 	unsigned long flags;
+ 
++	pm_runtime_get_sync(dai->dev);
++
+ 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
+ 		snd_soc_dai_init_dma_data(dai, &other->sec_dai->dma_playback,
+ 					   NULL);
+@@ -1016,6 +1047,7 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	if (!is_opened(other))
+ 		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
+ 				0, SND_SOC_CLOCK_IN);
++	pm_runtime_put(dai->dev);
+ 
+ 	return 0;
+ }
+@@ -1025,6 +1057,8 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
+ 	struct i2s_dai *i2s = snd_soc_dai_get_drvdata(dai);
+ 	unsigned long flags;
+ 
++	pm_runtime_get_sync(dai->dev);
++
+ 	if (!is_secondary(i2s)) {
+ 		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
+ 			spin_lock_irqsave(i2s->lock, flags);
+@@ -1033,6 +1067,8 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
+ 		}
+ 	}
+ 
++	pm_runtime_put(dai->dev);
 +
  	return 0;
  }
- #endif /* CONFIG_PM */
-@@ -1510,6 +1506,8 @@ MODULE_DEVICE_TABLE(of, exynos_i2s_match);
- static const struct dev_pm_ops samsung_i2s_pm = {
- 	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
- 				i2s_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
- };
  
- static struct platform_driver samsung_i2s_driver = {
+@@ -1322,7 +1358,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(&pdev->dev, pri_dai);
+ 
+-
++	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = i2s_register_clock_provider(pdev);
+@@ -1345,10 +1381,12 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	pri_dai->sec_dai = NULL;
+ 	sec_dai->pri_dai = NULL;
+ 
++	pm_runtime_get_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	i2s_unregister_clock_provider(pdev);
+ 	clk_disable_unprepare(pri_dai->clk);
++	pm_runtime_put_noidle(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
 2.11.0
