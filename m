@@ -1,15 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Let runtime PM operations to control op_clk too" to the asoc tree
-Date: Sat, 31 Dec 2016 19:19:19 +0000
-Message-ID: <E1cNPBX-0003wq-FQ@debutante>
-References: <1483011247-21613-5-git-send-email-m.szyprowski@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Provide I2S device for registered clocks" to the asoc tree
+Date: Sat, 31 Dec 2016 19:19:16 +0000
+Message-ID: <E1cNPBU-0003vr-Gg@debutante>
+References: <1483011247-21613-6-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51974 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51954 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754690AbcLaTTZ (ORCPT
+        with ESMTP id S1754690AbcLaTTX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Dec 2016 14:19:25 -0500
-In-Reply-To: <1483011247-21613-5-git-send-email-m.szyprowski@samsung.com>
+        Sat, 31 Dec 2016 14:19:23 -0500
+In-Reply-To: <1483011247-21613-6-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -17,7 +17,7 @@ Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-
 
 The patch
 
-   ASoC: samsung: i2s: Let runtime PM operations to control op_clk too
+   ASoC: samsung: i2s: Provide I2S device for registered clocks
 
 has been applied to the asoc tree at
 
@@ -42,51 +42,50 @@ to this mail.
 Thanks,
 Mark
 
->From afa99da863e8e00efd8ce2f8840ed31d50abb889 Mon Sep 17 00:00:00 2001
+>From 9b41da80e09128574f09bed8dc5a5fc6f72a8239 Mon Sep 17 00:00:00 2001
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 29 Dec 2016 12:34:06 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Let runtime PM operations to control
- op_clk too
+Date: Thu, 29 Dec 2016 12:34:07 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Provide I2S device for registered clocks
 
-This patch adds handling of parent operational clock to runtime PM
-callbacks. This way it is ensured that when I2S module is in runtime
-suspended state, all its parent clocks are disabled and unprepared.
+This patch adds pointer to I2S device to clk_register_* functions.
+This in the future allow clock framework to ensure proper runtime state
+of the I2S device during all operations on the clocks provided by I2S
+module.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/samsung/i2s.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index df3fae862665..b2b9ee4a177a 100644
+index b2b9ee4a177a..2a5b92c672fb 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -546,6 +546,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+@@ -1191,13 +1191,13 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
+ 		u32 val = readl(i2s->addr + I2SPSR);
+ 		writel(val | PSR_PSREN, i2s->addr + I2SPSR);
  
- 			if (WARN_ON(IS_ERR(i2s->op_clk))) {
- 				ret = PTR_ERR(i2s->op_clk);
-+				i2s->op_clk = NULL;
- 				goto err;
- 			}
+-		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(NULL,
++		i2s->clk_table[CLK_I2S_RCLK_SRC] = clk_register_mux(dev,
+ 				"i2s_rclksrc", p_names, ARRAY_SIZE(p_names),
+ 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SMOD, reg_info->rclksrc_off,
+ 				1, 0, i2s->lock);
  
-@@ -1121,6 +1122,8 @@ static int i2s_runtime_suspend(struct device *dev)
- 	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
- 	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
+-		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(NULL,
++		i2s->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
+ 				"i2s_presc", "i2s_rclksrc",
+ 				CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SPSR, 8, 6, 0, i2s->lock);
+@@ -1208,7 +1208,7 @@ static int i2s_register_clock_provider(struct platform_device *pdev)
+ 	of_property_read_string_index(dev->of_node,
+ 				"clock-output-names", 0, &clk_name[0]);
  
-+	if (i2s->op_clk)
-+		clk_disable_unprepare(i2s->op_clk);
- 	clk_disable_unprepare(i2s->clk);
- 
- 	return 0;
-@@ -1131,6 +1134,8 @@ static int i2s_runtime_resume(struct device *dev)
- 	struct i2s_dai *i2s = dev_get_drvdata(dev);
- 
- 	clk_prepare_enable(i2s->clk);
-+	if (i2s->op_clk)
-+		clk_prepare_enable(i2s->op_clk);
- 
- 	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
- 	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
+-	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(NULL, clk_name[0],
++	i2s->clk_table[CLK_I2S_CDCLK] = clk_register_gate(dev, clk_name[0],
+ 				p_names[0], CLK_SET_RATE_PARENT,
+ 				i2s->addr + I2SMOD, reg_info->cdclkcon_off,
+ 				CLK_GATE_SET_TO_DISABLE, i2s->lock);
 -- 
 2.11.0
