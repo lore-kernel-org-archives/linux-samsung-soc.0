@@ -1,15 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Remove virtual device for secondary DAI" to the asoc tree
-Date: Sat, 31 Dec 2016 19:19:28 +0000
-Message-ID: <E1cNPBg-00040u-AK@debutante>
-References: <1483011247-21613-2-git-send-email-m.szyprowski@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Move saving and restoring regs to runtime pm operations" to the asoc tree
+Date: Sat, 31 Dec 2016 19:19:22 +0000
+Message-ID: <E1cNPBa-0003xo-DF@debutante>
+References: <1483011247-21613-4-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52048 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52000 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754690AbcLaTTf (ORCPT
+        with ESMTP id S1754690AbcLaTT2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Dec 2016 14:19:35 -0500
-In-Reply-To: <1483011247-21613-2-git-send-email-m.szyprowski@samsung.com>
+        Sat, 31 Dec 2016 14:19:28 -0500
+In-Reply-To: <1483011247-21613-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -17,7 +17,7 @@ Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-
 
 The patch
 
-   ASoC: samsung: i2s: Remove virtual device for secondary DAI
+   ASoC: samsung: i2s: Move saving and restoring regs to runtime pm operations
 
 has been applied to the asoc tree at
 
@@ -42,244 +42,87 @@ to this mail.
 Thanks,
 Mark
 
->From be2c92eb64023e294d6bb9232578963670bb121b Mon Sep 17 00:00:00 2001
+>From e7e52dfc68a2160570c7ec51415e391961160edb Mon Sep 17 00:00:00 2001
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 29 Dec 2016 12:34:03 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Remove virtual device for secondary DAI
+Date: Thu, 29 Dec 2016 12:34:05 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Move saving and restoring regs to runtime
+ pm operations
 
-For some unknown (maybe historical?) reasons support for secondary I2S DAI
-was implemented by adding additional virtual platform device, which was
-then probed again with the main I2S driver. This pattern is really hard
-to follow and provides no benefits, so lets remove this hack and register
-both DAIs during linear probe of Exynos I2S controller driver.
+This patch moves saving and restoring I2S registers to runtime PM
+operations, what prepares the driver to operate with audio power domain.
+When support for audio power domain is enabled and the domain is being
+turned off, the I2S module will loose its context (registers), so runtime
+callbacks have to handle it. System sleep suspend/resume operation are
+implemented on top of runtime PM operations with generic
+pm_runtime_force_suspend/resume helpers.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 102 ++++++++++++------------------------------------
- 1 file changed, 26 insertions(+), 76 deletions(-)
+ sound/soc/samsung/i2s.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index d55326289a4a..10b19a4afe86 100644
+index 8d8965e7107c..df3fae862665 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -34,11 +34,6 @@
- 
- #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
- 
--enum samsung_dai_type {
--	TYPE_PRI,
--	TYPE_SEC,
--};
--
- struct samsung_i2s_variant_regs {
- 	unsigned int	bfs_off;
- 	unsigned int	rfs_off;
-@@ -54,7 +49,6 @@ struct samsung_i2s_variant_regs {
- };
- 
- struct samsung_i2s_dai_data {
--	int dai_type;
- 	u32 quirks;
- 	const struct samsung_i2s_variant_regs *i2s_variant_regs;
- };
-@@ -1066,7 +1060,6 @@ static const struct snd_soc_component_driver samsung_i2s_component = {
- static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+@@ -983,24 +983,12 @@ i2s_delay(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ #ifdef CONFIG_PM
+ static int i2s_suspend(struct snd_soc_dai *dai)
  {
- 	struct i2s_dai *i2s;
--	int ret;
- 
- 	i2s = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dai), GFP_KERNEL);
- 	if (i2s == NULL)
-@@ -1091,28 +1084,10 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
- 		i2s->i2s_dai_drv.capture.channels_max = 2;
- 		i2s->i2s_dai_drv.capture.rates = SAMSUNG_I2S_RATES;
- 		i2s->i2s_dai_drv.capture.formats = SAMSUNG_I2S_FMTS;
--		dev_set_drvdata(&i2s->pdev->dev, i2s);
--	} else {	/* Create a new platform_device for Secondary */
--		i2s->pdev = platform_device_alloc("samsung-i2s-sec", -1);
--		if (!i2s->pdev)
--			return NULL;
+-	struct i2s_dai *i2s = to_info(dai);
 -
--		i2s->pdev->dev.parent = &pdev->dev;
+-	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
+-	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
+-	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
 -
--		platform_set_drvdata(i2s->pdev, i2s);
--		ret = platform_device_add(i2s->pdev);
--		if (ret < 0)
--			return NULL;
- 	}
--
- 	return i2s;
+-	return 0;
++	return pm_runtime_force_suspend(dai->dev);
  }
  
--static void i2s_free_sec_dai(struct i2s_dai *i2s)
--{
--	platform_device_del(i2s->pdev);
--}
--
- #ifdef CONFIG_PM
- static int i2s_runtime_suspend(struct device *dev)
+ static int i2s_resume(struct snd_soc_dai *dai)
  {
-@@ -1230,22 +1205,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		i2s_dai_data = (struct samsung_i2s_dai_data *)
- 				platform_get_device_id(pdev)->driver_data;
- 
--	/* Call during the secondary interface registration */
--	if (i2s_dai_data->dai_type == TYPE_SEC) {
--		sec_dai = dev_get_drvdata(&pdev->dev);
--		if (!sec_dai) {
--			dev_err(&pdev->dev, "Unable to get drvdata\n");
--			return -EFAULT;
--		}
--		ret = samsung_asoc_dma_platform_register(&pdev->dev,
--					sec_dai->filter, "tx-sec", NULL);
--		if (ret != 0)
--			return ret;
+-	struct i2s_dai *i2s = to_info(dai);
 -
--		return devm_snd_soc_register_component(&sec_dai->pdev->dev,
--						&samsung_i2s_component,
--						&sec_dai->i2s_dai_drv, 1);
--	}
- 
- 	pri_dai = i2s_alloc_dai(pdev, false);
- 	if (!pri_dai) {
-@@ -1312,6 +1271,12 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_disable_clk;
- 
-+	ret = devm_snd_soc_register_component(&pdev->dev,
-+					&samsung_i2s_component,
-+					&pri_dai->i2s_dai_drv, 1);
-+	if (ret < 0)
-+		goto err_disable_clk;
-+
- 	if (quirks & QUIRK_SEC_DAI) {
- 		sec_dai = i2s_alloc_dai(pdev, true);
- 		if (!sec_dai) {
-@@ -1336,6 +1301,17 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		sec_dai->idma_playback.addr = idma_addr;
- 		sec_dai->pri_dai = pri_dai;
- 		pri_dai->sec_dai = sec_dai;
-+
-+		ret = samsung_asoc_dma_platform_register(&pdev->dev,
-+					sec_dai->filter, "tx-sec", NULL);
-+		if (ret < 0)
-+			goto err_disable_clk;
-+
-+		ret = devm_snd_soc_register_component(&pdev->dev,
-+						&samsung_i2s_component,
-+						&sec_dai->i2s_dai_drv, 1);
-+		if (ret < 0)
-+			goto err_disable_clk;
- 	}
- 
- 	if (i2s_pdata && i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
-@@ -1344,11 +1320,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		goto err_disable_clk;
- 	}
- 
--	ret = devm_snd_soc_register_component(&pri_dai->pdev->dev,
--					&samsung_i2s_component,
--					&pri_dai->i2s_dai_drv, 1);
--	if (ret < 0)
--		goto err_free_dai;
-+	dev_set_drvdata(&pdev->dev, pri_dai);
- 
- 
- 	pm_runtime_enable(&pdev->dev);
-@@ -1358,9 +1330,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		return 0;
- 
- 	pm_runtime_disable(&pdev->dev);
--err_free_dai:
--	if (sec_dai)
--		i2s_free_sec_dai(sec_dai);
- err_disable_clk:
- 	clk_disable_unprepare(pri_dai->clk);
- 	return ret;
-@@ -1368,25 +1337,18 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 
- static int samsung_i2s_remove(struct platform_device *pdev)
+-	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
+-	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
+-	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
+-
+-	return 0;
++	return pm_runtime_force_resume(dai->dev);
+ }
+ #else
+ #define i2s_suspend NULL
+@@ -1129,6 +1117,10 @@ static int i2s_runtime_suspend(struct device *dev)
  {
--	struct i2s_dai *i2s, *other;
-+	struct i2s_dai *pri_dai, *sec_dai;
+ 	struct i2s_dai *i2s = dev_get_drvdata(dev);
  
--	i2s = dev_get_drvdata(&pdev->dev);
--	other = get_other_dai(i2s);
-+	pri_dai = dev_get_drvdata(&pdev->dev);
-+	sec_dai = pri_dai->sec_dai;
- 
--	if (other) {
--		other->pri_dai = NULL;
--		other->sec_dai = NULL;
--	} else {
--		pm_runtime_disable(&pdev->dev);
--	}
-+	pri_dai->sec_dai = NULL;
-+	sec_dai->pri_dai = NULL;
- 
--	if (!is_secondary(i2s)) {
--		i2s_unregister_clock_provider(pdev);
--		clk_disable_unprepare(i2s->clk);
--	}
-+	pm_runtime_disable(&pdev->dev);
- 
--	i2s->pri_dai = NULL;
--	i2s->sec_dai = NULL;
-+	i2s_unregister_clock_provider(pdev);
-+	clk_disable_unprepare(pri_dai->clk);
++	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
++	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
++	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
++
+ 	clk_disable_unprepare(i2s->clk);
  
  	return 0;
+@@ -1140,6 +1132,10 @@ static int i2s_runtime_resume(struct device *dev)
+ 
+ 	clk_prepare_enable(i2s->clk);
+ 
++	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
++	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
++	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
++
+ 	return 0;
  }
-@@ -1448,49 +1410,37 @@ static const struct samsung_i2s_variant_regs i2sv5_i2s1_regs = {
+ #endif /* CONFIG_PM */
+@@ -1510,6 +1506,8 @@ MODULE_DEVICE_TABLE(of, exynos_i2s_match);
+ static const struct dev_pm_ops samsung_i2s_pm = {
+ 	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
+ 				i2s_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
  };
  
- static const struct samsung_i2s_dai_data i2sv3_dai_type = {
--	.dai_type = TYPE_PRI,
- 	.quirks = QUIRK_NO_MUXPSR,
- 	.i2s_variant_regs = &i2sv3_regs,
- };
- 
- static const struct samsung_i2s_dai_data i2sv5_dai_type = {
--	.dai_type = TYPE_PRI,
- 	.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR |
- 			QUIRK_SUPPORTS_IDMA,
- 	.i2s_variant_regs = &i2sv3_regs,
- };
- 
- static const struct samsung_i2s_dai_data i2sv6_dai_type = {
--	.dai_type = TYPE_PRI,
- 	.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR |
- 			QUIRK_SUPPORTS_TDM | QUIRK_SUPPORTS_IDMA,
- 	.i2s_variant_regs = &i2sv6_regs,
- };
- 
- static const struct samsung_i2s_dai_data i2sv7_dai_type = {
--	.dai_type = TYPE_PRI,
- 	.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR |
- 			QUIRK_SUPPORTS_TDM,
- 	.i2s_variant_regs = &i2sv7_regs,
- };
- 
- static const struct samsung_i2s_dai_data i2sv5_dai_type_i2s1 = {
--	.dai_type = TYPE_PRI,
- 	.quirks = QUIRK_PRI_6CHAN | QUIRK_NEED_RSTCLR,
- 	.i2s_variant_regs = &i2sv5_i2s1_regs,
- };
- 
--static const struct samsung_i2s_dai_data samsung_dai_type_sec = {
--	.dai_type = TYPE_SEC,
--};
--
- static const struct platform_device_id samsung_i2s_driver_ids[] = {
- 	{
- 		.name           = "samsung-i2s",
- 		.driver_data	= (kernel_ulong_t)&i2sv3_dai_type,
--	}, {
--		.name           = "samsung-i2s-sec",
--		.driver_data    = (kernel_ulong_t)&samsung_dai_type_sec,
- 	},
- 	{},
- };
+ static struct platform_driver samsung_i2s_driver = {
 -- 
 2.11.0
