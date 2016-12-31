@@ -1,55 +1,92 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/5] ASoC: samsung: i2s: Remove virtual device for
- secondary DAI
-Date: Sat, 31 Dec 2016 18:31:07 +0000
-Message-ID: <20161231183107.vvywtmaqegubpkyx@sirena.org.uk>
-References: <1483011247-21613-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161229113425eucas1p2600ba7e4337e90f65c0bc60bb4a9c2ec@eucas1p2.samsung.com>
- <1483011247-21613-2-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ckzaa56r5v7ipqqr"
+Subject: Applied "ASoC: samsung: i2s: Let runtime PM operations to control op_clk too" to the asoc tree
+Date: Sat, 31 Dec 2016 19:19:19 +0000
+Message-ID: <E1cNPBX-0003wq-FQ@debutante>
+References: <1483011247-21613-5-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51332 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51974 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754731AbcLaSbO (ORCPT
+        with ESMTP id S1754690AbcLaTTZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Dec 2016 13:31:14 -0500
-Content-Disposition: inline
-In-Reply-To: <1483011247-21613-2-git-send-email-m.szyprowski@samsung.com>
+        Sat, 31 Dec 2016 14:19:25 -0500
+In-Reply-To: <1483011247-21613-5-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
+The patch
 
---ckzaa56r5v7ipqqr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   ASoC: samsung: i2s: Let runtime PM operations to control op_clk too
 
-On Thu, Dec 29, 2016 at 12:34:03PM +0100, Marek Szyprowski wrote:
-> For some unknown (maybe historical?) reasons support for secondary I2S DAI
-> was implemented by adding additional virtual platform device, which was
-> then probed again with the main I2S driver. This pattern is really hard
-> to follow and provides no benefits, so lets remove this hack and register
-> both DAIs during linear probe of Exynos I2S controller driver.
+has been applied to the asoc tree at
 
-It's historical, there used to be limitations that made it impossible to
-register multiple devices to one DAI IIRC.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---ckzaa56r5v7ipqqr
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhn+WoACgkQJNaLcl1U
-h9Cu8wf9EWYWbtjefWHP66ifd9YgDuSdY8D7lgrJF1xKru4U1QPX/MeuJwX/8UZB
-BTcCEVOvMUU47fE0ei38TsoOgruxE1YB+zCsBaNRkHWtkWd8sXTMLTgyQjKJMkP2
-qbTWppCVfq/wYDTOoAoex1Tkq++dv1gRqKTGpOPe6+lc80f86zOmRudV6JdUMTsg
-5zNsgcal0oOwXEYPU5uhQZznS6Skh4MVhJNgeico+TBPqOxs51Cugwftzk8xlggO
-fr/O9sadmAybWAmb/B01J0KJNPJLhh7xcZOJb1DXOgQbY0lBQbUUtWuU3qlEQKKK
-Jwb3j9EKgSS0AlbVK+y+CZO1z5C3pQ==
-=BeRR
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---ckzaa56r5v7ipqqr--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From afa99da863e8e00efd8ce2f8840ed31d50abb889 Mon Sep 17 00:00:00 2001
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Thu, 29 Dec 2016 12:34:06 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Let runtime PM operations to control
+ op_clk too
+
+This patch adds handling of parent operational clock to runtime PM
+callbacks. This way it is ensured that when I2S module is in runtime
+suspended state, all its parent clocks are disabled and unprepared.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/i2s.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index df3fae862665..b2b9ee4a177a 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -546,6 +546,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 
+ 			if (WARN_ON(IS_ERR(i2s->op_clk))) {
+ 				ret = PTR_ERR(i2s->op_clk);
++				i2s->op_clk = NULL;
+ 				goto err;
+ 			}
+ 
+@@ -1121,6 +1122,8 @@ static int i2s_runtime_suspend(struct device *dev)
+ 	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
+ 	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
+ 
++	if (i2s->op_clk)
++		clk_disable_unprepare(i2s->op_clk);
+ 	clk_disable_unprepare(i2s->clk);
+ 
+ 	return 0;
+@@ -1131,6 +1134,8 @@ static int i2s_runtime_resume(struct device *dev)
+ 	struct i2s_dai *i2s = dev_get_drvdata(dev);
+ 
+ 	clk_prepare_enable(i2s->clk);
++	if (i2s->op_clk)
++		clk_prepare_enable(i2s->op_clk);
+ 
+ 	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
+ 	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
+-- 
+2.11.0
