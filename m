@@ -1,47 +1,38 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: s3c64xx: remove incorrect __init annotation
-Date: Mon, 2 Jan 2017 12:39:03 +0530
-Message-ID: <20170102070903.GC8588@vireshk-i7>
-References: <20161216090625.2235668-1-arnd@arndb.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] ARM: exynos: Late mach/soc for v4.10
+Date: Mon, 02 Jan 2017 10:20:21 +0100
+Message-ID: <5b0e55c8-01db-3f02-3526-2f71f4a73d88@samsung.com>
+References: <1482003132-8844-1-git-send-email-krzk@kernel.org>
+ <20161230155312.oupgyip7wtqwcuy2@kozik-lap>
+ <CGME20170102092044epcas1p3cbe831b7b6528f818b034d73c85dbe7d@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161216090625.2235668-1-arnd@arndb.de>
-Sender: linux-pm-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:44862 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932283AbdABJUr (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 2 Jan 2017 04:20:47 -0500
+In-reply-to: <20161230155312.oupgyip7wtqwcuy2@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 16-12-16, 10:06, Arnd Bergmann wrote:
-> s3c64xx_cpufreq_config_regulator is incorrectly annotated
-> as __init, since the caller is also not init:
+On 12/30/2016 04:53 PM, Krzysztof Kozlowski wrote:
 > 
-> WARNING: vmlinux.o(.text+0x92fe1c): Section mismatch in reference from the function s3c64xx_cpufreq_driver_init() to the function .init.text:s3c64xx_cpufreq_config_regulator()
-> 
-> With modern gcc versions, the function gets inline, so we don't
-> see the warning, this only happens with gcc-4.6 and older.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/cpufreq/s3c64xx-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
-> index 176e84cc3991..0cb9040eca49 100644
-> --- a/drivers/cpufreq/s3c64xx-cpufreq.c
-> +++ b/drivers/cpufreq/s3c64xx-cpufreq.c
-> @@ -107,7 +107,7 @@ static int s3c64xx_cpufreq_set_target(struct cpufreq_policy *policy,
->  }
->  
->  #ifdef CONFIG_REGULATOR
-> -static void __init s3c64xx_cpufreq_config_regulator(void)
-> +static void s3c64xx_cpufreq_config_regulator(void)
->  {
->  	int count, v, i, found;
->  	struct cpufreq_frequency_table *freq;
+> Any comments on this? I guess it won't come as late-late-4.10, so can
+> you pull it for v4.11?
+ 
+>> Sylwester Nawrocki (1):
+>>       ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+We need this patch in v4.10 to avoid possible I2S and MMC regressions
+on selected s3c24xx SoC, since the DMA clients are already modified.
+If the patch goes in only for v4.11 it would be good to mark it for 
+inclusion in v4.10 stable kernels.  
 
--- 
-viresh
+--
+Thanks, 
+Sylwester
