@@ -1,47 +1,40 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/5] arm64: dts: exynos5433: Add bus dt node using
- VDD_INT for Exynos5433
-Date: Mon, 2 Jan 2017 20:35:38 +0200
-Message-ID: <20170102183538.w4aapf4ztzyjaj5a@kozik-lap>
+Subject: Re: [PATCH v2 5/5] arm64: dts: exynos5433: Add support of bus
+ frequency using VDD_INT on TM2
+Date: Mon, 2 Jan 2017 20:37:11 +0200
+Message-ID: <20170102183711.jl2tznpaxgwakwhc@kozik-lap>
 References: <1481173091-9728-1-git-send-email-cw00.choi@samsung.com>
- <1481173091-9728-5-git-send-email-cw00.choi@samsung.com>
+ <1481173091-9728-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1481173091-9728-5-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1481173091-9728-6-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, krzk@kernel.org, s.nawrocki@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 08, 2016 at 01:58:10PM +0900, Chanwoo Choi wrote:
-> This patch adds the bus nodes using VDD_INT for Exynos5433 SoC.
-> Exynos5433 has the following AMBA AXI buses to translate data
-> between DRAM and sub-blocks.
-> 
-> Following list specify the detailed correlation between sub-block and clock:
-> - CLK_ACLK_G2D_{400|266}  : Bus clock for G2D (2D graphic engine)
-> - CLK_ACLK_MSCL_400       : Bus clock for MSCL (Memory to memory Scaler)
-> - CLK_ACLK_GSCL_333       : Bus clock for GSCL (General Scaler)
-> - CLK_SCLK_JPEG_MSCL      : Bus clock for JPEG
-> - CLK_ACLK_MFC_400        : Bus clock for MFC (Multi Format Codec)
-> - CLK_ACLK_HEVC_400       : Bus clock for HEVC (High Efficient Video Codec)
-> - CLK_ACLK_BUS0_400       : NoC(Network On Chip)'s bus clock for PERIC/PERIS/FSYS/MSCL
-> - CLK_ACLK_BUS1_400       : NoC's bus clock for MFC/HEVC/G3D
-> - CLK_ACLK_BUS2_400       : NoC's bus clock for GSCL/DISP/G2D/CAM0/CAM1/ISP
+On Thu, Dec 08, 2016 at 01:58:11PM +0900, Chanwoo Choi wrote:
+> This patch adds the bus Device-tree nodes for INT (Internal) block
+> to enable the bus frequency scaling.
 > 
 > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 197 +++++++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
->  2 files changed, 198 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 70 +++++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
 > 
-Thanks, applied with changes:
-1. Subject prefix,
-2. Minor adjustments in commit msg,
-3. Fixed missing space in 'status = "disabled"'.
+Thanks, applied.
 
 Best regards,
 Krzysztof
