@@ -1,80 +1,84 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v3 0/2] Add support for the S6E3HA2 panel on TM2 board
-Date: Mon, 02 Jan 2017 13:06:30 +0100
-Message-ID: <5aa24b42-6879-6f01-06d1-def32ef8d727@samsung.com>
-References: <CGME20161230065850epcas5p3ecad04edde7dfe1f2ad3c86815dcc377@epcas5p3.samsung.com>
- <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCHv2 0/4] video/exynos/cec: add HPD state notifier & use in s5p-cec
+Date: Mon,  2 Jan 2017 15:19:03 +0100
+Message-ID: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb3-smtp-cloud6.xs4all.net ([194.109.24.31]:47613 "EHLO
+        lb3-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932956AbdABOTQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 2 Jan 2017 09:19:16 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>
 
-On 30.12.2016 07:58, Hoegeun Kwon wrote:
-> Purpose of this patch is add support for S6E3HA2 AMOLED panel on
-> the TM2 board. The first patch adds support for S6E3HA2 panel
-> device tree document and driver, the second patch add support for
-> S6E3HA2 panel device tree.
->
-> Changes for V3:
->
-> - In the DT binding document, made it clearly that the panel is a
->   child node of dsi.
-> - Fix reset-gpio active from high to low.
-> - Is the OF graph saying related to [1]?
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Yes, video-interfaces described in [1] are OF graphs described in [2]
-with additional properties specific for video pipelines.
+This patch series adds the hotplug detect notifier code, based on Russell's code:
 
-[2]: Documentation/devicetree/bindings/graph.txt
+https://patchwork.kernel.org/patch/9277043/
 
->   Althogh the panel is a child of dsi, I think OF graph necessary.
->   because if a remote-endpoint is not specified, the dsi also
->   panel is not probed.
+It adds support for it to the exynos_hdmi drm driver, adds support for
+it to the CEC framework and finally adds support to the s5p-cec driver,
+which now can be moved out of staging.
 
-OK, I see the issue: dsi driver requires presence of DSI_PORT_OUT
-endpoint, because it needs to read MIPI-DSI burst and esc clock
-frequencies from these nodes, however it does not use it to get panel
-node, panel node is get by .attach callback. Probably these clock
-frequencies should be passed via struct mipi_dsi_device.
-So as for now I think it would be simpler to leave OF graph, as it is
-already used this way in other drivers.
+Tested with my Odroid U3 exynos4 devboard.
 
-> - The display-timings has been fixed to be provided by the device
->   driver. however, I think display-timings is necessary in dts.
->   because if dts does not have display-timings, dsi will not load.
+Comments are welcome. I'd like to get this in for the 4.11 kernel as
+this is a missing piece needed to integrate CEC drivers.
 
-After examining drivers it looks like these timings, beside panel, are
-read by MIC driver, and this is wrong. MIC driver shouldn't peek into
-other driver's nodes, it can use DRM callbacks (mode_fixup, mode_set) to
-get necessary information. And more importantly display-timings in
-panels are not accepted by panels maintainer AFAIK, see [1] for rationale.
+Changes since v1:
 
-[1]:
-https://sietch-tagr.blogspot.de/2016/04/display-panels-are-not-special.html
+Renamed HDMI notifier to HPD (hotplug detect) notifier since this code is
+not HDMI specific, but is interesting for any video source that has to
+deal with hotplug detect and EDID/ELD (HDMI, DVI, VGA, DP, ....).
+Only the use with CEC adapters is HDMI specific, but the HPD notifier
+is more generic.
 
-Regards
-Andrzej
+Regards,
 
->
-> [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
->
-> Hoegeun Kwon (1):
->   drm/panel: Add support for S6E3HA2 panel driver on TM2 board
->
-> Hyungwon Hwang (1):
->   arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
->
->  .../bindings/display/panel/samsung,s6e3ha2.txt     |  58 ++
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  31 +
->  drivers/gpu/drm/panel/Kconfig                      |   6 +
->  drivers/gpu/drm/panel/Makefile                     |   1 +
->  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 741 +++++++++++++++++++++
->  5 files changed, 837 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
->  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
->
+	Hans
+
+Hans Verkuil (4):
+  video: add hotplug detect notifier support
+  exynos_hdmi: add HPD notifier support
+  cec: integrate HPD notifier support
+  s5p-cec: add hpd-notifier support, move out of staging
+
+ .../devicetree/bindings/media/s5p-cec.txt          |   2 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ drivers/gpu/drm/exynos/Kconfig                     |   1 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  24 +++-
+ drivers/media/cec/cec-core.c                       |  50 ++++++++
+ drivers/media/platform/Kconfig                     |  18 +++
+ drivers/media/platform/Makefile                    |   1 +
+ .../media => media/platform}/s5p-cec/Makefile      |   0
+ .../platform}/s5p-cec/exynos_hdmi_cec.h            |   0
+ .../platform}/s5p-cec/exynos_hdmi_cecctrl.c        |   0
+ .../media => media/platform}/s5p-cec/regs-cec.h    |   0
+ .../media => media/platform}/s5p-cec/s5p_cec.c     |  35 +++++-
+ .../media => media/platform}/s5p-cec/s5p_cec.h     |   3 +
+ drivers/staging/media/Kconfig                      |   2 -
+ drivers/staging/media/Makefile                     |   1 -
+ drivers/staging/media/s5p-cec/Kconfig              |   9 --
+ drivers/staging/media/s5p-cec/TODO                 |   7 --
+ drivers/video/Kconfig                              |   3 +
+ drivers/video/Makefile                             |   1 +
+ drivers/video/hpd-notifier.c                       | 134 +++++++++++++++++++++
+ include/linux/hpd-notifier.h                       | 109 +++++++++++++++++
+ include/media/cec.h                                |  15 +++
+ 22 files changed, 389 insertions(+), 27 deletions(-)
+ rename drivers/{staging/media => media/platform}/s5p-cec/Makefile (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cecctrl.c (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/regs-cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.c (89%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.h (97%)
+ delete mode 100644 drivers/staging/media/s5p-cec/Kconfig
+ delete mode 100644 drivers/staging/media/s5p-cec/TODO
+ create mode 100644 drivers/video/hpd-notifier.c
+ create mode 100644 include/linux/hpd-notifier.h
+
+-- 
+2.8.1
