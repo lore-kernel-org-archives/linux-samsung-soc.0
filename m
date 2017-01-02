@@ -1,7 +1,7 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv2 1/4] video: add hotplug detect notifier support
-Date: Mon,  2 Jan 2017 15:19:04 +0100
-Message-ID: <1483366747-34288-2-git-send-email-hverkuil@xs4all.nl>
+Subject: [PATCHv2 3/4] cec: integrate HPD notifier support
+Date: Mon,  2 Jan 2017 15:19:06 +0100
+Message-ID: <1483366747-34288-4-git-send-email-hverkuil@xs4all.nl>
 References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
@@ -12,309 +12,123 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Add support for video hotplug detect and EDID/ELD notifiers, which is used
-to convey information from video drivers to their CEC and audio counterparts.
-
-Based on an earlier version from Russell King:
-
-https://patchwork.kernel.org/patch/9277043/
-
-The hpd_notifier is a reference counted object containing the HPD/EDID/ELD state
-of a video device.
-
-When a new notifier is registered the current state will be reported to
-that notifier at registration time.
+Support the HPD notifier framework, simplifying drivers that
+depend on this.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/video/Kconfig        |   3 +
- drivers/video/Makefile       |   1 +
- drivers/video/hpd-notifier.c | 134 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/hpd-notifier.h | 109 +++++++++++++++++++++++++++++++++++
- 4 files changed, 247 insertions(+)
- create mode 100644 drivers/video/hpd-notifier.c
- create mode 100644 include/linux/hpd-notifier.h
+ drivers/media/cec/cec-core.c | 50 ++++++++++++++++++++++++++++++++++++++++++++
+ include/media/cec.h          | 15 +++++++++++++
+ 2 files changed, 65 insertions(+)
 
-diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-index 3c20af9..cddc860 100644
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@ -36,6 +36,9 @@ config VIDEOMODE_HELPERS
- config HDMI
- 	bool
+diff --git a/drivers/media/cec/cec-core.c b/drivers/media/cec/cec-core.c
+index aca3ab8..a466dbe 100644
+--- a/drivers/media/cec/cec-core.c
++++ b/drivers/media/cec/cec-core.c
+@@ -195,6 +195,52 @@ static void cec_devnode_unregister(struct cec_devnode *devnode)
+ 	put_device(&devnode->dev);
+ }
  
-+config HPD_NOTIFIERS
-+	bool
-+
- if VT
- 	source "drivers/video/console/Kconfig"
- endif
-diff --git a/drivers/video/Makefile b/drivers/video/Makefile
-index 9ad3c17..424698b 100644
---- a/drivers/video/Makefile
-+++ b/drivers/video/Makefile
-@@ -1,5 +1,6 @@
- obj-$(CONFIG_VGASTATE)            += vgastate.o
- obj-$(CONFIG_HDMI)                += hdmi.o
-+obj-$(CONFIG_HPD_NOTIFIERS)       += hpd-notifier.o
- 
- obj-$(CONFIG_VT)		  += console/
- obj-$(CONFIG_LOGO)		  += logo/
-diff --git a/drivers/video/hpd-notifier.c b/drivers/video/hpd-notifier.c
-new file mode 100644
-index 0000000..54f7a6b
---- /dev/null
-+++ b/drivers/video/hpd-notifier.c
-@@ -0,0 +1,134 @@
-+#include <linux/export.h>
-+#include <linux/hpd-notifier.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
-+
-+static LIST_HEAD(hpd_notifiers);
-+static DEFINE_MUTEX(hpd_notifiers_lock);
-+
-+struct hpd_notifier *hpd_notifier_get(struct device *dev)
++#ifdef CONFIG_HPD_NOTIFIERS
++static u16 parse_hdmi_addr(const struct edid *edid)
 +{
-+	struct hpd_notifier *n;
++	if (!edid || edid->extensions == 0)
++		return CEC_PHYS_ADDR_INVALID;
 +
-+	mutex_lock(&hpd_notifiers_lock);
-+	list_for_each_entry(n, &hpd_notifiers, head) {
-+		if (n->dev == dev) {
-+			mutex_unlock(&hpd_notifiers_lock);
-+			kref_get(&n->kref);
-+			return n;
-+		}
++	return cec_get_edid_phys_addr((u8 *)edid,
++				EDID_LENGTH * (edid->extensions + 1), NULL);
++}
++
++static int cec_hpd_notify(struct notifier_block *nb, unsigned long event,
++			   void *data)
++{
++	struct cec_adapter *adap = container_of(nb, struct cec_adapter, nb);
++	struct hpd_notifier *n = data;
++	unsigned int phys;
++
++	dprintk(1, "event %lu\n", event);
++
++	switch (event) {
++	case HPD_DISCONNECTED:
++		cec_s_phys_addr(adap, CEC_PHYS_ADDR_INVALID, false);
++		break;
++
++	case HPD_NEW_EDID:
++		phys = parse_hdmi_addr(n->edid);
++		cec_s_phys_addr(adap, phys, false);
++		break;
 +	}
-+	n = kzalloc(sizeof(*n), GFP_KERNEL);
-+	if (!n)
-+		goto unlock;
-+	n->dev = dev;
-+	mutex_init(&n->lock);
-+	BLOCKING_INIT_NOTIFIER_HEAD(&n->notifiers);
-+	kref_init(&n->kref);
-+	list_add_tail(&n->head, &hpd_notifiers);
-+unlock:
-+	mutex_unlock(&hpd_notifiers_lock);
-+	return n;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_get);
 +
-+static void hpd_notifier_release(struct kref *kref)
++	return NOTIFY_OK;
++}
++
++void cec_register_hpd_notifier(struct cec_adapter *adap,
++				struct hpd_notifier *notifier)
 +{
-+	struct hpd_notifier *n =
-+		container_of(kref, struct hpd_notifier, kref);
++	if (WARN_ON(!adap->devnode.registered))
++		return;
 +
-+	mutex_lock(&hpd_notifiers_lock);
-+	list_del(&n->head);
-+	mutex_unlock(&hpd_notifiers_lock);
-+	kfree(n->edid);
-+	kfree(n);
++	adap->nb.notifier_call = cec_hpd_notify;
++	adap->notifier = notifier;
++	hpd_notifier_register(adap->notifier, &adap->nb);
 +}
-+
-+void hpd_notifier_put(struct hpd_notifier *n)
-+{
-+	kref_put(&n->kref, hpd_notifier_release);
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_put);
-+
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_register(&n->notifiers, nb);
-+
-+	if (ret)
-+		return ret;
-+	kref_get(&n->kref);
-+	mutex_lock(&n->lock);
-+	if (n->connected) {
-+		blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+		if (n->edid_size)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+		if (n->has_eld)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	}
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_register);
-+
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_unregister(&n->notifiers, nb);
-+
-+	if (ret == 0)
-+		hpd_notifier_put(n);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_unregister);
-+
-+void hpd_event_connect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_connect);
-+
-+void hpd_event_disconnect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = false;
-+	n->has_eld = false;
-+	n->edid_size = 0;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_DISCONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_disconnect);
-+
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size)
-+{
-+	mutex_lock(&n->lock);
-+	if (n->edid_allocated_size < size) {
-+		void *p = kmalloc(size, GFP_KERNEL);
-+
-+		if (p == NULL) {
-+			mutex_unlock(&n->lock);
-+			return -ENOMEM;
-+		}
-+		kfree(n->edid);
-+		n->edid = p;
-+		n->edid_allocated_size = size;
-+	}
-+	memcpy(n->edid, edid, size);
-+	n->edid_size = size;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_edid);
-+
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128])
-+{
-+	mutex_lock(&n->lock);
-+	memcpy(n->eld, eld, sizeof(n->eld));
-+	n->has_eld = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_eld);
-diff --git a/include/linux/hpd-notifier.h b/include/linux/hpd-notifier.h
-new file mode 100644
-index 0000000..4dcb451
---- /dev/null
-+++ b/include/linux/hpd-notifier.h
-@@ -0,0 +1,109 @@
-+/*
-+ * hpd-notifier.h - notify interested parties of (dis)connect and EDID
-+ * events
-+ *
-+ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
-+ * Copyright 2016 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
-+ */
-+
-+#ifndef LINUX_HPD_NOTIFIER_H
-+#define LINUX_HPD_NOTIFIER_H
-+
-+#include <linux/types.h>
-+#include <linux/notifier.h>
-+#include <linux/kref.h>
-+
-+enum {
-+	HPD_CONNECTED,
-+	HPD_DISCONNECTED,
-+	HPD_NEW_EDID,
-+	HPD_NEW_ELD,
-+};
-+
-+struct device;
-+
-+struct hpd_notifier {
-+	struct mutex lock;
-+	struct list_head head;
-+	struct kref kref;
-+	struct blocking_notifier_head notifiers;
-+	struct device *dev;
-+
-+	/* Current state */
-+	bool connected;
-+	bool has_eld;
-+	unsigned char eld[128];
-+	void *edid;
-+	size_t edid_size;
-+	size_t edid_allocated_size;
-+};
-+
-+/**
-+ * hpd_notifier_get - find or create a new hpd_notifier for the given device.
-+ * @dev: device that sends the events.
-+ *
-+ * If a notifier for device @dev already exists, then increase the refcount
-+ * and return that notifier.
-+ *
-+ * If it doesn't exist, then allocate a new notifier struct and return a
-+ * pointer to that new struct.
-+ *
-+ * Return NULL if the memory could not be allocated.
-+ */
-+struct hpd_notifier *hpd_notifier_get(struct device *dev);
-+
-+/**
-+ * hpd_notifier_put - decrease refcount and delete when the refcount reaches 0.
-+ * @n: notifier
-+ */
-+void hpd_notifier_put(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_notifier_register - register the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_notifier_unregister - unregister the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_event_connect - send a connect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_CONNECTED event to any registered parties.
-+ */
-+void hpd_event_connect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_disconnect - send a disconnect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_DISCONNECTED event to any registered parties.
-+ */
-+void hpd_event_disconnect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_new_edid - send a new EDID event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_EDID event to any registered parties.
-+ * This function will make a copy the EDID so it can return -ENOMEM if
-+ * no memory could be allocated.
-+ */
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size);
-+
-+/**
-+ * hpd_event_new_eld - send a new ELD event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_ELD event to any registered parties.
-+ */
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128]);
-+
++EXPORT_SYMBOL_GPL(cec_register_hpd_notifier);
 +#endif
++
+ struct cec_adapter *cec_allocate_adapter(const struct cec_adap_ops *ops,
+ 					 void *priv, const char *name, u32 caps,
+ 					 u8 available_las)
+@@ -344,6 +390,10 @@ void cec_unregister_adapter(struct cec_adapter *adap)
+ 	adap->rc = NULL;
+ #endif
+ 	debugfs_remove_recursive(adap->cec_dir);
++#ifdef CONFIG_HPD_NOTIFIERS
++	if (adap->notifier)
++		hpd_notifier_unregister(adap->notifier, &adap->nb);
++#endif
+ 	cec_devnode_unregister(&adap->devnode);
+ }
+ EXPORT_SYMBOL_GPL(cec_unregister_adapter);
+diff --git a/include/media/cec.h b/include/media/cec.h
+index 96a0aa7..d6c7b20 100644
+--- a/include/media/cec.h
++++ b/include/media/cec.h
+@@ -28,6 +28,11 @@
+ #include <linux/kthread.h>
+ #include <linux/timer.h>
+ #include <linux/cec-funcs.h>
++#ifdef CONFIG_HPD_NOTIFIERS
++#include <linux/notifier.h>
++#include <linux/hpd-notifier.h>
++#include <drm/drm_edid.h>
++#endif
+ #include <media/rc-core.h>
+ #include <media/cec-edid.h>
+ 
+@@ -173,6 +178,11 @@ struct cec_adapter {
+ 	bool passthrough;
+ 	struct cec_log_addrs log_addrs;
+ 
++#ifdef CONFIG_HPD_NOTIFIERS
++	struct hpd_notifier	*notifier;
++	struct notifier_block	nb;
++#endif
++
+ 	struct dentry *cec_dir;
+ 	struct dentry *status_file;
+ 
+@@ -213,6 +223,11 @@ void cec_transmit_done(struct cec_adapter *adap, u8 status, u8 arb_lost_cnt,
+ 		       u8 nack_cnt, u8 low_drive_cnt, u8 error_cnt);
+ void cec_received_msg(struct cec_adapter *adap, struct cec_msg *msg);
+ 
++#ifdef CONFIG_HPD_NOTIFIERS
++void cec_register_hpd_notifier(struct cec_adapter *adap,
++				struct hpd_notifier *notifier);
++#endif
++
+ #else
+ 
+ static inline int cec_register_adapter(struct cec_adapter *adap,
 -- 
 2.8.1
