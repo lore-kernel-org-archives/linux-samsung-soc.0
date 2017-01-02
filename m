@@ -1,83 +1,80 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 0/4] PCI: exynos: use the PHY generic framework
-Date: Mon, 02 Jan 2017 18:45:25 +0900
-Message-ID: <a9141f6a-0eb6-0556-c525-2df71a47acfd@samsung.com>
-References: <CGME20161228103455epcas1p1c762bc59add0011beff1d4ff697b5c8d@epcas1p1.samsung.com>
- <20161228103454.26467-1-jh80.chung@samsung.com>
- <20161230155613.jpwzytnh4osz76c6@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v3 0/2] Add support for the S6E3HA2 panel on TM2 board
+Date: Mon, 02 Jan 2017 13:06:30 +0100
+Message-ID: <5aa24b42-6879-6f01-06d1-def32ef8d727@samsung.com>
+References: <CGME20161230065850epcas5p3ecad04edde7dfe1f2ad3c86815dcc377@epcas5p3.samsung.com>
+ <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44202 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932202AbdABJp3 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Jan 2017 04:45:29 -0500
-In-reply-to: <20161230155613.jpwzytnh4osz76c6@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1483081108-32055-1-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 
-On 12/31/2016 12:56 AM, Krzysztof Kozlowski wrote:
-> On Wed, Dec 28, 2016 at 07:34:50PM +0900, Jaehoon Chung wrote:
->> This patch is for using PHY generic framework.
->> When Exynos5440 had upstreamed, there was no PHY subsytem.
->> Now the using PHY framework is mandantory.
->> In future, Exynos variant should be supported in pci-exynos.c
->>
->> Theses pathces based on the below patches
->>
-> 
-> Aren't you breaking DTB ABI here? If yes, then I don't mind but please
-> put it in the commit message.  Also order the patches in a way
-> preserving bisectability.
+On 30.12.2016 07:58, Hoegeun Kwon wrote:
+> Purpose of this patch is add support for S6E3HA2 AMOLED panel on
+> the TM2 board. The first patch adds support for S6E3HA2 panel
+> device tree document and driver, the second patch add support for
+> S6E3HA2 panel device tree.
+>
+> Changes for V3:
+>
+> - In the DT binding document, made it clearly that the panel is a
+>   child node of dsi.
+> - Fix reset-gpio active from high to low.
+> - Is the OF graph saying related to [1]?
 
-Will resend the patch v2.
+Yes, video-interfaces described in [1] are OF graphs described in [2]
+with additional properties specific for video pipelines.
 
-Best Regards,
-Jaehoon Chung
+[2]: Documentation/devicetree/bindings/graph.txt
 
-> 
-> Best regards,
-> Krzysztof
-> 
->> - Jaehoon's patches
->> http://patchwork.ozlabs.org/patch/706998/
->> http://patchwork.ozlabs.org/patch/706997/
->> http://patchwork.ozlabs.org/patch/706995/
->> http://patchwork.ozlabs.org/patch/706994/
->>
->> - Srinivas's patch
->> http://patchwork.ozlabs.org/patch/703530/
->>
->> - Pankaj's patch
->> http://patchwork.ozlabs.org/patch/708414/
->>
->> Jaehoon Chung (4):
->>   phy: exynos-pcie: Add support for Exynos PCIe phy
->>   Documetation: samsung-phy: add the exynos-pcie-phy binding
->>   Documetation: binding: modify the exynos5440 pcie binding
->>   ARM: dts: exynos5440: support the phy-pcie node for pcie
->>
->>  .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 ++-
->>  .../devicetree/bindings/phy/samsung-phy.txt        |  23 ++
->>  arch/arm/boot/dts/exynos5440.dtsi                  |  44 +++-
->>  drivers/pci/host/pci-exynos.c                      | 198 ++------------
->>  drivers/phy/Kconfig                                |   9 +
->>  drivers/phy/Makefile                               |   1 +
->>  drivers/phy/phy-exynos-pcie.c                      | 289 +++++++++++++++++++++
->>  7 files changed, 395 insertions(+), 198 deletions(-)
->>  create mode 100644 drivers/phy/phy-exynos-pcie.c
->>
->> -- 
->> 2.10.2
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+>   Althogh the panel is a child of dsi, I think OF graph necessary.
+>   because if a remote-endpoint is not specified, the dsi also
+>   panel is not probed.
+
+OK, I see the issue: dsi driver requires presence of DSI_PORT_OUT
+endpoint, because it needs to read MIPI-DSI burst and esc clock
+frequencies from these nodes, however it does not use it to get panel
+node, panel node is get by .attach callback. Probably these clock
+frequencies should be passed via struct mipi_dsi_device.
+So as for now I think it would be simpler to leave OF graph, as it is
+already used this way in other drivers.
+
+> - The display-timings has been fixed to be provided by the device
+>   driver. however, I think display-timings is necessary in dts.
+>   because if dts does not have display-timings, dsi will not load.
+
+After examining drivers it looks like these timings, beside panel, are
+read by MIC driver, and this is wrong. MIC driver shouldn't peek into
+other driver's nodes, it can use DRM callbacks (mode_fixup, mode_set) to
+get necessary information. And more importantly display-timings in
+panels are not accepted by panels maintainer AFAIK, see [1] for rationale.
+
+[1]:
+https://sietch-tagr.blogspot.de/2016/04/display-panels-are-not-special.html
+
+Regards
+Andrzej
+
+>
+> [1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>
+> Hoegeun Kwon (1):
+>   drm/panel: Add support for S6E3HA2 panel driver on TM2 board
+>
+> Hyungwon Hwang (1):
+>   arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
+>
+>  .../bindings/display/panel/samsung,s6e3ha2.txt     |  58 ++
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  31 +
+>  drivers/gpu/drm/panel/Kconfig                      |   6 +
+>  drivers/gpu/drm/panel/Makefile                     |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 741 +++++++++++++++++++++
+>  5 files changed, 837 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
+>
