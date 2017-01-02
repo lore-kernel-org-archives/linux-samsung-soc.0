@@ -1,134 +1,43 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv2 3/4] cec: integrate HPD notifier support
-Date: Mon,  2 Jan 2017 15:19:06 +0100
-Message-ID: <1483366747-34288-4-git-send-email-hverkuil@xs4all.nl>
-References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL] ARM: exynos: Late mach/soc for v4.10
+Date: Mon, 2 Jan 2017 17:56:54 +0200
+Message-ID: <20170102155654.oey6c542vjcqyit2@kozik-lap>
+References: <1482003132-8844-1-git-send-email-krzk@kernel.org>
+ <20161230155312.oupgyip7wtqwcuy2@kozik-lap>
+ <CGME20170102092044epcas1p3cbe831b7b6528f818b034d73c85dbe7d@epcas1p3.samsung.com>
+ <5b0e55c8-01db-3f02-3526-2f71f4a73d88@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:34580 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751388AbdABP5A (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 2 Jan 2017 10:57:00 -0500
+Content-Disposition: inline
+In-Reply-To: <5b0e55c8-01db-3f02-3526-2f71f4a73d88@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+On Mon, Jan 02, 2017 at 10:20:21AM +0100, Sylwester Nawrocki wrote:
+> On 12/30/2016 04:53 PM, Krzysztof Kozlowski wrote:
+> > 
+> > Any comments on this? I guess it won't come as late-late-4.10, so can
+> > you pull it for v4.11?
+>  
+> >> Sylwester Nawrocki (1):
+> >>       ARM: S3C24XX: Add DMA slave maps for remaining s3c24xx SoCs
+> 
+> We need this patch in v4.10 to avoid possible I2S and MMC regressions
+> on selected s3c24xx SoC, since the DMA clients are already modified.
+> If the patch goes in only for v4.11 it would be good to mark it for 
+> inclusion in v4.10 stable kernels.  
 
-Support the HPD notifier framework, simplifying drivers that
-depend on this.
+You didn't mention any strict dependencies when sending this patch...
+What do you mean by "needing patch in v4.10"? Is the code already
+not bisectable? Already broken?
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/cec/cec-core.c | 50 ++++++++++++++++++++++++++++++++++++++++++++
- include/media/cec.h          | 15 +++++++++++++
- 2 files changed, 65 insertions(+)
-
-diff --git a/drivers/media/cec/cec-core.c b/drivers/media/cec/cec-core.c
-index aca3ab8..a466dbe 100644
---- a/drivers/media/cec/cec-core.c
-+++ b/drivers/media/cec/cec-core.c
-@@ -195,6 +195,52 @@ static void cec_devnode_unregister(struct cec_devnode *devnode)
- 	put_device(&devnode->dev);
- }
- 
-+#ifdef CONFIG_HPD_NOTIFIERS
-+static u16 parse_hdmi_addr(const struct edid *edid)
-+{
-+	if (!edid || edid->extensions == 0)
-+		return CEC_PHYS_ADDR_INVALID;
-+
-+	return cec_get_edid_phys_addr((u8 *)edid,
-+				EDID_LENGTH * (edid->extensions + 1), NULL);
-+}
-+
-+static int cec_hpd_notify(struct notifier_block *nb, unsigned long event,
-+			   void *data)
-+{
-+	struct cec_adapter *adap = container_of(nb, struct cec_adapter, nb);
-+	struct hpd_notifier *n = data;
-+	unsigned int phys;
-+
-+	dprintk(1, "event %lu\n", event);
-+
-+	switch (event) {
-+	case HPD_DISCONNECTED:
-+		cec_s_phys_addr(adap, CEC_PHYS_ADDR_INVALID, false);
-+		break;
-+
-+	case HPD_NEW_EDID:
-+		phys = parse_hdmi_addr(n->edid);
-+		cec_s_phys_addr(adap, phys, false);
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+void cec_register_hpd_notifier(struct cec_adapter *adap,
-+				struct hpd_notifier *notifier)
-+{
-+	if (WARN_ON(!adap->devnode.registered))
-+		return;
-+
-+	adap->nb.notifier_call = cec_hpd_notify;
-+	adap->notifier = notifier;
-+	hpd_notifier_register(adap->notifier, &adap->nb);
-+}
-+EXPORT_SYMBOL_GPL(cec_register_hpd_notifier);
-+#endif
-+
- struct cec_adapter *cec_allocate_adapter(const struct cec_adap_ops *ops,
- 					 void *priv, const char *name, u32 caps,
- 					 u8 available_las)
-@@ -344,6 +390,10 @@ void cec_unregister_adapter(struct cec_adapter *adap)
- 	adap->rc = NULL;
- #endif
- 	debugfs_remove_recursive(adap->cec_dir);
-+#ifdef CONFIG_HPD_NOTIFIERS
-+	if (adap->notifier)
-+		hpd_notifier_unregister(adap->notifier, &adap->nb);
-+#endif
- 	cec_devnode_unregister(&adap->devnode);
- }
- EXPORT_SYMBOL_GPL(cec_unregister_adapter);
-diff --git a/include/media/cec.h b/include/media/cec.h
-index 96a0aa7..d6c7b20 100644
---- a/include/media/cec.h
-+++ b/include/media/cec.h
-@@ -28,6 +28,11 @@
- #include <linux/kthread.h>
- #include <linux/timer.h>
- #include <linux/cec-funcs.h>
-+#ifdef CONFIG_HPD_NOTIFIERS
-+#include <linux/notifier.h>
-+#include <linux/hpd-notifier.h>
-+#include <drm/drm_edid.h>
-+#endif
- #include <media/rc-core.h>
- #include <media/cec-edid.h>
- 
-@@ -173,6 +178,11 @@ struct cec_adapter {
- 	bool passthrough;
- 	struct cec_log_addrs log_addrs;
- 
-+#ifdef CONFIG_HPD_NOTIFIERS
-+	struct hpd_notifier	*notifier;
-+	struct notifier_block	nb;
-+#endif
-+
- 	struct dentry *cec_dir;
- 	struct dentry *status_file;
- 
-@@ -213,6 +223,11 @@ void cec_transmit_done(struct cec_adapter *adap, u8 status, u8 arb_lost_cnt,
- 		       u8 nack_cnt, u8 low_drive_cnt, u8 error_cnt);
- void cec_received_msg(struct cec_adapter *adap, struct cec_msg *msg);
- 
-+#ifdef CONFIG_HPD_NOTIFIERS
-+void cec_register_hpd_notifier(struct cec_adapter *adap,
-+				struct hpd_notifier *notifier);
-+#endif
-+
- #else
- 
- static inline int cec_register_adapter(struct cec_adapter *adap,
--- 
-2.8.1
+Best regards,
+Krzysztof
