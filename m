@@ -1,192 +1,139 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCHv2 1/4] video: add hotplug detect notifier support
-Date: Tue, 3 Jan 2017 08:54:52 +0100
-Message-ID: <ad4af428-fb4a-6b81-4c3a-9d525d6aa19d@xs4all.nl>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCHv2 2/4] exynos_hdmi: add HPD notifier support
+Date: Tue, 03 Jan 2017 08:55:43 +0100
+Message-ID: <e128714d-6e24-7fc5-17be-fa19606cb3b2@samsung.com>
 References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
- <CGME20170102141939epcas2p4a53acf3b27264f0b95e60eac75133885@epcas2p4.samsung.com>
- <1483366747-34288-2-git-send-email-hverkuil@xs4all.nl>
- <ddb0ba80-c2a4-1024-8e9c-4ba74882a282@samsung.com>
+ <CGME20170102141935epcas1p2a81b8cdc6f0ff3201f903c1e7e13ae27@epcas1p2.samsung.com>
+ <1483366747-34288-3-git-send-email-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud6.xs4all.net ([194.109.24.28]:51130 "EHLO
-        lb2-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756751AbdACHy6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 02:54:58 -0500
-In-Reply-To: <ddb0ba80-c2a4-1024-8e9c-4ba74882a282@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1483366747-34288-3-git-send-email-hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 01/03/2017 08:50 AM, Andrzej Hajda wrote:
-> Hi Hans,
-> 
-> On 02.01.2017 15:19, Hans Verkuil wrote:
->> From: Hans Verkuil <hans.verkuil@cisco.com>
->>
->> Add support for video hotplug detect and EDID/ELD notifiers, which is used
->> to convey information from video drivers to their CEC and audio counterparts.
->>
->> Based on an earlier version from Russell King:
->>
->> https://patchwork.kernel.org/patch/9277043/
->>
->> The hpd_notifier is a reference counted object containing the HPD/EDID/ELD state
->> of a video device.
->>
->> When a new notifier is registered the current state will be reported to
->> that notifier at registration time.
->>
->> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/video/Kconfig        |   3 +
->>  drivers/video/Makefile       |   1 +
->>  drivers/video/hpd-notifier.c | 134 +++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/hpd-notifier.h | 109 +++++++++++++++++++++++++++++++++++
->>  4 files changed, 247 insertions(+)
->>  create mode 100644 drivers/video/hpd-notifier.c
->>  create mode 100644 include/linux/hpd-notifier.h
->>
->> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
->> index 3c20af9..cddc860 100644
->> --- a/drivers/video/Kconfig
->> +++ b/drivers/video/Kconfig
->> @@ -36,6 +36,9 @@ config VIDEOMODE_HELPERS
->>  config HDMI
->>  	bool
->>  
->> +config HPD_NOTIFIERS
->> +	bool
->> +
->>  if VT
->>  	source "drivers/video/console/Kconfig"
->>  endif
->> diff --git a/drivers/video/Makefile b/drivers/video/Makefile
->> index 9ad3c17..424698b 100644
->> --- a/drivers/video/Makefile
->> +++ b/drivers/video/Makefile
->> @@ -1,5 +1,6 @@
->>  obj-$(CONFIG_VGASTATE)            += vgastate.o
->>  obj-$(CONFIG_HDMI)                += hdmi.o
->> +obj-$(CONFIG_HPD_NOTIFIERS)       += hpd-notifier.o
->>  
->>  obj-$(CONFIG_VT)		  += console/
->>  obj-$(CONFIG_LOGO)		  += logo/
->> diff --git a/drivers/video/hpd-notifier.c b/drivers/video/hpd-notifier.c
->> new file mode 100644
->> index 0000000..54f7a6b
->> --- /dev/null
->> +++ b/drivers/video/hpd-notifier.c
->> @@ -0,0 +1,134 @@
->> +#include <linux/export.h>
->> +#include <linux/hpd-notifier.h>
->> +#include <linux/string.h>
->> +#include <linux/slab.h>
->> +#include <linux/list.h>
->> +
->> +static LIST_HEAD(hpd_notifiers);
->> +static DEFINE_MUTEX(hpd_notifiers_lock);
->> +
->> +struct hpd_notifier *hpd_notifier_get(struct device *dev)
->> +{
->> +	struct hpd_notifier *n;
->> +
->> +	mutex_lock(&hpd_notifiers_lock);
->> +	list_for_each_entry(n, &hpd_notifiers, head) {
->> +		if (n->dev == dev) {
->> +			mutex_unlock(&hpd_notifiers_lock);
-> 
-> I think this place is racy, we have pointer to unprotected area
-> (n->kref), so if concurrent thread calls hpd_notifier_put in this moment
-> &n->kref could be freed and kref_get in the next line will operate on
-> dangling pointer. Am I right?
+On 02.01.2017 15:19, Hans Verkuil wrote:
+> From: Hans Verkuil <hans.verkuil@cisco.com>
+>
+> Implement the HPD notifier support to allow CEC drivers to
+> be informed when there is a new EDID and when a connect or
+> disconnect happens.
+>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig       |  1 +
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 24 +++++++++++++++++++++---
+>  2 files changed, 22 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index d706ca4..80bfd1d 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -77,6 +77,7 @@ config DRM_EXYNOS_DP
+>  config DRM_EXYNOS_HDMI
+>  	bool "HDMI"
+>  	depends on DRM_EXYNOS_MIXER || DRM_EXYNOS5433_DECON
+> +	select HPD_NOTIFIERS
+>  	help
+>  	  Choose this option if you want to use Exynos HDMI for DRM.
+>  
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 5ed8b1e..28bf609 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/clk.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/hpd-notifier.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/io.h>
+>  #include <linux/of_address.h>
+> @@ -118,6 +119,7 @@ struct hdmi_context {
+>  	bool				dvi_mode;
+>  	struct delayed_work		hotplug_work;
+>  	struct drm_display_mode		current_mode;
+> +	struct hpd_notifier		*notifier;
+>  	const struct hdmi_driver_data	*drv_data;
+>  
+>  	void __iomem			*regs;
+> @@ -807,9 +809,12 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+>  {
+>  	struct hdmi_context *hdata = connector_to_hdmi(connector);
+>  
+> -	if (gpiod_get_value(hdata->hpd_gpio))
+> +	if (gpiod_get_value(hdata->hpd_gpio)) {
+> +		hpd_event_connect(hdata->notifier);
+>  		return connector_status_connected;
+> +	}
+>  
+> +	hpd_event_disconnect(hdata->notifier);
+>  	return connector_status_disconnected;
+>  }
+>  
+> @@ -848,6 +853,9 @@ static int hdmi_get_modes(struct drm_connector *connector)
+>  		edid->width_cm, edid->height_cm);
+>  
+>  	drm_mode_connector_update_edid_property(connector, edid);
+> +	hpd_event_connect(hdata->notifier);
 
-You're right. I took the hpd_notifiers_lock in hpd_notifier_release,
-but I should take it in hpd_notifier_put.
+Is there a reason to call hpd_event_connect here? It was called already
+from hdmi_detect.
 
-Thanks! I'll fix that.
+Regards
+Andrzej
 
-Regards,
-
-	Hans
-
-> 
-> Regards
-> Andrzej
-> 
->> +			kref_get(&n->kref);
->> +			return n;
->> +		}
->> +	}
->> +	n = kzalloc(sizeof(*n), GFP_KERNEL);
->> +	if (!n)
->> +		goto unlock;
->> +	n->dev = dev;
->> +	mutex_init(&n->lock);
->> +	BLOCKING_INIT_NOTIFIER_HEAD(&n->notifiers);
->> +	kref_init(&n->kref);
->> +	list_add_tail(&n->head, &hpd_notifiers);
->> +unlock:
->> +	mutex_unlock(&hpd_notifiers_lock);
->> +	return n;
->> +}
->> +EXPORT_SYMBOL_GPL(hpd_notifier_get);
->> +
->> +static void hpd_notifier_release(struct kref *kref)
->> +{
->> +	struct hpd_notifier *n =
->> +		container_of(kref, struct hpd_notifier, kref);
->> +
->> +	mutex_lock(&hpd_notifiers_lock);
->> +	list_del(&n->head);
->> +	mutex_unlock(&hpd_notifiers_lock);
->> +	kfree(n->edid);
->> +	kfree(n);
->> +}
->> +
->> +void hpd_notifier_put(struct hpd_notifier *n)
->> +{
->> +	kref_put(&n->kref, hpd_notifier_release);
->> +}
->> +EXPORT_SYMBOL_GPL(hpd_notifier_put);
->> +
->> +int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb)
->> +{
->> +	int ret = blocking_notifier_chain_register(&n->notifiers, nb);
->> +
->> +	if (ret)
->> +		return ret;
->> +	kref_get(&n->kref);
->> +	mutex_lock(&n->lock);
->> +	if (n->connected) {
->> +		blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
->> +		if (n->edid_size)
->> +			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
->> +		if (n->has_eld)
->> +			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
->> +	}
->> +	mutex_unlock(&n->lock);
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(hpd_notifier_register);
->> +
->> +int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb)
->> +{
->> +	int ret = blocking_notifier_chain_unregister(&n->notifiers, nb);
->> +
->> +	if (ret == 0)
->> +		hpd_notifier_put(n);
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(hpd_notifier_unregister);
-> (...)
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> +	hpd_event_new_edid(hdata->notifier, edid,
+> +			    EDID_LENGTH * (1 + edid->extensions));
+>  
+>  	ret = drm_add_edid_modes(connector, edid);
+>  
+> @@ -1483,6 +1491,7 @@ static void hdmi_disable(struct drm_encoder *encoder)
+>  	if (funcs && funcs->disable)
+>  		(*funcs->disable)(crtc);
+>  
+> +	hpd_event_disconnect(hdata->notifier);
+>  	cancel_delayed_work(&hdata->hotplug_work);
+>  
+>  	hdmiphy_disable(hdata);
+> @@ -1832,15 +1841,22 @@ static int hdmi_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	hdata->notifier = hpd_notifier_get(&pdev->dev);
+> +	if (hdata->notifier == NULL) {
+> +		ret = -ENOMEM;
+> +		goto err_hdmiphy;
+> +	}
+> +
+>  	pm_runtime_enable(dev);
+>  
+>  	ret = component_add(&pdev->dev, &hdmi_component_ops);
+>  	if (ret)
+> -		goto err_disable_pm_runtime;
+> +		goto err_notifier_put;
+>  
+>  	return ret;
+>  
+> -err_disable_pm_runtime:
+> +err_notifier_put:
+> +	hpd_notifier_put(hdata->notifier);
+>  	pm_runtime_disable(dev);
+>  
+>  err_hdmiphy:
+> @@ -1859,9 +1875,11 @@ static int hdmi_remove(struct platform_device *pdev)
+>  	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+>  
+>  	cancel_delayed_work_sync(&hdata->hotplug_work);
+> +	hpd_event_disconnect(hdata->notifier);
+>  
+>  	component_del(&pdev->dev, &hdmi_component_ops);
+>  
+> +	hpd_notifier_put(hdata->notifier);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+>  	if (!IS_ERR(hdata->reg_hdmi_en))
