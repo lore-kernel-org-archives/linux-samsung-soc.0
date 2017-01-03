@@ -1,70 +1,499 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/4] Documetation: samsung-phy: add the exynos-pcie-phy
- binding
-Date: Tue, 3 Jan 2017 12:05:07 -0600
-Message-ID: <20170103180507.b7otjrfo4ye3yx42@rob-hp-laptop>
-References: <20161228103454.26467-1-jh80.chung@samsung.com>
- <CGME20161228103455epcas5p2acc54945d70ac45b2ce2cd4f6ad4b875@epcas5p2.samsung.com>
- <20161228103454.26467-3-jh80.chung@samsung.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 2/4] input: tm2-touchkey: Add touchkey driver support for
+ TM2
+Date: Tue, 3 Jan 2017 10:56:25 -0800
+Message-ID: <20170103185625.GC16032@dtor-ws>
+References: <1483430237-26823-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170103075733epcas5p4a065198d4abf35081024af95055c67d2@epcas5p4.samsung.com>
+ <1483430237-26823-3-git-send-email-jcsing.lee@samsung.com>
+ <7794c9b2-48e6-1451-9a3e-fe24410a145d@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34852 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753329AbdACSFJ (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34817 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965460AbdACS43 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Jan 2017 13:05:09 -0500
+        Tue, 3 Jan 2017 13:56:29 -0500
 Content-Disposition: inline
-In-Reply-To: <20161228103454.26467-3-jh80.chung@samsung.com>
+In-Reply-To: <7794c9b2-48e6-1451-9a3e-fe24410a145d@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Jaechul Lee <jcsing.lee@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 28, 2016 at 07:34:52PM +0900, Jaehoon Chung wrote:
-> Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
-> This is for using generic PHY framework.
+On Tue, Jan 03, 2017 at 10:11:39AM -0300, Javier Martinez Canillas wrote:
+> Hello Jaechul,
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
->  .../devicetree/bindings/phy/samsung-phy.txt        | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> On 01/03/2017 04:57 AM, Jaechul Lee wrote:
+> > This patch adds support for the TM2 touch key and led
+> > functionlity.
+> > 
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 9872ba8..1cbc15f 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -191,3 +191,26 @@ Example:
->  		usbdrdphy0 = &usb3_phy0;
->  		usbdrdphy1 = &usb3_phy1;
->  	};
-> +
-> +Samsung Exynos SoC series PCIe PHY controller
-> +--------------------------------------------------
-> +Required properties:
-> +- compatible : Should be set to "samsung,exynos5440-pcie-phy"
-> +- #phy-cells : Must be zero
-> +- reg : a register used by phy driver.
-> +
-> +Required properies for child node:
-> +- reg : a block register used by phy driver.
+> s/functionlity/functionality
+> 
+> > The driver interfaces with userspace through an input device and
+> > reports KEY_PHONE and KEY_BACK event types. LED brightness can be
+> > controlled by "/sys/class/leds/tm2-touchkey/brightness".
+> > 
+> > Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> > Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+> > ---
+> >  drivers/input/keyboard/Kconfig        |  11 ++
+> >  drivers/input/keyboard/Makefile       |   1 +
+> >  drivers/input/keyboard/tm2-touchkey.c | 326 ++++++++++++++++++++++++++++++++++
+> >  3 files changed, 338 insertions(+)
+> >  create mode 100644 drivers/input/keyboard/tm2-touchkey.c
+> > 
+> > diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+> > index cbd75cf..72c0ba1 100644
+> > --- a/drivers/input/keyboard/Kconfig
+> > +++ b/drivers/input/keyboard/Kconfig
+> > @@ -666,6 +666,17 @@ config KEYBOARD_TC3589X
+> >  	  To compile this driver as a module, choose M here: the
+> >  	  module will be called tc3589x-keypad.
+> >  
+> > +config KEYBOARD_TM2_TOUCHKEY
+> > +	tristate "tm2-touchkey support"
+> > +	depends on I2C
 
-There's no need for this. Either just make the length 0x1040 or add a 
-2nd address to the parent reg prop.
+There should be LED dependency as well.
 
-> +
-> +Example:
-> +	pcie_phy0: pcie-phy@270000 {
-> +		#phy-cells = <0>;
-> +		compatible = "samsung,exynos5440-pcie-phy";
-> +		reg = <0x270000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +		block@271000 {
-> +			reg = <0x271000 0x40>;
-> +		};
-> +	};
-> -- 
-> 2.10.2
+> > +	help
+> > +	  Say Y here to enable the tm2-touchkey.
+> > +	  touchkey driver for tm2. This driver can enable
+> > +	  the interrupt and make input events and control led brightness.
+> > +
+> > +	  To compile this driver as a module, choose M here.
+> > +	  module will be called tm2-touchkey
+> > +
+> >  config KEYBOARD_TWL4030
+> >  	tristate "TI TWL4030/TWL5030/TPS659x0 keypad support"
+> >  	depends on TWL4030_CORE
+> > diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+> > index d9f4cfc..7d9acff 100644
+> > --- a/drivers/input/keyboard/Makefile
+> > +++ b/drivers/input/keyboard/Makefile
+> > @@ -61,6 +61,7 @@ obj-$(CONFIG_KEYBOARD_SUN4I_LRADC)	+= sun4i-lradc-keys.o
+> >  obj-$(CONFIG_KEYBOARD_SUNKBD)		+= sunkbd.o
+> >  obj-$(CONFIG_KEYBOARD_TC3589X)		+= tc3589x-keypad.o
+> >  obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
+> > +obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
+> >  obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
+> >  obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
+> >  obj-$(CONFIG_KEYBOARD_W90P910)		+= w90p910_keypad.o
+> > diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
+> > new file mode 100644
+> > index 0000000..d9575d8
+> > --- /dev/null
+> > +++ b/drivers/input/keyboard/tm2-touchkey.c
+> > @@ -0,0 +1,326 @@
+> > +/*
+> > + * Driver for keys on GPIO lines capable of generating interrupts.
+
+This does not match what the driver does.
+
+> > + *
+> > + * Copyright 2005 Phil Blundell
+> > + * Copyright 2016 Samsung Electronics Co., Ltd.
+> > + *
+> > + * Author: Beomho Seo <beomho.seo@samsung.com>
+> > + * Author: Jaechul Lee <jcsing.lee@samsung.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include <linux/bitops.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/device.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/input.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/leds.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/pm.h>
+> > +#include <linux/regulator/consumer.h>
+> > +#include <linux/workqueue.h>
+> > +
+> > +#define TM2_TOUCHKEY_DEV_NAME			"tm2-touchkey"
+> > +#define TM2_TOUCHKEY_KEYCODE_REG			0x03
+> > +#define TM2_TOUCHKEY_BASE_REG			0x00
+> > +#define TM2_TOUCHKEY_CMD_LED_ON			0x10
+> > +#define TM2_TOUCHKEY_CMD_LED_OFF			0x20
+> > +#define TM2_TOUCHKEY_BIT_PRESS_EV			BIT(3)
+> > +#define TM2_TOUCHKEY_BIT_KEYCODE			GENMASK(2, 0)
+> > +#define TM2_TOUCHKEY_LED_VOLTAGE_MIN			2500000
+> > +#define TM2_TOUCHKEY_LED_VOLTAGE_MAX			3300000
+> > +
+> > +enum {
+> > +	TM2_TOUCHKEY_KEY_MENU = 0x1,
+> > +	TM2_TOUCHKEY_KEY_BACK,
+> > +};
+> > +
+> > +#define tm2_touchkey_power_enable(x) __tm2_touchkey_power_onoff(x, 1)
+> > +#define tm2_touchkey_power_disable(x) __tm2_touchkey_power_onoff(x, 0)
+> > +
+> > +struct tm2_touchkey_data {
+> > +	struct i2c_client *client;
+> > +	struct input_dev *input_dev;
+> > +	struct led_classdev led_dev;
+> > +
+> > +	u8 keycode_type;
+> > +	u8 pressed;
+> > +	struct work_struct irq_work;
+> > +
+> > +	bool power_onoff;
+> > +	struct regulator *regulator_vcc;	/* 1.8V */
+> > +	struct regulator *regulator_vdd;	/* 3.3V */
+> > +};
+> > +
+> > +static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+> > +						enum led_brightness brightness)
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey =
+
+Just call it "touchkey", "samsung_touchkey" is too long for a local
+variable.
+
+> > +	    container_of(led_dev, struct tm2_touchkey_data, led_dev);
+> > +	u32 volt;
+> > +	u8 data;
+> > +
+> > +	if (brightness == LED_OFF) {
+> > +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MIN;
+> > +		data = TM2_TOUCHKEY_CMD_LED_OFF;
+> > +	} else {
+> > +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MAX;
+> > +		data = TM2_TOUCHKEY_CMD_LED_ON;
+> > +	}
+> > +
+> > +	regulator_set_voltage(samsung_touchkey->regulator_vdd, volt, volt);
+> > +	i2c_smbus_write_byte_data(samsung_touchkey->client,
+> > +				  TM2_TOUCHKEY_BASE_REG, data);
+> > +}
+> > +
+> > +static int __tm2_touchkey_power_onoff(struct tm2_touchkey_data
+> > +					  *samsung_touchkey, bool onoff)
+> > +{
+> > +	int ret = 0;
+> > +
+> > +	if (samsung_touchkey->power_onoff == onoff)
+> > +		return ret;
+> > +
+> > +	if (onoff) {
+> > +		ret = regulator_enable(samsung_touchkey->regulator_vcc);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		ret = regulator_enable(samsung_touchkey->regulator_vdd);
+> > +		if (ret) {
+> > +			regulator_disable(samsung_touchkey->regulator_vcc);
+> > +			return ret;
+> > +		}
 > 
+> I would add a comment about the sleep here.
+
+Also "bulk" regulator API can be useful here.
+
+> 
+> > +		msleep(150);
+> > +	} else {
+> > +		int err;
+> > +
+> > +		err = regulator_disable(samsung_touchkey->regulator_vcc);
+> > +		if (err)
+> > +			ret = err;
+> > +
+> > +		err = regulator_disable(samsung_touchkey->regulator_vdd);
+> > +		if (err && !ret)
+> > +			ret = err;
+> > +	}
+> > +	samsung_touchkey->power_onoff = onoff;
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void tm2_touchkey_irq_work(struct work_struct *irq_work)
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey =
+> > +	    container_of(irq_work, struct tm2_touchkey_data, irq_work);
+> > +
+> > +	if (!samsung_touchkey->pressed) {
+> > +		input_report_key(samsung_touchkey->input_dev, KEY_PHONE, 0);
+> > +		input_report_key(samsung_touchkey->input_dev, KEY_BACK, 0);
+> > +	} else {
+> > +		if (samsung_touchkey->keycode_type == TM2_TOUCHKEY_KEY_MENU)
+> > +			input_report_key(samsung_touchkey->input_dev,
+> > +					 KEY_PHONE, 1);
+> > +		else
+> > +			input_report_key(samsung_touchkey->input_dev,
+> > +					 KEY_BACK, 1);
+> > +	}
+> > +	input_sync(samsung_touchkey->input_dev);
+> > +}
+
+There is absolutely no reason for doing this in a work. Just call
+input_report_key/input_sync from your threaded IRQ routine.
+
+> > +
+> > +static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey = devid;
+> > +	u32 data;
+> > +
+> > +	data = i2c_smbus_read_byte_data(samsung_touchkey->client,
+> > +					TM2_TOUCHKEY_KEYCODE_REG);
+> > +
+> > +	if (data < 0) {
+> > +		dev_err(&samsung_touchkey->client->dev, "Failed to read i2c data\n");
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	samsung_touchkey->keycode_type = data & TM2_TOUCHKEY_BIT_KEYCODE;
+> > +	samsung_touchkey->pressed = !(data & TM2_TOUCHKEY_BIT_PRESS_EV);
+> > +
+> > +	if (samsung_touchkey->keycode_type != TM2_TOUCHKEY_KEY_MENU &&
+> > +	    samsung_touchkey->keycode_type != TM2_TOUCHKEY_KEY_BACK)
+> 
+> Shouldn't at least a debug message be printed here so the user can
+> know that an error occurred and a correct keycode was not received?
+> 
+> > +		return IRQ_HANDLED;
+> > +
+> > +	schedule_work(&samsung_touchkey->irq_work);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int tm2_touchkey_probe(struct i2c_client *client,
+> > +				  const struct i2c_device_id *id)
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey;
+> > +	int ret;
+> > +
+> > +	ret = i2c_check_functionality(client->adapter,
+> > +				      I2C_FUNC_SMBUS_BYTE |
+> > +				      I2C_FUNC_SMBUS_BYTE_DATA);
+> > +	if (!ret) {
+> > +		dev_err(&client->dev, "No I2C functionality found\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	samsung_touchkey = devm_kzalloc(&client->dev,
+> > +			sizeof(struct tm2_touchkey_data), GFP_KERNEL);
+
+sizeof(*touchkey)
+
+> > +
+> > +	if (!samsung_touchkey) {
+> > +		dev_err(&client->dev, "Failed to allocate memory.\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	samsung_touchkey->client = client;
+> > +	i2c_set_clientdata(client, samsung_touchkey);
+> > +	INIT_WORK(&samsung_touchkey->irq_work, tm2_touchkey_irq_work);
+
+Work is not needed.
+
+> > +
+> > +	/* regulator */
+> > +	samsung_touchkey->regulator_vcc =
+> > +				devm_regulator_get(&client->dev, "vcc");
+> > +	if (IS_ERR(samsung_touchkey->regulator_vcc)) {
+> > +		dev_err(&client->dev, "Failed to get vcc regulator\n");
+> > +		return PTR_ERR(samsung_touchkey->regulator_vcc);
+> > +	}
+> > +
+> > +	samsung_touchkey->regulator_vdd =
+> > +				devm_regulator_get(&client->dev, "vdd");
+> > +	if (IS_ERR(samsung_touchkey->regulator_vdd)) {
+> > +		dev_err(&client->dev, "Failed to get vdd regulator\n");
+> > +		return PTR_ERR(samsung_touchkey->regulator_vcc);
+> > +	}
+
+devm_regulator_bulk_get
+
+> > +
+> > +	/* power */
+> > +	ret = tm2_touchkey_power_enable(samsung_touchkey);
+> > +	if (ret) {
+> > +		dev_err(&client->dev, "Failed to enable power\n");
+> > +		return ret;
+> > +	}
+
+You need to install devm action (devm_add_action_or_reset) to disable
+power when unloading driver (or if initialization fails).
+
+> > +
+> > +	/* irq */
+> > +	ret = devm_request_threaded_irq(&client->dev,
+> > +					client->irq, NULL,
+> > +					tm2_touchkey_irq_handler,
+> > +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+
+I'd rather we rely on IRQ trigger from DT, so just use IRQF_PNESHOT
+here.
+
+I'd rather you allocated input device before requesting IRQ. The
+registering input device is fine to do after getting IRQ.
+
+> > +					TM2_TOUCHKEY_DEV_NAME,
+> > +					samsung_touchkey);
+> > +	if (ret) {
+> > +		dev_err(&client->dev, "Failed to request threaded irq\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	/* input device */
+> > +	samsung_touchkey->input_dev = devm_input_allocate_device(&client->dev);
+> > +	if (!samsung_touchkey->input_dev) {
+> > +		dev_err(&client->dev, "Failed to alloc input device.\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +	samsung_touchkey->input_dev->name = TM2_TOUCHKEY_DEV_NAME;
+> > +	samsung_touchkey->input_dev->id.bustype = BUS_I2C;
+> > +	samsung_touchkey->input_dev->dev.parent = &client->dev;
+
+No need to set parent when using devm_input_allocate_device(), it is
+done automatically.
+
+> > +
+> > +	set_bit(EV_KEY, samsung_touchkey->input_dev->evbit);
+> > +	set_bit(KEY_PHONE, samsung_touchkey->input_dev->keybit);
+> > +	set_bit(KEY_BACK, samsung_touchkey->input_dev->keybit);
+
+
+Just do
+	input_set_capability(touchkey->input_dev, EV_KEY, KEY_PHONE);
+	input_set_capability(touchkey->input_dev, EV_KEY, KEY_BACK);
+
+
+> > +	input_set_drvdata(samsung_touchkey->input_dev, samsung_touchkey);
+> > +
+> > +	ret = input_register_device(samsung_touchkey->input_dev);
+> > +	if (ret) {
+> > +		dev_err(&client->dev, "Failed to register input device.\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	/* led device */
+> > +	samsung_touchkey->led_dev.name = TM2_TOUCHKEY_DEV_NAME;
+> > +	samsung_touchkey->led_dev.brightness = LED_FULL;
+> > +	samsung_touchkey->led_dev.max_brightness = LED_FULL;
+> > +	samsung_touchkey->led_dev.brightness_set =
+> > +						tm2_touchkey_led_brightness_set;
+> > +
+> > +	ret = devm_led_classdev_register(&client->dev,
+> > +					 &samsung_touchkey->led_dev);
+> > +	if (ret < 0) {
+> > +		dev_err(&client->dev, "Failed to register touchkey led\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void tm2_touchkey_shutdown(struct i2c_client *client)
+> > +{
+
+This is something not normally done. Does your platform really keep
+rails on when AP is off?
+
+> > +	struct tm2_touchkey_data *samsung_touchkey =
+> > +						i2c_get_clientdata(client);
+> > +	int ret;
+> > +
+> > +	disable_irq(client->irq);
+> > +	ret = tm2_touchkey_power_disable(samsung_touchkey);
+> > +	if (ret)
+> > +		dev_err(&client->dev, "Failed to disable power\n");
+> > +}
+> > +
+> > +static int tm2_touchkey_suspend(struct device *dev)
+
+__maybe_unused
+
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	disable_irq(samsung_touchkey->client->irq);
+> > +	ret = tm2_touchkey_power_disable(samsung_touchkey);
+> > +	if (ret)
+> > +		dev_err(dev, "Failed to disable power\n");
+> > +
+> > +	return ret;
+> > +}
+> 
+> These two functions are basically the same, can you factor it out?
+> 
+> > +
+> > +static int tm2_touchkey_resume(struct device *dev)
+
+__maybe_unused
+
+> > +{
+> > +	struct tm2_touchkey_data *samsung_touchkey = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	enable_irq(samsung_touchkey->client->irq);
+> > +	ret = tm2_touchkey_power_enable(samsung_touchkey);
+> > +	if (ret)
+> > +		dev_err(dev, "Failed to enable power\n");
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static SIMPLE_DEV_PM_OPS(tm2_touchkey_pm_ops, tm2_touchkey_suspend,
+> > +							tm2_touchkey_resume);
+> > +
+> > +static const struct i2c_device_id tm2_touchkey_id_table[] = {
+> > +	{TM2_TOUCHKEY_DEV_NAME, 0},
+> > +	{},
+> > +};
+> > +
+> 
+> You need a MODULE_DEVICE_TABLE(i2c, tm2_touchkey_id_table) here so the
+> module can be autoloaded when the device is registered.
+> 
+> > +static const struct of_device_id tm2_touchkey_of_match[] = {
+> > +	{.compatible = "samsung,tm2-touchkey",},
+> > +	{},
+> > +};
+> > +
+> 
+> Here a MODULE_DEVICE_TABLE(of, tm2_touchkey_of_match) is not strictly
+> needed since the I2C core always reports MODALIAS of the form i2c:<dev>
+> but still is good to have so the I2C core can be fixed at some point.
+
+Yes, please add MODULE_DEVICE_TABLE(of, ...).
+
+> 
+> > +static struct i2c_driver tm2_touchkey_driver = {
+> > +	.driver = {
+> > +		.name = TM2_TOUCHKEY_DEV_NAME,
+> > +		.pm = &tm2_touchkey_pm_ops,
+> > +		.of_match_table = of_match_ptr(tm2_touchkey_of_match),
+> > +	},
+> > +	.probe = tm2_touchkey_probe,
+> > +	.shutdown = tm2_touchkey_shutdown,
+> > +	.id_table = tm2_touchkey_id_table,
+> > +};
+> > +
+> > +module_i2c_driver(tm2_touchkey_driver);
+> > +
+> > +MODULE_AUTHOR("Beomho Seo <beomho.seo@samsung.com>");
+> > +MODULE_AUTHOR("Jaechul Lee <jcsing.lee@samsung.com>");
+> > +MODULE_DESCRIPTION("Samsung touchkey driver");
+> > +MODULE_LICENSE("GPL v2");
+> > 
+
+Thanks.
+
+-- 
+Dmitry
