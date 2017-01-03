@@ -1,41 +1,55 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/4] arm64: dts: exynos: make tm2 and tm2e independent
- from each other
-Date: Tue, 3 Jan 2017 10:27:29 +0200
-Message-ID: <CAJKOXPev9m07_dQWAvJ+=MKnbT0TFERKOtjWUDU+WXdGAiRyDA@mail.gmail.com>
-References: <CGME20170103075734epcas5p43a9743131f63affd0a438d2ed342f22e@epcas5p4.samsung.com>
- <1483430237-26823-1-git-send-email-jcsing.lee@samsung.com> <1483430237-26823-4-git-send-email-jcsing.lee@samsung.com>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV
+ bitfields for Exynos5433
+Date: Tue, 03 Jan 2017 18:45:43 +0900
+Message-ID: <20170103094543.ccb353srxszkovip@gangnam.samsung>
+References: <CGME20161230041426epcas1p1f827d3cee8b607d81e9921b412ddf301@epcas1p1.samsung.com>
+ <20161230041421.24448-1-andi.shyti@samsung.com>
+ <20161230041421.24448-2-andi.shyti@samsung.com>
+ <CACRpkdbR3x14h38Gg7qpeWnswwD9qsS0zDUrrXCEJH-AdEB+cQ@mail.gmail.com>
+ <20161230150932.q7kadv4ouhdrkqea@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1483430237-26823-4-git-send-email-jcsing.lee@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Jaechul Lee <jcsing.lee@samsung.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-disposition: inline
+In-reply-to: <20161230150932.q7kadv4ouhdrkqea@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 3, 2017 at 9:57 AM, Jaechul Lee <jcsing.lee@samsung.com> wrote:
-> From: Andi Shyti <andi.shyti@samsung.com>
->
-> Currently tm2e dts includes tm2 but there are some differences
-> between the two boards and tm2 has some properties that tm2e
-> doesn't have.
->
-> That's why it's important to keep the two dts files independent
-> and put all the commonalities in a tm2-common.dtsi file.
->
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> ---
->  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1046 ++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1033 +------------------
->  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |    2 +-
->  3 files changed, 1049 insertions(+), 1032 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+Hi Linus and Krzysztof,
 
-I would like to see here the rename and diff from it. Not entire delta
-(deletions and addons). It is not possible to compare it... I think
-git supports it by default with similarity of 50%.
+> > > From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > >
+> > > This patch fixes the wrong width of PINCFG_TYPE_DRV bitfields for Exynos5433
+> > > because PINCFG_TYPE_DRV of Exynos5433 has 4bit fields in the *_DRV
+> > > registers. Usually, other Exynos have 2bit field for PINCFG_TYPE_DRV.
+> > >
+> > > Fixes: 3c5ecc9ed353 ("pinctrl: exynos: Add support for Exynos5433")
+> > > Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> > > Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > > Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > > Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > > Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > Cc: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> > > Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > 
+> > Nominally I think you should sign this off too Andi, as you are in the delivery
+> > path.
+> > 
+> > Patch applied for fixes.
+> 
+> That has to be signed by Andi... otherwise the chain is broken (and
+> there could be changes added inside).
 
-Best regards,
-Krzysztof
+yes, sorry about this. If Linus wants and it's not too late, he
+can add my signed off at the bottom.
+
+Thanks,
+Andi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
