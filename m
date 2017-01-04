@@ -1,82 +1,131 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
- device on TM2 board
-Date: Wed, 04 Jan 2017 16:16:02 +0900
-Message-ID: <da8cefa6-2afe-0eb6-30bc-49052719eaea@samsung.com>
-References: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170104065900epcas5p2752d2a9575b62a6155ffeb2b7d8f49a7@epcas5p2.samsung.com>
- <1483513115-3068-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 3/4] Documetation: binding: modify the exynos5440 pcie
+ binding
+Date: Wed, 04 Jan 2017 17:23:24 +0900
+Message-ID: <1c7c1319-70cd-e6d5-87d1-c329a8166497@samsung.com>
+References: <20161228103454.26467-1-jh80.chung@samsung.com>
+ <CGME20161228103455epcas5p2b3ea563efc00c776e77477ab3c778bb1@epcas5p2.samsung.com>
+ <20161228103454.26467-4-jh80.chung@samsung.com>
+ <20170103195144.7fwtlvhzxhq3r25z@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38527 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934851AbdADI2g (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 03:28:36 -0500
-In-reply-to: <1483513115-3068-4-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20170103195144.7fwtlvhzxhq3r25z@rob-hp-laptop>
+Sender: linux-pci-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, jh80.chung@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
 
-Hi Hoegeun,
-
-On 2017년 01월 04일 15:58, Hoegeun Kwon wrote:
-> From: Hyungwon Hwang <human.hwang@samsung.com>
+On 01/04/2017 04:51 AM, Rob Herring wrote:
+> On Wed, Dec 28, 2016 at 07:34:53PM +0900, Jaehoon Chung wrote:
+>> According to using PHY framework, modified the exynos5440-pcie binding.
+>> And use "config" property to follow the designware-pcie binding.
 > 
-> This patch add the panel device tree node for S6E3HA2 display
-> controller to TM2 dts.
-> 
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index 5b9451d..b3ba1ac 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -304,11 +304,28 @@
->  			reg = <1>;
->  
->  			dsi_out: endpoint {
-> +				remote-endpoint = <&panel_in>;
->  				samsung,burst-clock-frequency = <512000000>;
->  				samsung,esc-clock-frequency = <16000000>;
->  			};
->  		};
->  	};
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6e3ha2";
-> +		reg = <0>;
-> +		vdd3-supply = <&ldo27_reg>;
-> +		vci-supply = <&ldo28_reg>;
-> +		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-> +		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-> +		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&dsi_out>;
-> +			};
-> +		};
-> +	};
->  };
->  
->  &hsi2c_0 {
-> 
+> You are breaking compatibility here. Please state that and why it is 
+> okay to do so.
 
-I tested this patch on Exynos5433-TM2 board.
-It is well working to display the image to LCD panel.
+I will update it..And i'm modifying the patches about maintaining the backward compatibility.
+So i will leave the current dt-binding. Just will add the dt-binding example for using phy framework.
+How about?
 
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+And will add the "DEPRECATED" for some properties. Also will display the kernel message.
 
--- 
-Regards,
-Chanwoo Choi
+> 
+>>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> ---
+>>  .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 +++++++++++++---------
+>>  1 file changed, 17 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>> index 4f9d23d..51f6214 100644
+>> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>> @@ -5,10 +5,15 @@ and thus inherits all the common properties defined in designware-pcie.txt.
+>>  
+>>  Required properties:
+>>  - compatible: "samsung,exynos5440-pcie"
+>> -- reg: base addresses and lengths of the pcie controller,
+>> -	the phy controller, additional register for the phy controller.
+>> +- reg: base addresses and lengths of the pcie controller
+>>  - interrupts: A list of interrupt outputs for level interrupt,
+>>  	pulse interrupt, special interrupt.
+>> +- phys: From PHY binding. Phandle for the Generic PHY.
+>> +	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
+>> +- phy-names: Must be "pcie-phy".
+> 
+> -names is pointless for a single element.
+
+Will remove.
+
+> 
+>> +
+>> +Other common properties refer to
+>> +	Documentation/devicetree/binding/pci/designware-pcie.txt
+>>  
+>>  Example:
+>>  
+>> @@ -16,18 +21,18 @@ SoC specific DT Entry:
+>>  
+>>  	pcie@290000 {
+>>  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+>> -		reg = <0x290000 0x1000
+>> -			0x270000 0x1000
+>> -			0x271000 0x40>;
+>> +		reg = <0x290000 0x1000>, <0x40000000 0x100>;
+> 
+> 256 bytes of config space?
+
+Typo. Will fix.
+
+> 
+>> +		reg-names = "elbi", "config";
+>>  		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+>>  		clocks = <&clock 28>, <&clock 27>;
+>>  		clock-names = "pcie", "pcie_bus";
+>>  		#address-cells = <3>;
+>>  		#size-cells = <2>;
+>>  		device_type = "pci";
+>> -		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
+>> -			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
+>> +		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
+>>  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+>> +		phys = <&pcie_phy0>;
+>> +		phy-names = "pcie-phy";
+>>  		#interrupt-cells = <1>;
+>>  		interrupt-map-mask = <0 0 0 0>;
+>>  		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+>> @@ -36,17 +41,17 @@ SoC specific DT Entry:
+>>  
+>>  	pcie@2a0000 {
+>>  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+>> -		reg = <0x2a0000 0x1000
+>> -			0x272000 0x1000
+>> -			0x271040 0x40>;
+>> +		reg = <0x2a0000 0x1000>, <0x60000000 0x1000>;
+>> +		reg-names = "elbi", "config";
+>>  		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
+>>  		clocks = <&clock 29>, <&clock 27>;
+>>  		clock-names = "pcie", "pcie_bus";
+>>  		#address-cells = <3>;
+>>  		#size-cells = <2>;
+>>  		device_type = "pci";
+>> -		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
+>> -			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
+>> +		phys = <&pcie_phy1>;
+>> +		phy-names = "pcie-phy";
+>> +		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
+>>  			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
+>>  		#interrupt-cells = <1>;
+>>  		interrupt-map-mask = <0 0 0 0>;
+>> -- 
+>> 2.10.2
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
