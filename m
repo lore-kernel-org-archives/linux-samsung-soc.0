@@ -1,67 +1,48 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v4 1/3] drm/exynos: mic: Add mode_set callback function
-Date: Wed, 04 Jan 2017 15:58:33 +0900
-Message-ID: <1483513115-3068-2-git-send-email-hoegeun.kwon@samsung.com>
-References: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170104065859epcas1p1df9efb3844bd8e4e4d4bb0af0a229ca2@epcas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 0/3] Add support for the S6E3HA2 panel on TM2 board
+Date: Wed, 04 Jan 2017 15:58:32 +0900
+Message-ID: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170104065858epcas5p2f6a70e125b1b6d7051d8fe3a28e626f5@epcas5p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QmVmb3JlIGFwcGx5aW5nIHRoZSBwYXRjaCwgdXNlZCB0aGUgb2ZfZ2V0X3ZpZGVvbW9kZSBmdW5j
-dGlvbiB0bwpwYXJzZSB0aGUgZGlzcGxheS10aW1pbmdzIGluIHRoZSBwYW5lbCB3aGljaCBpcyB0
-aGUgY2hpbGQgZHJpdmVyCm9mIGRzaSBpbiB0aGUgZGV2aWNldHJlZS4gdGhpcyBpcyB3cm9uZy4g
-U28gcmVtb3ZlZCB0aGUKb2ZfZ2V0X3ZpZGVvbW9kZSBhbmQgZml4ZWQgdG8gZ2V0IHZpZGVvbW9k
-ZSBzdHJ1Y3QgdGhyb3VnaAptb2RlX3NldCBjYWxsYmFjayBmdW5jdGlvbi4KClNpZ25lZC1vZmYt
-Ynk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyB8IDMzICsrKysrKysrKysrKysrKysrKysr
-KystLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDExIGRlbGV0
-aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9t
-aWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYwppbmRleCBhMGRl
-ZjBiLi45YTUwY2ViIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fbWljLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCkBA
-IC0yODYsMTMgKzI4Niw2IEBAIHN0YXRpYyBpbnQgcGFyc2VfZHQoc3RydWN0IGV4eW5vc19taWMg
-Km1pYykKIAkJCX0KIAkJCW5vZGVzW2orK10gPSByZW1vdGVfbm9kZTsKIAotCQkJcmV0ID0gb2Zf
-Z2V0X3ZpZGVvbW9kZShyZW1vdGVfbm9kZSwKLQkJCQkJCQkmbWljLT52bSwgMCk7Ci0JCQlpZiAo
-cmV0KSB7Ci0JCQkJRFJNX0VSUk9SKCJtaWM6IGZhaWxlZCB0byBnZXQgdmlkZW9tb2RlIik7Ci0J
-CQkJZ290byBleGl0OwotCQkJfQotCiAJCQlicmVhazsKIAkJZGVmYXVsdDoKIAkJCURSTV9FUlJP
-UigibWljOiBVbmtub3duIGVuZHBvaW50IGZyb20gTUlDIik7CkBAIC0zMjksNiArMzIyLDI3IEBA
-IHN0YXRpYyB2b2lkIG1pY19wb3N0X2Rpc2FibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkK
-IAltdXRleF91bmxvY2soJm1pY19tdXRleCk7CiB9CiAKK3N0YXRpYyB2b2lkIG1pY19tb2RlX3Nl
-dChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAorCQkJc3RydWN0IGRybV9kaXNwbGF5X21vZGUg
-Km1vZGUsCisJCQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSkKK3sKKwlz
-dHJ1Y3QgZXh5bm9zX21pYyAqbWljID0gYnJpZGdlLT5kcml2ZXJfcHJpdmF0ZTsKKworCW11dGV4
-X2xvY2soJm1pY19tdXRleCk7CisJaWYgKG1pYy0+ZW5hYmxlZCkKKwkJZ290byBhbHJlYWR5X2Vu
-YWJsZWQ7CisKKwlkcm1fZGlzcGxheV9tb2RlX3RvX3ZpZGVvbW9kZShtb2RlLCAmbWljLT52bSk7
-CisKKwlpZiAoIW1pYy0+aTgwX21vZGUpCisJCW1pY19zZXRfcG9yY2hfdGltaW5nKG1pYyk7CisJ
-bWljX3NldF9pbWdfc2l6ZShtaWMpOworCW1pY19zZXRfb3V0cHV0X3RpbWluZyhtaWMpOworCith
-bHJlYWR5X2VuYWJsZWQ6CisJbXV0ZXhfdW5sb2NrKCZtaWNfbXV0ZXgpOworfQorCiBzdGF0aWMg
-dm9pZCBtaWNfcHJlX2VuYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogewogCXN0cnVj
-dCBleHlub3NfbWljICptaWMgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRlOwpAQCAtMzU1LDEwICsz
-NjksNiBAQCBzdGF0aWMgdm9pZCBtaWNfcHJlX2VuYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJp
-ZGdlKQogCQlnb3RvIHR1cm5fb2ZmX2Nsa3M7CiAJfQogCi0JaWYgKCFtaWMtPmk4MF9tb2RlKQot
-CQltaWNfc2V0X3BvcmNoX3RpbWluZyhtaWMpOwotCW1pY19zZXRfaW1nX3NpemUobWljKTsKLQlt
-aWNfc2V0X291dHB1dF90aW1pbmcobWljKTsKIAltaWNfc2V0X3JlZ19vbihtaWMsIDEpOwogCW1p
-Yy0+ZW5hYmxlZCA9IDE7CiAJbXV0ZXhfdW5sb2NrKCZtaWNfbXV0ZXgpOwpAQCAtMzc3LDYgKzM4
-Nyw3IEBAIHN0YXRpYyB2b2lkIG1pY19lbmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkg
-eyB9CiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9icmlkZ2VfZnVuY3MgbWljX2JyaWRnZV9mdW5j
-cyA9IHsKIAkuZGlzYWJsZSA9IG1pY19kaXNhYmxlLAogCS5wb3N0X2Rpc2FibGUgPSBtaWNfcG9z
-dF9kaXNhYmxlLAorCS5tb2RlX3NldCA9IG1pY19tb2RlX3NldCwKIAkucHJlX2VuYWJsZSA9IG1p
-Y19wcmVfZW5hYmxlLAogCS5lbmFibGUgPSBtaWNfZW5hYmxlLAogfTsKLS0gCjEuOS4xCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Purpose of this patch is add support for S6E3HA2 AMOLED panel on
+the TM2 board. The first patch adds support for S6E3HA2 panel
+device tree document and driver, the second patch add support for
+S6E3HA2 panel device tree.
+
+Changes for V4:
+
+- Removed display-timings in devicetree, the display-timings has
+  been fixed to be provided by the device driver.
+- Added the mode_set callback function into exynos_drm_mic,
+  because the exynos_drm_mic driver can not parse a videomode
+  struct by removing the display-timings from the devicetree.
+
+Hoegeun Kwon (2):
+  drm/exynos: mic: Add mode_set callback function
+  drm/panel: Add support for S6E3HA2 panel driver on TM2 board
+
+Hyungwon Hwang (1):
+  arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
+
+ .../bindings/display/panel/samsung,s6e3ha2.txt     |  40 ++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  17 +
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  33 +-
+ drivers/gpu/drm/panel/Kconfig                      |   6 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 741 +++++++++++++++++++++
+ 6 files changed, 827 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
+
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
