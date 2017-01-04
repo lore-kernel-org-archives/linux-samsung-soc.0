@@ -1,119 +1,51 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 0/4] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Wed, 04 Jan 2017 14:25:51 +0900
-Message-ID: <ab1080b8-dfa4-77c5-226b-18e11bf557e8@samsung.com>
-References: <CGME20161230133344eucas1p21d107e1cf3096916aad1944f7e002bf9@eucas1p2.samsung.com>
- <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v4 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
+ device on TM2 board
+Date: Wed, 04 Jan 2017 15:58:35 +0900
+Message-ID: <1483513115-3068-4-git-send-email-hoegeun.kwon@samsung.com>
+References: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170104065900epcas5p2752d2a9575b62a6155ffeb2b7d8f49a7@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49166 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751787AbdADF0K (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 00:26:10 -0500
-In-reply-to: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1483513115-3068-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Dear Marek,
-
-I like these patches because as you already said, the some clocks are included in the specific power domain such as exynos5433. I want to test these patches on Exynos5433-TM2 board. But, this series don't include the Device-Tree binding patches. Could you give the additional patches for test?
-
-Best Regards,
-Chanwoo Choi
-
-On 2016년 12월 30일 22:33, Marek Szyprowski wrote:
-> Dear All,
-> 
-> This patchset adds runtime PM support to common clock framework. This is an
-> attempt to implement support for clock controllers, which belongs to a power
-> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
-> us to solve various freeze/crash issues related to power management.
-> 
-> The main idea behind this patchset is to keep clock's controller power domain
-> enabled every time when at least one of its clock is enabled or access to its
-> registers is being made. Clock controller driver (clock provider) can
-> supply a struct device pointer, which is the used by clock core for tracking and
-> managing clock's controller runtime pm state. Each clk_prepare() operation will
-> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-> will do pm_runtime_put() at the end.
-> 
-> This runtime PM feature has been tested with Exynos4412 (not included in this
-> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
-> respective power domains and need special handling during power on/off
-> procedures. Till now it wasn't handled at all, what caused various problems.
-> 
-> Patches for clocks drivers change the way the clock provider is initialized.
-> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
-> infrastructure is being used. This is needed to let driver to use runtime PM
-> feature and integrate with generic power domains. The side-effect of this change
-> is a delay in clock provider registeration during system boot, so early
-> initialized drivers might get EPROBEDEFER error when requesting their clocks.
-> This is an issue for IOMMU drivers, so this patchset will be fully functional
-> once the deferred probe for IOMMU will be merged.
-> 
-> Patches are based on vanilla v4.10-rc1 kernel.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> 
-> Changelog:
-> 
-> v4:
-> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
->   domain for ISP sub-controller needs more discussion. It will be handled
->   separately when the runtime PM for clocks feature gets merged.
-> - Added patch with runtime PM support for Exynos AudioSS clock controller driver
->   (needed to enable audio power domain on Exynos5 series).
-> - Fixes in Exynos5433 driver:
-> 	1. added missing clock for Audio CMU
-> 	2. added support for FSYS CMU
-> 	3. improved support for DISP CMU (thanks to Andrzej Hajda for
-> 	   investigating that).
-> - Rebased onto v4.10-rc1
-> - Waiting for a review...
-> 
-> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
-> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
->   for the provided device during clock registration as suggested by Ulf
-> - Simplified code for exynos4412 isp clock driver registration
-> - Resolved some other minor issues pointed by Ulf clk core code
-> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
-> 
-> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
-> - Simplified clk_pm_runtime_get/put functions, removed workaround for devices
->   with disabled runtime pm. Such workaround is no longer needed since commit
->   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
->   during system PM phases").
-> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
->   call runtime pm functions. This solves problem with clocks, for which struct
->   device is already registered, but no runtime pm is enabled.
-> - Extended commit messages according to Ulf suggestions.
-> - Fixed some style issues pointed by Barlomiej.
-> 
-> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-> - initial version
-> 
-> 
-> Marek Szyprowski (4):
->   clk: Add support for runtime PM
->   clk: samsung: Add support for runtime PM
->   clk: samsung: exynos5433: Add runtime PM support
->   clk: samsung: exynos-audss: Use runtime PM
-> 
->  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
->  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
->  drivers/clk/clk.c                                  | 111 +++++-
->  drivers/clk/samsung/clk-exynos-audss.c             |  62 +--
->  drivers/clk/samsung/clk-exynos5433.c               | 415 ++++++++++++++++-----
->  drivers/clk/samsung/clk-pll.c                      |   2 +-
->  drivers/clk/samsung/clk.c                          |  12 +-
->  drivers/clk/samsung/clk.h                          |   7 +
->  8 files changed, 504 insertions(+), 127 deletions(-)
-> 
+RnJvbTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgoKVGhpcyBwYXRj
+aCBhZGQgdGhlIHBhbmVsIGRldmljZSB0cmVlIG5vZGUgZm9yIFM2RTNIQTIgZGlzcGxheQpjb250
+cm9sbGVyIHRvIFRNMiBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4u
+aHdhbmdAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
+c2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1
+bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5n
+LmNvbT4KLS0tCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMg
+fCAxNyArKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKykK
+CmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5k
+dHMgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMKaW5kZXgg
+NWI5NDUxZC4uYjNiYTFhYyAxMDA2NDQKLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3Mv
+ZXh5bm9zNTQzMy10bTIuZHRzCisrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5v
+czU0MzMtdG0yLmR0cwpAQCAtMzA0LDExICszMDQsMjggQEAKIAkJCXJlZyA9IDwxPjsKIAogCQkJ
+ZHNpX291dDogZW5kcG9pbnQgeworCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmcGFuZWxfaW4+Owog
+CQkJCXNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVlbmN5ID0gPDUxMjAwMDAwMD47CiAJCQkJc2Ft
+c3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5ID0gPDE2MDAwMDAwPjsKIAkJCX07CiAJCX07CiAJfTsK
+KworCXBhbmVsQDAgeworCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZlM2hhMiI7CisJCXJlZyA9
+IDwwPjsKKwkJdmRkMy1zdXBwbHkgPSA8JmxkbzI3X3JlZz47CisJCXZjaS1zdXBwbHkgPSA8Jmxk
+bzI4X3JlZz47CisJCXJlc2V0LWdwaW9zID0gPCZncGcwIDAgR1BJT19BQ1RJVkVfTE9XPjsKKwkJ
+ZW5hYmxlLWdwaW9zID0gPCZncGYxIDUgR1BJT19BQ1RJVkVfSElHSD47CisJCXRlLWdwaW9zID0g
+PCZncGYxIDMgR1BJT19BQ1RJVkVfSElHSD47CisKKwkJcG9ydCB7CisJCQlwYW5lbF9pbjogZW5k
+cG9pbnQgeworCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNpX291dD47CisJCQl9OworCQl9Owor
+CX07CiB9OwogCiAmaHNpMmNfMCB7Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
