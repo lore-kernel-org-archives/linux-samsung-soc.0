@@ -1,30 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] ARM: exynos: Late mach/soc for v4.10
-Date: Wed, 04 Jan 2017 16:14:00 +0100
-Message-ID: <2234017.fClA8kpiX3@wuerfel>
-References: <1482003132-8844-1-git-send-email-krzk@kernel.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/5] Documetation: samsung-phy: add the
+ exynos-pcie-phy binding
+Date: Wed, 4 Jan 2017 09:17:14 -0600
+Message-ID: <20170104151714.k7irwwtcjwehbctc@rob-hp-laptop>
+References: <20170104123435.30740-1-jh80.chung@samsung.com>
+ <CGME20170104123436epcas1p1d3d840e4ade396a60ce690b09d486990@epcas1p1.samsung.com>
+ <20170104123435.30740-2-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1482003132-8844-1-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170104123435.30740-2-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Saturday, December 17, 2016 9:32:12 PM CET Krzysztof Kozlowski wrote:
-> After our discussions about not-breaking out-of-tree DTB with SCU
-> change in DeviceTree, I prepared an updated pull request without
-> the questioned changes.
+On Wed, Jan 04, 2017 at 09:34:31PM +0900, Jaehoon Chung wrote:
+> Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
+> This is for using generic PHY framework.
 > 
-> Ten days ago I prepared a tag, pushed it... and apparently forgot to send pull
-> request. At least, I don't have such email in my outbox. Dunno.
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> Changelog on V2:
+> - Remove the child node.
+> - Add 2nd address to the parent reg prop.
 > 
-> So let's send it now, better late then never. With just few commits (without
-> the DT SCU changes). These were sitting in the next for very long.
+>  Documentation/devicetree/bindings/phy/samsung-phy.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 
-Sorry for the delay. The patches in here are all straightforward, so
-I'm applying them for fixes now.
-
-	Arnd
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
