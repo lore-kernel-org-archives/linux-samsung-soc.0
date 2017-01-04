@@ -1,131 +1,57 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 3/4] Documetation: binding: modify the exynos5440 pcie
- binding
-Date: Wed, 04 Jan 2017 17:23:24 +0900
-Message-ID: <1c7c1319-70cd-e6d5-87d1-c329a8166497@samsung.com>
-References: <20161228103454.26467-1-jh80.chung@samsung.com>
- <CGME20161228103455epcas5p2b3ea563efc00c776e77477ab3c778bb1@epcas5p2.samsung.com>
- <20161228103454.26467-4-jh80.chung@samsung.com>
- <20170103195144.7fwtlvhzxhq3r25z@rob-hp-laptop>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCHv2 4/4] s5p-cec: add hpd-notifier support,
+ move out of staging
+Date: Wed, 04 Jan 2017 09:44:20 +0100
+Message-ID: <ac040a2a-f6f4-cd6d-05a7-54bc2a8b7e86@samsung.com>
+References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
+ <CGME20170102141935epcas1p3b093bcf648e1fa5873683cea60803f60@epcas1p3.samsung.com>
+ <1483366747-34288-5-git-send-email-hverkuil@xs4all.nl>
+ <4dd103b4-6f9b-8ef5-540e-6c5673b82c98@samsung.com>
+ <9652e8a9-1f5e-eadd-e588-b3051b0a8eb3@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20170103195144.7fwtlvhzxhq3r25z@rob-hp-laptop>
-Sender: linux-pci-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <9652e8a9-1f5e-eadd-e588-b3051b0a8eb3@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/04/2017 04:51 AM, Rob Herring wrote:
-> On Wed, Dec 28, 2016 at 07:34:53PM +0900, Jaehoon Chung wrote:
->> According to using PHY framework, modified the exynos5440-pcie binding.
->> And use "config" property to follow the designware-pcie binding.
-> 
-> You are breaking compatibility here. Please state that and why it is 
-> okay to do so.
+On 03.01.2017 09:11, Hans Verkuil wrote:
+> On 01/03/2017 09:00 AM, Andrzej Hajda wrote:
+>> Is there a reason to split registration into two steps?
+>> Wouldn't be better to integrate hpd_notifier_get into
+>> cec_register_hpd_notifier.
+> One problem is that hpd_notifier_get can fail, whereas cec_register_hpd_notifier can't.
+> And I rather not have to register a CEC device only to unregister it again if the
+> hpd_notifier_get would fail.
 
-I will update it..And i'm modifying the patches about maintaining the backward compatibility.
-So i will leave the current dt-binding. Just will add the dt-binding example for using phy framework.
-How about?
+hpd_notifier_get can fail only due to lack of memory for about 150 bytes
+so if it happens whole system will probably fail anyway :)
 
-And will add the "DEPRECATED" for some properties. Also will display the kernel message.
 
-> 
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> ---
->>  .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 +++++++++++++---------
->>  1 file changed, 17 insertions(+), 12 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
->> index 4f9d23d..51f6214 100644
->> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
->> @@ -5,10 +5,15 @@ and thus inherits all the common properties defined in designware-pcie.txt.
->>  
->>  Required properties:
->>  - compatible: "samsung,exynos5440-pcie"
->> -- reg: base addresses and lengths of the pcie controller,
->> -	the phy controller, additional register for the phy controller.
->> +- reg: base addresses and lengths of the pcie controller
->>  - interrupts: A list of interrupt outputs for level interrupt,
->>  	pulse interrupt, special interrupt.
->> +- phys: From PHY binding. Phandle for the Generic PHY.
->> +	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
->> +- phy-names: Must be "pcie-phy".
-> 
-> -names is pointless for a single element.
+>
+> Another reason is that this keeps the responsibility of the hpd_notifier life-time
+> handling in the driver instead of hiding it in the CEC framework, which is IMHO
+> unexpected.
 
-Will remove.
+Notifier is used only by CEC framework, so IMHO it would be desirable to
+put CEC specific things into CEC framework.
+Drivers duty is just to find notifier device.
+Leaving it as is will just put little more burden on drivers, so this is
+not big deal, do as you wish :)
 
-> 
->> +
->> +Other common properties refer to
->> +	Documentation/devicetree/binding/pci/designware-pcie.txt
->>  
->>  Example:
->>  
->> @@ -16,18 +21,18 @@ SoC specific DT Entry:
->>  
->>  	pcie@290000 {
->>  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
->> -		reg = <0x290000 0x1000
->> -			0x270000 0x1000
->> -			0x271000 0x40>;
->> +		reg = <0x290000 0x1000>, <0x40000000 0x100>;
-> 
-> 256 bytes of config space?
+Regards
+Andrzej
 
-Typo. Will fix.
-
-> 
->> +		reg-names = "elbi", "config";
->>  		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
->>  		clocks = <&clock 28>, <&clock 27>;
->>  		clock-names = "pcie", "pcie_bus";
->>  		#address-cells = <3>;
->>  		#size-cells = <2>;
->>  		device_type = "pci";
->> -		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
->> -			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
->> +		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
->>  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
->> +		phys = <&pcie_phy0>;
->> +		phy-names = "pcie-phy";
->>  		#interrupt-cells = <1>;
->>  		interrupt-map-mask = <0 0 0 0>;
->>  		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
->> @@ -36,17 +41,17 @@ SoC specific DT Entry:
->>  
->>  	pcie@2a0000 {
->>  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
->> -		reg = <0x2a0000 0x1000
->> -			0x272000 0x1000
->> -			0x271040 0x40>;
->> +		reg = <0x2a0000 0x1000>, <0x60000000 0x1000>;
->> +		reg-names = "elbi", "config";
->>  		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
->>  		clocks = <&clock 29>, <&clock 27>;
->>  		clock-names = "pcie", "pcie_bus";
->>  		#address-cells = <3>;
->>  		#size-cells = <2>;
->>  		device_type = "pci";
->> -		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
->> -			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
->> +		phys = <&pcie_phy1>;
->> +		phy-names = "pcie-phy";
->> +		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
->>  			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
->>  		#interrupt-cells = <1>;
->>  		interrupt-map-mask = <0 0 0 0>;
->> -- 
->> 2.10.2
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+>
+> I think I want to keep this as-is, at least for now.
+>
+> Regards,
+>
+> 	Hans
+>
+>
+>
+>
