@@ -1,52 +1,64 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH V2 2/5] phy: phy-exynos-pcie: Add support for Exynos PCIe phy
-Date: Wed, 4 Jan 2017 15:21:31 -0500
-Message-ID: <000501d266c8$23d63960$6b82ac20$@gmail.com>
-References: <20170104123435.30740-1-jh80.chung@samsung.com> <CGME20170104123436epcas1p1a729583c3c2307d8539a186f1050ea98@epcas1p1.samsung.com> <20170104123435.30740-3-jh80.chung@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2] ARM: dts: Add missing CPU frequencies for
+ Exynos5422/5800
+Date: Wed, 4 Jan 2017 13:05:41 -0800
+Message-ID: <CAD=FV=WM_K_f0NQ0mxB55Ksbqg1gYJHs5d66ARYsa1=5hKLjXA@mail.gmail.com>
+References: <10512254.nyUcL0zgTP@amdc3058>
+ <CAD=FV=Wo273T20fe8D2v5Pn1HYR==7PHtr7WZGwzFPRspAYPzg@mail.gmail.com>
+ <20161229141707.qjrtjz7dik6a7l5s@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35473 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032277AbdADUVj (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Jan 2017 15:21:39 -0500
-In-Reply-To: <20170104123435.30740-3-jh80.chung@samsung.com>
-Content-Language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20161229141707.qjrtjz7dik6a7l5s@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ben Gamari <ben@smart-cactus.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Arjun K V <arjun.kv@samsung.com>, Andreas Faerber <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 
-On Wednesday, January 4, 2017 7:35 AM, Jaehoon Chung wrote:
-> 
-> This patch supports to use Generic Phy framework for Exynos PCIe phy.
-> When Exynos that supported the pcie want to use the PCIe,
-> it needs to control the phy resgister.
-> But it should be more complex to control in their own PCIe device drivers.
-> 
-> Currently, there is an exynos5440 case to support the pcie.
-> So this driver is based on Exynos5440 PCIe.
-> In future, will support the Other exynos SoCs likes exynos5433, exynos7.
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Hi,
 
-Reviewed-by: Jingoo Han <jingoohan1@gmail.com>
+On Thu, Dec 29, 2016 at 6:17 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Thu, Dec 15, 2016 at 04:54:30PM -0800, Doug Anderson wrote:
+>> > Index: b/arch/arm/boot/dts/exynos5800.dtsi
+>> > ===================================================================
+>> > --- a/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.365955950 +0100
+>> > +++ b/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.361955949 +0100
+>> > @@ -24,6 +24,16 @@
+>> >  };
+>> >
+>> >  &cluster_a15_opp_table {
+>> > +       opp@2000000000 {
+>> > +               opp-hz = /bits/ 64 <2000000000>;
+>> > +               opp-microvolt = <1250000>;
+>> > +               clock-latency-ns = <140000>;
+>> > +       };
+>> > +       opp@1900000000 {
+>> > +               opp-hz = /bits/ 64 <1900000000>;
+>> > +               opp-microvolt = <1250000>;
+>> > +               clock-latency-ns = <140000>;
+>> > +       };
+>>
+>> I don't think the voltages you listed are high enough for all peach pi
+>> boards for A15 at 1.9 GHz and 2.0 GHz, at least based on the research
+>> I did.  See my response to v1.
+>
+> I wanted to apply this but saw this remaining issue. Javier tested it
+> on Peach Pi so is this concern still valid?
 
-Best regards,
-Jingoo Han
+I'm not sure.  It's been years since I did anything with exynos, so I
+won't stand in the way if everyone else agrees that this patch is
+good, but I will point out that testing on a single Peach Pi board is
+not really enough given the massive difference in voltage needed
+between the highest ASV group and the lowest (a whopping 112.5 mV from
+looking in the Chrome OS source tree).
 
-> ---
-> Changelog on V2:
-> - Not include the codes relevant to pci-exynos.
-> - Remove the getting child node.
-> 
->  drivers/phy/Kconfig           |   9 ++
->  drivers/phy/Makefile          |   1 +
->  drivers/phy/phy-exynos-pcie.c | 280
-> ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 290 insertions(+)
->  create mode 100644 drivers/phy/phy-exynos-pcie.c
-> 
+-Doug
