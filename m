@@ -1,37 +1,52 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] of: reserved_mem: set dma_ops for devices using reserved
- mem
-Date: Wed, 4 Jan 2017 14:02:09 -0600
-Message-ID: <20170104200209.pefpffxssu46qqcq@rob-hp-laptop>
-References: <1482299071-22637-1-git-send-email-pankaj.dubey@samsung.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH V2 2/5] phy: phy-exynos-pcie: Add support for Exynos PCIe phy
+Date: Wed, 4 Jan 2017 15:21:31 -0500
+Message-ID: <000501d266c8$23d63960$6b82ac20$@gmail.com>
+References: <20170104123435.30740-1-jh80.chung@samsung.com> <CGME20170104123436epcas1p1a729583c3c2307d8539a186f1050ea98@epcas1p1.samsung.com> <20170104123435.30740-3-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1482299071-22637-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35473 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032277AbdADUVj (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 4 Jan 2017 15:21:39 -0500
+In-Reply-To: <20170104123435.30740-3-jh80.chung@samsung.com>
+Content-Language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 
-On Wed, Dec 21, 2016 at 11:14:31AM +0530, Pankaj Dubey wrote:
-> From: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Wednesday, January 4, 2017 7:35 AM, Jaehoon Chung wrote:
 > 
-> For some IPs, there may be virtual child devices created and for them its
-> necessary to set the dma_ops if it's using reserved memory else it will call
-> the dummy dma_ops during buffer operations for the child devices which will
-> lead to memory mapping failure.
+> This patch supports to use Generic Phy framework for Exynos PCIe phy.
+> When Exynos that supported the pcie want to use the PCIe,
+> it needs to control the phy resgister.
+> But it should be more complex to control in their own PCIe device drivers.
 > 
-> Signed-off-by: Smitha T Murthy <smitha.t-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Currently, there is an exynos5440 case to support the pcie.
+> So this driver is based on Exynos5440 PCIe.
+> In future, will support the Other exynos SoCs likes exynos5433, exynos7.
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+Reviewed-by: Jingoo Han <jingoohan1@gmail.com>
+
+Best regards,
+Jingoo Han
+
 > ---
->  drivers/of/of_reserved_mem.c | 4 ++++
->  1 file changed, 4 insertions(+)
-
-Applied, thanks.
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Changelog on V2:
+> - Not include the codes relevant to pci-exynos.
+> - Remove the getting child node.
+> 
+>  drivers/phy/Kconfig           |   9 ++
+>  drivers/phy/Makefile          |   1 +
+>  drivers/phy/phy-exynos-pcie.c | 280
+> ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 290 insertions(+)
+>  create mode 100644 drivers/phy/phy-exynos-pcie.c
+> 
