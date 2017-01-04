@@ -1,113 +1,119 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/4] Documetation: binding: modify the exynos5440 pcie
- binding
-Date: Tue, 3 Jan 2017 13:51:44 -0600
-Message-ID: <20170103195144.7fwtlvhzxhq3r25z@rob-hp-laptop>
-References: <20161228103454.26467-1-jh80.chung@samsung.com>
- <CGME20161228103455epcas5p2b3ea563efc00c776e77477ab3c778bb1@epcas5p2.samsung.com>
- <20161228103454.26467-4-jh80.chung@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 0/4] Add runtime PM support for clocks (on Exynos SoC
+ example)
+Date: Wed, 04 Jan 2017 14:25:51 +0900
+Message-ID: <ab1080b8-dfa4-77c5-226b-18e11bf557e8@samsung.com>
+References: <CGME20161230133344eucas1p21d107e1cf3096916aad1944f7e002bf9@eucas1p2.samsung.com>
+ <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161228103454.26467-4-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49166 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751787AbdADF0K (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 4 Jan 2017 00:26:10 -0500
+In-reply-to: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Dec 28, 2016 at 07:34:53PM +0900, Jaehoon Chung wrote:
-> According to using PHY framework, modified the exynos5440-pcie binding.
-> And use "config" property to follow the designware-pcie binding.
+Dear Marek,
 
-You are breaking compatibility here. Please state that and why it is 
-okay to do so.
+I like these patches because as you already said, the some clocks are included in the specific power domain such as exynos5433. I want to test these patches on Exynos5433-TM2 board. But, this series don't include the Device-Tree binding patches. Could you give the additional patches for test?
 
+Best Regards,
+Chanwoo Choi
+
+On 2016년 12월 30일 22:33, Marek Szyprowski wrote:
+> Dear All,
 > 
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 +++++++++++++---------
->  1 file changed, 17 insertions(+), 12 deletions(-)
+> This patchset adds runtime PM support to common clock framework. This is an
+> attempt to implement support for clock controllers, which belongs to a power
+> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+> us to solve various freeze/crash issues related to power management.
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> index 4f9d23d..51f6214 100644
-> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> @@ -5,10 +5,15 @@ and thus inherits all the common properties defined in designware-pcie.txt.
->  
->  Required properties:
->  - compatible: "samsung,exynos5440-pcie"
-> -- reg: base addresses and lengths of the pcie controller,
-> -	the phy controller, additional register for the phy controller.
-> +- reg: base addresses and lengths of the pcie controller
->  - interrupts: A list of interrupt outputs for level interrupt,
->  	pulse interrupt, special interrupt.
-> +- phys: From PHY binding. Phandle for the Generic PHY.
-> +	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +- phy-names: Must be "pcie-phy".
-
--names is pointless for a single element.
-
-> +
-> +Other common properties refer to
-> +	Documentation/devicetree/binding/pci/designware-pcie.txt
->  
->  Example:
->  
-> @@ -16,18 +21,18 @@ SoC specific DT Entry:
->  
->  	pcie@290000 {
->  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
-> -		reg = <0x290000 0x1000
-> -			0x270000 0x1000
-> -			0x271000 0x40>;
-> +		reg = <0x290000 0x1000>, <0x40000000 0x100>;
-
-256 bytes of config space?
-
-> +		reg-names = "elbi", "config";
->  		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
->  		clocks = <&clock 28>, <&clock 27>;
->  		clock-names = "pcie", "pcie_bus";
->  		#address-cells = <3>;
->  		#size-cells = <2>;
->  		device_type = "pci";
-> -		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
-> -			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
-> +		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
->  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-> +		phys = <&pcie_phy0>;
-> +		phy-names = "pcie-phy";
->  		#interrupt-cells = <1>;
->  		interrupt-map-mask = <0 0 0 0>;
->  		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -36,17 +41,17 @@ SoC specific DT Entry:
->  
->  	pcie@2a0000 {
->  		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
-> -		reg = <0x2a0000 0x1000
-> -			0x272000 0x1000
-> -			0x271040 0x40>;
-> +		reg = <0x2a0000 0x1000>, <0x60000000 0x1000>;
-> +		reg-names = "elbi", "config";
->  		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
->  		clocks = <&clock 29>, <&clock 27>;
->  		clock-names = "pcie", "pcie_bus";
->  		#address-cells = <3>;
->  		#size-cells = <2>;
->  		device_type = "pci";
-> -		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
-> -			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
-> +		phys = <&pcie_phy1>;
-> +		phy-names = "pcie-phy";
-> +		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
->  			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
->  		#interrupt-cells = <1>;
->  		interrupt-map-mask = <0 0 0 0>;
-> -- 
-> 2.10.2
+> The main idea behind this patchset is to keep clock's controller power domain
+> enabled every time when at least one of its clock is enabled or access to its
+> registers is being made. Clock controller driver (clock provider) can
+> supply a struct device pointer, which is the used by clock core for tracking and
+> managing clock's controller runtime pm state. Each clk_prepare() operation will
+> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+> will do pm_runtime_put() at the end.
 > 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> This runtime PM feature has been tested with Exynos4412 (not included in this
+> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+> respective power domains and need special handling during power on/off
+> procedures. Till now it wasn't handled at all, what caused various problems.
+> 
+> Patches for clocks drivers change the way the clock provider is initialized.
+> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+> infrastructure is being used. This is needed to let driver to use runtime PM
+> feature and integrate with generic power domains. The side-effect of this change
+> is a delay in clock provider registeration during system boot, so early
+> initialized drivers might get EPROBEDEFER error when requesting their clocks.
+> This is an issue for IOMMU drivers, so this patchset will be fully functional
+> once the deferred probe for IOMMU will be merged.
+> 
+> Patches are based on vanilla v4.10-rc1 kernel.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> Changelog:
+> 
+> v4:
+> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
+>   domain for ISP sub-controller needs more discussion. It will be handled
+>   separately when the runtime PM for clocks feature gets merged.
+> - Added patch with runtime PM support for Exynos AudioSS clock controller driver
+>   (needed to enable audio power domain on Exynos5 series).
+> - Fixes in Exynos5433 driver:
+> 	1. added missing clock for Audio CMU
+> 	2. added support for FSYS CMU
+> 	3. improved support for DISP CMU (thanks to Andrzej Hajda for
+> 	   investigating that).
+> - Rebased onto v4.10-rc1
+> - Waiting for a review...
+> 
+> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
+>   for the provided device during clock registration as suggested by Ulf
+> - Simplified code for exynos4412 isp clock driver registration
+> - Resolved some other minor issues pointed by Ulf clk core code
+> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+> 
+> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+> - Simplified clk_pm_runtime_get/put functions, removed workaround for devices
+>   with disabled runtime pm. Such workaround is no longer needed since commit
+>   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
+>   during system PM phases").
+> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
+>   call runtime pm functions. This solves problem with clocks, for which struct
+>   device is already registered, but no runtime pm is enabled.
+> - Extended commit messages according to Ulf suggestions.
+> - Fixed some style issues pointed by Barlomiej.
+> 
+> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+> - initial version
+> 
+> 
+> Marek Szyprowski (4):
+>   clk: Add support for runtime PM
+>   clk: samsung: Add support for runtime PM
+>   clk: samsung: exynos5433: Add runtime PM support
+>   clk: samsung: exynos-audss: Use runtime PM
+> 
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+>  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+>  drivers/clk/clk.c                                  | 111 +++++-
+>  drivers/clk/samsung/clk-exynos-audss.c             |  62 +--
+>  drivers/clk/samsung/clk-exynos5433.c               | 415 ++++++++++++++++-----
+>  drivers/clk/samsung/clk-pll.c                      |   2 +-
+>  drivers/clk/samsung/clk.c                          |  12 +-
+>  drivers/clk/samsung/clk.h                          |   7 +
+>  8 files changed, 504 insertions(+), 127 deletions(-)
+> 
