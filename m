@@ -1,66 +1,60 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7 2/4] drm/exynos: mic: Fix parse_dt function
-Date: Thu, 05 Jan 2017 19:20:07 +0900
-Message-ID: <1483611609-23522-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v7 1/4] drm/exynos: mic: Add mode_set callback function
+Date: Thu, 05 Jan 2017 19:20:06 +0900
+Message-ID: <1483611609-23522-2-git-send-email-hoegeun.kwon@samsung.com>
 References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102012epcas5p308c2d3ed269d9bf76f76f1d38422eb54@epcas5p3.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1483611609-23522-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ <CGME20170105102012epcas5p3666c67cfc82d2439c993f917f8e2d0ce@epcas5p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The OF graph is not necessary because the panel is a child of
-dsi. therefore, the parse_dt function of dsi does not need to
-check the remote_node connected to the panel. and the whole
-parse_dt function should be refactored later.
-
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 25 +++----------------------
- 1 file changed, 3 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index fed1a94..cf9361a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -269,28 +269,9 @@ static int parse_dt(struct exynos_mic *mic)
- 		}
- 		nodes[j++] = remote_node;
- 
--		switch (i) {
--		case ENDPOINT_DECON_NODE:
--			/* decon node */
--			if (of_get_child_by_name(remote_node,
--						"i80-if-timings"))
--				mic->i80_mode = 1;
--
--			break;
--		case ENDPOINT_DSI_NODE:
--			/* panel node */
--			remote_node = get_remote_node(remote_node, 1);
--			if (!remote_node) {
--				ret = -EPIPE;
--				goto exit;
--			}
--			nodes[j++] = remote_node;
--
--			break;
--		default:
--			DRM_ERROR("mic: Unknown endpoint from MIC");
--			break;
--		}
-+		if (i == ENDPOINT_DECON_NODE &&
-+			of_get_child_by_name(remote_node, "i80-if-timings"))
-+			mic->i80_mode = 1;
- 	}
- 
- exit:
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+QmVmb3JlIGFwcGx5aW5nIHRoZSBwYXRjaCwgdXNlZCB0aGUgb2ZfZ2V0X3ZpZGVvbW9kZSBmdW5j
+dGlvbiB0bwpwYXJzZSB0aGUgZGlzcGxheS10aW1pbmdzIGluIHRoZSBwYW5lbCB3aGljaCBpcyB0
+aGUgY2hpbGQgZHJpdmVyCm9mIGRzaSBpbiB0aGUgZGV2aWNldHJlZS4gdGhpcyBpcyB3cm9uZy4g
+U28gcmVtb3ZlZCB0aGUKb2ZfZ2V0X3ZpZGVvbW9kZSBhbmQgZml4ZWQgdG8gZ2V0IHZpZGVvbW9k
+ZSBzdHJ1Y3QgdGhyb3VnaAptb2RlX3NldCBjYWxsYmFjayBmdW5jdGlvbi4KClNpZ25lZC1vZmYt
+Ynk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgpSZXZpZXdlZC1ieTog
+QW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgfCAxOSArKysrKysrKysrKystLS0tLS0tCiAxIGZpbGUg
+Y2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fbWljLmMKaW5kZXggYTBkZWYwYi4uZmVkMWE5NCAxMDA2NDQKLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCisrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYwpAQCAtMjg2LDEzICsyODYsNiBAQCBzdGF0
+aWMgaW50IHBhcnNlX2R0KHN0cnVjdCBleHlub3NfbWljICptaWMpCiAJCQl9CiAJCQlub2Rlc1tq
+KytdID0gcmVtb3RlX25vZGU7CiAKLQkJCXJldCA9IG9mX2dldF92aWRlb21vZGUocmVtb3RlX25v
+ZGUsCi0JCQkJCQkJJm1pYy0+dm0sIDApOwotCQkJaWYgKHJldCkgewotCQkJCURSTV9FUlJPUigi
+bWljOiBmYWlsZWQgdG8gZ2V0IHZpZGVvbW9kZSIpOwotCQkJCWdvdG8gZXhpdDsKLQkJCX0KLQog
+CQkJYnJlYWs7CiAJCWRlZmF1bHQ6CiAJCQlEUk1fRVJST1IoIm1pYzogVW5rbm93biBlbmRwb2lu
+dCBmcm9tIE1JQyIpOwpAQCAtMzI5LDYgKzMyMiwxNyBAQCBzdGF0aWMgdm9pZCBtaWNfcG9zdF9k
+aXNhYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAJbXV0ZXhfdW5sb2NrKCZtaWNfbXV0
+ZXgpOwogfQogCitzdGF0aWMgdm9pZCBtaWNfbW9kZV9zZXQoc3RydWN0IGRybV9icmlkZ2UgKmJy
+aWRnZSwKKwkJCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAorCQkJc3RydWN0IGRybV9k
+aXNwbGF5X21vZGUgKmFkanVzdGVkX21vZGUpCit7CisJc3RydWN0IGV4eW5vc19taWMgKm1pYyA9
+IGJyaWRnZS0+ZHJpdmVyX3ByaXZhdGU7CisKKwltdXRleF9sb2NrKCZtaWNfbXV0ZXgpOworCWRy
+bV9kaXNwbGF5X21vZGVfdG9fdmlkZW9tb2RlKG1vZGUsICZtaWMtPnZtKTsKKwltdXRleF91bmxv
+Y2soJm1pY19tdXRleCk7Cit9CisKIHN0YXRpYyB2b2lkIG1pY19wcmVfZW5hYmxlKHN0cnVjdCBk
+cm1fYnJpZGdlICpicmlkZ2UpCiB7CiAJc3RydWN0IGV4eW5vc19taWMgKm1pYyA9IGJyaWRnZS0+
+ZHJpdmVyX3ByaXZhdGU7CkBAIC0zNzcsNiArMzgxLDcgQEAgc3RhdGljIHZvaWQgbWljX2VuYWJs
+ZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKSB7IH0KIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJt
+X2JyaWRnZV9mdW5jcyBtaWNfYnJpZGdlX2Z1bmNzID0gewogCS5kaXNhYmxlID0gbWljX2Rpc2Fi
+bGUsCiAJLnBvc3RfZGlzYWJsZSA9IG1pY19wb3N0X2Rpc2FibGUsCisJLm1vZGVfc2V0ID0gbWlj
+X21vZGVfc2V0LAogCS5wcmVfZW5hYmxlID0gbWljX3ByZV9lbmFibGUsCiAJLmVuYWJsZSA9IG1p
+Y19lbmFibGUsCiB9OwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
