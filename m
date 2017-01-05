@@ -1,16 +1,19 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/4] arm64: dts: exynos: Add tm2 touchkey node
-Date: Thu, 5 Jan 2017 20:41:40 +0200
-Message-ID: <20170105184140.tongd3evzm57qkps@kozik-lap>
-References: <1483604833-29746-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170105082716epcas1p100f48f22d5ff0bad7776f6d7b444daf3@epcas1p1.samsung.com>
- <1483604833-29746-5-git-send-email-jcsing.lee@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Add missing CPU frequencies for
+ Exynos5422/5800
+Date: Thu, 5 Jan 2017 21:40:59 +0200
+Message-ID: <20170105194059.bwpotpv3zjtvg5oz@kozik-lap>
+References: <10512254.nyUcL0zgTP@amdc3058>
+ <CAD=FV=Wo273T20fe8D2v5Pn1HYR==7PHtr7WZGwzFPRspAYPzg@mail.gmail.com>
+ <20161229141707.qjrtjz7dik6a7l5s@kozik-lap>
+ <CAD=FV=WM_K_f0NQ0mxB55Ksbqg1gYJHs5d66ARYsa1=5hKLjXA@mail.gmail.com>
+ <2c85559a-dc12-610b-c842-c89d078e1c2a@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1483604833-29746-5-git-send-email-jcsing.lee@samsung.com>
+In-Reply-To: <2c85559a-dc12-610b-c842-c89d078e1c2a@osg.samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,53 +23,59 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jaechul Lee <jcsing.lee@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, galaxyra@gmail.com, beomho.seo@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ben Gamari <ben@smart-cactus.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Arjun K V <arjun.kv@samsung.com>, Andreas Faerber <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 05, 2017 at 05:27:13PM +0900, Jaechul Lee wrote:
-> Add DT node support for TM2 touchkey device.
+On Wed, Jan 04, 2017 at 08:57:47PM -0300, Javier Martinez Canillas wrote:
+> Hello Doug,
 > 
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> On 01/04/2017 06:05 PM, Doug Anderson wrote:
+> > Hi,
+> > 
+> > On Thu, Dec 29, 2016 at 6:17 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >> On Thu, Dec 15, 2016 at 04:54:30PM -0800, Doug Anderson wrote:
+> >>>> Index: b/arch/arm/boot/dts/exynos5800.dtsi
+> >>>> ===================================================================
+> >>>> --- a/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.365955950 +0100
+> >>>> +++ b/arch/arm/boot/dts/exynos5800.dtsi 2016-12-15 12:43:54.361955949 +0100
+> >>>> @@ -24,6 +24,16 @@
+> >>>>  };
+> >>>>
+> >>>>  &cluster_a15_opp_table {
+> >>>> +       opp@2000000000 {
+> >>>> +               opp-hz = /bits/ 64 <2000000000>;
+> >>>> +               opp-microvolt = <1250000>;
+> >>>> +               clock-latency-ns = <140000>;
+> >>>> +       };
+> >>>> +       opp@1900000000 {
+> >>>> +               opp-hz = /bits/ 64 <1900000000>;
+> >>>> +               opp-microvolt = <1250000>;
+> >>>> +               clock-latency-ns = <140000>;
+> >>>> +       };
+> >>>
+> >>> I don't think the voltages you listed are high enough for all peach pi
+> >>> boards for A15 at 1.9 GHz and 2.0 GHz, at least based on the research
+> >>> I did.  See my response to v1.
+> >>
+> >> I wanted to apply this but saw this remaining issue. Javier tested it
+> >> on Peach Pi so is this concern still valid?
+> > 
+> > I'm not sure.  It's been years since I did anything with exynos, so I
+> > won't stand in the way if everyone else agrees that this patch is
+> > good, but I will point out that testing on a single Peach Pi board is
+> > not really enough given the massive difference in voltage needed
+> > between the highest ASV group and the lowest (a whopping 112.5 mV from
+> > looking in the Chrome OS source tree).
+> > 
+> 
+> I agree. That's why answered that I wasn't able to find regressions on the
+> Peach Pi I've access to, but I couldn't provide a Reviewed-by tag since it
+> wasn't clear to me that the values were safe for any Exynos5420/5422/5800.
 
-Although I said the patch looks correct, it was not an explicit Review
-(and we have a quite serious "Reviewer's statement of oversight") so my
-tag should not be added.
-
-No harm was done, but I prefer clearly and explicitly given tags.
+The value of 1.250 V seems to be covering only half of ASV values for
+2.0 GHz so indeed it might be insufficient for some of the chips.
+Unfortunately...
 
 Best regards,
 Krzysztof
-
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index aa8584a..dad6fb8 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -17,3 +17,16 @@
->  	model = "Samsung TM2 board";
->  	compatible = "samsung,tm2", "samsung,exynos5433";
->  };
-> +
-> +&hsi2c_9 {
-> +	status = "okay";
-> +
-> +	touchkey@20 {
-> +		compatible = "samsung,tm2-touchkey";
-> +		reg = <0x20>;
-> +		interrupt-parent = <&gpa3>;
-> +		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +		vcc-supply = <&ldo32_reg>;
-> +		vdd-supply = <&ldo33_reg>;
-> +	};
-> +};
-> -- 
-> 2.7.4
-> 
