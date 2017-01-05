@@ -1,106 +1,72 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH V2 3/5] Documetation: binding: modify the exynos5440 pcie
- binding
-Date: Thu, 05 Jan 2017 11:51:58 +0530
-Message-ID: <059c5912-8078-0191-f677-e85a3b3d91ce@samsung.com>
-References: <20170104123435.30740-1-jh80.chung@samsung.com>
- <CGME20170104123436epcas1p1040f1e074748fabe58af52eb0b833713@epcas1p1.samsung.com>
- <20170104123435.30740-4-jh80.chung@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v6 0/4] Add support for the S6E3HA2 panel on TM2 board
+Date: Thu, 05 Jan 2017 15:45:46 +0900
+Message-ID: <1483598750-15062-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170105064607epcas1p1219d09b7d884f91b5063accf57794ec7@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170104123435.30740-4-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, alim.akhtar@samsung.com, cpgs@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jaehoon,
-
-On Wednesday 04 January 2017 06:04 PM, Jaehoon Chung wrote:
-> According to using PHY framework, updates the exynos5440-pcie binding.
-> For maintaining backward compatibility, leaves the current dt-binding.
-> (It should be deprecated.)
-> 
-> Recommends to use the Phy Framework and "config" property to follow
-> the designware-pcie binding.
-> If you use the old way, can see "mssing *config* reg space" message.
-> Because the getting configuration space address from range is old way.
-> 
-> NOTE: When use the "config" property, first name of 'reg-names' must be
-> set to "elbi". Otherwise driver can't maintain the backward capability.
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
-> Changelog on V2:
-> - Describes more commit message
-> - Fixes the typos
-> - Adds the new example for using PHY framework
-> - Deprecated the old dt-binding description
-> - Removes 'phy-names'
-> 
->  .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> index 4f9d23d..1d0af0e 100644
-> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> @@ -7,8 +7,19 @@ Required properties:
->  - compatible: "samsung,exynos5440-pcie"
->  - reg: base addresses and lengths of the pcie controller,
->  	the phy controller, additional register for the phy controller.
-> +	(Registers for the phy controller are DEPRECATED.
-> +	 Use the PHY framework.)
-> +- reg-names : First name should be set to "elbi".
-> +	And use the "config" instead of getting the confgiruation address space
-> +	from "ranges".
-> +	NOTE: When use the "config" property, reg-names must be set.
->  - interrupts: A list of interrupt outputs for level interrupt,
->  	pulse interrupt, special interrupt.
-> +- phys: From PHY binding. Phandle for the Generic PHY.
-> +	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +
-> +Other common properties refer to
-> +	Documentation/devicetree/binding/pci/designware-pcie.txt
->  
->  Example:
->  
-> @@ -54,6 +65,24 @@ SoC specific DT Entry:
->  		num-lanes = <4>;
->  	};
->  
-> +With using PHY framework:
-> +	pcie_phy0: pcie-phy@270000 {
-> +		...
-> +		reg = <0x270000 0x1000>, <0x271000 0x40>;
-> +		regn-names = "phy", "block";
-
-typo: %s/regn-names/reg-names/
-
-> +		...
-> +	};
-> +
-> +	pcie@290000 {
-> +		...
-> +		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
-> +		reg-names = "elbi", "config";
-> +		phys = <&pcie_phy0>;
-> +		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000
-> +			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>;
-> +		...
-> +	};
-> +
->  Board specific DT Entry:
->  
->  	pcie@290000 {
-> 
-
-Other than above one typo rest is looking fine.
-Once you address it, feel free to add
-
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-Thanks,
-Pankaj Dubey
+UHVycG9zZSBvZiB0aGlzIHBhdGNoIGlzIGFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIEFNT0xFRCBw
+YW5lbCBvbgp0aGUgVE0yIGJvYXJkLiBUaGUgZmlyc3QgcGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBT
+NkUzSEEyIHBhbmVsCmRldmljZSB0cmVlIGRvY3VtZW50IGFuZCBkcml2ZXIsIHRoZSBzZWNvbmQg
+cGF0Y2ggYWRkIHN1cHBvcnQgZm9yClM2RTNIQTIgcGFuZWwgZGV2aWNlIHRyZWUuCgpDaGFuZ2Vz
+IGZvciBWNjoKLSBGaXhlZCB0aGUgcGFyc2VfZHQgZnVuY3Rpb24gb2YgZHNpIGRldmljZSBkcml2
+ZXIuCi0gUmVtb3ZlZCBPRiBncmFwaCBvZiBwYW5lbCBpbiBEVCBhbmQgRFQgYmluZGluZyBkb2N1
+bWVudC4KLSBGaXhlZCB0aGUgczZlM2hhMiBwYW5lbCBkZXZpY2UgZHJpdmVyLgogIC0gRml4ZWQg
+ZnJvbSBudW1iZXIgc2l6ZSB0byBBUlJBWV9TSVpFKCkuCiAgLSBGaXhlZCBlcnJvciBoYW5kbGlu
+ZyBpbiBtaXBpX2RzaV9kY3NfKiBmdW5jdGlvbnMuCiAgLSBGaXhlZCB0aGUgY2xvY2sgb2YgZGlz
+cGxheV9tb2RlLgogIC0gUmVtb3ZlZCB1bm5lY2Vzc2FyeSBjYXN0aW5nIGFuZCBlcnJvciBsb2cu
+CgpDaGFuZ2UgZm9yIFY1OgotIFRoZSBWNSBoYXMgb25seSBvbmUgZml4IGluIFY0IGJlbG93Lgot
+IFJlbW92ZWQgdGhlIGVuYWJsZSBjaGVjayBvZiB0aGUgbWljIGRyaXZlciBpbiBtb2RlX3NldAog
+IGNhbGxiYWNrLCBiZWNhdXNlIG1vZGVfc2V0IHNob3VsZCBiZSBwZXJmb3JtZWQgZXZlcnkgdGlt
+ZS4KCkNoYW5nZXMgZm9yIFY0OgotIFJlbW92ZWQgZGlzcGxheS10aW1pbmdzIGluIGRldmljZXRy
+ZWUsIHRoZSBkaXNwbGF5LXRpbWluZ3MgaGFzCiAgYmVlbiBmaXhlZCB0byBiZSBwcm92aWRlZCBi
+eSB0aGUgZGV2aWNlIGRyaXZlci4KLSBBZGRlZCB0aGUgbW9kZV9zZXQgY2FsbGJhY2sgZnVuY3Rp
+b24gaW50byBleHlub3NfZHJtX21pYywKICBiZWNhdXNlIHRoZSBleHlub3NfZHJtX21pYyBkcml2
+ZXIgY2FuIG5vdCBwYXJzZSBhIHZpZGVvbW9kZQogIHN0cnVjdCBieSByZW1vdmluZyB0aGUgZGlz
+cGxheS10aW1pbmdzIGZyb20gdGhlIGRldmljZXRyZWUuCgpDaGFuZ2VzIGZvciBWMzoKLSBJbiB0
+aGUgRFQgYmluZGluZyBkb2N1bWVudCwgbWFkZSBpdCBjbGVhcmx5IHRoYXQgdGhlIHBhbmVsIGlz
+IGEKICBjaGlsZCBub2RlIG9mIGRzaS4KLSBGaXggcmVzZXQtZ3BpbyBhY3RpdmUgZnJvbSBoaWdo
+IHRvIGxvdy4KLSBJcyB0aGUgT0YgZ3JhcGggc2F5aW5nIHJlbGF0ZWQgdG8gWzFdPwogIEFsdGhv
+Z2ggdGhlIHBhbmVsIGlzIGEgY2hpbGQgb2YgZHNpLCBJIHRoaW5rIE9GIGdyYXBoIG5lY2Vzc2Fy
+eS4KICBiZWNhdXNlIGlmIGEgcmVtb3RlLWVuZHBvaW50IGlzIG5vdCBzcGVjaWZpZWQsIHRoZSBk
+c2kgYWxzbwogIHBhbmVsIGlzIG5vdCBwcm9iZWQuCi0gVGhlIGRpc3BsYXktdGltaW5ncyBoYXMg
+YmVlbiBmaXhlZCB0byBiZSBwcm92aWRlZCBieSB0aGUgZGV2aWNlCiAgZHJpdmVyLiBob3dldmVy
+LCBJIHRoaW5rIGRpc3BsYXktdGltaW5ncyBpcyBuZWNlc3NhcnkgaW4gZHRzLgogIGJlY2F1c2Ug
+aWYgZHRzIGRvZXMgbm90IGhhdmUgZGlzcGxheS10aW1pbmdzLCBkc2kgd2lsbCBub3QgbG9hZC4K
+CkNoYW5nZXMgZm9yIFYyOgotIEZpeGVkIHRoZSBzYW1zdW5nLHM2ZTNoYTIudHh0IERUIGRvY3Vt
+ZW50LgogIC0gQWRkZWQgYWN0aXZlIGhpZ2ggb3IgbG93IGFmdGVyIHRoZSBkZXNjcmlwdGlvbiBv
+ZiB0aGUgR1BJT3MuCiAgLSBSZW1vdmVkIHRoZSByZWcgYW5kIGFkZGVkIGEgZGVzY3JpcHRpb24g
+b2YgdGhlIHZpcnR1YWwKICAgIGNoYW5uZWwgbnVtYmVyIG9mIGEgRFNJIHBlcmlwaGVyYWwuCgpI
+b2VnZXVuIEt3b24gKDMpOgogIGRybS9leHlub3M6IG1pYzogQWRkIG1vZGVfc2V0IGNhbGxiYWNr
+IGZ1bmN0aW9uCiAgZHJtL2V4eW5vczogbWljOiBGaXggcGFyc2VfZHQgZnVuY3Rpb24KICBkcm0v
+cGFuZWw6IEFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIHBhbmVsIGRyaXZlciBvbiBUTTIgYm9hcmQK
+Ckh5dW5nd29uIEh3YW5nICgxKToKICBhcm02NDogZHRzOiBleHlub3M6IEFkZCBzdXBwb3J0IGZv
+ciBTNkUzSEEyIHBhbmVsIGRldmljZSBvbiBUTTIgYm9hcmQKCiAuLi4vYmluZGluZ3MvZGlzcGxh
+eS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0ICAgICB8ICAyOCArCiBhcmNoL2FybTY0L2Jvb3Qv
+ZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMgICAgICB8ICAxMCArCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgICAgICAgICAgICB8ICA1NSArLQogZHJpdmVycy9n
+cHUvZHJtL3BhbmVsL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKwogZHJpdmVy
+cy9ncHUvZHJtL3BhbmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwogZHJp
+dmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jICAgICAgfCA3NTQgKysr
+KysrKysrKysrKysrKysrKysrCiA2IGZpbGVzIGNoYW5nZWQsIDgyMSBpbnNlcnRpb25zKCspLCAz
+MyBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0CiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jCgot
+LSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
