@@ -1,361 +1,280 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: make tm2 and tm2e independent
- from each other
-Date: Thu, 05 Jan 2017 18:45:46 +0900
-Message-ID: <586E15CA.6060002@samsung.com>
-References: <1483604833-29746-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170105082716epcas1p1f2a6eea40d842e2d8f7f7f54c029bc82@epcas1p1.samsung.com>
- <1483604833-29746-4-git-send-email-jcsing.lee@samsung.com>
- <586E0E56.6050608@samsung.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH] cpufreq: Remove CONFIG_CPU_FREQ_STAT_DETAILS config option
+Date: Thu, 05 Jan 2017 10:50:25 +0100
+Message-ID: <877f69esym.fsf@free-electrons.com>
+References: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Boundary_(ID_UCz0DblgX3o/EjTXYf95eA)"
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <586E0E56.6050608@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jaechul Lee <jcsing.lee@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, beomho.seo@samsung.com, linux-input@vger.kernel.org, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
+        (Viresh Kumar's message of "Thu, 5 Jan 2017 13:57:41 +0530")
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, arnd.bergmann@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
+Hi Viresh,
+ 
+ On jeu., janv. 05 2017, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 
---Boundary_(ID_UCz0DblgX3o/EjTXYf95eA)
-Content-type: text/plain; charset=euc-kr
-Content-transfer-encoding: 8BIT
+> This doesn't have any benefit apart from saving a small amount of memory
+> when it is disabled. The ifdef hackery in the code makes it dirty
+> unnecessarily.
+>
+> Clean it up by removing the Kconfig option completely. Few defconfigs
+> are also updated and CONFIG_CPU_FREQ_STAT_DETAILS is replaced with
+> CONFIG_CPU_FREQ_STAT now in them, as users wanted stats to be enabled.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  arch/arm/configs/exynos_defconfig         |  2 +-
+>  arch/arm/configs/multi_v5_defconfig       |  2 +-
+>  arch/arm/configs/multi_v7_defconfig       |  2 +-
 
-Hi Andi,
+>  arch/arm/configs/mvebu_v5_defconfig       |  2 +-
+For this file:
 
-I correct the my previous comment about ldo23 and ldo25
-because I check the final schematic document, I worked
-with wrong information of ldo23 and ldo25 on the patch[1].
-[1] https://lkml.org/lkml/2016/11/3/61
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-I'll send the fix patch to you right now
-after that you better to work for these patches.
+Gregory
 
 
-On 2017년 01월 05일 18:13, Chanwoo Choi wrote:
-> Hi,
-> 
-> I add the some comment as following:
-> - ldo23/25/31/38 have the different value between tm2 and tm2e.
-> - The patch[1] was alread posted. I think you better to rebase this patch on patch[1].
-> [1] https://patchwork.kernel.org/patch/9491769/
-> - ("ARM64: dts: TM2: comply to the samsung pinctrl naming convention")
-> 
-> I add detailed comments on below.
-> 
-> On 2017년 01월 05일 17:27, Jaechul Lee wrote:
->> From: Andi Shyti <andi.shyti@samsung.com>
->>
->> Currently tm2e dts includes tm2 but there are some differences
->> between the two boards and tm2 has some properties that tm2e
->> doesn't have.
->>
->> That's why it's important to keep the two dts files independent
->> and put all the commonalities in a tm2-common.dtsi file.
->>
->> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
->> ---
->>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1116 +++++++++++++++++++
->>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1138 +-------------------
->>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |    2 +-
->>  3 files changed, 1136 insertions(+), 1120 deletions(-)
->>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->>  rewrite arch/arm64/boot/dts/exynos/exynos5433-tm2.dts (98%)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->> new file mode 100644
->> index 0000000..7ad0019
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->> @@ -0,0 +1,1116 @@
->> +/*
->> + * SAMSUNG Exynos5433 TM2 board device tree source
->> + *
->> + * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->> + *
->> + * Device tree source file for Samsung's TM2 board which is based on
->> + * Samsung Exynos5433 SoC.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +/dts-v1/;
->> +#include "exynos5433.dtsi"
->> +#include <dt-bindings/clock/samsung,s2mps11.h>
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/input/input.h>
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +
-> 
-> [snip]
-> 
->> +&hsi2c_0 {
->> +	status = "okay";
->> +	clock-frequency = <2500000>;
->> +
->> +	s2mps13-pmic@66 {
->> +		compatible = "samsung,s2mps13-pmic";
->> +		interrupt-parent = <&gpa0>;
->> +		interrupts = <7 IRQ_TYPE_NONE>;
->> +		reg = <0x66>;
->> +		samsung,s2mps11-wrstbi-ground;
->> +
->> +		s2mps13_osc: clocks {
->> +			compatible = "samsung,s2mps13-clk";
->> +			#clock-cells = <1>;
->> +			clock-output-names = "s2mps13_ap", "s2mps13_cp",
->> +				"s2mps13_bt";
->> +		};
->> +
->> +		regulators {
->> +			ldo1_reg: LDO1 {
->> +				regulator-name = "VDD_ALIVE_0.9V_AP";
->> +				regulator-min-microvolt = <900000>;
->> +				regulator-max-microvolt = <900000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo2_reg: LDO2 {
->> +				regulator-name = "VDDQ_MMC2_2.8V_AP";
->> +				regulator-min-microvolt = <2800000>;
->> +				regulator-max-microvolt = <2800000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo3_reg: LDO3 {
->> +				regulator-name = "VDD1_E_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo4_reg: LDO4 {
->> +				regulator-name = "VDD10_MIF_PLL_1.0V_AP";
->> +				regulator-min-microvolt = <1300000>;
->> +				regulator-max-microvolt = <1300000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo5_reg: LDO5 {
->> +				regulator-name = "VDD10_DPLL_1.0V_AP";
->> +				regulator-min-microvolt = <1000000>;
->> +				regulator-max-microvolt = <1000000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo6_reg: LDO6 {
->> +				regulator-name = "VDD10_MIPI2L_1.0V_AP";
->> +				regulator-min-microvolt = <1000000>;
->> +				regulator-max-microvolt = <1000000>;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo7_reg: LDO7 {
->> +				regulator-name = "VDD18_MIPI2L_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +			};
->> +
->> +			ldo8_reg: LDO8 {
->> +				regulator-name = "VDD18_LLI_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo9_reg: LDO9 {
->> +				regulator-name = "VDD18_ABB_ETC_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo10_reg: LDO10 {
->> +				regulator-name = "VDD33_USB30_3.0V_AP";
->> +				regulator-min-microvolt = <3000000>;
->> +				regulator-max-microvolt = <3000000>;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo11_reg: LDO11 {
->> +				regulator-name = "VDD_INT_M_1.0V_AP";
->> +				regulator-min-microvolt = <1000000>;
->> +				regulator-max-microvolt = <1000000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo12_reg: LDO12 {
->> +				regulator-name = "VDD_KFC_M_1.1V_AP";
->> +				regulator-min-microvolt = <800000>;
->> +				regulator-max-microvolt = <1350000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo13_reg: LDO13 {
->> +				regulator-name = "VDD_G3D_M_0.95V_AP";
->> +				regulator-min-microvolt = <950000>;
->> +				regulator-max-microvolt = <950000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo14_reg: LDO14 {
->> +				regulator-name = "VDDQ_M1_LDO_1.2V_AP";
->> +				regulator-min-microvolt = <1200000>;
->> +				regulator-max-microvolt = <1200000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo15_reg: LDO15 {
->> +				regulator-name = "VDDQ_M2_LDO_1.2V_AP";
->> +				regulator-min-microvolt = <1200000>;
->> +				regulator-max-microvolt = <1200000>;
->> +				regulator-always-on;
->> +				regulator-state-mem {
->> +					regulator-off-in-suspend;
->> +				};
->> +			};
->> +
->> +			ldo16_reg: LDO16 {
->> +				regulator-name = "VDDQ_EFUSE";
->> +				regulator-min-microvolt = <1400000>;
->> +				regulator-max-microvolt = <3400000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo17_reg: LDO17 {
->> +				regulator-name = "V_TFLASH_2.8V_AP";
->> +				regulator-min-microvolt = <2800000>;
->> +				regulator-max-microvolt = <2800000>;
->> +			};
->> +
->> +			ldo18_reg: LDO18 {
->> +				regulator-name = "V_CODEC_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +			};
->> +
->> +			ldo19_reg: LDO19 {
->> +				regulator-name = "VDDA_1.8V_COMP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo20_reg: LDO20 {
->> +				regulator-name = "VCC_2.8V_AP";
->> +				regulator-min-microvolt = <2800000>;
->> +				regulator-max-microvolt = <2800000>;
->> +				regulator-always-on;
->> +			};
->> +
->> +			ldo21_reg: LDO21 {
->> +				regulator-name = "VT_CAM_1.8V";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +			};
->> +
->> +			ldo22_reg: LDO22 {
->> +				regulator-name = "CAM_IO_1.8V_AP";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <1800000>;
->> +			};
->> +
->> +			ldo23_reg: LDO23 {
->> +				regulator-name = "CAM_SEN_CORE_1.2V_AP";
->> +				regulator-min-microvolt = <1050000>;
->> +				regulator-max-microvolt = <1200000>;
-> 
-> ldo23_reg has the different value between tm2 and tm2e.
-> - tm2 : name - CAM_SEN_CORE_1.2V_AP, max-microvolt :1200000
-> - tm2e : name - CAM_SEN_CORE_1.025V_AP, max-microvolt :1050000
-
-To check the final schematic document, ldo23 is used on both tm2 and tm2e without difference.
-But, name is CAM_SEN_CORE_1.05V_AP
-
-> 
->> +			};
->> +
->> +			ldo24_reg: LDO24 {
->> +				regulator-name = "VT_CAM_1.2V";
->> +				regulator-min-microvolt = <1200000>;
->> +				regulator-max-microvolt = <1200000>;
->> +			};
->> +
->> +			ldo25_reg: LDO25 {
->> +				regulator-name = "CAM_SEN_A2.8V_AP";
->> +				regulator-min-microvolt = <2800000>;
->> +				regulator-max-microvolt = <2800000>;
->> +			};
-> 
-> ldo25 is only used on TM2 and has the different name between tm2 and tm2e.
-> - tm2 : name - CAM_SEN_A2.8V_AP
-> - tm2e : name - UNUSED_LDO15
-
-To check the final schematic document, ldo25 is not used on both tm2 and tm2e.
-
-[snip]
+>  arch/arm/configs/pxa_defconfig            |  2 +-
+>  arch/arm/configs/shmobile_defconfig       |  2 +-
+>  arch/mips/configs/lemote2f_defconfig      |  1 -
+>  arch/powerpc/configs/ppc6xx_defconfig     |  1 -
+>  arch/sh/configs/sh7785lcr_32bit_defconfig |  2 +-
+>  drivers/cpufreq/Kconfig                   |  8 --------
+>  drivers/cpufreq/cpufreq_stats.c           | 14 --------------
+>  11 files changed, 7 insertions(+), 31 deletions(-)
+>
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 79c415c33f69..809f0bf3042a 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -24,7 +24,7 @@ CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
+> diff --git a/arch/arm/configs/multi_v5_defconfig b/arch/arm/configs/multi_v5_defconfig
+> index 361686a362f1..69a4bd13eea5 100644
+> --- a/arch/arm/configs/multi_v5_defconfig
+> +++ b/arch/arm/configs/multi_v5_defconfig
+> @@ -58,7 +58,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
+>  CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_IDLE=y
+>  CONFIG_ARM_KIRKWOOD_CPUIDLE=y
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index b01a43851294..2dcac90eba01 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -132,7 +132,7 @@ CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_KEXEC=y
+>  CONFIG_EFI=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
+> diff --git a/arch/arm/configs/mvebu_v5_defconfig b/arch/arm/configs/mvebu_v5_defconfig
+> index f7f6039419aa..4b598da0d086 100644
+> --- a/arch/arm/configs/mvebu_v5_defconfig
+> +++ b/arch/arm/configs/mvebu_v5_defconfig
+> @@ -44,7 +44,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
+>  CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_IDLE=y
+>  CONFIG_ARM_KIRKWOOD_CPUIDLE=y
+> diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+> index e4314b1227a3..271dc7e78e43 100644
+> --- a/arch/arm/configs/pxa_defconfig
+> +++ b/arch/arm/configs/pxa_defconfig
+> @@ -97,7 +97,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
+>  CONFIG_CMDLINE="root=/dev/ram0 ro"
+>  CONFIG_KEXEC=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
+> diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+> index 1b0f8ae36fb3..adeaecd831a4 100644
+> --- a/arch/arm/configs/shmobile_defconfig
+> +++ b/arch/arm/configs/shmobile_defconfig
+> @@ -38,7 +38,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
+>  CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_KEXEC=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=y
+>  CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+> diff --git a/arch/mips/configs/lemote2f_defconfig b/arch/mips/configs/lemote2f_defconfig
+> index 5da76e0e120f..bed745596d86 100644
+> --- a/arch/mips/configs/lemote2f_defconfig
+> +++ b/arch/mips/configs/lemote2f_defconfig
+> @@ -40,7 +40,6 @@ CONFIG_PM_STD_PARTITION="/dev/hda3"
+>  CONFIG_CPU_FREQ=y
+>  CONFIG_CPU_FREQ_DEBUG=y
+>  CONFIG_CPU_FREQ_STAT=m
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
+> diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
+> index 3ce91a3df27f..1d2d69dd6409 100644
+> --- a/arch/powerpc/configs/ppc6xx_defconfig
+> +++ b/arch/powerpc/configs/ppc6xx_defconfig
+> @@ -62,7 +62,6 @@ CONFIG_MPC8610_HPCD=y
+>  CONFIG_GEF_SBC610=y
+>  CONFIG_CPU_FREQ=y
+>  CONFIG_CPU_FREQ_STAT=m
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+>  CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+> diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> index 9bdcf72ec06a..2fce54d9c388 100644
+> --- a/arch/sh/configs/sh7785lcr_32bit_defconfig
+> +++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> @@ -25,7 +25,7 @@ CONFIG_SH_SH7785LCR=y
+>  CONFIG_NO_HZ=y
+>  CONFIG_HIGH_RES_TIMERS=y
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_SH_CPU_FREQ=y
+>  CONFIG_HEARTBEAT=y
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index d8b164a7c4e5..15adef473d42 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -37,14 +37,6 @@ config CPU_FREQ_STAT
+>  
+>  	  If in doubt, say N.
+>  
+> -config CPU_FREQ_STAT_DETAILS
+> -	bool "CPU frequency transition statistics details"
+> -	depends on CPU_FREQ_STAT
+> -	help
+> -	  Show detailed CPU frequency transition table in sysfs.
+> -
+> -	  If in doubt, say N.
+> -
+>  choice
+>  	prompt "Default CPUFreq governor"
+>  	default CPU_FREQ_DEFAULT_GOV_USERSPACE if ARM_SA1100_CPUFREQ || ARM_SA1110_CPUFREQ
+> diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+> index ac284e66839c..18abd454da43 100644
+> --- a/drivers/cpufreq/cpufreq_stats.c
+> +++ b/drivers/cpufreq/cpufreq_stats.c
+> @@ -25,9 +25,7 @@ struct cpufreq_stats {
+>  	unsigned int last_index;
+>  	u64 *time_in_state;
+>  	unsigned int *freq_table;
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	unsigned int *trans_table;
+> -#endif
+>  };
+>  
+>  static int cpufreq_stats_update(struct cpufreq_stats *stats)
+> @@ -46,9 +44,7 @@ static void cpufreq_stats_clear_table(struct cpufreq_stats *stats)
+>  	unsigned int count = stats->max_state;
+>  
+>  	memset(stats->time_in_state, 0, count * sizeof(u64));
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	memset(stats->trans_table, 0, count * count * sizeof(int));
+> -#endif
+>  	stats->last_time = get_jiffies_64();
+>  	stats->total_trans = 0;
+>  }
+> @@ -84,7 +80,6 @@ static ssize_t store_reset(struct cpufreq_policy *policy, const char *buf,
+>  	return count;
+>  }
+>  
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  static ssize_t show_trans_table(struct cpufreq_policy *policy, char *buf)
+>  {
+>  	struct cpufreq_stats *stats = policy->stats;
+> @@ -129,7 +124,6 @@ static ssize_t show_trans_table(struct cpufreq_policy *policy, char *buf)
+>  	return len;
+>  }
+>  cpufreq_freq_attr_ro(trans_table);
+> -#endif
+>  
+>  cpufreq_freq_attr_ro(total_trans);
+>  cpufreq_freq_attr_ro(time_in_state);
+> @@ -139,9 +133,7 @@ static struct attribute *default_attrs[] = {
+>  	&total_trans.attr,
+>  	&time_in_state.attr,
+>  	&reset.attr,
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	&trans_table.attr,
+> -#endif
+>  	NULL
+>  };
+>  static struct attribute_group stats_attr_group = {
+> @@ -200,9 +192,7 @@ void cpufreq_stats_create_table(struct cpufreq_policy *policy)
+>  
+>  	alloc_size = count * sizeof(int) + count * sizeof(u64);
+>  
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	alloc_size += count * count * sizeof(int);
+> -#endif
+>  
+>  	/* Allocate memory for time_in_state/freq_table/trans_table in one go */
+>  	stats->time_in_state = kzalloc(alloc_size, GFP_KERNEL);
+> @@ -211,9 +201,7 @@ void cpufreq_stats_create_table(struct cpufreq_policy *policy)
+>  
+>  	stats->freq_table = (unsigned int *)(stats->time_in_state + count);
+>  
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	stats->trans_table = stats->freq_table + count;
+> -#endif
+>  
+>  	stats->max_state = count;
+>  
+> @@ -259,8 +247,6 @@ void cpufreq_stats_record_transition(struct cpufreq_policy *policy,
+>  	cpufreq_stats_update(stats);
+>  
+>  	stats->last_index = new_index;
+> -#ifdef CONFIG_CPU_FREQ_STAT_DETAILS
+>  	stats->trans_table[old_index * stats->max_state + new_index]++;
+> -#endif
+>  	stats->total_trans++;
+>  }
+> -- 
+> 2.7.1.410.g6faf27b
+>
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
-
---Boundary_(ID_UCz0DblgX3o/EjTXYf95eA)
-Content-type: text/x-vcard; CHARSET=EUC-KR; name=cw00_choi.vcf
-Content-transfer-encoding: base64
-Content-disposition: attachment; filename=cw00_choi.vcf
-
-bnVsbA0K
-
---Boundary_(ID_UCz0DblgX3o/EjTXYf95eA)
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---Boundary_(ID_UCz0DblgX3o/EjTXYf95eA)--
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
