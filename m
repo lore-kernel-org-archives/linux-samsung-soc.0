@@ -1,40 +1,52 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH V2 4/5] PCI: exynos: support the using PHY generic framework
-Date: Thu, 05 Jan 2017 14:31:14 +0530
-Message-ID: <bf937878-04a0-77cb-4c0a-cecf1bc20a2e@samsung.com>
-References: <20170104123435.30740-1-jh80.chung@samsung.com>
- <CGME20170104123436epcas1p1651443c5fe13f67006864aed2f70fa9d@epcas1p1.samsung.com>
- <20170104123435.30740-5-jh80.chung@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: make tm2 and tm2e independent
+ from each other
+Date: Thu, 05 Jan 2017 18:23:15 +0900
+Message-ID: <20170105092315.swensammin4wbgx5@gangnam.samsung>
+References: <1483604833-29746-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170105082716epcas1p1f2a6eea40d842e2d8f7f7f54c029bc82@epcas1p1.samsung.com>
+ <1483604833-29746-4-git-send-email-jcsing.lee@samsung.com>
+ <586E0E56.6050608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170104123435.30740-5-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, alim.akhtar@samsung.com, cpgs@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-disposition: inline
+In-reply-to: <586E0E56.6050608@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Jaechul Lee <jcsing.lee@samsung.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-input@vger.kernel.org, galaxyra@gmail.com, beomho.seo@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jaehoon,
+Hi Chanwoo,
 
-On Wednesday 04 January 2017 06:04 PM, Jaehoon Chung wrote:
-> This patch is for using PHY generic framework.
-> To maintain backward compatibility, check whether phy is supported or
-> not with 'using_phy'.
-> 
-> And if someone use the old dt-file, display the "deprecated" message.
-> But it's still working fine with it.
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
-> Changelog on V2:
-> - This patch is split from previous PATCH[1/4]
-> - Maintain the backward compatibility
-> - Adds 'using_phy' for cheching whether phy framework is used or not
-> - Adds 'DEPRECATED' message for old dt-binding way
-> 
+> I add the some comment as following:
+> - ldo23/25/31/38 have the different value between tm2 and tm2e.
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Thanks for pointing this out. I planned to do this already in a
+following patch as for now I think it's out from the scope of this
+particular patch.
+
+> - The patch[1] was alread posted. I think you better to rebase this patch on patch[1].
+> [1] https://patchwork.kernel.org/patch/9491769/
+> - ("ARM64: dts: TM2: comply to the samsung pinctrl naming convention")
+
+Yes, I also thought about this, but I didn't know whether it was
+already picked by anyone. I didn't want to stop Jaechul that's
+why I was planning to rebase the other rather than this.
+But you are right, because some bits of the other patches I know
+that have been merged. Thank you!
+
+Krzysztof, do you mind if I send patch 3 as a reply to this
+e-mail? The changes should not affect patch 4, anyway.
 
 Thanks,
-Pankaj Dubey
+Andi
