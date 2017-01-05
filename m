@@ -1,88 +1,68 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/3] ARM64: dts: exynos5433: add DECON_TV node
-Date: Thu, 05 Jan 2017 16:25:41 +0100
-Message-ID: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170105152604eucas1p25340c974fa7f375905c958e2bff6d96f@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59103 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936298AbdAEP0I (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 10:26:08 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 2/3] ARM64: dts: exynos5433: add HDMI node
+Date: Thu, 05 Jan 2017 16:25:42 +0100
+Message-ID: <1483629943-31183-2-git-send-email-a.hajda@samsung.com>
+References: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170105152604eucas1p2092deeb660630f09b857cd1f8d1e4dea@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1483629943-31183-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org
 
-DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
-or 2nd DSI path.
+HDMI converts RGB/I80 signal from DECON_TV to HDMI/TMDS video stream.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 44 ++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 8cbfd1d..b47951b 100644
+index b47951b..cf45446 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -821,6 +821,28 @@
- 			};
+@@ -843,6 +843,36 @@
+ 			iommu-names = "m0", "m1";
  		};
  
-+		decon_tv: decon@13880000 {
-+			compatible = "samsung,exynos5433-decon-tv";
-+			reg = <0x13880000 0x20B8>;
-+			clocks = <&cmu_disp CLK_PCLK_DECON_TV>,
-+				 <&cmu_disp CLK_ACLK_DECON_TV>,
-+				 <&cmu_disp CLK_ACLK_SMMU_TV0X>,
-+				 <&cmu_disp CLK_ACLK_XIU_TV0X>,
-+				 <&cmu_disp CLK_PCLK_SMMU_TV0X>,
-+				 <&cmu_disp CLK_SCLK_DECON_TV_VCLK>,
-+				 <&cmu_disp CLK_SCLK_DECON_TV_ECLK>;
-+			clock-names = "pclk", "aclk_decon", "aclk_smmu_decon0x",
-+				      "aclk_xiu_decon0x", "pclk_smmu_decon0x",
-+				      "sclk_decon_vclk", "sclk_decon_eclk";
-+			samsung,disp-sysreg = <&syscon_disp>;
-+			interrupt-names = "fifo", "vsync", "lcd_sys";
-+			interrupts = <0 210 0>, <0 211 0>, <0 212 0>;
++		hdmi: hdmi@13970000 {
++			compatible = "samsung,exynos5433-hdmi";
++			reg = <0x13970000 0x70000>;
++			interrupts = <0 208 0>;
++			clocks = <&cmu_disp CLK_PCLK_HDMI>,
++				<&cmu_disp CLK_PCLK_HDMIPHY>,
++				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO>,
++				<&cmu_disp CLK_PHYCLK_HDMI_PIXEL>,
++				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY>,
++				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_TMDS_CLKO_USER>,
++				<&cmu_disp CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY>,
++				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_PIXEL_CLKO_USER>,
++				<&xxti>, <&cmu_disp CLK_SCLK_HDMI_SPDIF>;
++			clock-names = "hdmi_pclk", "hdmi_i_pclk",
++				"i_tmds_clk", "i_pixel_clk",
++				"tmds_clko", "tmds_clko_user",
++				"pixel_clko", "pixel_clko_user",
++				"oscclk", "i_spdif_clk";
++			phy = <&hdmiphy>;
++			ddc = <&hsi2c_11>;
++			samsung,syscon-phandle = <&pmu_system_controller>;
++			samsung,sysreg-phandle = <&syscon_disp>;
 +			power-domains = <&pd_disp>;
 +			status = "disabled";
-+			iommus = <&sysmmu_tv0x>, <&sysmmu_tv1x>;
-+			iommu-names = "m0", "m1";
++		};
++
++		hdmiphy: hdmiphy@13af0000 {
++			reg = <0x13af0000 0x80>;
 +		};
 +
  		syscon_disp: syscon@13b80000 {
  			compatible = "syscon";
  			reg = <0x13b80000 0x1010>;
-@@ -926,6 +948,28 @@
- 			power-domains = <&pd_disp>;
- 		};
- 
-+		sysmmu_tv0x: sysmmu@0x13a20000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x13a20000 0x1000>;
-+			interrupts = <0 214 0>;
-+			clock-names = "pclk", "aclk";
-+			clocks = <&cmu_disp CLK_PCLK_SMMU_TV0X>,
-+				<&cmu_disp CLK_ACLK_SMMU_TV0X>;
-+			#iommu-cells = <0>;
-+			power-domains = <&pd_disp>;
-+		};
-+
-+		sysmmu_tv1x: sysmmu@0x13a30000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x13a30000 0x1000>;
-+			interrupts = <0 216 0>;
-+			clock-names = "pclk", "aclk";
-+			clocks = <&cmu_disp CLK_PCLK_SMMU_TV1X>,
-+				<&cmu_disp CLK_ACLK_SMMU_TV1X>;
-+			#iommu-cells = <0>;
-+			power-domains = <&pd_disp>;
-+		};
-+
- 		sysmmu_gscl0: sysmmu@0x13C80000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13C80000 0x1000>;
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
