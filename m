@@ -1,47 +1,67 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Thu, 5 Jan 2017 20:09:05 +0200
-Message-ID: <CAJKOXPdD_u0NOixwkEekiF71RDfddkAkJGaKqBhETBwDPA3_1g@mail.gmail.com>
-References: <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
- <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com> <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH] cpufreq: Remove CONFIG_CPU_FREQ_STAT_DETAILS config option
+Date: Thu, 5 Jan 2017 20:32:42 +0200
+Message-ID: <20170105183242.cwyymvr37mdqb6mj@kozik-lap>
+References: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Vincent Guittot <vincent.guittot@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Simon Horman <horms@verge.net.au>, linux-pm@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-renesas-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-mips@linux-mips.org, Gregory Clement <gregory.clement@free-electrons.com>, arnd.bergmann@linaro.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 5, 2017 at 12:20 PM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> This patch add support for MIPI-DSI based S6E3HA2 AMOLED panel
-> driver. This panel has 1440x2560 resolution in 5.7-inch physical
-> panel in the TM2 device.
->
-> Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+On Thu, Jan 05, 2017 at 01:57:41PM +0530, Viresh Kumar wrote:
+> This doesn't have any benefit apart from saving a small amount of memory
+> when it is disabled. The ifdef hackery in the code makes it dirty
+> unnecessarily.
+> 
+> Clean it up by removing the Kconfig option completely. Few defconfigs
+> are also updated and CONFIG_CPU_FREQ_STAT_DETAILS is replaced with
+> CONFIG_CPU_FREQ_STAT now in them, as users wanted stats to be enabled.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  .../bindings/display/panel/samsung,s6e3ha2.txt     |  28 +
->  drivers/gpu/drm/panel/Kconfig                      |   6 +
->  drivers/gpu/drm/panel/Makefile                     |   1 +
->  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 754 +++++++++++++++++++++
->  4 files changed, 789 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
->  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
->
-> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
-> new file mode 100644
-> index 0000000..da4c291
+>  arch/arm/configs/exynos_defconfig         |  2 +-
+>  arch/arm/configs/multi_v5_defconfig       |  2 +-
+>  arch/arm/configs/multi_v7_defconfig       |  2 +-
+>  arch/arm/configs/mvebu_v5_defconfig       |  2 +-
+>  arch/arm/configs/pxa_defconfig            |  2 +-
+>  arch/arm/configs/shmobile_defconfig       |  2 +-
+>  arch/mips/configs/lemote2f_defconfig      |  1 -
+>  arch/powerpc/configs/ppc6xx_defconfig     |  1 -
+>  arch/sh/configs/sh7785lcr_32bit_defconfig |  2 +-
+>  drivers/cpufreq/Kconfig                   |  8 --------
+>  drivers/cpufreq/cpufreq_stats.c           | 14 --------------
+>  11 files changed, 7 insertions(+), 31 deletions(-)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 79c415c33f69..809f0bf3042a 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -24,7 +24,7 @@ CONFIG_ARM_APPENDED_DTB=y
+>  CONFIG_ARM_ATAG_DTB_COMPAT=y
+>  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
+>  CONFIG_CPU_FREQ=y
+> -CONFIG_CPU_FREQ_STAT_DETAILS=y
+> +CONFIG_CPU_FREQ_STAT=y
+>  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=m
 
-This should be a separate patch, preferably first one in the series. See:
-Documentation/devicetree/bindings/submitting-patches.txt
-Since you already got reviews and tests, I think you can retain them
-in both patches (so dt-bindings patch will have reviewed-by-Andrzej
-and the code will have review+tested).
+For Exynos:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
