@@ -1,85 +1,76 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] cpufreq: Remove CONFIG_CPU_FREQ_STAT_DETAILS config option
-Date: Thu, 05 Jan 2017 19:12:29 +0900
-Message-ID: <586E1C0D.20102@samsung.com>
-References: <CGME20170105082939epcas4p4b494945ce55c949dc7a030ebf9dbdd4c@epcas4p4.samsung.com>
- <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v7 0/4] Add support for the S6E3HA2 panel on TM2 board
+Date: Thu, 05 Jan 2017 19:20:05 +0900
+Message-ID: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170105102011epcas1p416e0495978dbce7e73e900eb69a4b7ad@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Boundary_(ID_nvHJ5WsuTttLH/XkBof27w)"
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <d4299228a500a889c2b4b9e305674f3d1ea9ae06.1483604760.git.viresh.kumar@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Rafael Wysocki <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-mips@linux-mips.org, linaro-kernel@lists.linaro.org, Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arnd.bergmann@linaro.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
---Boundary_(ID_nvHJ5WsuTttLH/XkBof27w)
-Content-type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8BIT
-
-Hi Viresh,
-
-On 2017년 01월 05일 17:27, Viresh Kumar wrote:
-> This doesn't have any benefit apart from saving a small amount of memory
-> when it is disabled. The ifdef hackery in the code makes it dirty
-> unnecessarily.
-> 
-> Clean it up by removing the Kconfig option completely. Few defconfigs
-> are also updated and CONFIG_CPU_FREQ_STAT_DETAILS is replaced with
-> CONFIG_CPU_FREQ_STAT now in them, as users wanted stats to be enabled.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  arch/arm/configs/exynos_defconfig         |  2 +-
->  arch/arm/configs/multi_v5_defconfig       |  2 +-
->  arch/arm/configs/multi_v7_defconfig       |  2 +-
->  arch/arm/configs/mvebu_v5_defconfig       |  2 +-
->  arch/arm/configs/pxa_defconfig            |  2 +-
->  arch/arm/configs/shmobile_defconfig       |  2 +-
->  arch/mips/configs/lemote2f_defconfig      |  1 -
->  arch/powerpc/configs/ppc6xx_defconfig     |  1 -
->  arch/sh/configs/sh7785lcr_32bit_defconfig |  2 +-
->  drivers/cpufreq/Kconfig                   |  8 --------
->  drivers/cpufreq/cpufreq_stats.c           | 14 --------------
->  11 files changed, 7 insertions(+), 31 deletions(-)
-
-
-I agree. Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-[snip]
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
-
---Boundary_(ID_nvHJ5WsuTttLH/XkBof27w)
-Content-type: text/x-vcard; CHARSET=EUC-KR; name=cw00_choi.vcf
-Content-transfer-encoding: base64
-Content-disposition: attachment; filename=cw00_choi.vcf
-
-bnVsbA0K
-
---Boundary_(ID_nvHJ5WsuTttLH/XkBof27w)
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---Boundary_(ID_nvHJ5WsuTttLH/XkBof27w)--
+UHVycG9zZSBvZiB0aGlzIHBhdGNoIGlzIGFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIEFNT0xFRCBw
+YW5lbCBvbgp0aGUgVE0yIGJvYXJkLiBUaGUgZmlyc3QgcGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBT
+NkUzSEEyIHBhbmVsCmRldmljZSB0cmVlIGRvY3VtZW50IGFuZCBkcml2ZXIsIHRoZSBzZWNvbmQg
+cGF0Y2ggYWRkIHN1cHBvcnQgZm9yClM2RTNIQTIgcGFuZWwgZGV2aWNlIHRyZWUuCgpDaGFuZ2Ug
+Zm9yIFY3OgotIEZpeGVkIHRoZSBtb2RlX3NldCBjYWxsYmFjayBmdW5jdGlvbiBvZiBtaWMgZGV2
+aWNlIGRyaXZlci4KICBiZWNhdXNlIHRoZSBtaWMgcmVnaXN0ZXIgaXMgaW5pdGlhbGl6ZWQgd2hl
+biBlbnRlcmluZyBzdXNwZW5kCiAgbW9kZSwgc28gc2hvdWxkIHNldCB0aGUgcmVnIHZhbHVlIHdo
+ZW5ldmVyIHByZV9lbmFibGUgaXMKICBjYWxsZWQuCgpDaGFuZ2VzIGZvciBWNjoKLSBGaXhlZCB0
+aGUgcGFyc2VfZHQgZnVuY3Rpb24gb2YgZHNpIGRldmljZSBkcml2ZXIuCi0gUmVtb3ZlZCBPRiBn
+cmFwaCBvZiBwYW5lbCBpbiBEVCBhbmQgRFQgYmluZGluZyBkb2N1bWVudC4KLSBGaXhlZCB0aGUg
+czZlM2hhMiBwYW5lbCBkZXZpY2UgZHJpdmVyLgogIC0gRml4ZWQgZnJvbSBudW1iZXIgc2l6ZSB0
+byBBUlJBWV9TSVpFKCkuCiAgLSBGaXhlZCBlcnJvciBoYW5kbGluZyBpbiBtaXBpX2RzaV9kY3Nf
+KiBmdW5jdGlvbnMuCiAgLSBGaXhlZCB0aGUgY2xvY2sgb2YgZGlzcGxheV9tb2RlLgogIC0gUmVt
+b3ZlZCB1bm5lY2Vzc2FyeSBjYXN0aW5nIGFuZCBlcnJvciBsb2cuCgpDaGFuZ2UgZm9yIFY1Ogot
+IFRoZSBWNSBoYXMgb25seSBvbmUgZml4IGluIFY0IGJlbG93LgotIFJlbW92ZWQgdGhlIGVuYWJs
+ZSBjaGVjayBvZiB0aGUgbWljIGRyaXZlciBpbiBtb2RlX3NldAogIGNhbGxiYWNrLCBiZWNhdXNl
+IG1vZGVfc2V0IHNob3VsZCBiZSBwZXJmb3JtZWQgZXZlcnkgdGltZS4KCkNoYW5nZXMgZm9yIFY0
+OgotIFJlbW92ZWQgZGlzcGxheS10aW1pbmdzIGluIGRldmljZXRyZWUsIHRoZSBkaXNwbGF5LXRp
+bWluZ3MgaGFzCiAgYmVlbiBmaXhlZCB0byBiZSBwcm92aWRlZCBieSB0aGUgZGV2aWNlIGRyaXZl
+ci4KLSBBZGRlZCB0aGUgbW9kZV9zZXQgY2FsbGJhY2sgZnVuY3Rpb24gaW50byBleHlub3NfZHJt
+X21pYywKICBiZWNhdXNlIHRoZSBleHlub3NfZHJtX21pYyBkcml2ZXIgY2FuIG5vdCBwYXJzZSBh
+IHZpZGVvbW9kZQogIHN0cnVjdCBieSByZW1vdmluZyB0aGUgZGlzcGxheS10aW1pbmdzIGZyb20g
+dGhlIGRldmljZXRyZWUuCgpDaGFuZ2VzIGZvciBWMzoKLSBJbiB0aGUgRFQgYmluZGluZyBkb2N1
+bWVudCwgbWFkZSBpdCBjbGVhcmx5IHRoYXQgdGhlIHBhbmVsIGlzIGEKICBjaGlsZCBub2RlIG9m
+IGRzaS4KLSBGaXggcmVzZXQtZ3BpbyBhY3RpdmUgZnJvbSBoaWdoIHRvIGxvdy4KLSBJcyB0aGUg
+T0YgZ3JhcGggc2F5aW5nIHJlbGF0ZWQgdG8gWzFdPwogIEFsdGhvZ2ggdGhlIHBhbmVsIGlzIGEg
+Y2hpbGQgb2YgZHNpLCBJIHRoaW5rIE9GIGdyYXBoIG5lY2Vzc2FyeS4KICBiZWNhdXNlIGlmIGEg
+cmVtb3RlLWVuZHBvaW50IGlzIG5vdCBzcGVjaWZpZWQsIHRoZSBkc2kgYWxzbwogIHBhbmVsIGlz
+IG5vdCBwcm9iZWQuCi0gVGhlIGRpc3BsYXktdGltaW5ncyBoYXMgYmVlbiBmaXhlZCB0byBiZSBw
+cm92aWRlZCBieSB0aGUgZGV2aWNlCiAgZHJpdmVyLiBob3dldmVyLCBJIHRoaW5rIGRpc3BsYXkt
+dGltaW5ncyBpcyBuZWNlc3NhcnkgaW4gZHRzLgogIGJlY2F1c2UgaWYgZHRzIGRvZXMgbm90IGhh
+dmUgZGlzcGxheS10aW1pbmdzLCBkc2kgd2lsbCBub3QgbG9hZC4KCkNoYW5nZXMgZm9yIFYyOgot
+IEZpeGVkIHRoZSBzYW1zdW5nLHM2ZTNoYTIudHh0IERUIGRvY3VtZW50LgogIC0gQWRkZWQgYWN0
+aXZlIGhpZ2ggb3IgbG93IGFmdGVyIHRoZSBkZXNjcmlwdGlvbiBvZiB0aGUgR1BJT3MuCiAgLSBS
+ZW1vdmVkIHRoZSByZWcgYW5kIGFkZGVkIGEgZGVzY3JpcHRpb24gb2YgdGhlIHZpcnR1YWwKICAg
+IGNoYW5uZWwgbnVtYmVyIG9mIGEgRFNJIHBlcmlwaGVyYWwuCgpIb2VnZXVuIEt3b24gKDMpOgog
+IGRybS9leHlub3M6IG1pYzogQWRkIG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uCiAgZHJtL2V4
+eW5vczogbWljOiBGaXggcGFyc2VfZHQgZnVuY3Rpb24KICBkcm0vcGFuZWw6IEFkZCBzdXBwb3J0
+IGZvciBTNkUzSEEyIHBhbmVsIGRyaXZlciBvbiBUTTIgYm9hcmQKCkh5dW5nd29uIEh3YW5nICgx
+KToKICBhcm02NDogZHRzOiBleHlub3M6IEFkZCBzdXBwb3J0IGZvciBTNkUzSEEyIHBhbmVsIGRl
+dmljZSBvbiBUTTIgYm9hcmQKCiAuLi4vYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2
+ZTNoYTIudHh0ICAgICB8ICAyOCArCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1
+NDMzLXRtMi5kdHMgICAgICB8ICAxMCArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fbWljLmMgICAgICAgICAgICB8ICA0NCArLQogZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tjb25m
+aWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKwogZHJpdmVycy9ncHUvZHJtL3BhbmVsL01h
+a2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3BhbmVs
+L3BhbmVsLXNhbXN1bmctczZlM2hhMi5jICAgICAgfCA3NTQgKysrKysrKysrKysrKysrKysrKysr
+CiA2IGZpbGVzIGNoYW5nZWQsIDgxNCBpbnNlcnRpb25zKCspLCAyOSBkZWxldGlvbnMoLSkKIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxh
+eS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0CiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9n
+cHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlM2hhMi5jCgotLSAKMS45LjEKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
