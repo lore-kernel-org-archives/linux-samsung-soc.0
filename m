@@ -1,94 +1,137 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add EXYNOS5433 ARM architectures entry as a
- supporter
-Date: Thu, 05 Jan 2017 22:47:24 +0900
-Message-ID: <586E4E6C.9020207@samsung.com>
-References: <CGME20170105131251epcas1p18bb302757d0e45145595cc68c4ad947e@epcas1p1.samsung.com>
- <1483621969-27631-1-git-send-email-cw00.choi@samsung.com>
- <651f27a4-bbe4-7832-d4e8-07716d78b2c6@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Boundary_(ID_7OMSijAQ7Fr/+giYvAL6Dw)"
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 3/3] ARM64: dts: exynos5433-tm2: enable HDMI/TV path
+Date: Thu, 05 Jan 2017 16:25:43 +0100
+Message-ID: <1483629943-31183-3-git-send-email-a.hajda@samsung.com>
+References: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170105152604eucas1p12c1a964b5299a5a41305b00b80a09f36@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38508 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161538AbdAENrd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59103 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936329AbdAEP0K (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 08:47:33 -0500
-In-reply-to: <651f27a4-bbe4-7832-d4e8-07716d78b2c6@osg.samsung.com>
+        Thu, 5 Jan 2017 10:26:10 -0500
+In-reply-to: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, krzk@kernel.org, kgene@kernel.org
-Cc: andi.shyti@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org
 
-This is a multi-part message in MIME format.
+TV path consist of following interconnected components:
+- DECON_TV - display controller,
+- HDMI - video signal converter RGB / HDMI,
+- MHL - video signal converter HDMI / MHL,
+- DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
 
---Boundary_(ID_7OMSijAQ7Fr/+giYvAL6Dw)
-Content-type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8BIT
+The same path/configuration is used by TM2E board and is
+automatically applied thanks to dts file inclusion.
 
-Hello Javier,
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 71 +++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-On 2017년 01월 05일 22:36, Javier Martinez Canillas wrote:
-> Hello Chanwoo,
-> 
-> On 01/05/2017 10:12 AM, Chanwoo Choi wrote:
->> This patch adds the 'ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES' entry
->> in order to review and test the upcoming patches as a supporter.
->> I have developed the low-level devices and power related devices for
->> Exyno5433 and TM2/E board.
->>
->> Moreover, Andi proposed himself as a reviewer for Exynos5433 and TM2/E.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->> ---
->>  MAINTAINERS | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index cfff2c9e3d94..96c055e8dd0b 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -1712,6 +1712,13 @@ F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
->>  F:	Documentation/devicetree/bindings/power/pd-samsung.txt
->>  N:	exynos
->>  
->> +ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES
->> +M:	Chanwoo Choi <cw00.choi@samsung.com>
->> +R:	Andi Shyti <andi.shyti@samsung.com>
->> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->> +S:	Supported
->> +F:	arch/arm64/boot/dts/exynos/exynos5433*
->> +
->>  ARM/SAMSUNG MOBILE MACHINE SUPPORT
->>  M:	Kyungmin Park <kyungmin.park@samsung.com>
->>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->>
-> 
-> I think these fall under the "ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" entry,
-> we don't have MAINTAINERS entry for individual Exynos SoCs.
-
-You're right. So, I just add the entry as a supporter.
-
-> 
-> What you can do is to post a patch to add Andi and you as reviewers for the
-> existing entry. The more people there, the better IMHO.
-
-Thanks for your suggestion. I think that the reviewer
-of all Exynos should much times to review and test the patches.
-It is very important role. But, I have not much time to review all
-of Exynos patches. So, I just add the entry for Exynos5433.
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index 060adbf..0a87670 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -236,6 +236,22 @@
+ 	};
+ };
+ 
++&decon_tv {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			tv_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_tv>;
++			};
++		};
++	};
++};
++
+ &dsi {
+ 	status = "okay";
+ 	vddcore-supply = <&ldo6_reg>;
+@@ -294,6 +310,33 @@
+ 	};
+ };
+ 
++&hdmi {
++	hpd-gpio = <&gpa3 0 0>;
++	status = "okay";
++	vdd-supply = <&ldo6_reg>;
++	vdd_osc-supply = <&ldo7_reg>;
++	vdd_pll-supply = <&ldo6_reg>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			hdmi_to_tv: endpoint {
++				remote-endpoint = <&tv_to_hdmi>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++			hdmi_to_mhl: endpoint {
++				remote-endpoint = <&mhl_to_hdmi>;
++			};
++		};
++	};
++};
++
+ &hsi2c_0 {
+ 	status = "okay";
+ 	clock-frequency = <2500000>;
+@@ -708,6 +751,30 @@
+ 	};
+ };
+ 
++&hsi2c_7 {
++	status = "okay";
++
++	sii8620@39 {
++		reg = <0x39>;
++		compatible = "sil,sii8620";
++		cvcc10-supply = <&ldo36_reg>;
++		iovcc18-supply = <&ldo34_reg>;
++		interrupt-parent = <&gpf0>;
++		interrupts = <2 0>;
++		reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "xtal";
++		assigned-clocks = <&pmu_system_controller 0>;
++		assigned-clock-parents = <&xxti>;
++
++		port {
++			mhl_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_mhl>;
++			};
++		};
++	};
++};
++
+ &hsi2c_8 {
+ 	status = "okay";
+ 
+@@ -751,6 +818,10 @@
+ 	};
+ };
+ 
++&hsi2c_11 {
++	status = "okay";
++};
++
+ &i2s0 {
+ 	status = "okay";
+ };
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
-
---Boundary_(ID_7OMSijAQ7Fr/+giYvAL6Dw)
-Content-type: text/x-vcard; CHARSET=EUC-KR; name=cw00_choi.vcf
-Content-transfer-encoding: base64
-Content-disposition: attachment; filename=cw00_choi.vcf
-
-bnVsbA0K
-
---Boundary_(ID_7OMSijAQ7Fr/+giYvAL6Dw)--
+2.7.4
