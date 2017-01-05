@@ -1,79 +1,47 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/3] ARM64: dts: exynos5433: add DECON_TV node
-Date: Thu, 5 Jan 2017 19:26:31 +0200
-Message-ID: <20170105172631.ymu5tlywe44ewb5b@kozik-lap>
-References: <CGME20170105152604eucas1p25340c974fa7f375905c958e2bff6d96f@eucas1p2.samsung.com>
- <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
+ TM2 board
+Date: Thu, 5 Jan 2017 20:09:05 +0200
+Message-ID: <CAJKOXPdD_u0NOixwkEekiF71RDfddkAkJGaKqBhETBwDPA3_1g@mail.gmail.com>
+References: <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
+ <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com> <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35268 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936821AbdAER0h (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 12:26:37 -0500
-Content-Disposition: inline
-In-Reply-To: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org
 
-On Thu, Jan 05, 2017 at 04:25:41PM +0100, Andrzej Hajda wrote:
-> DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
-> or 2nd DSI path.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+On Thu, Jan 5, 2017 at 12:20 PM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
+> This patch add support for MIPI-DSI based S6E3HA2 AMOLED panel
+> driver. This panel has 1440x2560 resolution in 5.7-inch physical
+> panel in the TM2 device.
+>
+> Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
+> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 44 ++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 8cbfd1d..b47951b 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -821,6 +821,28 @@
->  			};
->  		};
->  
-> +		decon_tv: decon@13880000 {
-> +			compatible = "samsung,exynos5433-decon-tv";
-> +			reg = <0x13880000 0x20B8>;
-> +			clocks = <&cmu_disp CLK_PCLK_DECON_TV>,
-> +				 <&cmu_disp CLK_ACLK_DECON_TV>,
-> +				 <&cmu_disp CLK_ACLK_SMMU_TV0X>,
-> +				 <&cmu_disp CLK_ACLK_XIU_TV0X>,
-> +				 <&cmu_disp CLK_PCLK_SMMU_TV0X>,
-> +				 <&cmu_disp CLK_SCLK_DECON_TV_VCLK>,
-> +				 <&cmu_disp CLK_SCLK_DECON_TV_ECLK>;
-> +			clock-names = "pclk", "aclk_decon", "aclk_smmu_decon0x",
-> +				      "aclk_xiu_decon0x", "pclk_smmu_decon0x",
-> +				      "sclk_decon_vclk", "sclk_decon_eclk";
-> +			samsung,disp-sysreg = <&syscon_disp>;
-> +			interrupt-names = "fifo", "vsync", "lcd_sys";
-> +			interrupts = <0 210 0>, <0 211 0>, <0 212 0>;
-> +			power-domains = <&pd_disp>;
-> +			status = "disabled";
-> +			iommus = <&sysmmu_tv0x>, <&sysmmu_tv1x>;
-> +			iommu-names = "m0", "m1";
-> +		};
-> +
->  		syscon_disp: syscon@13b80000 {
->  			compatible = "syscon";
->  			reg = <0x13b80000 0x1010>;
-> @@ -926,6 +948,28 @@
->  			power-domains = <&pd_disp>;
->  		};
->  
-> +		sysmmu_tv0x: sysmmu@0x13a20000 {
+>  .../bindings/display/panel/samsung,s6e3ha2.txt     |  28 +
+>  drivers/gpu/drm/panel/Kconfig                      |   6 +
+>  drivers/gpu/drm/panel/Makefile                     |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 754 +++++++++++++++++++++
+>  4 files changed, 789 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
+>
+> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+> new file mode 100644
+> index 0000000..da4c291
 
-Without the '0x' in the address, please. I see that you copied it from
-existing nodes, so maybe you could fix them as well in following patch.
-
-Beside that (and Javier's comments) looks okay, but please choose
-suitable subject prefix matching recent commits. I think it is the third
-time I am mentioning this recently (to different Samsung folks,
-though)... 
+This should be a separate patch, preferably first one in the series. See:
+Documentation/devicetree/bindings/submitting-patches.txt
+Since you already got reviews and tests, I think you can retain them
+in both patches (so dt-bindings patch will have reviewed-by-Andrzej
+and the code will have review+tested).
 
 Best regards,
 Krzysztof
