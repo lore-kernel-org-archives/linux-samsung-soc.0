@@ -1,35 +1,50 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v7 2/4] drm/exynos: mic: Fix parse_dt function
-Date: Thu, 05 Jan 2017 13:16:56 +0100
-Message-ID: <250677fc-e0ea-68f4-5891-1f02dfb20993@samsung.com>
-References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102012epcas5p308c2d3ed269d9bf76f76f1d38422eb54@epcas5p3.samsung.com>
- <1483611609-23522-3-git-send-email-hoegeun.kwon@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1483611609-23522-3-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] MAINTAINERS: Add EXYNOS5433 ARM architectures entry as a
+ supporter
+Date: Thu, 05 Jan 2017 22:12:49 +0900
+Message-ID: <1483621969-27631-1-git-send-email-cw00.choi@samsung.com>
+References: <CGME20170105131251epcas1p18bb302757d0e45145595cc68c4ad947e@epcas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:52246 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033818AbdAENN2 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 5 Jan 2017 08:13:28 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org
+Cc: cw00.choi@samsung.com, andi.shyti@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMDUuMDEuMjAxNyAxMToyMCwgSG9lZ2V1biBLd29uIHdyb3RlOgo+IFRoZSBPRiBncmFwaCBp
-cyBub3QgbmVjZXNzYXJ5IGJlY2F1c2UgdGhlIHBhbmVsIGlzIGEgY2hpbGQgb2YKPiBkc2kuIHRo
-ZXJlZm9yZSwgdGhlIHBhcnNlX2R0IGZ1bmN0aW9uIG9mIGRzaSBkb2VzIG5vdCBuZWVkIHRvCj4g
-Y2hlY2sgdGhlIHJlbW90ZV9ub2RlIGNvbm5lY3RlZCB0byB0aGUgcGFuZWwuIGFuZCB0aGUgd2hv
-bGUKPiBwYXJzZV9kdCBmdW5jdGlvbiBzaG91bGQgYmUgcmVmYWN0b3JlZCBsYXRlci4KPgo+IFNp
-Z25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgoKUmV2
-aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tClJlZ2FyZHMK
-QW5kcnplagpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This patch adds the 'ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES' entry
+in order to review and test the upcoming patches as a supporter.
+I have developed the low-level devices and power related devices for
+Exyno5433 and TM2/E board.
+
+Moreover, Andi proposed himself as a reviewer for Exynos5433 and TM2/E.
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfff2c9e3d94..96c055e8dd0b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1712,6 +1712,13 @@ F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
+ F:	Documentation/devicetree/bindings/power/pd-samsung.txt
+ N:	exynos
+ 
++ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES
++M:	Chanwoo Choi <cw00.choi@samsung.com>
++R:	Andi Shyti <andi.shyti@samsung.com>
++L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++S:	Supported
++F:	arch/arm64/boot/dts/exynos/exynos5433*
++
+ ARM/SAMSUNG MOBILE MACHINE SUPPORT
+ M:	Kyungmin Park <kyungmin.park@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-- 
+1.9.1
