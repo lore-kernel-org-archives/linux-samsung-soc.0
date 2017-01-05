@@ -1,72 +1,79 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add EXYNOS5433 ARM architectures entry as a supporter
-Date: Thu, 5 Jan 2017 19:19:21 +0200
-Message-ID: <CAJKOXPdFtq6GNU0Z1zn2Z3_OzqeHd6MK6ByYbpVpsP+AF4z+qw@mail.gmail.com>
-References: <CGME20170105131251epcas1p18bb302757d0e45145595cc68c4ad947e@epcas1p1.samsung.com>
- <1483621969-27631-1-git-send-email-cw00.choi@samsung.com> <20170105170951.2yftdz4nfqsgauoc@kozik-lap>
+Subject: Re: [PATCH 1/3] ARM64: dts: exynos5433: add DECON_TV node
+Date: Thu, 5 Jan 2017 19:26:31 +0200
+Message-ID: <20170105172631.ymu5tlywe44ewb5b@kozik-lap>
+References: <CGME20170105152604eucas1p25340c974fa7f375905c958e2bff6d96f@eucas1p2.samsung.com>
+ <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1763056AbdAERT1 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35268 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936821AbdAER0h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Jan 2017 12:19:27 -0500
-In-Reply-To: <20170105170951.2yftdz4nfqsgauoc@kozik-lap>
+        Thu, 5 Jan 2017 12:26:37 -0500
+Content-Disposition: inline
+In-Reply-To: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, kgene@kernel.org, Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org
 
-On Thu, Jan 5, 2017 at 7:09 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Jan 05, 2017 at 10:12:49PM +0900, Chanwoo Choi wrote:
->> This patch adds the 'ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES' entry
->> in order to review and test the upcoming patches as a supporter.
->> I have developed the low-level devices and power related devices for
->> Exyno5433 and TM2/E board.
->>
->> Moreover, Andi proposed himself as a reviewer for Exynos5433 and TM2/E.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->> ---
->>  MAINTAINERS | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index cfff2c9e3d94..96c055e8dd0b 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -1712,6 +1712,13 @@ F:     Documentation/devicetree/bindings/sram/samsung-sram.txt
->>  F:   Documentation/devicetree/bindings/power/pd-samsung.txt
->>  N:   exynos
->>
->> +ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES
->> +M:   Chanwoo Choi <cw00.choi@samsung.com>
->> +R:   Andi Shyti <andi.shyti@samsung.com>
->> +L:   linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->> +S:   Supported
->> +F:   arch/arm64/boot/dts/exynos/exynos5433*
->> +
->
-> Review and testing is always highly appreciated and you are doing,
-> Chanwoo, great work. I would like to sincerely thank you for that.
-> Samsung probably should thank you, as well. :)
->
-> As for the additional sub-entry, I do not see any need for creating
-> such entries for specific DTSes. This looks like overkill.
->
-> At the same time I would like to strongly avoid something which is
-> happening for example in our DRM where we have *four* maintainers but
-> only *one* is responding. We can add bazilions of maintainers to satisfy
-> Samsung KPIs but still this might not help reviewing patches (damn, why
-> am I waiting with this small [0] thing since 21st of October?).
->
-> On the other hand, this is just my personal opinion. If the broad
-> open-source community would like to do any changes here
-> (add/remove/move/whatever) I do not mind at all.
+On Thu, Jan 05, 2017 at 04:25:41PM +0100, Andrzej Hajda wrote:
+> DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
+> or 2nd DSI path.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 44 ++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 8cbfd1d..b47951b 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -821,6 +821,28 @@
+>  			};
+>  		};
+>  
+> +		decon_tv: decon@13880000 {
+> +			compatible = "samsung,exynos5433-decon-tv";
+> +			reg = <0x13880000 0x20B8>;
+> +			clocks = <&cmu_disp CLK_PCLK_DECON_TV>,
+> +				 <&cmu_disp CLK_ACLK_DECON_TV>,
+> +				 <&cmu_disp CLK_ACLK_SMMU_TV0X>,
+> +				 <&cmu_disp CLK_ACLK_XIU_TV0X>,
+> +				 <&cmu_disp CLK_PCLK_SMMU_TV0X>,
+> +				 <&cmu_disp CLK_SCLK_DECON_TV_VCLK>,
+> +				 <&cmu_disp CLK_SCLK_DECON_TV_ECLK>;
+> +			clock-names = "pclk", "aclk_decon", "aclk_smmu_decon0x",
+> +				      "aclk_xiu_decon0x", "pclk_smmu_decon0x",
+> +				      "sclk_decon_vclk", "sclk_decon_eclk";
+> +			samsung,disp-sysreg = <&syscon_disp>;
+> +			interrupt-names = "fifo", "vsync", "lcd_sys";
+> +			interrupts = <0 210 0>, <0 211 0>, <0 212 0>;
+> +			power-domains = <&pd_disp>;
+> +			status = "disabled";
+> +			iommus = <&sysmmu_tv0x>, <&sysmmu_tv1x>;
+> +			iommu-names = "m0", "m1";
+> +		};
+> +
+>  		syscon_disp: syscon@13b80000 {
+>  			compatible = "syscon";
+>  			reg = <0x13b80000 0x1010>;
+> @@ -926,6 +948,28 @@
+>  			power-domains = <&pd_disp>;
+>  		};
+>  
+> +		sysmmu_tv0x: sysmmu@0x13a20000 {
 
-Ah, forgot the link:
-[0] https://patchwork.kernel.org/patch/9391635/
+Without the '0x' in the address, please. I see that you copied it from
+existing nodes, so maybe you could fix them as well in following patch.
 
+Beside that (and Javier's comments) looks okay, but please choose
+suitable subject prefix matching recent commits. I think it is the third
+time I am mentioning this recently (to different Samsung folks,
+though)... 
+
+Best regards,
 Krzysztof
