@@ -1,129 +1,59 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 2/3] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Thu, 05 Jan 2017 16:52:51 +0900
-Message-ID: <586DFB53.9050709@samsung.com>
-References: <1483517711-23849-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170104081522epcas5p112698b2499e56dc9027ec1f57f8964ee@epcas5p1.samsung.com>
- <1483517711-23849-3-git-send-email-hoegeun.kwon@samsung.com>
- <20170104144439.bzjab3ovixyt3i5b@rob-hp-laptop>
- <412a0238-dd8e-6c74-46a7-876e112189f1@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <412a0238-dd8e-6c74-46a7-876e112189f1@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: devicetree@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, Hyungwon Hwang <human.hwang@samsung.com>
+From: Jaechul Lee <jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 0/4] Add touch key driver support for TM2
+Date: Thu, 05 Jan 2017 17:27:09 +0900
+Message-ID: <1483604833-29746-1-git-send-email-jcsing.lee@samsung.com>
+References: <CGME20170105082715epcas1p10e0820a792ba9d89cd165299d6602654@epcas1p1.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: Jaechul Lee <jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galaxyra-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAx7JuUIDA17J28IDE1OjU17JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAwNC4wMS4yMDE3IDE1OjQ0LCBSb2IgSGVycmluZyB3cm90ZToKPj4gT24gV2Vk
-LCBKYW4gMDQsIDIwMTcgYXQgMDU6MTU6MTBQTSArMDkwMCwgSG9lZ2V1biBLd29uIHdyb3RlOgo+
-Pj4gVGhpcyBwYXRjaCBhZGQgc3VwcG9ydCBmb3IgTUlQSS1EU0kgYmFzZWQgUzZFM0hBMiBBTU9M
-RUQgcGFuZWwKPj4+IGRyaXZlci4gVGhpcyBwYW5lbCBoYXMgMTQ0MHgyNTYwIHJlc29sdXRpb24g
-aW4gNS43LWluY2ggcGh5c2ljYWwKPj4+IHBhbmVsIGluIHRoZSBUTTIgZGV2aWNlLgo+Pj4KPj4+
-IFNpZ25lZC1vZmYtYnk6IERvbmdod2EgTGVlIDxkaDA5LmxlZUBzYW1zdW5nLmNvbT4KPj4+IFNp
-Z25lZC1vZmYtYnk6IEh5dW5nd29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KPj4+
-IFNpZ25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgo+
-Pj4gLS0tCj4+PiAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEyLnR4
-dCAgICAgfCAgNDAgKysKPj4+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZyAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgNiArCj4+PiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL01ha2VmaWxl
-ICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9w
-YW5lbC1zYW1zdW5nLXM2ZTNoYTIuYyAgICAgIHwgNzQxICsrKysrKysrKysrKysrKysrKysrKwo+
-Pj4gIDQgZmlsZXMgY2hhbmdlZCwgNzg4IGluc2VydGlvbnMoKykKPj4+ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ft
-c3VuZyxzNmUzaGEyLnR4dAo+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEy
-LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3Nh
-bXN1bmcsczZlM2hhMi50eHQKPj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+PiBpbmRleCAwMDAw
-MDAwLi42ODc5ZjUxCj4+PiAtLS0gL2Rldi9udWxsCj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0Cj4+PiBA
-QCAtMCwwICsxLDQwIEBACj4+PiArU2Ftc3VuZyBTNkUzSEEyIDUuNyIgMTQ0MHgyNTYwIEFNT0xF
-RCBwYW5lbAo+Pj4gKwo+Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6Cj4+PiArICAtIGNvbXBhdGli
-bGU6ICJzYW1zdW5nLHM2ZTNoYTIiCj4+PiArICAtIHJlZzogdGhlIHZpcnR1YWwgY2hhbm5lbCBu
-dW1iZXIgb2YgYSBEU0kgcGVyaXBoZXJhbAo+Pj4gKyAgLSB2ZGQzLXN1cHBseTogSS9PIHZvbHRh
-Z2Ugc3VwcGx5Cj4+PiArICAtIHZjaS1zdXBwbHk6IHZvbHRhZ2Ugc3VwcGx5IGZvciBhbmFsb2cg
-Y2lyY3VpdHMKPj4+ICsgIC0gcmVzZXQtZ3Bpb3M6IGEgR1BJTyBzcGVjIGZvciB0aGUgcmVzZXQg
-cGluIChhY3RpdmUgbG93KQo+Pj4gKyAgLSBlbmFibGUtZ3Bpb3M6IGEgR1BJTyBzcGVjIGZvciB0
-aGUgcGFuZWwgZW5hYmxlIHBpbiAoYWN0aXZlIGhpZ2gpCj4+PiArICAtIHRlLWdwaW9zOiBhIEdQ
-SU8gc3BlYyBmb3IgdGhlIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9uaXphdGlvbiBzaWduYWwKPj4+
-ICsgICAgZ3BpbyBwaW4gKGFjdGl2ZSBoaWdoKQo+Pj4gKwo+Pj4gK1RoZSBkZXZpY2Ugbm9kZSBj
-YW4gY29udGFpbiBvbmUgJ3BvcnQnIGNoaWxkIG5vZGUgd2l0aCBvbmUgY2hpbGQKPj4+ICsnZW5k
-cG9pbnQnIG5vZGUsIGFjY29yZGluZyB0byB0aGUgYmluZGluZ3MgZGVmaW5lZCBpbiBbMV0uIFRo
-aXMKPj4+ICtub2RlIHNob3VsZCBkZXNjcmliZSBwYW5lbCdzIHZpZGVvIGJ1cy4KPj4+ICsKPj4+
-ICtbMV06IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRl
-cmZhY2VzLnR4dAo+Pj4gKwo+Pj4gK0V4YW1wbGU6Cj4+PiArCj4+PiArJmRzaSB7Cj4+PiArCS4u
-Lgo+Pj4gKwo+Pj4gKwlwYW5lbEAwIHsKPj4+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmUz
-aGEyIjsKPj4+ICsJCXJlZyA9IDwwPjsKPj4+ICsJCXZkZDMtc3VwcGx5ID0gPCZsZG8yN19yZWc+
-Owo+Pj4gKwkJdmNpLXN1cHBseSA9IDwmbGRvMjhfcmVnPjsKPj4+ICsJCXJlc2V0LWdwaW9zID0g
-PCZncGcwIDAgR1BJT19BQ1RJVkVfTE9XPjsKPj4+ICsJCWVuYWJsZS1ncGlvcyA9IDwmZ3BmMSA1
-IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pj4gKwkJdGUtZ3Bpb3MgPSA8JmdwZjEgMyBHUElPX0FDVElW
-RV9ISUdIPjsKPj4+ICsKPj4+ICsJCXBvcnQgewo+Pj4gKwkJCXBhbmVsX2luOiBlbmRwb2ludCB7
-Cj4+PiArCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNpX291dD47Cj4+IEFzIEkgc2FpZCBwcmV2
-aW91c2x5LCBpdCBtYWtlcyBubyBzZW5zZSB0byBoYXZlIGEgZ3JhcGggdG8gZHNpX291dCBpdCBp
-cyAKPj4gc2ltcGx5IHRoZSBwYXJlbnQgbm9kZS4KPiAKPiBUaGUgcHJvYmxlbSBpcyB0aGF0IGV4
-eW5vc19kc2kgcmVxdWlyZXMgcHJlc2VuY2Ugb2YgZW5kcG9pbnQgbm9kZSwgd2hlbgo+IGl0IHdh
-cyB3cml0dGVuIHRoZSBwb2xpY3kgd2FzIHRoYXQgZ3JhcGhzIG11c3QgYmUgYWx3YXlzIHByZXNl
-bnQuCj4gRFNJIHJlYWRzIGZyb20gdGhpcyBub2RlIHNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVl
-bmN5IGFuZAo+IHNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeS4gRm9yIGV4YW1wbGUgaW4gZXh5
-bm9zNDQxMi10cmF0czIuZHRzOgo+IAo+PiAgICAgICAgIGRzaV8wOiBkc2lAMTFDODAwMDAgewo+
-PiAgICAgICAgICAgICAgICAgLi4uCj4+ICAgICAgICAgICAgICAgICBwb3J0cyB7Cj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+PiAgICAgICAgICAgICAg
-ICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDwwPjsKPj4gIAo+PiAgICAgICAgICAgICAgICAgICAg
-ICAgICBwb3J0QDEgewo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwx
-PjsKPj4KPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkc2lfb3V0OiBlbmRwb2lu
-dCB7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5k
-cG9pbnQgPSA8JmRzaV9pbj47Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeQo+PiA9IDw1MDAwMDAwMDA+Owo+PiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2Ftc3VuZyxlc2MtY2xvY2st
-ZnJlcXVlbmN5ID0KPj4gPDIwMDAwMDAwPjsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB9Owo+PiAgICAgICAgICAgICAgICAgICAgICAgICB9Owo+PiAgICAgICAgICAgICAgICAg
-fTsKPj4gICAgICAgICAKPj4gICAgICAgICAgICAgICAgIHBhbmVsQDAgewo+PiAgICAgICAgICAg
-ICAgICAgICAgICAgICAuLi4KPj4gICAgICAgICAgICAgICAgICAgICAgICAgcG9ydCB7Cj4+ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZHNpX2luOiBlbmRwb2ludCB7Cj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQgPSA8JmRz
-aV9vdXQ+Owo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH07Cj4+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIH07Cj4+ICAgICAgICAgICAgICAgICB9Owo+PiAgICAgICAgIH07Cj4g
-Cj4gSG93ZXZlciwgRFNJIGRyaXZlciBkb2VzIG5vdCB1c2UgcmVtb3RlLWVuZHBvaW50IHByb3Bl
-cnR5LCBpdCBpcyBoZXJlCj4gb25seSB0byBmdWxmaWxsIG9mX2dyYXBoIHBvbGljeS4KPiBTbyBp
-ZiBzb21ldGhpbmcgbGlrZSBiZWxvdyBpcyBhY2NlcHRhYmxlLCB3ZSBjYW4gZ2V0IHJpZCBvZiBw
-b3J0IG5vZGUgaW4KPiBwYW5lbDoKPiAKPj4gICAgICAgICBkc2lfMDogZHNpQDExQzgwMDAwIHsK
-Pj4gICAgICAgICAgICAgICAgIC4uLgo+PiAgICAgICAgICAgICAgICAgcG9ydHMgewo+PiAgICAg
-ICAgICAgICAgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8MD47Cj4+ICAKPj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgcG9ydEAxIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8
-MT47Cj4+Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZHNpX291dDogZW5kcG9p
-bnQgewo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2Ftc3VuZyxi
-dXJzdC1jbG9jay1mcmVxdWVuY3kKPj4gPSA8NTAwMDAwMDAwPjsKPj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSA9Cj4+
-IDwyMDAwMDAwMD47Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfTsKPj4gICAg
-ICAgICAgICAgICAgICAgICAgICAgfTsKPj4gICAgICAgICAgICAgICAgIH07Cj4+ICAgICAgICAg
-Cj4+ICAgICAgICAgICAgICAgICBwYW5lbEAwIHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAg
-Li4uCj4+ICAgICAgICAgICAgICAgICB9Owo+PiAgICAgICAgIH07Cj4gCj4gV2hhdCBkbyB5b3Ug
-dGhpbms/Cj4gCj4gT3RoZXIgc29sdXRpb24gaXMgdG8gbW92ZSBwcm9ibGVtYXRpYyBwcm9wZXJ0
-aWVzIHNvbWV3aGVyZSBlbHNlLCBidXQKPiB0aGlzIHJlcXVpcmUgY2hhbmdlIG9mIGJpbmRpbmdz
-Lgo+IEFueXdheSBJIHdvdWxkIGJlIGdsYWQgdG8gcmVtb3ZlIHBvcnQgbm9kZXMgaW4gb3RoZXIg
-c2Ftc3VuZyBwYW5lbHM6Cj4gczZlOGFhMCwgbGQ5MDQwLgoKSW4gYWRkaXRpb24sCgpOb3cgZHNp
-IGFuZCBtaWMgZGV2aWNlIG5vZGVzIG9mIGV4eW5vczU0MzMuZHRzaSBpbmNsdWRlIHJlbW90ZSBu
-b2RlcyB3aGljaCBkZWZpbmUgRGlzcGxheSBwaXBlbGluZS4gVGhpcyBpcyB3cm9uZy4KRGlzcGxh
-eSBwaXBlbGluZSBpcyBzcGVjaWZpYyB0byBib2FyZCwgbm90IFNvQyBzbyB0aGVzZSB0aGluZ3Mg
-c2hvdWxkIGJlIG1vdmVkIHRvIGV4eW5vczU0MzMtdG0yLmR0cyBmaWxlLgoKSG9lZ2V1biwgeW91
-IGNhbiBkbyB0aGlzIHdpdGggb3RoZXIgcGF0Y2ggYWxzby4KClRoYW5rcy4KCj4gCj4gUmVnYXJk
-cwo+IEFuZHJ6ZWoKPiAKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
-IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVlIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVz
-c2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBh
-dCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCj4gCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+This patchset adds support for the tm2 touchkey device.
+
+The driver has been ported from Tizen Kernel, originally written
+by Beomho. I ported it to the latest mainline Kernel.
+
+The patchset applies on next-20170105.
+
+Changes in v2:
+ - fixed reviews from Javier, Dmitry
+ - refactored power enable/disable functions.
+ - reordered signed-offs in patch 2, while patch 4 is left as it
+   was as Andi copy pasted the node to the new tm2.dts file
+ - added Jarvier's (patch 1,2,4) and Krzysztof's (patch 4) reviews 
+   and Rob's Ack
+ - patch 3 diff has been generated with -B50%
+
+Best Regards,
+Jaechul
+
+Andi Shyti (1):
+  arm64: dts: exynos: make tm2 and tm2e independent from each other
+
+Jaechul Lee (3):
+  input: Add support for the tm2 touchkey device driver
+  input: tm2-touchkey: Add touchkey driver support for TM2
+  arm64: dts: exynos: Add tm2 touchkey node
+
+ .../bindings/input/samsung,tm2-touchkey.txt        |   27 +
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1116 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1105 +------------------
+ arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |    2 +-
+ drivers/input/keyboard/Kconfig                     |   11 +
+ drivers/input/keyboard/Makefile                    |    1 +
+ drivers/input/keyboard/tm2-touchkey.c              |  280 +++++
+ 7 files changed, 1445 insertions(+), 1097 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/samsung,tm2-touchkey.txt
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+ create mode 100644 drivers/input/keyboard/tm2-touchkey.c
+
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
