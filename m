@@ -1,47 +1,66 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v7 4/4] arm64: dts: exynos: Add support for S6E3HA2 panel
- device on TM2 board
-Date: Thu, 05 Jan 2017 19:20:09 +0900
-Message-ID: <1483611609-23522-5-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v7 2/4] drm/exynos: mic: Fix parse_dt function
+Date: Thu, 05 Jan 2017 19:20:07 +0900
+Message-ID: <1483611609-23522-3-git-send-email-hoegeun.kwon@samsung.com>
 References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102013epcas5p3098ddb99e516ef138cc41d63c7591a79@epcas5p3.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, inki.dae@samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, cw00.choi@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+ <CGME20170105102012epcas5p308c2d3ed269d9bf76f76f1d38422eb54@epcas5p3.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1483611609-23522-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgoKVGhpcyBwYXRj
-aCBhZGQgdGhlIHBhbmVsIGRldmljZSB0cmVlIG5vZGUgZm9yIFM2RTNIQTIgZGlzcGxheQpjb250
-cm9sbGVyIHRvIFRNMiBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4u
-aHdhbmdAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
-c2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1
-bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5n
-LmNvbT4KVGVzdGVkLWJ5OiBDaGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KLS0t
-CiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMgfCAxMCArKysr
-KysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cyBiL2FyY2gvYXJtNjQv
-Ym9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cwppbmRleCA1Yjk0NTFkLi4wYTYyOTFm
-IDEwMDY0NAotLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5k
-dHMKKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIuZHRzCkBA
-IC0zMDksNiArMzA5LDE2IEBACiAJCQl9OwogCQl9OwogCX07CisKKwlwYW5lbEAwIHsKKwkJY29t
-cGF0aWJsZSA9ICJzYW1zdW5nLHM2ZTNoYTIiOworCQlyZWcgPSA8MD47CisJCXZkZDMtc3VwcGx5
-ID0gPCZsZG8yN19yZWc+OworCQl2Y2ktc3VwcGx5ID0gPCZsZG8yOF9yZWc+OworCQlyZXNldC1n
-cGlvcyA9IDwmZ3BnMCAwIEdQSU9fQUNUSVZFX0xPVz47CisJCWVuYWJsZS1ncGlvcyA9IDwmZ3Bm
-MSA1IEdQSU9fQUNUSVZFX0hJR0g+OworCQl0ZS1ncGlvcyA9IDwmZ3BmMSAzIEdQSU9fQUNUSVZF
-X0hJR0g+OworCX07CiB9OwogCiAmaHNpMmNfMCB7Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+The OF graph is not necessary because the panel is a child of
+dsi. therefore, the parse_dt function of dsi does not need to
+check the remote_node connected to the panel. and the whole
+parse_dt function should be refactored later.
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 25 +++----------------------
+ 1 file changed, 3 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index fed1a94..cf9361a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -269,28 +269,9 @@ static int parse_dt(struct exynos_mic *mic)
+ 		}
+ 		nodes[j++] = remote_node;
+ 
+-		switch (i) {
+-		case ENDPOINT_DECON_NODE:
+-			/* decon node */
+-			if (of_get_child_by_name(remote_node,
+-						"i80-if-timings"))
+-				mic->i80_mode = 1;
+-
+-			break;
+-		case ENDPOINT_DSI_NODE:
+-			/* panel node */
+-			remote_node = get_remote_node(remote_node, 1);
+-			if (!remote_node) {
+-				ret = -EPIPE;
+-				goto exit;
+-			}
+-			nodes[j++] = remote_node;
+-
+-			break;
+-		default:
+-			DRM_ERROR("mic: Unknown endpoint from MIC");
+-			break;
+-		}
++		if (i == ENDPOINT_DECON_NODE &&
++			of_get_child_by_name(remote_node, "i80-if-timings"))
++			mic->i80_mode = 1;
+ 	}
+ 
+ exit:
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
