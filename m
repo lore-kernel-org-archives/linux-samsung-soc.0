@@ -1,56 +1,55 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM64: dts: exynos5433-tm2: enable HDMI/TV path
-Date: Thu, 5 Jan 2017 13:33:03 -0300
-Message-ID: <78e3d9c4-ee60-9b60-9f1b-b73290a18d62@osg.samsung.com>
-References: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
- <CGME20170105152604eucas1p12c1a964b5299a5a41305b00b80a09f36@eucas1p1.samsung.com>
- <1483629943-31183-3-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Add EXYNOS5433 ARM architectures entry as a
+ supporter
+Date: Thu, 5 Jan 2017 18:59:52 +0200
+Message-ID: <20170105165952.yj5m4cm7zejvnayx@kozik-lap>
+References: <CGME20170105131251epcas1p18bb302757d0e45145595cc68c4ad947e@epcas1p1.samsung.com>
+ <1483621969-27631-1-git-send-email-cw00.choi@samsung.com>
+ <43019997-a6cf-30df-2437-306055ea6a78@linaro.org>
+ <20170105134104.zzjdirdiuqj6efyy@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1483629943-31183-3-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170105134104.zzjdirdiuqj6efyy@gangnam.samsung>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andrzej,
-
-On 01/05/2017 12:25 PM, Andrzej Hajda wrote:
-> TV path consist of following interconnected components:
-> - DECON_TV - display controller,
-> - HDMI - video signal converter RGB / HDMI,
-> - MHL - video signal converter HDMI / MHL,
-> - DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
+On Thu, Jan 05, 2017 at 10:41:04PM +0900, Andi Shyti wrote:
+> Hi Daniel,
 > 
-> The same path/configuration is used by TM2E board and is
-> automatically applied thanks to dts file inclusion.
+> > > +ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES
+> > > +M:	Chanwoo Choi <cw00.choi@samsung.com>
+> > > +R:	Andi Shyti <andi.shyti@samsung.com>
+> > > +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> > > +S:	Supported
+> > > +F:	arch/arm64/boot/dts/exynos/exynos5433*
+> > > +
+> > 
+> > Does it make sense to add a MAINTAINER entry for some dts files ?
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 71 +++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
+> I think it does considering that exynos5433* files are more then
+> the half of the arm64/.../exynos/ directory.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> Besides Chanwoo has authored all of them (almost) and doesn't
+> appear from the get_maintainers script.
 
-[snip]
+He appears:
+1. Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
 
->  
-> +&hdmi {
-> +	hpd-gpio = <&gpa3 0 0>;
+2. Krzysztof Kozlowski <krzk@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES,commit_signer:26/24=100%,authored:4/24=17%)
 
-Same comment than interrupts, please use the GPIO_ACTIVE_HIGH here.
-The rest looks good to me.
+3. Javier Martinez Canillas <javier@osg.samsung.com> (reviewer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES,commit_signer:6/24=25%)
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+4. Marek Szyprowski <m.szyprowski@samsung.com> (commit_signer:12/24=50%,authored:8/24=33%)
+
+5. Chanwoo Choi <cw00.choi@samsung.com> (commit_signer:9/24=38%,authored:3/24=12%)
+
+6. Sylwester Nawrocki <s.nawrocki@samsung.com> (commit_signer:9/24=38%)
+
+(sorry if lines are wrapped)
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Krzysztof
