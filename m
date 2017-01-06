@@ -1,45 +1,51 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 5/5] arm64: dts: exynos: Add tm2 touchkey node
-Date: Fri, 6 Jan 2017 16:03:33 +0200
-Message-ID: <20170106140333.v47qqspgvmkd24zg@kozik-lap>
-References: <20170106134350.32428-1-andi.shyti@samsung.com>
- <CGME20170106134356epcas1p1aee9f715c58b50f6056bf0b43b849497@epcas1p1.samsung.com>
- <20170106134350.32428-6-andi.shyti@samsung.com>
+Subject: Re: [PATCH] ARM, ARM64: dts: drop "arm,amba-bus" in favor of
+ "simple-bus" part 3
+Date: Fri, 6 Jan 2017 16:13:22 +0200
+Message-ID: <20170106141322.pejnlr6vbsq6bo6l@kozik-lap>
+References: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33918 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbdAFON3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 09:13:29 -0500
 Content-Disposition: inline
-In-Reply-To: <20170106134350.32428-6-andi.shyti@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Jaechul Lee <jcsing.lee@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi@etezian.org>, linux-input@vger.kernel.org, Jaechul Lee <galaxyra@gmail.com>, Beomho Seo <beomho.seo@samsung.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Russell King <linux@armlinux.org.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, David Brown <david.brown@linaro.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jan 06, 2017 at 10:43:50PM +0900, Andi Shyti wrote:
-> From: Jaechul Lee <jcsing.lee@samsung.com>
+On Wed, Dec 28, 2016 at 12:51:26AM +0900, Masahiro Yamada wrote:
+> Tree-wide replacement was done by commit 2ef7d5f342c1 ("ARM, ARM64:
+> dts: drop "arm,amba-bus" in favor of "simple-bus"), then the 2nd
+> round by commit 15b7cc78f095 ("arm64: dts: drop "arm,amba-bus" in
+> favor of "simple-bus" part 2").
 > 
-> Add DT node support for TM2 touchkey device.
+> Here, some new users have appeared for Linux v4.10-rc1.  Eliminate
+> them now.
 > 
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
 > 
+> Hi Arnd, Olof,
+> 
+> Can you pick this up for v4.10 fixes?
+> 
+> If we carry arm,amba-bus until the release, we will need to
+> take more time to deprecate it.
 
-Looks good, but I will wait with this one till the bindings and driver
-got accepted.
+What is the status of this?
+
+Masahiro, if you would split this, I could take Exynos part through my
+tree. Anyway I am fine with taking this directly into arm-soc. I do not
+expect conflicts around these lines, so:
+
+For Exynos:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
