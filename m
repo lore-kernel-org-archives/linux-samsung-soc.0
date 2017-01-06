@@ -1,57 +1,68 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v3 2/5] arm64: dts: exynos: make tm2 and tm2e independent
- from each other
-Date: Fri, 06 Jan 2017 16:59:14 +0900
-Message-ID: <20170106075914.y5nuak3bz3zrvvex@gangnam.samsung>
-References: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170106035914epcas5p209490dfca8e8ae83c6a9b5aa1408a1ed@epcas5p2.samsung.com>
- <1483675149-32598-3-git-send-email-jcsing.lee@samsung.com>
- <20170106070911.sj6qjd5akyxnazsl@kozik-lap>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
+ TM2 board
+Date: Fri, 06 Jan 2017 17:18:06 +0900
+Message-ID: <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
+References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
+ <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
+ <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
+ <586F2BF3.8080400@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-disposition: inline
-In-reply-to: <20170106070911.sj6qjd5akyxnazsl@kozik-lap>
-Sender: linux-input-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jaechul Lee <jcsing.lee@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-reply-to: <586F2BF3.8080400-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi, 
+Hi Inki,
 
-On Fri, Jan 06, 2017 at 09:09:11AM +0200, Krzysztof Kozlowski wrote:
-> On Fri, Jan 06, 2017 at 12:59:06PM +0900, Jaechul Lee wrote:
-> > From: Andi Shyti <andi.shyti@samsung.com>
+Thanks for the reply, but...
+
+> >> +static const struct drm_display_mode default_mode = {
+> >> +	.clock = 222372,
+> >> +	.hdisplay = 1440,
+> >> +	.hsync_start = 1440 + 1,
+> >> +	.hsync_end = 1440 + 1 + 1,
+> >> +	.htotal = 1440 + 1 + 1 + 1,
+> >> +	.vdisplay = 2560,
+> >> +	.vsync_start = 2560 + 1,
+> >> +	.vsync_end = 2560 + 1 + 1,
+> >> +	.vtotal = 2560 + 1 + 1 + 15,
+> >> +	.vrefresh = 60,
+> >> +	.flags = 0,
+> >> +};
 > > 
-> > Currently tm2e dts includes tm2 but there are some differences
-> > between the two boards and tm2 has some properties that tm2e
-> > doesn't have.
-> > 
-> > That's why it's important to keep the two dts files independent
-> > and put all the commonalities in a tm2-common.dtsi file.
-> > 
-> > At the current status the only two differences between the two
-> > dts files (besides the board name) are ldo31 and ldo38.
-> > 
-> > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> > Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> > ---
-> >  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1118 +++++++++++++++++++
-> >  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1153 +-------------------
+> > how is this working with tm2e? Are these values valid for both
+> > the boards?
 > 
-> Like talking to a wall. Without any feedback. If my instructions were
-> wrong (and it is not possible to detect rename) then please say it (you
-> can add personal comments after separator ---).
+> We don't need to consider tm2e board with two reasones,
+> 1. there is no tm2e board support in mainline
+> 2. the panel on tm2 would be a little bit different from one on tm2e
 
-no Krzysztof, I'm sorry, but this patch has been formatted with
-the diff algorithm *you* asked, -B50% both version 2 (where you
-didn't comment) and version 3. If you still don't like it, please
-don't blame me, blame the algorithm.
+... this display in the Tizen Kernel is supported by both:
+tm2 [1] and tm2e [2]. The only differences are:
 
-Now we can stay here at trying random diff algorithms (as they
-give more or less the same result) or you tell me which exact
-algorithm you want me to use. Besides, for me it's clear,
-tm2-common is all new, while in tm2 you have on one side the '-'
-(if it applies nothing has changed) on the bottom the '+'.
+TM2:
+   clock-frequency = <14874444>;
+   hactive = <1440>;
+
+TM2E:
+   clock-frequency = <16523724>;
+   hactive = <1600>;
+
+I don't know much about the differences you mention in point 2,
+but it's a pity to drop support only because we don't want to put
+in the dts the 'hactive', and 'clock-frequency' properties.
 
 Andi
+
+[1] https://git.tizen.org/cgit/platform/kernel/linux-exynos/tree/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts?h=tizen#n1284
+[2] https://git.tizen.org/cgit/platform/kernel/linux-exynos/tree/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts?h=tizen#n1270
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
