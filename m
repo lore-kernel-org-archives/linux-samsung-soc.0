@@ -1,68 +1,76 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Fri, 06 Jan 2017 17:36:56 +0900
-Message-ID: <586F5728.1010800@samsung.com>
-References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
- <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
- <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
- <586F2BF3.8080400@samsung.com>
- <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/5] arm64: dts: exynos: make tm2 and tm2e independent
+ from each other
+Date: Fri, 6 Jan 2017 10:37:29 +0200
+Message-ID: <20170106083729.4odfu42knjxxudve@kozik-lap>
+References: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170106035914epcas5p209490dfca8e8ae83c6a9b5aa1408a1ed@epcas5p2.samsung.com>
+ <1483675149-32598-3-git-send-email-jcsing.lee@samsung.com>
+ <20170106070911.sj6qjd5akyxnazsl@kozik-lap>
+ <20170106075914.y5nuak3bz3zrvvex@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170106075914.y5nuak3bz3zrvvex@gangnam.samsung>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andi Shyti <andi.shyti@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jaechul Lee <jcsing.lee@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAx7JuUIDA27J28IDE3OjE47JeQIEFuZGkgU2h5dGkg7J20KOqwgCkg7JO0IOq4
-gDoKPiBIaSBJbmtpLAo+IAo+IFRoYW5rcyBmb3IgdGhlIHJlcGx5LCBidXQuLi4KPiAKPj4+PiAr
-c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlIGRlZmF1bHRfbW9kZSA9IHsKPj4+
-PiArCS5jbG9jayA9IDIyMjM3MiwKPj4+PiArCS5oZGlzcGxheSA9IDE0NDAsCj4+Pj4gKwkuaHN5
-bmNfc3RhcnQgPSAxNDQwICsgMSwKPj4+PiArCS5oc3luY19lbmQgPSAxNDQwICsgMSArIDEsCj4+
-Pj4gKwkuaHRvdGFsID0gMTQ0MCArIDEgKyAxICsgMSwKPj4+PiArCS52ZGlzcGxheSA9IDI1NjAs
-Cj4+Pj4gKwkudnN5bmNfc3RhcnQgPSAyNTYwICsgMSwKPj4+PiArCS52c3luY19lbmQgPSAyNTYw
-ICsgMSArIDEsCj4+Pj4gKwkudnRvdGFsID0gMjU2MCArIDEgKyAxICsgMTUsCj4+Pj4gKwkudnJl
-ZnJlc2ggPSA2MCwKPj4+PiArCS5mbGFncyA9IDAsCj4+Pj4gK307Cj4+Pgo+Pj4gaG93IGlzIHRo
-aXMgd29ya2luZyB3aXRoIHRtMmU/IEFyZSB0aGVzZSB2YWx1ZXMgdmFsaWQgZm9yIGJvdGgKPj4+
-IHRoZSBib2FyZHM/Cj4+Cj4+IFdlIGRvbid0IG5lZWQgdG8gY29uc2lkZXIgdG0yZSBib2FyZCB3
-aXRoIHR3byByZWFzb25lcywKPj4gMS4gdGhlcmUgaXMgbm8gdG0yZSBib2FyZCBzdXBwb3J0IGlu
-IG1haW5saW5lCj4+IDIuIHRoZSBwYW5lbCBvbiB0bTIgd291bGQgYmUgYSBsaXR0bGUgYml0IGRp
-ZmZlcmVudCBmcm9tIG9uZSBvbiB0bTJlCj4gCj4gLi4uIHRoaXMgZGlzcGxheSBpbiB0aGUgVGl6
-ZW4gS2VybmVsIGlzIHN1cHBvcnRlZCBieSBib3RoOgo+IHRtMiBbMV0gYW5kIHRtMmUgWzJdLiBU
-aGUgb25seSBkaWZmZXJlbmNlcyBhcmU6CgpXaHkgdG0yZSBkdHMgZmlsZSBpcyBpbiBtYWlubGlu
-ZT8gU2VlbXMgY29tbXVuaWNhdGlvbiBtaXNzIHdpdGggQ2hhbndvby4gOiggCgo+IAo+IFRNMjoK
-PiAgICBjbG9jay1mcmVxdWVuY3kgPSA8MTQ4NzQ0NDQ+Owo+ICAgIGhhY3RpdmUgPSA8MTQ0MD47
-Cj4gCj4gVE0yRToKPiAgICBjbG9jay1mcmVxdWVuY3kgPSA8MTY1MjM3MjQ+Owo+ICAgIGhhY3Rp
-dmUgPSA8MTYwMD47Cj4gCj4gSSBkb24ndCBrbm93IG11Y2ggYWJvdXQgdGhlIGRpZmZlcmVuY2Vz
-IHlvdSBtZW50aW9uIGluIHBvaW50IDIsCj4gYnV0IGl0J3MgYSBwaXR5IHRvIGRyb3Agc3VwcG9y
-dCBvbmx5IGJlY2F1c2Ugd2UgZG9uJ3Qgd2FudCB0byBwdXQKPiBpbiB0aGUgZHRzIHRoZSAnaGFj
-dGl2ZScsIGFuZCAnY2xvY2stZnJlcXVlbmN5JyBwcm9wZXJ0aWVzLgoKQW55d2F5LCB0bTJlIGJv
-YXJkIGlzIGFscmVhZHkgaW4gbWFpbmxpbmUgc28gUGFuZWwgZHJpdmVyIG1heSBuZWVkIHRvIGlk
-ZW50aWZ5IHdoYXQga2luZHMgb2YgcGFuZWwgaXMgcHJvYmVkIHRvIGRlY2lkZSBwb3JjaCB2YWx1
-ZXMuIEkgdGhpbmsgdGhlcmUgYXJlIHJlbGV2YW50IHJlZ2lzdGVycyBpbiBNQ1Ugb2YgdGhlIFBh
-bmVsIGRldmljZSB0byBjaGVjayB2ZXJzaW9uIG9yIHNpbWlsYXIgdGhpbmcuCgpUaGFua3MuCgo+
-IAo+IEFuZGkKPiAKPiBbMV0gaHR0cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2Vy
-bmVsL2xpbnV4LWV4eW5vcy90cmVlL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0
-MzMtdG0yLmR0cz9oPXRpemVuI24xMjg0Cj4gWzJdIGh0dHBzOi8vZ2l0LnRpemVuLm9yZy9jZ2l0
-L3BsYXRmb3JtL2tlcm5lbC9saW51eC1leHlub3MvdHJlZS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4
-eW5vcy9leHlub3M1NDMzLXRtMmUuZHRzP2g9dGl6ZW4jbjEyNzAKPiAtLQo+IFRvIHVuc3Vic2Ny
-aWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVl
-IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-Cj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4gCj4gLgo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On Fri, Jan 06, 2017 at 04:59:14PM +0900, Andi Shyti wrote:
+> Hi, 
+> 
+> On Fri, Jan 06, 2017 at 09:09:11AM +0200, Krzysztof Kozlowski wrote:
+> > On Fri, Jan 06, 2017 at 12:59:06PM +0900, Jaechul Lee wrote:
+> > > From: Andi Shyti <andi.shyti@samsung.com>
+> > > 
+> > > Currently tm2e dts includes tm2 but there are some differences
+> > > between the two boards and tm2 has some properties that tm2e
+> > > doesn't have.
+> > > 
+> > > That's why it's important to keep the two dts files independent
+> > > and put all the commonalities in a tm2-common.dtsi file.
+> > > 
+> > > At the current status the only two differences between the two
+> > > dts files (besides the board name) are ldo31 and ldo38.
+> > > 
+> > > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> > > Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> > > ---
+> > >  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1118 +++++++++++++++++++
+> > >  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1153 +-------------------
+> > 
+> > Like talking to a wall. Without any feedback. If my instructions were
+> > wrong (and it is not possible to detect rename) then please say it (you
+> > can add personal comments after separator ---).
+> 
+> no Krzysztof, I'm sorry, but this patch has been formatted with
+> the diff algorithm *you* asked, -B50% both version 2 (where you
+> didn't comment) and version 3. If you still don't like it, please
+> don't blame me, blame the algorithm.
+
+If you wrote it in cover letter or after '---' I wouldn't complain
+because I would know that my feedback was ignored. But here it is like
+black hole - I do not know whether I was ignored or it was not working.
+> 
+> Now we can stay here at trying random diff algorithms (as they
+> give more or less the same result) or you tell me which exact
+> algorithm you want me to use. Besides, for me it's clear,
+> tm2-common is all new, while in tm2 you have on one side the '-'
+> (if it applies nothing has changed) on the bottom the '+'.
+
+Maybe that depends on the git?
+$ git --version 
+git version 2.9.3
+$ git format-patch -2 -B50%
+...
+  21  ...ynos5433-tm2.dts => exynos5433-tm2-common.dtsi} |   24 +-
+  22  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1153 +-------------------
+  23  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |   22 +-
+  24  3 files changed, 56 insertions(+), 1143 deletions(-)
+  25  copy arch/arm64/boot/dts/exynos/{exynos5433-tm2.dts => exynos5433-tm2-common.dtsi} (98%)
+  26  rewrite arch/arm64/boot/dts/exynos/exynos5433-tm2.dts (98%)
+
+Best regards,
+Krzysztof
