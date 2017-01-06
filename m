@@ -1,68 +1,68 @@
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
  TM2 board
-Date: Fri, 06 Jan 2017 17:18:06 +0900
-Message-ID: <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
+Date: Fri, 06 Jan 2017 17:36:56 +0900
+Message-ID: <586F5728.1010800@samsung.com>
 References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
  <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
  <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
  <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
  <586F2BF3.8080400@samsung.com>
+ <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-disposition: inline
-In-reply-to: <586F2BF3.8080400-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
-
-Thanks for the reply, but...
-
-> >> +static const struct drm_display_mode default_mode = {
-> >> +	.clock = 222372,
-> >> +	.hdisplay = 1440,
-> >> +	.hsync_start = 1440 + 1,
-> >> +	.hsync_end = 1440 + 1 + 1,
-> >> +	.htotal = 1440 + 1 + 1 + 1,
-> >> +	.vdisplay = 2560,
-> >> +	.vsync_start = 2560 + 1,
-> >> +	.vsync_end = 2560 + 1 + 1,
-> >> +	.vtotal = 2560 + 1 + 1 + 15,
-> >> +	.vrefresh = 60,
-> >> +	.flags = 0,
-> >> +};
-> > 
-> > how is this working with tm2e? Are these values valid for both
-> > the boards?
-> 
-> We don't need to consider tm2e board with two reasones,
-> 1. there is no tm2e board support in mainline
-> 2. the panel on tm2 would be a little bit different from one on tm2e
-
-... this display in the Tizen Kernel is supported by both:
-tm2 [1] and tm2e [2]. The only differences are:
-
-TM2:
-   clock-frequency = <14874444>;
-   hactive = <1440>;
-
-TM2E:
-   clock-frequency = <16523724>;
-   hactive = <1600>;
-
-I don't know much about the differences you mention in point 2,
-but it's a pity to drop support only because we don't want to put
-in the dts the 'hactive', and 'clock-frequency' properties.
-
-Andi
-
-[1] https://git.tizen.org/cgit/platform/kernel/linux-exynos/tree/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts?h=tizen#n1284
-[2] https://git.tizen.org/cgit/platform/kernel/linux-exynos/tree/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts?h=tizen#n1270
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+CgoyMDE364WEIDAx7JuUIDA27J28IDE3OjE47JeQIEFuZGkgU2h5dGkg7J20KOqwgCkg7JO0IOq4
+gDoKPiBIaSBJbmtpLAo+IAo+IFRoYW5rcyBmb3IgdGhlIHJlcGx5LCBidXQuLi4KPiAKPj4+PiAr
+c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlIGRlZmF1bHRfbW9kZSA9IHsKPj4+
+PiArCS5jbG9jayA9IDIyMjM3MiwKPj4+PiArCS5oZGlzcGxheSA9IDE0NDAsCj4+Pj4gKwkuaHN5
+bmNfc3RhcnQgPSAxNDQwICsgMSwKPj4+PiArCS5oc3luY19lbmQgPSAxNDQwICsgMSArIDEsCj4+
+Pj4gKwkuaHRvdGFsID0gMTQ0MCArIDEgKyAxICsgMSwKPj4+PiArCS52ZGlzcGxheSA9IDI1NjAs
+Cj4+Pj4gKwkudnN5bmNfc3RhcnQgPSAyNTYwICsgMSwKPj4+PiArCS52c3luY19lbmQgPSAyNTYw
+ICsgMSArIDEsCj4+Pj4gKwkudnRvdGFsID0gMjU2MCArIDEgKyAxICsgMTUsCj4+Pj4gKwkudnJl
+ZnJlc2ggPSA2MCwKPj4+PiArCS5mbGFncyA9IDAsCj4+Pj4gK307Cj4+Pgo+Pj4gaG93IGlzIHRo
+aXMgd29ya2luZyB3aXRoIHRtMmU/IEFyZSB0aGVzZSB2YWx1ZXMgdmFsaWQgZm9yIGJvdGgKPj4+
+IHRoZSBib2FyZHM/Cj4+Cj4+IFdlIGRvbid0IG5lZWQgdG8gY29uc2lkZXIgdG0yZSBib2FyZCB3
+aXRoIHR3byByZWFzb25lcywKPj4gMS4gdGhlcmUgaXMgbm8gdG0yZSBib2FyZCBzdXBwb3J0IGlu
+IG1haW5saW5lCj4+IDIuIHRoZSBwYW5lbCBvbiB0bTIgd291bGQgYmUgYSBsaXR0bGUgYml0IGRp
+ZmZlcmVudCBmcm9tIG9uZSBvbiB0bTJlCj4gCj4gLi4uIHRoaXMgZGlzcGxheSBpbiB0aGUgVGl6
+ZW4gS2VybmVsIGlzIHN1cHBvcnRlZCBieSBib3RoOgo+IHRtMiBbMV0gYW5kIHRtMmUgWzJdLiBU
+aGUgb25seSBkaWZmZXJlbmNlcyBhcmU6CgpXaHkgdG0yZSBkdHMgZmlsZSBpcyBpbiBtYWlubGlu
+ZT8gU2VlbXMgY29tbXVuaWNhdGlvbiBtaXNzIHdpdGggQ2hhbndvby4gOiggCgo+IAo+IFRNMjoK
+PiAgICBjbG9jay1mcmVxdWVuY3kgPSA8MTQ4NzQ0NDQ+Owo+ICAgIGhhY3RpdmUgPSA8MTQ0MD47
+Cj4gCj4gVE0yRToKPiAgICBjbG9jay1mcmVxdWVuY3kgPSA8MTY1MjM3MjQ+Owo+ICAgIGhhY3Rp
+dmUgPSA8MTYwMD47Cj4gCj4gSSBkb24ndCBrbm93IG11Y2ggYWJvdXQgdGhlIGRpZmZlcmVuY2Vz
+IHlvdSBtZW50aW9uIGluIHBvaW50IDIsCj4gYnV0IGl0J3MgYSBwaXR5IHRvIGRyb3Agc3VwcG9y
+dCBvbmx5IGJlY2F1c2Ugd2UgZG9uJ3Qgd2FudCB0byBwdXQKPiBpbiB0aGUgZHRzIHRoZSAnaGFj
+dGl2ZScsIGFuZCAnY2xvY2stZnJlcXVlbmN5JyBwcm9wZXJ0aWVzLgoKQW55d2F5LCB0bTJlIGJv
+YXJkIGlzIGFscmVhZHkgaW4gbWFpbmxpbmUgc28gUGFuZWwgZHJpdmVyIG1heSBuZWVkIHRvIGlk
+ZW50aWZ5IHdoYXQga2luZHMgb2YgcGFuZWwgaXMgcHJvYmVkIHRvIGRlY2lkZSBwb3JjaCB2YWx1
+ZXMuIEkgdGhpbmsgdGhlcmUgYXJlIHJlbGV2YW50IHJlZ2lzdGVycyBpbiBNQ1Ugb2YgdGhlIFBh
+bmVsIGRldmljZSB0byBjaGVjayB2ZXJzaW9uIG9yIHNpbWlsYXIgdGhpbmcuCgpUaGFua3MuCgo+
+IAo+IEFuZGkKPiAKPiBbMV0gaHR0cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2Vy
+bmVsL2xpbnV4LWV4eW5vcy90cmVlL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0
+MzMtdG0yLmR0cz9oPXRpemVuI24xMjg0Cj4gWzJdIGh0dHBzOi8vZ2l0LnRpemVuLm9yZy9jZ2l0
+L3BsYXRmb3JtL2tlcm5lbC9saW51eC1leHlub3MvdHJlZS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4
+eW5vcy9leHlub3M1NDMzLXRtMmUuZHRzP2g9dGl6ZW4jbjEyNzAKPiAtLQo+IFRvIHVuc3Vic2Ny
+aWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVl
+IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
+Cj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
+bW8taW5mby5odG1sCj4gCj4gLgo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
