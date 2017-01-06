@@ -1,51 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM, ARM64: dts: drop "arm,amba-bus" in favor of
- "simple-bus" part 3
-Date: Fri, 6 Jan 2017 16:13:22 +0200
-Message-ID: <20170106141322.pejnlr6vbsq6bo6l@kozik-lap>
-References: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v5 2/5] arm64: dts: exynos: make tm2 and tm2e independent
+ from each other
+Date: Sat, 7 Jan 2017 06:26:15 +0900
+Message-ID: <CAGTfZH2-NxEfPDnF987--V3HARm6ZWTeU+qPrhbM3RQ9mBSS=w@mail.gmail.com>
+References: <CGME20170106134356epcas1p19be459900aec43b2b9ea343cdaf0a2bf@epcas1p1.samsung.com>
+ <20170106134350.32428-1-andi.shyti@samsung.com> <20170106134350.32428-3-andi.shyti@samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33918 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbdAFON3 (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:35336 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932358AbdAFV0h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 09:13:29 -0500
-Content-Disposition: inline
-In-Reply-To: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 6 Jan 2017 16:26:37 -0500
+In-Reply-To: <20170106134350.32428-3-andi.shyti@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Russell King <linux@armlinux.org.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, David Brown <david.brown@linaro.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-input@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jaechul Lee <jcsing.lee@samsung.com>, Andi Shyti <andi@etezian.org>, Jaechul Lee <galaxyra@gmail.com>
 
-On Wed, Dec 28, 2016 at 12:51:26AM +0900, Masahiro Yamada wrote:
-> Tree-wide replacement was done by commit 2ef7d5f342c1 ("ARM, ARM64:
-> dts: drop "arm,amba-bus" in favor of "simple-bus"), then the 2nd
-> round by commit 15b7cc78f095 ("arm64: dts: drop "arm,amba-bus" in
-> favor of "simple-bus" part 2").
-> 
-> Here, some new users have appeared for Linux v4.10-rc1.  Eliminate
-> them now.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Hi Andi,
+
+2017-01-06 22:43 GMT+09:00 Andi Shyti <andi.shyti@samsung.com>:
+> Currently tm2e dts includes tm2 but there are some differences
+> between the two boards and tm2 has some properties that tm2e
+> doesn't have.
+>
+> That's why it's important to keep the two dts files independent
+> and put all the commonalities in a tm2-common.dtsi file.
+>
+> At the current status the only two differences between the two
+> dts files (besides the board name) are ldo31 and ldo38.
+>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > ---
-> 
-> Hi Arnd, Olof,
-> 
-> Can you pick this up for v4.10 fixes?
-> 
-> If we carry arm,amba-bus until the release, we will need to
-> take more time to deprecate it.
+>  ...ynos5433-tm2.dts => exynos5433-tm2-common.dtsi} |   21 +-
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1150 +-------------------
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |    2 +-
+>  3 files changed, 42 insertions(+), 1131 deletions(-)
+>  copy arch/arm64/boot/dts/exynos/{exynos5433-tm2.dts => exynos5433-tm2-common.dtsi} (98%)
+>  rewrite arch/arm64/boot/dts/exynos/exynos5433-tm2.dts (98%)
 
-What is the status of this?
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Masahiro, if you would split this, I could take Exynos part through my
-tree. Anyway I am fine with taking this directly into arm-soc. I do not
-expect conflicts around these lines, so:
+[snip]
 
-For Exynos:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanwoo Choi
