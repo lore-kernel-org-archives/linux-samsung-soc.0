@@ -1,42 +1,43 @@
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
  TM2 board
-Date: Fri, 06 Jan 2017 14:22:39 +0900
-Message-ID: <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
+Date: Fri, 06 Jan 2017 14:32:35 +0900
+Message-ID: <586F2BF3.8080400@samsung.com>
 References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
  <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
  <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
+ <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-disposition: inline
-In-reply-to: <1483611609-23522-4-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andi Shyti <andi.shyti@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: krzk@kernel.org, cw00.choi@samsung.com, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, jh80.chung@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, Hyungwon Hwang <human.hwang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Hoegeun,
-
-> +static const struct drm_display_mode default_mode = {
-> +	.clock = 222372,
-> +	.hdisplay = 1440,
-> +	.hsync_start = 1440 + 1,
-> +	.hsync_end = 1440 + 1 + 1,
-> +	.htotal = 1440 + 1 + 1 + 1,
-> +	.vdisplay = 2560,
-> +	.vsync_start = 2560 + 1,
-> +	.vsync_end = 2560 + 1 + 1,
-> +	.vtotal = 2560 + 1 + 1 + 15,
-> +	.vrefresh = 60,
-> +	.flags = 0,
-> +};
-
-how is this working with tm2e? Are these values valid for both
-the boards?
-
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+CgoyMDE364WEIDAx7JuUIDA27J28IDE0OjIy7JeQIEFuZGkgU2h5dGkg7J20KOqwgCkg7JO0IOq4
+gDoKPiBIaSBIb2VnZXVuLAo+IAo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9t
+b2RlIGRlZmF1bHRfbW9kZSA9IHsKPj4gKwkuY2xvY2sgPSAyMjIzNzIsCj4+ICsJLmhkaXNwbGF5
+ID0gMTQ0MCwKPj4gKwkuaHN5bmNfc3RhcnQgPSAxNDQwICsgMSwKPj4gKwkuaHN5bmNfZW5kID0g
+MTQ0MCArIDEgKyAxLAo+PiArCS5odG90YWwgPSAxNDQwICsgMSArIDEgKyAxLAo+PiArCS52ZGlz
+cGxheSA9IDI1NjAsCj4+ICsJLnZzeW5jX3N0YXJ0ID0gMjU2MCArIDEsCj4+ICsJLnZzeW5jX2Vu
+ZCA9IDI1NjAgKyAxICsgMSwKPj4gKwkudnRvdGFsID0gMjU2MCArIDEgKyAxICsgMTUsCj4+ICsJ
+LnZyZWZyZXNoID0gNjAsCj4+ICsJLmZsYWdzID0gMCwKPj4gK307Cj4gCj4gaG93IGlzIHRoaXMg
+d29ya2luZyB3aXRoIHRtMmU/IEFyZSB0aGVzZSB2YWx1ZXMgdmFsaWQgZm9yIGJvdGgKPiB0aGUg
+Ym9hcmRzPwoKV2UgZG9uJ3QgbmVlZCB0byBjb25zaWRlciB0bTJlIGJvYXJkIHdpdGggdHdvIHJl
+YXNvbmVzLAoxLiB0aGVyZSBpcyBubyB0bTJlIGJvYXJkIHN1cHBvcnQgaW4gbWFpbmxpbmUKMi4g
+dGhlIHBhbmVsIG9uIHRtMiB3b3VsZCBiZSBhIGxpdHRsZSBiaXQgZGlmZmVyZW50IGZyb20gb25l
+IG9uIHRtMmUKClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQW5kaQo+IAo+IApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
