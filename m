@@ -1,43 +1,53 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Fri, 06 Jan 2017 14:32:35 +0900
-Message-ID: <586F2BF3.8080400@samsung.com>
-References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
- <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
- <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/4] ARM64: dts: exynos5433: use macros for pinctrl
+ configuration on Exynos5433
+Date: Fri, 6 Jan 2017 08:18:05 +0200
+Message-ID: <20170106061805.6g57e6iulrclwieb@kozik-lap>
+References: <CGME20161230041427epcas1p1151d6e28fac143c63efaf4f7c8ed432d@epcas1p1.samsung.com>
+ <20161230041421.24448-1-andi.shyti@samsung.com>
+ <20161230041421.24448-4-andi.shyti@samsung.com>
+ <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
+ <20161230151724.5wlp4hbphasmw3rg@kozik-lap>
+ <CACRpkdbX_MuLSCerq08-1VZV6VJfynjkv1QOr7ssOCGvM5aB_Q@mail.gmail.com>
+ <20170105200807.54j2ebve6kqd5bob@kozik-lap>
+ <20170106022343.5w4d7pkydrfh2n75@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andi Shyti <andi.shyti@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: krzk@kernel.org, cw00.choi@samsung.com, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, jh80.chung@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33743 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbdAFGSS (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 6 Jan 2017 01:18:18 -0500
+Content-Disposition: inline
+In-Reply-To: <20170106022343.5w4d7pkydrfh2n75@gangnam.samsung>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
 
-CgoyMDE364WEIDAx7JuUIDA27J28IDE0OjIy7JeQIEFuZGkgU2h5dGkg7J20KOqwgCkg7JO0IOq4
-gDoKPiBIaSBIb2VnZXVuLAo+IAo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9t
-b2RlIGRlZmF1bHRfbW9kZSA9IHsKPj4gKwkuY2xvY2sgPSAyMjIzNzIsCj4+ICsJLmhkaXNwbGF5
-ID0gMTQ0MCwKPj4gKwkuaHN5bmNfc3RhcnQgPSAxNDQwICsgMSwKPj4gKwkuaHN5bmNfZW5kID0g
-MTQ0MCArIDEgKyAxLAo+PiArCS5odG90YWwgPSAxNDQwICsgMSArIDEgKyAxLAo+PiArCS52ZGlz
-cGxheSA9IDI1NjAsCj4+ICsJLnZzeW5jX3N0YXJ0ID0gMjU2MCArIDEsCj4+ICsJLnZzeW5jX2Vu
-ZCA9IDI1NjAgKyAxICsgMSwKPj4gKwkudnRvdGFsID0gMjU2MCArIDEgKyAxICsgMTUsCj4+ICsJ
-LnZyZWZyZXNoID0gNjAsCj4+ICsJLmZsYWdzID0gMCwKPj4gK307Cj4gCj4gaG93IGlzIHRoaXMg
-d29ya2luZyB3aXRoIHRtMmU/IEFyZSB0aGVzZSB2YWx1ZXMgdmFsaWQgZm9yIGJvdGgKPiB0aGUg
-Ym9hcmRzPwoKV2UgZG9uJ3QgbmVlZCB0byBjb25zaWRlciB0bTJlIGJvYXJkIHdpdGggdHdvIHJl
-YXNvbmVzLAoxLiB0aGVyZSBpcyBubyB0bTJlIGJvYXJkIHN1cHBvcnQgaW4gbWFpbmxpbmUKMi4g
-dGhlIHBhbmVsIG9uIHRtMiB3b3VsZCBiZSBhIGxpdHRsZSBiaXQgZGlmZmVyZW50IGZyb20gb25l
-IG9uIHRtMmUKClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQW5kaQo+IAo+IApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Fri, Jan 06, 2017 at 11:23:43AM +0900, Andi Shyti wrote:
+> Hi Krzysztof,
+> 
+> > Andi,
+> > Please fix missing Signed-off-by and resend with Linus' tags for #1 and
+> > #2 and with other accumulated tags.
+> 
+> patch #1 has already been merged in mainline:
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1259feddd0f83649d5c48d730c140b4f7f3fa288
+> 
+> and patch #2 is in LinusW's -next branch.
+
+Yes, but it is gone from devel so I suppose it will be removed from
+for-next in the future as well.
+
+> does it still make sense to send them again? If you want I can
+> send again patch 3 and 4 as independent patches with Chanwoo's
+> review (the only tags).
+
+No, no need. I wanted resend only because of #1 but it is merged as you
+said.
+
+Best regards,
+Krzysztof
