@@ -1,86 +1,71 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM64: dts: exynos5433: add HDMI node
-Date: Fri, 06 Jan 2017 12:43:22 +0900
-Message-ID: <586F125A.50804@samsung.com>
-References: <1483629943-31183-1-git-send-email-a.hajda@samsung.com>
- <CGME20170105152604eucas1p2092deeb660630f09b857cd1f8d1e4dea@eucas1p2.samsung.com>
- <1483629943-31183-2-git-send-email-a.hajda@samsung.com>
+From: Jaechul Lee <jcsing.lee@samsung.com>
+Subject: [PATCH v3 3/5] input: Add support for the tm2 touchkey device driver
+Date: Fri, 06 Jan 2017 12:59:07 +0900
+Message-ID: <1483675149-32598-4-git-send-email-jcsing.lee@samsung.com>
+References: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170106035914epcas5p2954865ce8060c6aaee61a7526e417b7d@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1483629943-31183-2-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaechul Lee <jcsing.lee@samsung.com>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, linux-input@vger.kernel.org, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
+This patch adds the binding description of the tm2 touchkey
+device driver.
 
-On 2017년 01월 06일 00:25, Andrzej Hajda wrote:
-> HDMI converts RGB/I80 signal from DECON_TV to HDMI/TMDS video stream.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index b47951b..cf45446 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -843,6 +843,36 @@
->  			iommu-names = "m0", "m1";
->  		};
->  
-> +		hdmi: hdmi@13970000 {
-> +			compatible = "samsung,exynos5433-hdmi";
-> +			reg = <0x13970000 0x70000>;
-> +			interrupts = <0 208 0>;
+Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/input/samsung,tm2-touchkey.txt        | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/samsung,tm2-touchkey.txt
 
-Need touse the interrupt definitions.
-
-> +			clocks = <&cmu_disp CLK_PCLK_HDMI>,
-> +				<&cmu_disp CLK_PCLK_HDMIPHY>,
-> +				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO>,
-> +				<&cmu_disp CLK_PHYCLK_HDMI_PIXEL>,
-> +				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY>,
-> +				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_TMDS_CLKO_USER>,
-> +				<&cmu_disp CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY>,
-> +				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_PIXEL_CLKO_USER>,
-> +				<&xxti>, <&cmu_disp CLK_SCLK_HDMI_SPDIF>;
-> +			clock-names = "hdmi_pclk", "hdmi_i_pclk",
-> +				"i_tmds_clk", "i_pixel_clk",
-> +				"tmds_clko", "tmds_clko_user",
-> +				"pixel_clko", "pixel_clko_user",
-> +				"oscclk", "i_spdif_clk";
-> +			phy = <&hdmiphy>;
-> +			ddc = <&hsi2c_11>;
-> +			samsung,syscon-phandle = <&pmu_system_controller>;
-> +			samsung,sysreg-phandle = <&syscon_disp>;
-> +			power-domains = <&pd_disp>;
-
-The Exynos5433 has not yet supported the power domain.
-You need to remove this property.
-
-> +			status = "disabled";
-> +		};
-> +
-> +		hdmiphy: hdmiphy@13af0000 {
-> +			reg = <0x13af0000 0x80>;
-> +		};
-> +
->  		syscon_disp: syscon@13b80000 {
->  			compatible = "syscon";
->  			reg = <0x13b80000 0x1010>;
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/input/samsung,tm2-touchkey.txt b/Documentation/devicetree/bindings/input/samsung,tm2-touchkey.txt
+new file mode 100644
+index 0000000..4de1af0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/samsung,tm2-touchkey.txt
+@@ -0,0 +1,27 @@
++Samsung tm2-touchkey
++
++Required properties:
++- compatible: must be "samsung,tm2-touchkey"
++- reg: I2C address of the chip.
++- interrupt-parent: a phandle for the interrupt controller (see interrupt
++	binding[0]).
++- interrupts: interrupt to which the chip is connected (see interrupt
++	binding[0]).
++- vcc-supply : internal regulator output. 1.8V
++- vdd-supply : power supply for IC 3.3V
++
++[0]: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++
++Example:
++	&i2c0 {
++		/* ... */
++
++		touchkey@20 {
++			compatible = "samsung,tm2-touchkey";
++			reg = <0x20>;
++			interrupt-parent = <&gpa3>;
++			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
++			vcc-supply=<&ldo32_reg>;
++			vdd-supply=<&ldo33_reg>;
++		};
++	};
 -- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.7.4
