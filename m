@@ -1,53 +1,112 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 3/4] ARM64: dts: exynos5433: use macros for pinctrl
- configuration on Exynos5433
-Date: Fri, 6 Jan 2017 08:18:05 +0200
-Message-ID: <20170106061805.6g57e6iulrclwieb@kozik-lap>
-References: <CGME20161230041427epcas1p1151d6e28fac143c63efaf4f7c8ed432d@epcas1p1.samsung.com>
- <20161230041421.24448-1-andi.shyti@samsung.com>
- <20161230041421.24448-4-andi.shyti@samsung.com>
- <CACRpkdaz9AyFJs1Th_SVexqKaP-=iPF0G-1YXOCoSmrQH8ZHDA@mail.gmail.com>
- <20161230151724.5wlp4hbphasmw3rg@kozik-lap>
- <CACRpkdbX_MuLSCerq08-1VZV6VJfynjkv1QOr7ssOCGvM5aB_Q@mail.gmail.com>
- <20170105200807.54j2ebve6kqd5bob@kozik-lap>
- <20170106022343.5w4d7pkydrfh2n75@gangnam.samsung>
+Subject: Re: [PATCH] MAINTAINERS: Add EXYNOS5433 ARM architectures entry as a
+ supporter
+Date: Fri, 6 Jan 2017 08:15:15 +0200
+Message-ID: <20170106061515.or6utefsj252ndyc@kozik-lap>
+References: <CGME20170105131251epcas1p18bb302757d0e45145595cc68c4ad947e@epcas1p1.samsung.com>
+ <1483621969-27631-1-git-send-email-cw00.choi@samsung.com>
+ <43019997-a6cf-30df-2437-306055ea6a78@linaro.org>
+ <20170105134104.zzjdirdiuqj6efyy@gangnam.samsung>
+ <20170105165952.yj5m4cm7zejvnayx@kozik-lap>
+ <586F0D48.9050104@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33743 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbdAFGSS (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35050 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbdAFGYC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Jan 2017 01:18:18 -0500
+        Fri, 6 Jan 2017 01:24:02 -0500
 Content-Disposition: inline
-In-Reply-To: <20170106022343.5w4d7pkydrfh2n75@gangnam.samsung>
+In-Reply-To: <586F0D48.9050104@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, Andi Shyti <andi@etezian.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 06, 2017 at 11:23:43AM +0900, Andi Shyti wrote:
-> Hi Krzysztof,
+On Fri, Jan 06, 2017 at 12:21:44PM +0900, Chanwoo Choi wrote:
+> On 2017년 01월 06일 01:59, Krzysztof Kozlowski wrote:
+> > On Thu, Jan 05, 2017 at 10:41:04PM +0900, Andi Shyti wrote:
+> >> Hi Daniel,
+> >>
+> >>>> +ARM/SAMSUNG EXYNOS5433 ARM ARCHITECTURES
+> >>>> +M:	Chanwoo Choi <cw00.choi@samsung.com>
+> >>>> +R:	Andi Shyti <andi.shyti@samsung.com>
+> >>>> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> >>>> +S:	Supported
+> >>>> +F:	arch/arm64/boot/dts/exynos/exynos5433*
+> >>>> +
+> >>>
+> >>> Does it make sense to add a MAINTAINER entry for some dts files ?
+> >>
+> >> I think it does considering that exynos5433* files are more then
+> >> the half of the arm64/.../exynos/ directory.
+> >>
+> >> Besides Chanwoo has authored all of them (almost) and doesn't
+> >> appear from the get_maintainers script.
+> > 
+> > He appears:
+> > 1. Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> > 
+> > 2. Krzysztof Kozlowski <krzk@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES,commit_signer:26/24=100%,authored:4/24=17%)
+> > 
+> > 3. Javier Martinez Canillas <javier@osg.samsung.com> (reviewer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES,commit_signer:6/24=25%)
+> > 
+> > 4. Marek Szyprowski <m.szyprowski@samsung.com> (commit_signer:12/24=50%,authored:8/24=33%)
+> > 
+> > 5. Chanwoo Choi <cw00.choi@samsung.com> (commit_signer:9/24=38%,authored:3/24=12%)
+> > 
+> > 6. Sylwester Nawrocki <s.nawrocki@samsung.com> (commit_signer:9/24=38%)
+> > 
+> > (sorry if lines are wrapped)
 > 
-> > Andi,
-> > Please fix missing Signed-off-by and resend with Linus' tags for #1 and
-> > #2 and with other accumulated tags.
+> I have a question.
 > 
-> patch #1 has already been merged in mainline:
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1259feddd0f83649d5c48d730c140b4f7f3fa288
-> 
-> and patch #2 is in LinusW's -next branch.
+> When I tested the get_maintainer script with Exynos5444 patch,
+> I cannot get the same result from you.
 
-Yes, but it is gone from devel so I suppose it will be removed from
-for-next in the future as well.
-
-> does it still make sense to send them again? If you want I can
-> send again patch 3 and 4 as independent patches with Chanwoo's
-> review (the only tags).
-
-No, no need. I wanted resend only because of #1 but it is merged as you
-said.
+The behavior of get_maintainers.pl changed few months ago and now it
+prints recent GIT activity only when there are no maintainers. To me
+personally, this is desired because otherwise a lot of people will be
+spammed on every patch. If someone wants to notify not only maintainers
+but also other people then he should use --git (which was used for
+output above).
 
 Best regards,
 Krzysztof
+
+> 
+> I tested the following patch[1] which was already merged by Marek.
+> [1] commit-id: 74c78036d5b5970266fa2075a17c9b89cabf873e
+> - ("arm64: dts: exynos: TM2 - add support for MFC video codec device"
+> 
+> ./scripts/get_maintainer.pl 0001-arm64-dts-exynos-TM2-add-support-for-MFC-video-codec.patch 
+> Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> Catalin Marinas <catalin.marinas@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE))
+> Will Deacon <will.deacon@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE))
+> Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> Krzysztof Kozlowski <krzk@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> Javier Martinez Canillas <javier@osg.samsung.com> (reviewer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE))
+> linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
+> linux-kernel@vger.kernel.org (open list)
+> 
+> Also, when I tested the exynos5433-tm2e.dts patch, I got the same result.
+> 
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> > 
+> > 
+> 
+> 
+> -- 
+> Best Regards,
+> Chanwoo Choi
+> Samsung Electronics
+
+> null
