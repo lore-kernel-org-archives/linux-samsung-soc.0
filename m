@@ -1,89 +1,48 @@
-From: Jaechul Lee <jcsing.lee@samsung.com>
-Subject: [PATCH v3 1/5] arm64: dts: exynos5433: TM2/E: Fix wrong information of
- ldo23 and ldo25
-Date: Fri, 06 Jan 2017 12:59:05 +0900
-Message-ID: <1483675149-32598-2-git-send-email-jcsing.lee@samsung.com>
-References: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170106035913epcas5p20336406863f1029ccf614520f366ddcf@epcas5p2.samsung.com>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v7 4/4] arm64: dts: exynos: Add support for S6E3HA2 panel
+ device on TM2 board
+Date: Fri, 06 Jan 2017 13:49:31 +0900
+Message-ID: <20170106044931.wumbmob46ihfnszn@gangnam.samsung>
+References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170105102013epcas5p3098ddb99e516ef138cc41d63c7591a79@epcas5p3.samsung.com>
+ <1483611609-23522-5-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1483675149-32598-1-git-send-email-jcsing.lee@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaechul Lee <jcsing.lee@samsung.com>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, linux-input@vger.kernel.org, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-disposition: inline
+In-reply-to: <1483611609-23522-5-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Chanwoo Choi <cw00.choi@samsung.com>
+Hi Hoegeun,
 
-This patch fixes the wrong information of ldo23 and ldo25 on both TM2 and TM2E.
+On Thu, Jan 05, 2017 at 07:20:09PM +0900, Hoegeun Kwon wrote:
+> From: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> This patch add the panel device tree node for S6E3HA2 display
+> controller to TM2 dts.
+> 
+> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
 
-Fixes: 01e5d2352152 ("arm64: dts: exynos: Add dts file for Exynos5433-based TM2 board")
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts  |  7 ++++---
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts | 10 ----------
- 2 files changed, 4 insertions(+), 13 deletions(-)
+Damn! this is getting complicated, you need to rebase this branch
+on top of the latest changes on exynos5433-tm2* (see Jaechul's
+patches https://lkml.org/lkml/2017/1/5/887).
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index 3b5215c..e8971f4 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -504,9 +504,9 @@
- 			};
- 
- 			ldo23_reg: LDO23 {
--				regulator-name = "CAM_SEN_CORE_1.2V_AP";
-+				regulator-name = "CAM_SEN_CORE_1.05V_AP";
- 				regulator-min-microvolt = <1050000>;
--				regulator-max-microvolt = <1200000>;
-+				regulator-max-microvolt = <1050000>;
- 			};
- 
- 			ldo24_reg: LDO24 {
-@@ -516,9 +516,10 @@
- 			};
- 
- 			ldo25_reg: LDO25 {
--				regulator-name = "CAM_SEN_A2.8V_AP";
-+				regulator-name = "UNUSED_LDO25";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-+				regulator-always-off;
- 			};
- 
- 			ldo26_reg: LDO26 {
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-index 1db4e7f..854c583 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-@@ -18,16 +18,6 @@
- 	compatible = "samsung,tm2e", "samsung,exynos5433";
- };
- 
--&ldo23_reg {
--	regulator-name = "CAM_SEN_CORE_1.025V_AP";
--	regulator-max-microvolt = <1050000>;
--};
--
--&ldo25_reg {
--	regulator-name = "UNUSED_LDO25";
--	regulator-always-off;
--};
--
- &ldo31_reg {
- 	regulator-name = "TSP_VDD_1.8V_AP";
- 	regulator-min-microvolt = <1800000>;
--- 
-2.7.4
+I will soon send you a link where you can get them.
+
+Andi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
