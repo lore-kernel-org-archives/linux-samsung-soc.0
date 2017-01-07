@@ -1,49 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v1.1] ARM: multi_v7_defconfig: Enable power sequence for Odroid U3
-Date: Sat,  7 Jan 2017 11:16:51 +0200
-Message-ID: <20170107091651.10560-1-krzk@kernel.org>
-References: <20170107085203.4431-5-krzk@kernel.org>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170107085203.4431-5-krzk@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Chen <peter.chen@nxp.com>, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, ulf.hansson@linaro.org, broonie@kernel.org, sre@kernel.org, robh+dt@kernel.org, linux-usb@vger.kernel.org, linux-pm@vger.kernel.org, hverkuil@xs4all.nl, Markus Reichl <m.reichl@fivetechno.de>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v5 5/5] arm64: dts: exynos: Add tm2 touchkey node
+Date: Sat, 7 Jan 2017 21:40:26 +0900
+Message-ID: <20170107124026.gl447hl5bucdflyk@jack.zhora.eu>
+References: <CGME20170106134356epcas1p1aee9f715c58b50f6056bf0b43b849497@epcas1p1.samsung.com>
+ <20170106134350.32428-1-andi.shyti@samsung.com>
+ <20170106134350.32428-6-andi.shyti@samsung.com>
+ <CAGTfZH2QYQK190kYFbOMqJMFgH32548ra-VqzYwc5LVBJwqisA@mail.gmail.com>
+ <CAGTfZH347ZRve20cdGLwtuf6arRAJ4Ry+HQrTubDj-RGR=K9cA@mail.gmail.com>
+ <CAGTfZH1QtbieMxQzoPvxsP_3tSYBSuXe+wtq0uUs03mhcLFdXg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAGTfZH1QtbieMxQzoPvxsP_3tSYBSuXe+wtq0uUs03mhcLFdXg@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Chanwoo Choi <cwchoi00@gmail.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-input@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jaechul Lee <jcsing.lee@samsung.com>, Andi Shyti <andi@etezian.org>, Jaechul Lee <galaxyra@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Odroid U3 needs a power sequence for lan9730, if it was enabled by
-bootloader.  Also enable the USB3503 HSCI to USB2.0 driver (device
-is present on Odroid U3).
+Hi Chanwoo,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>> +       touchkey@20 {
+> >>> +               compatible = "samsung,tm2-touchkey";
+> >>> +               reg = <0x20>;
+> >>> +               interrupt-parent = <&gpa3>;
+> >>> +               interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> >>> +               vcc-supply = <&ldo32_reg>;
+> >>> +               vdd-supply = <&ldo33_reg>;
+> >>> +       };
+> >>> +};
+> >>> +
+> >>>  &ldo31_reg {
+> >>>         regulator-name = "TSP_VDD_1.85V_AP";
+> >>>         regulator-min-microvolt = <1850000>;
+> 
+> I repiled the touchkey driver against compatible name.
+> Usually, when developing the device driver, we use the specific h/w name
+> but in this patch, the touckey dt node uses the h/w board name instead of
+> original touckhey name.
 
----
+this should be a device specifically done for the tm2 and we are
+not sure who is the manufacturer of the device. In order to not
+assign the device to the wrong manufacturer, we preferred calling
+it Samsung as it is in a Samsung device.
 
-Changes since v1 (v1 -> v1.1):
-1. Enable also usb3503 driver.
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index b01a43851294..8cc73e084b25 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -443,6 +443,7 @@ CONFIG_POWER_RESET_RMOBILE=y
- CONFIG_POWER_RESET_ST=y
- CONFIG_POWER_AVS=y
- CONFIG_ROCKCHIP_IODOMAIN=y
-+CONFIG_PWRSEQ_GENERIC=y
- CONFIG_SENSORS_IIO_HWMON=y
- CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_LM95245=y
-@@ -686,6 +687,7 @@ CONFIG_USB_DWC2=y
- CONFIG_USB_CHIPIDEA=y
- CONFIG_USB_CHIPIDEA_UDC=y
- CONFIG_USB_CHIPIDEA_HOST=y
-+CONFIG_USB_HSIC_USB3503=m
- CONFIG_AB8500_USB=y
- CONFIG_KEYSTONE_USB_PHY=y
- CONFIG_OMAP_USB3=y
--- 
-2.9.3
-
+Andi
