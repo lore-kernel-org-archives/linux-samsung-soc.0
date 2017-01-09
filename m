@@ -1,157 +1,131 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH V2 4/5] PCI: exynos: support the using PHY generic framework
-Date: Mon, 09 Jan 2017 19:09:18 +0530
-Message-ID: <e7c19900-0e9f-a3aa-240f-cba4244a8ef9@samsung.com>
-References: <20170104123435.30740-1-jh80.chung@samsung.com>
- <CGME20170104123436epcas1p1651443c5fe13f67006864aed2f70fa9d@epcas1p1.samsung.com>
- <20170104123435.30740-5-jh80.chung@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/4] DMA Engine: switch PL330 driver to non-irq-safe runtime
+ PM
+Date: Mon, 09 Jan 2017 15:03:14 +0100
+Message-ID: <1483970598-6191-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170109140324eucas1p2c2b981ae2222c6a4e3dcb3e5ce3c607d@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170104123435.30740-5-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, cpgs@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jaehoon,
+Hello,
 
-On 01/04/2017 06:04 PM, Jaehoon Chung wrote:
-> This patch is for using PHY generic framework.
-> To maintain backward compatibility, check whether phy is supported or
-> not with 'using_phy'.
->
-> And if someone use the old dt-file, display the "deprecated" message.
-> But it's still working fine with it.
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> ---
+This patchset changes the way the runtime PM is implemented in the PL330 DMA
+engine driver. The main goal of such change is to add support for the audio
+power domain to Exynos5 SoCs (5250, 542x, 5433, probably others) and let
+it to be properly turned off, when no audio is being used. Switching to
+non-irq-safe runtime PM is required to properly let power domain to be
+turned off (irq-safe runtime PM keeps power domain turned on all the time)
+and to integrate with clock controller's runtime PM (this cannot be
+workarounded any other way, PL330 uses clocks from the controller, which
+belongs to the same power domain).
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+For more details of the proposed change to the PL330 driver see patch #4.
+
+Audio power domain on Exynos5 SoCs contains following hardware modules:
+1. clock controller
+2. pin controller
+3. PL330 DMA controller
+4. I2S audio controller
+
+Patches for adding or fixing runtime PM for each of the above devices is
+handled separately.
+
+Runtime PM patches for clock controllers is possible and has been proposed
+in the following thread (pending review): "[PATCH v4 0/4] Add runtime PM
+support for clocks (on Exynos SoC example)",
+http://www.spinics.net/lists/arm-kernel/msg550747.html
+
+Runtime PM support for Exynos pin controller has been posted in the
+following thread: "[PATCH 0/9] Runtime PM for Exynos pin controller driver",
+http://www.spinics.net/lists/arm-kernel/msg550161.html
+
+Exynos I2S driver supports runtime PM, but some fixes were needed for it
+and they are already queued to linux-next.
+
+This patchset is based on linux-next from 9th January 2017.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
 
-> Changelog on V2:
-> - This patch is split from previous PATCH[1/4]
-> - Maintain the backward compatibility
-> - Adds 'using_phy' for cheching whether phy framework is used or not
-> - Adds 'DEPRECATED' message for old dt-binding way
->
->  drivers/pci/host/pci-exynos.c | 61 +++++++++++++++++++++++++++++++++++--------
->  1 file changed, 50 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-> index feed0fd..34f2eed 100644
-> --- a/drivers/pci/host/pci-exynos.c
-> +++ b/drivers/pci/host/pci-exynos.c
-> @@ -21,6 +21,7 @@
->  #include <linux/of_gpio.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/resource.h>
->  #include <linux/signal.h>
->  #include <linux/types.h>
-> @@ -110,6 +111,10 @@ struct exynos_pcie {
->  	struct exynos_pcie_clk_res	*clk_res;
->  	const struct exynos_pcie_ops	*ops;
->  	int				reset_gpio;
-> +
-> +	/* For Generic PHY Framework */
-> +	bool				using_phy;
-> +	struct phy			*phy;
->  };
->
->  struct exynos_pcie_ops {
-> @@ -135,6 +140,10 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
->  	if (IS_ERR(ep->mem_res->elbi_base))
->  		return PTR_ERR(ep->mem_res->elbi_base);
->
-> +	/* If using the PHY framework, doesn't need to get other resource */
-> +	if (ep->using_phy)
-> +		return 0;
-> +
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->  	ep->mem_res->phy_base = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(ep->mem_res->phy_base))
-> @@ -396,17 +405,28 @@ static int exynos_pcie_establish_link(struct exynos_pcie *exynos_pcie)
->  	}
->
->  	exynos_pcie_assert_core_reset(exynos_pcie);
-> -	exynos_pcie_assert_phy_reset(exynos_pcie);
-> -	exynos_pcie_deassert_phy_reset(exynos_pcie);
-> -	exynos_pcie_power_on_phy(exynos_pcie);
-> -	exynos_pcie_init_phy(exynos_pcie);
-> -
-> -	/* pulse for common reset */
-> -	exynos_pcie_writel(exynos_pcie->mem_res->block_base, 1,
-> -				PCIE_PHY_COMMON_RESET);
-> -	udelay(500);
-> -	exynos_pcie_writel(exynos_pcie->mem_res->block_base, 0,
-> -				PCIE_PHY_COMMON_RESET);
-> +
-> +	if (exynos_pcie->using_phy) {
-> +		phy_reset(exynos_pcie->phy);
-> +
-> +		exynos_pcie_writel(exynos_pcie->mem_res->elbi_base, 1,
-> +				PCIE_PWR_RESET);
-> +
-> +		phy_power_on(exynos_pcie->phy);
-> +		phy_init(exynos_pcie->phy);
-> +	} else {
-> +		exynos_pcie_assert_phy_reset(exynos_pcie);
-> +		exynos_pcie_deassert_phy_reset(exynos_pcie);
-> +		exynos_pcie_power_on_phy(exynos_pcie);
-> +		exynos_pcie_init_phy(exynos_pcie);
-> +
-> +		/* pulse for common reset */
-> +		exynos_pcie_writel(exynos_pcie->mem_res->block_base, 1,
-> +					PCIE_PHY_COMMON_RESET);
-> +		udelay(500);
-> +		exynos_pcie_writel(exynos_pcie->mem_res->block_base, 0,
-> +					PCIE_PHY_COMMON_RESET);
-> +	}
->
->  	exynos_pcie_deassert_core_reset(exynos_pcie);
->  	dw_pcie_setup_rc(pp);
-> @@ -420,6 +440,11 @@ static int exynos_pcie_establish_link(struct exynos_pcie *exynos_pcie)
->  	if (!dw_pcie_wait_for_link(pp))
->  		return 0;
->
-> +	if (exynos_pcie->using_phy) {
-> +		phy_power_off(exynos_pcie->phy);
-> +		return -ETIMEDOUT;
-> +	}
-> +
->  	while (exynos_pcie_readl(exynos_pcie->mem_res->phy_base,
->  				PCIE_PHY_PLL_LOCKED) == 0) {
->  		val = exynos_pcie_readl(exynos_pcie->mem_res->block_base,
-> @@ -633,6 +658,17 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->
->  	exynos_pcie->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
->
-> +	/* Assume that controller doesn't use the PHY framework */
-> +	exynos_pcie->using_phy = false;
-> +
-> +	exynos_pcie->phy = devm_of_phy_get(dev, np, NULL);
-> +	if (IS_ERR(exynos_pcie->phy)) {
-> +		if (PTR_ERR(exynos_pcie->phy) == -EPROBE_DEFER)
-> +			return PTR_ERR(exynos_pcie->phy);
-> +		dev_warn(dev, "Use the 'phy' property. Current DT of pci-exynos was deprecated!!\n");
-> +	} else
-> +		exynos_pcie->using_phy = true;
-> +
->  	if (exynos_pcie->ops && exynos_pcie->ops->get_mem_resources) {
->  		ret = exynos_pcie->ops->get_mem_resources(pdev, exynos_pcie);
->  		if (ret)
-> @@ -657,6 +693,9 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->  	return 0;
->
->  fail_probe:
-> +	if (exynos_pcie->using_phy)
-> +		phy_exit(exynos_pcie->phy);
-> +
->  	if (exynos_pcie->ops && exynos_pcie->ops->deinit_clk_resources)
->  		exynos_pcie->ops->deinit_clk_resources(exynos_pcie);
->  	return ret;
->
+Changelog:
+
+v2:
+- rebased onto linux next-20170109
+- improved patch description
+- separated patch #3 from #4 (storing a pointer to slave device for each
+  DMA channel) as requested by Krzysztof Kozlowski
+
+v1: https://www.spinics.net/lists/arm-kernel/msg550008.html
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (4):
+  dmaengine: pl330: remove pdata based initialization
+  dmaengine: Forward slave device pointer to of_xlate callback
+  dmaengine: pl330: Store pointer to slave device
+  dmaengine: pl330: Don't require irq-safe runtime PM
+
+ drivers/dma/amba-pl08x.c        |   2 +-
+ drivers/dma/at_hdmac.c          |   4 +-
+ drivers/dma/at_xdmac.c          |   2 +-
+ drivers/dma/bcm2835-dma.c       |   2 +-
+ drivers/dma/coh901318.c         |   2 +-
+ drivers/dma/cppi41.c            |   2 +-
+ drivers/dma/dma-jz4780.c        |   2 +-
+ drivers/dma/dmaengine.c         |   2 +-
+ drivers/dma/dw/platform.c       |   2 +-
+ drivers/dma/edma.c              |   4 +-
+ drivers/dma/fsl-edma.c          |   2 +-
+ drivers/dma/img-mdc-dma.c       |   2 +-
+ drivers/dma/imx-dma.c           |   2 +-
+ drivers/dma/imx-sdma.c          |   2 +-
+ drivers/dma/k3dma.c             |   2 +-
+ drivers/dma/lpc18xx-dmamux.c    |   2 +-
+ drivers/dma/mmp_pdma.c          |   2 +-
+ drivers/dma/mmp_tdma.c          |   2 +-
+ drivers/dma/moxart-dma.c        |   2 +-
+ drivers/dma/mxs-dma.c           |   2 +-
+ drivers/dma/nbpfaxi.c           |   2 +-
+ drivers/dma/of-dma.c            |  20 +++--
+ drivers/dma/pl330.c             | 166 +++++++++++++++++++---------------------
+ drivers/dma/pxa_dma.c           |   2 +-
+ drivers/dma/qcom/bam_dma.c      |   2 +-
+ drivers/dma/sh/rcar-dmac.c      |   2 +-
+ drivers/dma/sh/shdma-of.c       |   2 +-
+ drivers/dma/sh/usb-dmac.c       |   2 +-
+ drivers/dma/sirf-dma.c          |   2 +-
+ drivers/dma/st_fdma.c           |   2 +-
+ drivers/dma/ste_dma40.c         |   2 +-
+ drivers/dma/stm32-dma.c         |   2 +-
+ drivers/dma/sun4i-dma.c         |   2 +-
+ drivers/dma/sun6i-dma.c         |   2 +-
+ drivers/dma/tegra20-apb-dma.c   |   2 +-
+ drivers/dma/tegra210-adma.c     |   2 +-
+ drivers/dma/xilinx/xilinx_dma.c |   2 +-
+ drivers/dma/xilinx/zynqmp_dma.c |   2 +-
+ drivers/dma/zx_dma.c            |   2 +-
+ include/linux/amba/pl330.h      |  35 ---------
+ include/linux/of_dma.h          |  17 ++--
+ 41 files changed, 140 insertions(+), 176 deletions(-)
+ delete mode 100644 include/linux/amba/pl330.h
+
+-- 
+1.9.1
