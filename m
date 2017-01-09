@@ -1,40 +1,47 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos: Fix indentation of EHCI and OHCI
- ports
-Date: Mon, 9 Jan 2017 13:01:45 -0300
-Message-ID: <fc163f47-a810-9f37-96ad-cafbb57169f1@osg.samsung.com>
-References: <20170107085203.4431-1-krzk@kernel.org>
- <20170107085203.4431-2-krzk@kernel.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH 1/2] usb: host: ehci-exynos: Decrese node refcount on
+ exynos_ehci_get_phy() error paths
+Date: Mon, 9 Jan 2017 11:05:20 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1701091104540.1954-100000@iolanthe.rowland.org>
+References: <20170107084141.3731-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170107085203.4431-2-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Peter Chen <peter.chen@nxp.com>, ulf.hansson@linaro.org, Markus Reichl <m.reichl@fivetechno.de>, linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, sre@kernel.org, robh+dt@kernel.org, hverkuil@xs4all.nl, broonie@kernel.org, stern@rowland.harvard.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170107084141.3731-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+On Sat, 7 Jan 2017, Krzysztof Kozlowski wrote:
 
-On 01/07/2017 05:52 AM, Krzysztof Kozlowski wrote:
-> Replace spaces with tabs in EHCI and OHCI ports indentation.
+> Returning from for_each_available_child_of_node() loop requires cleaning
+> up node refcount.  Error paths lacked it so for example in case of
+> deferred probe, the refcount of phy node was left increased.
 > 
+> Fixes: 6d40500ac9b6 ("usb: ehci/ohci-exynos: Fix of_node_put() for child when getting PHYs")
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
+>  drivers/usb/host/ehci-exynos.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 42e5b66353ef..7a603f66a9bc 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -77,10 +77,12 @@ static int exynos_ehci_get_phy(struct device *dev,
+>  		if (IS_ERR(phy)) {
+>  			ret = PTR_ERR(phy);
+>  			if (ret == -EPROBE_DEFER) {
+> +				of_node_put(child);
+>  				return ret;
+>  			} else if (ret != -ENOSYS && ret != -ENODEV) {
+>  				dev_err(dev,
+>  					"Error retrieving usb2 phy: %d\n", ret);
+> +				of_node_put(child);
+>  				return ret;
+>  			}
+>  		}
+> 
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
