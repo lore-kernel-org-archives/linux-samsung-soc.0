@@ -1,68 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v1.1] ARM: multi_v7_defconfig: Enable power sequence for
- Odroid U3
-Date: Mon, 9 Jan 2017 14:44:54 -0300
-Message-ID: <953e4035-114d-6aa0-df88-8263b56be18b@osg.samsung.com>
-References: <20170107085203.4431-5-krzk@kernel.org>
- <20170107091651.10560-1-krzk@kernel.org>
- <d8ee24b1-9d6b-e76f-b5ef-71706efbf9e5@osg.samsung.com>
- <CAJKOXPdODg2gCXP-BCRhDZAc2+o1J7Ek9iLaYF7hn_R2mNiK3A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:57222
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932792AbdAIRpH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 12:45:07 -0500
-In-Reply-To: <CAJKOXPdODg2gCXP-BCRhDZAc2+o1J7Ek9iLaYF7hn_R2mNiK3A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] drm/exynos: constify exynos_drm_crtc_ops structures
+Date: Mon,  9 Jan 2017 23:24:53 +0530
+Message-ID: <1483984493-25284-1-git-send-email-bhumirks@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: julia.lawall@lip6.fr, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Chen <peter.chen@nxp.com>, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, ulf.hansson@linaro.org, broonie@kernel.org, sre@kernel.org, robh+dt@kernel.org, linux-usb@vger.kernel.org, linux-pm@vger.kernel.org, hverkuil@xs4all.nl, Markus Reichl <m.reichl@fivetechno.de>
 
-Hello Krzysztof,
+Declare exynos_drm_crtc_ops structures as const as they are only passed
+as an argument to the function exynos_drm_crtc_create. This argument is
+of type const struct exynos_drm_crtc_ops *, so exynos_drm_crtc_ops
+structures having this property can be declared const.
+Done using Coccinelle:
 
-On 01/09/2017 02:38 PM, Krzysztof Kozlowski wrote:
-> On Mon, Jan 9, 2017 at 6:24 PM, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
->> Hello Krzysztof,
->>
->> I think it would had been clearer if the subject prefix was "[PATCH v1.1 4/4]" :)
-> 
-> Ah, yes.
-> 
->>
->> On 01/07/2017 06:16 AM, Krzysztof Kozlowski wrote:
->>> Odroid U3 needs a power sequence for lan9730, if it was enabled by
->>> bootloader.  Also enable the USB3503 HSCI to USB2.0 driver (device
->>> is present on Odroid U3).
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>
->>> ---
->>>
->>
->> Do you think that makes sense to also enable GPIO_SYS for debugging
->> purposes as you do in patch 3/4?
-> 
-> I like the GPIO_SYSFS interface because it is easy to use. However
-> now, after your question, I found this:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2016-November/470154.html
-> ARM/ARM64: defconfig: drop GPIO_SYSFS on multiplatforms
-> 
-> ... so instead I will drop it from exynos_defconfig.
-> 
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct exynos_drm_crtc_ops i@p={...};
 
-Right, I forgot that using the GPIO sysfs interface is discouraged now and the
-new chardev/ioctl based should be used instead. So it makes sense to drop it.
+@ok@
+position p;
+identifier r.i;
+@@
+exynos_drm_crtc_create(...,&i@p,...)
 
-> Best regards,
-> Krzysztof
+@bad@
+position p!={r.p,ok.p};
+identifier r.i;
+@@
+i@p
 
-Best regards,
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
++const
+struct exynos_drm_crtc_ops i;
+
+File size before:
+   text	   data	    bss	    dec	    hex	filename
+   5008	    280	      0	   5288	   14a8	exynos/exynos5433_drm_decon.o
+
+File size after:
+   text	   data	    bss	    dec	    hex	filename
+   5120	    176	      0	   5296	   14b0 exynos/exynos5433_drm_decon.o
+
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 6ca1f31..12b9bf0 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -470,7 +470,7 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ 		clk_disable_unprepare(ctx->clks[i]);
+ }
+ 
+-static struct exynos_drm_crtc_ops decon_crtc_ops = {
++static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.enable			= decon_enable,
+ 	.disable		= decon_disable,
+ 	.enable_vblank		= decon_enable_vblank,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
