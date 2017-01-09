@@ -1,16 +1,16 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH 1/2] usb: host: ehci-exynos: Decrese node refcount on
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH 2/2] usb: host: ohci-exynos: Decrese node refcount on
  exynos_ehci_get_phy() error paths
-Date: Mon, 9 Jan 2017 11:05:20 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1701091104540.1954-100000@iolanthe.rowland.org>
-References: <20170107084141.3731-1-krzk@kernel.org>
+Date: Mon, 9 Jan 2017 11:05:35 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1701091105240.1954-100000@iolanthe.rowland.org>
+References: <20170107084141.3731-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170107084141.3731-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170107084141.3731-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sat, 7 Jan 2017, Krzysztof Kozlowski wrote:
@@ -20,16 +20,16 @@ On Sat, 7 Jan 2017, Krzysztof Kozlowski wrote:
 > deferred probe, the refcount of phy node was left increased.
 > 
 > Fixes: 6d40500ac9b6 ("usb: ehci/ohci-exynos: Fix of_node_put() for child when getting PHYs")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
->  drivers/usb/host/ehci-exynos.c | 2 ++
+>  drivers/usb/host/ohci-exynos.c | 2 ++
 >  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index 42e5b66353ef..7a603f66a9bc 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -77,10 +77,12 @@ static int exynos_ehci_get_phy(struct device *dev,
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index 2cd105be7319..6865b919403f 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -66,10 +66,12 @@ static int exynos_ohci_get_phy(struct device *dev,
 >  		if (IS_ERR(phy)) {
 >  			ret = PTR_ERR(phy);
 >  			if (ret == -EPROBE_DEFER) {
@@ -42,6 +42,10 @@ On Sat, 7 Jan 2017, Krzysztof Kozlowski wrote:
 >  				return ret;
 >  			}
 >  		}
-> 
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
