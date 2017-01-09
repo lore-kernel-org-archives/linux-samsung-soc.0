@@ -1,51 +1,54 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH 2/2] usb: host: ohci-exynos: Decrese node refcount on
- exynos_ehci_get_phy() error paths
-Date: Mon, 9 Jan 2017 11:05:35 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1701091105240.1954-100000@iolanthe.rowland.org>
-References: <20170107084141.3731-2-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/4] ARM: dts: exynos: Fix LAN9730 on Odroid U3 after
+ tftpboot
+Date: Mon, 9 Jan 2017 13:17:38 -0300
+Message-ID: <a145363b-4c88-ed27-839e-f71c9430dcf9@osg.samsung.com>
+References: <20170107085203.4431-1-krzk@kernel.org>
+ <20170107085203.4431-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170107084141.3731-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170107085203.4431-3-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Chen <peter.chen@nxp.com>, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, ulf.hansson@linaro.org, broonie@kernel.org, sre@kernel.org, robh+dt@kernel.org, linux-usb@vger.kernel.org, linux-pm@vger.kernel.org, hverkuil@xs4all.nl, Markus Reichl <m.reichl@fivetechno.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, 7 Jan 2017, Krzysztof Kozlowski wrote:
+Hello Krzysztof,
 
-> Returning from for_each_available_child_of_node() loop requires cleaning
-> up node refcount.  Error paths lacked it so for example in case of
-> deferred probe, the refcount of phy node was left increased.
+On 01/07/2017 05:52 AM, Krzysztof Kozlowski wrote:
+> The ethernet adapter LAN9730, after enabling in bootloader (e.g. for
+> tftpboot) requires reset during boot.  Otherwise it won't come up.
 > 
-> Fixes: 6d40500ac9b6 ("usb: ehci/ohci-exynos: Fix of_node_put() for child when getting PHYs")
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> The schematics of Odroid U3 are detailed enough but after grabbing
+> knowledge also from other sources (like U-Boot) the overall design looks
+> like:
+> 1. LAN9730 is connected to HSIC0 and USB3503 to HSIC1 of EHCI controller.
+> 2. USB3503 comes with its own reset pin: gpx3-5.
+> 3. Reset pin of LAN9730 is pulled up to 3.3 V so it cannot be used.
+> 4. The supply of 3.3 V for LAN9730 is delivered from buck8.
+> 5. Buck8 state is a logical OR of registry value (through I2C command)
+>    and ENB8 pin.  The ENB8, not described in schematics, is in fact
+>    gpa1-1.
+> 6. Missing or wrongly timed reset of LAN9730 might result in missing of
+>    two devices: LAN9730 and USB3503. Without reset, LAN9730 will not
+>    come up, if it was enabled by bootloader.
+> 
+> To fix the issue use the generic power sequence driver and toggle the
+> ENB8 (buck8) pin.  Reset duration of 500 us was chosen by experiments
+> (shortest working time was 400 us).  This is an easiest way to fix the
+> long standing LAN9730 reset issue.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/usb/host/ohci-exynos.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 2cd105be7319..6865b919403f 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -66,10 +66,12 @@ static int exynos_ohci_get_phy(struct device *dev,
->  		if (IS_ERR(phy)) {
->  			ret = PTR_ERR(phy);
->  			if (ret == -EPROBE_DEFER) {
-> +				of_node_put(child);
->  				return ret;
->  			} else if (ret != -ENOSYS && ret != -ENODEV) {
->  				dev_err(dev,
->  					"Error retrieving usb2 phy: %d\n", ret);
-> +				of_node_put(child);
->  				return ret;
->  			}
->  		}
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Thanks for keep pushing a fix for this long standing issue.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
