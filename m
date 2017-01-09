@@ -1,59 +1,153 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: Don't request/release DMA channels for
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH RESEND] spi: s3c64xx: Don't request/release DMA channels for
  each SPI transfer
-Date: Mon, 9 Jan 2017 10:00:09 +0000
-Message-ID: <20170109100009.22r7bjqsiaoerhgj@sirena.org.uk>
-References: <CGME20161229121937eucas1p11cd0bb98b21699b0f773ecaeb7c29d26@eucas1p1.samsung.com>
- <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
- <20161231182615.tuukfj5fa4wwkwvj@sirena.org.uk>
- <4bff51ce-2856-88dd-2518-ef8fa0c179e2@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="opldwiwzbju2auj4"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4bff51ce-2856-88dd-2518-ef8fa0c179e2-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Date: Mon, 09 Jan 2017 11:36:10 +0100
+Message-ID: <1483958170-17270-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170109103623eucas1p2f728e8ae5e1304fd3e06e2038edbdbf8@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11091 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759007AbdAIKg1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Jan 2017 05:36:27 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
+Requesting a DMA channel might be a time consuming operation, so there is
+no need to acquire and release DMA channel for each SPI transfer.
+DMA channels can be requested during driver probe and kept all the time,
+also because there are no shared nor dynamically allocated channels on
+Samsung S3C/S5P/Exynos platforms.
 
---opldwiwzbju2auj4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While moving dma_requrest_slave_channel calls, lets switch to
+dma_request_slave_channel_reason(), which returns error codes on failure,
+which can be properly propagated to the caller (this for example defers
+SPI probe when DMA controller is not yet available).
 
-On Mon, Jan 09, 2017 at 08:43:16AM +0100, Marek Szyprowski wrote:
-> On 2016-12-31 19:26, Mark Brown wrote:
-> > On Thu, Dec 29, 2016 at 01:19:31PM +0100, Marek Szyprowski wrote:
-> > > Requesting a DMA channel might be a time consuming operation, so there is
-> > > no need to acquire and release DMA channel for each SPI transfer.
-> > This doesn't apply against current code, please check and resend.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+Tested-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+This patch depends on commit 6f8dc9d481759b428a8cb6a17b83821451415ba9
+("spi: s3c64xx: Do not use platform_data for DMA parameters"), which is
+already in Linux v4.10-rc1 and came there through dma-engine tree. For
+merging to spi-next tree, it requires merging first v4.10-rc1.
 
-> It fails to apply because of missing commit
-> 6f8dc9d481759b428a8cb6a17b83821451415ba9
-> ("spi: s3c64xx: Do not use platform_data for DMA parameters") in your
-> spi-next,
+Resend reason:
+- collected tags
+- added information about patch dependency
+---
+ drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
 
-When I said "please check and resend" the resend part was important...
-
---opldwiwzbju2auj4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhzXyUACgkQJNaLcl1U
-h9B/qQf/c3D0uBCtMY4NDLsbQWiDWcxehgh+dnHpiy+SUP7e61fsWRsK0ARdZ51O
-AhSvjg2oc7EY2OgdGnnq3KO38YQyTJpAK0n0dsnNqABoEicUlUfzJ/BkEHSli4O0
-GcLp20S2xPTb1YIsL7N58bqdALD1gLeaTaz50PwpI7EwMHaooIEE25ykNWKG3vka
-ybg/8tzUwPHU74dC51fmJhUvOT+oFKrlaPj0t7/YfJi2SXYYKRQPUCB3NBXrzWw2
-oRPZBo+mrzMzAeDyc57VWzyPu2OQSCsAsxKn0q8fFhpnpT1N8gQs+eBGgpqprPE8
-lTYTrILW1ygXKZ8z3PVYf7Z0UdjgOg==
-=JfWH
------END PGP SIGNATURE-----
-
---opldwiwzbju2auj4--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 28dfdce4beae..849ee82483e4 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -341,43 +341,16 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-	struct device *dev = &sdd->pdev->dev;
+ 
+ 	if (is_polling(sdd))
+ 		return 0;
+ 
+-	/* Acquire DMA channels */
+-	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
+-	if (!sdd->rx_dma.ch) {
+-		dev_err(dev, "Failed to get RX DMA channel\n");
+-		return -EBUSY;
+-	}
+ 	spi->dma_rx = sdd->rx_dma.ch;
+-
+-	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
+-	if (!sdd->tx_dma.ch) {
+-		dev_err(dev, "Failed to get TX DMA channel\n");
+-		dma_release_channel(sdd->rx_dma.ch);
+-		return -EBUSY;
+-	}
+ 	spi->dma_tx = sdd->tx_dma.ch;
+ 
+ 	return 0;
+ }
+ 
+-static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
+-{
+-	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-
+-	/* Free DMA channels */
+-	if (!is_polling(sdd)) {
+-		dma_release_channel(sdd->rx_dma.ch);
+-		dma_release_channel(sdd->tx_dma.ch);
+-	}
+-
+-	return 0;
+-}
+-
+ static bool s3c64xx_spi_can_dma(struct spi_master *master,
+ 				struct spi_device *spi,
+ 				struct spi_transfer *xfer)
+@@ -1094,7 +1067,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
+ 	master->prepare_message = s3c64xx_spi_prepare_message;
+ 	master->transfer_one = s3c64xx_spi_transfer_one;
+-	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
+ 	master->num_chipselect = sci->num_cs;
+ 	master->dma_alignment = 8;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+@@ -1161,6 +1133,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (!is_polling(sdd)) {
++		/* Acquire DMA channels */
++		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "rx");
++		if (IS_ERR(sdd->rx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
++			ret = PTR_ERR(sdd->rx_dma.ch);
++			goto err_disable_io_clk;
++		}
++		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "tx");
++		if (IS_ERR(sdd->tx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
++			ret = PTR_ERR(sdd->tx_dma.ch);
++			goto err_release_tx_dma;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -1206,6 +1196,12 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->rx_dma.ch);
++err_release_tx_dma:
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->tx_dma.ch);
++err_disable_io_clk:
+ 	clk_disable_unprepare(sdd->ioclk);
+ err_disable_src_clk:
+ 	clk_disable_unprepare(sdd->src_clk);
+@@ -1226,6 +1222,11 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
++	if (!is_polling(sdd)) {
++		dma_release_channel(sdd->rx_dma.ch);
++		dma_release_channel(sdd->tx_dma.ch);
++	}
++
+ 	clk_disable_unprepare(sdd->ioclk);
+ 
+ 	clk_disable_unprepare(sdd->src_clk);
+-- 
+1.9.1
