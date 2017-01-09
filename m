@@ -1,194 +1,178 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/4] dmaengine: pl330: Don't require irq-safe runtime
- PM
-Date: Mon, 9 Jan 2017 20:47:59 +0200
-Message-ID: <20170109184759.3jijirfunhimqogt@kozik-lap>
-References: <1483970598-6191-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170109140327eucas1p20df21c98a5744003cd2687162f35ec10@eucas1p2.samsung.com>
- <1483970598-6191-5-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f194.google.com ([209.85.210.194]:34579 "EHLO
-        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161609AbdAISsG (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 13:48:06 -0500
-Content-Disposition: inline
-In-Reply-To: <1483970598-6191-5-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "spi: s3c64xx: Don't request/release DMA channels for each SPI transfer" to the spi tree
+Date: Mon, 09 Jan 2017 20:02:01 +0000
+Message-ID: <E1cQg8n-00074T-PN@debutante>
+References: <1483013971-26446-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1483013971-26446-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgAndi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-On Mon, Jan 09, 2017 at 03:03:18PM +0100, Marek Szyprowski wrote:
-> This patch replaces irq-safe runtime PM with non-irq-safe version based on
-> the new approach. Existing, irq-safe runtime PM implementation for PL330 was
-> not bringing much benefits of its own - only clocks were enabled/disabled.
-> 
-> Till now non-irq-safe runtime PM implementation was only possible by calling
-> pm_runtime_get/put functions from alloc/free_chan_resources. All other DMA
-> engine API functions cannot be called from a context, which permits sleeping.
-> Such implementation, in practice would result in keeping DMA controller's
-> device active almost all the time, because most of the slave device drivers
-> (DMA engine clients) acquire DMA channel in their probe() function and
-> released it during driver removal.
-> 
-> This patch provides a new, different approach. It is based on an observation
-> that there can be only one slave device using each DMA channel. PL330 hardware
-> always has dedicated channels for each peripheral device. Using recently
-> introduced device dependencies (links) infrastructure one can ensure proper
-> runtime PM state of PL330 DMA controller basing on the runtime PM state of
-> the slave device.
-> 
-> In this approach in pl330_alloc_chan_resources() function a new dependency
-> is being created between PL330 DMA controller device (as a supplier) and
-> given slave device (as a consumer). This way PL330 DMA controller device
-> runtime active counter is increased when the slave device is resumed and
-> decreased the same time when given slave device is put to suspend. This way
-> it has been ensured to keep PL330 DMA controller runtime active if there is
-> an active used of any of its DMA channels. Slave device pointer is initially
-> stored in per-channel data in of_dma_xlate callback. This is similar to what
-> has been already implemented in Exynos IOMMU driver in commit 2f5f44f205cc95
-> ("iommu/exynos: Use device dependency links to control runtime pm").
-> 
-> If slave device doesn't implement runtime PM or keeps device runtime active
-> all the time, then PL330 DMA controller will be runtime active all the time
-> when channel is being allocated. The goal is however to have runtime PM
-> added to all devices in the system, because it lets respective power
-> domains to be turned off, what gives the best results in terms of power
-> saving.
-> 
-> If one requests memory-to-memory channel, runtime active counter is
-> increased unconditionally. This might be a drawback of this approach, but
-> PL330 is not really used for memory-to-memory operations due to poor
-> performance in such operations compared to the CPU.
-> 
-> Introducing non-irq-safe runtime power management finally allows to turn off
-> audio power domain on Exynos5 SoCs.
-> 
-> Removal of irq-safe runtime PM is based on the revert of the following
-> commits:
-> 1. "dmaengine: pl330: fix runtime pm support" commit
->    5c9e6c2b2ba3ec3a442e2fb5b4286498f8b4dcb7
-> 2. "dmaengine: pl330: Fix hang on dmaengine_terminate_all on certain boards"
->    commit 81cc6edc08705ac0146fe6ac14a0982a31ce6f3d
-> 3. "ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12"
->    commit ae43b3289186480f81c78bb63d788a85a3631f47
+The patch
 
-Checkpatch will complain here. I think following standard pattern of
-'commit XYZ ("abc")' makes sense.
+   spi: s3c64xx: Don't request/release DMA channels for each SPI transfer
 
-Beside that, one not important remark below.
+has been applied to the spi tree at
 
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/dma/pl330.c | 124 ++++++++++++++++++++++++++--------------------------
->  1 file changed, 61 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 9c72f535739c..2cffbb44b09e 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -268,9 +268,6 @@ enum pl330_byteswap {
->  
->  #define NR_DEFAULT_DESC	16
->  
-> -/* Delay for runtime PM autosuspend, ms */
-> -#define PL330_AUTOSUSPEND_DELAY 20
-> -
->  /* Populated by the PL330 core driver for DMA API driver's info */
->  struct pl330_config {
->  	u32	periph_id;
-> @@ -449,8 +446,8 @@ struct dma_pl330_chan {
->  	bool cyclic;
->  
->  	/* for runtime pm tracking */
-> -	bool active;
->  	struct device *slave;
-> +	struct device_link *slave_link;
->  };
->  
->  struct pl330_dmac {
-> @@ -2016,7 +2013,6 @@ static void pl330_tasklet(unsigned long data)
->  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
->  	struct dma_pl330_desc *desc, *_dt;
->  	unsigned long flags;
-> -	bool power_down = false;
->  
->  	spin_lock_irqsave(&pch->lock, flags);
->  
-> @@ -2031,18 +2027,10 @@ static void pl330_tasklet(unsigned long data)
->  	/* Try to submit a req imm. next to the last completed cookie */
->  	fill_queue(pch);
->  
-> -	if (list_empty(&pch->work_list)) {
-> -		spin_lock(&pch->thread->dmac->lock);
-> -		_stop(pch->thread);
-> -		spin_unlock(&pch->thread->dmac->lock);
-> -		power_down = true;
-> -		pch->active = false;
-> -	} else {
-> -		/* Make sure the PL330 Channel thread is active */
-> -		spin_lock(&pch->thread->dmac->lock);
-> -		_start(pch->thread);
-> -		spin_unlock(&pch->thread->dmac->lock);
-> -	}
-> +	/* Make sure the PL330 Channel thread is active */
-> +	spin_lock(&pch->thread->dmac->lock);
-> +	_start(pch->thread);
-> +	spin_unlock(&pch->thread->dmac->lock);
->  
->  	while (!list_empty(&pch->completed_list)) {
->  		struct dmaengine_desc_callback cb;
-> @@ -2055,13 +2043,6 @@ static void pl330_tasklet(unsigned long data)
->  		if (pch->cyclic) {
->  			desc->status = PREP;
->  			list_move_tail(&desc->node, &pch->work_list);
-> -			if (power_down) {
-> -				pch->active = true;
-> -				spin_lock(&pch->thread->dmac->lock);
-> -				_start(pch->thread);
-> -				spin_unlock(&pch->thread->dmac->lock);
-> -				power_down = false;
-> -			}
->  		} else {
->  			desc->status = FREE;
->  			list_move_tail(&desc->node, &pch->dmac->desc_pool);
-> @@ -2076,12 +2057,6 @@ static void pl330_tasklet(unsigned long data)
->  		}
->  	}
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> -
-> -	/* If work list empty, power down */
-> -	if (power_down) {
-> -		pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
-> -		pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
-> -	}
->  }
->  
->  bool pl330_filter(struct dma_chan *chan, void *param)
-> @@ -2125,11 +2100,52 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
->  	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
->  }
->  
-> +static int pl330_add_slave_link(struct pl330_dmac *pl330,
-> +				struct dma_pl330_chan *pch)
-> +{
-> +	struct device_link *link;
-> +	int i;
-> +
-> +	if (pch->slave_link)
-> +		return 0;
-> +
-> +	link = device_link_add(pch->slave, pl330->ddma.dev,
-> +				       DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Align the arguments with open parenthesis?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Anyway, nice job!
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Best regards,
-Krzysztof
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3d63a47a380a873408dad10ca62bd8299b2208f1 Mon Sep 17 00:00:00 2001
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Date: Mon, 9 Jan 2017 11:36:10 +0100
+Subject: [PATCH] spi: s3c64xx: Don't request/release DMA channels for each SPI
+ transfer
+
+Requesting a DMA channel might be a time consuming operation, so there is
+no need to acquire and release DMA channel for each SPI transfer.
+DMA channels can be requested during driver probe and kept all the time,
+also because there are no shared nor dynamically allocated channels on
+Samsung S3C/S5P/Exynos platforms.
+
+While moving dma_requrest_slave_channel calls, lets switch to
+dma_request_slave_channel_reason(), which returns error codes on failure,
+which can be properly propagated to the caller (this for example defers
+SPI probe when DMA controller is not yet available).
+
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 28dfdce4beae..849ee82483e4 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -341,43 +341,16 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-	struct device *dev = &sdd->pdev->dev;
+ 
+ 	if (is_polling(sdd))
+ 		return 0;
+ 
+-	/* Acquire DMA channels */
+-	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
+-	if (!sdd->rx_dma.ch) {
+-		dev_err(dev, "Failed to get RX DMA channel\n");
+-		return -EBUSY;
+-	}
+ 	spi->dma_rx = sdd->rx_dma.ch;
+-
+-	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
+-	if (!sdd->tx_dma.ch) {
+-		dev_err(dev, "Failed to get TX DMA channel\n");
+-		dma_release_channel(sdd->rx_dma.ch);
+-		return -EBUSY;
+-	}
+ 	spi->dma_tx = sdd->tx_dma.ch;
+ 
+ 	return 0;
+ }
+ 
+-static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
+-{
+-	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+-
+-	/* Free DMA channels */
+-	if (!is_polling(sdd)) {
+-		dma_release_channel(sdd->rx_dma.ch);
+-		dma_release_channel(sdd->tx_dma.ch);
+-	}
+-
+-	return 0;
+-}
+-
+ static bool s3c64xx_spi_can_dma(struct spi_master *master,
+ 				struct spi_device *spi,
+ 				struct spi_transfer *xfer)
+@@ -1094,7 +1067,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
+ 	master->prepare_message = s3c64xx_spi_prepare_message;
+ 	master->transfer_one = s3c64xx_spi_transfer_one;
+-	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
+ 	master->num_chipselect = sci->num_cs;
+ 	master->dma_alignment = 8;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+@@ -1161,6 +1133,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (!is_polling(sdd)) {
++		/* Acquire DMA channels */
++		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "rx");
++		if (IS_ERR(sdd->rx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
++			ret = PTR_ERR(sdd->rx_dma.ch);
++			goto err_disable_io_clk;
++		}
++		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
++								  "tx");
++		if (IS_ERR(sdd->tx_dma.ch)) {
++			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
++			ret = PTR_ERR(sdd->tx_dma.ch);
++			goto err_release_tx_dma;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+@@ -1206,6 +1196,12 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->rx_dma.ch);
++err_release_tx_dma:
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->tx_dma.ch);
++err_disable_io_clk:
+ 	clk_disable_unprepare(sdd->ioclk);
+ err_disable_src_clk:
+ 	clk_disable_unprepare(sdd->src_clk);
+@@ -1226,6 +1222,11 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
++	if (!is_polling(sdd)) {
++		dma_release_channel(sdd->rx_dma.ch);
++		dma_release_channel(sdd->tx_dma.ch);
++	}
++
+ 	clk_disable_unprepare(sdd->ioclk);
+ 
+ 	clk_disable_unprepare(sdd->src_clk);
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
