@@ -1,124 +1,107 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver
- bind
-Date: Mon, 9 Jan 2017 15:17:22 +0530
-Message-ID: <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
-References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
- <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
- <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
+ TM2 board
+Date: Mon, 09 Jan 2017 10:53:53 +0100
+Message-ID: <aeab26bc-76a8-0b4d-b5b9-b8602fcf2eb3@samsung.com>
+References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
+ <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
+ <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
+ <586F2BF3.8080400@samsung.com>
+ <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
+ <586F5728.1010800@samsung.com>
+ <5df95abe-0d5d-0c48-2840-5996260201de@samsung.com>
+ <587355B8.2050701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34776 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751441AbdAIJra (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 04:47:30 -0500
-In-Reply-To: <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <587355B8.2050701@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, cw00.choi@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
 
-
-
-On 01/05/2017 01:01 PM, Sean Paul wrote:
-> On Fri, Dec 30, 2016 at 4:57 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Analogix_dp_bind() can be called from component framework, which doesn't
->> guarantee proper runtime PM state of the device during bind operation,
->> so ensure that device is runtime active before doing any register access.
->> This ensures that the power domain, to which DP module belongs, is turned
->> on. While at it, also fix the unbalanced call to phy_power_on() in
->> analogix_dp_bind() function.
-
-Pushed to drm-misc-fixes.
-
-Thanks,
-Archit
-
->>
->> This patch solves the following kernel oops on Samsung Exynos5250 Snow
->> board:
->>
->> Unhandled fault: imprecise external abort (0x406) at 0x00000000
->> pgd = c0004000
->> [00000000] *pgd=00000000
->> Internal error: : 406 [#1] PREEMPT SMP ARM
->> Modules linked in:
->> CPU: 0 PID: 75 Comm: kworker/0:2 Not tainted 4.9.0 #1046
->> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> Workqueue: events deferred_probe_work_func
->> task: ee272300 task.stack: ee312000
->> PC is at analogix_dp_enable_sw_function+0x18/0x2c
->> LR is at analogix_dp_init_dp+0x2c/0x50
->> ...
->> [<c03fcb38>] (analogix_dp_enable_sw_function) from [<c03fa9c4>] (analogix_dp_init_dp+0x2c/0x50)
->> [<c03fa9c4>] (analogix_dp_init_dp) from [<c03fab6c>] (analogix_dp_bind+0x184/0x42c)
->> [<c03fab6c>] (analogix_dp_bind) from [<c03fdb84>] (component_bind_all+0xf0/0x218)
->> [<c03fdb84>] (component_bind_all) from [<c03ed64c>] (exynos_drm_load+0x134/0x200)
->> [<c03ed64c>] (exynos_drm_load) from [<c03d5058>] (drm_dev_register+0xa0/0xd0)
->> [<c03d5058>] (drm_dev_register) from [<c03d66b8>] (drm_platform_init+0x58/0xb0)
->> [<c03d66b8>] (drm_platform_init) from [<c03fe0c4>] (try_to_bring_up_master+0x14c/0x188)
->> [<c03fe0c4>] (try_to_bring_up_master) from [<c03fe188>] (component_add+0x88/0x138)
->> [<c03fe188>] (component_add) from [<c0403a38>] (platform_drv_probe+0x50/0xb0)
->> [<c0403a38>] (platform_drv_probe) from [<c0402470>] (driver_probe_device+0x1f0/0x2a8)
->> [<c0402470>] (driver_probe_device) from [<c0400a54>] (bus_for_each_drv+0x44/0x8c)
->> [<c0400a54>] (bus_for_each_drv) from [<c04021f8>] (__device_attach+0x9c/0x100)
->> [<c04021f8>] (__device_attach) from [<c04018e8>] (bus_probe_device+0x84/0x8c)
->> [<c04018e8>] (bus_probe_device) from [<c0401d1c>] (deferred_probe_work_func+0x60/0x8c)
->> [<c0401d1c>] (deferred_probe_work_func) from [<c012fc14>] (process_one_work+0x120/0x318)
->> [<c012fc14>] (process_one_work) from [<c012fe34>] (process_scheduled_works+0x28/0x38)
->> [<c012fe34>] (process_scheduled_works) from [<c0130048>] (worker_thread+0x204/0x4ac)
->> [<c0130048>] (worker_thread) from [<c01352c4>] (kthread+0xd8/0xf4)
->> [<c01352c4>] (kthread) from [<c0107978>] (ret_from_fork+0x14/0x3c)
->> Code: e59035f0 e5935018 f57ff04f e3c55001 (f57ff04e)
->> ---[ end trace 3d1d0d87796de344 ]---
->>
->
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
->
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index eb9bf8786c24..18eefdcbf1ba 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1382,6 +1382,7 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
->>
->>         pm_runtime_enable(dev);
->>
->> +       pm_runtime_get_sync(dev);
->>         phy_power_on(dp->phy);
->>
->>         analogix_dp_init_dp(dp);
->> @@ -1414,9 +1415,15 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
->>                 goto err_disable_pm_runtime;
->>         }
->>
->> +       phy_power_off(dp->phy);
->> +       pm_runtime_put(dev);
->> +
->>         return 0;
->>
->>  err_disable_pm_runtime:
->> +
->> +       phy_power_off(dp->phy);
->> +       pm_runtime_put(dev);
->>         pm_runtime_disable(dev);
->>
->>         return ret;
->> --
->> 1.9.1
->>
->
->
->
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+T24gMDkuMDEuMjAxNyAxMDoxOSwgSW5raSBEYWUgd3JvdGU6Cj4KPiAyMDE364WEIDAx7JuUIDA5
+7J28IDE2OjM37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gT24gMDYuMDEu
+MjAxNyAwOTozNiwgSW5raSBEYWUgd3JvdGU6Cj4+PiAyMDE364WEIDAx7JuUIDA27J28IDE3OjE4
+7JeQIEFuZGkgU2h5dGkg7J20KOqwgCkg7JO0IOq4gDoKPj4+PiBIaSBJbmtpLAo+Pj4+Cj4+Pj4g
+VGhhbmtzIGZvciB0aGUgcmVwbHksIGJ1dC4uLgo+Pj4+Cj4+Pj4+Pj4gK3N0YXRpYyBjb25zdCBz
+dHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSBkZWZhdWx0X21vZGUgPSB7Cj4+Pj4+Pj4gKwkuY2xvY2sg
+PSAyMjIzNzIsCj4+Pj4+Pj4gKwkuaGRpc3BsYXkgPSAxNDQwLAo+Pj4+Pj4+ICsJLmhzeW5jX3N0
+YXJ0ID0gMTQ0MCArIDEsCj4+Pj4+Pj4gKwkuaHN5bmNfZW5kID0gMTQ0MCArIDEgKyAxLAo+Pj4+
+Pj4+ICsJLmh0b3RhbCA9IDE0NDAgKyAxICsgMSArIDEsCj4+Pj4+Pj4gKwkudmRpc3BsYXkgPSAy
+NTYwLAo+Pj4+Pj4+ICsJLnZzeW5jX3N0YXJ0ID0gMjU2MCArIDEsCj4+Pj4+Pj4gKwkudnN5bmNf
+ZW5kID0gMjU2MCArIDEgKyAxLAo+Pj4+Pj4+ICsJLnZ0b3RhbCA9IDI1NjAgKyAxICsgMSArIDE1
+LAo+Pj4+Pj4+ICsJLnZyZWZyZXNoID0gNjAsCj4+Pj4+Pj4gKwkuZmxhZ3MgPSAwLAo+Pj4+Pj4+
+ICt9Owo+Pj4+Pj4gaG93IGlzIHRoaXMgd29ya2luZyB3aXRoIHRtMmU/IEFyZSB0aGVzZSB2YWx1
+ZXMgdmFsaWQgZm9yIGJvdGgKPj4+Pj4+IHRoZSBib2FyZHM/Cj4+Pj4+IFdlIGRvbid0IG5lZWQg
+dG8gY29uc2lkZXIgdG0yZSBib2FyZCB3aXRoIHR3byByZWFzb25lcywKPj4+Pj4gMS4gdGhlcmUg
+aXMgbm8gdG0yZSBib2FyZCBzdXBwb3J0IGluIG1haW5saW5lCj4+Pj4+IDIuIHRoZSBwYW5lbCBv
+biB0bTIgd291bGQgYmUgYSBsaXR0bGUgYml0IGRpZmZlcmVudCBmcm9tIG9uZSBvbiB0bTJlCj4+
+Pj4gLi4uIHRoaXMgZGlzcGxheSBpbiB0aGUgVGl6ZW4gS2VybmVsIGlzIHN1cHBvcnRlZCBieSBi
+b3RoOgo+Pj4+IHRtMiBbMV0gYW5kIHRtMmUgWzJdLiBUaGUgb25seSBkaWZmZXJlbmNlcyBhcmU6
+Cj4+PiBXaHkgdG0yZSBkdHMgZmlsZSBpcyBpbiBtYWlubGluZT8gU2VlbXMgY29tbXVuaWNhdGlv
+biBtaXNzIHdpdGggQ2hhbndvby4gOiggCj4+Pgo+Pj4+IFRNMjoKPj4+PiAgICBjbG9jay1mcmVx
+dWVuY3kgPSA8MTQ4NzQ0NDQ+Owo+Pj4+ICAgIGhhY3RpdmUgPSA8MTQ0MD47Cj4+Pj4KPj4+PiBU
+TTJFOgo+Pj4+ICAgIGNsb2NrLWZyZXF1ZW5jeSA9IDwxNjUyMzcyND47Cj4+Pj4gICAgaGFjdGl2
+ZSA9IDwxNjAwPjsKPj4+Pgo+Pj4+IEkgZG9uJ3Qga25vdyBtdWNoIGFib3V0IHRoZSBkaWZmZXJl
+bmNlcyB5b3UgbWVudGlvbiBpbiBwb2ludCAyLAo+Pj4+IGJ1dCBpdCdzIGEgcGl0eSB0byBkcm9w
+IHN1cHBvcnQgb25seSBiZWNhdXNlIHdlIGRvbid0IHdhbnQgdG8gcHV0Cj4+Pj4gaW4gdGhlIGR0
+cyB0aGUgJ2hhY3RpdmUnLCBhbmQgJ2Nsb2NrLWZyZXF1ZW5jeScgcHJvcGVydGllcy4KPj4+IEFu
+eXdheSwgdG0yZSBib2FyZCBpcyBhbHJlYWR5IGluIG1haW5saW5lIHNvIFBhbmVsIGRyaXZlciBt
+YXkgbmVlZCB0byBpZGVudGlmeSB3aGF0IGtpbmRzIG9mIHBhbmVsIGlzIHByb2JlZCB0byBkZWNp
+ZGUgcG9yY2ggdmFsdWVzLiBJIHRoaW5rIHRoZXJlIGFyZSByZWxldmFudCByZWdpc3RlcnMgaW4g
+TUNVIG9mIHRoZSBQYW5lbCBkZXZpY2UgdG8gY2hlY2sgdmVyc2lvbiBvciBzaW1pbGFyIHRoaW5n
+Lgo+PiBJIHRoaW5rIHdlIGNhbiBzYWZlbHkgdXNlIGRpZmZlcmVudCBjb21wYXRpYmxlIHN0cmlu
+ZyBmb3IgdG0yZSAtIGl0IHVzZXMKPj4gZGlmZmVyZW50IGRpc3BsYXkgSUMgY29udHJvbGxlciAt
+IHM2ZTNoZjIsIGRyaXZlciB3aWxsIHByb3ZpZGUgdGltaW5ncwo+PiBiYXNlZCBvbiBpdC4KPiBV
+c2luZyBjb21wYXRhYmxlIHN0cmluZyB3b3VsZG4ndCBiZSBhIGdvb2QgaWRlYSBiZWNhdXNlIFBh
+bmVsIGlzIGEgZGV2aWNlIG5vdCBzcGVjaWZpYyB0byBib2FyZC4KCkJ1dCBib3RoIHBhbmVscyBh
+cmUgZGlmZmVyZW50IGRldmljZXM6ClRNMiBoYXM6IEFNUzU2N0RKMDEgcGFuZWwgb24gUzZFM0hB
+MiBpbnRlcmZhY2UgKGNhbGxlZCBMREkvSUMpClRNMkUgaGFzIEFNQjU1OURFMDEgcGFuZWwgb24g
+UzZFM0hGMiBpbnRlcmZhY2UgKGNhbGxlZCBMREkvSUMpCgpXaHkgYXNzaWduaW5nIGRpZmZlcmVu
+dCBjb21wYXRpYmxlcyB0byBkaWZmZXJlbnQgZGV2aWNlcyBpcyBub3QgYSBnb29kIGlkZWE/Cgo+
+Cj4+IEFzIGZhciBhcyBJIGV4YW1pbmVkIGF2YWlsYWJsZSBzcGVjcy9kb2NzIHRoZXJlIGlzIG5v
+IHJlbGlhYmxlIHJlZ2lzdGVyCj4+IHdoaWNoIGNhbiBiZSB1c2VkIHRvIHNhZmVseSBkaXN0aW5n
+dWlzaCBpdCBvbiBydW50aW1lLCBidXQgdGhlIGRvY3MgSQo+PiBoYXZlIGFyZSBmYXIgZnJvbSBj
+b21wbGV0ZW5lc3MuCj4gVGhlIGRhdGEgc2hlZXQgSSBhbSBzZWVpbmcgc2F5cyBhIFJERElEUyBy
+ZWdpc3RlciBkZXNjcmliZXMgbWFudWZhY3R1cmVyIGFuZCBtb2R1bGUgdmVyc2lvbiBpbmZvcm1h
+dGlvbi4gV2l0aCB0aGlzIHdlIGNvdWxkIGlkZW50aWZ5IHRoZSBQYW5lbCBkZXZpY2UuCj4gT2Yg
+Y291cnNlLCB3ZSBtYXkgbmVlZCB0byBjaGVjayB0aGUgcmVnaXN0ZXIgaGFzIHJlYWxseSBkaWZm
+ZXJlbnQgdmFsdWVzIGFjY29yZGluZyB0byBib2FyZC4KPgo+IEJlbG93IGlzIHRoZSB2ZXJzaW9u
+IGluZm9ybWF0aW9uIEhvZWdldW4gY2hlY2tlZCwKPgo+IFRNMgo+IFsgICAgNC45MDg2NjZdIHBh
+bmVsX3M2ZTNoYTIgMTM5MDAwMDAuZHNpLjA6IE1hbnVmYWN0dXJlIGRhdGU6IDIwMTQtMTAtMzEg
+MDY6NDEKPiBbICAgIDUuMDM1NzY4XSBwYW5lbF9zNmUzaGEyIDEzOTAwMDAwLmRzaS4wOiBJZDog
+NTAgMjAgMDkKPgo+IFRNMmUKPiBbICAgIDQuOTI5MjY1XSBwYW5lbF9zNmUzaGEyIDEzOTAwMDAw
+LmRzaS4wOiBNYW51ZmFjdHVyZSBkYXRlOiAyMDE0LTA5LTAzIDA2OjMwCj4gWyAgICA1LjA1NjI4
+N10gcGFuZWxfczZlM2hhMiAxMzkwMDAwMC5kc2kuMDogSWQ6IDQwIDQwIDE0CgpUaGVyZSBpcyBk
+ZXNjcmlwdGlvbiBvZiBJRDEsIElEMiwgSUQzIHJlZ2lzdGVycyBpbiBzcGVjcyBvZiBib3RoIHBh
+bmVscywKSSBzZWUgbm8gcmVsaWFibGUgYml0cyB0byBkaXN0aW5ndWlzaCBwYW5lbHMuCkFuZCBy
+ZWx5aW5nIG9uIHJlYWQgdmFsdWVzIG9mIHJhbmRvbSBkZXZpY2VzIGRvZXMgbm90IHNlZW1zIHRv
+IG1lIHByb3Blcgpzb2x1dGlvbi4KClJlZ2FyZHMKQW5kcnplagoKCj4KPgo+IFRoYW5rcy4KPgo+
+PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4KPj4+IFRoYW5rcy4KPj4+Cj4+Pj4gQW5kaQo+Pj4+Cj4+
+Pj4gWzFdIGh0dHBzOi8vZ2l0LnRpemVuLm9yZy9jZ2l0L3BsYXRmb3JtL2tlcm5lbC9saW51eC1l
+eHlub3MvdHJlZS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHM/
+aD10aXplbiNuMTI4NAo+Pj4+IFsyXSBodHRwczovL2dpdC50aXplbi5vcmcvY2dpdC9wbGF0Zm9y
+bS9rZXJuZWwvbGludXgtZXh5bm9zL3RyZWUvYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5
+bm9zNTQzMy10bTJlLmR0cz9oPXRpemVuI24xMjcwCj4+Pj4gLS0KPj4+PiBUbyB1bnN1YnNjcmli
+ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJlZSIg
+aW4KPj4+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
+Zwo+Pj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
+b3Jkb21vLWluZm8uaHRtbAo+Pj4+Cj4+Pj4gLgo+Pj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJl
+IGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVlIiBp
+bgo+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
+by1pbmZvLmh0bWwKPj4KPj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
