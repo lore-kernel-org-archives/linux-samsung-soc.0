@@ -1,16 +1,15 @@
 From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH V2 3/5] Documetation: binding: modify the exynos5440 pcie
- binding
-Date: Mon, 09 Jan 2017 19:06:43 +0530
-Message-ID: <c3b9b19a-1ece-6ec3-9127-aaeeac2c54a0@samsung.com>
+Subject: Re: [PATCH V2 4/5] PCI: exynos: support the using PHY generic framework
+Date: Mon, 09 Jan 2017 19:09:18 +0530
+Message-ID: <e7c19900-0e9f-a3aa-240f-cba4244a8ef9@samsung.com>
 References: <20170104123435.30740-1-jh80.chung@samsung.com>
- <CGME20170104123436epcas1p1040f1e074748fabe58af52eb0b833713@epcas1p1.samsung.com>
- <20170104123435.30740-4-jh80.chung@samsung.com>
+ <CGME20170104123436epcas1p1651443c5fe13f67006864aed2f70fa9d@epcas1p1.samsung.com>
+ <20170104123435.30740-5-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170104123435.30740-4-jh80.chung@samsung.com>
+In-reply-to: <20170104123435.30740-5-jh80.chung@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, kishon@ti.com, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, cpgs@samsung.com
@@ -19,80 +18,140 @@ List-Id: linux-samsung-soc@vger.kernel.org
 Hi Jaehoon,
 
 On 01/04/2017 06:04 PM, Jaehoon Chung wrote:
-> According to using PHY framework, updates the exynos5440-pcie binding.
-> For maintaining backward compatibility, leaves the current dt-binding.
-> (It should be deprecated.)
+> This patch is for using PHY generic framework.
+> To maintain backward compatibility, check whether phy is supported or
+> not with 'using_phy'.
 >
-> Recommends to use the Phy Framework and "config" property to follow
-> the designware-pcie binding.
-> If you use the old way, can see "mssing *config* reg space" message.
-> Because the getting configuration space address from range is old way.
->
-> NOTE: When use the "config" property, first name of 'reg-names' must be
-> set to "elbi". Otherwise driver can't maintain the backward capability.
+> And if someone use the old dt-file, display the "deprecated" message.
+> But it's still working fine with it.
 >
 > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
 
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
+
 > Changelog on V2:
-> - Describes more commit message
-> - Fixes the typos
-> - Adds the new example for using PHY framework
-> - Deprecated the old dt-binding description
-> - Removes 'phy-names'
+> - This patch is split from previous PATCH[1/4]
+> - Maintain the backward compatibility
+> - Adds 'using_phy' for cheching whether phy framework is used or not
+> - Adds 'DEPRECATED' message for old dt-binding way
 >
->  .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  drivers/pci/host/pci-exynos.c | 61 +++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 50 insertions(+), 11 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> index 4f9d23d..1d0af0e 100644
-> --- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-> @@ -7,8 +7,19 @@ Required properties:
->  - compatible: "samsung,exynos5440-pcie"
->  - reg: base addresses and lengths of the pcie controller,
->  	the phy controller, additional register for the phy controller.
-> +	(Registers for the phy controller are DEPRECATED.
-> +	 Use the PHY framework.)
-> +- reg-names : First name should be set to "elbi".
-> +	And use the "config" instead of getting the confgiruation address space
-> +	from "ranges".
-> +	NOTE: When use the "config" property, reg-names must be set.
->  - interrupts: A list of interrupt outputs for level interrupt,
->  	pulse interrupt, special interrupt.
-> +- phys: From PHY binding. Phandle for the Generic PHY.
-> +	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
+> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+> index feed0fd..34f2eed 100644
+> --- a/drivers/pci/host/pci-exynos.c
+> +++ b/drivers/pci/host/pci-exynos.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/resource.h>
+>  #include <linux/signal.h>
+>  #include <linux/types.h>
+> @@ -110,6 +111,10 @@ struct exynos_pcie {
+>  	struct exynos_pcie_clk_res	*clk_res;
+>  	const struct exynos_pcie_ops	*ops;
+>  	int				reset_gpio;
 > +
-> +Other common properties refer to
-> +	Documentation/devicetree/binding/pci/designware-pcie.txt
+> +	/* For Generic PHY Framework */
+> +	bool				using_phy;
+> +	struct phy			*phy;
+>  };
 >
->  Example:
+>  struct exynos_pcie_ops {
+> @@ -135,6 +140,10 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
+>  	if (IS_ERR(ep->mem_res->elbi_base))
+>  		return PTR_ERR(ep->mem_res->elbi_base);
 >
-> @@ -54,6 +65,24 @@ SoC specific DT Entry:
->  		num-lanes = <4>;
->  	};
->
-> +With using PHY framework:
-> +	pcie_phy0: pcie-phy@270000 {
-> +		...
-> +		reg = <0x270000 0x1000>, <0x271000 0x40>;
-> +		regn-names = "phy", "block";
-> +		...
-> +	};
+> +	/* If using the PHY framework, doesn't need to get other resource */
+> +	if (ep->using_phy)
+> +		return 0;
 > +
-> +	pcie@290000 {
-> +		...
-> +		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
-> +		reg-names = "elbi", "config";
-> +		phys = <&pcie_phy0>;
-> +		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000
-> +			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>;
-> +		...
-> +	};
-> +
->  Board specific DT Entry:
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>  	ep->mem_res->phy_base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(ep->mem_res->phy_base))
+> @@ -396,17 +405,28 @@ static int exynos_pcie_establish_link(struct exynos_pcie *exynos_pcie)
+>  	}
 >
->  	pcie@290000 {
+>  	exynos_pcie_assert_core_reset(exynos_pcie);
+> -	exynos_pcie_assert_phy_reset(exynos_pcie);
+> -	exynos_pcie_deassert_phy_reset(exynos_pcie);
+> -	exynos_pcie_power_on_phy(exynos_pcie);
+> -	exynos_pcie_init_phy(exynos_pcie);
+> -
+> -	/* pulse for common reset */
+> -	exynos_pcie_writel(exynos_pcie->mem_res->block_base, 1,
+> -				PCIE_PHY_COMMON_RESET);
+> -	udelay(500);
+> -	exynos_pcie_writel(exynos_pcie->mem_res->block_base, 0,
+> -				PCIE_PHY_COMMON_RESET);
+> +
+> +	if (exynos_pcie->using_phy) {
+> +		phy_reset(exynos_pcie->phy);
+> +
+> +		exynos_pcie_writel(exynos_pcie->mem_res->elbi_base, 1,
+> +				PCIE_PWR_RESET);
+> +
+> +		phy_power_on(exynos_pcie->phy);
+> +		phy_init(exynos_pcie->phy);
+> +	} else {
+> +		exynos_pcie_assert_phy_reset(exynos_pcie);
+> +		exynos_pcie_deassert_phy_reset(exynos_pcie);
+> +		exynos_pcie_power_on_phy(exynos_pcie);
+> +		exynos_pcie_init_phy(exynos_pcie);
+> +
+> +		/* pulse for common reset */
+> +		exynos_pcie_writel(exynos_pcie->mem_res->block_base, 1,
+> +					PCIE_PHY_COMMON_RESET);
+> +		udelay(500);
+> +		exynos_pcie_writel(exynos_pcie->mem_res->block_base, 0,
+> +					PCIE_PHY_COMMON_RESET);
+> +	}
+>
+>  	exynos_pcie_deassert_core_reset(exynos_pcie);
+>  	dw_pcie_setup_rc(pp);
+> @@ -420,6 +440,11 @@ static int exynos_pcie_establish_link(struct exynos_pcie *exynos_pcie)
+>  	if (!dw_pcie_wait_for_link(pp))
+>  		return 0;
+>
+> +	if (exynos_pcie->using_phy) {
+> +		phy_power_off(exynos_pcie->phy);
+> +		return -ETIMEDOUT;
+> +	}
+> +
+>  	while (exynos_pcie_readl(exynos_pcie->mem_res->phy_base,
+>  				PCIE_PHY_PLL_LOCKED) == 0) {
+>  		val = exynos_pcie_readl(exynos_pcie->mem_res->block_base,
+> @@ -633,6 +658,17 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+>
+>  	exynos_pcie->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
+>
+> +	/* Assume that controller doesn't use the PHY framework */
+> +	exynos_pcie->using_phy = false;
+> +
+> +	exynos_pcie->phy = devm_of_phy_get(dev, np, NULL);
+> +	if (IS_ERR(exynos_pcie->phy)) {
+> +		if (PTR_ERR(exynos_pcie->phy) == -EPROBE_DEFER)
+> +			return PTR_ERR(exynos_pcie->phy);
+> +		dev_warn(dev, "Use the 'phy' property. Current DT of pci-exynos was deprecated!!\n");
+> +	} else
+> +		exynos_pcie->using_phy = true;
+> +
+>  	if (exynos_pcie->ops && exynos_pcie->ops->get_mem_resources) {
+>  		ret = exynos_pcie->ops->get_mem_resources(pdev, exynos_pcie);
+>  		if (ret)
+> @@ -657,6 +693,9 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+>  	return 0;
+>
+>  fail_probe:
+> +	if (exynos_pcie->using_phy)
+> +		phy_exit(exynos_pcie->phy);
+> +
+>  	if (exynos_pcie->ops && exynos_pcie->ops->deinit_clk_resources)
+>  		exynos_pcie->ops->deinit_clk_resources(exynos_pcie);
+>  	return ret;
 >
