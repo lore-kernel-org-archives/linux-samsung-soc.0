@@ -1,48 +1,45 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v1.1] ARM: multi_v7_defconfig: Enable power sequence for
- Odroid U3
-Date: Mon, 9 Jan 2017 13:24:43 -0300
-Message-ID: <d8ee24b1-9d6b-e76f-b5ef-71706efbf9e5@osg.samsung.com>
-References: <20170107085203.4431-5-krzk@kernel.org>
- <20170107091651.10560-1-krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: exynos: remove Exynos4212 support (dead
+ code)
+Date: Mon, 9 Jan 2017 13:59:26 -0300
+Message-ID: <b924cc2e-72fb-cc69-980b-099a3b13c739@osg.samsung.com>
+References: <CGME20170109083453eucas1p295add9f8c3e5a10c7ae3081d6567fe08@eucas1p2.samsung.com>
+ <1483950880-16016-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170107091651.10560-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Peter Chen <peter.chen@nxp.com>, ulf.hansson@linaro.org, Markus Reichl <m.reichl@fivetechno.de>, linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, sre@kernel.org, robh+dt@kernel.org, hverkuil@xs4all.nl, broonie@kernel.org, stern@rowland.harvard.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:57001
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1762598AbdAIQ7g (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Jan 2017 11:59:36 -0500
+In-Reply-To: <1483950880-16016-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>
 
-Hello Krzysztof,
+Hello Marek,
 
-I think it would had been clearer if the subject prefix was "[PATCH v1.1 4/4]" :)
-
-On 01/07/2017 06:16 AM, Krzysztof Kozlowski wrote:
-> Odroid U3 needs a power sequence for lan9730, if it was enabled by
-> bootloader.  Also enable the USB3503 HSCI to USB2.0 driver (device
-> is present on Odroid U3).
+On 01/09/2017 05:34 AM, Marek Szyprowski wrote:
+> There are no Exynos4212 based boards in mainline, so there is no need to
+> keep additional files for SoCs, which are never used. This patch removes
+> support for Exynos4212 SoCs and moves previously shared Exynos4412
+> definitions to a single file to simplify future maintenance.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> 
 
-Do you think that makes sense to also enable GPIO_SYS for debugging
-purposes as you do in patch 3/4?
-
-In any case the patch looks good to me:
+Patch looks good to me.
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+There are still a lot of references to Exynos4212 after this patch though.
+I see Kconfig symbols, macros, SoC specific logic and compatibles strings
+in Exynos platform code, drivers and DT bindings.
+
+Are you planning to also remove these as a follow-up?
 
 Best regards,
 -- 
