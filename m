@@ -1,153 +1,138 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH RESEND] spi: s3c64xx: Don't request/release DMA channels for
- each SPI transfer
-Date: Mon, 09 Jan 2017 11:36:10 +0100
-Message-ID: <1483958170-17270-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170109103623eucas1p2f728e8ae5e1304fd3e06e2038edbdbf8@eucas1p2.samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 3/3] arm64: dts: exynos5433-tm2: enable HDMI/TV path
+Date: Mon, 09 Jan 2017 11:40:37 +0100
+Message-ID: <1483958437-6572-3-git-send-email-a.hajda@samsung.com>
+References: <1483958437-6572-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170109104055eucas1p20e90f616b4bb44b4759021885f560c08@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11091 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759007AbdAIKg1 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:14825 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964879AbdAIKlG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 05:36:27 -0500
+        Mon, 9 Jan 2017 05:41:06 -0500
+In-reply-to: <1483958437-6572-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Requesting a DMA channel might be a time consuming operation, so there is
-no need to acquire and release DMA channel for each SPI transfer.
-DMA channels can be requested during driver probe and kept all the time,
-also because there are no shared nor dynamically allocated channels on
-Samsung S3C/S5P/Exynos platforms.
+TV path consist of following interconnected components:
+- DECON_TV - display controller,
+- HDMI - video signal converter RGB / HDMI,
+- MHL - video signal converter HDMI / MHL,
+- DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
 
-While moving dma_requrest_slave_channel calls, lets switch to
-dma_request_slave_channel_reason(), which returns error codes on failure,
-which can be properly propagated to the caller (this for example defers
-SPI probe when DMA controller is not yet available).
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-Tested-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
-This patch depends on commit 6f8dc9d481759b428a8cb6a17b83821451415ba9
-("spi: s3c64xx: Do not use platform_data for DMA parameters"), which is
-already in Linux v4.10-rc1 and came there through dma-engine tree. For
-merging to spi-next tree, it requires merging first v4.10-rc1.
-
-Resend reason:
-- collected tags
-- added information about patch dependency
+v2:
+  - replaced magic numbers with macros,
+  - removed assigned-clock properties from sii8620 -
+    PMU clock is already confgured in PMU node
 ---
- drivers/spi/spi-s3c64xx.c | 57 ++++++++++++++++++++++++-----------------------
- 1 file changed, 29 insertions(+), 28 deletions(-)
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 69 ++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 28dfdce4beae..849ee82483e4 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -341,43 +341,16 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--	struct device *dev = &sdd->pdev->dev;
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 669bb1f..ca90e6a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -281,6 +281,22 @@
+ 	};
+ };
  
- 	if (is_polling(sdd))
- 		return 0;
- 
--	/* Acquire DMA channels */
--	sdd->rx_dma.ch = dma_request_slave_channel(dev, "rx");
--	if (!sdd->rx_dma.ch) {
--		dev_err(dev, "Failed to get RX DMA channel\n");
--		return -EBUSY;
--	}
- 	spi->dma_rx = sdd->rx_dma.ch;
--
--	sdd->tx_dma.ch = dma_request_slave_channel(dev, "tx");
--	if (!sdd->tx_dma.ch) {
--		dev_err(dev, "Failed to get TX DMA channel\n");
--		dma_release_channel(sdd->rx_dma.ch);
--		return -EBUSY;
--	}
- 	spi->dma_tx = sdd->tx_dma.ch;
- 
- 	return 0;
- }
- 
--static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
--{
--	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
--
--	/* Free DMA channels */
--	if (!is_polling(sdd)) {
--		dma_release_channel(sdd->rx_dma.ch);
--		dma_release_channel(sdd->tx_dma.ch);
--	}
--
--	return 0;
--}
--
- static bool s3c64xx_spi_can_dma(struct spi_master *master,
- 				struct spi_device *spi,
- 				struct spi_transfer *xfer)
-@@ -1094,7 +1067,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
--	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
- 	master->num_chipselect = sci->num_cs;
- 	master->dma_alignment = 8;
- 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
-@@ -1161,6 +1133,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (!is_polling(sdd)) {
-+		/* Acquire DMA channels */
-+		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
-+								  "rx");
-+		if (IS_ERR(sdd->rx_dma.ch)) {
-+			dev_err(&pdev->dev, "Failed to get RX DMA channel\n");
-+			ret = PTR_ERR(sdd->rx_dma.ch);
-+			goto err_disable_io_clk;
-+		}
-+		sdd->tx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
-+								  "tx");
-+		if (IS_ERR(sdd->tx_dma.ch)) {
-+			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
-+			ret = PTR_ERR(sdd->tx_dma.ch);
-+			goto err_release_tx_dma;
-+		}
-+	}
++&decon_tv {
++	status = "okay";
 +
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
-@@ -1206,6 +1196,12 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->rx_dma.ch);
-+err_release_tx_dma:
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->tx_dma.ch);
-+err_disable_io_clk:
- 	clk_disable_unprepare(sdd->ioclk);
- err_disable_src_clk:
- 	clk_disable_unprepare(sdd->src_clk);
-@@ -1226,6 +1222,11 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 
- 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
- 
-+	if (!is_polling(sdd)) {
-+		dma_release_channel(sdd->rx_dma.ch);
-+		dma_release_channel(sdd->tx_dma.ch);
-+	}
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- 	clk_disable_unprepare(sdd->ioclk);
++		port@0 {
++			reg = <0>;
++			tv_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_tv>;
++			};
++		};
++	};
++};
++
+ &dsi {
+ 	status = "okay";
+ 	vddcore-supply = <&ldo6_reg>;
+@@ -304,6 +320,33 @@
+ 	};
+ };
  
- 	clk_disable_unprepare(sdd->src_clk);
++&hdmi {
++	hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
++	status = "okay";
++	vdd-supply = <&ldo6_reg>;
++	vdd_osc-supply = <&ldo7_reg>;
++	vdd_pll-supply = <&ldo6_reg>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			hdmi_to_tv: endpoint {
++				remote-endpoint = <&tv_to_hdmi>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++			hdmi_to_mhl: endpoint {
++				remote-endpoint = <&mhl_to_hdmi>;
++			};
++		};
++	};
++};
++
+ &hsi2c_0 {
+ 	status = "okay";
+ 	clock-frequency = <2500000>;
+@@ -692,6 +735,28 @@
+ 	};
+ };
+ 
++&hsi2c_7 {
++	status = "okay";
++
++	sii8620@39 {
++		reg = <0x39>;
++		compatible = "sil,sii8620";
++		cvcc10-supply = <&ldo36_reg>;
++		iovcc18-supply = <&ldo34_reg>;
++		interrupt-parent = <&gpf0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
++		reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "xtal";
++
++		port {
++			mhl_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_mhl>;
++			};
++		};
++	};
++};
++
+ &hsi2c_8 {
+ 	status = "okay";
+ 
+@@ -735,6 +800,10 @@
+ 	};
+ };
+ 
++&hsi2c_11 {
++	status = "okay";
++};
++
+ &i2s0 {
+ 	status = "okay";
+ };
 -- 
-1.9.1
+2.7.4
