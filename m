@@ -1,48 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos: remove Exynos4212 support (dead
- code)
-Date: Mon, 9 Jan 2017 13:59:26 -0300
-Message-ID: <b924cc2e-72fb-cc69-980b-099a3b13c739@osg.samsung.com>
-References: <CGME20170109083453eucas1p295add9f8c3e5a10c7ae3081d6567fe08@eucas1p2.samsung.com>
- <1483950880-16016-1-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v1.1] ARM: multi_v7_defconfig: Enable power sequence for
+ Odroid U3
+Date: Mon, 9 Jan 2017 19:38:03 +0200
+Message-ID: <CAJKOXPdODg2gCXP-BCRhDZAc2+o1J7Ek9iLaYF7hn_R2mNiK3A@mail.gmail.com>
+References: <20170107085203.4431-5-krzk@kernel.org> <20170107091651.10560-1-krzk@kernel.org>
+ <d8ee24b1-9d6b-e76f-b5ef-71706efbf9e5@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:57001
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1762598AbdAIQ7g (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Jan 2017 11:59:36 -0500
-In-Reply-To: <1483950880-16016-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <d8ee24b1-9d6b-e76f-b5ef-71706efbf9e5-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>
 
-Hello Marek,
+On Mon, Jan 9, 2017 at 6:24 PM, Javier Martinez Canillas
+<javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org> wrote:
+> Hello Krzysztof,
+>
+> I think it would had been clearer if the subject prefix was "[PATCH v1.1 4/4]" :)
 
-On 01/09/2017 05:34 AM, Marek Szyprowski wrote:
-> There are no Exynos4212 based boards in mainline, so there is no need to
-> keep additional files for SoCs, which are never used. This patch removes
-> support for Exynos4212 SoCs and moves previously shared Exynos4412
-> definitions to a single file to simplify future maintenance.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+Ah, yes.
 
-Patch looks good to me.
+>
+> On 01/07/2017 06:16 AM, Krzysztof Kozlowski wrote:
+>> Odroid U3 needs a power sequence for lan9730, if it was enabled by
+>> bootloader.  Also enable the USB3503 HSCI to USB2.0 driver (device
+>> is present on Odroid U3).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>>
+>> ---
+>>
+>
+> Do you think that makes sense to also enable GPIO_SYS for debugging
+> purposes as you do in patch 3/4?
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+I like the GPIO_SYSFS interface because it is easy to use. However
+now, after your question, I found this:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2016-November/470154.html
+ARM/ARM64: defconfig: drop GPIO_SYSFS on multiplatforms
 
-There are still a lot of references to Exynos4212 after this patch though.
-I see Kconfig symbols, macros, SoC specific logic and compatibles strings
-in Exynos platform code, drivers and DT bindings.
-
-Are you planning to also remove these as a follow-up?
+... so instead I will drop it from exynos_defconfig.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
