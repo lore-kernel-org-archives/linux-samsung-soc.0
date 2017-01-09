@@ -1,95 +1,124 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v7 3/4] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Mon, 09 Jan 2017 18:19:52 +0900
-Message-ID: <587355B8.2050701@samsung.com>
-References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170105102012epcas1p4ddeb577ea84b5c2cdf7029666b2091c1@epcas1p4.samsung.com>
- <1483611609-23522-4-git-send-email-hoegeun.kwon@samsung.com>
- <20170106052239.5prkyj3v4x4qcc46@gangnam.samsung>
- <586F2BF3.8080400@samsung.com>
- <20170106081806.h4y7o57kjbibau6l@gangnam.samsung>
- <586F5728.1010800@samsung.com>
- <5df95abe-0d5d-0c48-2840-5996260201de@samsung.com>
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver
+ bind
+Date: Mon, 9 Jan 2017 15:17:22 +0530
+Message-ID: <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
+References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
+ <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
+ <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5df95abe-0d5d-0c48-2840-5996260201de@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, krzk@kernel.org, jh80.chung@samsung.com, cw00.choi@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34776 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbdAIJra (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Jan 2017 04:47:30 -0500
+In-Reply-To: <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
 
-CgoyMDE364WEIDAx7JuUIDA57J28IDE2OjM37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAwNi4wMS4yMDE3IDA5OjM2LCBJbmtpIERhZSB3cm90ZToKPj4KPj4gMjAxN+uF
-hCAwMeyblCAwNuydvCAxNzoxOOyXkCBBbmRpIFNoeXRpIOydtCjqsIApIOyTtCDquIA6Cj4+PiBI
-aSBJbmtpLAo+Pj4KPj4+IFRoYW5rcyBmb3IgdGhlIHJlcGx5LCBidXQuLi4KPj4+Cj4+Pj4+PiAr
-c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlIGRlZmF1bHRfbW9kZSA9IHsKPj4+
-Pj4+ICsJLmNsb2NrID0gMjIyMzcyLAo+Pj4+Pj4gKwkuaGRpc3BsYXkgPSAxNDQwLAo+Pj4+Pj4g
-KwkuaHN5bmNfc3RhcnQgPSAxNDQwICsgMSwKPj4+Pj4+ICsJLmhzeW5jX2VuZCA9IDE0NDAgKyAx
-ICsgMSwKPj4+Pj4+ICsJLmh0b3RhbCA9IDE0NDAgKyAxICsgMSArIDEsCj4+Pj4+PiArCS52ZGlz
-cGxheSA9IDI1NjAsCj4+Pj4+PiArCS52c3luY19zdGFydCA9IDI1NjAgKyAxLAo+Pj4+Pj4gKwku
-dnN5bmNfZW5kID0gMjU2MCArIDEgKyAxLAo+Pj4+Pj4gKwkudnRvdGFsID0gMjU2MCArIDEgKyAx
-ICsgMTUsCj4+Pj4+PiArCS52cmVmcmVzaCA9IDYwLAo+Pj4+Pj4gKwkuZmxhZ3MgPSAwLAo+Pj4+
-Pj4gK307Cj4+Pj4+IGhvdyBpcyB0aGlzIHdvcmtpbmcgd2l0aCB0bTJlPyBBcmUgdGhlc2UgdmFs
-dWVzIHZhbGlkIGZvciBib3RoCj4+Pj4+IHRoZSBib2FyZHM/Cj4+Pj4gV2UgZG9uJ3QgbmVlZCB0
-byBjb25zaWRlciB0bTJlIGJvYXJkIHdpdGggdHdvIHJlYXNvbmVzLAo+Pj4+IDEuIHRoZXJlIGlz
-IG5vIHRtMmUgYm9hcmQgc3VwcG9ydCBpbiBtYWlubGluZQo+Pj4+IDIuIHRoZSBwYW5lbCBvbiB0
-bTIgd291bGQgYmUgYSBsaXR0bGUgYml0IGRpZmZlcmVudCBmcm9tIG9uZSBvbiB0bTJlCj4+PiAu
-Li4gdGhpcyBkaXNwbGF5IGluIHRoZSBUaXplbiBLZXJuZWwgaXMgc3VwcG9ydGVkIGJ5IGJvdGg6
-Cj4+PiB0bTIgWzFdIGFuZCB0bTJlIFsyXS4gVGhlIG9ubHkgZGlmZmVyZW5jZXMgYXJlOgo+PiBX
-aHkgdG0yZSBkdHMgZmlsZSBpcyBpbiBtYWlubGluZT8gU2VlbXMgY29tbXVuaWNhdGlvbiBtaXNz
-IHdpdGggQ2hhbndvby4gOiggCj4+Cj4+PiBUTTI6Cj4+PiAgICBjbG9jay1mcmVxdWVuY3kgPSA8
-MTQ4NzQ0NDQ+Owo+Pj4gICAgaGFjdGl2ZSA9IDwxNDQwPjsKPj4+Cj4+PiBUTTJFOgo+Pj4gICAg
-Y2xvY2stZnJlcXVlbmN5ID0gPDE2NTIzNzI0PjsKPj4+ICAgIGhhY3RpdmUgPSA8MTYwMD47Cj4+
-Pgo+Pj4gSSBkb24ndCBrbm93IG11Y2ggYWJvdXQgdGhlIGRpZmZlcmVuY2VzIHlvdSBtZW50aW9u
-IGluIHBvaW50IDIsCj4+PiBidXQgaXQncyBhIHBpdHkgdG8gZHJvcCBzdXBwb3J0IG9ubHkgYmVj
-YXVzZSB3ZSBkb24ndCB3YW50IHRvIHB1dAo+Pj4gaW4gdGhlIGR0cyB0aGUgJ2hhY3RpdmUnLCBh
-bmQgJ2Nsb2NrLWZyZXF1ZW5jeScgcHJvcGVydGllcy4KPj4gQW55d2F5LCB0bTJlIGJvYXJkIGlz
-IGFscmVhZHkgaW4gbWFpbmxpbmUgc28gUGFuZWwgZHJpdmVyIG1heSBuZWVkIHRvIGlkZW50aWZ5
-IHdoYXQga2luZHMgb2YgcGFuZWwgaXMgcHJvYmVkIHRvIGRlY2lkZSBwb3JjaCB2YWx1ZXMuIEkg
-dGhpbmsgdGhlcmUgYXJlIHJlbGV2YW50IHJlZ2lzdGVycyBpbiBNQ1Ugb2YgdGhlIFBhbmVsIGRl
-dmljZSB0byBjaGVjayB2ZXJzaW9uIG9yIHNpbWlsYXIgdGhpbmcuCj4gCj4gSSB0aGluayB3ZSBj
-YW4gc2FmZWx5IHVzZSBkaWZmZXJlbnQgY29tcGF0aWJsZSBzdHJpbmcgZm9yIHRtMmUgLSBpdCB1
-c2VzCj4gZGlmZmVyZW50IGRpc3BsYXkgSUMgY29udHJvbGxlciAtIHM2ZTNoZjIsIGRyaXZlciB3
-aWxsIHByb3ZpZGUgdGltaW5ncwo+IGJhc2VkIG9uIGl0LgoKVXNpbmcgY29tcGF0YWJsZSBzdHJp
-bmcgd291bGRuJ3QgYmUgYSBnb29kIGlkZWEgYmVjYXVzZSBQYW5lbCBpcyBhIGRldmljZSBub3Qg
-c3BlY2lmaWMgdG8gYm9hcmQuCgo+IEFzIGZhciBhcyBJIGV4YW1pbmVkIGF2YWlsYWJsZSBzcGVj
-cy9kb2NzIHRoZXJlIGlzIG5vIHJlbGlhYmxlIHJlZ2lzdGVyCj4gd2hpY2ggY2FuIGJlIHVzZWQg
-dG8gc2FmZWx5IGRpc3Rpbmd1aXNoIGl0IG9uIHJ1bnRpbWUsIGJ1dCB0aGUgZG9jcyBJCj4gaGF2
-ZSBhcmUgZmFyIGZyb20gY29tcGxldGVuZXNzLgoKVGhlIGRhdGEgc2hlZXQgSSBhbSBzZWVpbmcg
-c2F5cyBhIFJERElEUyByZWdpc3RlciBkZXNjcmliZXMgbWFudWZhY3R1cmVyIGFuZCBtb2R1bGUg
-dmVyc2lvbiBpbmZvcm1hdGlvbi4gV2l0aCB0aGlzIHdlIGNvdWxkIGlkZW50aWZ5IHRoZSBQYW5l
-bCBkZXZpY2UuCk9mIGNvdXJzZSwgd2UgbWF5IG5lZWQgdG8gY2hlY2sgdGhlIHJlZ2lzdGVyIGhh
-cyByZWFsbHkgZGlmZmVyZW50IHZhbHVlcyBhY2NvcmRpbmcgdG8gYm9hcmQuCgpCZWxvdyBpcyB0
-aGUgdmVyc2lvbiBpbmZvcm1hdGlvbiBIb2VnZXVuIGNoZWNrZWQsCgpUTTIKWyAgICA0LjkwODY2
-Nl0gcGFuZWxfczZlM2hhMiAxMzkwMDAwMC5kc2kuMDogTWFudWZhY3R1cmUgZGF0ZTogMjAxNC0x
-MC0zMSAwNjo0MQpbICAgIDUuMDM1NzY4XSBwYW5lbF9zNmUzaGEyIDEzOTAwMDAwLmRzaS4wOiBJ
-ZDogNTAgMjAgMDkKClRNMmUKWyAgICA0LjkyOTI2NV0gcGFuZWxfczZlM2hhMiAxMzkwMDAwMC5k
-c2kuMDogTWFudWZhY3R1cmUgZGF0ZTogMjAxNC0wOS0wMyAwNjozMApbICAgIDUuMDU2Mjg3XSBw
-YW5lbF9zNmUzaGEyIDEzOTAwMDAwLmRzaS4wOiBJZDogNDAgNDAgMTQKCgpUaGFua3MuCgo+IAo+
-IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+IFRoYW5rcy4KPj4KPj4+IEFuZGkKPj4+Cj4+PiBb
-MV0gaHR0cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2VybmVsL2xpbnV4LWV4eW5v
-cy90cmVlL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cz9oPXRp
-emVuI24xMjg0Cj4+PiBbMl0gaHR0cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2Vy
-bmVsL2xpbnV4LWV4eW5vcy90cmVlL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0
-MzMtdG0yZS5kdHM/aD10aXplbiNuMTI3MAo+Pj4gLS0KPj4+IFRvIHVuc3Vic2NyaWJlIGZyb20g
-dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBkZXZpY2V0cmVlIiBpbgo+Pj4g
-dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
-Zm8uaHRtbAo+Pj4KPj4+IC4KPj4+Cj4+Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRo
-aXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJlZSIgaW4KPiB0aGUg
-Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFq
-b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
-bAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+
+On 01/05/2017 01:01 PM, Sean Paul wrote:
+> On Fri, Dec 30, 2016 at 4:57 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Analogix_dp_bind() can be called from component framework, which doesn't
+>> guarantee proper runtime PM state of the device during bind operation,
+>> so ensure that device is runtime active before doing any register access.
+>> This ensures that the power domain, to which DP module belongs, is turned
+>> on. While at it, also fix the unbalanced call to phy_power_on() in
+>> analogix_dp_bind() function.
+
+Pushed to drm-misc-fixes.
+
+Thanks,
+Archit
+
+>>
+>> This patch solves the following kernel oops on Samsung Exynos5250 Snow
+>> board:
+>>
+>> Unhandled fault: imprecise external abort (0x406) at 0x00000000
+>> pgd = c0004000
+>> [00000000] *pgd=00000000
+>> Internal error: : 406 [#1] PREEMPT SMP ARM
+>> Modules linked in:
+>> CPU: 0 PID: 75 Comm: kworker/0:2 Not tainted 4.9.0 #1046
+>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> Workqueue: events deferred_probe_work_func
+>> task: ee272300 task.stack: ee312000
+>> PC is at analogix_dp_enable_sw_function+0x18/0x2c
+>> LR is at analogix_dp_init_dp+0x2c/0x50
+>> ...
+>> [<c03fcb38>] (analogix_dp_enable_sw_function) from [<c03fa9c4>] (analogix_dp_init_dp+0x2c/0x50)
+>> [<c03fa9c4>] (analogix_dp_init_dp) from [<c03fab6c>] (analogix_dp_bind+0x184/0x42c)
+>> [<c03fab6c>] (analogix_dp_bind) from [<c03fdb84>] (component_bind_all+0xf0/0x218)
+>> [<c03fdb84>] (component_bind_all) from [<c03ed64c>] (exynos_drm_load+0x134/0x200)
+>> [<c03ed64c>] (exynos_drm_load) from [<c03d5058>] (drm_dev_register+0xa0/0xd0)
+>> [<c03d5058>] (drm_dev_register) from [<c03d66b8>] (drm_platform_init+0x58/0xb0)
+>> [<c03d66b8>] (drm_platform_init) from [<c03fe0c4>] (try_to_bring_up_master+0x14c/0x188)
+>> [<c03fe0c4>] (try_to_bring_up_master) from [<c03fe188>] (component_add+0x88/0x138)
+>> [<c03fe188>] (component_add) from [<c0403a38>] (platform_drv_probe+0x50/0xb0)
+>> [<c0403a38>] (platform_drv_probe) from [<c0402470>] (driver_probe_device+0x1f0/0x2a8)
+>> [<c0402470>] (driver_probe_device) from [<c0400a54>] (bus_for_each_drv+0x44/0x8c)
+>> [<c0400a54>] (bus_for_each_drv) from [<c04021f8>] (__device_attach+0x9c/0x100)
+>> [<c04021f8>] (__device_attach) from [<c04018e8>] (bus_probe_device+0x84/0x8c)
+>> [<c04018e8>] (bus_probe_device) from [<c0401d1c>] (deferred_probe_work_func+0x60/0x8c)
+>> [<c0401d1c>] (deferred_probe_work_func) from [<c012fc14>] (process_one_work+0x120/0x318)
+>> [<c012fc14>] (process_one_work) from [<c012fe34>] (process_scheduled_works+0x28/0x38)
+>> [<c012fe34>] (process_scheduled_works) from [<c0130048>] (worker_thread+0x204/0x4ac)
+>> [<c0130048>] (worker_thread) from [<c01352c4>] (kthread+0xd8/0xf4)
+>> [<c01352c4>] (kthread) from [<c0107978>] (ret_from_fork+0x14/0x3c)
+>> Code: e59035f0 e5935018 f57ff04f e3c55001 (f57ff04e)
+>> ---[ end trace 3d1d0d87796de344 ]---
+>>
+>
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index eb9bf8786c24..18eefdcbf1ba 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -1382,6 +1382,7 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>>
+>>         pm_runtime_enable(dev);
+>>
+>> +       pm_runtime_get_sync(dev);
+>>         phy_power_on(dp->phy);
+>>
+>>         analogix_dp_init_dp(dp);
+>> @@ -1414,9 +1415,15 @@ int analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>>                 goto err_disable_pm_runtime;
+>>         }
+>>
+>> +       phy_power_off(dp->phy);
+>> +       pm_runtime_put(dev);
+>> +
+>>         return 0;
+>>
+>>  err_disable_pm_runtime:
+>> +
+>> +       phy_power_off(dp->phy);
+>> +       pm_runtime_put(dev);
+>>         pm_runtime_disable(dev);
+>>
+>>         return ret;
+>> --
+>> 1.9.1
+>>
+>
+>
+>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
