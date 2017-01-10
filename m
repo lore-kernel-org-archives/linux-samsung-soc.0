@@ -1,74 +1,140 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 2/3] arm64: dts: exynos5433: add HDMI node
-Date: Tue, 10 Jan 2017 09:24:23 +0100
-Message-ID: <1484036664-15951-2-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 3/3] arm64: dts: exynos5433-tm2: enable HDMI/TV path
+Date: Tue, 10 Jan 2017 09:24:24 +0100
+Message-ID: <1484036664-15951-3-git-send-email-a.hajda@samsung.com>
 References: <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
- <CGME20170110082433eucas1p10121a0c5defc7a3004235c78a50b1ff4@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45168 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753064AbdAJIYi (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 03:24:38 -0500
-In-reply-to: <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <CGME20170110082434eucas1p2aa6d49ad0e77f9ed2a4d4d8c58f94307@eucas1p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1484036664-15951-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-HDMI converts RGB/I80 signal from DECON_TV to HDMI/TMDS video stream.
+TV path consist of following interconnected components:
+- DECON_TV - display controller,
+- HDMI - video signal converter RGB / HDMI,
+- MHL - video signal converter HDMI / MHL,
+- DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
 v2:
   - replaced magic numbers with macros,
-  - removed power domains
+  - removed assigned-clock properties from sii8620 -
+    PMU clock is already confgured in PMU node
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 69 ++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 8865fae..441270f 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -837,6 +837,35 @@
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 669bb1f..ca90e6a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -281,6 +281,22 @@
+ 	};
+ };
  
-+		hdmi: hdmi@13970000 {
-+			compatible = "samsung,exynos5433-hdmi";
-+			reg = <0x13970000 0x70000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu_disp CLK_PCLK_HDMI>,
-+				<&cmu_disp CLK_PCLK_HDMIPHY>,
-+				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO>,
-+				<&cmu_disp CLK_PHYCLK_HDMI_PIXEL>,
-+				<&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY>,
-+				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_TMDS_CLKO_USER>,
-+				<&cmu_disp CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY>,
-+				<&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_PIXEL_CLKO_USER>,
-+				<&xxti>, <&cmu_disp CLK_SCLK_HDMI_SPDIF>;
-+			clock-names = "hdmi_pclk", "hdmi_i_pclk",
-+				"i_tmds_clk", "i_pixel_clk",
-+				"tmds_clko", "tmds_clko_user",
-+				"pixel_clko", "pixel_clko_user",
-+				"oscclk", "i_spdif_clk";
-+			phy = <&hdmiphy>;
-+			ddc = <&hsi2c_11>;
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,sysreg-phandle = <&syscon_disp>;
-+			status = "disabled";
++&decon_tv {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			tv_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_tv>;
++			};
++		};
++	};
++};
++
+ &dsi {
+ 	status = "okay";
+ 	vddcore-supply = <&ldo6_reg>;
+@@ -304,6 +320,33 @@
+ 	};
+ };
+ 
++&hdmi {
++	hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
++	status = "okay";
++	vdd-supply = <&ldo6_reg>;
++	vdd_osc-supply = <&ldo7_reg>;
++	vdd_pll-supply = <&ldo6_reg>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			hdmi_to_tv: endpoint {
++				remote-endpoint = <&tv_to_hdmi>;
++			};
 +		};
 +
-+		hdmiphy: hdmiphy@13af0000 {
-+			reg = <0x13af0000 0x80>;
++		port@1 {
++			reg = <1>;
++			hdmi_to_mhl: endpoint {
++				remote-endpoint = <&mhl_to_hdmi>;
++			};
 +		};
++	};
++};
 +
- 		syscon_disp: syscon@13b80000 {
- 			compatible = "syscon";
- 			reg = <0x13b80000 0x1010>;
+ &hsi2c_0 {
+ 	status = "okay";
+ 	clock-frequency = <2500000>;
+@@ -692,6 +735,28 @@
+ 	};
+ };
+ 
++&hsi2c_7 {
++	status = "okay";
++
++	sii8620@39 {
++		reg = <0x39>;
++		compatible = "sil,sii8620";
++		cvcc10-supply = <&ldo36_reg>;
++		iovcc18-supply = <&ldo34_reg>;
++		interrupt-parent = <&gpf0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
++		reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "xtal";
++
++		port {
++			mhl_to_hdmi: endpoint {
++				remote-endpoint = <&hdmi_to_mhl>;
++			};
++		};
++	};
++};
++
+ &hsi2c_8 {
+ 	status = "okay";
+ 
+@@ -735,6 +800,10 @@
+ 	};
+ };
+ 
++&hsi2c_11 {
++	status = "okay";
++};
++
+ &i2s0 {
+ 	status = "okay";
+ };
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
