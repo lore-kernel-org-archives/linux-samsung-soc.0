@@ -1,38 +1,99 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] Fixes for Exynos IOMMU driver
-Date: Tue, 10 Jan 2017 15:01:49 +0100
-Message-ID: <20170110140149.GB1318@8bytes.org>
-References: <CGME20170109120410eucas1p2caf69260dc125da0d9651321eadd03ca@eucas1p2.samsung.com>
-	<1483963436-29803-1-git-send-email-m.szyprowski@samsung.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error
+ handling
+Date: Tue, 10 Jan 2017 07:16:21 -0700
+Message-ID: <2e4a5e53-6603-13b8-0302-dc8093978013@osg.samsung.com>
+References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
+ <CGME20170110120605epcas1p1c26f7f90fca4765ab9cc339c51d11347@epcas1p1.samsung.com>
+ <1641038.u0riMiuGF5@amdc3058>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1483963436-29803-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1641038.u0riMiuGF5@amdc3058>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 09, 2017 at 01:03:52PM +0100, Marek Szyprowski wrote:
-> Marek Szyprowski (4):
->   iommu/exynos: Improve page fault debug message
->   iommu/exynos: Fix warnings from DMA-debug
->   iommu/exynos: Ensure that SYSMMU is added only once to its master
->     device
->   iommu/exynos: Properly release device from the default domain in
->     ->remove
+On 01/10/2017 05:05 AM, Bartlomiej Zolnierkiewicz wrote:
 > 
->  drivers/iommu/exynos-iommu.c | 39 +++++++++++++++++++++++++++++++++------
->  1 file changed, 33 insertions(+), 6 deletions(-)
+> Hi,
+> 
+> On Monday, January 09, 2017 07:21:31 PM Shuah Khan wrote:
+>> Fix dwc3_exynos_probe() to call clk_prepare_enable() only when suspend
+>> clock is specified. Call clk_disable_unprepare() from remove and probe
+>> error path only when susp_clk has been set from remove and probe error
+>> paths.
+> 
+> It is legal to call clk_prepare_enable() and clk_disable_unprepare()
+> for NULL clock.  Also your patch changes susp_clk handling while
+> leaves axius_clk handling (which also can be NULL) untouched.
+> 
+> Do you actually see some runtime problem with the current code?
+> 
+> If not then the patch should probably be dropped.
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
 
-Applied, thanks.
+Hi Bartlomiej,
+
+I am seeing the "no suspend clk specified" message in dmesg.
+After that it sets the exynos->susp_clk = NULL and starts
+calling clk_prepare_enable(exynos->susp_clk);
+
+That can't be good. If you see the logic right above this
+one for exynos->clk, it returns error and fails the probe.
+This this case it doesn't, but tries to use null susp_clk.
+
+I believe this patch is necessary.
+
+thanks,
+-- Shuah
+
+> 
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>  drivers/usb/dwc3/dwc3-exynos.c | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+>> index e27899b..f97a3d7 100644
+>> --- a/drivers/usb/dwc3/dwc3-exynos.c
+>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+>> @@ -131,8 +131,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(exynos->susp_clk)) {
+>>  		dev_info(dev, "no suspend clk specified\n");
+>>  		exynos->susp_clk = NULL;
+>> -	}
+>> -	clk_prepare_enable(exynos->susp_clk);
+>> +	} else
+>> +		clk_prepare_enable(exynos->susp_clk);
+>>  
+>>  	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
+>>  		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+>> @@ -196,7 +196,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>  	regulator_disable(exynos->vdd33);
+>>  err2:
+>>  	clk_disable_unprepare(exynos->axius_clk);
+>> -	clk_disable_unprepare(exynos->susp_clk);
+>> +	if (exynos->susp_clk)
+>> +		clk_disable_unprepare(exynos->susp_clk);
+>>  	clk_disable_unprepare(exynos->clk);
+>>  	return ret;
+>>  }
+>> @@ -210,7 +211,8 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
+>>  	platform_device_unregister(exynos->usb3_phy);
+>>  
+>>  	clk_disable_unprepare(exynos->axius_clk);
+>> -	clk_disable_unprepare(exynos->susp_clk);
+>> +	if (exynos->susp_clk)
+>> +		clk_disable_unprepare(exynos->susp_clk);
+>>  	clk_disable_unprepare(exynos->clk);
+>>  
+>>  	regulator_disable(exynos->vdd33);
+> 
