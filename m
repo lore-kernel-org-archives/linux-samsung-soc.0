@@ -1,59 +1,65 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Remove unneeded unit names in
- Exynos5433 nodes
-Date: Tue, 10 Jan 2017 16:03:53 -0300
-Message-ID: <9ee4d297-51fd-fd37-e4e4-1a939a644201@osg.samsung.com>
-References: <1484069912-6534-1-git-send-email-javier@osg.samsung.com>
- <1484069912-6534-4-git-send-email-javier@osg.samsung.com>
- <20170110185109.n3x25yxbaarzikcd@kozik-lap>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] arm64: dts: exynos5433: add DECON_TV node
+Date: Tue, 10 Jan 2017 21:09:16 +0200
+Message-ID: <20170110190916.k3tek4zuvhggbuc6@kozik-lap>
+References: <CGME20170110082433eucas1p2f7cb7b0974987e2c8294509960468fd3@eucas1p2.samsung.com>
+ <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170110185109.n3x25yxbaarzikcd@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1484036664-15951-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On 01/10/2017 03:51 PM, Krzysztof Kozlowski wrote:
-
-[snip]
-
->>  
->> -		usbdrd30: usb@15400000  {
->> +		usbdrd30: usb-0  {
+On Tue, Jan 10, 2017 at 09:24:22AM +0100, Andrzej Hajda wrote:
+> DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
+> or 2nd DSI path.
 > 
-> How about "usbdrd" instead of "usb-0"? It would be still quite a generic
-> description of a class.
+> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
 > 
->>  			compatible = "samsung,exynos5250-dwusb3";
->>  			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
->>  				<&cmu_fsys CLK_SCLK_USBDRD30>;
->> @@ -1332,7 +1332,7 @@
->>  			status = "disabled";
->>  		};
->>  
->> -		usbhost30: usb@15a00000 {
->> +		usbhost30: usb-1 {
+> Hi Krzysztof,
 > 
-> usbhost?
+> These patches are based on latest patches separating tm2 and tm2e and
+> touchscreen patches. I hope this is good base.
+> Thanks all for quick response/review.
 > 
+> Regards
+> Andrzej
+> 
+> v2:
+>   - replaced magic numbers with macros,
+>   - removed power domains,
+>   - removed 0x prefixes from node names
+> 
+> v3:
+>   - order nodes by address
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 43 ++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>
 
-Indeed, these sounds better so I'll change for them.
+First, I applied your fix for unit addresses. Then I wanted to apply
+these... no, it does not apply.
+
+Okay, so maybe unit address confuses git-am (it is not that smart as
+cherry-pick etc) - let's try the other way. I applied these three
+patches, fixed that damned subject in each commit and I wanted to apply
+the fix for unit address. Nope. It won't apply.
+
+I do not know how you rebased your work.
+
+As of now, the fix is applied. Please fix the subject and rebase.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
