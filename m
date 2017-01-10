@@ -1,140 +1,115 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 3/3] arm64: dts: exynos5433-tm2: enable HDMI/TV path
-Date: Tue, 10 Jan 2017 09:24:24 +0100
-Message-ID: <1484036664-15951-3-git-send-email-a.hajda@samsung.com>
-References: <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
- <CGME20170110082434eucas1p2aa6d49ad0e77f9ed2a4d4d8c58f94307@eucas1p2.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1484036664-15951-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] arm64: dts: exynos5433: fix addresses in node names
+Date: Tue, 10 Jan 2017 10:30:48 +0100
+Message-ID: <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170110093054eucas1p1bb74f8494dd6cece0debfabfc8ec34ca@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58595 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759167AbdAJJa6 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 10 Jan 2017 04:30:58 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OJK00IP753EHY80@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2017 09:30:55 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-TV path consist of following interconnected components:
-- DECON_TV - display controller,
-- HDMI - video signal converter RGB / HDMI,
-- MHL - video signal converter HDMI / MHL,
-- DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
+Address should not contain 0x prefix.
 
-Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Tested-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
-v2:
-  - replaced magic numbers with macros,
-  - removed assigned-clock properties from sii8620 -
-    PMU clock is already confgured in PMU node
----
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 669bb1f..ca90e6a 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -281,6 +281,22 @@
- 	};
- };
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 441270f..aacd5f7 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -299,7 +299,7 @@
+ 			#clock-cells = <1>;
+ 		};
  
-+&decon_tv {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			tv_to_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_to_tv>;
-+			};
-+		};
-+	};
-+};
-+
- &dsi {
- 	status = "okay";
- 	vddcore-supply = <&ldo6_reg>;
-@@ -304,6 +320,33 @@
- 	};
- };
+-		cmu_peris: clock-controller@0x10040000 {
++		cmu_peris: clock-controller@10040000 {
+ 			compatible = "samsung,exynos5433-cmu-peris";
+ 			reg = <0x10040000 0x1000>;
+ 			#clock-cells = <1>;
+@@ -944,7 +944,7 @@
+ 			iommu-names = "left", "right";
+ 		};
  
-+&hdmi {
-+	hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+	vdd-supply = <&ldo6_reg>;
-+	vdd_osc-supply = <&ldo7_reg>;
-+	vdd_pll-supply = <&ldo6_reg>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			hdmi_to_tv: endpoint {
-+				remote-endpoint = <&tv_to_hdmi>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			hdmi_to_mhl: endpoint {
-+				remote-endpoint = <&mhl_to_hdmi>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_0 {
- 	status = "okay";
- 	clock-frequency = <2500000>;
-@@ -692,6 +735,28 @@
- 	};
- };
+-		sysmmu_decon0x: sysmmu@0x13a00000 {
++		sysmmu_decon0x: sysmmu@13a00000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13a00000 0x1000>;
+ 			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
+@@ -954,7 +954,7 @@
+ 			#iommu-cells = <0>;
+ 		};
  
-+&hsi2c_7 {
-+	status = "okay";
-+
-+	sii8620@39 {
-+		reg = <0x39>;
-+		compatible = "sil,sii8620";
-+		cvcc10-supply = <&ldo36_reg>;
-+		iovcc18-supply = <&ldo34_reg>;
-+		interrupt-parent = <&gpf0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+		reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "xtal";
-+
-+		port {
-+			mhl_to_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_to_mhl>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_8 {
- 	status = "okay";
+-		sysmmu_decon1x: sysmmu@0x13a10000 {
++		sysmmu_decon1x: sysmmu@13a10000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13a10000 0x1000>;
+ 			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
+@@ -984,7 +984,7 @@
+ 			#iommu-cells = <0>;
+ 		};
  
-@@ -735,6 +800,10 @@
- 	};
- };
+-		sysmmu_gscl0: sysmmu@0x13C80000 {
++		sysmmu_gscl0: sysmmu@13c80000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13C80000 0x1000>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+@@ -994,7 +994,7 @@
+ 			#iommu-cells = <0>;
+ 		};
  
-+&hsi2c_11 {
-+	status = "okay";
-+};
-+
- &i2s0 {
- 	status = "okay";
- };
+-		sysmmu_gscl1: sysmmu@0x13C90000 {
++		sysmmu_gscl1: sysmmu@13c90000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13C90000 0x1000>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1004,7 +1004,7 @@
+ 			#iommu-cells = <0>;
+ 		};
+ 
+-		sysmmu_gscl2: sysmmu@0x13CA0000 {
++		sysmmu_gscl2: sysmmu@13ca0000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13CA0000 0x1000>;
+ 			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1014,7 +1014,7 @@
+ 			#iommu-cells = <0>;
+ 		};
+ 
+-		sysmmu_jpeg: sysmmu@0x15060000 {
++		sysmmu_jpeg: sysmmu@15060000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x15060000 0x1000>;
+ 			interrupts = <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1024,7 +1024,7 @@
+ 			#iommu-cells = <0>;
+ 		};
+ 
+-		sysmmu_mfc_0: sysmmu@0x15200000 {
++		sysmmu_mfc_0: sysmmu@15200000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x15200000 0x1000>;
+ 			interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1034,7 +1034,7 @@
+ 			#iommu-cells = <0>;
+ 		};
+ 
+-		sysmmu_mfc_1: sysmmu@0x15210000 {
++		sysmmu_mfc_1: sysmmu@15210000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x15210000 0x1000>;
+ 			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
