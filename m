@@ -1,65 +1,59 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] arm64: dts: exynos5433: add DECON_TV node
-Date: Tue, 10 Jan 2017 21:09:16 +0200
-Message-ID: <20170110190916.k3tek4zuvhggbuc6@kozik-lap>
-References: <CGME20170110082433eucas1p2f7cb7b0974987e2c8294509960468fd3@eucas1p2.samsung.com>
- <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error
+ handling
+Date: Tue, 10 Jan 2017 12:20:35 -0700
+Message-ID: <e8241820-b710-9735-8b61-fc38ca636bd9@osg.samsung.com>
+References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
+ <CANAwSgQ4Nxyq5itu62qdz18d4xvTu-e3P3ZXK2acLWtzexaaCA@mail.gmail.com>
+ <2265318.ybtxfiNn3d@amdc3058>
+ <CGME20170110182345epcas1p3112f94aad300625ff1f75860c55a2b7e@epcas1p3.samsung.com>
+ <1659345.4CcVdVckN5@amdc3058>
+ <23cf318d-b83f-55e6-e980-13133f0ceb8b@osg.samsung.com>
+ <20170110185943.qxwnzjg6zzy4zbki@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1484036664-15951-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170110185943.qxwnzjg6zzy4zbki@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Felipe Balbi <balbi@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 10, 2017 at 09:24:22AM +0100, Andrzej Hajda wrote:
-> DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
-> or 2nd DSI path.
+On 01/10/2017 11:59 AM, Krzysztof Kozlowski wrote:
+> On Tue, Jan 10, 2017 at 11:37:24AM -0700, Shuah Khan wrote:
+>> On 01/10/2017 11:23 AM, Bartlomiej Zolnierkiewicz wrote:
+>>> I also think that regardless of what is decided on making susp_clk
+>>> non-optional for some Exynos SoCs we should probably remove the debug
+>>> message as it doesn't bring useful information and may be confusing.
+>>>
+>>> Shuah, can you take care of this?
+>>
+>> Yes. This message as it reads now is not only confusing, but also can
+>> lead users to think something is wrong.
+>>
+>> I can get rid of it or I could change it from info to debug and change
+>> it to read:
+>>
+>> "Optional Suspend clock isn't found. Diver operation isn't impacted"
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-> Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Tested-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
+> It is even more confusing. If the clock is required (by binding, by
+> hardware) - make it an error. If it is completely not important - do not
+> print anything. If it is optional but helpful (enabling clock gives
+> someything) then print something... but it is not that case.
 > 
-> Hi Krzysztof,
+> Best regards,
+> Krzysztof
 > 
-> These patches are based on latest patches separating tm2 and tm2e and
-> touchscreen patches. I hope this is good base.
-> Thanks all for quick response/review.
-> 
-> Regards
-> Andrzej
-> 
-> v2:
->   - replaced magic numbers with macros,
->   - removed power domains,
->   - removed 0x prefixes from node names
-> 
-> v3:
->   - order nodes by address
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 43 ++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
->
 
-First, I applied your fix for unit addresses. Then I wanted to apply
-these... no, it does not apply.
+Sounds fair. I will send a patch to remove the message.
 
-Okay, so maybe unit address confuses git-am (it is not that smart as
-cherry-pick etc) - let's try the other way. I applied these three
-patches, fixed that damned subject in each commit and I wanted to apply
-the fix for unit address. Nope. It won't apply.
-
-I do not know how you rebased your work.
-
-As of now, the fix is applied. Please fix the subject and rebase.
-
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- Shuah
