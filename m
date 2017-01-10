@@ -1,64 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: constify exynos_drm_crtc_ops structures
-Date: Tue, 10 Jan 2017 11:18:28 +0100
-Message-ID: <20170110101828.dtvivdtty44k7snd@phenom.ffwll.local>
-References: <1483984493-25284-1-git-send-email-bhumirks@gmail.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos5433: fix addresses in node names
+Date: Tue, 10 Jan 2017 19:25:04 +0900
+Message-ID: <20170110102504.d5wmwx6o7ovf3t6s@gangnam.samsung>
+References: <CGME20170110093054eucas1p1bb74f8494dd6cece0debfabfc8ec34ca@eucas1p1.samsung.com>
+ <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1483984493-25284-1-git-send-email-bhumirks@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, julia.lawall@lip6.fr, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:45557 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbdAJKZI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 10 Jan 2017 05:25:08 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OJK02UJV7LUO330@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2017 19:25:06 +0900 (KST)
+Content-disposition: inline
+In-reply-to: <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-T24gTW9uLCBKYW4gMDksIDIwMTcgYXQgMTE6MjQ6NTNQTSArMDUzMCwgQmh1bWlrYSBHb3lhbCB3
-cm90ZToKPiBEZWNsYXJlIGV4eW5vc19kcm1fY3J0Y19vcHMgc3RydWN0dXJlcyBhcyBjb25zdCBh
-cyB0aGV5IGFyZSBvbmx5IHBhc3NlZAo+IGFzIGFuIGFyZ3VtZW50IHRvIHRoZSBmdW5jdGlvbiBl
-eHlub3NfZHJtX2NydGNfY3JlYXRlLiBUaGlzIGFyZ3VtZW50IGlzCj4gb2YgdHlwZSBjb25zdCBz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyAqLCBzbyBleHlub3NfZHJtX2NydGNfb3BzCj4gc3Ry
-dWN0dXJlcyBoYXZpbmcgdGhpcyBwcm9wZXJ0eSBjYW4gYmUgZGVjbGFyZWQgY29uc3QuCj4gRG9u
-ZSB1c2luZyBDb2NjaW5lbGxlOgo+IAo+IEByIGRpc2FibGUgb3B0aW9uYWxfcXVhbGlmaWVyQAo+
-IGlkZW50aWZpZXIgaTsKPiBwb3NpdGlvbiBwOwo+IEBACj4gc3RhdGljIHN0cnVjdCBleHlub3Nf
-ZHJtX2NydGNfb3BzIGlAcD17Li4ufTsKPiAKPiBAb2tACj4gcG9zaXRpb24gcDsKPiBpZGVudGlm
-aWVyIHIuaTsKPiBAQAo+IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoLi4uLCZpQHAsLi4uKQo+IAo+
-IEBiYWRACj4gcG9zaXRpb24gcCE9e3IucCxvay5wfTsKPiBpZGVudGlmaWVyIHIuaTsKPiBAQAo+
-IGlAcAo+IAo+IEBkZXBlbmRzIG9uICFiYWQgZGlzYWJsZSBvcHRpb25hbF9xdWFsaWZpZXJACj4g
-aWRlbnRpZmllciByLmk7Cj4gQEAKPiArY29uc3QKPiBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29w
-cyBpOwo+IAo+IEZpbGUgc2l6ZSBiZWZvcmU6Cj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAg
-IGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAgNTAwOAkgICAgMjgwCSAgICAgIDAJICAgNTI4OAkg
-ICAxNGE4CWV4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5vCj4gCj4gRmlsZSBzaXplIGFmdGVy
-Ogo+ICAgIHRleHQJICAgZGF0YQkgICAgYnNzCSAgICBkZWMJICAgIGhleAlmaWxlbmFtZQo+ICAg
-IDUxMjAJICAgIDE3NgkgICAgICAwCSAgIDUyOTYJICAgMTRiMCBleHlub3MvZXh5bm9zNTQzM19k
-cm1fZGVjb24ubwo+IAo+IFNpZ25lZC1vZmYtYnk6IEJodW1pa2EgR295YWwgPGJodW1pcmtzQGdt
-YWlsLmNvbT4KCkFwcGxpZWQgdG8gZHJtLW1pc2MsIHRoYW5rcy4KLURhbmllbAoKPiAtLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMiArLQo+ICAx
-IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4gaW5kZXggNmNhMWYz
-MS4uMTJiOWJmMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0
-MzNfZHJtX2RlY29uLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNf
-ZHJtX2RlY29uLmMKPiBAQCAtNDcwLDcgKzQ3MCw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NsZWFy
-X2NoYW5uZWxzKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCj4gIAkJY2xrX2Rpc2FibGVf
-dW5wcmVwYXJlKGN0eC0+Y2xrc1tpXSk7Cj4gIH0KPiAgCj4gLXN0YXRpYyBzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsKPiArc3RhdGljIGNvbnN0IHN0cnVjdCBl
-eHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNfb3BzID0gewo+ICAJLmVuYWJsZQkJCT0gZGVj
-b25fZW5hYmxlLAo+ICAJLmRpc2FibGUJCT0gZGVjb25fZGlzYWJsZSwKPiAgCS5lbmFibGVfdmJs
-YW5rCQk9IGRlY29uX2VuYWJsZV92YmxhbmssCj4gLS0gCj4gMS45LjEKPiAKPiBfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0
-dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZnds
-bC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Andrzej,
+
+> Address should not contain 0x prefix.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+
+Thanks,
+Andi
