@@ -1,36 +1,53 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos5433: fix addresses in node names
-Date: Tue, 10 Jan 2017 19:25:04 +0900
-Message-ID: <20170110102504.d5wmwx6o7ovf3t6s@gangnam.samsung>
-References: <CGME20170110093054eucas1p1bb74f8494dd6cece0debfabfc8ec34ca@eucas1p1.samsung.com>
- <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error
+ handling
+Date: Tue, 10 Jan 2017 14:20:09 +0300
+Message-ID: <82fb5295-6640-7e9e-a42a-4067aa88e5b4@cogentembedded.com>
+References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45557 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbdAJKZI (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 05:25:08 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJK02UJV7LUO330@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2017 19:25:06 +0900 (KST)
-Content-disposition: inline
-In-reply-to: <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170110022131.31042-1-shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Hi Andrzej,
+Hello!
 
-> Address should not contain 0x prefix.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+On 01/10/2017 05:21 AM, Shuah Khan wrote:
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+> Fix dwc3_exynos_probe() to call clk_prepare_enable() only when suspend
+> clock is specified. Call clk_disable_unprepare() from remove and probe
+> error path only when susp_clk has been set from remove and probe error
+> paths.
+>
+> Signed-off-by: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index e27899b..f97a3d7 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -131,8 +131,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	if (IS_ERR(exynos->susp_clk)) {
+>  		dev_info(dev, "no suspend clk specified\n");
+>  		exynos->susp_clk = NULL;
+> -	}
+> -	clk_prepare_enable(exynos->susp_clk);
+> +	} else
+> +		clk_prepare_enable(exynos->susp_clk);
 
-Thanks,
-Andi
+    CodingStyle: need {} here as well since another branch has them.
+
+[...]
+
+MBR, Sergei
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
