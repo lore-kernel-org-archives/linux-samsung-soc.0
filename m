@@ -1,115 +1,64 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] arm64: dts: exynos5433: fix addresses in node names
-Date: Tue, 10 Jan 2017 10:30:48 +0100
-Message-ID: <1484040648-23763-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170110093054eucas1p1bb74f8494dd6cece0debfabfc8ec34ca@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58595 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759167AbdAJJa6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 04:30:58 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJK00IP753EHY80@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2017 09:30:55 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/exynos: constify exynos_drm_crtc_ops structures
+Date: Tue, 10 Jan 2017 11:18:28 +0100
+Message-ID: <20170110101828.dtvivdtty44k7snd@phenom.ffwll.local>
+References: <1483984493-25284-1-git-send-email-bhumirks@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1483984493-25284-1-git-send-email-bhumirks@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, javier@osg.samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, julia.lawall@lip6.fr, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
 
-Address should not contain 0x prefix.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 441270f..aacd5f7 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -299,7 +299,7 @@
- 			#clock-cells = <1>;
- 		};
- 
--		cmu_peris: clock-controller@0x10040000 {
-+		cmu_peris: clock-controller@10040000 {
- 			compatible = "samsung,exynos5433-cmu-peris";
- 			reg = <0x10040000 0x1000>;
- 			#clock-cells = <1>;
-@@ -944,7 +944,7 @@
- 			iommu-names = "left", "right";
- 		};
- 
--		sysmmu_decon0x: sysmmu@0x13a00000 {
-+		sysmmu_decon0x: sysmmu@13a00000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a00000 0x1000>;
- 			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-@@ -954,7 +954,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_decon1x: sysmmu@0x13a10000 {
-+		sysmmu_decon1x: sysmmu@13a10000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a10000 0x1000>;
- 			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-@@ -984,7 +984,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_gscl0: sysmmu@0x13C80000 {
-+		sysmmu_gscl0: sysmmu@13c80000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13C80000 0x1000>;
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-@@ -994,7 +994,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_gscl1: sysmmu@0x13C90000 {
-+		sysmmu_gscl1: sysmmu@13c90000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13C90000 0x1000>;
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1004,7 +1004,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_gscl2: sysmmu@0x13CA0000 {
-+		sysmmu_gscl2: sysmmu@13ca0000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13CA0000 0x1000>;
- 			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1014,7 +1014,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_jpeg: sysmmu@0x15060000 {
-+		sysmmu_jpeg: sysmmu@15060000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15060000 0x1000>;
- 			interrupts = <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1024,7 +1024,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_mfc_0: sysmmu@0x15200000 {
-+		sysmmu_mfc_0: sysmmu@15200000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15200000 0x1000>;
- 			interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1034,7 +1034,7 @@
- 			#iommu-cells = <0>;
- 		};
- 
--		sysmmu_mfc_1: sysmmu@0x15210000 {
-+		sysmmu_mfc_1: sysmmu@15210000 {
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15210000 0x1000>;
- 			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.7.4
+T24gTW9uLCBKYW4gMDksIDIwMTcgYXQgMTE6MjQ6NTNQTSArMDUzMCwgQmh1bWlrYSBHb3lhbCB3
+cm90ZToKPiBEZWNsYXJlIGV4eW5vc19kcm1fY3J0Y19vcHMgc3RydWN0dXJlcyBhcyBjb25zdCBh
+cyB0aGV5IGFyZSBvbmx5IHBhc3NlZAo+IGFzIGFuIGFyZ3VtZW50IHRvIHRoZSBmdW5jdGlvbiBl
+eHlub3NfZHJtX2NydGNfY3JlYXRlLiBUaGlzIGFyZ3VtZW50IGlzCj4gb2YgdHlwZSBjb25zdCBz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyAqLCBzbyBleHlub3NfZHJtX2NydGNfb3BzCj4gc3Ry
+dWN0dXJlcyBoYXZpbmcgdGhpcyBwcm9wZXJ0eSBjYW4gYmUgZGVjbGFyZWQgY29uc3QuCj4gRG9u
+ZSB1c2luZyBDb2NjaW5lbGxlOgo+IAo+IEByIGRpc2FibGUgb3B0aW9uYWxfcXVhbGlmaWVyQAo+
+IGlkZW50aWZpZXIgaTsKPiBwb3NpdGlvbiBwOwo+IEBACj4gc3RhdGljIHN0cnVjdCBleHlub3Nf
+ZHJtX2NydGNfb3BzIGlAcD17Li4ufTsKPiAKPiBAb2tACj4gcG9zaXRpb24gcDsKPiBpZGVudGlm
+aWVyIHIuaTsKPiBAQAo+IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoLi4uLCZpQHAsLi4uKQo+IAo+
+IEBiYWRACj4gcG9zaXRpb24gcCE9e3IucCxvay5wfTsKPiBpZGVudGlmaWVyIHIuaTsKPiBAQAo+
+IGlAcAo+IAo+IEBkZXBlbmRzIG9uICFiYWQgZGlzYWJsZSBvcHRpb25hbF9xdWFsaWZpZXJACj4g
+aWRlbnRpZmllciByLmk7Cj4gQEAKPiArY29uc3QKPiBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29w
+cyBpOwo+IAo+IEZpbGUgc2l6ZSBiZWZvcmU6Cj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAg
+IGRlYwkgICAgaGV4CWZpbGVuYW1lCj4gICAgNTAwOAkgICAgMjgwCSAgICAgIDAJICAgNTI4OAkg
+ICAxNGE4CWV4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5vCj4gCj4gRmlsZSBzaXplIGFmdGVy
+Ogo+ICAgIHRleHQJICAgZGF0YQkgICAgYnNzCSAgICBkZWMJICAgIGhleAlmaWxlbmFtZQo+ICAg
+IDUxMjAJICAgIDE3NgkgICAgICAwCSAgIDUyOTYJICAgMTRiMCBleHlub3MvZXh5bm9zNTQzM19k
+cm1fZGVjb24ubwo+IAo+IFNpZ25lZC1vZmYtYnk6IEJodW1pa2EgR295YWwgPGJodW1pcmtzQGdt
+YWlsLmNvbT4KCkFwcGxpZWQgdG8gZHJtLW1pc2MsIHRoYW5rcy4KLURhbmllbAoKPiAtLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMiArLQo+ICAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4gaW5kZXggNmNhMWYz
+MS4uMTJiOWJmMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0
+MzNfZHJtX2RlY29uLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNf
+ZHJtX2RlY29uLmMKPiBAQCAtNDcwLDcgKzQ3MCw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NsZWFy
+X2NoYW5uZWxzKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCj4gIAkJY2xrX2Rpc2FibGVf
+dW5wcmVwYXJlKGN0eC0+Y2xrc1tpXSk7Cj4gIH0KPiAgCj4gLXN0YXRpYyBzdHJ1Y3QgZXh5bm9z
+X2RybV9jcnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsKPiArc3RhdGljIGNvbnN0IHN0cnVjdCBl
+eHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNfb3BzID0gewo+ICAJLmVuYWJsZQkJCT0gZGVj
+b25fZW5hYmxlLAo+ICAJLmRpc2FibGUJCT0gZGVjb25fZGlzYWJsZSwKPiAgCS5lbmFibGVfdmJs
+YW5rCQk9IGRlY29uX2VuYWJsZV92YmxhbmssCj4gLS0gCj4gMS45LjEKPiAKPiBfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0
+dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZnds
+bC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
