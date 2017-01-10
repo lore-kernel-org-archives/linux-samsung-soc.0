@@ -1,43 +1,55 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 1/4] dmaengine: pl330: remove pdata based initialization
-Date: Tue, 10 Jan 2017 07:55:27 +0100
-Message-ID: <c12cb9e0-ce2f-662a-2b3b-12b4a2209b74@samsung.com>
-References: <1483970598-6191-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170109140325eucas1p2674704b2505517ee532284c58c8a64d1@eucas1p2.samsung.com>
- <1483970598-6191-2-git-send-email-m.szyprowski@samsung.com>
- <20170109181511.37da3mslzdiq4uhr@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 3/4] dmaengine: pl330: Store pointer to slave device
+Date: Tue, 10 Jan 2017 08:12:38 +0100
+Message-ID: <1484032359-8311-4-git-send-email-m.szyprowski@samsung.com>
+References: <1484032359-8311-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170110071343eucas1p1b3f8c5122f2d2259e95353a98fdd9484@eucas1p1.samsung.com>
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20170109181511.37da3mslzdiq4uhr@kozik-lap>
+In-reply-to: <1484032359-8311-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Store the pointer to slave device, which requested our channel. It will be
+later used to implement runtime PM of PL330 DMA controller. Although
+DMA channels might be requested many times, each DMA peripheral channel is
+physically dedicated only for specific hardware, so there should be only
+one slave device for each channel.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/dma/pl330.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On 2017-01-09 19:15, Krzysztof Kozlowski wrote:
-> On Mon, Jan 09, 2017 at 03:03:15PM +0100, Marek Szyprowski wrote:
->> This driver is now used only on platforms which support device tree, so
->> it is safe to remove legacy platform data based initialization code.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/dma/pl330.c        | 30 ++++++++----------------------
->>   include/linux/amba/pl330.h | 35 -----------------------------------
-> Nope:
-> $ git grep pl330.h
-> arch/arm/plat-samsung/devs.c:#include <linux/amba/pl330.h>
-
-Huh... This seems to be a leftover from a really old code, because pl330
-devices have been removed from devs.c quite a long time ago. I will fix
-this in v3.
-
-Best regards
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index d7670e7220e4..4489d4d13012 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -450,6 +450,7 @@ struct dma_pl330_chan {
+ 
+ 	/* for runtime pm tracking */
+ 	bool active;
++	struct device *slave;
+ };
+ 
+ struct pl330_dmac {
+@@ -2101,6 +2102,14 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
+ 	if (chan_id >= pl330->num_peripherals)
+ 		return NULL;
+ 
++	if (!pl330->peripherals[chan_id].slave) {
++		pl330->peripherals[chan_id].slave = slave;
++	} else if (pl330->peripherals[chan_id].slave != slave) {
++		dev_err(pl330->ddma.dev,
++			"Can't use same channel with multiple slave devices!\n");
++		return NULL;
++	}
++
+ 	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
+ }
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
 
