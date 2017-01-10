@@ -1,42 +1,47 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH] usb: dwc3-exynos remove suspend clock unspecified debug message
-Date: Tue, 10 Jan 2017 14:20:59 -0700
-Message-ID: <20170110212059.21995-1-shuahkh@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH] usb: dwc3-exynos fix axius clock error path to do cleanup
+Date: Tue, 10 Jan 2017 16:05:28 -0700
+Message-ID: <20170110230528.7612-1-shuahkh@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36719
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1756461AbdAJXFe (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 10 Jan 2017 18:05:34 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-dwc3-exynos prints debug message when suspend clock is not specified.
-The suspend clock is optional and driver can work without it.
-
-This debug message doesn't add any value and leads to confusion and
-concern. Remove it.
+Axius clock error path returns without disabling clock and suspend clock.
+Fix it to disable them before returning error.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
-This patch is a result of the disussion on the following patch.
-https://lkml.org/lkml/2017/1/9/891
-
-drivers/usb/dwc3/dwc3-exynos.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/dwc3/dwc3-exynos.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index e27899b..3e8407a 100644
+index 3e8407a..f7421c2 100644
 --- a/drivers/usb/dwc3/dwc3-exynos.c
 +++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -128,10 +128,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 	clk_prepare_enable(exynos->clk);
- 
- 	exynos->susp_clk = devm_clk_get(dev, "usbdrd30_susp_clk");
--	if (IS_ERR(exynos->susp_clk)) {
--		dev_info(dev, "no suspend clk specified\n");
-+	if (IS_ERR(exynos->susp_clk))
- 		exynos->susp_clk = NULL;
--	}
- 	clk_prepare_enable(exynos->susp_clk);
- 
- 	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
+@@ -136,7 +136,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+ 		if (IS_ERR(exynos->axius_clk)) {
+ 			dev_err(dev, "no AXI UpScaler clk specified\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto axius_clk_err;
+ 		}
+ 		clk_prepare_enable(exynos->axius_clk);
+ 	} else {
+@@ -194,6 +195,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	regulator_disable(exynos->vdd33);
+ err2:
+ 	clk_disable_unprepare(exynos->axius_clk);
++axius_clk_err:
+ 	clk_disable_unprepare(exynos->susp_clk);
+ 	clk_disable_unprepare(exynos->clk);
+ 	return ret;
 -- 
 2.7.4
