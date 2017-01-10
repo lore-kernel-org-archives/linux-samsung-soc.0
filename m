@@ -1,60 +1,39 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm: exynos: Add runtime PM support to MIC driver
-Date: Tue, 10 Jan 2017 13:57:47 +0100
-Message-ID: <1484053067-31665-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170110125756eucas1p1d9fe25f1ca7e0e982abaf2d71a607f0d@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/3] arm64: dts: Fix DTC warnings for Exynos boards
+Date: Tue, 10 Jan 2017 10:27:43 -0300
+Message-ID: <1484054866-3988-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:33797
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1756934AbdAJN2C (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 10 Jan 2017 08:28:02 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-VGhpcyBwYXRjaCBhZGRzIHBtX3J1bnRpbWVfZ2V0L3B1dCBjYWxscyB0byBub3RpZnkgZGV2aWNl
-IGNvcmUgd2hlbiBNSUMKZGV2aWNlIGlzIHJlYWxseSBpbiB1c2UuIFRoaXMgaXMgbmVlZGVkIHRv
-IGxldCBwb3dlciBkb21haW4gd2l0aCB0aGlzCmRldmljZSB0byBiZSB0dXJuZWQgb2ZmIHdoZW4g
-ZGlzcGxheSBpcyB0dXJuZWQgb2ZmLgoKU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9taWMuYyB8IDE3ICsrKysrKysrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwgMTYg
-aW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9taWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9taWMuYwppbmRleCBhMGRlZjBiZTZkNjUuLmY2NDNjMzgwY2I5YSAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYwpAQCAtMTksNiArMTksNyBAQAogI2luY2x1ZGUg
-PGxpbnV4L29mX2dyYXBoLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAjaW5jbHVkZSA8bGlu
-dXgvY29tcG9uZW50Lmg+CisjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5oPgogI2luY2x1ZGUg
-PGRybS9kcm1QLmg+CiAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgogI2luY2x1ZGUgPGxp
-bnV4L3JlZ21hcC5oPgpAQCAtMzIzLDYgKzMyNCw3IEBAIHN0YXRpYyB2b2lkIG1pY19wb3N0X2Rp
-c2FibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKIAlmb3IgKGkgPSBOVU1fQ0xLUyAtIDE7
-IGkgPiAtMTsgaS0tKQogCQljbGtfZGlzYWJsZV91bnByZXBhcmUobWljLT5jbGtzW2ldKTsKIAor
-CXBtX3J1bnRpbWVfcHV0KG1pYy0+ZGV2KTsKIAltaWMtPmVuYWJsZWQgPSAwOwogCiBhbHJlYWR5
-X2Rpc2FibGVkOgpAQCAtMzM4LDYgKzM0MCw4IEBAIHN0YXRpYyB2b2lkIG1pY19wcmVfZW5hYmxl
-KHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAJaWYgKG1pYy0+ZW5hYmxlZCkKIAkJZ290byBh
-bHJlYWR5X2VuYWJsZWQ7CiAKKwlwbV9ydW50aW1lX2dldF9zeW5jKG1pYy0+ZGV2KTsKKwogCWZv
-ciAoaSA9IDA7IGkgPCBOVU1fQ0xLUzsgaSsrKSB7CiAJCXJldCA9IGNsa19wcmVwYXJlX2VuYWJs
-ZShtaWMtPmNsa3NbaV0pOwogCQlpZiAocmV0IDwgMCkgewpAQCAtNDczLDggKzQ3NywxOCBAQCBz
-dGF0aWMgaW50IGV4eW5vc19taWNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
-IAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIG1pYyk7CiAKKwlwbV9ydW50aW1lX2VuYWJs
-ZShkZXYpOworCisJcmV0ID0gY29tcG9uZW50X2FkZChkZXYsICZleHlub3NfbWljX2NvbXBvbmVu
-dF9vcHMpOworCWlmIChyZXQpCisJCWdvdG8gZXJyX3BtOworCiAJRFJNX0RFQlVHX0tNUygiTUlD
-IGhhcyBiZWVuIHByb2JlZFxuIik7Ci0JcmV0dXJuIGNvbXBvbmVudF9hZGQoZGV2LCAmZXh5bm9z
-X21pY19jb21wb25lbnRfb3BzKTsKKworCXJldHVybiAwOworCitlcnJfcG06CisJcG1fcnVudGlt
-ZV9kaXNhYmxlKGRldik7CiAKIGVycjoKIAlyZXR1cm4gcmV0OwpAQCAtNDgzLDYgKzQ5Nyw3IEBA
-IHN0YXRpYyBpbnQgZXh5bm9zX21pY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQogc3RhdGljIGludCBleHlub3NfbWljX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQogewogCWNvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwgJmV4eW5vc19taWNfY29tcG9uZW50
-X29wcyk7CisJcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2LT5kZXYpOwogCXJldHVybiAwOwogfQog
-Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+Hello Krzysztof,
+
+This trivial series contains fixes for DTC warnings caused by mismatches
+between unit names and reg properties in device tree nodes.
+
+The patches shouldn't cause a functional change but have been just build
+tested. I compared the generated DTB though to make sure that only these
+nodes changed.
+
+Best regards,
+Javier
+
+
+Javier Martinez Canillas (3):
+  arm64: dts: Add missing unit name to Exynos7 SoC node
+  arm64: dts: Add missing unit name to Exynos5433 SoC node
+  arm64: dts: Remove unneeded unit names in Exynos5433 nodes
+
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 8 ++++----
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
