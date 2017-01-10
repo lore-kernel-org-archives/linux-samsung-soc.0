@@ -1,79 +1,66 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error handling
-Date: Tue, 10 Jan 2017 13:05:58 +0100
-Message-ID: <1641038.u0riMiuGF5@amdc3058>
-References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
- <CGME20170110120605epcas1p1c26f7f90fca4765ab9cc339c51d11347@epcas1p1.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: remove Exynos4212 support (dead
+ code)
+Date: Tue, 10 Jan 2017 09:06:44 -0300
+Message-ID: <9b7dd5ac-c78b-a03c-9d9d-8d09b59d00f5@osg.samsung.com>
+References: <CGME20170109083453eucas1p295add9f8c3e5a10c7ae3081d6567fe08@eucas1p2.samsung.com>
+ <1483950880-16016-1-git-send-email-m.szyprowski@samsung.com>
+ <b924cc2e-72fb-cc69-980b-099a3b13c739@osg.samsung.com>
+ <4b68a14f-72e1-6aaf-0629-2ebb1dffc8e8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170110022131.31042-1-shuahkh@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:33493
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1761513AbdAJMGw (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 10 Jan 2017 07:06:52 -0500
+In-Reply-To: <4b68a14f-72e1-6aaf-0629-2ebb1dffc8e8@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>
 
+Hello Marek,
 
-Hi,
+On 01/10/2017 04:48 AM, Marek Szyprowski wrote:
+> Hi Javier,
+> 
+> On 2017-01-09 17:59, Javier Martinez Canillas wrote:
+>> Hello Marek,
+>>
+>> On 01/09/2017 05:34 AM, Marek Szyprowski wrote:
+>>> There are no Exynos4212 based boards in mainline, so there is no need to
+>>> keep additional files for SoCs, which are never used. This patch removes
+>>> support for Exynos4212 SoCs and moves previously shared Exynos4412
+>>> definitions to a single file to simplify future maintenance.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>> Patch looks good to me.
+>>
+>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> There are still a lot of references to Exynos4212 after this patch though.
+>> I see Kconfig symbols, macros, SoC specific logic and compatibles strings
+>> in Exynos platform code, drivers and DT bindings.
+>>
+>> Are you planning to also remove these as a follow-up?
+> 
+> Yes, I plan to send follow-ups, especially for clocks, pincontrol drivers and
+> Kconfigs. However I don't plan to change compatible strings to keep
+> so called compatibility with old dtbs as requested by Krzysztof some time ago.
+> Drivers for Exynos4412 hw modules will still use "exynos4x12", "exynos4212"
+> and "exynos4412" strings as they do now.
+>
 
-On Monday, January 09, 2017 07:21:31 PM Shuah Khan wrote:
-> Fix dwc3_exynos_probe() to call clk_prepare_enable() only when suspend
-> clock is specified. Call clk_disable_unprepare() from remove and probe
-> error path only when susp_clk has been set from remove and probe error
-> paths.
-
-It is legal to call clk_prepare_enable() and clk_disable_unprepare()
-for NULL clock.  Also your patch changes susp_clk handling while
-leaves axius_clk handling (which also can be NULL) untouched.
-
-Do you actually see some runtime problem with the current code?
-
-If not then the patch should probably be dropped.
+I see, that makes sense. Thanks for the explanation.
+ 
+> Best regards
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index e27899b..f97a3d7 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -131,8 +131,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  	if (IS_ERR(exynos->susp_clk)) {
->  		dev_info(dev, "no suspend clk specified\n");
->  		exynos->susp_clk = NULL;
-> -	}
-> -	clk_prepare_enable(exynos->susp_clk);
-> +	} else
-> +		clk_prepare_enable(exynos->susp_clk);
->  
->  	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
->  		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
-> @@ -196,7 +196,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  	regulator_disable(exynos->vdd33);
->  err2:
->  	clk_disable_unprepare(exynos->axius_clk);
-> -	clk_disable_unprepare(exynos->susp_clk);
-> +	if (exynos->susp_clk)
-> +		clk_disable_unprepare(exynos->susp_clk);
->  	clk_disable_unprepare(exynos->clk);
->  	return ret;
->  }
-> @@ -210,7 +211,8 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
->  	platform_device_unregister(exynos->usb3_phy);
->  
->  	clk_disable_unprepare(exynos->axius_clk);
-> -	clk_disable_unprepare(exynos->susp_clk);
-> +	if (exynos->susp_clk)
-> +		clk_disable_unprepare(exynos->susp_clk);
->  	clk_disable_unprepare(exynos->clk);
->  
->  	regulator_disable(exynos->vdd33);
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
