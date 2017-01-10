@@ -1,41 +1,104 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM, ARM64: dts: drop "arm,amba-bus" in favor of
- "simple-bus" part 3
-Date: Mon, 9 Jan 2017 19:11:53 -0800
-Message-ID: <20170110031153.GD22261@localhost>
-References: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
+From: "Sricharan" <sricharan@codeaurora.org>
+Subject: RE: [PATCH v2 3/4] iommu/exynos: Ensure that SYSMMU is added only      once to its master device
+Date: Tue, 10 Jan 2017 10:04:19 +0530
+Message-ID: <000c01d26afa$d2a6a2f0$77f3e8d0$@codeaurora.org>
+References: <1483963436-29803-1-git-send-email-m.szyprowski@samsung.com>        <CGME20170109120412eucas1p27f3aab2d42712a9783d79bb4e06d01d5@eucas1p2.samsung.com>       <1483963436-29803-4-git-send-email-m.szyprowski@samsung.com> <fc7e0a6e-e65b-2a58-4c19-5bc31e36363c@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1482853886-7932-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Russell King <linux@armlinux.org.uk>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, David Brown <david.brown@linaro.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33352 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751759AbdAJEe1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 9 Jan 2017 23:34:27 -0500
+In-Reply-To: <fc7e0a6e-e65b-2a58-4c19-5bc31e36363c@arm.com>
+Content-Language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Robin Murphy' <robin.murphy@arm.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
 
-On Wed, Dec 28, 2016 at 12:51:26AM +0900, Masahiro Yamada wrote:
-> Tree-wide replacement was done by commit 2ef7d5f342c1 ("ARM, ARM64:
-> dts: drop "arm,amba-bus" in favor of "simple-bus"), then the 2nd
-> round by commit 15b7cc78f095 ("arm64: dts: drop "arm,amba-bus" in
-> favor of "simple-bus" part 2").
-> 
-> Here, some new users have appeared for Linux v4.10-rc1.  Eliminate
-> them now.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Hi Arnd, Olof,
-> 
-> Can you pick this up for v4.10 fixes?
-> 
-> If we carry arm,amba-bus until the release, we will need to
-> take more time to deprecate it.
+Hi,
 
-Applied to fixes for 4.10.
+>Hi Marek,
+>
+>On 09/01/17 12:03, Marek Szyprowski wrote:
+>> This patch prepares Exynos IOMMU driver for deferred probing
+>> support. Once it gets added, of_xlate() callback might be called
+>> more than once for the same SYSMMU controller and master device
+>> (for example it happens when masters device driver fails with
+>> EPROBE_DEFER). This patch adds a check, which ensures that SYSMMU
+>> controller is added to its master device (owner) only once.
+>
+>FWIW, I think it would be better to address that issue in the
+>probe-deferral code itself, rather than fixing up individual IOMMU
+>drivers. In fact, I *think* it's already covered in the latest version
+>of the of_iommu_configure() changes[1], specifically this bit:
+>
+>	...
+>	if (fwspec) {
+>		if (fwspec->ops)
+>			return fwspec->ops;
+>	...
+>
+>Which should ensure that a successful IOMMU configuration happens
+>exactly once between device creation and destruction.
+>
+>That said, this patch would still add robustness against actual error
+>conditions, e.g. an erroneous DT which managed to specify the same
+>phandle twice, although making it "if (WARN_ON(entry == data))" might be
+>a good idea.
+>
 
+Yes, the latest version has the above mentioned fix of just returning back
+from of_iommu_configure, if already configured. But anyways since this
+patch is doing the check in xlate, which still can be called multiple times
+even without deferring, incase of say multiple sids as well. But i
+remember that sometime back Marek mentioned that the exynos
+iommu currently always has "#iommu-cells = <0>" , but this patch might
+be required if that changes as well.
 
-Thanks,
+Regards,
+ Sricharan
 
--Olof
+>Robin.
+>
+>[1]:https://www.mail-archive.com/iommu@lists.linux-foundation.org/msg15333.html
+>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/iommu/exynos-iommu.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+>> index b0d537e6a445..8bf5a06a6c01 100644
+>> --- a/drivers/iommu/exynos-iommu.c
+>> +++ b/drivers/iommu/exynos-iommu.c
+>> @@ -1253,7 +1253,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
+>>  {
+>>  	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+>>  	struct platform_device *sysmmu = of_find_device_by_node(spec->np);
+>> -	struct sysmmu_drvdata *data;
+>> +	struct sysmmu_drvdata *data, *entry;
+>>
+>>  	if (!sysmmu)
+>>  		return -ENODEV;
+>> @@ -1272,6 +1272,10 @@ static int exynos_iommu_of_xlate(struct device *dev,
+>>  		dev->archdata.iommu = owner;
+>>  	}
+>>
+>> +	list_for_each_entry(entry, &owner->controllers, owner_node)
+>> +		if (entry == data)
+>> +			return 0;
+>> +
+>>  	list_add_tail(&data->owner_node, &owner->controllers);
+>>  	data->master = dev;
+>>
+>>
+>
+>_______________________________________________
+>iommu mailing list
+>iommu@lists.linux-foundation.org
+>https://lists.linuxfoundation.org/mailman/listinfo/iommu
