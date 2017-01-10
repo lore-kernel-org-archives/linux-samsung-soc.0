@@ -1,36 +1,63 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 0/3] arm64: dts: exynos: Fix DTC warnings for Exynos
- boards
-Date: Tue, 10 Jan 2017 20:42:34 +0200
-Message-ID: <20170110184234.rzxedwnvsun7cfk2@kozik-lap>
+Subject: Re: [PATCH v2 1/3] arm64: dts: exynos: Add missing unit name to
+ Exynos7 SoC node
+Date: Tue, 10 Jan 2017 20:47:28 +0200
+Message-ID: <20170110184728.2nff4r634ics4wb3@kozik-lap>
 References: <1484069912-6534-1-git-send-email-javier@osg.samsung.com>
+ <1484069912-6534-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1484069912-6534-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1484069912-6534-2-git-send-email-javier@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 10, 2017 at 02:38:29PM -0300, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On Tue, Jan 10, 2017 at 02:38:30PM -0300, Javier Martinez Canillas wrote:
+> This patch fixes the following DTC warning about a mismatch
+> between a device node reg property and its unit name:
 > 
-> This trivial series contains fixes for DTC warnings caused by mismatches
-> between unit names and reg properties in device tree nodes.
+> Node /soc has a reg or ranges property, but no unit name
 > 
-> The patches shouldn't cause a functional change but have been just build
-> tested. I compared the generated DTB though to make sure that only these
-> nodes changed.
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
 > 
-> Best regards,
-> Javier
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes since v1:
->   - Fix subject line since I forgot the "exynos" prefix.
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index 80aa60e38237..0d2fedc6ac2f 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -69,7 +69,7 @@
+>  		method = "smc";
+>  	};
+>  
+> -	soc: soc {
+> +	soc: soc@0 {
 
-Thanks :)
+This looks unnatural, like a fix just to silence the DTC. Mostly de do
+not enumerate soc node, although there are few exceptions.
+
+I would prefer ignore the warning... however I am happy to hear other opinions.
 
 Best regards,
 Krzysztof
+
+>  		compatible = "simple-bus";
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> -- 
+> 2.7.4
+> 
