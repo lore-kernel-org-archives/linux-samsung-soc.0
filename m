@@ -1,33 +1,47 @@
-From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error
- handling
-Date: Tue, 10 Jan 2017 14:20:09 +0300
-Message-ID: <82fb5295-6640-7e9e-a42a-4067aa88e5b4@cogentembedded.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error handling
+Date: Tue, 10 Jan 2017 13:05:58 +0100
+Message-ID: <1641038.u0riMiuGF5@amdc3058>
 References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
+ <CGME20170110120605epcas1p1c26f7f90fca4765ab9cc339c51d11347@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170110022131.31042-1-shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170110022131.31042-1-shuahkh@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello!
 
-On 01/10/2017 05:21 AM, Shuah Khan wrote:
+Hi,
 
+On Monday, January 09, 2017 07:21:31 PM Shuah Khan wrote:
 > Fix dwc3_exynos_probe() to call clk_prepare_enable() only when suspend
 > clock is specified. Call clk_disable_unprepare() from remove and probe
 > error path only when susp_clk has been set from remove and probe error
 > paths.
->
-> Signed-off-by: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+It is legal to call clk_prepare_enable() and clk_disable_unprepare()
+for NULL clock.  Also your patch changes susp_clk handling while
+leaves axius_clk handling (which also can be NULL) untouched.
+
+Do you actually see some runtime problem with the current code?
+
+If not then the patch should probably be dropped.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 > ---
 >  drivers/usb/dwc3/dwc3-exynos.c | 10 ++++++----
 >  1 file changed, 6 insertions(+), 4 deletions(-)
->
+> 
 > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
 > index e27899b..f97a3d7 100644
 > --- a/drivers/usb/dwc3/dwc3-exynos.c
@@ -40,14 +54,26 @@ On 01/10/2017 05:21 AM, Shuah Khan wrote:
 > -	clk_prepare_enable(exynos->susp_clk);
 > +	} else
 > +		clk_prepare_enable(exynos->susp_clk);
-
-    CodingStyle: need {} here as well since another branch has them.
-
-[...]
-
-MBR, Sergei
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  
+>  	if (of_device_is_compatible(node, "samsung,exynos7-dwusb3")) {
+>  		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+> @@ -196,7 +196,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	regulator_disable(exynos->vdd33);
+>  err2:
+>  	clk_disable_unprepare(exynos->axius_clk);
+> -	clk_disable_unprepare(exynos->susp_clk);
+> +	if (exynos->susp_clk)
+> +		clk_disable_unprepare(exynos->susp_clk);
+>  	clk_disable_unprepare(exynos->clk);
+>  	return ret;
+>  }
+> @@ -210,7 +211,8 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
+>  	platform_device_unregister(exynos->usb3_phy);
+>  
+>  	clk_disable_unprepare(exynos->axius_clk);
+> -	clk_disable_unprepare(exynos->susp_clk);
+> +	if (exynos->susp_clk)
+> +		clk_disable_unprepare(exynos->susp_clk);
+>  	clk_disable_unprepare(exynos->clk);
+>  
+>  	regulator_disable(exynos->vdd33);
