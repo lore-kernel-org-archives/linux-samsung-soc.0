@@ -1,17 +1,19 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error
  handling
-Date: Tue, 10 Jan 2017 19:23:43 +0100
-Message-ID: <1659345.4CcVdVckN5@amdc3058>
+Date: Tue, 10 Jan 2017 20:25:52 +0200
+Message-ID: <20170110182552.coom4p6dpdqo2ljv@kozik-lap>
 References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
- <CANAwSgQ4Nxyq5itu62qdz18d4xvTu-e3P3ZXK2acLWtzexaaCA@mail.gmail.com>
- <2265318.ybtxfiNn3d@amdc3058>
- <CGME20170110182345epcas1p3112f94aad300625ff1f75860c55a2b7e@epcas1p3.samsung.com>
+ <8784459.rxWqZlDLVg@amdc3058>
+ <28815306-e220-4847-99ce-b058baae0d07@osg.samsung.com>
+ <CGME20170110170942epcas1p3decee28366d7d42b70e7b0669b97326f@epcas1p3.samsung.com>
+ <5156028.4V9iLD3Qkj@amdc3058>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <2265318.ybtxfiNn3d@amdc3058>
+Content-Disposition: inline
+In-Reply-To: <5156028.4V9iLD3Qkj@amdc3058>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,107 +23,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Felipe Balbi <balbi@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: balbi@kernel.org, linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, krzk@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, January 10, 2017 07:03:57 PM Bartlomiej Zolnierkiewicz wrote:
+On Tue, Jan 10, 2017 at 06:09:40PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> BTW What is interesting is that the Exynos7 dts patch [2] has never
+> made it into upstream for some reason.  In the meantime however
+> Exynos5433 (similar to Exynos7 to some degree) became the user of
+> susp_clk.
 > 
-> Hi,
-> 
-> On Tuesday, January 10, 2017 11:23:38 PM Anand Moon wrote:
-> > Hi Shuah,
-> > 
-> > On 10 January 2017 at 21:58, Shuah Khan <shuahkh@osg.samsung.com> wrote:
-> > > On 01/10/2017 09:05 AM, Bartlomiej Zolnierkiewicz wrote:
-> > >>
-> > >> Hi,
-> > >>
-> > >> On Tuesday, January 10, 2017 07:36:35 AM Shuah Khan wrote:
-> > >>> On 01/10/2017 07:16 AM, Shuah Khan wrote:
-> > >>>> On 01/10/2017 05:05 AM, Bartlomiej Zolnierkiewicz wrote:
-> > >>>>>
-> > >>>>> Hi,
-> > >>>>>
-> > >>>>> On Monday, January 09, 2017 07:21:31 PM Shuah Khan wrote:
-> > >>>>>> Fix dwc3_exynos_probe() to call clk_prepare_enable() only when suspend
-> > >>>>>> clock is specified. Call clk_disable_unprepare() from remove and probe
-> > >>>>>> error path only when susp_clk has been set from remove and probe error
-> > >>>>>> paths.
-> > >>>>>
-> > >>>>> It is legal to call clk_prepare_enable() and clk_disable_unprepare()
-> > >>>>> for NULL clock.  Also your patch changes susp_clk handling while
-> > >>>>> leaves axius_clk handling (which also can be NULL) untouched.
-> > >>>>>
-> > >>>>> Do you actually see some runtime problem with the current code?
-> > >>>>>
-> > >>>>> If not then the patch should probably be dropped.
-> > >>>>>
-> > >>>>> Best regards,
-> > >>>>> --
-> > >>>>> Bartlomiej Zolnierkiewicz
-> > >>>>> Samsung R&D Institute Poland
-> > >>>>> Samsung Electronics
-> > >>>>
-> > >>>> Hi Bartlomiej,
-> > >>>>
-> > >>>> I am seeing the "no suspend clk specified" message in dmesg.
-> > >>>> After that it sets the exynos->susp_clk = NULL and starts
-> > >>>> calling clk_prepare_enable(exynos->susp_clk);
-> > >>>>
-> > >>>> That can't be good. If you see the logic right above this
-> > >>>> one for exynos->clk, it returns error and fails the probe.
-> > >>>> This this case it doesn't, but tries to use null susp_clk.
-> > >>
-> > >> exynos->susp_clk is optional, exynos->clk is not.
-> > >
-> > > Right. That is clear since we don't fail the probe.
-> > >
-> > >>
-> > >>>> I believe this patch is necessary.
-> > >>>
-> > >>> Let me clarify this a bit further. Since we already know
-> > >>> susp_clk is null, with this patch we can avoid extra calls
-> > >>> to clk_prepare_enable() and clk_disable_unprepare().
-> > >>>
-> > >>> One can say, it also adds extra checks, hence I will let you
-> > >>> decide one way or the other. :)
-> > >>
-> > >> I would prefer to leave the things as they are currently.
-> > >>
-> > >> The code in question is not performance sensitive so extra
-> > >> calls are not a problem.  No extra checks means less code.
-> > >>
-> > >> Also the current code seems to be more in line with the rest
-> > >> of the kernel.
-> > >
-> > > What functionality is missing without the suspend clock? Would
-> > > it make sense to change the info. message to include what it
-> > > means. At the moment it doesn't anything more than "no suspend
-> > > clock" which is a very cryptic user visible message. It would be
-> > > helpful for it to also include what functionality is impacted.
-> > >
-> > 
-> > Both usbdrd30_susp_clk and usbdrd30_axius_clk are used by exynos5433 platform
-> 
-> Can you point me to the use of usbdrd30_axius_clk?
-> 
-> I cannot find in the upstream code.
-> 
-> > so moving the clk under compatible string "samsung,exynos7-dwusb3" make sense.
-> 
-> This is not so simple and we would probably need a new compatible for
-> Exynos5433 (it is currently using "samsung,exynos5250-dwusb3" one and
-> is not using axius_clk).
+> [1] https://lkml.org/lkml/2014/11/21/247
+> [2] https://patchwork.kernel.org/patch/5355161/
+>
 
-I also think that regardless of what is decided on making susp_clk
-non-optional for some Exynos SoCs we should probably remove the debug
-message as it doesn't bring useful information and may be confusing.
++Cc Alim and Pankaj,
 
-Shuah, can you take care of this?
+Anyone would like to resend [2] after rebasing and testing? Interrupt
+flags would have to be fixed and status=disabled added.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Krzysztof
