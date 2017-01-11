@@ -1,57 +1,83 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error handling
-Date: Wed, 11 Jan 2017 08:13:38 +0530
-Message-ID: <f32657c2-a0b7-b84c-e5d6-eb33f7705880@samsung.com>
-References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
- <8784459.rxWqZlDLVg@amdc3058>
- <28815306-e220-4847-99ce-b058baae0d07@osg.samsung.com>
- <CGME20170110170942epcas1p3decee28366d7d42b70e7b0669b97326f@epcas1p3.samsung.com>
- <5156028.4V9iLD3Qkj@amdc3058> <20170110182552.coom4p6dpdqo2ljv@kozik-lap>
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v7 1/4] drm/exynos: mic: Add mode_set callback function
+Date: Wed, 11 Jan 2017 14:33:12 +0900
+Message-ID: <5875C398.6000906@samsung.com>
+References: <1483611609-23522-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170105102012epcas5p3666c67cfc82d2439c993f917f8e2d0ce@epcas5p3.samsung.com>
+ <1483611609-23522-2-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50985 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbdAKCkx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 21:40:53 -0500
-In-reply-to: <20170110182552.coom4p6dpdqo2ljv@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1483611609-23522-2-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Alim Akhtar <alim.akhtar@samsung.com>
 
-Hi Krzysztof,
+Applied.
 
-On Tuesday 10 January 2017 11:55 PM, Krzysztof Kozlowski wrote:
-> On Tue, Jan 10, 2017 at 06:09:40PM +0100, Bartlomiej Zolnierkiewicz wrote:
->> BTW What is interesting is that the Exynos7 dts patch [2] has never
->> made it into upstream for some reason.  In the meantime however
->> Exynos5433 (similar to Exynos7 to some degree) became the user of
->> susp_clk.
->>
->> [1] https://lkml.org/lkml/2014/11/21/247
->> [2] https://patchwork.kernel.org/patch/5355161/
->>
+Thanks.
+
+2017년 01월 05일 19:20에 Hoegeun Kwon 이(가) 쓴 글:
+> Before applying the patch, used the of_get_videomode function to
+> parse the display-timings in the panel which is the child driver
+> of dsi in the devicetree. this is wrong. So removed the
+> of_get_videomode and fixed to get videomode struct through
+> mode_set callback function.
 > 
-> +Cc Alim and Pankaj,
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_mic.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
 > 
-> Anyone would like to resend [2] after rebasing and testing? Interrupt
-> flags would have to be fixed and status=disabled added.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> index a0def0b..fed1a94 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+> @@ -286,13 +286,6 @@ static int parse_dt(struct exynos_mic *mic)
+>  			}
+>  			nodes[j++] = remote_node;
+>  
+> -			ret = of_get_videomode(remote_node,
+> -							&mic->vm, 0);
+> -			if (ret) {
+> -				DRM_ERROR("mic: failed to get videomode");
+> -				goto exit;
+> -			}
+> -
+>  			break;
+>  		default:
+>  			DRM_ERROR("mic: Unknown endpoint from MIC");
+> @@ -329,6 +322,17 @@ static void mic_post_disable(struct drm_bridge *bridge)
+>  	mutex_unlock(&mic_mutex);
+>  }
+>  
+> +static void mic_mode_set(struct drm_bridge *bridge,
+> +			struct drm_display_mode *mode,
+> +			struct drm_display_mode *adjusted_mode)
+> +{
+> +	struct exynos_mic *mic = bridge->driver_private;
+> +
+> +	mutex_lock(&mic_mutex);
+> +	drm_display_mode_to_videomode(mode, &mic->vm);
+> +	mutex_unlock(&mic_mutex);
+> +}
+> +
+>  static void mic_pre_enable(struct drm_bridge *bridge)
+>  {
+>  	struct exynos_mic *mic = bridge->driver_private;
+> @@ -377,6 +381,7 @@ static void mic_enable(struct drm_bridge *bridge) { }
+>  static const struct drm_bridge_funcs mic_bridge_funcs = {
+>  	.disable = mic_disable,
+>  	.post_disable = mic_post_disable,
+> +	.mode_set = mic_mode_set,
+>  	.pre_enable = mic_pre_enable,
+>  	.enable = mic_enable,
+>  };
 > 
-
-Thanks for looping us into this thread.
-
-Well I will be taking care of Exynos USB as Vivek has left Samsung.
-I am currently working on adding Exynos7 USB support, as soon as patches
-are ready for posting will post them. Will take care of review comments
-given for Vivek's patchset [1].
-
-Thanks,
-Pankaj Dubey
-
-> Best regards,
-> Krzysztof
-> 
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
