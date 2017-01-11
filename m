@@ -1,45 +1,58 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] arm64: dts: exynos: Replace small letter of base
- address/offset on Exynos5433
-Date: Wed, 11 Jan 2017 18:26:13 +0200
-Message-ID: <20170111162613.lxkc7k75f6q3fsz2@kozik-lap>
-References: <CGME20170111005552epcas1p4a1f6ed88022b46544dec4b3801583267@epcas1p4.samsung.com>
- <1484096148-17120-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: remove Exynos4212 support (dead code)
+Date: Wed, 11 Jan 2017 18:41:00 +0200
+Message-ID: <20170111164100.4ebg63gscpdjnbt7@kozik-lap>
+References: <CGME20170111074433eucas1p17027e7b9f72de528197b4d2b0e611a2a@eucas1p1.samsung.com>
+ <1484120668-29954-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:36019 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760931AbdAKQlL (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 11 Jan 2017 11:41:11 -0500
+Received: by mail-wj0-f193.google.com with SMTP id dh1so11219083wjb.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jan 2017 08:41:10 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1484096148-17120-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, chanwoo@kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1484120668-29954-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>
 
-On Wed, Jan 11, 2017 at 09:55:48AM +0900, Chanwoo Choi wrote:
-> This patch replaces the small letter of base address, offset and hex value
-> with the capital letter to keep the consistency on Exynos5433.
+On Wed, Jan 11, 2017 at 08:44:28AM +0100, Marek Szyprowski wrote:
+> There are no Exynos4212 based boards in mainline, so there is no need to
+> keep additional files for SoCs, which are never used. This patch removes
+> support for Exynos4212 SoCs and moves previously shared Exynos4412
+> definitions to a single file to simplify future maintenance.
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Changelog:
+> v3:
+> - generated patch on top of current samsung/for-next to avoid adding nodes,
+>   which are not yet in the mainline
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index abaf6b4d599d..d7ed1a68b6fd 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -231,7 +231,7 @@
->  		compatible = "arm,psci";
->  		method = "smc";
->  		cpu_off = <0x84000002>;
-> -		cpu_on = <0xC4000003>;
-> +		cpu_on = <0xc4000003>;
+> v2:
+> - generated patch with -M for easier review
+> - replaced 4x12 with 4412 in dts comments
+> 
+> v1:
+> - initial version
+> ---
+>  arch/arm/boot/dts/exynos4212.dtsi                  | 133 -----
+>  ...os4x12-pinctrl.dtsi => exynos4412-pinctrl.dtsi} |   4 +-
+>  arch/arm/boot/dts/exynos4412.dtsi                  | 575 +++++++++++++++++++-
+>  arch/arm/boot/dts/exynos4x12.dtsi                  | 594 ---------------------
+>  4 files changed, 572 insertions(+), 734 deletions(-)
+>  delete mode 100644 arch/arm/boot/dts/exynos4212.dtsi
+>  rename arch/arm/boot/dts/{exynos4x12-pinctrl.dtsi => exynos4412-pinctrl.dtsi} (99%)
+>  delete mode 100644 arch/arm/boot/dts/exynos4x12.dtsi
+> 
 
-There is no point of such "improvements". This is just unnecessary
-churn.
-
-Sometimes such things are accepted as part of some bigger work (vide
-recent Andrzej's sysmmu for HDMI/TV). But on its own? No sense at all.
+Thanks, applied.
 
 Best regards,
 Krzysztof
