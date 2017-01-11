@@ -1,53 +1,87 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to
- meaningful names
-Date: Wed, 11 Jan 2017 14:06:01 -0300
-Message-ID: <d32213e3-98c8-6c8c-231c-53aaba6468ff@osg.samsung.com>
-References: <20170111164537.2981-1-shuahkh@osg.samsung.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 1/4] PCI: exynos: replace to one register accessor from
+ each accessors
+Date: Wed, 11 Jan 2017 12:50:03 -0600
+Message-ID: <20170111185003.GG14532@bhelgaas-glaptop.roam.corp.google.com>
+References: <20161219081614.5403-1-jh80.chung@samsung.com>
+ <20161219081614.5403-2-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170111164537.2981-1-shuahkh@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:34560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754337AbdAKSuN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 11 Jan 2017 13:50:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20161219081614.5403-2-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-pci@vger.kernel.org, helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Shuah,
+Hi Jaehoon,
 
-On 01/11/2017 01:45 PM, Shuah Khan wrote:
-> Change goto labels to meaningful names from a series of errNs.
+On Mon, Dec 19, 2016 at 05:16:11PM +0900, Jaehoon Chung wrote:
+> There is no reason to maintain *_blk/phy/elbi_* as register accessors.
+> It can be replaced to one register accessor.
 > 
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
->  drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+>  drivers/pci/host/pci-exynos.c | 214 +++++++++++++++++++-----------------------
+>  1 file changed, 97 insertions(+), 117 deletions(-)
 > 
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index f7421c2..ea50f74 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
->  	if (IS_ERR(exynos->vdd33)) {
->  		ret = PTR_ERR(exynos->vdd33);
-> -		goto err2;
-> +		goto vdd33_err;
->  	}
+> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+> index f1c544b..6dbfa2c 100644
+> --- a/drivers/pci/host/pci-exynos.c
+> +++ b/drivers/pci/host/pci-exynos.c
+> @@ -102,197 +102,175 @@ struct exynos_pcie {
+>  #define PCIE_PHY_TRSV3_PD_TSV		(0x1 << 7)
+>  #define PCIE_PHY_TRSV3_LVCC		0x31c
+>  
+> -static void exynos_elb_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+> +static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
+>  {
+> -	writel(val, exynos_pcie->elbi_base + reg);
+> +	writel(val, base + reg);
+>  }
+>  
+> -static u32 exynos_elb_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+> +static u32 exynos_pcie_readl(void __iomem *base, u32 reg)
+>  {
+> -	return readl(exynos_pcie->elbi_base + reg);
+> +	return readl(base + reg);
+>  }
+>  
+> -static void exynos_phy_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+> -{
+> -	writel(val, exynos_pcie->phy_base + reg);
+> -}
+> -
+> -static u32 exynos_phy_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+> -{
+> -	return readl(exynos_pcie->phy_base + reg);
+> -}
+> -
+> -static void exynos_blk_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+> -{
+> -	writel(val, exynos_pcie->block_base + reg);
+> -}
+> -
+> -static u32 exynos_blk_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+> -{
+> -	return readl(exynos_pcie->block_base + reg);
+> -}
+> -
+> -static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *exynos_pcie,
+> -					    bool on)
+> +static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
 
-I think it's better to use as labels what will be done in the error path
-rather than what failed. IOW, "disable_axius_clk" or "disable_clks" are
-more clear than vdd33_err for me, since can give you an idea of what will
-happen in the error path.
+Replacing all the separate accessors with one that takes the base
+pointer is OK, but please use the same name for all the "struct
+exynos_pcie *" pointers in the whole file.
 
-But I don't have a strong opinion and your naming is an improvement over
-the current one, so:
+Before your patch, they were all called "exynos_pci"; after it some
+are called "exynos_pci" and some are called "ep".
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Bjorn
