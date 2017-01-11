@@ -1,114 +1,57 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] drm: exynos: Add runtime PM support to MIC driver
-Date: Wed, 11 Jan 2017 10:39:42 +0900
-Message-ID: <58758CDE.50300@samsung.com>
-References: <CGME20170110125756eucas1p1d9fe25f1ca7e0e982abaf2d71a607f0d@eucas1p1.samsung.com>
- <1484053067-31665-1-git-send-email-m.szyprowski@samsung.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH] usb: dwc3-exynos fix unspecified suspend clk error handling
+Date: Wed, 11 Jan 2017 08:13:38 +0530
+Message-ID: <f32657c2-a0b7-b84c-e5d6-eb33f7705880@samsung.com>
+References: <20170110022131.31042-1-shuahkh@osg.samsung.com>
+ <8784459.rxWqZlDLVg@amdc3058>
+ <28815306-e220-4847-99ce-b058baae0d07@osg.samsung.com>
+ <CGME20170110170942epcas1p3decee28366d7d42b70e7b0669b97326f@epcas1p3.samsung.com>
+ <5156028.4V9iLD3Qkj@amdc3058> <20170110182552.coom4p6dpdqo2ljv@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43605 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753361AbdAKBjq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:50985 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbdAKCkx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 20:39:46 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJL02TPGDY8EO30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jan 2017 10:39:44 +0900 (KST)
-In-reply-to: <1484053067-31665-1-git-send-email-m.szyprowski@samsung.com>
+        Tue, 10 Jan 2017 21:40:53 -0500
+In-reply-to: <20170110182552.coom4p6dpdqo2ljv@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, javier@osg.samsung.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>, Alim Akhtar <alim.akhtar@samsung.com>
 
-Hi Marek,
+Hi Krzysztof,
 
-On 2017년 01월 10일 21:57, Marek Szyprowski wrote:
-> This patch adds pm_runtime_get/put calls to notify device core when MIC
-> device is really in use. This is needed to let power domain with this
-> device to be turned off when display is turned off.
+On Tuesday 10 January 2017 11:55 PM, Krzysztof Kozlowski wrote:
+> On Tue, Jan 10, 2017 at 06:09:40PM +0100, Bartlomiej Zolnierkiewicz wrote:
+>> BTW What is interesting is that the Exynos7 dts patch [2] has never
+>> made it into upstream for some reason.  In the meantime however
+>> Exynos5433 (similar to Exynos7 to some degree) became the user of
+>> susp_clk.
+>>
+>> [1] https://lkml.org/lkml/2014/11/21/247
+>> [2] https://patchwork.kernel.org/patch/5355161/
+>>
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_mic.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+> +Cc Alim and Pankaj,
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> index a0def0be6d65..f643c380cb9a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> @@ -19,6 +19,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/clk.h>
->  #include <linux/component.h>
-> +#include <linux/pm_runtime.h>
->  #include <drm/drmP.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> @@ -323,6 +324,7 @@ static void mic_post_disable(struct drm_bridge *bridge)
->  	for (i = NUM_CLKS - 1; i > -1; i--)
->  		clk_disable_unprepare(mic->clks[i]);
->  
-> +	pm_runtime_put(mic->dev);
->  	mic->enabled = 0;
-
-It is minor comment.
-
-How about calling the pm_runtime_put() after 'mic->enabled = 0'?
-I think that you better to call the runtime_pm funtcion after completing
-the handle of data of mic device driver. Because this patch just notifies
-the status.
-
->  
->  already_disabled:
-> @@ -338,6 +340,8 @@ static void mic_pre_enable(struct drm_bridge *bridge)
->  	if (mic->enabled)
->  		goto already_enabled;
->  
-> +	pm_runtime_get_sync(mic->dev);
-> +
->  	for (i = 0; i < NUM_CLKS; i++) {
->  		ret = clk_prepare_enable(mic->clks[i]);
->  		if (ret < 0) {
-> @@ -473,8 +477,18 @@ static int exynos_mic_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, mic);
->  
-> +	pm_runtime_enable(dev);
-> +
-> +	ret = component_add(dev, &exynos_mic_component_ops);
-> +	if (ret)
-> +		goto err_pm;
-> +
->  	DRM_DEBUG_KMS("MIC has been probed\n");
-> -	return component_add(dev, &exynos_mic_component_ops);
-> +
-> +	return 0;
-> +
-> +err_pm:
-> +	pm_runtime_disable(dev);
->  
->  err:
->  	return ret;
-> @@ -483,6 +497,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
->  static int exynos_mic_remove(struct platform_device *pdev)
->  {
->  	component_del(&pdev->dev, &exynos_mic_component_ops);
-> +	pm_runtime_disable(&pdev->dev);
->  	return 0;
->  }
->  
+> Anyone would like to resend [2] after rebasing and testing? Interrupt
+> flags would have to be fixed and status=disabled added.
 > 
 
-If this patch just notifies the status(enabled or disabled)
-of mic device with pm runtime interface, looks good to me.
+Thanks for looping us into this thread.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Well I will be taking care of Exynos USB as Vivek has left Samsung.
+I am currently working on adding Exynos7 USB support, as soon as patches
+are ready for posting will post them. Will take care of review comments
+given for Vivek's patchset [1].
 
--- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
+Thanks,
+Pankaj Dubey
+
+> Best regards,
+> Krzysztof
+> 
+> 
