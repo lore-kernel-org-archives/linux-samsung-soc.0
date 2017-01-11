@@ -1,58 +1,93 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: remove Exynos4212 support (dead code)
-Date: Wed, 11 Jan 2017 18:41:00 +0200
-Message-ID: <20170111164100.4ebg63gscpdjnbt7@kozik-lap>
-References: <CGME20170111074433eucas1p17027e7b9f72de528197b4d2b0e611a2a@eucas1p1.samsung.com>
- <1484120668-29954-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to meaningful names
+Date: Wed, 11 Jan 2017 09:45:37 -0700
+Message-ID: <20170111164537.2981-1-shuahkh@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36019 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760931AbdAKQlL (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:40129
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751165AbdAKQpn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 11:41:11 -0500
-Received: by mail-wj0-f193.google.com with SMTP id dh1so11219083wjb.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jan 2017 08:41:10 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1484120668-29954-1-git-send-email-m.szyprowski@samsung.com>
+        Wed, 11 Jan 2017 11:45:43 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 11, 2017 at 08:44:28AM +0100, Marek Szyprowski wrote:
-> There are no Exynos4212 based boards in mainline, so there is no need to
-> keep additional files for SoCs, which are never used. This patch removes
-> support for Exynos4212 SoCs and moves previously shared Exynos4412
-> definitions to a single file to simplify future maintenance.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
-> Changelog:
-> v3:
-> - generated patch on top of current samsung/for-next to avoid adding nodes,
->   which are not yet in the mainline
-> 
-> v2:
-> - generated patch with -M for easier review
-> - replaced 4x12 with 4412 in dts comments
-> 
-> v1:
-> - initial version
-> ---
->  arch/arm/boot/dts/exynos4212.dtsi                  | 133 -----
->  ...os4x12-pinctrl.dtsi => exynos4412-pinctrl.dtsi} |   4 +-
->  arch/arm/boot/dts/exynos4412.dtsi                  | 575 +++++++++++++++++++-
->  arch/arm/boot/dts/exynos4x12.dtsi                  | 594 ---------------------
->  4 files changed, 572 insertions(+), 734 deletions(-)
->  delete mode 100644 arch/arm/boot/dts/exynos4212.dtsi
->  rename arch/arm/boot/dts/{exynos4x12-pinctrl.dtsi => exynos4412-pinctrl.dtsi} (99%)
->  delete mode 100644 arch/arm/boot/dts/exynos4x12.dtsi
-> 
+Change goto labels to meaningful names from a series of errNs.
 
-Thanks, applied.
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
+ drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index f7421c2..ea50f74 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+ 	if (IS_ERR(exynos->vdd33)) {
+ 		ret = PTR_ERR(exynos->vdd33);
+-		goto err2;
++		goto vdd33_err;
+ 	}
+ 	ret = regulator_enable(exynos->vdd33);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable VDD33 supply\n");
+-		goto err2;
++		goto vdd33_err;
+ 	}
+ 
+ 	exynos->vdd10 = devm_regulator_get(dev, "vdd10");
+ 	if (IS_ERR(exynos->vdd10)) {
+ 		ret = PTR_ERR(exynos->vdd10);
+-		goto err3;
++		goto vdd10_err;
+ 	}
+ 	ret = regulator_enable(exynos->vdd10);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable VDD10 supply\n");
+-		goto err3;
++		goto vdd10_err;
+ 	}
+ 
+ 	ret = dwc3_exynos_register_phys(exynos);
+ 	if (ret) {
+ 		dev_err(dev, "couldn't register PHYs\n");
+-		goto err4;
++		goto phys_err;
+ 	}
+ 
+ 	if (node) {
+ 		ret = of_platform_populate(node, NULL, NULL, dev);
+ 		if (ret) {
+ 			dev_err(dev, "failed to add dwc3 core\n");
+-			goto err5;
++			goto populate_err;
+ 		}
+ 	} else {
+ 		dev_err(dev, "no device node, failed to add dwc3 core\n");
+ 		ret = -ENODEV;
+-		goto err5;
++		goto populate_err;
+ 	}
+ 
+ 	return 0;
+ 
+-err5:
++populate_err:
+ 	platform_device_unregister(exynos->usb2_phy);
+ 	platform_device_unregister(exynos->usb3_phy);
+-err4:
++phys_err:
+ 	regulator_disable(exynos->vdd10);
+-err3:
++vdd10_err:
+ 	regulator_disable(exynos->vdd33);
+-err2:
++vdd33_err:
+ 	clk_disable_unprepare(exynos->axius_clk);
+ axius_clk_err:
+ 	clk_disable_unprepare(exynos->susp_clk);
+-- 
+2.7.4
