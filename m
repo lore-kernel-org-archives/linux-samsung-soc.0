@@ -1,66 +1,62 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] usb: dwc3-exynos remove suspend clock unspecified debug
- message
-Date: Tue, 10 Jan 2017 17:24:51 -0700
-Message-ID: <1bf1b0bc-9295-1484-8ab9-a380afd69ccb@osg.samsung.com>
-References: <20170110212059.21995-1-shuahkh@osg.samsung.com>
- <74dfb6fb-6ab0-135b-5d0a-60b69f35ff5a@osg.samsung.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH] usb: dwc3-exynos fix axius clock error path to do cleanup
+Date: Tue, 10 Jan 2017 21:27:50 -0300
+Message-ID: <e4f0b77a-d827-08fa-c4f6-950197c54358@osg.samsung.com>
+References: <20170110230528.7612-1-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:37052
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751840AbdAKAYy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Jan 2017 19:24:54 -0500
-In-Reply-To: <74dfb6fb-6ab0-135b-5d0a-60b69f35ff5a@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170110230528.7612-1-shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 01/10/2017 05:18 PM, Javier Martinez Canillas wrote:
-> Hello Shuah,
-> 
-> On 01/10/2017 06:20 PM, Shuah Khan wrote:
->> dwc3-exynos prints debug message when suspend clock is not specified.
->> The suspend clock is optional and driver can work without it.
->>
->> This debug message doesn't add any value and leads to confusion and
->> concern. Remove it.
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->> This patch is a result of the disussion on the following patch.
->> https://lkml.org/lkml/2017/1/9/891
->>
->> drivers/usb/dwc3/dwc3-exynos.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
->> index e27899b..3e8407a 100644
->> --- a/drivers/usb/dwc3/dwc3-exynos.c
->> +++ b/drivers/usb/dwc3/dwc3-exynos.c
->> @@ -128,10 +128,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->>  	clk_prepare_enable(exynos->clk);
->>  
->>  	exynos->susp_clk = devm_clk_get(dev, "usbdrd30_susp_clk");
->> -	if (IS_ERR(exynos->susp_clk)) {
->> -		dev_info(dev, "no suspend clk specified\n");
-> 
-> Sorry for being late in the discussion, but what about making it a
-> dev_dbg() instead? That way the message may not confuse others but
-> still keep information that could be useful for debugging purposes.
-> 
-> I know the current message isn't great but keeping it as debug allows
-> to improve it later.
-> 
-> Best regards,
-> 
+Hello Shuah,
 
-I proposed dev debug and the recommendation from  Krzysztof was to
-just remove it. Please see response from Krzysztof's response.
+Patch looks good to me, I've just one comment.
 
-thanks,
--- Shuah
+On 01/10/2017 08:05 PM, Shuah Khan wrote:
+> Axius clock error path returns without disabling clock and suspend clock.
+> Fix it to disable them before returning error.
+> 
+> Signed-off-by: Shuah Khan <shuahkh-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index 3e8407a..f7421c2 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -136,7 +136,8 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  		exynos->axius_clk = devm_clk_get(dev, "usbdrd30_axius_clk");
+>  		if (IS_ERR(exynos->axius_clk)) {
+>  			dev_err(dev, "no AXI UpScaler clk specified\n");
+> -			return -ENODEV;
+> +			ret = -ENODEV;
+> +			goto axius_clk_err;
+>  		}
+>  		clk_prepare_enable(exynos->axius_clk);
+>  	} else {
+> @@ -194,6 +195,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	regulator_disable(exynos->vdd33);
+>  err2:
+>  	clk_disable_unprepare(exynos->axius_clk);
+> +axius_clk_err:
+
+This label isn't consistent with the others, I know the errN aren't great
+so what about changing those to meaningful names in a preparatory patch?
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
