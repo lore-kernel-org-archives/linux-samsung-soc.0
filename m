@@ -1,61 +1,68 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v8 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
- device on TM2 board
-Date: Wed, 11 Jan 2017 08:46:34 +0100
-Message-ID: <f292435b-8faa-d2e9-17f6-99a4d00173c5@samsung.com>
-References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170111063408epcas1p4b29b1308a0b8088afd46a475770d4b00@epcas1p4.samsung.com>
- <1484116439-7275-4-git-send-email-hoegeun.kwon@samsung.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] arm64: dts: exynos5433: add DECON_TV node
+Date: Wed, 11 Jan 2017 09:07:52 +0100
+Message-ID: <fa80edf3-51ea-48a2-f14e-0619885aa4c3@samsung.com>
+References: <CGME20170110082433eucas1p2f7cb7b0974987e2c8294509960468fd3@eucas1p2.samsung.com>
+ <1484036664-15951-1-git-send-email-a.hajda@samsung.com>
+ <20170110171114.unajua37bbosxuey@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1484116439-7275-4-git-send-email-hoegeun.kwon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, krzk@kernel.org, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20170110171114.unajua37bbosxuey@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11.01.2017 07:33, Hoegeun Kwon wrote:
-> From: Hyungwon Hwang <human.hwang@samsung.com>
+On 10.01.2017 18:11, Krzysztof Kozlowski wrote:
+> On Tue, Jan 10, 2017 at 09:24:22AM +0100, Andrzej Hajda wrote:
+>> DECON_TV is 2nd display controller on Exynos5433, used in HDMI path
+>> or 2nd DSI path.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+>> Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Tested-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>
+>> Hi Krzysztof,
+>>
+>> These patches are based on latest patches separating tm2 and tm2e and
+>> touchscreen patches. I hope this is good base.
+>> Thanks all for quick response/review.
+>>
+> Thanks for fixing the issues. Also thank you for trying to fix the
+> subject. However this is not a full fix. Please run:
+> $ git log --oneline arch/arm64/boot/dts/exynos/
 >
-> This patch add the panel device tree node for S6E3HA2 display
-> controller to TM2 dts.
+> Why I am asking about this? I am trying to have it consistent so
+> going through history would be easier. Of course we might discuss what
+> prefix should be used. Some other platforms use "arm64: dts:
+> architecture:", some use "arm64: dts: specific_chip_family:". For exynos
+> we are trying to keep it just "exynos". Anyway regardless of the chosen
+> prefix itself, after choosing some pattern, the consistency helps.
 >
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> When people keep sending patches with wrong title, then after every
+> git-am I have to amend the commit and fix it. It is not difficult but
+> annoying.
 >
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> index ddba2f8..6d362f9 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> @@ -18,6 +18,18 @@
->  	compatible = "samsung,tm2", "samsung,exynos5433";
->  };
->  
-> +&dsi {
-> +	panel@0 {
-> +		compatible = "samsung,s6e3ha2";
-> +		reg = <0>;
-> +		vdd3-supply = <&ldo27_reg>;
-> +		vci-supply = <&ldo28_reg>;
-> +		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-> +		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-> +		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
-The same here (as in 1st comment) , te-gpios should be dropper - decon
-uses hw-trigger.
+> Actually before I did not complain about it... but recently (this cycle)
+> a lot of Samsung folks are sending wrong subjects. Weird.
+
+I agree that consistency is good, so next time maybe it would be better
+to just simply write which prefix to use, instead of advising to dig
+into samsung-soc for help :)
+
+>
+> So just use the command and look at history.
+
+Good point.
 
 Regards
 Andrzej
-> +	};
-> +};
-> +
->  &hsi2c_9 {
->  	status = "okay";
->  
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
