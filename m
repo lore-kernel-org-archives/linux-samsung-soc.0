@@ -1,92 +1,69 @@
 From: hoegeun kwon <hoegeun.kwon@samsung.com>
 Subject: Re: [PATCH v8 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
  device on TM2 board
-Date: Wed, 11 Jan 2017 19:23:15 +0900
-Message-ID: <94285a63-68df-494c-872b-41c5810a3251@samsung.com>
+Date: Wed, 11 Jan 2017 19:27:10 +0900
+Message-ID: <7f698df0-f581-7fea-ed2a-762d4a9fcd77@samsung.com>
 References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
  <CGME20170111063408epcas1p4b29b1308a0b8088afd46a475770d4b00@epcas1p4.samsung.com>
  <1484116439-7275-4-git-send-email-hoegeun.kwon@samsung.com>
  <f292435b-8faa-d2e9-17f6-99a4d00173c5@samsung.com>
- <5875EF69.1070803@samsung.com>
- <581db2a8-e357-a3ba-9464-fa8f83f95c09@samsung.com>
+ <2f362dda-6c57-6aa4-5572-b27c34c4c78e@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39976 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759954AbdAKKXP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 05:23:15 -0500
-In-reply-to: <581db2a8-e357-a3ba-9464-fa8f83f95c09@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2f362dda-6c57-6aa4-5572-b27c34c4c78e@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, krzk@kernel.org, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, krzk@kernel.org, robh@kernel.org, thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
 
-
-
-On 01/11/2017 06:39 PM, Andrzej Hajda wrote:
-> On 11.01.2017 09:40, Inki Dae wrote:
->> 2017년 01월 11일 16:46에 Andrzej Hajda 이(가) 쓴 글:
->>> On 11.01.2017 07:33, Hoegeun Kwon wrote:
->>>> From: Hyungwon Hwang <human.hwang@samsung.com>
->>>>
->>>> This patch add the panel device tree node for S6E3HA2 display
->>>> controller to TM2 dts.
->>>>
->>>> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
->>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
->>>> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> ---
->>>>   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
->>>>   1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
->>>> index ddba2f8..6d362f9 100644
->>>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
->>>> @@ -18,6 +18,18 @@
->>>>   	compatible = "samsung,tm2", "samsung,exynos5433";
->>>>   };
->>>>   
->>>> +&dsi {
->>>> +	panel@0 {
->>>> +		compatible = "samsung,s6e3ha2";
->>>> +		reg = <0>;
->>>> +		vdd3-supply = <&ldo27_reg>;
->>>> +		vci-supply = <&ldo28_reg>;
->>>> +		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
->>>> +		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
->>>> +		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
->>> The same here (as in 1st comment) , te-gpios should be dropper - decon
->>> uses hw-trigger.
->> Reasonable to remove te-gpios property but this change would make MIPI-DSI driver probing to be failed so MIPI-DSI driver should be fixed together.
->>
->> Thanks.
-> OK, I forgot it was not yet ported to mainline.
->
-> Regards
-> Andrzej
-
-I received a reply while I was writing the mail.
-so, how about removing te-gpios later?
-
-Best Regards,
-Hoegeun
-
->
->>> Regards
->>> Andrzej
->>>> +	};
->>>> +};
->>>> +
->>>>   &hsi2c_9 {
->>>>   	status = "okay";
->>>>   
->>>
->>>
->
->
+CgpPbiAwMS8xMS8yMDE3IDA2OjUxIFBNLCBob2VnZXVuIGt3b24gd3JvdGU6Cj4KPgo+IE9uIDAx
+LzExLzIwMTcgMDQ6NDYgUE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IE9uIDExLjAxLjIwMTcg
+MDc6MzMsIEhvZWdldW4gS3dvbiB3cm90ZToKPj4+IEZyb206IEh5dW5nd29uIEh3YW5nIDxodW1h
+bi5od2FuZ0BzYW1zdW5nLmNvbT4KPj4+Cj4+PiBUaGlzIHBhdGNoIGFkZCB0aGUgcGFuZWwgZGV2
+aWNlIHRyZWUgbm9kZSBmb3IgUzZFM0hBMiBkaXNwbGF5Cj4+PiBjb250cm9sbGVyIHRvIFRNMiBk
+dHMuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNh
+bXN1bmcuY29tPgo+Pj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1z
+dW5nLmNvbT4KPj4+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1
+bmcuY29tPgo+Pj4gU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25Ac2Ft
+c3VuZy5jb20+Cj4+PiBUZXN0ZWQtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcu
+Y29tPgo+Pj4gLS0tCj4+PiAgIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMt
+dG0yLmR0cyB8IDEyICsrKysrKysrKysrKwo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0
+aW9ucygrKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9l
+eHlub3M1NDMzLXRtMi5kdHMgCj4+PiBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5v
+czU0MzMtdG0yLmR0cwo+Pj4gaW5kZXggZGRiYTJmOC4uNmQzNjJmOSAxMDA2NDQKPj4+IC0tLSBh
+L2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cwo+Pj4gKysrIGIv
+YXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIuZHRzCj4+PiBAQCAtMTgs
+NiArMTgsMTggQEAKPj4+ICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyx0bTIiLCAic2Ftc3Vu
+ZyxleHlub3M1NDMzIjsKPj4+ICAgfTsKPj4+ICAgKyZkc2kgewo+Pj4gKyAgICBwYW5lbEAwIHsK
+Pj4+ICsgICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmUzaGEyIjsKPj4+ICsgICAgICAg
+IHJlZyA9IDwwPjsKPj4+ICsgICAgICAgIHZkZDMtc3VwcGx5ID0gPCZsZG8yN19yZWc+Owo+Pj4g
+KyAgICAgICAgdmNpLXN1cHBseSA9IDwmbGRvMjhfcmVnPjsKPj4+ICsgICAgICAgIHJlc2V0LWdw
+aW9zID0gPCZncGcwIDAgR1BJT19BQ1RJVkVfTE9XPjsKPj4+ICsgICAgICAgIGVuYWJsZS1ncGlv
+cyA9IDwmZ3BmMSA1IEdQSU9fQUNUSVZFX0hJR0g+Owo+Pj4gKyAgICAgICAgdGUtZ3Bpb3MgPSA8
+JmdwZjEgMyBHUElPX0FDVElWRV9ISUdIPjsKPj4gVGhlIHNhbWUgaGVyZSAoYXMgaW4gMXN0IGNv
+bW1lbnQpICwgdGUtZ3Bpb3Mgc2hvdWxkIGJlIGRyb3BwZXIgLSBkZWNvbgo+PiB1c2VzIGh3LXRy
+aWdnZXIuCj4KPiBIaSBBbmRyemVqLAo+Cj4gVGhhbmtzIGZvciB5b3VyIHF1aWNrIHJldmlldy4K
+Pgo+IFJlYXNvbmFibGUgdG8gcmVtb3ZlIHRlLWdwaW9zIHByb3BlcnR5LAo+IFRoZSBUaXplbiBw
+dWJsaWMgYWxyZWFkeSBoYXMgWzFdIHlvdXIgcGF0Y2ggYXBwbGllZCBhbmQgdGUtZ3Bpb3MgcmVt
+b3ZlZC4KPiBTbyBJIHdpbGwgYWRkIFsxXSB0byB0aGUgVjkgcGF0Y2guCj4KPiBbMV0gCj4gaHR0
+cHM6Ly9yZXZpZXcudGl6ZW4ub3JnL2dlcnJpdC9naXR3ZWI/cD1wbGF0Zm9ybS9rZXJuZWwvbGlu
+dXgtZXh5bm9zLmdpdDthPWNvbW1pdGRpZmY7aD00Njg3NjliZjZhYmJhYWVkMjU0N2I4YzQzZTk4
+OWFiNWRjNzg3OTAwCgpJJ20gc29ycnkgVVJMIGFkZHJlc3MgaXMgd3JvbmcuCkNvcnJlY3QgYWRk
+cmVzcyBiZWxvdzoKClsxXSAKaHR0cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2Vy
+bmVsL2xpbnV4LWV4eW5vcy9jb21taXQvP2g9dGl6ZW4maWQ9NDY4NzY5YmY2YWJiYWFlZDI1NDdi
+OGM0M2U5ODlhYjVkYzc4NzkwMAoKUmVnYXJkcywKSG9lZ2V1bgoKPgo+IEJlc3QgUmVnYXJkcywK
+PiBIb2VnZXVuCj4KPj4KPj4gUmVnYXJkcwo+PiBBbmRyemVqCj4+PiArICAgIH07Cj4+PiArfTsK
+Pj4+ICsKPj4+ICAgJmhzaTJjXzkgewo+Pj4gICAgICAgc3RhdHVzID0gIm9rYXkiOwo+Pgo+Pgo+
+Pgo+Cj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
