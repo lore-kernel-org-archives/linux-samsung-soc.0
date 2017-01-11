@@ -1,136 +1,78 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v4 3/3] arm64: dts: exynos: enable HDMI/TV path
-Date: Wed, 11 Jan 2017 09:31:40 +0100
-Message-ID: <1484123500-20488-3-git-send-email-a.hajda@samsung.com>
-References: <20170110190916.k3tek4zuvhggbuc6@kozik-lap>
- <1484123500-20488-1-git-send-email-a.hajda@samsung.com>
- <CGME20170111083155eucas1p28c9c49a619a31d33c2666f58bf22e7c0@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35927 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933204AbdAKIcB (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 03:32:01 -0500
-In-reply-to: <1484123500-20488-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v8 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
+ device on TM2 board
+Date: Wed, 11 Jan 2017 17:40:09 +0900
+Message-ID: <5875EF69.1070803@samsung.com>
+References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170111063408epcas1p4b29b1308a0b8088afd46a475770d4b00@epcas1p4.samsung.com>
+ <1484116439-7275-4-git-send-email-hoegeun.kwon@samsung.com>
+ <f292435b-8faa-d2e9-17f6-99a4d00173c5@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <f292435b-8faa-d2e9-17f6-99a4d00173c5-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-TV path consist of following interconnected components:
-- DECON_TV - display controller,
-- HDMI - video signal converter RGB / HDMI,
-- MHL - video signal converter HDMI / MHL,
-- DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
----
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index cc6701b..a5c8669 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -278,6 +278,22 @@
- 	};
- };
- 
-+&decon_tv {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			tv_to_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_to_tv>;
-+			};
-+		};
-+	};
-+};
-+
- &dsi {
- 	status = "okay";
- 	vddcore-supply = <&ldo6_reg>;
-@@ -301,6 +317,33 @@
- 	};
- };
- 
-+&hdmi {
-+	hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+	vdd-supply = <&ldo6_reg>;
-+	vdd_osc-supply = <&ldo7_reg>;
-+	vdd_pll-supply = <&ldo6_reg>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			hdmi_to_tv: endpoint {
-+				remote-endpoint = <&tv_to_hdmi>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			hdmi_to_mhl: endpoint {
-+				remote-endpoint = <&mhl_to_hdmi>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_0 {
- 	status = "okay";
- 	clock-frequency = <2500000>;
-@@ -702,6 +745,28 @@
- 	};
- };
- 
-+&hsi2c_7 {
-+	status = "okay";
-+
-+	sii8620@39 {
-+		reg = <0x39>;
-+		compatible = "sil,sii8620";
-+		cvcc10-supply = <&ldo36_reg>;
-+		iovcc18-supply = <&ldo34_reg>;
-+		interrupt-parent = <&gpf0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+		reset-gpios = <&gpv7 0 GPIO_ACTIVE_LOW>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "xtal";
-+
-+		port {
-+			mhl_to_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_to_mhl>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_8 {
- 	status = "okay";
- 
-@@ -745,6 +810,10 @@
- 	};
- };
- 
-+&hsi2c_11 {
-+	status = "okay";
-+};
-+
- &i2s0 {
- 	status = "okay";
- };
--- 
-2.7.4
+2017년 01월 11일 16:46에 Andrzej Hajda 이(가) 쓴 글:
+> On 11.01.2017 07:33, Hoegeun Kwon wrote:
+>> From: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>
+>> This patch add the panel device tree node for S6E3HA2 display
+>> controller to TM2 dts.
+>>
+>> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> index ddba2f8..6d362f9 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+>> @@ -18,6 +18,18 @@
+>>  	compatible = "samsung,tm2", "samsung,exynos5433";
+>>  };
+>>  
+>> +&dsi {
+>> +	panel@0 {
+>> +		compatible = "samsung,s6e3ha2";
+>> +		reg = <0>;
+>> +		vdd3-supply = <&ldo27_reg>;
+>> +		vci-supply = <&ldo28_reg>;
+>> +		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
+>> +		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
+>> +		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
+> The same here (as in 1st comment) , te-gpios should be dropper - decon
+> uses hw-trigger.
+
+Reasonable to remove te-gpios property but this change would make MIPI-DSI driver probing to be failed so MIPI-DSI driver should be fixed together.
+
+Thanks.
+
+> 
+> Regards
+> Andrzej
+>> +	};
+>> +};
+>> +
+>>  &hsi2c_9 {
+>>  	status = "okay";
+>>  
+> 
+> 
+> 
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
