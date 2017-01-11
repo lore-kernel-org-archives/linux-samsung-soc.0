@@ -1,43 +1,45 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 3/3] arm64: dts: exynos: enable HDMI/TV path
-Date: Wed, 11 Jan 2017 18:21:50 +0200
-Message-ID: <20170111162150.3rwilj5v7nkok4cv@kozik-lap>
-References: <20170110190916.k3tek4zuvhggbuc6@kozik-lap>
- <1484123500-20488-1-git-send-email-a.hajda@samsung.com>
- <CGME20170111083155eucas1p28c9c49a619a31d33c2666f58bf22e7c0@eucas1p2.samsung.com>
- <1484123500-20488-3-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: Replace small letter of base
+ address/offset on Exynos5433
+Date: Wed, 11 Jan 2017 18:26:13 +0200
+Message-ID: <20170111162613.lxkc7k75f6q3fsz2@kozik-lap>
+References: <CGME20170111005552epcas1p4a1f6ed88022b46544dec4b3801583267@epcas1p4.samsung.com>
+ <1484096148-17120-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f195.google.com ([209.85.210.195]:35051 "EHLO
-        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1764200AbdAKQVz (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 11:21:55 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1484123500-20488-3-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1484096148-17120-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com, chanwoo@kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Wed, Jan 11, 2017 at 09:31:40AM +0100, Andrzej Hajda wrote:
-> TV path consist of following interconnected components:
-> - DECON_TV - display controller,
-> - HDMI - video signal converter RGB / HDMI,
-> - MHL - video signal converter HDMI / MHL,
-> - DDC - i2c slave device for EDID reading (on hsi2c_11 bus).
+On Wed, Jan 11, 2017 at 09:55:48AM +0900, Chanwoo Choi wrote:
+> This patch replaces the small letter of base address, offset and hex value
+> with the capital letter to keep the consistency on Exynos5433.
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 69 ++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index abaf6b4d599d..d7ed1a68b6fd 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -231,7 +231,7 @@
+>  		compatible = "arm,psci";
+>  		method = "smc";
+>  		cpu_off = <0x84000002>;
+> -		cpu_on = <0xC4000003>;
+> +		cpu_on = <0xc4000003>;
 
-Thanks, applied.
+There is no point of such "improvements". This is just unnecessary
+churn.
+
+Sometimes such things are accepted as part of some bigger work (vide
+recent Andrzej's sysmmu for HDMI/TV). But on its own? No sense at all.
 
 Best regards,
 Krzysztof
