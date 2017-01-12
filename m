@@ -1,121 +1,106 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Replace small letter of base
- address/offset on Exynos5433
-Date: Thu, 12 Jan 2017 06:30:45 +0900
-Message-ID: <CAGTfZH1172CkN_EqMvZNvn8_LYYATYgNnW9PJrL7ArPr2SPMVQ@mail.gmail.com>
-References: <CGME20170111005552epcas1p4a1f6ed88022b46544dec4b3801583267@epcas1p4.samsung.com>
- <1484096148-17120-1-git-send-email-cw00.choi@samsung.com> <20170111211503.6kwqaunb5mpe6eb2@rob-hp-laptop>
-Reply-To: cwchoi00@gmail.com
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 1/4] PCI: exynos: replace to one register accessor from
+ each accessors
+Date: Thu, 12 Jan 2017 10:13:18 +0900
+Message-ID: <38b40475-97fc-da8a-82f4-4c5932a008a1@samsung.com>
+References: <20161219081614.5403-1-jh80.chung@samsung.com>
+ <20161219081614.5403-2-jh80.chung@samsung.com>
+ <CGME20170111185058epcas4p3b75597ea7f18d0ac10a16fc752a708ca@epcas4p3.samsung.com>
+ <20170111185003.GG14532@bhelgaas-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:35714 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753757AbdAKVb0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Jan 2017 16:31:26 -0500
-In-Reply-To: <20170111211503.6kwqaunb5mpe6eb2@rob-hp-laptop>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20170111185003.GG14532@bhelgaas-glaptop.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, helgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Rutland <mark.rutland@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, a.hajda@samsung.com, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-2017-01-12 6:15 GMT+09:00 Rob Herring <robh@kernel.org>:
-> On Wed, Jan 11, 2017 at 09:55:48AM +0900, Chanwoo Choi wrote:
->> This patch replaces the small letter of base address, offset and hex val=
-ue
->> with the capital letter to keep the consistency on Exynos5433.
->
-> You mean the other way around, right?
+Hi Bjorn,
 
-When I posted the dts patches, I got the comment that small letter is bette=
-r
-for base address/offset. (It doesn=E2=80=99t mean that all dts file in Linu=
-x Kernel
-have to use the small letter of base address and offset.)
-
-This dts uses the both capital and small letter for each base address/offse=
-t.
-Almost hex value already uses the small letter. If possible, I hope to use
-the one style (small letter).
-
->
+On 01/12/2017 03:50 AM, Bjorn Helgaas wrote:
+> Hi Jaehoon,
+> 
+> On Mon, Dec 19, 2016 at 05:16:11PM +0900, Jaehoon Chung wrote:
+>> There is no reason to maintain *_blk/phy/elbi_* as register accessors.
+>> It can be replaced to one register accessor.
 >>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 >> ---
->>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 14 +++++++-------
->>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>  drivers/pci/host/pci-exynos.c | 214 +++++++++++++++++++-----------------------
+>>  1 file changed, 97 insertions(+), 117 deletions(-)
 >>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boo=
-t/dts/exynos/exynos5433.dtsi
->> index abaf6b4d599d..d7ed1a68b6fd 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> @@ -231,7 +231,7 @@
->>               compatible =3D "arm,psci";
->>               method =3D "smc";
->>               cpu_off =3D <0x84000002>;
->> -             cpu_on =3D <0xC4000003>;
->> +             cpu_on =3D <0xc4000003>;
->>       };
->>
->>       reboot: syscon-reboot {
->> @@ -753,7 +753,7 @@
->>
->>               dsi: dsi@13900000 {
->>                       compatible =3D "samsung,exynos5433-mipi-dsi";
->> -                     reg =3D <0x13900000 0xC0>;
->> +                     reg =3D <0x13900000 0xc0>;
->>                       interrupts =3D <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
->>                       phys =3D <&mipi_phy 1>;
->>                       phy-names =3D "dsim";
->> @@ -880,9 +880,9 @@
->>                       iommus =3D <&sysmmu_jpeg>;
->>               };
->>
->> -             mfc: codec@152E0000 {
->> +             mfc: codec@152e0000 {
->>                       compatible =3D "samsung,exynos5433-mfc";
->> -                     reg =3D <0x152E0000 0x10000>;
->> +                     reg =3D <0x152e0000 0x10000>;
->>                       interrupts =3D <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
->>                       clock-names =3D "pclk", "aclk", "aclk_xiu";
->>                       clocks =3D <&cmu_mfc CLK_PCLK_MFC>,
->> @@ -914,7 +914,7 @@
->>
->>               sysmmu_gscl0: sysmmu@13c80000 {
->>                       compatible =3D "samsung,exynos-sysmmu";
->> -                     reg =3D <0x13C80000 0x1000>;
->> +                     reg =3D <0x13c80000 0x1000>;
->>                       interrupts =3D <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
->>                       clock-names =3D "aclk", "pclk";
->>                       clocks =3D <&cmu_gscl CLK_ACLK_SMMU_GSCL0>,
->> @@ -924,7 +924,7 @@
->>
->>               sysmmu_gscl1: sysmmu@13c90000 {
->>                       compatible =3D "samsung,exynos-sysmmu";
->> -                     reg =3D <0x13C90000 0x1000>;
->> +                     reg =3D <0x13c90000 0x1000>;
->>                       interrupts =3D <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
->>                       clock-names =3D "aclk", "pclk";
->>                       clocks =3D <&cmu_gscl CLK_ACLK_SMMU_GSCL1>,
->> @@ -934,7 +934,7 @@
->>
->>               sysmmu_gscl2: sysmmu@13ca0000 {
->>                       compatible =3D "samsung,exynos-sysmmu";
->> -                     reg =3D <0x13CA0000 0x1000>;
->> +                     reg =3D <0x13ca0000 0x1000>;
->>                       interrupts =3D <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
->>                       clock-names =3D "aclk", "pclk";
->>                       clocks =3D <&cmu_gscl CLK_ACLK_SMMU_GSCL2>,
->> --
->> 1.9.1
->>
+>> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+>> index f1c544b..6dbfa2c 100644
+>> --- a/drivers/pci/host/pci-exynos.c
+>> +++ b/drivers/pci/host/pci-exynos.c
+>> @@ -102,197 +102,175 @@ struct exynos_pcie {
+>>  #define PCIE_PHY_TRSV3_PD_TSV		(0x1 << 7)
+>>  #define PCIE_PHY_TRSV3_LVCC		0x31c
+>>  
+>> -static void exynos_elb_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+>> +static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
+>>  {
+>> -	writel(val, exynos_pcie->elbi_base + reg);
+>> +	writel(val, base + reg);
+>>  }
+>>  
+>> -static u32 exynos_elb_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+>> +static u32 exynos_pcie_readl(void __iomem *base, u32 reg)
+>>  {
+>> -	return readl(exynos_pcie->elbi_base + reg);
+>> +	return readl(base + reg);
+>>  }
+>>  
+>> -static void exynos_phy_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+>> -{
+>> -	writel(val, exynos_pcie->phy_base + reg);
+>> -}
+>> -
+>> -static u32 exynos_phy_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+>> -{
+>> -	return readl(exynos_pcie->phy_base + reg);
+>> -}
+>> -
+>> -static void exynos_blk_writel(struct exynos_pcie *exynos_pcie, u32 val, u32 reg)
+>> -{
+>> -	writel(val, exynos_pcie->block_base + reg);
+>> -}
+>> -
+>> -static u32 exynos_blk_readl(struct exynos_pcie *exynos_pcie, u32 reg)
+>> -{
+>> -	return readl(exynos_pcie->block_base + reg);
+>> -}
+>> -
+>> -static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *exynos_pcie,
+>> -					    bool on)
+>> +static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
+> 
+> Replacing all the separate accessors with one that takes the base
+> pointer is OK, but please use the same name for all the "struct
+> exynos_pcie *" pointers in the whole file.
+> 
+> Before your patch, they were all called "exynos_pci"; after it some
+> are called "exynos_pci" and some are called "ep".
 
+I will use the 'ep' as name, exynos_pcie is a little bit long.
+When 'exynos_pcie' is used, some code is need to change lines because of 80 char.
+I think it's the meaningless line changing.
 
+I will resend the PATCH v2..also patches relevant to using PHY framework.
+After applying everything, i will upstream TM2(Exynos5433) PCIe patches.
 
---=20
+Thanks for reviewing.
+
 Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Jaehoon Chung
+
+> 
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
