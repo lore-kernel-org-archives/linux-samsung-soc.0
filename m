@@ -1,170 +1,138 @@
 From: Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: Re: [PATCH 10/37] PCI: dwc: designware: Fix style errors in
- pcie-designware.c
-Date: Fri, 13 Jan 2017 16:38:24 +0000
-Message-ID: <a138b0fb-f584-8953-658f-cf476e3d16e7@synopsys.com>
+Subject: Re: [PATCH 11/37] PCI: dwc: Split pcie-designware.c into host and
+ core files
+Date: Fri, 13 Jan 2017 16:49:44 +0000
+Message-ID: <4a89fb45-af84-d660-5ef0-12227b141cda@synopsys.com>
 References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-11-git-send-email-kishon@ti.com>
+ <1484216786-17292-12-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484216786-17292-11-git-send-email-kishon@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1484216786-17292-12-git-send-email-kishon@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, nsekhar@ti.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Às 10:25 AM de 1/12/2017, Kishon Vijay Abraham I escreveu:
-> No functional change. Fix all checkpatch warnings and check errors
-> in pcie-designware.c
-> 
+=C0s 10:26 AM de 1/12/2017, Kishon Vijay Abraham I escreveu:
+> Split pcie-designware.c into pcie-designware-host.c that contains
+> the host specific parts of the driver and pcie-designware.c that
+> contains the parts used by both host driver and endpoint driver.
+> =
+
 > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  drivers/pci/dwc/pcie-designware.c |   42 ++++++++++++++++++-------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-designware.c
-> index 89cdb6b..ff04074 100644
-> --- a/drivers/pci/dwc/pcie-designware.c
-> +++ b/drivers/pci/dwc/pcie-designware.c
-> @@ -40,13 +40,13 @@ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
->  		return PCIBIOS_BAD_REGISTER_NUMBER;
->  	}
->  
-> -	if (size == 4)
-> +	if (size == 4) {
->  		*val = readl(addr);
-> -	else if (size == 2)
-> +	} else if (size == 2) {
->  		*val = readw(addr);
-> -	else if (size == 1)
-> +	} else if (size == 1) {
->  		*val = readb(addr);
-> -	else {
-> +	} else {
->  		*val = 0;
->  		return PCIBIOS_BAD_REGISTER_NUMBER;
->  	}
-> @@ -203,16 +203,15 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
->  
->  	for (i = 0; i < MAX_MSI_CTRLS; i++) {
->  		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
-> -				(u32 *)&val);
-> +				    (u32 *)&val);
->  		if (val) {
->  			ret = IRQ_HANDLED;
->  			pos = 0;
->  			while ((pos = find_next_bit(&val, 32, pos)) != 32) {
->  				irq = irq_find_mapping(pp->irq_domain,
-> -						i * 32 + pos);
-> -				dw_pcie_wr_own_conf(pp,
-> -						PCIE_MSI_INTR0_STATUS + i * 12,
-> -						4, 1 << pos);
-> +						       i * 32 + pos);
-> +				dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-> +						    i * 12, 4, 1 << pos);
->  				generic_handle_irq(irq);
->  				pos++;
->  			}
-> @@ -278,8 +277,9 @@ static void dw_pcie_msi_set_irq(struct pcie_port *pp, int irq)
->  static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
->  {
->  	int irq, pos0, i;
-> -	struct pcie_port *pp = (struct pcie_port *) msi_desc_to_pci_sysdata(desc);
-> +	struct pcie_port *pp;
->  
-> +	pp  = (struct pcie_port *)msi_desc_to_pci_sysdata(desc);
->  	pos0 = bitmap_find_free_region(pp->msi_irq_in_use, MAX_MSI_IRQS,
->  				       order_base_2(no_irqs));
->  	if (pos0 < 0)
-> @@ -341,7 +341,7 @@ static void dw_msi_setup_msg(struct pcie_port *pp, unsigned int irq, u32 pos)
->  }
->  
->  static int dw_msi_setup_irq(struct msi_controller *chip, struct pci_dev *pdev,
-> -			struct msi_desc *desc)
-> +			    struct msi_desc *desc)
->  {
->  	int irq, pos;
->  	struct pcie_port *pp = pdev->bus->sysdata;
-> @@ -389,7 +389,7 @@ static void dw_msi_teardown_irq(struct msi_controller *chip, unsigned int irq)
->  {
->  	struct irq_data *data = irq_get_irq_data(irq);
->  	struct msi_desc *msi = irq_data_get_msi_desc(data);
-> -	struct pcie_port *pp = (struct pcie_port *) msi_desc_to_pci_sysdata(msi);
-> +	struct pcie_port *pp = (struct pcie_port *)msi_desc_to_pci_sysdata(msi);
->  
->  	clear_irq_range(pp, irq, 1, data->hwirq);
->  }
-> @@ -431,7 +431,7 @@ int dw_pcie_link_up(struct dw_pcie *pci)
->  }
->  
->  static int dw_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
-> -			irq_hw_number_t hwirq)
-> +			   irq_hw_number_t hwirq)
->  {
->  	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
->  	irq_set_chip_data(irq, domain->host_data);
-> @@ -468,8 +468,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  
->  	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
->  	if (cfg_res) {
-> -		pp->cfg0_size = resource_size(cfg_res)/2;
-> -		pp->cfg1_size = resource_size(cfg_res)/2;
-> +		pp->cfg0_size = resource_size(cfg_res) / 2;
-> +		pp->cfg1_size = resource_size(cfg_res) / 2;
->  		pp->cfg0_base = cfg_res->start;
->  		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
->  	} else if (!pp->va_cfg0_base) {
-> @@ -508,8 +508,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  			break;
->  		case 0:
->  			pp->cfg = win->res;
-> -			pp->cfg0_size = resource_size(pp->cfg)/2;
-> -			pp->cfg1_size = resource_size(pp->cfg)/2;
-> +			pp->cfg0_size = resource_size(pp->cfg) / 2;
-> +			pp->cfg1_size = resource_size(pp->cfg) / 2;
->  			pp->cfg0_base = pp->cfg->start;
->  			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
->  			break;
-> @@ -615,7 +615,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  }
->  
->  static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> -		u32 devfn, int where, int size, u32 *val)
-> +				 u32 devfn, int where, int size, u32 *val)
->  {
->  	int ret, type;
->  	u32 busdev, cfg_size;
-> @@ -654,7 +654,7 @@ static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  }
->  
->  static int dw_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> -		u32 devfn, int where, int size, u32 val)
-> +				 u32 devfn, int where, int size, u32 val)
->  {
->  	int ret, type;
->  	u32 busdev, cfg_size;
-> @@ -711,7 +711,7 @@ static int dw_pcie_valid_device(struct pcie_port *pp, struct pci_bus *bus,
->  }
->  
->  static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
-> -			int size, u32 *val)
-> +			   int size, u32 *val)
->  {
->  	struct pcie_port *pp = bus->sysdata;
->  
-> @@ -727,7 +727,7 @@ static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
->  }
->  
->  static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
-> -			int where, int size, u32 val)
-> +			   int where, int size, u32 val)
->  {
->  	struct pcie_port *pp = bus->sysdata;
->  
-> 
+>  drivers/pci/dwc/Makefile               |    2 +-
+>  drivers/pci/dwc/pcie-designware-host.c |  619 ++++++++++++++++++++++++++=
+++++++
+>  drivers/pci/dwc/pcie-designware.c      |  613 +-------------------------=
+-----
+>  drivers/pci/dwc/pcie-designware.h      |    8 +
+>  4 files changed, 634 insertions(+), 608 deletions(-)
+>  create mode 100644 drivers/pci/dwc/pcie-designware-host.c
+> =
 
-Always good to make clean up! Thanks!
+> diff --git a/drivers/pci/dwc/Makefile b/drivers/pci/dwc/Makefile
+> index 7d27c14..3b57e55 100644
+> --- a/drivers/pci/dwc/Makefile
+> +++ b/drivers/pci/dwc/Makefile
+> @@ -1,4 +1,4 @@
 
-Acked-By: Joao Pinto <jpinto@synopsys.com>
+(snip...)
+
+> -static void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
+> -				      int type, u64 cpu_addr, u64 pci_addr,
+> -				      u32 size)
+> +void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+> +			       u64 cpu_addr, u64 pci_addr, u32 size)
+>  {
+>  	u32 retries, val;
+>  =
+
+> @@ -186,220 +151,6 @@ static void dw_pcie_prog_outbound_atu(struct dw_pci=
+e *pci, int index,
+>  	dev_err(pci->dev, "iATU is not being enabled\n");
+>  }
+
+Kishon, iATU only makes sense in The Root Complex (host), so it should be i=
+nside
+the pcie-designware-host.
+
+>  =
+
+> -static struct irq_chip dw_msi_irq_chip =3D {
+> -	.name =3D "PCI-MSI",
+> -	.irq_enable =3D pci_msi_unmask_irq,
+> -	.irq_disable =3D pci_msi_mask_irq,
+> -	.irq_mask =3D pci_msi_mask_irq,
+> -	.irq_unmask =3D pci_msi_unmask_irq,
+> -};
+> -
+
+(snip...)
+
+> -
+> -static const struct irq_domain_ops msi_domain_ops =3D {
+> -	.map =3D dw_pcie_msi_map,
+> -};
+> -
+>  static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
+>  {
+>  	u32 val;
+> @@ -454,303 +192,11 @@ static u8 dw_pcie_iatu_unroll_enabled(struct dw_pc=
+ie *pci)
+>  	return 0;
+>  }
+
+Kishon, iATU only makes sense in The Root Complex (host), so it should be i=
+nside
+the pcie-designware-host.
+
+(snip...)
+
+> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-des=
+ignware.h
+> index 491fbe3..808d17b 100644
+> --- a/drivers/pci/dwc/pcie-designware.h
+> +++ b/drivers/pci/dwc/pcie-designware.h
+> @@ -14,6 +14,10 @@
+>  #ifndef _PCIE_DESIGNWARE_H
+>  #define _PCIE_DESIGNWARE_H
+>  =
+
+> +#include <linux/irq.h>
+> +#include <linux/msi.h>
+> +#include <linux/pci.h>
+> +
+>  /* Parameters for the waiting for link up routine */
+>  #define LINK_WAIT_MAX_RETRIES		10
+>  #define LINK_WAIT_USLEEP_MIN		90000
+> @@ -167,4 +171,8 @@ struct dw_pcie {
+>  void dw_pcie_writel_dbi(struct dw_pcie *pci, u32 reg, u32 val);
+>  int dw_pcie_link_up(struct dw_pcie *pci);
+>  int dw_pcie_wait_for_link(struct dw_pcie *pci);
+> +void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
+> +			       int type, u64 cpu_addr, u64 pci_addr,
+> +			       u32 size);
+> +void dw_pcie_setup(struct dw_pcie *pci);
+
+
+Kishon, iATU only makes sense in The Root Complex (host), so it should be i=
+nside
+the pcie-designware-host as static.
+
+>  #endif /* _PCIE_DESIGNWARE_H */
+> =
+
+
+Thanks,
+Joao
