@@ -1,83 +1,70 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/4] arm64: dts: exynos: DT for v4.11
-Date: Fri, 13 Jan 2017 17:20:29 +0200
-Message-ID: <20170113152030.13586-3-krzk@kernel.org>
-References: <20170113152030.13586-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170113152030.13586-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+From: Joao Pinto <Joao.Pinto@synopsys.com>
+Subject: Re: [PATCH 02/37] PCI: dwc: designware: Add new *ops* for cpu addr
+ fixup
+Date: Fri, 13 Jan 2017 16:34:26 +0000
+Message-ID: <68f59de0-104f-41aa-886d-52d43ecd8e6b@synopsys.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-3-git-send-email-kishon@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1484216786-17292-3-git-send-email-kishon@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, nsekhar@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-Important:
-1. Unlike others, this is rebased on v4.10-rc2 because v4.10-rc1 was not
-   building on arm64.
-2. This contains pinctrl change (in header), acked by Linus Walleij.
-   Although I kept it on separate branch and merged here, but I did not
-   prepare a separate pull request for this one pinctrl change - it is
-   just one patch. Anyway it sits on separate branch so this is still
-   possible if you need it.
+Hi Kishon,
 
-Best regards,
-Krzysztof
+Às 10:25 AM de 1/12/2017, Kishon Vijay Abraham I escreveu:
+> Some platforms (like dra7xx) require only the least 28 bits of the
+> corresponding 32 bit CPU address to be programmed in the address
+> translation unit. This modified address is stored in io_base/mem_base/
+> cfg0_base/cfg1_base in dra7xx_pcie_host_init. While this is okay for
+> host mode where the address range is fixed, device mode requires
+> different addresses to be programmed based on the host buffer address.
+> Add a new ops to get the least 28 bits of the corresponding 32 bit
+> CPU address and invoke it before programming the address translation
+> unit.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/dwc/pcie-designware.c |    3 +++
+>  drivers/pci/dwc/pcie-designware.h |    1 +
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-designware.c
+> index bed1999..d68bc7b 100644
+> --- a/drivers/pci/dwc/pcie-designware.c
+> +++ b/drivers/pci/dwc/pcie-designware.c
+> @@ -195,6 +195,9 @@ static void dw_pcie_prog_outbound_atu(struct pcie_port *pp, int index,
+>  {
+>  	u32 retries, val;
+>  
+> +	if (pp->ops->cpu_addr_fixup)
+> +		cpu_addr = pp->ops->cpu_addr_fixup(cpu_addr);
+> +
+>  	if (pp->iatu_unroll_enabled) {
+>  		dw_pcie_writel_unroll(pp, index, PCIE_ATU_UNR_LOWER_BASE,
+>  			lower_32_bits(cpu_addr));
+> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+> index a567ea2..32f4602 100644
+> --- a/drivers/pci/dwc/pcie-designware.h
+> +++ b/drivers/pci/dwc/pcie-designware.h
+> @@ -54,6 +54,7 @@ struct pcie_port {
+>  };
+>  
+>  struct pcie_host_ops {
+> +	u64 (*cpu_addr_fixup)(u64 cpu_addr);
+>  	u32 (*readl_rc)(struct pcie_port *pp, u32 reg);
+>  	void (*writel_rc)(struct pcie_port *pp, u32 reg, u32 val);
+>  	int (*rd_own_conf)(struct pcie_port *pp, int where, int size, u32 *val);
+> 
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
+I think this is an acceptable fixup, I am ok with it.
 
-The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+Reviewed-By: Joao Pinto <jpinto@synopsys.com>
 
-  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11
-
-for you to fetch changes up to e4e381133241a27d732e78be09973b89a193eaf7:
-
-  arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree ARM64 update for v4.11:
-1. Add bus frequency and voltage scalling on Exynos5433 TM2 device (along with
-   necessary bus nodes and Platform Performance Monitoring Unit on Exynos5433).
-2. Use macros for pinctrl settings on Exynos5433.
-   This contains necessary header with bindings.
-3. Minor cleanups in Exynos5433 DTSI and boards using it.
-4. Create common DTSI betweem Exynos5433 TM2E and TM2E.
-5. Add HDMI/TV to Exynos5433 TM2.
-
-----------------------------------------------------------------
-Andi Shyti (4):
-      pinctrl: dt-bindings: samsung: add drive strength macros for Exynos5433
-      arm64: dts: exynos: Use macros for pinctrl configuration on Exynos5433
-      arm64: dts: exynos: Comply to the samsung pinctrl naming convention in TM2
-      arm64: dts: exynos: Make TM2 and TM2E independent from each other
-
-Andrzej Hajda (4):
-      arm64: dts: exynos: Fix addresses in node names on Exynos5433
-      arm64: dts: exynos: Add DECON_TV node to Exynos5433
-      arm64: dts: exynos: Add HDMI node to Exynos5433
-      arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2
-
-Chanwoo Choi (4):
-      arm64: dts: exynos: Add PPMU node to Exynos5433
-      arm64: dts: exynos: Add bus nodes using VDD_INT for Exynos5433
-      arm64: dts: exynos: Add support of bus frequency using VDD_INT on Exynos5433 TM2
-      arm64: dts: exynos: Fix wrong values for ldo23 and ldo25 on TM2/TM2E
-
-Krzysztof Kozlowski (2):
-      Merge branch 'for-v4.11/pinctrl-macros' into next/dt64
-      arm64: dts: exynos: Remove unsupported regulator-always-off property from TM2E
-
- arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     |  197 ++++
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  373 +++---
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 1187 ++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 1036 +----------------
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |   12 +-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  115 +-
- include/dt-bindings/pinctrl/samsung.h              |   14 +
- 7 files changed, 1695 insertions(+), 1239 deletions(-)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+Joao
