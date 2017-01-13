@@ -1,58 +1,32 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [patch] spi: s3c64xx: potential oops on probe error
-Date: Fri, 13 Jan 2017 20:12:30 +0900
-Message-ID: <20170113111230.ybhmch7fcnng4oml@gangnam.samsung>
-References: <CGME20170113074318epcas5p29fb2fd41d46553b64a4423f37663fd44@epcas5p2.samsung.com>
- <20170113074253.GA30524@mwanda>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 1/4] dmaengine: pl330: remove pdata based
+ initialization
+Date: Fri, 13 Jan 2017 15:20:41 +0200
+Message-ID: <20170113132041.3k7sr7ciy46dd42q@kozik-lap>
+References: <1484292400-29730-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170113072651eucas1p214662327fe5a3dfbaa79d11c2a0b195a@eucas1p2.samsung.com>
+ <1484292400-29730-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20170113074253.GA30524@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1484292400-29730-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 13, 2017 at 10:42:53AM +0300, Dan Carpenter wrote:
-> We accidentally mixed up freeing the rx and tx channels which would a
-> leak and an oops.
+On Fri, Jan 13, 2017 at 08:26:37AM +0100, Marek Szyprowski wrote:
+> This driver is now used only on platforms which support device tree, so
+> it is safe to remove legacy platform data based initialization code.
 > 
-> Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/plat-samsung/devs.c |  1 -
 
-Thanks, Dan.
+For plat-samsung:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
+Best regards,
+Krzysztof
 
-Andi
-
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 849ee82..b8cd356 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  		if (IS_ERR(sdd->tx_dma.ch)) {
->  			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
->  			ret = PTR_ERR(sdd->tx_dma.ch);
-> -			goto err_release_tx_dma;
-> +			goto err_release_rx_dma;
->  		}
->  	}
->  
-> @@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	pm_runtime_set_suspended(&pdev->dev);
->  
->  	if (!is_polling(sdd))
-> -		dma_release_channel(sdd->rx_dma.ch);
-> -err_release_tx_dma:
-> -	if (!is_polling(sdd))
->  		dma_release_channel(sdd->tx_dma.ch);
-> +err_release_rx_dma:
-> +	if (!is_polling(sdd))
-> +		dma_release_channel(sdd->rx_dma.ch);
->  err_disable_io_clk:
->  	clk_disable_unprepare(sdd->ioclk);
->  err_disable_src_clk:
-> 
