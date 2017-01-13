@@ -1,44 +1,89 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: exynos: Fixes for v4.10
-Date: Fri, 13 Jan 2017 16:32:25 +0200
-Message-ID: <20170113143225.11311-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v4 0/4] DMA Engine: switch PL330 driver to non-irq-safe
+ runtime PM
+Date: Fri, 13 Jan 2017 15:41:48 +0100
+Message-ID: <CAPDyKFqHAhsqn+1cQw4Y4GPYZghY8Z=GgYMO=2e6FPGWP0tzsg@mail.gmail.com>
+References: <CGME20170113072651eucas1p2b7487d97894de93daab24adb6745087c@eucas1p2.samsung.com>
+ <1484292400-29730-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFqDGs6OkG-NKiY9Xd3hHEJOJB1YJ2O0_3Tojrzv_xR-yw@mail.gmail.com> <60596eee-12a9-58f3-387e-145a5bc28aaa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <60596eee-12a9-58f3-387e-145a5bc28aaa@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+[...]
 
-Just a couple of minor fixes for this release cycle.
+>>
+>> Marek, this is great work! It's been on my TODO list forever, so I
+>> really appreciate your work here.
+>>
+>> I did only a brief review so far, particularly concentrating on the
+>> changes for device links and runtime PM. I like it!
+>>
+>> Perhaps we can get someone like Arnd/Vinod to comment in general idea
+>> from a DT and DMA slave channel point of view. I don't know that stuff
+>> good enough to give good opinion.
+>
+>
+> Arnd already said that it looks good:
+> http://www.spinics.net/lists/dmaengine/msg12186.html
 
-Best regards,
-Krzysztof
+Great! Clearly, I haven't fully catched up since the holidays. :-)
 
+>
+>> A couple of things that crosses my mind so far:
+>> 1) I have planned to extend pm_runtime_force_suspend|resume() to cover
+>> also device links. Seems like that becomes really useful together with
+>> these changes.
+>
+>
+> Is is really needed? I thought that this case is already handled by device
+> core. It works perfectly fine for Exynos IOMMU and its client devices for
+> suspend/resume too, which rely on pm_runtime_force_suspend|resume().
 
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+Only parent devices are being considered in
+pm_runtime_force_suspend|resume(). Meaning that the runtime PM usage
+count will not be updated for a device's link, even if it should.
 
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+I guess what happens is that the pl330 controller will be brought up
+to full power during system resume, even if it isn't necessary to do
+so. If that's the case, it's not the end of the world, we can optimize
+it later on.
 
-are available in the git repository at:
+Note, this is very theoretical and to be sure, I need to run some
+tests and think more about it.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-4.10
+>
+>> 2) I think there will be some corner cases during system
+>> suspend/resume for pl330. Not sure yet though. However, fixing 1) and
+>> converting the driver to use pm_runtime_force_suspend|resume() should
+>> probably work anyway.
+>
+>
+> Do you have any particular case in mind? Device links ensures that pl330
+> will
+> suspended after its slave devices and waken before them. Is there anything
+> more needed here?
 
-for you to fetch changes up to 3ef01c968fbfb21c2f16281445d30a865ee4412c:
+Likely we can consider them as optimizations. See comment above.
 
-  ARM: s3c2410_defconfig: Fix invalid values for NF_CT_PROTO_* (2017-01-02 21:05:34 +0200)
+>
+>> Allow me to help out looking into 1) and 2). If not for pl330, I am
+>> pretty sure it will be useful for other DMA controllers that
+>> implements device links and runtime PM.
+>
+>
+> I'm open for suggestions.
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
 
-----------------------------------------------------------------
-Samsung fixes for v4.10:
-1. Update maintainers entry with Patchwork address.
-2. Fix invalid values for NF_CT_PROTO_* in s3c2410 defconfig (these options
-   cannot be modules anymore).
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      MAINTAINERS: Add Patchwork URL to Samsung Exynos entry
-      ARM: s3c2410_defconfig: Fix invalid values for NF_CT_PROTO_*
-
- MAINTAINERS                        | 1 +
- arch/arm/configs/s3c2410_defconfig | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+Kind regards
+Uffe
