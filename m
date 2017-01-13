@@ -1,51 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] spi: s3c64xx: potential oops on probe error
-Date: Fri, 13 Jan 2017 10:42:53 +0300
-Message-ID: <20170113074253.GA30524@mwanda>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if planes
+ are disabled
+Date: Fri, 13 Jan 2017 09:10:26 +0100
+Message-ID: <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170113081037eucas1p2a87c058901f1bf9544a36b798b8349ff@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:29250 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbdAMHn5 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 02:43:57 -0500
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally mixed up freeing the rx and tx channels which would a
-leak and an oops.
-
-Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 849ee82..b8cd356 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (IS_ERR(sdd->tx_dma.ch)) {
- 			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
- 			ret = PTR_ERR(sdd->tx_dma.ch);
--			goto err_release_tx_dma;
-+			goto err_release_rx_dma;
- 		}
- 	}
- 
-@@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	if (!is_polling(sdd))
--		dma_release_channel(sdd->rx_dma.ch);
--err_release_tx_dma:
--	if (!is_polling(sdd))
- 		dma_release_channel(sdd->tx_dma.ch);
-+err_release_rx_dma:
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->rx_dma.ch);
- err_disable_io_clk:
- 	clk_disable_unprepare(sdd->ioclk);
- err_disable_src_clk:
+U1RBTkRBTE9ORV9VUERBVEVfRiBzaG91bGQgYmUgc2V0IGlmIHNvbWV0aGluZyBjaGFuZ2VkIGlu
+IHBsYW5lIGNvbmZpZ3VyYXRpb25zLAppbmNsdWRpbmcgcGxhbmUgZGlzYWJsZS4KVGhlIHBhdGNo
+IGZpeGVzIHBhZ2UtZmF1bHRzIGJ1Z3MsIGNhdXNlZCBieSBkZWNvbiBzdGlsbCB1c2luZyBmcmFt
+ZWJ1ZmZlcnMKb2YgZGlzYWJsZWQgcGxhbmVzLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
+YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+czU0MzNfZHJtX2RlY29uLmMgfCA5ICsrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+czU0MzNfZHJtX2RlY29uLmMKaW5kZXggZWY3ZmNiNS4uMzk5OWU4OCAxMDA2NDQKLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYwpAQCAtNDYsNyArNDYsOCBAQCBl
+bnVtIGRlY29uX2ZsYWdfYml0cyB7CiAJQklUX0NMS1NfRU5BQkxFRCwKIAlCSVRfSVJRU19FTkFC
+TEVELAogCUJJVF9XSU5fVVBEQVRFRCwKLQlCSVRfU1VTUEVOREVECisJQklUX1NVU1BFTkRFRCwK
+KwlCSVRfUkVRVUVTVF9VUERBVEUKIH07CiAKIHN0cnVjdCBkZWNvbl9jb250ZXh0IHsKQEAgLTMx
+Myw2ICszMTQsNyBAQCBzdGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5v
+c19kcm1fY3J0YyAqY3J0YywKIAogCS8qIHdpbmRvdyBlbmFibGUgKi8KIAlkZWNvbl9zZXRfYml0
+cyhjdHgsIERFQ09OX1dJTkNPTngod2luKSwgV0lOQ09OeF9FTldJTl9GLCB+MCk7CisJc2V0X2Jp
+dChCSVRfUkVRVUVTVF9VUERBVEUsICZjdHgtPmZsYWdzKTsKIH0KIAogc3RhdGljIHZvaWQgZGVj
+b25fZGlzYWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLApAQCAtMzI1LDYg
+KzMyNyw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rpc2FibGVfcGxhbmUoc3RydWN0IGV4eW5vc19k
+cm1fY3J0YyAqY3J0YywKIAkJcmV0dXJuOwogCiAJZGVjb25fc2V0X2JpdHMoY3R4LCBERUNPTl9X
+SU5DT054KHdpbiksIFdJTkNPTnhfRU5XSU5fRiwgMCk7CisJc2V0X2JpdChCSVRfUkVRVUVTVF9V
+UERBVEUsICZjdHgtPmZsYWdzKTsKIH0KIAogc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2ZsdXNo
+KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCkBAIC0zMzksOCArMzQyLDEwIEBAIHN0YXRp
+YyB2b2lkIGRlY29uX2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQog
+CQlkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCBpLCBmYWxzZSk7CiAKIAkvKiB1cGRhdGUg
+aWZmIHRoZXJlIGFyZSBhY3RpdmUgd2luZG93cyAqLwotCWlmIChjcnRjLT5iYXNlLnN0YXRlLT5w
+bGFuZV9tYXNrKQorCWlmICh0ZXN0X2JpdChCSVRfUkVRVUVTVF9VUERBVEUsICZjdHgtPmZsYWdz
+KSkgewogCQlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1VQREFURSwgU1RBTkRBTE9ORV9VUERB
+VEVfRiwgfjApOworCQlzZXRfYml0KEJJVF9SRVFVRVNUX1VQREFURSwgJmN0eC0+ZmxhZ3MpOwor
+CX0KIAogCWlmIChjdHgtPm91dF90eXBlICYgSUZUWVBFX0k4MCkKIAkJc2V0X2JpdChCSVRfV0lO
+X1VQREFURUQsICZjdHgtPmZsYWdzKTsKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
