@@ -1,111 +1,83 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] drm/exynos: mic: Add runtime PM support
-Date: Fri, 13 Jan 2017 09:30:00 +0100
-Message-ID: <1484296200-5321-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170113083005eucas1p29fc6abb79e866c1e613a522190118de5@eucas1p2.samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if
+ planes are disabled
+Date: Fri, 13 Jan 2017 17:37:09 +0900
+Message-ID: <186cdcc7-be8a-db9a-878d-d2358c3cb139@samsung.com>
+References: <CGME20170113081037eucas1p2a87c058901f1bf9544a36b798b8349ff@eucas1p2.samsung.com>
+ <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:45431 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbdAMIgo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 13 Jan 2017 03:36:44 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OJP017NPML5LV70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jan 2017 17:36:41 +0900 (KST)
+In-reply-to: <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-VGhpcyBwYXRjaCBhZGRzIHJ1bnRpbWUgc3VwcG9ydCBjYWxscyB0byBub3RpZnkgZGV2aWNlIGNv
-cmUgd2hlbiBNSUMKZGV2aWNlIGlzIHJlYWxseSBpbiB1c2UuIFJ1bnRpbWUgUE0gaXMgaW1wbGVt
-ZW50ZWQgYnkgZW5hYmxpbmcgYW5kCmRpc2FibGluZyBjbG9ja3MgbGlrZSBpbiBvdGhlciBFeHlu
-b3MgRFJNIHN1YmRyaXZlcnMuIEFkZGluZyBydW50aW1lClBNIHN1cHBvcnQgaXMgbmVlZGVkIHRv
-IGxldCBwb3dlciBkb21haW4gd2l0aCB0aGlzIGRldmljZSB0byBiZSB0dXJuZWQKb2ZmIHdoZW4g
-ZGlzcGxheSBpcyBub3QgdXNlZC4KClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0u
-c3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCkNoYW5nZWxvZzoKdjI6Ci0gbW92ZWQgY2xvY2sg
-Y29udHJvbCB0byBydW50aW1lIFBNIGNhbGxiYWNrcyBhcyByZXF1ZXN0ZWQgYnkgSW5raSBEYWUK
-CnYxOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2cxMjkwOTUuaHRt
-bAotIGluaXRpYWwgdmVyc2lvbgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9taWMuYyB8IDgyICsrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQogMSBmaWxlIGNo
-YW5nZWQsIDU5IGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9taWMuYwppbmRleCBhMGRlZjBiZTZkNjUuLjQzMGY2N2M2MzcwNyAx
-MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX21pYy5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYwpAQCAtMTksNiArMTksNyBA
-QAogI2luY2x1ZGUgPGxpbnV4L29mX2dyYXBoLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAj
-aW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+CisjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5o
-PgogI2luY2x1ZGUgPGRybS9kcm1QLmg+CiAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgog
-I2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPgpAQCAtMzEyLDcgKzMxMyw2IEBAIHN0YXRpYyB2b2lk
-IG1pY19kaXNhYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpIHsgfQogc3RhdGljIHZvaWQg
-bWljX3Bvc3RfZGlzYWJsZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogewogCXN0cnVjdCBl
-eHlub3NfbWljICptaWMgPSBicmlkZ2UtPmRyaXZlcl9wcml2YXRlOwotCWludCBpOwogCiAJbXV0
-ZXhfbG9jaygmbWljX211dGV4KTsKIAlpZiAoIW1pYy0+ZW5hYmxlZCkKQEAgLTMyMCw5ICszMjAs
-NyBAQCBzdGF0aWMgdm9pZCBtaWNfcG9zdF9kaXNhYmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlk
-Z2UpCiAKIAltaWNfc2V0X3BhdGgobWljLCAwKTsKIAotCWZvciAoaSA9IE5VTV9DTEtTIC0gMTsg
-aSA+IC0xOyBpLS0pCi0JCWNsa19kaXNhYmxlX3VucHJlcGFyZShtaWMtPmNsa3NbaV0pOwotCisJ
-cG1fcnVudGltZV9wdXQobWljLT5kZXYpOwogCW1pYy0+ZW5hYmxlZCA9IDA7CiAKIGFscmVhZHlf
-ZGlzYWJsZWQ6CkBAIC0zMzIsMjcgKzMzMCwyMiBAQCBzdGF0aWMgdm9pZCBtaWNfcG9zdF9kaXNh
-YmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiBzdGF0aWMgdm9pZCBtaWNfcHJlX2VuYWJs
-ZShzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQogewogCXN0cnVjdCBleHlub3NfbWljICptaWMg
-PSBicmlkZ2UtPmRyaXZlcl9wcml2YXRlOwotCWludCByZXQsIGk7CisJaW50IHJldDsKIAogCW11
-dGV4X2xvY2soJm1pY19tdXRleCk7CiAJaWYgKG1pYy0+ZW5hYmxlZCkKLQkJZ290byBhbHJlYWR5
-X2VuYWJsZWQ7CisJCWdvdG8gdW5sb2NrOwogCi0JZm9yIChpID0gMDsgaSA8IE5VTV9DTEtTOyBp
-KyspIHsKLQkJcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxlKG1pYy0+Y2xrc1tpXSk7Ci0JCWlmIChy
-ZXQgPCAwKSB7Ci0JCQlEUk1fRVJST1IoIkZhaWxlZCB0byBlbmFibGUgY2xvY2sgKCVzKVxuIiwK
-LQkJCQkJCQljbGtfbmFtZXNbaV0pOwotCQkJZ290byB0dXJuX29mZl9jbGtzOwotCQl9Ci0JfQor
-CXJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMobWljLT5kZXYpOworCWlmIChyZXQgPCAwKQorCQln
-b3RvIHVubG9jazsKIAogCW1pY19zZXRfcGF0aChtaWMsIDEpOwogCiAJcmV0ID0gbWljX3N3X3Jl
-c2V0KG1pYyk7CiAJaWYgKHJldCkgewogCQlEUk1fRVJST1IoIkZhaWxlZCB0byByZXNldFxuIik7
-Ci0JCWdvdG8gdHVybl9vZmZfY2xrczsKKwkJZ290byB0dXJuX29mZjsKIAl9CiAKIAlpZiAoIW1p
-Yy0+aTgwX21vZGUpCkBAIC0zNjUsMTAgKzM1OCw5IEBAIHN0YXRpYyB2b2lkIG1pY19wcmVfZW5h
-YmxlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCiAKIAlyZXR1cm47CiAKLXR1cm5fb2ZmX2Ns
-a3M6Ci0Jd2hpbGUgKC0taSA+IC0xKQotCQljbGtfZGlzYWJsZV91bnByZXBhcmUobWljLT5jbGtz
-W2ldKTsKLWFscmVhZHlfZW5hYmxlZDoKK3R1cm5fb2ZmOgorCXBtX3J1bnRpbWVfcHV0KG1pYy0+
-ZGV2KTsKK3VubG9jazoKIAltdXRleF91bmxvY2soJm1pY19tdXRleCk7CiB9CiAKQEAgLTQwMSwx
-NCArMzkzLDEyIEBAIHN0YXRpYyB2b2lkIGV4eW5vc19taWNfdW5iaW5kKHN0cnVjdCBkZXZpY2Ug
-KmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAogCQkJICAgICAgdm9pZCAqZGF0YSkKIHsKIAlz
-dHJ1Y3QgZXh5bm9zX21pYyAqbWljID0gZGV2X2dldF9kcnZkYXRhKGRldik7Ci0JaW50IGk7CiAK
-IAltdXRleF9sb2NrKCZtaWNfbXV0ZXgpOwogCWlmICghbWljLT5lbmFibGVkKQogCQlnb3RvIGFs
-cmVhZHlfZGlzYWJsZWQ7CiAKLQlmb3IgKGkgPSBOVU1fQ0xLUyAtIDE7IGkgPiAtMTsgaS0tKQot
-CQljbGtfZGlzYWJsZV91bnByZXBhcmUobWljLT5jbGtzW2ldKTsKKwlwbV9ydW50aW1lX3B1dCht
-aWMtPmRldik7CiAKIGFscmVhZHlfZGlzYWJsZWQ6CiAJbXV0ZXhfdW5sb2NrKCZtaWNfbXV0ZXgp
-OwpAQCAtNDIxLDYgKzQxMSw0MSBAQCBzdGF0aWMgdm9pZCBleHlub3NfbWljX3VuYmluZChzdHJ1
-Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKIAkudW5iaW5kCT0gZXh5bm9z
-X21pY191bmJpbmQsCiB9OwogCisjaWZkZWYgQ09ORklHX1BNCitzdGF0aWMgaW50IGV4eW5vc19t
-aWNfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCit7CisJc3RydWN0IGV4eW5vc19taWMgKm1p
-YyA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOworCWludCBpOworCisJZm9yIChpID0gTlVNX0NMS1Mg
-LSAxOyBpID4gLTE7IGktLSkKKwkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKG1pYy0+Y2xrc1tpXSk7
-CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludCBleHlub3NfbWljX3Jlc3VtZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpCit7CisJc3RydWN0IGV4eW5vc19taWMgKm1pYyA9IGRldl9nZXRfZHJ2ZGF0
-YShkZXYpOworCWludCByZXQsIGk7CisKKwlmb3IgKGkgPSAwOyBpIDwgTlVNX0NMS1M7IGkrKykg
-eworCQlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUobWljLT5jbGtzW2ldKTsKKwkJaWYgKHJldCA8
-IDApIHsKKwkJCURSTV9FUlJPUigiRmFpbGVkIHRvIGVuYWJsZSBjbG9jayAoJXMpXG4iLAorCQkJ
-CQkJCWNsa19uYW1lc1tpXSk7CisJCQl3aGlsZSAoLS1pID4gLTEpCisJCQkJY2xrX2Rpc2FibGVf
-dW5wcmVwYXJlKG1pYy0+Y2xrc1tpXSk7CisJCQlyZXR1cm4gcmV0OworCQl9CisJfQorCXJldHVy
-biAwOworfQorI2VuZGlmCisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBleHlub3Nf
-bWljX3BtX29wcyA9IHsKKwlTRVRfUlVOVElNRV9QTV9PUFMoZXh5bm9zX21pY19zdXNwZW5kLCBl
-eHlub3NfbWljX3Jlc3VtZSwgTlVMTCkKK307CisKIHN0YXRpYyBpbnQgZXh5bm9zX21pY19wcm9i
-ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewogCXN0cnVjdCBkZXZpY2UgKmRldiA9
-ICZwZGV2LT5kZXY7CkBAIC00NzMsOSArNDk4LDE4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX21pY19w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCiAJcGxhdGZvcm1fc2V0X2RydmRh
-dGEocGRldiwgbWljKTsKIAorCXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CisKKwlyZXQgPSBjb21w
-b25lbnRfYWRkKGRldiwgJmV4eW5vc19taWNfY29tcG9uZW50X29wcyk7CisJaWYgKHJldCkKKwkJ
-Z290byBlcnJfcG07CisKIAlEUk1fREVCVUdfS01TKCJNSUMgaGFzIGJlZW4gcHJvYmVkXG4iKTsK
-LQlyZXR1cm4gY29tcG9uZW50X2FkZChkZXYsICZleHlub3NfbWljX2NvbXBvbmVudF9vcHMpOwog
-CisJcmV0dXJuIDA7CisKK2Vycl9wbToKKwlwbV9ydW50aW1lX2Rpc2FibGUoZGV2KTsKIGVycjoK
-IAlyZXR1cm4gcmV0OwogfQpAQCAtNDgzLDYgKzUxNyw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX21p
-Y19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogc3RhdGljIGludCBleHlub3Nf
-bWljX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewogCWNvbXBvbmVudF9k
-ZWwoJnBkZXYtPmRldiwgJmV4eW5vc19taWNfY29tcG9uZW50X29wcyk7CisJcG1fcnVudGltZV9k
-aXNhYmxlKCZwZGV2LT5kZXYpOwogCXJldHVybiAwOwogfQogCkBAIC00OTcsNiArNTMyLDcgQEAg
-c3RydWN0IHBsYXRmb3JtX2RyaXZlciBtaWNfZHJpdmVyID0gewogCS5yZW1vdmUJCT0gZXh5bm9z
-X21pY19yZW1vdmUsCiAJLmRyaXZlcgkJPSB7CiAJCS5uYW1lCT0gImV4eW5vcy1taWMiLAorCQku
-cG0JPSAmZXh5bm9zX21pY19wbV9vcHMsCiAJCS5vd25lcgk9IFRISVNfTU9EVUxFLAogCQkub2Zf
-bWF0Y2hfdGFibGUgPSBleHlub3NfbWljX29mX21hdGNoLAogCX0sCi0tIAoxLjkuMQoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Andrzej,
+
+On 01/13/2017 05:10 PM, Andrzej Hajda wrote:
+> STANDALONE_UPDATE_F should be set if something changed in plane configurations,
+> including plane disable.
+> The patch fixes page-faults bugs, caused by decon still using framebuffers
+> of disabled planes.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> index ef7fcb5..3999e88 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -46,7 +46,8 @@ enum decon_flag_bits {
+>  	BIT_CLKS_ENABLED,
+>  	BIT_IRQS_ENABLED,
+>  	BIT_WIN_UPDATED,
+> -	BIT_SUSPENDED
+> +	BIT_SUSPENDED,
+> +	BIT_REQUEST_UPDATE
+>  };
+>  
+>  struct decon_context {
+> @@ -313,6 +314,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+>  
+>  	/* window enable */
+>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
+> +	set_bit(BIT_REQUEST_UPDATE, &ctx->flags);
+>  }
+>  
+>  static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+> @@ -325,6 +327,7 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
+>  		return;
+>  
+>  	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
+> +	set_bit(BIT_REQUEST_UPDATE, &ctx->flags);
+>  }
+>  
+>  static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+> @@ -339,8 +342,10 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+>  		decon_shadow_protect_win(ctx, i, false);
+>  
+>  	/* update iff there are active windows */
+> -	if (crtc->base.state->plane_mask)
+> +	if (test_bit(BIT_REQUEST_UPDATE, &ctx->flags)) {
+>  		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+> +		set_bit(BIT_REQUEST_UPDATE, &ctx->flags);
+> +	}
+
+There is no code to clear BIT_REQUEST_UPDATE, is it right?
+
+Thanks.
