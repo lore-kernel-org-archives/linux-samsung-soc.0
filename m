@@ -1,19 +1,14 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/4] ARM: exynos: Mach/soc for v4.11
-Date: Fri, 13 Jan 2017 17:20:27 +0200
-Message-ID: <20170113152030.13586-1-krzk@kernel.org>
+Subject: [GIT PULL 4/4] ARM: defconfig: exynos: Defconfig for v4.11
+Date: Fri, 13 Jan 2017 17:20:30 +0200
+Message-ID: <20170113152030.13586-4-krzk@kernel.org>
+References: <20170113152030.13586-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170113152030.13586-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi,
-
-Mostly cleanups for v4.11.
-
-Best regards,
-Krzysztof
 
 
 The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
@@ -22,42 +17,24 @@ The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.11
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.11
 
-for you to fetch changes up to cda1a52dab50340728e46601e6c9da9fc4beaf1f:
+for you to fetch changes up to 74b0ee7579f279dae053053008d29f10f3890c07:
 
-  ARM: s3c64xx: Constify wake_irqs (2016-12-29 15:41:44 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc update for v4.11. Mostly cleanups:
-1. Removal of unused platform data in S3C24XX and S3C64xx as follow up of
-   conversion to new DMA channel request API.
-2. Adding const and __ro_after_init to various data in Samsung platforms.
+  ARM: exynos_defconfig: Enable IP multicast (2016-12-29 16:04:57 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (7):
-      ARM: EXYNOS: Constify list of retention registers
-      ARM: EXYNOS: Annotate iomem and pm_data pointers __ro_after_init
-      ARM: s3c24xx: Constify few integer tables
-      ARM: s3c64xx: Annotate external clock frequencies __ro_after_init
-      ARM: SAMSUNG: Constify array of wake irqs passed to samsung_sync_wakemask
-      ARM: s3c24xx: Constify wake_irqs
-      ARM: s3c64xx: Constify wake_irqs
+Samsung defconfig update for v4.11:
+1. Cleanup from old MACHs in s5pv210.
+2. Enable IP_MULTICAST for libnss-mdns.
 
-Sylwester Nawrocki (2):
-      ARM: s3c64xx: Drop initialization of unused struct s3c_audio_pdata fields
-      ARM: s3c24xx: Drop unused struct s3c_audio_pdata entries
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: s5pv210_defconfig: Remove old MACHs
 
- arch/arm/mach-exynos/exynos.c                    |  4 ++--
- arch/arm/mach-exynos/mcpm-exynos.c               |  2 +-
- arch/arm/mach-exynos/suspend.c                   | 10 +++++-----
- arch/arm/mach-s3c24xx/bast-irq.c                 |  4 ++--
- arch/arm/mach-s3c24xx/iotiming-s3c2410.c         |  2 +-
- arch/arm/mach-s3c24xx/pm-s3c2412.c               |  2 +-
- arch/arm/mach-s3c64xx/common.c                   |  3 ++-
- arch/arm/mach-s3c64xx/dev-audio.c                | 19 -------------------
- arch/arm/mach-s3c64xx/pm.c                       |  2 +-
- arch/arm/plat-samsung/devs.c                     | 19 -------------------
- arch/arm/plat-samsung/include/plat/wakeup-mask.h |  2 +-
- arch/arm/plat-samsung/wakeup-mask.c              |  2 +-
- 12 files changed, 17 insertions(+), 54 deletions(-)
+Robie Basak (1):
+      ARM: exynos_defconfig: Enable IP multicast
+
+ arch/arm/configs/exynos_defconfig  | 1 +
+ arch/arm/configs/s5pv210_defconfig | 4 ----
+ 2 files changed, 1 insertion(+), 4 deletions(-)
