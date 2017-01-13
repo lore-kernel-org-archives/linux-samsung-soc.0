@@ -1,53 +1,62 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v3] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if
  planes are disabled
-Date: Fri, 13 Jan 2017 17:55:53 +0900
-Message-ID: <aa240581-5f90-400b-baef-f6488dec939a@samsung.com>
-References: <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
- <CGME20170113084308eucas1p24db5cafc0cc94556beaabfc4cfde8200@eucas1p2.samsung.com>
- <1484296979-17195-1-git-send-email-a.hajda@samsung.com>
+Date: Fri, 13 Jan 2017 10:20:58 +0100
+Message-ID: <1484299258-2371-1-git-send-email-a.hajda@samsung.com>
+References: <aa240581-5f90-400b-baef-f6488dec939a@samsung.com>
+ <CGME20170113092102eucas1p2e9cc739f2ff96b5ad760f5e5c821037d@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39956 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751304AbdAMIz0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 03:55:26 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJP01TVFNGCS580@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jan 2017 17:55:24 +0900 (KST)
-In-reply-to: <1484296979-17195-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <aa240581-5f90-400b-baef-f6488dec939a@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hi Andrzej,
-
-On 01/13/2017 05:42 PM, Andrzej Hajda wrote:
-> @@ -339,8 +342,10 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
->  		decon_shadow_protect_win(ctx, i, false);
->  
->  	/* update iff there are active windows */
-> -	if (crtc->base.state->plane_mask)
-> +	if (test_bit(BIT_REQUEST_UPDATE, &ctx->flags)) {
-
-It's better to just use test_and_clear_bit?
-
->  		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
-> +		clear_bit(BIT_REQUEST_UPDATE, &ctx->flags);
-> +	}
->  
->  	if (ctx->out_type & IFTYPE_I80)
->  		set_bit(BIT_WIN_UPDATED, &ctx->flags);
-> 
-
-I tested on TM2E board,
-
-Tested-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Thanks.
+U1RBTkRBTE9ORV9VUERBVEVfRiBzaG91bGQgYmUgc2V0IGlmIHNvbWV0aGluZyBjaGFuZ2VkIGlu
+IHBsYW5lIGNvbmZpZ3VyYXRpb25zLAppbmNsdWRpbmcgcGxhbmUgZGlzYWJsZS4KVGhlIHBhdGNo
+IGZpeGVzIHBhZ2UtZmF1bHRzIGJ1Z3MsIGNhdXNlZCBieSBkZWNvbiBzdGlsbCB1c2luZyBmcmFt
+ZWJ1ZmZlcnMKb2YgZGlzYWJsZWQgcGxhbmVzLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpk
+YSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KVGVzdGVkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIy
+LnNoaW1Ac2Ftc3VuZy5jb20+Ci0tLQp2MjogZml4ZWQgY2xlYXItYml0IGNvZGUgKFRoeCBNYXJl
+aykKdjM6IHVzZSB0ZXN0X2FuZF9jbGVhcl9iaXQgKFRoeCBKb29ueW91bmcpCi0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgOCArKysrKy0tLQogMSBm
+aWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggZWY3ZmNiNS4uMDll
+OGNjMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
+ZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24u
+YwpAQCAtNDYsNyArNDYsOCBAQCBlbnVtIGRlY29uX2ZsYWdfYml0cyB7CiAJQklUX0NMS1NfRU5B
+QkxFRCwKIAlCSVRfSVJRU19FTkFCTEVELAogCUJJVF9XSU5fVVBEQVRFRCwKLQlCSVRfU1VTUEVO
+REVECisJQklUX1NVU1BFTkRFRCwKKwlCSVRfUkVRVUVTVF9VUERBVEUKIH07CiAKIHN0cnVjdCBk
+ZWNvbl9jb250ZXh0IHsKQEAgLTMxMyw2ICszMTQsNyBAQCBzdGF0aWMgdm9pZCBkZWNvbl91cGRh
+dGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAogCS8qIHdpbmRvdyBlbmFi
+bGUgKi8KIAlkZWNvbl9zZXRfYml0cyhjdHgsIERFQ09OX1dJTkNPTngod2luKSwgV0lOQ09OeF9F
+TldJTl9GLCB+MCk7CisJc2V0X2JpdChCSVRfUkVRVUVTVF9VUERBVEUsICZjdHgtPmZsYWdzKTsK
+IH0KIAogc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9zX2RybV9j
+cnRjICpjcnRjLApAQCAtMzI1LDYgKzMyNyw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rpc2FibGVf
+cGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKIAkJcmV0dXJuOwogCiAJZGVjb25f
+c2V0X2JpdHMoY3R4LCBERUNPTl9XSU5DT054KHdpbiksIFdJTkNPTnhfRU5XSU5fRiwgMCk7CisJ
+c2V0X2JpdChCSVRfUkVRVUVTVF9VUERBVEUsICZjdHgtPmZsYWdzKTsKIH0KIAogc3RhdGljIHZv
+aWQgZGVjb25fYXRvbWljX2ZsdXNoKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCkBAIC0z
+MzgsOCArMzQxLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fYXRvbWljX2ZsdXNoKHN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgKmNydGMpCiAJZm9yIChpID0gY3R4LT5maXJzdF93aW47IGkgPCBXSU5ET1dT
+X05SOyBpKyspCiAJCWRlY29uX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIGksIGZhbHNlKTsKIAot
+CS8qIHVwZGF0ZSBpZmYgdGhlcmUgYXJlIGFjdGl2ZSB3aW5kb3dzICovCi0JaWYgKGNydGMtPmJh
+c2Uuc3RhdGUtPnBsYW5lX21hc2spCisJaWYgKHRlc3RfYW5kX2NsZWFyX2JpdChCSVRfUkVRVUVT
+VF9VUERBVEUsICZjdHgtPmZsYWdzKSkKIAkJZGVjb25fc2V0X2JpdHMoY3R4LCBERUNPTl9VUERB
+VEUsIFNUQU5EQUxPTkVfVVBEQVRFX0YsIH4wKTsKIAogCWlmIChjdHgtPm91dF90eXBlICYgSUZU
+WVBFX0k4MCkKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
