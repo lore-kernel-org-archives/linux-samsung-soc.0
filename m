@@ -1,32 +1,72 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if
- planes are disabled
-Date: Fri, 13 Jan 2017 09:44:39 +0100
-Message-ID: <37cb6960-2d87-66db-bbd7-2588be64a9e9@samsung.com>
-References: <CGME20170113081037eucas1p2a87c058901f1bf9544a36b798b8349ff@eucas1p2.samsung.com>
- <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
- <186cdcc7-be8a-db9a-878d-d2358c3cb139@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [patch] spi: s3c64xx: potential oops on probe error
+Date: Fri, 13 Jan 2017 09:52:38 +0100
+Message-ID: <50005d2c-9a1d-45f5-fe6c-7877d35cf442@samsung.com>
+References: <CGME20170113074414epcas3p2474dd2512aa5b64989bee3696c7c48f8@epcas3p2.samsung.com>
+ <20170113074253.GA30524@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <186cdcc7-be8a-db9a-878d-d2358c3cb139@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:12948 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbdAMIwo (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 13 Jan 2017 03:52:44 -0500
+In-reply-to: <20170113074253.GA30524@mwanda>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gMTMuMDEuMjAxNyAwOTozNywgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4KPiBUaGVyZSBpcyBu
-byBjb2RlIHRvIGNsZWFyIEJJVF9SRVFVRVNUX1VQREFURSwgaXMgaXQgcmlnaHQ/CgpNYXJlayBo
-YXMgYWxyZWFkeSBwb2ludGVkIGl0IG91dCwgdjIgc2VudC4KClJlZ2FyZHMKQW5kcnplagoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Dan,
+
+
+On 2017-01-13 08:42, Dan Carpenter wrote:
+> We accidentally mixed up freeing the rx and tx channels which would a
+> leak and an oops.
+>
+> Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Right, my fault. Thanks for the fix!
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 849ee82..b8cd356 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>   		if (IS_ERR(sdd->tx_dma.ch)) {
+>   			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
+>   			ret = PTR_ERR(sdd->tx_dma.ch);
+> -			goto err_release_tx_dma;
+> +			goto err_release_rx_dma;
+>   		}
+>   	}
+>   
+> @@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>   	pm_runtime_set_suspended(&pdev->dev);
+>   
+>   	if (!is_polling(sdd))
+> -		dma_release_channel(sdd->rx_dma.ch);
+> -err_release_tx_dma:
+> -	if (!is_polling(sdd))
+>   		dma_release_channel(sdd->tx_dma.ch);
+> +err_release_rx_dma:
+> +	if (!is_polling(sdd))
+> +		dma_release_channel(sdd->rx_dma.ch);
+>   err_disable_io_clk:
+>   	clk_disable_unprepare(sdd->ioclk);
+>   err_disable_src_clk:
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
