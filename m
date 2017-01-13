@@ -1,72 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [patch] spi: s3c64xx: potential oops on probe error
-Date: Fri, 13 Jan 2017 09:52:38 +0100
-Message-ID: <50005d2c-9a1d-45f5-fe6c-7877d35cf442@samsung.com>
-References: <CGME20170113074414epcas3p2474dd2512aa5b64989bee3696c7c48f8@epcas3p2.samsung.com>
- <20170113074253.GA30524@mwanda>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos/decon5433: set STANDALONE_UPDATE_F also if
+ planes are disabled
+Date: Fri, 13 Jan 2017 17:55:53 +0900
+Message-ID: <aa240581-5f90-400b-baef-f6488dec939a@samsung.com>
+References: <1484295026-16435-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170113084308eucas1p24db5cafc0cc94556beaabfc4cfde8200@eucas1p2.samsung.com>
+ <1484296979-17195-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12948 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751146AbdAMIwo (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:39956 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751304AbdAMIz0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Jan 2017 03:52:44 -0500
-In-reply-to: <20170113074253.GA30524@mwanda>
+        Fri, 13 Jan 2017 03:55:26 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OJP01TVFNGCS580@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jan 2017 17:55:24 +0900 (KST)
+In-reply-to: <1484296979-17195-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hi Dan,
+Hi Andrzej,
 
+On 01/13/2017 05:42 PM, Andrzej Hajda wrote:
+> @@ -339,8 +342,10 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
+>  		decon_shadow_protect_win(ctx, i, false);
+>  
+>  	/* update iff there are active windows */
+> -	if (crtc->base.state->plane_mask)
+> +	if (test_bit(BIT_REQUEST_UPDATE, &ctx->flags)) {
 
-On 2017-01-13 08:42, Dan Carpenter wrote:
-> We accidentally mixed up freeing the rx and tx channels which would a
-> leak and an oops.
->
-> Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's better to just use test_and_clear_bit?
 
-Right, my fault. Thanks for the fix!
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>  		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
+> +		clear_bit(BIT_REQUEST_UPDATE, &ctx->flags);
+> +	}
+>  
+>  	if (ctx->out_type & IFTYPE_I80)
+>  		set_bit(BIT_WIN_UPDATED, &ctx->flags);
+> 
 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 849ee82..b8cd356 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->   		if (IS_ERR(sdd->tx_dma.ch)) {
->   			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
->   			ret = PTR_ERR(sdd->tx_dma.ch);
-> -			goto err_release_tx_dma;
-> +			goto err_release_rx_dma;
->   		}
->   	}
->   
-> @@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->   	pm_runtime_set_suspended(&pdev->dev);
->   
->   	if (!is_polling(sdd))
-> -		dma_release_channel(sdd->rx_dma.ch);
-> -err_release_tx_dma:
-> -	if (!is_polling(sdd))
->   		dma_release_channel(sdd->tx_dma.ch);
-> +err_release_rx_dma:
-> +	if (!is_polling(sdd))
-> +		dma_release_channel(sdd->rx_dma.ch);
->   err_disable_io_clk:
->   	clk_disable_unprepare(sdd->ioclk);
->   err_disable_src_clk:
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+I tested on TM2E board,
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Tested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Thanks.
