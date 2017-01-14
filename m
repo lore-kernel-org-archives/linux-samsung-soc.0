@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC not supported anymore)
-Date: Sat, 14 Jan 2017 14:36:41 +0200
-Message-ID: <20170114123642.15581-4-krzk@kernel.org>
+Subject: [PATCH 4/4] drm: exynos: Remove support for Exynos4415 (SoC not supported anymore)
+Date: Sat, 14 Jan 2017 14:36:42 +0200
+Message-ID: <20170114123642.15581-5-krzk@kernel.org>
 References: <20170114123642.15581-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170114123642.15581-1-krzk@kernel.org>
@@ -17,121 +17,120 @@ the platform cannot be instantiated so remove also the drivers.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 75 -------------------------------
- drivers/pinctrl/samsung/pinctrl-samsung.c |  2 -
- drivers/pinctrl/samsung/pinctrl-samsung.h |  1 -
- 3 files changed, 78 deletions(-)
+ .../devicetree/bindings/display/exynos/exynos_dsim.txt |  1 -
+ .../bindings/display/exynos/samsung-fimd.txt           |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c                | 15 +--------------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c               | 18 ++----------------
+ 4 files changed, 3 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 07409fde02b2..24814db251a7 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -919,81 +919,6 @@ const struct samsung_pin_ctrl exynos4x12_pin_ctrl[] __initconst = {
- 	},
+diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+index a78265993665..ca5204b3bc21 100644
+--- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+@@ -4,7 +4,6 @@ Required properties:
+   - compatible: value should be one of the following
+ 		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
+ 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
+-		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+ 		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+ 		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
+diff --git a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
+index c7c6b9af87ac..c7ffe614ab2d 100644
+--- a/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
+@@ -11,7 +11,6 @@ Required properties:
+ 		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
+ 		"samsung,exynos3250-fimd"; /* for Exynos3250/3472 SoCs */
+ 		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
+-		"samsung,exynos4415-fimd"; /* for Exynos4415 SoC */
+ 		"samsung,exynos5250-fimd"; /* for Exynos5250 SoCs */
+ 		"samsung,exynos5420-fimd"; /* for Exynos5420/5422/5800 SoCs */
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 812e2ec0761d..ef6f9c6de098 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -86,7 +86,7 @@
+ #define DSIM_SYNC_INFORM		(1 << 27)
+ #define DSIM_EOT_DISABLE		(1 << 28)
+ #define DSIM_MFLUSH_VS			(1 << 29)
+-/* This flag is valid only for exynos3250/3472/4415/5260/5430 */
++/* This flag is valid only for exynos3250/3472/5260/5430 */
+ #define DSIM_CLKLANE_STOP		(1 << 30)
+ 
+ /* DSIM_ESCMODE */
+@@ -473,17 +473,6 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ 	.reg_values = reg_values,
  };
  
--/* pin banks of exynos4415 pin-controller 0 */
--static const struct samsung_pin_bank_data exynos4415_pin_banks0[] = {
--	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
--	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
--	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
--	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
--	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0", 0x30),
--	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1", 0x34),
--	EXYNOS_PIN_BANK_EINTG(1, 0x1C0, "gpf2", 0x38),
+-static const struct exynos_dsi_driver_data exynos4415_dsi_driver_data = {
+-	.reg_ofs = exynos_reg_ofs,
+-	.plltmr_reg = 0x58,
+-	.has_clklane_stop = 1,
+-	.num_clks = 2,
+-	.max_freq = 1000,
+-	.wait_for_reset = 1,
+-	.num_bits_resol = 11,
+-	.reg_values = reg_values,
 -};
 -
--/* pin banks of exynos4415 pin-controller 1 */
--static const struct samsung_pin_bank_data exynos4415_pin_banks1[] = {
--	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3", 0x14),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpl0", 0x18),
--	EXYNOS_PIN_BANK_EINTN(6, 0x120, "mp00"),
--	EXYNOS_PIN_BANK_EINTN(4, 0x140, "mp01"),
--	EXYNOS_PIN_BANK_EINTN(6, 0x160, "mp02"),
--	EXYNOS_PIN_BANK_EINTN(8, 0x180, "mp03"),
--	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "mp04"),
--	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "mp05"),
--	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "mp06"),
--	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
--	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
--	EXYNOS_PIN_BANK_EINTG(5, 0x2A0, "gpm2", 0x2c),
--	EXYNOS_PIN_BANK_EINTG(8, 0x2C0, "gpm3", 0x30),
--	EXYNOS_PIN_BANK_EINTG(8, 0x2E0, "gpm4", 0x34),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+ 	.reg_ofs = exynos_reg_ofs,
+ 	.plltmr_reg = 0x58,
+@@ -521,8 +510,6 @@ static const struct of_device_id exynos_dsi_of_match[] = {
+ 	  .data = &exynos3_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos4210-mipi-dsi",
+ 	  .data = &exynos4_dsi_driver_data },
+-	{ .compatible = "samsung,exynos4415-mipi-dsi",
+-	  .data = &exynos4415_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5410-mipi-dsi",
+ 	  .data = &exynos5_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5422-mipi-dsi",
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 745cfbdf6b39..7ba50549283e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -71,10 +71,10 @@
+ #define TRIGCON				0x1A4
+ #define TRGMODE_ENABLE			(1 << 0)
+ #define SWTRGCMD_ENABLE			(1 << 1)
+-/* Exynos3250, 3472, 4415, 5260 5410, 5420 and 5422 only supported. */
++/* Exynos3250, 3472, 5260 5410, 5420 and 5422 only supported. */
+ #define HWTRGEN_ENABLE			(1 << 3)
+ #define HWTRGMASK_ENABLE		(1 << 4)
+-/* Exynos3250, 3472, 4415, 5260, 5420 and 5422 only supported. */
++/* Exynos3250, 3472, 5260, 5420 and 5422 only supported. */
+ #define HWTRIGEN_PER_ENABLE		(1 << 31)
+ 
+ /* display mode change control register except exynos4 */
+@@ -140,18 +140,6 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.has_vtsel = 1,
+ };
+ 
+-static struct fimd_driver_data exynos4415_fimd_driver_data = {
+-	.timing_base = 0x20000,
+-	.lcdblk_offset = 0x210,
+-	.lcdblk_vt_shift = 10,
+-	.lcdblk_bypass_shift = 1,
+-	.trg_type = I80_HW_TRG,
+-	.has_shadowcon = 1,
+-	.has_vidoutcon = 1,
+-	.has_vtsel = 1,
+-	.has_trigger_per_te = 1,
 -};
 -
--/* pin banks of exynos4415 pin-controller 2 */
--static const struct samsung_pin_bank_data exynos4415_pin_banks2[] = {
--	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz", 0x00),
--	EXYNOS_PIN_BANK_EINTN(2, 0x000, "etc1"),
--};
--
--/*
-- * Samsung pinctrl driver data for Exynos4415 SoC. Exynos4415 SoC includes
-- * three gpio/pin-mux/pinconfig controllers.
-- */
--const struct samsung_pin_ctrl exynos4415_pin_ctrl[] = {
--	{
--		/* pin-controller instance 0 data */
--		.pin_banks	= exynos4415_pin_banks0,
--		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks0),
--		.eint_gpio_init = exynos_eint_gpio_init,
--		.suspend	= exynos_pinctrl_suspend,
--		.resume		= exynos_pinctrl_resume,
--	}, {
--		/* pin-controller instance 1 data */
--		.pin_banks	= exynos4415_pin_banks1,
--		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks1),
--		.eint_gpio_init = exynos_eint_gpio_init,
--		.eint_wkup_init = exynos_eint_wkup_init,
--		.suspend	= exynos_pinctrl_suspend,
--		.resume		= exynos_pinctrl_resume,
--	}, {
--		/* pin-controller instance 2 data */
--		.pin_banks	= exynos4415_pin_banks2,
--		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks2),
--		.eint_gpio_init = exynos_eint_gpio_init,
--		.suspend	= exynos_pinctrl_suspend,
--		.resume		= exynos_pinctrl_resume,
--	},
--};
--
- /* pin banks of exynos5250 pin-controller 0 */
- static const struct samsung_pin_bank_data exynos5250_pin_banks0[] __initconst = {
- 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 41e62391c33c..3bc925f61b71 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1238,8 +1238,6 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos4210_pin_ctrl },
- 	{ .compatible = "samsung,exynos4x12-pinctrl",
- 		.data = (void *)exynos4x12_pin_ctrl },
--	{ .compatible = "samsung,exynos4415-pinctrl",
--		.data = (void *)exynos4415_pin_ctrl },
- 	{ .compatible = "samsung,exynos5250-pinctrl",
- 		.data = (void *)exynos5250_pin_ctrl },
- 	{ .compatible = "samsung,exynos5260-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 043cb6c11180..6f7ce7539a00 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -273,7 +273,6 @@ struct samsung_pmx_func {
- extern const struct samsung_pin_ctrl exynos3250_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos4210_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
--extern const struct samsung_pin_ctrl exynos4415_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5260_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5410_pin_ctrl[];
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.timing_base = 0x20000,
+ 	.lcdblk_offset = 0x214,
+@@ -212,8 +200,6 @@ static const struct of_device_id fimd_driver_dt_match[] = {
+ 	  .data = &exynos3_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos4210-fimd",
+ 	  .data = &exynos4_fimd_driver_data },
+-	{ .compatible = "samsung,exynos4415-fimd",
+-	  .data = &exynos4415_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos5250-fimd",
+ 	  .data = &exynos5_fimd_driver_data },
+ 	{ .compatible = "samsung,exynos5420-fimd",
 -- 
 2.9.3
