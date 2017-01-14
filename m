@@ -1,40 +1,52 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 16/37] PCI: endpoint: Introduce configfs entry for
- configuring EP functions
-Date: Fri, 13 Jan 2017 19:06:02 +0100
-Message-ID: <20170113180602.GA30346@infradead.org>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-17-git-send-email-kishon@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1484216786-17292-17-git-send-email-kishon@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: devicetree@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/4] Drop drivers for Exynos4415
+Date: Sat, 14 Jan 2017 14:36:38 +0200
+Message-ID: <20170114123642.15581-1-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-deve
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
+Hi,
 
-a couple comments on the configfs layout based on my experiments with
-your previous drop to implement a NVMe device using it.
+Support for Exynos4415 is being removed because:
+1. There are no upstream users,
+2. There are no known downstream users,
+3. Except compile testing, you cannot build working kernel
+   for Exynos4415 anymore.
 
-I don't think most of these configfs files should be present here, as
-they are properties of the implemented PCIe devices.  E.g. for my
-NVMe device they will be sort of hardcoded most of the time, as they
-would be for other devices that would always have a fixed vendor/device/
-class ID, cacheline size, etc.
+Patches are rebased on current next and are independent.
+Please pick up as you wish.
 
-In the end what we'll to be able to do here is to be able to create
-a directory for each function driver, which then can create it's own
-attributes inside it.
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (4):
+  ARM: EXYNOS: Remove Exynos4415 driver (SoC not supported anymore)
+  clk: samsung: Remove Exynos4415 driver (SoC not supported anymore)
+  pinctrl: samsung: Remove support for Exynos4415 (SoC not supported
+    anymore)
+  drm: exynos: Remove support for Exynos4415 (SoC not supported anymore)
+
+ .../devicetree/bindings/clock/exynos4415-clock.txt |   38 -
+ .../bindings/display/exynos/exynos_dsim.txt        |    1 -
+ .../bindings/display/exynos/samsung-fimd.txt       |    1 -
+ arch/arm/mach-exynos/Kconfig                       |    5 -
+ arch/arm/mach-exynos/exynos.c                      |    1 -
+ arch/arm/mach-exynos/suspend.c                     |    1 -
+ drivers/clk/samsung/Makefile                       |    1 -
+ drivers/clk/samsung/clk-exynos4415.c               | 1022 --------------------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   15 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   18 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   75 --
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 -
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 -
+ include/dt-bindings/clock/exynos4415.h             |  360 -------
+ 14 files changed, 3 insertions(+), 1538 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+ delete mode 100644 drivers/clk/samsung/clk-exynos4415.c
+ delete mode 100644 include/dt-bindings/clock/exynos4415.h
+
+-- 
+2.9.3
+
