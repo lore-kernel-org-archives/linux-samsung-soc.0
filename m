@@ -1,9 +1,9 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 5/5] PCI: exynos: remove the duplicated codes
-Date: Mon, 16 Jan 2017 15:31:38 +0900
-Message-ID: <20170116063138.25805-6-jh80.chung@samsung.com>
+Subject: [PATCH V3 3/5] PCI: exynos: Remove the unnecessary variables
+Date: Mon, 16 Jan 2017 15:31:36 +0900
+Message-ID: <20170116063138.25805-4-jh80.chung@samsung.com>
 References: <20170116063138.25805-1-jh80.chung@samsung.com>
- <CGME20170116063142epcas1p32d52a367a66410206b3ddb4149fde079@epcas1p3.samsung.com>
+ <CGME20170116063141epcas5p329a9496aabe28a9961176539c47065dc@epcas5p3.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20170116063138.25805-1-jh80.chung@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,8 +11,9 @@ To: linux-pci@vger.kernel.org
 Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Removed the duplicated codes.
-It can use the more simply than now.
+Remove the unnecessary variables(elbi/phy/block_base).
+It needs one resource structure for assigning each resource.
+So it replaces with one 'res' variable.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
@@ -22,51 +23,52 @@ Changelog on V3:
 - None
 Changelog on V2:
 - None
- drivers/pci/host/pci-exynos.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/pci/host/pci-exynos.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index c5892c2..faee7d3 100644
+index 166881a..6255294 100644
 --- a/drivers/pci/host/pci-exynos.c
 +++ b/drivers/pci/host/pci-exynos.c
-@@ -116,30 +116,24 @@ static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
- {
- 	u32 val;
+@@ -507,9 +507,7 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+ 	struct exynos_pcie *ep;
+ 	struct pcie_port *pp;
+ 	struct device_node *np = dev->of_node;
+-	struct resource *elbi_base;
+-	struct resource *phy_base;
+-	struct resource *block_base;
++	struct resource *res;
+ 	int ret;
  
--	if (on) {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	if (on)
- 		val |= PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
--	} else {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_AWMISC);
-+	else
- 		val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
--	}
-+	exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_AWMISC);
- }
+ 	ep = devm_kzalloc(dev, sizeof(*ep), GFP_KERNEL);
+@@ -540,22 +538,22 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto fail_clk;
  
- static void exynos_pcie_sideband_dbi_r_mode(struct exynos_pcie *ep, bool on)
- {
- 	u32 val;
+-	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ep->elbi_base = devm_ioremap_resource(dev, elbi_base);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ep->elbi_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(ep->elbi_base)) {
+ 		ret = PTR_ERR(ep->elbi_base);
+ 		goto fail_bus_clk;
+ 	}
  
--	if (on) {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	if (on)
- 		val |= PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
--	} else {
--		val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_SLV_ARMISC);
-+	else
- 		val &= ~PCIE_ELBI_SLV_DBI_ENABLE;
--		exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
--	}
-+	exynos_pcie_writel(ep->elbi_base, val, PCIE_ELBI_SLV_ARMISC);
- }
+-	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	ep->phy_base = devm_ioremap_resource(dev, phy_base);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	ep->phy_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(ep->phy_base)) {
+ 		ret = PTR_ERR(ep->phy_base);
+ 		goto fail_bus_clk;
+ 	}
  
- static void exynos_pcie_assert_core_reset(struct exynos_pcie *ep)
+-	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	ep->block_base = devm_ioremap_resource(dev, block_base);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
++	ep->block_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(ep->block_base)) {
+ 		ret = PTR_ERR(ep->block_base);
+ 		goto fail_bus_clk;
 -- 
 2.10.2
