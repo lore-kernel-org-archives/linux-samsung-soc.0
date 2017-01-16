@@ -1,39 +1,106 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/4] ARM: EXYNOS: Remove Exynos4415 driver (SoC not
- supported anymore)
-Date: Mon, 16 Jan 2017 12:56:28 +0900
-Message-ID: <587C446C.4090002@samsung.com>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123711epcas1p382a72a6edbe757ca66eb370421e3f1e5@epcas1p3.samsung.com>
- <20170114123642.15581-2-krzk@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 09/37] PCI: dwc: designware: Parse *num-lanes* property in
+ dw_pcie_setup_rc
+Date: Mon, 16 Jan 2017 10:49:57 +0530
+Message-ID: <587C57FD.7050601@ti.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-10-git-send-email-kishon@ti.com>
+ <c3c55af3-29d1-dc59-3ae4-9a4132c99092@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170114123642.15581-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-gpio@vg
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <c3c55af3-29d1-dc59-3ae4-9a4132c99092@synopsys.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joao Pinto <Joao.Pinto@synopsys.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2017년 01월 14일 21:36, Krzysztof Kozlowski wrote:
-> Support for Exynos4415 is going away because there are no internal nor
-> external users.
-> 
-> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-> the platform cannot be instantiated so remove also the mach code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-exynos/Kconfig   | 5 -----
->  arch/arm/mach-exynos/exynos.c  | 1 -
->  arch/arm/mach-exynos/suspend.c | 1 -
->  3 files changed, 7 deletions(-)
+Hi,
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Friday 13 January 2017 10:43 PM, Joao Pinto wrote:
+> Hi,
+> =
 
-[snip]
+> =C0s 10:25 AM de 1/12/2017, Kishon Vijay Abraham I escreveu:
+>> *num-lanes* dt property is parsed in dw_pcie_host_init. However
+>> *num-lanes* property is applicable to both root complex mode and
+>> endpoint mode. As a first step, move the parsing of this property
+>> outside dw_pcie_host_init. This is in preparation for splitting
+>> pcie-designware.c to pcie-designware.c and pcie-designware-host.c
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  drivers/pci/dwc/pcie-designware.c |   18 +++++++++++-------
+>>  drivers/pci/dwc/pcie-designware.h |    1 -
+>>  2 files changed, 11 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-de=
+signware.c
+>> index 00a0fdc..89cdb6b 100644
+>> --- a/drivers/pci/dwc/pcie-designware.c
+>> +++ b/drivers/pci/dwc/pcie-designware.c
+>> @@ -551,10 +551,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>>  		}
+>>  	}
+>>  =
 
--- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
+>> -	ret =3D of_property_read_u32(np, "num-lanes", &pci->lanes);
+>> -	if (ret)
+>> -		pci->lanes =3D 0;
+>> -
+>>  	ret =3D of_property_read_u32(np, "num-viewport", &pci->num_viewport);
+>>  	if (ret)
+>>  		pci->num_viewport =3D 2;
+>> @@ -751,18 +747,26 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u3=
+2 devfn,
+>>  =
+
+>>  void dw_pcie_setup_rc(struct pcie_port *pp)
+>>  {
+>> +	int ret;
+>> +	u32 lanes;
+>>  	u32 val;
+>>  	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
+>> +	struct device *dev =3D pci->dev;
+>> +	struct device_node *np =3D dev->of_node;
+>>  =
+
+>>  	/* get iATU unroll support */
+>>  	pci->iatu_unroll_enabled =3D dw_pcie_iatu_unroll_enabled(pci);
+>>  	dev_dbg(pci->dev, "iATU unroll: %s\n",
+>>  		pci->iatu_unroll_enabled ? "enabled" : "disabled");
+>>  =
+
+>> +	ret =3D of_property_read_u32(np, "num-lanes", &lanes);
+>> +	if (ret)
+>> +		lanes =3D 0;
+> =
+
+> You moved from host_init to root complex setup function, which in my opin=
+ion did
+> not improve (in this scope).
+> =
+
+> I suggest that instead of making so much intermediary patches, which is n=
+ice to
+> understand your development sequence, but hard to review. Wouldn't be bet=
+ter to
+> condense some of the patches? We would have a cloear vision of the final =
+product :)
+
+I thought the other way. If squashing patches is easier to review, I'll do =
+it.
+
+Btw, thanks for reviewing.
+
+Cheers
+Kishon
