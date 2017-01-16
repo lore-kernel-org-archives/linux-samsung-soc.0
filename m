@@ -1,38 +1,33 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 16/37] PCI: endpoint: Introduce configfs entry for
- configuring EP functions
-Date: Mon, 16 Jan 2017 07:51:10 -0800
-Message-ID: <20170116155110.GA13495@infradead.org>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-17-git-send-email-kishon@ti.com>
- <20170113180602.GA30346@infradead.org> <587C61B3.3070107@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 04/12] pinctrl: samsung: Document Exynos3250 SoC support
+Date: Mon, 16 Jan 2017 21:01:28 +0200
+Message-ID: <20170116190128.nylf37ra6iio7ly4@kozik-lap>
+References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170116064525eucas1p123df65dedceef6e3efe255e9a2ec6d07@eucas1p1.samsung.com>
+ <1484549107-5957-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <587C61B3.3070107@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: devicetree@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, Christoph Hellwig <hch@infradead.org>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1484549107-5957-5-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 11:31:23AM +0530, Kishon Vijay Abraham I wrote:
-> Actually not all devices have hardcoded headers. E.g the platform I'm using
-> doesn't have hardcoded headers and it can be configured based on the function
-> the user would like to use. If the devices are hardcoded, then using configfs
-> can be skipped altogether. In such cases, APIs like pci_epf_create() can
-> directly be used by the drivers instead of going via configfs.
+On Mon, Jan 16, 2017 at 07:44:59AM +0100, Marek Szyprowski wrote:
+> Add missing compatible id for Exynos3250 SoC to device tree docs.
+> Exynos pin control driver supports it since commit d97f5b9804bfcdc1
+> ("pinctrl: exynos: Add driver data for Exynos3250").
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-That's exactly what I meant - the IDs need to be set by the driver for
-the implemented PCI device, and it's not up to the gadget core to configur
-e them, it's up to the implementation of the PCIe device which PCI it
-exposes.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
