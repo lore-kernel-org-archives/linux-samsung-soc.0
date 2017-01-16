@@ -1,138 +1,88 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 06/12] pinctrl: samsung: Add missing initconst annotation
-Date: Mon, 16 Jan 2017 21:14:00 +0200
-Message-ID: <20170116191400.ehm3ivkmz4csynvq@kozik-lap>
+Subject: Re: [PATCH 08/12] pinctrl: samsung: Use generic
+ of_device_get_match_data helper
+Date: Mon, 16 Jan 2017 21:19:12 +0200
+Message-ID: <20170116191912.duvzdsvetgebbvrh@kozik-lap>
 References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170116064526eucas1p1e3064fad71a3ab8de34d306dec531b14@eucas1p1.samsung.com>
- <1484549107-5957-7-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170116064527eucas1p1950a217ba6563a443bb44e8e87cc26b1@eucas1p1.samsung.com>
+ <1484549107-5957-9-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1484549107-5957-7-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1484549107-5957-9-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 07:45:01AM +0100, Marek Szyprowski wrote:
-> Exynos5433 support has been added in parallel to adding initconst
-> annotation to most of the init data structures, so add those
-> annotations also to Exynos5433 structures.
+On Mon, Jan 16, 2017 at 07:45:03AM +0100, Marek Szyprowski wrote:
+> Replace custom code with generic helper.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index bf753a596209..70b94ad10cc1 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->  };
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 7648a280c0f4..86f23842f681 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/err.h>
+>  #include <linux/gpio.h>
+>  #include <linux/irqdomain.h>
+> +#include <linux/of_device.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/syscore_ops.h>
 >  
->  /* pin banks of exynos5433 pin-controller - ALIVE */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
->  	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
->  	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-> @@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->  };
+> @@ -955,15 +956,13 @@ static int samsung_gpiolib_unregister(struct platform_device *pdev,
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id samsung_pinctrl_dt_match[];
+> -
+>  /* retrieve the soc specific data */
+>  static const struct samsung_pin_ctrl *
+>  samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+>  			     struct platform_device *pdev)
+>  {
+>  	int id;
+> -	const struct of_device_id *match;
+> +	const struct samsung_pin_ctrl *match_data;
+>  	struct device_node *node = pdev->dev.of_node;
+>  	struct device_node *np;
+>  	const struct samsung_pin_bank_data *bdata;
+> @@ -978,8 +977,8 @@ static int samsung_gpiolib_unregister(struct platform_device *pdev,
+>  		dev_err(&pdev->dev, "failed to get alias id\n");
+>  		return ERR_PTR(-ENOENT);
+>  	}
+> -	match = of_match_node(samsung_pinctrl_dt_match, node);
+> -	ctrl = (struct samsung_pin_ctrl *)match->data + id;
+> +	match_data = of_device_get_match_data(&pdev->dev);
+> +	ctrl = match_data + id;
 
-Your change is aligned with existing code... but after I started to look
-into it I think this should not be initconst.
+I did not receive answer for my previous question here - why you need
+two samsung_pin_ctrl* variables? Why you need additional match_data?
 
-The pin_banks (initconst) are referenced in pin_ctrl (initconst) which
-is referenced in samsung_pinctrl_dt_match (NOT initconst). The dt_match
-then is used in samsung_pinctrl_driver (for obvious reasons not
-initconst).
+Just make it:
+	ctrl = of_device_get_match_data(&pdev->dev);
+	ctrl += id;
+To me it looks simpler and obvious. Having two variables for the same
+brings questions.
 
-We suppress the bind so this looks safe - this data should not be ever used
-after init - but it is not correct strictly speaking.
-
-Let's imagine some weird future platform which will use DT overlays with
-pinctrl. I think the overlays could affect the tree after the init
-stage.
-
-The other question is why the DEBUG_SECTION_MISMATCH is not complaining
-about this...
+If you do not agree, say it. I don't mind. But I would appreciate if
+comments were not ignored.
 
 Best regards,
 Krzysztof
-
->  
->  /* pin banks of exynos5433 pin-controller - AUD */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks1[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks1[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - CPIF */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks2[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks2[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - eSE */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks3[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks3[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - FINGER */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks4[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks4[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - FSYS */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks5[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks5[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
->  	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
-> @@ -1310,17 +1310,17 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->  };
->  
->  /* pin banks of exynos5433 pin-controller - IMEM */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks6[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks6[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - NFC */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks7[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks7[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - PERIC */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks8[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks8[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
->  	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
->  	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
-> @@ -1341,7 +1341,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->  };
->  
->  /* pin banks of exynos5433 pin-controller - TOUCH */
-> -static const struct samsung_pin_bank_data exynos5433_pin_banks9[] = {
-> +static const struct samsung_pin_bank_data exynos5433_pin_banks9[] __initconst = {
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
->  };
->  
-> @@ -1349,7 +1349,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->   * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
->   * ten gpio/pin-mux/pinconfig controllers.
->   */
-> -const struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
-> +const struct samsung_pin_ctrl exynos5433_pin_ctrl[] __initconst = {
->  	{
->  		/* pin-controller instance 0 data */
->  		.pin_banks	= exynos5433_pin_banks0,
-> -- 
-> 1.9.1
-> 
