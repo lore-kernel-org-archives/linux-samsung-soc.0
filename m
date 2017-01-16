@@ -1,152 +1,434 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 09/12] pinctrl: samsung: Add infrastructure for pin-bank
- retention control
-Date: Mon, 16 Jan 2017 07:45:04 +0100
-Message-ID: <1484549107-5957-10-git-send-email-m.szyprowski@samsung.com>
-References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170116064527eucas1p1f0f78e9420e7d9d60d94b6e7381caeb1@eucas1p1.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Jaechul Lee <jcsing.lee@samsung.com>
+Subject: Re: [PATCH v6 2/3] input: tm2-touchkey: Add touchkey driver support
+ for TM2
+Date: Mon, 16 Jan 2017 16:24:47 +0900
+Message-ID: <20170116072447.GA15619@jcsing>
+References: <1483946535-4703-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170109072218epcas1p1f95be49f7f466712c146d1e9163601e1@epcas1p1.samsung.com>
+ <1483946535-4703-3-git-send-email-jcsing.lee@samsung.com>
+ <20170115071110.GA24007@dtor-ws>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <20170115071110.GA24007@dtor-ws>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Pad retention control after suspend/resume cycle should be done from pin
-controller driver instead of PMU (power management unit) driver to avoid
-possible ordering and logical dependencies. Till now it worked fine only
-because PMU driver registered its sys_ops after pin controller.
+Dear Dmitry Torokhov,
 
-This patch adds infrastructure to handle pad retention during pin control
-driver resume.
+On Sat, Jan 14, 2017 at 11:11:10PM -0800, Dmitry Torokhov wrote:
+> Hi Jaechul,
+> 
+> On Mon, Jan 09, 2017 at 04:22:14PM +0900, Jaechul Lee wrote:
+> > +static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+> > +{
+> > +	struct tm2_touchkey_data *touchkey = devid;
+> > +	u32 data;
+> > +
+> > +	data = i2c_smbus_read_byte_data(touchkey->client,
+> > +					TM2_TOUCHKEY_KEYCODE_REG);
+> > +
+> > +	if (data < 0) {
+> 
+> You declared data as u32 so it will never be negative.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++---
- drivers/pinctrl/samsung/pinctrl-samsung.h | 42 +++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 3 deletions(-)
+Yes, it won't be negative.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 86f23842f681..95a84086a2e9 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1075,6 +1075,9 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 		ctrl->eint_gpio_init(drvdata);
- 	if (ctrl->eint_wkup_init)
- 		ctrl->eint_wkup_init(drvdata);
-+	if (ctrl->retention_data && ctrl->retention_data->init)
-+		drvdata->retention_ctrl = ctrl->retention_data->init(drvdata,
-+							  ctrl->retention_data);
- 
- 	platform_set_drvdata(pdev, drvdata);
- 
-@@ -1127,15 +1130,15 @@ static void samsung_pinctrl_suspend_dev(
- 
- 	if (drvdata->suspend)
- 		drvdata->suspend(drvdata);
-+	if (drvdata->retention_ctrl && drvdata->retention_ctrl->on)
-+		drvdata->retention_ctrl->on(drvdata);
-+
- }
- 
- /**
-  * samsung_pinctrl_resume_dev - restore pinctrl state from suspend for a device
-  *
-  * Restore one of the banks that was saved during suspend.
-- *
-- * We don't bother doing anything complicated to avoid glitching lines since
-- * we're called before pad retention is turned off.
-  */
- static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- {
-@@ -1174,6 +1177,9 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- 			if (widths[type])
- 				writel(bank->pm_save[type], reg + offs[type]);
- 	}
-+
-+	if (drvdata->retention_ctrl && drvdata->retention_ctrl->off)
-+		drvdata->retention_ctrl->off(drvdata);
- }
- 
- /**
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 6f7ce7539a00..6079142422f8 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -185,10 +185,48 @@ struct samsung_pin_bank {
- };
- 
- /**
-+ * struct samsung_retention_data: runtime pin-bank retention control data.
-+ * @regs: array of PMU registers to control pad retention.
-+ * @nr_regs: number of registers in @regs array.
-+ * @value: value to store to registers to turn off retention.
-+ * @refcnt: atomic counter if retention control affects more than one bank.
-+ * @priv: retention control code private data
-+ * @on: platform specific callback to enter retention mode.
-+ * @off: platform specific callback to exit retention mode.
-+ **/
-+struct samsung_retention_ctrl {
-+	const u32	*regs;
-+	int		nr_regs;
-+	u32		value;
-+	atomic_t	*refcnt;
-+	void		*priv;
-+	void		(*on)(struct samsung_pinctrl_drv_data *);
-+	void		(*off)(struct samsung_pinctrl_drv_data *);
-+};
-+
-+/**
-+ * struct samsung_retention_data: represent a pin-bank retention control data.
-+ * @regs: array of PMU registers to control pad retention.
-+ * @nr_regs: number of registers in @regs array.
-+ * @value: value to store to registers to turn off retention.
-+ * @refcnt: atomic counter if retention control affects more than one bank.
-+ * @init: platform specific callback to initialize retention control.
-+ **/
-+struct samsung_retention_data {
-+	const u32	*regs;
-+	int		nr_regs;
-+	u32		value;
-+	atomic_t	*refcnt;
-+	struct samsung_retention_ctrl *(*init)(struct samsung_pinctrl_drv_data *,
-+					const struct samsung_retention_data *);
-+};
-+
-+/**
-  * struct samsung_pin_ctrl: represent a pin controller.
-  * @pin_banks: list of pin banks included in this controller.
-  * @nr_banks: number of pin banks.
-  * @nr_ext_resources: number of the extra base address for pin banks.
-+ * @retention_data: configuration data for retention control.
-  * @eint_gpio_init: platform specific callback to setup the external gpio
-  *	interrupts for the controller.
-  * @eint_wkup_init: platform specific callback to setup the external wakeup
-@@ -198,6 +236,7 @@ struct samsung_pin_ctrl {
- 	const struct samsung_pin_bank_data *pin_banks;
- 	u32		nr_banks;
- 	int		nr_ext_resources;
-+	const struct samsung_retention_data *retention_data;
- 
- 	int		(*eint_gpio_init)(struct samsung_pinctrl_drv_data *);
- 	int		(*eint_wkup_init)(struct samsung_pinctrl_drv_data *);
-@@ -219,6 +258,7 @@ struct samsung_pin_ctrl {
-  * @nr_function: number of such pin functions.
-  * @pin_base: starting system wide pin number.
-  * @nr_pins: number of pins supported by the controller.
-+ * @retention_ctrl: retention control runtime data.
-  */
- struct samsung_pinctrl_drv_data {
- 	struct list_head		node;
-@@ -238,6 +278,8 @@ struct samsung_pinctrl_drv_data {
- 	unsigned int			pin_base;
- 	unsigned int			nr_pins;
- 
-+	const struct samsung_retention_ctrl *retention_ctrl;
-+
- 	void (*suspend)(struct samsung_pinctrl_drv_data *);
- 	void (*resume)(struct samsung_pinctrl_drv_data *);
- };
--- 
-1.9.1
+> 
+> > +		dev_err(&touchkey->client->dev, "Failed to read i2c data\n");
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	touchkey->keycode_type = data & TM2_TOUCHKEY_BIT_KEYCODE;
+> > +	touchkey->pressed = !(data & TM2_TOUCHKEY_BIT_PRESS_EV);
+> 
+> There is no need to store this in touchkey structure as you are not
+> going to use it past this function.
 
+I agree with you. it doesn't need to store variables in touchkey structure.
+
+> 
+> Does the version of the patch below work for you?
+
+I found that the condition is inverted.
+if data & TM2_TOUCHKEY_BIT_PRESS_EV is true, it means touchkey is released.
+
+it should be changed like this.
+
+	if (data & TM2_TOUCHKEY_BIT_PRESS_EV) {
+		input_report_key(touchkey->input_dev, KEY_PHONE, 0);
+		input_report_key(touchkey->input_dev, KEY_BACK, 0);
+	} else {
+		input_report_key(touchkey->input_dev, key, 1);
+	}
+
+I will prepare for patch v7 based on your modifications.
+Thank you very much for your reviews.
+
+Best Regards,
+Jaechul
+
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
+> 
+> 
+> Input: tm2-touchkey - add touchkey driver support for TM2
+> 
+> From: Jaechul Lee <jcsing.lee@samsung.com>
+> 
+> This patch adds support for the TM2 touch key and led functionality.
+> 
+> The driver interfaces with userspace through an input device and
+> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
+> controlled by "/sys/class/leds/tm2-touchkey/brightness".
+> 
+> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Patchwork-Id: 9504149
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/keyboard/Kconfig        |   11 +
+>  drivers/input/keyboard/Makefile       |    1 
+>  drivers/input/keyboard/tm2-touchkey.c |  286 +++++++++++++++++++++++++++++++++
+>  3 files changed, 298 insertions(+)
+>  create mode 100644 drivers/input/keyboard/tm2-touchkey.c
+> 
+> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+> index cbd75cf44739..97acd6524ad7 100644
+> --- a/drivers/input/keyboard/Kconfig
+> +++ b/drivers/input/keyboard/Kconfig
+> @@ -666,6 +666,17 @@ config KEYBOARD_TC3589X
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called tc3589x-keypad.
+>  
+> +config KEYBOARD_TM2_TOUCHKEY
+> +	tristate "TM2 touchkey support"
+> +	depends on I2C
+> +	depends on LEDS_CLASS
+> +	help
+> +	  Say Y here to enable device driver for tm2-touchkey with
+> +	  LED control for the Exynos5433 TM2 board.
+> +
+> +	  To compile this driver as a module, choose M here.
+> +	  module will be called tm2-touchkey.
+> +
+>  config KEYBOARD_TWL4030
+>  	tristate "TI TWL4030/TWL5030/TPS659x0 keypad support"
+>  	depends on TWL4030_CORE
+> diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+> index d9f4cfcf3410..7d9acff819a7 100644
+> --- a/drivers/input/keyboard/Makefile
+> +++ b/drivers/input/keyboard/Makefile
+> @@ -61,6 +61,7 @@ obj-$(CONFIG_KEYBOARD_SUN4I_LRADC)	+= sun4i-lradc-keys.o
+>  obj-$(CONFIG_KEYBOARD_SUNKBD)		+= sunkbd.o
+>  obj-$(CONFIG_KEYBOARD_TC3589X)		+= tc3589x-keypad.o
+>  obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
+> +obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
+>  obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
+>  obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
+>  obj-$(CONFIG_KEYBOARD_W90P910)		+= w90p910_keypad.o
+> diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
+> new file mode 100644
+> index 000000000000..79bc2d2bd4b9
+> --- /dev/null
+> +++ b/drivers/input/keyboard/tm2-touchkey.c
+> @@ -0,0 +1,286 @@
+> +/*
+> + * TM2 touchkey device driver
+> + *
+> + * Copyright 2005 Phil Blundell
+> + * Copyright 2016 Samsung Electronics Co., Ltd.
+> + *
+> + * Author: Beomho Seo <beomho.seo@samsung.com>
+> + * Author: Jaechul Lee <jcsing.lee@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/pm.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#define TM2_TOUCHKEY_DEV_NAME		"tm2-touchkey"
+> +#define TM2_TOUCHKEY_KEYCODE_REG	0x03
+> +#define TM2_TOUCHKEY_BASE_REG		0x00
+> +#define TM2_TOUCHKEY_CMD_LED_ON		0x10
+> +#define TM2_TOUCHKEY_CMD_LED_OFF	0x20
+> +#define TM2_TOUCHKEY_BIT_PRESS_EV	BIT(3)
+> +#define TM2_TOUCHKEY_BIT_KEYCODE	GENMASK(2, 0)
+> +#define TM2_TOUCHKEY_LED_VOLTAGE_MIN	2500000
+> +#define TM2_TOUCHKEY_LED_VOLTAGE_MAX	3300000
+> +
+> +enum {
+> +	TM2_TOUCHKEY_KEY_MENU = 0x1,
+> +	TM2_TOUCHKEY_KEY_BACK,
+> +};
+> +
+> +struct tm2_touchkey_data {
+> +	struct i2c_client *client;
+> +	struct input_dev *input_dev;
+> +	struct led_classdev led_dev;
+> +	struct regulator *vdd;
+> +	struct regulator_bulk_data regulators[2];
+> +};
+> +
+> +static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
+> +					    enum led_brightness brightness)
+> +{
+> +	struct tm2_touchkey_data *touchkey =
+> +		container_of(led_dev, struct tm2_touchkey_data, led_dev);
+> +	u32 volt;
+> +	u8 data;
+> +
+> +	if (brightness == LED_OFF) {
+> +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MIN;
+> +		data = TM2_TOUCHKEY_CMD_LED_OFF;
+> +	} else {
+> +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MAX;
+> +		data = TM2_TOUCHKEY_CMD_LED_ON;
+> +	}
+> +
+> +	regulator_set_voltage(touchkey->vdd, volt, volt);
+> +	i2c_smbus_write_byte_data(touchkey->client,
+> +				  TM2_TOUCHKEY_BASE_REG, data);
+> +}
+> +
+> +static int tm2_touchkey_power_enable(struct tm2_touchkey_data *touchkey)
+> +{
+> +	int error;
+> +
+> +	error = regulator_bulk_enable(ARRAY_SIZE(touchkey->regulators),
+> +				      touchkey->regulators);
+> +	if (error)
+> +		return error;
+> +
+> +	/* waiting for device initialization, at least 150ms */
+> +	msleep(150);
+> +
+> +	return 0;
+> +}
+> +
+> +static void tm2_touchkey_power_disable(void *data)
+> +{
+> +	struct tm2_touchkey_data *touchkey = data;
+> +
+> +	regulator_bulk_disable(ARRAY_SIZE(touchkey->regulators),
+> +			       touchkey->regulators);
+> +}
+> +
+> +static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
+> +{
+> +	struct tm2_touchkey_data *touchkey = devid;
+> +	int data;
+> +	int key;
+> +
+> +	data = i2c_smbus_read_byte_data(touchkey->client,
+> +					TM2_TOUCHKEY_KEYCODE_REG);
+> +	if (data < 0) {
+> +		dev_err(&touchkey->client->dev,
+> +			"failed to read i2c data: %d\n", data);
+> +		goto out;
+> +	}
+> +
+> +	switch (data & TM2_TOUCHKEY_BIT_KEYCODE) {
+> +	case TM2_TOUCHKEY_KEY_MENU:
+> +		key = KEY_PHONE;
+> +		break;
+> +
+> +	case TM2_TOUCHKEY_KEY_BACK:
+> +		key = KEY_BACK;
+> +		break;
+> +
+> +	default:
+> +		dev_warn(&touchkey->client->dev,
+> +			 "unhandled keycode, data %#02x\n", data);
+> +		goto out;
+> +	}
+> +
+> +	if (data & TM2_TOUCHKEY_BIT_PRESS_EV) {
+> +		input_report_key(touchkey->input_dev, key, 1);
+> +	} else {
+> +		input_report_key(touchkey->input_dev, KEY_PHONE, 0);
+> +		input_report_key(touchkey->input_dev, KEY_BACK, 0);
+> +	}
+> +
+> +	input_sync(touchkey->input_dev);
+> +
+> +out:
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int tm2_touchkey_probe(struct i2c_client *client,
+> +			      const struct i2c_device_id *id)
+> +{
+> +	struct tm2_touchkey_data *touchkey;
+> +	int error;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +			I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA)) {
+> +		dev_err(&client->dev, "incompatible I2C adapter\n");
+> +		return -EIO;
+> +	}
+> +
+> +	touchkey = devm_kzalloc(&client->dev, sizeof(*touchkey), GFP_KERNEL);
+> +	if (!touchkey)
+> +		return -ENOMEM;
+> +
+> +	touchkey->client = client;
+> +	i2c_set_clientdata(client, touchkey);
+> +
+> +	touchkey->regulators[0].supply = "vcc";
+> +	touchkey->regulators[1].supply = "vdd";
+> +	error = devm_regulator_bulk_get(&client->dev,
+> +					ARRAY_SIZE(touchkey->regulators),
+> +					touchkey->regulators);
+> +	if (error) {
+> +		dev_err(&client->dev, "failed to get regulators: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	/* Save VDD for easy access */
+> +	touchkey->vdd = touchkey->regulators[1].consumer;
+> +
+> +	error = tm2_touchkey_power_enable(touchkey);
+> +	if (error) {
+> +		dev_err(&client->dev, "failed to power up device: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	error = devm_add_action_or_reset(&client->dev,
+> +					 tm2_touchkey_power_disable, touchkey);
+> +	if (error) {
+> +		dev_err(&client->dev,
+> +			"failed to install poweroff handler: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	/* input device */
+> +	touchkey->input_dev = devm_input_allocate_device(&client->dev);
+> +	if (!touchkey->input_dev) {
+> +		dev_err(&client->dev, "failed to allocate input device\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	touchkey->input_dev->name = TM2_TOUCHKEY_DEV_NAME;
+> +	touchkey->input_dev->id.bustype = BUS_I2C;
+> +
+> +	input_set_capability(touchkey->input_dev, EV_KEY, KEY_PHONE);
+> +	input_set_capability(touchkey->input_dev, EV_KEY, KEY_BACK);
+> +
+> +	input_set_drvdata(touchkey->input_dev, touchkey);
+> +
+> +	error = input_register_device(touchkey->input_dev);
+> +	if (error) {
+> +		dev_err(&client->dev,
+> +			"failed to register input device: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	error = devm_request_threaded_irq(&client->dev, client->irq,
+> +					  NULL, tm2_touchkey_irq_handler,
+> +					  IRQF_ONESHOT,
+> +					  TM2_TOUCHKEY_DEV_NAME, touchkey);
+> +	if (error) {
+> +		dev_err(&client->dev,
+> +			"failed to request threaded irq: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	/* led device */
+> +	touchkey->led_dev.name = TM2_TOUCHKEY_DEV_NAME;
+> +	touchkey->led_dev.brightness = LED_FULL;
+> +	touchkey->led_dev.max_brightness = LED_FULL;
+> +	touchkey->led_dev.brightness_set = tm2_touchkey_led_brightness_set;
+> +
+> +	error = devm_led_classdev_register(&client->dev, &touchkey->led_dev);
+> +	if (error) {
+> +		dev_err(&client->dev,
+> +			"failed to register touchkey led: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused tm2_touchkey_suspend(struct device *dev)
+> +{
+> +	struct i2c_client *client = to_i2c_client(dev);
+> +	struct tm2_touchkey_data *touchkey = i2c_get_clientdata(client);
+> +
+> +	disable_irq(client->irq);
+> +	tm2_touchkey_power_disable(touchkey);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused tm2_touchkey_resume(struct device *dev)
+> +{
+> +	struct i2c_client *client = to_i2c_client(dev);
+> +	struct tm2_touchkey_data *touchkey = i2c_get_clientdata(client);
+> +	int ret;
+> +
+> +	enable_irq(client->irq);
+> +
+> +	ret = tm2_touchkey_power_enable(touchkey);
+> +	if (ret)
+> +		dev_err(dev, "failed to enable power: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(tm2_touchkey_pm_ops,
+> +			 tm2_touchkey_suspend, tm2_touchkey_resume);
+> +
+> +static const struct i2c_device_id tm2_touchkey_id_table[] = {
+> +	{ TM2_TOUCHKEY_DEV_NAME, 0 },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(i2c, tm2_touchkey_id_table);
+> +
+> +static const struct of_device_id tm2_touchkey_of_match[] = {
+> +	{ .compatible = "cypress,tm2-touchkey", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, tm2_touchkey_of_match);
+> +
+> +static struct i2c_driver tm2_touchkey_driver = {
+> +	.driver = {
+> +		.name = TM2_TOUCHKEY_DEV_NAME,
+> +		.pm = &tm2_touchkey_pm_ops,
+> +		.of_match_table = of_match_ptr(tm2_touchkey_of_match),
+> +	},
+> +	.probe = tm2_touchkey_probe,
+> +	.id_table = tm2_touchkey_id_table,
+> +};
+> +module_i2c_driver(tm2_touchkey_driver);
+> +
+> +MODULE_AUTHOR("Beomho Seo <beomho.seo@samsung.com>");
+> +MODULE_AUTHOR("Jaechul Lee <jcsing.lee@samsung.com>");
+> +MODULE_DESCRIPTION("Samsung touchkey driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
