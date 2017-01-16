@@ -1,66 +1,102 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove unnecessary codes
-Date: Mon, 16 Jan 2017 10:37:14 +0100
-Message-ID: <f2f5ff44-17e9-9ae3-d01a-efa4f596e2fa@samsung.com>
-References: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
- <CGME20170116091327epcas5p1250b06956c0fb805113c35c3223a94e3@epcas5p1.samsung.com>
- <1484558003-18691-2-git-send-email-inki.dae@samsung.com>
+From: Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 09/37] PCI: dwc: designware: Parse *num-lanes* property in
+ dw_pcie_setup_rc
+Date: Mon, 16 Jan 2017 10:23:10 +0000
+Message-ID: <3f9d931f-a57f-2ea7-b821-ea9846ad0aa4@synopsys.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-10-git-send-email-kishon@ti.com>
+ <c3c55af3-29d1-dc59-3ae4-9a4132c99092@synopsys.com> <587C57FD.7050601@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:65002 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750901AbdAPJhY (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 04:37:24 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJV004G69E4KB10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Jan 2017 09:37:16 +0000 (GMT)
-In-reply-to: <1484558003-18691-2-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <587C57FD.7050601-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-VrBV9hrLPhE@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
-
-On 16.01.2017 10:13, Inki Dae wrote:
-> This patch removes exynos_drm_crtc_cancel_page_flip call
-> when drm is closed because at that time, events will be released
-> by drm_events_release function.
->
-> Change-Id: I156ea27a4c90aa87a27a50415515fa334148c912
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 9d0df00..035d02e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -198,13 +198,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
->  static void exynos_drm_preclose(struct drm_device *dev,
->  					struct drm_file *file)
->  {
-> -	struct drm_crtc *crtc;
-> -
->  	exynos_drm_subdrv_close(dev, file);
-> -
-> -	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
-> -		exynos_drm_crtc_cancel_page_flip(crtc, file);
-
-Since this is single user of exynos_drm_crtc_cancel_page_flip, this
-function can be removed as well.
-Beside this:
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
 
-Regards
-Andrzej
+Hi,
 
-> -
->  }
->  
->  static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+Às 5:19 AM de 1/16/2017, Kishon Vijay Abraham I escreveu:
+> Hi,
+> 
+> On Friday 13 January 2017 10:43 PM, Joao Pinto wrote:
+>> Hi,
+>>
+>> Às 10:25 AM de 1/12/2017, Kishon Vijay Abraham I escreveu:
+>>> *num-lanes* dt property is parsed in dw_pcie_host_init. However
+>>> *num-lanes* property is applicable to both root complex mode and
+>>> endpoint mode. As a first step, move the parsing of this property
+>>> outside dw_pcie_host_init. This is in preparation for splitting
+>>> pcie-designware.c to pcie-designware.c and pcie-designware-host.c
+>>>
+>>> Signed-off-by: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+>>> ---
+>>>  drivers/pci/dwc/pcie-designware.c |   18 +++++++++++-------
+>>>  drivers/pci/dwc/pcie-designware.h |    1 -
+>>>  2 files changed, 11 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-designware.c
+>>> index 00a0fdc..89cdb6b 100644
+>>> --- a/drivers/pci/dwc/pcie-designware.c
+>>> +++ b/drivers/pci/dwc/pcie-designware.c
+>>> @@ -551,10 +551,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>>>  		}
+>>>  	}
+>>>  
+>>> -	ret = of_property_read_u32(np, "num-lanes", &pci->lanes);
+>>> -	if (ret)
+>>> -		pci->lanes = 0;
+>>> -
+>>>  	ret = of_property_read_u32(np, "num-viewport", &pci->num_viewport);
+>>>  	if (ret)
+>>>  		pci->num_viewport = 2;
+>>> @@ -751,18 +747,26 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
+>>>  
+>>>  void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>  {
+>>> +	int ret;
+>>> +	u32 lanes;
+>>>  	u32 val;
+>>>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>> +	struct device *dev = pci->dev;
+>>> +	struct device_node *np = dev->of_node;
+>>>  
+>>>  	/* get iATU unroll support */
+>>>  	pci->iatu_unroll_enabled = dw_pcie_iatu_unroll_enabled(pci);
+>>>  	dev_dbg(pci->dev, "iATU unroll: %s\n",
+>>>  		pci->iatu_unroll_enabled ? "enabled" : "disabled");
+>>>  
+>>> +	ret = of_property_read_u32(np, "num-lanes", &lanes);
+>>> +	if (ret)
+>>> +		lanes = 0;
+>>
+>> You moved from host_init to root complex setup function, which in my opinion did
+>> not improve (in this scope).
+>>
+>> I suggest that instead of making so much intermediary patches, which is nice to
+>> understand your development sequence, but hard to review. Wouldn't be better to
+>> condense some of the patches? We would have a cloear vision of the final product :)
+> 
+> I thought the other way. If squashing patches is easier to review, I'll do it.
+
+I understand. To break it in small pieces is good to understand clearly what is
+done and how was done, but I would break too much. That's a personal opinion of
+course, lets see what others say :).
+
+Thanks,
+Joao
+
+> 
+> Btw, thanks for reviewing.
+> 
+> Cheers
+> Kishon
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
