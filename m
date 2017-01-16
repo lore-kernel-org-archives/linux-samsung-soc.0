@@ -1,439 +1,258 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH V2 2/5] phy: phy-exynos-pcie: Add support for Exynos PCIe
- phy
-Date: Mon, 16 Jan 2017 20:00:17 +0900
-Message-ID: <0aa8f5ac-af56-b2f7-f1af-9f8550a73a75@samsung.com>
-References: <20170104123435.30740-1-jh80.chung@samsung.com>
- <CGME20170104123436epcas1p1a729583c3c2307d8539a186f1050ea98@epcas1p1.samsung.com>
- <20170104123435.30740-3-jh80.chung@samsung.com> <587C8633.5000100@ti.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: use atomic helper commit
+Date: Mon, 16 Jan 2017 12:22:00 +0100
+Message-ID: <587CACD8.7090504@math.uni-bielefeld.de>
+References: <CGME20170116091327epcas5p11cf9bbd8abe89543df059688abc32fb7@epcas5p1.samsung.com>
+ <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <587C8633.5000100@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, linux-pci@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39952 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751230AbdAPLWF (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 16 Jan 2017 06:22:05 -0500
+In-Reply-To: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org
 
-Hi,
+Inki Dae wrote:
+> This patch relpaces specific atomic commit function
+> with atomic helper commit one, which also includes
+> atomic_commit_tail callback for Exynos SoC becasue
+> crtc devices on Exynos SoC uses power domain device
+> so drm_atomic_helper_commit_planes should be called
+> after drm_atomic_helper_commit_modeset_enables.
+The commit message needs fixing. I think I know my way around Exynos DRM
+a bit, but reading this just confuses me.
 
-On 01/16/2017 05:37 PM, Kishon Vijay Abraham I wrote:
-> Hi,
+In particular the first part can probably be dropped, since it only
+describes what the patch does (and I can already see this from the diff
+itself).
+Also some spelling issues:
+relpaces -> replaces
+becasue - because
+
+With best wishes,
+Tobias
+
+
 > 
-> On Wednesday 04 January 2017 06:04 PM, Jaehoon Chung wrote:
->> This patch supports to use Generic Phy framework for Exynos PCIe phy.
->> When Exynos that supported the pcie want to use the PCIe,
->> it needs to control the phy resgister.
->> But it should be more complex to control in their own PCIe device drivers.
->>
->> Currently, there is an exynos5440 case to support the pcie.
->> So this driver is based on Exynos5440 PCIe.
->> In future, will support the Other exynos SoCs likes exynos5433, exynos7.
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |   9 ++-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 110 +------------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c   |  25 ++++++-
+>  3 files changed, 33 insertions(+), 111 deletions(-)
 > 
-> please re-write the commit message.
-
-Will update the commit-message
-
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> ---
->> Changelog on V2:
->> - Not include the codes relevant to pci-exynos.
->> - Remove the getting child node.
->>
->>  drivers/phy/Kconfig           |   9 ++
->>  drivers/phy/Makefile          |   1 +
->>  drivers/phy/phy-exynos-pcie.c | 280 ++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 290 insertions(+)
->>  create mode 100644 drivers/phy/phy-exynos-pcie.c
->>
->> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->> index e8eb7f2..2dddef4 100644
->> --- a/drivers/phy/Kconfig
->> +++ b/drivers/phy/Kconfig
->> @@ -331,6 +331,15 @@ config PHY_EXYNOS5_USBDRD
->>  	  This driver provides PHY interface for USB 3.0 DRD controller
->>  	  present on Exynos5 SoC series.
->>  
->> +config PHY_EXYNOS_PCIE
->> +	bool "Exynos PCIe PHY driver"
->> +	depends on ARCH_EXYNOS && OF
-> 
-> include COMPILE_TEST
-
-Ok.
-
->> +	depends on PCI_EXYNOS
-> 
-> PCI_EXYNOS should depend on PHY_EXYNOS_PCIE if at all required. Or else do away
-> with this dependency.
-
-Ok.
-
->> +	select GENERIC_PHY
->> +	help
->> +	  Enable PCIe PHY support for Exynos SoC series.
->> +	  This driver provides PHY interface for Exynos PCIe controller.
->> +
->>  config PHY_PISTACHIO_USB
->>  	tristate "IMG Pistachio USB2.0 PHY driver"
->>  	depends on MACH_PISTACHIO
->> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
->> index 65eb2f4..081aeb4 100644
->> --- a/drivers/phy/Makefile
->> +++ b/drivers/phy/Makefile
->> @@ -37,6 +37,7 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
->>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
->> +obj-$(CONFIG_PHY_EXYNOS_PCIE)	+= phy-exynos-pcie.o
->>  obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
->>  obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
->>  obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+= phy-rockchip-inno-usb2.o
->> diff --git a/drivers/phy/phy-exynos-pcie.c b/drivers/phy/phy-exynos-pcie.c
->> new file mode 100644
->> index 0000000..b57f49b
->> --- /dev/null
->> +++ b/drivers/phy/phy-exynos-pcie.c
->> @@ -0,0 +1,280 @@
->> +/*
->> + * Samsung EXYNOS SoC series PCIe PHY driver
->> + *
->> + * Phy provider for PCIe controller on Exynos SoC series
->> + *
->> + * Copyright (C) 2016 Samsung Electronics Co., Ltd.
-> 
-> 2017?
-
-When i had posted the first version, it was 2016.. :)
-
->> + * Jaehoon Chung <jh80.chung@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/delay.h>
->> +#include <linux/io.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/regmap.h>
->> +
->> +/* PCIe Purple registers */
->> +#define PCIE_PHY_GLOBAL_RESET		0x000
->> +#define PCIE_PHY_COMMON_RESET		0x004
->> +#define PCIE_PHY_CMN_REG		0x008
->> +#define PCIE_PHY_MAC_RESET		0x00c
->> +#define PCIE_PHY_PLL_LOCKED		0x010
->> +#define PCIE_PHY_TRSVREG_RESET		0x020
->> +#define PCIE_PHY_TRSV_RESET		0x024
-> 
-> Please use BIT() macro for bit definitions.
-
-Ok.
-
->> +
->> +/* PCIe PHY registers */
->> +#define PCIE_PHY_IMPEDANCE		0x004
->> +#define PCIE_PHY_PLL_DIV_0		0x008
->> +#define PCIE_PHY_PLL_BIAS		0x00c
->> +#define PCIE_PHY_DCC_FEEDBACK		0x014
->> +#define PCIE_PHY_PLL_DIV_1		0x05c
->> +#define PCIE_PHY_COMMON_POWER		0x064
->> +#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
->> +#define PCIE_PHY_TRSV0_EMP_LVL		0x084
->> +#define PCIE_PHY_TRSV0_DRV_LVL		0x088
->> +#define PCIE_PHY_TRSV0_RXCDR		0x0ac
->> +#define PCIE_PHY_TRSV0_POWER		0x0c4
->> +#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
->> +#define PCIE_PHY_TRSV0_LVCC		0x0dc
->> +#define PCIE_PHY_TRSV1_EMP_LVL		0x144
->> +#define PCIE_PHY_TRSV1_RXCDR		0x16c
->> +#define PCIE_PHY_TRSV1_POWER		0x184
->> +#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
->> +#define PCIE_PHY_TRSV1_LVCC		0x19c
->> +#define PCIE_PHY_TRSV2_EMP_LVL		0x204
->> +#define PCIE_PHY_TRSV2_RXCDR		0x22c
->> +#define PCIE_PHY_TRSV2_POWER		0x244
->> +#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
->> +#define PCIE_PHY_TRSV2_LVCC		0x25c
->> +#define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
->> +#define PCIE_PHY_TRSV3_RXCDR		0x2ec
->> +#define PCIE_PHY_TRSV3_POWER		0x304
->> +#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
->> +#define PCIE_PHY_TRSV3_LVCC		0x31c
->> +
->> +struct exynos_pcie_phy_data {
->> +	struct phy_ops	*ops;
->> +};
->> +
->> +/* For Exynos pcie phy */
->> +struct exynos_pcie_phy {
->> +	const struct exynos_pcie_phy_data *drv_data;
->> +	void __iomem *phy_base;
->> +	void __iomem *blk_base; /* For exynos5440 */
->> +};
->> +
->> +static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
->> +{
->> +	writel(val, base + offset);
->> +}
->> +
->> +static u32 exynos_pcie_phy_readl(void __iomem *base, u32 offset)
->> +{
->> +	return readl(base + offset);
->> +}
->> +
->> +/* For Exynos5440 specific functions */
->> +static int exynos5440_pcie_phy_init(struct phy *phy)
->> +{
->> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->> +
->> +	/* DCC feedback control off */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x29, PCIE_PHY_DCC_FEEDBACK);
->> +
->> +	/* set TX/RX impedance */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
->> +
->> +	/* set 50Mhz PHY clock */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
->> +
->> +	/* set TX Differential output for lane 0 */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x7f, PCIE_PHY_TRSV0_DRV_LVL);
->> +
->> +	/* set TX Pre-emphasis Level Control for lane 0 to minimum */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x0, PCIE_PHY_TRSV0_EMP_LVL);
->> +
->> +	/* set RX clock and data recovery bandwidth */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV0_RXCDR);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV1_RXCDR);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV2_RXCDR);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV3_RXCDR);
->> +
->> +	/* change TX Pre-emphasis Level Control for lanes */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV0_EMP_LVL);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV1_EMP_LVL);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV2_EMP_LVL);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV3_EMP_LVL);
->> +
->> +	/* set LVCC */
->> +	exynos_pcie_phy_writel(ep->phy_base, 0x20, PCIE_PHY_TRSV0_LVCC);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV1_LVCC);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV2_LVCC);
->> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV3_LVCC);
-> 
-> I'm starting to dis-like all this hard-coded hw params. All this should come
-> from dt. Define a dt binding like this for all hw params..
-> 	phy,tx-differential = <val, reg-offset, mask>
-> 
-> and have one API in phy-core to do all these settings.
-
-Will check.
-
->> +
->> +	/* pulse for common reset */
->> +	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_COMMON_RESET);
->> +	udelay(500);
-> 
-> how did you get this delay value? Adding a comment might help.
-
-Well..Actually i don't know why udelay(500) was defined.
-When i had started the refactoring pci-exynos, there was one problem..
-I didn't have Exynos5440 TRM and information..i can't check anything for exyno5440.
-(I don't know who is using EXYNOS5440 pci.)
-
-the entire codes are just moved from pci-exynos.c.
-
-When i want to upstream exynos5433 pcie, first step is the cleaning pci-exynos.c relevant to exynos5440.
-It was too complex to support the other Exynos SoCs.
-
-Otherwise, it needs to add the new file for exynos5433.
-
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
->> +
->> +	return 0;
->> +}
->> +
->> +static int exynos5440_pcie_phy_power_on(struct phy *phy)
->> +{
->> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->> +	u32 val;
->> +
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_CMN_REG);
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSVREG_RESET);
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSV_RESET);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
->> +	val &= ~PCIE_PHY_COMMON_PD_CMN;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
->> +	val &= ~PCIE_PHY_TRSV0_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
->> +	val &= ~PCIE_PHY_TRSV1_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
->> +	val &= ~PCIE_PHY_TRSV2_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
->> +	val &= ~PCIE_PHY_TRSV3_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
->> +
->> +	return 0;
->> +}
->> +
->> +static int exynos5440_pcie_phy_power_off(struct phy *phy)
->> +{
->> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->> +	u32 val;
->> +
->> +	while (exynos_pcie_phy_readl(ep->phy_base,
->> +				PCIE_PHY_PLL_LOCKED) == 0) {
->> +		val = exynos_pcie_phy_readl(ep->blk_base,
->> +				PCIE_PHY_PLL_LOCKED);
->> +		dev_info(&phy->dev, "PLL Locked: 0x%x\n", val);
->> +	}
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
->> +	val |= PCIE_PHY_COMMON_PD_CMN;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
->> +	val |= PCIE_PHY_TRSV0_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
->> +	val |= PCIE_PHY_TRSV1_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
->> +	val |= PCIE_PHY_TRSV2_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
->> +
->> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
->> +	val |= PCIE_PHY_TRSV3_PD_TSV;
->> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
->> +
->> +	return 0;
->> +}
->> +
->> +static int exynos5440_pcie_phy_reset(struct phy *phy)
->> +{
->> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->> +
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_MAC_RESET);
->> +	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_GLOBAL_RESET);
->> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_GLOBAL_RESET);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct phy_ops exynos5440_phy_ops = {
->> +	.init	= exynos5440_pcie_phy_init,
->> +	.power_on = exynos5440_pcie_phy_power_on,
->> +	.power_off = exynos5440_pcie_phy_power_off,
->> +	.reset	= exynos5440_pcie_phy_reset,
-> 
-> add .owner
-
-Will fix.
-
->> +};
->> +
->> +static const struct exynos_pcie_phy_data exynos5440_pcie_phy_data = {
->> +	.ops		= &exynos5440_phy_ops,
-> 
-> why do you need a wrapper for phy_ops?
-
-My main goal is the upstreaming exynos5433 pci, not exynos5440.
-There are many different with exynos5440 and exynos5433.
-As i know, only exynos5440 has the big different with other Exynos variants.
-
-I think i can be removed in this patch. When i upstream the other SoCs, I will use the wrapper.
-
-Best Regards,
-Jaehoon Chung
-
->> +};
->> +
->> +static const struct of_device_id exynos_pcie_phy_match[] = {
->> +	{
->> +		.compatible = "samsung,exynos5440-pcie-phy",
->> +		.data = &exynos5440_pcie_phy_data,
->> +	},
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, exynos_pcie_phy_match);
->> +
->> +static int exynos_pcie_phy_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct exynos_pcie_phy *exynos_phy;
->> +	struct phy *generic_phy;
->> +	struct phy_provider *phy_provider;
->> +	struct resource *res;
->> +	const struct exynos_pcie_phy_data *drv_data;
->> +
->> +	drv_data = of_device_get_match_data(dev);
->> +	if (!drv_data)
->> +		return -ENODEV;
->> +
->> +	exynos_phy = devm_kzalloc(dev, sizeof(*exynos_phy), GFP_KERNEL);
->> +	if (!exynos_phy)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	exynos_phy->phy_base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(exynos_phy->phy_base))
->> +		return PTR_ERR(exynos_phy->phy_base);
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->> +	exynos_phy->blk_base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(exynos_phy->phy_base))
->> +		return PTR_ERR(exynos_phy->phy_base);
->> +
->> +	exynos_phy->drv_data = drv_data;
->> +
->> +	generic_phy = devm_phy_create(dev, dev->of_node, drv_data->ops);
->> +	if (IS_ERR(generic_phy)) {
->> +		dev_err(dev, "failed to create PHY\n");
->> +		return PTR_ERR(generic_phy);
->> +	}
->> +
->> +	phy_set_drvdata(generic_phy, exynos_phy);
->> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->> +
->> +	return PTR_ERR_OR_ZERO(phy_provider);
->> +}
->> +
->> +static struct platform_driver exynos_pcie_phy_driver = {
->> +	.probe	= exynos_pcie_phy_probe,
->> +	.driver = {
->> +		.of_match_table	= exynos_pcie_phy_match,
->> +		.name		= "exynos_pcie_phy",
->> +	}
->> +};
->> +module_platform_driver(exynos_pcie_phy_driver);
->>
-> Thanks
-> Kishon
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 2530bf5..47da612 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -39,6 +39,14 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+>  
+>  	if (exynos_crtc->ops->disable)
+>  		exynos_crtc->ops->disable(exynos_crtc);
+> +
+> +	if (crtc->state->event && !crtc->state->active) {
+> +		spin_lock_irq(&crtc->dev->event_lock);
+> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+> +		spin_unlock_irq(&crtc->dev->event_lock);
+> +
+> +		crtc->state->event = NULL;
+> +	}
+>  }
+>  
+>  static void
+> @@ -94,7 +102,6 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
+>  			drm_crtc_send_vblank_event(crtc, event);
+>  		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+>  	}
+> -
+>  }
+>  
+>  static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 3ec0535..9d0df00 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -38,56 +38,6 @@
+>  #define DRIVER_MAJOR	1
+>  #define DRIVER_MINOR	0
+>  
+> -struct exynos_atomic_commit {
+> -	struct work_struct	work;
+> -	struct drm_device	*dev;
+> -	struct drm_atomic_state *state;
+> -	u32			crtcs;
+> -};
+> -
+> -static void exynos_atomic_commit_complete(struct exynos_atomic_commit *commit)
+> -{
+> -	struct drm_device *dev = commit->dev;
+> -	struct exynos_drm_private *priv = dev->dev_private;
+> -	struct drm_atomic_state *state = commit->state;
+> -
+> -	drm_atomic_helper_commit_modeset_disables(dev, state);
+> -
+> -	drm_atomic_helper_commit_modeset_enables(dev, state);
+> -
+> -	/*
+> -	 * Exynos can't update planes with CRTCs and encoders disabled,
+> -	 * its updates routines, specially for FIMD, requires the clocks
+> -	 * to be enabled. So it is necessary to handle the modeset operations
+> -	 * *before* the commit_planes() step, this way it will always
+> -	 * have the relevant clocks enabled to perform the update.
+> -	 */
+> -
+> -	drm_atomic_helper_commit_planes(dev, state, 0);
+> -
+> -	drm_atomic_helper_wait_for_vblanks(dev, state);
+> -
+> -	drm_atomic_helper_cleanup_planes(dev, state);
+> -
+> -	drm_atomic_state_put(state);
+> -
+> -	spin_lock(&priv->lock);
+> -	priv->pending &= ~commit->crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	wake_up_all(&priv->wait);
+> -
+> -	kfree(commit);
+> -}
+> -
+> -static void exynos_drm_atomic_work(struct work_struct *work)
+> -{
+> -	struct exynos_atomic_commit *commit = container_of(work,
+> -				struct exynos_atomic_commit, work);
+> -
+> -	exynos_atomic_commit_complete(commit);
+> -}
+> -
+>  static struct device *exynos_drm_get_dma_device(void);
+>  
+>  static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+> @@ -202,65 +152,6 @@ static void exynos_drm_unload(struct drm_device *dev)
+>  	dev->dev_private = NULL;
+>  }
+>  
+> -static int commit_is_pending(struct exynos_drm_private *priv, u32 crtcs)
+> -{
+> -	bool pending;
+> -
+> -	spin_lock(&priv->lock);
+> -	pending = priv->pending & crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	return pending;
+> -}
+> -
+> -int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
+> -			 bool nonblock)
+> -{
+> -	struct exynos_drm_private *priv = dev->dev_private;
+> -	struct exynos_atomic_commit *commit;
+> -	struct drm_crtc *crtc;
+> -	struct drm_crtc_state *crtc_state;
+> -	int i, ret;
+> -
+> -	commit = kzalloc(sizeof(*commit), GFP_KERNEL);
+> -	if (!commit)
+> -		return -ENOMEM;
+> -
+> -	ret = drm_atomic_helper_prepare_planes(dev, state);
+> -	if (ret) {
+> -		kfree(commit);
+> -		return ret;
+> -	}
+> -
+> -	/* This is the point of no return */
+> -
+> -	INIT_WORK(&commit->work, exynos_drm_atomic_work);
+> -	commit->dev = dev;
+> -	commit->state = state;
+> -
+> -	/* Wait until all affected CRTCs have completed previous commits and
+> -	 * mark them as pending.
+> -	 */
+> -	for_each_crtc_in_state(state, crtc, crtc_state, i)
+> -		commit->crtcs |= drm_crtc_mask(crtc);
+> -
+> -	wait_event(priv->wait, !commit_is_pending(priv, commit->crtcs));
+> -
+> -	spin_lock(&priv->lock);
+> -	priv->pending |= commit->crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	drm_atomic_helper_swap_state(state, true);
+> -
+> -	drm_atomic_state_get(state);
+> -	if (nonblock)
+> -		schedule_work(&commit->work);
+> -	else
+> -		exynos_atomic_commit_complete(commit);
+> -
+> -	return 0;
+> -}
+> -
+>  int exynos_atomic_check(struct drm_device *dev,
+>  			struct drm_atomic_state *state)
+>  {
+> @@ -313,6 +204,7 @@ static void exynos_drm_preclose(struct drm_device *dev,
+>  
+>  	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
+>  		exynos_drm_crtc_cancel_page_flip(crtc, file);
+> +
+>  }
+>  
+>  static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> index 68d4142..1e10b73 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> @@ -187,11 +187,33 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)
+>  	return exynos_fb->dma_addr[index];
+>  }
+>  
+> +static void exynos_drm_atomic_commit_tail(struct drm_atomic_state *state)
+> +{
+> +	struct drm_device *dev = state->dev;
+> +
+> +	drm_atomic_helper_commit_modeset_disables(dev, state);
+> +
+> +	drm_atomic_helper_commit_modeset_enables(dev, state);
+> +
+> +	drm_atomic_helper_commit_planes(dev, state,
+> +					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+> +
+> +	drm_atomic_helper_commit_hw_done(state);
+> +
+> +	drm_atomic_helper_wait_for_vblanks(dev, state);
+> +
+> +	drm_atomic_helper_cleanup_planes(dev, state);
+> +}
+> +
+> +static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helpers = {
+> +	.atomic_commit_tail = exynos_drm_atomic_commit_tail,
+> +};
+> +
+>  static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+>  	.fb_create = exynos_user_fb_create,
+>  	.output_poll_changed = exynos_drm_output_poll_changed,
+>  	.atomic_check = exynos_atomic_check,
+> -	.atomic_commit = exynos_atomic_commit,
+> +	.atomic_commit = drm_atomic_helper_commit,
+>  };
+>  
+>  void exynos_drm_mode_config_init(struct drm_device *dev)
+> @@ -208,4 +230,5 @@ void exynos_drm_mode_config_init(struct drm_device *dev)
+>  	dev->mode_config.max_height = 4096;
+>  
+>  	dev->mode_config.funcs = &exynos_drm_mode_config_funcs;
+> +	dev->mode_config.helper_private = &exynos_drm_mode_config_helpers;
+>  }
 > 
