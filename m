@@ -1,9 +1,10 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 3/5] PCI: exynos: Remove the unnecessary variables
-Date: Mon, 16 Jan 2017 15:31:36 +0900
-Message-ID: <20170116063138.25805-4-jh80.chung@samsung.com>
+Subject: [PATCH V3 4/5] PCI: exynos: Use the bitops API to operate the bit
+ shifting
+Date: Mon, 16 Jan 2017 15:31:37 +0900
+Message-ID: <20170116063138.25805-5-jh80.chung@samsung.com>
 References: <20170116063138.25805-1-jh80.chung@samsung.com>
- <CGME20170116063141epcas5p329a9496aabe28a9961176539c47065dc@epcas5p3.samsung.com>
+ <CGME20170116063141epcas5p3717d40cea33d34b715b6c0016c10ab16@epcas5p3.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20170116063138.25805-1-jh80.chung@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,9 +12,7 @@ To: linux-pci@vger.kernel.org
 Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove the unnecessary variables(elbi/phy/block_base).
-It needs one resource structure for assigning each resource.
-So it replaces with one 'res' variable.
+Just use the bitops api to operate the bit.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
@@ -23,52 +22,80 @@ Changelog on V3:
 - None
 Changelog on V2:
 - None
- drivers/pci/host/pci-exynos.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/pci/host/pci-exynos.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 166881a..6255294 100644
+index 6255294..c5892c2 100644
 --- a/drivers/pci/host/pci-exynos.c
 +++ b/drivers/pci/host/pci-exynos.c
-@@ -507,9 +507,7 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
- 	struct exynos_pcie *ep;
- 	struct pcie_port *pp;
- 	struct device_node *np = dev->of_node;
--	struct resource *elbi_base;
--	struct resource *phy_base;
--	struct resource *block_base;
-+	struct resource *res;
- 	int ret;
+@@ -40,19 +40,19 @@ struct exynos_pcie {
  
- 	ep = devm_kzalloc(dev, sizeof(*ep), GFP_KERNEL);
-@@ -540,22 +538,22 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto fail_clk;
+ /* PCIe ELBI registers */
+ #define PCIE_IRQ_PULSE			0x000
+-#define IRQ_INTA_ASSERT			(0x1 << 0)
+-#define IRQ_INTB_ASSERT			(0x1 << 2)
+-#define IRQ_INTC_ASSERT			(0x1 << 4)
+-#define IRQ_INTD_ASSERT			(0x1 << 6)
++#define IRQ_INTA_ASSERT			BIT(0)
++#define IRQ_INTB_ASSERT			BIT(2)
++#define IRQ_INTC_ASSERT			BIT(4)
++#define IRQ_INTD_ASSERT			BIT(6)
+ #define PCIE_IRQ_LEVEL			0x004
+ #define PCIE_IRQ_SPECIAL		0x008
+ #define PCIE_IRQ_EN_PULSE		0x00c
+ #define PCIE_IRQ_EN_LEVEL		0x010
+-#define IRQ_MSI_ENABLE			(0x1 << 2)
++#define IRQ_MSI_ENABLE			BIT(2)
+ #define PCIE_IRQ_EN_SPECIAL		0x014
+ #define PCIE_PWR_RESET			0x018
+ #define PCIE_CORE_RESET			0x01c
+-#define PCIE_CORE_RESET_ENABLE		(0x1 << 0)
++#define PCIE_CORE_RESET_ENABLE		BIT(0)
+ #define PCIE_STICKY_RESET		0x020
+ #define PCIE_NONSTICKY_RESET		0x024
+ #define PCIE_APP_INIT_RESET		0x028
+@@ -61,7 +61,7 @@ struct exynos_pcie {
+ #define PCIE_ELBI_LTSSM_ENABLE		0x1
+ #define PCIE_ELBI_SLV_AWMISC		0x11c
+ #define PCIE_ELBI_SLV_ARMISC		0x120
+-#define PCIE_ELBI_SLV_DBI_ENABLE	(0x1 << 21)
++#define PCIE_ELBI_SLV_DBI_ENABLE	BIT(21)
  
--	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ep->elbi_base = devm_ioremap_resource(dev, elbi_base);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ep->elbi_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(ep->elbi_base)) {
- 		ret = PTR_ERR(ep->elbi_base);
- 		goto fail_bus_clk;
- 	}
+ /* PCIe Purple registers */
+ #define PCIE_PHY_GLOBAL_RESET		0x000
+@@ -79,27 +79,27 @@ struct exynos_pcie {
+ #define PCIE_PHY_DCC_FEEDBACK		0x014
+ #define PCIE_PHY_PLL_DIV_1		0x05c
+ #define PCIE_PHY_COMMON_POWER		0x064
+-#define PCIE_PHY_COMMON_PD_CMN		(0x1 << 3)
++#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
+ #define PCIE_PHY_TRSV0_EMP_LVL		0x084
+ #define PCIE_PHY_TRSV0_DRV_LVL		0x088
+ #define PCIE_PHY_TRSV0_RXCDR		0x0ac
+ #define PCIE_PHY_TRSV0_POWER		0x0c4
+-#define PCIE_PHY_TRSV0_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV0_LVCC		0x0dc
+ #define PCIE_PHY_TRSV1_EMP_LVL		0x144
+ #define PCIE_PHY_TRSV1_RXCDR		0x16c
+ #define PCIE_PHY_TRSV1_POWER		0x184
+-#define PCIE_PHY_TRSV1_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV1_LVCC		0x19c
+ #define PCIE_PHY_TRSV2_EMP_LVL		0x204
+ #define PCIE_PHY_TRSV2_RXCDR		0x22c
+ #define PCIE_PHY_TRSV2_POWER		0x244
+-#define PCIE_PHY_TRSV2_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV2_LVCC		0x25c
+ #define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
+ #define PCIE_PHY_TRSV3_RXCDR		0x2ec
+ #define PCIE_PHY_TRSV3_POWER		0x304
+-#define PCIE_PHY_TRSV3_PD_TSV		(0x1 << 7)
++#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+ #define PCIE_PHY_TRSV3_LVCC		0x31c
  
--	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	ep->phy_base = devm_ioremap_resource(dev, phy_base);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	ep->phy_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(ep->phy_base)) {
- 		ret = PTR_ERR(ep->phy_base);
- 		goto fail_bus_clk;
- 	}
- 
--	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	ep->block_base = devm_ioremap_resource(dev, block_base);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
-+	ep->block_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(ep->block_base)) {
- 		ret = PTR_ERR(ep->block_base);
- 		goto fail_bus_clk;
+ static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
 -- 
 2.10.2
