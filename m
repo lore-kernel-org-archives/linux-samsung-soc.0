@@ -1,50 +1,45 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Mon, 16 Jan 2017 18:03:14 +0900
-Message-ID: <1484557394-17649-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20170116090314epcas1p3be0bda8ccc11f3be5475bb405a24a246@epcas1p3.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59446 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbdAPJDR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 04:03:17 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJV00D587TFUW20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Jan 2017 18:03:15 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] drm/exynos: remove unnecessary codes
+Date: Mon, 16 Jan 2017 18:13:23 +0900
+Message-ID: <1484558003-18691-2-git-send-email-inki.dae@samsung.com>
+References: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+ <CGME20170116091327epcas5p1250b06956c0fb805113c35c3223a94e3@epcas5p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
-
-   Just regression fixups to resolve page fault issue of DECON device.
-
-   Please kindly let me know if there is any problem.
-
-Thanks,
-Inki Dae
-
-The following changes since commit 9afe69d5a9495f8b023017e4c328fa717e00f092:
-
-  Merge tag 'drm-misc-fixes-2017-01-09' of git://anongit.freedesktop.org/git/drm-misc into drm-fixes (2017-01-10 08:18:53 +1000)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos exynos-drm-fixes
-
-for you to fetch changes up to 821b40b79db7dedbfe15ab330dfd181e661a533f:
-
-  drm/exynos/decon5433: set STANDALONE_UPDATE_F also if planes are disabled (2017-01-13 18:22:51 +0900)
-
-----------------------------------------------------------------
-Andrzej Hajda (2):
-      drm/exynos/decon5433: update shadow registers iff there are active windows
-      drm/exynos/decon5433: set STANDALONE_UPDATE_F also if planes are disabled
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+VGhpcyBwYXRjaCByZW1vdmVzIGV4eW5vc19kcm1fY3J0Y19jYW5jZWxfcGFnZV9mbGlwIGNhbGwK
+d2hlbiBkcm0gaXMgY2xvc2VkIGJlY2F1c2UgYXQgdGhhdCB0aW1lLCBldmVudHMgd2lsbCBiZSBy
+ZWxlYXNlZApieSBkcm1fZXZlbnRzX3JlbGVhc2UgZnVuY3Rpb24uCgpDaGFuZ2UtSWQ6IEkxNTZl
+YTI3YTRjOTBhYTg3YTI3YTUwNDE1NTE1ZmEzMzQxNDhjOTEyClNpZ25lZC1vZmYtYnk6IElua2kg
+RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmMgfCA2IC0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IDlkMGRmMDAuLjAz
+NWQwMmUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAgLTE5OCwx
+MyArMTk4LDcgQEAgc3RhdGljIGludCBleHlub3NfZHJtX29wZW4oc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwgc3RydWN0IGRybV9maWxlICpmaWxlKQogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9wcmVj
+bG9zZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkJCQlzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUp
+CiB7Ci0Jc3RydWN0IGRybV9jcnRjICpjcnRjOwotCiAJZXh5bm9zX2RybV9zdWJkcnZfY2xvc2Uo
+ZGV2LCBmaWxlKTsKLQotCWxpc3RfZm9yX2VhY2hfZW50cnkoY3J0YywgJmRldi0+bW9kZV9jb25m
+aWcuY3J0Y19saXN0LCBoZWFkKQotCQlleHlub3NfZHJtX2NydGNfY2FuY2VsX3BhZ2VfZmxpcChj
+cnRjLCBmaWxlKTsKLQogfQogCiBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3Bvc3RjbG9zZShzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCi0tIAoxLjkuMQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
