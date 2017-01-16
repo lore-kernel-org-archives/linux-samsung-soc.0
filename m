@@ -1,159 +1,266 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 05/12] pinctrl: samsung: Remove messages for failed
- memory allocation
-Date: Mon, 16 Jan 2017 21:04:25 +0200
-Message-ID: <20170116190425.365vtjijrxggvwct@kozik-lap>
-References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170116064525eucas1p1556f795af7e2323726ca9a89943c7309@eucas1p1.samsung.com>
- <1484549107-5957-6-git-send-email-m.szyprowski@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH] drm/exynos: use atomic helper commit
+Date: Mon, 16 Jan 2017 17:08:56 -0200
+Message-ID: <20170116190856.GF16017@joana>
+References: <CGME20170116091327epcas5p11cf9bbd8abe89543df059688abc32fb7@epcas5p1.samsung.com>
+ <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:36046 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbdAPTEm (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:36803 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbdAPTJC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 14:04:42 -0500
+        Mon, 16 Jan 2017 14:09:02 -0500
+Received: by mail-ua0-f195.google.com with SMTP id f2so10500336uaf.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jan 2017 11:09:02 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1484549107-5957-6-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 07:45:00AM +0100, Marek Szyprowski wrote:
-> Memory subsystem already prints message about failed memory
-> allocation, there is no need to do it in the drivers.
+Hi Inki,
+
+2017-01-16 Inki Dae <inki.dae@samsung.com>:
+
+> This patch relpaces specific atomic commit function
+> with atomic helper commit one, which also includes
+> atomic_commit_tail callback for Exynos SoC becasue
+> crtc devices on Exynos SoC uses power domain device
+> so drm_atomic_helper_commit_planes should be called
+> after drm_atomic_helper_commit_modeset_enables.
+
+Indeed, the commit message needs fixing.
+
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c  |  8 ++------
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 12 +++---------
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 24 ++++++------------------
->  3 files changed, 11 insertions(+), 33 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |   9 ++-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 110 +------------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c   |  25 ++++++-
+>  3 files changed, 33 insertions(+), 111 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index 24814db251a7..bf753a596209 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -528,10 +528,8 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 2530bf5..47da612 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -39,6 +39,14 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
 >  
->  		weint_data = devm_kzalloc(dev, bank->nr_pins
->  					* sizeof(*weint_data), GFP_KERNEL);
-> -		if (!weint_data) {
-> -			dev_err(dev, "could not allocate memory for weint_data\n");
-> +		if (!weint_data)
->  			return -ENOMEM;
-> -		}
+>  	if (exynos_crtc->ops->disable)
+>  		exynos_crtc->ops->disable(exynos_crtc);
+> +
+> +	if (crtc->state->event && !crtc->state->active) {
+> +		spin_lock_irq(&crtc->dev->event_lock);
+> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+> +		spin_unlock_irq(&crtc->dev->event_lock);
+> +
+> +		crtc->state->event = NULL;
+> +	}
+>  }
 >  
->  		for (idx = 0; idx < bank->nr_pins; ++idx) {
->  			irq = irq_of_parse_and_map(bank->of_node, idx);
-> @@ -559,10 +557,8 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
->  
->  	muxed_data = devm_kzalloc(dev, sizeof(*muxed_data)
->  		+ muxed_banks*sizeof(struct samsung_pin_bank *), GFP_KERNEL);
-> -	if (!muxed_data) {
-> -		dev_err(dev, "could not allocate memory for muxed_data\n");
-> +	if (!muxed_data)
->  		return -ENOMEM;
-> -	}
->  
->  	irq_set_chained_handler_and_data(irq, exynos_irq_demux_eint16_31,
->  					 muxed_data);
-> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> index 4c632812ccff..f17890aa6e25 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> @@ -489,10 +489,8 @@ static int s3c64xx_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
->  
->  	data = devm_kzalloc(dev, sizeof(*data)
->  			+ nr_domains * sizeof(*data->domains), GFP_KERNEL);
-> -	if (!data) {
-> -		dev_err(dev, "failed to allocate handler data\n");
-> +	if (!data)
->  		return -ENOMEM;
-> -	}
->  	data->drvdata = d;
->  
->  	bank = d->pin_banks;
-> @@ -715,10 +713,8 @@ static int s3c64xx_eint_eint0_init(struct samsung_pinctrl_drv_data *d)
->  		return -ENODEV;
->  
->  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> -	if (!data) {
-> -		dev_err(dev, "could not allocate memory for wkup eint data\n");
-> +	if (!data)
->  		return -ENOMEM;
-> -	}
->  	data->drvdata = d;
->  
->  	for (i = 0; i < NUM_EINT0_IRQ; ++i) {
-> @@ -751,10 +747,8 @@ static int s3c64xx_eint_eint0_init(struct samsung_pinctrl_drv_data *d)
->  
->  		ddata = devm_kzalloc(dev,
->  				sizeof(*ddata) + nr_eints, GFP_KERNEL);
-> -		if (!ddata) {
-> -			dev_err(dev, "failed to allocate domain data\n");
-> +		if (!ddata)
->  			return -ENOMEM;
-> -		}
->  		ddata->bank = bank;
->  
->  		bank->irq_domain = irq_domain_add_linear(bank->of_node,
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 3bc925f61b71..b11e67e85460 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -93,10 +93,8 @@ static int reserve_map(struct device *dev, struct pinctrl_map **map,
->  		return 0;
->  
->  	new_map = krealloc(*map, sizeof(*new_map) * new_num, GFP_KERNEL);
-> -	if (!new_map) {
-> -		dev_err(dev, "krealloc(map) failed\n");
-> +	if (!new_map)
->  		return -ENOMEM;
-> -	}
->  
->  	memset(new_map + old_num, 0, (new_num - old_num) * sizeof(*new_map));
->  
-> @@ -133,10 +131,8 @@ static int add_map_configs(struct device *dev, struct pinctrl_map **map,
->  
->  	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
->  			      GFP_KERNEL);
-> -	if (!dup_configs) {
-> -		dev_err(dev, "kmemdup(configs) failed\n");
-> +	if (!dup_configs)
->  		return -ENOMEM;
-> -	}
->  
->  	(*map)[*num_maps].type = PIN_MAP_TYPE_CONFIGS_GROUP;
->  	(*map)[*num_maps].data.configs.group_or_pin = group;
-> @@ -156,10 +152,8 @@ static int add_config(struct device *dev, unsigned long **configs,
->  
->  	new_configs = krealloc(*configs, sizeof(*new_configs) * new_num,
->  			       GFP_KERNEL);
-> -	if (!new_configs) {
-> -		dev_err(dev, "krealloc(configs) failed\n");
-> +	if (!new_configs)
->  		return -ENOMEM;
-> -	}
->  
->  	new_configs[old_num] = config;
->  
-> @@ -756,10 +750,8 @@ static struct samsung_pmx_func *samsung_pinctrl_create_functions(
->  
->  	functions = devm_kzalloc(dev, func_cnt * sizeof(*functions),
->  					GFP_KERNEL);
-> -	if (!functions) {
-> -		dev_err(dev, "failed to allocate memory for function list\n");
-> +	if (!functions)
->  		return ERR_PTR(-EINVAL);
+>  static void
+> @@ -94,7 +102,6 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
+>  			drm_crtc_send_vblank_event(crtc, event);
+>  		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+>  	}
+> -
 
-Out of scope of this patch - why are we returning EINVAL instead of
-ENOMEM?
+Nitpick: I wouldn't include changes like this in the patch.
 
-Regardless:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>  }
+>  
+>  static const struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 3ec0535..9d0df00 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -38,56 +38,6 @@
+>  #define DRIVER_MAJOR	1
+>  #define DRIVER_MINOR	0
+>  
+> -struct exynos_atomic_commit {
+> -	struct work_struct	work;
+> -	struct drm_device	*dev;
+> -	struct drm_atomic_state *state;
+> -	u32			crtcs;
+> -};
+> -
+> -static void exynos_atomic_commit_complete(struct exynos_atomic_commit *commit)
+> -{
+> -	struct drm_device *dev = commit->dev;
+> -	struct exynos_drm_private *priv = dev->dev_private;
+> -	struct drm_atomic_state *state = commit->state;
+> -
+> -	drm_atomic_helper_commit_modeset_disables(dev, state);
+> -
+> -	drm_atomic_helper_commit_modeset_enables(dev, state);
+> -
+> -	/*
+> -	 * Exynos can't update planes with CRTCs and encoders disabled,
+> -	 * its updates routines, specially for FIMD, requires the clocks
+> -	 * to be enabled. So it is necessary to handle the modeset operations
+> -	 * *before* the commit_planes() step, this way it will always
+> -	 * have the relevant clocks enabled to perform the update.
+> -	 */
 
-Best regards,
-Krzysztof
+Please move this comment to the commit_tail function instead of deleting
+it.
+
+> -
+> -	drm_atomic_helper_commit_planes(dev, state, 0);
+> -
+> -	drm_atomic_helper_wait_for_vblanks(dev, state);
+> -
+> -	drm_atomic_helper_cleanup_planes(dev, state);
+> -
+> -	drm_atomic_state_put(state);
+> -
+> -	spin_lock(&priv->lock);
+> -	priv->pending &= ~commit->crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	wake_up_all(&priv->wait);
+> -
+> -	kfree(commit);
+> -}
+> -
+> -static void exynos_drm_atomic_work(struct work_struct *work)
+> -{
+> -	struct exynos_atomic_commit *commit = container_of(work,
+> -				struct exynos_atomic_commit, work);
+> -
+> -	exynos_atomic_commit_complete(commit);
+> -}
+> -
+>  static struct device *exynos_drm_get_dma_device(void);
+>  
+>  static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+> @@ -202,65 +152,6 @@ static void exynos_drm_unload(struct drm_device *dev)
+>  	dev->dev_private = NULL;
+>  }
+>  
+> -static int commit_is_pending(struct exynos_drm_private *priv, u32 crtcs)
+> -{
+> -	bool pending;
+> -
+> -	spin_lock(&priv->lock);
+> -	pending = priv->pending & crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	return pending;
+> -}
+> -
+> -int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state *state,
+> -			 bool nonblock)
+> -{
+> -	struct exynos_drm_private *priv = dev->dev_private;
+> -	struct exynos_atomic_commit *commit;
+> -	struct drm_crtc *crtc;
+> -	struct drm_crtc_state *crtc_state;
+> -	int i, ret;
+> -
+> -	commit = kzalloc(sizeof(*commit), GFP_KERNEL);
+> -	if (!commit)
+> -		return -ENOMEM;
+> -
+> -	ret = drm_atomic_helper_prepare_planes(dev, state);
+> -	if (ret) {
+> -		kfree(commit);
+> -		return ret;
+> -	}
+> -
+> -	/* This is the point of no return */
+> -
+> -	INIT_WORK(&commit->work, exynos_drm_atomic_work);
+> -	commit->dev = dev;
+> -	commit->state = state;
+> -
+> -	/* Wait until all affected CRTCs have completed previous commits and
+> -	 * mark them as pending.
+> -	 */
+> -	for_each_crtc_in_state(state, crtc, crtc_state, i)
+> -		commit->crtcs |= drm_crtc_mask(crtc);
+> -
+> -	wait_event(priv->wait, !commit_is_pending(priv, commit->crtcs));
+> -
+> -	spin_lock(&priv->lock);
+> -	priv->pending |= commit->crtcs;
+> -	spin_unlock(&priv->lock);
+> -
+> -	drm_atomic_helper_swap_state(state, true);
+> -
+> -	drm_atomic_state_get(state);
+> -	if (nonblock)
+> -		schedule_work(&commit->work);
+> -	else
+> -		exynos_atomic_commit_complete(commit);
+> -
+> -	return 0;
+> -}
+> -
+>  int exynos_atomic_check(struct drm_device *dev,
+>  			struct drm_atomic_state *state)
+>  {
+> @@ -313,6 +204,7 @@ static void exynos_drm_preclose(struct drm_device *dev,
+>  
+>  	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
+>  		exynos_drm_crtc_cancel_page_flip(crtc, file);
+> +
+
+This change shouldn't be here too.
+
+>  }
+>  
+>  static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> index 68d4142..1e10b73 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> @@ -187,11 +187,33 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)
+>  	return exynos_fb->dma_addr[index];
+>  }
+>  
+> +static void exynos_drm_atomic_commit_tail(struct drm_atomic_state *state)
+> +{
+> +	struct drm_device *dev = state->dev;
+> +
+> +	drm_atomic_helper_commit_modeset_disables(dev, state);
+> +
+> +	drm_atomic_helper_commit_modeset_enables(dev, state);
+> +
+> +	drm_atomic_helper_commit_planes(dev, state,
+> +					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+> +
+> +	drm_atomic_helper_commit_hw_done(state);
+> +
+> +	drm_atomic_helper_wait_for_vblanks(dev, state);
+> +
+> +	drm_atomic_helper_cleanup_planes(dev, state);
+> +}
+> +
+> +static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helpers = {
+> +	.atomic_commit_tail = exynos_drm_atomic_commit_tail,
+> +};
+> +
+>  static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+>  	.fb_create = exynos_user_fb_create,
+>  	.output_poll_changed = exynos_drm_output_poll_changed,
+>  	.atomic_check = exynos_atomic_check,
+> -	.atomic_commit = exynos_atomic_commit,
+> +	.atomic_commit = drm_atomic_helper_commit,
+>  };
+>  
+>  void exynos_drm_mode_config_init(struct drm_device *dev)
+> @@ -208,4 +230,5 @@ void exynos_drm_mode_config_init(struct drm_device *dev)
+>  	dev->mode_config.max_height = 4096;
+>  
+>  	dev->mode_config.funcs = &exynos_drm_mode_config_funcs;
+> +	dev->mode_config.helper_private = &exynos_drm_mode_config_helpers;
+
+With all that fixed:
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+
+Gustavo
