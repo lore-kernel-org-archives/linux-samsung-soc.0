@@ -1,434 +1,386 @@
-From: Jaechul Lee <jcsing.lee@samsung.com>
-Subject: Re: [PATCH v6 2/3] input: tm2-touchkey: Add touchkey driver support
- for TM2
-Date: Mon, 16 Jan 2017 16:24:47 +0900
-Message-ID: <20170116072447.GA15619@jcsing>
-References: <1483946535-4703-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170109072218epcas1p1f95be49f7f466712c146d1e9163601e1@epcas1p1.samsung.com>
- <1483946535-4703-3-git-send-email-jcsing.lee@samsung.com>
- <20170115071110.GA24007@dtor-ws>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V2 2/5] phy: phy-exynos-pcie: Add support for Exynos PCIe
+ phy
+Date: Mon, 16 Jan 2017 14:07:07 +0530
+Message-ID: <587C8633.5000100@ti.com>
+References: <20170104123435.30740-1-jh80.chung@samsung.com>
+ <CGME20170104123436epcas1p1a729583c3c2307d8539a186f1050ea98@epcas1p1.samsung.com>
+ <20170104123435.30740-3-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20170115071110.GA24007@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20170104123435.30740-3-jh80.chung@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-pci@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, jingoohan1@gmail.com, vivek.gautam@codeaurora.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Dmitry Torokhov,
+Hi,
 
-On Sat, Jan 14, 2017 at 11:11:10PM -0800, Dmitry Torokhov wrote:
-> Hi Jaechul,
+On Wednesday 04 January 2017 06:04 PM, Jaehoon Chung wrote:
+> This patch supports to use Generic Phy framework for Exynos PCIe phy.
+> When Exynos that supported the pcie want to use the PCIe,
+> it needs to control the phy resgister.
+> But it should be more complex to control in their own PCIe device drivers.
 > 
-> On Mon, Jan 09, 2017 at 04:22:14PM +0900, Jaechul Lee wrote:
-> > +static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
-> > +{
-> > +	struct tm2_touchkey_data *touchkey = devid;
-> > +	u32 data;
-> > +
-> > +	data = i2c_smbus_read_byte_data(touchkey->client,
-> > +					TM2_TOUCHKEY_KEYCODE_REG);
-> > +
-> > +	if (data < 0) {
-> 
-> You declared data as u32 so it will never be negative.
+> Currently, there is an exynos5440 case to support the pcie.
+> So this driver is based on Exynos5440 PCIe.
+> In future, will support the Other exynos SoCs likes exynos5433, exynos7.
 
-Yes, it won't be negative.
-
+please re-write the commit message.
 > 
-> > +		dev_err(&touchkey->client->dev, "Failed to read i2c data\n");
-> > +		return IRQ_HANDLED;
-> > +	}
-> > +
-> > +	touchkey->keycode_type = data & TM2_TOUCHKEY_BIT_KEYCODE;
-> > +	touchkey->pressed = !(data & TM2_TOUCHKEY_BIT_PRESS_EV);
-> 
-> There is no need to store this in touchkey structure as you are not
-> going to use it past this function.
-
-I agree with you. it doesn't need to store variables in touchkey structure.
-
-> 
-> Does the version of the patch below work for you?
-
-I found that the condition is inverted.
-if data & TM2_TOUCHKEY_BIT_PRESS_EV is true, it means touchkey is released.
-
-it should be changed like this.
-
-	if (data & TM2_TOUCHKEY_BIT_PRESS_EV) {
-		input_report_key(touchkey->input_dev, KEY_PHONE, 0);
-		input_report_key(touchkey->input_dev, KEY_BACK, 0);
-	} else {
-		input_report_key(touchkey->input_dev, key, 1);
-	}
-
-I will prepare for patch v7 based on your modifications.
-Thank you very much for your reviews.
-
-Best Regards,
-Jaechul
-
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
-> 
-> 
-> Input: tm2-touchkey - add touchkey driver support for TM2
-> 
-> From: Jaechul Lee <jcsing.lee@samsung.com>
-> 
-> This patch adds support for the TM2 touch key and led functionality.
-> 
-> The driver interfaces with userspace through an input device and
-> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
-> controlled by "/sys/class/leds/tm2-touchkey/brightness".
-> 
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Patchwork-Id: 9504149
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
->  drivers/input/keyboard/Kconfig        |   11 +
->  drivers/input/keyboard/Makefile       |    1 
->  drivers/input/keyboard/tm2-touchkey.c |  286 +++++++++++++++++++++++++++++++++
->  3 files changed, 298 insertions(+)
->  create mode 100644 drivers/input/keyboard/tm2-touchkey.c
+> Changelog on V2:
+> - Not include the codes relevant to pci-exynos.
+> - Remove the getting child node.
 > 
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-> index cbd75cf44739..97acd6524ad7 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -666,6 +666,17 @@ config KEYBOARD_TC3589X
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called tc3589x-keypad.
+>  drivers/phy/Kconfig           |   9 ++
+>  drivers/phy/Makefile          |   1 +
+>  drivers/phy/phy-exynos-pcie.c | 280 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 290 insertions(+)
+>  create mode 100644 drivers/phy/phy-exynos-pcie.c
+> 
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index e8eb7f2..2dddef4 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -331,6 +331,15 @@ config PHY_EXYNOS5_USBDRD
+>  	  This driver provides PHY interface for USB 3.0 DRD controller
+>  	  present on Exynos5 SoC series.
 >  
-> +config KEYBOARD_TM2_TOUCHKEY
-> +	tristate "TM2 touchkey support"
-> +	depends on I2C
-> +	depends on LEDS_CLASS
+> +config PHY_EXYNOS_PCIE
+> +	bool "Exynos PCIe PHY driver"
+> +	depends on ARCH_EXYNOS && OF
+
+include COMPILE_TEST
+> +	depends on PCI_EXYNOS
+
+PCI_EXYNOS should depend on PHY_EXYNOS_PCIE if at all required. Or else do away
+with this dependency.
+> +	select GENERIC_PHY
 > +	help
-> +	  Say Y here to enable device driver for tm2-touchkey with
-> +	  LED control for the Exynos5433 TM2 board.
+> +	  Enable PCIe PHY support for Exynos SoC series.
+> +	  This driver provides PHY interface for Exynos PCIe controller.
 > +
-> +	  To compile this driver as a module, choose M here.
-> +	  module will be called tm2-touchkey.
-> +
->  config KEYBOARD_TWL4030
->  	tristate "TI TWL4030/TWL5030/TPS659x0 keypad support"
->  	depends on TWL4030_CORE
-> diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-> index d9f4cfcf3410..7d9acff819a7 100644
-> --- a/drivers/input/keyboard/Makefile
-> +++ b/drivers/input/keyboard/Makefile
-> @@ -61,6 +61,7 @@ obj-$(CONFIG_KEYBOARD_SUN4I_LRADC)	+= sun4i-lradc-keys.o
->  obj-$(CONFIG_KEYBOARD_SUNKBD)		+= sunkbd.o
->  obj-$(CONFIG_KEYBOARD_TC3589X)		+= tc3589x-keypad.o
->  obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
-> +obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
->  obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
->  obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
->  obj-$(CONFIG_KEYBOARD_W90P910)		+= w90p910_keypad.o
-> diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
+>  config PHY_PISTACHIO_USB
+>  	tristate "IMG Pistachio USB2.0 PHY driver"
+>  	depends on MACH_PISTACHIO
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index 65eb2f4..081aeb4 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -37,6 +37,7 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+>  phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+> +obj-$(CONFIG_PHY_EXYNOS_PCIE)	+= phy-exynos-pcie.o
+>  obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
+>  obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
+>  obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+= phy-rockchip-inno-usb2.o
+> diff --git a/drivers/phy/phy-exynos-pcie.c b/drivers/phy/phy-exynos-pcie.c
 > new file mode 100644
-> index 000000000000..79bc2d2bd4b9
+> index 0000000..b57f49b
 > --- /dev/null
-> +++ b/drivers/input/keyboard/tm2-touchkey.c
-> @@ -0,0 +1,286 @@
+> +++ b/drivers/phy/phy-exynos-pcie.c
+> @@ -0,0 +1,280 @@
 > +/*
-> + * TM2 touchkey device driver
+> + * Samsung EXYNOS SoC series PCIe PHY driver
 > + *
-> + * Copyright 2005 Phil Blundell
-> + * Copyright 2016 Samsung Electronics Co., Ltd.
+> + * Phy provider for PCIe controller on Exynos SoC series
 > + *
-> + * Author: Beomho Seo <beomho.seo@samsung.com>
-> + * Author: Jaechul Lee <jcsing.lee@samsung.com>
+> + * Copyright (C) 2016 Samsung Electronics Co., Ltd.
+
+2017?
+> + * Jaehoon Chung <jh80.chung@samsung.com>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#include <linux/bitops.h>
 > +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/i2c.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/leds.h>
+> +#include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
 > +#include <linux/module.h>
 > +#include <linux/of.h>
-> +#include <linux/pm.h>
-> +#include <linux/regulator/consumer.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/regmap.h>
 > +
-> +#define TM2_TOUCHKEY_DEV_NAME		"tm2-touchkey"
-> +#define TM2_TOUCHKEY_KEYCODE_REG	0x03
-> +#define TM2_TOUCHKEY_BASE_REG		0x00
-> +#define TM2_TOUCHKEY_CMD_LED_ON		0x10
-> +#define TM2_TOUCHKEY_CMD_LED_OFF	0x20
-> +#define TM2_TOUCHKEY_BIT_PRESS_EV	BIT(3)
-> +#define TM2_TOUCHKEY_BIT_KEYCODE	GENMASK(2, 0)
-> +#define TM2_TOUCHKEY_LED_VOLTAGE_MIN	2500000
-> +#define TM2_TOUCHKEY_LED_VOLTAGE_MAX	3300000
+> +/* PCIe Purple registers */
+> +#define PCIE_PHY_GLOBAL_RESET		0x000
+> +#define PCIE_PHY_COMMON_RESET		0x004
+> +#define PCIE_PHY_CMN_REG		0x008
+> +#define PCIE_PHY_MAC_RESET		0x00c
+> +#define PCIE_PHY_PLL_LOCKED		0x010
+> +#define PCIE_PHY_TRSVREG_RESET		0x020
+> +#define PCIE_PHY_TRSV_RESET		0x024
+
+Please use BIT() macro for bit definitions.
 > +
-> +enum {
-> +	TM2_TOUCHKEY_KEY_MENU = 0x1,
-> +	TM2_TOUCHKEY_KEY_BACK,
+> +/* PCIe PHY registers */
+> +#define PCIE_PHY_IMPEDANCE		0x004
+> +#define PCIE_PHY_PLL_DIV_0		0x008
+> +#define PCIE_PHY_PLL_BIAS		0x00c
+> +#define PCIE_PHY_DCC_FEEDBACK		0x014
+> +#define PCIE_PHY_PLL_DIV_1		0x05c
+> +#define PCIE_PHY_COMMON_POWER		0x064
+> +#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
+> +#define PCIE_PHY_TRSV0_EMP_LVL		0x084
+> +#define PCIE_PHY_TRSV0_DRV_LVL		0x088
+> +#define PCIE_PHY_TRSV0_RXCDR		0x0ac
+> +#define PCIE_PHY_TRSV0_POWER		0x0c4
+> +#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
+> +#define PCIE_PHY_TRSV0_LVCC		0x0dc
+> +#define PCIE_PHY_TRSV1_EMP_LVL		0x144
+> +#define PCIE_PHY_TRSV1_RXCDR		0x16c
+> +#define PCIE_PHY_TRSV1_POWER		0x184
+> +#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
+> +#define PCIE_PHY_TRSV1_LVCC		0x19c
+> +#define PCIE_PHY_TRSV2_EMP_LVL		0x204
+> +#define PCIE_PHY_TRSV2_RXCDR		0x22c
+> +#define PCIE_PHY_TRSV2_POWER		0x244
+> +#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
+> +#define PCIE_PHY_TRSV2_LVCC		0x25c
+> +#define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
+> +#define PCIE_PHY_TRSV3_RXCDR		0x2ec
+> +#define PCIE_PHY_TRSV3_POWER		0x304
+> +#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+> +#define PCIE_PHY_TRSV3_LVCC		0x31c
+> +
+> +struct exynos_pcie_phy_data {
+> +	struct phy_ops	*ops;
 > +};
 > +
-> +struct tm2_touchkey_data {
-> +	struct i2c_client *client;
-> +	struct input_dev *input_dev;
-> +	struct led_classdev led_dev;
-> +	struct regulator *vdd;
-> +	struct regulator_bulk_data regulators[2];
+> +/* For Exynos pcie phy */
+> +struct exynos_pcie_phy {
+> +	const struct exynos_pcie_phy_data *drv_data;
+> +	void __iomem *phy_base;
+> +	void __iomem *blk_base; /* For exynos5440 */
 > +};
 > +
-> +static void tm2_touchkey_led_brightness_set(struct led_classdev *led_dev,
-> +					    enum led_brightness brightness)
+> +static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
 > +{
-> +	struct tm2_touchkey_data *touchkey =
-> +		container_of(led_dev, struct tm2_touchkey_data, led_dev);
-> +	u32 volt;
-> +	u8 data;
-> +
-> +	if (brightness == LED_OFF) {
-> +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MIN;
-> +		data = TM2_TOUCHKEY_CMD_LED_OFF;
-> +	} else {
-> +		volt = TM2_TOUCHKEY_LED_VOLTAGE_MAX;
-> +		data = TM2_TOUCHKEY_CMD_LED_ON;
-> +	}
-> +
-> +	regulator_set_voltage(touchkey->vdd, volt, volt);
-> +	i2c_smbus_write_byte_data(touchkey->client,
-> +				  TM2_TOUCHKEY_BASE_REG, data);
+> +	writel(val, base + offset);
 > +}
 > +
-> +static int tm2_touchkey_power_enable(struct tm2_touchkey_data *touchkey)
+> +static u32 exynos_pcie_phy_readl(void __iomem *base, u32 offset)
 > +{
-> +	int error;
+> +	return readl(base + offset);
+> +}
 > +
-> +	error = regulator_bulk_enable(ARRAY_SIZE(touchkey->regulators),
-> +				      touchkey->regulators);
-> +	if (error)
-> +		return error;
+> +/* For Exynos5440 specific functions */
+> +static int exynos5440_pcie_phy_init(struct phy *phy)
+> +{
+> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
 > +
-> +	/* waiting for device initialization, at least 150ms */
-> +	msleep(150);
+> +	/* DCC feedback control off */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x29, PCIE_PHY_DCC_FEEDBACK);
+> +
+> +	/* set TX/RX impedance */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
+> +
+> +	/* set 50Mhz PHY clock */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
+> +
+> +	/* set TX Differential output for lane 0 */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x7f, PCIE_PHY_TRSV0_DRV_LVL);
+> +
+> +	/* set TX Pre-emphasis Level Control for lane 0 to minimum */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x0, PCIE_PHY_TRSV0_EMP_LVL);
+> +
+> +	/* set RX clock and data recovery bandwidth */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV0_RXCDR);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV1_RXCDR);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV2_RXCDR);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV3_RXCDR);
+> +
+> +	/* change TX Pre-emphasis Level Control for lanes */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV0_EMP_LVL);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV1_EMP_LVL);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV2_EMP_LVL);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV3_EMP_LVL);
+> +
+> +	/* set LVCC */
+> +	exynos_pcie_phy_writel(ep->phy_base, 0x20, PCIE_PHY_TRSV0_LVCC);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV1_LVCC);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV2_LVCC);
+> +	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV3_LVCC);
+
+I'm starting to dis-like all this hard-coded hw params. All this should come
+from dt. Define a dt binding like this for all hw params..
+	phy,tx-differential = <val, reg-offset, mask>
+
+and have one API in phy-core to do all these settings.
+> +
+> +	/* pulse for common reset */
+> +	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_COMMON_RESET);
+> +	udelay(500);
+
+how did you get this delay value? Adding a comment might help.
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
 > +
 > +	return 0;
 > +}
 > +
-> +static void tm2_touchkey_power_disable(void *data)
+> +static int exynos5440_pcie_phy_power_on(struct phy *phy)
 > +{
-> +	struct tm2_touchkey_data *touchkey = data;
+> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> +	u32 val;
 > +
-> +	regulator_bulk_disable(ARRAY_SIZE(touchkey->regulators),
-> +			       touchkey->regulators);
-> +}
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_CMN_REG);
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSVREG_RESET);
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSV_RESET);
 > +
-> +static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
-> +{
-> +	struct tm2_touchkey_data *touchkey = devid;
-> +	int data;
-> +	int key;
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
+> +	val &= ~PCIE_PHY_COMMON_PD_CMN;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
 > +
-> +	data = i2c_smbus_read_byte_data(touchkey->client,
-> +					TM2_TOUCHKEY_KEYCODE_REG);
-> +	if (data < 0) {
-> +		dev_err(&touchkey->client->dev,
-> +			"failed to read i2c data: %d\n", data);
-> +		goto out;
-> +	}
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
+> +	val &= ~PCIE_PHY_TRSV0_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
 > +
-> +	switch (data & TM2_TOUCHKEY_BIT_KEYCODE) {
-> +	case TM2_TOUCHKEY_KEY_MENU:
-> +		key = KEY_PHONE;
-> +		break;
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
+> +	val &= ~PCIE_PHY_TRSV1_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
 > +
-> +	case TM2_TOUCHKEY_KEY_BACK:
-> +		key = KEY_BACK;
-> +		break;
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
+> +	val &= ~PCIE_PHY_TRSV2_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
 > +
-> +	default:
-> +		dev_warn(&touchkey->client->dev,
-> +			 "unhandled keycode, data %#02x\n", data);
-> +		goto out;
-> +	}
-> +
-> +	if (data & TM2_TOUCHKEY_BIT_PRESS_EV) {
-> +		input_report_key(touchkey->input_dev, key, 1);
-> +	} else {
-> +		input_report_key(touchkey->input_dev, KEY_PHONE, 0);
-> +		input_report_key(touchkey->input_dev, KEY_BACK, 0);
-> +	}
-> +
-> +	input_sync(touchkey->input_dev);
-> +
-> +out:
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int tm2_touchkey_probe(struct i2c_client *client,
-> +			      const struct i2c_device_id *id)
-> +{
-> +	struct tm2_touchkey_data *touchkey;
-> +	int error;
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +			I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA)) {
-> +		dev_err(&client->dev, "incompatible I2C adapter\n");
-> +		return -EIO;
-> +	}
-> +
-> +	touchkey = devm_kzalloc(&client->dev, sizeof(*touchkey), GFP_KERNEL);
-> +	if (!touchkey)
-> +		return -ENOMEM;
-> +
-> +	touchkey->client = client;
-> +	i2c_set_clientdata(client, touchkey);
-> +
-> +	touchkey->regulators[0].supply = "vcc";
-> +	touchkey->regulators[1].supply = "vdd";
-> +	error = devm_regulator_bulk_get(&client->dev,
-> +					ARRAY_SIZE(touchkey->regulators),
-> +					touchkey->regulators);
-> +	if (error) {
-> +		dev_err(&client->dev, "failed to get regulators: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	/* Save VDD for easy access */
-> +	touchkey->vdd = touchkey->regulators[1].consumer;
-> +
-> +	error = tm2_touchkey_power_enable(touchkey);
-> +	if (error) {
-> +		dev_err(&client->dev, "failed to power up device: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	error = devm_add_action_or_reset(&client->dev,
-> +					 tm2_touchkey_power_disable, touchkey);
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +			"failed to install poweroff handler: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	/* input device */
-> +	touchkey->input_dev = devm_input_allocate_device(&client->dev);
-> +	if (!touchkey->input_dev) {
-> +		dev_err(&client->dev, "failed to allocate input device\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	touchkey->input_dev->name = TM2_TOUCHKEY_DEV_NAME;
-> +	touchkey->input_dev->id.bustype = BUS_I2C;
-> +
-> +	input_set_capability(touchkey->input_dev, EV_KEY, KEY_PHONE);
-> +	input_set_capability(touchkey->input_dev, EV_KEY, KEY_BACK);
-> +
-> +	input_set_drvdata(touchkey->input_dev, touchkey);
-> +
-> +	error = input_register_device(touchkey->input_dev);
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +			"failed to register input device: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	error = devm_request_threaded_irq(&client->dev, client->irq,
-> +					  NULL, tm2_touchkey_irq_handler,
-> +					  IRQF_ONESHOT,
-> +					  TM2_TOUCHKEY_DEV_NAME, touchkey);
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +			"failed to request threaded irq: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	/* led device */
-> +	touchkey->led_dev.name = TM2_TOUCHKEY_DEV_NAME;
-> +	touchkey->led_dev.brightness = LED_FULL;
-> +	touchkey->led_dev.max_brightness = LED_FULL;
-> +	touchkey->led_dev.brightness_set = tm2_touchkey_led_brightness_set;
-> +
-> +	error = devm_led_classdev_register(&client->dev, &touchkey->led_dev);
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +			"failed to register touchkey led: %d\n", error);
-> +		return error;
-> +	}
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
+> +	val &= ~PCIE_PHY_TRSV3_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
 > +
 > +	return 0;
 > +}
 > +
-> +static int __maybe_unused tm2_touchkey_suspend(struct device *dev)
+> +static int exynos5440_pcie_phy_power_off(struct phy *phy)
 > +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +	struct tm2_touchkey_data *touchkey = i2c_get_clientdata(client);
+> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> +	u32 val;
 > +
-> +	disable_irq(client->irq);
-> +	tm2_touchkey_power_disable(touchkey);
+> +	while (exynos_pcie_phy_readl(ep->phy_base,
+> +				PCIE_PHY_PLL_LOCKED) == 0) {
+> +		val = exynos_pcie_phy_readl(ep->blk_base,
+> +				PCIE_PHY_PLL_LOCKED);
+> +		dev_info(&phy->dev, "PLL Locked: 0x%x\n", val);
+> +	}
+> +
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
+> +	val |= PCIE_PHY_COMMON_PD_CMN;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
+> +
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
+> +	val |= PCIE_PHY_TRSV0_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
+> +
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
+> +	val |= PCIE_PHY_TRSV1_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
+> +
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
+> +	val |= PCIE_PHY_TRSV2_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
+> +
+> +	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
+> +	val |= PCIE_PHY_TRSV3_PD_TSV;
+> +	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
 > +
 > +	return 0;
 > +}
 > +
-> +static int __maybe_unused tm2_touchkey_resume(struct device *dev)
+> +static int exynos5440_pcie_phy_reset(struct phy *phy)
 > +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +	struct tm2_touchkey_data *touchkey = i2c_get_clientdata(client);
-> +	int ret;
+> +	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
 > +
-> +	enable_irq(client->irq);
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_MAC_RESET);
+> +	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_GLOBAL_RESET);
+> +	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_GLOBAL_RESET);
 > +
-> +	ret = tm2_touchkey_power_enable(touchkey);
-> +	if (ret)
-> +		dev_err(dev, "failed to enable power: %d\n", ret);
-> +
-> +	return ret;
+> +	return 0;
 > +}
 > +
-> +static SIMPLE_DEV_PM_OPS(tm2_touchkey_pm_ops,
-> +			 tm2_touchkey_suspend, tm2_touchkey_resume);
-> +
-> +static const struct i2c_device_id tm2_touchkey_id_table[] = {
-> +	{ TM2_TOUCHKEY_DEV_NAME, 0 },
-> +	{ },
+> +static struct phy_ops exynos5440_phy_ops = {
+> +	.init	= exynos5440_pcie_phy_init,
+> +	.power_on = exynos5440_pcie_phy_power_on,
+> +	.power_off = exynos5440_pcie_phy_power_off,
+> +	.reset	= exynos5440_pcie_phy_reset,
+
+add .owner
 > +};
-> +MODULE_DEVICE_TABLE(i2c, tm2_touchkey_id_table);
 > +
-> +static const struct of_device_id tm2_touchkey_of_match[] = {
-> +	{ .compatible = "cypress,tm2-touchkey", },
-> +	{ },
+> +static const struct exynos_pcie_phy_data exynos5440_pcie_phy_data = {
+> +	.ops		= &exynos5440_phy_ops,
+
+why do you need a wrapper for phy_ops?
 > +};
-> +MODULE_DEVICE_TABLE(of, tm2_touchkey_of_match);
 > +
-> +static struct i2c_driver tm2_touchkey_driver = {
-> +	.driver = {
-> +		.name = TM2_TOUCHKEY_DEV_NAME,
-> +		.pm = &tm2_touchkey_pm_ops,
-> +		.of_match_table = of_match_ptr(tm2_touchkey_of_match),
+> +static const struct of_device_id exynos_pcie_phy_match[] = {
+> +	{
+> +		.compatible = "samsung,exynos5440-pcie-phy",
+> +		.data = &exynos5440_pcie_phy_data,
 > +	},
-> +	.probe = tm2_touchkey_probe,
-> +	.id_table = tm2_touchkey_id_table,
+> +	{},
 > +};
-> +module_i2c_driver(tm2_touchkey_driver);
+> +MODULE_DEVICE_TABLE(of, exynos_pcie_phy_match);
 > +
-> +MODULE_AUTHOR("Beomho Seo <beomho.seo@samsung.com>");
-> +MODULE_AUTHOR("Jaechul Lee <jcsing.lee@samsung.com>");
-> +MODULE_DESCRIPTION("Samsung touchkey driver");
-> +MODULE_LICENSE("GPL v2");
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +static int exynos_pcie_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct exynos_pcie_phy *exynos_phy;
+> +	struct phy *generic_phy;
+> +	struct phy_provider *phy_provider;
+> +	struct resource *res;
+> +	const struct exynos_pcie_phy_data *drv_data;
+> +
+> +	drv_data = of_device_get_match_data(dev);
+> +	if (!drv_data)
+> +		return -ENODEV;
+> +
+> +	exynos_phy = devm_kzalloc(dev, sizeof(*exynos_phy), GFP_KERNEL);
+> +	if (!exynos_phy)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	exynos_phy->phy_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(exynos_phy->phy_base))
+> +		return PTR_ERR(exynos_phy->phy_base);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	exynos_phy->blk_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(exynos_phy->phy_base))
+> +		return PTR_ERR(exynos_phy->phy_base);
+> +
+> +	exynos_phy->drv_data = drv_data;
+> +
+> +	generic_phy = devm_phy_create(dev, dev->of_node, drv_data->ops);
+> +	if (IS_ERR(generic_phy)) {
+> +		dev_err(dev, "failed to create PHY\n");
+> +		return PTR_ERR(generic_phy);
+> +	}
+> +
+> +	phy_set_drvdata(generic_phy, exynos_phy);
+> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +static struct platform_driver exynos_pcie_phy_driver = {
+> +	.probe	= exynos_pcie_phy_probe,
+> +	.driver = {
+> +		.of_match_table	= exynos_pcie_phy_match,
+> +		.name		= "exynos_pcie_phy",
+> +	}
+> +};
+> +module_platform_driver(exynos_pcie_phy_driver);
+> 
+Thanks
+Kishon
