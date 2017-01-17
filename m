@@ -1,16 +1,16 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 1/2] arm64: dts: exynos: Add USB 3.0 controller node for
- Exynos7
-Date: Tue, 17 Jan 2017 20:34:03 +0530
-Message-ID: <1484665444-23365-2-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v2 2/2] arm64: dts: exynos: Add regulators for Vbus and
+ Vbus-Boost
+Date: Tue, 17 Jan 2017 20:34:04 +0530
+Message-ID: <1484665444-23365-3-git-send-email-pankaj.dubey@samsung.com>
 References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170117150121epcas1p102bd1355f780a56e14a0a7a81bd6dfaf@epcas1p1.samsung.com>
+ <CGME20170117150123epcas1p12709f99a0993ae58ea1fe294df5a12fe@epcas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:45552 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751032AbdAQPBf (ORCPT
+        with ESMTP id S1750826AbdAQPBd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 10:01:35 -0500
+        Tue, 17 Jan 2017 10:01:33 -0500
 In-reply-to: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,60 +19,82 @@ Cc: krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, j
 
 From: Vivek Gautam <gautamvivek1987@gmail.com>
 
-Add USB 3.0 DRD controller device node, with its clock
-and phy information to enable the same on Exynos7.
+Adding fixed voltage regulators for Vbus and Vbus-boost required
+by USB 3.0 DRD controller on Exynos7-espresso board.
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos7.dtsi | 34 +++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 45 +++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 9080a11..a2d8d11 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -603,6 +603,40 @@
- 				#include "exynos7-trip-points.dtsi"
- 			};
- 		};
-+
-+		usbdrd_phy: phy@15500000 {
-+			compatible = "samsung,exynos7-usbdrd-phy";
-+			reg = <0x15500000 0x100>;
-+			clocks = <&clock_fsys0 ACLK_USBDRD300>,
-+			       <&clock_fsys0 OSCCLK_PHY_CLKOUT_USB30_PHY>,
-+			       <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PIPE_PCLK_USER>,
-+			       <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PHYCLK_USER>,
-+			       <&clock_fsys0 SCLK_USBDRD300_REFCLK>;
-+			clock-names = "phy", "ref", "phy_pipe",
-+				"phy_utmi", "itp";
-+			samsung,pmu-syscon = <&pmu_system_controller>;
-+			#phy-cells = <1>;
-+		};
-+
-+		usbdrd3: usb@15400000 {
-+			compatible = "samsung,exynos7-dwusb3";
-+			clocks = <&clock_fsys0 ACLK_USBDRD300>,
-+			       <&clock_fsys0 SCLK_USBDRD300_SUSPENDCLK>,
-+			       <&clock_fsys0 ACLK_AXIUS_USBDRD30X_FSYS0X>;
-+			clock-names = "usbdrd30", "usbdrd30_susp_clk",
-+				"usbdrd30_axius_clk";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			dwc3 {
-+				compatible = "snps,dwc3";
-+				reg = <0x15400000 0x10000>;
-+				interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
-+				phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+			};
-+		};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index 9cf73cf..8d5abdd 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -13,6 +13,7 @@
+ #include "exynos7.dtsi"
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+@@ -33,6 +34,29 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x40000000 0x0 0xC0000000>;
  	};
++
++	usb30_vbus_reg: regulator-usb30 {
++		compatible = "regulator-fixed";
++		regulator-name = "VBUS_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gph1 1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb30_vbus_en>;
++		enable-active-high;
++	};
++
++	usb3drd_boost_5v: regulator-usb3drd-boost {
++		compatible = "regulator-fixed";
++		regulator-name = "VUSB_VBUS_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpf4 1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb3drd_boost_en>;
++		enable-active-high;
++	};
++
  };
  
+ &fin_pll {
+@@ -366,3 +390,24 @@
+ 	vqmmc-supply = <&ldo2_reg>;
+ 	disable-wp;
+ };
++
++&usbdrd_phy {
++	vbus-supply = <&usb30_vbus_reg>;
++	vbus-boost-supply = <&usb3drd_boost_5v>;
++};
++
++&pinctrl_bus1 {
++	usb30_vbus_en: usb30-vbus-en {
++		samsung,pins = "gph1-1";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	usb3drd_boost_en: usb3drd-boost-en {
++		samsung,pins = "gpf4-1";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
 -- 
 2.7.4
