@@ -1,90 +1,59 @@
-From: Jaechul Lee <jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7 0/3] Add touch key driver support for TM2
-Date: Tue, 17 Jan 2017 14:54:36 +0900
-Message-ID: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
-References: <CGME20170117055443epcas1p40b08d361f8f95090ad7b4d855a5bfad4@epcas1p4.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: Jaechul Lee <jcsing.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galaxyra-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove unnecessary codes
+Date: Tue, 17 Jan 2017 15:03:28 +0900
+Message-ID: <587DB3B0.3000303@samsung.com>
+References: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+ <CGME20170116091327epcas5p1250b06956c0fb805113c35c3223a94e3@epcas5p1.samsung.com>
+ <1484558003-18691-2-git-send-email-inki.dae@samsung.com>
+ <f2f5ff44-17e9-9ae3-d01a-efa4f596e2fa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <f2f5ff44-17e9-9ae3-d01a-efa4f596e2fa@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-This patch is last three patch from https://lkml.org/lkml/2017/1/6/277.
-because 1 and 2 patches have already been merged by Krzysztof.
-
-This patchset adds support for the tm2 touchkey device.
-
-The driver has been ported from Tizen Kernel, originally written
-by Beomho. I ported it to the latest mainline Kernel.
-
-Best Regard,
-Jaechul
-
-Changes in v7
- - added Chanwoo's reviewed and tested.
- - fixed reviews from Dmitry.
-
-Changes in v6:
- - changed compatible name from samsaung to cypress.
- - updated commit tags.
- - removed first two patches from the original patchset.
-
-Changes in v5:
- - patch 1: removed a spurious regulator-always-off inherited from
-   a different patch. Thanks Krzysztof.
- - patch 2: fixed a slip on  the model, thanks Javier (this patch
-   confuses me quite a lot, this was all right some patches ago
-   and re appeared on this one).
- - patch 2: removed 'regulator' label and used the original ldo3x
-   labels. Krzysztof: it looks better indeed.
- - added Javier's reviews and Krzysztof's acks on the related
-   patches.
-
-Changes in v4:
- - patch 1 has been rebased on top of 7c294e002641 (arm64: dts:
-   exynos: Remove unsupported regulator-always-off property from
-   TM2E)
- - patch 2 has been generated with -B50% diff option using git
-   2.11
-
-Changes in v3:
- - Changed the commit ordering, the tm2-touchkey related patches
-   are the last 3.
- - Added Chanwoo's patch which fixes the wrong voltage of ldo23
-   and ldo25.
- - Andi (patch 3) moves the ldo31 and ldo38 in the tm2 and tm2e
-   files as they have different values.
-
-Changes in v2:
- - fixed reviews from Javier, Dmitry
- - refactored power enable/disable functions.
- - reordered signed-offs in patch 2, while patch 4 is left as it
-   was as Andi copy pasted the node to the new tm2.dts file
- - added Jarvier's (patch 1,2,4) and Krzysztof's (patch 4)
-   reviews
-   and Rob's Ack
- - patch 3 diff has been generated with -B50%
-
-Jaechul Lee (3):
-  input: Add support for the tm2 touchkey device driver
-  input: tm2-touchkey: Add touchkey driver support for TM2
-  arm64: dts: exynos: Add tm2 touchkey node
-
- .../bindings/input/cypress,tm2-touchkey.txt        |  27 ++
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  13 +
- drivers/input/keyboard/Kconfig                     |  11 +
- drivers/input/keyboard/Makefile                    |   1 +
- drivers/input/keyboard/tm2-touchkey.c              | 287 +++++++++++++++++++++
- 5 files changed, 339 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/cypress,tm2-touchkey.txt
- create mode 100644 drivers/input/keyboard/tm2-touchkey.c
-
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+CgoyMDE364WEIDAx7JuUIDE27J28IDE4OjM37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
+IOq4gDoKPiBPbiAxNi4wMS4yMDE3IDEwOjEzLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRj
+aCByZW1vdmVzIGV4eW5vc19kcm1fY3J0Y19jYW5jZWxfcGFnZV9mbGlwIGNhbGwKPj4gd2hlbiBk
+cm0gaXMgY2xvc2VkIGJlY2F1c2UgYXQgdGhhdCB0aW1lLCBldmVudHMgd2lsbCBiZSByZWxlYXNl
+ZAo+PiBieSBkcm1fZXZlbnRzX3JlbGVhc2UgZnVuY3Rpb24uCj4+Cj4+IENoYW5nZS1JZDogSTE1
+NmVhMjdhNGM5MGFhODdhMjdhNTA0MTU1MTVmYTMzNDE0OGM5MTIKPj4gU2lnbmVkLW9mZi1ieTog
+SW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyB8IDYgLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwg
+NiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+Ywo+PiBpbmRleCA5ZDBkZjAwLi4wMzVkMDJlIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2Rydi5jCj4+IEBAIC0xOTgsMTMgKzE5OCw3IEBAIHN0YXRpYyBpbnQgZXh5
+bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmls
+ZSkKPj4gIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fcHJlY2xvc2Uoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwKPj4gIAkJCQkJc3RydWN0IGRybV9maWxlICpmaWxlKQo+PiAgewo+PiAtCXN0cnVjdCBk
+cm1fY3J0YyAqY3J0YzsKPj4gLQo+PiAgCWV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKGRldiwgZmls
+ZSk7Cj4+IC0KPj4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNydGMsICZkZXYtPm1vZGVfY29uZmln
+LmNydGNfbGlzdCwgaGVhZCkKPj4gLQkJZXh5bm9zX2RybV9jcnRjX2NhbmNlbF9wYWdlX2ZsaXAo
+Y3J0YywgZmlsZSk7Cj4gCj4gU2luY2UgdGhpcyBpcyBzaW5nbGUgdXNlciBvZiBleHlub3NfZHJt
+X2NydGNfY2FuY2VsX3BhZ2VfZmxpcCwgdGhpcwo+IGZ1bmN0aW9uIGNhbiBiZSByZW1vdmVkIGFz
+IHdlbGwuCgpJbmRlZWQuIFdpbGwgcmVtb3ZlIHRoYXQgZnVuY3Rpb24uCgpUaGFua3MuCgo+IEJl
+c2lkZSB0aGlzOgo+IFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
+Y29tPgo+IAo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+IC0KPj4gIH0KPj4gIAo+PiAgc3Rh
+dGljIHZvaWQgZXh5bm9zX2RybV9wb3N0Y2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3Ry
+dWN0IGRybV9maWxlICpmaWxlKQo+IAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
+IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+
+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9y
+ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
+by5odG1sCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
