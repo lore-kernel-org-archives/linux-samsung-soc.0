@@ -1,86 +1,55 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynos: Add stmfts touchscreen node for TM2
- and TM2E
-Date: Tue, 17 Jan 2017 22:54:41 +0900
-Message-ID: <20170117135441.31450-4-andi.shyti@samsung.com>
-References: <20170117135441.31450-1-andi.shyti@samsung.com>
- <CGME20170117135457epcas5p2044e9e5cd9eb6b162bb0acb4e317bdfb@epcas5p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53110 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751051AbdAQOGH (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 09:06:07 -0500
-In-reply-to: <20170117135441.31450-1-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
+Date: Tue, 17 Jan 2017 15:24:34 +0100
+Message-ID: <587E2922.10805@math.uni-bielefeld.de>
+References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
+ <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-TM2 and TM2E devices are provided with a ST-Microelectronics
-Finger Tip S device with small differences:
-
- - screen size
- - TM2E uses the stmfts also as a touchkey for "back" and "menu"
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 13 +++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts         |  5 +++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts        |  7 +++++++
- 3 files changed, 25 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index a5c866901e93..689d5c124a49 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -745,6 +745,19 @@
- 	};
- };
- 
-+&hsi2c_5 {
-+	status = "okay";
-+
-+	touchscreen: stmfts@49 {
-+		compatible = "st,stmfts";
-+		reg = <0x49>;
-+		interrupt-parent = <&gpa1>;
-+		interrupts = <1 IRQ_TYPE_NONE>;
-+		avdd-supply = <&ldo30_reg>;
-+		vdd-supply = <&ldo31_reg>;
-+	};
-+};
-+
- &hsi2c_7 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index 2449266b268f..d0311d34c6bd 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -29,3 +29,8 @@
- 	regulator-min-microvolt = <3000000>;
- 	regulator-max-microvolt = <3000000>;
- };
-+
-+&touchscreen {
-+	touchscreen-size-x = <1439>;
-+	touchscreen-size-y = <2559>;
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-index 2fbf3a860316..388880dcb5ae 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-@@ -29,3 +29,10 @@
- 	regulator-min-microvolt = <3300000>;
- 	regulator-max-microvolt = <3300000>;
- };
-+
-+&touchscreen {
-+	touchscreen-size-x = <1599>;
-+	touchscreen-size-y = <2559>;
-+	touch-key-connected;
-+	ledvdd-supply = <&ldo33_reg>;
-+};
--- 
-2.11.0
+Sm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gVGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5
+cGUsIHNvIGl0IGNhbiBiZSBvdmVyZmxvd2VkIGJ5IGNtZCBhbmQKPiBjbWRfYnVmIHRoYXQgaGFz
+IHRvbyBiaWcgc2l6ZS4gVGhpcyBwYXRjaCB3aWxsIGZpeCBvdmVyZmxvdyBpc3N1ZSBhcwo+IGNo
+ZWNraW5nIG1heGltdW0gc2l6ZSBvZiBjbWQgYW5kIGNtZF9idWYuCkkgZG9uJ3QgdW5kZXJzdGFu
+ZC9zZWUgdGhlIGlzc3VlIGhlcmUuIENvdWxkIHlvdSBwb2ludCBvdXQgZm9yIHdoaWNoCmlucHV0
+IG9mIHRoZSBzZXRfY21kbGlzdCBpb2N0bCB5b3Ugc2VlIHRoaXMgcGFydGljdWxhciBvdmVyZmxv
+dz8KCkluIHBhcnRpY3VsYXIgaXQgaXMgbm90IGNsZWFyIHRvIG1lIHdoaWNoIHNpemUgZmllbGQg
+eW91J3JlIHRhbGtpbmcKYWJvdXQuIHN0cnVjdCBnMmRfY21kbGlzdCBkb2VzIG5vdCBoYXZlIGFu
+eSBmaWVsZCBuYW1lZCAnc2l6ZScuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IFNpZ25l
+ZC1vZmYtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiAtLS0K
+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIHwgOSArKysrKysrKy0K
+PiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKPiBpbmRleCBmYmQxM2ZhLi5iMzEy
+NDRmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQu
+Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwo+IEBAIC0x
+MjUwLDcgKzEyNTAsMTQgQEAgaW50IGV4eW5vc19nMmRfc2V0X2NtZGxpc3RfaW9jdGwoc3RydWN0
+IGRybV9kZXZpY2UgKmRybV9kZXYsIHZvaWQgKmRhdGEsCj4gIAkJY21kbGlzdC0+ZGF0YVtjbWRs
+aXN0LT5sYXN0KytdID0gRzJEX0lOVEVOX0FDRjsKPiAgCX0KPiAgCj4gLQkvKiBDaGVjayBzaXpl
+IG9mIGNtZGxpc3Q6IGxhc3QgMiBpcyBhYm91dCBHMkRfQklUQkxUX1NUQVJUICovCj4gKwkvKiBD
+aGVjayBzaXplIG9mIGNtZCBhbmQgY21kbGlzdDogbGFzdCAyIGlzIGFib3V0IEcyRF9CSVRCTFRf
+U1RBUlQgKi8KPiArCXNpemUgPSAoRzJEX0NNRExJU1RfREFUQV9OVU0gLSBjbWRsaXN0LT5sYXN0
+IC0gMikgLyAyOwo+ICsJaWYgKHJlcS0+Y21kX25yID4gc2l6ZSB8fCByZXEtPmNtZF9idWZfbnIg
+PiBzaXplKSB7Cj4gKwkJZGV2X2VycihkZXYsICJzaXplIG9mIGNtZCBvciBjbWRfYnVmIGlzIHRv
+byBiaWdcbiIpOwo+ICsJCXJldCA9IC1FSU5WQUw7Cj4gKwkJZ290byBlcnJfZnJlZV9ldmVudDsK
+PiArCX0KPiArCj4gIAlzaXplID0gY21kbGlzdC0+bGFzdCArIHJlcS0+Y21kX25yICogMiArIHJl
+cS0+Y21kX2J1Zl9uciAqIDIgKyAyOwo+ICAJaWYgKHNpemUgPiBHMkRfQ01ETElTVF9EQVRBX05V
+TSkgewo+ICAJCWRldl9lcnIoZGV2LCAiY21kbGlzdCBzaXplIGlzIHRvbyBiaWdcbiIpOwo+IAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
