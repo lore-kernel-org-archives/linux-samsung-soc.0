@@ -1,87 +1,47 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 01/12] soc: samsung: pmu: Use common device name to let
- others to find it easily
-Date: Tue, 17 Jan 2017 13:39:46 +0900
-Message-ID: <CA+Ln22F6Lnm6LkOO-X9ceqYknxXmuwCBowJzDGACmZzQCBj13w@mail.gmail.com>
-References: <CGME20170116064523eucas1p18a55f951566df5ddd978364486154931@eucas1p1.samsung.com>
- <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com> <1484549107-5957-2-git-send-email-m.szyprowski@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
+Date: Tue, 17 Jan 2017 13:42:06 +0900
+Message-ID: <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
+References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1484549107-5957-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-2017-01-16 15:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> This patch always set device name to "exynos-pmu" to let other drivers to
-> find PMU device easily. This is done mainly to get regmap to access PMU
-> registers from other drivers. This way it can be avoided to add phandle to
-> the PMU node to almost all drivers in the SoC just to get a regmap access
-> in the drivers. PMU is something like a SoC wide service, so there is no
-> point modeling it as hardware dependency for all devices in device tree.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/soc/samsung/exynos-pmu.c       |  1 +
->  include/linux/soc/samsung/exynos-pmu.h | 19 +++++++++++++++++++
->  2 files changed, 20 insertions(+)
->
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index 0acdfd82e751..63bb471845cb 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -120,6 +120,7 @@ static int exynos_pmu_probe(struct platform_device *pdev)
->                 pmu_context->pmu_data->pmu_init();
->
->         platform_set_drvdata(pdev, pmu_context);
-> +       dev_set_name(dev, EXYNOS_PMU_DEV_NAME);
->
->         dev_dbg(dev, "Exynos PMU Driver probe done\n");
->         return 0;
-> diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
-> index e2e9de1acc5b..90d9205805ea 100644
-> --- a/include/linux/soc/samsung/exynos-pmu.h
-> +++ b/include/linux/soc/samsung/exynos-pmu.h
-> @@ -12,6 +12,10 @@
->  #ifndef __LINUX_SOC_EXYNOS_PMU_H
->  #define __LINUX_SOC_EXYNOS_PMU_H
->
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
->  enum sys_powerdown {
->         SYS_AFTR,
->         SYS_LPA,
-> @@ -21,4 +25,19 @@ enum sys_powerdown {
->
->  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
->
-> +#define EXYNOS_PMU_DEV_NAME "exynos-pmu"
-> +
-> +static inline struct regmap *exynos_get_pmu_regs(void)
-> +{
-> +       struct device *dev = bus_find_device_by_name(&platform_bus_type, NULL,
-> +                                                    EXYNOS_PMU_DEV_NAME);
-> +       if (dev) {
-> +               struct regmap *regs = syscon_node_to_regmap(dev->of_node);
-> +               put_device(dev);
-> +               if (!IS_ERR(regs))
-> +                       return regs;
-> +       }
-> +       return NULL;
-
-As discussed offline, since this function relies on the PMU driver
-probing, we need to defer here if someone calls this function before
-that. Since PMU is something that should be assumed to be available in
-any Exynos system (it controls to many critical aspects of the SoC), I
-think we can simply return ERR_PTR(-EDEFER_PROBE) here instead of
-NULL. Maybe also a pr_debug() before deferring could be useful to
-debug PMU probe failures.
-
-Best regards,
-Tomasz
+VGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5cGUsIHNvIGl0IGNhbiBiZSBvdmVyZmxv
+d2VkIGJ5IGNtZCBhbmQKY21kX2J1ZiB0aGF0IGhhcyB0b28gYmlnIHNpemUuIFRoaXMgcGF0Y2gg
+d2lsbCBmaXggb3ZlcmZsb3cgaXNzdWUgYXMKY2hlY2tpbmcgbWF4aW11bSBzaXplIG9mIGNtZCBh
+bmQgY21kX2J1Zi4KClNpZ25lZC1vZmYtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBz
+YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMg
+fCA5ICsrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
+bigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCBmYmQxM2Zh
+Li5iMzEyNDRmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZzJkLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCkBAIC0x
+MjUwLDcgKzEyNTAsMTQgQEAgaW50IGV4eW5vc19nMmRfc2V0X2NtZGxpc3RfaW9jdGwoc3RydWN0
+IGRybV9kZXZpY2UgKmRybV9kZXYsIHZvaWQgKmRhdGEsCiAJCWNtZGxpc3QtPmRhdGFbY21kbGlz
+dC0+bGFzdCsrXSA9IEcyRF9JTlRFTl9BQ0Y7CiAJfQogCi0JLyogQ2hlY2sgc2l6ZSBvZiBjbWRs
+aXN0OiBsYXN0IDIgaXMgYWJvdXQgRzJEX0JJVEJMVF9TVEFSVCAqLworCS8qIENoZWNrIHNpemUg
+b2YgY21kIGFuZCBjbWRsaXN0OiBsYXN0IDIgaXMgYWJvdXQgRzJEX0JJVEJMVF9TVEFSVCAqLwor
+CXNpemUgPSAoRzJEX0NNRExJU1RfREFUQV9OVU0gLSBjbWRsaXN0LT5sYXN0IC0gMikgLyAyOwor
+CWlmIChyZXEtPmNtZF9uciA+IHNpemUgfHwgcmVxLT5jbWRfYnVmX25yID4gc2l6ZSkgeworCQlk
+ZXZfZXJyKGRldiwgInNpemUgb2YgY21kIG9yIGNtZF9idWYgaXMgdG9vIGJpZ1xuIik7CisJCXJl
+dCA9IC1FSU5WQUw7CisJCWdvdG8gZXJyX2ZyZWVfZXZlbnQ7CisJfQorCiAJc2l6ZSA9IGNtZGxp
+c3QtPmxhc3QgKyByZXEtPmNtZF9uciAqIDIgKyByZXEtPmNtZF9idWZfbnIgKiAyICsgMjsKIAlp
+ZiAoc2l6ZSA+IEcyRF9DTURMSVNUX0RBVEFfTlVNKSB7CiAJCWRldl9lcnIoZGV2LCAiY21kbGlz
+dCBzaXplIGlzIHRvbyBiaWdcbiIpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
