@@ -1,47 +1,73 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
-Date: Tue, 17 Jan 2017 13:42:06 +0900
-Message-ID: <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
-References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 06/12] pinctrl: samsung: Add missing initconst annotation
+Date: Tue, 17 Jan 2017 13:44:18 +0900
+Message-ID: <CA+Ln22EsV1mKzM5WZ4gwD+C2Yy22aMwy7YNgi7P=2Jy03XXaSg@mail.gmail.com>
+References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170116064526eucas1p1e3064fad71a3ab8de34d306dec531b14@eucas1p1.samsung.com>
+ <1484549107-5957-7-git-send-email-m.szyprowski@samsung.com> <20170116191400.ehm3ivkmz4csynvq@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35586 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbdAQEoT (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 16 Jan 2017 23:44:19 -0500
+In-Reply-To: <20170116191400.ehm3ivkmz4csynvq@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-VGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5cGUsIHNvIGl0IGNhbiBiZSBvdmVyZmxv
-d2VkIGJ5IGNtZCBhbmQKY21kX2J1ZiB0aGF0IGhhcyB0b28gYmlnIHNpemUuIFRoaXMgcGF0Y2gg
-d2lsbCBmaXggb3ZlcmZsb3cgaXNzdWUgYXMKY2hlY2tpbmcgbWF4aW11bSBzaXplIG9mIGNtZCBh
-bmQgY21kX2J1Zi4KClNpZ25lZC1vZmYtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBz
-YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMg
-fCA5ICsrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
-bigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCBmYmQxM2Zh
-Li5iMzEyNDRmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZzJkLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCkBAIC0x
-MjUwLDcgKzEyNTAsMTQgQEAgaW50IGV4eW5vc19nMmRfc2V0X2NtZGxpc3RfaW9jdGwoc3RydWN0
-IGRybV9kZXZpY2UgKmRybV9kZXYsIHZvaWQgKmRhdGEsCiAJCWNtZGxpc3QtPmRhdGFbY21kbGlz
-dC0+bGFzdCsrXSA9IEcyRF9JTlRFTl9BQ0Y7CiAJfQogCi0JLyogQ2hlY2sgc2l6ZSBvZiBjbWRs
-aXN0OiBsYXN0IDIgaXMgYWJvdXQgRzJEX0JJVEJMVF9TVEFSVCAqLworCS8qIENoZWNrIHNpemUg
-b2YgY21kIGFuZCBjbWRsaXN0OiBsYXN0IDIgaXMgYWJvdXQgRzJEX0JJVEJMVF9TVEFSVCAqLwor
-CXNpemUgPSAoRzJEX0NNRExJU1RfREFUQV9OVU0gLSBjbWRsaXN0LT5sYXN0IC0gMikgLyAyOwor
-CWlmIChyZXEtPmNtZF9uciA+IHNpemUgfHwgcmVxLT5jbWRfYnVmX25yID4gc2l6ZSkgeworCQlk
-ZXZfZXJyKGRldiwgInNpemUgb2YgY21kIG9yIGNtZF9idWYgaXMgdG9vIGJpZ1xuIik7CisJCXJl
-dCA9IC1FSU5WQUw7CisJCWdvdG8gZXJyX2ZyZWVfZXZlbnQ7CisJfQorCiAJc2l6ZSA9IGNtZGxp
-c3QtPmxhc3QgKyByZXEtPmNtZF9uciAqIDIgKyByZXEtPmNtZF9idWZfbnIgKiAyICsgMjsKIAlp
-ZiAoc2l6ZSA+IEcyRF9DTURMSVNUX0RBVEFfTlVNKSB7CiAJCWRldl9lcnIoZGV2LCAiY21kbGlz
-dCBzaXplIGlzIHRvbyBiaWdcbiIpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+2017-01-17 4:14 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Mon, Jan 16, 2017 at 07:45:01AM +0100, Marek Szyprowski wrote:
+>> Exynos5433 support has been added in parallel to adding initconst
+>> annotation to most of the init data structures, so add those
+>> annotations also to Exynos5433 structures.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
+>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> index bf753a596209..70b94ad10cc1 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> @@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+>>  };
+>>
+>>  /* pin banks of exynos5433 pin-controller - ALIVE */
+>> -static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
+>> +static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
+>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+>> @@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+>>  };
+>
+> Your change is aligned with existing code... but after I started to look
+> into it I think this should not be initconst.
+>
+> The pin_banks (initconst) are referenced in pin_ctrl (initconst) which
+> is referenced in samsung_pinctrl_dt_match (NOT initconst). The dt_match
+> then is used in samsung_pinctrl_driver (for obvious reasons not
+> initconst).
+>
+> We suppress the bind so this looks safe - this data should not be ever used
+> after init - but it is not correct strictly speaking.
+>
+> Let's imagine some weird future platform which will use DT overlays with
+> pinctrl. I think the overlays could affect the tree after the init
+> stage.
+
+I think it's not very realistic to have a Samsung on-SoC pin
+controller in an overlay. AFAIR we already assume in several places
+that this driver fully initializes in init stage, so we can save some
+memory by discarding this data
+
+Still, I guess we could add some measure to make sure nothing attempts
+to probe this driver after the data is discarded.
+
+Best regards,
+Tomasz
