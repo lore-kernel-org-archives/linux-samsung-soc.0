@@ -1,159 +1,87 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] drm/exynos: use atomic helper commit
-Date: Mon, 16 Jan 2017 22:34:07 +0200
-Message-ID: <2196053.NgR6vNcVuF@avalon>
-References: <CGME20170116091327epcas5p11cf9bbd8abe89543df059688abc32fb7@epcas5p1.samsung.com>
- <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 01/12] soc: samsung: pmu: Use common device name to let
+ others to find it easily
+Date: Tue, 17 Jan 2017 13:39:46 +0900
+Message-ID: <CA+Ln22F6Lnm6LkOO-X9ceqYknxXmuwCBowJzDGACmZzQCBj13w@mail.gmail.com>
+References: <CGME20170116064523eucas1p18a55f951566df5ddd978364486154931@eucas1p1.samsung.com>
+ <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com> <1484549107-5957-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1484549107-5957-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSW5raSwKClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgoKT24gTW9uZGF5IDE2IEphbiAyMDE3
-IDE4OjEzOjIyIElua2kgRGFlIHdyb3RlOgo+IFRoaXMgcGF0Y2ggcmVscGFjZXMgc3BlY2lmaWMg
-YXRvbWljIGNvbW1pdCBmdW5jdGlvbgo+IHdpdGggYXRvbWljIGhlbHBlciBjb21taXQgb25lLCB3
-aGljaCBhbHNvIGluY2x1ZGVzCj4gYXRvbWljX2NvbW1pdF90YWlsIGNhbGxiYWNrIGZvciBFeHlu
-b3MgU29DIGJlY2FzdWUKPiBjcnRjIGRldmljZXMgb24gRXh5bm9zIFNvQyB1c2VzIHBvd2VyIGRv
-bWFpbiBkZXZpY2UKPiBzbyBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzIHNob3VsZCBi
-ZSBjYWxsZWQKPiBhZnRlciBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVz
-LgoKUGxlYXNlIG5vdGUgdGhhdCBkcm1fYXRvbWljX2hlbHBlcl9jb21taXQoKSBpcyBjdXJyZW50
-bHkgYnJva2VuLCBpdHMgYXN5bmMgCmNvbW1pdCBzdXBwb3J0IGlzIHN1YmplY3QgdG8gYSByYWNl
-IGNvbmRpdGlvbi4gTWFhcnRlbidzICJbUEFUQ0ggdjMgMC83XSAKZHJtL2F0b21pYzogQWRkIGFj
-Y2Vzc29yIG1hY3JvcyBmb3IgYWxsIGF0b21pYyBzdGF0ZSIgcGF0Y2ggc2VyaWVzIGlzIGFuIAph
-dHRlbXB0IHRvIGZpeCB0aGF0LCBJJ2xsIHRyeSB0byByZXZpZXcgaXQgQVNBUC4KCj4gU2lnbmVk
-LW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgICA5ICsrLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgIHwgMTEwICstLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8ICAy
-NSArKysrKystCj4gIDMgZmlsZXMgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwgMTExIGRlbGV0
-aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fY3J0Yy5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGlu
-ZGV4IDI1MzBiZjUuLjQ3ZGE2MTIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMKPiBAQCAtMzksNiArMzksMTQgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9j
-cnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjCj4gKmNydGMpCj4gCj4gIAlpZiAoZXh5bm9zX2Ny
-dGMtPm9wcy0+ZGlzYWJsZSkKPiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlKGV4eW5vc19j
-cnRjKTsKPiArCj4gKwlpZiAoY3J0Yy0+c3RhdGUtPmV2ZW50ICYmICFjcnRjLT5zdGF0ZS0+YWN0
-aXZlKSB7Cj4gKwkJc3Bpbl9sb2NrX2lycSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2NrKTsKPiArCQlk
-cm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChjcnRjLCBjcnRjLT5zdGF0ZS0+ZXZlbnQpOwo+ICsJ
-CXNwaW5fdW5sb2NrX2lycSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2NrKTsKPiArCj4gKwkJY3J0Yy0+
-c3RhdGUtPmV2ZW50ID0gTlVMTDsKPiArCX0KPiAgfQo+IAo+ICBzdGF0aWMgdm9pZAo+IEBAIC05
-NCw3ICsxMDIsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfY3J0Y19hdG9taWNfZmx1c2goc3RydWN0
-IGRybV9jcnRjCj4gKmNydGMsIGRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMsIGV2ZW50
-KTsKPiAgCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZs
-YWdzKTsKPiAgCX0KPiAtCj4gIH0KPiAKPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY3J0Y19o
-ZWxwZXJfZnVuY3MgZXh5bm9zX2NydGNfaGVscGVyX2Z1bmNzID0gewo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPiBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBpbmRleCAzZWMwNTM1Li45ZDBkZjAwIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IEBAIC0zOCw1NiArMzgsNiBA
-QAo+ICAjZGVmaW5lIERSSVZFUl9NQUpPUgkxCj4gICNkZWZpbmUgRFJJVkVSX01JTk9SCTAKPiAK
-PiAtc3RydWN0IGV4eW5vc19hdG9taWNfY29tbWl0IHsKPiAtCXN0cnVjdCB3b3JrX3N0cnVjdAl3
-b3JrOwo+IC0Jc3RydWN0IGRybV9kZXZpY2UJKmRldjsKPiAtCXN0cnVjdCBkcm1fYXRvbWljX3N0
-YXRlICpzdGF0ZTsKPiAtCXUzMgkJCWNydGNzOwo+IC19Owo+IC0KPiAtc3RhdGljIHZvaWQgZXh5
-bm9zX2F0b21pY19jb21taXRfY29tcGxldGUoc3RydWN0IGV4eW5vc19hdG9taWNfY29tbWl0Cj4g
-KmNvbW1pdCkgLXsKPiAtCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjb21taXQtPmRldjsKPiAt
-CXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBkZXYtPmRldl9wcml2YXRlOwo+IC0J
-c3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlID0gY29tbWl0LT5zdGF0ZTsKPiAtCj4gLQlk
-cm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9kaXNhYmxlcyhkZXYsIHN0YXRlKTsKPiAt
-Cj4gLQlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKGRldiwgc3RhdGUp
-Owo+IC0KPiAtCS8qCj4gLQkgKiBFeHlub3MgY2FuJ3QgdXBkYXRlIHBsYW5lcyB3aXRoIENSVENz
-IGFuZCBlbmNvZGVycyBkaXNhYmxlZCwKPiAtCSAqIGl0cyB1cGRhdGVzIHJvdXRpbmVzLCBzcGVj
-aWFsbHkgZm9yIEZJTUQsIHJlcXVpcmVzIHRoZSBjbG9ja3MKPiAtCSAqIHRvIGJlIGVuYWJsZWQu
-IFNvIGl0IGlzIG5lY2Vzc2FyeSB0byBoYW5kbGUgdGhlIG1vZGVzZXQgb3BlcmF0aW9ucwo+IC0J
-ICogKmJlZm9yZSogdGhlIGNvbW1pdF9wbGFuZXMoKSBzdGVwLCB0aGlzIHdheSBpdCB3aWxsIGFs
-d2F5cwo+IC0JICogaGF2ZSB0aGUgcmVsZXZhbnQgY2xvY2tzIGVuYWJsZWQgdG8gcGVyZm9ybSB0
-aGUgdXBkYXRlLgo+IC0JICovCj4gLQo+IC0JZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3BsYW5l
-cyhkZXYsIHN0YXRlLCAwKTsKPiAtCj4gLQlkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92Ymxh
-bmtzKGRldiwgc3RhdGUpOwo+IC0KPiAtCWRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVz
-KGRldiwgc3RhdGUpOwo+IC0KPiAtCWRybV9hdG9taWNfc3RhdGVfcHV0KHN0YXRlKTsKPiAtCj4g
-LQlzcGluX2xvY2soJnByaXYtPmxvY2spOwo+IC0JcHJpdi0+cGVuZGluZyAmPSB+Y29tbWl0LT5j
-cnRjczsKPiAtCXNwaW5fdW5sb2NrKCZwcml2LT5sb2NrKTsKPiAtCj4gLQl3YWtlX3VwX2FsbCgm
-cHJpdi0+d2FpdCk7Cj4gLQo+IC0Ja2ZyZWUoY29tbWl0KTsKPiAtfQo+IC0KPiAtc3RhdGljIHZv
-aWQgZXh5bm9zX2RybV9hdG9taWNfd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCj4gLXsK
-PiAtCXN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1pdCAqY29tbWl0ID0gY29udGFpbmVyX29mKHdv
-cmssCj4gLQkJCQlzdHJ1Y3QgZXh5bm9zX2F0b21pY19jb21taXQsIHdvcmspOwo+IC0KPiAtCWV4
-eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKGNvbW1pdCk7Cj4gLX0KPiAtCj4gIHN0YXRpYyBz
-dHJ1Y3QgZGV2aWNlICpleHlub3NfZHJtX2dldF9kbWFfZGV2aWNlKHZvaWQpOwo+IAo+ICBzdGF0
-aWMgaW50IGV4eW5vc19kcm1fbG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBs
-b25nIGZsYWdzKQo+IEBAIC0yMDIsNjUgKzE1Miw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1f
-dW5sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4gIAlkZXYtPmRldl9wcml2YXRlID0gTlVM
-TDsKPiAgfQo+IAo+IC1zdGF0aWMgaW50IGNvbW1pdF9pc19wZW5kaW5nKHN0cnVjdCBleHlub3Nf
-ZHJtX3ByaXZhdGUgKnByaXYsIHUzMiBjcnRjcykKPiAtewo+IC0JYm9vbCBwZW5kaW5nOwo+IC0K
-PiAtCXNwaW5fbG9jaygmcHJpdi0+bG9jayk7Cj4gLQlwZW5kaW5nID0gcHJpdi0+cGVuZGluZyAm
-IGNydGNzOwo+IC0Jc3Bpbl91bmxvY2soJnByaXYtPmxvY2spOwo+IC0KPiAtCXJldHVybiBwZW5k
-aW5nOwo+IC19Cj4gLQo+IC1pbnQgZXh5bm9zX2F0b21pY19jb21taXQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRldiwgc3RydWN0IGRybV9hdG9taWNfc3RhdGUKPiAqc3RhdGUsIC0JCQkgYm9vbCBub25i
-bG9jaykKPiAtewo+IC0Jc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdiA9IGRldi0+ZGV2
-X3ByaXZhdGU7Cj4gLQlzdHJ1Y3QgZXh5bm9zX2F0b21pY19jb21taXQgKmNvbW1pdDsKPiAtCXN0
-cnVjdCBkcm1fY3J0YyAqY3J0YzsKPiAtCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdGF0
-ZTsKPiAtCWludCBpLCByZXQ7Cj4gLQo+IC0JY29tbWl0ID0ga3phbGxvYyhzaXplb2YoKmNvbW1p
-dCksIEdGUF9LRVJORUwpOwo+IC0JaWYgKCFjb21taXQpCj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4g
-LQo+IC0JcmV0ID0gZHJtX2F0b21pY19oZWxwZXJfcHJlcGFyZV9wbGFuZXMoZGV2LCBzdGF0ZSk7
-Cj4gLQlpZiAocmV0KSB7Cj4gLQkJa2ZyZWUoY29tbWl0KTsKPiAtCQlyZXR1cm4gcmV0Owo+IC0J
-fQo+IC0KPiAtCS8qIFRoaXMgaXMgdGhlIHBvaW50IG9mIG5vIHJldHVybiAqLwo+IC0KPiAtCUlO
-SVRfV09SSygmY29tbWl0LT53b3JrLCBleHlub3NfZHJtX2F0b21pY193b3JrKTsKPiAtCWNvbW1p
-dC0+ZGV2ID0gZGV2Owo+IC0JY29tbWl0LT5zdGF0ZSA9IHN0YXRlOwo+IC0KPiAtCS8qIFdhaXQg
-dW50aWwgYWxsIGFmZmVjdGVkIENSVENzIGhhdmUgY29tcGxldGVkIHByZXZpb3VzIGNvbW1pdHMg
-YW5kCj4gLQkgKiBtYXJrIHRoZW0gYXMgcGVuZGluZy4KPiAtCSAqLwo+IC0JZm9yX2VhY2hfY3J0
-Y19pbl9zdGF0ZShzdGF0ZSwgY3J0YywgY3J0Y19zdGF0ZSwgaSkKPiAtCQljb21taXQtPmNydGNz
-IHw9IGRybV9jcnRjX21hc2soY3J0Yyk7Cj4gLQo+IC0Jd2FpdF9ldmVudChwcml2LT53YWl0LCAh
-Y29tbWl0X2lzX3BlbmRpbmcocHJpdiwgY29tbWl0LT5jcnRjcykpOwo+IC0KPiAtCXNwaW5fbG9j
-aygmcHJpdi0+bG9jayk7Cj4gLQlwcml2LT5wZW5kaW5nIHw9IGNvbW1pdC0+Y3J0Y3M7Cj4gLQlz
-cGluX3VubG9jaygmcHJpdi0+bG9jayk7Cj4gLQo+IC0JZHJtX2F0b21pY19oZWxwZXJfc3dhcF9z
-dGF0ZShzdGF0ZSwgdHJ1ZSk7Cj4gLQo+IC0JZHJtX2F0b21pY19zdGF0ZV9nZXQoc3RhdGUpOwo+
-IC0JaWYgKG5vbmJsb2NrKQo+IC0JCXNjaGVkdWxlX3dvcmsoJmNvbW1pdC0+d29yayk7Cj4gLQll
-bHNlCj4gLQkJZXh5bm9zX2F0b21pY19jb21taXRfY29tcGxldGUoY29tbWl0KTsKPiAtCj4gLQly
-ZXR1cm4gMDsKPiAtfQo+IC0KPiAgaW50IGV4eW5vc19hdG9taWNfY2hlY2soc3RydWN0IGRybV9k
-ZXZpY2UgKmRldiwKPiAgCQkJc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlKQo+ICB7Cj4g
-QEAgLTMxMyw2ICsyMDQsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX3ByZWNsb3NlKHN0cnVj
-dCBkcm1fZGV2aWNlICpkZXYsCj4gCj4gIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNydGMsICZkZXYt
-Pm1vZGVfY29uZmlnLmNydGNfbGlzdCwgaGVhZCkKPiAgCQlleHlub3NfZHJtX2NydGNfY2FuY2Vs
-X3BhZ2VfZmxpcChjcnRjLCBmaWxlKTsKPiArCj4gIH0KPiAKPiAgc3RhdGljIHZvaWQgZXh5bm9z
-X2RybV9wb3N0Y2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9maWxlCj4g
-KmZpbGUpIGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIu
-Ywo+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgaW5kZXggNjhkNDE0
-Mi4uMWUxMGI3MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCj4g
-QEAgLTE4NywxMSArMTg3LDMzIEBAIGRtYV9hZGRyX3QgZXh5bm9zX2RybV9mYl9kbWFfYWRkcihz
-dHJ1Y3QKPiBkcm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgaW5kZXgpIHJldHVybiBleHlub3NfZmIt
-PmRtYV9hZGRyW2luZGV4XTsKPiAgfQo+IAo+ICtzdGF0aWMgdm9pZCBleHlub3NfZHJtX2F0b21p
-Y19jb21taXRfdGFpbChzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4gK3sKPiArCXN0
-cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBzdGF0ZS0+ZGV2Owo+ICsKPiArCWRybV9hdG9taWNfaGVs
-cGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwgc3RhdGUpOwo+ICsKPiArCWRybV9hdG9t
-aWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2VuYWJsZXMoZGV2LCBzdGF0ZSk7Cj4gKwo+ICsJZHJt
-X2F0b21pY19oZWxwZXJfY29tbWl0X3BsYW5lcyhkZXYsIHN0YXRlLAo+ICsJCQkJCURSTV9QTEFO
-RV9DT01NSVRfQUNUSVZFX09OTFkpOwo+ICsKPiArCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9o
-d19kb25lKHN0YXRlKTsKPiArCj4gKwlkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92Ymxhbmtz
-KGRldiwgc3RhdGUpOwo+ICsKPiArCWRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVzKGRl
-diwgc3RhdGUpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19oZWxw
-ZXJfZnVuY3MgZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzID0KPiB7ICsJLmF0b21pY19j
-b21taXRfdGFpbCA9IGV4eW5vc19kcm1fYXRvbWljX2NvbW1pdF90YWlsLAo+ICt9Owo+ICsKPiAg
-c3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9jb25maWdfZnVuY3MgZXh5bm9zX2RybV9tb2Rl
-X2NvbmZpZ19mdW5jcyA9IHsKPiAgCS5mYl9jcmVhdGUgPSBleHlub3NfdXNlcl9mYl9jcmVhdGUs
-Cj4gIAkub3V0cHV0X3BvbGxfY2hhbmdlZCA9IGV4eW5vc19kcm1fb3V0cHV0X3BvbGxfY2hhbmdl
-ZCwKPiAgCS5hdG9taWNfY2hlY2sgPSBleHlub3NfYXRvbWljX2NoZWNrLAo+IC0JLmF0b21pY19j
-b21taXQgPSBleHlub3NfYXRvbWljX2NvbW1pdCwKPiArCS5hdG9taWNfY29tbWl0ID0gZHJtX2F0
-b21pY19oZWxwZXJfY29tbWl0LAo+ICB9Owo+IAo+ICB2b2lkIGV4eW5vc19kcm1fbW9kZV9jb25m
-aWdfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+IEBAIC0yMDgsNCArMjMwLDUgQEAgdm9p
-ZCBleHlub3NfZHJtX21vZGVfY29uZmlnX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPiBk
-ZXYtPm1vZGVfY29uZmlnLm1heF9oZWlnaHQgPSA0MDk2Owo+IAo+ICAJZGV2LT5tb2RlX2NvbmZp
-Zy5mdW5jcyA9ICZleHlub3NfZHJtX21vZGVfY29uZmlnX2Z1bmNzOwo+ICsJZGV2LT5tb2RlX2Nv
-bmZpZy5oZWxwZXJfcHJpdmF0ZSA9ICZleHlub3NfZHJtX21vZGVfY29uZmlnX2hlbHBlcnM7Cj4g
-IH0KCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Marek,
+
+2017-01-16 15:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> This patch always set device name to "exynos-pmu" to let other drivers to
+> find PMU device easily. This is done mainly to get regmap to access PMU
+> registers from other drivers. This way it can be avoided to add phandle to
+> the PMU node to almost all drivers in the SoC just to get a regmap access
+> in the drivers. PMU is something like a SoC wide service, so there is no
+> point modeling it as hardware dependency for all devices in device tree.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c       |  1 +
+>  include/linux/soc/samsung/exynos-pmu.h | 19 +++++++++++++++++++
+>  2 files changed, 20 insertions(+)
+>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index 0acdfd82e751..63bb471845cb 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -120,6 +120,7 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+>                 pmu_context->pmu_data->pmu_init();
+>
+>         platform_set_drvdata(pdev, pmu_context);
+> +       dev_set_name(dev, EXYNOS_PMU_DEV_NAME);
+>
+>         dev_dbg(dev, "Exynos PMU Driver probe done\n");
+>         return 0;
+> diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
+> index e2e9de1acc5b..90d9205805ea 100644
+> --- a/include/linux/soc/samsung/exynos-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-pmu.h
+> @@ -12,6 +12,10 @@
+>  #ifndef __LINUX_SOC_EXYNOS_PMU_H
+>  #define __LINUX_SOC_EXYNOS_PMU_H
+>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+>  enum sys_powerdown {
+>         SYS_AFTR,
+>         SYS_LPA,
+> @@ -21,4 +25,19 @@ enum sys_powerdown {
+>
+>  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+>
+> +#define EXYNOS_PMU_DEV_NAME "exynos-pmu"
+> +
+> +static inline struct regmap *exynos_get_pmu_regs(void)
+> +{
+> +       struct device *dev = bus_find_device_by_name(&platform_bus_type, NULL,
+> +                                                    EXYNOS_PMU_DEV_NAME);
+> +       if (dev) {
+> +               struct regmap *regs = syscon_node_to_regmap(dev->of_node);
+> +               put_device(dev);
+> +               if (!IS_ERR(regs))
+> +                       return regs;
+> +       }
+> +       return NULL;
+
+As discussed offline, since this function relies on the PMU driver
+probing, we need to defer here if someone calls this function before
+that. Since PMU is something that should be assumed to be available in
+any Exynos system (it controls to many critical aspects of the SoC), I
+think we can simply return ERR_PTR(-EDEFER_PROBE) here instead of
+NULL. Maybe also a pr_debug() before deferring could be useful to
+debug PMU probe failures.
+
+Best regards,
+Tomasz
