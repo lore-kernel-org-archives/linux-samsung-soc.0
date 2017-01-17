@@ -1,73 +1,57 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: [PATCH 1/3] Input: add STMicroelectronics FingerTip touchscreen driver
-Date: Tue, 17 Jan 2017 22:54:39 +0900
-Message-ID: <20170117135441.31450-2-andi.shyti@samsung.com>
-References: <20170117135441.31450-1-andi.shyti@samsung.com>
- <CGME20170117135456epcas5p2e303f0c5fa642b43fde543d5d6098dc2@epcas5p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170117135441.31450-1-andi.shyti@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
+From: "pankaj.dubey" <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: Add USB 3.0 controller node for
+ Exynos7
+Date: Tue, 17 Jan 2017 19:39:41 +0530
+Message-ID: <23067cbb-08de-abd9-3530-246c81ba5931@samsung.com>
+References: <1484649143-19423-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170117102939epcas5p1aa25d6d8d080c086fb237e645bedbd17@epcas5p1.samsung.com>
+ <1484649143-19423-2-git-send-email-pankaj.dubey@samsung.com>
+ <3a607d18-acf9-37f5-a6d4-7f8fe538d27f@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <3a607d18-acf9-37f5-a6d4-7f8fe538d27f-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sanath-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add binding for the STMicroelectronics FingerTip (stmfts)
-touchscreen driver.
+Hi Javier,
 
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
----
- .../bindings/input/touchscreen/st,stmfts.txt       | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+On Tuesday 17 January 2017 07:07 PM, Javier Martinez Canillas wrote:
+> Hello Pankaj,
+> 
+> On 01/17/2017 07:32 AM, Pankaj Dubey wrote:
+>> Add USB 3.0 DRD controller device node, with its clock
+>> and phy information to enable the same on Exynos7.
+>>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> The S-o-B order isn't correct. You are the one posting the patch so
+> yours should be the last one.
+> 
+> Also, wasn't this patch originally from Vivek? If you didn't change
+> that much, I think that he should be listed as the patch author.
+> 
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt b/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
-new file mode 100644
-index 000000000000..788f4ba744db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
-@@ -0,0 +1,43 @@
-+* ST-Microelectronics FingerTip touchscreen controller
-+
-+The ST-Microelectronics FingerTip device provides a basic touchscreen
-+functionality. Along with it the user can enable the touchkey which can work as
-+a basic HOME and BACK key for phones.
-+
-+The driver supports also hovering as an absolute single touch event with x, y, z
-+coordinates.
-+
-+Required properties:
-+- compatible		: must be "st,stmfts"
-+- reg			: I2C slave address, (e.g. 0x49)
-+- interrupt-parent	: the phandle to the interrupt controller which provides
-+			  the interrupt
-+- interrupts		: interrupt specification
-+- avdd-supply		: analogic power supply
-+- vdd-supply		: power supply
-+- touchscreen-size-x	: see touchscreen.txt
-+- touchscreen-size-y	: see touchscreen.txt
-+
-+Optional properties:
-+- touch-key-connected	: specifies whether the touchkey feature is connected
-+- ledvdd-supply		: power supply to the touch key leds
-+
-+Example:
-+
-+i2c@00000000 {
-+
-+	/* ... */
-+
-+	stmfts@49 {
-+		compatible = "st,stmfts";
-+		reg = <0x49>;
-+		interrupt-parent = <&gpa1>;
-+		interrupts = <1 IRQ_TYPE_NONE>;
-+		touchscreen-size-x = <1599>;
-+		touchscreen-size-y = <2559>;
-+		touch-key-connected;
-+		avdd-supply = <&ldo30_reg>;
-+		vdd-supply = <&ldo31_reg>;
-+		ledvdd-supply = <&ldo33_reg>;
-+	};
-+};
--- 
-2.11.0
+Thanks for review.
+
+Just noticed, I missed to take care of this, as original patch could not
+be applied on latest tree and I had to do all these changes manually,
+will submit soon with Signed-off-by and author change.
+
+Thanks,
+Pankaj Dubey
+
+> I don't have an Exynos7 manual to verify but the patch looks good.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> 
+> Best regards,
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
