@@ -1,59 +1,71 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove unnecessary codes
-Date: Tue, 17 Jan 2017 15:03:28 +0900
-Message-ID: <587DB3B0.3000303@samsung.com>
-References: <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
- <CGME20170116091327epcas5p1250b06956c0fb805113c35c3223a94e3@epcas5p1.samsung.com>
- <1484558003-18691-2-git-send-email-inki.dae@samsung.com>
- <f2f5ff44-17e9-9ae3-d01a-efa4f596e2fa@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v7 3/3] arm64: dts: exynos: Add tm2 touchkey node
+Date: Tue, 17 Jan 2017 15:12:28 +0900
+Message-ID: <587DB5CC.4090909@samsung.com>
+References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170117055444epcas1p430376a7c03940ded299e374367170b03@epcas1p4.samsung.com>
+ <1484632479-3111-4-git-send-email-jcsing.lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <f2f5ff44-17e9-9ae3-d01a-efa4f596e2fa@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1484632479-3111-4-git-send-email-jcsing.lee@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaechul Lee <jcsing.lee@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>, beomho.seo@samsung.com, galaxyra@gmail.com, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAx7JuUIDE27J28IDE4OjM37JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAxNi4wMS4yMDE3IDEwOjEzLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRj
-aCByZW1vdmVzIGV4eW5vc19kcm1fY3J0Y19jYW5jZWxfcGFnZV9mbGlwIGNhbGwKPj4gd2hlbiBk
-cm0gaXMgY2xvc2VkIGJlY2F1c2UgYXQgdGhhdCB0aW1lLCBldmVudHMgd2lsbCBiZSByZWxlYXNl
-ZAo+PiBieSBkcm1fZXZlbnRzX3JlbGVhc2UgZnVuY3Rpb24uCj4+Cj4+IENoYW5nZS1JZDogSTE1
-NmVhMjdhNGM5MGFhODdhMjdhNTA0MTU1MTVmYTMzNDE0OGM5MTIKPj4gU2lnbmVkLW9mZi1ieTog
-SW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyB8IDYgLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwg
-NiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-Ywo+PiBpbmRleCA5ZDBkZjAwLi4wMzVkMDJlIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5jCj4+IEBAIC0xOTgsMTMgKzE5OCw3IEBAIHN0YXRpYyBpbnQgZXh5
-bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmls
-ZSkKPj4gIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fcHJlY2xvc2Uoc3RydWN0IGRybV9kZXZpY2Ug
-KmRldiwKPj4gIAkJCQkJc3RydWN0IGRybV9maWxlICpmaWxlKQo+PiAgewo+PiAtCXN0cnVjdCBk
-cm1fY3J0YyAqY3J0YzsKPj4gLQo+PiAgCWV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKGRldiwgZmls
-ZSk7Cj4+IC0KPj4gLQlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNydGMsICZkZXYtPm1vZGVfY29uZmln
-LmNydGNfbGlzdCwgaGVhZCkKPj4gLQkJZXh5bm9zX2RybV9jcnRjX2NhbmNlbF9wYWdlX2ZsaXAo
-Y3J0YywgZmlsZSk7Cj4gCj4gU2luY2UgdGhpcyBpcyBzaW5nbGUgdXNlciBvZiBleHlub3NfZHJt
-X2NydGNfY2FuY2VsX3BhZ2VfZmxpcCwgdGhpcwo+IGZ1bmN0aW9uIGNhbiBiZSByZW1vdmVkIGFz
-IHdlbGwuCgpJbmRlZWQuIFdpbGwgcmVtb3ZlIHRoYXQgZnVuY3Rpb24uCgpUaGFua3MuCgo+IEJl
-c2lkZSB0aGlzOgo+IFJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPgo+IAo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+IC0KPj4gIH0KPj4gIAo+PiAgc3Rh
-dGljIHZvaWQgZXh5bm9zX2RybV9wb3N0Y2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3Ry
-dWN0IGRybV9maWxlICpmaWxlKQo+IAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlz
-IGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+
-IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9y
-ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
-by5odG1sCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Hi,
+
+I tested this patch on v6[1] and replied it.
+But, this version is missing the my tested-by and reviewed-by tag.
+[1] https://patchwork.kernel.org/patch/9504139/
+
+So, I add my reviewed-by and tested-by tag again.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+On 2017년 01월 17일 14:54, Jaechul Lee wrote:
+> Add DT node support for TM2 touchkey device.
+> 
+> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> index 2449266..ddba2f8 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> @@ -18,6 +18,19 @@
+>  	compatible = "samsung,tm2", "samsung,exynos5433";
+>  };
+>  
+> +&hsi2c_9 {
+> +	status = "okay";
+> +
+> +	touchkey@20 {
+> +		compatible = "cypress,tm2-touchkey";
+> +		reg = <0x20>;
+> +		interrupt-parent = <&gpa3>;
+> +		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> +		vcc-supply = <&ldo32_reg>;
+> +		vdd-supply = <&ldo33_reg>;
+> +	};
+> +};
+> +
+>  &ldo31_reg {
+>  	regulator-name = "TSP_VDD_1.85V_AP";
+>  	regulator-min-microvolt = <1850000>;
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+S/W Center, Samsung Electronics
