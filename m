@@ -1,55 +1,52 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
-Date: Tue, 17 Jan 2017 15:24:34 +0100
-Message-ID: <587E2922.10805@math.uni-bielefeld.de>
-References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
- <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/3] Input: add STMicroelectronics FingerTip touchscreen
+ driver
+Date: Tue, 17 Jan 2017 11:32:49 -0300
+Message-ID: <fb6ec656-ec3a-b0f3-4c39-56f0825eaf23@osg.samsung.com>
+References: <20170117135441.31450-1-andi.shyti@samsung.com>
+ <CGME20170117135456epcas5p2e303f0c5fa642b43fde543d5d6098dc2@epcas5p2.samsung.com>
+ <20170117135441.31450-2-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170117135441.31450-2-andi.shyti@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Sm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gVGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5
-cGUsIHNvIGl0IGNhbiBiZSBvdmVyZmxvd2VkIGJ5IGNtZCBhbmQKPiBjbWRfYnVmIHRoYXQgaGFz
-IHRvbyBiaWcgc2l6ZS4gVGhpcyBwYXRjaCB3aWxsIGZpeCBvdmVyZmxvdyBpc3N1ZSBhcwo+IGNo
-ZWNraW5nIG1heGltdW0gc2l6ZSBvZiBjbWQgYW5kIGNtZF9idWYuCkkgZG9uJ3QgdW5kZXJzdGFu
-ZC9zZWUgdGhlIGlzc3VlIGhlcmUuIENvdWxkIHlvdSBwb2ludCBvdXQgZm9yIHdoaWNoCmlucHV0
-IG9mIHRoZSBzZXRfY21kbGlzdCBpb2N0bCB5b3Ugc2VlIHRoaXMgcGFydGljdWxhciBvdmVyZmxv
-dz8KCkluIHBhcnRpY3VsYXIgaXQgaXMgbm90IGNsZWFyIHRvIG1lIHdoaWNoIHNpemUgZmllbGQg
-eW91J3JlIHRhbGtpbmcKYWJvdXQuIHN0cnVjdCBnMmRfY21kbGlzdCBkb2VzIG5vdCBoYXZlIGFu
-eSBmaWVsZCBuYW1lZCAnc2l6ZScuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IFNpZ25l
-ZC1vZmYtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiAtLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jIHwgOSArKysrKysrKy0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMKPiBpbmRleCBmYmQxM2ZhLi5iMzEy
-NDRmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQu
-Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwo+IEBAIC0x
-MjUwLDcgKzEyNTAsMTQgQEAgaW50IGV4eW5vc19nMmRfc2V0X2NtZGxpc3RfaW9jdGwoc3RydWN0
-IGRybV9kZXZpY2UgKmRybV9kZXYsIHZvaWQgKmRhdGEsCj4gIAkJY21kbGlzdC0+ZGF0YVtjbWRs
-aXN0LT5sYXN0KytdID0gRzJEX0lOVEVOX0FDRjsKPiAgCX0KPiAgCj4gLQkvKiBDaGVjayBzaXpl
-IG9mIGNtZGxpc3Q6IGxhc3QgMiBpcyBhYm91dCBHMkRfQklUQkxUX1NUQVJUICovCj4gKwkvKiBD
-aGVjayBzaXplIG9mIGNtZCBhbmQgY21kbGlzdDogbGFzdCAyIGlzIGFib3V0IEcyRF9CSVRCTFRf
-U1RBUlQgKi8KPiArCXNpemUgPSAoRzJEX0NNRExJU1RfREFUQV9OVU0gLSBjbWRsaXN0LT5sYXN0
-IC0gMikgLyAyOwo+ICsJaWYgKHJlcS0+Y21kX25yID4gc2l6ZSB8fCByZXEtPmNtZF9idWZfbnIg
-PiBzaXplKSB7Cj4gKwkJZGV2X2VycihkZXYsICJzaXplIG9mIGNtZCBvciBjbWRfYnVmIGlzIHRv
-byBiaWdcbiIpOwo+ICsJCXJldCA9IC1FSU5WQUw7Cj4gKwkJZ290byBlcnJfZnJlZV9ldmVudDsK
-PiArCX0KPiArCj4gIAlzaXplID0gY21kbGlzdC0+bGFzdCArIHJlcS0+Y21kX25yICogMiArIHJl
-cS0+Y21kX2J1Zl9uciAqIDIgKyAyOwo+ICAJaWYgKHNpemUgPiBHMkRfQ01ETElTVF9EQVRBX05V
-TSkgewo+ICAJCWRldl9lcnIoZGV2LCAiY21kbGlzdCBzaXplIGlzIHRvbyBiaWdcbiIpOwo+IAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Andi,
+
+On 01/17/2017 10:54 AM, Andi Shyti wrote:
+> Add binding for the STMicroelectronics FingerTip (stmfts)
+> touchscreen driver.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+
+The binding looks good to me, I've just a minor nit below.
+
+[snip]
+
+> +
+> +i2c@00000000 {
+> +
+> +	/* ... */
+> +
+> +	stmfts@49 {
+
+The ePAPR document says:
+
+The name of a node should be somewhat generic, reflecting the function
+of the device and not its precise programming model.
+
+So I think this should be touchscreen@49 instead.
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
