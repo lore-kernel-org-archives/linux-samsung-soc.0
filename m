@@ -1,19 +1,17 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v7 2/3] input: tm2-touchkey: Add touchkey driver support
- for TM2
-Date: Tue, 17 Jan 2017 20:10:56 +0200
-Message-ID: <20170117181056.mrwyudslfgh2wfms@kozik-lap>
-References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170117055444epcas1p47b0b0a0ae3260b22fa61d2b92362050b@epcas1p4.samsung.com>
- <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
- <20170117172047.47535bj5xd6toayu@kozik-lap>
- <CAKdAkRQij9VuG1mguE0FwQMKuHrnyLAZJxOtkoR97uuX+ZBmLQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: exynos: Add USB 3.0 controller node
+ for Exynos7
+Date: Tue, 17 Jan 2017 20:23:18 +0200
+Message-ID: <20170117182318.fvatrazvyuzmdsor@kozik-lap>
+References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170117150121epcas1p102bd1355f780a56e14a0a7a81bd6dfaf@epcas1p1.samsung.com>
+ <1484665444-23365-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAKdAkRQij9VuG1mguE0FwQMKuHrnyLAZJxOtkoR97uuX+ZBmLQ@mail.gmail.com>
+In-Reply-To: <1484665444-23365-2-git-send-email-pankaj.dubey@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,34 +21,80 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Jaechul Lee <jcsing.lee@samsung.com>, Will Deacon <will.deacon@arm.com>, lkml <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, =?utf-8?B?7J207J6s7LKg?= <galaxyra@gmail.com>, Beomho Seo <beomho.seo@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, Vivek Gautam <gautamvivek1987@gmail.com>, javier@osg.samsung.com, kgene@kernel.org, krzk@kernel.org, sanath@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 17, 2017 at 10:06:27AM -0800, Dmitry Torokhov wrote:
-> On Tue, Jan 17, 2017 at 9:20 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Tue, Jan 17, 2017 at 02:54:38PM +0900, Jaechul Lee wrote:
-> >> This patch adds support for the TM2 touch key and led
-> >> functionality.
-> >>
-> >> The driver interfaces with userspace through an input device and
-> >> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
-> >> controlled by "/sys/class/leds/tm2-touchkey/brightness".
-> >>
-> >> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> >> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> >> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> >> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-> >> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >
-> > This looks unusual. How did Dmitry's Sob end here?
+On Tue, Jan 17, 2017 at 08:34:03PM +0530, Pankaj Dubey wrote:
+> From: Vivek Gautam <gautamvivek1987@gmail.com>
 > 
-> I sent Jaechul a version of the patch to try out.
+> Add USB 3.0 DRD controller device node, with its clock
+> and phy information to enable the same on Exynos7.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Ah, makes sense then.
+Javier's Reviewed-by should be at the end.
+
+> ---
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi | 34 +++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index 9080a11..a2d8d11 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -603,6 +603,40 @@
+>  				#include "exynos7-trip-points.dtsi"
+>  			};
+>  		};
+> +
+> +		usbdrd_phy: phy@15500000 {
+> +			compatible = "samsung,exynos7-usbdrd-phy";
+> +			reg = <0x15500000 0x100>;
+> +			clocks = <&clock_fsys0 ACLK_USBDRD300>,
+> +			       <&clock_fsys0 OSCCLK_PHY_CLKOUT_USB30_PHY>,
+> +			       <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PIPE_PCLK_USER>,
+> +			       <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PHYCLK_USER>,
+> +			       <&clock_fsys0 SCLK_USBDRD300_REFCLK>;
+> +			clock-names = "phy", "ref", "phy_pipe",
+> +				"phy_utmi", "itp";
+> +			samsung,pmu-syscon = <&pmu_system_controller>;
+> +			#phy-cells = <1>;
+> +		};
+> +
+> +		usbdrd3: usb@15400000 {
+> +			compatible = "samsung,exynos7-dwusb3";
+> +			clocks = <&clock_fsys0 ACLK_USBDRD300>,
+> +			       <&clock_fsys0 SCLK_USBDRD300_SUSPENDCLK>,
+> +			       <&clock_fsys0 ACLK_AXIUS_USBDRD30X_FSYS0X>;
+> +			clock-names = "usbdrd30", "usbdrd30_susp_clk",
+> +				"usbdrd30_axius_clk";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			dwc3 {
+
+dtc should complain here - you need:
+	dwc3@15400000
+In the same time I think the address node does not have to be put after
+parent's usb.
 
 Best regards,
 Krzysztof
+
+> +				compatible = "snps,dwc3";
+> +				reg = <0x15400000 0x10000>;
+> +				interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+> +				phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
+> +				phy-names = "usb2-phy", "usb3-phy";
+> +			};
+> +		};
+>  	};
+>  };
+>  
+> -- 
+> 2.7.4
+> 
