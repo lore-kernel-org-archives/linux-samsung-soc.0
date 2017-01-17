@@ -1,100 +1,48 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v2 2/2] arm64: dts: exynos: Add regulators for Vbus and
- Vbus-Boost
-Date: Tue, 17 Jan 2017 20:34:04 +0530
-Message-ID: <1484665444-23365-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170117150123epcas1p12709f99a0993ae58ea1fe294df5a12fe@epcas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45552 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbdAQPBd (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 10:01:33 -0500
-In-reply-to: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v7 2/3] input: tm2-touchkey: Add touchkey driver support
+ for TM2
+Date: Tue, 17 Jan 2017 19:20:47 +0200
+Message-ID: <20170117172047.47535bj5xd6toayu@kozik-lap>
+References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170117055444epcas1p47b0b0a0ae3260b22fa61d2b92362050b@epcas1p4.samsung.com>
+ <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jaechul Lee <jcsing.lee@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, galaxyra@gmail.com, beomho.seo@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, javier@osg.samsung.com, Vivek Gautam <gautamvivek1987@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-From: Vivek Gautam <gautamvivek1987@gmail.com>
+On Tue, Jan 17, 2017 at 02:54:38PM +0900, Jaechul Lee wrote:
+> This patch adds support for the TM2 touch key and led
+> functionality.
+> 
+> The driver interfaces with userspace through an input device and
+> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
+> controlled by "/sys/class/leds/tm2-touchkey/brightness".
+> 
+> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Adding fixed voltage regulators for Vbus and Vbus-boost required
-by USB 3.0 DRD controller on Exynos7-espresso board.
+This looks unusual. How did Dmitry's Sob end here?
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 45 +++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 9cf73cf..8d5abdd 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -13,6 +13,7 @@
- #include "exynos7.dtsi"
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/samsung,s2mps11.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
-@@ -33,6 +34,29 @@
- 		device_type = "memory";
- 		reg = <0x0 0x40000000 0x0 0xC0000000>;
- 	};
-+
-+	usb30_vbus_reg: regulator-usb30 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VBUS_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gph1 1 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb30_vbus_en>;
-+		enable-active-high;
-+	};
-+
-+	usb3drd_boost_5v: regulator-usb3drd-boost {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VUSB_VBUS_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpf4 1 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb3drd_boost_en>;
-+		enable-active-high;
-+	};
-+
- };
- 
- &fin_pll {
-@@ -366,3 +390,24 @@
- 	vqmmc-supply = <&ldo2_reg>;
- 	disable-wp;
- };
-+
-+&usbdrd_phy {
-+	vbus-supply = <&usb30_vbus_reg>;
-+	vbus-boost-supply = <&usb3drd_boost_5v>;
-+};
-+
-+&pinctrl_bus1 {
-+	usb30_vbus_en: usb30-vbus-en {
-+		samsung,pins = "gph1-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	usb3drd_boost_en: usb3drd-boost-en {
-+		samsung,pins = "gpf4-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
--- 
-2.7.4
+Best regards,
+Krzysztof
