@@ -1,86 +1,93 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: s3c64xx: potential oops on probe error" to the spi tree
-Date: Tue, 17 Jan 2017 18:46:25 +0000
-Message-ID: <E1cTYm1-0000XD-FR@debutante>
-References: <20170113074253.GA30524@mwanda>
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <20170113074253.GA30524@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>Andi Shyti <andi.shyti@samsung.com>Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/3] Input: add STMicroelectronics FingerTip touchscreen
+ driver
+Date: Tue, 17 Jan 2017 20:43:32 +0200
+Message-ID: <20170117184332.6ne4ercemll6qrbm@kozik-lap>
+References: <20170117135441.31450-1-andi.shyti@samsung.com>
+ <CGME20170117135456epcas5p2e303f0c5fa642b43fde543d5d6098dc2@epcas5p2.samsung.com>
+ <20170117135441.31450-2-andi.shyti@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170117135441.31450-2-andi.shyti@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+On Tue, Jan 17, 2017 at 10:54:39PM +0900, Andi Shyti wrote:
+> Add binding for the STMicroelectronics FingerTip (stmfts)
+> touchscreen driver.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  .../bindings/input/touchscreen/st,stmfts.txt       | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt b/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+> new file mode 100644
+> index 000000000000..788f4ba744db
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+> @@ -0,0 +1,43 @@
+> +* ST-Microelectronics FingerTip touchscreen controller
+> +
+> +The ST-Microelectronics FingerTip device provides a basic touchscreen
+> +functionality. Along with it the user can enable the touchkey which can work as
+> +a basic HOME and BACK key for phones.
+> +
+> +The driver supports also hovering as an absolute single touch event with x, y, z
+> +coordinates.
+> +
+> +Required properties:
+> +- compatible		: must be "st,stmfts"
+> +- reg			: I2C slave address, (e.g. 0x49)
+> +- interrupt-parent	: the phandle to the interrupt controller which provides
+> +			  the interrupt
+> +- interrupts		: interrupt specification
+> +- avdd-supply		: analogic power supply
+> +- vdd-supply		: power supply
+> +- touchscreen-size-x	: see touchscreen.txt
+> +- touchscreen-size-y	: see touchscreen.txt
+> +
+> +Optional properties:
+> +- touch-key-connected	: specifies whether the touchkey feature is connected
 
-   spi: s3c64xx: potential oops on probe error
+You are making it a generic property but it is specific to this device,
+so:
+	st,touch-key-connected
+?
 
-has been applied to the spi tree at
+> +- ledvdd-supply		: power supply to the touch key leds
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Is this really optional? If yes... how it gets the power when not
+provided?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Best regards,
+Krzysztof
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 72bc7ae0633e2b580217d254114ac6650380b7f6 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jan 2017 10:42:53 +0300
-Subject: [PATCH] spi: s3c64xx: potential oops on probe error
-
-We accidentally mixed up freeing the rx and tx channels which would a
-leak and an oops.
-
-Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-s3c64xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 849ee82483e4..b8cd356d8d10 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (IS_ERR(sdd->tx_dma.ch)) {
- 			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
- 			ret = PTR_ERR(sdd->tx_dma.ch);
--			goto err_release_tx_dma;
-+			goto err_release_rx_dma;
- 		}
- 	}
- 
-@@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	if (!is_polling(sdd))
--		dma_release_channel(sdd->rx_dma.ch);
--err_release_tx_dma:
--	if (!is_polling(sdd))
- 		dma_release_channel(sdd->tx_dma.ch);
-+err_release_rx_dma:
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->rx_dma.ch);
- err_disable_io_clk:
- 	clk_disable_unprepare(sdd->ioclk);
- err_disable_src_clk:
--- 
-2.11.0
-
+> +
+> +Example:
+> +
+> +i2c@00000000 {
+> +
+> +	/* ... */
+> +
+> +	stmfts@49 {
+> +		compatible = "st,stmfts";
+> +		reg = <0x49>;
+> +		interrupt-parent = <&gpa1>;
+> +		interrupts = <1 IRQ_TYPE_NONE>;
+> +		touchscreen-size-x = <1599>;
+> +		touchscreen-size-y = <2559>;
+> +		touch-key-connected;
+> +		avdd-supply = <&ldo30_reg>;
+> +		vdd-supply = <&ldo31_reg>;
+> +		ledvdd-supply = <&ldo33_reg>;
+> +	};
+> +};
+> -- 
+> 2.11.0
+> 
