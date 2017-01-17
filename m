@@ -1,126 +1,96 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] arm64: dts: exynos: Add regulators for Vbus and
- Vbus-Boost
-Date: Tue, 17 Jan 2017 20:28:26 +0200
-Message-ID: <20170117182826.gngf7gjkvfyg3uww@kozik-lap>
-References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170117150123epcas1p12709f99a0993ae58ea1fe294df5a12fe@epcas1p1.samsung.com>
- <1484665444-23365-3-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 3/3] arm64: dts: exynos: Add stmfts touchscreen node for
+ TM2 and TM2E
+Date: Tue, 17 Jan 2017 20:39:52 +0200
+Message-ID: <20170117183952.tfexmtp6723w7ism@kozik-lap>
+References: <20170117135441.31450-1-andi.shyti@samsung.com>
+ <CGME20170117135457epcas5p2044e9e5cd9eb6b162bb0acb4e317bdfb@epcas5p2.samsung.com>
+ <20170117135441.31450-4-andi.shyti@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1484665444-23365-3-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, Vivek Gautam <gautamvivek1987@gmail.com>, javier@osg.samsung.com, kgene@kernel.org, krzk@kernel.org, sanath@samsung.com, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20170117135441.31450-4-andi.shyti@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 17, 2017 at 08:34:04PM +0530, Pankaj Dubey wrote:
-> From: Vivek Gautam <gautamvivek1987@gmail.com>
+On Tue, Jan 17, 2017 at 10:54:41PM +0900, Andi Shyti wrote:
+> TM2 and TM2E devices are provided with a ST-Microelectronics
+> Finger Tip S device with small differences:
 > 
-> Adding fixed voltage regulators for Vbus and Vbus-boost required
-> by USB 3.0 DRD controller on Exynos7-espresso board.
+>  - screen size
+>  - TM2E uses the stmfts also as a touchkey for "back" and "menu"
 > 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-Same as patch 1.
-
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 45 +++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 13 +++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts         |  5 +++++
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts        |  7 +++++++
+>  3 files changed, 25 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index 9cf73cf..8d5abdd 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -13,6 +13,7 @@
->  #include "exynos7.dtsi"
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
-> @@ -33,6 +34,29 @@
->  		device_type = "memory";
->  		reg = <0x0 0x40000000 0x0 0xC0000000>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index a5c866901e93..689d5c124a49 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -745,6 +745,19 @@
 >  	};
-> +
-> +	usb30_vbus_reg: regulator-usb30 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VBUS_5V";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpio = <&gph1 1 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&usb30_vbus_en>;
-> +		enable-active-high;
-> +	};
-> +
-> +	usb3drd_boost_5v: regulator-usb3drd-boost {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VUSB_VBUS_5V";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpio = <&gpf4 1 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&usb3drd_boost_en>;
-> +		enable-active-high;
-> +	};
-> +
 >  };
 >  
->  &fin_pll {
-> @@ -366,3 +390,24 @@
->  	vqmmc-supply = <&ldo2_reg>;
->  	disable-wp;
->  };
+> +&hsi2c_5 {
+> +	status = "okay";
 > +
-> +&usbdrd_phy {
-> +	vbus-supply = <&usb30_vbus_reg>;
-> +	vbus-boost-supply = <&usb3drd_boost_5v>;
-> +};
-> +
-> +&pinctrl_bus1 {
-> +	usb30_vbus_en: usb30-vbus-en {
-> +		samsung,pins = "gph1-1";
-> +		samsung,pin-function = <1>;
+> +	touchscreen: stmfts@49 {
+> +		compatible = "st,stmfts";
+> +		reg = <0x49>;
+> +		interrupt-parent = <&gpa1>;
+> +		interrupts = <1 IRQ_TYPE_NONE>;
 
-Javier mentioned it, please use EXYNOS_PIN_FUNC_OUTPUT
-
-> +		samsung,pin-pud = <0>;
-
-EXYNOS_PIN_PULL_NONE
-
-> +		samsung,pin-drv = <0>;
-
-I think these are the same as in Exynos5422, so EXYNOS5420_PIN_DRV_LV1
+Looks fine to me, just wondering:
+1. Are you sure this is TYPE_NONE interrupt? Sometimes we put it
+   everywhere instead of checking real value.
+2. Don't you have to configure the gpa1-1 to EINT? Any pull up/down?
 
 Best regards,
 Krzysztof
 
-
-> +	};
-> +
-> +	usb3drd_boost_en: usb3drd-boost-en {
-> +		samsung,pins = "gpf4-1";
-> +		samsung,pin-function = <1>;
-> +		samsung,pin-pud = <0>;
-> +		samsung,pin-drv = <0>;
+> +		avdd-supply = <&ldo30_reg>;
+> +		vdd-supply = <&ldo31_reg>;
 > +	};
 > +};
+> +
+>  &hsi2c_7 {
+>  	status = "okay";
+>  
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> index 2449266b268f..d0311d34c6bd 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> @@ -29,3 +29,8 @@
+>  	regulator-min-microvolt = <3000000>;
+>  	regulator-max-microvolt = <3000000>;
+>  };
+> +
+> +&touchscreen {
+> +	touchscreen-size-x = <1439>;
+> +	touchscreen-size-y = <2559>;
+> +};
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> index 2fbf3a860316..388880dcb5ae 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> @@ -29,3 +29,10 @@
+>  	regulator-min-microvolt = <3300000>;
+>  	regulator-max-microvolt = <3300000>;
+>  };
+> +
+> +&touchscreen {
+> +	touchscreen-size-x = <1599>;
+> +	touchscreen-size-y = <2559>;
+> +	touch-key-connected;
+> +	ledvdd-supply = <&ldo33_reg>;
+> +};
 > -- 
-> 2.7.4
+> 2.11.0
 > 
