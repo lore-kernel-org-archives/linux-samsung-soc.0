@@ -1,17 +1,17 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 12/13] pinctrl: samsung: Move retention control from
- mach-s5pv210 to the pinctrl driver
-Date: Tue, 17 Jan 2017 19:54:27 +0200
-Message-ID: <20170117175427.4jgjkhwd6etti7qj@kozik-lap>
-References: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170117124502eucas1p19ce0cd772fc4295b207b20cdad30485e@eucas1p1.samsung.com>
- <1484657084-26227-13-git-send-email-m.szyprowski@samsung.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v7 2/3] input: tm2-touchkey: Add touchkey driver support
+ for TM2
+Date: Tue, 17 Jan 2017 10:06:27 -0800
+Message-ID: <CAKdAkRQij9VuG1mguE0FwQMKuHrnyLAZJxOtkoR97uuX+ZBmLQ@mail.gmail.com>
+References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170117055444epcas1p47b0b0a0ae3260b22fa61d2b92362050b@epcas1p4.samsung.com>
+ <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
+ <20170117172047.47535bj5xd6toayu@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1484657084-26227-13-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <20170117172047.47535bj5xd6toayu@kozik-lap>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,24 +21,31 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Jaechul Lee <jcsing.lee@samsung.com>, Will Deacon <will.deacon@arm.com>, lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, =?UTF-8?B?7J207J6s7LKg?= <galaxyra@gmail.com>, Beomho Seo <beomho.seo@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 17, 2017 at 01:44:43PM +0100, Marek Szyprowski wrote:
-> This patch moves pad retention control from S5PV210 machine code to
-> Exynos pin controller driver. This helps to avoid possible ordering
-> and logical dependencies between machine and pin control code. Till
-> now it worked fine only because sys_ops for machine code and pin
-> controller were called in registration order.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/pm.c               |  7 ----
->  arch/arm/mach-s5pv210/regs-clock.h       |  4 ---
+On Tue, Jan 17, 2017 at 9:20 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Tue, Jan 17, 2017 at 02:54:38PM +0900, Jaechul Lee wrote:
+>> This patch adds support for the TM2 touch key and led
+>> functionality.
+>>
+>> The driver interfaces with userspace through an input device and
+>> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
+>> controlled by "/sys/class/leds/tm2-touchkey/brightness".
+>>
+>> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+>> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+>> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>
+> This looks unusual. How did Dmitry's Sob end here?
 
-For mach-s5pv210:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+I sent Jaechul a version of the patch to try out.
 
-Best regards,
-Krzysztof
+-- 
+Dmitry
