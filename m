@@ -1,55 +1,109 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 3/4] dmaengine: pl330: Store pointer to slave device
-Date: Tue, 17 Jan 2017 13:48:57 +0100
-Message-ID: <1484657338-26338-4-git-send-email-m.szyprowski@samsung.com>
-References: <1484657338-26338-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170117124922eucas1p1d4037d80229e55007169cf85c19e5eec@eucas1p1.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1484657338-26338-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] ASoC: Revert
+ "Drop SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag"
+Date: Tue, 17 Jan 2017 14:16:41 +0100
+Message-ID: <1484659002-20200-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170117131713epcas5p1a4892e3cf5ebb230d72e59a2b80b7691@epcas5p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:48304 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbdAQNRV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 17 Jan 2017 08:17:21 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OJX01C5OE8PJQ40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jan 2017 22:17:13 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, lars@metafoo.de, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Store the pointer to slave device, which requested our channel. It will be
-later used to implement runtime PM of PL330 DMA controller. Although
-DMA channels might be requested many times, each DMA peripheral channel is
-physically dedicated only for specific hardware, so there should be only
-one slave device for each channel.
+This reverts commit c6644119a3f80ea644bde10009d5e1013b5aff29 and
+restores the ability to specify DMA channel names per DAI dma_data.
+Unfortunately the functionality removed in the patch being reverted
+cannot be entirely replaced by specifying DMA channel names in struct
+snd_dmaengine_pcm_config as that does not cover devices with more than
+2 DMA channels.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Together with patch "ASoC: Revert "samsung: Remove unneeded
+initialization of chan_name"" this fixes broken sound on the s3c24xx
+SoC platforms.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/dma/pl330.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/sound/dmaengine_pcm.h         |  6 ++++++
+ sound/soc/soc-generic-dmaengine-pcm.c | 12 +++++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index b6b2cc912380..c77a3494659c 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -450,6 +450,7 @@ struct dma_pl330_chan {
- 
- 	/* for runtime pm tracking */
- 	bool active;
-+	struct device *slave;
+diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+index 1c8f9e1..67be244 100644
+--- a/include/sound/dmaengine_pcm.h
++++ b/include/sound/dmaengine_pcm.h
+@@ -71,6 +71,7 @@ struct dma_chan *snd_dmaengine_pcm_request_channel(dma_filter_fn filter_fn,
+  * @slave_id: Slave requester id for the DMA channel.
+  * @filter_data: Custom DMA channel filter data, this will usually be used when
+  * requesting the DMA channel.
++ * @chan_name: Custom channel name to use when requesting DMA channel.
+  * @fifo_size: FIFO size of the DAI controller in bytes
+  * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
+  */
+@@ -80,6 +81,7 @@ struct snd_dmaengine_dai_dma_data {
+ 	u32 maxburst;
+ 	unsigned int slave_id;
+ 	void *filter_data;
++	const char *chan_name;
+ 	unsigned int fifo_size;
+ 	unsigned int flags;
  };
- 
- struct pl330_dmac {
-@@ -2093,6 +2094,14 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
- 	if (chan_id >= pl330->num_peripherals)
- 		return NULL;
- 
-+	if (!pl330->peripherals[chan_id].slave) {
-+		pl330->peripherals[chan_id].slave = slave;
-+	} else if (pl330->peripherals[chan_id].slave != slave) {
-+		dev_err(pl330->ddma.dev,
-+			"Can't use same channel with multiple slave devices!\n");
-+		return NULL;
-+	}
-+
- 	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
- }
- 
--- 
-1.9.1
+@@ -105,6 +107,10 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
+  * playback.
+  */
+ #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
++/*
++ * The PCM streams have custom channel names specified.
++ */
++#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
 
+ /**
+  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
+diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+index 17eb149..d537864 100644
+--- a/sound/soc/soc-generic-dmaengine-pcm.c
++++ b/sound/soc/soc-generic-dmaengine-pcm.c
+@@ -263,6 +263,7 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+ 	const struct snd_dmaengine_pcm_config *config = pcm->config;
+ 	struct device *dev = rtd->platform->dev;
++	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	struct snd_pcm_substream *substream;
+ 	size_t prealloc_buffer_size;
+ 	size_t max_buffer_size;
+@@ -282,6 +283,13 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 		if (!substream)
+ 			continue;
+
++		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
++
++		if (!pcm->chan[i] &&
++		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
++			pcm->chan[i] = dma_request_slave_channel(dev,
++				dma_data->chan_name);
++
+ 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+ 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
+ 				substream);
+@@ -350,7 +358,9 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+ 	const char *name;
+ 	struct dma_chan *chan;
+
+-	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
++	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
++			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
++	    !dev->of_node)
+ 		return 0;
+
+ 	if (config && config->dma_dev) {
+--
+1.9.1
