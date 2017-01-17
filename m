@@ -1,42 +1,62 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
-Date: Tue, 17 Jan 2017 15:47:24 +0900
-Message-ID: <20170117064724.cxn57q3yis3dynvz@gangnam.samsung>
-References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
- <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 2/4] ARM: dts: exynos: DT for v4.11
+Date: Mon, 16 Jan 2017 22:30:52 -0800
+Message-ID: <20170117063052.GM16607@localhost>
+References: <20170113152030.13586-1-krzk@kernel.org>
+ <20170113152030.13586-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20170113152030.13586-2-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
-
-On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
-> In case of arbitration lost adequate interrupt sometimes is not signaled. As
-> a result transfer timeouts and is not retried, as it should. To avoid such
-> cases code is added to check transaction status in case of every interrupt.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
+On Fri, Jan 13, 2017 at 05:20:28PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> I am not I2C specialist, this patch is a result of debugging issues
-> with SiI8620 MHL driver on TM2 device. I guess the main problem is
-> with SiI8620 chip, but exynos5 i2c is also guilty - with i2c-gpio driver
-> it works correctly - there is only one arbitration lost at 1st transaction
-> (which is properly handled - transfer is repeated succesfully). In case
-> of exynos5 there are much more arbitration losts. Lowering bus speed
-> decreases frequency of losts but do not eliminate them.
-> Any help/hint, what could cause such issues?
+> Few improvements and Exynos4412 DTSI removal.
+> 
+> This pulls external dependecy from clock tree (one clock commit).
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.11
+> 
+> for you to fetch changes up to bca9085e0ae93253bc93ce218c85ac7d7e7f1831:
+> 
+>   ARM: dts: exynos: remove Exynos4212 support (dead code) (2017-01-11 18:28:43 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung DeviceTree update for v4.11:
+> 1. Fixes for initial audio clocks configuration.
+> 2. Enable sound on Odroid-X board.
+> 3. Enable DMA for UART modules on Exynos5 SoCs.
+> 4. Add CPU OPPs for Exynos4412 Prime (newer version of Exynos4412). This pulls
+>    necessary change in the clocks.
+> 5. Remove Exynos4212. We do not have any mainline boards with it. This will
+>    simplify few bits later.
 
-I'm having the same issue on TM2 and your patch fixes it. I'm
-not sure, though, that's the right fix.
+Merged, thanks.
 
-In any case I will look into it.
 
-Andi
+-Olof
