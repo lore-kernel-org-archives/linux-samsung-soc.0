@@ -1,73 +1,123 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 06/12] pinctrl: samsung: Add missing initconst annotation
-Date: Tue, 17 Jan 2017 13:44:18 +0900
-Message-ID: <CA+Ln22EsV1mKzM5WZ4gwD+C2Yy22aMwy7YNgi7P=2Jy03XXaSg@mail.gmail.com>
-References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170116064526eucas1p1e3064fad71a3ab8de34d306dec531b14@eucas1p1.samsung.com>
- <1484549107-5957-7-git-send-email-m.szyprowski@samsung.com> <20170116191400.ehm3ivkmz4csynvq@kozik-lap>
+Subject: Re: [PATCH 09/12] pinctrl: samsung: Add infrastructure for pin-bank
+ retention control
+Date: Tue, 17 Jan 2017 13:51:15 +0900
+Message-ID: <CA+Ln22GY+RSX3WKvsmAvARxqvYitKq=7TWpy9zn7PbRiKyxeWQ@mail.gmail.com>
+References: <CGME20170116064527eucas1p1f0f78e9420e7d9d60d94b6e7381caeb1@eucas1p1.samsung.com>
+ <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com> <1484549107-5957-10-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35586 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbdAQEoT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Jan 2017 23:44:19 -0500
-In-Reply-To: <20170116191400.ehm3ivkmz4csynvq@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1484549107-5957-10-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-2017-01-17 4:14 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Mon, Jan 16, 2017 at 07:45:01AM +0100, Marek Szyprowski wrote:
->> Exynos5433 support has been added in parallel to adding initconst
->> annotation to most of the init data structures, so add those
->> annotations also to Exynos5433 structures.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> index bf753a596209..70b94ad10cc1 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> @@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->>  };
->>
->>  /* pin banks of exynos5433 pin-controller - ALIVE */
->> -static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
->> +static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
->>       EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
->>       EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
->>       EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
->> @@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
->>  };
->
-> Your change is aligned with existing code... but after I started to look
-> into it I think this should not be initconst.
->
-> The pin_banks (initconst) are referenced in pin_ctrl (initconst) which
-> is referenced in samsung_pinctrl_dt_match (NOT initconst). The dt_match
-> then is used in samsung_pinctrl_driver (for obvious reasons not
-> initconst).
->
-> We suppress the bind so this looks safe - this data should not be ever used
-> after init - but it is not correct strictly speaking.
->
-> Let's imagine some weird future platform which will use DT overlays with
-> pinctrl. I think the overlays could affect the tree after the init
-> stage.
+Hi Marek,
 
-I think it's not very realistic to have a Samsung on-SoC pin
-controller in an overlay. AFAIR we already assume in several places
-that this driver fully initializes in init stage, so we can save some
-memory by discarding this data
+2017-01-16 15:45 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Pad retention control after suspend/resume cycle should be done from pin
+> controller driver instead of PMU (power management unit) driver to avoid
+> possible ordering and logical dependencies. Till now it worked fine only
+> because PMU driver registered its sys_ops after pin controller.
+>
+> This patch adds infrastructure to handle pad retention during pin control
+> driver resume.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++---
+>  drivers/pinctrl/samsung/pinctrl-samsung.h | 42 +++++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+), 3 deletions(-)
 
-Still, I guess we could add some measure to make sure nothing attempts
-to probe this driver after the data is discarded.
+Please see my comments inline.
+
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 86f23842f681..95a84086a2e9 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1075,6 +1075,9 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+>                 ctrl->eint_gpio_init(drvdata);
+>         if (ctrl->eint_wkup_init)
+>                 ctrl->eint_wkup_init(drvdata);
+> +       if (ctrl->retention_data && ctrl->retention_data->init)
+> +               drvdata->retention_ctrl = ctrl->retention_data->init(drvdata,
+> +                                                         ctrl->retention_data);
+
+Is there really a use case for init being optional? Also maybe it
+could make sense to add a pr_debug() in case retention_data is not
+present (maybe even a warning would make sense, since the old code
+should be deprecated...).
+
+>
+>         platform_set_drvdata(pdev, drvdata);
+>
+> @@ -1127,15 +1130,15 @@ static void samsung_pinctrl_suspend_dev(
+>
+>         if (drvdata->suspend)
+>                 drvdata->suspend(drvdata);
+> +       if (drvdata->retention_ctrl && drvdata->retention_ctrl->on)
+> +               drvdata->retention_ctrl->on(drvdata);
+> +
+
+nit: Stray blank line.
+
+>  }
+>
+>  /**
+>   * samsung_pinctrl_resume_dev - restore pinctrl state from suspend for a device
+>   *
+>   * Restore one of the banks that was saved during suspend.
+> - *
+> - * We don't bother doing anything complicated to avoid glitching lines since
+> - * we're called before pad retention is turned off.
+
+I think the comment is still valid. Just could be adjusted to take
+into account that now we are in charge of turning off the retention
+after restoring the registers.
+
+>   */
+>  static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
+>  {
+> @@ -1174,6 +1177,9 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
+>                         if (widths[type])
+>                                 writel(bank->pm_save[type], reg + offs[type]);
+>         }
+> +
+> +       if (drvdata->retention_ctrl && drvdata->retention_ctrl->off)
+> +               drvdata->retention_ctrl->off(drvdata);
+>  }
+>
+>  /**
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> index 6f7ce7539a00..6079142422f8 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> @@ -185,10 +185,48 @@ struct samsung_pin_bank {
+>  };
+>
+>  /**
+> + * struct samsung_retention_data: runtime pin-bank retention control data.
+> + * @regs: array of PMU registers to control pad retention.
+> + * @nr_regs: number of registers in @regs array.
+> + * @value: value to store to registers to turn off retention.
+> + * @refcnt: atomic counter if retention control affects more than one bank.
+> + * @priv: retention control code private data
+> + * @on: platform specific callback to enter retention mode.
+> + * @off: platform specific callback to exit retention mode.
+> + **/
+> +struct samsung_retention_ctrl {
+> +       const u32       *regs;
+> +       int             nr_regs;
+> +       u32             value;
+> +       atomic_t        *refcnt;
+> +       void            *priv;
+> +       void            (*on)(struct samsung_pinctrl_drv_data *);
+> +       void            (*off)(struct samsung_pinctrl_drv_data *);
+
+bikeshed: I think enable/disable is more commonly used for this kind
+of operations.
 
 Best regards,
 Tomasz
