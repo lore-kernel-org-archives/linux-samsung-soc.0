@@ -1,166 +1,94 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: use atomic helper commit
-Date: Tue, 17 Jan 2017 15:20:47 +0900
-Message-ID: <587DB7BF.3070401@samsung.com>
-References: <CGME20170116091327epcas5p11cf9bbd8abe89543df059688abc32fb7@epcas5p1.samsung.com>
- <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
- <2196053.NgR6vNcVuF@avalon>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 06/12] pinctrl: samsung: Add missing initconst annotation
+Date: Tue, 17 Jan 2017 08:34:03 +0200
+Message-ID: <CAJKOXPc0u061nany6SYWRN5W=iKWWSJpZ_W5g68AM9_+oR=B7Q@mail.gmail.com>
+References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170116064526eucas1p1e3064fad71a3ab8de34d306dec531b14@eucas1p1.samsung.com>
+ <1484549107-5957-7-git-send-email-m.szyprowski@samsung.com>
+ <20170116191400.ehm3ivkmz4csynvq@kozik-lap> <CA+Ln22EsV1mKzM5WZ4gwD+C2Yy22aMwy7YNgi7P=2Jy03XXaSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <2196053.NgR6vNcVuF@avalon>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CA+Ln22EsV1mKzM5WZ4gwD+C2Yy22aMwy7YNgi7P=2Jy03XXaSg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAx7JuUIDE37J28IDA1OjM07JeQIExhdXJlbnQgUGluY2hhcnQg7J20KOqwgCkg
-7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IFRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgo+IAo+IE9u
-IE1vbmRheSAxNiBKYW4gMjAxNyAxODoxMzoyMiBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRj
-aCByZWxwYWNlcyBzcGVjaWZpYyBhdG9taWMgY29tbWl0IGZ1bmN0aW9uCj4+IHdpdGggYXRvbWlj
-IGhlbHBlciBjb21taXQgb25lLCB3aGljaCBhbHNvIGluY2x1ZGVzCj4+IGF0b21pY19jb21taXRf
-dGFpbCBjYWxsYmFjayBmb3IgRXh5bm9zIFNvQyBiZWNhc3VlCj4+IGNydGMgZGV2aWNlcyBvbiBF
-eHlub3MgU29DIHVzZXMgcG93ZXIgZG9tYWluIGRldmljZQo+PiBzbyBkcm1fYXRvbWljX2hlbHBl
-cl9jb21taXRfcGxhbmVzIHNob3VsZCBiZSBjYWxsZWQKPj4gYWZ0ZXIgZHJtX2F0b21pY19oZWxw
-ZXJfY29tbWl0X21vZGVzZXRfZW5hYmxlcy4KPiAKPiBQbGVhc2Ugbm90ZSB0aGF0IGRybV9hdG9t
-aWNfaGVscGVyX2NvbW1pdCgpIGlzIGN1cnJlbnRseSBicm9rZW4sIGl0cyBhc3luYyAKPiBjb21t
-aXQgc3VwcG9ydCBpcyBzdWJqZWN0IHRvIGEgcmFjZSBjb25kaXRpb24uIE1hYXJ0ZW4ncyAiW1BB
-VENIIHYzIDAvN10gCj4gZHJtL2F0b21pYzogQWRkIGFjY2Vzc29yIG1hY3JvcyBmb3IgYWxsIGF0
-b21pYyBzdGF0ZSIgcGF0Y2ggc2VyaWVzIGlzIGFuIAo+IGF0dGVtcHQgdG8gZml4IHRoYXQsIEkn
-bGwgdHJ5IHRvIHJldmlldyBpdCBBU0FQLgoKVGhhbmtzIGZvciBzaGFyZSBhbmQgaWYgeW91IGdp
-dmUgbWUgYSByZXZpZXcsIGl0IHdvdWxkIGhlbHAgbWUgYSBsb3QuCgo+IAo+PiBTaWduZWQtb2Zm
-LWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8ICAgOSArKy0KPj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgfCAxMTAgKy0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8ICAy
-NSArKysrKystCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDMzIGluc2VydGlvbnMoKyksIDExMSBkZWxl
-dGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMKPj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-IGluZGV4IDI1MzBiZjUuLjQ3ZGE2MTIgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYwo+PiBAQCAtMzksNiArMzksMTQgQEAgc3RhdGljIHZvaWQgZXh5bm9z
-X2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjCj4+ICpjcnRjKQo+Pgo+PiAgCWlmIChl
-eHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlKQo+PiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxl
-KGV4eW5vc19jcnRjKTsKPj4gKwo+PiArCWlmIChjcnRjLT5zdGF0ZS0+ZXZlbnQgJiYgIWNydGMt
-PnN0YXRlLT5hY3RpdmUpIHsKPj4gKwkJc3Bpbl9sb2NrX2lycSgmY3J0Yy0+ZGV2LT5ldmVudF9s
-b2NrKTsKPj4gKwkJZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0YywgY3J0Yy0+c3RhdGUt
-PmV2ZW50KTsKPj4gKwkJc3Bpbl91bmxvY2tfaXJxKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2spOwo+
-PiArCj4+ICsJCWNydGMtPnN0YXRlLT5ldmVudCA9IE5VTEw7Cj4+ICsJfQo+PiAgfQo+Pgo+PiAg
-c3RhdGljIHZvaWQKPj4gQEAgLTk0LDcgKzEwMiw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19jcnRj
-X2F0b21pY19mbHVzaChzdHJ1Y3QgZHJtX2NydGMKPj4gKmNydGMsIGRybV9jcnRjX3NlbmRfdmJs
-YW5rX2V2ZW50KGNydGMsIGV2ZW50KTsKPj4gIAkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmY3J0
-Yy0+ZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4+ICAJfQo+PiAtCj4+ICB9Cj4+Cj4+ICBzdGF0
-aWMgY29uc3Qgc3RydWN0IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxwZXJf
-ZnVuY3MgPSB7Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHJ2LmMKPj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgaW5k
-ZXggM2VjMDUzNS4uOWQwZGYwMCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kcnYuYwo+PiBAQCAtMzgsNTYgKzM4LDYgQEAKPj4gICNkZWZpbmUgRFJJVkVSX01BSk9S
-CTEKPj4gICNkZWZpbmUgRFJJVkVSX01JTk9SCTAKPj4KPj4gLXN0cnVjdCBleHlub3NfYXRvbWlj
-X2NvbW1pdCB7Cj4+IC0Jc3RydWN0IHdvcmtfc3RydWN0CXdvcms7Cj4+IC0Jc3RydWN0IGRybV9k
-ZXZpY2UJKmRldjsKPj4gLQlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGU7Cj4+IC0JdTMy
-CQkJY3J0Y3M7Cj4+IC19Owo+PiAtCj4+IC1zdGF0aWMgdm9pZCBleHlub3NfYXRvbWljX2NvbW1p
-dF9jb21wbGV0ZShzdHJ1Y3QgZXh5bm9zX2F0b21pY19jb21taXQKPj4gKmNvbW1pdCkgLXsKPj4g
-LQlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0gY29tbWl0LT5kZXY7Cj4+IC0Jc3RydWN0IGV4eW5v
-c19kcm1fcHJpdmF0ZSAqcHJpdiA9IGRldi0+ZGV2X3ByaXZhdGU7Cj4+IC0Jc3RydWN0IGRybV9h
-dG9taWNfc3RhdGUgKnN0YXRlID0gY29tbWl0LT5zdGF0ZTsKPj4gLQo+PiAtCWRybV9hdG9taWNf
-aGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwgc3RhdGUpOwo+PiAtCj4+IC0JZHJt
-X2F0b21pY19oZWxwZXJfY29tbWl0X21vZGVzZXRfZW5hYmxlcyhkZXYsIHN0YXRlKTsKPj4gLQo+
-PiAtCS8qCj4+IC0JICogRXh5bm9zIGNhbid0IHVwZGF0ZSBwbGFuZXMgd2l0aCBDUlRDcyBhbmQg
-ZW5jb2RlcnMgZGlzYWJsZWQsCj4+IC0JICogaXRzIHVwZGF0ZXMgcm91dGluZXMsIHNwZWNpYWxs
-eSBmb3IgRklNRCwgcmVxdWlyZXMgdGhlIGNsb2Nrcwo+PiAtCSAqIHRvIGJlIGVuYWJsZWQuIFNv
-IGl0IGlzIG5lY2Vzc2FyeSB0byBoYW5kbGUgdGhlIG1vZGVzZXQgb3BlcmF0aW9ucwo+PiAtCSAq
-ICpiZWZvcmUqIHRoZSBjb21taXRfcGxhbmVzKCkgc3RlcCwgdGhpcyB3YXkgaXQgd2lsbCBhbHdh
-eXMKPj4gLQkgKiBoYXZlIHRoZSByZWxldmFudCBjbG9ja3MgZW5hYmxlZCB0byBwZXJmb3JtIHRo
-ZSB1cGRhdGUuCj4+IC0JICovCj4+IC0KPj4gLQlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxh
-bmVzKGRldiwgc3RhdGUsIDApOwo+PiAtCj4+IC0JZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3Jf
-dmJsYW5rcyhkZXYsIHN0YXRlKTsKPj4gLQo+PiAtCWRybV9hdG9taWNfaGVscGVyX2NsZWFudXBf
-cGxhbmVzKGRldiwgc3RhdGUpOwo+PiAtCj4+IC0JZHJtX2F0b21pY19zdGF0ZV9wdXQoc3RhdGUp
-Owo+PiAtCj4+IC0Jc3Bpbl9sb2NrKCZwcml2LT5sb2NrKTsKPj4gLQlwcml2LT5wZW5kaW5nICY9
-IH5jb21taXQtPmNydGNzOwo+PiAtCXNwaW5fdW5sb2NrKCZwcml2LT5sb2NrKTsKPj4gLQo+PiAt
-CXdha2VfdXBfYWxsKCZwcml2LT53YWl0KTsKPj4gLQo+PiAtCWtmcmVlKGNvbW1pdCk7Cj4+IC19
-Cj4+IC0KPj4gLXN0YXRpYyB2b2lkIGV4eW5vc19kcm1fYXRvbWljX3dvcmsoc3RydWN0IHdvcmtf
-c3RydWN0ICp3b3JrKQo+PiAtewo+PiAtCXN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1pdCAqY29t
-bWl0ID0gY29udGFpbmVyX29mKHdvcmssCj4+IC0JCQkJc3RydWN0IGV4eW5vc19hdG9taWNfY29t
-bWl0LCB3b3JrKTsKPj4gLQo+PiAtCWV4eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKGNvbW1p
-dCk7Cj4+IC19Cj4+IC0KPj4gIHN0YXRpYyBzdHJ1Y3QgZGV2aWNlICpleHlub3NfZHJtX2dldF9k
-bWFfZGV2aWNlKHZvaWQpOwo+Pgo+PiAgc3RhdGljIGludCBleHlub3NfZHJtX2xvYWQoc3RydWN0
-IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyBmbGFncykKPj4gQEAgLTIwMiw2NSArMTUy
-LDYgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRl
-dikKPj4gIAlkZXYtPmRldl9wcml2YXRlID0gTlVMTDsKPj4gIH0KPj4KPj4gLXN0YXRpYyBpbnQg
-Y29tbWl0X2lzX3BlbmRpbmcoc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdiwgdTMyIGNy
-dGNzKQo+PiAtewo+PiAtCWJvb2wgcGVuZGluZzsKPj4gLQo+PiAtCXNwaW5fbG9jaygmcHJpdi0+
-bG9jayk7Cj4+IC0JcGVuZGluZyA9IHByaXYtPnBlbmRpbmcgJiBjcnRjczsKPj4gLQlzcGluX3Vu
-bG9jaygmcHJpdi0+bG9jayk7Cj4+IC0KPj4gLQlyZXR1cm4gcGVuZGluZzsKPj4gLX0KPj4gLQo+
-PiAtaW50IGV4eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVj
-dCBkcm1fYXRvbWljX3N0YXRlCj4+ICpzdGF0ZSwgLQkJCSBib29sIG5vbmJsb2NrKQo+PiAtewo+
-PiAtCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBkZXYtPmRldl9wcml2YXRlOwo+
-PiAtCXN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1pdCAqY29tbWl0Owo+PiAtCXN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YzsKPj4gLQlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNydGNfc3RhdGU7Cj4+IC0J
-aW50IGksIHJldDsKPj4gLQo+PiAtCWNvbW1pdCA9IGt6YWxsb2Moc2l6ZW9mKCpjb21taXQpLCBH
-RlBfS0VSTkVMKTsKPj4gLQlpZiAoIWNvbW1pdCkKPj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4+IC0K
-Pj4gLQlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wcmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsK
-Pj4gLQlpZiAocmV0KSB7Cj4+IC0JCWtmcmVlKGNvbW1pdCk7Cj4+IC0JCXJldHVybiByZXQ7Cj4+
-IC0JfQo+PiAtCj4+IC0JLyogVGhpcyBpcyB0aGUgcG9pbnQgb2Ygbm8gcmV0dXJuICovCj4+IC0K
-Pj4gLQlJTklUX1dPUksoJmNvbW1pdC0+d29yaywgZXh5bm9zX2RybV9hdG9taWNfd29yayk7Cj4+
-IC0JY29tbWl0LT5kZXYgPSBkZXY7Cj4+IC0JY29tbWl0LT5zdGF0ZSA9IHN0YXRlOwo+PiAtCj4+
-IC0JLyogV2FpdCB1bnRpbCBhbGwgYWZmZWN0ZWQgQ1JUQ3MgaGF2ZSBjb21wbGV0ZWQgcHJldmlv
-dXMgY29tbWl0cyBhbmQKPj4gLQkgKiBtYXJrIHRoZW0gYXMgcGVuZGluZy4KPj4gLQkgKi8KPj4g
-LQlmb3JfZWFjaF9jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBjcnRjX3N0YXRlLCBpKQo+PiAt
-CQljb21taXQtPmNydGNzIHw9IGRybV9jcnRjX21hc2soY3J0Yyk7Cj4+IC0KPj4gLQl3YWl0X2V2
-ZW50KHByaXYtPndhaXQsICFjb21taXRfaXNfcGVuZGluZyhwcml2LCBjb21taXQtPmNydGNzKSk7
-Cj4+IC0KPj4gLQlzcGluX2xvY2soJnByaXYtPmxvY2spOwo+PiAtCXByaXYtPnBlbmRpbmcgfD0g
-Y29tbWl0LT5jcnRjczsKPj4gLQlzcGluX3VubG9jaygmcHJpdi0+bG9jayk7Cj4+IC0KPj4gLQlk
-cm1fYXRvbWljX2hlbHBlcl9zd2FwX3N0YXRlKHN0YXRlLCB0cnVlKTsKPj4gLQo+PiAtCWRybV9h
-dG9taWNfc3RhdGVfZ2V0KHN0YXRlKTsKPj4gLQlpZiAobm9uYmxvY2spCj4+IC0JCXNjaGVkdWxl
-X3dvcmsoJmNvbW1pdC0+d29yayk7Cj4+IC0JZWxzZQo+PiAtCQlleHlub3NfYXRvbWljX2NvbW1p
-dF9jb21wbGV0ZShjb21taXQpOwo+PiAtCj4+IC0JcmV0dXJuIDA7Cj4+IC19Cj4+IC0KPj4gIGlu
-dCBleHlub3NfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4+ICAJCQlzdHJ1
-Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4+ICB7Cj4+IEBAIC0zMTMsNiArMjA0LDcgQEAg
-c3RhdGljIHZvaWQgZXh5bm9zX2RybV9wcmVjbG9zZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+
-Pgo+PiAgCWxpc3RfZm9yX2VhY2hfZW50cnkoY3J0YywgJmRldi0+bW9kZV9jb25maWcuY3J0Y19s
-aXN0LCBoZWFkKQo+PiAgCQlleHlub3NfZHJtX2NydGNfY2FuY2VsX3BhZ2VfZmxpcChjcnRjLCBm
-aWxlKTsKPj4gKwo+PiAgfQo+Pgo+PiAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9wb3N0Y2xvc2Uo
-c3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9maWxlCj4+ICpmaWxlKSBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPj4gYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBpbmRleCA2OGQ0MTQyLi4xZTEwYjczIDEw
-MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+PiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+PiBAQCAtMTg3LDEx
-ICsxODcsMzMgQEAgZG1hX2FkZHJfdCBleHlub3NfZHJtX2ZiX2RtYV9hZGRyKHN0cnVjdAo+PiBk
-cm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgaW5kZXgpIHJldHVybiBleHlub3NfZmItPmRtYV9hZGRy
-W2luZGV4XTsKPj4gIH0KPj4KPj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kcm1fYXRvbWljX2NvbW1p
-dF90YWlsKHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKPj4gK3sKPj4gKwlzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2ID0gc3RhdGUtPmRldjsKPj4gKwo+PiArCWRybV9hdG9taWNfaGVscGVy
-X2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwgc3RhdGUpOwo+PiArCj4+ICsJZHJtX2F0b21p
-Y19oZWxwZXJfY29tbWl0X21vZGVzZXRfZW5hYmxlcyhkZXYsIHN0YXRlKTsKPj4gKwo+PiArCWRy
-bV9hdG9taWNfaGVscGVyX2NvbW1pdF9wbGFuZXMoZGV2LCBzdGF0ZSwKPj4gKwkJCQkJRFJNX1BM
-QU5FX0NPTU1JVF9BQ1RJVkVfT05MWSk7Cj4+ICsKPj4gKwlkcm1fYXRvbWljX2hlbHBlcl9jb21t
-aXRfaHdfZG9uZShzdGF0ZSk7Cj4+ICsKPj4gKwlkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92
-YmxhbmtzKGRldiwgc3RhdGUpOwo+PiArCj4+ICsJZHJtX2F0b21pY19oZWxwZXJfY2xlYW51cF9w
-bGFuZXMoZGV2LCBzdGF0ZSk7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBzdHJ1Y3QgZHJtX21vZGVf
-Y29uZmlnX2hlbHBlcl9mdW5jcyBleHlub3NfZHJtX21vZGVfY29uZmlnX2hlbHBlcnMgPQo+PiB7
-ICsJLmF0b21pY19jb21taXRfdGFpbCA9IGV4eW5vc19kcm1fYXRvbWljX2NvbW1pdF90YWlsLAo+
-PiArfTsKPj4gKwo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9jb25maWdfZnVuY3Mg
-ZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19mdW5jcyA9IHsKPj4gIAkuZmJfY3JlYXRlID0gZXh5bm9z
-X3VzZXJfZmJfY3JlYXRlLAo+PiAgCS5vdXRwdXRfcG9sbF9jaGFuZ2VkID0gZXh5bm9zX2RybV9v
-dXRwdXRfcG9sbF9jaGFuZ2VkLAo+PiAgCS5hdG9taWNfY2hlY2sgPSBleHlub3NfYXRvbWljX2No
-ZWNrLAo+PiAtCS5hdG9taWNfY29tbWl0ID0gZXh5bm9zX2F0b21pY19jb21taXQsCj4+ICsJLmF0
-b21pY19jb21taXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb21taXQsCj4+ICB9Owo+Pgo+PiAgdm9p
-ZCBleHlub3NfZHJtX21vZGVfY29uZmlnX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPj4g
-QEAgLTIwOCw0ICsyMzAsNSBAQCB2b2lkIGV4eW5vc19kcm1fbW9kZV9jb25maWdfaW5pdChzdHJ1
-Y3QgZHJtX2RldmljZSAqZGV2KQo+PiBkZXYtPm1vZGVfY29uZmlnLm1heF9oZWlnaHQgPSA0MDk2
-Owo+Pgo+PiAgCWRldi0+bW9kZV9jb25maWcuZnVuY3MgPSAmZXh5bm9zX2RybV9tb2RlX2NvbmZp
-Z19mdW5jczsKPj4gKwlkZXYtPm1vZGVfY29uZmlnLmhlbHBlcl9wcml2YXRlID0gJmV4eW5vc19k
-cm1fbW9kZV9jb25maWdfaGVscGVyczsKPj4gIH0KPiAKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Jan 17, 2017 at 6:44 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> 2017-01-17 4:14 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+>> On Mon, Jan 16, 2017 at 07:45:01AM +0100, Marek Szyprowski wrote:
+>>> Exynos5433 support has been added in parallel to adding initconst
+>>> annotation to most of the init data structures, so add those
+>>> annotations also to Exynos5433 structures.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>  drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
+>>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>>> index bf753a596209..70b94ad10cc1 100644
+>>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+>>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>>> @@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+>>>  };
+>>>
+>>>  /* pin banks of exynos5433 pin-controller - ALIVE */
+>>> -static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
+>>> +static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
+>>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+>>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+>>>       EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+>>> @@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+>>>  };
+>>
+>> Your change is aligned with existing code... but after I started to look
+>> into it I think this should not be initconst.
+>>
+>> The pin_banks (initconst) are referenced in pin_ctrl (initconst) which
+>> is referenced in samsung_pinctrl_dt_match (NOT initconst). The dt_match
+>> then is used in samsung_pinctrl_driver (for obvious reasons not
+>> initconst).
+>>
+>> We suppress the bind so this looks safe - this data should not be ever used
+>> after init - but it is not correct strictly speaking.
+>>
+>> Let's imagine some weird future platform which will use DT overlays with
+>> pinctrl. I think the overlays could affect the tree after the init
+>> stage.
+>
+> I think it's not very realistic to have a Samsung on-SoC pin
+> controller in an overlay. AFAIR we already assume in several places
+> that this driver fully initializes in init stage, so we can save some
+> memory by discarding this data
+
+Two things here. Either we write proper code or we write code for
+"believe it will work". There is a problem with second approach -
+after some time, the driver will be developed further it your
+assumptions might change... then stuff might get broken because no one
+expected that driver data is discarded. Code working only with some
+assumptions is a more difficult to maintain than code which is
+correct.
+
+In the same time if you believe your code is "correct" then just mark
+samsung_pinctrl_dt_match initconst... Marking only few parts in the
+chain is broken.
+
+Second thing. How much memory you are saving? 5 kB in total? 10 kB? Is
+it worth the risk?
+
+> Still, I guess we could add some measure to make sure nothing attempts
+> to probe this driver after the data is discarded.
+
+That could work... but last time I asked for checking the return value
+of match_data then you (I think) and Bartlomiej responded "no sense".
+So please be consistent. Anyway it is not possible to NULL-ify the
+match_data after first probe because samsung_pinctrl_dt_match is
+const. This means you would have to add some crazy logic to check for
+late (from overlays) or second probe and discard it... just because we
+wanted to save some memory and marked initconst something referenced
+from non-initconst section.
+
+Best regards,
+Krzysztof
