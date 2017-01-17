@@ -1,115 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] ASoC: Revert
- "samsung: Remove unneeded initialization of chan_name"
-Date: Tue, 17 Jan 2017 14:16:42 +0100
-Message-ID: <1484659002-20200-2-git-send-email-s.nawrocki@samsung.com>
-References: <1484659002-20200-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170117131720epcas1p46266c1038aec2af3e6db23b8314212e6@epcas1p4.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: Add USB 3.0 controller node for
+ Exynos7
+Date: Tue, 17 Jan 2017 10:37:14 -0300
+Message-ID: <3a607d18-acf9-37f5-a6d4-7f8fe538d27f@osg.samsung.com>
+References: <1484649143-19423-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170117102939epcas5p1aa25d6d8d080c086fb237e645bedbd17@epcas5p1.samsung.com>
+ <1484649143-19423-2-git-send-email-pankaj.dubey@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33529 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750892AbdAQNR0 (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35159
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750787AbdAQNh1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Jan 2017 08:17:26 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OJX00IK2E8XDQ60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jan 2017 22:17:21 +0900 (KST)
-In-reply-to: <1484659002-20200-1-git-send-email-s.nawrocki@samsung.com>
+        Tue, 17 Jan 2017 08:37:27 -0500
+In-Reply-To: <1484649143-19423-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com, lars@metafoo.de, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, gautamvivek1987@gmail.com
 
-This reverts commit cdaf9af1eaeb539e32bfd6da6310b41ad6c3ba23
-which breaks I2S support on the non-DT Samsung SoC platforms,
-since the default "tx", "rx" DMA channel names for playback
-and capture streams or custom channel names in struct
-snd_dmaengine_pcm_config are supported in the ASoC dmaengine
-module only for devicetree booting case.
+Hello Pankaj,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/dmaengine.c   | 8 ++++++--
- sound/soc/samsung/i2s.c         | 3 +++
- sound/soc/samsung/s3c2412-i2s.c | 2 ++
- sound/soc/samsung/s3c24xx-i2s.c | 2 ++
- 4 files changed, 13 insertions(+), 2 deletions(-)
+On 01/17/2017 07:32 AM, Pankaj Dubey wrote:
+> Add USB 3.0 DRD controller device node, with its clock
+> and phy information to enable the same on Exynos7.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
 
-diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
-index cda656e..9104c98 100644
---- a/sound/soc/samsung/dmaengine.c
-+++ b/sound/soc/samsung/dmaengine.c
-@@ -37,8 +37,12 @@ int samsung_asoc_dma_platform_register(struct device *dev, dma_filter_fn filter,
- 	pcm_conf->prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config;
- 	pcm_conf->compat_filter_fn = filter;
+The S-o-B order isn't correct. You are the one posting the patch so
+yours should be the last one.
 
--	pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
--	pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
-+	if (dev->of_node) {
-+		pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
-+		pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
-+	} else {
-+		flags |= SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME;
-+	}
+Also, wasn't this patch originally from Vivek? If you didn't change
+that much, I think that he should be listed as the patch author.
 
- 	return devm_snd_dmaengine_pcm_register(dev, pcm_conf, flags);
- }
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index e00974b..85324e6 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1305,6 +1305,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	}
- 	pri_dai->dma_playback.addr = regs_base + I2STXD;
- 	pri_dai->dma_capture.addr = regs_base + I2SRXD;
-+	pri_dai->dma_playback.chan_name = "tx";
-+	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
- 	pri_dai->quirks = quirks;
-@@ -1329,6 +1331,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		sec_dai->lock = &pri_dai->spinlock;
- 		sec_dai->variant_regs = pri_dai->variant_regs;
- 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
-+		sec_dai->dma_playback.chan_name = "tx-sec";
+I don't have an Exynos7 manual to verify but the patch looks good.
 
- 		if (!np) {
- 			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
-diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-index 6d0b889..0a47182 100644
---- a/sound/soc/samsung/s3c2412-i2s.c
-+++ b/sound/soc/samsung/s3c2412-i2s.c
-@@ -35,10 +35,12 @@
- #include <linux/platform_data/asoc-s3c.h>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_out = {
-+	.chan_name	= "tx",
- 	.addr_width	= 4,
- };
-
- static struct snd_dmaengine_dai_dma_data s3c2412_i2s_pcm_stereo_in = {
-+	.chan_name	= "rx",
- 	.addr_width	= 4,
- };
-
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 07f5091..91e6871 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -31,10 +31,12 @@
- #include "s3c24xx-i2s.h"
-
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
-+	.chan_name	= "tx",
- 	.addr_width	= 2,
- };
-
- static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
-+	.chan_name	= "rx",
- 	.addr_width	= 2,
- };
-
---
-1.9.1
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
