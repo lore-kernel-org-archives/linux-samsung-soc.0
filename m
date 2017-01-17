@@ -1,48 +1,71 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v7 2/3] input: tm2-touchkey: Add touchkey driver support
- for TM2
-Date: Tue, 17 Jan 2017 19:20:47 +0200
-Message-ID: <20170117172047.47535bj5xd6toayu@kozik-lap>
-References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
- <CGME20170117055444epcas1p47b0b0a0ae3260b22fa61d2b92362050b@epcas1p4.samsung.com>
- <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
+Subject: Re: [PATCH v5 3/4] dmaengine: pl330: Store pointer to slave device
+Date: Tue, 17 Jan 2017 19:29:42 +0200
+Message-ID: <20170117172445.3itztktiay22as26@kozik-lap>
+References: <1484657338-26338-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170117124922eucas1p1d4037d80229e55007169cf85c19e5eec@eucas1p1.samsung.com>
+ <1484657338-26338-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35187 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbdAQR3v (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 17 Jan 2017 12:29:51 -0500
 Content-Disposition: inline
-In-Reply-To: <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jaechul Lee <jcsing.lee@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, galaxyra@gmail.com, beomho.seo@samsung.com, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1484657338-26338-4-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-On Tue, Jan 17, 2017 at 02:54:38PM +0900, Jaechul Lee wrote:
-> This patch adds support for the TM2 touch key and led
-> functionality.
+On Tue, Jan 17, 2017 at 01:48:57PM +0100, Marek Szyprowski wrote:
+> Store the pointer to slave device, which requested our channel. It will be
+> later used to implement runtime PM of PL330 DMA controller. Although
+> DMA channels might be requested many times, each DMA peripheral channel is
+> physically dedicated only for specific hardware, so there should be only
+> one slave device for each channel.
 > 
-> The driver interfaces with userspace through an input device and
-> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
-> controlled by "/sys/class/leds/tm2-touchkey/brightness".
-> 
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-This looks unusual. How did Dmitry's Sob end here?
+Any particular reason for removing my Reviewed-by? Any changes here?
 
 Best regards,
 Krzysztof
+
+> ---
+>  drivers/dma/pl330.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index b6b2cc912380..c77a3494659c 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -450,6 +450,7 @@ struct dma_pl330_chan {
+>  
+>  	/* for runtime pm tracking */
+>  	bool active;
+> +	struct device *slave;
+>  };
+>  
+>  struct pl330_dmac {
+> @@ -2093,6 +2094,14 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
+>  	if (chan_id >= pl330->num_peripherals)
+>  		return NULL;
+>  
+> +	if (!pl330->peripherals[chan_id].slave) {
+> +		pl330->peripherals[chan_id].slave = slave;
+> +	} else if (pl330->peripherals[chan_id].slave != slave) {
+> +		dev_err(pl330->ddma.dev,
+> +			"Can't use same channel with multiple slave devices!\n");
+> +		return NULL;
+> +	}
+> +
+>  	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
+>  }
+>  
+> -- 
+> 1.9.1
+> 
