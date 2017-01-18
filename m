@@ -1,79 +1,63 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 3/4] dmaengine: pl330: Store pointer to slave device
-Date: Wed, 18 Jan 2017 08:07:22 +0100
-Message-ID: <539bd321-66f5-9d06-923e-88dcb12787b8@samsung.com>
-References: <1484657338-26338-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170117124922eucas1p1d4037d80229e55007169cf85c19e5eec@eucas1p1.samsung.com>
- <1484657338-26338-4-git-send-email-m.szyprowski@samsung.com>
- <20170117172445.3itztktiay22as26@kozik-lap>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: Remove address node from usb parent
+ node
+Date: Wed, 18 Jan 2017 16:04:27 +0900
+Message-ID: <587F137B.6070109@samsung.com>
+References: <CGME20170118054410epcas1p4df5c5631e0b13081662eb8fff5e383b3@epcas1p4.samsung.com>
+ <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20170117172445.3itztktiay22as26@kozik-lap>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: robh+dt@kernel.org, krzk@kernel.org, kgene@kernel.org, javier@osg.samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Pankaj,
 
-On 2017-01-17 18:29, Krzysztof Kozlowski wrote:
-> On Tue, Jan 17, 2017 at 01:48:57PM +0100, Marek Szyprowski wrote:
->> Store the pointer to slave device, which requested our channel. It will be
->> later used to implement runtime PM of PL330 DMA controller. Although
->> DMA channels might be requested many times, each DMA peripheral channel is
->> physically dedicated only for specific hardware, so there should be only
->> one slave device for each channel.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Any particular reason for removing my Reviewed-by? Any changes here?
+This issue already posted by Javier Martinez Canillas[1].
+Maybe, he will post v2.
 
-No changes here. I'm sorry, the tag got lost during rebase.
+[1] https://lkml.org/lkml/2017/1/10/907
+- ("Re: [PATCH v2 3/3] arm64: dts: exynos: Remove unneeded unit names in Exynos5433 nodes")
 
-> Best regards,
-> Krzysztof
->
->> ---
->>   drivers/dma/pl330.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index b6b2cc912380..c77a3494659c 100644
->> --- a/drivers/dma/pl330.c
->> +++ b/drivers/dma/pl330.c
->> @@ -450,6 +450,7 @@ struct dma_pl330_chan {
->>   
->>   	/* for runtime pm tracking */
->>   	bool active;
->> +	struct device *slave;
->>   };
->>   
->>   struct pl330_dmac {
->> @@ -2093,6 +2094,14 @@ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
->>   	if (chan_id >= pl330->num_peripherals)
->>   		return NULL;
->>   
->> +	if (!pl330->peripherals[chan_id].slave) {
->> +		pl330->peripherals[chan_id].slave = slave;
->> +	} else if (pl330->peripherals[chan_id].slave != slave) {
->> +		dev_err(pl330->ddma.dev,
->> +			"Can't use same channel with multiple slave devices!\n");
->> +		return NULL;
->> +	}
->> +
->>   	return dma_get_slave_channel(&pl330->peripherals[chan_id].chan);
->>   }
->>   
->> -- 
->> 1.9.1
->>
->
->
+On 2017년 01월 18일 14:46, Pankaj Dubey wrote:
+> Address node does not required to be put after parent't node,
+> so remove address node from usb parent node.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 68f764e..0d7a55d 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -1285,7 +1285,7 @@
+>  			status = "disabled";
+>  		};
+>  
+> -		usbdrd30: usb@15400000  {
+> +		usbdrd30: usb3-0 {
+>  			compatible = "samsung,exynos5250-dwusb3";
+>  			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
+>  				<&cmu_fsys CLK_SCLK_USBDRD30>;
+> @@ -1332,7 +1332,7 @@
+>  			status = "disabled";
+>  		};
+>  
+> -		usbhost30: usb@15a00000 {
+> +		usbhost30: usbhost3-0 {
+>  			compatible = "samsung,exynos5250-dwusb3";
+>  			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
+>  				<&cmu_fsys CLK_SCLK_USBHOST30>;
+> 
 
-Best regards
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best Regards,
+Chanwoo Choi
+S/W Center, Samsung Electronics
