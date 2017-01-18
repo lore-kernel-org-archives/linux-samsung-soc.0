@@ -1,16 +1,18 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: exynos: Add regulators for Vbus and
- Vbus-Boost
-Date: Wed, 18 Jan 2017 23:04:54 +0900
-Message-ID: <CAGOxZ51jV87oEZLQ73g+b1doLpGZ1LRRXn073TPppbcFTWWs8w@mail.gmail.com>
-References: <CGME20170118063009epcas5p27f555398c9f3f44d733e04a585e74139@epcas5p2.samsung.com>
- <1484721173-30474-1-git-send-email-pankaj.dubey@samsung.com>
- <1484721173-30474-3-git-send-email-pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 3/4] dmaengine: pl330: Store pointer to slave device
+Date: Wed, 18 Jan 2017 16:13:46 +0200
+Message-ID: <20170118141346.wfwp7ybtqmwsiee7@kozik-lap>
+References: <1484657338-26338-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170117124922eucas1p1d4037d80229e55007169cf85c19e5eec@eucas1p1.samsung.com>
+ <1484657338-26338-4-git-send-email-m.szyprowski@samsung.com>
+ <20170117172445.3itztktiay22as26@kozik-lap>
+ <539bd321-66f5-9d06-923e-88dcb12787b8@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1484721173-30474-3-git-send-email-pankaj.dubey@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <539bd321-66f5-9d06-923e-88dcb12787b8@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,106 +22,29 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, robh+dt <robh+dt@kernel.org>, kgene <kgene@kernel.org>, sanath@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Wed, Jan 18, 2017 at 08:07:22AM +0100, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 2017-01-17 18:29, Krzysztof Kozlowski wrote:
+> > On Tue, Jan 17, 2017 at 01:48:57PM +0100, Marek Szyprowski wrote:
+> > > Store the pointer to slave device, which requested our channel. It will be
+> > > later used to implement runtime PM of PL330 DMA controller. Although
+> > > DMA channels might be requested many times, each DMA peripheral channel is
+> > > physically dedicated only for specific hardware, so there should be only
+> > > one slave device for each channel.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > Any particular reason for removing my Reviewed-by? Any changes here?
+> 
+> No changes here. I'm sorry, the tag got lost during rebase.
 
-On Wed, Jan 18, 2017 at 3:32 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> From: Vivek Gautam <gautamvivek1987@gmail.com>
->
-> Adding fixed voltage regulators for Vbus and Vbus-boost required
-> by USB 3.0 DRD controller on Exynos7-espresso board.
->
-> Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
+Okay:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 45 +++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index 1b2db9f0..e4705fd 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -13,6 +13,7 @@
->  #include "exynos7.dtsi"
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/gpio/gpio.h>
->
->  / {
->         model = "Samsung Exynos7 Espresso board based on EXYNOS7";
-> @@ -32,6 +33,29 @@
->                 device_type = "memory";
->                 reg = <0x0 0x40000000 0x0 0xC0000000>;
->         };
-> +
-> +       usb30_vbus_reg: regulator-usb30 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "VBUS_5V";
-> +               regulator-min-microvolt = <5000000>;
-> +               regulator-max-microvolt = <5000000>;
-> +               gpio = <&gph1 1 GPIO_ACTIVE_HIGH>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&usb30_vbus_en>;
-> +               enable-active-high;
-> +       };
-> +
-> +       usb3drd_boost_5v: regulator-usb3drd-boost {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "VUSB_VBUS_5V";
-> +               regulator-min-microvolt = <5000000>;
-> +               regulator-max-microvolt = <5000000>;
-> +               gpio = <&gpf4 1 GPIO_ACTIVE_HIGH>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&usb3drd_boost_en>;
-> +               enable-active-high;
-> +       };
-> +
->  };
->
->  &fin_pll {
-> @@ -365,3 +389,24 @@
->         vqmmc-supply = <&ldo2_reg>;
->         disable-wp;
->  };
-> +
-> +&usbdrd_phy {
-> +       vbus-supply = <&usb30_vbus_reg>;
-> +       vbus-boost-supply = <&usb3drd_boost_5v>;
-> +};
-> +
-> +&pinctrl_bus1 {
-> +       usb30_vbus_en: usb30-vbus-en {
-> +               samsung,pins = "gph1-1";
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +       };
-> +
-> +       usb3drd_boost_en: usb3drd-boost-en {
-> +               samsung,pins = "gpf4-1";
-> +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +               samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +       };
-> +};
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
-
--- 
-Regards,
-Alim
+Best regards,
+Krzysztof
