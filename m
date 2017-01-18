@@ -1,37 +1,38 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 00/13] Move pad retention control to Exynos pin
- controller driver
-Date: Wed, 18 Jan 2017 17:40:47 +0900
-Message-ID: <CA+Ln22EpeAu59Yp0x7Ph_Z06xP4WY7KMJypwQ9x6Wkpf2yEhgg@mail.gmail.com>
-References: <CGME20170117124453eucas1p1b812596939db4c4f3298b941555eb05a@eucas1p1.samsung.com>
- <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC
+ not supported anymore)
+Date: Wed, 18 Jan 2017 11:37:04 +0100
+Message-ID: <CACRpkdZh+kPUwf56XskzCUPh89h5a_2_-=EFw=NFKYY_zD4jfw@mail.gmail.com>
+References: <20170114123642.15581-1-krzk@kernel.org>
+ <20170114123642.15581-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170114123642.15581-4-krzk@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-2017-01-17 21:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Changelog:
->
-> v2:
-> - reworked exynos_get_pmu_regmap() function and moved to Exynos PMU driver,
->   now it doesn't depend on driver probe order thus doesn't need to defer probing
->   of pinctrl driver if PMU has not yet been probed
-> - collected Acks, minor fixes according to review comments
-
-After fixing remaining nits in patch 1 and 10, for all pinctrl patches (4-13):
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-and for other patches (1-3):
-
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+T24gU2F0LCBKYW4gMTQsIDIwMTcgYXQgMTozNiBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6
+a0BrZXJuZWwub3JnPiB3cm90ZToKCj4gU3VwcG9ydCBmb3IgRXh5bm9zNDQxNSBpcyBnb2luZyBh
+d2F5IGJlY2F1c2UgdGhlcmUgYXJlIG5vIGludGVybmFsIG5vcgo+IGV4dGVybmFsIHVzZXJzLgo+
+Cj4gU2luY2UgY29tbWl0IDQ2ZGNmMGZmMGRlMyAoIkFSTTogZHRzOiBleHlub3M6IFJlbW92ZSBl
+eHlub3M0NDE1LmR0c2kiKSwKPiB0aGUgcGxhdGZvcm0gY2Fubm90IGJlIGluc3RhbnRpYXRlZCBz
+byByZW1vdmUgYWxzbyB0aGUgZHJpdmVycy4KPgo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBL
+b3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KCkl0IGNhbiBjZXJ0YWlubHkgYmUgaW5zdGFudGlh
+dGVkIChmcm9tIG9sZCBEVEJzLi4uKSBidXQgaGFzCm5vIERUUyB1cHN0cmVhbS4gQnV0IEkgZ2V0
+IHdoYXQgeW91IG1lYW4uCgpQYXRjaCBhcHBsaWVkLCBpZiBzb21lb25lIGlzIHVuaGFwcHkgdGhl
+eSBjYW4gYWx3YXlzIHN0YXJ0CnNlbmRpbmcgcmV2ZXJ0cy4KCllvdXJzLApMaW51cyBXYWxsZWlq
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
