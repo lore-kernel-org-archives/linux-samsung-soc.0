@@ -1,97 +1,129 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH 2/3] Input: add support for the STMicroelectronics
- FingerTip touchscreen
-Date: Wed, 18 Jan 2017 10:58:04 +0900
-Message-ID: <20170118015804.4j26oruyyej54qt4@gangnam.samsung>
-References: <20170117135441.31450-1-andi.shyti@samsung.com>
- <CGME20170117135456epcas5p25a2bfb3a8e1e785177ea842310401d24@epcas5p2.samsung.com>
- <20170117135441.31450-3-andi.shyti@samsung.com> <20170117212128.GC6888@dtor-ws>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: use atomic helper commit
+Date: Wed, 18 Jan 2017 11:17:00 +0900
+Message-ID: <587ED01C.6090506@samsung.com>
+References: <CGME20170116091327epcas5p11cf9bbd8abe89543df059688abc32fb7@epcas5p1.samsung.com>
+ <1484558003-18691-1-git-send-email-inki.dae@samsung.com>
+ <2598225.2QKARYRJCR@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20170117212128.GC6888@dtor-ws>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2598225.2QKARYRJCR@avalon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Dmitry,
-
-thanks for looking into the driver and the review!
-I agree with almost everything, some comments below.
-
-> > +	/* optional tuning */
-> > +	err = stmfts_write_and_wait(sdata, STMFTS_MS_CX_TUNING);
-> > +	if (err)
-> > +		dev_warn(&sdata->client->dev, "failed to perform mutual auto tune\n");
-> > +
-> > +	/* optional tuning */
-> > +	err = stmfts_write_and_wait(sdata, STMFTS_SS_CX_TUNING);
-> > +	if (err)
-> > +		dev_warn(&sdata->client->dev, "failed to perform self auto tune\n");
-> > +
-> > +	err = stmfts_write_and_wait(sdata, STMFTS_FULL_FORCE_CALIBRATION);
-> > +	if (err)
-> > +		return err;
-> 
-> Hmm, do you need to calibrate on boot, or maybe wait for the device to
-> be opened first?
-
-The datasheet says that I need to calibrate during boot. Anyway,
-the calibration requires some time (it can be up to a couple of
-seconds), therefore I wouldn't like to calibrate everytime
-someone opens the device.
-
-> > +static int stmfts_enable_key(struct stmfts_data *sdata)
-> > +{
-> > +	int err;
-> > +
-> > +	sdata->input_key = devm_input_allocate_device(&sdata->client->dev);
-> > +	if (!sdata->input_key)
-> > +		return -ENOMEM;
-> > +
-> > +	sdata->input_key->name = "stmfts_key";
-> > +	sdata->input_key->id.bustype = BUS_I2C;
-> > +	sdata->input_key->open = stmfts_input_key_open;
-> > +	sdata->input_key->close = stmfts_input_key_close;
-> 
-> If you want separate input device for keys I'd recommend setting ->phys
-> on them. Another option is to add keys to teh touchscreen device. Do you
-> expect different actors listening to these devices? Even with different
-> actors you can program event masks so that if process is not interested
-> in some events (like ABS_MT_* events) it is not woken up when dveice
-> generates them.
-
-Are you suggesting to drop one event interface?
-
-The reason why I chose to generate two interfaces is indeed
-because there might be be different processes completely
-unrelated to each other that will interact with the device (for
-example in Jaechul's driver that you just reviewed, touchscreen
-and touchkey are different devices).
-
-I chose it for coherency with the common userspace architecture.
-But of course, I can do as you recommend.
-
-I have one more question. This touchscreen has also a proximity
-functionality that works exactly as a proximity sensor and I
-planned to add it in the future. Would it make sense to use the
-iio framework (as it behaves as a proximity sensor) or use the
-current interface? For instance, I was going to use the iio.
-
-> > +	/* get the regulator for powering the leds on */
-> > +	sdata->ledvdd = devm_regulator_get(&sdata->client->dev, "ledvdd");
-> > +	if (IS_ERR(sdata->ledvdd))
-> > +		/* there is no LED connected to the touch key */
-> > +		sdata->ledvdd = NULL;
-> 
-> As I mentioned, is it truly regulator, or just a GPIO?
-
-As I wrote in the previous mail, this is truly a regulator. If it
-was a gpio, I would still prefer to use the regulator_* functions
-as those would be managed by regulator-gpio and I don't need to
-change the driver for that.
-
-Thanks a lot,
-Andi
+SGkgTGF1cmVudCwKCjIwMTfrhYQgMDHsm5QgMTfsnbwgMTg6MTfsl5AgTGF1cmVudCBQaW5jaGFy
+dCDsnbQo6rCAKSDsk7Qg6riAOgo+IEhpIElua2ksCj4gCj4gVGhhbmsgeW91IGZvciB0aGUgcGF0
+Y2guCj4gCj4gT24gTW9uZGF5IDE2IEphbiAyMDE3IDE4OjEzOjIyIElua2kgRGFlIHdyb3RlOgo+
+PiBUaGlzIHBhdGNoIHJlbHBhY2VzIHNwZWNpZmljIGF0b21pYyBjb21taXQgZnVuY3Rpb24KPj4g
+d2l0aCBhdG9taWMgaGVscGVyIGNvbW1pdCBvbmUsIHdoaWNoIGFsc28gaW5jbHVkZXMKPj4gYXRv
+bWljX2NvbW1pdF90YWlsIGNhbGxiYWNrIGZvciBFeHlub3MgU29DIGJlY2FzdWUKPj4gY3J0YyBk
+ZXZpY2VzIG9uIEV4eW5vcyBTb0MgdXNlcyBwb3dlciBkb21haW4gZGV2aWNlCj4+IHNvIGRybV9h
+dG9taWNfaGVscGVyX2NvbW1pdF9wbGFuZXMgc2hvdWxkIGJlIGNhbGxlZAo+PiBhZnRlciBkcm1f
+YXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5
+OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8ICAgOSArKy0KPj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgfCAxMTAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8ICAyNSAr
+KysrKystCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDMzIGluc2VydGlvbnMoKyksIDExMSBkZWxldGlv
+bnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMKPj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGlu
+ZGV4IDI1MzBiZjUuLjQ3ZGE2MTIgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuYwo+PiBAQCAtMzksNiArMzksMTQgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2Ry
+bV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjCj4+ICpjcnRjKQo+Pgo+PiAgCWlmIChleHlu
+b3NfY3J0Yy0+b3BzLT5kaXNhYmxlKQo+PiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlKGV4
+eW5vc19jcnRjKTsKPj4gKwo+PiArCWlmIChjcnRjLT5zdGF0ZS0+ZXZlbnQgJiYgIWNydGMtPnN0
+YXRlLT5hY3RpdmUpIHsKPj4gKwkJc3Bpbl9sb2NrX2lycSgmY3J0Yy0+ZGV2LT5ldmVudF9sb2Nr
+KTsKPj4gKwkJZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0YywgY3J0Yy0+c3RhdGUtPmV2
+ZW50KTsKPj4gKwkJc3Bpbl91bmxvY2tfaXJxKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2spOwo+PiAr
+Cj4+ICsJCWNydGMtPnN0YXRlLT5ldmVudCA9IE5VTEw7Cj4+ICsJfQo+IAo+IFlvdSBhbHNvIG5l
+ZWQgdG8gaGFuZGxlIGV2ZW50cyBmb3IgZXh5bm9zX2RybV9jcnRjX2VuYWJsZSgpLiBJJ20gbm90
+IHRvbwoKSXMgdGhlcmUgYW55IGNvcm5lciBjYXNlPyBJIHRoaW5rIHRoZXJlIHNob3VsZCBiZSBu
+byBldmVudCB3aGljaCBpcyBub3QgaGFuZGxlZCB3aGVuIGV4eW5vc19kcm1fY3J0Y19lbmFibGUo
+KSBpcyBjYWxsZWQuCiAKPiBmYW1pbGlhciB3aXRoIHRoZSBleHlub3MgZHJtIGRyaXZlciwgaXMg
+dGhhdCB0YWtlbiBjYXJlIG9mIGJ5IGV2ZW50IGhhbmRsaW5nIAo+IGluIGV4eW5vc19jcnRjX2F0
+b21pY19mbHVzaCgpID8KClllcywgZXh5bm9zX2NydGNfYXRvbWljX2ZsdXNoKCkgaGFuZGxlcyB0
+aGUgZXZlbnQgLSBtYWtpbmcgY3J0Yy0+c3RhdGUtPmV2ZW50IHRvIE5VTEwgYW5kIGhhbmRpbmcg
+dGhlIGV2ZW50LgoKSG93ZXZlciwgSSB0aGluayBubyBuZWVkIHRvIGhhbmRsZSB0aGUgZXZlbnQg
+YXQgdGhpcyBmdW50aW9uIHNvIHJlbGV2YW50IGNvZGUgaW4gZXh5bm9zX2NydGNfY3RvbWljX2Zs
+dXNoKCkgaXMgbm90IGNsZWFyIHRvIG1lIGV4Y2VwdGluZyBzZXR0aW5nIGNydGMtPnN0YXRlLT5l
+dmVudCB0byBOVUxMIC0gd2l0aG91dCB0aGlzIGNvZGUsIGh3X2RvbmUgZnVuY3Rpb24gd2lsbCBz
+YXkgd2FybmluZy4KVGhpcyBwYXRjaCB3b3VsZCBiZSBhIGZpcnN0IHN0ZXAgdG8gY2xlYW4gdXAg
+YXRvbWljIGludGVyZmFjZXMgb2YgRXh5bm9zIERSTSBkcml2ZXIuCgo+IAo+IFlvdSBjb3VsZCBh
+bHNvIHNwbGl0IHRoaXMgY2hhbmdlIGludG8gYSBzZXBhcmF0ZSBwYXRjaCB3aXRoIGEgY2xlYXIg
+Cj4gZXhwbGFuYXRpb24gb2Ygd2h5IGl0J3MgbmVlZGVkIGluIHRoZSBjb21taXQgbWVzc2FnZS4K
+PiAKPj4gIH0KPiAKPiBbc25pcF0KPiAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuYyBpbmRleCAzZWMwNTM1Li45ZDBkZjAwIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4gCj4gW3NuaXBdCj4gCj4+IC1zdGF0aWMgdm9pZCBl
+eHlub3NfYXRvbWljX2NvbW1pdF9jb21wbGV0ZShzdHJ1Y3QgZXh5bm9zX2F0b21pY19jb21taXQK
+Pj4gKmNvbW1pdCkKPj4gLXsKPj4gLQlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0gY29tbWl0LT5k
+ZXY7Cj4+IC0Jc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdiA9IGRldi0+ZGV2X3ByaXZh
+dGU7Cj4+IC0Jc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlID0gY29tbWl0LT5zdGF0ZTsK
+Pj4gLQo+PiAtCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwg
+c3RhdGUpOwo+PiAtCj4+IC0JZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X21vZGVzZXRfZW5hYmxl
+cyhkZXYsIHN0YXRlKTsKPj4gLQo+PiAtCS8qCj4+IC0JICogRXh5bm9zIGNhbid0IHVwZGF0ZSBw
+bGFuZXMgd2l0aCBDUlRDcyBhbmQgZW5jb2RlcnMgZGlzYWJsZWQsCj4+IC0JICogaXRzIHVwZGF0
+ZXMgcm91dGluZXMsIHNwZWNpYWxseSBmb3IgRklNRCwgcmVxdWlyZXMgdGhlIGNsb2Nrcwo+PiAt
+CSAqIHRvIGJlIGVuYWJsZWQuIFNvIGl0IGlzIG5lY2Vzc2FyeSB0byBoYW5kbGUgdGhlIG1vZGVz
+ZXQgb3BlcmF0aW9ucwo+PiAtCSAqICpiZWZvcmUqIHRoZSBjb21taXRfcGxhbmVzKCkgc3RlcCwg
+dGhpcyB3YXkgaXQgd2lsbCBhbHdheXMKPj4gLQkgKiBoYXZlIHRoZSByZWxldmFudCBjbG9ja3Mg
+ZW5hYmxlZCB0byBwZXJmb3JtIHRoZSB1cGRhdGUuCj4+IC0JICovCj4gCj4gVGhlcmUncyBhIHZh
+bHVlIGluIHRoaXMgY29tbWVudCwgSSB3b3VsZCBjb3B5IGl0IHRvIAo+IGV4eW5vc19kcm1fYXRv
+bWljX2NvbW1pdF90YWlsKCkKCkFzIEkgYWxyZWFkeSBsZWZ0IHRoZSBjb21tZW50IGF0IG90aGVy
+IGVtYWlsIHRocmVhZCwgSSB3aWxsIHVwZGF0ZSBkZXNjcmlwdGlvbiBvZiB0aGlzIHBhdGNoIGlu
+c3RlYWQgYmVjYXVzZSBhdG9taWMga21zIGhlbHBlciBhbHJlYWR5IGRlc2NyaWJlZCB3aHkgYXRv
+bWljX2NvbW1pdF90YWlsIGNhbGxiYWNrIGlzIHJlcXVpcmVkIC0gdGhlIGRyaXZlciB1c2luZyBy
+dW50aW1lIFBNIHNob3VsZCBoYXZlIGRpZmZlcmVudCBjYWxsIG9yZGVyLgpCdXQuLiBvaywgdGhp
+cyBpcyB3aGF0IEd1c3Rhdm8gd2FudGVkIGFsc28uIFNlZW1zIGJldHRlciB0byBsZWF2ZSBhYm92
+ZSBjb21tZW50IGJlY2F1c2UgdGhlIG1vcmUgZXhwbGFuYXRpb24sIHRoZSBiZXR0ZXIuIAoKPiAK
+Pj4gLQlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzKGRldiwgc3RhdGUsIDApOwo+PiAt
+Cj4+IC0JZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5rcyhkZXYsIHN0YXRlKTsKPj4g
+LQo+PiAtCWRybV9hdG9taWNfaGVscGVyX2NsZWFudXBfcGxhbmVzKGRldiwgc3RhdGUpOwo+PiAt
+Cj4+IC0JZHJtX2F0b21pY19zdGF0ZV9wdXQoc3RhdGUpOwo+PiAtCj4+IC0Jc3Bpbl9sb2NrKCZw
+cml2LT5sb2NrKTsKPj4gLQlwcml2LT5wZW5kaW5nICY9IH5jb21taXQtPmNydGNzOwo+PiAtCXNw
+aW5fdW5sb2NrKCZwcml2LT5sb2NrKTsKPj4gLQo+PiAtCXdha2VfdXBfYWxsKCZwcml2LT53YWl0
+KTsKPj4gLQo+PiAtCWtmcmVlKGNvbW1pdCk7Cj4+IC19Cj4gCj4gW3NuaXBdCj4gCj4+IEBAIC0z
+MTMsNiArMjA0LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9wcmVjbG9zZShzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2LAo+Pgo+PiAgCWxpc3RfZm9yX2VhY2hfZW50cnkoY3J0YywgJmRldi0+bW9k
+ZV9jb25maWcuY3J0Y19saXN0LCBoZWFkKQo+PiAgCQlleHlub3NfZHJtX2NydGNfY2FuY2VsX3Bh
+Z2VfZmxpcChjcnRjLCBmaWxlKTsKPj4gKwo+IAo+IFRoaXMgaXNuJ3QgbmVlZGVkLgo+IAo+PiAg
+fQo+Pgo+PiAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9wb3N0Y2xvc2Uoc3RydWN0IGRybV9kZXZp
+Y2UgKmRldiwgc3RydWN0IGRybV9maWxlCj4+ICpmaWxlKSBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmIuYyBpbmRleCA2OGQ0MTQyLi4xZTEwYjczIDEwMDY0NAo+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+PiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+PiBAQCAtMTg3LDExICsxODcsMzMgQEAgZG1h
+X2FkZHJfdCBleHlub3NfZHJtX2ZiX2RtYV9hZGRyKHN0cnVjdAo+PiBkcm1fZnJhbWVidWZmZXIg
+KmZiLCBpbnQgaW5kZXgpIHJldHVybiBleHlub3NfZmItPmRtYV9hZGRyW2luZGV4XTsKPj4gIH0K
+Pj4KPj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kcm1fYXRvbWljX2NvbW1pdF90YWlsKHN0cnVjdCBk
+cm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKPj4gK3sKPj4gKwlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+ID0gc3RhdGUtPmRldjsKPj4gKwo+PiArCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0
+X2Rpc2FibGVzKGRldiwgc3RhdGUpOwo+PiArCj4+ICsJZHJtX2F0b21pY19oZWxwZXJfY29tbWl0
+X21vZGVzZXRfZW5hYmxlcyhkZXYsIHN0YXRlKTsKPj4gKwo+PiArCWRybV9hdG9taWNfaGVscGVy
+X2NvbW1pdF9wbGFuZXMoZGV2LCBzdGF0ZSwKPj4gKwkJCQkJRFJNX1BMQU5FX0NPTU1JVF9BQ1RJ
+VkVfT05MWSk7Cj4gCj4gVGhlIERSTV9QTEFORV9DT01NSVRfQUNUSVZFX09OTFkgZmxhZyB3YXNu
+J3Qgc2V0IGJlZm9yZSwgSSB0aGluayB0aGlzIGNoYW5nZSAKPiBzaG91bGQgZ28gaW4gYSBzZXBh
+cmF0ZSBwYXRjaCAob3IgYXQgbGVhc3QgYmUgZG9jdW1lbnRlZCBpbiB0aGUgY29tbWl0IAo+IG1l
+c3NhZ2UpLgoKQWdyZWUuIEkgd2lsbCB1cGRhdGUgZGVzY3JpcHRpb24gb2YgdGhpcyBwYXRjaCBh
+Ym91dCB3aHkgRFJNX1BMQU5FX0NPTU1JVF9BQ1RJVkVfT05MWSBmbGFnIGlzIHVzZWQuCgpUaGFu
+a3MuCgo+IAo+PiArCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9od19kb25lKHN0YXRlKTsKPj4g
+Kwo+PiArCWRybV9hdG9taWNfaGVscGVyX3dhaXRfZm9yX3ZibGFua3MoZGV2LCBzdGF0ZSk7Cj4+
+ICsKPj4gKwlkcm1fYXRvbWljX2hlbHBlcl9jbGVhbnVwX3BsYW5lcyhkZXYsIHN0YXRlKTsKPj4g
+K30KPiAKPiBbc25pcF0KPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
