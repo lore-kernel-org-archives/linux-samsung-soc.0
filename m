@@ -1,56 +1,44 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: Use macros for pinctrl
- configuration on Exynos7
-Date: Wed, 18 Jan 2017 17:01:31 +0200
-Message-ID: <20170118150131.ttalzfxxtpbrw5gb@kozik-lap>
-References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170118054013epcas5p3b20dca776ee350f4ba863db24d3dea67@epcas5p3.samsung.com>
- <1484718141-28785-4-git-send-email-pankaj.dubey@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: Remove address node from usb parent
+ node
+Date: Wed, 18 Jan 2017 12:36:42 -0300
+Message-ID: <7280351b-d26a-accb-b442-fc1eb056c8d6@osg.samsung.com>
+References: <CGME20170118054410epcas1p4df5c5631e0b13081662eb8fff5e383b3@epcas1p4.samsung.com>
+ <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
+ <587F137B.6070109@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34100 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbdARPBi (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:41696
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751454AbdARPgu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 10:01:38 -0500
-Content-Disposition: inline
-In-Reply-To: <1484718141-28785-4-git-send-email-pankaj.dubey@samsung.com>
+        Wed, 18 Jan 2017 10:36:50 -0500
+In-Reply-To: <587F137B.6070109@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, javier@osg.samsung.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: robh+dt@kernel.org, krzk@kernel.org, kgene@kernel.org
 
-On Wed, Jan 18, 2017 at 11:12:21AM +0530, Pankaj Dubey wrote:
-> Usage of DTS macros instead of hard-coded numbers makes code easier to
-> read.  One does not have to remember which value means pull-up/down or
-> specific driver strength.
+Hello,
+
+On 01/18/2017 04:04 AM, Chanwoo Choi wrote:
+> Hi Pankaj,
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   4 +-
->  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi | 302 ++++++++++++------------
->  2 files changed, 154 insertions(+), 152 deletions(-)
+> This issue already posted by Javier Martinez Canillas[1].
+> Maybe, he will post v2.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index c528dd5..1b2db9f0 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -328,8 +328,8 @@
->  &pinctrl_alive {
->  	pmic_irq: pmic-irq {
->  		samsung,pins = "gpa0-2";
-> -		samsung,pin-pud = <3>;
-> -		samsung,pin-drv = <3>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV3>;
->  	};
->  };
 
-This is not equal (value 3 => 1). If the change was intended, please do
-in separate patch.
+That's correct, I didn't post a v2 since I was waiting for feedback
+from the DT maintainers on patches 1/2 and 2/2 from the same series:
 
-Rest looks fine.
+https://www.spinics.net/lists/arm-kernel/msg553286.html
+
+But I'll re-spin just this patch since the changes are independent.
 
 Best regards,
-Krzysztof
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
