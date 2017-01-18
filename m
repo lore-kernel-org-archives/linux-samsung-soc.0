@@ -1,48 +1,48 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
- pinctrl macro definitions
-Date: Wed, 18 Jan 2017 11:12:20 +0530
-Message-ID: <1484718141-28785-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170118054002epcas5p3b08e2f419976e17a3c584d64776810fd@epcas5p3.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32821 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751237AbdARFl6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 00:41:58 -0500
-In-reply-to: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] arm64: dts: exynos: Remove address node from usb parent node
+Date: Wed, 18 Jan 2017 11:16:48 +0530
+Message-ID: <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
+References: <CGME20170118054410epcas1p4df5c5631e0b13081662eb8fff5e383b3@epcas1p4.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, javier@osg.samsung.com, s.nawrocki@samsung.com, alim.akhtar@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
-for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
-pinctrl driver strength related macros which will be used in Exynos7
-DTSi files.
+Address node does not required to be put after parent't node,
+so remove address node from usb parent node.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
-index 6276eb7..3f1d583 100644
---- a/include/dt-bindings/pinctrl/samsung.h
-+++ b/include/dt-bindings/pinctrl/samsung.h
-@@ -54,4 +54,12 @@
- #define EXYNOS_PIN_FUNC_6		6
- #define EXYNOS_PIN_FUNC_F		0xf
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 68f764e..0d7a55d 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1285,7 +1285,7 @@
+ 			status = "disabled";
+ 		};
  
-+/* Drive strengths for Exynos7 FSYS1 block */
-+#define EXYNOS7_FSYS1_PIN_DRV_LV1	0
-+#define EXYNOS7_FSYS1_PIN_DRV_LV2	4
-+#define EXYNOS7_FSYS1_PIN_DRV_LV3	2
-+#define EXYNOS7_FSYS1_PIN_DRV_LV4	6
-+#define EXYNOS7_FSYS1_PIN_DRV_LV5	1
-+#define EXYNOS7_FSYS1_PIN_DRV_LV6	5
-+
- #endif /* __DT_BINDINGS_PINCTRL_SAMSUNG_H__ */
+-		usbdrd30: usb@15400000  {
++		usbdrd30: usb3-0 {
+ 			compatible = "samsung,exynos5250-dwusb3";
+ 			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
+ 				<&cmu_fsys CLK_SCLK_USBDRD30>;
+@@ -1332,7 +1332,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		usbhost30: usb@15a00000 {
++		usbhost30: usbhost3-0 {
+ 			compatible = "samsung,exynos5250-dwusb3";
+ 			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
+ 				<&cmu_fsys CLK_SCLK_USBHOST30>;
 -- 
 2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
