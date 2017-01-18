@@ -1,44 +1,81 @@
-From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] arm64: dts: exynos: Add USB 3.0 controller node
- for Exynos7
-Date: Wed, 18 Jan 2017 01:27:14 -0300
-Message-ID: <CABxcv=kFe+En+6f-xKJS5nnJLsdXViAd7KWJmJYEhvZG5DU+_w@mail.gmail.com>
-References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170117150121epcas1p102bd1355f780a56e14a0a7a81bd6dfaf@epcas1p1.samsung.com>
- <1484665444-23365-2-git-send-email-pankaj.dubey@samsung.com>
- <20170117182318.fvatrazvyuzmdsor@kozik-lap> <9f45a921-ebfb-c252-20bb-3a7adf508343@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: odroid xu4:pinctrl and gpio mapping for usb 3.0
+Date: Wed, 18 Jan 2017 10:30:55 +0530
+Message-ID: <CANAwSgSsXXuFjK6ckyYBNCqwAp6KS1V+LwMBMNkzW90BxUxpAQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9f45a921-ebfb-c252-20bb-3a7adf508343-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "pankaj.dubey" <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, sanath-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:34593 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751171AbdARFBQ (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 18 Jan 2017 00:01:16 -0500
+Received: by mail-ot0-f196.google.com with SMTP id 73so220855otj.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jan 2017 21:01:15 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hello Pankaj,
+Hi All,
 
-On Wed, Jan 18, 2017 at 12:16 AM, pankaj.dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On Tuesday 17 January 2017 11:53 PM, Krzysztof Kozlowski wrote:
+I tried to find the link between pinctrl and internal gpio for usb 3.0 ports
+from the schematics, but I could not find valuable input.
 
-[snip]
+I tired to map the internal gpio pins to gather information on
+id-gpio and vbus-gpio pins, but it was no luck.
 
->>> +
->>> +                    dwc3 {
->>
->> dtc should complain here - you need:
->>       dwc3@15400000
->
-> No, it didn't complain. Anyway, I will update as it's already taken care
-> in other Exynos SoC DTSi files.
->
+I tried to debug the phy-exynos5-usbdrd.c and the vbus regulator
+input is missing, but with no correct input on internal gpio and pinctrl
+so it hard to map this correctly.
 
-It only complains if you run dtc with warnings enabled, i.e: make W=1
-exynos7-espresso.dtb
+Is their some thing missing configuration.
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Their are some issues into the phy-exynos5-usbdrd.c
+with respect to exynos5_usbdrd_phy_exit not getting called
+on the warm boot which leads to usb ports not getting reset.
+
+Please share me some input on improve the power on usb 3.0 ports
+
+odroid@odroidxu4n:~$ lsusb -t
+/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 480M
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 5000M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 5000M
+        |__ Port 1: Dev 3, If 0, Class=Mass Storage, Driver=usb-storage, 5000M
+/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci-hcd/1p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/2p, 480M
+        |__ Port 2: Dev 3, If 0, Class=Video, Driver=uvcvideo, 480M
+        |__ Port 2: Dev 3, If 1, Class=Video, Driver=uvcvideo, 480M
+/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=exynos-ohci/3p, 12M
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=exynos-ehci/3p, 480M
+
+root@odroidxu4n:~# lsusb -v|egrep "^Bus|MaxPower"
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+    MaxPower                0mA
+Bus 005 Device 002: ID 0bda:8153 Realtek Semiconductor Corp.
+    MaxPower              180mA
+    MaxPower              180mA
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+    MaxPower                0mA
+Bus 004 Device 003: ID 174c:5106 ASMedia Technology Inc. ASM1051 SATA
+3Gb/s bridge
+    MaxPower                0mA
+Bus 004 Device 002: ID 05e3:0616 Genesys Logic, Inc. hub
+    MaxPower                0mA
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+    MaxPower                0mA
+Bus 003 Device 004: ID 04b4:00f8 Cypress Semiconductor Corp.
+    MaxPower              500mA
+Bus 003 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+    MaxPower              100mA
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+    MaxPower                0mA
+Bus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+    MaxPower                0mA
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+    MaxPower                0mA
+
+-Best Regards
+Anand Moon
