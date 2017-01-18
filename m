@@ -1,36 +1,69 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
- supported anymore)
-Date: Mon, 16 Jan 2017 11:32:40 +0100
-Message-ID: <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123727epcas2p296aae6459c8575d7e5def74f18e5c64d@epcas2p2.samsung.com>
- <20170114123642.15581-3-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170114123642.15581-3-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v3] arm64: dts: exynos: Remove unneeded unit names in Exynos5433 nodes
+Date: Wed, 18 Jan 2017 12:50:13 -0300
+Message-ID: <1484754613-2425-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:41788
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752628AbdARPuh (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 18 Jan 2017 10:50:37 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-T24gMDEvMTQvMjAxNyAwMTozNiBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBTdXBw
-b3J0IGZvciBFeHlub3M0NDE1IGlzIGdvaW5nIGF3YXkgYmVjYXVzZSB0aGVyZSBhcmUgbm8gaW50
-ZXJuYWwgbm9yCj4gZXh0ZXJuYWwgdXNlcnMuCj4gCj4gU2luY2UgY29tbWl0IDQ2ZGNmMGZmMGRl
-MyAoIkFSTTogZHRzOiBleHlub3M6IFJlbW92ZSBleHlub3M0NDE1LmR0c2kiKSwKPiB0aGUgcGxh
-dGZvcm0gY2Fubm90IGJlIGluc3RhbnRpYXRlZCBzbyByZW1vdmUgYWxzbyB0aGUgZHJpdmVycy4K
-PiAKPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+
-CgpBcHBsaWVkLCB0aGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+The "samsung,exynos5433-mipi-video-phy" and "samsung,exynos5250-dwusb3"
+DT bindings don't specify a reg property for these nodes, so having a
+unit name leads to the following DTC warnings:
+
+Node /soc/video-phy@105c0710 has a unit name, but no reg property
+Node /soc/usb@15400000 has a unit name, but no reg property
+Node /soc/usb@15a00000 has a unit name, but no reg property
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+Changes in v3:
+  - Use proper device node names, suggested by Krzysztof.
+
+Changes in v2:
+  - Fix subject line since I forgot the "exynos" prefix.
+
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 59788d89b686..57c7bbeb65a7 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -706,7 +706,7 @@
+ 			interrupts = <GIC_PPI 9 0xf04>;
+ 		};
+ 
+-		mipi_phy: video-phy@105c0710 {
++		mipi_phy: video-phy {
+ 			compatible = "samsung,exynos5433-mipi-video-phy";
+ 			#phy-cells = <1>;
+ 			samsung,pmu-syscon = <&pmu_system_controller>;
+@@ -1357,7 +1357,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		usbdrd30: usb@15400000  {
++		usbdrd30: usbdrd {
+ 			compatible = "samsung,exynos5250-dwusb3";
+ 			clocks = <&cmu_fsys CLK_ACLK_USBDRD30>,
+ 				<&cmu_fsys CLK_SCLK_USBDRD30>;
+@@ -1404,7 +1404,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		usbhost30: usb@15a00000 {
++		usbhost30: usbhost {
+ 			compatible = "samsung,exynos5250-dwusb3";
+ 			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
+ 				<&cmu_fsys CLK_SCLK_USBHOST30>;
+-- 
+2.7.4
