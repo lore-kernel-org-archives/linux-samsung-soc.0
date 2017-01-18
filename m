@@ -1,44 +1,47 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Remove address node from usb parent
- node
-Date: Wed, 18 Jan 2017 12:36:42 -0300
-Message-ID: <7280351b-d26a-accb-b442-fc1eb056c8d6@osg.samsung.com>
-References: <CGME20170118054410epcas1p4df5c5631e0b13081662eb8fff5e383b3@epcas1p4.samsung.com>
- <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
- <587F137B.6070109@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] arm64: dts: exynos: Remove unneeded unit names in
+ Exynos5433 nodes
+Date: Wed, 18 Jan 2017 18:27:33 +0200
+Message-ID: <20170118162733.rfnskad7iltojsda@kozik-lap>
+References: <1484754613-2425-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:41696
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751454AbdARPgu (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34915 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753080AbdARQ1k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Jan 2017 10:36:50 -0500
-In-Reply-To: <587F137B.6070109@samsung.com>
+        Wed, 18 Jan 2017 11:27:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1484754613-2425-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: robh+dt@kernel.org, krzk@kernel.org, kgene@kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hello,
-
-On 01/18/2017 04:04 AM, Chanwoo Choi wrote:
-> Hi Pankaj,
+On Wed, Jan 18, 2017 at 12:50:13PM -0300, Javier Martinez Canillas wrote:
+> The "samsung,exynos5433-mipi-video-phy" and "samsung,exynos5250-dwusb3"
+> DT bindings don't specify a reg property for these nodes, so having a
+> unit name leads to the following DTC warnings:
 > 
-> This issue already posted by Javier Martinez Canillas[1].
-> Maybe, he will post v2.
+> Node /soc/video-phy@105c0710 has a unit name, but no reg property
+> Node /soc/usb@15400000 has a unit name, but no reg property
+> Node /soc/usb@15a00000 has a unit name, but no reg property
 > 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+> Changes in v3:
+>   - Use proper device node names, suggested by Krzysztof.
+> 
+> Changes in v2:
+>   - Fix subject line since I forgot the "exynos" prefix.
+> 
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-That's correct, I didn't post a v2 since I was waiting for feedback
-from the DT maintainers on patches 1/2 and 2/2 from the same series:
-
-https://www.spinics.net/lists/arm-kernel/msg553286.html
-
-But I'll re-spin just this patch since the changes are independent.
+Thanks, applied.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
