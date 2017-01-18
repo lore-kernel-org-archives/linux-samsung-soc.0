@@ -1,146 +1,44 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: exynos: Add regulators for Vbus and
- Vbus-Boost
-Date: Wed, 18 Jan 2017 08:50:12 +0530
-Message-ID: <68177964-890d-7061-dac0-f37717b1a254@samsung.com>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] arm64: dts: exynos: Add USB 3.0 controller node
+ for Exynos7
+Date: Wed, 18 Jan 2017 01:27:14 -0300
+Message-ID: <CABxcv=kFe+En+6f-xKJS5nnJLsdXViAd7KWJmJYEhvZG5DU+_w@mail.gmail.com>
 References: <1484665444-23365-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170117150123epcas1p12709f99a0993ae58ea1fe294df5a12fe@epcas1p1.samsung.com>
- <1484665444-23365-3-git-send-email-pankaj.dubey@samsung.com>
- <20170117182826.gngf7gjkvfyg3uww@kozik-lap>
+ <CGME20170117150121epcas1p102bd1355f780a56e14a0a7a81bd6dfaf@epcas1p1.samsung.com>
+ <1484665444-23365-2-git-send-email-pankaj.dubey@samsung.com>
+ <20170117182318.fvatrazvyuzmdsor@kozik-lap> <9f45a921-ebfb-c252-20bb-3a7adf508343@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170117182826.gngf7gjkvfyg3uww@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautamvivek1987@gmail.com>, javier@osg.samsung.com, robh+dt@kernel.org, kgene@kernel.org, sanath@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <9f45a921-ebfb-c252-20bb-3a7adf508343-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "pankaj.dubey" <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, sanath-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Pankaj,
 
+On Wed, Jan 18, 2017 at 12:16 AM, pankaj.dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On Tuesday 17 January 2017 11:53 PM, Krzysztof Kozlowski wrote:
 
-On Tuesday 17 January 2017 11:58 PM, Krzysztof Kozlowski wrote:
-> On Tue, Jan 17, 2017 at 08:34:04PM +0530, Pankaj Dubey wrote:
->> From: Vivek Gautam <gautamvivek1987@gmail.com>
+[snip]
+
+>>> +
+>>> +                    dwc3 {
 >>
->> Adding fixed voltage regulators for Vbus and Vbus-boost required
->> by USB 3.0 DRD controller on Exynos7-espresso board.
->>
->> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> Signed-off-by: Vivek Gautam <gautamvivek1987@gmail.com>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> 
-> Same as patch 1.
-> 
+>> dtc should complain here - you need:
+>>       dwc3@15400000
+>
+> No, it didn't complain. Anyway, I will update as it's already taken care
+> in other Exynos SoC DTSi files.
+>
 
-OK, will update.
+It only complains if you run dtc with warnings enabled, i.e: make W=1
+exynos7-espresso.dtb
 
->> ---
->>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 45 +++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> index 9cf73cf..8d5abdd 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->> @@ -13,6 +13,7 @@
->>  #include "exynos7.dtsi"
->>  #include <dt-bindings/interrupt-controller/irq.h>
->>  #include <dt-bindings/clock/samsung,s2mps11.h>
->> +#include <dt-bindings/gpio/gpio.h>
->>  
->>  / {
->>  	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
->> @@ -33,6 +34,29 @@
->>  		device_type = "memory";
->>  		reg = <0x0 0x40000000 0x0 0xC0000000>;
->>  	};
->> +
->> +	usb30_vbus_reg: regulator-usb30 {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "VBUS_5V";
->> +		regulator-min-microvolt = <5000000>;
->> +		regulator-max-microvolt = <5000000>;
->> +		gpio = <&gph1 1 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&usb30_vbus_en>;
->> +		enable-active-high;
->> +	};
->> +
->> +	usb3drd_boost_5v: regulator-usb3drd-boost {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "VUSB_VBUS_5V";
->> +		regulator-min-microvolt = <5000000>;
->> +		regulator-max-microvolt = <5000000>;
->> +		gpio = <&gpf4 1 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&usb3drd_boost_en>;
->> +		enable-active-high;
->> +	};
->> +
->>  };
->>  
->>  &fin_pll {
->> @@ -366,3 +390,24 @@
->>  	vqmmc-supply = <&ldo2_reg>;
->>  	disable-wp;
->>  };
->> +
->> +&usbdrd_phy {
->> +	vbus-supply = <&usb30_vbus_reg>;
->> +	vbus-boost-supply = <&usb3drd_boost_5v>;
->> +};
->> +
->> +&pinctrl_bus1 {
->> +	usb30_vbus_en: usb30-vbus-en {
->> +		samsung,pins = "gph1-1";
->> +		samsung,pin-function = <1>;
-> 
-> Javier mentioned it, please use EXYNOS_PIN_FUNC_OUTPUT
-> 
-
-Yes, but as it's not taken care in existing dts for other pin
-definitions, so a Javier mentioned, this can be taken care as a separate
-patch for all pin definitions? Or do you want me to first add patch
-converting all these with macros and then on top of add this usb related
-pin definitions.
-
-Thanks,
-Pankaj Dubey
-
-
->> +		samsung,pin-pud = <0>;
-> 
-> EXYNOS_PIN_PULL_NONE
-> 
->> +		samsung,pin-drv = <0>;
-> 
-> I think these are the same as in Exynos5422, so EXYNOS5420_PIN_DRV_LV1
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
->> +	};
->> +
->> +	usb3drd_boost_en: usb3drd-boost-en {
->> +		samsung,pins = "gpf4-1";
->> +		samsung,pin-function = <1>;
->> +		samsung,pin-pud = <0>;
->> +		samsung,pin-drv = <0>;
->> +	};
->> +};
->> -- 
->> 2.7.4
->>
-> 
-> 
-> 
+Best regards,
+Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
