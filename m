@@ -1,59 +1,53 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 2/2] [media] exynos-gsc: Only reset the GSC HW on probe() if !CONFIG_PM
-Date: Thu, 19 Jan 2017 19:36:20 -0300
-Message-ID: <1484865380-12651-2-git-send-email-javier@osg.samsung.com>
-References: <1484865380-12651-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484865380-12651-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 1/2] [media] exynos-gsc: Fix unbalanced pm_runtime_enable() error
+Date: Thu, 19 Jan 2017 19:36:19 -0300
+Message-ID: <1484865380-12651-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:48049
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751240AbdASWge (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 19 Jan 2017 17:36:34 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 15f90ab57acc ("[media] exynos-gsc: Make driver functional when
-CONFIG_PM is unset") removed the implicit dependency that the driver
-had with CONFIG_PM, since it relied on the config option to be enabled.
+Commit a006c04e6218 ("[media] exynos-gsc: Fixup clock management at
+->remove()") changed the driver's .remove function logic to fist do
+a pm_runtime_get_sync() to make sure the device is powered before
+attempting to gate the gsc clock.
 
-In order to work with !CONFIG_PM, the GSC reset logic that happens in
-the runtime resume callback had to be executed on the probe function.
+But the commit also removed a pm_runtime_disable() call that leads
+to an unbalanced pm_runtime_enable() error if the driver is removed
+and re-probed:
 
-But there's no need to do this if CONFIG_PM is enabled, since in this
-case the runtime PM resume callback will be called by VIDIOC_STREAMON
-ioctl, so the resume handler will call the GSC HW reset function.
+exynos-gsc 13e00000.video-scaler: Unbalanced pm_runtime_enable!
+exynos-gsc 13e10000.video-scaler: Unbalanced pm_runtime_enable!
 
+Fixes: a006c04e6218 ("[media] exynos-gsc: Fixup clock management at ->remove()")
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 ---
 
-I-ve only tested with CONFIG_PM enabled since my Exynos5422 Odroid
-XU4 board fails to boot when the config option is disabled.
-
-Best regards,
-Javier
-
 Changes in v2:
- - Remove the Fixes tag and reword the commit message after feedback
-   from Marek Szyprowski.
+  - Added Marek Szyprowski's Acked-by tag.
 
- drivers/media/platform/exynos-gsc/gsc-core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 83272f10722d..42e1e09ea915 100644
+index cbf75b6194b4..83272f10722d 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1083,8 +1083,10 @@ static int gsc_probe(struct platform_device *pdev)
+@@ -1118,6 +1118,7 @@ static int gsc_remove(struct platform_device *pdev)
+ 		clk_disable_unprepare(gsc->clock[i]);
  
- 	platform_set_drvdata(pdev, gsc);
+ 	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
  
--	gsc_hw_set_sw_reset(gsc);
--	gsc_wait_reset(gsc);
-+	if (!IS_ENABLED(CONFIG_PM)) {
-+		gsc_hw_set_sw_reset(gsc);
-+		gsc_wait_reset(gsc);
-+	}
- 
- 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
- 
+ 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+ 	return 0;
 -- 
 2.7.4
