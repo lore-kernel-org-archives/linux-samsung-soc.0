@@ -1,159 +1,93 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2] drm/exynos: use atomic helper commit
-Date: Thu, 19 Jan 2017 19:18:38 +0900
-Message-ID: <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
+Date: Thu, 19 Jan 2017 09:53:39 -0200
+Message-ID: <20170119115339.GQ16017@joana>
 References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
+ <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:33859 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbdASLxp (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 19 Jan 2017 06:53:45 -0500
+Received: by mail-yb0-f194.google.com with SMTP id w194so1877792ybe.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2017 03:53:45 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCByZXBsYWNlcyBzcGVjaWZpYyBhdG9taWMgY29tbWl0IGZ1bmN0aW9uCndpdGgg
-YXRvbWljIGhlbHBlciBjb21taXQgb25lLgoKRm9yIHRoaXMsIGl0IHJlbW92ZXMgZXhpc3Rpbmcg
-YXRvbWljIGNvbW1pdCBmdW5jdGlvbgphbmQgcmVsZXZhbnQgY29kZSBzcGVjaWZpYyB0byBFeHlu
-b3MgRFJNIGFuZCBtYWtlcwphdG9taWMgaGVscGVyIGNvbW1pdCB0byBiZSB1c2VkIGluc3RlYWQu
-CgpCZWxvdyBhcmUgY2hhbmdlcyBmb3IgdGhlIHVzZSBvZiBhdG9taWMgaGVscGVyIGNvbW1pdDoK
-LSBhZGQgYXRvbWljX2NvbW1pdF90YWlsIGNhbGxiYWNrIHNwZWNpZmljIHRvIEV4eW5vcyBEUk0K
-ICAuIGRlZmF1bHQgaW1wbGVtZW50aW9uIG9mIGF0b21pYyBoZWxwZXIgZG9lc24ndCBtZXNoIHdl
-bGwKICAgIHdpdGggcnVudGltZSBQTSBzbyB0aGUgZGV2aWNlIGRyaXZlciB3aGljaCBzdXBwb3J0
-cyBydW50aW1lCiAgICBQTSBzaG91bGQgY2FsbCBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9k
-ZXNldF9lbmFibGVzIGZ1bmN0aW9uCiAgICBwcmlvciB0byBkcm1fYXRvbWljX2hlbHBlcl9jb21t
-aXRfcGxhbmVzIGZ1bmN0aW9uIGNhbGwuCiAgICBhdG9taWNfY29tbWl0X3RhaWwgY2FsbGJhY2sg
-aW1wbGVtZW50cyB0aGlzIGNhbGwgb3JkZXJpbmcuCi0gYWxsb3cgcGxhbmUgY29tbWl0IG9ubHkg
-aW4gY2FzZSB0aGF0IENSVEMgZGV2aWNlIGlzIGVuYWJsZWQuCiAgLiBmb3IgdGhpcywgaXQgY2Fs
-bHMgYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzIGZ1bmN0aW9uCiAgICB3aXRoIERSTV9QTEFO
-RV9DT01NSVRfQUNUSVZFX09OTFkgZmxhZyBpbiBhdG9taWNfY29tbWl0X3RhaWwgY2FsbGJhY2su
-CgpDaGFuZ2Vsb2cgdjE6Ci0gZml4IGNvbW1lbnQKLSBmaXggdHJpdmlhbCB0aGluZ3MKLSByZXZp
-dmUgZXhpc3RpbmcgY29tbWVudCB3aGljaCBleHBsYWlucyB3aHkgcGxhbmUgY29tbWl0IHNob3Vs
-ZCBiZQogIGNhbGxlZCBhZnRlciBjcnRjIGFuZCBlbmNvZGVyIGRldmljZSBhcmUgZW5hYmxlZC4K
-ClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KUmV2aWV3ZWQt
-Ynk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jb20+Ci0tLQog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8ICAxMCArKy0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgfCAxMDkgLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMg
-ICB8ICAzMiArKysrKysrKy0KIDMgZmlsZXMgY2hhbmdlZCwgNDAgaW5zZXJ0aW9ucygrKSwgMTEx
-IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmlu
-ZGV4IDI1MzBiZjUuLjhmMTNiY2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2NydGMuYwpAQCAtMzksNiArMzksMTQgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rp
-c2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQogCiAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmRp
-c2FibGUpCiAJCWV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGUoZXh5bm9zX2NydGMpOworCisJaWYg
-KGNydGMtPnN0YXRlLT5ldmVudCAmJiAhY3J0Yy0+c3RhdGUtPmFjdGl2ZSkgeworCQlzcGluX2xv
-Y2tfaXJxKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2spOworCQlkcm1fY3J0Y19zZW5kX3ZibGFua19l
-dmVudChjcnRjLCBjcnRjLT5zdGF0ZS0+ZXZlbnQpOworCQlzcGluX3VubG9ja19pcnEoJmNydGMt
-PmRldi0+ZXZlbnRfbG9jayk7CisKKwkJY3J0Yy0+c3RhdGUtPmV2ZW50ID0gTlVMTDsKKwl9CiB9
-CiAKIHN0YXRpYyB2b2lkCkBAIC05NCw5ICsxMDIsOSBAQCBzdGF0aWMgdm9pZCBleHlub3NfY3J0
-Y19hdG9taWNfZmx1c2goc3RydWN0IGRybV9jcnRjICpjcnRjLAogCQkJZHJtX2NydGNfc2VuZF92
-YmxhbmtfZXZlbnQoY3J0YywgZXZlbnQpOwogCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRj
-LT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKIAl9Ci0KIH0KIAorCiBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxwZXJfZnVuY3MgPSB7CiAJ
-LmVuYWJsZQkJPSBleHlub3NfZHJtX2NydGNfZW5hYmxlLAogCS5kaXNhYmxlCT0gZXh5bm9zX2Ry
-bV9jcnRjX2Rpc2FibGUsCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5k
-ZXggM2VjMDUzNS4uYzhmM2VlYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYwpAQCAtMzgsNTYgKzM4LDYgQEAKICNkZWZpbmUgRFJJVkVSX01BSk9SCTEKICNkZWZpbmUg
-RFJJVkVSX01JTk9SCTAKIAotc3RydWN0IGV4eW5vc19hdG9taWNfY29tbWl0IHsKLQlzdHJ1Y3Qg
-d29ya19zdHJ1Y3QJd29yazsKLQlzdHJ1Y3QgZHJtX2RldmljZQkqZGV2OwotCXN0cnVjdCBkcm1f
-YXRvbWljX3N0YXRlICpzdGF0ZTsKLQl1MzIJCQljcnRjczsKLX07Ci0KLXN0YXRpYyB2b2lkIGV4
-eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKHN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1pdCAq
-Y29tbWl0KQotewotCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjb21taXQtPmRldjsKLQlzdHJ1
-Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2ID0gZGV2LT5kZXZfcHJpdmF0ZTsKLQlzdHJ1Y3Qg
-ZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUgPSBjb21taXQtPnN0YXRlOwotCi0JZHJtX2F0b21pY19o
-ZWxwZXJfY29tbWl0X21vZGVzZXRfZGlzYWJsZXMoZGV2LCBzdGF0ZSk7Ci0KLQlkcm1fYXRvbWlj
-X2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKGRldiwgc3RhdGUpOwotCi0JLyoKLQkgKiBF
-eHlub3MgY2FuJ3QgdXBkYXRlIHBsYW5lcyB3aXRoIENSVENzIGFuZCBlbmNvZGVycyBkaXNhYmxl
-ZCwKLQkgKiBpdHMgdXBkYXRlcyByb3V0aW5lcywgc3BlY2lhbGx5IGZvciBGSU1ELCByZXF1aXJl
-cyB0aGUgY2xvY2tzCi0JICogdG8gYmUgZW5hYmxlZC4gU28gaXQgaXMgbmVjZXNzYXJ5IHRvIGhh
-bmRsZSB0aGUgbW9kZXNldCBvcGVyYXRpb25zCi0JICogKmJlZm9yZSogdGhlIGNvbW1pdF9wbGFu
-ZXMoKSBzdGVwLCB0aGlzIHdheSBpdCB3aWxsIGFsd2F5cwotCSAqIGhhdmUgdGhlIHJlbGV2YW50
-IGNsb2NrcyBlbmFibGVkIHRvIHBlcmZvcm0gdGhlIHVwZGF0ZS4KLQkgKi8KLQotCWRybV9hdG9t
-aWNfaGVscGVyX2NvbW1pdF9wbGFuZXMoZGV2LCBzdGF0ZSwgMCk7Ci0KLQlkcm1fYXRvbWljX2hl
-bHBlcl93YWl0X2Zvcl92YmxhbmtzKGRldiwgc3RhdGUpOwotCi0JZHJtX2F0b21pY19oZWxwZXJf
-Y2xlYW51cF9wbGFuZXMoZGV2LCBzdGF0ZSk7Ci0KLQlkcm1fYXRvbWljX3N0YXRlX3B1dChzdGF0
-ZSk7Ci0KLQlzcGluX2xvY2soJnByaXYtPmxvY2spOwotCXByaXYtPnBlbmRpbmcgJj0gfmNvbW1p
-dC0+Y3J0Y3M7Ci0Jc3Bpbl91bmxvY2soJnByaXYtPmxvY2spOwotCi0Jd2FrZV91cF9hbGwoJnBy
-aXYtPndhaXQpOwotCi0Ja2ZyZWUoY29tbWl0KTsKLX0KLQotc3RhdGljIHZvaWQgZXh5bm9zX2Ry
-bV9hdG9taWNfd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCi17Ci0Jc3RydWN0IGV4eW5v
-c19hdG9taWNfY29tbWl0ICpjb21taXQgPSBjb250YWluZXJfb2Yod29yaywKLQkJCQlzdHJ1Y3Qg
-ZXh5bm9zX2F0b21pY19jb21taXQsIHdvcmspOwotCi0JZXh5bm9zX2F0b21pY19jb21taXRfY29t
-cGxldGUoY29tbWl0KTsKLX0KLQogc3RhdGljIHN0cnVjdCBkZXZpY2UgKmV4eW5vc19kcm1fZ2V0
-X2RtYV9kZXZpY2Uodm9pZCk7CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9sb2FkKHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCkBAIC0yMDIsNjUgKzE1Miw2IEBA
-IHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fdW5sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCiAJ
-ZGV2LT5kZXZfcHJpdmF0ZSA9IE5VTEw7CiB9CiAKLXN0YXRpYyBpbnQgY29tbWl0X2lzX3BlbmRp
-bmcoc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdiwgdTMyIGNydGNzKQotewotCWJvb2wg
-cGVuZGluZzsKLQotCXNwaW5fbG9jaygmcHJpdi0+bG9jayk7Ci0JcGVuZGluZyA9IHByaXYtPnBl
-bmRpbmcgJiBjcnRjczsKLQlzcGluX3VubG9jaygmcHJpdi0+bG9jayk7Ci0KLQlyZXR1cm4gcGVu
-ZGluZzsKLX0KLQotaW50IGV4eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpk
-ZXYsIHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSwKLQkJCSBib29sIG5vbmJsb2NrKQot
-ewotCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBkZXYtPmRldl9wcml2YXRlOwot
-CXN0cnVjdCBleHlub3NfYXRvbWljX2NvbW1pdCAqY29tbWl0OwotCXN0cnVjdCBkcm1fY3J0YyAq
-Y3J0YzsKLQlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNydGNfc3RhdGU7Ci0JaW50IGksIHJldDsK
-LQotCWNvbW1pdCA9IGt6YWxsb2Moc2l6ZW9mKCpjb21taXQpLCBHRlBfS0VSTkVMKTsKLQlpZiAo
-IWNvbW1pdCkKLQkJcmV0dXJuIC1FTk9NRU07Ci0KLQlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9w
-cmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsKLQlpZiAocmV0KSB7Ci0JCWtmcmVlKGNvbW1pdCk7
-Ci0JCXJldHVybiByZXQ7Ci0JfQotCi0JLyogVGhpcyBpcyB0aGUgcG9pbnQgb2Ygbm8gcmV0dXJu
-ICovCi0KLQlJTklUX1dPUksoJmNvbW1pdC0+d29yaywgZXh5bm9zX2RybV9hdG9taWNfd29yayk7
-Ci0JY29tbWl0LT5kZXYgPSBkZXY7Ci0JY29tbWl0LT5zdGF0ZSA9IHN0YXRlOwotCi0JLyogV2Fp
-dCB1bnRpbCBhbGwgYWZmZWN0ZWQgQ1JUQ3MgaGF2ZSBjb21wbGV0ZWQgcHJldmlvdXMgY29tbWl0
-cyBhbmQKLQkgKiBtYXJrIHRoZW0gYXMgcGVuZGluZy4KLQkgKi8KLQlmb3JfZWFjaF9jcnRjX2lu
-X3N0YXRlKHN0YXRlLCBjcnRjLCBjcnRjX3N0YXRlLCBpKQotCQljb21taXQtPmNydGNzIHw9IGRy
-bV9jcnRjX21hc2soY3J0Yyk7Ci0KLQl3YWl0X2V2ZW50KHByaXYtPndhaXQsICFjb21taXRfaXNf
-cGVuZGluZyhwcml2LCBjb21taXQtPmNydGNzKSk7Ci0KLQlzcGluX2xvY2soJnByaXYtPmxvY2sp
-OwotCXByaXYtPnBlbmRpbmcgfD0gY29tbWl0LT5jcnRjczsKLQlzcGluX3VubG9jaygmcHJpdi0+
-bG9jayk7Ci0KLQlkcm1fYXRvbWljX2hlbHBlcl9zd2FwX3N0YXRlKHN0YXRlLCB0cnVlKTsKLQot
-CWRybV9hdG9taWNfc3RhdGVfZ2V0KHN0YXRlKTsKLQlpZiAobm9uYmxvY2spCi0JCXNjaGVkdWxl
-X3dvcmsoJmNvbW1pdC0+d29yayk7Ci0JZWxzZQotCQlleHlub3NfYXRvbWljX2NvbW1pdF9jb21w
-bGV0ZShjb21taXQpOwotCi0JcmV0dXJuIDA7Ci19Ci0KIGludCBleHlub3NfYXRvbWljX2NoZWNr
-KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJCQlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3Rh
-dGUpCiB7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCmluZGV4IDY4ZDQxNDIu
-LmM3N2E1YWMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-Yi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xODcs
-MTEgKzE4Nyw0MCBAQCBkbWFfYWRkcl90IGV4eW5vc19kcm1fZmJfZG1hX2FkZHIoc3RydWN0IGRy
-bV9mcmFtZWJ1ZmZlciAqZmIsIGludCBpbmRleCkKIAlyZXR1cm4gZXh5bm9zX2ZiLT5kbWFfYWRk
-cltpbmRleF07CiB9CiAKK3N0YXRpYyB2b2lkIGV4eW5vc19kcm1fYXRvbWljX2NvbW1pdF90YWls
-KHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKK3sKKwlzdHJ1Y3QgZHJtX2RldmljZSAq
-ZGV2ID0gc3RhdGUtPmRldjsKKworCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rp
-c2FibGVzKGRldiwgc3RhdGUpOworCisJZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X21vZGVzZXRf
-ZW5hYmxlcyhkZXYsIHN0YXRlKTsKKworCS8qCisJICogRXh5bm9zIGNhbid0IHVwZGF0ZSBwbGFu
-ZXMgd2l0aCBDUlRDcyBhbmQgZW5jb2RlcnMgZGlzYWJsZWQsCisJICogaXRzIHVwZGF0ZXMgcm91
-dGluZXMsIHNwZWNpYWxseSBmb3IgRklNRCwgcmVxdWlyZXMgdGhlIGNsb2NrcworCSAqIHRvIGJl
-IGVuYWJsZWQuIFNvIGl0IGlzIG5lY2Vzc2FyeSB0byBoYW5kbGUgdGhlIG1vZGVzZXQgb3BlcmF0
-aW9ucworCSAqICpiZWZvcmUqIHRoZSBjb21taXRfcGxhbmVzKCkgc3RlcCwgdGhpcyB3YXkgaXQg
-d2lsbCBhbHdheXMKKwkgKiBoYXZlIHRoZSByZWxldmFudCBjbG9ja3MgZW5hYmxlZCB0byBwZXJm
-b3JtIHRoZSB1cGRhdGUuCisJICovCisJZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X3BsYW5lcyhk
-ZXYsIHN0YXRlLAorCQkJCQlEUk1fUExBTkVfQ09NTUlUX0FDVElWRV9PTkxZKTsKKworCWRybV9h
-dG9taWNfaGVscGVyX2NvbW1pdF9od19kb25lKHN0YXRlKTsKKworCWRybV9hdG9taWNfaGVscGVy
-X3dhaXRfZm9yX3ZibGFua3MoZGV2LCBzdGF0ZSk7CisKKwlkcm1fYXRvbWljX2hlbHBlcl9jbGVh
-bnVwX3BsYW5lcyhkZXYsIHN0YXRlKTsKK30KKworc3RhdGljIHN0cnVjdCBkcm1fbW9kZV9jb25m
-aWdfaGVscGVyX2Z1bmNzIGV4eW5vc19kcm1fbW9kZV9jb25maWdfaGVscGVycyA9IHsKKwkuYXRv
-bWljX2NvbW1pdF90YWlsID0gZXh5bm9zX2RybV9hdG9taWNfY29tbWl0X3RhaWwsCit9OworCiBz
-dGF0aWMgY29uc3Qgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19mdW5jcyBleHlub3NfZHJtX21vZGVf
-Y29uZmlnX2Z1bmNzID0gewogCS5mYl9jcmVhdGUgPSBleHlub3NfdXNlcl9mYl9jcmVhdGUsCiAJ
-Lm91dHB1dF9wb2xsX2NoYW5nZWQgPSBleHlub3NfZHJtX291dHB1dF9wb2xsX2NoYW5nZWQsCiAJ
-LmF0b21pY19jaGVjayA9IGV4eW5vc19hdG9taWNfY2hlY2ssCi0JLmF0b21pY19jb21taXQgPSBl
-eHlub3NfYXRvbWljX2NvbW1pdCwKKwkuYXRvbWljX2NvbW1pdCA9IGRybV9hdG9taWNfaGVscGVy
-X2NvbW1pdCwKIH07CiAKIHZvaWQgZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19pbml0KHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYpCkBAIC0yMDgsNCArMjM3LDUgQEAgdm9pZCBleHlub3NfZHJtX21vZGVf
-Y29uZmlnX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIAlkZXYtPm1vZGVfY29uZmlnLm1h
-eF9oZWlnaHQgPSA0MDk2OwogCiAJZGV2LT5tb2RlX2NvbmZpZy5mdW5jcyA9ICZleHlub3NfZHJt
-X21vZGVfY29uZmlnX2Z1bmNzOworCWRldi0+bW9kZV9jb25maWcuaGVscGVyX3ByaXZhdGUgPSAm
-ZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzOwogfQotLSAKMS45LjEKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Inki,
+
+2017-01-19 Inki Dae <inki.dae@samsung.com>:
+
+> This patch replaces specific atomic commit function
+> with atomic helper commit one.
+> 
+> For this, it removes existing atomic commit function
+> and relevant code specific to Exynos DRM and makes
+> atomic helper commit to be used instead.
+> 
+> Below are changes for the use of atomic helper commit:
+> - add atomic_commit_tail callback specific to Exynos DRM
+>   . default implemention of atomic helper doesn't mesh well
+>     with runtime PM so the device driver which supports runtime
+>     PM should call drm_atomic_helper_commit_modeset_enables function
+>     prior to drm_atomic_helper_commit_planes function call.
+>     atomic_commit_tail callback implements this call ordering.
+> - allow plane commit only in case that CRTC device is enabled.
+>   . for this, it calls atomic_helper_commit_planes function
+>     with DRM_PLANE_COMMIT_ACTIVE_ONLY flag in atomic_commit_tail callback.
+> 
+> Changelog v1:
+> - fix comment
+> - fix trivial things
+> - revive existing comment which explains why plane commit should be
+>   called after crtc and encoder device are enabled.
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |  10 ++-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 109 -------------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c   |  32 ++++++++-
+>  3 files changed, 40 insertions(+), 111 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 2530bf5..8f13bce 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -39,6 +39,14 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+>  
+>  	if (exynos_crtc->ops->disable)
+>  		exynos_crtc->ops->disable(exynos_crtc);
+> +
+> +	if (crtc->state->event && !crtc->state->active) {
+> +		spin_lock_irq(&crtc->dev->event_lock);
+> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+> +		spin_unlock_irq(&crtc->dev->event_lock);
+> +
+> +		crtc->state->event = NULL;
+> +	}
+>  }
+>  
+>  static void
+> @@ -94,9 +102,9 @@ static void exynos_crtc_atomic_flush(struct drm_crtc *crtc,
+>  			drm_crtc_send_vblank_event(crtc, event);
+>  		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+>  	}
+> -
+>  }
+>  
+> +
+
+Please refrain from removing/adding random blank lines when working on your
+features, they polute the code review and git history. Actually your line
+addition here breaks the kernel coding styles rules. Please update the
+patch.
+
+Gustavo
