@@ -1,53 +1,80 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 1/2] [media] exynos-gsc: Fix unbalanced pm_runtime_enable() error
-Date: Thu, 19 Jan 2017 19:36:19 -0300
-Message-ID: <1484865380-12651-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:48049
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751240AbdASWge (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 17:36:34 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
+Date: Fri, 20 Jan 2017 08:15:02 +0900
+Message-ID: <58814876.7050209@samsung.com>
+References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
+ <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
+ <20170119115339.GQ16017@joana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20170119115339.GQ16017@joana>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
 
-Commit a006c04e6218 ("[media] exynos-gsc: Fixup clock management at
-->remove()") changed the driver's .remove function logic to fist do
-a pm_runtime_get_sync() to make sure the device is powered before
-attempting to gate the gsc clock.
-
-But the commit also removed a pm_runtime_disable() call that leads
-to an unbalanced pm_runtime_enable() error if the driver is removed
-and re-probed:
-
-exynos-gsc 13e00000.video-scaler: Unbalanced pm_runtime_enable!
-exynos-gsc 13e10000.video-scaler: Unbalanced pm_runtime_enable!
-
-Fixes: a006c04e6218 ("[media] exynos-gsc: Fixup clock management at ->remove()")
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
----
-
-Changes in v2:
-  - Added Marek Szyprowski's Acked-by tag.
-
- drivers/media/platform/exynos-gsc/gsc-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index cbf75b6194b4..83272f10722d 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1118,6 +1118,7 @@ static int gsc_remove(struct platform_device *pdev)
- 		clk_disable_unprepare(gsc->clock[i]);
- 
- 	pm_runtime_put_noidle(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- 
- 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
- 	return 0;
--- 
-2.7.4
+CgoyMDE364WEIDAx7JuUIDE57J28IDIwOjUz7JeQIEd1c3Rhdm8gUGFkb3ZhbiDsnbQo6rCAKSDs
+k7Qg6riAOgo+IEhpIElua2ksCj4gCj4gMjAxNy0wMS0xOSBJbmtpIERhZSA8aW5raS5kYWVAc2Ft
+c3VuZy5jb20+Ogo+IAo+PiBUaGlzIHBhdGNoIHJlcGxhY2VzIHNwZWNpZmljIGF0b21pYyBjb21t
+aXQgZnVuY3Rpb24KPj4gd2l0aCBhdG9taWMgaGVscGVyIGNvbW1pdCBvbmUuCj4+Cj4+IEZvciB0
+aGlzLCBpdCByZW1vdmVzIGV4aXN0aW5nIGF0b21pYyBjb21taXQgZnVuY3Rpb24KPj4gYW5kIHJl
+bGV2YW50IGNvZGUgc3BlY2lmaWMgdG8gRXh5bm9zIERSTSBhbmQgbWFrZXMKPj4gYXRvbWljIGhl
+bHBlciBjb21taXQgdG8gYmUgdXNlZCBpbnN0ZWFkLgo+Pgo+PiBCZWxvdyBhcmUgY2hhbmdlcyBm
+b3IgdGhlIHVzZSBvZiBhdG9taWMgaGVscGVyIGNvbW1pdDoKPj4gLSBhZGQgYXRvbWljX2NvbW1p
+dF90YWlsIGNhbGxiYWNrIHNwZWNpZmljIHRvIEV4eW5vcyBEUk0KPj4gICAuIGRlZmF1bHQgaW1w
+bGVtZW50aW9uIG9mIGF0b21pYyBoZWxwZXIgZG9lc24ndCBtZXNoIHdlbGwKPj4gICAgIHdpdGgg
+cnVudGltZSBQTSBzbyB0aGUgZGV2aWNlIGRyaXZlciB3aGljaCBzdXBwb3J0cyBydW50aW1lCj4+
+ICAgICBQTSBzaG91bGQgY2FsbCBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFi
+bGVzIGZ1bmN0aW9uCj4+ICAgICBwcmlvciB0byBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxh
+bmVzIGZ1bmN0aW9uIGNhbGwuCj4+ICAgICBhdG9taWNfY29tbWl0X3RhaWwgY2FsbGJhY2sgaW1w
+bGVtZW50cyB0aGlzIGNhbGwgb3JkZXJpbmcuCj4+IC0gYWxsb3cgcGxhbmUgY29tbWl0IG9ubHkg
+aW4gY2FzZSB0aGF0IENSVEMgZGV2aWNlIGlzIGVuYWJsZWQuCj4+ICAgLiBmb3IgdGhpcywgaXQg
+Y2FsbHMgYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzIGZ1bmN0aW9uCj4+ICAgICB3aXRoIERS
+TV9QTEFORV9DT01NSVRfQUNUSVZFX09OTFkgZmxhZyBpbiBhdG9taWNfY29tbWl0X3RhaWwgY2Fs
+bGJhY2suCj4+Cj4+IENoYW5nZWxvZyB2MToKPj4gLSBmaXggY29tbWVudAo+PiAtIGZpeCB0cml2
+aWFsIHRoaW5ncwo+PiAtIHJldml2ZSBleGlzdGluZyBjb21tZW50IHdoaWNoIGV4cGxhaW5zIHdo
+eSBwbGFuZSBjb21taXQgc2hvdWxkIGJlCj4+ICAgY2FsbGVkIGFmdGVyIGNydGMgYW5kIGVuY29k
+ZXIgZGV2aWNlIGFyZSBlbmFibGVkLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5r
+aS5kYWVAc2Ftc3VuZy5jb20+Cj4+IFJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rh
+dm8ucGFkb3ZhbkBjb2xsYWJvcmEuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jcnRjLmMgfCAgMTAgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHJ2LmMgIHwgMTA5IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgfCAgMzIgKysrKysr
+KystCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDQwIGluc2VydGlvbnMoKyksIDExMSBkZWxldGlvbnMo
+LSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+cnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+IGluZGV4
+IDI1MzBiZjUuLjhmMTNiY2UgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2NydGMuYwo+PiBAQCAtMzksNiArMzksMTQgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9j
+cnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+PiAgCj4+ICAJaWYgKGV4eW5vc19j
+cnRjLT5vcHMtPmRpc2FibGUpCj4+ICAJCWV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGUoZXh5bm9z
+X2NydGMpOwo+PiArCj4+ICsJaWYgKGNydGMtPnN0YXRlLT5ldmVudCAmJiAhY3J0Yy0+c3RhdGUt
+PmFjdGl2ZSkgewo+PiArCQlzcGluX2xvY2tfaXJxKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2spOwo+
+PiArCQlkcm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChjcnRjLCBjcnRjLT5zdGF0ZS0+ZXZlbnQp
+Owo+PiArCQlzcGluX3VubG9ja19pcnEoJmNydGMtPmRldi0+ZXZlbnRfbG9jayk7Cj4+ICsKPj4g
+KwkJY3J0Yy0+c3RhdGUtPmV2ZW50ID0gTlVMTDsKPj4gKwl9Cj4+ICB9Cj4+ICAKPj4gIHN0YXRp
+YyB2b2lkCj4+IEBAIC05NCw5ICsxMDIsOSBAQCBzdGF0aWMgdm9pZCBleHlub3NfY3J0Y19hdG9t
+aWNfZmx1c2goc3RydWN0IGRybV9jcnRjICpjcnRjLAo+PiAgCQkJZHJtX2NydGNfc2VuZF92Ymxh
+bmtfZXZlbnQoY3J0YywgZXZlbnQpOwo+PiAgCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjcnRj
+LT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPj4gIAl9Cj4+IC0KPj4gIH0KPj4gIAo+PiArCj4g
+Cj4gUGxlYXNlIHJlZnJhaW4gZnJvbSByZW1vdmluZy9hZGRpbmcgcmFuZG9tIGJsYW5rIGxpbmVz
+IHdoZW4gd29ya2luZyBvbiB5b3VyCgpPb3BzLCBzb3JyeS4gSSBkaWRuJ3QgY2hlY2sgaXQuIDoo
+Cgo+IGZlYXR1cmVzLCB0aGV5IHBvbHV0ZSB0aGUgY29kZSByZXZpZXcgYW5kIGdpdCBoaXN0b3J5
+LiBBY3R1YWxseSB5b3VyIGxpbmUKPiBhZGRpdGlvbiBoZXJlIGJyZWFrcyB0aGUga2VybmVsIGNv
+ZGluZyBzdHlsZXMgcnVsZXMuIFBsZWFzZSB1cGRhdGUgdGhlCj4gcGF0Y2guCj4gCj4gR3VzdGF2
+bwo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
+InVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2Fn
+ZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
+aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCj4gCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
