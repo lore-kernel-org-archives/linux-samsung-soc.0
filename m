@@ -1,68 +1,112 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
-Date: Thu, 19 Jan 2017 14:16:09 +0100
-Message-ID: <5880BC19.8080000@math.uni-bielefeld.de>
-References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
- <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
- <587E2922.10805@math.uni-bielefeld.de>
- <f0d1e14e-26b9-1f4f-6703-e0efe8ad9af4@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <f0d1e14e-26b9-1f4f-6703-e0efe8ad9af4@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 07/13] pinctrl: samsung: Add missing initconst annotation
+Date: Thu, 19 Jan 2017 14:48:47 +0100
+Message-ID: <1484833733-16082-8-git-send-email-m.szyprowski@samsung.com>
+References: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170119134907eucas1p14be6b994bddf37f8baca669a66acc1d4@eucas1p1.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gSm9vbnlvdW5nLAoKSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gSGkgVG9iaWFzLAo+IAo+
-IE9uIDAxLzE3LzIwMTcgMTE6MjQgUE0sIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEpvb255b3Vu
-ZyBTaGltIHdyb3RlOgo+Pj4gVGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5cGUsIHNv
-IGl0IGNhbiBiZSBvdmVyZmxvd2VkIGJ5IGNtZCBhbmQKPj4+IGNtZF9idWYgdGhhdCBoYXMgdG9v
-IGJpZyBzaXplLiBUaGlzIHBhdGNoIHdpbGwgZml4IG92ZXJmbG93IGlzc3VlIGFzCj4+PiBjaGVj
-a2luZyBtYXhpbXVtIHNpemUgb2YgY21kIGFuZCBjbWRfYnVmLgo+PiBJIGRvbid0IHVuZGVyc3Rh
-bmQvc2VlIHRoZSBpc3N1ZSBoZXJlLiBDb3VsZCB5b3UgcG9pbnQgb3V0IGZvciB3aGljaAo+PiBp
-bnB1dCBvZiB0aGUgc2V0X2NtZGxpc3QgaW9jdGwgeW91IHNlZSB0aGlzIHBhcnRpY3VsYXIgb3Zl
-cmZsb3c/Cj4+Cj4+IEluIHBhcnRpY3VsYXIgaXQgaXMgbm90IGNsZWFyIHRvIG1lIHdoaWNoIHNp
-emUgZmllbGQgeW91J3JlIHRhbGtpbmcKPj4gYWJvdXQuIHN0cnVjdCBnMmRfY21kbGlzdCBkb2Vz
-IG5vdCBoYXZlIGFueSBmaWVsZCBuYW1lZCAnc2l6ZScuCj4+Cj4gCj4gSSBtZWFuIHNpemUgb2Yg
-Y21kbGlzdCBpcwo+IHNpemUgPSBjbWRsaXN0LT5sYXN0ICsgcmVxLT5jbWRfbnIgKiAyICsgcmVx
-LT5jbWRfYnVmX25yICogMiArIDI7Cj4gaW4gZXh5bm9zX2cyZF9zZXRfY21kbGlzdF9pb2N0bCgp
-LgpvaywgdGhhdCBtYWtlcyB0aGluZ3MgbW9yZSBjbGVhci4gQnV0IHRoZW4geW91IG5lZWQgdG8g
-Zml4IHRoZSBjb21taXQKbWVzc2FnZS4gVGhlIGN1cnJlbnQgbWVzc2FnZSBpbXBsaWVzIHRoYXQg
-dGhpcyAnc2l6ZScgeW91J3JlIHRhbGtpbmcKYWJvdXQgaXMgc29tZSBwcm9wZXJ0eSBvZiB0aGUg
-Y21kbGlzdC4KCkFsc28gdGhlIG5ldyBjb21tZW50IGlzIHdyb25nLgovKiBDaGVjayBzaXplIG9m
-IGNtZCBhbmQgY21kbGlzdDogbGFzdCAyIGlzIGFib3V0IEcyRF9CSVRCTFRfU1RBUlQgKi8KCldo
-YXQgaXMgY21kIGFuZCBjbWRsaXN0PyBZb3UncmUgbWl4aW5nIHR3byBkaWZmZXJlbnQgdGhpbmdz
-IGhlcmUuIFdlIGFyZQpzdGlsbCBjaGVja2luZyB0aGUgc2l6ZSBvZiAnY21kbGlzdCcgKHdoaWNo
-IGlzIGEgc3RydWN0IGcyZF9jbWRsaXN0KSBoZXJlLgoKV2hhdCB5b3UgYWRkIGlzIGEgY2hlY2sg
-Zm9yIHRoZSBmaWVsZHMgb2YgJ3JlcScgKHdoaWNoIGlzIGEgc3RydWN0CmRybV9leHlub3NfZzJk
-X3NldF9jbWRsaXN0KS4KCldpdGggYWxsIHRoYXQgc2FpZCwgSSBkb24ndCBsaWtlIHRoZSBjaGFu
-Z2VzLiBJIHNlZSB0aGUgaXNzdWUsIGJ1dCB0aGUKY3VycmVudCBzb2x1dGlvbiBzaG91bGQgYmUg
-Y2xlYW5lci4KCkkgcHJvcG9zZSB0aGlzLiBXZSBqdXN0IGNoZWNrIHJlcS0+Y21kX2J1Zl9uciBh
-bmQgcmVxLT5jbWRfbnIgYWdhaW5zdApHMkRfQ01ETElTVF9EQVRBX05VTS4gVGhpcyBsZWF2ZXMg
-dXMgZW5vdWdoIGhlYWRyb20gc28gdGhhdCB0aGUgbGF0ZXIKY29tcHV0YXRpb24gKGkuZS4gd2hh
-dCBpcyBlbmRpbmcgdXAgaW4gdGhlIGxvY2FsIHZhcmlhYmxlICdzaXplJykgY2FuCm5ldmVyIG92
-ZXJmbG93LgoKRm9yIGEgY29tbWVudCBmb3IgdGhlIGNoZWNrIEkgcHJvcG9zZSB0aGlzOgoiVG8g
-YXZvaWQgYW4gaW50ZWdlciBvdmVyZmxvdyBmb3IgdGhlIGxhdGVyIHNpemUgY29tcHV0YXRpb25z
-LCB3ZQplbmZvcmNlIGEgbWF4aW11bSBudW1iZXIgb2Ygc3VibWl0dGVkIGNvbW1hbmRzIGhlcmUu
-IFRoaXMgbGltaXQgaXMKc3VmZmljaWVudCBmb3IgYWxsIGNvbmNlaXZhYmxlIHVzYWdlIGNhc2Vz
-IG9mIHRoZSBHMkQuIgoKCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IAo+IFlvdSBjYW4g
-cmVwcm9kdWNlIG92ZXJmbG93IG9mIHNpemUgZWFzaWx5IGlmIHlvdSB1c2UgdmFsdWUgbGlrZQo+
-IDQyOTQ5NjcyOTUgb3IgMjE0NzQ4MzY0NyBhdCB0aGUgcmVxLT5jbWRfYnVmX25yLgo+IAo+IFRo
-YW5rcy4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
-ICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3Nh
-Z2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Exynos5433 support has been added in parallel to adding initconst
+annotation to most of the init data structures, so add those
+annotations also to Exynos5433 structures.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index bf753a596209..70b94ad10cc1 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - ALIVE */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+@@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - AUD */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks1[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks1[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - CPIF */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks2[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks2[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - eSE */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks3[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks3[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - FINGER */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks4[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks4[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - FSYS */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks5[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks5[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
+@@ -1310,17 +1310,17 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - IMEM */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks6[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks6[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - NFC */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks7[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks7[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - PERIC */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks8[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks8[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
+@@ -1341,7 +1341,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - TOUCH */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks9[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks9[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
+ };
+ 
+@@ -1349,7 +1349,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+  * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+  * ten gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
++const struct samsung_pin_ctrl exynos5433_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5433_pin_banks0,
+-- 
+1.9.1
+
