@@ -1,127 +1,71 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] [media] exynos-gsc: Fix imprecise external abort due
- disabled power domain
-Date: Thu, 19 Jan 2017 14:51:02 -0300
-Message-ID: <d727576a-fbce-eb54-3b74-270c689b7fa3@osg.samsung.com>
-References: <1484699402-28738-1-git-send-email-javier@osg.samsung.com>
- <CGME20170118003022epcas3p34cf03bb6feb830c4fa231497f2536d0e@epcas3p3.samsung.com>
- <1484699402-28738-2-git-send-email-javier@osg.samsung.com>
- <cc9c6837-7141-b63c-ddf6-68252493df11@samsung.com>
- <842737f2-3faf-7b22-c480-93e183bbb670@osg.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.11
+Date: Thu, 19 Jan 2017 18:54:41 +0100
+Message-ID: <684f822a-b405-f7f1-da45-965fe14ac741@samsung.com>
+References: <CGME20170119175445epcas1p41dcadba15bf106dd4a3a76a3a0278467@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <842737f2-3faf-7b22-c480-93e183bbb670@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Marek,
+Hi Stephen, Mike,
 
-On 01/19/2017 11:56 AM, Javier Martinez Canillas wrote:
-> On 01/19/2017 11:17 AM, Marek Szyprowski wrote:
+Here is my pull request with a few clk/samsung updates for v4.11.
+Commit "clk: samsung: Add CPU clk configuration data for Exynos4412 Prime"
+has been already pulled into the arm-soc tree as a dependency.
 
-[snip]
 
-> 
-> Also when removing the exynos_gsc driver, I get the same error:
-> 
-> # rmmod s5p_mfc
-> [  106.405972] s5p-mfc 11000000.codec: Removing 11000000.codec
-> # rmmod exynos_gsc
-> [  227.008559] Unhandled fault: imprecise external abort (0x1c06) at 0x00048e14
-> [  227.015116] pgd = ed5dc000
-> [  227.017213] [00048e14] *pgd=b17c6835
-> [  227.020889] Internal error: : 1c06 [#1] PREEMPT SMP ARM
-> ...
-> [  227.241585] [<bf2429bc>] (gsc_wait_reset [exynos_gsc]) from [<bf24009c>] (gsc_runtime_resume+0x9c/0xec [exynos_gsc])
-> [  227.252331] [<bf24009c>] (gsc_runtime_resume [exynos_gsc]) from [<c042e488>] (genpd_runtime_resume+0x120/0x1d4)
-> [  227.262294] [<c042e488>] (genpd_runtime_resume) from [<c04241c0>] (__rpm_callback+0xc8/0x218)
-> 
-> # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-> domain                          status          slaves
->     /device                                             runtime status
-> ----------------------------------------------------------------------
-> power-domain@100440C0           on              
->     /devices/platform/soc/14450000.mixer                active
->     /devices/platform/soc/14530000.hdmi                 active
-> power-domain@10044120           on              
-> power-domain@10044060           off-0           
-> power-domain@10044020           on              
-> power-domain@10044000           on              
->     /devices/platform/soc/13e00000.video-scaler         suspended
->     /devices/platform/soc/13e10000.video-scaler         resuming
-> 
-> This seems to be caused by some needed clocks to access the power domains
-> to be gated, since I don't get these erros when passing clk_ignore_unused
-> as parameter in the kernel command line.
->
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
 
-I found the issue. The problem was that Exynos5422 needs not only the
-CLK_ACLK_ 300_GSCL but also CLK_ACLK432_SCALER to be ungated in order
-to access the GSCL IP block.
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
 
-The Exynos5422 manual shows in Figure 7-14 that ACLK_432_SCLAER is needed
-for the internal buses.
+are available in the git repository at:
 
-Exynos5420 only needs CLK_ACLK_ 300_GSCL to be ungated.
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung
 
-With following hack, the issue goes away for the gsc_pd in the Odroid XU4:
+for you to fetch changes up to cb4ac949ea14416a2d57b7a343bc4b571074e3bd:
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 8c8b495cbf0d..9876ec28b94c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -586,7 +586,7 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
- 				GATE_BUS_TOP, 24, 0, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
--				GATE_BUS_TOP, 27, 0, 0),
-+				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- };
+  clk: samsung: Remove Exynos4415 driver (SoC not supported anymore) (2017-01-16 11:33:38 +0100)
 
-# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-domain                          status          slaves
-    /device                                             runtime status
-----------------------------------------------------------------------
-power-domain@100440C0           on              
-    /devices/platform/soc/14450000.mixer                active
-    /devices/platform/soc/14530000.hdmi                 active
-power-domain@10044120           on              
-power-domain@10044060           off-0           
-    /devices/platform/soc/11000000.codec                suspended
-power-domain@10044020           on              
-power-domain@10044000           off-0           
-    /devices/platform/soc/13e00000.video-scaler         suspended
-    /devices/platform/soc/13e10000.video-scaler         suspended
+----------------------------------------------------------------
+clk/samsung updates for v4.11:
+ - addition of the CPU clock configuration data for Exynos4412
+   Prime SoC variant,
+ - removal of driver for deprecated Exynos4415 SoC,
+ - switching from the syscore to regular system sleep PM ops
+   in the audio subsystem clocks controller driver,
+ - updates of the definitions of some "Network On Chip" related
+   clocks.
 
-# rmmod s5p_mfc
-[   82.885227] s5p-mfc 11000000.codec: Removing 11000000.codec
-# rmmod exynos_gsc
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (1):
+      clk: samsung: Add CPU clk configuration data for Exynos4412 Prime
 
-# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-domain                          status          slaves
-    /device                                             runtime status
-----------------------------------------------------------------------
-power-domain@100440C0           on              
-    /devices/platform/soc/14450000.mixer                active
-    /devices/platform/soc/14530000.hdmi                 active
-power-domain@10044120           on              
-power-domain@10044060           off-0           
-power-domain@10044020           on              
-power-domain@10044000           off-0
- 
-I'll post a proper patch for the exynos5800.dtsi, to override the
-clocks in the gsc_pd device node.
+Chanwoo Choi (1):
+      clk: samsung: exynos5433: Set NoC (Network On Chip) clocks as critical
 
-I also see that the two power domains that fail to be disabled msc_pd
-(power-domain@10044120) and isp_pd (power-domain@10044020) don't have
-clocks defined in the exynos54xx.dtsi. I'll add clocks for those too.
+Krzysztof Kozlowski (1):
+      clk: samsung: Remove Exynos4415 driver (SoC not supported anymore)
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Marek Szyprowski (1):
+      clk: samsung: exynos-audss: Replace syscore PM with platform device PM
+
+ .../bindings/clock/exynos4415-clock.txt          |   38 -
+ drivers/clk/samsung/Makefile                     |    1 -
+ drivers/clk/samsung/clk-exynos-audss.c           |   24 +-
+ drivers/clk/samsung/clk-exynos4.c                |    4 +
+ drivers/clk/samsung/clk-exynos4415.c             | 1022 ------------------
+ drivers/clk/samsung/clk-exynos5433.c             |    8 +-
+ include/dt-bindings/clock/exynos4415.h           |  360 ------
+ 7 files changed, 18 insertions(+), 1439 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+ delete mode 100644 drivers/clk/samsung/clk-exynos4415.c
+ delete mode 100644 include/dt-bindings/clock/exynos4415.h
+
+--
+Regards, 
+Sylwester
