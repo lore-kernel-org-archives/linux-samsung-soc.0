@@ -1,43 +1,54 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/4] drm: exynos: Remove support for Exynos4415 (SoC not
- supported anymore)
-Date: Wed, 18 Jan 2017 17:14:02 -0600
-Message-ID: <20170118231402.xxje54gag3mb6b3x@rob-hp-laptop>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <20170114123642.15581-5-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v7 2/3] input: tm2-touchkey: Add touchkey driver support
+ for TM2
+Date: Thu, 19 Jan 2017 09:17:21 +0200
+Message-ID: <CAJKOXPd1jd2LkdTPB4oUK071v0X92YWCsc=japDUv3tuFbNXHQ@mail.gmail.com>
+References: <1484632479-3111-1-git-send-email-jcsing.lee@samsung.com>
+ <CGME20170117055444epcas1p47b0b0a0ae3260b22fa61d2b92362050b@epcas1p4.samsung.com>
+ <1484632479-3111-3-git-send-email-jcsing.lee@samsung.com> <20170117172047.47535bj5xd6toayu@kozik-lap>
+ <CAKdAkRQij9VuG1mguE0FwQMKuHrnyLAZJxOtkoR97uuX+ZBmLQ@mail.gmail.com>
+ <20170117181056.mrwyudslfgh2wfms@kozik-lap> <20170118224711.GB11881@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170114123642.15581-5-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20170118224711.GB11881@dtor-ws>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jaechul Lee <jcsing.lee@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, =?UTF-8?B?7J207J6s7LKg?= <galaxyra@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU2F0LCBKYW4gMTQsIDIwMTcgYXQgMDI6MzY6NDJQTSArMDIwMCwgS3J6eXN6dG9mIEtvemxv
-d3NraSB3cm90ZToKPiBTdXBwb3J0IGZvciBFeHlub3M0NDE1IGlzIGdvaW5nIGF3YXkgYmVjYXVz
-ZSB0aGVyZSBhcmUgbm8gaW50ZXJuYWwgbm9yCj4gZXh0ZXJuYWwgdXNlcnMuCj4gCj4gU2luY2Ug
-Y29tbWl0IDQ2ZGNmMGZmMGRlMyAoIkFSTTogZHRzOiBleHlub3M6IFJlbW92ZSBleHlub3M0NDE1
-LmR0c2kiKSwKPiB0aGUgcGxhdGZvcm0gY2Fubm90IGJlIGluc3RhbnRpYXRlZCBzbyByZW1vdmUg
-YWxzbyB0aGUgZHJpdmVycy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tp
-IDxrcnprQGtlcm5lbC5vcmc+Cj4gLS0tCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
-YXkvZXh5bm9zL2V4eW5vc19kc2ltLnR4dCB8ICAxIC0KPiAgLi4uL2JpbmRpbmdzL2Rpc3BsYXkv
-ZXh5bm9zL3NhbXN1bmctZmltZC50eHQgICAgICAgICAgIHwgIDEgLQoKQWNrZWQtYnk6IFJvYiBI
-ZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+Cgo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHNpLmMgICAgICAgICAgICAgICAgfCAxNSArLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgICAgICAgICAgIHwgMTggKyst
-LS0tLS0tLS0tLS0tLS0tCj4gIDQgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzMiBk
-ZWxldGlvbnMoLSkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+On Thu, Jan 19, 2017 at 12:47 AM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Tue, Jan 17, 2017 at 08:10:56PM +0200, Krzysztof Kozlowski wrote:
+>> On Tue, Jan 17, 2017 at 10:06:27AM -0800, Dmitry Torokhov wrote:
+>> > On Tue, Jan 17, 2017 at 9:20 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> > > On Tue, Jan 17, 2017 at 02:54:38PM +0900, Jaechul Lee wrote:
+>> > >> This patch adds support for the TM2 touch key and led
+>> > >> functionality.
+>> > >>
+>> > >> The driver interfaces with userspace through an input device and
+>> > >> reports KEY_PHONE and KEY_BACK event types. LED brightness can be
+>> > >> controlled by "/sys/class/leds/tm2-touchkey/brightness".
+>> > >>
+>> > >> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+>> > >> Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
+>> > >> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> > >> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+>> > >> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> > >> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> > >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> > >> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>> > >
+>> > > This looks unusual. How did Dmitry's Sob end here?
+>> >
+>> > I sent Jaechul a version of the patch to try out.
+>>
+>> Ah, makes sense then.
+>
+> I picked up (and folded) the binding doc and driver patches, DTS should
+> go through some other tree I believe.
+
+Yes, I will take it. I waited for driver and bindings to be accepted.
+
+Thanks,
+Krzysztof
