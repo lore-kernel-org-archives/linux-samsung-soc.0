@@ -1,42 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 03/13] soc: samsung: pmu: Remove messages for failed
- memory allocation
-Date: Fri, 20 Jan 2017 18:40:43 +0200
-Message-ID: <20170120164043.y243tf4lsvwa3wpy@kozik-lap>
-References: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170119134905eucas1p2ed9d6baf6283528289a36a58ee6c978e@eucas1p2.samsung.com>
- <1484833733-16082-4-git-send-email-m.szyprowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH] drm/exynos: fix a timeout loop
+Date: Fri, 20 Jan 2017 17:54:32 +0100
+Message-ID: <1484931272-20113-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1484833733-16082-4-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 19, 2017 at 02:48:43PM +0100, Marek Szyprowski wrote:
-> Memory subsystem already prints message about failed memory
-> allocation, there is no need to do it in the driver.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/soc/samsung/exynos-pmu.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
+RnJvbTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgoKV2Ugd2VyZSB0
+cnlpbmcgdG8gcHJpbnQgYW4gZXJyb3IgbWVzc2FnZSBpZiB3ZSB0aW1lZCBvdXQgaGVyZSwgYnV0
+IHRoZQpsb29wIGFjdHVhbGx5IGVuZHMgd2l0aCAidHJpZXMiIHNldCB0byBVSU5UX01BWCBhbmQg
+bm90IHplcm8uICBGaXggdGhpcwpieSBjaGFuZ2luZyBmcm9tIHRyaWVzLS0gdG8gLS10cmllcy4K
+CkEgZm9yIGxvb3Agd291bGQgYWN0dWFsbHkgYmUgdGhlIG1vc3QgbmF0dXJhbCB3YXkgdG8gZG8g
+dGhpcy4gIE15IGZpeAptZWFucyB3ZSBvbmx5IGxvb3AgOTkgdGltZXMgaW5zdGVhZCBvZiAxMDAg
+YnV0IHRoYXQncyBwcm9iYWJseSBvay4KCkZpeGVzOiBhNjk2Mzk0YzUyMjQgKCdkcm0vZXh5bm9z
+OiBtaXhlcjogc2ltcGxpZnkgbG9vcCBpbiB2cF93aW5fcmVzZXQoKScpClNpZ25lZC1vZmYtYnk6
+IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KUmV2aWV3ZWQtYnk6IFRv
+YmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
+ZXIuYwppbmRleCBlZGIyMGEzLi5mY2M3ZTRmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X21peGVyLmMKQEAgLTcwMSw3ICs3MDEsNyBAQCBzdGF0aWMgdm9pZCB2cF93aW5fcmVzZXQoc3Ry
+dWN0IG1peGVyX2NvbnRleHQgKmN0eCkKIAl1bnNpZ25lZCBpbnQgdHJpZXMgPSAxMDA7CiAKIAl2
+cF9yZWdfd3JpdGUocmVzLCBWUF9TUkVTRVQsIFZQX1NSRVNFVF9QUk9DRVNTSU5HKTsKLQl3aGls
+ZSAodHJpZXMtLSkgeworCXdoaWxlICgtLXRyaWVzKSB7CiAJCS8qIHdhaXRpbmcgdW50aWwgVlBf
+U1JFU0VUX1BST0NFU1NJTkcgaXMgMCAqLwogCQlpZiAofnZwX3JlZ19yZWFkKHJlcywgVlBfU1JF
+U0VUKSAmIFZQX1NSRVNFVF9QUk9DRVNTSU5HKQogCQkJYnJlYWs7Ci0tIAoyLjcuMwoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
