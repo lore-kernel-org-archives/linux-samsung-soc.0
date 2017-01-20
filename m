@@ -1,53 +1,65 @@
 From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Remove address node from usb parent
- node
-Date: Fri, 20 Jan 2017 09:53:07 +0530
-Message-ID: <3666f929-6ffb-5991-f6f0-0e922a745439@samsung.com>
-References: <CGME20170118054410epcas1p4df5c5631e0b13081662eb8fff5e383b3@epcas1p4.samsung.com>
- <1484718408-28933-1-git-send-email-pankaj.dubey@samsung.com>
- <587F137B.6070109@samsung.com>
- <7280351b-d26a-accb-b442-fc1eb056c8d6@osg.samsung.com>
+Subject: Re: [PATCH v2] PCI: exynos: refactor exynos pcie driver
+Date: Fri, 20 Jan 2017 09:59:19 +0530
+Message-ID: <d63bfff9-4ea8-a670-581b-38b224ca1676@samsung.com>
+References: <CGME20170105035104epcas1p2de6c52e577dd78a4f3539fb32d1f0dfe@epcas1p2.samsung.com>
+ <1483588418-2551-1-git-send-email-pankaj.dubey@samsung.com>
+ <339cc068-567e-09b0-3578-08fd7a5df109@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46432 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbdATEXg (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Jan 2017 23:23:36 -0500
-In-reply-to: <7280351b-d26a-accb-b442-fc1eb056c8d6@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <339cc068-567e-09b0-3578-08fd7a5df109@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, jingoohan1@gmail.com, bhelgaas@google.com
+Cc: krzk@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, sanath@samsung.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: robh+dt@kernel.org, krzk@kernel.org, kgene@kernel.org
 
-Hi Javier,
+Hello Jingoo, Bjorn,
 
-On Wednesday 18 January 2017 09:06 PM, Javier Martinez Canillas wrote:
-> Hello,
-> 
-> On 01/18/2017 04:04 AM, Chanwoo Choi wrote:
->> Hi Pankaj,
+On Thursday 05 January 2017 09:47 AM, Jaehoon Chung wrote:
+> On 01/05/2017 12:53 PM, Pankaj Dubey wrote:
+>> From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
 >>
->> This issue already posted by Javier Martinez Canillas[1].
->> Maybe, he will post v2.
+>> Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
+>> This patch does refactoring of Exynos PCIe driver to extend support
+>> for other Exynos SoC.
 >>
+>> Following are the main changes done via this patch:
+>>
+>> 1) It adds separate structs for memory, clock resources.
+>>
+>> Reason behind this change is, moving ahead various Exynos SoC will
+>> have different hardware resources such as iomem, clocks, regmap handles
+>> etc. for PCIe controller, so keeping these resources in separate struct
+>> will help us in intiailizing them via per SoC ops, and will avoid too
+>> many of_machine_is_compatible in code, and help us simplifying
+>> exynos_pcie struct.
+>>
+>> 2) It add exynos_pcie_ops struct which will allow us to support the
+>> differences in resources in different Exynos SoC.
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Niyas Ahmed S T <niyas.ahmed@samsung.com>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > 
-> That's correct, I didn't post a v2 since I was waiting for feedback
-> from the DT maintainers on patches 1/2 and 2/2 from the same series:
+> Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
 > 
-> https://www.spinics.net/lists/arm-kernel/msg553286.html
+> Best Regards,
+> Jaehoon Chung
 > 
-> But I'll re-spin just this patch since the changes are independent.
-> 
+>> ---
+>> This patch set is prepared on top of Krzysztof's for-next and
+>> PCIe driver cleanup patch [1] by Jaehoon Chung.
+>>
+>> [1]: https://lkml.org/lkml/2016/12/19/44
+>>
 
-I didn't noticed this earlier. In this case my patch [1] can be ignored.
+Any update on this patch and dependent series [1] from Jaehoon Chung.
 
-[1]: https://patchwork.kernel.org/patch/9522645/
 
 Thanks,
 Pankaj Dubey
-
-> Best regards,
-> 
