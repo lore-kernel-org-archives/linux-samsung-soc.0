@@ -1,53 +1,42 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd fields
-Date: Fri, 20 Jan 2017 07:52:24 +0100
-Message-ID: <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 1/7] drm/exynos/hdmi: add 297MHz pixel clock support
+Date: Fri, 20 Jan 2017 07:52:19 +0100
+Message-ID: <1484895145-511-2-git-send-email-a.hajda@samsung.com>
 References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+ <CGME20170120065229eucas1p173d2b1844498dd3afdd9d2860cd1ee93@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SW4gY2FzZSBvZiBpbnRlcmxhY2UgbW9kZSBpcnEgaXMgZ2VuZXJhdGVkIGZvciBvZGQgYW5kIGV2
-ZW4gZmllbGRzLCBidXQKdmJsYW5rIHNob3VsZCBiZSBzaWduYWxlZCBvbmx5IGZvciB0aGUgbGFz
-dCBlbWl0dGVkIGZpZWxkLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
-YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2Rl
-Y29uLmMgfCA3ICsrKysrKysKIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAg
-ICAgICAgICB8IDEgKwogMiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykKCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKaW5kZXggNDY0MzRiYTku
-LmFkOGI5M2EgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19k
-cm1fZGVjb24uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2Rl
-Y29uLmMKQEAgLTU5MSw2ICs1OTEsMTMgQEAgc3RhdGljIGlycXJldHVybl90IGRlY29uX2lycV9o
-YW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKIAogCWlmICh2YWwpIHsKIAkJd3JpdGVsKHZh
-bCwgY3R4LT5hZGRyICsgREVDT05fVklESU5UQ09OMSk7CisJCWlmIChjdHgtPm91dF90eXBlICYg
-SUZUWVBFX0hETUkpIHsKKwkJCXZhbCA9IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX1ZJRE9VVENP
-TjApOworCQkJdmFsICY9IFZJRE9VVF9JTlRFUkxBQ0VfRU5fRiB8IFZJRE9VVF9JTlRFUkxBQ0Vf
-RklFTERfRjsKKwkJCWlmICh2YWwgPT0KKwkJCSAgICAoVklET1VUX0lOVEVSTEFDRV9FTl9GIHwg
-VklET1VUX0lOVEVSTEFDRV9GSUVMRF9GKSkKKwkJCQlyZXR1cm4gSVJRX0hBTkRMRUQ7CisJCX0K
-IAkJZHJtX2NydGNfaGFuZGxlX3ZibGFuaygmY3R4LT5jcnRjLT5iYXNlKTsKIAl9CiAKZGlmZiAt
-LWdpdCBhL2luY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oIGIvaW5jbHVkZS92aWRlby9l
-eHlub3M1NDMzX2RlY29uLmgKaW5kZXggYjI2NTExYS4uZWY4ZTJhOCAxMDA2NDQKLS0tIGEvaW5j
-bHVkZS92aWRlby9leHlub3M1NDMzX2RlY29uLmgKKysrIGIvaW5jbHVkZS92aWRlby9leHlub3M1
-NDMzX2RlY29uLmgKQEAgLTg5LDYgKzg5LDcgQEAKICNkZWZpbmUgVklEQ09OMF9FTlZJRF9GCQkJ
-KDEgPDwgMCkKIAogLyogVklET1VUQ09OMCAqLworI2RlZmluZSBWSURPVVRfSU5URVJMQUNFX0ZJ
-RUxEX0YJKDEgPDwgMjkpCiAjZGVmaW5lIFZJRE9VVF9JTlRFUkxBQ0VfRU5fRgkJKDEgPDwgMjgp
-CiAjZGVmaW5lIFZJRE9VVF9MQ0RfT04JCQkoMSA8PCAyNCkKICNkZWZpbmUgVklET1VUX0lGX0Zf
-TUFTSwkJKDB4MyA8PCAyMCkKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+297MHz is used by Ultra HD modes.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5ed8b1e..bef8965 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -587,6 +587,15 @@ static const struct hdmiphy_config hdmiphy_5433_configs[] = {
+ 			0x08, 0x10, 0x01, 0x01, 0x48, 0x4a, 0x00, 0x40,
+ 		},
+ 	},
++	{
++		.pixel_clock = 297000000,
++		.conf = {
++			0x01, 0x51, 0x3E, 0x05, 0x40, 0xF0, 0x88, 0xC2,
++			0x52, 0x53, 0x44, 0x8C, 0x27, 0x00, 0x7C, 0xAC,
++			0xD6, 0x2B, 0x67, 0x00, 0x00, 0x04, 0x00, 0x30,
++			0x08, 0x10, 0x01, 0x01, 0x48, 0x40, 0x00, 0x40,
++		},
++	},
+ };
+ 
+ static const char * const hdmi_clk_gates4[] = {
+-- 
+2.7.4
