@@ -1,58 +1,43 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Use correct mfc_pd async-bridge
- clock for Exynos5420
-Date: Fri, 20 Jan 2017 18:28:46 +0200
-Message-ID: <20170120162846.x766u3nzblqywggj@kozik-lap>
-References: <1484864995-10679-1-git-send-email-javier@osg.samsung.com>
- <1484864995-10679-2-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH v3 01/13] soc: samsung: pmu: Provide global function to
+ get PMU regmap
+Date: Fri, 20 Jan 2017 18:39:32 +0200
+Message-ID: <20170120163932.4me7fyxxxuiegouf@kozik-lap>
+References: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170119134904eucas1p153a1d5b2ff9826c88293b6a8fe5140bc@eucas1p1.samsung.com>
+ <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34935 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752957AbdATQji (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 20 Jan 2017 11:39:38 -0500
 Content-Disposition: inline
-In-Reply-To: <1484864995-10679-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Jan 19, 2017 at 07:29:55PM -0300, Javier Martinez Canillas wrote:
-> Commit 94aed538e032 ("ARM: dts: exynos: Add async-bridge clock to MFC
-> power domain for Exynos5420") fixed an imprecise external abort error
-> when the MFC registers were tried to be accessed and the needed clock
-> for the asynchronous bridges were gated.
+On Thu, Jan 19, 2017 at 02:48:41PM +0100, Marek Szyprowski wrote:
+> PMU is something like a SoC wide service, so add a helper function to get
+> PMU regmap. This will be used by other Exynos device drivers. This way it
+> can be avoided to model this dependency in device tree (as phandles to PMU
+> node) for almost every device in the SoC.
 > 
-> But according to the Exynos5420 manual the "Gating AXI clock for MFC"
-> is not CLK_ACLK333 but CLK_MFC.
-> 
-> The end effect is the same because CLK_ACLK333 is a parent of CLK_MFC
-> but the correct clock should be used instead.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 > ---
+>  drivers/soc/samsung/exynos-pmu.c       | 11 +++++++++++
+>  include/linux/soc/samsung/exynos-pmu.h | 10 ++++++++++
+>  2 files changed, 21 insertions(+)
 > 
->  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is this still needed?
+Thanks, applied.
+
+I'll prepare a tag for pinctrl in a sec.
 
 Best regards,
 Krzysztof
-
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 906a1a42a7ea..ffb148ea91d6 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -294,7 +294,7 @@
->  			reg = <0x10044060 0x20>;
->  			clocks = <&clock CLK_FIN_PLL>,
->  				 <&clock CLK_MOUT_USER_ACLK333>,
-> -				 <&clock CLK_ACLK333>;
-> +				 <&clock CLK_MFC>;
->  			clock-names = "oscclk", "clk0","asb0";
->  			#power-domain-cells = <0>;
->  		};
-> -- 
-> 2.7.4
-> 
