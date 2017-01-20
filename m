@@ -1,50 +1,92 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
- pinctrl macro definitions
-Date: Fri, 20 Jan 2017 09:49:56 +0530
-Message-ID: <1484885997-21004-3-git-send-email-pankaj.dubey@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 1/3] arm64: dts: exynos: Fix drive strength of sd0_xxx pin
+ definitions
+Date: Fri, 20 Jan 2017 09:49:55 +0530
+Message-ID: <1484885997-21004-2-git-send-email-pankaj.dubey@samsung.com>
 References: <1484885997-21004-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170120041720epcas5p175081a95d4a1041beba586fecb2a4cfb@epcas5p1.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1484885997-21004-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sanath-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ <CGME20170120041718epcas5p18cfaaaf19279744af1522fee5b739c3f@epcas5p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:42677 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbdATERV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 19 Jan 2017 23:17:21 -0500
+In-reply-to: <1484885997-21004-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, javier@osg.samsung.com, s.nawrocki@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
-for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
-pinctrl driver strength related macros which will be used in Exynos7
-DTSi files.
+As per Exynos7 datasheet FSYS1 pinctrl block does not support drive
+strength value of 0x3. This patch fixes this and update the correct
+drive strength for sd0_xxx pin definitions.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
-index 6276eb7..3f1d583 100644
---- a/include/dt-bindings/pinctrl/samsung.h
-+++ b/include/dt-bindings/pinctrl/samsung.h
-@@ -54,4 +54,12 @@
- #define EXYNOS_PIN_FUNC_6		6
- #define EXYNOS_PIN_FUNC_F		0xf
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+index 8232198..7ebb939 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+@@ -497,49 +497,49 @@
+ 		samsung,pins = "gpr0-0";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <0>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
  
-+/* Drive strengths for Exynos7 FSYS1 block */
-+#define EXYNOS7_FSYS1_PIN_DRV_LV1	0
-+#define EXYNOS7_FSYS1_PIN_DRV_LV2	4
-+#define EXYNOS7_FSYS1_PIN_DRV_LV3	2
-+#define EXYNOS7_FSYS1_PIN_DRV_LV4	6
-+#define EXYNOS7_FSYS1_PIN_DRV_LV5	1
-+#define EXYNOS7_FSYS1_PIN_DRV_LV6	5
-+
- #endif /* __DT_BINDINGS_PINCTRL_SAMSUNG_H__ */
+ 	sd0_cmd: sd0-cmd {
+ 		samsung,pins = "gpr0-1";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <3>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd0_ds: sd0-ds {
+ 		samsung,pins = "gpr0-2";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <1>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd0_qrdy: sd0-qrdy {
+ 		samsung,pins = "gpr0-3";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <1>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd0_bus1: sd0-bus-width1 {
+ 		samsung,pins = "gpr1-0";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <3>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd0_bus4: sd0-bus-width4 {
+ 		samsung,pins = "gpr1-1", "gpr1-2", "gpr1-3";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <3>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd0_bus8: sd0-bus-width8 {
+ 		samsung,pins = "gpr1-4", "gpr1-5", "gpr1-6", "gpr1-7";
+ 		samsung,pin-function = <2>;
+ 		samsung,pin-pud = <3>;
+-		samsung,pin-drv = <3>;
++		samsung,pin-drv = <4>;
+ 	};
+ 
+ 	sd1_clk: sd1-clk {
 -- 
 2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
