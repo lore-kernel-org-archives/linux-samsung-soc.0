@@ -1,60 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] soc: samsung: Drivers for v4.11
-Date: Fri, 20 Jan 2017 20:13:43 +0200
-Message-ID: <20170120181343.12570-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 36/37] ARM: DRA7: clockdomain: Change the CLKTRCTRL of
+ CM_PCIE_CLKSTCTRL to SW_WKUP
+Date: Fri, 20 Jan 2017 10:28:50 -0800
+Message-ID: <20170120182850.GE7403@atomide.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-37-git-send-email-kishon@ti.com>
+ <20170113171537.GZ2630@atomide.com>
+ <587C628E.7070804@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <587C628E.7070804@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, nsekhar@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+* Kishon Vijay Abraham I <kishon@ti.com> [170115 22:06]:
+> Hi Tony,
+> 
+> On Friday 13 January 2017 10:45 PM, Tony Lindgren wrote:
+> > * Kishon Vijay Abraham I <kishon@ti.com> [170112 02:35]:
+> >> The PCIe programming sequence in TRM suggests CLKSTCTRL of PCIe should
+> >> be set to SW_WKUP. There are no issues when CLKSTCTRL is set to HW_AUTO
+> >> in RC mode. However in EP mode, the host system is not able to access the
+> >> MEMSPACE and setting the CLKSTCTRL to SW_WKUP fixes it.
+> > 
+> > I guess ideally in the long run we would set this dynamically based on
+> > the selected mode, right?
+> 
+> The programming sequence mentioned in the TRM w.r.t clock programming is same
+> for both host mode or device mode. Though we never faced any issues in host
+> mode when HW_AUTO is set, it's better to follow TRM recommended settings IMHO.
 
-Few changes in Exynos PMU driver including one that is needed by pinctrl
-driver for runtime PM. We want to move forward with the RPM for our drivers
-while keeping still DT ABI.
+OK best to merge this with the whole series:
 
-
-This tag is also for Linus Walleij to pull - base for pinctrl changes.
-
-Best regards,
-Krzysztof
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-
-The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
-
-  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git samsung-drivers-soc-pmu-4.11
-
-for you to fetch changes up to 1da6de33e43901ec5220cbf292d71172635ada67:
-
-  soc: samsung: pmu: Remove messages for failed memory allocation (2017-01-20 18:37:27 +0200)
-
-----------------------------------------------------------------
-Improvements for Exynos PMU driver for v4.11:
-
-Beside basic function of setting proper configuration for low power modes, the
-Exynos PMU (Power Management Unit) driver is also a provider of syscon regmap
-for its registers.  This regmap is essential to many other drivers wanting to
-or needing to implement low power mode.
-
-Exynos pinctrl driver, before getting support for Runtime Power Management,
-needs access to this syscon regmap.  Let's do it in a DT ABI friendly way.
-
-----------------------------------------------------------------
-Marek Szyprowski (3):
-      soc: samsung: pmu: Provide global function to get PMU regmap
-      soc: samsung: pmu: Use of_device_get_match_data helper
-      soc: samsung: pmu: Remove messages for failed memory allocation
-
- drivers/soc/samsung/exynos-pmu.c       | 22 ++++++++++++++--------
- include/linux/soc/samsung/exynos-pmu.h | 10 ++++++++++
- 2 files changed, 24 insertions(+), 8 deletions(-)
+Acked-by: Tony Lindgren <tony@atomide.com>
