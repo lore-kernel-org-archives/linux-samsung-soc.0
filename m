@@ -1,42 +1,45 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/7] drm/exynos/hdmi: fix VSI infoframe registers
-Date: Fri, 20 Jan 2017 07:52:20 +0100
-Message-ID: <1484895145-511-3-git-send-email-a.hajda@samsung.com>
-References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065230eucas1p20a73a6911158fb6eb2f2d2b22db36aba@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:20713 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbdATGwk (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 01:52:40 -0500
-In-reply-to: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/7] drm/exynos: add Ultra HD and interlace modes support to
+ Exynos5433
+Date: Fri, 20 Jan 2017 07:52:18 +0100
+Message-ID: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170120065229eucas1p22f0eed53220820b1145294029d4bd706@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-VSI infoframe registers address space is non-contiguous, so infoframe write
-should be split into two chunks.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index bef8965..223b872 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -797,7 +797,8 @@ static void hdmi_reg_infoframes(struct hdmi_context *hdata)
- 				sizeof(buf));
- 	if (ret > 0) {
- 		hdmi_reg_writeb(hdata, HDMI_VSI_CON, HDMI_VSI_CON_EVERY_VSYNC);
--		hdmi_reg_write_buf(hdata, HDMI_VSI_HEADER0, buf, ret);
-+		hdmi_reg_write_buf(hdata, HDMI_VSI_HEADER0, buf, 3);
-+		hdmi_reg_write_buf(hdata, HDMI_VSI_DATA(0), buf + 3, ret - 3);
- 	}
- 
- 	ret = hdmi_audio_infoframe_init(&frm.audio);
--- 
-2.7.4
+SGkgSW5raSwKClRoaXMgcGF0Y2hzZXQgYWRkcyBzdXBwb3J0IGZvciBVbHRyYUhEIGFuZCBpbnRy
+ZWxhY2UgbW9kZXMgb24gREVDT04gYW5kIEhETUkKZHJpdmVycyBvZiBFeHlub3M1NDMzIGNoaXBz
+ZXQuIFRvIGZ1bGx5IHN1cHBvcnQgaXQgb24gVE0yKGUpIHBsYXRmb3JtcyBNSEwKcGF0Y2hlcyBh
+cmUgYWxzZSByZXF1aXJlZCB3aGljaCB3aWxsIGJlIHBvc3RlZCBpbiBzZXBhcmF0ZSBwYXRjaHNl
+dC4KCktyenlzenRvZiwgRFRTIHBhdGNoIGRvIG5vdCBkZXBlbmQgb24gdGhlIHByZXZpb3VzIHBh
+dGNoZXMsIHNvIHRoZXJlIGlzCm5vIG5lZWQgdG8gc3luY2hyb25pemUgYnJhbmNoZXMuCgpSZWdh
+cmRzCkFuZHJ6ZWoKCgpBbmRyemVqIEhhamRhICg3KToKICBkcm0vZXh5bm9zL2hkbWk6IGFkZCAy
+OTdNSHogcGl4ZWwgY2xvY2sgc3VwcG9ydAogIGRybS9leHlub3MvaGRtaTogZml4IFZTSSBpbmZv
+ZnJhbWUgcmVnaXN0ZXJzCiAgZHJtL2V4eW5vcy9oZG1pOiBmaXggUExMIGZvciAyN01IeiBzZXR0
+aW5ncwogIGRybS9leHlub3MvaGRtaTogYWRkIGJyaWRnZSBzdXBwb3J0CiAgZHJtL2V4eW5vcy9k
+ZWNvbjU0MzM6IGFkZCBzdXBwb3J0IGZvciBpbnRlcmxhY2UgbW9kZXMKICBkcm0vZXh5bm9zL2Rl
+Y29uNTQzMzogc2lnbmFsIHZibGFuayBvbmx5IG9uIG9kZCBmaWVsZHMKICBhcm02NDogZHRzOiBl
+eHlub3M6IGNvbmZpZ3VyZSBUViBwYXRoIGNsb2NrcyBmb3IgVWx0cmEgSEQgbW9kZXMKCiBhcmNo
+L2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kgICAgfCAgMyArCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCA1MiArKysrKysrKysrKyst
+LS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAgIHwgODAg
+KysrKysrKysrKysrKysrKysrKysrLS0tLS0tCiBpbmNsdWRlL3ZpZGVvL2V4eW5vczU0MzNfZGVj
+b24uaCAgICAgICAgICAgICAgfCAgMiArCiA0IGZpbGVzIGNoYW5nZWQsIDEwNyBpbnNlcnRpb25z
+KCspLCAzMCBkZWxldGlvbnMoLSkKCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
