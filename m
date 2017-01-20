@@ -1,64 +1,56 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as CLK_IS_CRITICAL
-Date: Fri, 20 Jan 2017 07:41:30 -0300
-Message-ID: <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH 2/2] [media] exynos-gsc: Fix imprecise external abort due
+ disabled power domain
+Date: Fri, 20 Jan 2017 07:46:29 -0300
+Message-ID: <042e9067-7ef1-c942-0341-634963ff3fb0@osg.samsung.com>
+References: <1484699402-28738-1-git-send-email-javier@osg.samsung.com>
+ <CGME20170118003022epcas3p34cf03bb6feb830c4fa231497f2536d0e@epcas3p3.samsung.com>
+ <1484699402-28738-2-git-send-email-javier@osg.samsung.com>
+ <cc9c6837-7141-b63c-ddf6-68252493df11@samsung.com>
+ <842737f2-3faf-7b22-c480-93e183bbb670@osg.samsung.com>
+ <d727576a-fbce-eb54-3b74-270c689b7fa3@osg.samsung.com>
+ <c1d00b28-0252-0fb1-eb7c-5fc69035f12f@samsung.com>
+ <c72965a4-d6e0-f3e7-1140-039274f7e60b@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c72965a4-d6e0-f3e7-1140-039274f7e60b@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
-and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
+Hello,
 
-But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
-this definition from exynos5420.dtsi in Exynos5800 leads to the following:
+On 01/20/2017 07:06 AM, Javier Martinez Canillas wrote:
+> Hello Marek,
+> 
+> On 01/20/2017 05:37 AM, Marek Szyprowski wrote:
+> 
+> [snip]
+>>
+>> Please send this patch instead of adding more clocks to the power domains.
+>> This way we will avoid adding more dependencies to userspace (DT ABI).
+>> Likely those clocks are also needed to access any device in that power
+>> domains.
+>>
+>> Later, once the runtime PM for clocks get merged, a patch for exynos542x
+>> clocks driver can be made to replace IS_CRITICAL with proper runtime
+>> handling.
+>>
+> 
+> Ok, I thought that we didn't want to mark more clocks as CLK_IGNORE_UNUSED
+> or CLK_IS_CRITICAL but I agree this can be done as a temporary workaround
+> until a proper runtime PM based solution gets merged.
+> 
 
-    [  227.008559] Unhandled fault: imprecise external abort (0x1c06) at 0x00048e14
-    [  227.015116] pgd = ed5dc000
-    [  227.017213] [00048e14] *pgd=b17c6835
-    [  227.020889] Internal error: : 1c06 [#1] PREEMPT SMP ARM
-    ...
-    [  227.241585] [<bf2429bc>] (gsc_wait_reset [exynos_gsc]) from [<bf24009c>] (gsc_runtime_resume+0x9c/0xec [exynos_gsc])
-    [  227.252331] [<bf24009c>] (gsc_runtime_resume [exynos_gsc]) from [<c042e488>] (genpd_runtime_resume+0x120/0x1d4)
-    [  227.262294] [<c042e488>] (genpd_runtime_resume) from [<c04241c0>] (__rpm_callback+0xc8/0x218)
+I posted following patch [0] for clk-exynos5420, so $SUBJECT can be dropped.
 
-    domain                          status          slaves
-        /device                                             runtime status
-    ----------------------------------------------------------------------
-    power-domain@100440C0           on
-        /devices/platform/soc/14450000.mixer                active
-        /devices/platform/soc/14530000.hdmi                 active
-    power-domain@10044120           on
-    power-domain@10044060           off-0
-    power-domain@10044020           on
-    power-domain@10044000           on
-        /devices/platform/soc/13e00000.video-scaler         suspended
-        /devices/platform/soc/13e10000.video-scaler         resuming
+[0]: https://patchwork.kernel.org/patch/9527957/
 
-So until a proper solution based on runtime PM gets merged, mark the clock
-as critical to prevent it to be gated.
-
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 8c8b495cbf0d..9876ec28b94c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -586,7 +586,7 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
- 				GATE_BUS_TOP, 24, 0, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
--				GATE_BUS_TOP, 27, 0, 0),
-+				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- };
- 
- static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+Best regards,
 -- 
-2.7.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
