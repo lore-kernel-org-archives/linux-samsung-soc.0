@@ -1,78 +1,58 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
-Date: Fri, 20 Jan 2017 17:05:04 +0100
-Message-ID: <58823530.70107@math.uni-bielefeld.de>
-References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
- <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
- <587E2922.10805@math.uni-bielefeld.de>
- <f0d1e14e-26b9-1f4f-6703-e0efe8ad9af4@samsung.com>
- <5880BC19.8080000@math.uni-bielefeld.de>
- <67df69b9-3231-efd3-8e28-d73ce00ebe41@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Use correct mfc_pd async-bridge
+ clock for Exynos5420
+Date: Fri, 20 Jan 2017 18:28:46 +0200
+Message-ID: <20170120162846.x766u3nzblqywggj@kozik-lap>
+References: <1484864995-10679-1-git-send-email-javier@osg.samsung.com>
+ <1484864995-10679-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <67df69b9-3231-efd3-8e28-d73ce00ebe41@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1484864995-10679-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gSm9vbnlvdW5nLAoKCkpvb255b3VuZyBTaGltIHdyb3RlOgo+IEhpIFRvYmlhcywKPiAK
-PiBPbiAwMS8xOS8yMDE3IDEwOjE2IFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBIZWxsbyBK
-b29ueW91bmcsCj4+Cj4+IEpvb255b3VuZyBTaGltIHdyb3RlOgo+Pj4gSGkgVG9iaWFzLAo+Pj4K
-Pj4+IE9uIDAxLzE3LzIwMTcgMTE6MjQgUE0sIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+Pj4gSm9v
-bnlvdW5nIFNoaW0gd3JvdGU6Cj4+Pj4+IFRoZSBzaXplIG9mIGNtZGxpc3QgaXMgaW50ZWdlciB0
-eXBlLCBzbyBpdCBjYW4gYmUgb3ZlcmZsb3dlZCBieSBjbWQgYW5kCj4+Pj4+IGNtZF9idWYgdGhh
-dCBoYXMgdG9vIGJpZyBzaXplLiBUaGlzIHBhdGNoIHdpbGwgZml4IG92ZXJmbG93IGlzc3VlIGFz
-Cj4+Pj4+IGNoZWNraW5nIG1heGltdW0gc2l6ZSBvZiBjbWQgYW5kIGNtZF9idWYuCj4+Pj4gSSBk
-b24ndCB1bmRlcnN0YW5kL3NlZSB0aGUgaXNzdWUgaGVyZS4gQ291bGQgeW91IHBvaW50IG91dCBm
-b3Igd2hpY2gKPj4+PiBpbnB1dCBvZiB0aGUgc2V0X2NtZGxpc3QgaW9jdGwgeW91IHNlZSB0aGlz
-IHBhcnRpY3VsYXIgb3ZlcmZsb3c/Cj4+Pj4KPj4+PiBJbiBwYXJ0aWN1bGFyIGl0IGlzIG5vdCBj
-bGVhciB0byBtZSB3aGljaCBzaXplIGZpZWxkIHlvdSdyZSB0YWxraW5nCj4+Pj4gYWJvdXQuIHN0
-cnVjdCBnMmRfY21kbGlzdCBkb2VzIG5vdCBoYXZlIGFueSBmaWVsZCBuYW1lZCAnc2l6ZScuCj4+
-Pj4KPj4+Cj4+PiBJIG1lYW4gc2l6ZSBvZiBjbWRsaXN0IGlzCj4+PiBzaXplID0gY21kbGlzdC0+
-bGFzdCArIHJlcS0+Y21kX25yICogMiArIHJlcS0+Y21kX2J1Zl9uciAqIDIgKyAyOwo+Pj4gaW4g
-ZXh5bm9zX2cyZF9zZXRfY21kbGlzdF9pb2N0bCgpLgo+PiBvaywgdGhhdCBtYWtlcyB0aGluZ3Mg
-bW9yZSBjbGVhci4gQnV0IHRoZW4geW91IG5lZWQgdG8gZml4IHRoZSBjb21taXQKPj4gbWVzc2Fn
-ZS4gVGhlIGN1cnJlbnQgbWVzc2FnZSBpbXBsaWVzIHRoYXQgdGhpcyAnc2l6ZScgeW91J3JlIHRh
-bGtpbmcKPj4gYWJvdXQgaXMgc29tZSBwcm9wZXJ0eSBvZiB0aGUgY21kbGlzdC4KPj4KPj4gQWxz
-byB0aGUgbmV3IGNvbW1lbnQgaXMgd3JvbmcuCj4+IC8qIENoZWNrIHNpemUgb2YgY21kIGFuZCBj
-bWRsaXN0OiBsYXN0IDIgaXMgYWJvdXQgRzJEX0JJVEJMVF9TVEFSVCAqLwo+Pgo+PiBXaGF0IGlz
-IGNtZCBhbmQgY21kbGlzdD8gWW91J3JlIG1peGluZyB0d28gZGlmZmVyZW50IHRoaW5ncyBoZXJl
-LiBXZSBhcmUKPj4gc3RpbGwgY2hlY2tpbmcgdGhlIHNpemUgb2YgJ2NtZGxpc3QnICh3aGljaCBp
-cyBhIHN0cnVjdCBnMmRfY21kbGlzdCkgaGVyZS4KPj4KPj4gV2hhdCB5b3UgYWRkIGlzIGEgY2hl
-Y2sgZm9yIHRoZSBmaWVsZHMgb2YgJ3JlcScgKHdoaWNoIGlzIGEgc3RydWN0Cj4+IGRybV9leHlu
-b3NfZzJkX3NldF9jbWRsaXN0KS4KPj4KPj4gV2l0aCBhbGwgdGhhdCBzYWlkLCBJIGRvbid0IGxp
-a2UgdGhlIGNoYW5nZXMuIEkgc2VlIHRoZSBpc3N1ZSwgYnV0IHRoZQo+PiBjdXJyZW50IHNvbHV0
-aW9uIHNob3VsZCBiZSBjbGVhbmVyLgo+Pgo+PiBJIHByb3Bvc2UgdGhpcy4gV2UganVzdCBjaGVj
-ayByZXEtPmNtZF9idWZfbnIgYW5kIHJlcS0+Y21kX25yIGFnYWluc3QKPj4gRzJEX0NNRExJU1Rf
-REFUQV9OVU0uIFRoaXMgbGVhdmVzIHVzIGVub3VnaCBoZWFkcm9tIHNvIHRoYXQgdGhlIGxhdGVy
-Cj4+IGNvbXB1dGF0aW9uIChpLmUuIHdoYXQgaXMgZW5kaW5nIHVwIGluIHRoZSBsb2NhbCB2YXJp
-YWJsZSAnc2l6ZScpIGNhbgo+PiBuZXZlciBvdmVyZmxvdy4KPj4KPiAKPiBBZ3JlZSwgaXQncyBt
-b3JlIGNsZWFyIHRvIGNoZWNrIHJlcS0+Y21kX2J1Zl9uciBhbmQgcmVxLT5jbWRfbnIgYWdhaW5z
-dAo+IEcyRF9DTURMSVNUX0RBVEFfTlVNLgo+IAo+PiBGb3IgYSBjb21tZW50IGZvciB0aGUgY2hl
-Y2sgSSBwcm9wb3NlIHRoaXM6Cj4+ICJUbyBhdm9pZCBhbiBpbnRlZ2VyIG92ZXJmbG93IGZvciB0
-aGUgbGF0ZXIgc2l6ZSBjb21wdXRhdGlvbnMsIHdlCj4+IGVuZm9yY2UgYSBtYXhpbXVtIG51bWJl
-ciBvZiBzdWJtaXR0ZWQgY29tbWFuZHMgaGVyZS4gVGhpcyBsaW1pdCBpcwo+PiBzdWZmaWNpZW50
-IGZvciBhbGwgY29uY2VpdmFibGUgdXNhZ2UgY2FzZXMgb2YgdGhlIEcyRC4iCj4+Cj4gCj4gQ291
-bGQgeW91IHBvc3QgeW91ciBwYXRjaCB0byBNTCBhYm91dCB0aGlzIGlmIHlvdSB3YW50PwpTdXJl
-LCBJJ3ZlIGp1c3Qgc2VuZCBpdCB0b2dldGhlciB3aXRoIHR3byBvdGhlciBzbWFsbCBwYXRjaGVz
-LiBMZXQgbWUKa25vdyBpZiB0aGUgY3VycmVudCB2ZXJzaW9uIGlzIE9LIHdpdGggeW91LiBJIGhv
-cGUgSSBkaWQgdGhlIG9yZGVyIG9mClNvQiBjb3JyZWN0bHkgKEkga25vdyB0aGF0IEtyenlzenRv
-ZiBoYXMgcG9pbnRlZCB0aGlzIG91dCBsYXRlbHkpLgoKLSBUb2JpYXMKCgo+IAo+IFRoYW5rcy4K
-PiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
-YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
-bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
-Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Jan 19, 2017 at 07:29:55PM -0300, Javier Martinez Canillas wrote:
+> Commit 94aed538e032 ("ARM: dts: exynos: Add async-bridge clock to MFC
+> power domain for Exynos5420") fixed an imprecise external abort error
+> when the MFC registers were tried to be accessed and the needed clock
+> for the asynchronous bridges were gated.
+> 
+> But according to the Exynos5420 manual the "Gating AXI clock for MFC"
+> is not CLK_ACLK333 but CLK_MFC.
+> 
+> The end effect is the same because CLK_ACLK333 is a parent of CLK_MFC
+> but the correct clock should be used instead.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Is this still needed?
+
+Best regards,
+Krzysztof
+
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 906a1a42a7ea..ffb148ea91d6 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -294,7 +294,7 @@
+>  			reg = <0x10044060 0x20>;
+>  			clocks = <&clock CLK_FIN_PLL>,
+>  				 <&clock CLK_MOUT_USER_ACLK333>,
+> -				 <&clock CLK_ACLK333>;
+> +				 <&clock CLK_MFC>;
+>  			clock-names = "oscclk", "clk0","asb0";
+>  			#power-domain-cells = <0>;
+>  		};
+> -- 
+> 2.7.4
+> 
