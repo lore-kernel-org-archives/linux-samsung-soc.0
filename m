@@ -1,41 +1,64 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Disable pull down for audio pins in
- Exynos5433 SoCs
-Date: Fri, 20 Jan 2017 07:35:12 -0300
-Message-ID: <0028c25b-8c9b-99f5-f170-92453d295391@osg.samsung.com>
-References: <CGME20170120065702eucas1p1dd0b370aa6cba11d26ce2ed1651f16b9@eucas1p1.samsung.com>
- <1484895413-9080-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:50401
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751598AbdATKfT (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Jan 2017 05:35:19 -0500
-In-Reply-To: <1484895413-9080-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as CLK_IS_CRITICAL
+Date: Fri, 20 Jan 2017 07:41:30 -0300
+Message-ID: <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Marek,
+On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
+and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
 
-On 01/20/2017 03:56 AM, Marek Szyprowski wrote:
-> Common definition for I2S, PMC, SPDIF buses should not define any pull
-> control for the individual pins. Correct this by changing samsung,pin-pud
-> property to EXYNOS_PIN_PULL_NONE like it is defined for other Exynos SoCs.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
+this definition from exynos5420.dtsi in Exynos5800 leads to the following:
 
-Looks good to me.
+    [  227.008559] Unhandled fault: imprecise external abort (0x1c06) at 0x00048e14
+    [  227.015116] pgd = ed5dc000
+    [  227.017213] [00048e14] *pgd=b17c6835
+    [  227.020889] Internal error: : 1c06 [#1] PREEMPT SMP ARM
+    ...
+    [  227.241585] [<bf2429bc>] (gsc_wait_reset [exynos_gsc]) from [<bf24009c>] (gsc_runtime_resume+0x9c/0xec [exynos_gsc])
+    [  227.252331] [<bf24009c>] (gsc_runtime_resume [exynos_gsc]) from [<c042e488>] (genpd_runtime_resume+0x120/0x1d4)
+    [  227.262294] [<c042e488>] (genpd_runtime_resume) from [<c04241c0>] (__rpm_callback+0xc8/0x218)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+    domain                          status          slaves
+        /device                                             runtime status
+    ----------------------------------------------------------------------
+    power-domain@100440C0           on
+        /devices/platform/soc/14450000.mixer                active
+        /devices/platform/soc/14530000.hdmi                 active
+    power-domain@10044120           on
+    power-domain@10044060           off-0
+    power-domain@10044020           on
+    power-domain@10044000           on
+        /devices/platform/soc/13e00000.video-scaler         suspended
+        /devices/platform/soc/13e10000.video-scaler         resuming
 
-Best regards,
+So until a proper solution based on runtime PM gets merged, mark the clock
+as critical to prevent it to be gated.
+
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 8c8b495cbf0d..9876ec28b94c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -586,7 +586,7 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+ 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+-				GATE_BUS_TOP, 27, 0, 0),
++				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.4
