@@ -1,45 +1,59 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH] drm/exynos: fix a timeout loop
-Date: Fri, 20 Jan 2017 17:54:32 +0100
-Message-ID: <1484931272-20113-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Use correct mfc_pd async-bridge
+ clock for Exynos5420
+Date: Fri, 20 Jan 2017 14:15:40 -0300
+Message-ID: <55cdceb9-d768-d5a9-7bc2-d4ef26d2e5e8@osg.samsung.com>
+References: <1484864995-10679-1-git-send-email-javier@osg.samsung.com>
+ <1484864995-10679-2-git-send-email-javier@osg.samsung.com>
+ <20170120162846.x766u3nzblqywggj@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170120162846.x766u3nzblqywggj@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgoKV2Ugd2VyZSB0
-cnlpbmcgdG8gcHJpbnQgYW4gZXJyb3IgbWVzc2FnZSBpZiB3ZSB0aW1lZCBvdXQgaGVyZSwgYnV0
-IHRoZQpsb29wIGFjdHVhbGx5IGVuZHMgd2l0aCAidHJpZXMiIHNldCB0byBVSU5UX01BWCBhbmQg
-bm90IHplcm8uICBGaXggdGhpcwpieSBjaGFuZ2luZyBmcm9tIHRyaWVzLS0gdG8gLS10cmllcy4K
-CkEgZm9yIGxvb3Agd291bGQgYWN0dWFsbHkgYmUgdGhlIG1vc3QgbmF0dXJhbCB3YXkgdG8gZG8g
-dGhpcy4gIE15IGZpeAptZWFucyB3ZSBvbmx5IGxvb3AgOTkgdGltZXMgaW5zdGVhZCBvZiAxMDAg
-YnV0IHRoYXQncyBwcm9iYWJseSBvay4KCkZpeGVzOiBhNjk2Mzk0YzUyMjQgKCdkcm0vZXh5bm9z
-OiBtaXhlcjogc2ltcGxpZnkgbG9vcCBpbiB2cF93aW5fcmVzZXQoKScpClNpZ25lZC1vZmYtYnk6
-IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KUmV2aWV3ZWQtYnk6IFRv
-YmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBp
-bnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYwppbmRleCBlZGIyMGEzLi5mY2M3ZTRmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMKQEAgLTcwMSw3ICs3MDEsNyBAQCBzdGF0aWMgdm9pZCB2cF93aW5fcmVzZXQoc3Ry
-dWN0IG1peGVyX2NvbnRleHQgKmN0eCkKIAl1bnNpZ25lZCBpbnQgdHJpZXMgPSAxMDA7CiAKIAl2
-cF9yZWdfd3JpdGUocmVzLCBWUF9TUkVTRVQsIFZQX1NSRVNFVF9QUk9DRVNTSU5HKTsKLQl3aGls
-ZSAodHJpZXMtLSkgeworCXdoaWxlICgtLXRyaWVzKSB7CiAJCS8qIHdhaXRpbmcgdW50aWwgVlBf
-U1JFU0VUX1BST0NFU1NJTkcgaXMgMCAqLwogCQlpZiAofnZwX3JlZ19yZWFkKHJlcywgVlBfU1JF
-U0VUKSAmIFZQX1NSRVNFVF9QUk9DRVNTSU5HKQogCQkJYnJlYWs7Ci0tIAoyLjcuMwoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Krzysztof,
+
+On 01/20/2017 01:28 PM, Krzysztof Kozlowski wrote:
+> On Thu, Jan 19, 2017 at 07:29:55PM -0300, Javier Martinez Canillas wrote:
+>> Commit 94aed538e032 ("ARM: dts: exynos: Add async-bridge clock to MFC
+>> power domain for Exynos5420") fixed an imprecise external abort error
+>> when the MFC registers were tried to be accessed and the needed clock
+>> for the asynchronous bridges were gated.
+>>
+>> But according to the Exynos5420 manual the "Gating AXI clock for MFC"
+>> is not CLK_ACLK333 but CLK_MFC.
+>>
+>> The end effect is the same because CLK_ACLK333 is a parent of CLK_MFC
+>> but the correct clock should be used instead.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> ---
+>>
+>>  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Is this still needed?
+> 
+
+Not really, only if we care about correctness in the existing power domains
+that have their clocks defined. But as said, even currently with CLK_ACLK333
+works due to the clock hierarchy.
+
+I think is less of an issue now that we prefer to mark clocks that needs to
+be ungated as critical instead of growing the DT ABI.
+
+> Best regards,
+> Krzysztof
+> 
+ 
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
