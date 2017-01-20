@@ -1,27 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 37/37] ARM: dts: DRA7: Add pcie1 dt node for EP mode
-Date: Fri, 20 Jan 2017 10:30:00 -0800
-Message-ID: <20170120183000.GF7403@atomide.com>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-38-git-send-email-kishon@ti.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.11
+Date: Fri, 20 Jan 2017 15:51:24 -0800
+Message-ID: <20170120235124.GD20800@codeaurora.org>
+References: <CGME20170119175445epcas1p41dcadba15bf106dd4a3a76a3a0278467@epcas1p4.samsung.com>
+ <684f822a-b405-f7f1-da45-965fe14ac741@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1484216786-17292-38-git-send-email-kishon@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, nsekhar@ti.com
+In-Reply-To: <684f822a-b405-f7f1-da45-965fe14ac741@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Kishon Vijay Abraham I <kishon@ti.com> [170112 02:34]:
-> Add pcie1 dt node in order for the controller to operate in
-> endpoint mode. However since none of the dra7 based boards have
-> slots configured to operate in endpoint mode, keep EP mode
-> disabled.
+On 01/19, Sylwester Nawrocki wrote:
+> Hi Stephen, Mike,
+> 
+> Here is my pull request with a few clk/samsung updates for v4.11.
+> Commit "clk: samsung: Add CPU clk configuration data for Exynos4412 Prime"
+> has been already pulled into the arm-soc tree as a dependency.
+> 
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung
+> 
+> for you to fetch changes up to cb4ac949ea14416a2d57b7a343bc4b571074e3bd:
+> 
+>   clk: samsung: Remove Exynos4415 driver (SoC not supported anymore) (2017-01-16 11:33:38 +0100)
 
-Can this be merged separately later on without breaking anything?
+Thanks. Pulled into clk-next.
 
-Regards,
-
-Tony
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
