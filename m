@@ -1,56 +1,31 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] [media] exynos-gsc: Fix imprecise external abort due
- disabled power domain
-Date: Fri, 20 Jan 2017 07:46:29 -0300
-Message-ID: <042e9067-7ef1-c942-0341-634963ff3fb0@osg.samsung.com>
-References: <1484699402-28738-1-git-send-email-javier@osg.samsung.com>
- <CGME20170118003022epcas3p34cf03bb6feb830c4fa231497f2536d0e@epcas3p3.samsung.com>
- <1484699402-28738-2-git-send-email-javier@osg.samsung.com>
- <cc9c6837-7141-b63c-ddf6-68252493df11@samsung.com>
- <842737f2-3faf-7b22-c480-93e183bbb670@osg.samsung.com>
- <d727576a-fbce-eb54-3b74-270c689b7fa3@osg.samsung.com>
- <c1d00b28-0252-0fb1-eb7c-5fc69035f12f@samsung.com>
- <c72965a4-d6e0-f3e7-1140-039274f7e60b@osg.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
+ CLK_IS_CRITICAL
+Date: Fri, 20 Jan 2017 13:32:18 +0100
+Message-ID: <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
+References: <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
+ <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c72965a4-d6e0-f3e7-1140-039274f7e60b@osg.samsung.com>
+In-reply-to: <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 01/20/2017 07:06 AM, Javier Martinez Canillas wrote:
-> Hello Marek,
+On 01/20/2017 11:41 AM, Javier Martinez Canillas wrote:
+> On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
+> and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
 > 
-> On 01/20/2017 05:37 AM, Marek Szyprowski wrote:
+> But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
+> this definition from exynos5420.dtsi in Exynos5800 leads to the following:
+[...]
+> So until a proper solution based on runtime PM gets merged, mark the clock
+> as critical to prevent it to be gated.
 > 
-> [snip]
->>
->> Please send this patch instead of adding more clocks to the power domains.
->> This way we will avoid adding more dependencies to userspace (DT ABI).
->> Likely those clocks are also needed to access any device in that power
->> domains.
->>
->> Later, once the runtime PM for clocks get merged, a patch for exynos542x
->> clocks driver can be made to replace IS_CRITICAL with proper runtime
->> handling.
->>
-> 
-> Ok, I thought that we didn't want to mark more clocks as CLK_IGNORE_UNUSED
-> or CLK_IS_CRITICAL but I agree this can be done as a temporary workaround
-> until a proper runtime PM based solution gets merged.
-> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-I posted following patch [0] for clk-exynos5420, so $SUBJECT can be dropped.
-
-[0]: https://patchwork.kernel.org/patch/9527957/
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
