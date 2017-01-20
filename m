@@ -1,65 +1,53 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2] PCI: exynos: refactor exynos pcie driver
-Date: Fri, 20 Jan 2017 09:59:19 +0530
-Message-ID: <d63bfff9-4ea8-a670-581b-38b224ca1676@samsung.com>
-References: <CGME20170105035104epcas1p2de6c52e577dd78a4f3539fb32d1f0dfe@epcas1p2.samsung.com>
- <1483588418-2551-1-git-send-email-pankaj.dubey@samsung.com>
- <339cc068-567e-09b0-3578-08fd7a5df109@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 3/7] drm/exynos/hdmi: fix PLL for 27MHz settings
+Date: Fri, 20 Jan 2017 07:52:21 +0100
+Message-ID: <1484895145-511-4-git-send-email-a.hajda@samsung.com>
+References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170120065230eucas1p1839ddd9b5fefa265ad5feab59e67fd2a@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <339cc068-567e-09b0-3578-08fd7a5df109@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, jingoohan1@gmail.com, bhelgaas@google.com
-Cc: krzk@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, sanath@samsung.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, CPGS <cpgs@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Jingoo, Bjorn,
-
-On Thursday 05 January 2017 09:47 AM, Jaehoon Chung wrote:
-> On 01/05/2017 12:53 PM, Pankaj Dubey wrote:
->> From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
->>
->> Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
->> This patch does refactoring of Exynos PCIe driver to extend support
->> for other Exynos SoC.
->>
->> Following are the main changes done via this patch:
->>
->> 1) It adds separate structs for memory, clock resources.
->>
->> Reason behind this change is, moving ahead various Exynos SoC will
->> have different hardware resources such as iomem, clocks, regmap handles
->> etc. for PCIe controller, so keeping these resources in separate struct
->> will help us in intiailizing them via per SoC ops, and will avoid too
->> many of_machine_is_compatible in code, and help us simplifying
->> exynos_pcie struct.
->>
->> 2) It add exynos_pcie_ops struct which will allow us to support the
->> differences in resources in different Exynos SoC.
->>
->> No functional change intended.
->>
->> Signed-off-by: Niyas Ahmed S T <niyas.ahmed@samsung.com>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
-> Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
-> 
-> Best Regards,
-> Jaehoon Chung
-> 
->> ---
->> This patch set is prepared on top of Krzysztof's for-next and
->> PCIe driver cleanup patch [1] by Jaehoon Chung.
->>
->> [1]: https://lkml.org/lkml/2016/12/19/44
->>
-
-Any update on this patch and dependent series [1] from Jaehoon Chung.
-
-
-Thanks,
-Pankaj Dubey
+Q3VycmVudCBzZXR0aW5ncyBmb3IgMjdNSHogYW5kIDI3LjAyN01IeiBkbyBub3Qgd29yay4gVXNl
+IHRoZSBzZXR0aW5ncyBmcm9tCnZlbmRvciBjb2RlIGluc3RlYWQuCgpTaWduZWQtb2ZmLWJ5OiBB
+bmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2hkbWkuYyB8IDEyICsrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDYg
+aW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19o
+ZG1pLmMKaW5kZXggMjIzYjg3Mi4uYTczYjE5MiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2hkbWkuYwpAQCAtNTA5LDkgKzUwOSw5IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaGRtaXBoeV9j
+b25maWcgaGRtaXBoeV81NDMzX2NvbmZpZ3NbXSA9IHsKIAl7CiAJCS5waXhlbF9jbG9jayA9IDI3
+MDAwMDAwLAogCQkuY29uZiA9IHsKLQkJCTB4MDEsIDB4NTEsIDB4MjIsIDB4NTEsIDB4MDgsIDB4
+ZmMsIDB4ODgsIDB4NDYsCi0JCQkweDcyLCAweDUwLCAweDI0LCAweDBjLCAweDI0LCAweDBmLCAw
+eDdjLCAweGE1LAotCQkJMHhkNCwgMHgyYiwgMHg4NywgMHgwMCwgMHgwMCwgMHgwNCwgMHgwMCwg
+MHgzMCwKKwkJCTB4MDEsIDB4NTEsIDB4MmQsIDB4NzUsIDB4MDEsIDB4MDAsIDB4ODgsIDB4MDIs
+CisJCQkweDcyLCAweDUwLCAweDQ0LCAweDhjLCAweDI3LCAweDAwLCAweDdjLCAweGFjLAorCQkJ
+MHhkNiwgMHgyYiwgMHg2NywgMHgwMCwgMHgwMCwgMHgwNCwgMHgwMCwgMHgzMCwKIAkJCTB4MDgs
+IDB4MTAsIDB4MDEsIDB4MDEsIDB4NDgsIDB4NDAsIDB4MDAsIDB4NDAsCiAJCX0sCiAJfSwKQEAg
+LTUxOSw5ICs1MTksOSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhkbWlwaHlfY29uZmlnIGhkbWlw
+aHlfNTQzM19jb25maWdzW10gPSB7CiAJCS5waXhlbF9jbG9jayA9IDI3MDI3MDAwLAogCQkuY29u
+ZiA9IHsKIAkJCTB4MDEsIDB4NTEsIDB4MmQsIDB4NzIsIDB4NjQsIDB4MDksIDB4ODgsIDB4YzMs
+Ci0JCQkweDcxLCAweDUwLCAweDI0LCAweDE0LCAweDI0LCAweDBmLCAweDdjLCAweGE1LAotCQkJ
+MHhkNCwgMHgyYiwgMHg4NywgMHgwMCwgMHgwMCwgMHgwNCwgMHgwMCwgMHgzMCwKLQkJCTB4Mjgs
+IDB4MTAsIDB4MDEsIDB4MDEsIDB4NDgsIDB4NDAsIDB4MDAsIDB4NDAsCisJCQkweDcxLCAweDUw
+LCAweDQ0LCAweDhjLCAweDI3LCAweDAwLCAweDdjLCAweGFjLAorCQkJMHhkNiwgMHgyYiwgMHg2
+NywgMHgwMCwgMHgwMCwgMHgwNCwgMHgwMCwgMHgzMCwKKwkJCTB4MDgsIDB4MTAsIDB4MDEsIDB4
+MDEsIDB4NDgsIDB4NDAsIDB4MDAsIDB4NDAsCiAJCX0sCiAJfSwKIAl7Ci0tIAoyLjcuNAoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
