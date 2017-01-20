@@ -1,68 +1,38 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
-Date: Fri, 20 Jan 2017 08:53:03 +0900
-Message-ID: <67df69b9-3231-efd3-8e28-d73ce00ebe41@samsung.com>
-References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
- <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
- <587E2922.10805@math.uni-bielefeld.de>
- <f0d1e14e-26b9-1f4f-6703-e0efe8ad9af4@samsung.com>
- <5880BC19.8080000@math.uni-bielefeld.de>
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH 1/3] Input: add STMicroelectronics FingerTip touchscreen
+ driver
+Date: Fri, 20 Jan 2017 09:19:14 +0900
+Message-ID: <20170120001914.him3d6j2fota547l@jack.zhora.eu>
+References: <20170117135441.31450-1-andi.shyti@samsung.com>
+ <CGME20170117135456epcas5p2e303f0c5fa642b43fde543d5d6098dc2@epcas5p2.samsung.com>
+ <20170117135441.31450-2-andi.shyti@samsung.com>
+ <20170119181912.lzlcc5zbtue2ojp4@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5880BC19.8080000@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smida.it ([94.23.22.176]:54004 "EHLO smtp.smida.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753603AbdATATb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 19 Jan 2017 19:19:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20170119181912.lzlcc5zbtue2ojp4@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Andi Shyti <andi.shyti@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-SGkgVG9iaWFzLAoKT24gMDEvMTkvMjAxNyAxMDoxNiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
-PiBIZWxsbyBKb29ueW91bmcsCj4gCj4gSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4+IEhpIFRvYmlh
-cywKPj4KPj4gT24gMDEvMTcvMjAxNyAxMToyNCBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4+
-IEpvb255b3VuZyBTaGltIHdyb3RlOgo+Pj4+IFRoZSBzaXplIG9mIGNtZGxpc3QgaXMgaW50ZWdl
-ciB0eXBlLCBzbyBpdCBjYW4gYmUgb3ZlcmZsb3dlZCBieSBjbWQgYW5kCj4+Pj4gY21kX2J1ZiB0
-aGF0IGhhcyB0b28gYmlnIHNpemUuIFRoaXMgcGF0Y2ggd2lsbCBmaXggb3ZlcmZsb3cgaXNzdWUg
-YXMKPj4+PiBjaGVja2luZyBtYXhpbXVtIHNpemUgb2YgY21kIGFuZCBjbWRfYnVmLgo+Pj4gSSBk
-b24ndCB1bmRlcnN0YW5kL3NlZSB0aGUgaXNzdWUgaGVyZS4gQ291bGQgeW91IHBvaW50IG91dCBm
-b3Igd2hpY2gKPj4+IGlucHV0IG9mIHRoZSBzZXRfY21kbGlzdCBpb2N0bCB5b3Ugc2VlIHRoaXMg
-cGFydGljdWxhciBvdmVyZmxvdz8KPj4+Cj4+PiBJbiBwYXJ0aWN1bGFyIGl0IGlzIG5vdCBjbGVh
-ciB0byBtZSB3aGljaCBzaXplIGZpZWxkIHlvdSdyZSB0YWxraW5nCj4+PiBhYm91dC4gc3RydWN0
-IGcyZF9jbWRsaXN0IGRvZXMgbm90IGhhdmUgYW55IGZpZWxkIG5hbWVkICdzaXplJy4KPj4+Cj4+
-Cj4+IEkgbWVhbiBzaXplIG9mIGNtZGxpc3QgaXMKPj4gc2l6ZSA9IGNtZGxpc3QtPmxhc3QgKyBy
-ZXEtPmNtZF9uciAqIDIgKyByZXEtPmNtZF9idWZfbnIgKiAyICsgMjsKPj4gaW4gZXh5bm9zX2cy
-ZF9zZXRfY21kbGlzdF9pb2N0bCgpLgo+IG9rLCB0aGF0IG1ha2VzIHRoaW5ncyBtb3JlIGNsZWFy
-LiBCdXQgdGhlbiB5b3UgbmVlZCB0byBmaXggdGhlIGNvbW1pdAo+IG1lc3NhZ2UuIFRoZSBjdXJy
-ZW50IG1lc3NhZ2UgaW1wbGllcyB0aGF0IHRoaXMgJ3NpemUnIHlvdSdyZSB0YWxraW5nCj4gYWJv
-dXQgaXMgc29tZSBwcm9wZXJ0eSBvZiB0aGUgY21kbGlzdC4KPiAKPiBBbHNvIHRoZSBuZXcgY29t
-bWVudCBpcyB3cm9uZy4KPiAvKiBDaGVjayBzaXplIG9mIGNtZCBhbmQgY21kbGlzdDogbGFzdCAy
-IGlzIGFib3V0IEcyRF9CSVRCTFRfU1RBUlQgKi8KPiAKPiBXaGF0IGlzIGNtZCBhbmQgY21kbGlz
-dD8gWW91J3JlIG1peGluZyB0d28gZGlmZmVyZW50IHRoaW5ncyBoZXJlLiBXZSBhcmUKPiBzdGls
-bCBjaGVja2luZyB0aGUgc2l6ZSBvZiAnY21kbGlzdCcgKHdoaWNoIGlzIGEgc3RydWN0IGcyZF9j
-bWRsaXN0KSBoZXJlLgo+IAo+IFdoYXQgeW91IGFkZCBpcyBhIGNoZWNrIGZvciB0aGUgZmllbGRz
-IG9mICdyZXEnICh3aGljaCBpcyBhIHN0cnVjdAo+IGRybV9leHlub3NfZzJkX3NldF9jbWRsaXN0
-KS4KPiAKPiBXaXRoIGFsbCB0aGF0IHNhaWQsIEkgZG9uJ3QgbGlrZSB0aGUgY2hhbmdlcy4gSSBz
-ZWUgdGhlIGlzc3VlLCBidXQgdGhlCj4gY3VycmVudCBzb2x1dGlvbiBzaG91bGQgYmUgY2xlYW5l
-ci4KPiAKPiBJIHByb3Bvc2UgdGhpcy4gV2UganVzdCBjaGVjayByZXEtPmNtZF9idWZfbnIgYW5k
-IHJlcS0+Y21kX25yIGFnYWluc3QKPiBHMkRfQ01ETElTVF9EQVRBX05VTS4gVGhpcyBsZWF2ZXMg
-dXMgZW5vdWdoIGhlYWRyb20gc28gdGhhdCB0aGUgbGF0ZXIKPiBjb21wdXRhdGlvbiAoaS5lLiB3
-aGF0IGlzIGVuZGluZyB1cCBpbiB0aGUgbG9jYWwgdmFyaWFibGUgJ3NpemUnKSBjYW4KPiBuZXZl
-ciBvdmVyZmxvdy4KPiAKCkFncmVlLCBpdCdzIG1vcmUgY2xlYXIgdG8gY2hlY2sgcmVxLT5jbWRf
-YnVmX25yIGFuZCByZXEtPmNtZF9uciBhZ2FpbnN0CkcyRF9DTURMSVNUX0RBVEFfTlVNLgoKPiBG
-b3IgYSBjb21tZW50IGZvciB0aGUgY2hlY2sgSSBwcm9wb3NlIHRoaXM6Cj4gIlRvIGF2b2lkIGFu
-IGludGVnZXIgb3ZlcmZsb3cgZm9yIHRoZSBsYXRlciBzaXplIGNvbXB1dGF0aW9ucywgd2UKPiBl
-bmZvcmNlIGEgbWF4aW11bSBudW1iZXIgb2Ygc3VibWl0dGVkIGNvbW1hbmRzIGhlcmUuIFRoaXMg
-bGltaXQgaXMKPiBzdWZmaWNpZW50IGZvciBhbGwgY29uY2VpdmFibGUgdXNhZ2UgY2FzZXMgb2Yg
-dGhlIEcyRC4iCj4gCgpDb3VsZCB5b3UgcG9zdCB5b3VyIHBhdGNoIHRvIE1MIGFib3V0IHRoaXMg
-aWYgeW91IHdhbnQ/CgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hi Rob,
+
+> > +- compatible		: must be "st,stmfts"
+> 
+> Seems too generic. Is this a single device?
+
+the device is precisely called ST-Microelectronics FingerTip S
+(stmfts). There are variants, but they all have the same name and
+same datasheet.
+
+Maybe I can be more specific in the description, sometimes I
+omitted the 'S'.
+
+Andi
