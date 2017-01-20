@@ -1,74 +1,56 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd
- fields
-Date: Fri, 20 Jan 2017 15:55:40 +0200
-Message-ID: <20170120135540.GC31595@intel.com>
-References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
- <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
+ CLK_IS_CRITICAL
+Date: Fri, 20 Jan 2017 11:00:38 -0300
+Message-ID: <48a2f141-4275-cb79-aafd-62191d747107@osg.samsung.com>
+References: <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
+ <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+ <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
+ <0ffa0d28-1086-887c-dcfc-590b6146b03e@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+In-Reply-To: <0ffa0d28-1086-887c-dcfc-590b6146b03e@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 20, 2017 at 07:52:24AM +0100, Andrzej Hajda wrote:
-> In case of interlace mode irq is generated for odd and even fields, but
-> vblank should be signaled only for the last emitted field.
+Hello Sylwester,
 
-I'm pretty sure most drivers signal it for both fields. At least i915
-does.
+On 01/20/2017 10:55 AM, Sylwester Nawrocki wrote:
+> On 01/20/2017 01:32 PM, Sylwester Nawrocki wrote:
+>> On 01/20/2017 11:41 AM, Javier Martinez Canillas wrote:
+>>> On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
+>>> and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
+>>>
+>>> But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
+>>> this definition from exynos5420.dtsi in Exynos5800 leads to the following:
+>> [...]
+>>> So until a proper solution based on runtime PM gets merged, mark the clock
+>>> as critical to prevent it to be gated.
+>>>
+>>> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> Oops, the $subject patch can be dropped since as Marek just pointed out
+> to me the changes introduced by that patch are already included in a patch
+> which is already in the v4.10 fixes queue:
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=318fa46cc60d37fec1e87dbf03a82aca0f5ce695
+> 
 
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 7 +++++++
->  include/video/exynos5433_decon.h              | 1 +
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> index 46434ba9..ad8b93a 100644
-> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> @@ -591,6 +591,13 @@ static irqreturn_t decon_irq_handler(int irq, void *dev_id)
->  
->  	if (val) {
->  		writel(val, ctx->addr + DECON_VIDINTCON1);
-> +		if (ctx->out_type & IFTYPE_HDMI) {
-> +			val = readl(ctx->addr + DECON_VIDOUTCON0);
-> +			val &= VIDOUT_INTERLACE_EN_F | VIDOUT_INTERLACE_FIELD_F;
-> +			if (val ==
-> +			    (VIDOUT_INTERLACE_EN_F | VIDOUT_INTERLACE_FIELD_F))
-> +				return IRQ_HANDLED;
-> +		}
->  		drm_crtc_handle_vblank(&ctx->crtc->base);
->  	}
->  
-> diff --git a/include/video/exynos5433_decon.h b/include/video/exynos5433_decon.h
-> index b26511a..ef8e2a8 100644
-> --- a/include/video/exynos5433_decon.h
-> +++ b/include/video/exynos5433_decon.h
-> @@ -89,6 +89,7 @@
->  #define VIDCON0_ENVID_F			(1 << 0)
->  
->  /* VIDOUTCON0 */
-> +#define VIDOUT_INTERLACE_FIELD_F	(1 << 29)
->  #define VIDOUT_INTERLACE_EN_F		(1 << 28)
->  #define VIDOUT_LCD_ON			(1 << 24)
->  #define VIDOUT_IF_F_MASK		(0x3 << 20)
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Yes, I just answered to Marek in the other thread saying the same.
+He did mention the patch could fix the issue but for some reason I
+didn't see the CLK_ACLK_300_GSCL in the clocks marked as critical...
 
+Anyways, sorry for the noise.
+
+Best regards,
 -- 
-Ville Syrjälä
-Intel OTC
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
