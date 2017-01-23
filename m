@@ -1,66 +1,87 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 7/7] arm64: dts: exynos: configure TV path clocks for
- Ultra HD modes
-Date: Mon, 23 Jan 2017 10:08:32 +0100
-Message-ID: <a9812091-2b97-0abf-da74-313ff941bb76@samsung.com>
-References: <20170120145138.yhjngt2cxbikq32z@kozik-lap>
- <CGME20170123075623eucas1p19a1edd12eec91abdbbf786b308f65051@eucas1p1.samsung.com>
- <1485158175-22342-1-git-send-email-a.hajda@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: g2d: fix overflow of cmdlist size
+Date: Mon, 23 Jan 2017 18:10:53 +0900
+Message-ID: <5885C89D.4020204@samsung.com>
+References: <CGME20170117044134epcas5p2d0e67623efa7eb0b9a1ad6f8a593f0c4@epcas5p2.samsung.com>
+ <1484628126-21671-1-git-send-email-jy0922.shim@samsung.com>
+ <587E2922.10805@math.uni-bielefeld.de>
+ <f0d1e14e-26b9-1f4f-6703-e0efe8ad9af4@samsung.com>
+ <5880BC19.8080000@math.uni-bielefeld.de>
+ <67df69b9-3231-efd3-8e28-d73ce00ebe41@samsung.com>
+ <58823530.70107@math.uni-bielefeld.de>
+ <fc4202a0-63aa-49b6-58c6-d0fbc470dad5@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29439 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751050AbdAWJIh (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 04:08:37 -0500
-In-reply-to: <1485158175-22342-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <fc4202a0-63aa-49b6-58c6-d0fbc470dad5@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
-
-On 2017-01-23 08:56, Andrzej Hajda wrote:
-> Ultra HD modes requires clock ticking at increased rate.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index f120d99..4d28e93 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-
-I think that exynos5433-tm2-common.dtsi is a better place for such 
-definitions.
-They can be also moved to &cmu_disp node to match convention for the clocks
-configuration used on particular board.
-
-> @@ -764,6 +764,17 @@
->   			clock-names = "pclk", "aclk_decon", "aclk_smmu_decon0x",
->   				      "aclk_xiu_decon0x", "pclk_smmu_decon0x",
->   				      "sclk_decon_vclk", "sclk_decon_eclk";
-> +			assigned-clocks =
-> +				<&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
-> +				<&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
-> +				<&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
-> +				<&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
-> +			assigned-clock-parents =
-> +				<&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
-> +				<0>,
-> +				<&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-> +				<&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
-> +			assigned-clock-rates = <0>, <400000000>;
->   			samsung,disp-sysreg = <&syscon_disp>;
->   			interrupt-names = "fifo", "vsync", "lcd_sys";
->   			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+CgoyMDE364WEIDAx7JuUIDIz7J28IDE3OjIy7JeQIEpvb255b3VuZyBTaGltIOydtCjqsIApIOyT
+tCDquIA6Cj4gSGkgVG9iaWFzLAo+IAo+IE9uIDAxLzIxLzIwMTcgMDE6MDUgQU0sIFRvYmlhcyBK
+YWtvYmkgd3JvdGU6Cj4+IEhlbGxvIEpvb255b3VuZywKPj4KPj4KPj4gSm9vbnlvdW5nIFNoaW0g
+d3JvdGU6Cj4+PiBIaSBUb2JpYXMsCj4+Pgo+Pj4gT24gMDEvMTkvMjAxNyAxMDoxNiBQTSwgVG9i
+aWFzIEpha29iaSB3cm90ZToKPj4+PiBIZWxsbyBKb29ueW91bmcsCj4+Pj4KPj4+PiBKb29ueW91
+bmcgU2hpbSB3cm90ZToKPj4+Pj4gSGkgVG9iaWFzLAo+Pj4+Pgo+Pj4+PiBPbiAwMS8xNy8yMDE3
+IDExOjI0IFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+Pj4+Pj4gSm9vbnlvdW5nIFNoaW0gd3Jv
+dGU6Cj4+Pj4+Pj4gVGhlIHNpemUgb2YgY21kbGlzdCBpcyBpbnRlZ2VyIHR5cGUsIHNvIGl0IGNh
+biBiZSBvdmVyZmxvd2VkIGJ5IGNtZCBhbmQKPj4+Pj4+PiBjbWRfYnVmIHRoYXQgaGFzIHRvbyBi
+aWcgc2l6ZS4gVGhpcyBwYXRjaCB3aWxsIGZpeCBvdmVyZmxvdyBpc3N1ZSBhcwo+Pj4+Pj4+IGNo
+ZWNraW5nIG1heGltdW0gc2l6ZSBvZiBjbWQgYW5kIGNtZF9idWYuCj4+Pj4+PiBJIGRvbid0IHVu
+ZGVyc3RhbmQvc2VlIHRoZSBpc3N1ZSBoZXJlLiBDb3VsZCB5b3UgcG9pbnQgb3V0IGZvciB3aGlj
+aAo+Pj4+Pj4gaW5wdXQgb2YgdGhlIHNldF9jbWRsaXN0IGlvY3RsIHlvdSBzZWUgdGhpcyBwYXJ0
+aWN1bGFyIG92ZXJmbG93Pwo+Pj4+Pj4KPj4+Pj4+IEluIHBhcnRpY3VsYXIgaXQgaXMgbm90IGNs
+ZWFyIHRvIG1lIHdoaWNoIHNpemUgZmllbGQgeW91J3JlIHRhbGtpbmcKPj4+Pj4+IGFib3V0LiBz
+dHJ1Y3QgZzJkX2NtZGxpc3QgZG9lcyBub3QgaGF2ZSBhbnkgZmllbGQgbmFtZWQgJ3NpemUnLgo+
+Pj4+Pj4KPj4+Pj4KPj4+Pj4gSSBtZWFuIHNpemUgb2YgY21kbGlzdCBpcwo+Pj4+PiBzaXplID0g
+Y21kbGlzdC0+bGFzdCArIHJlcS0+Y21kX25yICogMiArIHJlcS0+Y21kX2J1Zl9uciAqIDIgKyAy
+Owo+Pj4+PiBpbiBleHlub3NfZzJkX3NldF9jbWRsaXN0X2lvY3RsKCkuCj4+Pj4gb2ssIHRoYXQg
+bWFrZXMgdGhpbmdzIG1vcmUgY2xlYXIuIEJ1dCB0aGVuIHlvdSBuZWVkIHRvIGZpeCB0aGUgY29t
+bWl0Cj4+Pj4gbWVzc2FnZS4gVGhlIGN1cnJlbnQgbWVzc2FnZSBpbXBsaWVzIHRoYXQgdGhpcyAn
+c2l6ZScgeW91J3JlIHRhbGtpbmcKPj4+PiBhYm91dCBpcyBzb21lIHByb3BlcnR5IG9mIHRoZSBj
+bWRsaXN0Lgo+Pj4+Cj4+Pj4gQWxzbyB0aGUgbmV3IGNvbW1lbnQgaXMgd3JvbmcuCj4+Pj4gLyog
+Q2hlY2sgc2l6ZSBvZiBjbWQgYW5kIGNtZGxpc3Q6IGxhc3QgMiBpcyBhYm91dCBHMkRfQklUQkxU
+X1NUQVJUICovCj4+Pj4KPj4+PiBXaGF0IGlzIGNtZCBhbmQgY21kbGlzdD8gWW91J3JlIG1peGlu
+ZyB0d28gZGlmZmVyZW50IHRoaW5ncyBoZXJlLiBXZSBhcmUKPj4+PiBzdGlsbCBjaGVja2luZyB0
+aGUgc2l6ZSBvZiAnY21kbGlzdCcgKHdoaWNoIGlzIGEgc3RydWN0IGcyZF9jbWRsaXN0KSBoZXJl
+Lgo+Pj4+Cj4+Pj4gV2hhdCB5b3UgYWRkIGlzIGEgY2hlY2sgZm9yIHRoZSBmaWVsZHMgb2YgJ3Jl
+cScgKHdoaWNoIGlzIGEgc3RydWN0Cj4+Pj4gZHJtX2V4eW5vc19nMmRfc2V0X2NtZGxpc3QpLgo+
+Pj4+Cj4+Pj4gV2l0aCBhbGwgdGhhdCBzYWlkLCBJIGRvbid0IGxpa2UgdGhlIGNoYW5nZXMuIEkg
+c2VlIHRoZSBpc3N1ZSwgYnV0IHRoZQo+Pj4+IGN1cnJlbnQgc29sdXRpb24gc2hvdWxkIGJlIGNs
+ZWFuZXIuCj4+Pj4KPj4+PiBJIHByb3Bvc2UgdGhpcy4gV2UganVzdCBjaGVjayByZXEtPmNtZF9i
+dWZfbnIgYW5kIHJlcS0+Y21kX25yIGFnYWluc3QKPj4+PiBHMkRfQ01ETElTVF9EQVRBX05VTS4g
+VGhpcyBsZWF2ZXMgdXMgZW5vdWdoIGhlYWRyb20gc28gdGhhdCB0aGUgbGF0ZXIKPj4+PiBjb21w
+dXRhdGlvbiAoaS5lLiB3aGF0IGlzIGVuZGluZyB1cCBpbiB0aGUgbG9jYWwgdmFyaWFibGUgJ3Np
+emUnKSBjYW4KPj4+PiBuZXZlciBvdmVyZmxvdy4KPj4+Pgo+Pj4KPj4+IEFncmVlLCBpdCdzIG1v
+cmUgY2xlYXIgdG8gY2hlY2sgcmVxLT5jbWRfYnVmX25yIGFuZCByZXEtPmNtZF9uciBhZ2FpbnN0
+Cj4+PiBHMkRfQ01ETElTVF9EQVRBX05VTS4KPj4+Cj4+Pj4gRm9yIGEgY29tbWVudCBmb3IgdGhl
+IGNoZWNrIEkgcHJvcG9zZSB0aGlzOgo+Pj4+ICJUbyBhdm9pZCBhbiBpbnRlZ2VyIG92ZXJmbG93
+IGZvciB0aGUgbGF0ZXIgc2l6ZSBjb21wdXRhdGlvbnMsIHdlCj4+Pj4gZW5mb3JjZSBhIG1heGlt
+dW0gbnVtYmVyIG9mIHN1Ym1pdHRlZCBjb21tYW5kcyBoZXJlLiBUaGlzIGxpbWl0IGlzCj4+Pj4g
+c3VmZmljaWVudCBmb3IgYWxsIGNvbmNlaXZhYmxlIHVzYWdlIGNhc2VzIG9mIHRoZSBHMkQuIgo+
+Pj4+Cj4+Pgo+Pj4gQ291bGQgeW91IHBvc3QgeW91ciBwYXRjaCB0byBNTCBhYm91dCB0aGlzIGlm
+IHlvdSB3YW50Pwo+PiBTdXJlLCBJJ3ZlIGp1c3Qgc2VuZCBpdCB0b2dldGhlciB3aXRoIHR3byBv
+dGhlciBzbWFsbCBwYXRjaGVzLiBMZXQgbWUKPj4ga25vdyBpZiB0aGUgY3VycmVudCB2ZXJzaW9u
+IGlzIE9LIHdpdGggeW91LiBJIGhvcGUgSSBkaWQgdGhlIG9yZGVyIG9mCj4+IFNvQiBjb3JyZWN0
+bHkgKEkga25vdyB0aGF0IEtyenlzenRvZiBoYXMgcG9pbnRlZCB0aGlzIG91dCBsYXRlbHkpLgo+
+Pgo+IAo+IEkgZG9uJ3Qga25vdyBleGFjdGx5IGFib3V0IG9yZGVyIG9mIFNvQiBidXQgaXQncyBv
+ayB0byBtZSBleGNlcHQKPiBXQVJOSU5HOiBsaW5lIG92ZXIgODAgY2hhcmFjdGVycyBmcm9tIGNo
+ZWNrcGF0Y2gucGwuCgpUcml2aWFsIHRoaW5nLiBJIGNhbiBmaXggaXQuCgpUaGFua3MuCgo+IAo+
+IFRoYW5rcyBmb3IgcG9zdGluZy4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUg
+Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFq
+b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
+bAo+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
