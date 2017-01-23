@@ -1,73 +1,42 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
-Date: Mon, 23 Jan 2017 19:03:11 +0100
-Message-ID: <20170123180311.7cg2pzb4wckdzy5b@phenom.ffwll.local>
-References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
- <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
- <5880B5E8.4000309@math.uni-bielefeld.de>
- <5881874A.5050506@samsung.com>
- <58820B33.8050107@math.uni-bielefeld.de>
- <5885C63B.7060606@samsung.com>
- <5885FABB.20909@math.uni-bielefeld.de>
- <20170123145506.GA17868@trickycodes.roam.corp.google.com>
- <588628F4.50808@math.uni-bielefeld.de>
- <20170123162041.GA22897@trickycodes.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170123162041.GA22897@trickycodes.roam.corp.google.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] [media] exynos4-is: Add missing 'of_node_put'
+Date: Mon, 23 Jan 2017 22:16:56 +0100
+Message-ID: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:42327 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751016AbdAWVRK (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 23 Jan 2017 16:17:10 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-T24gTW9uLCBKYW4gMjMsIDIwMTcgYXQgMTE6MjA6NDJBTSAtMDUwMCwgU2VhbiBQYXVsIHdyb3Rl
-Ogo+IE9uIE1vbiwgSmFuIDIzLCAyMDE3IGF0IDA1OjAxOjU2UE0gKzAxMDAsIFRvYmlhcyBKYWtv
-Ymkgd3JvdGU6Cj4gPiBTZWFuIFBhdWwgd3JvdGU6Cj4gPiA+IDxzbmlwPgo+ID4gPiAKPiA+ID4+
-Pj4+IEFzIG9mIG5vdywgSSBkb24ndCBzZWUgYW55IGNhc2UuIGV2ZW4gd2l0aG91dCBNYWFydGVu
-J3MgcGF0Y2ggc2V0LCBpdCB3b3JrcyB3ZWxsIC0gYWN0dWFsbHksIEkgaGFkIGEgdGVzdCB3aXRo
-IGF0b21pYyB0ZXN0IGFwcCBtb3JlIHRoYW4gMTAgaG91cnMuLgo+ID4gPj4+PiBDYW4geW91IHBy
-b3ZpZGUgdGhpcyB0ZXN0IGFwcGxpY2F0aW9uPyBJbiBwYXJ0aWN1bGFyIEknbSBhc2tpbmcgdGhp
-cwo+ID4gPj4+PiBiZWNhdXNlIGxpYmRybSBjdXJyZW50bHkgZG9lc24ndCBwcm92aWRlIGFueSB0
-ZXN0cyB1c2luZyB0aGUgYXRvbWljIEFQSS4KPiA+ID4+Pj4gU28gdGhpcyBhcHBsaWNhdGlvbiBt
-aWdodCBiZSBvZiBpbnRlcmVzdCBhbHNvIGZvciBvdGhlciBwZW9wbGUuCj4gPiA+Pj4KPiA+ID4+
-PiBCZWxvdyBpcyB0aGUgYXBwIEkgdGVzdGVkLiBLbm93IHRoYXQgdGhpcyBhcHBsaWNhdGlvbiBp
-cyBmcm9tIGNocm9taXVtT1MgdHJlZSBhbmQgSSBqdXN0IGZpeGVkIHNvbWUgcGFydHMgZm9yIGlu
-dGVybmFsIHRlc3QuCj4gPiA+Pj4gaHR0cHM6Ly9yZXZpZXcudGl6ZW4ub3JnL2dpdC8/cD1hdGZv
-cm0vdXBzdHJlYW0vbGliZHJtLmdpdDthPWNvbW1pdGRpZmY7aO+/vTNiZDk1ZjJjNWE5YjRiNjkw
-NjJhM2ZmMDA4OTQ3MDU0Yjk0ZjU1Cj4gPiA+PiBUaGFua3MsIGFueSBjaGFuY2UgdGhpcyBpcyBn
-b2luZyB0byBiZSBzdWJtaXR0ZWQgdXBzdHJlYW0/Cj4gPiA+Pgo+ID4gPiAKPiA+ID4gUHJvYmFi
-bHkgbm90IGluIGl0cyBjdXJyZW50IGZvcm0uIEkganVzdCB3cm90ZSBpdCB0byBxdWlja2x5IHRl
-c3Qgb3V0Cj4gPiA+IHNvbWUgc3R1ZmYgd2UgZGlkbid0IHlldCBzdXBwb3J0IGluIENyT1MuIEkg
-ZG9uJ3QgcmVhbGx5IHRoaW5rIGl0J3MgZml0Cj4gPiA+IGZvciBpbmNsdXNpb24gdXBzdHJlYW0u
-Cj4gPiBUaGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uISBKdXN0IHZvaWNpbmcgbXkgaW50ZXJl
-c3QgaGVyZSB0byBoYXZlCj4gPiBzb21ldGhpbmcgbGlrZSB0aGlzIHVwc3RyZWFtLiBJIG1lYW4g
-d2l0aCBhdG9taWMgbm93IGJlaW5nIG1hbmRhdG9yeSBmb3IKPiA+IG5ldyBEUk0ga2VybmVsIGRy
-aXZlcnMgYW5kIGFsbC4uLiA6LSkKPiAKPiBBZ3JlZWQgdGhhdCB0ZXN0cyBhcmUgaW1wb3J0YW50
-LCBJJ20ganVzdCBoZXNpdGFudCB0byBzbGluZyBteSBzcGFnaGV0dGkgY29kZQo+IGFyb3VuZCB0
-b28gd2lkZWx5IDopCj4gCj4gVGhlIGlndCBzdWl0ZSBzaG91bGQgaGF2ZSB5b3UgY292ZXJlZCBm
-b3IgYmFzaWMgdGVzdGluZyBhbmQgbW9yZS4gQ3JPUyBhbHNvIGhhcyBhCj4gYnNkcm0gdGVzdCBz
-dWl0ZSB0aGF0IG1heSBvciBtYXkgbm90IGJlY29tZSBhdG9taWMtYXdhcmUgaW4gdGhlIGZ1dHVy
-ZS4gQm90aCBhcmUKPiBiZXR0ZXIgb3B0aW9ucyB0aGF0IG15IGF0b21pY3Rlc3QsIElNTy4KCisx
-IG9uIGlndC4gSSBraW5kYSB3b3VsZCBsaWtlIHRvIG51a2UgYWxsIG90aGVyIHRlc3QgYXBwcyB3
-ZSBoYXZlIGZsb2F0aW5nCmFyb3VuZCwgdG8gYXZvaWQgZHVwbGljYXRpbmcgZWZmb3J0LiBVbmZv
-cnR1bmF0ZWx5IHdlIGRvbnQgaGF2ZSBhIGZ1bGwKcmVwbGFjZW1lbnQgZm9yIG1vZGV0ZXN0IGlu
-IGlndCB5ZXQgZm9yIG1hbnVhbCB0ZXN0aW5nLiBUaGUgdGVzdGNhc2VzIGFyZQp0aGVyZSwgYW5k
-IGlndCBzdXBwb3J0cyBtYW51YWxseS9pbnRlcmFjdGl2ZSB0ZXN0aW5nIHNvIHlvdSBjYW4gY2hl
-Y2sgdGhlCnJlc3VsdHMgYnkgaGFuZCwgaXQncyBqdXN0IG5vdCB3aXJlZCB1cCB5ZXQgZm9yIHRo
-ZSB0ZXN0cyB0aGF0IHdvdWxkIGJlCmVxdWl2YWxlbnQgdG8gbW9kZXRlc3QgLi4uIGhpbnQsIGhp
-bnQgOi0pCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVs
-IENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+It is likely that a "of_node_put(ep)" is missing here.
+There is one in the previous error handling code, and one a few lines
+below in the normal case as well.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index e3a8709138fa..da5b76c1df98 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -402,8 +402,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+ 		return ret;
+ 	}
+ 
+-	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
++	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
++		of_node_put(ep);
+ 		return -EINVAL;
++	}
+ 
+ 	pd->mux_id = (endpoint.base.port - 1) & 0x1;
+ 
+-- 
+2.9.3
