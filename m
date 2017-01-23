@@ -1,320 +1,90 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv3 1/5] video: add hotplug detect notifier support
-Date: Mon, 23 Jan 2017 11:23:33 +0100
-Message-ID: <20170123102337.20947-2-hverkuil@xs4all.nl>
-References: <20170123102337.20947-1-hverkuil@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170123102337.20947-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCHv3 0/5] video/exynos/cec: add HPD state notifier & use in s5p-cec
+Date: Mon, 23 Jan 2017 11:23:32 +0100
+Message-ID: <20170123102337.20947-1-hverkuil@xs4all.nl>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:35347 "EHLO
+        lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750703AbdAWKXn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 23 Jan 2017 05:23:43 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Add support for video hotplug detect and EDID/ELD notifiers, which is used
-to convey information from video drivers to their CEC and audio counterparts.
-
-Based on an earlier version from Russell King:
+This patch series adds the hotplug detect notifier code, based on Russell's code:
 
 https://patchwork.kernel.org/patch/9277043/
 
-The hpd_notifier is a reference counted object containing the HPD/EDID/ELD state
-of a video device.
+It adds support for it to the exynos_hdmi drm driver, adds support for
+it to the CEC framework and finally adds support to the s5p-cec driver,
+which now can be moved out of staging.
 
-When a new notifier is registered the current state will be reported to
-that notifier at registration time.
+Tested with my Odroid U3 exynos4 devboard.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/video/Kconfig        |   3 +
- drivers/video/Makefile       |   1 +
- drivers/video/hpd-notifier.c | 134 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/hpd-notifier.h | 109 +++++++++++++++++++++++++++++++++++
- 4 files changed, 247 insertions(+)
+Comments are welcome. I'd like to get this in for the 4.11 kernel as
+this is a missing piece needed to integrate CEC drivers.
+
+Changes since v2:
+- Split off the dts changes of the s5p-cec patch into a separate patch
+- Renamed HPD_NOTIFIERS to HPD_NOTIFIER to be consistent with the name
+  of the source.
+
+Changes since v1:
+
+Renamed HDMI notifier to HPD (hotplug detect) notifier since this code is
+not HDMI specific, but is interesting for any video source that has to
+deal with hotplug detect and EDID/ELD (HDMI, DVI, VGA, DP, ....).
+Only the use with CEC adapters is HDMI specific, but the HPD notifier
+is more generic.
+
+Regards,
+
+	Hans
+
+Hans Verkuil (5):
+  video: add hotplug detect notifier support
+  exynos_hdmi: add HPD notifier support
+  cec: integrate HPD notifier support
+  exynos4.dtsi: add HDMI controller phandle
+  s5p-cec: add hpd-notifier support, move out of staging
+
+ .../devicetree/bindings/media/s5p-cec.txt          |   2 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ drivers/gpu/drm/exynos/Kconfig                     |   1 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  23 +++-
+ drivers/media/cec/cec-core.c                       |  50 ++++++++
+ drivers/media/platform/Kconfig                     |  18 +++
+ drivers/media/platform/Makefile                    |   1 +
+ .../media => media/platform}/s5p-cec/Makefile      |   0
+ .../platform}/s5p-cec/exynos_hdmi_cec.h            |   0
+ .../platform}/s5p-cec/exynos_hdmi_cecctrl.c        |   0
+ .../media => media/platform}/s5p-cec/regs-cec.h    |   0
+ .../media => media/platform}/s5p-cec/s5p_cec.c     |  35 +++++-
+ .../media => media/platform}/s5p-cec/s5p_cec.h     |   3 +
+ drivers/staging/media/Kconfig                      |   2 -
+ drivers/staging/media/Makefile                     |   1 -
+ drivers/staging/media/s5p-cec/Kconfig              |   9 --
+ drivers/staging/media/s5p-cec/TODO                 |   7 --
+ drivers/video/Kconfig                              |   3 +
+ drivers/video/Makefile                             |   1 +
+ drivers/video/hpd-notifier.c                       | 134 +++++++++++++++++++++
+ include/linux/hpd-notifier.h                       | 109 +++++++++++++++++
+ include/media/cec.h                                |  15 +++
+ 22 files changed, 388 insertions(+), 27 deletions(-)
+ rename drivers/{staging/media => media/platform}/s5p-cec/Makefile (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cecctrl.c (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/regs-cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.c (89%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.h (97%)
+ delete mode 100644 drivers/staging/media/s5p-cec/Kconfig
+ delete mode 100644 drivers/staging/media/s5p-cec/TODO
  create mode 100644 drivers/video/hpd-notifier.c
  create mode 100644 include/linux/hpd-notifier.h
 
-diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-index 3c20af999893..a3a58d8481e9 100644
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@ -36,6 +36,9 @@ config VIDEOMODE_HELPERS
- config HDMI
- 	bool
- 
-+config HPD_NOTIFIER
-+	bool
-+
- if VT
- 	source "drivers/video/console/Kconfig"
- endif
-diff --git a/drivers/video/Makefile b/drivers/video/Makefile
-index 9ad3c17d6456..2697ae5c4166 100644
---- a/drivers/video/Makefile
-+++ b/drivers/video/Makefile
-@@ -1,5 +1,6 @@
- obj-$(CONFIG_VGASTATE)            += vgastate.o
- obj-$(CONFIG_HDMI)                += hdmi.o
-+obj-$(CONFIG_HPD_NOTIFIER)        += hpd-notifier.o
- 
- obj-$(CONFIG_VT)		  += console/
- obj-$(CONFIG_LOGO)		  += logo/
-diff --git a/drivers/video/hpd-notifier.c b/drivers/video/hpd-notifier.c
-new file mode 100644
-index 000000000000..971e823ead00
---- /dev/null
-+++ b/drivers/video/hpd-notifier.c
-@@ -0,0 +1,134 @@
-+#include <linux/export.h>
-+#include <linux/hpd-notifier.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
-+
-+static LIST_HEAD(hpd_notifiers);
-+static DEFINE_MUTEX(hpd_notifiers_lock);
-+
-+struct hpd_notifier *hpd_notifier_get(struct device *dev)
-+{
-+	struct hpd_notifier *n;
-+
-+	mutex_lock(&hpd_notifiers_lock);
-+	list_for_each_entry(n, &hpd_notifiers, head) {
-+		if (n->dev == dev) {
-+			mutex_unlock(&hpd_notifiers_lock);
-+			kref_get(&n->kref);
-+			return n;
-+		}
-+	}
-+	n = kzalloc(sizeof(*n), GFP_KERNEL);
-+	if (!n)
-+		goto unlock;
-+	n->dev = dev;
-+	mutex_init(&n->lock);
-+	BLOCKING_INIT_NOTIFIER_HEAD(&n->notifiers);
-+	kref_init(&n->kref);
-+	list_add_tail(&n->head, &hpd_notifiers);
-+unlock:
-+	mutex_unlock(&hpd_notifiers_lock);
-+	return n;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_get);
-+
-+static void hpd_notifier_release(struct kref *kref)
-+{
-+	struct hpd_notifier *n =
-+		container_of(kref, struct hpd_notifier, kref);
-+
-+	list_del(&n->head);
-+	kfree(n->edid);
-+	kfree(n);
-+}
-+
-+void hpd_notifier_put(struct hpd_notifier *n)
-+{
-+	mutex_lock(&hpd_notifiers_lock);
-+	kref_put(&n->kref, hpd_notifier_release);
-+	mutex_unlock(&hpd_notifiers_lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_put);
-+
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_register(&n->notifiers, nb);
-+
-+	if (ret)
-+		return ret;
-+	kref_get(&n->kref);
-+	mutex_lock(&n->lock);
-+	if (n->connected) {
-+		blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+		if (n->edid_size)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+		if (n->has_eld)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	}
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_register);
-+
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_unregister(&n->notifiers, nb);
-+
-+	if (ret == 0)
-+		hpd_notifier_put(n);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_unregister);
-+
-+void hpd_event_connect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_connect);
-+
-+void hpd_event_disconnect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = false;
-+	n->has_eld = false;
-+	n->edid_size = 0;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_DISCONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_disconnect);
-+
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size)
-+{
-+	mutex_lock(&n->lock);
-+	if (n->edid_allocated_size < size) {
-+		void *p = kmalloc(size, GFP_KERNEL);
-+
-+		if (p == NULL) {
-+			mutex_unlock(&n->lock);
-+			return -ENOMEM;
-+		}
-+		kfree(n->edid);
-+		n->edid = p;
-+		n->edid_allocated_size = size;
-+	}
-+	memcpy(n->edid, edid, size);
-+	n->edid_size = size;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_edid);
-+
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128])
-+{
-+	mutex_lock(&n->lock);
-+	memcpy(n->eld, eld, sizeof(n->eld));
-+	n->has_eld = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_eld);
-diff --git a/include/linux/hpd-notifier.h b/include/linux/hpd-notifier.h
-new file mode 100644
-index 000000000000..4dcb4515d2b2
---- /dev/null
-+++ b/include/linux/hpd-notifier.h
-@@ -0,0 +1,109 @@
-+/*
-+ * hpd-notifier.h - notify interested parties of (dis)connect and EDID
-+ * events
-+ *
-+ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
-+ * Copyright 2016 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
-+ */
-+
-+#ifndef LINUX_HPD_NOTIFIER_H
-+#define LINUX_HPD_NOTIFIER_H
-+
-+#include <linux/types.h>
-+#include <linux/notifier.h>
-+#include <linux/kref.h>
-+
-+enum {
-+	HPD_CONNECTED,
-+	HPD_DISCONNECTED,
-+	HPD_NEW_EDID,
-+	HPD_NEW_ELD,
-+};
-+
-+struct device;
-+
-+struct hpd_notifier {
-+	struct mutex lock;
-+	struct list_head head;
-+	struct kref kref;
-+	struct blocking_notifier_head notifiers;
-+	struct device *dev;
-+
-+	/* Current state */
-+	bool connected;
-+	bool has_eld;
-+	unsigned char eld[128];
-+	void *edid;
-+	size_t edid_size;
-+	size_t edid_allocated_size;
-+};
-+
-+/**
-+ * hpd_notifier_get - find or create a new hpd_notifier for the given device.
-+ * @dev: device that sends the events.
-+ *
-+ * If a notifier for device @dev already exists, then increase the refcount
-+ * and return that notifier.
-+ *
-+ * If it doesn't exist, then allocate a new notifier struct and return a
-+ * pointer to that new struct.
-+ *
-+ * Return NULL if the memory could not be allocated.
-+ */
-+struct hpd_notifier *hpd_notifier_get(struct device *dev);
-+
-+/**
-+ * hpd_notifier_put - decrease refcount and delete when the refcount reaches 0.
-+ * @n: notifier
-+ */
-+void hpd_notifier_put(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_notifier_register - register the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_notifier_unregister - unregister the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_event_connect - send a connect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_CONNECTED event to any registered parties.
-+ */
-+void hpd_event_connect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_disconnect - send a disconnect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_DISCONNECTED event to any registered parties.
-+ */
-+void hpd_event_disconnect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_new_edid - send a new EDID event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_EDID event to any registered parties.
-+ * This function will make a copy the EDID so it can return -ENOMEM if
-+ * no memory could be allocated.
-+ */
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size);
-+
-+/**
-+ * hpd_event_new_eld - send a new ELD event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_ELD event to any registered parties.
-+ */
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128]);
-+
-+#endif
 -- 
 2.11.0
