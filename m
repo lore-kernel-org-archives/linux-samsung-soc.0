@@ -1,67 +1,87 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv3 4/5] exynos4.dtsi: add HDMI controller phandle
-Date: Mon, 23 Jan 2017 11:23:36 +0100
-Message-ID: <20170123102337.20947-5-hverkuil@xs4all.nl>
+Subject: [PATCHv3 3/5] cec: integrate HPD notifier support
+Date: Mon, 23 Jan 2017 11:23:35 +0100
+Message-ID: <20170123102337.20947-4-hverkuil@xs4all.nl>
 References: <20170123102337.20947-1-hverkuil@xs4all.nl>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:35347 "EHLO
-        lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750724AbdAWKX4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 05:23:56 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170123102337.20947-1-hverkuil@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-media@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
-
-Update the bindings documenting the new hdmi phandle and
-update exynos4.dtsi accordingly. This phandle is needed by the
-s5p-cec driver to initialize the HPD notifier framework.
-
-Tested with my Odroid U3.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-CC: linux-samsung-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/media/s5p-cec.txt | 2 ++
- arch/arm/boot/dts/exynos4.dtsi                      | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/media/s5p-cec.txt b/Documentation/devicetree/bindings/media/s5p-cec.txt
-index 925ab4d72eaa..710fc005150c 100644
---- a/Documentation/devicetree/bindings/media/s5p-cec.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-cec.txt
-@@ -15,6 +15,7 @@ Required properties:
-   - clock-names : from common clock binding: must contain "hdmicec",
- 		  corresponding to entry in the clocks property.
-   - samsung,syscon-phandle - phandle to the PMU system controller
-+  - samsung,hdmi-phandle - phandle to the HDMI controller
- 
- Example:
- 
-@@ -25,6 +26,7 @@ hdmicec: cec@100B0000 {
- 	clocks = <&clock CLK_HDMI_CEC>;
- 	clock-names = "hdmicec";
- 	samsung,syscon-phandle = <&pmu_system_controller>;
-+	samsung,hdmi-phandle = <&hdmi>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&hdmi_cec>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index c64737baa45e..51dfcbb51b6b 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -762,6 +762,7 @@
- 		clocks = <&clock CLK_HDMI_CEC>;
- 		clock-names = "hdmicec";
- 		samsung,syscon-phandle = <&pmu_system_controller>;
-+		samsung,hdmi-phandle = <&hdmi>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&hdmi_cec>;
- 		status = "disabled";
--- 
-2.11.0
+RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKU3VwcG9ydCB0aGUg
+SFBEIG5vdGlmaWVyIGZyYW1ld29yaywgc2ltcGxpZnlpbmcgZHJpdmVycyB0aGF0CmRlcGVuZCBv
+biB0aGlzLgoKU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28u
+Y29tPgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
+bT4KLS0tCiBkcml2ZXJzL21lZGlhL2NlYy9jZWMtY29yZS5jIHwgNTAgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGluY2x1ZGUvbWVkaWEvY2VjLmggICAgICAg
+ICAgfCAxNSArKysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDY1IGluc2VydGlvbnMoKykK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2NlYy9jZWMtY29yZS5jIGIvZHJpdmVycy9tZWRp
+YS9jZWMvY2VjLWNvcmUuYwppbmRleCBhY2EzYWI4M2E4YTEuLmRkMmM0YTE3YWZmNSAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNvcmUuYworKysgYi9kcml2ZXJzL21lZGlhL2Nl
+Yy9jZWMtY29yZS5jCkBAIC0xOTUsNiArMTk1LDUyIEBAIHN0YXRpYyB2b2lkIGNlY19kZXZub2Rl
+X3VucmVnaXN0ZXIoc3RydWN0IGNlY19kZXZub2RlICpkZXZub2RlKQogCXB1dF9kZXZpY2UoJmRl
+dm5vZGUtPmRldik7CiB9CiAKKyNpZmRlZiBDT05GSUdfSFBEX05PVElGSUVSCitzdGF0aWMgdTE2
+IHBhcnNlX2hkbWlfYWRkcihjb25zdCBzdHJ1Y3QgZWRpZCAqZWRpZCkKK3sKKwlpZiAoIWVkaWQg
+fHwgZWRpZC0+ZXh0ZW5zaW9ucyA9PSAwKQorCQlyZXR1cm4gQ0VDX1BIWVNfQUREUl9JTlZBTElE
+OworCisJcmV0dXJuIGNlY19nZXRfZWRpZF9waHlzX2FkZHIoKHU4ICopZWRpZCwKKwkJCQlFRElE
+X0xFTkdUSCAqIChlZGlkLT5leHRlbnNpb25zICsgMSksIE5VTEwpOworfQorCitzdGF0aWMgaW50
+IGNlY19ocGRfbm90aWZ5KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIsIHVuc2lnbmVkIGxvbmcg
+ZXZlbnQsCisJCQkgICB2b2lkICpkYXRhKQoreworCXN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCA9
+IGNvbnRhaW5lcl9vZihuYiwgc3RydWN0IGNlY19hZGFwdGVyLCBuYik7CisJc3RydWN0IGhwZF9u
+b3RpZmllciAqbiA9IGRhdGE7CisJdW5zaWduZWQgaW50IHBoeXM7CisKKwlkcHJpbnRrKDEsICJl
+dmVudCAlbHVcbiIsIGV2ZW50KTsKKworCXN3aXRjaCAoZXZlbnQpIHsKKwljYXNlIEhQRF9ESVND
+T05ORUNURUQ6CisJCWNlY19zX3BoeXNfYWRkcihhZGFwLCBDRUNfUEhZU19BRERSX0lOVkFMSUQs
+IGZhbHNlKTsKKwkJYnJlYWs7CisKKwljYXNlIEhQRF9ORVdfRURJRDoKKwkJcGh5cyA9IHBhcnNl
+X2hkbWlfYWRkcihuLT5lZGlkKTsKKwkJY2VjX3NfcGh5c19hZGRyKGFkYXAsIHBoeXMsIGZhbHNl
+KTsKKwkJYnJlYWs7CisJfQorCisJcmV0dXJuIE5PVElGWV9PSzsKK30KKwordm9pZCBjZWNfcmVn
+aXN0ZXJfaHBkX25vdGlmaWVyKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwKKwkJCQlzdHJ1Y3Qg
+aHBkX25vdGlmaWVyICpub3RpZmllcikKK3sKKwlpZiAoV0FSTl9PTighYWRhcC0+ZGV2bm9kZS5y
+ZWdpc3RlcmVkKSkKKwkJcmV0dXJuOworCisJYWRhcC0+bmIubm90aWZpZXJfY2FsbCA9IGNlY19o
+cGRfbm90aWZ5OworCWFkYXAtPm5vdGlmaWVyID0gbm90aWZpZXI7CisJaHBkX25vdGlmaWVyX3Jl
+Z2lzdGVyKGFkYXAtPm5vdGlmaWVyLCAmYWRhcC0+bmIpOworfQorRVhQT1JUX1NZTUJPTF9HUEwo
+Y2VjX3JlZ2lzdGVyX2hwZF9ub3RpZmllcik7CisjZW5kaWYKKwogc3RydWN0IGNlY19hZGFwdGVy
+ICpjZWNfYWxsb2NhdGVfYWRhcHRlcihjb25zdCBzdHJ1Y3QgY2VjX2FkYXBfb3BzICpvcHMsCiAJ
+CQkJCSB2b2lkICpwcml2LCBjb25zdCBjaGFyICpuYW1lLCB1MzIgY2FwcywKIAkJCQkJIHU4IGF2
+YWlsYWJsZV9sYXMpCkBAIC0zNDQsNiArMzkwLDEwIEBAIHZvaWQgY2VjX3VucmVnaXN0ZXJfYWRh
+cHRlcihzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXApCiAJYWRhcC0+cmMgPSBOVUxMOwogI2VuZGlm
+CiAJZGVidWdmc19yZW1vdmVfcmVjdXJzaXZlKGFkYXAtPmNlY19kaXIpOworI2lmZGVmIENPTkZJ
+R19IUERfTk9USUZJRVIKKwlpZiAoYWRhcC0+bm90aWZpZXIpCisJCWhwZF9ub3RpZmllcl91bnJl
+Z2lzdGVyKGFkYXAtPm5vdGlmaWVyLCAmYWRhcC0+bmIpOworI2VuZGlmCiAJY2VjX2Rldm5vZGVf
+dW5yZWdpc3RlcigmYWRhcC0+ZGV2bm9kZSk7CiB9CiBFWFBPUlRfU1lNQk9MX0dQTChjZWNfdW5y
+ZWdpc3Rlcl9hZGFwdGVyKTsKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbWVkaWEvY2VjLmggYi9pbmNs
+dWRlL21lZGlhL2NlYy5oCmluZGV4IDk2YTBhYTc3MGQ2MS4uZjg3YTA3ZWUzNmIzIDEwMDY0NAot
+LS0gYS9pbmNsdWRlL21lZGlhL2NlYy5oCisrKyBiL2luY2x1ZGUvbWVkaWEvY2VjLmgKQEAgLTI4
+LDYgKzI4LDExIEBACiAjaW5jbHVkZSA8bGludXgva3RocmVhZC5oPgogI2luY2x1ZGUgPGxpbnV4
+L3RpbWVyLmg+CiAjaW5jbHVkZSA8bGludXgvY2VjLWZ1bmNzLmg+CisjaWZkZWYgQ09ORklHX0hQ
+RF9OT1RJRklFUgorI2luY2x1ZGUgPGxpbnV4L25vdGlmaWVyLmg+CisjaW5jbHVkZSA8bGludXgv
+aHBkLW5vdGlmaWVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9lZGlkLmg+CisjZW5kaWYKICNpbmNs
+dWRlIDxtZWRpYS9yYy1jb3JlLmg+CiAjaW5jbHVkZSA8bWVkaWEvY2VjLWVkaWQuaD4KIApAQCAt
+MTczLDYgKzE3OCwxMSBAQCBzdHJ1Y3QgY2VjX2FkYXB0ZXIgewogCWJvb2wgcGFzc3Rocm91Z2g7
+CiAJc3RydWN0IGNlY19sb2dfYWRkcnMgbG9nX2FkZHJzOwogCisjaWZkZWYgQ09ORklHX0hQRF9O
+T1RJRklFUgorCXN0cnVjdCBocGRfbm90aWZpZXIJKm5vdGlmaWVyOworCXN0cnVjdCBub3RpZmll
+cl9ibG9jawluYjsKKyNlbmRpZgorCiAJc3RydWN0IGRlbnRyeSAqY2VjX2RpcjsKIAlzdHJ1Y3Qg
+ZGVudHJ5ICpzdGF0dXNfZmlsZTsKIApAQCAtMjEzLDYgKzIyMywxMSBAQCB2b2lkIGNlY190cmFu
+c21pdF9kb25lKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwgdTggc3RhdHVzLCB1OCBhcmJfbG9z
+dF9jbnQsCiAJCSAgICAgICB1OCBuYWNrX2NudCwgdTggbG93X2RyaXZlX2NudCwgdTggZXJyb3Jf
+Y250KTsKIHZvaWQgY2VjX3JlY2VpdmVkX21zZyhzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXAsIHN0
+cnVjdCBjZWNfbXNnICptc2cpOwogCisjaWZkZWYgQ09ORklHX0hQRF9OT1RJRklFUgordm9pZCBj
+ZWNfcmVnaXN0ZXJfaHBkX25vdGlmaWVyKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwKKwkJCQlz
+dHJ1Y3QgaHBkX25vdGlmaWVyICpub3RpZmllcik7CisjZW5kaWYKKwogI2Vsc2UKIAogc3RhdGlj
+IGlubGluZSBpbnQgY2VjX3JlZ2lzdGVyX2FkYXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFw
+LAotLSAKMi4xMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
