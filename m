@@ -1,79 +1,85 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
-Date: Mon, 23 Jan 2017 11:20:42 -0500
-Message-ID: <20170123162041.GA22897@trickycodes.roam.corp.google.com>
-References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
- <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
- <5880B5E8.4000309@math.uni-bielefeld.de>
- <5881874A.5050506@samsung.com>
- <58820B33.8050107@math.uni-bielefeld.de>
- <5885C63B.7060606@samsung.com>
- <5885FABB.20909@math.uni-bielefeld.de>
- <20170123145506.GA17868@trickycodes.roam.corp.google.com>
- <588628F4.50808@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCHv3 4/5] exynos4.dtsi: add HDMI controller phandle
+Date: Mon, 23 Jan 2017 18:27:18 +0200
+Message-ID: <20170123162718.4tqhjgs56eewx4tc@kozik-lap>
+References: <20170123102337.20947-1-hverkuil@xs4all.nl>
+ <20170123102337.20947-5-hverkuil@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:36488 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbdAWQUp (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 11:20:45 -0500
-Received: by mail-qt0-f174.google.com with SMTP id k15so132631329qtg.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2017 08:20:44 -0800 (PST)
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <588628F4.50808@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20170123102337.20947-5-hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Mon, Jan 23, 2017 at 05:01:56PM +0100, Tobias Jakobi wrote:
-> Sean Paul wrote:
-> > <snip>
-> > 
-> >>>>> As of now, I don't see any case. even without Maarten's patch set, it works well - actually, I had a test with atomic test app more than 10 hours..
-> >>>> Can you provide this test application? In particular I'm asking this
-> >>>> because libdrm currently doesn't provide any tests using the atomic API.
-> >>>> So this application might be of interest also for other people.
-> >>>
-> >>> Below is the app I tested. Know that this application is from chromiumOS tree and I just fixed some parts for internal test.
-> >>> https://review.tizen.org/git/?p=atform/upstream/libdrm.git;a=commitdiff;h�3bd95f2c5a9b4b69062a3ff008947054b94f55
-> >> Thanks, any chance this is going to be submitted upstream?
-> >>
-> > 
-> > Probably not in its current form. I just wrote it to quickly test out
-> > some stuff we didn't yet support in CrOS. I don't really think it's fit
-> > for inclusion upstream.
-> Thanks for the clarification! Just voicing my interest here to have
-> something like this upstream. I mean with atomic now being mandatory for
-> new DRM kernel drivers and all... :-)
-
-Agreed that tests are important, I'm just hesitant to sling my spaghetti code
-around too widely :)
-
-The igt suite should have you covered for basic testing and more. CrOS also has a
-bsdrm test suite that may or may not become atomic-aware in the future. Both are
-better options that my atomictest, IMO.
-
-Sean
-
-
+On Mon, Jan 23, 2017 at 11:23:36AM +0100, Hans Verkuil wrote:
+> From: Hans Verkuil <hans.verkuil@cisco.com>
 > 
-> - Tobias
+> Update the bindings documenting the new hdmi phandle and
+> update exynos4.dtsi accordingly. This phandle is needed by the
+> s5p-cec driver to initialize the HPD notifier framework.
 > 
+> Tested with my Odroid U3.
 > 
-> > 
-> > Sean
-> > 
-> > <snip>
-> > 
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> CC: linux-samsung-soc@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/media/s5p-cec.txt | 2 ++
+>  arch/arm/boot/dts/exynos4.dtsi                      | 1 +
+>  2 files changed, 3 insertions(+)
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> diff --git a/Documentation/devicetree/bindings/media/s5p-cec.txt b/Documentation/devicetree/bindings/media/s5p-cec.txt
+> index 925ab4d72eaa..710fc005150c 100644
+> --- a/Documentation/devicetree/bindings/media/s5p-cec.txt
+> +++ b/Documentation/devicetree/bindings/media/s5p-cec.txt
+> @@ -15,6 +15,7 @@ Required properties:
+>    - clock-names : from common clock binding: must contain "hdmicec",
+>  		  corresponding to entry in the clocks property.
+>    - samsung,syscon-phandle - phandle to the PMU system controller
+> +  - samsung,hdmi-phandle - phandle to the HDMI controller
+>  
+>  Example:
+>  
+> @@ -25,6 +26,7 @@ hdmicec: cec@100B0000 {
+>  	clocks = <&clock CLK_HDMI_CEC>;
+>  	clock-names = "hdmicec";
+>  	samsung,syscon-phandle = <&pmu_system_controller>;
+> +	samsung,hdmi-phandle = <&hdmi>;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&hdmi_cec>;
+>  	status = "okay";
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+The bindings description can be a separate patch (often welcomed) but
+does not have to. It may be squashed with driver changes. But not with
+DTS changes because DTS should go through samsung-soc tree (alone). The
+bindings description usually go through subsystem maintainer.
+
+When sending the bindings description, please Cc at least
+devicetree@vger.kernel.org as mentioned by get_maintainers. It is
+welcomed to Cc also DT maintainers (Rob & Mark) although with simple
+bindings extension I think it is not a necessity.
+
+Anyway please split this and name the subject (git log --oneline
+arch/arm/boot/dts/exynos*: "ARM: dts: exynos: Foo Bar").
+
+Best regards,
+Krzysztof
+
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index c64737baa45e..51dfcbb51b6b 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -762,6 +762,7 @@
+>  		clocks = <&clock CLK_HDMI_CEC>;
+>  		clock-names = "hdmicec";
+>  		samsung,syscon-phandle = <&pmu_system_controller>;
+> +		samsung,hdmi-phandle = <&hdmi>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&hdmi_cec>;
+>  		status = "disabled";
+> -- 
+> 2.11.0
+> 
