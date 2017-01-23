@@ -1,16 +1,14 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd fields
-Date: Mon, 23 Jan 2017 10:15:16 +0100
-Message-ID: <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
-References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
- <1484895145-511-7-git-send-email-a.hajda@samsung.com>
- <20170120135540.GC31595@intel.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix a timeout loop
+Date: Mon, 23 Jan 2017 18:32:16 +0900
+Message-ID: <5885CDA0.40700@samsung.com>
+References: <CGME20170120165445epcas5p1a5fd54c6617006d8b4922d2c0269b17a@epcas5p1.samsung.com>
+ <1484931272-20113-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170120135540.GC31595@intel.com>
+In-reply-to: <1484931272-20113-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,25 +18,36 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAuMDEuMjAxNyAxNDo1NSwgVmlsbGUgU3lyasOkbMOkIHdyb3RlOgo+IE9uIEZyaSwgSmFu
-IDIwLCAyMDE3IGF0IDA3OjUyOjI0QU0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IElu
-IGNhc2Ugb2YgaW50ZXJsYWNlIG1vZGUgaXJxIGlzIGdlbmVyYXRlZCBmb3Igb2RkIGFuZCBldmVu
-IGZpZWxkcywgYnV0Cj4+IHZibGFuayBzaG91bGQgYmUgc2lnbmFsZWQgb25seSBmb3IgdGhlIGxh
-c3QgZW1pdHRlZCBmaWVsZC4KPiBJJ20gcHJldHR5IHN1cmUgbW9zdCBkcml2ZXJzIHNpZ25hbCBp
-dCBmb3IgYm90aCBmaWVsZHMuIEF0IGxlYXN0IGk5MTUKPiBkb2VzLgoKVGhlIHF1ZXN0aW9uIGlz
-IHdoaWNoIGJlaGF2aW9yIGlzIGNvcnJlY3Q/IEkgaGF2ZSBub3QgZm91bmQgYW55IGNsZWFyCnN0
-YXRlbWVudCBpbiB0aGUgZG9jdW1lbnRhdGlvbiwgb3IgZHJtIGNvcmUgY29kZS4KSSBoYXZlIGd1
-ZXNzZWQgdGhhdCBzaW5jZSB2YmxhbmsgZXZlbnQgaXMgdXNlZCB0byBzaWduYWwgZW5kIG9mIHNj
-YW4tb3V0Cm9mIGJ1ZmZlciBpdCBzaG91bGQgYmUgY2FsbGVkIGFmdGVyIHNjYW4tb3V0IG9mIHdo
-b2xlIGJ1ZmZlciAtIGluIGNhc2UKb2YgaW50ZXJsYWNlZCBtb2RlIGFmdGVyIHNjYW4tb3V0IG9m
-IDJuZCBmaWVsZC4KTWF5YmUgbXkgYXNzdW1wdGlvbiBpcyB3cm9uZywgaW4gc3VjaCBjYXNlIHRo
-aXMgcGF0Y2ggc2hvdWxkIGJlIGRyb3BwZWQKYW5kIG1peGVyIGRyaXZlciBhbHNvIHNob3VsZCBi
-ZSBmaXhlZCwgYnV0IGJlZm9yZSBkb2luZyB0aGF0IGl0IHdvdWxkIGJlCmdvb2QgdG8ga25vdyBm
-b3Igc3VyZSBob3cgaXQgc2hvdWxkIGJlIGhhbmRsZWQgY29ycmVjdGx5LgoKUmVnYXJkcwpBbmRy
-emVqCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+CgoyMDE364WEIDAx7JuUIDIx7J28IDAxOjU07JeQIFRvYmlhcyBKYWtvYmkg7J20KOqwgCkg7JO0
+IOq4gDoKPiBGcm9tOiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+Cj4g
+Cj4gV2Ugd2VyZSB0cnlpbmcgdG8gcHJpbnQgYW4gZXJyb3IgbWVzc2FnZSBpZiB3ZSB0aW1lZCBv
+dXQgaGVyZSwgYnV0IHRoZQo+IGxvb3AgYWN0dWFsbHkgZW5kcyB3aXRoICJ0cmllcyIgc2V0IHRv
+IFVJTlRfTUFYIGFuZCBub3QgemVyby4gIEZpeCB0aGlzCj4gYnkgY2hhbmdpbmcgZnJvbSB0cmll
+cy0tIHRvIC0tdHJpZXMuCgpTb3JyeSBidXQgSSBhbHJlYWR5IGtub3cgdGhpcyBwYXRjaCBmcm9t
+IGxvbmcgYWdvIGJ1dCBJJ20gbm90IGNsZWFyIHlldC4KSG93IHRoZSB2YXJpYWJsZSwgdHJpZXMs
+IGNvdWxkIGhhdmUgVU5JVF9NQVg/CgpTZWVtcyBzb21ldGhpbmcgSSdtIG1pc3NpbmcuCgpUaGFu
+a3MuCgo+IAo+IEEgZm9yIGxvb3Agd291bGQgYWN0dWFsbHkgYmUgdGhlIG1vc3QgbmF0dXJhbCB3
+YXkgdG8gZG8gdGhpcy4gIE15IGZpeAo+IG1lYW5zIHdlIG9ubHkgbG9vcCA5OSB0aW1lcyBpbnN0
+ZWFkIG9mIDEwMCBidXQgdGhhdCdzIHByb2JhYmx5IG9rLgo+IAo+IEZpeGVzOiBhNjk2Mzk0YzUy
+MjQgKCdkcm0vZXh5bm9zOiBtaXhlcjogc2ltcGxpZnkgbG9vcCBpbiB2cF93aW5fcmVzZXQoKScp
+Cj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29t
+Pgo+IFJldmlld2VkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVs
+ZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIg
+Ky0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gaW5kZXggZWRiMjBhMy4uZmNjN2U0
+ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IEBAIC03MDEsNyAr
+NzAxLDcgQEAgc3RhdGljIHZvaWQgdnBfd2luX3Jlc2V0KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpj
+dHgpCj4gIAl1bnNpZ25lZCBpbnQgdHJpZXMgPSAxMDA7Cj4gIAo+ICAJdnBfcmVnX3dyaXRlKHJl
+cywgVlBfU1JFU0VULCBWUF9TUkVTRVRfUFJPQ0VTU0lORyk7Cj4gLQl3aGlsZSAodHJpZXMtLSkg
+ewo+ICsJd2hpbGUgKC0tdHJpZXMpIHsKPiAgCQkvKiB3YWl0aW5nIHVudGlsIFZQX1NSRVNFVF9Q
+Uk9DRVNTSU5HIGlzIDAgKi8KPiAgCQlpZiAofnZwX3JlZ19yZWFkKHJlcywgVlBfU1JFU0VUKSAm
+IFZQX1NSRVNFVF9QUk9DRVNTSU5HKQo+ICAJCQlicmVhazsKPiAKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
