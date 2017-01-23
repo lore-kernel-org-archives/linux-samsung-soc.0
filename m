@@ -1,50 +1,78 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v3 7/7] arm64: dts: exynos: configure TV path clocks for Ultra
- HD modes
-Date: Mon, 23 Jan 2017 11:05:49 +0100
-Message-ID: <1485165949-32661-1-git-send-email-a.hajda@samsung.com>
-References: <a9812091-2b97-0abf-da74-313ff941bb76@samsung.com>
- <CGME20170123100557eucas1p28174748d64c4e8503a2006a9c5b554a6@eucas1p2.samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv2 4/4] s5p-cec: add hpd-notifier support, move out of
+ staging
+Date: Mon, 23 Jan 2017 11:14:17 +0100
+Message-ID: <16e95a75-9b08-bf87-76b9-99ed573d1869@xs4all.nl>
+References: <1483366747-34288-1-git-send-email-hverkuil@xs4all.nl>
+ <CGME20170102141935epcas1p3b093bcf648e1fa5873683cea60803f60@epcas1p3.samsung.com>
+ <1483366747-34288-5-git-send-email-hverkuil@xs4all.nl>
+ <4dd103b4-6f9b-8ef5-540e-6c5673b82c98@samsung.com>
+ <9652e8a9-1f5e-eadd-e588-b3051b0a8eb3@xs4all.nl>
+ <ac040a2a-f6f4-cd6d-05a7-54bc2a8b7e86@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <a9812091-2b97-0abf-da74-313ff941bb76@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb3-smtp-cloud2.xs4all.net ([194.109.24.29]:53992 "EHLO
+        lb3-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750865AbdAWKO1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 23 Jan 2017 05:14:27 -0500
+In-Reply-To: <ac040a2a-f6f4-cd6d-05a7-54bc2a8b7e86@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-VWx0cmEgSEQgbW9kZXMgcmVxdWlyZXMgY2xvY2sgdGlja2luZyBhdCBpbmNyZWFzZWQgcmF0ZS4K
-ClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQp2
-MjogbG9uZyBsaW5lcyB3cmFwcGVkCnYzOiBtb3ZlZCBhc3NpZ25lZCBjbG9ja3MgdG8gY211X2Rp
-c3Agbm9kZSBpbiB0bTItY29tbW9uCi0tLQogYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5
-bm9zNTQzMy10bTItY29tbW9uLmR0c2kgfCAxMiArKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2Vk
-LCAxMiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9leHlu
-b3MvZXh5bm9zNTQzMy10bTItY29tbW9uLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5v
-cy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRzaQppbmRleCBjZDg4NDdiLi41ZjFlMTcyIDEwMDY0
-NAotLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24u
-ZHRzaQorKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21t
-b24uZHRzaQpAQCAtMjE3LDYgKzIxNywxOCBAQAogCWFzc2lnbmVkLWNsb2NrLXBhcmVudHMgPSA8
-JmNtdV90b3AgQ0xLX0ZPVVRfQVVEX1BMTD47CiB9OwogCismY211X2Rpc3AgeworCWFzc2lnbmVk
-LWNsb2NrcyA9IDwmY211X21pZiBDTEtfTU9VVF9TQ0xLX0RFQ09OX1RWX0VDTEtfQT4sCisJCQkg
-IDwmY211X21pZiBDTEtfRElWX1NDTEtfREVDT05fVFZfRUNMSz4sCisJCQkgIDwmY211X2Rpc3Ag
-Q0xLX01PVVRfU0NMS19ERUNPTl9UVl9FQ0xLX1VTRVI+LAorCQkJICA8JmNtdV9kaXNwIENMS19N
-T1VUX1NDTEtfREVDT05fVFZfRUNMSz47CisJYXNzaWduZWQtY2xvY2stcGFyZW50cyA9IDwmY211
-X21pZiBDTEtfTU9VVF9CVVNfUExMX0RJVjI+LAorCQkJCSA8MD4sCisJCQkJIDwmY211X21pZiBD
-TEtfU0NMS19ERUNPTl9UVl9FQ0xLX0RJU1A+LAorCQkJCSA8JmNtdV9kaXNwIENMS19NT1VUX1ND
-TEtfREVDT05fVFZfRUNMS19VU0VSPjsKKwlhc3NpZ25lZC1jbG9jay1yYXRlcyA9IDwwPiwgPDQw
-MDAwMDAwMD47Cit9OworCiAmY211X2ZzeXMgewogCWFzc2lnbmVkLWNsb2NrcyA9IDwmY211X3Rv
-cCBDTEtfTU9VVF9TQ0xLX1VTQkRSRDMwPiwKIAkJPCZjbXVfdG9wIENMS19NT1VUX1NDTEtfVVNC
-SE9TVDMwPiwKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+On 01/04/2017 09:44 AM, Andrzej Hajda wrote:
+> On 03.01.2017 09:11, Hans Verkuil wrote:
+>> On 01/03/2017 09:00 AM, Andrzej Hajda wrote:
+>>> Is there a reason to split registration into two steps?
+>>> Wouldn't be better to integrate hpd_notifier_get into
+>>> cec_register_hpd_notifier.
+>> One problem is that hpd_notifier_get can fail, whereas cec_register_hpd_notifier can't.
+>> And I rather not have to register a CEC device only to unregister it again if the
+>> hpd_notifier_get would fail.
+> 
+> hpd_notifier_get can fail only due to lack of memory for about 150 bytes
+> so if it happens whole system will probably fail anyway :)
+> 
+> 
+>>
+>> Another reason is that this keeps the responsibility of the hpd_notifier life-time
+>> handling in the driver instead of hiding it in the CEC framework, which is IMHO
+>> unexpected.
+> 
+> Notifier is used only by CEC framework, so IMHO it would be desirable to
+> put CEC specific things into CEC framework.
+
+The CEC framework is just the first that needs it. But especially audio drivers also
+want to use it. It was designed to help out both subsystems since both need the EDID/ELD.
+
+Regards,
+
+	Hans
+
+> Drivers duty is just to find notifier device.
+> Leaving it as is will just put little more burden on drivers, so this is
+> not big deal, do as you wish :)
+> 
+> Regards
+> Andrzej
+> 
+>>
+>> I think I want to keep this as-is, at least for now.
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+>>
+>>
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
