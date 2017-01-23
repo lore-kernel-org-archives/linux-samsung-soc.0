@@ -1,51 +1,79 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Sean Paul <seanpaul@chromium.org>
 Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
-Date: Mon, 23 Jan 2017 17:01:56 +0100
-Message-ID: <588628F4.50808@math.uni-bielefeld.de>
+Date: Mon, 23 Jan 2017 11:20:42 -0500
+Message-ID: <20170123162041.GA22897@trickycodes.roam.corp.google.com>
 References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
  <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
- <5880B5E8.4000309@math.uni-bielefeld.de> <5881874A.5050506@samsung.com>
- <58820B33.8050107@math.uni-bielefeld.de> <5885C63B.7060606@samsung.com>
+ <5880B5E8.4000309@math.uni-bielefeld.de>
+ <5881874A.5050506@samsung.com>
+ <58820B33.8050107@math.uni-bielefeld.de>
+ <5885C63B.7060606@samsung.com>
  <5885FABB.20909@math.uni-bielefeld.de>
  <20170123145506.GA17868@trickycodes.roam.corp.google.com>
+ <588628F4.50808@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170123145506.GA17868@trickycodes.roam.corp.google.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:36488 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750821AbdAWQUp (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 23 Jan 2017 11:20:45 -0500
+Received: by mail-qt0-f174.google.com with SMTP id k15so132631329qtg.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jan 2017 08:20:44 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <588628F4.50808@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-U2VhbiBQYXVsIHdyb3RlOgo+IDxzbmlwPgo+IAo+Pj4+PiBBcyBvZiBub3csIEkgZG9uJ3Qgc2Vl
-IGFueSBjYXNlLiBldmVuIHdpdGhvdXQgTWFhcnRlbidzIHBhdGNoIHNldCwgaXQgd29ya3Mgd2Vs
-bCAtIGFjdHVhbGx5LCBJIGhhZCBhIHRlc3Qgd2l0aCBhdG9taWMgdGVzdCBhcHAgbW9yZSB0aGFu
-IDEwIGhvdXJzLi4KPj4+PiBDYW4geW91IHByb3ZpZGUgdGhpcyB0ZXN0IGFwcGxpY2F0aW9uPyBJ
-biBwYXJ0aWN1bGFyIEknbSBhc2tpbmcgdGhpcwo+Pj4+IGJlY2F1c2UgbGliZHJtIGN1cnJlbnRs
-eSBkb2Vzbid0IHByb3ZpZGUgYW55IHRlc3RzIHVzaW5nIHRoZSBhdG9taWMgQVBJLgo+Pj4+IFNv
-IHRoaXMgYXBwbGljYXRpb24gbWlnaHQgYmUgb2YgaW50ZXJlc3QgYWxzbyBmb3Igb3RoZXIgcGVv
-cGxlLgo+Pj4KPj4+IEJlbG93IGlzIHRoZSBhcHAgSSB0ZXN0ZWQuIEtub3cgdGhhdCB0aGlzIGFw
-cGxpY2F0aW9uIGlzIGZyb20gY2hyb21pdW1PUyB0cmVlIGFuZCBJIGp1c3QgZml4ZWQgc29tZSBw
-YXJ0cyBmb3IgaW50ZXJuYWwgdGVzdC4KPj4+IGh0dHBzOi8vcmV2aWV3LnRpemVuLm9yZy9naXQv
-P3A9YXRmb3JtL3Vwc3RyZWFtL2xpYmRybS5naXQ7YT1jb21taXRkaWZmO2jvv70zYmQ5NWYyYzVh
-OWI0YjY5MDYyYTNmZjAwODk0NzA1NGI5NGY1NQo+PiBUaGFua3MsIGFueSBjaGFuY2UgdGhpcyBp
-cyBnb2luZyB0byBiZSBzdWJtaXR0ZWQgdXBzdHJlYW0/Cj4+Cj4gCj4gUHJvYmFibHkgbm90IGlu
-IGl0cyBjdXJyZW50IGZvcm0uIEkganVzdCB3cm90ZSBpdCB0byBxdWlja2x5IHRlc3Qgb3V0Cj4g
-c29tZSBzdHVmZiB3ZSBkaWRuJ3QgeWV0IHN1cHBvcnQgaW4gQ3JPUy4gSSBkb24ndCByZWFsbHkg
-dGhpbmsgaXQncyBmaXQKPiBmb3IgaW5jbHVzaW9uIHVwc3RyZWFtLgpUaGFua3MgZm9yIHRoZSBj
-bGFyaWZpY2F0aW9uISBKdXN0IHZvaWNpbmcgbXkgaW50ZXJlc3QgaGVyZSB0byBoYXZlCnNvbWV0
-aGluZyBsaWtlIHRoaXMgdXBzdHJlYW0uIEkgbWVhbiB3aXRoIGF0b21pYyBub3cgYmVpbmcgbWFu
-ZGF0b3J5IGZvcgpuZXcgRFJNIGtlcm5lbCBkcml2ZXJzIGFuZCBhbGwuLi4gOi0pCgotIFRvYmlh
-cwoKCj4gCj4gU2Vhbgo+IAo+IDxzbmlwPgo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, Jan 23, 2017 at 05:01:56PM +0100, Tobias Jakobi wrote:
+> Sean Paul wrote:
+> > <snip>
+> > 
+> >>>>> As of now, I don't see any case. even without Maarten's patch set, it works well - actually, I had a test with atomic test app more than 10 hours..
+> >>>> Can you provide this test application? In particular I'm asking this
+> >>>> because libdrm currently doesn't provide any tests using the atomic API.
+> >>>> So this application might be of interest also for other people.
+> >>>
+> >>> Below is the app I tested. Know that this application is from chromiumOS tree and I just fixed some parts for internal test.
+> >>> https://review.tizen.org/git/?p=atform/upstream/libdrm.git;a=commitdiff;h�3bd95f2c5a9b4b69062a3ff008947054b94f55
+> >> Thanks, any chance this is going to be submitted upstream?
+> >>
+> > 
+> > Probably not in its current form. I just wrote it to quickly test out
+> > some stuff we didn't yet support in CrOS. I don't really think it's fit
+> > for inclusion upstream.
+> Thanks for the clarification! Just voicing my interest here to have
+> something like this upstream. I mean with atomic now being mandatory for
+> new DRM kernel drivers and all... :-)
+
+Agreed that tests are important, I'm just hesitant to sling my spaghetti code
+around too widely :)
+
+The igt suite should have you covered for basic testing and more. CrOS also has a
+bsdrm test suite that may or may not become atomic-aware in the future. Both are
+better options that my atomictest, IMO.
+
+Sean
+
+
+> 
+> - Tobias
+> 
+> 
+> > 
+> > Sean
+> > 
+> > <snip>
+> > 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
