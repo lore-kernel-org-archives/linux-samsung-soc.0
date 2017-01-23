@@ -1,56 +1,73 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver
- bind
-Date: Mon, 23 Jan 2017 14:28:11 -0300
-Message-ID: <79ce3bb1-3049-fc1c-64a9-2d4ef18981a0@osg.samsung.com>
-References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
- <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
- <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
- <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
+Date: Mon, 23 Jan 2017 19:03:11 +0100
+Message-ID: <20170123180311.7cg2pzb4wckdzy5b@phenom.ffwll.local>
+References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
+ <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
+ <5880B5E8.4000309@math.uni-bielefeld.de>
+ <5881874A.5050506@samsung.com>
+ <58820B33.8050107@math.uni-bielefeld.de>
+ <5885C63B.7060606@samsung.com>
+ <5885FABB.20909@math.uni-bielefeld.de>
+ <20170123145506.GA17868@trickycodes.roam.corp.google.com>
+ <588628F4.50808@math.uni-bielefeld.de>
+ <20170123162041.GA22897@trickycodes.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:59590
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750756AbdAWR2W (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 12:28:22 -0500
-In-Reply-To: <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170123162041.GA22897@trickycodes.roam.corp.google.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Archit Taneja <architt@codeaurora.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Kevin Hilman <khilman@baylibre.com>
 
-Hello Archit,
-
-On 01/09/2017 06:47 AM, Archit Taneja wrote:
-> 
-> 
-> On 01/05/2017 01:01 PM, Sean Paul wrote:
->> On Fri, Dec 30, 2016 at 4:57 AM, Marek Szyprowski
->> <m.szyprowski@samsung.com> wrote:
->>> Analogix_dp_bind() can be called from component framework, which doesn't
->>> guarantee proper runtime PM state of the device during bind operation,
->>> so ensure that device is runtime active before doing any register access.
->>> This ensures that the power domain, to which DP module belongs, is turned
->>> on. While at it, also fix the unbalanced call to phy_power_on() in
->>> analogix_dp_bind() function.
-> 
-> Pushed to drm-misc-fixes.
->
-
-Do you know when this fix will land in mainline? The regression is still
-present in v4.10-rc5:
-
-https://storage.kernelci.org/mainline/v4.10-rc5/arm-exynos_defconfig/lab-collabora/boot-exynos5250-snow.html
- 
-> Thanks,
-> Archit
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+T24gTW9uLCBKYW4gMjMsIDIwMTcgYXQgMTE6MjA6NDJBTSAtMDUwMCwgU2VhbiBQYXVsIHdyb3Rl
+Ogo+IE9uIE1vbiwgSmFuIDIzLCAyMDE3IGF0IDA1OjAxOjU2UE0gKzAxMDAsIFRvYmlhcyBKYWtv
+Ymkgd3JvdGU6Cj4gPiBTZWFuIFBhdWwgd3JvdGU6Cj4gPiA+IDxzbmlwPgo+ID4gPiAKPiA+ID4+
+Pj4+IEFzIG9mIG5vdywgSSBkb24ndCBzZWUgYW55IGNhc2UuIGV2ZW4gd2l0aG91dCBNYWFydGVu
+J3MgcGF0Y2ggc2V0LCBpdCB3b3JrcyB3ZWxsIC0gYWN0dWFsbHksIEkgaGFkIGEgdGVzdCB3aXRo
+IGF0b21pYyB0ZXN0IGFwcCBtb3JlIHRoYW4gMTAgaG91cnMuLgo+ID4gPj4+PiBDYW4geW91IHBy
+b3ZpZGUgdGhpcyB0ZXN0IGFwcGxpY2F0aW9uPyBJbiBwYXJ0aWN1bGFyIEknbSBhc2tpbmcgdGhp
+cwo+ID4gPj4+PiBiZWNhdXNlIGxpYmRybSBjdXJyZW50bHkgZG9lc24ndCBwcm92aWRlIGFueSB0
+ZXN0cyB1c2luZyB0aGUgYXRvbWljIEFQSS4KPiA+ID4+Pj4gU28gdGhpcyBhcHBsaWNhdGlvbiBt
+aWdodCBiZSBvZiBpbnRlcmVzdCBhbHNvIGZvciBvdGhlciBwZW9wbGUuCj4gPiA+Pj4KPiA+ID4+
+PiBCZWxvdyBpcyB0aGUgYXBwIEkgdGVzdGVkLiBLbm93IHRoYXQgdGhpcyBhcHBsaWNhdGlvbiBp
+cyBmcm9tIGNocm9taXVtT1MgdHJlZSBhbmQgSSBqdXN0IGZpeGVkIHNvbWUgcGFydHMgZm9yIGlu
+dGVybmFsIHRlc3QuCj4gPiA+Pj4gaHR0cHM6Ly9yZXZpZXcudGl6ZW4ub3JnL2dpdC8/cD1hdGZv
+cm0vdXBzdHJlYW0vbGliZHJtLmdpdDthPWNvbW1pdGRpZmY7aO+/vTNiZDk1ZjJjNWE5YjRiNjkw
+NjJhM2ZmMDA4OTQ3MDU0Yjk0ZjU1Cj4gPiA+PiBUaGFua3MsIGFueSBjaGFuY2UgdGhpcyBpcyBn
+b2luZyB0byBiZSBzdWJtaXR0ZWQgdXBzdHJlYW0/Cj4gPiA+Pgo+ID4gPiAKPiA+ID4gUHJvYmFi
+bHkgbm90IGluIGl0cyBjdXJyZW50IGZvcm0uIEkganVzdCB3cm90ZSBpdCB0byBxdWlja2x5IHRl
+c3Qgb3V0Cj4gPiA+IHNvbWUgc3R1ZmYgd2UgZGlkbid0IHlldCBzdXBwb3J0IGluIENyT1MuIEkg
+ZG9uJ3QgcmVhbGx5IHRoaW5rIGl0J3MgZml0Cj4gPiA+IGZvciBpbmNsdXNpb24gdXBzdHJlYW0u
+Cj4gPiBUaGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uISBKdXN0IHZvaWNpbmcgbXkgaW50ZXJl
+c3QgaGVyZSB0byBoYXZlCj4gPiBzb21ldGhpbmcgbGlrZSB0aGlzIHVwc3RyZWFtLiBJIG1lYW4g
+d2l0aCBhdG9taWMgbm93IGJlaW5nIG1hbmRhdG9yeSBmb3IKPiA+IG5ldyBEUk0ga2VybmVsIGRy
+aXZlcnMgYW5kIGFsbC4uLiA6LSkKPiAKPiBBZ3JlZWQgdGhhdCB0ZXN0cyBhcmUgaW1wb3J0YW50
+LCBJJ20ganVzdCBoZXNpdGFudCB0byBzbGluZyBteSBzcGFnaGV0dGkgY29kZQo+IGFyb3VuZCB0
+b28gd2lkZWx5IDopCj4gCj4gVGhlIGlndCBzdWl0ZSBzaG91bGQgaGF2ZSB5b3UgY292ZXJlZCBm
+b3IgYmFzaWMgdGVzdGluZyBhbmQgbW9yZS4gQ3JPUyBhbHNvIGhhcyBhCj4gYnNkcm0gdGVzdCBz
+dWl0ZSB0aGF0IG1heSBvciBtYXkgbm90IGJlY29tZSBhdG9taWMtYXdhcmUgaW4gdGhlIGZ1dHVy
+ZS4gQm90aCBhcmUKPiBiZXR0ZXIgb3B0aW9ucyB0aGF0IG15IGF0b21pY3Rlc3QsIElNTy4KCisx
+IG9uIGlndC4gSSBraW5kYSB3b3VsZCBsaWtlIHRvIG51a2UgYWxsIG90aGVyIHRlc3QgYXBwcyB3
+ZSBoYXZlIGZsb2F0aW5nCmFyb3VuZCwgdG8gYXZvaWQgZHVwbGljYXRpbmcgZWZmb3J0LiBVbmZv
+cnR1bmF0ZWx5IHdlIGRvbnQgaGF2ZSBhIGZ1bGwKcmVwbGFjZW1lbnQgZm9yIG1vZGV0ZXN0IGlu
+IGlndCB5ZXQgZm9yIG1hbnVhbCB0ZXN0aW5nLiBUaGUgdGVzdGNhc2VzIGFyZQp0aGVyZSwgYW5k
+IGlndCBzdXBwb3J0cyBtYW51YWxseS9pbnRlcmFjdGl2ZSB0ZXN0aW5nIHNvIHlvdSBjYW4gY2hl
+Y2sgdGhlCnJlc3VsdHMgYnkgaGFuZCwgaXQncyBqdXN0IG5vdCB3aXJlZCB1cCB5ZXQgZm9yIHRo
+ZSB0ZXN0cyB0aGF0IHdvdWxkIGJlCmVxdWl2YWxlbnQgdG8gbW9kZXRlc3QgLi4uIGhpbnQsIGhp
+bnQgOi0pCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVs
+IENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
