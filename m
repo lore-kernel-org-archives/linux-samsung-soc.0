@@ -1,62 +1,190 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.9 061/130] clocksource/exynos_mct: Clear interrupt when cpu is shut down
-Date: Tue, 24 Jan 2017 08:55:01 +0100
-Message-ID: <20170124075537.439363186@linuxfoundation.org>
-References: <20170124075534.905042535@linuxfoundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170124075534.905042535@linuxfoundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, daniel.lezcano@linaro.org, javier@osg.samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v6 1/4] dmaengine: pl330: remove pdata based initialization
+Date: Tue, 24 Jan 2017 10:27:32 +0100
+Message-ID: <1485250055-22137-2-git-send-email-m.szyprowski@samsung.com>
+References: <1485250055-22137-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170124092750eucas1p1127947314c9ad7eed297c1b6739110cb@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52359 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbdAXJ1z (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 24 Jan 2017 04:27:55 -0500
+In-reply-to: <1485250055-22137-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This driver is now used only on platforms which support device tree, so
+it is safe to remove legacy platform data based initialization code.
 
-------------------
-
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-
-commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
-
-When a CPU goes offline a potentially pending timer interrupt is not
-cleared. When the CPU comes online again then the pending interrupt is
-delivered before the per cpu clockevent device is initialized. As a
-consequence the tick interrupt handler dereferences a NULL pointer.
-
-[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
-[   51.289348] task: ee942d00 task.stack: ee960000
-[   51.293861] PC is at tick_periodic+0x38/0xb0
-[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
-
-Clear the pending interrupt in the cpu dying path.
-
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: cw00.choi@samsung.com
-Cc: daniel.lezcano@linaro.org
-Cc: javier@osg.samsung.com
-Cc: kgene@kernel.org
-Cc: krzk@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+For plat-samsung:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clocksource/exynos_mct.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/plat-samsung/devs.c |  1 -
+ drivers/dma/pl330.c          | 42 ++++++++----------------------------------
+ include/linux/amba/pl330.h   | 35 -----------------------------------
+ 3 files changed, 8 insertions(+), 70 deletions(-)
+ delete mode 100644 include/linux/amba/pl330.h
 
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -495,6 +495,7 @@ static int exynos4_mct_dying_cpu(unsigne
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (evt->irq != -1)
- 			disable_irq_nosync(evt->irq);
-+		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
- 	} else {
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 03fac123676d..dc269d9143bc 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -10,7 +10,6 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/amba/pl330.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 7539f73df9e0..78be12b45a45 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -22,7 +22,6 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+ #include <linux/amba/bus.h>
+-#include <linux/amba/pl330.h>
+ #include <linux/scatterlist.h>
+ #include <linux/of.h>
+ #include <linux/of_dma.h>
+@@ -2076,18 +2075,6 @@ static void pl330_tasklet(unsigned long data)
  	}
+ }
+ 
+-bool pl330_filter(struct dma_chan *chan, void *param)
+-{
+-	u8 *peri_id;
+-
+-	if (chan->device->dev->driver != &pl330_driver.drv)
+-		return false;
+-
+-	peri_id = chan->private;
+-	return *peri_id == (unsigned long)param;
+-}
+-EXPORT_SYMBOL(pl330_filter);
+-
+ static struct dma_chan *of_dma_pl330_xlate(struct of_phandle_args *dma_spec,
+ 						struct of_dma *ofdma)
+ {
+@@ -2832,7 +2819,6 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ static int
+ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+-	struct dma_pl330_platdata *pdat;
+ 	struct pl330_config *pcfg;
+ 	struct pl330_dmac *pl330;
+ 	struct dma_pl330_chan *pch, *_p;
+@@ -2842,8 +2828,6 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ 	int num_chan;
+ 	struct device_node *np = adev->dev.of_node;
+ 
+-	pdat = dev_get_platdata(&adev->dev);
+-
+ 	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+@@ -2856,7 +2840,7 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ 	pd = &pl330->ddma;
+ 	pd->dev = &adev->dev;
+ 
+-	pl330->mcbufsz = pdat ? pdat->mcbuf_sz : 0;
++	pl330->mcbufsz = 0;
+ 
+ 	/* get quirk */
+ 	for (i = 0; i < ARRAY_SIZE(of_quirks); i++)
+@@ -2900,10 +2884,7 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ 	INIT_LIST_HEAD(&pd->channels);
+ 
+ 	/* Initialize channel parameters */
+-	if (pdat)
+-		num_chan = max_t(int, pdat->nr_valid_peri, pcfg->num_chan);
+-	else
+-		num_chan = max_t(int, pcfg->num_peri, pcfg->num_chan);
++	num_chan = max_t(int, pcfg->num_peri, pcfg->num_chan);
+ 
+ 	pl330->num_peripherals = num_chan;
+ 
+@@ -2915,11 +2896,8 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ 
+ 	for (i = 0; i < num_chan; i++) {
+ 		pch = &pl330->peripherals[i];
+-		if (!adev->dev.of_node)
+-			pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
+-		else
+-			pch->chan.private = adev->dev.of_node;
+ 
++		pch->chan.private = adev->dev.of_node;
+ 		INIT_LIST_HEAD(&pch->submitted_list);
+ 		INIT_LIST_HEAD(&pch->work_list);
+ 		INIT_LIST_HEAD(&pch->completed_list);
+@@ -2932,15 +2910,11 @@ static int __maybe_unused pl330_resume(struct device *dev)
+ 		list_add_tail(&pch->chan.device_node, &pd->channels);
+ 	}
+ 
+-	if (pdat) {
+-		pd->cap_mask = pdat->cap_mask;
+-	} else {
+-		dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+-		if (pcfg->num_peri) {
+-			dma_cap_set(DMA_SLAVE, pd->cap_mask);
+-			dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+-			dma_cap_set(DMA_PRIVATE, pd->cap_mask);
+-		}
++	dma_cap_set(DMA_MEMCPY, pd->cap_mask);
++	if (pcfg->num_peri) {
++		dma_cap_set(DMA_SLAVE, pd->cap_mask);
++		dma_cap_set(DMA_CYCLIC, pd->cap_mask);
++		dma_cap_set(DMA_PRIVATE, pd->cap_mask);
+ 	}
+ 
+ 	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+deleted file mode 100644
+index fe93758e8403..000000000000
+--- a/include/linux/amba/pl330.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/* linux/include/linux/amba/pl330.h
+- *
+- * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+- *	Jaswinder Singh <jassi.brar@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef	__AMBA_PL330_H_
+-#define	__AMBA_PL330_H_
+-
+-#include <linux/dmaengine.h>
+-
+-struct dma_pl330_platdata {
+-	/*
+-	 * Number of valid peripherals connected to DMAC.
+-	 * This may be different from the value read from
+-	 * CR0, as the PL330 implementation might have 'holes'
+-	 * in the peri list or the peri could also be reached
+-	 * from another DMAC which the platform prefers.
+-	 */
+-	u8 nr_valid_peri;
+-	/* Array of valid peripherals */
+-	u8 *peri_id;
+-	/* Operational capabilities */
+-	dma_cap_mask_t cap_mask;
+-	/* Bytes to allocate for MC buffer */
+-	unsigned mcbuf_sz;
+-};
+-
+-extern bool pl330_filter(struct dma_chan *chan, void *param);
+-#endif	/* __AMBA_PL330_H_ */
+-- 
+1.9.1
