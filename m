@@ -1,18 +1,18 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 25/42] clocksource/exynos_mct: Clear interrupt when cpu is shut down
-Date: Tue, 24 Jan 2017 08:55:35 +0100
-Message-ID: <20170124075510.367397946@linuxfoundation.org>
-References: <20170124075509.299412838@linuxfoundation.org>
+Subject: [PATCH 4.9 061/130] clocksource/exynos_mct: Clear interrupt when cpu is shut down
+Date: Tue, 24 Jan 2017 08:55:01 +0100
+Message-ID: <20170124075537.439363186@linuxfoundation.org>
+References: <20170124075534.905042535@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170124075509.299412838@linuxfoundation.org>
+In-Reply-To: <20170124075534.905042535@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, daniel.lezcano@linaro.org, javier@osg.samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -52,7 +52,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -482,6 +482,7 @@ static void exynos4_local_timer_stop(str
+@@ -495,6 +495,7 @@ static int exynos4_mct_dying_cpu(unsigne
  	if (mct_int_type == MCT_INT_SPI) {
  		if (evt->irq != -1)
  			disable_irq_nosync(evt->irq);
