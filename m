@@ -1,51 +1,62 @@
-From: Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver
- bind
-Date: Tue, 24 Jan 2017 08:10:18 +0530
-Message-ID: <223caf05-800d-8d79-fe69-153fdf0852a6@codeaurora.org>
-References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
- <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
- <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
- <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
- <79ce3bb1-3049-fc1c-64a9-2d4ef18981a0@osg.samsung.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 4.4 25/42] clocksource/exynos_mct: Clear interrupt when cpu is shut down
+Date: Tue, 24 Jan 2017 08:55:35 +0100
+Message-ID: <20170124075510.367397946@linuxfoundation.org>
+References: <20170124075509.299412838@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <79ce3bb1-3049-fc1c-64a9-2d4ef18981a0@osg.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>, Yakir Yang <ykk@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170124075509.299412838@linuxfoundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, daniel.lezcano@linaro.org, javier@osg.samsung.com, kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAwMS8yMy8yMDE3IDEwOjU4IFBNLCBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgd3Jv
-dGU6Cj4gSGVsbG8gQXJjaGl0LAo+Cj4gT24gMDEvMDkvMjAxNyAwNjo0NyBBTSwgQXJjaGl0IFRh
-bmVqYSB3cm90ZToKPj4KPj4KPj4gT24gMDEvMDUvMjAxNyAwMTowMSBQTSwgU2VhbiBQYXVsIHdy
-b3RlOgo+Pj4gT24gRnJpLCBEZWMgMzAsIDIwMTYgYXQgNDo1NyBBTSwgTWFyZWsgU3p5cHJvd3Nr
-aQo+Pj4gPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+Pj4gQW5hbG9naXhfZHBf
-YmluZCgpIGNhbiBiZSBjYWxsZWQgZnJvbSBjb21wb25lbnQgZnJhbWV3b3JrLCB3aGljaCBkb2Vz
-bid0Cj4+Pj4gZ3VhcmFudGVlIHByb3BlciBydW50aW1lIFBNIHN0YXRlIG9mIHRoZSBkZXZpY2Ug
-ZHVyaW5nIGJpbmQgb3BlcmF0aW9uLAo+Pj4+IHNvIGVuc3VyZSB0aGF0IGRldmljZSBpcyBydW50
-aW1lIGFjdGl2ZSBiZWZvcmUgZG9pbmcgYW55IHJlZ2lzdGVyIGFjY2Vzcy4KPj4+PiBUaGlzIGVu
-c3VyZXMgdGhhdCB0aGUgcG93ZXIgZG9tYWluLCB0byB3aGljaCBEUCBtb2R1bGUgYmVsb25ncywg
-aXMgdHVybmVkCj4+Pj4gb24uIFdoaWxlIGF0IGl0LCBhbHNvIGZpeCB0aGUgdW5iYWxhbmNlZCBj
-YWxsIHRvIHBoeV9wb3dlcl9vbigpIGluCj4+Pj4gYW5hbG9naXhfZHBfYmluZCgpIGZ1bmN0aW9u
-Lgo+Pgo+PiBQdXNoZWQgdG8gZHJtLW1pc2MtZml4ZXMuCj4+Cj4KPiBEbyB5b3Uga25vdyB3aGVu
-IHRoaXMgZml4IHdpbGwgbGFuZCBpbiBtYWlubGluZT8gVGhlIHJlZ3Jlc3Npb24gaXMgc3RpbGwK
-PiBwcmVzZW50IGluIHY0LjEwLXJjNToKPgo+IGh0dHBzOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcv
-bWFpbmxpbmUvdjQuMTAtcmM1L2FybS1leHlub3NfZGVmY29uZmlnL2xhYi1jb2xsYWJvcmEvYm9v
-dC1leHlub3M1MjUwLXNub3cuaHRtbAoKSXQncyB0aGVyZSBpbiBEYXZlJ3MgNC4xMC1yYzYgcHVs
-bCByZXF1ZXN0OgoKaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTcvMS8yMi8zMDUKQXJjaGl0Cgot
-LSAKUXVhbGNvbW0gSW5ub3ZhdGlvbiBDZW50ZXIsIEluYy4gaXMgYSBtZW1iZXIgb2YgQ29kZSBB
-dXJvcmEgRm9ydW0sCmEgTGludXggRm91bmRhdGlvbiBDb2xsYWJvcmF0aXZlIFByb2plY3QKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+4.4-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+
+commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
+
+When a CPU goes offline a potentially pending timer interrupt is not
+cleared. When the CPU comes online again then the pending interrupt is
+delivered before the per cpu clockevent device is initialized. As a
+consequence the tick interrupt handler dereferences a NULL pointer.
+
+[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
+[   51.289348] task: ee942d00 task.stack: ee960000
+[   51.293861] PC is at tick_periodic+0x38/0xb0
+[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
+
+Clear the pending interrupt in the cpu dying path.
+
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com
+Cc: daniel.lezcano@linaro.org
+Cc: javier@osg.samsung.com
+Cc: kgene@kernel.org
+Cc: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/clocksource/exynos_mct.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -482,6 +482,7 @@ static void exynos4_local_timer_stop(str
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
++		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ 	}
