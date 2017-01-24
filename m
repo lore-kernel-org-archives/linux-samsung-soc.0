@@ -1,43 +1,52 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 31/37] misc: Add host side pci driver for pci test
- function device
-Date: Tue, 24 Jan 2017 17:02:24 +0100
-Message-ID: <20170124160224.GA23528@infradead.org>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-32-git-send-email-kishon@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: dts: exynos: set LDO7 regulator as always on
+Date: Tue, 24 Jan 2017 19:52:06 +0200
+Message-ID: <20170124175206.m2hquaf7eylslydq@kozik-lap>
+References: <CGME20170124124537eucas1p23ef10c2cf3b15ce70682b0cf71ae14a3@eucas1p2.samsung.com>
+ <1485261928-10769-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34421 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbdAXRwL (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 24 Jan 2017 12:52:11 -0500
+Received: by mail-wm0-f65.google.com with SMTP id c85so36222672wmi.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2017 09:52:10 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1484216786-17292-32-git-send-email-kishon@ti.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, nsekhar@ti.com
+In-Reply-To: <1485261928-10769-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Thu, Jan 12, 2017 at 03:56:20PM +0530, Kishon Vijay Abraham I wrote:
-> Add PCI endpoint test driver that can verify base address
-> register, legacy interrupt/MSI interrupt and read/write/copy
-> buffers between host and device. The corresponding pci-epf-test
-> function driver should be used on the EP side.
+On Tue, Jan 24, 2017 at 01:45:28PM +0100, Andrzej Hajda wrote:
+> LDO7 regulator beside DSI and HDMI provides power for core blocks in Exynos
+> 5433 SoC. Disabling it causes serious current leak - about 200mA.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index 5f1e172..b22bec8 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -432,6 +432,10 @@
+>  				regulator-name = "VDD18_MIPI2L_1.8V_AP";
+>  				regulator-min-microvolt = <1800000>;
+>  				regulator-max-microvolt = <1800000>;
+> +				regulator-always-on;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
 
-Just curious:  what would you think of a text based (e.g. debugfs)
-interface to avoid the need for a userspace tool here?
+Thanks, applied.
 
-> +static const struct pci_device_id pci_endpoint_test_tbl[] = {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_ANY_ID) },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+Just to satisfy my curiosity, how disabling the regulator causes current
+leak? What happens exactly?
 
-Also this looks really odd, and dangerous.  Probing for any
-TI device will bind to all kinds of legit devices.  It would
-be good if you could squeeze out a single id for this device
-out of the TI group responsible for allocating it.  Otherwise
-we might try some other venues, e.g. Red Hat through Qumranet
-has PCI IDs available for virtio, which might have some left
-for other Linux uses.
-
-In general I fear the PCI ID allocation will become a worse
-and worse issue once your framework goes in and we'll grow
-more PCI device models in the kernel.
+Best regards,
+Krzysztof
