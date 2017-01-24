@@ -1,72 +1,138 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] arm64: dts: exynos: set LDO7 regulator as always on
-Date: Tue, 24 Jan 2017 20:26:36 +0200
-Message-ID: <20170124182636.qyh4zki4zuktm3u7@kozik-lap>
-References: <CGME20170124124537eucas1p23ef10c2cf3b15ce70682b0cf71ae14a3@eucas1p2.samsung.com>
- <1485261928-10769-1-git-send-email-a.hajda@samsung.com>
- <20170124175206.m2hquaf7eylslydq@kozik-lap>
- <587eb6c1-3e39-f160-26f6-40d90b7f13f7@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: Revert "Drop SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag"" to the asoc tree
+Date: Tue, 24 Jan 2017 18:39:16 +0000
+Message-ID: <E1cW5zw-0006YJ-6g@debutante>
+References: <1477670708-471-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35446 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbdAXS0m (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34828 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbdAXSjZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 13:26:42 -0500
-Received: by mail-wm0-f66.google.com with SMTP id d140so36686175wmd.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jan 2017 10:26:41 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <587eb6c1-3e39-f160-26f6-40d90b7f13f7@osg.samsung.com>
+        Tue, 24 Jan 2017 13:39:25 -0500
+In-Reply-To: <1477670708-471-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, lars@metafoo.de, arnd@arndb.de, b.zolnierkie@samsung.com, lgirdwood@gmail.comalsa-devel@alsa-project.org
 
-On Tue, Jan 24, 2017 at 02:57:00PM -0300, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 01/24/2017 02:52 PM, Krzysztof Kozlowski wrote:
-> > On Tue, Jan 24, 2017 at 01:45:28PM +0100, Andrzej Hajda wrote:
-> >> LDO7 regulator beside DSI and HDMI provides power for core blocks in Exynos
-> >> 5433 SoC. Disabling it causes serious current leak - about 200mA.
-> >>
-> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >> ---
-> >>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> >> index 5f1e172..b22bec8 100644
-> >> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> >> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> >> @@ -432,6 +432,10 @@
-> >>  				regulator-name = "VDD18_MIPI2L_1.8V_AP";
-> >>  				regulator-min-microvolt = <1800000>;
-> >>  				regulator-max-microvolt = <1800000>;
-> 
-> I see you already applied, but I think it would be good to have some comments
-> here explaining why the regulator should be always-on. Otherwise, in future a
-> developer might want to disable the regulator since it may think that is not
-> needed due dsi and hdmi already enabling it.
+The patch
 
-It is a good idea however we never put such information for other
-regulators... If agreed, we might make it a requirement for new DTS and
-new changes.
+   ASoC: Revert "Drop SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag"
 
-Anyway one could get this from the log itself.
+has been applied to the asoc tree at
 
-> 
-> >> +				regulator-always-on;
-> >> +				regulator-state-mem {
-> >> +					regulator-off-in-suspend;
-> >> +				};
-> > 
-> > Thanks, applied.
-> >
-> > Just to satisfy my curiosity, how disabling the regulator causes current
-> > leak? What happens exactly?
-> >
-> 
-> I was wondering the same.
-> 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9bfa24e90956cc79362572391657b84cf54a559a Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Tue, 17 Jan 2017 14:16:41 +0100
+Subject: [PATCH] ASoC: Revert "Drop SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME
+ flag"
+
+This reverts commit c6644119a3f80ea644bde10009d5e1013b5aff29 and
+restores the ability to specify DMA channel names per DAI dma_data.
+Unfortunately the functionality removed in the patch being reverted
+cannot be entirely replaced by specifying DMA channel names in struct
+snd_dmaengine_pcm_config as that does not cover devices with more than
+2 DMA channels.
+
+Together with patch "ASoC: Revert "samsung: Remove unneeded
+initialization of chan_name"" this fixes broken sound on the s3c24xx
+SoC platforms.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/dmaengine_pcm.h         |  6 ++++++
+ sound/soc/soc-generic-dmaengine-pcm.c | 12 +++++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+index 1c8f9e1ef2a5..67be2445941a 100644
+--- a/include/sound/dmaengine_pcm.h
++++ b/include/sound/dmaengine_pcm.h
+@@ -71,6 +71,7 @@ struct dma_chan *snd_dmaengine_pcm_get_chan(struct snd_pcm_substream *substream)
+  * @slave_id: Slave requester id for the DMA channel.
+  * @filter_data: Custom DMA channel filter data, this will usually be used when
+  * requesting the DMA channel.
++ * @chan_name: Custom channel name to use when requesting DMA channel.
+  * @fifo_size: FIFO size of the DAI controller in bytes
+  * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
+  */
+@@ -80,6 +81,7 @@ struct snd_dmaengine_dai_dma_data {
+ 	u32 maxburst;
+ 	unsigned int slave_id;
+ 	void *filter_data;
++	const char *chan_name;
+ 	unsigned int fifo_size;
+ 	unsigned int flags;
+ };
+@@ -105,6 +107,10 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
+  * playback.
+  */
+ #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
++/*
++ * The PCM streams have custom channel names specified.
++ */
++#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
+ 
+ /**
+  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
+diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+index 17eb14935577..d53786498b61 100644
+--- a/sound/soc/soc-generic-dmaengine-pcm.c
++++ b/sound/soc/soc-generic-dmaengine-pcm.c
+@@ -263,6 +263,7 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+ 	const struct snd_dmaengine_pcm_config *config = pcm->config;
+ 	struct device *dev = rtd->platform->dev;
++	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	struct snd_pcm_substream *substream;
+ 	size_t prealloc_buffer_size;
+ 	size_t max_buffer_size;
+@@ -282,6 +283,13 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 		if (!substream)
+ 			continue;
+ 
++		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
++
++		if (!pcm->chan[i] &&
++		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
++			pcm->chan[i] = dma_request_slave_channel(dev,
++				dma_data->chan_name);
++
+ 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+ 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
+ 				substream);
+@@ -350,7 +358,9 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+ 	const char *name;
+ 	struct dma_chan *chan;
+ 
+-	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
++	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
++			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
++	    !dev->of_node)
+ 		return 0;
+ 
+ 	if (config && config->dma_dev) {
+-- 
+2.11.0
