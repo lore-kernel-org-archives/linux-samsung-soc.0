@@ -1,150 +1,54 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v6 0/4] DMA Engine: switch PL330 driver to non-irq-safe runtime
- PM
-Date: Tue, 24 Jan 2017 10:27:31 +0100
-Message-ID: <1485250055-22137-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170124092750eucas1p2b806ec3340d9d57439cc6d8975b516ef@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:18605 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbdAXJ1z (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Jan 2017 04:27:55 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] drm/bridge: analogix dp: Fix runtime PM state on driver
+ bind
+Date: Tue, 24 Jan 2017 09:16:42 -0300
+Message-ID: <675368e6-900a-e71d-4223-337cbc725332@osg.samsung.com>
+References: <CGME20161230095831eucas1p2c315f7ca20a49e1a7ad421cc68b1101a@eucas1p2.samsung.com>
+ <1483091866-1088-1-git-send-email-m.szyprowski@samsung.com>
+ <CAOw6vbJLwm8nx5w6oF4LreLYPi8Mqi5f-W9CrAx8B_7DW6xf-w@mail.gmail.com>
+ <5552ad97-2043-8690-dcc9-fd7d4701c947@codeaurora.org>
+ <79ce3bb1-3049-fc1c-64a9-2d4ef18981a0@osg.samsung.com>
+ <223caf05-800d-8d79-fe69-153fdf0852a6@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <223caf05-800d-8d79-fe69-153fdf0852a6@codeaurora.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Archit Taneja <architt@codeaurora.org>, Sean Paul <seanpaul@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>, Yakir Yang <ykk@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-Hello,
-
-This patchset changes the way the runtime PM is implemented in the PL330 DMA
-engine driver. The main goal of such change is to add support for the audio
-power domain to Exynos5 SoCs (5250, 542x, 5433, probably others) and let
-it to be properly turned off, when no audio is being used. Switching to
-non-irq-safe runtime PM is required to properly let power domain to be
-turned off (irq-safe runtime PM keeps power domain turned on all the time)
-and to integrate with clock controller's runtime PM (this cannot be
-workarounded any other way, PL330 uses clocks from the controller, which
-belongs to the same power domain).
-
-For more details of the proposed change to the PL330 driver see patch #4.
-
-Audio power domain on Exynos5 SoCs contains following hardware modules:
-1. clock controller
-2. pin controller
-3. PL330 DMA controller
-4. I2S audio controller
-
-Patches for adding or fixing runtime PM for each of the above devices is
-handled separately.
-
-Runtime PM patches for clock controllers is possible and has been proposed
-in the following thread (pending review): "[PATCH v4 0/4] Add runtime PM
-support for clocks (on Exynos SoC example)",
-http://www.spinics.net/lists/arm-kernel/msg550747.html
-
-Runtime PM support for Exynos pin controller has been posted in the
-following thread: "[PATCH 0/9] Runtime PM for Exynos pin controller driver",
-http://www.spinics.net/lists/arm-kernel/msg550161.html
-
-Exynos I2S driver supports runtime PM, but some fixes were needed for it
-and they are already queued to linux-next.
-
-This patchset is based on linux-next from 24th January 2017 with "dmaengine:
-pl330: fix double lock" patch applied.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v6:
-- fixed pl330 system sleep suspend/resume callbacks, previous implementation
-  incorrectly tried to unprepare clocks unconditionally - after a fix pl330
-  suspend/resume callbacks can be simply replaced by generic
-  pm_runtime_force_{suspend,resume} helpers, what simplifies code even more
-
-v5: https://www.spinics.net/lists/arm-kernel/msg555001.html
-- added Acks
-- additional mutex is indeed not needed, rely on dma_list_mutex in dmaengine
-  core, added comment about locking
-
-v4: http://www.spinics.net/lists/dmaengine/msg12329.html
-- rebased onto "dmaengine: pl330: fix double lock" patch:
-  http://www.spinics.net/lists/dmaengine/msg12289.html
-- added a mutex to protect runtime PM links creation/removal to avoid races
-- moved mem2mem channel case handing to pl330_{add,del}_slave_pm_link
-  functions to simplify code and error paths
-
-v3: http://www.spinics.net/lists/dmaengine/msg12245.html
-- removed pl330_filter function as suggested by Arnd Bergmann
-- removed pl330.h from arch/arm/plat-samsung/devs.c
-- fixes some minor style issues pointed by Krzysztof Kozlowski
-
-v2: https://www.spinics.net/lists/arm-kernel/msg552772.html
-- rebased onto linux next-20170109
-- improved patch description
-- separated patch #3 from #4 (storing a pointer to slave device for each
-  DMA channel) as requested by Krzysztof Kozlowski
-
-v1: https://www.spinics.net/lists/arm-kernel/msg550008.html
-- initial version
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  dmaengine: pl330: remove pdata based initialization
-  dmaengine: Forward slave device pointer to of_xlate callback
-  dmaengine: pl330: Store pointer to slave device
-  dmaengine: pl330: Don't require irq-safe runtime PM
-
- arch/arm/plat-samsung/devs.c    |   1 -
- drivers/dma/amba-pl08x.c        |   2 +-
- drivers/dma/at_hdmac.c          |   4 +-
- drivers/dma/at_xdmac.c          |   2 +-
- drivers/dma/bcm2835-dma.c       |   2 +-
- drivers/dma/coh901318.c         |   2 +-
- drivers/dma/cppi41.c            |   2 +-
- drivers/dma/dma-jz4780.c        |   2 +-
- drivers/dma/dmaengine.c         |   2 +-
- drivers/dma/dw/platform.c       |   2 +-
- drivers/dma/edma.c              |   4 +-
- drivers/dma/fsl-edma.c          |   2 +-
- drivers/dma/img-mdc-dma.c       |   2 +-
- drivers/dma/imx-dma.c           |   2 +-
- drivers/dma/imx-sdma.c          |   2 +-
- drivers/dma/k3dma.c             |   2 +-
- drivers/dma/lpc18xx-dmamux.c    |   2 +-
- drivers/dma/mmp_pdma.c          |   2 +-
- drivers/dma/mmp_tdma.c          |   2 +-
- drivers/dma/moxart-dma.c        |   2 +-
- drivers/dma/mxs-dma.c           |   2 +-
- drivers/dma/nbpfaxi.c           |   2 +-
- drivers/dma/of-dma.c            |  20 ++--
- drivers/dma/pl330.c             | 220 ++++++++++++++++------------------------
- drivers/dma/pxa_dma.c           |   2 +-
- drivers/dma/qcom/bam_dma.c      |   2 +-
- drivers/dma/sh/rcar-dmac.c      |   2 +-
- drivers/dma/sh/shdma-of.c       |   2 +-
- drivers/dma/sh/usb-dmac.c       |   2 +-
- drivers/dma/sirf-dma.c          |   2 +-
- drivers/dma/st_fdma.c           |   2 +-
- drivers/dma/ste_dma40.c         |   2 +-
- drivers/dma/stm32-dma.c         |   2 +-
- drivers/dma/sun4i-dma.c         |   2 +-
- drivers/dma/sun6i-dma.c         |   2 +-
- drivers/dma/tegra20-apb-dma.c   |   2 +-
- drivers/dma/tegra210-adma.c     |   2 +-
- drivers/dma/xilinx/xilinx_dma.c |   2 +-
- drivers/dma/xilinx/zynqmp_dma.c |   2 +-
- drivers/dma/zx_dma.c            |   2 +-
- include/linux/amba/pl330.h      |  35 -------
- include/linux/of_dma.h          |  17 ++--
- 42 files changed, 145 insertions(+), 226 deletions(-)
- delete mode 100644 include/linux/amba/pl330.h
-
--- 
-1.9.1
+SGVsbG8gQXJjaGl0LAoKT24gMDEvMjMvMjAxNyAxMTo0MCBQTSwgQXJjaGl0IFRhbmVqYSB3cm90
+ZToKPiBIaSwKPiAKPiBPbiAwMS8yMy8yMDE3IDEwOjU4IFBNLCBKYXZpZXIgTWFydGluZXogQ2Fu
+aWxsYXMgd3JvdGU6Cj4+IEhlbGxvIEFyY2hpdCwKPj4KPj4gT24gMDEvMDkvMjAxNyAwNjo0NyBB
+TSwgQXJjaGl0IFRhbmVqYSB3cm90ZToKPj4+Cj4+Pgo+Pj4gT24gMDEvMDUvMjAxNyAwMTowMSBQ
+TSwgU2VhbiBQYXVsIHdyb3RlOgo+Pj4+IE9uIEZyaSwgRGVjIDMwLCAyMDE2IGF0IDQ6NTcgQU0s
+IE1hcmVrIFN6eXByb3dza2kKPj4+PiA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToK
+Pj4+Pj4gQW5hbG9naXhfZHBfYmluZCgpIGNhbiBiZSBjYWxsZWQgZnJvbSBjb21wb25lbnQgZnJh
+bWV3b3JrLCB3aGljaCBkb2Vzbid0Cj4+Pj4+IGd1YXJhbnRlZSBwcm9wZXIgcnVudGltZSBQTSBz
+dGF0ZSBvZiB0aGUgZGV2aWNlIGR1cmluZyBiaW5kIG9wZXJhdGlvbiwKPj4+Pj4gc28gZW5zdXJl
+IHRoYXQgZGV2aWNlIGlzIHJ1bnRpbWUgYWN0aXZlIGJlZm9yZSBkb2luZyBhbnkgcmVnaXN0ZXIg
+YWNjZXNzLgo+Pj4+PiBUaGlzIGVuc3VyZXMgdGhhdCB0aGUgcG93ZXIgZG9tYWluLCB0byB3aGlj
+aCBEUCBtb2R1bGUgYmVsb25ncywgaXMgdHVybmVkCj4+Pj4+IG9uLiBXaGlsZSBhdCBpdCwgYWxz
+byBmaXggdGhlIHVuYmFsYW5jZWQgY2FsbCB0byBwaHlfcG93ZXJfb24oKSBpbgo+Pj4+PiBhbmFs
+b2dpeF9kcF9iaW5kKCkgZnVuY3Rpb24uCj4+Pgo+Pj4gUHVzaGVkIHRvIGRybS1taXNjLWZpeGVz
+Lgo+Pj4KPj4KPj4gRG8geW91IGtub3cgd2hlbiB0aGlzIGZpeCB3aWxsIGxhbmQgaW4gbWFpbmxp
+bmU/IFRoZSByZWdyZXNzaW9uIGlzIHN0aWxsCj4+IHByZXNlbnQgaW4gdjQuMTAtcmM1Ogo+Pgo+
+PiBodHRwczovL3N0b3JhZ2Uua2VybmVsY2kub3JnL21haW5saW5lL3Y0LjEwLXJjNS9hcm0tZXh5
+bm9zX2RlZmNvbmZpZy9sYWItY29sbGFib3JhL2Jvb3QtZXh5bm9zNTI1MC1zbm93Lmh0bWwKPiAK
+PiBJdCdzIHRoZXJlIGluIERhdmUncyA0LjEwLXJjNiBwdWxsIHJlcXVlc3Q6Cj4gCj4gaHR0cHM6
+Ly9sa21sLm9yZy9sa21sLzIwMTcvMS8yMi8zMDUKClRoYW5rcyBhIGxvdCBmb3IgdGhlIGluZm9y
+bWF0aW9uLgoKPiBBcmNoaXQKPiAKCkJlc3QgcmVnYXJkcywKLS0gCkphdmllciBNYXJ0aW5leiBD
+YW5pbGxhcwpPcGVuIFNvdXJjZSBHcm91cApTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
