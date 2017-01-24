@@ -1,63 +1,49 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos: use atomic helper commit
-Date: Tue, 24 Jan 2017 08:49:37 +0900
-Message-ID: <58869691.60307@samsung.com>
-References: <CGME20170119101840epcas5p36732799cf9d707abdf6a8f07e5169131@epcas5p3.samsung.com>
- <1484821118-10479-1-git-send-email-inki.dae@samsung.com>
- <5880B5E8.4000309@math.uni-bielefeld.de> <5881874A.5050506@samsung.com>
- <58820B33.8050107@math.uni-bielefeld.de> <5885C63B.7060606@samsung.com>
- <5885FABB.20909@math.uni-bielefeld.de>
- <20170123145506.GA17868@trickycodes.roam.corp.google.com>
+Subject: Re: [PATCH] drm/exynos: fix a timeout loop
+Date: Tue, 24 Jan 2017 09:07:17 +0900
+Message-ID: <58869AB5.9080808@samsung.com>
+References: <CGME20170120165445epcas5p1a5fd54c6617006d8b4922d2c0269b17a@epcas5p1.samsung.com>
+ <1484931272-20113-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5885CDA0.40700@samsung.com> <20170123094101.GL17136@nuc-i3427.alporthouse.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:60764 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:53653 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751055AbdAWXtk (ORCPT
+        with ESMTP id S1751113AbdAXBRW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Jan 2017 18:49:40 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        Mon, 23 Jan 2017 20:17:22 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OK900BKDBIQ17A0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Jan 2017 08:49:38 +0900 (KST)
-In-reply-to: <20170123145506.GA17868@trickycodes.roam.corp.google.com>
+ with ESMTP id <0OK9008VSCC7JAB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jan 2017 09:07:19 +0900 (KST)
+In-reply-to: <20170123094101.GL17136@nuc-i3427.alporthouse.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+To: Chris Wilson <chris@chris-wilson.co.uk>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org
 
 
-2017년 01월 23일 23:55에 Sean Paul 이(가) 쓴 글:
-> <snip>
-> 
->>>>> As of now, I don't see any case. even without Maarten's patch set, it works well - actually, I had a test with atomic test app more than 10 hours..
->>>> Can you provide this test application? In particular I'm asking this
->>>> because libdrm currently doesn't provide any tests using the atomic API.
->>>> So this application might be of interest also for other people.
->>>
->>> Below is the app I tested. Know that this application is from chromiumOS tree and I just fixed some parts for internal test.
->>> https://review.tizen.org/git/?p=atform/upstream/libdrm.git;a=commitdiff;h�3bd95f2c5a9b4b69062a3ff008947054b94f55
->> Thanks, any chance this is going to be submitted upstream?
+
+2017년 01월 23일 18:41에 Chris Wilson 이(가) 쓴 글:
+> On Mon, Jan 23, 2017 at 06:32:16PM +0900, Inki Dae wrote:
 >>
+>>
+>> 2017년 01월 21일 01:54에 Tobias Jakobi 이(가) 쓴 글:
+>>> From: Dan Carpenter <dan.carpenter@oracle.com>
+>>>
+>>> We were trying to print an error message if we timed out here, but the
+>>> loop actually ends with "tries" set to UINT_MAX and not zero.  Fix this
+>>> by changing from tries-- to --tries.
+>>
+>> Sorry but I already know this patch from long ago but I'm not clear yet.
+>> How the variable, tries, could have UNIT_MAX?
 > 
-> Probably not in its current form. I just wrote it to quickly test out
-> some stuff we didn't yet support in CrOS. I don't really think it's fit
-> for inclusion upstream.
+> The value of tries after the final loop is -1u. The WARN fires on a
+> succesful read on the final loop, instead of the complete failure.
 
-Sean Paul, do you have any update about this test app? I'd be glad if you could share it.
-For the verification of atomic kms interfaces, I tried to find proper solution before making new one and this is what I found out.
+Ah, right. thanks.
 
-And another story. Do you know which use case CrOS has for use of atomic KMS? I'm trying to apply atomic KMS on Tizen platform - this platform uses Enlightenment as Wayland server.
-I had a dicussion with a Platform guy for it but I didn't find any use case for atomic KMS. And I guess Android has such use case. For this they would use ADF framework maybe.
-Can you share some detail with me if you know it?
-
-Thanks.
-
-> 
-> Sean
-> 
-> <snip>
-> 
+> -Chris
 > 
