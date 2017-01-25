@@ -1,162 +1,96 @@
-From: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
-Date: Wed, 25 Jan 2017 09:34:03 +0100
-Message-ID: <691f2c7b-dbef-9c01-9deb-a0f62944f91b@gmail.com>
-References: <20170124134809.23315-1-richard.genoud@gmail.com>
- <20170124182237.kwixpqc3wkutxbsj@kozik-lap>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 2/4] dmaengine: Forward slave device pointer to of_xlate
+ callback
+Date: Wed, 25 Jan 2017 11:13:57 +0100
+Message-ID: <40e8364c-660e-6555-2a61-1ea9d66f1172@samsung.com>
+References: <CGME20170124092751eucas1p1411586335ad7083f7fff451212e002a3@eucas1p1.samsung.com>
+ <1485250055-22137-1-git-send-email-m.szyprowski@samsung.com>
+ <1485250055-22137-3-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFp8rRXsnkJ+XR_rV1JotPAJmC8bb9OwC0e0FP=VsrKrvg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170124182237.kwixpqc3wkutxbsj@kozik-lap>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64645 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbdAYKOE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 05:14:04 -0500
+In-reply-to: <CAPDyKFp8rRXsnkJ+XR_rV1JotPAJmC8bb9OwC0e0FP=VsrKrvg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>
 
-On 24/01/2017 19:22, Krzysztof Kozlowski wrote:
-> On Tue, Jan 24, 2017 at 02:48:09PM +0100, Richard Genoud wrote:
->> Since commit 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores"),
->> the USB ports on odroid-XU4 don't work anymore.
-> 
-> Hi,
-> 
-> Thanks for the patch. Please:
-> 1. Use recent kernel to test it, which could be one of: mainline
->    (Linus'), recent linux-next or my for-next branch. Why am I thinking
->    that you did not test it on thse? Because you sent the patch to
->    k.kozlowski-Sze3O3UU22LowKkBSvOlow@public.gmane.org The guy disappeared four months ago and
->    recent kernel has all addresses updated (including mailmap).
-My bad, I took the email from the commit 6658356014cb ("ARM: dts: Add
-support Odroid XU4 board for exynos5422-odroidxu4") instead of taking it
-from get_maintainer (That was clearly a bad idea).
-I actually ran my tests on 4.4.44 / 4.8.5 / 4.9.5 4.10-rc4
-I'll also run them on -next
+Hi Ulf,
 
-> 2. Fix the title to match subsystem (git log --oneline arch/arm/boot/dts/exynos*).
-Ok
-
-> 
+On 2017-01-24 16:09, Ulf Hansson wrote:
+> On 24 January 2017 at 10:27, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> Add pointer to slave device to of_dma_xlate to let DMA engine driver
+>> to know which slave device is using given DMA channel. This will be
+>> later used to implement non-irq-safe runtime PM for DMA engine driver.
 >>
->> Inserting an usb key (USB2.0) on the USB3.0 port result in:
->> [   64.488264] xhci-hcd xhci-hcd.2.auto: Port resume took longer than 20000 msec, port status = 0xc400fe3
->> [   74.568156] xhci-hcd xhci-hcd.2.auto: xHCI host not responding to stop endpoint command.
->> [   74.574806] xhci-hcd xhci-hcd.2.auto: Assuming host is dying, halting host.
->> [   74.601970] xhci-hcd xhci-hcd.2.auto: HC died; cleaning up
->> [   74.606276] usb 3-1: USB disconnect, device number 2
->> [   74.613565] usb 4-1: USB disconnect, device number 2
->> [   74.621208] usb usb3-port1: couldn't allocate usb_device
->> NB: it's not related to USB2.0 devices, I get the same result with an USB3.0 device (SATA to USB3 for instance).
->> NB2: it doesn't happen on an odriod-XU3 board, that doesn't have the realtek RTL8153 chip.
-> 
-> Odroid-XU3
-> s/realtek/Realtek/
-> However I do not think that Realtek matters here. The USB3 ports are
-> directly accessible on XU3. On XU4 on the other hand, the port USB3-0 is
-> connected to USB hub. I think the sentence about Realtek is then
-> misleading, so just mention the XU3.
-Ok
-
-> 
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> [...]
+>
+>> diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
+>> index b90d8ec57c1f..a0a6c8c17669 100644
+>> --- a/include/linux/of_dma.h
+>> +++ b/include/linux/of_dma.h
+>> @@ -22,7 +22,8 @@ struct of_dma {
+>>          struct list_head        of_dma_controllers;
+>>          struct device_node      *of_node;
+>>          struct dma_chan         *(*of_dma_xlate)
+>> -                               (struct of_phandle_args *, struct of_dma *);
+>> +                               (struct of_phandle_args *, struct of_dma *,
+>> +                                struct device *);
+>>          void                    *(*of_dma_route_allocate)
+>>                                  (struct of_phandle_args *, struct of_dma *);
+>>          struct dma_router       *dma_router;
+>> @@ -37,7 +38,7 @@ struct of_dma_filter_info {
+>>   #ifdef CONFIG_DMA_OF
+>>   extern int of_dma_controller_register(struct device_node *np,
+>>                  struct dma_chan *(*of_dma_xlate)
+>> -               (struct of_phandle_args *, struct of_dma *),
+>> +               (struct of_phandle_args *, struct of_dma *, struct device *),
+>>                  void *data);
+>>   extern void of_dma_controller_free(struct device_node *np);
 >>
->> If the lines:
->> 	if (dwc->revision > DWC3_REVISION_194A)
->> 		reg |= DWC3_GUSB3PIPECTL_SUSPHY;
->> are commented out, the USB3.0 start working.
-> 
-> s/start/starts/
-Ok
-
+>> @@ -47,17 +48,17 @@ extern int of_dma_router_register(struct device_node *np,
+>>                  struct dma_router *dma_router);
+>>   #define of_dma_router_free of_dma_controller_free
 >>
->> For a full analyse: https://lkml.org/lkml/2017/1/18/678
-> 
-> Documentation/process/submitting-patches.rst
-> Instead of this above (lkml.org is highly discouraged) use proper
-> https://lkml.kernel.org/ in "Link:" put next to other tags (look at
-> recent commits), however I do not find this link as necessary.  Just
-> describe here what is wrong and how you are going to fix it.
-Ok
+>> -extern struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+>> +extern struct dma_chan *of_dma_request_slave_channel(struct device *slave,
+>>                                                       const char *name);
+> I noticed that this API is being used from sound/soc/sh/rcar/dma.c, so
+> I assume this change triggers a compiler error. I guess you want to
+> fold in a change dealing with that as well.
 
->>
->> Felipe suggested that suspend should be disabled temporarily while
->> what's wrong with DCW3 is figured out.
->>
->> Tested on Odroid XU4
->>
->> Suggested-by: Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->> Tested-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> Being an author implies testing. Please remove the tag.
-Ok
+Right. Thanks for pointing this.
 
->> Signed-off-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.4+
-> 
-> Malformed tag - missing <>.
-Ok
+I didn't expect that of_dma_request_slave_channel() is used outside 
+drivers/dma,
+especially in such a creative way as in sh/rcar driver. I will change a 
+function
+signature to:
 
->> Fixes: 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores")
-> 
-> No need for such long hash (2164a405762c).
-> 
-> I wonder about pointing the commit which introduced the issue. Usually
-> the fixes directly indicates how far we want the patch to be backported.
-> In this case this should be backported to kernel bringing XU4 DTS. The
-> commit which was not valid, was the commit adding DTS without this
-> property. 2164a476205c was innocent for XU4 because XU4 did not exist
-> that time.
-> 
-> Definitely something is wrong if Fixes tag does not match indicated
-> backport version.
+of_dma_request_slave_channel(struct device *slave, struct device_node 
+*np, const char *name)
 
-Yes, I see what you mean. We can't say that 2164a476205ccc ("usb: dwc3:
-set SUSPHY bit for all cores") broke XU4 because it predates it !
-I'll simply remove that.
+then, as there is no direct relation between device and of node pointer, 
+from
+which rcar driver extracts the dma channel data.
 
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu4.dts | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
->> index 2faf88627a48..f62dbd9b5ad3 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
->> @@ -43,6 +43,15 @@
->>  	status = "okay";
->>  };
->>  
->> +&usbdrd_dwc3_0 {
->> +	/*
->> +	 * without that, usb devices are not recognized when
->> +	 * they are plugged.
-> 
-> s/without/Without/
-> s/usb/USB.
-> 
->> +	 * cf: https://lkml.org/lkml/2017/1/18/678
-> 
-> No external resources. You can extend a little bit the sentence above to
-> two sentences. Combined with "git log" this would be sufficient.
+I would also expect that zero-day build robot will complain about missing
+sh/rcar driver update, but I didn't get any message from it.
 
-Ok
-> Best regards,
-> Krzysztof
+> [...]
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks !
-
->> +	 */
->> +	snps,dis_u3_susphy_quirk;
->> +};
->> +
->>  &usbdrd_dwc3_1 {
->>  	dr_mode = "host";
->>  };
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
