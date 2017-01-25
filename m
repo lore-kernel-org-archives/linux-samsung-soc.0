@@ -1,39 +1,62 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Wed, 25 Jan 2017 14:03:21 +0000
-Message-ID: <20170125140321.23911-1-weiyj.lk@gmail.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd fields
+Date: Wed, 25 Jan 2017 16:06:41 +0200
+Message-ID: <20170125140641.GU31595@intel.com>
+References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
+ <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+ <20170120135540.GC31595@intel.com>
+ <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
-
-In case of error, the function devm_ioremap() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should
-be replaced with NULL test.
-
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
-IORESOURCE_MEM for one pin-bank")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 3bc925f..9c03eab 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
- 						resource_size(res));
--		if (IS_ERR(virt_base[i]))
-+		if (!virt_base[i])
- 			return ERR_PTR(-EIO);
- 	}
-
+T24gTW9uLCBKYW4gMjMsIDIwMTcgYXQgMTA6MTU6MTZBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBPbiAyMC4wMS4yMDE3IDE0OjU1LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPiBP
+biBGcmksIEphbiAyMCwgMjAxNyBhdCAwNzo1MjoyNEFNICswMTAwLCBBbmRyemVqIEhhamRhIHdy
+b3RlOgo+ID4+IEluIGNhc2Ugb2YgaW50ZXJsYWNlIG1vZGUgaXJxIGlzIGdlbmVyYXRlZCBmb3Ig
+b2RkIGFuZCBldmVuIGZpZWxkcywgYnV0Cj4gPj4gdmJsYW5rIHNob3VsZCBiZSBzaWduYWxlZCBv
+bmx5IGZvciB0aGUgbGFzdCBlbWl0dGVkIGZpZWxkLgo+ID4gSSdtIHByZXR0eSBzdXJlIG1vc3Qg
+ZHJpdmVycyBzaWduYWwgaXQgZm9yIGJvdGggZmllbGRzLiBBdCBsZWFzdCBpOTE1Cj4gPiBkb2Vz
+Lgo+IAo+IFRoZSBxdWVzdGlvbiBpcyB3aGljaCBiZWhhdmlvciBpcyBjb3JyZWN0PyBJIGhhdmUg
+bm90IGZvdW5kIGFueSBjbGVhcgo+IHN0YXRlbWVudCBpbiB0aGUgZG9jdW1lbnRhdGlvbiwgb3Ig
+ZHJtIGNvcmUgY29kZS4KClRoYXQncyB2ZXJ5IHR5cGljYWwgZm9yIHVzIHVuZm9ydHVuYXRlbHku
+CgpJIHdvdWxkIHNheSB3aGF0IHdlIHNob3VsZCBkbyB3aGF0IGk5MTUgZG9lcy4gSXQgYWxsb3dz
+IG1vcmUgZmxleGliaWxpdHkKaW4gaG93IHlvdSB1c2UgdGhlIGhhcmR3YXJlLiBFZy4gdGhlbiB5
+b3UgY2FuIGFjdHVhbGx5IHNjYW4gb3V0CmludGVybGFjZWQgbWF0ZXJpYWwgdG8gYW4gaW50ZXJs
+YWNlZCBkaXNwbGF5IGFuZCBub3QgbWVzcyB1cCB0aGUgZmllbGRzLAphbmQgeW91IGNhbiBhbHNv
+IGRvIDM6MiBwdWxsZG93biB0eXBlIG9mIHN0dWZmLiBPciB5b3UgY2FuIGV2ZW4ganVzdApzdHVm
+ZiBwcm9ncmVzc2l2ZSBmcmFtZXMgZG93biB0aGUgcGlwZSBhdCBmaWVsZCByYXRlLgoKT25lIHBy
+b2JsZW0gd2l0aCBpbnRlcmxhY2VkIHN0dWZmIGlzIHRoYXQgd2UgZG9uJ3QgaGF2ZSBhbnkgZmll
+bGQKaW5kaWNhdGlvbiBpbiB0aGUgZXZlbnRzLCBub3IgZG8gd2UgaGF2ZSBhIHdheSB0byBmbGlw
+IG9uIGEgc3BlY2lmaWMKZmllbGQuIEkgdHJpZWQgdG8gc3BlY2lmeSB0aGUgbGF0dGVyIGZvciB0
+aGUgU0VUUExBTkUgaW9jdGwgd2F5CmJhY2sgd2hlbiwgYnV0IGl0IGRpZG4ndCBlbmQgdXAgYmVp
+bmcgaW1wbGVtZW50ZWQgYW5kIG5vdyB3ZSB3b3VsZApuZWVkIHNvbWV0aGluZyBkaWZmZXJlbnQg
+Zm9yIGF0b21pYy4KCj4gSSBoYXZlIGd1ZXNzZWQgdGhhdCBzaW5jZSB2YmxhbmsgZXZlbnQgaXMg
+dXNlZCB0byBzaWduYWwgZW5kIG9mIHNjYW4tb3V0Cj4gb2YgYnVmZmVyIGl0IHNob3VsZCBiZSBj
+YWxsZWQgYWZ0ZXIgc2Nhbi1vdXQgb2Ygd2hvbGUgYnVmZmVyIC0gaW4gY2FzZQo+IG9mIGludGVy
+bGFjZWQgbW9kZSBhZnRlciBzY2FuLW91dCBvZiAybmQgZmllbGQuCgpFYWNoIGZpZWxkIGhhcyBh
+IHByb3BlciB2ZXJ0aWNhbCBibGFua2luZyBpbnRlcnZhbCwgc28geW91J2QganVzdCBlbmQgdXAK
+dG90YWxseSB3YXN0aW5nIG9uZSBvZiB0aGVtLgoKPiBNYXliZSBteSBhc3N1bXB0aW9uIGlzIHdy
+b25nLCBpbiBzdWNoIGNhc2UgdGhpcyBwYXRjaCBzaG91bGQgYmUgZHJvcHBlZAo+IGFuZCBtaXhl
+ciBkcml2ZXIgYWxzbyBzaG91bGQgYmUgZml4ZWQsIGJ1dCBiZWZvcmUgZG9pbmcgdGhhdCBpdCB3
+b3VsZCBiZQo+IGdvb2QgdG8ga25vdyBmb3Igc3VyZSBob3cgaXQgc2hvdWxkIGJlIGhhbmRsZWQg
+Y29ycmVjdGx5Lgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCgotLSAKVmlsbGUgU3lyasOkbMOkCklu
+dGVsIE9UQwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
