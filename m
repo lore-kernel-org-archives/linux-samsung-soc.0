@@ -1,48 +1,61 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Wed, 25 Jan 2017 23:25:43 +0900
-Message-ID: <CA+Ln22Gs62a2+YTCUBoWdv95=oUWoW_W_+pP59U+z8T668fQtA@mail.gmail.com>
-References: <20170125140321.23911-1-weiyj.lk@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/7] soc: samsung: pmu: Add dummy support for Exynos5433
+ SoC
+Date: Wed, 25 Jan 2017 19:30:00 +0200
+Message-ID: <20170125173000.nj7bp3f4wjeoie3q@kozik-lap>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115102eucas1p187f817f967c18a640098cf29268238d2@eucas1p1.samsung.com>
+ <1485345031-2948-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170125140321.23911-1-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1485345031-2948-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Wei,
-
-2017-01-25 23:03 GMT+09:00 Wei Yongjun <weiyj.lk@gmail.com>:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
->
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
->
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
-> IORESOURCE_MEM for one pin-bank")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Jan 25, 2017 at 12:50:25PM +0100, Marek Szyprowski wrote:
+> Add compatible for Exynos5433 SoC, so the driver will bind and let other
+> drivers to use PMU regmap.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 3bc925f..9c03eab 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->                 res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->                 virt_base[i] = devm_ioremap(&pdev->dev, res->start,
->                                                 resource_size(res));
-> -               if (IS_ERR(virt_base[i]))
-> +               if (!virt_base[i])
+>  drivers/soc/samsung/exynos-pmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
-I'd rather replace devm_ioremap() (and explicit resource struct
-dereferencing, without any checks by the way), with
-devm_ioremap_resource() (which actually returns ERR_PTR()s, so no need
-to change the condition with it).
+Makes sense but please also add a check in exynos_sys_powerdown_conf() for
+!pmu_data or a comment for that. For current architecture, this will not
+happen but you are adding different usage thus forcing reader to find the
+dependencies on his own (dependecies are already spread all over for ARMv7).
 
 Best regards,
-Tomasz
+Krzysztof
+
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index 813df6e7292d..effb8a8a78c6 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -90,6 +90,8 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>  	}, {
+>  		.compatible = "samsung,exynos5420-pmu",
+>  		.data = &exynos5420_pmu_data,
+> +	}, {
+> +		.compatible = "samsung,exynos5433-pmu",
+>  	},
+>  	{ /*sentinel*/ },
+>  };
+> @@ -122,7 +124,7 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+>  	pmu_context->dev = dev;
+>  	pmu_context->pmu_data = of_device_get_match_data(dev);
+>  
+> -	if (pmu_context->pmu_data->pmu_init)
+> +	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
+>  		pmu_context->pmu_data->pmu_init();
+>  
+>  	platform_set_drvdata(pdev, pmu_context);
+> -- 
+> 1.9.1
+> 
