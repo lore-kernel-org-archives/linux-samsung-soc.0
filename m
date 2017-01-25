@@ -1,67 +1,127 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
-Date: Wed, 25 Jan 2017 21:57:15 +0100
-Message-ID: <20170125205715.xaaphsyb7hwowurq@ninjato>
-References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
- <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
- <20170125205554.m7vmhs4tq6bzti52@ninjato>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4cqzfwdul5dnhlb6"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170125205554.m7vmhs4tq6bzti52@ninjato>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
+From: martin@kaiser.cx
+Subject: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
+Date: Wed, 25 Jan 2017 22:42:25 +0100
+Message-ID: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+From: Martin Kaiser <martin@kaiser.cx>
 
---4cqzfwdul5dnhlb6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These functions are referencing s3c...._clk_regs[], which are marked as
+__initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
+produces warnings like
 
-On Wed, Jan 25, 2017 at 09:55:54PM +0100, Wolfram Sang wrote:
-> On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
-> > In case of arbitration lost adequate interrupt sometimes is not signale=
-d. As
-> > a result transfer timeouts and is not retried, as it should. To avoid s=
-uch
-> > cases code is added to check transaction status in case of every interr=
-upt.
-> >=20
-> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->=20
-> Looks good to me, but I'd like some review from one of the Samsung
-> people?
+WARNING: vmlinux.o(.text+0x198350):
+Section mismatch in reference from the function s3c2410_clk_sleep_init()
+to the (unknown reference) .init.data:(unknown)
 
-Ooops, you are from Samsung as well :) Still, I'd like one more ack or
-review from someone with the HW.
+Mark the s3c...._clk_sleep_init() functions as __init in
+order to fix this.
 
-Thanks,
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+v2:
+Fix the commit message, describe what the problem really is.
+(Thanks, Krzysztof)
 
-   Wolfram
+ drivers/clk/samsung/clk-s3c2410.c |    4 ++--
+ drivers/clk/samsung/clk-s3c2412.c |    4 ++--
+ drivers/clk/samsung/clk-s3c2443.c |    4 ++--
+ drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-
---4cqzfwdul5dnhlb6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliJESsACgkQFA3kzBSg
-KbYE+g/+KGe1Z7iFAkXlu4f+WN6A9/3ejRk0hTNyifn1p6fjPSKuF08D/gqWLUea
-r4S5jcEwQ9IEeHevgO9n0dcbg+0zutxde76YzozQWg2rR2jGb97pMN6lSHgAUW2V
-5/VGBmKlTbD7mUMSkJjRm62MkWml1RQnKfPRke9pjhVN+AnJhpJXeViFka7BoHZ/
-VJsUwDbFEop3oXVnGsQcnoPBuiH1zSeysmvgzwwNSCYB2EKYrrxCim3h1epaWRZv
-7K4Re0uY5/7HcJJUTheCaY+Bfo1y3wydcbGH6qwxlKpGzufbNRQ1b4cgV26bK2a1
-VsMq14rZmQKtdlhzXi1zTkGbpToudpIIt/TIk+3Xz7JcoRJ4JmWr7LN2ImJx5Y9h
-bZi2voQaS8V+4Z0SwC29mDlffQJh80v0fQFEVWCF/JWROx9PZTt8k0pH/CP9I4Q5
-vppEViof5kDkV8gSTlpa9342laSZviz5iY/G8qOpTU1CTr/H9m6VpxZcYW/1xEFF
-oh6PcxqEGSAschMnV+CSYooWkYZdDuU+7vtpfLSQNbhON6p5VpqqmFF2mfznSdci
-Uy4oa6hIdcM/XAQojF475lJUljcQx0gLsoatfaBxErlqMy6tHkFF9geOvloLh5rF
-CwfQcTYx5Lm3L++9gFwTSWuXoLUXZe+UxgxXXQyGPt0LOIXnb90=
-=vhDR
------END PGP SIGNATURE-----
-
---4cqzfwdul5dnhlb6--
+diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+index d7a1e77..e0650c3 100644
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -76,7 +76,7 @@ static void s3c2410_clk_resume(void)
+ 	.resume = s3c2410_clk_resume,
+ };
+ 
+-static void s3c2410_clk_sleep_init(void)
++static void __init s3c2410_clk_sleep_init(void)
+ {
+ 	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
+ 						ARRAY_SIZE(s3c2410_clk_regs));
+@@ -90,7 +90,7 @@ static void s3c2410_clk_sleep_init(void)
+ 	return;
+ }
+ #else
+-static void s3c2410_clk_sleep_init(void) {}
++static void __init s3c2410_clk_sleep_init(void) {}
+ #endif
+ 
+ PNAME(fclk_p) = { "mpll", "div_slow" };
+diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+index ec873ee..b8340a4 100644
+--- a/drivers/clk/samsung/clk-s3c2412.c
++++ b/drivers/clk/samsung/clk-s3c2412.c
+@@ -69,7 +69,7 @@ static void s3c2412_clk_resume(void)
+ 	.resume = s3c2412_clk_resume,
+ };
+ 
+-static void s3c2412_clk_sleep_init(void)
++static void __init s3c2412_clk_sleep_init(void)
+ {
+ 	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
+ 						ARRAY_SIZE(s3c2412_clk_regs));
+@@ -83,7 +83,7 @@ static void s3c2412_clk_sleep_init(void)
+ 	return;
+ }
+ #else
+-static void s3c2412_clk_sleep_init(void) {}
++static void __init s3c2412_clk_sleep_init(void) {}
+ #endif
+ 
+ static struct clk_div_table divxti_d[] = {
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index 5e24a17..abb935c 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -89,7 +89,7 @@ static void s3c2443_clk_resume(void)
+ 	.resume = s3c2443_clk_resume,
+ };
+ 
+-static void s3c2443_clk_sleep_init(void)
++static void __init s3c2443_clk_sleep_init(void)
+ {
+ 	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
+ 						ARRAY_SIZE(s3c2443_clk_regs));
+@@ -103,7 +103,7 @@ static void s3c2443_clk_sleep_init(void)
+ 	return;
+ }
+ #else
+-static void s3c2443_clk_sleep_init(void) {}
++static void __init s3c2443_clk_sleep_init(void) {}
+ #endif
+ 
+ PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index a48bd5f..7306867 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -121,7 +121,7 @@ static void s3c64xx_clk_resume(void)
+ 	.resume = s3c64xx_clk_resume,
+ };
+ 
+-static void s3c64xx_clk_sleep_init(void)
++static void __init s3c64xx_clk_sleep_init(void)
+ {
+ 	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
+ 						ARRAY_SIZE(s3c64xx_clk_regs));
+@@ -145,7 +145,7 @@ static void s3c64xx_clk_sleep_init(void)
+ 		__func__);
+ }
+ #else
+-static void s3c64xx_clk_sleep_init(void) {}
++static void __init s3c64xx_clk_sleep_init(void) {}
+ #endif
+ 
+ /* List of parent clocks common for all S3C64xx SoCs. */
+-- 
+1.7.10.4
