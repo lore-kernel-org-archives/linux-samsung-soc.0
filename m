@@ -1,60 +1,79 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 7/7] mfd: exynos-lpass: Add runtime PM support
-Date: Wed, 25 Jan 2017 12:50:31 +0100
-Message-ID: <1485345031-2948-8-git-send-email-m.szyprowski@samsung.com>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115105eucas1p1e7191cf0be871c254dd09477ca7f9e1a@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/2] arm64: dts: exynos: Add initial configuration for DISP
+ clocks for TM2/TM2e
+Date: Wed, 25 Jan 2017 12:51:58 +0100
+Message-ID: <1485345118-3082-3-git-send-email-m.szyprowski@samsung.com>
+References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115215eucas1p239b83cbdfead5b59e3cbbc6e3d3a4b22@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57547 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbdAYLwe (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 06:52:34 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OKC00FCW3N44S10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2017 11:52:16 +0000 (GMT)
+In-reply-to: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Convert exisitng lpass-suspend/resume callbacks into runtime PM callbacks.
-This way Exynos LPASS driver will be ready for use with power domains
-enabled. LPASS will be runtime resumed/suspended as a result of its child
-devices runtime PM transitions.
+Add initial clock configuration for display subsystem for Exynos5433
+based TM2/TM2e boards in device tree in order to avoid dependency on the
+configuration left by the bootloader. This initial configuration is also
+needed to ensure that display subsystem is operational if display power
+domain gets turned off before clock controller is probed and the inital
+clock configuration left by the bootloader saved.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/mfd/exynos-lpass.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 25 ++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 44d8ea1a978b..d383b2f6f207 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -22,6 +22,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/types.h>
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 13a0950b57e2..1b9a8a92a40c 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -218,15 +218,32 @@
+ };
  
-@@ -132,6 +133,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	}
+ &cmu_disp {
+-	assigned-clocks = <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
++	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+ 			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
++			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
++			  <&cmu_disp CLK_MOUT_DISP_PLL>,
++			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+ 			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+ 			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+-	assigned-clock-parents = <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+-				 <0>,
++	assigned-clock-parents = <0>, <0>,
++				 <&cmu_mif CLK_ACLK_DISP_333>,
++				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
++				 <&cmu_disp CLK_FOUT_DISP_PLL>,
++				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+ 				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+ 				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+-	assigned-clock-rates = <0>, <400000000>;
++	assigned-clock-rates = <266000000>, <400000000>;
+ };
  
- 	platform_set_drvdata(pdev, lpass);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
- 	exynos_lpass_enable(lpass);
- 
- 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-@@ -155,8 +158,11 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
--					exynos_lpass_resume);
-+static const struct dev_pm_ops lpass_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_lpass_suspend, exynos_lpass_resume, NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
-+};
- 
- static const struct of_device_id exynos_lpass_of_match[] = {
- 	{ .compatible = "samsung,exynos5433-lpass" },
+ &cmu_fsys {
 -- 
 1.9.1
