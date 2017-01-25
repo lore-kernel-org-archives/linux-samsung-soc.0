@@ -1,90 +1,37 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 6/8] arm64: dts: exynos: Add AUD power domain to Exynos5433 SoC
-Date: Wed, 25 Jan 2017 12:55:40 +0100
-Message-ID: <1485345342-3273-7-git-send-email-m.szyprowski@samsung.com>
-References: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115601eucas1p29decb9c2daf4c3fcb9d796392f5d69ba@eucas1p2.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device pointer to
+ of_xlate callback
+Date: Wed, 25 Jan 2017 14:12:38 +0100
+Message-ID: <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
+References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
+ <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for AUD power domain to Exynos5433 SoCs, which
-contains following devices: a clock controller, a pin controller, LPASS
-module, I2S controller, ADMA PL330 engine and UART #3 device.
+On 01/25/2017 11:28 AM, Marek Szyprowski wrote:
+> Add pointer to slave device to of_dma_xlate to let DMA engine driver
+> to know which slave device is using given DMA channel. This will be
+> later used to implement non-irq-safe runtime PM for DMA engine driver.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+of_dma_xlate() is used to translate from a OF phandle and a specifier to a
+DMA channel. On one hand this does not necessarily mean that the channel is
+actually going to be used by the slave that called the xlate function.
+Modifying the driver state when a lookup of the channel is done is a
+layering violation. And this approach is also missing a way to disassociate
+a slave from a DMA channel, e.g. when it is no longer used.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 3487981726d9..24fc3b46cc40 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -377,6 +377,7 @@
- 			#clock-cells = <1>;
- 			clock-names = "oscclk", "fout_aud_pll";
- 			clocks = <&xxti>, <&cmu_top CLK_FOUT_AUD_PLL>;
-+			power-domains = <&pd_aud>;
- 		};
- 
- 		cmu_bus0: clock-controller@13600000 {
-@@ -553,6 +554,12 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		pd_aud: aud-power-domain@105c40c0 {
-+			compatible = "samsung,exynos5433-pd";
-+			reg = <0x105c40c0 0x20>;
-+			#power-domain-cells = <0>;
-+		};
-+
- 		tmu_atlas0: tmu@10060000 {
- 			compatible = "samsung,exynos5433-tmu";
- 			reg = <0x10060000 0x200>;
-@@ -665,6 +672,7 @@
- 			compatible = "samsung,exynos5433-pinctrl";
- 			reg = <0x114b0000 0x1000>;
- 			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&pd_aud>;
- 		};
- 
- 		pinctrl_cpif: pinctrl@10fe0000 {
-@@ -1544,6 +1552,7 @@
- 			clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
- 			clock-names = "sfr0_ctrl";
- 			samsung,pmu-syscon = <&pmu_system_controller>;
-+			power-domains = <&pd_aud>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-@@ -1557,6 +1566,7 @@
- 				#dma-cells = <1>;
- 				#dma-channels = <8>;
- 				#dma-requests = <32>;
-+				power-domains = <&pd_aud>;
- 			};
- 
- 			i2s0: i2s0@11440000 {
-@@ -1573,6 +1583,7 @@
- 				clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&i2s0_bus>;
-+				power-domains = <&pd_aud>;
- 				status = "disabled";
- 			};
- 
-@@ -1585,6 +1596,7 @@
- 				clock-names = "uart", "clk_uart_baud0";
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&uart_aud_bus>;
-+				power-domains = <&pd_aud>;
- 				status = "disabled";
- 			};
- 		};
--- 
-1.9.1
+On the other hand there are other mechanisms to translate between some kind
+of firmware handle to a DMA channel which are completely ignored here.
 
+So this approach does not work. This is something that needs to be done at
+the dmaengine level, not a the firmware resource translation level. And it
+needs a matching method that is called when the channel is disassociated
+from a device, when the device no longer uses the DMA channel.
