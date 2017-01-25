@@ -1,62 +1,136 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd fields
-Date: Wed, 25 Jan 2017 16:06:41 +0200
-Message-ID: <20170125140641.GU31595@intel.com>
-References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
- <1484895145-511-7-git-send-email-a.hajda@samsung.com>
- <20170120135540.GC31595@intel.com>
- <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
+Date: Wed, 25 Jan 2017 16:17:08 +0200
+Message-ID: <CAJKOXPd+CnmVG282NEVCFqS_3YEURCWx41udyQKpL21keGJOWg@mail.gmail.com>
+References: <20170124134809.23315-1-richard.genoud@gmail.com>
+ <CANAwSgRAT0-XETx=yVRgM4GfukFLLEw-hqHjYGEWs0tqAx8g2g@mail.gmail.com>
+ <CGME20170125075556epcas1p4b916a6d6acda28f8fc1959a1227520fa@epcas1p4.samsung.com>
+ <CAJKOXPesCuYsK23466=6W9PPX7DtztdymZLBfNz0Dmjzwp4qBA@mail.gmail.com> <ef6c0d33-73d6-805e-aeab-86190e8b0aa0@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ef6c0d33-73d6-805e-aeab-86190e8b0aa0-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBKYW4gMjMsIDIwMTcgYXQgMTA6MTU6MTZBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBPbiAyMC4wMS4yMDE3IDE0OjU1LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4gPiBP
-biBGcmksIEphbiAyMCwgMjAxNyBhdCAwNzo1MjoyNEFNICswMTAwLCBBbmRyemVqIEhhamRhIHdy
-b3RlOgo+ID4+IEluIGNhc2Ugb2YgaW50ZXJsYWNlIG1vZGUgaXJxIGlzIGdlbmVyYXRlZCBmb3Ig
-b2RkIGFuZCBldmVuIGZpZWxkcywgYnV0Cj4gPj4gdmJsYW5rIHNob3VsZCBiZSBzaWduYWxlZCBv
-bmx5IGZvciB0aGUgbGFzdCBlbWl0dGVkIGZpZWxkLgo+ID4gSSdtIHByZXR0eSBzdXJlIG1vc3Qg
-ZHJpdmVycyBzaWduYWwgaXQgZm9yIGJvdGggZmllbGRzLiBBdCBsZWFzdCBpOTE1Cj4gPiBkb2Vz
-Lgo+IAo+IFRoZSBxdWVzdGlvbiBpcyB3aGljaCBiZWhhdmlvciBpcyBjb3JyZWN0PyBJIGhhdmUg
-bm90IGZvdW5kIGFueSBjbGVhcgo+IHN0YXRlbWVudCBpbiB0aGUgZG9jdW1lbnRhdGlvbiwgb3Ig
-ZHJtIGNvcmUgY29kZS4KClRoYXQncyB2ZXJ5IHR5cGljYWwgZm9yIHVzIHVuZm9ydHVuYXRlbHku
-CgpJIHdvdWxkIHNheSB3aGF0IHdlIHNob3VsZCBkbyB3aGF0IGk5MTUgZG9lcy4gSXQgYWxsb3dz
-IG1vcmUgZmxleGliaWxpdHkKaW4gaG93IHlvdSB1c2UgdGhlIGhhcmR3YXJlLiBFZy4gdGhlbiB5
-b3UgY2FuIGFjdHVhbGx5IHNjYW4gb3V0CmludGVybGFjZWQgbWF0ZXJpYWwgdG8gYW4gaW50ZXJs
-YWNlZCBkaXNwbGF5IGFuZCBub3QgbWVzcyB1cCB0aGUgZmllbGRzLAphbmQgeW91IGNhbiBhbHNv
-IGRvIDM6MiBwdWxsZG93biB0eXBlIG9mIHN0dWZmLiBPciB5b3UgY2FuIGV2ZW4ganVzdApzdHVm
-ZiBwcm9ncmVzc2l2ZSBmcmFtZXMgZG93biB0aGUgcGlwZSBhdCBmaWVsZCByYXRlLgoKT25lIHBy
-b2JsZW0gd2l0aCBpbnRlcmxhY2VkIHN0dWZmIGlzIHRoYXQgd2UgZG9uJ3QgaGF2ZSBhbnkgZmll
-bGQKaW5kaWNhdGlvbiBpbiB0aGUgZXZlbnRzLCBub3IgZG8gd2UgaGF2ZSBhIHdheSB0byBmbGlw
-IG9uIGEgc3BlY2lmaWMKZmllbGQuIEkgdHJpZWQgdG8gc3BlY2lmeSB0aGUgbGF0dGVyIGZvciB0
-aGUgU0VUUExBTkUgaW9jdGwgd2F5CmJhY2sgd2hlbiwgYnV0IGl0IGRpZG4ndCBlbmQgdXAgYmVp
-bmcgaW1wbGVtZW50ZWQgYW5kIG5vdyB3ZSB3b3VsZApuZWVkIHNvbWV0aGluZyBkaWZmZXJlbnQg
-Zm9yIGF0b21pYy4KCj4gSSBoYXZlIGd1ZXNzZWQgdGhhdCBzaW5jZSB2YmxhbmsgZXZlbnQgaXMg
-dXNlZCB0byBzaWduYWwgZW5kIG9mIHNjYW4tb3V0Cj4gb2YgYnVmZmVyIGl0IHNob3VsZCBiZSBj
-YWxsZWQgYWZ0ZXIgc2Nhbi1vdXQgb2Ygd2hvbGUgYnVmZmVyIC0gaW4gY2FzZQo+IG9mIGludGVy
-bGFjZWQgbW9kZSBhZnRlciBzY2FuLW91dCBvZiAybmQgZmllbGQuCgpFYWNoIGZpZWxkIGhhcyBh
-IHByb3BlciB2ZXJ0aWNhbCBibGFua2luZyBpbnRlcnZhbCwgc28geW91J2QganVzdCBlbmQgdXAK
-dG90YWxseSB3YXN0aW5nIG9uZSBvZiB0aGVtLgoKPiBNYXliZSBteSBhc3N1bXB0aW9uIGlzIHdy
-b25nLCBpbiBzdWNoIGNhc2UgdGhpcyBwYXRjaCBzaG91bGQgYmUgZHJvcHBlZAo+IGFuZCBtaXhl
-ciBkcml2ZXIgYWxzbyBzaG91bGQgYmUgZml4ZWQsIGJ1dCBiZWZvcmUgZG9pbmcgdGhhdCBpdCB3
-b3VsZCBiZQo+IGdvb2QgdG8ga25vdyBmb3Igc3VyZSBob3cgaXQgc2hvdWxkIGJlIGhhbmRsZWQg
-Y29ycmVjdGx5Lgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCgotLSAKVmlsbGUgU3lyasOkbMOkCklu
-dGVsIE9UQwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Jan 25, 2017 at 3:48 PM, Marek Szyprowski
+<m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi Krzysztof,
+>
+> On 2017-01-25 08:55, Krzysztof Kozlowski wrote:
+>>
+>> On Wed, Jan 25, 2017 at 7:51 AM, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>
+>>> On 24 January 2017 at 19:18, Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> wrote:
+>>>>
+>>>> Since commit 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores"),
+>>>> the USB ports on odroid-XU4 don't work anymore.
+>>>>
+>>>> Inserting an usb key (USB2.0) on the USB3.0 port result in:
+>>>> [ 64.488264] xhci-hcd xhci-hcd.2.auto: Port resume took longer than
+>>>> 20000 msec, port status = 0xc400fe3
+>>>> [   74.568156] xhci-hcd xhci-hcd.2.auto: xHCI host not responding to
+>>>> stop endpoint command.
+>>>> [   74.574806] xhci-hcd xhci-hcd.2.auto: Assuming host is dying, halting
+>>>> host.
+>>>> [   74.601970] xhci-hcd xhci-hcd.2.auto: HC died; cleaning up
+>>>> [   74.606276] usb 3-1: USB disconnect, device number 2
+>>>> [   74.613565] usb 4-1: USB disconnect, device number 2
+>>>> [   74.621208] usb usb3-port1: couldn't allocate usb_device
+>>>> NB: it's not related to USB2.0 devices, I get the same result with an
+>>>> USB3.0 device (SATA to USB3 for instance).
+>>>> NB2: it doesn't happen on an odriod-XU3 board, that doesn't have the
+>>>> realtek RTL8153 chip.
+>>>>
+>>>> If the lines:
+>>>>          if (dwc->revision > DWC3_REVISION_194A)
+>>>>                  reg |= DWC3_GUSB3PIPECTL_SUSPHY;
+>>>> are commented out, the USB3.0 start working.
+>>>>
+>>>> For a full analyse: https://lkml.org/lkml/2017/1/18/678
+>>>>
+>>>> Felipe suggested that suspend should be disabled temporarily while
+>>>> what's wrong with DCW3 is figured out.
+>>>>
+>>>> Tested on Odroid XU4
+>>>>
+>>>> Suggested-by: Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+>>>> Tested-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>> Signed-off-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.4+
+>>>> Fixes: 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores")
+>>>> ---
+>>>>   arch/arm/boot/dts/exynos5422-odroidxu4.dts | 9 +++++++++
+>>>>   1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+>>>> b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+>>>> index 2faf88627a48..f62dbd9b5ad3 100644
+>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+>>>> @@ -43,6 +43,15 @@
+>>>>          status = "okay";
+>>>>   };
+>>>>
+>>>> +&usbdrd_dwc3_0 {
+>>>> +       /*
+>>>> +        * without that, usb devices are not recognized when
+>>>> +        * they are plugged.
+>>>> +        * cf: https://lkml.org/lkml/2017/1/18/678
+>>>> +        */
+>>>> +       snps,dis_u3_susphy_quirk;
+>>>> +};
+>>>> +
+>>>>   &usbdrd_dwc3_1 {
+>>>>          dr_mode = "host";
+>>>>   };
+>>>> --
+>>>
+>>> Thanks for this patch.
+>>> But could you consider moving this changes as below.
+>>>
+>>> https://lkml.org/lkml/2015/3/18/400
+>>
+>> The patch above (and other DTS patches from the set) was not even sent
+>> to linux-samsung-soc nor to me... It is sad how easily one's work can
+>> disappear. Also, it is really worthless to solve the same problem
+>> twice.
+>
+>
+> Well, they were sent about 2 years ago... and you were also working on this
+> topic. ;)
+
+Nope, I have never worked on this. That time I was in Korea so my
+tasks were completely different. Later when I got back, I took for a
+second U3 OTG which was not involving this thing.
+
+>> Cc Marek and Bartlomiej,
+>> Guys, do you want to continue with Robert's patch (linked above by
+>> Anand)? If yes, please take the ownership (Robert's address is not
+>> valid anymore). If not, I will take Richard's patch after
+>> resubmission.
+>
+>
+> Take Richard's patch because it has a bit more details describing why such
+> quirk
+> is needed.
+>
+> Richard: in Roberts patch there is also a quirk for USB 2.0 mode
+> (snps,dis_u2_susphy_quirk). Could you check if it really needed?
+>
+> Maybe it would make sense to set those quirks for both DWC3 controllers, as
+> this
+> issue with PHY suspend seems to be a Exynos specific thing.
+
+Okay,
+Richard, please continue with your patch.
+
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
