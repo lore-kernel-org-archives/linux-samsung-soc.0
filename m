@@ -1,128 +1,114 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: samsung: pll: Add enable/disable support for PLL35XX
- clocks
-Date: Wed, 25 Jan 2017 12:52:32 +0100
-Message-ID: <1485345152-3140-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170125115241eucas1p25f7244ee4c79f42de48d91a2f659ce8c@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57566 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752116AbdAYLwo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 06:52:44 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKC00EDN3NUO910@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2017 11:52:43 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH 5/7] mfd: exynos-lpass: Remove pad retention control
+Date: Wed, 25 Jan 2017 12:50:29 +0100
+Message-ID: <1485345031-2948-6-git-send-email-m.szyprowski@samsung.com>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115104eucas1p219f763cea7fdb2dfea092d1f2a28fc31@eucas1p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Some PLLs might be disabled by default after turning off and then on a
-power domain which they belongs to. To avoid configuring a disabled PLL,
-add proper code for handling PLL enable/disable.
+Pad retention should be controlled from pin control driver, so remove it
+from Exynos LPASS driver. After this change, no more access to PMU regmap
+is needed, so remove also the code for handling PMU regmap.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-This patchset is a next step to add support for all power domains on
-Exynos5433 SoCs. This patchset contains patches for initial clocks
-configuration on TM2/TM2e boards. Till now all PLLs worked only
-because they were enabled by the bootloader. However when power domains
-are added, such configuration might be lost if the display power domain
-get turned off before clock controller's probe.
+ .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
+ drivers/mfd/exynos-lpass.c                              | 17 -----------------
+ include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
+ 3 files changed, 22 deletions(-)
 
-Patches have been generated on top of linux-next from 25th January 2017.
-
-This is a part of a larger task, which goal is to add support for power
-domains on Exynos5433 SoCs / TM2 boards. All patches needed to get it
-working have been pushed to the following git repo:
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
-
-This patch was also tested on Exynos4412-based Odroid U3 board, which also
-uses some PLL35XX clocks.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
----
- drivers/clk/samsung/clk-pll.c | 45 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 38 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 9617825daabb..52290894857a 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -136,11 +136,39 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
- #define PLL35XX_MDIV_MASK       (0x3FF)
- #define PLL35XX_PDIV_MASK       (0x3F)
- #define PLL35XX_SDIV_MASK       (0x7)
--#define PLL35XX_LOCK_STAT_MASK	(0x1)
- #define PLL35XX_MDIV_SHIFT      (16)
- #define PLL35XX_PDIV_SHIFT      (8)
- #define PLL35XX_SDIV_SHIFT      (0)
- #define PLL35XX_LOCK_STAT_SHIFT	(29)
-+#define PLL35XX_ENABLE_SHIFT	(31)
-+
-+static int samsung_pll35xx_enable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
-+	writel_relaxed(tmp, pll->con_reg);
-+
-+	/* wait_lock_time */
-+	do {
-+		cpu_relax();
-+		tmp = readl_relaxed(pll->con_reg);
-+	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-+
-+	return 0;
-+}
-+
-+static void samsung_pll35xx_disable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
-+	writel_relaxed(tmp, pll->con_reg);
-+}
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+index c110e118b79f..a8deaee82c44 100644
+--- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
++++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+@@ -5,7 +5,6 @@ Required properties:
+  - compatible		: "samsung,exynos5433-lpass"
+  - reg			: should contain the LPASS top SFR region location
+ 			  and size
+- - samsung,pmu-syscon	: the phandle to the Power Management Unit node
+  - #address-cells	: should be 1
+  - #size-cells		: should be 1
+  - ranges		: must be present
+@@ -25,7 +24,6 @@ Example:
+ audio-subsystem {
+ 	compatible = "samsung,exynos5433-lpass";
+ 	reg = <0x11400000 0x100>, <0x11500000 0x08>;
+-	samsung,pmu-syscon = <&pmu_system_controller>;
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 	ranges;
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index 2e064fb8826f..17915daa2e80 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -18,7 +18,6 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/mfd/syscon/exynos5-pmu.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+@@ -51,8 +50,6 @@
+ #define  LPASS_INTR_SFR			BIT(0)
  
- static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
-@@ -210,12 +238,13 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 			(rate->sdiv << PLL35XX_SDIV_SHIFT);
- 	writel_relaxed(tmp, pll->con_reg);
+ struct exynos_lpass {
+-	/* pointer to the Power Management Unit regmap */
+-	struct regmap *pmu;
+ 	/* pointer to the LPASS TOP regmap */
+ 	struct regmap *top;
+ };
+@@ -81,10 +78,6 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK,
+ 		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
  
--	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & (PLL35XX_LOCK_STAT_MASK
--				<< PLL35XX_LOCK_STAT_SHIFT)));
-+	/* wait_lock_time if enabled */
-+	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
-+		do {
-+			cpu_relax();
-+			tmp = readl_relaxed(pll->con_reg);
-+		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-+	}
- 	return 0;
+-	/* Activate related PADs from retention state */
+-	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION,
+-		     EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR);
+-
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
+ 	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
+@@ -95,9 +88,6 @@ static void exynos_lpass_disable(struct exynos_lpass *lpass)
+ 	/* Mask any unmasked IP interrupt sources */
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK, 0);
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK, 0);
+-
+-	/* Deactivate related PADs from retention state */
+-	regmap_write(lpass->pmu, EXYNOS5433_PAD_RETENTION_AUD_OPTION, 0);
  }
  
-@@ -223,6 +252,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	.recalc_rate = samsung_pll35xx_recalc_rate,
- 	.round_rate = samsung_pll_round_rate,
- 	.set_rate = samsung_pll35xx_set_rate,
-+	.enable = samsung_pll35xx_enable,
-+	.disable = samsung_pll35xx_disable,
- };
+ static const struct regmap_config exynos_lpass_reg_conf = {
+@@ -131,13 +121,6 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 		return PTR_ERR(lpass->top);
+ 	}
  
- static const struct clk_ops samsung_pll35xx_clk_min_ops = {
+-	lpass->pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
+-						"samsung,pmu-syscon");
+-	if (IS_ERR(lpass->pmu)) {
+-		dev_err(dev, "Failed to lookup PMU regmap\n");
+-		return PTR_ERR(lpass->pmu);
+-	}
+-
+ 	platform_set_drvdata(pdev, lpass);
+ 	exynos_lpass_enable(lpass);
+ 
+diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+index c28ff21ca4d2..0622ae86f9db 100644
+--- a/include/linux/mfd/syscon/exynos5-pmu.h
++++ b/include/linux/mfd/syscon/exynos5-pmu.h
+@@ -46,7 +46,4 @@
+ #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+ #define EXYNOS5_MIPI_PHY_M_RESETN		BIT(2)
+ 
+-#define EXYNOS5433_PAD_RETENTION_AUD_OPTION		(0x3028)
+-#define EXYNOS5433_PAD_INITIATE_WAKEUP_FROM_LOWPWR	BIT(28)
+-
+ #endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS5_H_ */
 -- 
 1.9.1
