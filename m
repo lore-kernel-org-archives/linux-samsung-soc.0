@@ -1,88 +1,55 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] soc: samsung: pmu: Remove duplicated define for ARM_L2_OPTION register
-Date: Wed, 25 Jan 2017 21:34:52 +0200
-Message-ID: <20170125193452.31768-2-krzk@kernel.org>
-References: <20170125193452.31768-1-krzk@kernel.org>
+Subject: Re: [PATCH 4/7] arm64: dts: exynos: Add clocks to Exynos5433 LPASS
+ module
+Date: Wed, 25 Jan 2017 21:50:22 +0200
+Message-ID: <20170125195022.yiqxnfted2vw4owh@kozik-lap>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115103eucas1p1d0e446fa6e998da257e3c17922a00d7f@eucas1p1.samsung.com>
+ <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170125193452.31768-1-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The register ARM_L2_OPTION (0x2608 in Exynos4 and Exynos5 PMU) was
-defined twice.  Both names were used in the Exynos542x code.  Simplify
-this.
+On Wed, Jan 25, 2017 at 12:50:28PM +0100, Marek Szyprowski wrote:
+> Exynos5433 LPASS module requires some clocks for proper operation with
+> power domain.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 57c7bbeb65a7..16072c1c3ed3 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -1494,6 +1494,8 @@
+>  		audio-subsystem@11400000 {
+>  			compatible = "samsung,exynos5433-lpass";
+>  			reg = <0x11400000 0x100>, <0x11500000 0x08>;
+> +			clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
+> +			clock-names = "sfr0_ctrl";
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-exynos/suspend.c              | 6 +++---
- drivers/soc/samsung/exynos5250-pmu.c        | 2 +-
- drivers/soc/samsung/exynos5420-pmu.c        | 4 ++--
- include/linux/soc/samsung/exynos-regs-pmu.h | 3 +--
- 4 files changed, 7 insertions(+), 8 deletions(-)
+You wrote that 6/7 depends on this. I prefer not to take DTS changes if
+the corresponding user (driver) is still under discussion because the
+bindings might change. I'll take it when bindings got acked or accepted.
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 94df5d5c024e..29fc95f19bb5 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -387,9 +387,9 @@ static void exynos5420_pm_prepare(void)
- 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
- 		pmu_raw_writel(__pa_symbol(mcpm_entry_point), S5P_INFORM0);
- 
--	tmp = pmu_raw_readl(EXYNOS5_ARM_L2_OPTION);
--	tmp &= ~EXYNOS5_USE_RETENTION;
--	pmu_raw_writel(tmp, EXYNOS5_ARM_L2_OPTION);
-+	tmp = pmu_raw_readl(EXYNOS_L2_OPTION(0));
-+	tmp &= ~EXYNOS_L2_USE_RETENTION;
-+	pmu_raw_writel(tmp, EXYNOS_L2_OPTION(0));
- 
- 	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
- 	tmp |= EXYNOS5420_UFS;
-diff --git a/drivers/soc/samsung/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
-index 3fac42561964..8d94f0819f32 100644
---- a/drivers/soc/samsung/exynos5250-pmu.c
-+++ b/drivers/soc/samsung/exynos5250-pmu.c
-@@ -29,7 +29,7 @@ static const struct exynos_pmu_conf exynos5250_pmu_config[] = {
- 	{ EXYNOS5_DIS_IRQ_ISP_ARM_CENTRAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
- 	{ EXYNOS5_ARM_COMMON_SYS_PWR_REG,		{ 0x0, 0x0, 0x2} },
- 	{ EXYNOS5_ARM_L2_SYS_PWR_REG,			{ 0x3, 0x3, 0x3} },
--	{ EXYNOS5_ARM_L2_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ EXYNOS_L2_OPTION(0),				{ 0x10, 0x10, 0x0 } },
- 	{ EXYNOS5_CMU_ACLKSTOP_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
- 	{ EXYNOS5_CMU_SCLKSTOP_SYS_PWR_REG,		{ 0x1, 0x0, 0x1} },
- 	{ EXYNOS5_CMU_RESET_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-diff --git a/drivers/soc/samsung/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
-index 3f2c64180ef8..0a89fa79c678 100644
---- a/drivers/soc/samsung/exynos5420-pmu.c
-+++ b/drivers/soc/samsung/exynos5420-pmu.c
-@@ -230,11 +230,11 @@ static void exynos5420_pmu_init(void)
- 	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
- 
- 	value  = pmu_raw_readl(EXYNOS_L2_OPTION(0));
--	value &= ~EXYNOS5_USE_RETENTION;
-+	value &= ~EXYNOS_L2_USE_RETENTION;
- 	pmu_raw_writel(value, EXYNOS_L2_OPTION(0));
- 
- 	value = pmu_raw_readl(EXYNOS_L2_OPTION(1));
--	value &= ~EXYNOS5_USE_RETENTION;
-+	value &= ~EXYNOS_L2_USE_RETENTION;
- 	pmu_raw_writel(value, EXYNOS_L2_OPTION(1));
- 
- 	/*
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index 9793502a6a57..9786c62d7159 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -149,8 +149,7 @@
- #define EXYNOS_L2_OPTION(_nr)			\
- 			(EXYNOS_L2_CONFIGURATION(_nr) + 0x8)
- 
--#define EXYNOS5_ARM_L2_OPTION			0x2608
--#define EXYNOS5_USE_RETENTION			BIT(4)
-+#define EXYNOS_L2_USE_RETENTION			BIT(4)
- 
- #define S5P_PAD_RET_MAUDIO_OPTION		0x3028
- #define S5P_PAD_RET_MMC2_OPTION			0x30c8
--- 
-2.9.3
+BTW, the 6/7 is a quite reasonable ABI break, but for the sake of
+documentation - why you did not continue with the patch for marking
+bidings as experimental/under-development?
+
+Best regards,
+Krzysztof
+
+>  			samsung,pmu-syscon = <&pmu_system_controller>;
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+> -- 
+> 1.9.1
+> 
