@@ -1,57 +1,88 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 31/37] misc: Add host side pci driver for pci test
- function device
-Date: Wed, 25 Jan 2017 11:10:53 +0530
-Message-ID: <58883A65.8020306@ti.com>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-32-git-send-email-kishon@ti.com>
- <20170124160224.GA23528@infradead.org>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
+Date: Wed, 25 Jan 2017 11:21:35 +0530
+Message-ID: <CANAwSgRAT0-XETx=yVRgM4GfukFLLEw-hqHjYGEWs0tqAx8g2g@mail.gmail.com>
+References: <20170124134809.23315-1-richard.genoud@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170124160224.GA23528-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+In-Reply-To: <20170124134809.23315-1-richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-VrBV9hrLPhE@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
+To: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, #@vger.kernel.org, 4.4+-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Richard,
 
-On Tuesday 24 January 2017 09:32 PM, Christoph Hellwig wrote:
-> On Thu, Jan 12, 2017 at 03:56:20PM +0530, Kishon Vijay Abraham I wrote:
->> Add PCI endpoint test driver that can verify base address
->> register, legacy interrupt/MSI interrupt and read/write/copy
->> buffers between host and device. The corresponding pci-epf-test
->> function driver should be used on the EP side.
-> 
-> Just curious:  what would you think of a text based (e.g. debugfs)
-> interface to avoid the need for a userspace tool here?
+On 24 January 2017 at 19:18, Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Since commit 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores"),
+> the USB ports on odroid-XU4 don't work anymore.
+>
+> Inserting an usb key (USB2.0) on the USB3.0 port result in:
+> [   64.488264] xhci-hcd xhci-hcd.2.auto: Port resume took longer than 20000 msec, port status = 0xc400fe3
+> [   74.568156] xhci-hcd xhci-hcd.2.auto: xHCI host not responding to stop endpoint command.
+> [   74.574806] xhci-hcd xhci-hcd.2.auto: Assuming host is dying, halting host.
+> [   74.601970] xhci-hcd xhci-hcd.2.auto: HC died; cleaning up
+> [   74.606276] usb 3-1: USB disconnect, device number 2
+> [   74.613565] usb 4-1: USB disconnect, device number 2
+> [   74.621208] usb usb3-port1: couldn't allocate usb_device
+> NB: it's not related to USB2.0 devices, I get the same result with an USB3.0 device (SATA to USB3 for instance).
+> NB2: it doesn't happen on an odriod-XU3 board, that doesn't have the realtek RTL8153 chip.
+>
+> If the lines:
+>         if (dwc->revision > DWC3_REVISION_194A)
+>                 reg |= DWC3_GUSB3PIPECTL_SUSPHY;
+> are commented out, the USB3.0 start working.
+>
+> For a full analyse: https://lkml.org/lkml/2017/1/18/678
+>
+> Felipe suggested that suspend should be disabled temporarily while
+> what's wrong with DCW3 is figured out.
+>
+> Tested on Odroid XU4
+>
+> Suggested-by: Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Tested-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.4+
+> Fixes: 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores")
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu4.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> index 2faf88627a48..f62dbd9b5ad3 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+> @@ -43,6 +43,15 @@
+>         status = "okay";
+>  };
+>
+> +&usbdrd_dwc3_0 {
+> +       /*
+> +        * without that, usb devices are not recognized when
+> +        * they are plugged.
+> +        * cf: https://lkml.org/lkml/2017/1/18/678
+> +        */
+> +       snps,dis_u3_susphy_quirk;
+> +};
+> +
+>  &usbdrd_dwc3_1 {
+>         dr_mode = "host";
+>  };
+> --
 
-I felt having a userspace tool gives the flexibility to add more tests
-(iterations, sizes etc..) while the driver can just focus on performing simple
-tests. Say we'd like to perform infinite read/write tests, it's better if the
-userspace tool invokes read/write tests repeatedly instead of that being
-implemented in the driver.
-> 
->> +static const struct pci_device_id pci_endpoint_test_tbl[] = {
->> +	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_ANY_ID) },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
-> 
-> Also this looks really odd, and dangerous.  Probing for any
-> TI device will bind to all kinds of legit devices.  It would
-> be good if you could squeeze out a single id for this device
+Thanks for this patch.
+But could you consider moving this changes as below.
 
-There is actually an id for the device, but I think we'll need an id for every
-function right?
+https://lkml.org/lkml/2015/3/18/400
 
-Having said that the id for the device is better than PCI_ANY_ID. Will fix it
-in my next revision.
+Best Regards
+-Anand
 
-Thanks
-Kishon
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
