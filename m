@@ -1,40 +1,148 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
-Date: Thu, 26 Jan 2017 07:48:48 +0900
-Message-ID: <20170125224848.34lxht4xnuvhxrqd@gangnam.samsung>
-References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
- <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
- <20170125205554.m7vmhs4tq6bzti52@ninjato>
- <20170125205715.xaaphsyb7hwowurq@ninjato>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
+Date: Thu, 26 Jan 2017 08:47:05 +0900
+Message-ID: <588938F9.9070907@samsung.com>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+ <CGME20170125214354epcas3p2715bf71d3c8d56aefe881f95fb4aef1d@epcas3p2.samsung.com>
+ <1485380545-24815-1-git-send-email-martin@kaiser.cx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20170125205715.xaaphsyb7hwowurq@ninjato>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+Sender: linux-clk-owner@vger.kernel.org
+To: martin@kaiser.cx, Krzysztof Kozlowski <krzk@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Martin,
 
-> > > In case of arbitration lost adequate interrupt sometimes is not signaled. As
-> > > a result transfer timeouts and is not retried, as it should. To avoid such
-> > > cases code is added to check transaction status in case of every interrupt.
-> > > 
-> > > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> > 
-> > Looks good to me, but I'd like some review from one of the Samsung
-> > people?
+The v2 patch is missing my reviewed-by tag[1].
+[1] https://patchwork.kernel.org/patch/9535993/
+
+Again, I add my reviewed-by tag.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+On 2017년 01월 26일 06:42, martin@kaiser.cx wrote:
+> From: Martin Kaiser <martin@kaiser.cx>
 > 
-> Ooops, you are from Samsung as well :) Still, I'd like one more ack or
-> review from someone with the HW.
+> These functions are referencing s3c...._clk_regs[], which are marked as
+> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
+> produces warnings like
+> 
+> WARNING: vmlinux.o(.text+0x198350):
+> Section mismatch in reference from the function s3c2410_clk_sleep_init()
+> to the (unknown reference) .init.data:(unknown)
+> 
+> Mark the s3c...._clk_sleep_init() functions as __init in
+> order to fix this.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> v2:
+> Fix the commit message, describe what the problem really is.
+> (Thanks, Krzysztof)
+> 
+>  drivers/clk/samsung/clk-s3c2410.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2412.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2443.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+> index d7a1e77..e0650c3 100644
+> --- a/drivers/clk/samsung/clk-s3c2410.c
+> +++ b/drivers/clk/samsung/clk-s3c2410.c
+> @@ -76,7 +76,7 @@ static void s3c2410_clk_resume(void)
+>  	.resume = s3c2410_clk_resume,
+>  };
+>  
+> -static void s3c2410_clk_sleep_init(void)
+> +static void __init s3c2410_clk_sleep_init(void)
+>  {
+>  	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
+>  						ARRAY_SIZE(s3c2410_clk_regs));
+> @@ -90,7 +90,7 @@ static void s3c2410_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2410_clk_sleep_init(void) {}
+> +static void __init s3c2410_clk_sleep_init(void) {}
+>  #endif
+>  
+>  PNAME(fclk_p) = { "mpll", "div_slow" };
+> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+> index ec873ee..b8340a4 100644
+> --- a/drivers/clk/samsung/clk-s3c2412.c
+> +++ b/drivers/clk/samsung/clk-s3c2412.c
+> @@ -69,7 +69,7 @@ static void s3c2412_clk_resume(void)
+>  	.resume = s3c2412_clk_resume,
+>  };
+>  
+> -static void s3c2412_clk_sleep_init(void)
+> +static void __init s3c2412_clk_sleep_init(void)
+>  {
+>  	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
+>  						ARRAY_SIZE(s3c2412_clk_regs));
+> @@ -83,7 +83,7 @@ static void s3c2412_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2412_clk_sleep_init(void) {}
+> +static void __init s3c2412_clk_sleep_init(void) {}
+>  #endif
+>  
+>  static struct clk_div_table divxti_d[] = {
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 5e24a17..abb935c 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -89,7 +89,7 @@ static void s3c2443_clk_resume(void)
+>  	.resume = s3c2443_clk_resume,
+>  };
+>  
+> -static void s3c2443_clk_sleep_init(void)
+> +static void __init s3c2443_clk_sleep_init(void)
+>  {
+>  	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
+>  						ARRAY_SIZE(s3c2443_clk_regs));
+> @@ -103,7 +103,7 @@ static void s3c2443_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2443_clk_sleep_init(void) {}
+> +static void __init s3c2443_clk_sleep_init(void) {}
+>  #endif
+>  
+>  PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
+> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+> index a48bd5f..7306867 100644
+> --- a/drivers/clk/samsung/clk-s3c64xx.c
+> +++ b/drivers/clk/samsung/clk-s3c64xx.c
+> @@ -121,7 +121,7 @@ static void s3c64xx_clk_resume(void)
+>  	.resume = s3c64xx_clk_resume,
+>  };
+>  
+> -static void s3c64xx_clk_sleep_init(void)
+> +static void __init s3c64xx_clk_sleep_init(void)
+>  {
+>  	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
+>  						ARRAY_SIZE(s3c64xx_clk_regs));
+> @@ -145,7 +145,7 @@ static void s3c64xx_clk_sleep_init(void)
+>  		__func__);
+>  }
+>  #else
+> -static void s3c64xx_clk_sleep_init(void) {}
+> +static void __init s3c64xx_clk_sleep_init(void) {}
+>  #endif
+>  
+>  /* List of parent clocks common for all S3C64xx SoCs. */
+> 
 
-I am using this patch already:
 
-Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-Tested-by: Andi Shyti <andi.shyti@samsung.com>
-
-Shouldn't we cc for the stable Kernel?
-
-Andi
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
