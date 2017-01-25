@@ -1,89 +1,90 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
-Date: Wed, 25 Jan 2017 11:21:35 +0530
-Message-ID: <CANAwSgRAT0-XETx=yVRgM4GfukFLLEw-hqHjYGEWs0tqAx8g2g@mail.gmail.com>
-References: <20170124134809.23315-1-richard.genoud@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: set LDO7 regulator as always on
+Date: Wed, 25 Jan 2017 08:13:25 +0100
+Message-ID: <48fcf959-845e-f601-229d-83b8fb13c121@samsung.com>
+References: <CGME20170124124537eucas1p23ef10c2cf3b15ce70682b0cf71ae14a3@eucas1p2.samsung.com>
+ <1485261928-10769-1-git-send-email-a.hajda@samsung.com>
+ <20170124175206.m2hquaf7eylslydq@kozik-lap>
+ <587eb6c1-3e39-f160-26f6-40d90b7f13f7@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170124134809.23315-1-richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, #@vger.kernel.org, 4.4+-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41700 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751296AbdAYHNb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 02:13:31 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OKB00GO2QQGUU30@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2017 07:13:28 +0000 (GMT)
+In-reply-to: <587eb6c1-3e39-f160-26f6-40d90b7f13f7@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, sw0312.kim@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Richard,
+Hi Javier,
 
-On 24 January 2017 at 19:18, Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Since commit 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores"),
-> the USB ports on odroid-XU4 don't work anymore.
->
-> Inserting an usb key (USB2.0) on the USB3.0 port result in:
-> [   64.488264] xhci-hcd xhci-hcd.2.auto: Port resume took longer than 20000 msec, port status = 0xc400fe3
-> [   74.568156] xhci-hcd xhci-hcd.2.auto: xHCI host not responding to stop endpoint command.
-> [   74.574806] xhci-hcd xhci-hcd.2.auto: Assuming host is dying, halting host.
-> [   74.601970] xhci-hcd xhci-hcd.2.auto: HC died; cleaning up
-> [   74.606276] usb 3-1: USB disconnect, device number 2
-> [   74.613565] usb 4-1: USB disconnect, device number 2
-> [   74.621208] usb usb3-port1: couldn't allocate usb_device
-> NB: it's not related to USB2.0 devices, I get the same result with an USB3.0 device (SATA to USB3 for instance).
-> NB2: it doesn't happen on an odriod-XU3 board, that doesn't have the realtek RTL8153 chip.
->
-> If the lines:
->         if (dwc->revision > DWC3_REVISION_194A)
->                 reg |= DWC3_GUSB3PIPECTL_SUSPHY;
-> are commented out, the USB3.0 start working.
->
-> For a full analyse: https://lkml.org/lkml/2017/1/18/678
->
-> Felipe suggested that suspend should be disabled temporarily while
-> what's wrong with DCW3 is figured out.
->
-> Tested on Odroid XU4
->
-> Suggested-by: Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> Tested-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # 4.4+
-> Fixes: 2164a476205ccc ("usb: dwc3: set SUSPHY bit for all cores")
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu4.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-> index 2faf88627a48..f62dbd9b5ad3 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-> @@ -43,6 +43,15 @@
->         status = "okay";
->  };
->
-> +&usbdrd_dwc3_0 {
-> +       /*
-> +        * without that, usb devices are not recognized when
-> +        * they are plugged.
-> +        * cf: https://lkml.org/lkml/2017/1/18/678
-> +        */
-> +       snps,dis_u3_susphy_quirk;
-> +};
-> +
->  &usbdrd_dwc3_1 {
->         dr_mode = "host";
->  };
-> --
 
-Thanks for this patch.
-But could you consider moving this changes as below.
+On 2017-01-24 18:57, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+>
+> On 01/24/2017 02:52 PM, Krzysztof Kozlowski wrote:
+>> On Tue, Jan 24, 2017 at 01:45:28PM +0100, Andrzej Hajda wrote:
+>>> LDO7 regulator beside DSI and HDMI provides power for core blocks in Exynos
+>>> 5433 SoC. Disabling it causes serious current leak - about 200mA.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>>   arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>>> index 5f1e172..b22bec8 100644
+>>> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+>>> @@ -432,6 +432,10 @@
+>>>   				regulator-name = "VDD18_MIPI2L_1.8V_AP";
+>>>   				regulator-min-microvolt = <1800000>;
+>>>   				regulator-max-microvolt = <1800000>;
+> I see you already applied, but I think it would be good to have some comments
+> here explaining why the regulator should be always-on. Otherwise, in future a
+> developer might want to disable the regulator since it may think that is not
+> needed due dsi and hdmi already enabling it.
 
-https://lkml.org/lkml/2015/3/18/400
+If such change is added in a separate commit, one can easily find the reason
+using "git blame".
 
-Best Regards
--Anand
+>>> +				regulator-always-on;
+>>> +				regulator-state-mem {
+>>> +					regulator-off-in-suspend;
+>>> +				};
+>> Thanks, applied.
+>>
+>> Just to satisfy my curiosity, how disabling the regulator causes current
+>> leak? What happens exactly?
 
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Such leakage usually happens if there is a hw block, which have more 
+than one
+power supply. Disabling power for the one power supply might turn the hw 
+logic
+into some meta state, in which it still conduct a current from the other 
+source.
+
+The best example of such behavior is Odroid U3 and its problems with 
+reset when
+HDMI cable is connected. Sometimes the current leaks from the HDMI 
+connector to
+the board when the main power supply is turned off and the board enters some
+kind of a a "meta state".
+
+We still have no idea which hw block causes this leakage in case of TM2/TM2e
+though.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
