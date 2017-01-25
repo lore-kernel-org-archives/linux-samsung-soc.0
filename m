@@ -1,47 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: mark s3c...._clk_sleep_init() as __init
-Date: Wed, 25 Jan 2017 09:35:50 +0900
-Message-ID: <5887F2E6.7060205@samsung.com>
-References: <CGME20170124213354epcas2p48cd7596378462562c66017fe39774bb0@epcas2p4.samsung.com>
- <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 31/37] misc: Add host side pci driver for pci test
+ function device
+Date: Wed, 25 Jan 2017 11:10:53 +0530
+Message-ID: <58883A65.8020306@ti.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-32-git-send-email-kishon@ti.com>
+ <20170124160224.GA23528@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-reply-to: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-Sender: linux-clk-owner@vger.kernel.org
-To: Martin Kaiser <martin@kaiser.cx>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170124160224.GA23528-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-VrBV9hrLPhE@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Martin,
+Hi,
 
-On 2017년 01월 25일 06:33, Martin Kaiser wrote:
-> These functions are called only by other __init functions.
-> Compiling for s3c2410 with CONFIG_DEBUG_SECTION_MISMATCH=y,
-> I get warnings like
+On Tuesday 24 January 2017 09:32 PM, Christoph Hellwig wrote:
+> On Thu, Jan 12, 2017 at 03:56:20PM +0530, Kishon Vijay Abraham I wrote:
+>> Add PCI endpoint test driver that can verify base address
+>> register, legacy interrupt/MSI interrupt and read/write/copy
+>> buffers between host and device. The corresponding pci-epf-test
+>> function driver should be used on the EP side.
 > 
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
+> Just curious:  what would you think of a text based (e.g. debugfs)
+> interface to avoid the need for a userspace tool here?
+
+I felt having a userspace tool gives the flexibility to add more tests
+(iterations, sizes etc..) while the driver can just focus on performing simple
+tests. Say we'd like to perform infinite read/write tests, it's better if the
+userspace tool invokes read/write tests repeatedly instead of that being
+implemented in the driver.
 > 
-> Marking the s3c...._clk_sleep() functions as __init fixes this.
+>> +static const struct pci_device_id pci_endpoint_test_tbl[] = {
+>> +	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_ANY_ID) },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
 > 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
->  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2412.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2443.c | 4 ++--
->  drivers/clk/samsung/clk-s3c64xx.c | 4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
+> Also this looks really odd, and dangerous.  Probing for any
+> TI device will bind to all kinds of legit devices.  It would
+> be good if you could squeeze out a single id for this device
 
+There is actually an id for the device, but I think we'll need an id for every
+function right?
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Having said that the id for the device is better than PCI_ANY_ID. Will fix it
+in my next revision.
 
-[snip]
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Thanks
+Kishon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
