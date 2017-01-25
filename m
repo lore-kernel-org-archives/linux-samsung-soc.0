@@ -1,202 +1,191 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/7] pinctrl: samsung: Add support for pad retention
- control for Exynos5433 SoCs
-Date: Wed, 25 Jan 2017 20:51:52 +0200
-Message-ID: <20170125185152.6wedhwibl2q3mlp5@kozik-lap>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115103eucas1p1b37096286fb65c64acf8f74222d473af@eucas1p1.samsung.com>
- <1485345031-2948-4-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1485345031-2948-4-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/2] soc: samsung: pmu: Remove unused and duplicated defines
+Date: Wed, 25 Jan 2017 21:34:51 +0200
+Message-ID: <20170125193452.31768-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:46270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750959AbdAYTfL (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 25 Jan 2017 14:35:11 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wed, Jan 25, 2017 at 12:50:27PM +0100, Marek Szyprowski wrote:
-> This patch adds support for retention control for Exynos5433 SoCs. Three
-> groups of pins has been defined for retention control: common shared group
-> for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
-> separate control for FSYS and AUD pin banks, for which PMU retention
-> registers match whole banks.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c    | 58 +++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h | 19 ++++++++++
->  2 files changed, 77 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index fa3802970570..f854c92209e1 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -1551,6 +1551,54 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
->  };
->  
-> +/* PMU pin retention groups registers for Exynos5433 (without audio & fsys) */
-> +static const u32 exynos5433_retention_regs[] = {
-> +	EXYNOS5433_PAD_RETENTION_TOP_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_UART_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_EBIA_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_EBIB_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_SPI_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_MIF_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_USBXTI_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_UFS_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION,
-> +};
-> +
-> +static const struct samsung_retention_data exynos5433_retention_data __initconst = {
-> +	.regs	 = exynos5433_retention_regs,
-> +	.nr_regs = ARRAY_SIZE(exynos5433_retention_regs),
-> +	.value	 = PAD_INITIATE_WAKEUP,
-> +	.refcnt	 = &exynos_shared_retention_refcnt,
-> +	.init	 = exynos_retention_init,
-> +};
-> +
-> +/* PMU retention control for audio pins can be tied to audio pin bank */
-> +static const u32 exynos5433_audio_retention_regs[] = {
-> +	EXYNOS5433_PAD_RETENTION_AUD_OPTION,
-> +};
-> +
-> +static const struct samsung_retention_data exynos5433_audio_retention_data __initconst = {
-> +	.regs	 = exynos5433_audio_retention_regs,
-> +	.nr_regs = ARRAY_SIZE(exynos5433_audio_retention_regs),
-> +	.value	 = PAD_INITIATE_WAKEUP,
-> +	.init	 = exynos_retention_init,
-> +};
-> +
-> +/* PMU retention control for mmc pins can be tied to fsys pin bank */
-> +static const u32 exynos5433_fsys_retention_regs[] = {
-> +	EXYNOS5433_PAD_RETENTION_MMC0_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_MMC1_OPTION,
-> +	EXYNOS5433_PAD_RETENTION_MMC2_OPTION,
-> +};
-> +
-> +static const struct samsung_retention_data exynos5433_fsys_retention_data __initconst = {
-> +	.regs	 = exynos5433_fsys_retention_regs,
-> +	.nr_regs = ARRAY_SIZE(exynos5433_fsys_retention_regs),
-> +	.value	 = PAD_INITIATE_WAKEUP,
-> +	.init	 = exynos_retention_init,
-> +};
-> +
->  /*
->   * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
->   * ten gpio/pin-mux/pinconfig controllers.
-> @@ -1564,6 +1612,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
->  		.nr_ext_resources = 1,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 1 data */
->  		.pin_banks	= exynos5433_pin_banks1,
-> @@ -1571,6 +1620,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_audio_retention_data,
->  	}, {
->  		/* pin-controller instance 2 data */
->  		.pin_banks	= exynos5433_pin_banks2,
-> @@ -1578,6 +1628,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 3 data */
->  		.pin_banks	= exynos5433_pin_banks3,
-> @@ -1585,6 +1636,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 4 data */
->  		.pin_banks	= exynos5433_pin_banks4,
-> @@ -1592,6 +1644,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 5 data */
->  		.pin_banks	= exynos5433_pin_banks5,
-> @@ -1599,6 +1652,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_fsys_retention_data,
->  	}, {
->  		/* pin-controller instance 6 data */
->  		.pin_banks	= exynos5433_pin_banks6,
-> @@ -1606,6 +1660,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 7 data */
->  		.pin_banks	= exynos5433_pin_banks7,
-> @@ -1613,6 +1668,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 8 data */
->  		.pin_banks	= exynos5433_pin_banks8,
-> @@ -1620,6 +1676,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	}, {
->  		/* pin-controller instance 9 data */
->  		.pin_banks	= exynos5433_pin_banks9,
-> @@ -1627,6 +1684,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
-> +		.retention_data	= &exynos5433_retention_data,
->  	},
->  };
->  
-> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-> index d30186e2b609..6a160e2ef4f0 100644
-> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
-> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-> @@ -690,4 +690,23 @@
->  					 | EXYNOS5420_KFC_USE_STANDBY_WFI2  \
->  					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
->  
-> +/* For EXYNOS5433 */
-> +#define EXYNOS5433_PAD_RETENTION_AUD_OPTION			(0x3028)
-> +#define EXYNOS5433_PAD_RETENTION_MMC2_OPTION			(0x30C8)
-> +#define EXYNOS5433_PAD_RETENTION_TOP_OPTION			(0x3108)
-> +#define EXYNOS5433_PAD_RETENTION_UART_OPTION			(0x3128)
-> +#define EXYNOS5433_PAD_RETENTION_MMC0_OPTION			(0x3148)
-> +#define EXYNOS5433_PAD_RETENTION_MMC1_OPTION			(0x3168)
-> +#define EXYNOS5433_PAD_RETENTION_EBIA_OPTION			(0x3188)
-> +#define EXYNOS5433_PAD_RETENTION_EBIB_OPTION			(0x31A8)
-> +#define EXYNOS5433_PAD_RETENTION_SPI_OPTION			(0x31C8)
-> +#define EXYNOS5433_PAD_RETENTION_MIF_OPTION			(0x31E8)
-> +#define EXYNOS5433_PAD_RETENTION_USBXTI_OPTION			(0x3228)
-> +#define EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION			(0x3248)
-> +#define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
-> +#define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
-> +
-> +/* EXYNOS5433_PAD_RETENTION_*_OPTION */
-> +#define PAD_INITIATE_WAKEUP					(0x1 << 28)
+The exynos-regs-pmu.h was never a complete list of PMU registers.  It
+contained a lot of holes for registers which are not used.  However, a
+lot of unused defines came with porting the code from vendor kernel.
 
-Use existing EXYNOS_WAKEUP_FROM_LOWPWR unless there is a reason not to
-use it?
+Few of defines were also duplicated.
 
-Best regards,
-Krzysztof
+Remove them so the file will be slightly smaller.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ include/linux/soc/samsung/exynos-regs-pmu.h | 72 +++--------------------------
+ 1 file changed, 7 insertions(+), 65 deletions(-)
+
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index d30186e2b609..9793502a6a57 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -7,7 +7,13 @@
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+-*/
++ *
++ *
++ * Notice:
++ * This is not a list of all Exynos Power Management Unit SFRs.
++ * There are too many of them, not mentioning subtle differences
++ * between SoCs. For now, put here only the used registers.
++ */
+ 
+ #ifndef __LINUX_SOC_EXYNOS_REGS_PMU_H
+ #define __LINUX_SOC_EXYNOS_REGS_PMU_H __FILE__
+@@ -38,7 +44,6 @@
+ #define EXYNOS_CORE_PO_RESET(n)			((1 << 4) << n)
+ #define EXYNOS_WAKEUP_FROM_LOWPWR		(1 << 28)
+ #define EXYNOS_SWRESET				0x0400
+-#define EXYNOS5440_SWRESET			0x00C4
+ 
+ #define S5P_WAKEUP_STAT				0x0600
+ #define S5P_EINT_WAKEUP_MASK			0x0604
+@@ -136,12 +141,6 @@
+ #define EXYNOS_COMMON_OPTION(_nr)		\
+ 			(EXYNOS_COMMON_CONFIGURATION(_nr) + 0x8)
+ 
+-#define EXYNOS_CORE_LOCAL_PWR_EN		0x3
+-
+-#define EXYNOS_ARM_COMMON_STATUS		0x2504
+-#define EXYNOS_COMMON_OPTION(_nr)		\
+-			(EXYNOS_COMMON_CONFIGURATION(_nr) + 0x8)
+-
+ #define EXYNOS_ARM_L2_CONFIGURATION		0x2600
+ #define EXYNOS_L2_CONFIGURATION(_nr)		\
+ 			(EXYNOS_ARM_L2_CONFIGURATION + ((_nr) * 0x80))
+@@ -149,18 +148,10 @@
+ 			(EXYNOS_L2_CONFIGURATION(_nr) + 0x4)
+ #define EXYNOS_L2_OPTION(_nr)			\
+ 			(EXYNOS_L2_CONFIGURATION(_nr) + 0x8)
+-#define EXYNOS_L2_COMMON_PWR_EN			0x3
+-
+-#define EXYNOS_ARM_CORE_X_STATUS_OFFSET		0x4
+-
+-#define EXYNOS5_APLL_SYSCLK_CONFIGURATION	0x2A00
+-#define EXYNOS5_APLL_SYSCLK_STATUS		0x2A04
+ 
+ #define EXYNOS5_ARM_L2_OPTION			0x2608
+ #define EXYNOS5_USE_RETENTION			BIT(4)
+ 
+-#define EXYNOS5_L2RSTDISABLE_VALUE		BIT(3)
+-
+ #define S5P_PAD_RET_MAUDIO_OPTION		0x3028
+ #define S5P_PAD_RET_MMC2_OPTION			0x30c8
+ #define S5P_PAD_RET_GPIO_OPTION			0x3108
+@@ -411,7 +402,6 @@
+ #define EXYNOS5_SATA_MEM_SYS_PWR_REG				0x11FC
+ #define EXYNOS5_PAD_RETENTION_DRAM_SYS_PWR_REG			0x1200
+ #define EXYNOS5_PAD_RETENTION_MAU_SYS_PWR_REG			0x1204
+-#define EXYNOS5_PAD_RETENTION_EFNAND_SYS_PWR_REG		0x1208
+ #define EXYNOS5_PAD_RETENTION_GPIO_SYS_PWR_REG			0x1220
+ #define EXYNOS5_PAD_RETENTION_UART_SYS_PWR_REG			0x1224
+ #define EXYNOS5_PAD_RETENTION_MMCA_SYS_PWR_REG			0x1228
+@@ -485,7 +475,6 @@
+ #define EXYNOS5420_SWRESET_KFC_SEL				0x3
+ 
+ /* Only for EXYNOS5420 */
+-#define EXYNOS5420_ISP_ARM_OPTION				0x2488
+ #define EXYNOS5420_L2RSTDISABLE_VALUE				BIT(3)
+ 
+ #define EXYNOS5420_LPI_MASK					0x0004
+@@ -494,9 +483,6 @@
+ #define EXYNOS5420_ATB_KFC					BIT(13)
+ #define EXYNOS5420_ATB_ISP_ARM					BIT(19)
+ #define EXYNOS5420_EMULATION					BIT(31)
+-#define ATB_ISP_ARM						BIT(12)
+-#define ATB_KFC							BIT(13)
+-#define ATB_NOC							BIT(14)
+ 
+ #define EXYNOS5420_ARM_INTR_SPREAD_ENABLE			0x0100
+ #define EXYNOS5420_ARM_INTR_SPREAD_USE_STANDBYWFI		0x0104
+@@ -510,11 +496,6 @@
+ #define EXYNOS5420_KFC_CORE_RESET(_nr)				\
+ 	((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
+ 
+-#define EXYNOS5420_BB_CON1					0x0784
+-#define EXYNOS5420_BB_SEL_EN					BIT(31)
+-#define EXYNOS5420_BB_PMOS_EN					BIT(7)
+-#define EXYNOS5420_BB_1300X					0XF
+-
+ #define EXYNOS5420_ARM_CORE2_SYS_PWR_REG			0x1020
+ #define EXYNOS5420_DIS_IRQ_ARM_CORE2_LOCAL_SYS_PWR_REG		0x1024
+ #define EXYNOS5420_DIS_IRQ_ARM_CORE2_CENTRAL_SYS_PWR_REG	0x1028
+@@ -546,15 +527,6 @@
+ #define EXYNOS5420_SPLL_SYSCLK_SYS_PWR_REG                      0x1178
+ #define EXYNOS5420_INTRAM_MEM_SYS_PWR_REG                       0x11B8
+ #define EXYNOS5420_INTROM_MEM_SYS_PWR_REG                       0x11BC
+-#define EXYNOS5420_ONENANDXL_MEM_SYS_PWR			0x11C0
+-#define EXYNOS5420_USBDEV_MEM_SYS_PWR				0x11CC
+-#define EXYNOS5420_USBDEV1_MEM_SYS_PWR				0x11D0
+-#define EXYNOS5420_SDMMC_MEM_SYS_PWR				0x11D4
+-#define EXYNOS5420_CSSYS_MEM_SYS_PWR				0x11D8
+-#define EXYNOS5420_SECSS_MEM_SYS_PWR				0x11DC
+-#define EXYNOS5420_ROTATOR_MEM_SYS_PWR				0x11E0
+-#define EXYNOS5420_INTRAM_MEM_SYS_PWR				0x11E4
+-#define EXYNOS5420_INTROM_MEM_SYS_PWR				0x11E8
+ #define EXYNOS5420_PAD_RETENTION_JTAG_SYS_PWR_REG		0x1208
+ #define EXYNOS5420_PAD_RETENTION_DRAM_SYS_PWR_REG		0x1210
+ #define EXYNOS5420_PAD_RETENTION_UART_SYS_PWR_REG		0x1214
+@@ -605,13 +577,7 @@
+ #define EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG			0x159C
+ #define EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG			0x15A0
+ #define EXYNOS5420_SFR_AXI_CGDIS1				0x15E4
+-#define EXYNOS_ARM_CORE2_CONFIGURATION				0x2100
+-#define EXYNOS5420_ARM_CORE2_OPTION				0x2108
+-#define EXYNOS_ARM_CORE3_CONFIGURATION				0x2180
+-#define EXYNOS5420_ARM_CORE3_OPTION				0x2188
+-#define EXYNOS5420_ARM_COMMON_STATUS				0x2504
+ #define EXYNOS5420_ARM_COMMON_OPTION				0x2508
+-#define EXYNOS5420_KFC_COMMON_STATUS				0x2584
+ #define EXYNOS5420_KFC_COMMON_OPTION				0x2588
+ #define EXYNOS5420_LOGIC_RESET_DURATION3			0x2D1C
+ 
+@@ -626,33 +592,9 @@
+ #define EXYNOS_PAD_RET_DRAM_OPTION				0x3008
+ #define EXYNOS_PAD_RET_MAUDIO_OPTION				0x3028
+ #define EXYNOS_PAD_RET_JTAG_OPTION				0x3048
+-#define EXYNOS_PAD_RET_GPIO_OPTION				0x3108
+-#define EXYNOS_PAD_RET_UART_OPTION				0x3128
+-#define EXYNOS_PAD_RET_MMCA_OPTION				0x3148
+-#define EXYNOS_PAD_RET_MMCB_OPTION				0x3168
+ #define EXYNOS_PAD_RET_EBIA_OPTION				0x3188
+ #define EXYNOS_PAD_RET_EBIB_OPTION				0x31A8
+ 
+-#define EXYNOS_PS_HOLD_CONTROL					0x330C
+-
+-/* For SYS_PWR_REG */
+-#define EXYNOS_SYS_PWR_CFG					BIT(0)
+-
+-#define EXYNOS5420_MFC_CONFIGURATION				0x4060
+-#define EXYNOS5420_MFC_STATUS					0x4064
+-#define EXYNOS5420_MFC_OPTION					0x4068
+-#define EXYNOS5420_G3D_CONFIGURATION				0x4080
+-#define EXYNOS5420_G3D_STATUS					0x4084
+-#define EXYNOS5420_G3D_OPTION					0x4088
+-#define EXYNOS5420_DISP0_CONFIGURATION				0x40A0
+-#define EXYNOS5420_DISP0_STATUS					0x40A4
+-#define EXYNOS5420_DISP0_OPTION					0x40A8
+-#define EXYNOS5420_DISP1_CONFIGURATION				0x40C0
+-#define EXYNOS5420_DISP1_STATUS					0x40C4
+-#define EXYNOS5420_DISP1_OPTION					0x40C8
+-#define EXYNOS5420_MAU_CONFIGURATION				0x40E0
+-#define EXYNOS5420_MAU_STATUS					0x40E4
+-#define EXYNOS5420_MAU_OPTION					0x40E8
+ #define EXYNOS5420_FSYS2_OPTION					0x4168
+ #define EXYNOS5420_PSGEN_OPTION					0x4188
+ 
+-- 
+2.9.3
