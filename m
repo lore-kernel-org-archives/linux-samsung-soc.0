@@ -1,70 +1,102 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_*
- clocks
-Date: Wed, 25 Jan 2017 12:51:57 +0100
-Message-ID: <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
-References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:12862 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbdAYLwX (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 06:52:23 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKC003AO3N4KS10@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2017 11:52:16 +0000 (GMT)
-In-reply-to: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH 6/7] mfd: exynos-lpass: Add support for clocks
+Date: Wed, 25 Jan 2017 12:50:30 +0100
+Message-ID: <1485345031-2948-7-git-send-email-m.szyprowski@samsung.com>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115104eucas1p1c725f2854fb4cff98548721f79dd6a5b@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
-phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
-to setup initial clock configuration for display subsystem in device tree
-in order to avoid dependency on the configuration left by the bootloader.
+Exynos LPASS requires some clocks to be enabled to make any access to its
+registers. This patch adds code for handling such clocks. For current set
+of registers it is enough to keep sfr0_ctrl clock enabled. Till now it
+worked only because those clocks were enabled by bootloader and driver
+probe() happened before they were disabled by clock core because of lack
+of users. Handling those clocks is also needed to make it possible to
+enable support for audio power domain.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
- include/dt-bindings/clock/exynos5433.h | 5 ++++-
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/mfd/samsung,exynos5433-lpass.txt       |  6 ++++++
+ drivers/mfd/exynos-lpass.c                                     | 10 ++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 0db5204c307c..1ab4fca255e1 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -2559,8 +2559,10 @@ static void __init exynos5433_cmu_g2d_init(struct device_node *np)
- 	FRATE(0, "phyclk_mipidphy1_bitclkdiv8_phy", NULL, 0, 188000000),
- 	FRATE(0, "phyclk_mipidphy1_rxclkesc0_phy", NULL, 0, 100000000),
- 	/* PHY clocks from MIPI_DPHY0 */
--	FRATE(0, "phyclk_mipidphy0_bitclkdiv8_phy", NULL, 0, 188000000),
--	FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, 0, 100000000),
-+	FRATE(CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY, "phyclk_mipidphy0_bitclkdiv8_phy",
-+			NULL, 0, 188000000),
-+	FRATE(CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY, "phyclk_mipidphy0_rxclkesc0_phy",
-+			NULL, 0, 100000000),
- 	/* PHY clocks from HDMI_PHY */
- 	FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko_phy",
- 			NULL, 0, 300000000),
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 4fa6bb2136e3..be39d23e6a32 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -771,7 +771,10 @@
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+index a8deaee82c44..df664018c148 100644
+--- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
++++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+@@ -5,6 +5,10 @@ Required properties:
+  - compatible		: "samsung,exynos5433-lpass"
+  - reg			: should contain the LPASS top SFR region location
+ 			  and size
++ - clock-names		: should contain following required clocks: "sfr0_ctrl"
++ - clocks		: should contain clock specifiers of all clocks, which
++			  input names have been specified in clock-names
++			  property, in same order.
+  - #address-cells	: should be 1
+  - #size-cells		: should be 1
+  - ranges		: must be present
+@@ -24,6 +28,8 @@ Example:
+ audio-subsystem {
+ 	compatible = "samsung,exynos5433-lpass";
+ 	reg = <0x11400000 0x100>, <0x11500000 0x08>;
++	clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
++	clock-names = "sfr0_ctrl";
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 	ranges;
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index 17915daa2e80..44d8ea1a978b 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -14,6 +14,7 @@
+  * only version 2 as published by the Free Software Foundation.
+  */
  
- #define CLK_PCLK_DECON					113
++#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -52,6 +53,7 @@
+ struct exynos_lpass {
+ 	/* pointer to the LPASS TOP regmap */
+ 	struct regmap *top;
++	struct clk *sfr0_clk;
+ };
  
--#define DISP_NR_CLK					114
-+#define CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY		114
-+#define CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY		115
+ static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
+@@ -71,6 +73,8 @@ static void exynos_lpass_core_sw_reset(struct exynos_lpass *lpass, int mask)
+ 
+ static void exynos_lpass_enable(struct exynos_lpass *lpass)
+ {
++	clk_prepare_enable(lpass->sfr0_clk);
 +
-+#define DISP_NR_CLK					116
+ 	/* Unmask SFR, DMA and I2S interrupt */
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK,
+ 		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
+@@ -88,6 +92,8 @@ static void exynos_lpass_disable(struct exynos_lpass *lpass)
+ 	/* Mask any unmasked IP interrupt sources */
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK, 0);
+ 	regmap_write(lpass->top, SFR_LPASS_INTR_CA5_MASK, 0);
++
++	clk_disable_unprepare(lpass->sfr0_clk);
+ }
  
- /* CMU_AUD */
- #define CLK_MOUT_AUD_PLL_USER				1
+ static const struct regmap_config exynos_lpass_reg_conf = {
+@@ -114,6 +120,10 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base_top))
+ 		return PTR_ERR(base_top);
+ 
++	lpass->sfr0_clk = clk_get(dev, "sfr0_ctrl");
++	if (IS_ERR(lpass->sfr0_clk))
++		return PTR_ERR(lpass->sfr0_clk);
++
+ 	lpass->top = regmap_init_mmio(dev, base_top,
+ 					&exynos_lpass_reg_conf);
+ 	if (IS_ERR(lpass->top)) {
 -- 
 1.9.1
