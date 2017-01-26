@@ -1,60 +1,84 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 0/8] Pad retentions support for Exynos5433
-Date: Thu, 26 Jan 2017 11:37:29 +0100
-Message-ID: <31715f20-2dca-498c-f7bd-1947cfe9ac70@samsung.com>
-References: <CGME20170126083401eucas1p20b4794fe46ccf2189bf734f0d8e3c536@eucas1p2.samsung.com>
- <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CACRpkdawiAp3xqVd7J5ZAd2dQ=X09DGybyw0EVp=07w8-ccKfA@mail.gmail.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd
+ fields
+Date: Thu, 26 Jan 2017 12:42:07 +0200
+Message-ID: <20170126104207.GZ31595@intel.com>
+References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
+ <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+ <20170120135540.GC31595@intel.com>
+ <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
+ <20170125140641.GU31595@intel.com>
+ <51bd59d2-e0ca-f265-c90f-d68725602b44@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <CACRpkdawiAp3xqVd7J5ZAd2dQ=X09DGybyw0EVp=07w8-ccKfA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:44973 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752971AbdAZKmN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 05:42:13 -0500
+Content-Disposition: inline
+In-Reply-To: <51bd59d2-e0ca-f265-c90f-d68725602b44@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Daniel Vetter <daniel@ffwll.ch>
 
-Hi Linus,
+On Thu, Jan 26, 2017 at 09:22:27AM +0100, Andrzej Hajda wrote:
+> On 25.01.2017 15:06, Ville Syrjälä wrote:
+> > On Mon, Jan 23, 2017 at 10:15:16AM +0100, Andrzej Hajda wrote:
+> >> On 20.01.2017 14:55, Ville Syrjälä wrote:
+> >>> On Fri, Jan 20, 2017 at 07:52:24AM +0100, Andrzej Hajda wrote:
+> >>>> In case of interlace mode irq is generated for odd and even fields, but
+> >>>> vblank should be signaled only for the last emitted field.
+> >>> I'm pretty sure most drivers signal it for both fields. At least i915
+> >>> does.
+> >> The question is which behavior is correct? I have not found any clear
+> >> statement in the documentation, or drm core code.
+> > That's very typical for us unfortunately.
+> >
+> > I would say what we should do what i915 does. It allows more flexibility
+> > in how you use the hardware. Eg. then you can actually scan out
+> > interlaced material to an interlaced display and not mess up the fields,
+> > and you can also do 3:2 pulldown type of stuff. Or you can even just
+> > stuff progressive frames down the pipe at field rate.
+> >
+> > One problem with interlaced stuff is that we don't have any field
+> > indication in the events, nor do we have a way to flip on a specific
+> > field. I tried to specify the latter for the SETPLANE ioctl way
+> > back when, but it didn't end up being implemented and now we would
+> > need something different for atomic.
+> >
+> >> I have guessed that since vblank event is used to signal end of scan-out
+> >> of buffer it should be called after scan-out of whole buffer - in case
+> >> of interlaced mode after scan-out of 2nd field.
+> > Each field has a proper vertical blanking interval, so you'd just end up
+> > totally wasting one of them.
+> 
+> The problem in this particular case is that hardware does not allow to
+> change buffers between fields, or more precisely it updates its internal
+> registers after 2nd field - ie after reading full frame.
 
-On 2017-01-26 10:50, Linus Walleij wrote:
-> On Thu, Jan 26, 2017 at 9:33 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Patches in this patchset depends on each other. They are order in such a
->> way to make the changes bisectable.
->>
->> Patch #3 has runtime dependency on #1.
->> Patch #5 has runtime dependency on #3.
->> Patch #6 has runtime dependency on #4.
->>
->> This patchset also directly depends on the "Move pad retention control to
->> Exynos pin controller driver" patchset:
->> https://www.spinics.net/lists/arm-kernel/msg556074.html
-> Do we *have* to merge it runtime-bisectably?
->
-> I'm asking because we need a huge immutable branch
-> (I guess in the MFD subsystem) to deal with that.
->
-> It'd be great if I could just apply the pinctrl patches in
-> isolation, then Lee applies the MFD patches in isolation,
-> everything compiles in isolation but maye just work once both
-> pinctrl and MFD are merged upstream, as in linux-next
-> or Torvalds' tree.
+Oh. That's a rather odd piece of hw then. In that case it might indeed
+be better to not signal vblank for the field that can't do the flip.
 
-I always thought that it is good to prepare patches in such a way that they
-don't break runtime bisectability, especially if this is just a matter of
-applying a few patches via the other tree. In this case it will work fine
-if MFD patches gets applied with Lee Jones ack via pinctrl tree (I remember
-that MFD changes were often applied via the other trees in the past).
+> I am still investigating the issue, but it is possible this limitation
+> cannot be overcome.
+> 
+> Regards
+> Andrzej
+> 
+> >
+> >> Maybe my assumption is wrong, in such case this patch should be dropped
+> >> and mixer driver also should be fixed, but before doing that it would be
+> >> good to know for sure how it should be handled correctly.
+> >>
+> >> Regards
+> >> Andrzej
+> 
 
-> That is one of the reasons why using a system-agnostic
-> syscon regmap lookup is so good, BTW.
-
-I've just explained my rationale about the regmap lookup in the separate
-mail.
-
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Ville Syrjälä
+Intel OTC
