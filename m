@@ -1,58 +1,47 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: samsung: exynos5433: Add data for 250MHz and
- 278MHz PLL rates
-Date: Thu, 26 Jan 2017 23:33:02 +0900
-Message-ID: <CAGTfZH2PZUAj91f=HBYYJzLxLEfcbU+TwTVvgQmDmHDAdJWBFw@mail.gmail.com>
-References: <CGME20170126123805eucas1p2b95ab23660b7a6631ab7f639ebaff0fc@eucas1p2.samsung.com>
- <1485434274-6579-1-git-send-email-m.szyprowski@samsung.com> <1485434274-6579-3-git-send-email-m.szyprowski@samsung.com>
-Reply-To: cwchoi00@gmail.com
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 01/13] soc: samsung: pmu: Provide global function to
+ get PMU regmap
+Date: Thu, 26 Jan 2017 16:41:55 +0200
+Message-ID: <CAJKOXPefwmNwqV1=PkWrbU6Tj4AgK78Z2qo2DqJ8v4jMJH=8=Q@mail.gmail.com>
+References: <CGME20170119134904eucas1p153a1d5b2ff9826c88293b6a8fe5140bc@eucas1p1.samsung.com>
+ <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com> <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35244 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752853AbdAZOdo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:33:44 -0500
-Received: by mail-qt0-f193.google.com with SMTP id f4so38903193qte.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:33:43 -0800 (PST)
-In-Reply-To: <1485434274-6579-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Marek,
-
-2017-01-26 21:37 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Default clock configuration applied by the bootloader for TM2 and TM2e
-> boards includes 250MHz and 278MHz rate for DISP PLL clock. To ensure such
-> configuration for those boards with 'assigned-clocks*' properties,
-> parameters for those two additional rates are needed.
+On Thu, Jan 26, 2017 at 11:43 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 2 ++
->  1 file changed, 2 insertions(+)
+>> PMU is something like a SoC wide service, so add a helper function to get
+>> PMU regmap. This will be used by other Exynos device drivers. This way it
+>> can be avoided to model this dependency in device tree (as phandles to PMU
+>> node) for almost every device in the SoC.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 6ee91ae875c3..11343a597093 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -739,7 +739,9 @@
->         PLL_35XX_RATE(350000000U,  350, 6,  2),
->         PLL_35XX_RATE(333000000U,  222, 4,  2),
->         PLL_35XX_RATE(300000000U,  500, 5,  3),
-> +       PLL_35XX_RATE(278000000U,  556, 6,  3),
->         PLL_35XX_RATE(266000000U,  532, 6,  3),
-> +       PLL_35XX_RATE(250000000U,  500, 6,  3),
->         PLL_35XX_RATE(200000000U,  400, 6,  3),
->         PLL_35XX_RATE(166000000U,  332, 6,  3),
->         PLL_35XX_RATE(160000000U,  320, 6,  3),
+> But why? I could understand it as a local header in
+> drivers/soc/samsung/*.h for those files.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Marek gave quite detailed answer... so let me just add minor note.
+Apparently we cannot satisfy everyone. When break the DT ABI, DT
+people are not happy. When we try to avoid ABI break, we create such
+dependency.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+In fact, such compile and runtime dependency is not unusual. Our
+drivers are coupled because our hardware modules are coupled. When
+they were put in arch/arm/mach-exynos, no one cared because everything
+was contained in mach-exynos. We try to move the code out of there
+thus we need to model such dependencies in a new way... or break the
+DT ABI.
+
+Best regards,
+Krzysztof
