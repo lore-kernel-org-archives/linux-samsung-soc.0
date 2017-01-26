@@ -1,86 +1,206 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device pointer to of_xlate
- callback
-Date: Thu, 26 Jan 2017 15:43:05 +0100
-Message-ID: <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
-References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
- <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
- <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add initial configuration for
+ DISP clocks for TM2/TM2e
+Date: Thu, 26 Jan 2017 23:49:59 +0900
+Message-ID: <CAGTfZH1A49arLe3nRfeYS02M-8052SU6xqhvPMYg_8hRO3yYBA@mail.gmail.com>
+References: <CGME20170126123806eucas1p2dfbb67c5248e6c3dd979bdd343a3b7cb@eucas1p2.samsung.com>
+ <1485434274-6579-1-git-send-email-m.szyprowski@samsung.com> <1485434274-6579-4-git-send-email-m.szyprowski@samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:42835 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752788AbdAZOnM (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34051 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752183AbdAZOuk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:43:12 -0500
-In-reply-to: <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
+        Thu, 26 Jan 2017 09:50:40 -0500
+Received: by mail-qt0-f193.google.com with SMTP id w20so5663292qtb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2017 06:50:40 -0800 (PST)
+In-Reply-To: <1485434274-6579-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Lars,
+Hi Marek
 
-On 2017-01-25 14:12, Lars-Peter Clausen wrote:
-> On 01/25/2017 11:28 AM, Marek Szyprowski wrote:
->> Add pointer to slave device to of_dma_xlate to let DMA engine driver
->> to know which slave device is using given DMA channel. This will be
->> later used to implement non-irq-safe runtime PM for DMA engine driver.
-> of_dma_xlate() is used to translate from a OF phandle and a specifier to a
-> DMA channel. On one hand this does not necessarily mean that the channel is
-> actually going to be used by the slave that called the xlate function.
-> Modifying the driver state when a lookup of the channel is done is a
-> layering violation. And this approach is also missing a way to disassociate
-> a slave from a DMA channel, e.g. when it is no longer used.
+2017-01-26 21:37 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Add initial clock configuration for display subsystem for Exynos5433
+> based TM2/TM2e boards in device tree in order to avoid dependency on the
+> configuration left by the bootloader. This initial configuration is also
+> needed to ensure that display subsystem is operational if display power
+> domain gets turned off before clock controller is probed and the inital
+> clock configuration left by the bootloader saved.
 >
-> On the other hand there are other mechanisms to translate between some kind
-> of firmware handle to a DMA channel which are completely ignored here.
+> TM2 and TM2e uses different rate for DISP PLL clock, but for better
+> maintainability all 'assigned-clocks-*' properties for DISP CMU are
+> defines in each board dts instead of redefining the rates property.
 >
-> So this approach does not work. This is something that needs to be done at
-> the dmaengine level, not a the firmware resource translation level. And it
-> needs a matching method that is called when the channel is disassociated
-> from a device, when the device no longer uses the DMA channel.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 12 ---------
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 29 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 29 ++++++++++++++++++++++
+>  3 files changed, 58 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index 5c207575ed0a..1c1c03142e6d 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -217,18 +217,6 @@
+>         assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+>  };
+>
+> -&cmu_disp {
+> -       assigned-clocks = <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+> -                         <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
+> -                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+> -                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+> -       assigned-clock-parents = <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+> -                                <0>,
+> -                                <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+> -                                <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+> -       assigned-clock-rates = <0>, <400000000>;
+> -};
+> -
+>  &cmu_fsys {
+>         assigned-clocks = <&cmu_top CLK_MOUT_SCLK_USBDRD30>,
+>                 <&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> index ddba2f889326..b8bb053495af 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+> @@ -18,6 +18,35 @@
+>         compatible = "samsung,tm2", "samsung,exynos5433";
+>  };
+>
+> +&cmu_disp {
+> +       assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+> +                         <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
+> +                         <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
+> +                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
+> +                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
+> +                         <&cmu_disp CLK_MOUT_DISP_PLL>,
+> +                         <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+> +       assigned-clock-parents = <0>, <0>,
+> +                                <&cmu_mif CLK_ACLK_DISP_333>,
+> +                                <&cmu_mif CLK_SCLK_DSIM0_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+> +                                <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
+> +                                <&cmu_disp CLK_FOUT_DISP_PLL>,
+> +                                <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+> +                                <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+> +       assigned-clock-rates = <250000000>, <400000000>;
+> +};
+> +
+>  &hsi2c_9 {
+>         status = "okay";
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> index d8bca75a1afe..c27500b7d8b5 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+> @@ -18,6 +18,35 @@
+>         compatible = "samsung,tm2e", "samsung,exynos5433";
+>  };
+>
+> +&cmu_disp {
+> +       assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+> +                         <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
+> +                         <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
+> +                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
+> +                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
+> +                         <&cmu_disp CLK_MOUT_DISP_PLL>,
+> +                         <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+> +                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+> +       assigned-clock-parents = <0>, <0>,
+> +                                <&cmu_mif CLK_ACLK_DISP_333>,
+> +                                <&cmu_mif CLK_SCLK_DSIM0_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+> +                                <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
+> +                                <&cmu_disp CLK_FOUT_DISP_PLL>,
+> +                                <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+> +                                <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+> +                                <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+> +       assigned-clock-rates = <278000000>, <400000000>;
 
-Frankly I agree that of_dma_xlate() should only return the requested channel
-to the dmaengine core and do not do any modification in the the driver 
-state.
+Except for setting the assigned-clock-rate for CLK_FOUT_DISP_PLL,
+tm2.dts and tm2e.dts has the same dt node of cmu_disp.
+If there is same value between tm2 and tm2e, you should keep the same value
+in exynos5433-tm2-common.dtsi.
 
-However the current dma engine design and implementation breaks this rule.
-Please check the drivers - how do they implement of_xlate callback. They
-usually call dma_get_any_slave_channel, dma_get_slave_channel or
-__dma_request_channel there, which in turn calls dma_chan_get, which then
-calls back to device_alloc_chan_resources callback. Some of the drivers also
-do a hardware configuration or other resource allocation in of_xlate.
-This is a bit messy design and leave no place in the core to set slave 
-device
-before device_alloc_chan_resources callback, where one would expect to have
-it already set.
+So, I think that exynos5433-tm2-common.dtsi include the relationships
+between clocks and parent clocks as following without assigning the clocks.
 
-The best place to add new calls to the dmaengine drivers to set slave device
-would be just before device_alloc_chan_resources(), what in turn means that
-the current dmaengine core should do in dma_chan_get(). This would 
-require to
-forward the slave device pointer via even more layers including the of_xlate
-callback too. IMHO this is not worth the effort.
+And then, each tm2 and tm2e.dts can assign the clock rate for CLK_FOUT_DISP_PLL
+and CLK_DIV_SCLK_DECON_TV_ECLK.
 
-DMA engine core and API definitely needs some cleanup. During such cleanup
-the slave device pointer might be moved out of xlate into separate callback
-when the core gets ready for such operation.
+For example,
+In exynos5433-tm2-common.dtsi
 
-I ignored other paths for other firmware handle to a DMA channel translation
-mechanism because for the current pl330 driver they are simply not used. I
-assume that if one needs to implement similar things for drivers relying on
-them, he will update the respective DMA engine core parts.
+&cmu_disp {
+       assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+                         <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
+                         <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
+                         <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+                         <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
+                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+                         <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
+                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
+                         <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
+                         <&cmu_disp CLK_MOUT_DISP_PLL>,
+                         <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+                         <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+       assigned-clock-parents = <0>, <0>,
+                                <&cmu_mif CLK_ACLK_DISP_333>,
+                                <&cmu_mif CLK_SCLK_DSIM0_DISP>,
+                                <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
+                                <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
+                                <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
+                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
+                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
+                                <&cmu_disp CLK_FOUT_DISP_PLL>,
+                                <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+                                <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+                                <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+    };
 
-Slave device assignments can be cleared in device_chan_release_resources if
-this is needed and that what existing DMA engine drivers do with the 
-resources
-allocated in the of_xlate callback...
 
-Best regards
+In exynos5433-tm2.dts
+&cmu_disp {
+     assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+                                   <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>;
+     assigned-clock-rates = <250000000>, <400000000>;
+};
+
+
+In exynos5433-tm2e.dts
+&cmu_disp {
+     assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
+                                  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>;
+     assigned-clock-rates = <278000000>, <400000000>;
+};
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
