@@ -1,43 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
-Date: Thu, 26 Jan 2017 16:59:45 +0100
-Message-ID: <CACRpkdboB+-n6BFPACKCr6VoHtq9W53YcUBBer3jgyyRcnN+Xg@mail.gmail.com>
-References: <20170120181343.12570-1-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] clk: samsung: exynos5433: Correct typos in SoC name
+Date: Thu, 26 Jan 2017 21:08:13 +0200
+Message-ID: <20170126190813.juim4lwr5oy2e4zt@kozik-lap>
+References: <CGME20170126124348eucas1p19cd1a8f28f657f523ac46b48bf699674@eucas1p1.samsung.com>
+ <1485434622-6936-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170120181343.12570-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36096 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752814AbdAZTIV (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 14:08:21 -0500
+Received: by mail-wm0-f68.google.com with SMTP id r126so52466165wmr.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2017 11:08:18 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1485434622-6936-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Fri, Jan 20, 2017 at 7:13 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Thu, Jan 26, 2017 at 01:43:42PM +0100, Marek Szyprowski wrote:
+> This patch fixes simple typos in Exynos5433 clocks driver. The SoC name
+> was refered a few times as '5443' instead of '5433'.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
 
-> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
->
->   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git samsung-drivers-soc-pmu-4.11
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-OK I pulled it and applied the final three patches from Marek
-on top.
-
-Grrr I was based in v4.10-rc1, well I could easily merge in v4.10-rc2
-so no big deal.
-
-Let's see if it survives linux-next.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
