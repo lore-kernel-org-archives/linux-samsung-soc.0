@@ -1,45 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 12/13] pinctrl: samsung: Move retention control from
- mach-s5pv210 to the pinctrl driver
-Date: Thu, 26 Jan 2017 10:11:33 +0100
-Message-ID: <CACRpkdYSVvGPoJ-gLiyGuHrqz=GYHCmmFv_bD9HpAywPD5Yzzg@mail.gmail.com>
-References: <CGME20170119134910eucas1p2d401df77ccc1ef8e7b05f4cdb2ffc8d3@eucas1p2.samsung.com>
- <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com> <1484833733-16082-13-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
+Date: Thu, 26 Jan 2017 10:13:10 +0100
+Message-ID: <CACRpkdZebsd5MfARWL2WbKkAuXfjEe6p_k5tYwPFF6kSsCXDdQ@mail.gmail.com>
+References: <20170120181343.12570-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:38154 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752324AbdAZJLf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 04:11:35 -0500
-Received: by mail-it0-f49.google.com with SMTP id c7so30427344itd.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jan 2017 01:11:34 -0800 (PST)
-In-Reply-To: <1484833733-16082-13-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170120181343.12570-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, "arm@kernel.org" <arm@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On Fri, Jan 20, 2017 at 7:13 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> This patch moves pad retention control from S5PV210 machine code to
-> Exynos pin controller driver. This helps to avoid possible ordering
-> and logical dependencies between machine and pin control code. Till
-> now it worked fine only because sys_ops for machine code and pin
-> controller were called in registration order.
+> Few changes in Exynos PMU driver including one that is needed by pinctrl
+> driver for runtime PM. We want to move forward with the RPM for our drivers
+> while keeping still DT ABI.
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> For mach-s5pv210:
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-s5pv210/pm.c               |  7 ----
->  arch/arm/mach-s5pv210/regs-clock.h       |  4 ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 56 ++++++++++++++++++++++++++++++++
+> This tag is also for Linus Walleij to pull - base for pinctrl changes.
 
-Same here, can I have an ARM SoC ACK?
+Do I need it? I.e. will my branch not compile without this, or is this
+just a runtime problem?
 
 Yours,
 Linus Walleij
