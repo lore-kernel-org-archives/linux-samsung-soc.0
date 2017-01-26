@@ -1,66 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 4/7] arm64: dts: exynos: Add clocks to Exynos5433 LPASS
- module
-Date: Thu, 26 Jan 2017 08:18:50 +0100
-Message-ID: <2eabe488-1e58-4320-6d6f-f7844ee06998@samsung.com>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115103eucas1p1d0e446fa6e998da257e3c17922a00d7f@eucas1p1.samsung.com>
- <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
- <20170125195022.yiqxnfted2vw4owh@kozik-lap>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 6/7] drm/exynos/decon5433: signal vblank only on odd fields
+Date: Thu, 26 Jan 2017 09:22:27 +0100
+Message-ID: <51bd59d2-e0ca-f265-c90f-d68725602b44@samsung.com>
+References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170120065231eucas1p121d2a987695fdce00e1b2bba445f1818@eucas1p1.samsung.com>
+ <1484895145-511-7-git-send-email-a.hajda@samsung.com>
+ <20170120135540.GC31595@intel.com>
+ <953193f0-484e-0457-baf4-e42b44a3f147@samsung.com>
+ <20170125140641.GU31595@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:16288 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751787AbdAZHS4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 02:18:56 -0500
-In-reply-to: <20170125195022.yiqxnfted2vw4owh@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170125140641.GU31595@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Daniel Vetter <daniel@ffwll.ch>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
+On 25.01.2017 15:06, Ville Syrjälä wrote:
+> On Mon, Jan 23, 2017 at 10:15:16AM +0100, Andrzej Hajda wrote:
+>> On 20.01.2017 14:55, Ville Syrjälä wrote:
+>>> On Fri, Jan 20, 2017 at 07:52:24AM +0100, Andrzej Hajda wrote:
+>>>> In case of interlace mode irq is generated for odd and even fields, but
+>>>> vblank should be signaled only for the last emitted field.
+>>> I'm pretty sure most drivers signal it for both fields. At least i915
+>>> does.
+>> The question is which behavior is correct? I have not found any clear
+>> statement in the documentation, or drm core code.
+> That's very typical for us unfortunately.
+>
+> I would say what we should do what i915 does. It allows more flexibility
+> in how you use the hardware. Eg. then you can actually scan out
+> interlaced material to an interlaced display and not mess up the fields,
+> and you can also do 3:2 pulldown type of stuff. Or you can even just
+> stuff progressive frames down the pipe at field rate.
+>
+> One problem with interlaced stuff is that we don't have any field
+> indication in the events, nor do we have a way to flip on a specific
+> field. I tried to specify the latter for the SETPLANE ioctl way
+> back when, but it didn't end up being implemented and now we would
+> need something different for atomic.
+>
+>> I have guessed that since vblank event is used to signal end of scan-out
+>> of buffer it should be called after scan-out of whole buffer - in case
+>> of interlaced mode after scan-out of 2nd field.
+> Each field has a proper vertical blanking interval, so you'd just end up
+> totally wasting one of them.
 
+The problem in this particular case is that hardware does not allow to
+change buffers between fields, or more precisely it updates its internal
+registers after 2nd field - ie after reading full frame.
+I am still investigating the issue, but it is possible this limitation
+cannot be overcome.
 
-On 2017-01-25 20:50, Krzysztof Kozlowski wrote:
-> On Wed, Jan 25, 2017 at 12:50:28PM +0100, Marek Szyprowski wrote:
->> Exynos5433 LPASS module requires some clocks for proper operation with
->> power domain.
+Regards
+Andrzej
+
+>
+>> Maybe my assumption is wrong, in such case this patch should be dropped
+>> and mixer driver also should be fixed, but before doing that it would be
+>> good to know for sure how it should be handled correctly.
 >>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> index 57c7bbeb65a7..16072c1c3ed3 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> @@ -1494,6 +1494,8 @@
->>   		audio-subsystem@11400000 {
->>   			compatible = "samsung,exynos5433-lpass";
->>   			reg = <0x11400000 0x100>, <0x11500000 0x08>;
->> +			clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
->> +			clock-names = "sfr0_ctrl";
-> You wrote that 6/7 depends on this. I prefer not to take DTS changes if
-> the corresponding user (driver) is still under discussion because the
-> bindings might change. I'll take it when bindings got acked or accepted.
-
-Well, audio support in 4.9 is still not functional due to missing other
-patches to ALSA SoC, so nothing will break as for now if we manage to get
-this into v4.10.
-
-> BTW, the 6/7 is a quite reasonable ABI break, but for the sake of
-> documentation - why you did not continue with the patch for marking
-> bidings as experimental/under-development?
-
-Because I had no time to list all breaks, what was requested by Rob.
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+>> Regards
+>> Andrzej
