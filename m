@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 REBASED 13/13] pinctrl: samsung: Replace syscore ops
- with standard platform device pm_ops
-Date: Thu, 26 Jan 2017 16:58:31 +0100
-Message-ID: <CACRpkdZM_eu-1vKaT0ijqvXDp=QnLoA=r3fU0Rs7CT58hWnFNw@mail.gmail.com>
-References: <CACRpkdY_SpqfyTTqSP5+a1k1LDf_5w77UXo=EognmOzWBz2c-Q@mail.gmail.com>
- <CGME20170126093003eucas1p1e63fcbad90361f6ccf90fe07da897823@eucas1p1.samsung.com>
- <1485422967-30643-1-git-send-email-m.szyprowski@samsung.com> <1485422967-30643-10-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
+Date: Thu, 26 Jan 2017 16:59:45 +0100
+Message-ID: <CACRpkdboB+-n6BFPACKCr6VoHtq9W53YcUBBer3jgyyRcnN+Xg@mail.gmail.com>
+References: <20170120181343.12570-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1485422967-30643-10-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170120181343.12570-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 26, 2017 at 10:29 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On Fri, Jan 20, 2017 at 7:13 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> Once the dependency on PMU driver (for pad retention control) has been
-> removed, there is no reason to use syscore_ops based suspend/resume.
-> This patch replaces it with standard platform device pm_ops based solution.
+> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git samsung-drivers-soc-pmu-4.11
 
-Patch applied after pulling in Krzysztof's branch and
-applying 11 & 12 again.
+OK I pulled it and applied the final three patches from Marek
+on top.
+
+Grrr I was based in v4.10-rc1, well I could easily merge in v4.10-rc2
+so no big deal.
+
+Let's see if it survives linux-next.
 
 Yours,
 Linus Walleij
