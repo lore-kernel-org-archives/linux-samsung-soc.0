@@ -1,137 +1,102 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5433: Correct typos in SoC name
-Date: Thu, 26 Jan 2017 13:43:42 +0100
-Message-ID: <1485434622-6936-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170126124348eucas1p19cd1a8f28f657f523ac46b48bf699674@eucas1p1.samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] serial: samsung: add clock controls in
+ s3c24xx_serial_resume_noirq()
+Date: Thu, 26 Jan 2017 14:40:52 +0100
+Message-ID: <43f1d7da-9857-4f0e-12b9-ff0f241de762@math.uni-bielefeld.de>
+References: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
+ <CGME20160930103448epcas2p4e2ee38332ad98ad3cb1e07866d4337d8@epcas2p4.samsung.com>
+ <20160930103434.GA4713@kozik-lap>
+ <000401d21dfc$dba89bb0$92f9d310$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46201 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750856AbdAZMnw (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:35931 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750855AbdAZNk4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Jan 2017 07:43:52 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKE00KG80P1LH20@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jan 2017 12:43:49 +0000 (GMT)
+        Thu, 26 Jan 2017 08:40:56 -0500
+In-Reply-To: <000401d21dfc$dba89bb0$92f9d310$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>, 'Krzysztof Kozlowski' <krzk@kernel.org>
+Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-This patch fixes simple typos in Exynos5433 clocks driver. The SoC name
-was refered a few times as '5443' instead of '5433'.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+was going through my mail folder and I don't think that this patch was
+ever applied (or resent).
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 0db5204c307c..8fd7f6e88e3c 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -6,7 +6,7 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  *
-- * Common Clock Framework support for Exynos5443 SoC.
-+ * Common Clock Framework support for Exynos5433 SoC.
-  */
- 
- #include <linux/clk-provider.h>
-@@ -698,7 +698,7 @@
-  * ATLAS_PLL & APOLLO_PLL & MEM0_PLL & MEM1_PLL & BUS_PLL & MFC_PLL
-  * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
-  */
--static const struct samsung_pll_rate_table exynos5443_pll_rates[] __initconst = {
-+static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst = {
- 	PLL_35XX_RATE(2500000000U, 625, 6,  0),
- 	PLL_35XX_RATE(2400000000U, 500, 5,  0),
- 	PLL_35XX_RATE(2300000000U, 575, 6,  0),
-@@ -749,7 +749,7 @@
- };
- 
- /* AUD_PLL */
--static const struct samsung_pll_rate_table exynos5443_aud_pll_rates[] __initconst = {
-+static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
- 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
- 	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
- 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
-@@ -764,9 +764,9 @@
- 
- static const struct samsung_pll_clock top_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_ISP_PLL, "fout_isp_pll", "oscclk",
--		ISP_PLL_LOCK, ISP_PLL_CON0, exynos5443_pll_rates),
-+		ISP_PLL_LOCK, ISP_PLL_CON0, exynos5433_pll_rates),
- 	PLL(pll_36xx, CLK_FOUT_AUD_PLL, "fout_aud_pll", "oscclk",
--		AUD_PLL_LOCK, AUD_PLL_CON0, exynos5443_aud_pll_rates),
-+		AUD_PLL_LOCK, AUD_PLL_CON0, exynos5433_aud_pll_rates),
- };
- 
- static const struct samsung_cmu_info top_cmu_info __initconst = {
-@@ -820,7 +820,7 @@ static void __init exynos5433_cmu_top_init(struct device_node *np)
- 
- static const struct samsung_pll_clock cpif_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_MPHY_PLL, "fout_mphy_pll", "oscclk",
--		MPHY_PLL_LOCK, MPHY_PLL_CON0, exynos5443_pll_rates),
-+		MPHY_PLL_LOCK, MPHY_PLL_CON0, exynos5433_pll_rates),
- };
- 
- static const struct samsung_mux_clock cpif_mux_clks[] __initconst = {
-@@ -1011,13 +1011,13 @@ static void __init exynos5433_cmu_cpif_init(struct device_node *np)
- 
- static const struct samsung_pll_clock mif_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_MEM0_PLL, "fout_mem0_pll", "oscclk",
--		MEM0_PLL_LOCK, MEM0_PLL_CON0, exynos5443_pll_rates),
-+		MEM0_PLL_LOCK, MEM0_PLL_CON0, exynos5433_pll_rates),
- 	PLL(pll_35xx, CLK_FOUT_MEM1_PLL, "fout_mem1_pll", "oscclk",
--		MEM1_PLL_LOCK, MEM1_PLL_CON0, exynos5443_pll_rates),
-+		MEM1_PLL_LOCK, MEM1_PLL_CON0, exynos5433_pll_rates),
- 	PLL(pll_35xx, CLK_FOUT_BUS_PLL, "fout_bus_pll", "oscclk",
--		BUS_PLL_LOCK, BUS_PLL_CON0, exynos5443_pll_rates),
-+		BUS_PLL_LOCK, BUS_PLL_CON0, exynos5433_pll_rates),
- 	PLL(pll_35xx, CLK_FOUT_MFC_PLL, "fout_mfc_pll", "oscclk",
--		MFC_PLL_LOCK, MFC_PLL_CON0, exynos5443_pll_rates),
-+		MFC_PLL_LOCK, MFC_PLL_CON0, exynos5433_pll_rates),
- };
- 
- /* list of all parent clock list */
-@@ -2539,7 +2539,7 @@ static void __init exynos5433_cmu_g2d_init(struct device_node *np)
- 
- static const struct samsung_pll_clock disp_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_DISP_PLL, "fout_disp_pll", "oscclk",
--		DISP_PLL_LOCK, DISP_PLL_CON0, exynos5443_pll_rates),
-+		DISP_PLL_LOCK, DISP_PLL_CON0, exynos5433_pll_rates),
- };
- 
- static const struct samsung_fixed_factor_clock disp_fixed_factor_clks[] __initconst = {
-@@ -3224,7 +3224,7 @@ static void __init exynos5433_cmu_aud_init(struct device_node *np)
- 
- static const struct samsung_pll_clock g3d_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
--		G3D_PLL_LOCK, G3D_PLL_CON0, exynos5443_pll_rates),
-+		G3D_PLL_LOCK, G3D_PLL_CON0, exynos5433_pll_rates),
- };
- 
- static const struct samsung_mux_clock g3d_mux_clks[] __initconst = {
-@@ -3514,7 +3514,7 @@ static void __init exynos5433_cmu_gscl_init(struct device_node *np)
- 
- static const struct samsung_pll_clock apollo_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_APOLLO_PLL, "fout_apollo_pll", "oscclk",
--		APOLLO_PLL_LOCK, APOLLO_PLL_CON0, exynos5443_pll_rates),
-+		APOLLO_PLL_LOCK, APOLLO_PLL_CON0, exynos5433_pll_rates),
- };
- 
- static const struct samsung_mux_clock apollo_mux_clks[] __initconst = {
-@@ -3737,7 +3737,7 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
- 
- static const struct samsung_pll_clock atlas_pll_clks[] __initconst = {
- 	PLL(pll_35xx, CLK_FOUT_ATLAS_PLL, "fout_atlas_pll", "oscclk",
--		ATLAS_PLL_LOCK, ATLAS_PLL_CON0, exynos5443_pll_rates),
-+		ATLAS_PLL_LOCK, ATLAS_PLL_CON0, exynos5433_pll_rates),
- };
- 
- static const struct samsung_mux_clock atlas_mux_clks[] __initconst = {
--- 
-1.9.1
+Just wondering if it is still necessary.
+
+- Tobias
+
+
+남영민 wrote:
+> Hello,
+> 
+>> On Tue, Sep 27, 2016 at 10:43:54PM +0900, 남영민 wrote:
+>>> This patch adds clock controls in s3c24xx_serial_resume_noirq() to set
+>>> S3C64XX_UINTM register.
+>>
+>> Code looks correct but the commit message is bogus. It does not bring any
+>> benefit over the code, not mentioning that it is quite cryptic (what does
+>> the "clock controls" mean?).
+>>
+>> Just describe here WHAT is the problem and WHY the fix is needed.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Thank you for taking your time for the review.
+> I will improve the commit message applying your suggestions and resend this patch.
+> 
+> Best regards,
+> Youngmin Nam
+> 
+> 
+>>>
+>>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+>>> ---
+>>>  drivers/tty/serial/samsung.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/tty/serial/samsung.c
+>>> b/drivers/tty/serial/samsung.c index ae2095a..97f7b3b 100644
+>>> --- a/drivers/tty/serial/samsung.c
+>>> +++ b/drivers/tty/serial/samsung.c
+>>> @@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device
+>>> *dev)  static int s3c24xx_serial_resume_noirq(struct device *dev)  {
+>>>  	struct uart_port *port = s3c24xx_dev_to_port(dev);
+>>> +	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>>>
+>>>  	if (port) {
+>>>  		/* restore IRQ mask */
+>>> @@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct
+>> device *dev)
+>>>  				uintm &= ~S3C64XX_UINTM_TXD_MSK;
+>>>  			if (rx_enabled(port))
+>>>  				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+>>> +			clk_prepare_enable(ourport->clk);
+>>>  			wr_regl(port, S3C64XX_UINTM, uintm);
+>>> +			clk_disable_unprepare(ourport->clk);
+>>>  		}
+>>>  	}
+>>>
+>>> --
+>>> 2.8.1
+>>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-samsung-soc" in the body of a message to
+>>> majordomo@vger.kernel.org More majordomo info at
+>> http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
