@@ -1,55 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 01/13] soc: samsung: pmu: Provide global function to
- get PMU regmap
-Date: Thu, 26 Jan 2017 10:43:20 +0100
-Message-ID: <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
-References: <CGME20170119134904eucas1p153a1d5b2ff9826c88293b6a8fe5140bc@eucas1p1.samsung.com>
- <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com> <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
+Date: Thu, 26 Jan 2017 10:44:25 +0100
+Message-ID: <CACRpkdbKfojW-adLDL5Y7UQNps9H=5NpwWnYOzC5xBo9Bq1RJg@mail.gmail.com>
+References: <20170120181343.12570-1-krzk@kernel.org> <CGME20170126091313epcas3p4034ef54af813082ceb26f5213bb97a1c@epcas3p4.samsung.com>
+ <CACRpkdZebsd5MfARWL2WbKkAuXfjEe6p_k5tYwPFF6kSsCXDdQ@mail.gmail.com> <4be96fae-6790-d281-61dc-f7e7cde9efb7@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4be96fae-6790-d281-61dc-f7e7cde9efb7@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, "arm@kernel.org" <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+On Thu, Jan 26, 2017 at 10:20 AM, Marek Szyprowski
 <m.szyprowski@samsung.com> wrote:
-
-> PMU is something like a SoC wide service, so add a helper function to get
-> PMU regmap. This will be used by other Exynos device drivers. This way it
-> can be avoided to model this dependency in device tree (as phandles to PMU
-> node) for almost every device in the SoC.
+> Hi Linus,
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> On 2017-01-26 10:13, Linus Walleij wrote:
+>>
+>> On Fri, Jan 20, 2017 at 7:13 PM, Krzysztof Kozlowski <krzk@kernel.org>
+>> wrote:
+>>
+>>> Few changes in Exynos PMU driver including one that is needed by pinctrl
+>>> driver for runtime PM. We want to move forward with the RPM for our
+>>> drivers
+>>> while keeping still DT ABI.
+>>>
+>>> This tag is also for Linus Walleij to pull - base for pinctrl changes.
+>>
+>> Do I need it? I.e. will my branch not compile without this, or is this
+>> just a runtime problem?
+>
+>
+> "[PATCH v3 11/13] pinctrl: samsung: Move retention control from mach-exynos
+> to the
+> pinctrl driver" has compile time dependency on the changes included in that
+> tag.
 
-But why? I could understand it as a local header in
-drivers/soc/samsung/*.h for those files.
+Is that because of the custom syscon regmap lookup function?
 
-For the global kernel scope we usually look up the syscon
-regmap we need using a phandle, DT node or even
-compatible string directly from the device tree.
-
-Just
-#include <linux/mfd/syscon.h>
-
-syscon_node_to_regmap()
-syscon_regmap_lookup_by_compatible()
-syscon_regmap_lookup_by_pdevname()
-syscon_regmap_lookup_by_phandle()
-
-what is wrong with just using one of these?
-
-Introducing a special header just creates compile time problems
-with global interfaces when merging code and just litter the kernel
-for no good reason.
-
-Can you explain why this necessarily different approach is
-needed?
-
-I guess I should have said this earlier, mea culpa.
+I just complained about that in a separate mail ;)
 
 Yours,
 Linus Walleij
