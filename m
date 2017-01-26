@@ -1,50 +1,77 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 2/8] pinctrl: samsung: Ensure that pad retention is disabled
- on driver init
-Date: Thu, 26 Jan 2017 09:33:48 +0100
-Message-ID: <1485419634-28331-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 8/8] mfd: exynos-lpass: Add runtime PM support
+Date: Thu, 26 Jan 2017 09:33:54 +0100
+Message-ID: <1485419634-28331-9-git-send-email-m.szyprowski@samsung.com>
 References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170126083401eucas1p289b69e3694b91e83983cd6e09aa7053c@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20170126083406eucas1p20148fa4f3ca70d333400c806dd490aef@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43161 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752975AbdAZIeL (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 26 Jan 2017 03:34:11 -0500
 In-reply-to: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-When pin controller device is a part of power domain, there is no guarantee
-that the power domain was not turned off and then on during boot process
-before probing of the pin control driver. If it happened, then pin control
-driver should ensure that pad retention is turned off during its probe call.
+Convert exisitng lpass-suspend/resume callbacks into runtime PM callbacks.
+This way Exynos LPASS driver will be ready for use with power domains
+enabled. LPASS will be runtime resumed/suspended as a result of its child
+devices runtime PM transitions.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/mfd/exynos-lpass.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 63e51b56a22a..fa3802970570 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -777,6 +777,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index 9dbbedad916f..6d735e22acda 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -22,6 +22,7 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+@@ -132,6 +133,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	platform_set_drvdata(pdev, lpass);
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
+ 	exynos_lpass_enable(lpass);
+ 
+ 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
+@@ -141,7 +144,9 @@ static int exynos_lpass_remove(struct platform_device *pdev)
  {
- 	struct samsung_retention_ctrl *ctrl;
- 	struct regmap *pmu_regs;
-+	int i;
+ 	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
  
- 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
-@@ -794,6 +795,10 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 	ctrl->enable = exynos_retention_enable;
- 	ctrl->disable = exynos_retention_disable;
+-	exynos_lpass_disable(lpass);
++	pm_runtime_disable(&pdev->dev);
++	if (!pm_runtime_status_suspended(&pdev->dev))
++		exynos_lpass_disable(lpass);
+ 	regmap_exit(lpass->top);
  
-+	/* Ensure that retention is disabled on driver init */
-+	for (i = 0; i < ctrl->nr_regs; i++)
-+		regmap_write(pmu_regs, ctrl->regs[i], ctrl->value);
-+
- 	return ctrl;
+ 	return 0;
+@@ -165,8 +170,11 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
+ 	return 0;
  }
  
+-static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
+-					exynos_lpass_resume);
++static const struct dev_pm_ops lpass_pm_ops = {
++	SET_RUNTIME_PM_OPS(exynos_lpass_suspend, exynos_lpass_resume, NULL)
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
++};
+ 
+ static const struct of_device_id exynos_lpass_of_match[] = {
+ 	{ .compatible = "samsung,exynos5433-lpass" },
 -- 
 1.9.1
