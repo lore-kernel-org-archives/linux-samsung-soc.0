@@ -1,168 +1,63 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/4] phy: exynos4: Remove duplicated defines of PHY register defines
-Date: Fri, 27 Jan 2017 22:05:07 +0200
-Message-ID: <20170127200510.4444-2-krzk@kernel.org>
-References: <20170127200510.4444-1-krzk@kernel.org>
+Subject: [PATCH 0/4] phy/mfd/soc: exynos: Header cleanup
+Date: Fri, 27 Jan 2017 22:05:06 +0200
+Message-ID: <20170127200510.4444-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43016 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:42978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751267AbdA0UFj (ORCPT
+        id S1751225AbdA0UF3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 15:05:39 -0500
-In-Reply-To: <20170127200510.4444-1-krzk@kernel.org>
+        Fri, 27 Jan 2017 15:05:29 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Phy drivers access PMU region through regmap provided by exynos-pmu
-driver.   However there is no need to duplicate defines for PMU
-registers.  Instead just use whatever is defined in exynos-regs-pmu.h.
+Hi,
 
-Additionally MIPI PHY registers for Exynos5433 start from the same
-address as Exynos4 and Exynos5250 so re-use existing defines.
+Suggested by Marek, continuation of cleanup of PMU register defines
+in headers.
 
-This reduces number of defines and allows removal of one header file.
+Let's keep all of them in include/linux/soc/samsung/exynos-regs-pmu.h.
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/phy/phy-exynos-mipi-video.c         | 12 ++++++------
- include/linux/mfd/syscon/exynos4-pmu.h      | 21 ---------------------
- include/linux/mfd/syscon/exynos5-pmu.h      |  3 ---
- include/linux/soc/samsung/exynos-regs-pmu.h |  9 ++++++++-
- 4 files changed, 14 insertions(+), 31 deletions(-)
+This is based on:
+1. Marek's recent work around pinctrl/power domains/lpass:
+   https://git.linaro.org/people/marek.szyprowski/linux-srpol.git
+   branch: v4.10-next-tm2-pd
+
+2. My two previous patches for cleanup:
+   https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git
+   branch: for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends
+
+Affected subsystems/drivers:
+1. phy - drivers,
+2. mfd - headers,
+3. soc/samsung - header.
+
+However because of dependency on Marek's patchset, I do not have a clue
+how to merge it... it is not an urgent stuff, so it may wait till
+dependencies get in.
+
+
+Best regards,
+Krzysztof
+
+
+
+Krzysztof Kozlowski (4):
+  phy: exynos4: Remove duplicated defines of PHY register defines
+  phy: exynos5: Remove duplicated defines of PHY register defines
+  phy: exynos-mipi-video: Use consistent method to address phy registers
+  phy: exynos: Use one define for enable bit
+
+ drivers/phy/phy-exynos-dp-video.c           |  6 +--
+ drivers/phy/phy-exynos-mipi-video.c         | 71 ++++++++++++++---------------
+ drivers/phy/phy-exynos5-usbdrd.c            |  6 +--
+ include/linux/mfd/syscon/exynos4-pmu.h      | 21 ---------
+ include/linux/mfd/syscon/exynos5-pmu.h      | 49 --------------------
+ include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++-
+ 6 files changed, 56 insertions(+), 113 deletions(-)
  delete mode 100644 include/linux/mfd/syscon/exynos4-pmu.h
+ delete mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
 
-diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
-index 6bee04cc4d53..d7fe1f8c3ac8 100644
---- a/drivers/phy/phy-exynos-mipi-video.c
-+++ b/drivers/phy/phy-exynos-mipi-video.c
-@@ -12,7 +12,6 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
--#include <linux/mfd/syscon/exynos4-pmu.h>
- #include <linux/mfd/syscon/exynos5-pmu.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -21,6 +20,7 @@
- #include <linux/phy/phy.h>
- #include <linux/regmap.h>
- #include <linux/spinlock.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/mfd/syscon.h>
- 
- enum exynos_mipi_phy_id {
-@@ -173,7 +173,7 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			/* EXYNOS_MIPI_PHY_ID_CSIS0 */
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_DSIM0,
- 			.enable_val = EXYNOS5_PHY_ENABLE,
--			.enable_reg = EXYNOS5433_MIPI_PHY0_CONTROL,
-+			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
- 			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
- 			.resetn_val = BIT(0),
- 			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
-@@ -182,7 +182,7 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_CSIS0,
- 			.enable_val = EXYNOS5_PHY_ENABLE,
--			.enable_reg = EXYNOS5433_MIPI_PHY0_CONTROL,
-+			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(0),
- 			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
- 			.resetn_val = BIT(0),
- 			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
-@@ -191,7 +191,7 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			/* EXYNOS_MIPI_PHY_ID_CSIS1 */
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS5_PHY_ENABLE,
--			.enable_reg = EXYNOS5433_MIPI_PHY1_CONTROL,
-+			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
- 			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
- 			.resetn_val = BIT(1),
- 			.resetn_reg = EXYNOS5433_SYSREG_CAM0_MIPI_DPHY_CON,
-@@ -200,7 +200,7 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			/* EXYNOS_MIPI_PHY_ID_DSIM1 */
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS5_PHY_ENABLE,
--			.enable_reg = EXYNOS5433_MIPI_PHY1_CONTROL,
-+			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(1),
- 			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
- 			.resetn_val = BIT(1),
- 			.resetn_reg = EXYNOS5433_SYSREG_DISP_MIPI_PHY,
-@@ -209,7 +209,7 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
- 			/* EXYNOS_MIPI_PHY_ID_CSIS2 */
- 			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
- 			.enable_val = EXYNOS5_PHY_ENABLE,
--			.enable_reg = EXYNOS5433_MIPI_PHY2_CONTROL,
-+			.enable_reg = EXYNOS4_MIPI_PHY_CONTROL(2),
- 			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
- 			.resetn_val = BIT(0),
- 			.resetn_reg = EXYNOS5433_SYSREG_CAM1_MIPI_DPHY_CON,
-diff --git a/include/linux/mfd/syscon/exynos4-pmu.h b/include/linux/mfd/syscon/exynos4-pmu.h
-deleted file mode 100644
-index 278b1b1549e9..000000000000
---- a/include/linux/mfd/syscon/exynos4-pmu.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
--#define _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_
--
--/* Exynos4 PMU register definitions */
--
--/* MIPI_PHYn_CONTROL register offset: n = 0..1 */
--#define EXYNOS4_MIPI_PHY_CONTROL(n)	(0x710 + (n) * 4)
--#define EXYNOS4_MIPI_PHY_ENABLE		(1 << 0)
--#define EXYNOS4_MIPI_PHY_SRESETN	(1 << 1)
--#define EXYNOS4_MIPI_PHY_MRESETN	(1 << 2)
--#define EXYNOS4_MIPI_PHY_RESET_MASK	(3 << 1)
--
--#endif /* _LINUX_MFD_SYSCON_PMU_EXYNOS4_H_ */
-diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-index 0622ae86f9db..02af8dece914 100644
---- a/include/linux/mfd/syscon/exynos5-pmu.h
-+++ b/include/linux/mfd/syscon/exynos5-pmu.h
-@@ -38,9 +38,6 @@
- 
- /* Exynos5433 specific register definitions */
- #define EXYNOS5433_USBHOST30_PHY_CONTROL	(0x728)
--#define EXYNOS5433_MIPI_PHY0_CONTROL		(0x710)
--#define EXYNOS5433_MIPI_PHY1_CONTROL		(0x714)
--#define EXYNOS5433_MIPI_PHY2_CONTROL		(0x718)
- 
- #define EXYNOS5_PHY_ENABLE			BIT(0)
- #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index 6a6529c96442..637ead0efd36 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2010-2015 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-  * EXYNOS - Power management unit definition
-@@ -50,6 +50,13 @@
- #define S5P_WAKEUP_MASK				0x0608
- #define S5P_WAKEUP_MASK2				0x0614
- 
-+/* MIPI_PHYn_CONTROL, valid for Exynos3250, Exynos4, Exynos5250 and Exynos5433 */
-+#define EXYNOS4_MIPI_PHY_CONTROL(n)		(0x0710 + (n) * 4)
-+#define EXYNOS4_MIPI_PHY_ENABLE			(1 << 0)
-+#define EXYNOS4_MIPI_PHY_SRESETN		(1 << 1)
-+#define EXYNOS4_MIPI_PHY_MRESETN		(1 << 2)
-+#define EXYNOS4_MIPI_PHY_RESET_MASK		(3 << 1)
-+
- #define S5P_INFORM0				0x0800
- #define S5P_INFORM1				0x0804
- #define S5P_INFORM5				0x0814
 -- 
 2.9.3
