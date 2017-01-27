@@ -1,49 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 12/13] pinctrl: samsung: Move retention control from
- mach-s5pv210 to the pinctrl driver
-Date: Fri, 27 Jan 2017 17:20:41 +0100
-Message-ID: <7931853.ZcRrqCbIhv@wuerfel>
-References: <CGME20170119134910eucas1p2d401df77ccc1ef8e7b05f4cdb2ffc8d3@eucas1p2.samsung.com>
- <1484833733-16082-13-git-send-email-m.szyprowski@samsung.com>
- <CACRpkdYSVvGPoJ-gLiyGuHrqz=GYHCmmFv_bD9HpAywPD5Yzzg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.11, part 2
+Date: Fri, 27 Jan 2017 18:22:50 +0100
+Message-ID: <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYSVvGPoJ-gLiyGuHrqz=GYHCmmFv_bD9HpAywPD5Yzzg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, January 26, 2017 10:11:33 AM CET Linus Walleij wrote:
-> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> 
-> > This patch moves pad retention control from S5PV210 machine code to
-> > Exynos pin controller driver. This helps to avoid possible ordering
-> > and logical dependencies between machine and pin control code. Till
-> > now it worked fine only because sys_ops for machine code and pin
-> > controller were called in registration order.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > For mach-s5pv210:
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  arch/arm/mach-s5pv210/pm.c               |  7 ----
-> >  arch/arm/mach-s5pv210/regs-clock.h       |  4 ---
-> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 56 ++++++++++++++++++++++++++++++++
-> 
-> Same here, can I have an ARM SoC ACK?
-> 
+Hi Stephen, Mike,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+
+  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+
+for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+
+  clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+
+----------------------------------------------------------------
+Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+Exynos PLL code updates and overall minor clean-ups.
+
+----------------------------------------------------------------
+Marek Szyprowski (4):
+      clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
+      clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
+      clk: samsung: exynos5433: Correct typos in SoC name
+      clk: samsung: Add enable/disable support for PLL35XX clocks
+
+Martin Kaiser (1):
+      clk: samsung: mark s3c...._clk_sleep_init() as __init
+
+ drivers/clk/samsung/clk-exynos5433.c   | 36 ++++++++++++++++++++----------------
+ drivers/clk/samsung/clk-pll.c          | 45 ++++++++++++++++++++++++++++++++++++++-------
+ drivers/clk/samsung/clk-s3c2410.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c2412.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c2443.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c64xx.c      |  4 ++--
+ include/dt-bindings/clock/exynos5433.h |  5 ++++-
+ 7 files changed, 70 insertions(+), 32 deletions(-)
+
+-- 
+Thanks,
+Sylwester
