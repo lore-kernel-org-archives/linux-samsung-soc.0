@@ -1,77 +1,161 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 3.12 186/235] clocksource/exynos_mct: Clear interrupt when cpu
- is shut down
-Date: Fri, 27 Jan 2017 11:55:19 +0100
-Message-ID: <0d340098985b2c0f72f12c12106b83fd1079a60f.1485514374.git.jslaby@suse.cz>
-References: <5b46dc789ca2be4046e4e40a131858d386cac741.1485514374.git.jslaby@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5b46dc789ca2be4046e4e40a131858d386cac741.1485514374.git.jslaby@suse.cz>
-In-Reply-To: <cover.1485514374.git.jslaby@suse.cz>
-References: <cover.1485514374.git.jslaby@suse.cz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: stable@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, javier@osg.samsung.com, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, kgene@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jslaby@suse.cz>, linux-arm-kernel@lists.infradead.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 3/3] arm64: dts: exynos: Add initial configuration for DISP
+ clocks for TM2/TM2e
+Date: Fri, 27 Jan 2017 12:20:42 +0100
+Message-ID: <1485516042-32291-1-git-send-email-m.szyprowski@samsung.com>
+References: <20170126193529.5dyynx5dpmtmje5b@kozik-lap>
+ <CGME20170127112056eucas1p15ced94a57821f980445c86f1393d5a94@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:16477 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934038AbdA0LWR (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 06:22:17 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OKF00JUARIX9Y80@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2017 11:20:57 +0000 (GMT)
+In-reply-to: <20170126193529.5dyynx5dpmtmje5b@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+Add initial clock configuration for display subsystem for Exynos5433
+based TM2/TM2e boards in device tree in order to avoid dependency on the
+configuration left by the bootloader. This initial configuration is also
+needed to ensure that display subsystem is operational if display power
+domain gets turned off before clock controller is probed and the inital
+clock configuration left by the bootloader saved.
 
-3.12-stable review patch.  If anyone has any objections, please let me know.
+TM2 and TM2e uses different rate for DISP PLL clock, but for better
+maintainability all 'assigned-clocks-*' properties for DISP CMU are
+defines in each board dts instead of redefining the rates property.
 
-===============
-
-commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
-
-When a CPU goes offline a potentially pending timer interrupt is not
-cleared. When the CPU comes online again then the pending interrupt is
-delivered before the per cpu clockevent device is initialized. As a
-consequence the tick interrupt handler dereferences a NULL pointer.
-
-[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
-[   51.289348] task: ee942d00 task.stack: ee960000
-[   51.293861] PC is at tick_periodic+0x38/0xb0
-[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
-
-Clear the pending interrupt in the cpu dying path.
-
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: cw00.choi@samsung.com
-Cc: daniel.lezcano@linaro.org
-Cc: javier@osg.samsung.com
-Cc: kgene@kernel.org
-Cc: krzk@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 1 +
- 1 file changed, 1 insertion(+)
+Changelog:
+v3:
+- added comment about DISP CMU clocks configuration on TM2 and TM2e
+---
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 12 --------
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 34 ++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 34 ++++++++++++++++++++++
+ 3 files changed, 68 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index af994880be72..26bfe09ce0fb 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -439,6 +439,7 @@ static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (evt->irq != -1)
- 			disable_irq_nosync(evt->irq);
-+		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
- 	} else {
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- 	}
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 53fd0683d400..098ad557fee3 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -217,18 +217,6 @@
+ 	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
+ };
+ 
+-&cmu_disp {
+-	assigned-clocks = <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
+-			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
+-			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
+-			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
+-	assigned-clock-parents = <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
+-				 <0>,
+-				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
+-				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
+-	assigned-clock-rates = <0>, <400000000>;
+-};
+-
+ &cmu_fsys {
+ 	assigned-clocks = <&cmu_top CLK_MOUT_SCLK_USBDRD30>,
+ 		<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+index 6d362f964b3a..db3fed27728b 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
+@@ -18,6 +18,40 @@
+ 	compatible = "samsung,tm2", "samsung,exynos5433";
+ };
+ 
++&cmu_disp {
++	/*
++	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
++	 * clocks properties for DISP CMU for each board to keep them together
++	 * for easier review and maintenance.
++	 */
++	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
++			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
++			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
++			  <&cmu_disp CLK_MOUT_DISP_PLL>,
++			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
++	assigned-clock-parents = <0>, <0>,
++				 <&cmu_mif CLK_ACLK_DISP_333>,
++				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
++				 <&cmu_disp CLK_FOUT_DISP_PLL>,
++				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
++				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
++	assigned-clock-rates = <250000000>, <400000000>;
++};
++
+ &dsi {
+ 	panel@0 {
+ 		compatible = "samsung,s6e3ha2";
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+index 2fbf3a860316..7891a31adc17 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
+@@ -18,6 +18,40 @@
+ 	compatible = "samsung,tm2e", "samsung,exynos5433";
+ };
+ 
++&cmu_disp {
++	/*
++	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
++	 * clocks properties for DISP CMU for each board to keep them together
++	 * for easier review and maintenance.
++	 */
++	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
++			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
++			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
++			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
++			  <&cmu_disp CLK_MOUT_DISP_PLL>,
++			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
++			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
++	assigned-clock-parents = <0>, <0>,
++				 <&cmu_mif CLK_ACLK_DISP_333>,
++				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
++				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
++				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
++				 <&cmu_disp CLK_FOUT_DISP_PLL>,
++				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
++				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
++				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
++	assigned-clock-rates = <278000000>, <400000000>;
++};
++
+ &ldo31_reg {
+ 	regulator-name = "TSP_VDD_1.8V_AP";
+ 	regulator-min-microvolt = <1800000>;
 -- 
-2.11.0
+1.9.1
