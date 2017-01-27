@@ -1,64 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 2/8] arm64: dts: exynos: Add GSCL power domain to Exynos
- 5433 SoC
-Date: Fri, 27 Jan 2017 11:33:36 +0100
-Message-ID: <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
-References: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115559eucas1p1a219b6ae0fef16bbdb68645328b61a5e@eucas1p1.samsung.com>
- <1485345342-3273-3-git-send-email-m.szyprowski@samsung.com>
- <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
+ pinctrl macro definitions
+Date: Fri, 27 Jan 2017 13:25:42 +0100
+Message-ID: <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
+References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170118054002epcas5p3b08e2f419976e17a3c584d64776810fd@epcas5p3.samsung.com>
+ <1484718141-28785-3-git-send-email-pankaj.dubey@samsung.com>
+ <20170118141935.eu7wmki7jnjdarkw@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
-Sender: linux-pm-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20170118141935.eu7wmki7jnjdarkw@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, javier@osg.samsung.com, robh+dt@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, sanath@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2017-01-27 08:46, Krzysztof Kozlowski wrote:
-> On Wed, Jan 25, 2017 at 12:55:36PM +0100, Marek Szyprowski wrote:
->> This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
->> contains following devices: a clock controller, three GSCL video scalers and
->> their SYSMMUs.
+On 01/18/2017 03:19 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jan 18, 2017 at 11:12:20AM +0530, Pankaj Dubey wrote:
+>> Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
+>> for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
+>> pinctrl driver strength related macros which will be used in Exynos7
+>> DTSi files.
 >>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 >> ---
->>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
+>>  include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> index 16072c1c3ed3..74c767d756ac 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> @@ -425,6 +425,7 @@
->>   			clocks = <&xxti>,
->>   				<&cmu_top CLK_ACLK_GSCL_111>,
->>   				<&cmu_top CLK_ACLK_GSCL_333>;
->> +			power-domains = <&pd_gscl>;
->>   		};
->>   
->>   		cmu_apollo: clock-controller@11900000 {
->> @@ -525,6 +526,12 @@
->>   				<&cmu_top CLK_ACLK_CAM1_552>;
->>   		};
->>   
->> +		pd_gscl: gscl-power-domain@105c4000 {
-> The name of node: just "power-domain". This should be generic class of
-> device (following ePAPR).
->
-> The same applies to other patches.
+> 
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> I will need this header, so Sylwester if it is okay with you, could you
+> provide a tag with it (or ack it)?
 
-Well, this makes the debugging much harder, but I will change it to generic
-names. Also existing Exynos dtsi should be fixed in this area (Exynos4 still
-use such more descriptive names). I will check how hard is to add real
-domain names directly to the Exynos power domain driver then.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Best regards
+I don't have pinctrl/samsung git tree, Linus applies patches directly.
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Regards,
+Sylwester
 
+> diff --git a/include/dt-bindings/pinctrl/samsung.h
+b/include/dt-bindings/pinctrl/samsung.h
+> index 6276eb7..3f1d583 100644
+> --- a/include/dt-bindings/pinctrl/samsung.h
+> +++ b/include/dt-bindings/pinctrl/samsung.h
+> @@ -54,4 +54,12 @@
+>  #define EXYNOS_PIN_FUNC_6		6
+>  #define EXYNOS_PIN_FUNC_F		0xf
+>
+> +/* Drive strengths for Exynos7 FSYS1 block */
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV1	0
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV2	4
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV3	2
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV4	6
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV5	1
+> +#define EXYNOS7_FSYS1_PIN_DRV_LV6	5
+> +
+>  #endif /* __DT_BINDINGS_PINCTRL_SAMSUNG_H__ */
+> -- 2.7.4
