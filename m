@@ -1,72 +1,58 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
  pinctrl macro definitions
-Date: Fri, 27 Jan 2017 13:25:42 +0100
-Message-ID: <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
+Date: Fri, 27 Jan 2017 16:41:23 +0200
+Message-ID: <20170127144123.slmwxorx7cjxwtcr@kozik-lap>
 References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
  <CGME20170118054002epcas5p3b08e2f419976e17a3c584d64776810fd@epcas5p3.samsung.com>
  <1484718141-28785-3-git-send-email-pankaj.dubey@samsung.com>
  <20170118141935.eu7wmki7jnjdarkw@kozik-lap>
+ <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170118141935.eu7wmki7jnjdarkw@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, javier@osg.samsung.com, robh+dt@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, sanath@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34804 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754814AbdA0Olf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 09:41:35 -0500
+Content-Disposition: inline
+In-Reply-To: <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene@kernel.org, robh+dt@kernel.org, sanath@samsung.com, javier@osg.samsung.com, alim.akhtar@samsung.com
 
-On 01/18/2017 03:19 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jan 18, 2017 at 11:12:20AM +0530, Pankaj Dubey wrote:
->> Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
->> for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
->> pinctrl driver strength related macros which will be used in Exynos7
->> DTSi files.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>  include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
+On Fri, Jan 27, 2017 at 01:25:42PM +0100, Sylwester Nawrocki wrote:
+> On 01/18/2017 03:19 PM, Krzysztof Kozlowski wrote:
+> > On Wed, Jan 18, 2017 at 11:12:20AM +0530, Pankaj Dubey wrote:
+> >> Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
+> >> for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
+> >> pinctrl driver strength related macros which will be used in Exynos7
+> >> DTSi files.
+> >>
+> >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >> ---
+> >>  include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
+> >>  1 file changed, 8 insertions(+)
+> >>
+> > 
+> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > I will need this header, so Sylwester if it is okay with you, could you
+> > provide a tag with it (or ack it)?
 > 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
-> I will need this header, so Sylwester if it is okay with you, could you
-> provide a tag with it (or ack it)?
+> I don't have pinctrl/samsung git tree, Linus applies patches directly.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Oh, my mistake.
 
-I don't have pinctrl/samsung git tree, Linus applies patches directly.
+Linus,
+This is similar case as "pinctrl: dt-bindings: samsung: add drive
+strength macros for Exynos5433" [1].
 
--- 
-Regards,
-Sylwester
+Best regards,
+Krzysztof
 
-> diff --git a/include/dt-bindings/pinctrl/samsung.h
-b/include/dt-bindings/pinctrl/samsung.h
-> index 6276eb7..3f1d583 100644
-> --- a/include/dt-bindings/pinctrl/samsung.h
-> +++ b/include/dt-bindings/pinctrl/samsung.h
-> @@ -54,4 +54,12 @@
->  #define EXYNOS_PIN_FUNC_6		6
->  #define EXYNOS_PIN_FUNC_F		0xf
->
-> +/* Drive strengths for Exynos7 FSYS1 block */
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV1	0
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV2	4
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV3	2
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV4	6
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV5	1
-> +#define EXYNOS7_FSYS1_PIN_DRV_LV6	5
-> +
->  #endif /* __DT_BINDINGS_PINCTRL_SAMSUNG_H__ */
-> -- 2.7.4
+[1] https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=for-v4.11/pinctrl-macros
