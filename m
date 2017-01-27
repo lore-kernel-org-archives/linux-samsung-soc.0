@@ -1,62 +1,77 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/4] soc: samsung: pm_domains: Remove unused name field
-Date: Fri, 27 Jan 2017 11:47:50 +0100
-Message-ID: <1485514072-29502-3-git-send-email-m.szyprowski@samsung.com>
-References: <1485514072-29502-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170127104801eucas1p2287962bae474ca786644de4ad6a11f57@eucas1p2.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1485514072-29502-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 3.12 186/235] clocksource/exynos_mct: Clear interrupt when cpu
+ is shut down
+Date: Fri, 27 Jan 2017 11:55:19 +0100
+Message-ID: <0d340098985b2c0f72f12c12106b83fd1079a60f.1485514374.git.jslaby@suse.cz>
+References: <5b46dc789ca2be4046e4e40a131858d386cac741.1485514374.git.jslaby@suse.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5b46dc789ca2be4046e4e40a131858d386cac741.1485514374.git.jslaby@suse.cz>
+In-Reply-To: <cover.1485514374.git.jslaby@suse.cz>
+References: <cover.1485514374.git.jslaby@suse.cz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: stable@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, javier@osg.samsung.com, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, kgene@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jslaby@suse.cz>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Name is now in generic pm domain structure, so there is no need to
-duplicate it in private data.
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+3.12-stable review patch.  If anyone has any objections, please let me know.
+
+===============
+
+commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
+
+When a CPU goes offline a potentially pending timer interrupt is not
+cleared. When the CPU comes online again then the pending interrupt is
+delivered before the per cpu clockevent device is initialized. As a
+consequence the tick interrupt handler dereferences a NULL pointer.
+
+[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
+[   51.289348] task: ee942d00 task.stack: ee960000
+[   51.293861] PC is at tick_periodic+0x38/0xb0
+[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
+
+Clear the pending interrupt in the cpu dying path.
+
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com
+Cc: daniel.lezcano@linaro.org
+Cc: javier@osg.samsung.com
+Cc: kgene@kernel.org
+Cc: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- drivers/soc/samsung/pm_domains.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clocksource/exynos_mct.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index c33196087e9f..00e32772655a 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -35,7 +35,6 @@ struct exynos_pm_domain_config {
-  */
- struct exynos_pm_domain {
- 	void __iomem *base;
--	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
- 	struct clk *oscclk;
-@@ -70,7 +69,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 			pd->pclk[i] = clk_get_parent(pd->clk[i]);
- 			if (clk_set_parent(pd->clk[i], pd->oscclk))
- 				pr_err("%s: error setting oscclk as parent to clock %d\n",
--						pd->name, i);
-+						domain->name, i);
- 		}
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index af994880be72..26bfe09ce0fb 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -439,6 +439,7 @@ static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
++		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
  	}
- 
-@@ -101,7 +100,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 				continue; /* Skip on first power up */
- 			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
- 				pr_err("%s: error setting parent to clock%d\n",
--						pd->name, i);
-+						domain->name, i);
- 		}
- 	}
- 
-@@ -170,7 +169,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 			return -ENOMEM;
- 		}
- 
--		pd->name = pd->pd.name;
- 		pd->base = of_iomap(np, 0);
- 		if (!pd->base) {
- 			pr_warn("%s: failed to map memory\n", __func__);
 -- 
-1.9.1
-
+2.11.0
