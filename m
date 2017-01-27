@@ -1,161 +1,77 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 3/3] arm64: dts: exynos: Add initial configuration for DISP
- clocks for TM2/TM2e
-Date: Fri, 27 Jan 2017 12:20:42 +0100
-Message-ID: <1485516042-32291-1-git-send-email-m.szyprowski@samsung.com>
-References: <20170126193529.5dyynx5dpmtmje5b@kozik-lap>
- <CGME20170127112056eucas1p15ced94a57821f980445c86f1393d5a94@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:16477 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934038AbdA0LWR (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 06:22:17 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKF00JUARIX9Y80@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2017 11:20:57 +0000 (GMT)
-In-reply-to: <20170126193529.5dyynx5dpmtmje5b@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/8] arm64: dts: exynos: Add GSCL power domain to Exynos
+ 5433 SoC
+Date: Fri, 27 Jan 2017 13:28:08 +0200
+Message-ID: <20170127112808.he7lpzoobmnc2k7r@kozik-lap>
+References: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115559eucas1p1a219b6ae0fef16bbdb68645328b61a5e@eucas1p1.samsung.com>
+ <1485345342-3273-3-git-send-email-m.szyprowski@samsung.com>
+ <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
+ <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-Add initial clock configuration for display subsystem for Exynos5433
-based TM2/TM2e boards in device tree in order to avoid dependency on the
-configuration left by the bootloader. This initial configuration is also
-needed to ensure that display subsystem is operational if display power
-domain gets turned off before clock controller is probed and the inital
-clock configuration left by the bootloader saved.
+On Fri, Jan 27, 2017 at 11:33:36AM +0100, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 2017-01-27 08:46, Krzysztof Kozlowski wrote:
+> > On Wed, Jan 25, 2017 at 12:55:36PM +0100, Marek Szyprowski wrote:
+> > > This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
+> > > contains following devices: a clock controller, three GSCL video scalers and
+> > > their SYSMMUs.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > ---
+> > >   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++++++++
+> > >   1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> > > index 16072c1c3ed3..74c767d756ac 100644
+> > > --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> > > +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> > > @@ -425,6 +425,7 @@
+> > >   			clocks = <&xxti>,
+> > >   				<&cmu_top CLK_ACLK_GSCL_111>,
+> > >   				<&cmu_top CLK_ACLK_GSCL_333>;
+> > > +			power-domains = <&pd_gscl>;
+> > >   		};
+> > >   		cmu_apollo: clock-controller@11900000 {
+> > > @@ -525,6 +526,12 @@
+> > >   				<&cmu_top CLK_ACLK_CAM1_552>;
+> > >   		};
+> > > +		pd_gscl: gscl-power-domain@105c4000 {
+> > The name of node: just "power-domain". This should be generic class of
+> > device (following ePAPR).
+> > 
+> > The same applies to other patches.
+> 
+> Well, this makes the debugging much harder, but I will change it to generic
+> names.
 
-TM2 and TM2e uses different rate for DISP PLL clock, but for better
-maintainability all 'assigned-clocks-*' properties for DISP CMU are
-defines in each board dts instead of redefining the rates property.
+Good point. I remember some patch from Javier trying to address this but
+I cannot find it anymore.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Changelog:
-v3:
-- added comment about DISP CMU clocks configuration on TM2 and TM2e
----
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 12 --------
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 34 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 34 ++++++++++++++++++++++
- 3 files changed, 68 insertions(+), 12 deletions(-)
+Anyway, I don't think power-domains should be treated here differently
+then rest of devices (which have generic names: clock-controller,
+pinctrl, i2s, i2c etc).
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 53fd0683d400..098ad557fee3 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -217,18 +217,6 @@
- 	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
- };
- 
--&cmu_disp {
--	assigned-clocks = <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
--			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
--			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
--			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
--	assigned-clock-parents = <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
--				 <0>,
--				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
--				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
--	assigned-clock-rates = <0>, <400000000>;
--};
--
- &cmu_fsys {
- 	assigned-clocks = <&cmu_top CLK_MOUT_SCLK_USBDRD30>,
- 		<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index 6d362f964b3a..db3fed27728b 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -18,6 +18,40 @@
- 	compatible = "samsung,tm2", "samsung,exynos5433";
- };
- 
-+&cmu_disp {
-+	/*
-+	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
-+	 * clocks properties for DISP CMU for each board to keep them together
-+	 * for easier review and maintenance.
-+	 */
-+	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
-+			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
-+			  <&cmu_disp CLK_MOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
-+	assigned-clock-parents = <0>, <0>,
-+				 <&cmu_mif CLK_ACLK_DISP_333>,
-+				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
-+				 <&cmu_disp CLK_FOUT_DISP_PLL>,
-+				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
-+				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
-+	assigned-clock-rates = <250000000>, <400000000>;
-+};
-+
- &dsi {
- 	panel@0 {
- 		compatible = "samsung,s6e3ha2";
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-index 2fbf3a860316..7891a31adc17 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-@@ -18,6 +18,40 @@
- 	compatible = "samsung,tm2e", "samsung,exynos5433";
- };
- 
-+&cmu_disp {
-+	/*
-+	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
-+	 * clocks properties for DISP CMU for each board to keep them together
-+	 * for easier review and maintenance.
-+	 */
-+	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
-+			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
-+			  <&cmu_disp CLK_MOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
-+	assigned-clock-parents = <0>, <0>,
-+				 <&cmu_mif CLK_ACLK_DISP_333>,
-+				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
-+				 <&cmu_disp CLK_FOUT_DISP_PLL>,
-+				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
-+				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
-+	assigned-clock-rates = <278000000>, <400000000>;
-+};
-+
- &ldo31_reg {
- 	regulator-name = "TSP_VDD_1.8V_AP";
- 	regulator-min-microvolt = <1800000>;
--- 
-1.9.1
+> Also existing Exynos dtsi should be fixed in this area (Exynos4 still
+> use such more descriptive names).
+
+I am trying to bring some shape to new code but of course you are right
+- old code should be adjusted as well (maybe as part of some bigger
+  cleanup). Exynos5420 uses short/generic names.
+
+> I will check how hard is to add real
+> domain names directly to the Exynos power domain driver then.
+
+Thanks!
+
+Krzysztof
