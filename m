@@ -1,49 +1,49 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Increase MFC left reserved memory region
- size
-Date: Fri, 27 Jan 2017 17:10:46 -0300
-Message-ID: <1485547846-12778-1-git-send-email-javier@osg.samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
+Date: Fri, 27 Jan 2017 11:55:37 -0800
+Message-ID: <20170127195537.GG8801@codeaurora.org>
+References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
+ <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, linux-samsung-soc@vger.kernel.org, Thibault Saunier <thibault.saunier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Russell King <linux@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35240 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751226AbdA0UFf (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 27 Jan 2017 15:05:35 -0500
+Content-Disposition: inline
+In-Reply-To: <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-The sizes of the MFC reserved memory regions for CMA are 16 MiB for the
-left bank and 8 MiB for the right bank. But this isn't enough to decode
-high resolution videos so increase the size for the left bank to 36 MiB
-which is enough for 1080p (1920x1080).
+On 01/27, Sylwester Nawrocki wrote:
+> Hi Stephen, Mike,
+> 
+> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+> 
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+> 
+> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+> 
+>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+> 
+> ----------------------------------------------------------------
+> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+> Exynos PLL code updates and overall minor clean-ups.
+> 
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Thanks. Pulled into clk-next.
 
----
+Can you get your key signed by more people? Maybe others at
+Samsung?
 
- arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-index f78c14c82e17..25186ac4188d 100644
---- a/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-+++ b/arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi
-@@ -17,7 +17,7 @@
- 		mfc_left: region_mfc_left {
- 			compatible = "shared-dma-pool";
- 			no-map;
--			size = <0x1000000>;
-+			size = <0x2400000>;
- 			alignment = <0x100000>;
- 		};
- 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
