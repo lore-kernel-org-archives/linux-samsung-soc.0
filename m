@@ -1,46 +1,76 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-Date: Fri, 27 Jan 2017 11:08:32 +0100
-Message-ID: <2825cb23-0922-c950-f18f-7b9077831e33@samsung.com>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
- <1485380545-24815-1-git-send-email-martin@kaiser.cx>
- <CGME20170127003627epcas3p3dc6a50295e915679c346a6f32cc3c664@epcas3p3.samsung.com>
- <20170127002750.GC8801@codeaurora.org>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: [patch added to 3.12-stable] clocksource/exynos_mct: Clear interrupt
+ when cpu is shut down
+Date: Fri, 27 Jan 2017 11:46:58 +0100
+Message-ID: <20170127104747.24816-14-jslaby@suse.cz>
+References: <20170127104747.24816-1-jslaby@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170127002750.GC8801@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, martin@kaiser.cx
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170127104747.24816-1-jslaby@suse.cz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: stable@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, javier@osg.samsung.com, daniel.lezcano@linaro.org, krzk@kernel.org, cw00.choi@samsung.com, kgene@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jiri Slaby <jslaby@suse.cz>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/27/2017 01:27 AM, Stephen Boyd wrote:
-> On 01/25, martin@kaiser.cx wrote:
->> From: Martin Kaiser <martin@kaiser.cx>
->>
->> These functions are referencing s3c...._clk_regs[], which are marked as
->> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
->> produces warnings like
->>
->> WARNING: vmlinux.o(.text+0x198350):
->> Section mismatch in reference from the function s3c2410_clk_sleep_init()
->> to the (unknown reference) .init.data:(unknown)
->>
->> Mark the s3c...._clk_sleep_init() functions as __init in
->> order to fix this.
->>
->> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
->
-> Fixes tag?
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-The patch fixes the very first commit adding the driver:
-"ca2e90a clk: samsung: add clock controller driver for s3c2412"
-and it doesn't apply cleanly on top of that commit.
-Still it applies cleanly up to v3.15 so I'll add the tag when
-applying.
+This patch has been added to the 3.12 stable tree. If you have any
+objections, please let us know.
 
+===============
+
+commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 upstream.
+
+When a CPU goes offline a potentially pending timer interrupt is not
+cleared. When the CPU comes online again then the pending interrupt is
+delivered before the per cpu clockevent device is initialized. As a
+consequence the tick interrupt handler dereferences a NULL pointer.
+
+[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
+[   51.289348] task: ee942d00 task.stack: ee960000
+[   51.293861] PC is at tick_periodic+0x38/0xb0
+[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
+
+Clear the pending interrupt in the cpu dying path.
+
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com
+Cc: daniel.lezcano@linaro.org
+Cc: javier@osg.samsung.com
+Cc: kgene@kernel.org
+Cc: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/clocksource/exynos_mct.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index af994880be72..26bfe09ce0fb 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -439,6 +439,7 @@ static void exynos4_local_timer_stop(struct mct_clock_event_device *mevt)
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
++		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ 	}
 -- 
-Thanks,
-Sylwester
+2.11.0
