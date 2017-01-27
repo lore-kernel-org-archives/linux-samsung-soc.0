@@ -1,51 +1,64 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
- PHYCLK_MIPIDPHY0_* clocks
-Date: Fri, 27 Jan 2017 12:05:39 +0100
-Message-ID: <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
-References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
- <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
- <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 2/8] arm64: dts: exynos: Add GSCL power domain to Exynos
+ 5433 SoC
+Date: Fri, 27 Jan 2017 11:33:36 +0100
+Message-ID: <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
+References: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115559eucas1p1a219b6ae0fef16bbdb68645328b61a5e@eucas1p1.samsung.com>
+ <1485345342-3273-3-git-send-email-m.szyprowski@samsung.com>
+ <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54846 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933616AbdA0LF6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 06:05:58 -0500
-In-reply-to: <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 
-Cc: linux-clk@vger.kernel.org
+Hi Krzysztof,
 
-On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
->> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
->> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
->> to setup initial clock configuration for display subsystem in device tree
->> in order to avoid dependency on the configuration left by the bootloader.
+On 2017-01-27 08:46, Krzysztof Kozlowski wrote:
+> On Wed, Jan 25, 2017 at 12:55:36PM +0100, Marek Szyprowski wrote:
+>> This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
+>> contains following devices: a clock controller, three GSCL video scalers and
+>> their SYSMMUs.
 >>
 >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >> ---
->>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
->>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
->>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++++++++
+>>   1 file changed, 13 insertions(+)
 >>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Sylwester,
-> Could you provide a tag with this?
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> index 16072c1c3ed3..74c767d756ac 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>> @@ -425,6 +425,7 @@
+>>   			clocks = <&xxti>,
+>>   				<&cmu_top CLK_ACLK_GSCL_111>,
+>>   				<&cmu_top CLK_ACLK_GSCL_333>;
+>> +			power-domains = <&pd_gscl>;
+>>   		};
+>>   
+>>   		cmu_apollo: clock-controller@11900000 {
+>> @@ -525,6 +526,12 @@
+>>   				<&cmu_top CLK_ACLK_CAM1_552>;
+>>   		};
+>>   
+>> +		pd_gscl: gscl-power-domain@105c4000 {
+> The name of node: just "power-domain". This should be generic class of
+> device (following ePAPR).
+>
+> The same applies to other patches.
 
-I have the tag prepared already, but please resend the patch to
-linux-clk@vger.kernel.org and I will reply there.
-The patches were sent only to the linux-samsung-soc mailing list.
+Well, this makes the debugging much harder, but I will change it to generic
+names. Also existing Exynos dtsi should be fixed in this area (Exynos4 still
+use such more descriptive names). I will check how hard is to add real
+domain names directly to the Exynos power domain driver then.
 
+Best regards
 -- 
-Thanks,
-Sylwester
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
