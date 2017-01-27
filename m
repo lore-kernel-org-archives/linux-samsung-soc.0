@@ -1,77 +1,72 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/8] arm64: dts: exynos: Add GSCL power domain to Exynos
- 5433 SoC
-Date: Fri, 27 Jan 2017 13:28:08 +0200
-Message-ID: <20170127112808.he7lpzoobmnc2k7r@kozik-lap>
-References: <1485345342-3273-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115559eucas1p1a219b6ae0fef16bbdb68645328b61a5e@eucas1p1.samsung.com>
- <1485345342-3273-3-git-send-email-m.szyprowski@samsung.com>
- <20170127074617.ez6wxeu5vyz6lm4x@kozik-lap>
- <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
+ PHYCLK_MIPIDPHY0_* clocks
+Date: Fri, 27 Jan 2017 12:34:57 +0100
+Message-ID: <fa7f7ac4-5ac7-435e-a076-b18bf332388b@samsung.com>
+References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
+ <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
+ <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
+ <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <62a55088-ff3d-dc4b-b0f0-9810d88801c4@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-reply-to: <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 27, 2017 at 11:33:36AM +0100, Marek Szyprowski wrote:
-> Hi Krzysztof,
+On 01/27/2017 12:05 PM, Sylwester Nawrocki wrote:
+> Cc: linux-clk@vger.kernel.org
 > 
-> On 2017-01-27 08:46, Krzysztof Kozlowski wrote:
-> > On Wed, Jan 25, 2017 at 12:55:36PM +0100, Marek Szyprowski wrote:
-> > > This patch adds support for GSCL power domain to Exynos 5433 SoCs, which
-> > > contains following devices: a clock controller, three GSCL video scalers and
-> > > their SYSMMUs.
-> > > 
-> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > ---
-> > >   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++++++++
-> > >   1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > > index 16072c1c3ed3..74c767d756ac 100644
-> > > --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > > +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > > @@ -425,6 +425,7 @@
-> > >   			clocks = <&xxti>,
-> > >   				<&cmu_top CLK_ACLK_GSCL_111>,
-> > >   				<&cmu_top CLK_ACLK_GSCL_333>;
-> > > +			power-domains = <&pd_gscl>;
-> > >   		};
-> > >   		cmu_apollo: clock-controller@11900000 {
-> > > @@ -525,6 +526,12 @@
-> > >   				<&cmu_top CLK_ACLK_CAM1_552>;
-> > >   		};
-> > > +		pd_gscl: gscl-power-domain@105c4000 {
-> > The name of node: just "power-domain". This should be generic class of
-> > device (following ePAPR).
-> > 
-> > The same applies to other patches.
+> On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
+>> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
+>>> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
+>>> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
+>>> to setup initial clock configuration for display subsystem in device tree
+>>> in order to avoid dependency on the configuration left by the bootloader.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
+>>>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
+>>>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>> Sylwester,
+>> Could you provide a tag with this?
 > 
-> Well, this makes the debugging much harder, but I will change it to generic
-> names.
+> I have the tag prepared already, but please resend the patch to
+> linux-clk@vger.kernel.org and I will reply there.
+> The patches were sent only to the linux-samsung-soc mailing list.
 
-Good point. I remember some patch from Javier trying to address this but
-I cannot find it anymore.
+Krzysztof, if you need this patch series as a dependency here is the tag:
 
-Anyway, I don't think power-domains should be treated here differently
-then rest of devices (which have generic names: clock-controller,
-pinctrl, i2s, i2c etc).
+ The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
 
-> Also existing Exynos dtsi should be fixed in this area (Exynos4 still
-> use such more descriptive names).
+  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
 
-I am trying to bring some shape to new code but of course you are right
-- old code should be adjusted as well (maybe as part of some bigger
-  cleanup). Exynos5420 uses short/generic names.
+are available in the git repository at:
 
-> I will check how hard is to add real
-> domain names directly to the Exynos power domain driver then.
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-dphy
 
-Thanks!
+for you to fetch changes up to 698e0d1d22346ef03d7a13fcd9c2cc86a24bf317:
 
-Krzysztof
+  clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
+(2017-01-27 11:34:00 +0100)
+
+----------------------------------------------------------------
+Exporting clocks for MIPI DSI DPHY and the display PLL
+frequency list update for Exynos5433 SoC.
+
+----------------------------------------------------------------
+Marek Szyprowski (2):
+      clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
+      clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
+
+ drivers/clk/samsung/clk-exynos5433.c   | 8 ++++++--
+ include/dt-bindings/clock/exynos5433.h | 5 ++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
