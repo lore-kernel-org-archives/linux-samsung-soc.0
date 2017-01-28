@@ -1,285 +1,87 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] watchdog: constify watchdog_ops structures
-Date: Sat, 28 Jan 2017 13:11:17 +0530
-Message-ID: <1485589277-6824-1-git-send-email-bhumirks@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/4] soc: samsung: pm_domains: Provide real name for
+ all supported domains
+Date: Sat, 28 Jan 2017 17:16:22 +0200
+Message-ID: <20170128151622.scfqft3hxfdjh7ca@kozik-lap>
+References: <1485514072-29502-5-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170127144908eucas1p14c50396f670a01c31a69ec95b636a0e1@eucas1p1.samsung.com>
+ <1485528538-30256-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: julia.lawall@lip6.fr, wim@iguana.be, linux@roeck-us.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, baruch@tkos.co.il, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, baohua@kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1485528538-30256-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Declare watchdog_ops structures as const as they are only stored in the
-ops field of a watchdog_device structure. This field is of type const, so
-watchdog_ops structures having this property can be made const too.
-Done using Coccinelle:
+On Fri, Jan 27, 2017 at 03:48:58PM +0100, Marek Szyprowski wrote:
+> Device tree nodes for each power domain should use generic "power-domain"
+> name, so using it as a domain name doesn't give much benefits. This patch
+> adds human readable names for all supported domains, what makes debugging
+> much easier.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changelog:
+> v2:
+> - sorted all domains data by domain base address in the arrays
+> ---
+>  drivers/soc/samsung/pm_domains.c | 125 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 123 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+> index 5a0a46bcbe18..43003318b948 100644
+> --- a/drivers/soc/samsung/pm_domains.c
+> +++ b/drivers/soc/samsung/pm_domains.c
+> @@ -30,6 +30,17 @@ struct exynos_pm_domain_config {
+>  	u32 local_pwr_cfg;
+>  };
+>  
+> +struct exynos_pm_domain_data {
+> +	const char *name;
+> +	u32 base;
+> +};
+> +
+> +struct exynos_pm_domain_soc_data {
+> +	const char *compatible;
+> +	unsigned int nr_domains;
+> +	const struct exynos_pm_domain_data *domains;
+> +};
+> +
+>  /*
+>   * Exynos specific wrapper around the generic power domain
+>   */
+> @@ -123,6 +134,91 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+>  	return exynos_pd_power(domain, false);
+>  }
+>  
+> +static const struct exynos_pm_domain_data exynos4210_domains[] __initconst = {
+> +	{ "LCD1",	0x10023CA0 },
+> +};
+> +
+> +static const struct exynos_pm_domain_data exynos4412_domains[] __initconst = {
+> +	{ "CAM",	0x10023C00 },
+> +	{ "TV",		0x10023C20 },
+> +	{ "MFC",	0x10023C40 },
+> +	{ "G3D",	0x10023C60 },
+> +	{ "LCD0",	0x10023C80 },
+> +	{ "ISP",	0x10023CA0 },
+> +	{ "GPS",	0x10023CE0 },
+> +	{ "GPS alive",	0x10023D00 },
 
-@r disable optional_qualifier@
-identifier x;
-position p;
-@@
-static struct watchdog_ops x@p={...};
+That is a kind of duplication of DT and also spreading the description
+of hardware between DT and driver. I understand the purpose. Messages
+like:
+	"power-domain has as child subdomain: power-domain."
+are useless. However I do not like putting any of these in the driver.
 
-@ok@
-struct watchdog_device w;
-identifier r.x;
-position p;
-@@
-w.ops=&x@p;
+How about adding a property "label" and parse it? Some other
+drivers/nodes are using labels already to have a meaningful name, either
+for user-space or for just user.
 
-@bad@
-position p != {r.p,ok.p};
-identifier r.x;
-@@
-x@p
+Patches 1-3 look fine.
 
-@depends on !bad disable optional_qualifier@
-identifier r.x;
-@@
-+const
-struct watchdog_ops x;
-
-File size details before and after patching.
-First line of every .o file shows the file size before patching
-and second line shows the size after patching.
-
-   text    data     bss     dec     hex filename
-
-   1340	    544	      0	   1884	    75c	drivers/watchdog/bcm_kona_wdt.o
-   1436	    440	      0	   1876	    754	drivers/watchdog/bcm_kona_wdt.o
-
-   1176	    544	      4	   1724	    6bc	drivers/watchdog/digicolor_wdt.o
-   1272	    440	      4	   1716	    6b4	drivers/watchdog/digicolor_wdt.o
-
-    925	    580	     89	   1594	    63a	drivers/watchdog/ep93xx_wdt.o
-   1021	    476	     89	   1586	    632	drivers/watchdog/ep93xx_wdt.o
-
-   4932	    288	     17	   5237	   1475	drivers/watchdog/s3c2410_wdt.o
-   5028	    192	     17	   5237	   1475	drivers/watchdog/s3c2410_wdt.o
-
-   1977	    292	      1	   2270	    8de	drivers/watchdog/sama5d4_wdt.o
-   2073	    196	      1	   2270	    8de	drivers/watchdog/sama5d4_wdt.o
-
-   1375	    484	      1	   1860	    744	drivers/watchdog/sirfsoc_wdt.o
-   1471	    380	      1	   1852	    73c	drivers/watchdog/sirfsoc_wdt.o
-
-Size remains the same for the files drivers/watchdog/diag288_wdt.o
-drivers/watchdog/asm9260_wdt.o and drivers/watchdog/atlas7_wdt.o
-
-The following .o files did not compile:
-drivers/watchdog/sun4v_wdt.o, drivers/watchdog/sbsa_gwdt.o,
-drivers/watchdog/rt2880_wdt.o, drivers/watchdog/booke_wdt.o
-drivers/watchdog/mt7621_wdt.o
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/watchdog/asm9260_wdt.c   | 2 +-
- drivers/watchdog/atlas7_wdt.c    | 2 +-
- drivers/watchdog/bcm_kona_wdt.c  | 2 +-
- drivers/watchdog/booke_wdt.c     | 2 +-
- drivers/watchdog/diag288_wdt.c   | 2 +-
- drivers/watchdog/digicolor_wdt.c | 2 +-
- drivers/watchdog/ep93xx_wdt.c    | 2 +-
- drivers/watchdog/mt7621_wdt.c    | 2 +-
- drivers/watchdog/rt2880_wdt.c    | 2 +-
- drivers/watchdog/s3c2410_wdt.c   | 2 +-
- drivers/watchdog/sama5d4_wdt.c   | 2 +-
- drivers/watchdog/sbsa_gwdt.c     | 2 +-
- drivers/watchdog/sirfsoc_wdt.c   | 2 +-
- drivers/watchdog/sun4v_wdt.c     | 2 +-
- 14 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
-index d0b59ba..233dfa9 100644
---- a/drivers/watchdog/asm9260_wdt.c
-+++ b/drivers/watchdog/asm9260_wdt.c
-@@ -189,7 +189,7 @@ static const struct watchdog_info asm9260_wdt_ident = {
- 	.identity         =	"Alphascale asm9260 Watchdog",
- };
- 
--static struct watchdog_ops asm9260_wdt_ops = {
-+static const struct watchdog_ops asm9260_wdt_ops = {
- 	.owner		= THIS_MODULE,
- 	.start		= asm9260_wdt_enable,
- 	.stop		= asm9260_wdt_disable,
-diff --git a/drivers/watchdog/atlas7_wdt.c b/drivers/watchdog/atlas7_wdt.c
-index ed80734..4abdcab 100644
---- a/drivers/watchdog/atlas7_wdt.c
-+++ b/drivers/watchdog/atlas7_wdt.c
-@@ -105,7 +105,7 @@ static const struct watchdog_info atlas7_wdt_ident = {
- 	.identity = "atlas7 Watchdog",
- };
- 
--static struct watchdog_ops atlas7_wdt_ops = {
-+static const struct watchdog_ops atlas7_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = atlas7_wdt_enable,
- 	.stop = atlas7_wdt_disable,
-diff --git a/drivers/watchdog/bcm_kona_wdt.c b/drivers/watchdog/bcm_kona_wdt.c
-index e0c9842..80cdd16 100644
---- a/drivers/watchdog/bcm_kona_wdt.c
-+++ b/drivers/watchdog/bcm_kona_wdt.c
-@@ -266,7 +266,7 @@ static int bcm_kona_wdt_stop(struct watchdog_device *wdog)
- 					    SECWDOG_SRSTEN_MASK, 0);
- }
- 
--static struct watchdog_ops bcm_kona_wdt_ops = {
-+static const struct watchdog_ops bcm_kona_wdt_ops = {
- 	.owner =	THIS_MODULE,
- 	.start =	bcm_kona_wdt_start,
- 	.stop =		bcm_kona_wdt_stop,
-diff --git a/drivers/watchdog/booke_wdt.c b/drivers/watchdog/booke_wdt.c
-index 04da4b6..4925034 100644
---- a/drivers/watchdog/booke_wdt.c
-+++ b/drivers/watchdog/booke_wdt.c
-@@ -197,7 +197,7 @@ static struct watchdog_info booke_wdt_info = {
- 	.identity = "PowerPC Book-E Watchdog",
- };
- 
--static struct watchdog_ops booke_wdt_ops = {
-+static const struct watchdog_ops booke_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = booke_wdt_start,
- 	.stop = booke_wdt_stop,
-diff --git a/drivers/watchdog/diag288_wdt.c b/drivers/watchdog/diag288_wdt.c
-index 861d3d3..6f59108 100644
---- a/drivers/watchdog/diag288_wdt.c
-+++ b/drivers/watchdog/diag288_wdt.c
-@@ -205,7 +205,7 @@ static int wdt_set_timeout(struct watchdog_device * dev, unsigned int new_to)
- 	return wdt_ping(dev);
- }
- 
--static struct watchdog_ops wdt_ops = {
-+static const struct watchdog_ops wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = wdt_start,
- 	.stop = wdt_stop,
-diff --git a/drivers/watchdog/digicolor_wdt.c b/drivers/watchdog/digicolor_wdt.c
-index 77df772..817d3f9 100644
---- a/drivers/watchdog/digicolor_wdt.c
-+++ b/drivers/watchdog/digicolor_wdt.c
-@@ -96,7 +96,7 @@ static unsigned int dc_wdt_get_timeleft(struct watchdog_device *wdog)
- 	return count / clk_get_rate(wdt->clk);
- }
- 
--static struct watchdog_ops dc_wdt_ops = {
-+static const struct watchdog_ops dc_wdt_ops = {
- 	.owner		= THIS_MODULE,
- 	.start		= dc_wdt_start,
- 	.stop		= dc_wdt_stop,
-diff --git a/drivers/watchdog/ep93xx_wdt.c b/drivers/watchdog/ep93xx_wdt.c
-index 0a4d7cc..8a6e1a7 100644
---- a/drivers/watchdog/ep93xx_wdt.c
-+++ b/drivers/watchdog/ep93xx_wdt.c
-@@ -99,7 +99,7 @@ static const struct watchdog_info ep93xx_wdt_ident = {
- 	.identity	= "EP93xx Watchdog",
- };
- 
--static struct watchdog_ops ep93xx_wdt_ops = {
-+static const struct watchdog_ops ep93xx_wdt_ops = {
- 	.owner		= THIS_MODULE,
- 	.start		= ep93xx_wdt_start,
- 	.stop		= ep93xx_wdt_stop,
-diff --git a/drivers/watchdog/mt7621_wdt.c b/drivers/watchdog/mt7621_wdt.c
-index d5735c1..cb3651ae 100644
---- a/drivers/watchdog/mt7621_wdt.c
-+++ b/drivers/watchdog/mt7621_wdt.c
-@@ -110,7 +110,7 @@ static struct watchdog_info mt7621_wdt_info = {
- 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
- };
- 
--static struct watchdog_ops mt7621_wdt_ops = {
-+static const struct watchdog_ops mt7621_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = mt7621_wdt_start,
- 	.stop = mt7621_wdt_stop,
-diff --git a/drivers/watchdog/rt2880_wdt.c b/drivers/watchdog/rt2880_wdt.c
-index 14b4fd4..b2b472f 100644
---- a/drivers/watchdog/rt2880_wdt.c
-+++ b/drivers/watchdog/rt2880_wdt.c
-@@ -124,7 +124,7 @@ static struct watchdog_info rt288x_wdt_info = {
- 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
- };
- 
--static struct watchdog_ops rt288x_wdt_ops = {
-+static const struct watchdog_ops rt288x_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = rt288x_wdt_start,
- 	.stop = rt288x_wdt_stop,
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 59e9576..d48ba25 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -394,7 +394,7 @@ static const struct watchdog_info s3c2410_wdt_ident = {
- 	.identity         =	"S3C2410 Watchdog",
- };
- 
--static struct watchdog_ops s3c2410wdt_ops = {
-+static const struct watchdog_ops s3c2410wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = s3c2410wdt_start,
- 	.stop = s3c2410wdt_stop,
-diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-index a49634c..dc4c76b 100644
---- a/drivers/watchdog/sama5d4_wdt.c
-+++ b/drivers/watchdog/sama5d4_wdt.c
-@@ -107,7 +107,7 @@ static const struct watchdog_info sama5d4_wdt_info = {
- 	.identity = "Atmel SAMA5D4 Watchdog",
- };
- 
--static struct watchdog_ops sama5d4_wdt_ops = {
-+static const struct watchdog_ops sama5d4_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = sama5d4_wdt_start,
- 	.stop = sama5d4_wdt_stop,
-diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
-index ce0c38b..c0d1d3b 100644
---- a/drivers/watchdog/sbsa_gwdt.c
-+++ b/drivers/watchdog/sbsa_gwdt.c
-@@ -215,7 +215,7 @@ static struct watchdog_info sbsa_gwdt_info = {
- 			  WDIOF_CARDRESET,
- };
- 
--static struct watchdog_ops sbsa_gwdt_ops = {
-+static const struct watchdog_ops sbsa_gwdt_ops = {
- 	.owner		= THIS_MODULE,
- 	.start		= sbsa_gwdt_start,
- 	.stop		= sbsa_gwdt_stop,
-diff --git a/drivers/watchdog/sirfsoc_wdt.c b/drivers/watchdog/sirfsoc_wdt.c
-index 3050a00..4eea351 100644
---- a/drivers/watchdog/sirfsoc_wdt.c
-+++ b/drivers/watchdog/sirfsoc_wdt.c
-@@ -127,7 +127,7 @@ static const struct watchdog_info sirfsoc_wdt_ident = {
- 	.identity         =	"SiRFSOC Watchdog",
- };
- 
--static struct watchdog_ops sirfsoc_wdt_ops = {
-+static const struct watchdog_ops sirfsoc_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = sirfsoc_wdt_enable,
- 	.stop = sirfsoc_wdt_disable,
-diff --git a/drivers/watchdog/sun4v_wdt.c b/drivers/watchdog/sun4v_wdt.c
-index 1467fe5..0090797 100644
---- a/drivers/watchdog/sun4v_wdt.c
-+++ b/drivers/watchdog/sun4v_wdt.c
-@@ -77,7 +77,7 @@ static const struct watchdog_info sun4v_wdt_ident = {
- 	.firmware_version = 0,
- };
- 
--static struct watchdog_ops sun4v_wdt_ops = {
-+static const struct watchdog_ops sun4v_wdt_ops = {
- 	.owner =	THIS_MODULE,
- 	.start =	sun4v_wdt_ping,
- 	.stop =		sun4v_wdt_stop,
--- 
-2.7.4
+Best regards,
+Krzysztof
