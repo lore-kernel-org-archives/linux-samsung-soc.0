@@ -1,49 +1,285 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
-Date: Fri, 27 Jan 2017 11:55:37 -0800
-Message-ID: <20170127195537.GG8801@codeaurora.org>
-References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
- <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] watchdog: constify watchdog_ops structures
+Date: Sat, 28 Jan 2017 13:11:17 +0530
+Message-ID: <1485589277-6824-1-git-send-email-bhumirks@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35240 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751226AbdA0UFf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Jan 2017 15:05:35 -0500
-Content-Disposition: inline
-In-Reply-To: <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: julia.lawall@lip6.fr, wim@iguana.be, linux@roeck-us.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, baruch@tkos.co.il, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, baohua@kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 01/27, Sylwester Nawrocki wrote:
-> Hi Stephen, Mike,
-> 
-> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
-> 
->   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
-> 
-> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
-> 
->   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
-> 
-> ----------------------------------------------------------------
-> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
-> Exynos PLL code updates and overall minor clean-ups.
-> 
+Declare watchdog_ops structures as const as they are only stored in the
+ops field of a watchdog_device structure. This field is of type const, so
+watchdog_ops structures having this property can be made const too.
+Done using Coccinelle:
 
-Thanks. Pulled into clk-next.
+@r disable optional_qualifier@
+identifier x;
+position p;
+@@
+static struct watchdog_ops x@p={...};
 
-Can you get your key signed by more people? Maybe others at
-Samsung?
+@ok@
+struct watchdog_device w;
+identifier r.x;
+position p;
+@@
+w.ops=&x@p;
 
+@bad@
+position p != {r.p,ok.p};
+identifier r.x;
+@@
+x@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.x;
+@@
++const
+struct watchdog_ops x;
+
+File size details before and after patching.
+First line of every .o file shows the file size before patching
+and second line shows the size after patching.
+
+   text    data     bss     dec     hex filename
+
+   1340	    544	      0	   1884	    75c	drivers/watchdog/bcm_kona_wdt.o
+   1436	    440	      0	   1876	    754	drivers/watchdog/bcm_kona_wdt.o
+
+   1176	    544	      4	   1724	    6bc	drivers/watchdog/digicolor_wdt.o
+   1272	    440	      4	   1716	    6b4	drivers/watchdog/digicolor_wdt.o
+
+    925	    580	     89	   1594	    63a	drivers/watchdog/ep93xx_wdt.o
+   1021	    476	     89	   1586	    632	drivers/watchdog/ep93xx_wdt.o
+
+   4932	    288	     17	   5237	   1475	drivers/watchdog/s3c2410_wdt.o
+   5028	    192	     17	   5237	   1475	drivers/watchdog/s3c2410_wdt.o
+
+   1977	    292	      1	   2270	    8de	drivers/watchdog/sama5d4_wdt.o
+   2073	    196	      1	   2270	    8de	drivers/watchdog/sama5d4_wdt.o
+
+   1375	    484	      1	   1860	    744	drivers/watchdog/sirfsoc_wdt.o
+   1471	    380	      1	   1852	    73c	drivers/watchdog/sirfsoc_wdt.o
+
+Size remains the same for the files drivers/watchdog/diag288_wdt.o
+drivers/watchdog/asm9260_wdt.o and drivers/watchdog/atlas7_wdt.o
+
+The following .o files did not compile:
+drivers/watchdog/sun4v_wdt.o, drivers/watchdog/sbsa_gwdt.o,
+drivers/watchdog/rt2880_wdt.o, drivers/watchdog/booke_wdt.o
+drivers/watchdog/mt7621_wdt.o
+
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/watchdog/asm9260_wdt.c   | 2 +-
+ drivers/watchdog/atlas7_wdt.c    | 2 +-
+ drivers/watchdog/bcm_kona_wdt.c  | 2 +-
+ drivers/watchdog/booke_wdt.c     | 2 +-
+ drivers/watchdog/diag288_wdt.c   | 2 +-
+ drivers/watchdog/digicolor_wdt.c | 2 +-
+ drivers/watchdog/ep93xx_wdt.c    | 2 +-
+ drivers/watchdog/mt7621_wdt.c    | 2 +-
+ drivers/watchdog/rt2880_wdt.c    | 2 +-
+ drivers/watchdog/s3c2410_wdt.c   | 2 +-
+ drivers/watchdog/sama5d4_wdt.c   | 2 +-
+ drivers/watchdog/sbsa_gwdt.c     | 2 +-
+ drivers/watchdog/sirfsoc_wdt.c   | 2 +-
+ drivers/watchdog/sun4v_wdt.c     | 2 +-
+ 14 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/watchdog/asm9260_wdt.c b/drivers/watchdog/asm9260_wdt.c
+index d0b59ba..233dfa9 100644
+--- a/drivers/watchdog/asm9260_wdt.c
++++ b/drivers/watchdog/asm9260_wdt.c
+@@ -189,7 +189,7 @@ static const struct watchdog_info asm9260_wdt_ident = {
+ 	.identity         =	"Alphascale asm9260 Watchdog",
+ };
+ 
+-static struct watchdog_ops asm9260_wdt_ops = {
++static const struct watchdog_ops asm9260_wdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= asm9260_wdt_enable,
+ 	.stop		= asm9260_wdt_disable,
+diff --git a/drivers/watchdog/atlas7_wdt.c b/drivers/watchdog/atlas7_wdt.c
+index ed80734..4abdcab 100644
+--- a/drivers/watchdog/atlas7_wdt.c
++++ b/drivers/watchdog/atlas7_wdt.c
+@@ -105,7 +105,7 @@ static const struct watchdog_info atlas7_wdt_ident = {
+ 	.identity = "atlas7 Watchdog",
+ };
+ 
+-static struct watchdog_ops atlas7_wdt_ops = {
++static const struct watchdog_ops atlas7_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = atlas7_wdt_enable,
+ 	.stop = atlas7_wdt_disable,
+diff --git a/drivers/watchdog/bcm_kona_wdt.c b/drivers/watchdog/bcm_kona_wdt.c
+index e0c9842..80cdd16 100644
+--- a/drivers/watchdog/bcm_kona_wdt.c
++++ b/drivers/watchdog/bcm_kona_wdt.c
+@@ -266,7 +266,7 @@ static int bcm_kona_wdt_stop(struct watchdog_device *wdog)
+ 					    SECWDOG_SRSTEN_MASK, 0);
+ }
+ 
+-static struct watchdog_ops bcm_kona_wdt_ops = {
++static const struct watchdog_ops bcm_kona_wdt_ops = {
+ 	.owner =	THIS_MODULE,
+ 	.start =	bcm_kona_wdt_start,
+ 	.stop =		bcm_kona_wdt_stop,
+diff --git a/drivers/watchdog/booke_wdt.c b/drivers/watchdog/booke_wdt.c
+index 04da4b6..4925034 100644
+--- a/drivers/watchdog/booke_wdt.c
++++ b/drivers/watchdog/booke_wdt.c
+@@ -197,7 +197,7 @@ static struct watchdog_info booke_wdt_info = {
+ 	.identity = "PowerPC Book-E Watchdog",
+ };
+ 
+-static struct watchdog_ops booke_wdt_ops = {
++static const struct watchdog_ops booke_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = booke_wdt_start,
+ 	.stop = booke_wdt_stop,
+diff --git a/drivers/watchdog/diag288_wdt.c b/drivers/watchdog/diag288_wdt.c
+index 861d3d3..6f59108 100644
+--- a/drivers/watchdog/diag288_wdt.c
++++ b/drivers/watchdog/diag288_wdt.c
+@@ -205,7 +205,7 @@ static int wdt_set_timeout(struct watchdog_device * dev, unsigned int new_to)
+ 	return wdt_ping(dev);
+ }
+ 
+-static struct watchdog_ops wdt_ops = {
++static const struct watchdog_ops wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = wdt_start,
+ 	.stop = wdt_stop,
+diff --git a/drivers/watchdog/digicolor_wdt.c b/drivers/watchdog/digicolor_wdt.c
+index 77df772..817d3f9 100644
+--- a/drivers/watchdog/digicolor_wdt.c
++++ b/drivers/watchdog/digicolor_wdt.c
+@@ -96,7 +96,7 @@ static unsigned int dc_wdt_get_timeleft(struct watchdog_device *wdog)
+ 	return count / clk_get_rate(wdt->clk);
+ }
+ 
+-static struct watchdog_ops dc_wdt_ops = {
++static const struct watchdog_ops dc_wdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= dc_wdt_start,
+ 	.stop		= dc_wdt_stop,
+diff --git a/drivers/watchdog/ep93xx_wdt.c b/drivers/watchdog/ep93xx_wdt.c
+index 0a4d7cc..8a6e1a7 100644
+--- a/drivers/watchdog/ep93xx_wdt.c
++++ b/drivers/watchdog/ep93xx_wdt.c
+@@ -99,7 +99,7 @@ static const struct watchdog_info ep93xx_wdt_ident = {
+ 	.identity	= "EP93xx Watchdog",
+ };
+ 
+-static struct watchdog_ops ep93xx_wdt_ops = {
++static const struct watchdog_ops ep93xx_wdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= ep93xx_wdt_start,
+ 	.stop		= ep93xx_wdt_stop,
+diff --git a/drivers/watchdog/mt7621_wdt.c b/drivers/watchdog/mt7621_wdt.c
+index d5735c1..cb3651ae 100644
+--- a/drivers/watchdog/mt7621_wdt.c
++++ b/drivers/watchdog/mt7621_wdt.c
+@@ -110,7 +110,7 @@ static struct watchdog_info mt7621_wdt_info = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+ };
+ 
+-static struct watchdog_ops mt7621_wdt_ops = {
++static const struct watchdog_ops mt7621_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = mt7621_wdt_start,
+ 	.stop = mt7621_wdt_stop,
+diff --git a/drivers/watchdog/rt2880_wdt.c b/drivers/watchdog/rt2880_wdt.c
+index 14b4fd4..b2b472f 100644
+--- a/drivers/watchdog/rt2880_wdt.c
++++ b/drivers/watchdog/rt2880_wdt.c
+@@ -124,7 +124,7 @@ static struct watchdog_info rt288x_wdt_info = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+ };
+ 
+-static struct watchdog_ops rt288x_wdt_ops = {
++static const struct watchdog_ops rt288x_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = rt288x_wdt_start,
+ 	.stop = rt288x_wdt_stop,
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 59e9576..d48ba25 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -394,7 +394,7 @@ static const struct watchdog_info s3c2410_wdt_ident = {
+ 	.identity         =	"S3C2410 Watchdog",
+ };
+ 
+-static struct watchdog_ops s3c2410wdt_ops = {
++static const struct watchdog_ops s3c2410wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = s3c2410wdt_start,
+ 	.stop = s3c2410wdt_stop,
+diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+index a49634c..dc4c76b 100644
+--- a/drivers/watchdog/sama5d4_wdt.c
++++ b/drivers/watchdog/sama5d4_wdt.c
+@@ -107,7 +107,7 @@ static const struct watchdog_info sama5d4_wdt_info = {
+ 	.identity = "Atmel SAMA5D4 Watchdog",
+ };
+ 
+-static struct watchdog_ops sama5d4_wdt_ops = {
++static const struct watchdog_ops sama5d4_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = sama5d4_wdt_start,
+ 	.stop = sama5d4_wdt_stop,
+diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
+index ce0c38b..c0d1d3b 100644
+--- a/drivers/watchdog/sbsa_gwdt.c
++++ b/drivers/watchdog/sbsa_gwdt.c
+@@ -215,7 +215,7 @@ static struct watchdog_info sbsa_gwdt_info = {
+ 			  WDIOF_CARDRESET,
+ };
+ 
+-static struct watchdog_ops sbsa_gwdt_ops = {
++static const struct watchdog_ops sbsa_gwdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= sbsa_gwdt_start,
+ 	.stop		= sbsa_gwdt_stop,
+diff --git a/drivers/watchdog/sirfsoc_wdt.c b/drivers/watchdog/sirfsoc_wdt.c
+index 3050a00..4eea351 100644
+--- a/drivers/watchdog/sirfsoc_wdt.c
++++ b/drivers/watchdog/sirfsoc_wdt.c
+@@ -127,7 +127,7 @@ static const struct watchdog_info sirfsoc_wdt_ident = {
+ 	.identity         =	"SiRFSOC Watchdog",
+ };
+ 
+-static struct watchdog_ops sirfsoc_wdt_ops = {
++static const struct watchdog_ops sirfsoc_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = sirfsoc_wdt_enable,
+ 	.stop = sirfsoc_wdt_disable,
+diff --git a/drivers/watchdog/sun4v_wdt.c b/drivers/watchdog/sun4v_wdt.c
+index 1467fe5..0090797 100644
+--- a/drivers/watchdog/sun4v_wdt.c
++++ b/drivers/watchdog/sun4v_wdt.c
+@@ -77,7 +77,7 @@ static const struct watchdog_info sun4v_wdt_ident = {
+ 	.firmware_version = 0,
+ };
+ 
+-static struct watchdog_ops sun4v_wdt_ops = {
++static const struct watchdog_ops sun4v_wdt_ops = {
+ 	.owner =	THIS_MODULE,
+ 	.start =	sun4v_wdt_ping,
+ 	.stop =		sun4v_wdt_stop,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
