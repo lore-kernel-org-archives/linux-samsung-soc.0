@@ -1,42 +1,52 @@
 From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V3 0/5] PCI: exynos: cleans the minor things
-Date: Sat, 28 Jan 2017 15:27:30 -0600
-Message-ID: <20170128212730.GA22283@bhelgaas-glaptop.roam.corp.google.com>
-References: <CGME20170116063140epcas5p38fffe5effdcfd2650cad98c25c31335e@epcas5p3.samsung.com>
- <20170116063138.25805-1-jh80.chung@samsung.com>
+Subject: Re: [PATCH v2] PCI: exynos: refactor exynos pcie driver
+Date: Sat, 28 Jan 2017 15:29:12 -0600
+Message-ID: <20170128212912.GK20550@bhelgaas-glaptop.roam.corp.google.com>
+References: <CGME20170105035104epcas1p2de6c52e577dd78a4f3539fb32d1f0dfe@epcas1p2.samsung.com>
+ <1483588418-2551-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170116063138.25805-1-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+In-Reply-To: <1483588418-2551-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, jingoohan1@gmail.com, Niyas Ahmed S T <niyas.ahmed@samsung.com>, krzk@kernel.org, jh80.chung@samsung.com, kgene@kernel.org, alim.akhtar@samsung.com, bhelgaas@google.com, sanath@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 03:31:33PM +0900, Jaehoon Chung wrote:
-> Current pci-exynos.c is used for only EXYNOS5440.
-> It's too complex to support the other Exynos SoCs.
-> Before supporting the other Exynos SoCs, it needs to clean the codes.
+On Thu, Jan 05, 2017 at 09:23:38AM +0530, Pankaj Dubey wrote:
+> From: Niyas Ahmed S T <niyas.ahmed@samsung.com>
 > 
-> Changelog on V3:
-> - Splits "PCI: exynos: replace to one register accessor from each accessors"
+> Currently Exynos PCIe driver is only supported for Exynos5440 SoC.
+> This patch does refactoring of Exynos PCIe driver to extend support
+> for other Exynos SoC.
 > 
-> Changelog on V2:
-> - Changes the all pointer names as "ep" instead of "exynos_pcie"
+> Following are the main changes done via this patch:
 > 
-> Jaehoon Chung (5):
->   PCI: exynos: Rename all pointer names from "exynos_pcie" to "ep"
->   PCI: exynos: Replace the *_blk/*_phy/*_elb accessors
->   PCI: exynos: Remove the unnecessary variables
->   PCI: exynos: Use the bitops API to operate the bit shifting
->   PCI: exynos: remove the duplicated codes
+> 1) It adds separate structs for memory, clock resources.
 > 
->  drivers/pci/host/pci-exynos.c | 392 +++++++++++++++++++-----------------------
+> Reason behind this change is, moving ahead various Exynos SoC will
+> have different hardware resources such as iomem, clocks, regmap handles
+> etc. for PCIe controller, so keeping these resources in separate struct
+> will help us in intiailizing them via per SoC ops, and will avoid too
+> many of_machine_is_compatible in code, and help us simplifying
+> exynos_pcie struct.
+> 
+> 2) It add exynos_pcie_ops struct which will allow us to support the
+> differences in resources in different Exynos SoC.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Niyas Ahmed S T <niyas.ahmed@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> This patch set is prepared on top of Krzysztof's for-next and
+> PCIe driver cleanup patch [1] by Jaehoon Chung.
+> 
+> [1]: https://lkml.org/lkml/2016/12/19/44
 
-Waiting for ack from Jingoom, per MAINTAINERS:
-
-Jingoo Han <jingoohan1@gmail.com> (maintainer:PCI DRIVER FOR SAMSUNG EXYNOS)
-
-Pankaj has a follow-on patch that depends on this series:
-https://patchwork.ozlabs.org/patch/711210/
+Jaehoon has posted an updated version since you posted this patch, so
+I assume this will need to be rebased on that.  I'll drop this version and
+wait for your rebased version.
