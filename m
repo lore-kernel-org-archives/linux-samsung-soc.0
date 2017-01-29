@@ -1,52 +1,81 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/4] ARM: dts: exynos: for v4.11, 2nd round
-Date: Sun, 29 Jan 2017 22:06:28 +0200
-Message-ID: <20170129200630.22083-3-krzk@kernel.org>
+Subject: [GIT PULL 4/4] arm64: dts: exynos: for v4.11, 2nd round
+Date: Sun, 29 Jan 2017 22:06:29 +0200
+Message-ID: <20170129200630.22083-4-krzk@kernel.org>
 References: <20170129200630.22083-1-krzk@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49306 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:49350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751869AbdA2UH4 (ORCPT
+        id S1751890AbdA2UH4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 29 Jan 2017 15:07:56 -0500
 In-Reply-To: <20170129200630.22083-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
 Hi,
 
 On top of previous pull request.
 
+This adds proper clocks to LPASS node on Exynos5433 which is needed
+by Marek's patchset:
+ - [PATCH v2 0/8] Pad retentions support for Exynos5433
+   https://lkml.kernel.org/r/1485419634-28331-1-git-send-email-m.szyprowski () samsung ! com
+
+
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+
 Best regards,
 Krzysztof
 
 
-The following changes since commit bca9085e0ae93253bc93ce218c85ac7d7e7f1831:
+The following changes since commit e4e381133241a27d732e78be09973b89a193eaf7:
 
-  ARM: dts: exynos: remove Exynos4212 support (dead code) (2017-01-11 18:28:43 +0200)
+  arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.11-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-2
 
-for you to fetch changes up to dfaf06baad0c088a55570f7a324949c498f2106c:
+for you to fetch changes up to 7547162ac351483df3641f64e99e10be329dd6a2:
 
-  ARM: dts: exynos: Fix indentation of EHCI and OHCI ports (2017-01-29 21:03:46 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree update for v4.11, second round:
-1. Use bigger reserved memory region for Multi Format Codec on all Exynos
-   chipsets so it could decode FullHD easily.
+  arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
 
 ----------------------------------------------------------------
+Samsung DeviceTree ARM64 update for v4.11, second round:
+1. Use proper drive strengths on Exynos7.
+2. Fix significant current leak on Exynos5433-based TM2/TM2E due
+   to disabled regulator.
+2. Add touchkey to TM2, set display clocks for Ultra HD modes.
+3. Cleanups and minor fixes for Exynos5433, TM2 and TM2E.
+
+----------------------------------------------------------------
+Andrzej Hajda (2):
+      arm64: dts: exynos: configure TV path clocks for Ultra HD modes
+      arm64: dts: exynos: set LDO7 regulator as always on
+
+Jaechul Lee (1):
+      arm64: dts: exynos: Add TM2 touchkey node
+
 Javier Martinez Canillas (1):
-      ARM: dts: exynos: Increase MFC left reserved memory region size
+      arm64: dts: exynos: Remove unneeded unit names in Exynos5433 nodes
 
-Krzysztof Kozlowski (1):
-      ARM: dts: exynos: Fix indentation of EHCI and OHCI ports
+Marek Szyprowski (2):
+      arm64: dts: exynos: Disable pull down for audio pins in Exynos5433 SoCs
+      arm64: dts: exynos: Add clocks to Exynos5433 LPASS module
 
- arch/arm/boot/dts/exynos-mfc-reserved-memory.dtsi |  2 +-
- arch/arm/boot/dts/exynos4.dtsi                    | 24 +++++++++++------------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+Pankaj Dubey (1):
+      arm64: dts: exynos: Fix drive strength of sd0_xxx pin definitions
+
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi    | 10 +++++-----
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 16 ++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts         | 13 +++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi            |  8 +++++---
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi       | 14 +++++++-------
+ 5 files changed, 46 insertions(+), 15 deletions(-)
