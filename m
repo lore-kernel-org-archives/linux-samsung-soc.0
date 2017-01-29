@@ -1,49 +1,71 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/4] ARM: mach/soc: exynos for v4.11, 2nd round
-Date: Sun, 29 Jan 2017 22:06:30 +0200
-Message-ID: <20170129200630.22083-5-krzk@kernel.org>
-References: <20170129200630.22083-1-krzk@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751943AbdA2UH4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Jan 2017 15:07:56 -0500
-In-Reply-To: <20170129200630.22083-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
+Date: Sun, 29 Jan 2017 14:31:09 -0800
+Message-ID: <20170129223109.GB3133@localhost>
+References: <20170120181343.12570-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20170120181343.12570-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
+On Fri, Jan 20, 2017 at 08:13:43PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Few changes in Exynos PMU driver including one that is needed by pinctrl
+> driver for runtime PM. We want to move forward with the RPM for our drivers
+> while keeping still DT ABI.
+> 
+> 
+> This tag is also for Linus Walleij to pull - base for pinctrl changes.
+> 
+> Best regards,
+> Krzysztof
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> 
+> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+> 
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git samsung-drivers-soc-pmu-4.11
+> 
+> for you to fetch changes up to 1da6de33e43901ec5220cbf292d71172635ada67:
+> 
+>   soc: samsung: pmu: Remove messages for failed memory allocation (2017-01-20 18:37:27 +0200)
+> 
+> ----------------------------------------------------------------
+> Improvements for Exynos PMU driver for v4.11:
+> 
+> Beside basic function of setting proper configuration for low power modes, the
+> Exynos PMU (Power Management Unit) driver is also a provider of syscon regmap
+> for its registers.  This regmap is essential to many other drivers wanting to
+> or needing to implement low power mode.
+> 
+> Exynos pinctrl driver, before getting support for Runtime Power Management,
+> needs access to this syscon regmap.  Let's do it in a DT ABI friendly way.
 
-On top of previous pull request.
+Merged here as well.
 
+THanks,
 
-The following changes since commit cda1a52dab50340728e46601e6c9da9fc4beaf1f:
-
-  ARM: s3c64xx: Constify wake_irqs (2016-12-29 15:41:44 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.11-2
-
-for you to fetch changes up to 95ed41df129ca8f76eb190534d20f4a6dcd37213:
-
-  dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property (2017-01-29 21:03:56 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc update for v4.11, second round:
-1. Remove mach code for Exynos4415 as a continuation of removal
-   of this SoC.
-2. Remove obsolete property from the bindings documentation.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: EXYNOS: Remove Exynos4415 arch code (SoC not supported anymore)
-      dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property
-
- Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt | 2 +-
- arch/arm/mach-exynos/Kconfig                                       | 5 -----
- arch/arm/mach-exynos/exynos.c                                      | 1 -
- arch/arm/mach-exynos/suspend.c                                     | 1 -
- 4 files changed, 1 insertion(+), 8 deletions(-)
+-Olof
