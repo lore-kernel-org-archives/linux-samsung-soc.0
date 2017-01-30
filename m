@@ -1,55 +1,95 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/8] pinctrl: samsung: Add support for pad retention
- control for Exynos5433 SoCs
-Date: Mon, 30 Jan 2017 11:39:54 +0100
-Message-ID: <91de6eca-f70f-d4c9-732e-c48621347ac5@samsung.com>
-References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170126083402eucas1p187d3d31f62544fc46fae99fc5f74dbfe@eucas1p1.samsung.com>
- <1485419634-28331-4-git-send-email-m.szyprowski@samsung.com>
- <20170126194811.rori5j5hmclniqig@kozik-lap>
- <20170127180203.eacwbyb2noqjpmgw@kozik-lap>
+Subject: Re: [PATCH v2 4/4] soc: samsung: pm_domains: Provide real name for all
+ supported domains
+Date: Mon, 30 Jan 2017 11:41:04 +0100
+Message-ID: <f4bf7cdd-870f-e95b-0069-5f4e9ad3fd73@samsung.com>
+References: <1485514072-29502-5-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170127144908eucas1p14c50396f670a01c31a69ec95b636a0e1@eucas1p1.samsung.com>
+ <1485528538-30256-1-git-send-email-m.szyprowski@samsung.com>
+ <20170128151622.scfqft3hxfdjh7ca@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170127180203.eacwbyb2noqjpmgw@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20170128151622.scfqft3hxfdjh7ca@kozik-lap>
+Sender: linux-pm-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 2017-01-27 19:02, Krzysztof Kozlowski wrote:
-> On Thu, Jan 26, 2017 at 09:48:11PM +0200, Krzysztof Kozlowski wrote:
->> On Thu, Jan 26, 2017 at 09:33:49AM +0100, Marek Szyprowski wrote:
->>> This patch adds support for retention control for Exynos5433 SoCs. Three
->>> groups of pins has been defined for retention control: common shared group
->>> for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
->>> separate control for FSYS and AUD pin banks, for which PMU retention
->>> registers match whole banks.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/pinctrl/samsung/pinctrl-exynos.c    | 58 +++++++++++++++++++++++++++++
->>>   include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++
-> I already have some non-conflicting changes to exynos-regs-pmu.h in my
-> branch. Now I want to add some more which will create conflicts.
+On 2017-01-28 16:16, Krzysztof Kozlowski wrote:
+> On Fri, Jan 27, 2017 at 03:48:58PM +0100, Marek Szyprowski wrote:
+>> Device tree nodes for each power domain should use generic "power-domain"
+>> name, so using it as a domain name doesn't give much benefits. This patch
+>> adds human readable names for all supported domains, what makes debugging
+>> much easier.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> Changelog:
+>> v2:
+>> - sorted all domains data by domain base address in the arrays
+>> ---
+>>   drivers/soc/samsung/pm_domains.c | 125 ++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 123 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+>> index 5a0a46bcbe18..43003318b948 100644
+>> --- a/drivers/soc/samsung/pm_domains.c
+>> +++ b/drivers/soc/samsung/pm_domains.c
+>> @@ -30,6 +30,17 @@ struct exynos_pm_domain_config {
+>>   	u32 local_pwr_cfg;
+>>   };
+>>   
+>> +struct exynos_pm_domain_data {
+>> +	const char *name;
+>> +	u32 base;
+>> +};
+>> +
+>> +struct exynos_pm_domain_soc_data {
+>> +	const char *compatible;
+>> +	unsigned int nr_domains;
+>> +	const struct exynos_pm_domain_data *domains;
+>> +};
+>> +
+>>   /*
+>>    * Exynos specific wrapper around the generic power domain
+>>    */
+>> @@ -123,6 +134,91 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+>>   	return exynos_pd_power(domain, false);
+>>   }
+>>   
+>> +static const struct exynos_pm_domain_data exynos4210_domains[] __initconst = {
+>> +	{ "LCD1",	0x10023CA0 },
+>> +};
+>> +
+>> +static const struct exynos_pm_domain_data exynos4412_domains[] __initconst = {
+>> +	{ "CAM",	0x10023C00 },
+>> +	{ "TV",		0x10023C20 },
+>> +	{ "MFC",	0x10023C40 },
+>> +	{ "G3D",	0x10023C60 },
+>> +	{ "LCD0",	0x10023C80 },
+>> +	{ "ISP",	0x10023CA0 },
+>> +	{ "GPS",	0x10023CE0 },
+>> +	{ "GPS alive",	0x10023D00 },
+> That is a kind of duplication of DT and also spreading the description
+> of hardware between DT and driver. I understand the purpose. Messages
+> like:
+> 	"power-domain has as child subdomain: power-domain."
+> are useless. However I do not like putting any of these in the driver.
 >
-> How about splitting the header to separate patch, so I will take it to
-> my exynos-pmu branch?
+> How about adding a property "label" and parse it? Some other
+> drivers/nodes are using labels already to have a meaningful name, either
+> for user-space or for just user.
+>
+> Patches 1-3 look fine.
 
-Okay, I will split this into 2 patches.
+Okay, I will prepare a new patchset, which rely on 'label' property.
 
 Best regards
 -- 
 Marek Szyprowski, PhD
 Samsung R&D Institute Poland
+
