@@ -1,45 +1,45 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/7] soc: smasung: pmu: Add register defines for pad
- retention control
-Date: Mon, 30 Jan 2017 21:43:29 +0200
-Message-ID: <20170130194329.duudcv5oxu2q2td4@kozik-lap>
-References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130123837eucas1p1056a57f23b1e3bf089e5bc55bb2cf2d4@eucas1p1.samsung.com>
- <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 0/7] Pad retentions support for Exynos5433
+Date: Mon, 30 Jan 2017 21:46:56 +0200
+Message-ID: <20170130194656.mfyvq3bxzjnbkxg5@kozik-lap>
+References: <CGME20170130123837eucas1p13c607f81a1775a805740dccc87fe8b87@eucas1p1.samsung.com>
+ <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34782 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753915AbdA3Tnf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 14:43:35 -0500
+Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 01:38:22PM +0100, Marek Szyprowski wrote:
-> Add PMU defines related to pad retention control. Will be later used
-> by the Exynos pin controller driver.
+On Mon, Jan 30, 2017 at 01:38:21PM +0100, Marek Szyprowski wrote:
+> Hello,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> This patchset is a first step to add support for all power domains on
+> Exynos5433 SoCs. This patchset contains patches for Exynos pin control
+> driver and Exynos LPASS MFD driver, which are needed to make the
+> platform ready for adding power domains support.
+> 
+> Patches in this patchset depends on each other. They are order in such a
+> way to make the changes bisectable.
+> 
+> Patch #2 has compile dependency on #1.
+> Patch #3 has runtime dependency on commit fa59aa70907b2 ("soc: samsung:
+> 	pmu: Add dummy support for Exynos5433 SoC",
+> 	for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends branch).
+> Patch #4 has runtime dependency on #3.
+> Patch #5 has runtime dependency on commit 7547162ac3514 ("arm64: dts:
+> 	exynos: Add clocks to Exynos5433 LPASS module, next/dt64 branch).
 > 
 
-Thanks Marek.
+Dependencies in samsung-soc tree, for those who need them, are:
+ - tags/samsung-drivers-soc-pmu-4.11-2
+ - tags/samsung-dt64-4.11-2
 
-Initially I thought that this should go through samsung-soc to limit
-conflicts but I sent already my pull requests and I am not sure if I
-will be getting more patches for next cycle. We'll see.
-
-However, the point is, I do not want to block this patchset, so if
-someone would like to take it before me, feel free:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Repo: git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
 
 Best regards,
 Krzysztof
+
