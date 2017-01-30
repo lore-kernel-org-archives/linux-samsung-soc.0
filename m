@@ -1,164 +1,65 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 3/3 REBASED] arm64: dts: exynos: Add initial configuration
- for DISP clocks for TM2/TM2e
-Date: Mon, 30 Jan 2017 11:57:36 +0100
-Message-ID: <1485773856-22707-1-git-send-email-m.szyprowski@samsung.com>
-References: <20170128152846.ychltfggmlrgrwwx@kozik-lap>
- <CGME20170130105746eucas1p1232fb56b92e5939beb7ee65670422860@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23944 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbdA3K7P (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 05:59:15 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKL00CZAAGBA820@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Jan 2017 10:57:47 +0000 (GMT)
-In-reply-to: <20170128152846.ychltfggmlrgrwwx@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v3 0/5] Provide real domain names for Exynos power domain driver
+Date: Mon, 30 Jan 2017 13:18:55 +0100
+Message-ID: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170130121912eucas1p1002708fc40c2d385c41ef2d7574561f9@eucas1p1.samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-Add initial clock configuration for display subsystem for Exynos5433
-based TM2/TM2e boards in device tree in order to avoid dependency on the
-configuration left by the bootloader. This initial configuration is also
-needed to ensure that display subsystem is operational if display power
-domain gets turned off before clock controller is probed and the inital
-clock configuration left by the bootloader saved.
+Hi!
 
-TM2 and TM2e uses different rate for DISP PLL clock, but for better
-maintainability all 'assigned-clocks-*' properties for DISP CMU are
-defines in each board dts instead of redefining the rates property.
+For everyone working on power management and runtime power management it
+is important to have a meaningful information about the state of the
+power domains. Current Exynos power domain driver created names of the
+domains based on the device tree node name. Those name
+we incorrectly a bit more descriptive (like "mfc-power-domain@10023C40"
+in exynos4.dtsi) than they should be (it should be fixed to
+"power-domain@10023C40"). This patch series adds reading human readable
+names from the 'label' property. While touching this, I've also fixes
+a few obvious issues related to power domain driver code.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
+Patches are based on the Linux next-20170130 branch.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
 Changelog:
-v3 resend:
-- rebased onto Linux next-20170130
-
 v3:
-- added comment about DISP CMU clocks configuration on TM2 and TM2e
----
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 12 --------
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 34 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 34 ++++++++++++++++++++++
- 3 files changed, 68 insertions(+), 12 deletions(-)
+- moved real domains names from hardcoded string in the driver to the label
+  property in the device tree (suggested by Krzysztof Kozlowski)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 53fd0683d400..098ad557fee3 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -217,18 +217,6 @@
- 	assigned-clock-parents = <&cmu_top CLK_FOUT_AUD_PLL>;
- };
- 
--&cmu_disp {
--	assigned-clocks = <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
--			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
--			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
--			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
--	assigned-clock-parents = <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
--				 <0>,
--				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
--				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
--	assigned-clock-rates = <0>, <400000000>;
--};
--
- &cmu_fsys {
- 	assigned-clocks = <&cmu_top CLK_MOUT_SCLK_USBDRD30>,
- 		<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-index ddba2f889326..dea0a6f5bc18 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-@@ -18,6 +18,40 @@
- 	compatible = "samsung,tm2", "samsung,exynos5433";
- };
- 
-+&cmu_disp {
-+	/*
-+	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
-+	 * clocks properties for DISP CMU for each board to keep them together
-+	 * for easier review and maintenance.
-+	 */
-+	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
-+			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
-+			  <&cmu_disp CLK_MOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
-+	assigned-clock-parents = <0>, <0>,
-+				 <&cmu_mif CLK_ACLK_DISP_333>,
-+				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
-+				 <&cmu_disp CLK_FOUT_DISP_PLL>,
-+				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
-+				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
-+	assigned-clock-rates = <250000000>, <400000000>;
-+};
-+
- &hsi2c_9 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-index 2fbf3a860316..7891a31adc17 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts
-@@ -18,6 +18,40 @@
- 	compatible = "samsung,tm2e", "samsung,exynos5433";
- };
- 
-+&cmu_disp {
-+	/*
-+	 * TM2 and TM2e differ only by DISP_PLL rate, but define all assigned
-+	 * clocks properties for DISP CMU for each board to keep them together
-+	 * for easier review and maintenance.
-+	 */
-+	assigned-clocks = <&cmu_disp CLK_FOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_DIV_SCLK_DECON_TV_ECLK>,
-+			  <&cmu_disp CLK_MOUT_ACLK_DISP_333_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DSIM0>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_RXCLKESC0_USER>,
-+			  <&cmu_disp CLK_MOUT_PHYCLK_MIPIDPHY0_BITCLKDIV8_USER>,
-+			  <&cmu_disp CLK_MOUT_DISP_PLL>,
-+			  <&cmu_mif CLK_MOUT_SCLK_DECON_TV_ECLK_A>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>,
-+			  <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK>;
-+	assigned-clock-parents = <0>, <0>,
-+				 <&cmu_mif CLK_ACLK_DISP_333>,
-+				 <&cmu_mif CLK_SCLK_DSIM0_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DSIM0_USER>,
-+				 <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_ECLK_USER>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY>,
-+				 <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY>,
-+				 <&cmu_disp CLK_FOUT_DISP_PLL>,
-+				 <&cmu_mif CLK_MOUT_BUS_PLL_DIV2>,
-+				 <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-+				 <&cmu_disp CLK_MOUT_SCLK_DECON_TV_ECLK_USER>;
-+	assigned-clock-rates = <278000000>, <400000000>;
-+};
-+
- &ldo31_reg {
- 	regulator-name = "TSP_VDD_1.8V_AP";
- 	regulator-min-microvolt = <1800000>;
+v2:
+- sorted all domains data by domain base address in the arrays in driver
+
+v1:
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (5):
+  soc: samsung: pm_domains: Use full names in subdomains registration
+    log
+  soc: samsung: pm_domains: Remove unused name field
+  soc: samsung: pm_domains: Remove message about failed memory
+    allocation
+  soc: samsung: pm_domains: Read domain name from the new label property
+  arm: dts: exynos: Add labels to all existing power domains
+
+ .../devicetree/bindings/power/pd-samsung.txt       |  4 ++++
+ arch/arm/boot/dts/exynos4.dtsi                     |  7 +++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  1 +
+ arch/arm/boot/dts/exynos4412.dtsi                  |  1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |  3 +++
+ arch/arm/boot/dts/exynos5420.dtsi                  |  5 +++++
+ drivers/soc/samsung/pm_domains.c                   | 24 +++++++++++++---------
+ 7 files changed, 35 insertions(+), 10 deletions(-)
+
 -- 
 1.9.1
+
