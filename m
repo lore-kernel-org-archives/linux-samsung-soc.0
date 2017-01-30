@@ -1,76 +1,67 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: for v4.11, 2nd round
-Date: Mon, 30 Jan 2017 19:57:20 +0200
-Message-ID: <20170130175720.nfmhet6mkajq3vho@kozik-lap>
-References: <20170129200630.22083-1-krzk@kernel.org>
- <20170129200630.22083-4-krzk@kernel.org>
- <20170130052329.GZ18943@localhost>
+Subject: Re: [PATCH v3 0/5] Provide real domain names for Exynos power domain
+ driver
+Date: Mon, 30 Jan 2017 20:36:21 +0200
+Message-ID: <20170130183621.3v77pfrncm2qb7nr@kozik-lap>
+References: <CGME20170130121912eucas1p1002708fc40c2d385c41ef2d7574561f9@eucas1p1.samsung.com>
+ <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:36730 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753587AbdA3Sg1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 13:36:27 -0500
 Content-Disposition: inline
-In-Reply-To: <20170130052329.GZ18943@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-On Sun, Jan 29, 2017 at 09:23:29PM -0800, Olof Johansson wrote:
-> Hi Krzysztof,
+On Mon, Jan 30, 2017 at 01:18:55PM +0100, Marek Szyprowski wrote:
+> Hi!
 > 
-> On Sun, Jan 29, 2017 at 10:06:29PM +0200, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > On top of previous pull request.
-> > 
-> > This adds proper clocks to LPASS node on Exynos5433 which is needed
-> > by Marek's patchset:
-> >  - [PATCH v2 0/8] Pad retentions support for Exynos5433
-> >    https://lkml.kernel.org/r/1485419634-28331-1-git-send-email-m.szyprowski () samsung ! com
-> > 
-> > 
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
-> > 
-> > The following changes since commit e4e381133241a27d732e78be09973b89a193eaf7:
-> > 
-> >   arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-2
-> > 
-> > for you to fetch changes up to 7547162ac351483df3641f64e99e10be329dd6a2:
-> > 
-> >   arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
+> For everyone working on power management and runtime power management it
+> is important to have a meaningful information about the state of the
+> power domains. Current Exynos power domain driver created names of the
+> domains based on the device tree node name. Those name
+> we incorrectly a bit more descriptive (like "mfc-power-domain@10023C40"
+> in exynos4.dtsi) than they should be (it should be fixed to
+> "power-domain@10023C40"). This patch series adds reading human readable
+> names from the 'label' property. While touching this, I've also fixes
+> a few obvious issues related to power domain driver code.
 > 
-> I think you tagged the wrong branch here. The log message shows the right hash
-> at the tip, but the tag is of 95648b747071d530b5bb983735cfe0ffff1b66bf, which
-> seems to be on your for-next.
+> Patches are based on the Linux next-20170130 branch.
 > 
-> Care to respin, so your tag and our merged branch match up?
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
 >
-Fixed, the same name of tag but this time on proper branch:
-tag name	samsung-dt64-4.11-2
-https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt64
 
-Sorry for the mess.
+I think I am missing something... but it looks it does not work. I
+applied it on top of my for-next tree and:
+cat /sys/kernel/debug/pm_genpd/pm_genpd_summary 
+domain                          status          slaves
+    /device                                             runtime status
+    ----------------------------------------------------------------------
+    isp-power-domain@10023CA0       off-0           
+    gps-alive-power-domain@10023D00  off-0           
+    gps-power-domain@10023CE0       off-0           
+    cam-power-domain@10023C00       off-0           
+
+Also, with enabled debug on pm-domains and unbinding a device:
+[  180.016800] s5p-mfc 13400000.codec: genpd_runtime_resume()
+[  180.017289] s5p-mfc 13400000.codec: genpd_runtime_suspend()
+[  180.017519] s5p-mfc 13400000.codec: Removing 13400000.codec
+[  180.024283] s5p-mfc 13400000.codec: removing from PM domain mfc-power-domain@10023C40
+[  180.024323] s5p-mfc 13400000.codec: genpd_remove_device()
+
+I think in both cases the genpd->name is used... which should be the new
+name (label).
+
+What is wrong?
 
 Best regards,
 Krzysztof
