@@ -1,14 +1,12 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] soc: samsung: Drivers for v4.11
-Date: Sun, 29 Jan 2017 14:31:09 -0800
-Message-ID: <20170129223109.GB3133@localhost>
-References: <20170120181343.12570-1-krzk@kernel.org>
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] Gpu: drm: exynos - Fix possible NULL derefrence.
+Date: Mon, 30 Jan 2017 10:32:03 +0530
+Message-ID: <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
+References: <CGME20170130050228epcas4p1b880b1ae599b7f7d6c60a4b0554a2162@epcas4p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170120181343.12570-1-krzk@kernel.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,54 +16,79 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 20, 2017 at 08:13:43PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Few changes in Exynos PMU driver including one that is needed by pinctrl
-> driver for runtime PM. We want to move forward with the RPM for our drivers
-> while keeping still DT ABI.
-> 
-> 
-> This tag is also for Linus Walleij to pull - base for pinctrl changes.
-> 
-> Best regards,
-> Krzysztof
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> 
-> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
-> 
->   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git samsung-drivers-soc-pmu-4.11
-> 
-> for you to fetch changes up to 1da6de33e43901ec5220cbf292d71172635ada67:
-> 
->   soc: samsung: pmu: Remove messages for failed memory allocation (2017-01-20 18:37:27 +0200)
-> 
-> ----------------------------------------------------------------
-> Improvements for Exynos PMU driver for v4.11:
-> 
-> Beside basic function of setting proper configuration for low power modes, the
-> Exynos PMU (Power Management Unit) driver is also a provider of syscon regmap
-> for its registers.  This regmap is essential to many other drivers wanting to
-> or needing to implement low power mode.
-> 
-> Exynos pinctrl driver, before getting support for Runtime Power Management,
-> needs access to this syscon regmap.  Let's do it in a DT ABI friendly way.
+of_device_get_match_data could return NULL, and so can cause
+a NULL pointer dereference later.
 
-Merged here as well.
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  |    4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |    4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c     |    4 ++++
+ drivers/gpu/drm/exynos/exynos_mixer.c    |    4 ++++
+ 4 files changed, 16 insertions(+)
 
-THanks,
-
--Olof
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index e07cb1f..fba0ffc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1765,6 +1765,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 
+ 	dsi->dev = dev;
+ 	dsi->driver_data = of_device_get_match_data(dev);
++	if (!dsi->driver_data) {
++		dev_err(dev, "no device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	ret = exynos_dsi_parse_dt(dsi);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index e2e4051..f568234 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -1076,6 +1076,10 @@ static int fimd_probe(struct platform_device *pdev)
+ 	ctx->dev = dev;
+ 	ctx->suspended = true;
+ 	ctx->driver_data = of_device_get_match_data(dev);
++	if (!ctx->driver_data) {
++		dev_err(dev, "no device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
+ 		ctx->vidcon1 |= VIDCON1_INV_VDEN;
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 38eaa63..27aeb74 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1837,6 +1837,10 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	hdata->drv_data = of_device_get_match_data(dev);
++	if (!hdata->drv_data) {
++		dev_err(dev, "no device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	platform_set_drvdata(pdev, hdata);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index edb20a3..b3c6bbb 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1205,6 +1205,10 @@ static int mixer_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	drv = of_device_get_match_data(dev);
++	if (!drv) {
++		dev_err(dev, "no device match found\n");
++		return -ENODEV;
++	}
+ 
+ 	ctx->pdev = pdev;
+ 	ctx->dev = dev;
+-- 
+1.7.9.5
