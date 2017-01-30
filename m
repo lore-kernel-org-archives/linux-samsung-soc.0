@@ -1,53 +1,54 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] Gpu: drm: exynos - Fix possible NULL derefrence.
-Date: Mon, 30 Jan 2017 09:51:53 -0300
-Message-ID: <d57ee31f-493c-0f76-65f5-a60babd7b20c@osg.samsung.com>
-References: <CGME20170130050228epcas4p1b880b1ae599b7f7d6c60a4b0554a2162@epcas4p1.samsung.com>
- <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
+Date: Mon, 30 Jan 2017 18:05:32 +0100
+Message-ID: <380eea9f-401b-f83f-4420-f89810086278@samsung.com>
+References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
+ <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+ <20170127195537.GG8801@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Shailendra Verma <shailendra.v@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.capricorn@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:53624 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbdA3RQx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 12:16:53 -0500
+In-reply-to: <20170127195537.GG8801@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-SGVsbG8gU2hhaWxlbmRyYSwKClRoZSBzdWJqZWN0IGxpbmUgaXMgd3JvbmcsIHBsZWFzZSBhbHdh
-eXMgdXNlIHRoZSBjb252ZW50aW9uIHVzZWQgaW4KcHJldmlvdXMgY29tbWl0cywgaS5lOiBnaXQg
-bG9nIC0tb25lbGluZSBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zLwoKT24gMDEvMzAvMjAxNyAwMjow
-MiBBTSwgU2hhaWxlbmRyYSBWZXJtYSB3cm90ZToKPiBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEg
-Y291bGQgcmV0dXJuIE5VTEwsIGFuZCBzbyBjYW4gY2F1c2UKPiBhIE5VTEwgcG9pbnRlciBkZXJl
-ZmVyZW5jZSBsYXRlci4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTaGFpbGVuZHJhIFZlcm1hIDxzaGFp
-bGVuZHJhLnZAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYyAgfCAgICA0ICsrKysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2ZpbWQuYyB8ICAgIDQgKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19oZG1pLmMgICAgIHwgICAgNCArKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMgICAgfCAgICA0ICsrKysKPiAgNCBmaWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25z
-KCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-c2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IGUw
-N2NiMWYuLmZiYTBmZmMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jCj4gQEAgLTE3NjUsNiArMTc2NSwxMCBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcHJvYmUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCj4gIAlkc2ktPmRldiA9IGRldjsKPiAg
-CWRzaS0+ZHJpdmVyX2RhdGEgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoZGV2KTsKPiArCWlm
-ICghZHNpLT5kcml2ZXJfZGF0YSkgewo+ICsJCWRldl9lcnIoZGV2LCAibm8gZGV2aWNlIG1hdGNo
-IGZvdW5kXG4iKTsKPiArCQlyZXR1cm4gLUVOT0RFVjsKPiArCX0KPgoKSSBkb24ndCB0aGluayB0
-aGlzIG1ha2VzIHNlbnNlIGZvciB0aGUgRXh5bm9zIGRyaXZlciBzaW5jZSBFeHlub3MgaXMgYQpE
-VC1vbmx5IHBsYXRmb3JtIGFuZCBzbyB0aGUgcHJvYmUgY2FsbGJhY2sgY2FuIG9ubHkgYmUgY2Fs
-bGVkIGlmIGEgZGV2Cm5vZGUgd2l0aCBhIGNvbXBhdGlibGUgc3RyaW5nIGluIHRoZSBPRiBkZXZp
-Y2UgaWQgdGFibGUgd2FzIHJlZ2lzdGVyZWQuCgpBbGwgdGhlIHN0cnVjdCBvZl9kZXZpY2VfaWQg
-aW4gdGhlIHRhYmxlIGhhdmUgYSAuZGF0YSBhbmQgc28gdGhpcyBjYW4ndApiZSBOVUxMIGluIHRo
-aXMgZHJpdmVyLgogCkJlc3QgcmVnYXJkcywKLS0gCkphdmllciBNYXJ0aW5leiBDYW5pbGxhcwpP
-cGVuIFNvdXJjZSBHcm91cApTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 01/27/2017 08:55 PM, Stephen Boyd wrote:
+> On 01/27, Sylwester Nawrocki wrote:
+>> Hi Stephen, Mike,
+>>
+>> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+>>
+>>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+>>
+>> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+>>
+>>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+>>
+>> ----------------------------------------------------------------
+>> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+>> Exynos PLL code updates and overall minor clean-ups.
+>>
+> Thanks. Pulled into clk-next.
+> 
+> Can you get your key signed by more people? Maybe others at
+> Samsung?
+
+That has been on my todo list for quite long time, thanks for
+reminding.  My key got signed already by one more person and
+there should be two more before I'm sending next pull request.
+
+-- 
+Regards,
+Sylwester
