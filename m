@@ -1,94 +1,50 @@
-From: Shailendra Verma <shailendra.v@samsung.com>
-Subject: [PATCH] Gpu: drm: exynos - Fix possible NULL derefrence.
-Date: Mon, 30 Jan 2017 10:32:03 +0530
-Message-ID: <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
-References: <CGME20170130050228epcas4p1b880b1ae599b7f7d6c60a4b0554a2162@epcas4p1.samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/4] ARM: mach/soc: exynos for v4.11, 2nd round
+Date: Sun, 29 Jan 2017 21:24:10 -0800
+Message-ID: <20170130052410.GA18943@localhost>
+References: <20170129200630.22083-1-krzk@kernel.org>
+ <20170129200630.22083-5-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34049 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752078AbdA3Ffh (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 30 Jan 2017 00:35:37 -0500
+Received: by mail-pf0-f194.google.com with SMTP id y143so22569123pfb.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2017 21:35:08 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20170129200630.22083-5-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-of_device_get_match_data could return NULL, and so can cause
-a NULL pointer dereference later.
+On Sun, Jan 29, 2017 at 10:06:30PM +0200, Krzysztof Kozlowski wrote:
+> 
+> On top of previous pull request.
+> 
+> 
+> The following changes since commit cda1a52dab50340728e46601e6c9da9fc4beaf1f:
+> 
+>   ARM: s3c64xx: Constify wake_irqs (2016-12-29 15:41:44 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.11-2
+> 
+> for you to fetch changes up to 95ed41df129ca8f76eb190534d20f4a6dcd37213:
+> 
+>   dt-bindings: video: exynos7-decon: Remove obsolete samsung,power-domain property (2017-01-29 21:03:56 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung mach/soc update for v4.11, second round:
+> 1. Remove mach code for Exynos4415 as a continuation of removal
+>    of this SoC.
+> 2. Remove obsolete property from the bindings documentation.
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c  |    4 ++++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |    4 ++++
- drivers/gpu/drm/exynos/exynos_hdmi.c     |    4 ++++
- drivers/gpu/drm/exynos/exynos_mixer.c    |    4 ++++
- 4 files changed, 16 insertions(+)
+Merged, thanks!
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e07cb1f..fba0ffc 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1765,6 +1765,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- 	dsi->dev = dev;
- 	dsi->driver_data = of_device_get_match_data(dev);
-+	if (!dsi->driver_data) {
-+		dev_err(dev, "no device match found\n");
-+		return -ENODEV;
-+	}
- 
- 	ret = exynos_dsi_parse_dt(dsi);
- 	if (ret)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index e2e4051..f568234 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -1076,6 +1076,10 @@ static int fimd_probe(struct platform_device *pdev)
- 	ctx->dev = dev;
- 	ctx->suspended = true;
- 	ctx->driver_data = of_device_get_match_data(dev);
-+	if (!ctx->driver_data) {
-+		dev_err(dev, "no device match found\n");
-+		return -ENODEV;
-+	}
- 
- 	if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
- 		ctx->vidcon1 |= VIDCON1_INV_VDEN;
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 38eaa63..27aeb74 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1837,6 +1837,10 @@ static int hdmi_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	hdata->drv_data = of_device_get_match_data(dev);
-+	if (!hdata->drv_data) {
-+		dev_err(dev, "no device match found\n");
-+		return -ENODEV;
-+	}
- 
- 	platform_set_drvdata(pdev, hdata);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index edb20a3..b3c6bbb 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1205,6 +1205,10 @@ static int mixer_probe(struct platform_device *pdev)
- 	}
- 
- 	drv = of_device_get_match_data(dev);
-+	if (!drv) {
-+		dev_err(dev, "no device match found\n");
-+		return -ENODEV;
-+	}
- 
- 	ctx->pdev = pdev;
- 	ctx->dev = dev;
--- 
-1.7.9.5
+
+-Olof
