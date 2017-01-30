@@ -1,54 +1,76 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
-Date: Mon, 30 Jan 2017 18:05:32 +0100
-Message-ID: <380eea9f-401b-f83f-4420-f89810086278@samsung.com>
-References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
- <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
- <20170127195537.GG8801@codeaurora.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: for v4.11, 2nd round
+Date: Mon, 30 Jan 2017 19:57:20 +0200
+Message-ID: <20170130175720.nfmhet6mkajq3vho@kozik-lap>
+References: <20170129200630.22083-1-krzk@kernel.org>
+ <20170129200630.22083-4-krzk@kernel.org>
+ <20170130052329.GZ18943@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:53624 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbdA3RQx (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 12:16:53 -0500
-In-reply-to: <20170127195537.GG8801@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20170130052329.GZ18943@localhost>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 01/27/2017 08:55 PM, Stephen Boyd wrote:
-> On 01/27, Sylwester Nawrocki wrote:
->> Hi Stephen, Mike,
->>
->> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
->>
->>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
->>
->> are available in the git repository at:
->>
->>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
->>
->> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
->>
->>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
->>
->> ----------------------------------------------------------------
->> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
->> Exynos PLL code updates and overall minor clean-ups.
->>
-> Thanks. Pulled into clk-next.
+On Sun, Jan 29, 2017 at 09:23:29PM -0800, Olof Johansson wrote:
+> Hi Krzysztof,
 > 
-> Can you get your key signed by more people? Maybe others at
-> Samsung?
+> On Sun, Jan 29, 2017 at 10:06:29PM +0200, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > On top of previous pull request.
+> > 
+> > This adds proper clocks to LPASS node on Exynos5433 which is needed
+> > by Marek's patchset:
+> >  - [PATCH v2 0/8] Pad retentions support for Exynos5433
+> >    https://lkml.kernel.org/r/1485419634-28331-1-git-send-email-m.szyprowski () samsung ! com
+> > 
+> > 
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> > 
+> > The following changes since commit e4e381133241a27d732e78be09973b89a193eaf7:
+> > 
+> >   arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-2
+> > 
+> > for you to fetch changes up to 7547162ac351483df3641f64e99e10be329dd6a2:
+> > 
+> >   arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
+> 
+> I think you tagged the wrong branch here. The log message shows the right hash
+> at the tip, but the tag is of 95648b747071d530b5bb983735cfe0ffff1b66bf, which
+> seems to be on your for-next.
+> 
+> Care to respin, so your tag and our merged branch match up?
+>
+Fixed, the same name of tag but this time on proper branch:
+tag name	samsung-dt64-4.11-2
+https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt64
 
-That has been on my todo list for quite long time, thanks for
-reminding.  My key got signed already by one more person and
-there should be two more before I'm sending next pull request.
+Sorry for the mess.
 
--- 
-Regards,
-Sylwester
+Best regards,
+Krzysztof
