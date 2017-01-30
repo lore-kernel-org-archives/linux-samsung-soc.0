@@ -1,34 +1,32 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: for v4.11, 2nd round
-Date: Sun, 29 Jan 2017 21:23:29 -0800
-Message-ID: <20170130052329.GZ18943@localhost>
+Subject: Re: [GIT PULL 2/4] soc: samsung: exynos for v4.11, 2nd round
+Date: Sun, 29 Jan 2017 21:19:07 -0800
+Message-ID: <20170130051907.GX18943@localhost>
 References: <20170129200630.22083-1-krzk@kernel.org>
- <20170129200630.22083-4-krzk@kernel.org>
+ <20170129200630.22083-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35422 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752057AbdA3Ffh (ORCPT
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35035 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751961AbdA3Ffh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Mon, 30 Jan 2017 00:35:37 -0500
-Received: by mail-pf0-f193.google.com with SMTP id f144so22567067pfa.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2017 21:35:06 -0800 (PST)
+Received: by mail-pg0-f67.google.com with SMTP id 204so30611866pge.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2017 21:35:02 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20170129200630.22083-4-krzk@kernel.org>
+In-Reply-To: <20170129200630.22083-2-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
-Hi Krzysztof,
-
-On Sun, Jan 29, 2017 at 10:06:29PM +0200, Krzysztof Kozlowski wrote:
+On Sun, Jan 29, 2017 at 10:06:27PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> On top of previous pull request.
+> On top of previous pull request (tags/samsung-drivers-soc-pmu-4.11).
 > 
-> This adds proper clocks to LPASS node on Exynos5433 which is needed
+> This adds support for Exynos5433 to PMU driver which is needed
 > by Marek's patchset:
 >  - [PATCH v2 0/8] Pad retentions support for Exynos5433
 >    https://lkml.kernel.org/r/1485419634-28331-1-git-send-email-m.szyprowski () samsung ! com
@@ -42,28 +40,8 @@ On Sun, Jan 29, 2017 at 10:06:29PM +0200, Krzysztof Kozlowski wrote:
 > 
 > Best regards,
 > Krzysztof
-> 
-> 
-> The following changes since commit e4e381133241a27d732e78be09973b89a193eaf7:
-> 
->   arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-2
-> 
-> for you to fetch changes up to 7547162ac351483df3641f64e99e10be329dd6a2:
-> 
->   arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
 
-I think you tagged the wrong branch here. The log message shows the right hash
-at the tip, but the tag is of 95648b747071d530b5bb983735cfe0ffff1b66bf, which
-seems to be on your for-next.
-
-Care to respin, so your tag and our merged branch match up?
-
-
-Thanks!
+Merged, thanks!
 
 
 -Olof
