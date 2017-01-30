@@ -1,67 +1,96 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 0/5] Provide real domain names for Exynos power domain
- driver
-Date: Mon, 30 Jan 2017 20:36:21 +0200
-Message-ID: <20170130183621.3v77pfrncm2qb7nr@kozik-lap>
-References: <CGME20170130121912eucas1p1002708fc40c2d385c41ef2d7574561f9@eucas1p1.samsung.com>
- <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH] usb: dwc3 dwc3_exynos_probe() change goto labels to meaningful names
+Date: Mon, 30 Jan 2017 12:25:04 -0700
+Message-ID: <20170130192504.19046-1-shuahkh@osg.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36730 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753587AbdA3Sg1 (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:60941
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754068AbdA3TZK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Jan 2017 13:36:27 -0500
-Content-Disposition: inline
-In-Reply-To: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+        Mon, 30 Jan 2017 14:25:10 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 01:18:55PM +0100, Marek Szyprowski wrote:
-> Hi!
-> 
-> For everyone working on power management and runtime power management it
-> is important to have a meaningful information about the state of the
-> power domains. Current Exynos power domain driver created names of the
-> domains based on the device tree node name. Those name
-> we incorrectly a bit more descriptive (like "mfc-power-domain@10023C40"
-> in exynos4.dtsi) than they should be (it should be fixed to
-> "power-domain@10023C40"). This patch series adds reading human readable
-> names from the 'label' property. While touching this, I've also fixes
-> a few obvious issues related to power domain driver code.
-> 
-> Patches are based on the Linux next-20170130 branch.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
+Change goto labels to meaningful names from a series of errNs.
 
-I think I am missing something... but it looks it does not work. I
-applied it on top of my for-next tree and:
-cat /sys/kernel/debug/pm_genpd/pm_genpd_summary 
-domain                          status          slaves
-    /device                                             runtime status
-    ----------------------------------------------------------------------
-    isp-power-domain@10023CA0       off-0           
-    gps-alive-power-domain@10023D00  off-0           
-    gps-power-domain@10023CE0       off-0           
-    cam-power-domain@10023C00       off-0           
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
 
-Also, with enabled debug on pm-domains and unbinding a device:
-[  180.016800] s5p-mfc 13400000.codec: genpd_runtime_resume()
-[  180.017289] s5p-mfc 13400000.codec: genpd_runtime_suspend()
-[  180.017519] s5p-mfc 13400000.codec: Removing 13400000.codec
-[  180.024283] s5p-mfc 13400000.codec: removing from PM domain mfc-power-domain@10023C40
-[  180.024323] s5p-mfc 13400000.codec: genpd_remove_device()
+Rebased to usb-next
 
-I think in both cases the genpd->name is used... which should be the new
-name (label).
+ drivers/usb/dwc3/dwc3-exynos.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-What is wrong?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index 1515d45..98f74ff 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -147,53 +147,53 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+ 	if (IS_ERR(exynos->vdd33)) {
+ 		ret = PTR_ERR(exynos->vdd33);
+-		goto err2;
++		goto vdd33_err;
+ 	}
+ 	ret = regulator_enable(exynos->vdd33);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable VDD33 supply\n");
+-		goto err2;
++		goto vdd33_err;
+ 	}
+ 
+ 	exynos->vdd10 = devm_regulator_get(dev, "vdd10");
+ 	if (IS_ERR(exynos->vdd10)) {
+ 		ret = PTR_ERR(exynos->vdd10);
+-		goto err3;
++		goto vdd10_err;
+ 	}
+ 	ret = regulator_enable(exynos->vdd10);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable VDD10 supply\n");
+-		goto err3;
++		goto vdd10_err;
+ 	}
+ 
+ 	ret = dwc3_exynos_register_phys(exynos);
+ 	if (ret) {
+ 		dev_err(dev, "couldn't register PHYs\n");
+-		goto err4;
++		goto phys_err;
+ 	}
+ 
+ 	if (node) {
+ 		ret = of_platform_populate(node, NULL, NULL, dev);
+ 		if (ret) {
+ 			dev_err(dev, "failed to add dwc3 core\n");
+-			goto err5;
++			goto populate_err;
+ 		}
+ 	} else {
+ 		dev_err(dev, "no device node, failed to add dwc3 core\n");
+ 		ret = -ENODEV;
+-		goto err5;
++		goto populate_err;
+ 	}
+ 
+ 	return 0;
+ 
+-err5:
++populate_err:
+ 	platform_device_unregister(exynos->usb2_phy);
+ 	platform_device_unregister(exynos->usb3_phy);
+-err4:
++phys_err:
+ 	regulator_disable(exynos->vdd10);
+-err3:
++vdd10_err:
+ 	regulator_disable(exynos->vdd33);
+-err2:
++vdd33_err:
+ 	clk_disable_unprepare(exynos->axius_clk);
+ axius_clk_err:
+ 	clk_disable_unprepare(exynos->susp_clk);
+-- 
+2.7.4
