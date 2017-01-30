@@ -1,61 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/7] pinctrl: samsung: Ensure that pad retention is disabled
- on driver init
-Date: Mon, 30 Jan 2017 13:38:23 +0100
-Message-ID: <1485779908-32147-3-git-send-email-m.szyprowski@samsung.com>
-References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130123838eucas1p12953af1e9af22e17ed9ca9c49dbd1e9d@eucas1p1.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] Gpu: drm: exynos - Fix possible NULL derefrence.
+Date: Mon, 30 Jan 2017 09:51:53 -0300
+Message-ID: <d57ee31f-493c-0f76-65f5-a60babd7b20c@osg.samsung.com>
+References: <CGME20170130050228epcas4p1b880b1ae599b7f7d6c60a4b0554a2162@epcas4p1.samsung.com>
+ <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1485752523-30029-1-git-send-email-shailendra.v@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Shailendra Verma <shailendra.v@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.capricorn@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When pin controller device is a part of power domain, there is no guarantee
-that the power domain was not turned off and then on during boot process
-before probing of the pin control driver. If it happened, then pin control
-driver should ensure that pad retention is turned off during its probe call.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 63e51b56a22a..fa3802970570 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -777,6 +777,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
- 	struct samsung_retention_ctrl *ctrl;
- 	struct regmap *pmu_regs;
-+	int i;
- 
- 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
-@@ -794,6 +795,10 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 	ctrl->enable = exynos_retention_enable;
- 	ctrl->disable = exynos_retention_disable;
- 
-+	/* Ensure that retention is disabled on driver init */
-+	for (i = 0; i < ctrl->nr_regs; i++)
-+		regmap_write(pmu_regs, ctrl->regs[i], ctrl->value);
-+
- 	return ctrl;
- }
- 
--- 
-1.9.1
+SGVsbG8gU2hhaWxlbmRyYSwKClRoZSBzdWJqZWN0IGxpbmUgaXMgd3JvbmcsIHBsZWFzZSBhbHdh
+eXMgdXNlIHRoZSBjb252ZW50aW9uIHVzZWQgaW4KcHJldmlvdXMgY29tbWl0cywgaS5lOiBnaXQg
+bG9nIC0tb25lbGluZSBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zLwoKT24gMDEvMzAvMjAxNyAwMjow
+MiBBTSwgU2hhaWxlbmRyYSBWZXJtYSB3cm90ZToKPiBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEg
+Y291bGQgcmV0dXJuIE5VTEwsIGFuZCBzbyBjYW4gY2F1c2UKPiBhIE5VTEwgcG9pbnRlciBkZXJl
+ZmVyZW5jZSBsYXRlci4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTaGFpbGVuZHJhIFZlcm1hIDxzaGFp
+bGVuZHJhLnZAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kc2kuYyAgfCAgICA0ICsrKysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2ZpbWQuYyB8ICAgIDQgKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19oZG1pLmMgICAgIHwgICAgNCArKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X21peGVyLmMgICAgfCAgICA0ICsrKysKPiAgNCBmaWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25z
+KCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+c2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IGUw
+N2NiMWYuLmZiYTBmZmMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jCj4gQEAgLTE3NjUsNiArMTc2NSwxMCBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCj4gIAlkc2ktPmRldiA9IGRldjsKPiAg
+CWRzaS0+ZHJpdmVyX2RhdGEgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoZGV2KTsKPiArCWlm
+ICghZHNpLT5kcml2ZXJfZGF0YSkgewo+ICsJCWRldl9lcnIoZGV2LCAibm8gZGV2aWNlIG1hdGNo
+IGZvdW5kXG4iKTsKPiArCQlyZXR1cm4gLUVOT0RFVjsKPiArCX0KPgoKSSBkb24ndCB0aGluayB0
+aGlzIG1ha2VzIHNlbnNlIGZvciB0aGUgRXh5bm9zIGRyaXZlciBzaW5jZSBFeHlub3MgaXMgYQpE
+VC1vbmx5IHBsYXRmb3JtIGFuZCBzbyB0aGUgcHJvYmUgY2FsbGJhY2sgY2FuIG9ubHkgYmUgY2Fs
+bGVkIGlmIGEgZGV2Cm5vZGUgd2l0aCBhIGNvbXBhdGlibGUgc3RyaW5nIGluIHRoZSBPRiBkZXZp
+Y2UgaWQgdGFibGUgd2FzIHJlZ2lzdGVyZWQuCgpBbGwgdGhlIHN0cnVjdCBvZl9kZXZpY2VfaWQg
+aW4gdGhlIHRhYmxlIGhhdmUgYSAuZGF0YSBhbmQgc28gdGhpcyBjYW4ndApiZSBOVUxMIGluIHRo
+aXMgZHJpdmVyLgogCkJlc3QgcmVnYXJkcywKLS0gCkphdmllciBNYXJ0aW5leiBDYW5pbGxhcwpP
+cGVuIFNvdXJjZSBHcm91cApTYW1zdW5nIFJlc2VhcmNoIEFtZXJpY2EKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
