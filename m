@@ -1,90 +1,60 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 4/5] soc: samsung: pm_domains: Read domain name from the new
- label property
-Date: Mon, 30 Jan 2017 13:18:59 +0100
-Message-ID: <1485778740-30337-5-git-send-email-m.szyprowski@samsung.com>
-References: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130121915eucas1p23aa4f4be912bcd64f9521f6e6b51132f@eucas1p2.samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 1/7] soc: smasung: pmu: Add register defines for pad
+ retention control
+Date: Mon, 30 Jan 2017 13:38:22 +0100
+Message-ID: <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
+References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170130123837eucas1p1056a57f23b1e3bf089e5bc55bb2cf2d4@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Device tree nodes for each power domain should use generic "power-domain"
-name, so using it as a domain name doesn't give much benefits. This patch
-adds support for human readable names defined in 'label' property. Such
-names are visible to userspace and makes debugging much easier. When no
-'label' property is found, driver keeps using the name constructed from
-full node name.
+Add PMU defines related to pad retention control. Will be later used
+by the Exynos pin controller driver.
 
-Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- Documentation/devicetree/bindings/power/pd-samsung.txt |  4 ++++
- drivers/soc/samsung/pm_domains.c                       | 12 ++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
-index fb08c8d62733..549f7dee9b9d 100644
---- a/Documentation/devicetree/bindings/power/pd-samsung.txt
-+++ b/Documentation/devicetree/bindings/power/pd-samsung.txt
-@@ -13,6 +13,8 @@ Required Properties:
-     must be 0.
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 9786c62d7159..49df0a01a2cc 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -631,4 +631,20 @@
+ 					 | EXYNOS5420_KFC_USE_STANDBY_WFI2  \
+ 					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
  
- Optional Properties:
-+- label: Human readable string with domain name. Will be visible in userspace
-+	to let user to distinguish between multiple domains in SoC.
- - clocks: List of clock handles. The parent clocks of the input clocks to the
- 	devices in this power domain are set to oscclk before power gating
- 	and restored back after powering on a domain. This is required for
-@@ -39,6 +41,7 @@ Example:
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
- 		#power-domain-cells = <0>;
-+		label = "LCD0";
- 	};
- 
- 	mfc_pd: power-domain@10044060 {
-@@ -47,6 +50,7 @@ Example:
- 		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
- 		clock-names = "oscclk", "clk0";
- 		#power-domain-cells = <0>;
-+		label = "MFC";
- 	};
- 
- See Documentation/devicetree/bindings/power/power_domain.txt for description
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index 5a0a46bcbe18..a6a5d807cc2b 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -142,6 +142,15 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	{ },
- };
- 
-+static __init const char *exynos_get_domain_name(struct device_node *node)
-+{
-+	const char *name;
++/* For EXYNOS5433 */
++#define EXYNOS5433_PAD_RETENTION_AUD_OPTION			(0x3028)
++#define EXYNOS5433_PAD_RETENTION_MMC2_OPTION			(0x30C8)
++#define EXYNOS5433_PAD_RETENTION_TOP_OPTION			(0x3108)
++#define EXYNOS5433_PAD_RETENTION_UART_OPTION			(0x3128)
++#define EXYNOS5433_PAD_RETENTION_MMC0_OPTION			(0x3148)
++#define EXYNOS5433_PAD_RETENTION_MMC1_OPTION			(0x3168)
++#define EXYNOS5433_PAD_RETENTION_EBIA_OPTION			(0x3188)
++#define EXYNOS5433_PAD_RETENTION_EBIB_OPTION			(0x31A8)
++#define EXYNOS5433_PAD_RETENTION_SPI_OPTION			(0x31C8)
++#define EXYNOS5433_PAD_RETENTION_MIF_OPTION			(0x31E8)
++#define EXYNOS5433_PAD_RETENTION_USBXTI_OPTION			(0x3228)
++#define EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION			(0x3248)
++#define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
++#define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
 +
-+	if (of_property_read_string(node, "label", &name) < 0)
-+		name = strrchr(node->full_name, '/') + 1;
-+	return kstrdup_const(name, GFP_KERNEL);
-+}
-+
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct device_node *np;
-@@ -159,8 +168,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 			of_node_put(np);
- 			return -ENOMEM;
- 		}
--		pd->pd.name = kstrdup_const(strrchr(np->full_name, '/') + 1,
--					    GFP_KERNEL);
-+		pd->pd.name = exynos_get_domain_name(np);
- 		if (!pd->pd.name) {
- 			kfree(pd);
- 			of_node_put(np);
+ #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
 -- 
 1.9.1
-
