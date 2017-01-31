@@ -1,21 +1,20 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Tue, 31 Jan 2017 21:32:42 +0000
-Message-ID: <CACvgo52MeWN2q-0xPHq+YPSzJzoRXC5+rb_=xdic_015qy8Yig@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver
+ on TM2 board
+Date: Tue, 31 Jan 2017 22:51:06 +0100
+Message-ID: <20170131215105.GA3515@mithrandir.ba.sec>
 References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
  <CGME20170111063408epcas5p2e6ec091549c3ffed8462fd95d11d3c82@epcas5p2.samsung.com>
  <1484116439-7275-3-git-send-email-hoegeun.kwon@samsung.com>
  <08c5d94b-c76f-af14-c08f-478e26a34a7c@samsung.com>
- <588FD3C3.7080508@samsung.com>
- <20170131085449.GA19348@ulmo.ba.sec> <20170131143853.GU20076@art_vandelay>
- <20170131150226.GB4519@ulmo.ba.sec> <20170131154951.GZ20076@art_vandelay>
- <20170131211728.GB872@mithrandir.ba.sec>
+ <588FD3C3.7080508@samsung.com> <20170131085449.GA19348@ulmo.ba.sec>
+ <20170131143853.GU20076@art_vandelay>
+ <20170131150226.GB4519@ulmo.ba.sec>
+ <87r33j85ap.fsf@eliezer.anholt.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1509727373=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170131211728.GB872@mithrandir.ba.sec>
+In-Reply-To: <87r33j85ap.fsf@eliezer.anholt.net>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -25,93 +24,67 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Donghwa Lee <dh09.lee@samsung.com>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Hyungwon Hwang <human.hwang@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMzEgSmFudWFyeSAyMDE3IGF0IDIxOjE3LCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
-bmdAZ21haWwuY29tPiB3cm90ZToKPiBPbiBUdWUsIEphbiAzMSwgMjAxNyBhdCAxMDo0OTo1MUFN
-IC0wNTAwLCBTZWFuIFBhdWwgd3JvdGU6Cj4+IE9uIFR1ZSwgSmFuIDMxLCAyMDE3IGF0IDA0OjAy
-OjI2UE0gKzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+PiA+IE9uIFR1ZSwgSmFuIDMxLCAy
-MDE3IGF0IDA5OjM4OjUzQU0gLTA1MDAsIFNlYW4gUGF1bCB3cm90ZToKPj4gPiA+IE9uIFR1ZSwg
-SmFuIDMxLCAyMDE3IGF0IDA5OjU0OjQ5QU0gKzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+
-PiA+ID4gPiBPbiBUdWUsIEphbiAzMSwgMjAxNyBhdCAwOTowMTowN0FNICswOTAwLCBJbmtpIERh
-ZSB3cm90ZToKPj4gPiA+ID4gPgo+PiA+ID4gPiA+Cj4+ID4gPiA+ID4gMjAxN+uFhCAwMeyblCAy
-NOydvCAxMDo1MOyXkCBIb2VnZXVuIEt3b24g7J20KOqwgCkg7JO0IOq4gDoKPj4gPiA+ID4gPiA+
-IERlYXIgVGhpZXJyeSwKPj4gPiA+ID4gPiA+Cj4+ID4gPiA+ID4gPiBDb3VsZCB5b3UgcGxlYXNl
-IHJldmlldyB0aGlzIHBhdGNoPwo+PiA+ID4gPiA+Cj4+ID4gPiA+ID4gVGhpZXJyeSwgSSB0aGlu
-ayB0aGlzIHBhdGNoIGhhcyBiZWVuIHJldmlld2VkIGVub3VnaCBidXQgbm8gY29tbWVudAo+PiA+
-ID4gPiA+IGZyb20geW91LiBTZWVtcyB5b3UgYXJlIGJ1c3kuIEkgd2lsbCBwaWNrIHVwIHRoaXMu
-Cj4+ID4gPiA+Cj4+ID4gPiA+IFNvcnJ5LCBidXQgdGhhdCdzIG5vdCBob3cgaXQgd29ya3MuIFRo
-aXMgcGF0Y2ggaGFzIGdvbmUgdGhyb3VnaCA4Cj4+ID4gPiA+IHJldmlzaW9ucyB3aXRoaW4gNCB3
-ZWVrcywgYW5kIEkgdGVuZCB0byBpZ25vcmUgcGF0Y2hlcyBsaWtlIHRoYXQgdW50aWwKPj4gPiA+
-ID4gdGhlIGR1c3Qgc2V0dGxlcy4KPj4gPiA+ID4KPj4gPiA+Cj4+ID4gPiBTZWVtcyBsaWtlIHRo
-ZSBkdXN0IHdhcyBwcmV0dHkgc2V0dGxlZC4gSXQgd2FzIHBvc3RlZCBvbiAxLzExLCBwaW5nZWQg
-b24gMS8yNCwKPj4gPiA+IGFuZCBwaWNrZWQgdXAgb24gMS8zMS4gSSBkb24ndCB0aGluayBpdCdz
-IHVucmVhc29uYWJsZSB0byB0YWtlIGl0IHRocm91Z2gKPj4gPiA+IGFub3RoZXIgdHJlZSBhZnRl
-ciB0aGF0Lgo+PiA+ID4KPj4gPiA+IEkgd29uZGVyIGlmIGRybV9wYW5lbCB3b3VsZCBiZW5lZml0
-IGZyb20gdGhlIC1taXNjIGdyb3VwIG1haW50YWluZXJzaGlwIG1vZGVsCj4+ID4gPiBhcyBkcm1f
-YnJpZGdlIGRvZXMuIEJ5IHNwcmVhZGluZyBvdXQgdGhlIHdvcmtsb2FkLCB0aGUgaGlnaC1tYWlu
-dGVuYW5jZQo+PiA+ID4gcGF0Y2hlcyB3b3VsZCBob3BlZnVsbHkgZmluZCBzb21lb25lIHRvIHNo
-ZXBoZXJkIHRoZW0gdGhyb3VnaC4KPj4gPgo+PiA+IEV4Y2VwdCB0aGF0IG5vYm9keSBleGNlcHQg
-bWUgcmVhbGx5IGNhcmVzLgo+Pgo+PiBJIGNlcnRhaW5seSBoYXZlbid0IGJlZW4gcGF5aW5nIGF0
-dGVudGlvbi4gTXkgZXhjdXNlLCBhdCBsZWFzdCwgaXMgdGhhdCB5b3UncmUgYQo+PiBncmVhdCBt
-YWludGFpbmVyIGFuZCBJIGhhdmVuJ3QgdGhvdWdodCB0aGUgcGF0Y2hlcyBuZWVkIGEgc2Vjb25k
-IGxvb2suIFBlcmhhcHMKPj4gaWYgd2UgbW92ZWQgdG93YXJkcyBhIGdyb3VwLCBtb3JlIHBlb3Bs
-ZSB3b3VsZCBiZSB2ZXN0ZWQvY2FyZT8KPgo+IEkgZG91YnQgdGhhdCBncm91cCBtYWludGFpbmVy
-c2hpcCB3b3VsZCBjaGFuZ2UgbXVjaCBhYm91dCB0aGUgbGFjayBvZgo+IHBlZXIgcmV2aWV3LiBQ
-ZWVyIHJldmlldyBtYWtlcyBtYWludGVuYW5jZSBhIGxvdCBlYXNpZXIuIFVzdWFsbHkgd2hlbiBJ
-Cj4gc2VlIHRoYXQgYSBwYXRjaCBoYXMgYmVlbiByZXZpZXdlZCBieSBzb21lb25lIHRoYXQgSSB0
-aGluayBJIGNhbiB0cnVzdCwKPiBJIG9ubHkgZ2l2ZSBpdCBhIHZlcnkgYnJpZWYgbG9vayBiZWZv
-cmUgYXBwbHlpbmcuIEhvd2V2ZXIsIGlmIHRoZXJlJ3MKPiBiZWVuIG5vIG90aGVyIHJldmlldyBJ
-IG5lZWQgdG8gdGFrZSBhIGxvdCBtb3JlIHRpbWUgdG8gcmV2aWV3Lgo+Cj4+ID4gSWYgd2UgbGV0
-IHBlb3BsZSB0YWtlIHBhdGNoZXMKPj4gPiB0aHJvdWdoIHNlcGFyYXRlIHRyZWVzIG9yIGdyb3Vw
-LW1haW50YWluZWQgdHJlZXMgdGhleSdsbCBsaWtlbHkgZ28gaW4KPj4gPiB3aXRob3V0IHRvbyBt
-dWNoIHRob3VnaHQuIERSTSBwYW5lbCBpcyBzb21ld2hhdCBkaWZmZXJlbnQgZnJvbSBjb3JlIERS
-TQo+PiA+IGluIHRoaXMgcmVnYXJkIGJlY2F1c2UgaXRzIGluZnJhc3RydWN0dXJlIGlzIG1pbmlt
-YWwgYW5kIHRoZXJlJ3MgbGl0dGxlCj4+ID4gb3V0c2lkZSB0aGUgcGFuZWwtc2ltcGxlIGRyaXZl
-ci4gU28gd2UncmUgc3RpbGwgYXQgYSBzdGFnZSB3aGVyZSB3ZSBuZWVkCj4+ID4gdG8gZmluZS10
-dW5lIHdoYXQgZHJpdmVycyBzaG91bGQgbG9vayBsaWtlIGFuZCBob3cgd2UgY2FuIGltcHJvdmUu
-Cj4+ID4KPj4KPj4gRmFpciBwb2ludC4gV2l0aCBkcm1fYnJpZGdlLCBJJ3ZlIGJlZW4gbGVuZGlu
-ZyByZXZpZXcgaGVscCwgYnV0IGRlZmVycmluZyB0bwo+PiBBcmNoaXQgZm9yIG1lcmdlIG9uIHBh
-dGNoZXMgd2hpY2ggSSB0aGluayBoZSBzaG91bGQgbG9vayBhdC4gR3VzdGF2byBpcyBpbiBhCj4+
-IHNpbWlsYXIgcGxhY2Ugd2l0aCBmZW5jZXMuIGRybV9wYW5lbCBzZWVtcyBsaWtlIHNvbWV0aGlu
-ZyB0aGF0IHNob3VsZCBmb2xsb3cKPj4gdGhlIHNhbWUgbW9kZWwuIE1heWJlIG9uY2UgbW9yZSBw
-ZW9wbGUgKG9yIG9uZSBwZXJzb24pIGdldCB1cCB0byBzcGVlZCBvbgo+PiB0aGluZ3MsIHdlIGNv
-dWxkIHNoYXJlIHRoZSBsb2FkLgo+Cj4gSSBjZXJ0YWlubHkgd291bGRuJ3QgbWluZCBtb3JlIHBl
-b3BsZSByZXZpZXdpbmcgcGFuZWwgcGF0Y2hlcy4gQXBwbHlpbmcKPiB0aGVtIGlzIHRoZSBlYXN5
-IHBhcnQuCj4KPj4gPiA+ID4gT3RoZXIgdGhhbiB0aGF0LCB0aGlzIGNvbnRpbnVlcyB0aGUgc2Ft
-ZSBtYWRuZXNzIHRoYXQgSSd2ZSByZXBlYXRlZGx5Cj4+ID4gPiA+IGNvbXBsYWluZWQgYWJvdXQg
-aW4gdGhlIHBhc3QuIFRoZSB3aG9sZSBtZWNoYW5pc20gb2YgcnVubmluZyB0aHJvdWdoIGEKPj4g
-PiA+ID4gc2VyaWVzIG9mIHdyaXRlcyBhbmQgbm90IGNhcmluZyBhYm91dCBlcnJvcnMgdW50aWwg
-dGhlIHZlcnkgZW5kIGlzCj4+ID4gPiA+IHNvbWV0aGluZyB3ZSd2ZSBkaXNjdXNzZWQgYXQgbGVu
-Z3RoIGluIHRoZSBwYXN0LiBJdCBhbHNvIGluIGxhcmdlIHBhcnRzCj4+ID4gPiA+IGR1cGxpY2F0
-ZXMgYSBidW5jaCBvZiBmdW5jdGlvbnMgZnJvbSBvdGhlciBTYW1zdW5nIHBhbmVsIGRyaXZlcnMg
-dGhhdCBJCj4+ID4gPiA+IGFscmVhZHkgc2FpZCBzaG91bGQgZXZlbnR1YWxseSBiZSBtb3ZlZCB0
-byBzb21ldGhpbmcgc2FuZXIuCj4+ID4gPiA+Cj4+ID4gPgo+PiA+ID4gRldJVywgdGhpcyB0eXBl
-IG9mIGVycm9yIGhhbmRsaW5nIGlzbid0IG15IHByZWZlcmVuY2UgZWl0aGVyLiBJZiB3ZSBtdXN0
-IGRlZmVyLAo+PiA+ID4gSSdkIHJhdGhlciBub3Qga2VlcCBpdCBpbiBjdHgsIGJ1dCByYXRoZXIg
-cGFzcyBhcm91bmQgYW4gYXJndW1lbnQgc28gaXQncyBtb3JlCj4+ID4gPiBvYnZpb3VzIHdlIG5l
-ZWQgdG8gZGVhbCB3aXRoIGl0IGluIHRoZSByZXR1cm4uIFRoYXQgc2FpZCwgdGhpcyBzZWVtcyBs
-aWtlCj4+ID4gPiBhIGNhc2Ugb2YgbGV0dGluZyB0aGUgcGVyZmVjdCBiZSB0aGUgZW5lbXkgb2Yg
-dGhlIGdvb2QsIHN1cmVseSBzb21ldGhpbmcgaXMKPj4gPiA+IGJldHRlciB0aGFuIG5vdGhpbmc/
-Cj4+ID4KPj4gPiBUaGF0J3Mgd2hhdCBJIGVuZGVkIHVwIHNheWluZyB0aGUgbGFzdCB0d28gdGlt
-ZXMuIEJ1dCB0aGlzIGhhcyBnb3QgdG8KPj4gPiBzdG9wIGF0IHNvbWUgcG9pbnQuIElmIHlvdSBs
-b29rIGF0IG1vc3Qgb2YgdGhlIHBhbmVsIGRyaXZlcnMsIHRoZXkgbG9vawo+PiA+IG1vcmUgbGlr
-ZSBtYXRlcmlhbCBmb3IgdGhlIHN0YWdpbmcgdHJlZSByYXRoZXIgdGhhbiBEUk0gcHJvcGVyLgo+
-PiA+Cj4+ID4gWWVzLCBzb21ldGhpbmcgaXMgYmV0dGVyIHRoYW4gbm90aGluZywgYnV0IHdlIGNh
-bid0IGhhdmUgdGhpcyBtdWx0aXBseQo+PiA+IGZ1cnRoZXIuCj4+ID4KPj4KPj4gU28gcGVyaGFw
-cyBpZiB3ZSBoYWQgbW9yZSByZXZpZXdlcnMsIHdlIGNvdWxkIHRpZ2h0ZW4gdXAgdGhlIHJldmll
-dyBmZWVkYmFjawo+PiBsb29wIGFuZCBhdm9pZCB0aGlzIHdoaWxlIHN0aWxsIGdldHRpbmcgdGhp
-bmdzIG1lcmdlZD8KPgo+IE1heWJlLiBMaWtlIEkgc2FpZCwgSSB3b3VsZCB2ZXJ5IG11Y2ggd2Vs
-Y29tZSBtb3JlIHJldmlldyBvbiBwYW5lbAo+IHBhdGNoZXMuCj4KSSB0aGluayB0aGF0IHRoZXJl
-J3MgYSBwYXJ0IHRoYXQgSW5raSBhbmQvb3Igb3RoZXJzIG1pZ2h0IGhhdmUKZm9yZ290dGVuLiBC
-ZWluZyB0aGUgc29sZS9jb3JlIHBlcnNvbiByZXZpZXdpbmcgdGhpcyBsZWFkcyB0byBhIGJpdAp0
-b28gb2Z0ZW4gcmVwZWF0IG9mIHRoZSBzYW1lIHByaW5jaXBsZXMgLi4uIHdoaWNoIGFmdGVyIGEg
-d2hpbGUgZ2V0cyBhCmJpdCBbcGljayB5b3VyIGZhdm91cml0ZSBub24tY29vbCB3b3JkXS4KCklu
-IG9uZSBvZiBteSBleHBlcmllbmNlcyBbd2hpc3QgYXR0ZW1wdGluZyB0byBoZWxwIG91dF0sIG9u
-ZSBoYWQgdG8KcmVwZWF0L3Jld29yZCB0aGUgZXhhY3Qgc2FtZSB0aGluZyB0aHJlZSB0aW1lcyBp
-biBvcmRlciB0byBiZQphZGRyZXNzZWQgOi1cCgotRW1pbApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1509727373==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+
+
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jan 31, 2017 at 10:15:10AM -0800, Eric Anholt wrote:
+[...]
+> As is, I'm stuck out here with my panel driver I submitted on December
+> 14th completely ignored, and no other developer will look at it because
+> their review doesn't count and only yours does.
+
+For the record, until earlier today when Daniel started to review your
+patches, no doubt in response to this discussion, there was exactly one
+response to one of your clock driver patches in the series.
+
+So can we please stop singling out panel drivers? This is a general
+problem that we've had across the kernel, or at least the ARM and
+related parts of it, for as long as I can remember.
+
+Thierry
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliRBskACgkQ3SOs138+
+s6Encg//fIp3eg2YiCpvKC3se1LoiQ8J818rtn7jgi83RdphCj0Z+cKtREFEXp5O
+tXIjgJDCwywCXKOqlEf/wRho34W+mdYTTY3pheOtPyyF8yCWRptHxCbxh7jYdKez
+TdpJWA47Vt5oqWJVJHRO7glwyVqpASYpP7tc2+rFS0PaiVk6eyTFlN3H2XVQGe7q
+CHGtBmuPxOp6SwCjj9jACQXHwES5LxOz01OxY9qpw0YwOiEkQRaEABhJecP/GEqJ
+7kxj9Dc7oDccl2wWAtXm5KGl86g4Nugy+Ix1suhlD86RFkxy9PrYBA8jZkfhUBbt
+IE78pLq9q1DD9LUkw2mxdmYyjoo7k5cfSza5NwkjB75ElIdOsUI3EURioxNqz84i
+g8HEy8Gup5ey7EFCyvLnG1VD2C7QLb2kPxx3h0GKWIu9ZCvLpWpVIOhghJVF5Rf5
+XBbyGW7XydNhGafQxxe6c6uR2hxjfN7TmwrdnRwiHwBdNgnoeUeQsGeDXZm9VROX
+44oBHGl/NOJ4YybiI91jjK07MDYHQ/9nkgtX6X2XjWIsSn0UrNj5qJqnq1t1Qa0v
+K5TajXypbi/6biQXfGPEYHUyhzLnvXuodl4xJnT0TPlMh3OaUfTxr+a3anMkU2Tf
+OHxdaS9YVsT1ueWntkV8u64/8O8IqZBKpUAYMOGiUW3kA/omQAA=
+=q14P
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
+
+--===============1509727373==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1509727373==--
