@@ -1,117 +1,111 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver on
- TM2 board
-Date: Tue, 31 Jan 2017 10:15:10 -0800
-Message-ID: <87r33j85ap.fsf@eliezer.anholt.net>
-References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170111063408epcas5p2e6ec091549c3ffed8462fd95d11d3c82@epcas5p2.samsung.com>
- <1484116439-7275-3-git-send-email-hoegeun.kwon@samsung.com>
- <08c5d94b-c76f-af14-c08f-478e26a34a7c@samsung.com>
- <588FD3C3.7080508@samsung.com> <20170131085449.GA19348@ulmo.ba.sec>
- <20170131143853.GU20076@art_vandelay> <20170131150226.GB4519@ulmo.ba.sec>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 0/5] Provide real domain names for Exynos power domain
+ driver
+Date: Tue, 31 Jan 2017 21:19:55 +0200
+Message-ID: <20170131191955.zdv5bzirraf3xoyu@kozik-lap>
+References: <CGME20170130121912eucas1p1002708fc40c2d385c41ef2d7574561f9@eucas1p1.samsung.com>
+ <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+ <20170130183621.3v77pfrncm2qb7nr@kozik-lap>
+ <e632ffe1-87ce-7d05-2ec2-a93e7f91058f@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1379450264=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170131150226.GB4519@ulmo.ba.sec>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============1379450264==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Thierry Reding <thierry.reding@gmail.com> writes:
-
-> [ Unknown signature status ]
-> On Tue, Jan 31, 2017 at 09:38:53AM -0500, Sean Paul wrote:
->> On Tue, Jan 31, 2017 at 09:54:49AM +0100, Thierry Reding wrote:
->> > On Tue, Jan 31, 2017 at 09:01:07AM +0900, Inki Dae wrote:
->> > >=20
->> > >=20
->> > > 2017=EB=85=84 01=EC=9B=94 24=EC=9D=BC 10:50=EC=97=90 Hoegeun Kwon =
-=EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
->> > > > Dear Thierry,
->> > > >=20
->> > > > Could you please review this patch?
->> > >=20
->> > > Thierry, I think this patch has been reviewed enough but no comment
->> > > from you. Seems you are busy. I will pick up this.
->> >=20
->> > Sorry, but that's not how it works. This patch has gone through 8
->> > revisions within 4 weeks, and I tend to ignore patches like that until
->> > the dust settles.
->> >=20
->>=20
->> Seems like the dust was pretty settled. It was posted on 1/11, pinged on=
- 1/24,
->> and picked up on 1/31. I don't think it's unreasonable to take it through
->> another tree after that.
->>=20
->> I wonder if drm_panel would benefit from the -misc group maintainership =
-model
->> as drm_bridge does. By spreading out the workload, the high-maintenance
->> patches would hopefully find someone to shepherd them through.
->
-> Except that nobody except me really cares. If we let people take patches
-> through separate trees or group-maintained trees they'll likely go in
-> without too much thought. DRM panel is somewhat different from core DRM
-> in this regard because its infrastructure is minimal and there's little
-> outside the panel-simple driver. So we're still at a stage where we need
-> to fine-tune what drivers should look like and how we can improve.
-
-I would love to care and participate in review, but with the structure
-of your tree you're the only one whose review counts, so I don't
-participate.
-
-As is, I'm stuck out here with my panel driver I submitted on December
-14th completely ignored, and no other developer will look at it because
-their review doesn't count and only yours does.
-
-I would love for drm-panel to be moved under -misc.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAliQ1C8ACgkQtdYpNtH8
-nuiNbA//f3VEpehrmIiZOQYiKOusFo/DeWl/Uw2/aUJeiezrzHzFtGaIQL+m4a+O
-as4FNKIl7vwC87zw2V98xDVNNY/HlMrI914/PUZY7k31Ta5mSGpdHIkjRn377Apn
-CND44YaCOnbyO1LcFiTfgNrCWP5yq+p+bPC8NPRlphLlxw+s/CjywwPVdanNS8F2
-D+J+JstsYTP6C0cucU32n/ZBDbDTxNqySjTz2IttbfaVp+Y1Yq/fRGqA6sw8nN+C
-79668VxzPCBP9AjnEQ2lVrlMtiRFP1xOgXo90xJ3lVGQdtrnJ1RW0lCSwAT2I2K0
-KLaQb4wuKDlEzkkhDHCFtQXgHmqs4bJJWxlWcRho4L6/jPEHYO3vj4AZWVkkLVEs
-nMiK4MDRVH9JGT5i66Nd6KlyQh6afCH6ul5ZkBc1CklW5gsxr2DvqZ37SHd5zW87
-PuIG8nVZR4Xw6+aHiMSDZbZLQdXYCi9Xr9LwoFwlj82tJD17e8ncCpNkzSASCz0A
-UWRlCu4r7DFvGNJSB6LgCm8pJX3ATnRP1PtgbQgFevlaZItP3dvvw1Hf2jkIQKLO
-X+M4Cj5OnxypotkzVXkdowhHY9KTs1EBeCR/vbm2Q9LURihi/FGGl7C5j565L5NR
-OJDjkDSV247RyOjXmdDyuHdWgDsNJW9hVEBgDUbJz/o0I5tXSXU=
-=FkzR
------END PGP SIGNATURE-----
---=-=-=--
-
---===============1379450264==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35758 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbdAaTWY (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 31 Jan 2017 14:22:24 -0500
 Content-Disposition: inline
+In-Reply-To: <e632ffe1-87ce-7d05-2ec2-a93e7f91058f@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Jan 31, 2017 at 08:04:53AM +0100, Marek Szyprowski wrote:
+> 
+> 
+> On 2017-01-30 19:36, Krzysztof Kozlowski wrote:
+> > On Mon, Jan 30, 2017 at 01:18:55PM +0100, Marek Szyprowski wrote:
+> > > Hi!
+> > > 
+> > > For everyone working on power management and runtime power management it
+> > > is important to have a meaningful information about the state of the
+> > > power domains. Current Exynos power domain driver created names of the
+> > > domains based on the device tree node name. Those name
+> > > we incorrectly a bit more descriptive (like "mfc-power-domain@10023C40"
+> > > in exynos4.dtsi) than they should be (it should be fixed to
+> > > "power-domain@10023C40"). This patch series adds reading human readable
+> > > names from the 'label' property. While touching this, I've also fixes
+> > > a few obvious issues related to power domain driver code.
+> > > 
+> > > Patches are based on the Linux next-20170130 branch.
+> > > 
+> > > Best regards
+> > > Marek Szyprowski
+> > > Samsung R&D Institute Poland
+> > > 
+> > I think I am missing something... but it looks it does not work. I
+> > applied it on top of my for-next tree and:
+> > cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> > domain                          status          slaves
+> >      /device                                             runtime status
+> >      ----------------------------------------------------------------------
+> >      isp-power-domain@10023CA0       off-0
+> >      gps-alive-power-domain@10023D00  off-0
+> >      gps-power-domain@10023CE0       off-0
+> >      cam-power-domain@10023C00       off-0
+> > 
+> > Also, with enabled debug on pm-domains and unbinding a device:
+> > [  180.016800] s5p-mfc 13400000.codec: genpd_runtime_resume()
+> > [  180.017289] s5p-mfc 13400000.codec: genpd_runtime_suspend()
+> > [  180.017519] s5p-mfc 13400000.codec: Removing 13400000.codec
+> > [  180.024283] s5p-mfc 13400000.codec: removing from PM domain mfc-power-domain@10023C40
+> > [  180.024323] s5p-mfc 13400000.codec: genpd_remove_device()
+> > 
+> > I think in both cases the genpd->name is used... which should be the new
+> > name (label).
+> > 
+> > What is wrong?
+> 
+> I have no idea. Are you sure you have applied the dts patch? Here it works
+> fine (Odroid U3 with next-20170130 + this patchset):
 
---===============1379450264==--
+Yep:
+$ git log --oneline
+ee85c687392b arm: dts: exynos: Add labels to all existing power domains
+6c63bc30112d soc: samsung: pm_domains: Read domain name from the new label property
+f4c8f7f062ca soc: samsung: pm_domains: Remove message about failed memory allocation
+90d5c7c36ad3 soc: samsung: pm_domains: Remove unused name field
+b8b54d5c4f5a soc: samsung: pm_domains: Use full names in subdomains registration log
+95648b747071 Merge branch 'next/soc' into for-next
+
+On the board:
+$ uname -a
+Linux odroidu3 4.10.0-rc2-00070-gee85c687392b-dirty
+
+The hash matches. Let my try it on the linux-next...
+
+BR,
+Krzysztof
+
+> 
+> domain                          status          slaves
+>     /device                                             runtime status
+> ----------------------------------------------------------------------
+> ISP                             off-0
+> GPS alive                       off-0
+> GPS                             off-0
+> CAM                             off-0
+> TV                              on
+>     /devices/platform/12c10000.mixer                    active
+>     /devices/platform/12d00000.hdmi                     active
+> LCD0                            on              TV
+> G3D                             off-0
+> MFC                             off-0
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
