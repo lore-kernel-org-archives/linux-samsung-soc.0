@@ -1,67 +1,66 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] regulator: s2mpa01: reduce stack size for probe function
-Date: Wed, 25 Jan 2017 23:20:59 +0100
-Message-ID: <20170125222126.1188246-1-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:55282 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751177AbdAYWVp (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Jan 2017 17:21:45 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH V3 0/5] PCI: exynos: cleans the minor things
+Date: Wed, 01 Feb 2017 08:41:34 +0900
+Message-ID: <7c5ba1ea-e2a9-aac3-2007-73ae6a83c8e5@samsung.com>
+References: <CGME20170116063140epcas5p38fffe5effdcfd2650cad98c25c31335e@epcas5p3.samsung.com>
+ <20170116063138.25805-1-jh80.chung@samsung.com>
+ <20170128212730.GA22283@bhelgaas-glaptop.roam.corp.google.com>
+ <003901d27c07$506c3610$f144a230$@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <003901d27c07$506c3610$f144a230$@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jingoohan1@gmail.com>, 'Bjorn Helgaas' <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, 'Pankaj Dubey' <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-In some rare configurations we can run into rather high kernel stack
-consumption:
+On 02/01/2017 06:16 AM, Jingoo Han wrote:
+> On Saturday, January 28, 2017 4:28 PM, Bjorn Helgaas wrote:
+>> On Mon, Jan 16, 2017 at 03:31:33PM +0900, Jaehoon Chung wrote:
+>>> Current pci-exynos.c is used for only EXYNOS5440.
+>>> It's too complex to support the other Exynos SoCs.
+>>> Before supporting the other Exynos SoCs, it needs to clean the codes.
+>>>
+>>> Changelog on V3:
+>>> - Splits "PCI: exynos: replace to one register accessor from each
+>> accessors"
+>>>
+>>> Changelog on V2:
+>>> - Changes the all pointer names as "ep" instead of "exynos_pcie"
+>>>
+>>> Jaehoon Chung (5):
+>>>   PCI: exynos: Rename all pointer names from "exynos_pcie" to "ep"
+>>>   PCI: exynos: Replace the *_blk/*_phy/*_elb accessors
+>>>   PCI: exynos: Remove the unnecessary variables
+>>>   PCI: exynos: Use the bitops API to operate the bit shifting
+>>>   PCI: exynos: remove the duplicated codes
+>>>
+>>>  drivers/pci/host/pci-exynos.c | 392 +++++++++++++++++++----------------
+>> -------
+>>
+>> Waiting for ack from Jingoom, per MAINTAINERS:
+>>
+>> Jingoo Han <jingoohan1@gmail.com> (maintainer:PCI DRIVER FOR SAMSUNG
+>> EXYNOS)
+> 
+> It looks good.
+> 
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-drivers/regulator/s2mpa01.c:397:1: error: the frame size of 1536 bytes is larger than 1152 bytes [-Werror=frame-larger-than=]
+Thank you! I will post the other patches soon.
 
-This is probably harmless since it happens only in the probe function,
-but there is also a relatively simple workaround, moving the regulator
-match data into the device specific structure.
+Best Regards,
+Jaehoon Chung
 
-As a small downside, we waste a little memory at runtime. An alternative
-approach would free the array at the end of the probe function, which in
-turn is a little more complicated.
-
-Fixes: f18792714608 ("regulator: Add support for S2MPA01 regulator")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/regulator/s2mpa01.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 92f88753bfed..38ee97a085f9 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -26,6 +26,7 @@
- #define S2MPA01_REGULATOR_CNT ARRAY_SIZE(regulators)
- 
- struct s2mpa01_info {
-+	struct of_regulator_match rdata[S2MPA01_REGULATOR_MAX];
- 	int ramp_delay24;
- 	int ramp_delay3;
- 	int ramp_delay5;
-@@ -341,9 +342,9 @@ static int s2mpa01_pmic_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
--	struct of_regulator_match rdata[S2MPA01_REGULATOR_MAX] = { };
- 	struct device_node *reg_np = NULL;
- 	struct regulator_config config = { };
-+	struct of_regulator_match *rdata;
- 	struct s2mpa01_info *s2mpa01;
- 	int i;
- 
-@@ -351,6 +352,7 @@ static int s2mpa01_pmic_probe(struct platform_device *pdev)
- 	if (!s2mpa01)
- 		return -ENOMEM;
- 
-+	rdata = s2mpa01->rdata;
- 	for (i = 0; i < S2MPA01_REGULATOR_CNT; i++)
- 		rdata[i].name = regulators[i].name;
- 
--- 
-2.9.0
+> 
+> Thanks,
+> Jingoo
+> 
+>>
+>> Pankaj has a follow-on patch that depends on this series:
+>> https://patchwork.ozlabs.org/patch/711210/
+> 
+> 
+> 
