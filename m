@@ -1,20 +1,19 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver
- on TM2 board
-Date: Tue, 31 Jan 2017 22:51:06 +0100
-Message-ID: <20170131215105.GA3515@mithrandir.ba.sec>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver on
+ TM2 board
+Date: Tue, 31 Jan 2017 14:54:53 -0800
+Message-ID: <87d1f2kfgi.fsf@eliezer.anholt.net>
 References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
  <CGME20170111063408epcas5p2e6ec091549c3ffed8462fd95d11d3c82@epcas5p2.samsung.com>
  <1484116439-7275-3-git-send-email-hoegeun.kwon@samsung.com>
  <08c5d94b-c76f-af14-c08f-478e26a34a7c@samsung.com>
  <588FD3C3.7080508@samsung.com> <20170131085449.GA19348@ulmo.ba.sec>
- <20170131143853.GU20076@art_vandelay>
- <20170131150226.GB4519@ulmo.ba.sec>
- <87r33j85ap.fsf@eliezer.anholt.net>
+ <20170131143853.GU20076@art_vandelay> <20170131150226.GB4519@ulmo.ba.sec>
+ <87r33j85ap.fsf@eliezer.anholt.net> <20170131213132.GC872@mithrandir.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1509727373=="
+Content-Type: multipart/mixed; boundary="===============0858028808=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <87r33j85ap.fsf@eliezer.anholt.net>
+In-Reply-To: <20170131213132.GC872@mithrandir.ba.sec>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -24,60 +23,111 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Eric Anholt <eric@anholt.net>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, Hyungwon Hwang <human.hwang@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+--===============0858028808==
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
---===============1509727373==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Thierry Reding <thierry.reding@gmail.com> writes:
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> [ Unknown signature status ]
+> On Tue, Jan 31, 2017 at 10:15:10AM -0800, Eric Anholt wrote:
+>> Thierry Reding <thierry.reding@gmail.com> writes:
+>>=20
+>> > [ Unknown signature status ]
+>> > On Tue, Jan 31, 2017 at 09:38:53AM -0500, Sean Paul wrote:
+>> >> On Tue, Jan 31, 2017 at 09:54:49AM +0100, Thierry Reding wrote:
+>> >> > On Tue, Jan 31, 2017 at 09:01:07AM +0900, Inki Dae wrote:
+>> >> > >=20
+>> >> > >=20
+>> >> > > 2017=EB=85=84 01=EC=9B=94 24=EC=9D=BC 10:50=EC=97=90 Hoegeun Kwon=
+ =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+>> >> > > > Dear Thierry,
+>> >> > > >=20
+>> >> > > > Could you please review this patch?
+>> >> > >=20
+>> >> > > Thierry, I think this patch has been reviewed enough but no comme=
+nt
+>> >> > > from you. Seems you are busy. I will pick up this.
+>> >> >=20
+>> >> > Sorry, but that's not how it works. This patch has gone through 8
+>> >> > revisions within 4 weeks, and I tend to ignore patches like that un=
+til
+>> >> > the dust settles.
+>> >> >=20
+>> >>=20
+>> >> Seems like the dust was pretty settled. It was posted on 1/11, pinged=
+ on 1/24,
+>> >> and picked up on 1/31. I don't think it's unreasonable to take it thr=
+ough
+>> >> another tree after that.
+>> >>=20
+>> >> I wonder if drm_panel would benefit from the -misc group maintainersh=
+ip model
+>> >> as drm_bridge does. By spreading out the workload, the high-maintenan=
+ce
+>> >> patches would hopefully find someone to shepherd them through.
+>> >
+>> > Except that nobody except me really cares. If we let people take patch=
+es
+>> > through separate trees or group-maintained trees they'll likely go in
+>> > without too much thought. DRM panel is somewhat different from core DRM
+>> > in this regard because its infrastructure is minimal and there's little
+>> > outside the panel-simple driver. So we're still at a stage where we ne=
+ed
+>> > to fine-tune what drivers should look like and how we can improve.
+>>=20
+>> I would love to care and participate in review, but with the structure
+>> of your tree you're the only one whose review counts, so I don't
+>> participate.
+>
+> Really? What exactly do you think is special about the structure of my
+> tree? I require patches to be on dri-devel (I pick them up from the
+> patchwork instance at freedesktop.org), the tree is publicly available
+> and reviewed-by tags get picked up automatically by patchwork.
+>
+> The panel tree works exactly like any other maintainer tree. And my
+> review is *not* the only one that counts. I appreciate every Reviewed-by
+> tag I see on panel patches because it means that I don't have to look as
+> closely as I have to otherwise.
+>
+> It is true that I am responsible for those patches, that's why I get to
+> have the final word on whether or not a patch gets applied. And that's
+> no different from any other maintainer tree either.
 
-On Tue, Jan 31, 2017 at 10:15:10AM -0800, Eric Anholt wrote:
-[...]
-> As is, I'm stuck out here with my panel driver I submitted on December
-> 14th completely ignored, and no other developer will look at it because
-> their review doesn't count and only yours does.
+If me reviewing a patch isn't part of unblocking that patch getting in,
+then I won't bother because all I could end up doing is punishing the
+developer of the patch.  Contributors have a hard enough time already.
 
-For the record, until earlier today when Daniel started to review your
-patches, no doubt in response to this discussion, there was exactly one
-response to one of your clock driver patches in the series.
-
-So can we please stop singling out panel drivers? This is a general
-problem that we've had across the kernel, or at least the ARM and
-related parts of it, for as long as I can remember.
-
-Thierry
-
---u3/rZRmxL6MmkK24
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliRBskACgkQ3SOs138+
-s6Encg//fIp3eg2YiCpvKC3se1LoiQ8J818rtn7jgi83RdphCj0Z+cKtREFEXp5O
-tXIjgJDCwywCXKOqlEf/wRho34W+mdYTTY3pheOtPyyF8yCWRptHxCbxh7jYdKez
-TdpJWA47Vt5oqWJVJHRO7glwyVqpASYpP7tc2+rFS0PaiVk6eyTFlN3H2XVQGe7q
-CHGtBmuPxOp6SwCjj9jACQXHwES5LxOz01OxY9qpw0YwOiEkQRaEABhJecP/GEqJ
-7kxj9Dc7oDccl2wWAtXm5KGl86g4Nugy+Ix1suhlD86RFkxy9PrYBA8jZkfhUBbt
-IE78pLq9q1DD9LUkw2mxdmYyjoo7k5cfSza5NwkjB75ElIdOsUI3EURioxNqz84i
-g8HEy8Gup5ey7EFCyvLnG1VD2C7QLb2kPxx3h0GKWIu9ZCvLpWpVIOhghJVF5Rf5
-XBbyGW7XydNhGafQxxe6c6uR2hxjfN7TmwrdnRwiHwBdNgnoeUeQsGeDXZm9VROX
-44oBHGl/NOJ4YybiI91jjK07MDYHQ/9nkgtX6X2XjWIsSn0UrNj5qJqnq1t1Qa0v
-K5TajXypbi/6biQXfGPEYHUyhzLnvXuodl4xJnT0TPlMh3OaUfTxr+a3anMkU2Tf
-OHxdaS9YVsT1ueWntkV8u64/8O8IqZBKpUAYMOGiUW3kA/omQAA=
-=q14P
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAliRFb0ACgkQtdYpNtH8
+nuiP1hAAuoWkYiJW8f7XTNzO+DloPyrsfTKZ9fXUWl/Oq9dejAelYsSG5udR+Wmk
+lHYsTb0dyWuQlck0zT5MA7SQoaGUiJJ3otrR7qcWjryc2Pgq7l0qlOrvQlCkKNIW
+kjO+v/p52Hfp0rm6VUOGhJhVupzyTV6pNh+9IGjxzECfV4QEftq0twTSHa1cqXK/
+QoQG7tjqA/2pnVr0KQTcBXGeSlP36MoXKM+4d+5lO3Q7LLU/mxbgvSFpqW9+Ifeu
+Zk/DsCoj7tB3pj6/qlLT4bxvajPeQ7Iznw88CdhNzLmhG4ms5ZWCA23JupSf5IA6
+RgT2cLQDqYyvu/WspKiZEVtcnSf/MSXPMvnc8krYOxEnwdO0Br1dpmzM3I/BsjQP
+GadRyztd3I8yQzIQ3sQsUDTjpLVA4gISUt3SVStTysqfbccXwMjMOdcdq5nQ3+Yo
+iUva/C5+p8t4hlSjp9vGH8JdhwvR5IYpOQVOBPuh3vy7vPZhf1hk/dcAsZIJ/nGm
+5yPMMgBTXsCr8KhdY/wBMRx+dWLYs7VmDQoHVzwtg74K6eA5Uf2EaI55mfIaThWz
+ZfTU700WRvBmAHhfU58wwPKcw2RXVBWnuBdaHFq5I54+1ub2351iu7mEGK1YZJ/o
+VZE/5PZv4tuTKAdSo66reb9E1cabzR+4OoKeBEW7sfYI3vngNwE=
+=H/ra
 -----END PGP SIGNATURE-----
+--=-=-=--
 
---u3/rZRmxL6MmkK24--
-
---===============1509727373==
+--===============0858028808==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -87,4 +137,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============1509727373==--
+--===============0858028808==--
