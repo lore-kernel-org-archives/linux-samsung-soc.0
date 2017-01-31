@@ -1,73 +1,85 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: for v4.11, 2nd round
-Date: Mon, 30 Jan 2017 21:07:59 -0800
-Message-ID: <20170131050759.GC16560@localhost>
-References: <20170129200630.22083-1-krzk@kernel.org>
- <20170129200630.22083-4-krzk@kernel.org>
- <20170130052329.GZ18943@localhost>
- <20170130175720.nfmhet6mkajq3vho@kozik-lap>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 0/5] Provide real domain names for Exynos power domain
+ driver
+Date: Tue, 31 Jan 2017 08:04:53 +0100
+Message-ID: <e632ffe1-87ce-7d05-2ec2-a93e7f91058f@samsung.com>
+References: <CGME20170130121912eucas1p1002708fc40c2d385c41ef2d7574561f9@eucas1p1.samsung.com>
+ <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+ <20170130183621.3v77pfrncm2qb7nr@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170130175720.nfmhet6mkajq3vho@kozik-lap>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20170130183621.3v77pfrncm2qb7nr@kozik-lap>
+Sender: linux-pm-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 07:57:20PM +0200, Krzysztof Kozlowski wrote:
-> On Sun, Jan 29, 2017 at 09:23:29PM -0800, Olof Johansson wrote:
-> > Hi Krzysztof,
-> > 
-> > On Sun, Jan 29, 2017 at 10:06:29PM +0200, Krzysztof Kozlowski wrote:
-> > > Hi,
-> > > 
-> > > On top of previous pull request.
-> > > 
-> > > This adds proper clocks to LPASS node on Exynos5433 which is needed
-> > > by Marek's patchset:
-> > >  - [PATCH v2 0/8] Pad retentions support for Exynos5433
-> > >    https://lkml.kernel.org/r/1485419634-28331-1-git-send-email-m.szyprowski () samsung ! com
-> > > 
-> > > 
-> > > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > > Cc: Lee Jones <lee.jones@linaro.org>
-> > > 
-> > > Best regards,
-> > > Krzysztof
-> > > 
-> > > 
-> > > The following changes since commit e4e381133241a27d732e78be09973b89a193eaf7:
-> > > 
-> > >   arm64: dts: exynos: Enable HDMI/TV path on Exynos5433-TM2 (2017-01-11 18:20:28 +0200)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-2
-> > > 
-> > > for you to fetch changes up to 7547162ac351483df3641f64e99e10be329dd6a2:
-> > > 
-> > >   arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
-> > 
-> > I think you tagged the wrong branch here. The log message shows the right hash
-> > at the tip, but the tag is of 95648b747071d530b5bb983735cfe0ffff1b66bf, which
-> > seems to be on your for-next.
-> > 
-> > Care to respin, so your tag and our merged branch match up?
-> >
-> Fixed, the same name of tag but this time on proper branch:
-> tag name	samsung-dt64-4.11-2
-> https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/log/?h=next/dt64
-
-Merged!
-
-> Sorry for the mess.
-
-No worries, I've done exactly that myself before.
 
 
--Olof
+On 2017-01-30 19:36, Krzysztof Kozlowski wrote:
+> On Mon, Jan 30, 2017 at 01:18:55PM +0100, Marek Szyprowski wrote:
+>> Hi!
+>>
+>> For everyone working on power management and runtime power management it
+>> is important to have a meaningful information about the state of the
+>> power domains. Current Exynos power domain driver created names of the
+>> domains based on the device tree node name. Those name
+>> we incorrectly a bit more descriptive (like "mfc-power-domain@10023C40"
+>> in exynos4.dtsi) than they should be (it should be fixed to
+>> "power-domain@10023C40"). This patch series adds reading human readable
+>> names from the 'label' property. While touching this, I've also fixes
+>> a few obvious issues related to power domain driver code.
+>>
+>> Patches are based on the Linux next-20170130 branch.
+>>
+>> Best regards
+>> Marek Szyprowski
+>> Samsung R&D Institute Poland
+>>
+> I think I am missing something... but it looks it does not work. I
+> applied it on top of my for-next tree and:
+> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> domain                          status          slaves
+>      /device                                             runtime status
+>      ----------------------------------------------------------------------
+>      isp-power-domain@10023CA0       off-0
+>      gps-alive-power-domain@10023D00  off-0
+>      gps-power-domain@10023CE0       off-0
+>      cam-power-domain@10023C00       off-0
+>
+> Also, with enabled debug on pm-domains and unbinding a device:
+> [  180.016800] s5p-mfc 13400000.codec: genpd_runtime_resume()
+> [  180.017289] s5p-mfc 13400000.codec: genpd_runtime_suspend()
+> [  180.017519] s5p-mfc 13400000.codec: Removing 13400000.codec
+> [  180.024283] s5p-mfc 13400000.codec: removing from PM domain mfc-power-domain@10023C40
+> [  180.024323] s5p-mfc 13400000.codec: genpd_remove_device()
+>
+> I think in both cases the genpd->name is used... which should be the new
+> name (label).
+>
+> What is wrong?
+
+I have no idea. Are you sure you have applied the dts patch? Here it works
+fine (Odroid U3 with next-20170130 + this patchset):
+
+domain                          status          slaves
+     /device                                             runtime status
+----------------------------------------------------------------------
+ISP                             off-0
+GPS alive                       off-0
+GPS                             off-0
+CAM                             off-0
+TV                              on
+     /devices/platform/12c10000.mixer                    active
+     /devices/platform/12d00000.hdmi                     active
+LCD0                            on              TV
+G3D                             off-0
+MFC                             off-0
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
