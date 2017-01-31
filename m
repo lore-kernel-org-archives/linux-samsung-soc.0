@@ -1,82 +1,80 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] media: exynos4-is: add flags to dummy Exynos IS i2c adapter
-Date: Tue, 31 Jan 2017 13:05:53 +0100
-Message-ID: <1485864353-9205-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170131120559eucas1p171eea15496e67cce34f964484065a714@eucas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:62353 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbdAaMR1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Jan 2017 07:17:27 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <daeinki@gmail.com>
+Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver on
+ TM2 board
+Date: Tue, 31 Jan 2017 21:58:55 +0900
+Message-ID: <CAAQKjZPknkhrpj_0TUS3=Z720Nu6mO7UMDy6RKceyu3OuaO8mQ@mail.gmail.com>
+References: <1484116439-7275-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170111063408epcas5p2e6ec091549c3ffed8462fd95d11d3c82@epcas5p2.samsung.com>
+ <1484116439-7275-3-git-send-email-hoegeun.kwon@samsung.com>
+ <08c5d94b-c76f-af14-c08f-478e26a34a7c@samsung.com>
+ <588FD3C3.7080508@samsung.com>
+ <CAJKOXPfB0yuQY2bdTEYegU+eakBw32X80ALJkxB2sUX8xFjy+g@mail.gmail.com>
+ <58905A2B.9090101@samsung.com>
+ <CAJKOXPeCF3+YXk-GHmewn6fi0rcPbQ_GoPOeFRP2KYN=6KLLxw@mail.gmail.com>
+ <CAAQKjZNN98pah8ht=kSmwsVybA5cMP=Z6BVkfZ6HH-5rRYFQ9w@mail.gmail.com>
+ <CAJKOXPczttCexd4ZGHEFj=4-6a=9t1VsEmovPGmFFYHv1e5ZzQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAJKOXPczttCexd4ZGHEFj=4-6a=9t1VsEmovPGmFFYHv1e5ZzQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Donghwa Lee <dh09.lee@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Add simple 'functionality' member to dummy Exynos IS i2c adapter to make
-i2c core happy and get rid of NULL pointer dereference during Exynos4 IS
-probe since v4.10-rc1:
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000000
-pgd = c0004000
-[00000000] *pgd=00000000
-Internal error: Oops: 80000005 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 1 PID: 100 Comm: kworker/1:2 Not tainted 4.10.0-rc6-next-20170131-00054-g39e6e4233de6 #1921
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: events deferred_probe_work_func
-task: ef2e0000 task.stack: ef2ec000
-PC is at 0x0
-LR is at i2c_register_adapter+0x98/0x5cc
-...
-[<c05040bc>] (i2c_register_adapter) from [<c05379d4>] (fimc_is_i2c_probe+0x84/0xe4)
-[<c05379d4>] (fimc_is_i2c_probe) from [<c041b5c8>] (platform_drv_probe+0x50/0xb0)
-[<c041b5c8>] (platform_drv_probe) from [<c0419f48>] (driver_probe_device+0x234/0x2dc)
-[<c0419f48>] (driver_probe_device) from [<c04184e0>] (bus_for_each_drv+0x44/0x8c)
-[<c04184e0>] (bus_for_each_drv) from [<c0419c8c>] (__device_attach+0x9c/0x100)
-[<c0419c8c>] (__device_attach) from [<c0419374>] (bus_probe_device+0x84/0x8c)
-[<c0419374>] (bus_probe_device) from [<c04178d4>] (device_add+0x380/0x528)
-[<c04178d4>] (device_add) from [<c05aceb4>] (of_platform_device_create_pdata+0x70/0xa4)
-[<c05aceb4>] (of_platform_device_create_pdata) from [<c05acfd4>] (of_platform_bus_create+0xec/0x320)
-[<c05acfd4>] (of_platform_bus_create) from [<c05ad264>] (of_platform_populate+0x5c/0xac)
-[<c05ad264>] (of_platform_populate) from [<c0533420>] (fimc_is_probe+0x1c0/0x4cc)
-[<c0533420>] (fimc_is_probe) from [<c041b5c8>] (platform_drv_probe+0x50/0xb0)
-[<c041b5c8>] (platform_drv_probe) from [<c0419f48>] (driver_probe_device+0x234/0x2dc)
-[<c0419f48>] (driver_probe_device) from [<c04184e0>] (bus_for_each_drv+0x44/0x8c)
-[<c04184e0>] (bus_for_each_drv) from [<c0419c8c>] (__device_attach+0x9c/0x100)
-[<c0419c8c>] (__device_attach) from [<c0419374>] (bus_probe_device+0x84/0x8c)
-[<c0419374>] (bus_probe_device) from [<c04197a8>] (deferred_probe_work_func+0x60/0x8c)
-[<c04197a8>] (deferred_probe_work_func) from [<c01329a4>] (process_one_work+0x120/0x31c)
-[<c01329a4>] (process_one_work) from [<c0132bc8>] (process_scheduled_works+0x28/0x38)
-[<c0132bc8>] (process_scheduled_works) from [<c0132ddc>] (worker_thread+0x204/0x4ac)
-[<c0132ddc>] (worker_thread) from [<c01381b8>] (kthread+0xfc/0x134)
-[<c01381b8>] (kthread) from [<c01078b8>] (ret_from_fork+0x14/0x3c)
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/exynos4-is/fimc-is-i2c.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-index 6bba4ca022be..2f559663e51e 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-@@ -28,7 +28,14 @@ struct fimc_is_i2c {
-  * is implemented in the FIMC-IS subsystem firmware and the host CPU
-  * doesn't access the I2C bus controller.
-  */
--static const struct i2c_algorithm fimc_is_i2c_algorithm;
-+static u32 is_i2c_func(struct i2c_adapter *adap)
-+{
-+	return I2C_FUNC_I2C;
-+}
-+
-+static const struct i2c_algorithm fimc_is_i2c_algorithm = {
-+	.functionality	= is_i2c_func,
-+};
- 
- static int fimc_is_i2c_probe(struct platform_device *pdev)
- {
--- 
-1.9.1
+MjAxNy0wMS0zMSAyMDozMCBHTVQrMDk6MDAgS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJu
+ZWwub3JnPjoKPiBPbiBUdWUsIEphbiAzMSwgMjAxNyBhdCAxMjozNyBQTSwgSW5raSBEYWUgPGRh
+ZWlua2lAZ21haWwuY29tPiB3cm90ZToKPj4gMjAxNy0wMS0zMSAxOTowMSBHTVQrMDk6MDAgS3J6
+eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPjoKPj4+IE9uIFR1ZSwgSmFuIDMxLCAy
+MDE3IGF0IDExOjM0IEFNLCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+
+Pj4+Cj4+Pj4KPj4+PiAyMDE364WEIDAx7JuUIDMx7J28IDE4OjIy7JeQIEtyenlzenRvZiBLb3ps
+b3dza2kg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4gT24gVHVlLCBKYW4gMzEsIDIwMTcgYXQgMjow
+MSBBTSwgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3cm90ZToKPj4+Pj4+Cj4+Pj4+
+Pgo+Pj4+Pj4gMjAxN+uFhCAwMeyblCAyNOydvCAxMDo1MOyXkCBIb2VnZXVuIEt3b24g7J20KOqw
+gCkg7JO0IOq4gDoKPj4+Pj4+PiBEZWFyIFRoaWVycnksCj4+Pj4+Pj4KPj4+Pj4+PiBDb3VsZCB5
+b3UgcGxlYXNlIHJldmlldyB0aGlzIHBhdGNoPwo+Pj4+Pj4KPj4+Pj4+IFRoaWVycnksIEkgdGhp
+bmsgdGhpcyBwYXRjaCBoYXMgYmVlbiByZXZpZXdlZCBlbm91Z2ggYnV0IG5vIGNvbW1lbnQgZnJv
+bSB5b3UuIFNlZW1zIHlvdSBhcmUgYnVzeS4gSSB3aWxsIHBpY2sgdXAgdGhpcy4KPj4+Pj4+Cj4+
+Pj4+Cj4+Pj4+IENvbW1lbnRzIGZyb20gdjggd2VyZSBub3QgcmVzb2x2ZWQgYW5kIEkgdGhpbmsg
+d2UgYXJlIHdhaXRpbmcgZm9yIHY5Ogo+Pj4+PiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNy8x
+LzExLzE3OAo+Pj4+Pgo+Pj4+PiBJZiB0aGF0IGlzIG5vdCBjb3JyZWN0IHRoZW4gcGxlYXNlIGNs
+YXJpZnkuCj4+Pj4KPj4+PiBTZWVtcyB5b3UgcG9pbnRlZCB0byBjaGFuZ2UgdGUtZ3Bpb3MgYmlu
+ZGluZ3MgdG8gb3B0aW9uYWwuIHJpZ2h0Pwo+Pj4+Cj4+Pj4gSSB0aG91Z2h0IFJvYiBsZWZ0IGFj
+ayBzbyBpdCdzIG5vIHByb2JsZW0uCj4+Pj4gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTcvMS8x
+My82MjYKPj4+Cj4+PiBZZXMsIGNoYW5nZSB0aGVtIHRvIG9wdGlvbmFsLiBJIHRoaW5rIGl0IGlz
+IGEgcHJvYmxlbSAocmVnYXJkbGVzcyBvZgo+Pj4gUm9iJ3MgYWNrKSBiZWNhdXNlIHlvdSBhcmUg
+bWVyZ2luZyBhIGRyaXZlciByZXF1aXJpbmcgYSBwcm9wZXJ0eSB3aGljaAo+Pj4gc29vbiB5b3Ug
+d2FudCB0byByZW1vdmUuIElmIHlvdSBtZXJnZSBpdCAobGlrZSB0aGlzKSByZW1vdmFsIG9mCj4+
+PiB0ZS1ncGlvcyBwcm9wZXJ0eSB3aWxsIGJlIGJyZWFrYWdlIG9mIEFCSS4gVGhpcyBpcyBub3Qg
+YSBzZXJpb3VzCj4+PiBwcm9ibGVtIGJ1dCBrbm93aW5nIHN1Y2ggcGxhbiBvZiB0ZS1ncGlvcyBy
+ZW1vdmFsIHVwZnJvbnQsIGl0IHdvdWxkIGJlCj4+PiB3cm9uZyB0byBjb21taXQgc3VjaCBkcml2
+ZXIuCj4+Cj4+IFRoaXMgaXMgYSB0cml2aWFsIHRoaW5nIHNvIGl0IGRvZXNuJ3QgbWFrZSBicmVh
+a2FnZSBvZiBBQkkgYmVjYXVzZSB0aGUKPj4gcHJvcGVydHksIHRlLWdwaW9zLCBpcyAqb3B0aW9u
+YWwqLgo+Cj4gU28gd2h5IGJpbmRpbmdzIGRvY3VtZW50IGlzIG5vdCBjaGFuZ2VkPwoKU2VlbXMg
+SG9lZ2V1biBtaXNzZWQgdGhpcy4KSSBhbHNvIHRoaW5rIGl0IHNob3VsZCBzcGVjaWZ5ICp0ZS1n
+cGlvcyBpcyBvcHRpb25hbCBwcm9wZXJ0eSogbGlrZQptaXBpLWRzaSBiaW5kaW5nIGRvY3VtZW50
+IGRpZCBidXQgdGhpcyBkb2Vzbid0IGJyZWFrYWdlIG9mIEFCSSB5b3UKbWVudGlvbmVkLiBBbmQg
+SSdkIGxpa2UgdG8gc2F5IHdlIHNob3VsZCBmZWVsIEFCSSBicmVha2FnZSBpcyBhCnNlcmlvdXMg
+cHJvYmxlbS4KClNhZCB0byBzYXksIEV4eW5vcyBpcyBhbHJlYWR5IGJyb2tlbiBsaWtlIE1hcmVr
+IGRlY2xhcmVkLiBUaGlzIGlzCnJlYWxseSBhIHNlcmlvdXMgcHJvYmxlbSBFeHlub3MgbWFpbnRh
+aW5lcnMgaGF2ZSB0byBmaXggaW5jbHVkaW5nIHlvdQphbmQgbWUuCgpUaGFua3MsCklua2kgRGFl
+Cgo+Cj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6Cj4gKC4uLikKPiArICAtIHRlLWdwaW9zOiBhIEdQ
+SU8gc3BlYyBmb3IgdGhlIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9uaXphdGlvbiBzaWduYWwKPiAr
+ICAgIGdwaW8gcGluIChhY3RpdmUgaGlnaCkKPgo+IEFuZHJ6ZWogcG9pbnRlZCB0aGlzIG91dCBh
+bmQgaXQgaXMgbm90IGZpeGVkIHNpbmNlIHRoZW4uIFdoYXQgaXMgdGhlCj4gcHJvYmxlbSB3aXRo
+IGZpeGluZyB0aGUgYmluZGluZ3MgZG9jdW1lbnRhdGlvbj8KPgo+PiBBbnl3YXksIHRoaXMgd291
+bGRuJ3QgYmUgKnRoZSB0aGluZ3MqIFRoaWVycnkgbWVudGlvbmVkLgo+Cj4gUHJvYmFibHkgbm90
+LCBJIGRpZCBub3QgcmVzcG9uZCB0byBUaGllcnJ5J3MgZmVlZGJhY2suCj4KPiBCZXN0IHJlZ2Fy
+ZHMsCj4gS3J6eXN6dG9mCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
