@@ -1,54 +1,61 @@
-From: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
-Subject: [RESEND PATCH] serial: samsung: enable clock before accessing
- interrupt mask resister
-Date: Wed, 01 Feb 2017 19:25:46 +0900
-Message-ID: <008c01d27c75$8cd73e60$a685bb20$@samsung.com>
-References: <CGME20170201102546epcas1p25107505cc2ff66f06211f945d2ddd679@epcas1p2.samsung.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
+ pinctrl macro definitions
+Date: Wed, 1 Feb 2017 13:51:00 +0100
+Message-ID: <CACRpkdYLpQHT1ykYE1tNJpNRyUt7ezhyxznbe=dPu70mPn0OLQ@mail.gmail.com>
+References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170118054002epcas5p3b08e2f419976e17a3c584d64776810fd@epcas5p3.samsung.com>
+ <1484718141-28785-3-git-send-email-pankaj.dubey@samsung.com>
+ <20170118141935.eu7wmki7jnjdarkw@kozik-lap> <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
+ <20170127144123.slmwxorx7cjxwtcr@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56317 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbdBAKZt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 05:25:49 -0500
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170127144123.slmwxorx7cjxwtcr@kozik-lap>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, sanath-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, root <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tjakobi@math.uni-bielefeld.de
 
-Ensure that the uart clock is enabled prior to writing to the
-interrupt mask register in s3c24xx_serial_resume_noirq function.
-Without enabing the uart clock, the uart register cannot be accessed.
+On Fri, Jan 27, 2017 at 3:41 PM, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Fri, Jan 27, 2017 at 01:25:42PM +0100, Sylwester Nawrocki wrote:
+>> On 01/18/2017 03:19 PM, Krzysztof Kozlowski wrote:
+>> > On Wed, Jan 18, 2017 at 11:12:20AM +0530, Pankaj Dubey wrote:
+>> >> Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
+>> >> for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
+>> >> pinctrl driver strength related macros which will be used in Exynos7
+>> >> DTSi files.
+>> >>
+>> >> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> >> ---
+>> >>  include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
+>> >>  1 file changed, 8 insertions(+)
+>> >>
+>> >
+>> > Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>> >
+>> > I will need this header, so Sylwester if it is okay with you, could you
+>> > provide a tag with it (or ack it)?
+>>
+>> Acked-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>
+>> I don't have pinctrl/samsung git tree, Linus applies patches directly.
+>
+> Oh, my mistake.
+>
+> Linus,
+> This is similar case as "pinctrl: dt-bindings: samsung: add drive
+> strength macros for Exynos5433" [1].
 
-Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
----
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
+OK
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f44615f..06488fd 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
- static int s3c24xx_serial_resume_noirq(struct device *dev)
- {
- 	struct uart_port *port = s3c24xx_dev_to_port(dev);
-+	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
- 	if (port) {
- 		/* restore IRQ mask */
-@@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 				uintm &= ~S3C64XX_UINTM_TXD_MSK;
- 			if (rx_enabled(port))
- 				uintm &= ~S3C64XX_UINTM_RXD_MSK;
-+			clk_prepare_enable(ourport->clk);
- 			wr_regl(port, S3C64XX_UINTM, uintm);
-+			clk_disable_unprepare(ourport->clk);
- 		}
- 	}
- 
--- 
-2.8.1
+I expect that you take it through ARM SoC and/or send me a pull
+request for it on an immutable branch, whatever is best.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
