@@ -1,37 +1,36 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 4/5] soc: samsung: pm_domains: Read domain name from
- the new label property
-Date: Wed, 1 Feb 2017 10:25:54 -0600
-Message-ID: <20170201162554.airhzowkqpyaxqpf@rob-hp-laptop>
-References: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130121915eucas1p23aa4f4be912bcd64f9521f6e6b51132f@eucas1p2.samsung.com>
- <1485778740-30337-5-git-send-email-m.szyprowski@samsung.com>
+From: Willy WOLFF <willy.mh.wolff@gmail.com>
+Subject: Exynos542x/5800 dts - multiple conflicting thermal-zones definition
+Date: Wed, 1 Feb 2017 17:49:40 +0000
+Message-ID: <fda674a2-b209-7683-191b-80bc1286c334@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1485778740-30337-5-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36210 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753003AbdBARtn (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 12:49:43 -0500
+Received: by mail-wm0-f65.google.com with SMTP id r18so7180291wmd.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2017 09:49:42 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rob Herring <robh+dt@kernel.org>;Mark Rutland <mark.rutland@arm.com>;Russell King <linux@armlinux.org.uk>;Kukjin Kim <kgene@kernel.org>;Krzysztof Kozlowski <krzk@kernel.org>;Javier Martinez Canillas" <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 01:18:59PM +0100, Marek Szyprowski wrote:
-> Device tree nodes for each power domain should use generic "power-domain"
-> name, so using it as a domain name doesn't give much benefits. This patch
-> adds support for human readable names defined in 'label' property. Such
-> names are visible to userspace and makes debugging much easier. When no
-> 'label' property is found, driver keeps using the name constructed from
-> full node name.
+Since the commit f4715dc7eb89e1e776ab2c260cb008617490f931
+ARM: dts: exynos: Only Odroid XU3-family boards use DTSI with CPU 
+thermal nodes
 
-I'm not sure this is really a good use of label. label is intended for 
-end user visible things like ports/connectors on a board. It's fine 
-here, but I wouldn't want to see it used everywhere.
+The file exynos5422-cpu-thermal.dtsi which defines thermal-zones for 
+this processor, has been injected in exynos5422-odroidxu3-common.dtsi
+This file includes exynos5800.dtsi, which finally include exynos5420.dtsi
 
-> 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/power/pd-samsung.txt |  4 ++++
->  drivers/soc/samsung/pm_domains.c                       | 12 ++++++++++--
->  2 files changed, 14 insertions(+), 2 deletions(-)
+On this last file, you have already some thermal-zones definition 
+specific to exynos5420 processor, that are different from the 
+thermal-zones defined in exynos5422-odroidxu3-common.dtsi
+
+Is it possible to revert this patch? or modify the includes hierarchy to 
+have better isolation of thermal-zones definition?
+
+Best Regards,
+Willy Wolff
