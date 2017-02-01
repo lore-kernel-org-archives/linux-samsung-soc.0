@@ -1,42 +1,133 @@
-From: Willy WOLFF <willy.mh.wolff@gmail.com>
-Subject: Re: Exynos542x/5800 dts - multiple conflicting thermal-zones
- definition
-Date: Wed, 1 Feb 2017 18:45:24 +0000
-Message-ID: <08f2bac8-e42b-f359-0fe7-567204e657df@gmail.com>
-References: <fda674a2-b209-7683-191b-80bc1286c334@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v8 2/3] drm/panel: Add support for S6E3HA2 panel driver
+ on TM2 board
+Date: Wed, 1 Feb 2017 14:03:32 -0500
+Message-ID: <20170201190331.GB14264@art_vandelay>
+References: <08c5d94b-c76f-af14-c08f-478e26a34a7c@samsung.com>
+ <588FD3C3.7080508@samsung.com> <20170131085449.GA19348@ulmo.ba.sec>
+ <20170131143853.GU20076@art_vandelay>
+ <20170131150226.GB4519@ulmo.ba.sec>
+ <87r33j85ap.fsf@eliezer.anholt.net>
+ <20170131213132.GC872@mithrandir.ba.sec>
+ <87d1f2kfgi.fsf@eliezer.anholt.net>
+ <20170201145249.GB17698@ulmo.ba.sec>
+ <CACvgo504WEd_pPrjEViH+-i8BNwEjQ-q7MdnYWJ3V6uTB_tk5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36833 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754214AbdBASp1 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Feb 2017 13:45:27 -0500
-Received: by mail-wm0-f68.google.com with SMTP id r18so7482594wmd.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2017 10:45:26 -0800 (PST)
-In-Reply-To: <fda674a2-b209-7683-191b-80bc1286c334@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CACvgo504WEd_pPrjEViH+-i8BNwEjQ-q7MdnYWJ3V6uTB_tk5Q@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: devicetree <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Donghwa Lee <dh09.lee@samsung.com>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, andi.shyti@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, Hyungwon Hwang <human.hwang@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rob Herring <robh+dt@kernel.org>;Mark Rutland <mark.rutland@arm.com>;Russell King <linux@armlinux.org.uk>;Kukjin Kim <kgene@kernel.org>;Krzysztof Kozlowski <krzk@kernel.org>;Javier Martinez Canillas" <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Forgive this mail, it's my mistake.
-
-On 01/02/2017 17:49, Willy WOLFF wrote:
-> Since the commit f4715dc7eb89e1e776ab2c260cb008617490f931
-> ARM: dts: exynos: Only Odroid XU3-family boards use DTSI with CPU
-> thermal nodes
->
-> The file exynos5422-cpu-thermal.dtsi which defines thermal-zones for
-> this processor, has been injected in exynos5422-odroidxu3-common.dtsi
-> This file includes exynos5800.dtsi, which finally include exynos5420.dtsi
->
-> On this last file, you have already some thermal-zones definition
-> specific to exynos5420 processor, that are different from the
-> thermal-zones defined in exynos5422-odroidxu3-common.dtsi
->
-> Is it possible to revert this patch? or modify the includes hierarchy to
-> have better isolation of thermal-zones definition?
->
-> Best Regards,
-> Willy Wolff
+T24gV2VkLCBGZWIgMDEsIDIwMTcgYXQgMDM6Mjk6NDBQTSArMDAwMCwgRW1pbCBWZWxpa292IHdy
+b3RlOgo+IE9uIDEgRmVicnVhcnkgMjAxNyBhdCAxNDo1MiwgVGhpZXJyeSBSZWRpbmcgPHRoaWVy
+cnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gPiBPbiBUdWUsIEphbiAzMSwgMjAxNyBhdCAw
+Mjo1NDo1M1BNIC0wODAwLCBFcmljIEFuaG9sdCB3cm90ZToKPiA+PiBUaGllcnJ5IFJlZGluZyA8
+dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPiB3cml0ZXM6Cj4gPj4KPiA+PiA+IFsgVW5rbm93biBz
+aWduYXR1cmUgc3RhdHVzIF0KPiA+PiA+IE9uIFR1ZSwgSmFuIDMxLCAyMDE3IGF0IDEwOjE1OjEw
+QU0gLTA4MDAsIEVyaWMgQW5ob2x0IHdyb3RlOgo+ID4+ID4+IFRoaWVycnkgUmVkaW5nIDx0aGll
+cnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyaXRlczoKPiA+PiA+Pgo+ID4+ID4+ID4gWyBVbmtub3du
+IHNpZ25hdHVyZSBzdGF0dXMgXQo+ID4+ID4+ID4gT24gVHVlLCBKYW4gMzEsIDIwMTcgYXQgMDk6
+Mzg6NTNBTSAtMDUwMCwgU2VhbiBQYXVsIHdyb3RlOgo+ID4+ID4+ID4+IE9uIFR1ZSwgSmFuIDMx
+LCAyMDE3IGF0IDA5OjU0OjQ5QU0gKzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ID4+ID4+
+ID4+ID4gT24gVHVlLCBKYW4gMzEsIDIwMTcgYXQgMDk6MDE6MDdBTSArMDkwMCwgSW5raSBEYWUg
+d3JvdGU6Cj4gPj4gPj4gPj4gPiA+Cj4gPj4gPj4gPj4gPiA+Cj4gPj4gPj4gPj4gPiA+IDIwMTfr
+hYQgMDHsm5QgMjTsnbwgMTA6NTDsl5AgSG9lZ2V1biBLd29uIOydtCjqsIApIOyTtCDquIA6Cj4g
+Pj4gPj4gPj4gPiA+ID4gRGVhciBUaGllcnJ5LAo+ID4+ID4+ID4+ID4gPiA+Cj4gPj4gPj4gPj4g
+PiA+ID4gQ291bGQgeW91IHBsZWFzZSByZXZpZXcgdGhpcyBwYXRjaD8KPiA+PiA+PiA+PiA+ID4K
+PiA+PiA+PiA+PiA+ID4gVGhpZXJyeSwgSSB0aGluayB0aGlzIHBhdGNoIGhhcyBiZWVuIHJldmll
+d2VkIGVub3VnaCBidXQgbm8gY29tbWVudAo+ID4+ID4+ID4+ID4gPiBmcm9tIHlvdS4gU2VlbXMg
+eW91IGFyZSBidXN5LiBJIHdpbGwgcGljayB1cCB0aGlzLgo+ID4+ID4+ID4+ID4KPiA+PiA+PiA+
+PiA+IFNvcnJ5LCBidXQgdGhhdCdzIG5vdCBob3cgaXQgd29ya3MuIFRoaXMgcGF0Y2ggaGFzIGdv
+bmUgdGhyb3VnaCA4Cj4gPj4gPj4gPj4gPiByZXZpc2lvbnMgd2l0aGluIDQgd2Vla3MsIGFuZCBJ
+IHRlbmQgdG8gaWdub3JlIHBhdGNoZXMgbGlrZSB0aGF0IHVudGlsCj4gPj4gPj4gPj4gPiB0aGUg
+ZHVzdCBzZXR0bGVzLgo+ID4+ID4+ID4+ID4KPiA+PiA+PiA+Pgo+ID4+ID4+ID4+IFNlZW1zIGxp
+a2UgdGhlIGR1c3Qgd2FzIHByZXR0eSBzZXR0bGVkLiBJdCB3YXMgcG9zdGVkIG9uIDEvMTEsIHBp
+bmdlZCBvbiAxLzI0LAo+ID4+ID4+ID4+IGFuZCBwaWNrZWQgdXAgb24gMS8zMS4gSSBkb24ndCB0
+aGluayBpdCdzIHVucmVhc29uYWJsZSB0byB0YWtlIGl0IHRocm91Z2gKPiA+PiA+PiA+PiBhbm90
+aGVyIHRyZWUgYWZ0ZXIgdGhhdC4KPiA+PiA+PiA+Pgo+ID4+ID4+ID4+IEkgd29uZGVyIGlmIGRy
+bV9wYW5lbCB3b3VsZCBiZW5lZml0IGZyb20gdGhlIC1taXNjIGdyb3VwIG1haW50YWluZXJzaGlw
+IG1vZGVsCj4gPj4gPj4gPj4gYXMgZHJtX2JyaWRnZSBkb2VzLiBCeSBzcHJlYWRpbmcgb3V0IHRo
+ZSB3b3JrbG9hZCwgdGhlIGhpZ2gtbWFpbnRlbmFuY2UKPiA+PiA+PiA+PiBwYXRjaGVzIHdvdWxk
+IGhvcGVmdWxseSBmaW5kIHNvbWVvbmUgdG8gc2hlcGhlcmQgdGhlbSB0aHJvdWdoLgo+ID4+ID4+
+ID4KPiA+PiA+PiA+IEV4Y2VwdCB0aGF0IG5vYm9keSBleGNlcHQgbWUgcmVhbGx5IGNhcmVzLiBJ
+ZiB3ZSBsZXQgcGVvcGxlIHRha2UgcGF0Y2hlcwo+ID4+ID4+ID4gdGhyb3VnaCBzZXBhcmF0ZSB0
+cmVlcyBvciBncm91cC1tYWludGFpbmVkIHRyZWVzIHRoZXknbGwgbGlrZWx5IGdvIGluCj4gPj4g
+Pj4gPiB3aXRob3V0IHRvbyBtdWNoIHRob3VnaHQuIERSTSBwYW5lbCBpcyBzb21ld2hhdCBkaWZm
+ZXJlbnQgZnJvbSBjb3JlIERSTQo+ID4+ID4+ID4gaW4gdGhpcyByZWdhcmQgYmVjYXVzZSBpdHMg
+aW5mcmFzdHJ1Y3R1cmUgaXMgbWluaW1hbCBhbmQgdGhlcmUncyBsaXR0bGUKPiA+PiA+PiA+IG91
+dHNpZGUgdGhlIHBhbmVsLXNpbXBsZSBkcml2ZXIuIFNvIHdlJ3JlIHN0aWxsIGF0IGEgc3RhZ2Ug
+d2hlcmUgd2UgbmVlZAo+ID4+ID4+ID4gdG8gZmluZS10dW5lIHdoYXQgZHJpdmVycyBzaG91bGQg
+bG9vayBsaWtlIGFuZCBob3cgd2UgY2FuIGltcHJvdmUuCj4gPj4gPj4KPiA+PiA+PiBJIHdvdWxk
+IGxvdmUgdG8gY2FyZSBhbmQgcGFydGljaXBhdGUgaW4gcmV2aWV3LCBidXQgd2l0aCB0aGUgc3Ry
+dWN0dXJlCj4gPj4gPj4gb2YgeW91ciB0cmVlIHlvdSdyZSB0aGUgb25seSBvbmUgd2hvc2UgcmV2
+aWV3IGNvdW50cywgc28gSSBkb24ndAo+ID4+ID4+IHBhcnRpY2lwYXRlLgo+ID4+ID4KPiA+PiA+
+IFJlYWxseT8gV2hhdCBleGFjdGx5IGRvIHlvdSB0aGluayBpcyBzcGVjaWFsIGFib3V0IHRoZSBz
+dHJ1Y3R1cmUgb2YgbXkKPiA+PiA+IHRyZWU/IEkgcmVxdWlyZSBwYXRjaGVzIHRvIGJlIG9uIGRy
+aS1kZXZlbCAoSSBwaWNrIHRoZW0gdXAgZnJvbSB0aGUKPiA+PiA+IHBhdGNod29yayBpbnN0YW5j
+ZSBhdCBmcmVlZGVza3RvcC5vcmcpLCB0aGUgdHJlZSBpcyBwdWJsaWNseSBhdmFpbGFibGUKPiA+
+PiA+IGFuZCByZXZpZXdlZC1ieSB0YWdzIGdldCBwaWNrZWQgdXAgYXV0b21hdGljYWxseSBieSBw
+YXRjaHdvcmsuCj4gPj4gPgo+ID4+ID4gVGhlIHBhbmVsIHRyZWUgd29ya3MgZXhhY3RseSBsaWtl
+IGFueSBvdGhlciBtYWludGFpbmVyIHRyZWUuIEFuZCBteQo+ID4+ID4gcmV2aWV3IGlzICpub3Qq
+IHRoZSBvbmx5IG9uZSB0aGF0IGNvdW50cy4gSSBhcHByZWNpYXRlIGV2ZXJ5IFJldmlld2VkLWJ5
+Cj4gPj4gPiB0YWcgSSBzZWUgb24gcGFuZWwgcGF0Y2hlcyBiZWNhdXNlIGl0IG1lYW5zIHRoYXQg
+SSBkb24ndCBoYXZlIHRvIGxvb2sgYXMKPiA+PiA+IGNsb3NlbHkgYXMgSSBoYXZlIHRvIG90aGVy
+d2lzZS4KPiA+PiA+Cj4gPj4gPiBJdCBpcyB0cnVlIHRoYXQgSSBhbSByZXNwb25zaWJsZSBmb3Ig
+dGhvc2UgcGF0Y2hlcywgdGhhdCdzIHdoeSBJIGdldCB0bwo+ID4+ID4gaGF2ZSB0aGUgZmluYWwg
+d29yZCBvbiB3aGV0aGVyIG9yIG5vdCBhIHBhdGNoIGdldHMgYXBwbGllZC4gQW5kIHRoYXQncwo+
+ID4+ID4gbm8gZGlmZmVyZW50IGZyb20gYW55IG90aGVyIG1haW50YWluZXIgdHJlZSBlaXRoZXIu
+Cj4gPj4KPiA+PiBJZiBtZSByZXZpZXdpbmcgYSBwYXRjaCBpc24ndCBwYXJ0IG9mIHVuYmxvY2tp
+bmcgdGhhdCBwYXRjaCBnZXR0aW5nIGluLAo+ID4+IHRoZW4gSSB3b24ndCBib3RoZXIgYmVjYXVz
+ZSBhbGwgSSBjb3VsZCBlbmQgdXAgZG9pbmcgaXMgcHVuaXNoaW5nIHRoZQo+ID4+IGRldmVsb3Bl
+ciBvZiB0aGUgcGF0Y2guICBDb250cmlidXRvcnMgaGF2ZSBhIGhhcmQgZW5vdWdoIHRpbWUgYWxy
+ZWFkeS4KPiA+Cj4gPiBNYXliZSB5b3Ugc2hvdWxkIGdvIGFuZCByZWFkIG15IHByZXZpb3VzIHJl
+cGx5IGFnYWluIG1vcmUgY2FyZWZ1bGx5Lgo+ID4gUGVyaGFwcyB0aGVuIHlvdSdsbCByZWFsaXpl
+IHRoYXQgcmV2aWV3cyBhcmUgaW4gZmFjdCBoZWxwaW5nIGluIGdldHRpbmcKPiA+IHBhdGNoZXMg
+bWVyZ2VkLgo+ID4KPiA+IEludGVyZXN0aW5nbHkgbXkgaW5ib3ggZG9lc24ndCBzaG93IHlvdSBl
+dmVyIGJvdGhlcmluZyB0byByZXZpZXcgcGFuZWwKPiA+IHBhdGNoZXMsIHNvIG1heWJlIHlvdSBz
+aG91bGQgYmUgbW9yZSBjYXJlZnVsIGFib3V0IHlvdXIgYXNzdW1wdGlvbnMuCj4gPgo+IEdlbnRz
+LCBpdCdzIHVuZGVyc3RhbmRhYmxlIHRoYXQgZW1vdGlvbnMgbWlnaHQgYmUgcnVubmluZyBoaWdo
+Lgo+IAo+IFdoYXQncyB0aGUgcG9pbnQgaW4gcG9pbnRpbmcgZmluZ2VycyBhdCBlYWNoIG90aGVy
+IC0gdGhlcmUgaXMgZW5vdWdoCj4gdG8gZ28gaW4gZWFjaCBkaXJlY3Rpb24uCj4gTGV0IHVzIGFs
+bCBzdGVwIGJhY2sgZm9yIGEgc2Vjb25kIGFuZCBjb25zaWRlciBob3cgd2UgY2FuIG1ha2UgdGhp
+bmdzIGJldHRlci4KPiAKClNlZW1zIGxpa2UgSSBraWNrZWQgdXAgc29tZSBkdXN0IGhlcmUsIGZv
+ciB0aGF0IEkgYXBvbG9naXplLiBJIGNlcnRhaW5seSBkaWQgbm90CmludGVuZCB0byBkaW1pbmlz
+aCBUaGllcnJ5J3MgKG9yIGFueW9uZSBlbHNlJ3MpIHJvbGUgYXMgbWFpbnRhaW5lci4KClRvIHB1
+dCB0aGlzIGFzIGNvbmNpc2VseSBhcyBJIGNhbiwgSSB0aG91Z2h0IGRybV9wYW5lbCB3b3VsZCBi
+ZSBhIGdvb2QgY2FuZGlkYXRlCmZvciAtbWlzYyBnaXZlbjoKICAgICAgICAtIGRybV9icmlkZ2Ug
+aXMgYWxyZWFkeSBtYWludGFpbmVkIHRoZXJlCiAgICAgICAgLSB0aGUgZHJpdmVycyBhcmUgc21h
+bGwsIGFuZCB3ZSBqdXN0IHJlc29sdmVkIHRvIG1haW50YWluIHNtYWxsIGRyaXZlcnMKICAgICAg
+ICAgIGluIC1taXNjCiAgICAgICAgLSBuZXcgcGF0Y2hlcyBhcmUgYmxvY2tlZCBvbiBhIHNpbmds
+ZSByZXZpZXdlci9jb21taXR0ZXIgYXMgb3Bwb3NlZCB0byBhCiAgICAgICAgICBxdWFsaWZpZWQg
+Y29tbWl0dGVlICh3aGljaCBJIGhhdmUgY29tZSB0byB1bmRlcnN0YW5kIGlzIGEgZmVhdHVyZSBp
+bgogICAgICAgICAgdGhpcyBpbnN0YW5jZSkKClNvIGlmIHdlIGNhbid0IG1pZ3JhdGUgaXQgdG8g
+LW1pc2Mgbm93LCBmb3IgZmVhciBvZiBxdWFsaXR5IGlzc3Vlcywgd2hhdCBhcmUgdGhlCnN0ZXBz
+IG5lY2Vzc2FyeSB0byAiZGUtc3RhZ2UiIGl0PwoKU2VhbgoKCj4gSSB0aGluayBpdCdsbCBiZSBu
+aWNlIHRvIGhhdmUgc29tZS9tb3N0IG9mIHRoZSBjb21tb24gY29uY2VybnMgdGhhdAo+IFRoaWVy
+cnkvb3RoZXJzIGNvbWVzIGFjcm9zcyBkb2N1bWVudGVkIC0gaW4ta2VybmVsLCBibG9nIHBvc3Qs
+IG90aGVyLgo+IFN1Y2ggdGhhdCBvbmUgY2FuIHJlZmVyZW5jZSB0byBzcGVjaWZpYyBwb2ludHMg
+YXMgcGF0Y2ggZmFsbHMgc3ViLXBhci4KPiBXZSBhbGwgd2FudCB0byBoYXZlIGEgYmFsYW5jZSBv
+ZiBuaWNlbHkgd3JpdHRlbiBkcml2ZXIgYW5kIHF1aWNrCj4gbWVyZ2UuCj4gCj4gSW5raSwgSSBi
+ZWxpZXZlIG15c2VsZiBhbmQgb3RoZXJzIGhhdmUgaW52aXRlZCB5b3UgYmVmb3JlIG9uCj4gI2Ry
+aS1kZXZlbC4gVGhpcyBpcyBhbm90aGVyIG1lZGl1bSB3aGVyZSB5b3UgY2FuIHBva2UgZGV2cyBh
+bmQgZnJvbSBteQo+IGV4cGVyaWVuY2UgLSBpdCB0ZW5kcyB0byBiZSBtb3JlIGVmZmljaWVudCwg
+bW9zdCBvZiB0aGUgdGltZS4KPiAKPiBUaGFua3MKPiBFbWlsCj4gX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4g
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgotLSAKU2VhbiBQYXVsLCBTb2Z0d2Fy
+ZSBFbmdpbmVlciwgR29vZ2xlIC8gQ2hyb21pdW0gT1MKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
