@@ -1,63 +1,127 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 4/7] drm/exynos/hdmi: add bridge support
-Date: Wed, 01 Feb 2017 17:17:24 +0900
-Message-ID: <58919994.3060100@samsung.com>
-References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
- <CGME20170120065230eucas1p2e22f7b832ec7e1c770c3e8a27a3341f5@eucas1p2.samsung.com>
- <1484895145-511-5-git-send-email-a.hajda@samsung.com>
- <58918ED0.3020406@samsung.com>
- <53bb68fd-5de0-6b3d-df3e-e961ba3fd0fb@samsung.com>
- <589191DB.5000304@samsung.com>
- <faefa2bc-0e52-f4a7-3968-e5b7c07d50a0@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <faefa2bc-0e52-f4a7-3968-e5b7c07d50a0@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v3 4/7] drm/exynos/hdmi: add bridge support
+Date: Wed, 01 Feb 2017 09:29:14 +0100
+Message-ID: <1485937754-21440-1-git-send-email-a.hajda@samsung.com>
+References: <58919994.3060100@samsung.com>
+ <CGME20170201082940eucas1p1f19e15328a787d6b77cba97bad92afce@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45754 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751404AbdBAI3o (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 03:29:44 -0500
+In-reply-to: <58919994.3060100@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAy7JuUIDAx7J28IDE3OjEy7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBPbiAwMS4wMi4yMDE3IDA4OjQ0LCBJbmtpIERhZSB3cm90ZToKPj4KPj4gMjAxN+uF
-hCAwMuyblCAwMeydvCAxNjozNOyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+
-PiBPbiAwMS4wMi4yMDE3IDA4OjMxLCBJbmtpIERhZSB3cm90ZToKPj4+PiAyMDE364WEIDAx7JuU
-IDIw7J28IDE1OjUy7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4gSW4g
-c29tZSBwbGF0Zm9ybXMgdGhlcmUgaXMgYXR0YWNoZWQgYW5vdGhlciBkZXZpY2UgdG8gdGhlIGVu
-ZCBvZiBIRE1JLgo+Pj4+PiBUaGUgcGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBpdC4KPj4+PiBBbmRy
-emVqLCBjYW4geW91IGNsYXJpZnkgd2hhdCBicmlkZ2UgZGV2aWNlIGNhbiBiZSBhdHRhY2hlZCBh
-bmQgYWN0dWFsbHkgaXMgbm93IGF0dGFjaGVkIHRvIHRoZSBlbmQgb2YgSERNST8KPj4+PiBBbmQg
-SSB3b25kZXIgaWYgd2UgaGF2ZSB0aGUgZGV2aWNlIHRyZWUgZmlsZSB3aGljaCBkZWZpbmVzIHRo
-ZSBicmlkZ2UgZGV2aWNlIGluIG1haW5saW5lLiBTZWVtcyB3ZSBoYXZlIG5vIHRoZSBkZXZpY2Ug
-dHJlZSBmaWxlLgo+Pj4+Cj4+Pj4gSWYgbm90aGluZywgdGhlbiB0aGlzIHBhdGNoIHNob3VsZCBi
-ZSBtZXJnZWQgd2l0aCByZWFsIHVzZSBjYXNlLgo+Pj4gU2lJODYyMCBNSEwgYnJpZGdlIGluIHRt
-Mi90bTJlLgo+PiBEaWQgeW91IHBvc3QgZHQgcGF0Y2ggdG8gYWRkIHRoZSBwcm9wZXJ0aWVzIHJl
-bGF0ZWQgdG8gU2lJODYyMCBNSEwgYnJpZGdlIGRldmljZT8KPj4KPj4gSSBzZWUgYmVsb3cgcGF0
-Y2ggc2VyaWVzLAo+PiBbUEFUQ0ggMDAvMjRdIGRybS9icmlkZ2Uvc2lpODYyMDogYWRkIFVsdHJh
-IEhEIG1vZGVzIHN1cHBvcnQKPj4KPj4gYnV0IEkgY291bGRuJ3QgZmluZCBkdCBwYXRjaCBmb3Ig
-aXQuIEFuZCBzcGVjaWZ5aW5nIFNpSTg2MjAgTUhMIGJyaWRnZSBkZXZpY2UgYXMgZGVzY3JpcHRp
-b24gd291bGQgYmUgbmVlZGVkLgo+Pgo+PiBUaGFua3MuCj4+Cj4+Cj4gCj4gUGF0Y2ggYWRkaW5n
-IEhETUkgcGF0aCB0byB0bTIoZSkgaW5jbHVkaW5nIFNpSTg2MjAgbm9kZSBhbmQgT0YgYmluZGlu
-Z3MKPiBiZXR3ZWVuIGhkbWkgYW5kIFNpSTg2MjAgWzFdLgoKT29wcywgeW91IGFscmVhZHkgQ0Nl
-ZCBtZS4gSSBkaWRuJ3QgY2hlY2sgaXQuIFNvcnJ5LgoKPiBBcyB0aGUgYnJpZGdlIGZyYW1ld29y
-ayBpbiBsb3dlciBtb2RlcyB3YXMgdXNlZCBvbmx5IHRvIGVsaW1pbmF0ZQo+IHVuc3VwcG9ydGVk
-IG1vZGVzLCBzdXBwb3J0IGZvciBicmlkZ2UgaW4gZXh5bm9zX2hkbWkgZHJpdmVyIHdhcyBub3QK
-PiBjcml0aWNhbCwgSERNSSBwYXRoIHdvcmtlZCB3ZWxsIGFuZCBJIGZvcmdvdCBhYm91dCBpdC4K
-PiBCdXQgZm9yIFVsdHJhSEQgbW9kZXMgaXQgaXMgcmVxdWlyZWQgYXMgU2lJODYyMCB1c2VzIGJy
-aWRnZSBmcmFtZXdvcmsgdG8KPiBnYXRoZXIgaW5mbyBhYm91dCBhcHBsaWVkIHZpZGVvIG1vZGUg
-dG8gcHJvZ3JhbSByZWdpc3RlcnMgYWNjb3JkaW5nbHkuCj4gSSB3aWxsIGFkZCByZXF1ZXN0ZWQg
-ZGVzY3JpcHRpb24gdG8gdGhpcyBwYXRjaC4KClRoYW5rcy4KCj4gCj4gWzFdOiBodHRwOi8vd3d3
-LnNwaW5pY3MubmV0L2xpc3RzL2RldmljZXRyZWUvbXNnMTU3ODkyLmh0bWwKPiAKPiBSZWdhcmRz
-Cj4gQW5kcnplago+IAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On TM2/TM2e platforms HDMI output is connected to MHL bridge
+SiI8620. To allow configure UltraHD modes on the bridge
+and to eliminate unsupported modes this bridge should be
+attached to drm_encoder implemented in exynos_hdmi.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 56 +++++++++++++++++++++++++++++-------
+ 1 file changed, 46 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index a73b192..41fb894 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -35,6 +35,7 @@
+ #include <linux/io.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_graph.h>
+ #include <linux/hdmi.h>
+ #include <linux/component.h>
+ #include <linux/mfd/syscon.h>
+@@ -133,6 +134,7 @@ struct hdmi_context {
+ 	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+ 	struct regulator		*reg_hdmi_en;
+ 	struct exynos_drm_clk		phy_clk;
++	struct drm_bridge		*bridge;
+ };
+ 
+ static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+@@ -922,7 +924,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ 	drm_connector_register(connector);
+ 	drm_mode_connector_attach_encoder(connector, encoder);
+ 
+-	return 0;
++	if (hdata->bridge) {
++		encoder->bridge = hdata->bridge;
++		hdata->bridge->encoder = encoder;
++		ret = drm_bridge_attach(encoder->dev, hdata->bridge);
++		if (ret)
++			DRM_ERROR("Failed to attach bridge\n");
++	}
++
++	return ret;
+ }
+ 
+ static bool hdmi_mode_fixup(struct drm_encoder *encoder,
+@@ -1591,6 +1601,31 @@ static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
+ 		hdmiphy_disable(hdata);
+ }
+ 
++static int hdmi_bridge_init(struct hdmi_context *hdata)
++{
++	struct device *dev = hdata->dev;
++	struct device_node *ep, *np;
++
++	ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
++	if (!ep)
++		return 0;
++
++	np = of_graph_get_remote_port_parent(ep);
++	of_node_put(ep);
++	if (!np) {
++		DRM_ERROR("failed to get remote port parent");
++		return -EINVAL;
++	}
++
++	hdata->bridge = of_drm_find_bridge(np);
++	of_node_put(np);
++
++	if (!hdata->bridge)
++		return -EPROBE_DEFER;
++
++	return 0;
++}
++
+ static int hdmi_resources_init(struct hdmi_context *hdata)
+ {
+ 	struct device *dev = hdata->dev;
+@@ -1630,17 +1665,18 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 
+ 	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
+ 
+-	if (PTR_ERR(hdata->reg_hdmi_en) == -ENODEV)
+-		return 0;
++	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
++		if (IS_ERR(hdata->reg_hdmi_en))
++			return PTR_ERR(hdata->reg_hdmi_en);
+ 
+-	if (IS_ERR(hdata->reg_hdmi_en))
+-		return PTR_ERR(hdata->reg_hdmi_en);
+-
+-	ret = regulator_enable(hdata->reg_hdmi_en);
+-	if (ret)
+-		DRM_ERROR("failed to enable hdmi-en regulator\n");
++		ret = regulator_enable(hdata->reg_hdmi_en);
++		if (ret) {
++			DRM_ERROR("failed to enable hdmi-en regulator\n");
++			return ret;
++		}
++	}
+ 
+-	return ret;
++	return hdmi_bridge_init(hdata);
+ }
+ 
+ static struct of_device_id hdmi_match_types[] = {
+-- 
+2.7.4
