@@ -1,91 +1,145 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH 4/7] drm/exynos/hdmi: add bridge support
-Date: Wed, 01 Feb 2017 16:31:28 +0900
-Message-ID: <58918ED0.3020406@samsung.com>
+Date: Wed, 01 Feb 2017 08:34:46 +0100
+Message-ID: <53bb68fd-5de0-6b3d-df3e-e961ba3fd0fb@samsung.com>
 References: <1484895145-511-1-git-send-email-a.hajda@samsung.com>
  <CGME20170120065230eucas1p2e22f7b832ec7e1c770c3e8a27a3341f5@eucas1p2.samsung.com>
  <1484895145-511-5-git-send-email-a.hajda@samsung.com>
+ <58918ED0.3020406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1484895145-511-5-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42740 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751080AbdBAHev (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 02:34:51 -0500
+In-reply-to: <58918ED0.3020406@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-CgoyMDE364WEIDAx7JuUIDIw7J28IDE1OjUy7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPiBJbiBzb21lIHBsYXRmb3JtcyB0aGVyZSBpcyBhdHRhY2hlZCBhbm90aGVyIGRldmlj
-ZSB0byB0aGUgZW5kIG9mIEhETUkuCj4gVGhlIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgaXQuCgpB
-bmRyemVqLCBjYW4geW91IGNsYXJpZnkgd2hhdCBicmlkZ2UgZGV2aWNlIGNhbiBiZSBhdHRhY2hl
-ZCBhbmQgYWN0dWFsbHkgaXMgbm93IGF0dGFjaGVkIHRvIHRoZSBlbmQgb2YgSERNST8KQW5kIEkg
-d29uZGVyIGlmIHdlIGhhdmUgdGhlIGRldmljZSB0cmVlIGZpbGUgd2hpY2ggZGVmaW5lcyB0aGUg
-YnJpZGdlIGRldmljZSBpbiBtYWlubGluZS4gU2VlbXMgd2UgaGF2ZSBubyB0aGUgZGV2aWNlIHRy
-ZWUgZmlsZS4KCklmIG5vdGhpbmcsIHRoZW4gdGhpcyBwYXRjaCBzaG91bGQgYmUgbWVyZ2VkIHdp
-dGggcmVhbCB1c2UgY2FzZS4KClRoYW5rcy4KCj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBI
-YWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfaGRtaS5jIHwgNTYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0t
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCA0NiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gaW5kZXggYTczYjE5Mi4uNDFmYjg5
-NCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPiBAQCAtMzUsNiArMzUs
-NyBAQAo+ICAjaW5jbHVkZSA8bGludXgvaW8uaD4KPiAgI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJl
-c3MuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPgo+ICsjaW5jbHVkZSA8bGludXgv
-b2ZfZ3JhcGguaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2hkbWkuaD4KPiAgI2luY2x1ZGUgPGxpbnV4
-L2NvbXBvbmVudC5oPgo+ICAjaW5jbHVkZSA8bGludXgvbWZkL3N5c2Nvbi5oPgo+IEBAIC0xMzMs
-NiArMTM0LDcgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7Cj4gIAlzdHJ1Y3QgcmVndWxhdG9yX2J1
-bGtfZGF0YQlyZWd1bF9idWxrW0FSUkFZX1NJWkUoc3VwcGx5KV07Cj4gIAlzdHJ1Y3QgcmVndWxh
-dG9yCQkqcmVnX2hkbWlfZW47Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9jbGsJCXBoeV9jbGs7Cj4g
-KwlzdHJ1Y3QgZHJtX2JyaWRnZQkJKmJyaWRnZTsKPiAgfTsKPiAgCj4gIHN0YXRpYyBpbmxpbmUg
-c3RydWN0IGhkbWlfY29udGV4dCAqZW5jb2Rlcl90b19oZG1pKHN0cnVjdCBkcm1fZW5jb2RlciAq
-ZSkKPiBAQCAtOTIyLDcgKzkyNCwxNSBAQCBzdGF0aWMgaW50IGhkbWlfY3JlYXRlX2Nvbm5lY3Rv
-cihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCj4gIAlkcm1fY29ubmVjdG9yX3JlZ2lzdGVy
-KGNvbm5lY3Rvcik7Cj4gIAlkcm1fbW9kZV9jb25uZWN0b3JfYXR0YWNoX2VuY29kZXIoY29ubmVj
-dG9yLCBlbmNvZGVyKTsKPiAgCj4gLQlyZXR1cm4gMDsKPiArCWlmIChoZGF0YS0+YnJpZGdlKSB7
-Cj4gKwkJZW5jb2Rlci0+YnJpZGdlID0gaGRhdGEtPmJyaWRnZTsKPiArCQloZGF0YS0+YnJpZGdl
-LT5lbmNvZGVyID0gZW5jb2RlcjsKPiArCQlyZXQgPSBkcm1fYnJpZGdlX2F0dGFjaChlbmNvZGVy
-LT5kZXYsIGhkYXRhLT5icmlkZ2UpOwo+ICsJCWlmIChyZXQpCj4gKwkJCURSTV9FUlJPUigiRmFp
-bGVkIHRvIGF0dGFjaCBicmlkZ2VcbiIpOwo+ICsJfQo+ICsKPiArCXJldHVybiByZXQ7Cj4gIH0K
-PiAgCj4gIHN0YXRpYyBib29sIGhkbWlfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVu
-Y29kZXIsCj4gQEAgLTE1OTEsNiArMTYwMSwzMSBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2Nsa19l
-bmFibGUoc3RydWN0IGV4eW5vc19kcm1fY2xrICpjbGssIGJvb2wgZW5hYmxlKQo+ICAJCWhkbWlw
-aHlfZGlzYWJsZShoZGF0YSk7Cj4gIH0KPiAgCj4gK3N0YXRpYyBpbnQgaGRtaV9icmlkZ2VfaW5p
-dChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPiArewo+ICsJc3RydWN0IGRldmljZSAqZGV2
-ID0gaGRhdGEtPmRldjsKPiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqZXAsICpucDsKPiArCj4gKwll
-cCA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9ieV9yZWdzKGRldi0+b2Zfbm9kZSwgMSwgLTEpOwo+
-ICsJaWYgKCFlcCkKPiArCQlyZXR1cm4gMDsKPiArCj4gKwlucCA9IG9mX2dyYXBoX2dldF9yZW1v
-dGVfcG9ydF9wYXJlbnQoZXApOwo+ICsJb2Zfbm9kZV9wdXQoZXApOwo+ICsJaWYgKCFucCkgewo+
-ICsJCURSTV9FUlJPUigiZmFpbGVkIHRvIGdldCByZW1vdGUgcG9ydCBwYXJlbnQiKTsKPiArCQly
-ZXR1cm4gLUVJTlZBTDsKPiArCX0KPiArCj4gKwloZGF0YS0+YnJpZGdlID0gb2ZfZHJtX2ZpbmRf
-YnJpZGdlKG5wKTsKPiArCW9mX25vZGVfcHV0KG5wKTsKPiArCj4gKwlpZiAoIWhkYXRhLT5icmlk
-Z2UpCj4gKwkJcmV0dXJuIC1FUFJPQkVfREVGRVI7Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gK30KPiAr
-Cj4gIHN0YXRpYyBpbnQgaGRtaV9yZXNvdXJjZXNfaW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpo
-ZGF0YSkKPiAgewo+ICAJc3RydWN0IGRldmljZSAqZGV2ID0gaGRhdGEtPmRldjsKPiBAQCAtMTYz
-MCwxNyArMTY2NSwxOCBAQCBzdGF0aWMgaW50IGhkbWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhk
-bWlfY29udGV4dCAqaGRhdGEpCj4gIAo+ICAJaGRhdGEtPnJlZ19oZG1pX2VuID0gZGV2bV9yZWd1
-bGF0b3JfZ2V0X29wdGlvbmFsKGRldiwgImhkbWktZW4iKTsKPiAgCj4gLQlpZiAoUFRSX0VSUiho
-ZGF0YS0+cmVnX2hkbWlfZW4pID09IC1FTk9ERVYpCj4gLQkJcmV0dXJuIDA7Cj4gKwlpZiAoUFRS
-X0VSUihoZGF0YS0+cmVnX2hkbWlfZW4pICE9IC1FTk9ERVYpIHsKPiArCQlpZiAoSVNfRVJSKGhk
-YXRhLT5yZWdfaGRtaV9lbikpCj4gKwkJCXJldHVybiBQVFJfRVJSKGhkYXRhLT5yZWdfaGRtaV9l
-bik7Cj4gIAo+IC0JaWYgKElTX0VSUihoZGF0YS0+cmVnX2hkbWlfZW4pKQo+IC0JCXJldHVybiBQ
-VFJfRVJSKGhkYXRhLT5yZWdfaGRtaV9lbik7Cj4gLQo+IC0JcmV0ID0gcmVndWxhdG9yX2VuYWJs
-ZShoZGF0YS0+cmVnX2hkbWlfZW4pOwo+IC0JaWYgKHJldCkKPiAtCQlEUk1fRVJST1IoImZhaWxl
-ZCB0byBlbmFibGUgaGRtaS1lbiByZWd1bGF0b3JcbiIpOwo+ICsJCXJldCA9IHJlZ3VsYXRvcl9l
-bmFibGUoaGRhdGEtPnJlZ19oZG1pX2VuKTsKPiArCQlpZiAocmV0KSB7Cj4gKwkJCURSTV9FUlJP
-UigiZmFpbGVkIHRvIGVuYWJsZSBoZG1pLWVuIHJlZ3VsYXRvclxuIik7Cj4gKwkJCXJldHVybiBy
-ZXQ7Cj4gKwkJfQo+ICsJfQo+ICAKPiAtCXJldHVybiByZXQ7Cj4gKwlyZXR1cm4gaGRtaV9icmlk
-Z2VfaW5pdChoZGF0YSk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGhk
-bWlfbWF0Y2hfdHlwZXNbXSA9IHsKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+On 01.02.2017 08:31, Inki Dae wrote:
+>
+> 2017년 01월 20일 15:52에 Andrzej Hajda 이(가) 쓴 글:
+>> In some platforms there is attached another device to the end of HDMI.
+>> The patch adds support for it.
+> Andrzej, can you clarify what bridge device can be attached and actually is now attached to the end of HDMI?
+> And I wonder if we have the device tree file which defines the bridge device in mainline. Seems we have no the device tree file.
+>
+> If nothing, then this patch should be merged with real use case.
+
+SiI8620 MHL bridge in tm2/tm2e.
+
+Regards
+Andrzej
+
+>
+> Thanks.
+>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c | 56 +++++++++++++++++++++++++++++-------
+>>  1 file changed, 46 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> index a73b192..41fb894 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -35,6 +35,7 @@
+>>  #include <linux/io.h>
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_device.h>
+>> +#include <linux/of_graph.h>
+>>  #include <linux/hdmi.h>
+>>  #include <linux/component.h>
+>>  #include <linux/mfd/syscon.h>
+>> @@ -133,6 +134,7 @@ struct hdmi_context {
+>>  	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+>>  	struct regulator		*reg_hdmi_en;
+>>  	struct exynos_drm_clk		phy_clk;
+>> +	struct drm_bridge		*bridge;
+>>  };
+>>  
+>>  static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+>> @@ -922,7 +924,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+>>  	drm_connector_register(connector);
+>>  	drm_mode_connector_attach_encoder(connector, encoder);
+>>  
+>> -	return 0;
+>> +	if (hdata->bridge) {
+>> +		encoder->bridge = hdata->bridge;
+>> +		hdata->bridge->encoder = encoder;
+>> +		ret = drm_bridge_attach(encoder->dev, hdata->bridge);
+>> +		if (ret)
+>> +			DRM_ERROR("Failed to attach bridge\n");
+>> +	}
+>> +
+>> +	return ret;
+>>  }
+>>  
+>>  static bool hdmi_mode_fixup(struct drm_encoder *encoder,
+>> @@ -1591,6 +1601,31 @@ static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
+>>  		hdmiphy_disable(hdata);
+>>  }
+>>  
+>> +static int hdmi_bridge_init(struct hdmi_context *hdata)
+>> +{
+>> +	struct device *dev = hdata->dev;
+>> +	struct device_node *ep, *np;
+>> +
+>> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
+>> +	if (!ep)
+>> +		return 0;
+>> +
+>> +	np = of_graph_get_remote_port_parent(ep);
+>> +	of_node_put(ep);
+>> +	if (!np) {
+>> +		DRM_ERROR("failed to get remote port parent");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	hdata->bridge = of_drm_find_bridge(np);
+>> +	of_node_put(np);
+>> +
+>> +	if (!hdata->bridge)
+>> +		return -EPROBE_DEFER;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int hdmi_resources_init(struct hdmi_context *hdata)
+>>  {
+>>  	struct device *dev = hdata->dev;
+>> @@ -1630,17 +1665,18 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>>  
+>>  	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
+>>  
+>> -	if (PTR_ERR(hdata->reg_hdmi_en) == -ENODEV)
+>> -		return 0;
+>> +	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
+>> +		if (IS_ERR(hdata->reg_hdmi_en))
+>> +			return PTR_ERR(hdata->reg_hdmi_en);
+>>  
+>> -	if (IS_ERR(hdata->reg_hdmi_en))
+>> -		return PTR_ERR(hdata->reg_hdmi_en);
+>> -
+>> -	ret = regulator_enable(hdata->reg_hdmi_en);
+>> -	if (ret)
+>> -		DRM_ERROR("failed to enable hdmi-en regulator\n");
+>> +		ret = regulator_enable(hdata->reg_hdmi_en);
+>> +		if (ret) {
+>> +			DRM_ERROR("failed to enable hdmi-en regulator\n");
+>> +			return ret;
+>> +		}
+>> +	}
+>>  
+>> -	return ret;
+>> +	return hdmi_bridge_init(hdata);
+>>  }
+>>  
+>>  static struct of_device_id hdmi_match_types[] = {
+>>
+>
