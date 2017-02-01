@@ -1,42 +1,83 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/2] [media] exynos-gsc: Do not swap cb/cr for semi planar formats
-Date: Wed,  1 Feb 2017 17:05:21 -0300
-Message-ID: <1485979523-32404-2-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH 2/2] [media] exynos-gsc: Add support for NV{16,21,61}M pixel formats
+Date: Wed,  1 Feb 2017 17:05:22 -0300
+Message-ID: <1485979523-32404-3-git-send-email-javier@osg.samsung.com>
 References: <1485979523-32404-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:44692
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753619AbdBAUGE (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 15:06:04 -0500
 In-Reply-To: <1485979523-32404-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Andi Shyti <andi.shyti@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Thibault Saunier <thibault.saunier@osg.samsung.com>
 
-In the case of semi planar formats cb and cr are in the same plane
-in memory, meaning that will be set to 'cb' whatever the format is,
-and whatever the (packed) order of those components are.
+Those are useful formats that should be handled.
 
-Suggested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
 
- drivers/media/platform/exynos-gsc/gsc-core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 40aff08dd51d..a846659ae5c1 100644
+index a846659ae5c1..eff636d4502b 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -861,9 +861,7 @@ int gsc_prepare_addr(struct gsc_ctx *ctx, struct vb2_buffer *vb,
- 
- 	if ((frame->fmt->pixelformat == V4L2_PIX_FMT_VYUY) ||
- 		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVYU) ||
--		(frame->fmt->pixelformat == V4L2_PIX_FMT_NV61) ||
- 		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVU420) ||
--		(frame->fmt->pixelformat == V4L2_PIX_FMT_NV21) ||
- 		(frame->fmt->pixelformat == V4L2_PIX_FMT_YVU420M))
- 		swap(addr->cb, addr->cr);
- 
+@@ -112,6 +112,15 @@ static const struct gsc_fmt gsc_formats[] = {
+ 		.num_planes	= 1,
+ 		.num_comp	= 2,
+ 	}, {
++		.name		= "YUV 4:2:2 non-contig, Y/CbCr",
++		.pixelformat	= V4L2_PIX_FMT_NV16M,
++		.depth		= { 8, 8 },
++		.color		= GSC_YUV422,
++		.yorder		= GSC_LSB_Y,
++		.corder		= GSC_CBCR,
++		.num_planes	= 2,
++		.num_comp	= 2,
++	}, {
+ 		.name		= "YUV 4:2:2 planar, Y/CrCb",
+ 		.pixelformat	= V4L2_PIX_FMT_NV61,
+ 		.depth		= { 16 },
+@@ -121,6 +130,15 @@ static const struct gsc_fmt gsc_formats[] = {
+ 		.num_planes	= 1,
+ 		.num_comp	= 2,
+ 	}, {
++		.name		= "YUV 4:2:2 non-contig, Y/CrCb",
++		.pixelformat	= V4L2_PIX_FMT_NV61M,
++		.depth		= { 8, 8 },
++		.color		= GSC_YUV422,
++		.yorder		= GSC_LSB_Y,
++		.corder		= GSC_CRCB,
++		.num_planes	= 2,
++		.num_comp	= 2,
++	}, {
+ 		.name		= "YUV 4:2:0 planar, YCbCr",
+ 		.pixelformat	= V4L2_PIX_FMT_YUV420,
+ 		.depth		= { 12 },
+@@ -158,6 +176,15 @@ static const struct gsc_fmt gsc_formats[] = {
+ 		.num_planes	= 1,
+ 		.num_comp	= 2,
+ 	}, {
++		.name		= "YUV 4:2:0 non-contig. 2p, Y/CrCb",
++		.pixelformat	= V4L2_PIX_FMT_NV21M,
++		.depth		= { 8, 4 },
++		.color		= GSC_YUV420,
++		.yorder		= GSC_LSB_Y,
++		.corder		= GSC_CRCB,
++		.num_planes	= 2,
++		.num_comp	= 2,
++	}, {
+ 		.name		= "YUV 4:2:0 non-contig. 2p, Y/CbCr",
+ 		.pixelformat	= V4L2_PIX_FMT_NV12M,
+ 		.depth		= { 8, 4 },
 -- 
 2.7.4
