@@ -1,39 +1,119 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9 1/3] dt-bindings: Add support for samsung s6e3ha2 panel binding
-Date: Wed, 1 Feb 2017 11:22:36 +0200
-Message-ID: <CAJKOXPedbtxLGciyc+mqS5X2P6CCwN4uoy9RpnAGW4zcfD5O1g@mail.gmail.com>
-References: <CGME20170201074711epcas1p3c7f9542d5b6a4501dd7d440d866951ec@epcas1p3.samsung.com>
- <1485935214-16210-1-git-send-email-hoegeun.kwon@samsung.com> <1485935214-16210-2-git-send-email-hoegeun.kwon@samsung.com>
+From: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Subject: RE: [PATCH] serial: samsung: add clock controls in
+ s3c24xx_serial_resume_noirq()
+Date: Wed, 01 Feb 2017 18:45:28 +0900
+Message-ID: <008b01d27c6f$ebce8500$c36b8f00$@samsung.com>
+References: <000d01d218c5$3069cdf0$913d69d0$@samsung.com>
+ <CGME20160930103448epcas2p4e2ee38332ad98ad3cb1e07866d4337d8@epcas2p4.samsung.com>
+ <20160930103434.GA4713@kozik-lap>
+ <000401d21dfc$dba89bb0$92f9d310$@samsung.com>
+ <43f1d7da-9857-4f0e-12b9-ff0f241de762@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1485935214-16210-2-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47716 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751627AbdBAJpb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 1 Feb 2017 04:45:31 -0500
+In-reply-to: <43f1d7da-9857-4f0e-12b9-ff0f241de762@math.uni-bielefeld.de>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Krzysztof Kozlowski' <krzk@kernel.org>
+Cc: gregkh@linuxfoundation.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 1, 2017 at 9:46 AM, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> The Samsung s6e3ha2 is a 5.7" 1440x2560 AMOLED panel connected
-> using MIPI-DSI interfaces.
+Hello,
+
 >
-> Signed-off-by: Donghwa Lee <dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Hyungwon Hwang <human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
->  .../bindings/display/panel/samsung,s6e3ha2.txt     | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+>Hello,
+>
+>was going through my mail folder and I don't think that this patch was ever
+>applied (or resent).
+>
+>Just wondering if it is still necessary.
+>
+>- Tobias
+>
 
-Thanks Hoegeun for update.
+Sorry for late reply. I will resend the patch soon.
 
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Thanks.
 
-BR,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>남영민 wrote:
+>> Hello,
+>>
+>>> On Tue, Sep 27, 2016 at 10:43:54PM +0900, 남영민 wrote:
+>>>> This patch adds clock controls in s3c24xx_serial_resume_noirq() to
+>>>> set S3C64XX_UINTM register.
+>>>
+>>> Code looks correct but the commit message is bogus. It does not bring
+>>> any benefit over the code, not mentioning that it is quite cryptic
+>>> (what does the "clock controls" mean?).
+>>>
+>>> Just describe here WHAT is the problem and WHY the fix is needed.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> Thank you for taking your time for the review.
+>> I will improve the commit message applying your suggestions and resend
+>this patch.
+>>
+>> Best regards,
+>> Youngmin Nam
+>>
+>>
+>>>>
+>>>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+>>>> ---
+>>>>  drivers/tty/serial/samsung.c | 3 +++
+>>>>  1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/drivers/tty/serial/samsung.c
+>>>> b/drivers/tty/serial/samsung.c index ae2095a..97f7b3b 100644
+>>>> --- a/drivers/tty/serial/samsung.c
+>>>> +++ b/drivers/tty/serial/samsung.c
+>>>> @@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device
+>>>> *dev)  static int s3c24xx_serial_resume_noirq(struct device *dev)  {
+>>>>  	struct uart_port *port = s3c24xx_dev_to_port(dev);
+>>>> +	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>>>>
+>>>>  	if (port) {
+>>>>  		/* restore IRQ mask */
+>>>> @@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct
+>>> device *dev)
+>>>>  				uintm &= ~S3C64XX_UINTM_TXD_MSK;
+>>>>  			if (rx_enabled(port))
+>>>>  				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+>>>> +			clk_prepare_enable(ourport->clk);
+>>>>  			wr_regl(port, S3C64XX_UINTM, uintm);
+>>>> +			clk_disable_unprepare(ourport->clk);
+>>>>  		}
+>>>>  	}
+>>>>
+>>>> --
+>>>> 2.8.1
+>>>>
+>>>>
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe
+>>>> linux-samsung-soc" in the body of a message to
+>>>> majordomo@vger.kernel.org More majordomo info at
+>>> http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> linux-samsung-soc" in the body of a message to
+>> majordomo@vger.kernel.org More majordomo info at
+>> http://vger.kernel.org/majordomo-info.html
+>>
+>
+>--
+>To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+>soc" in the body of a message to majordomo@vger.kernel.org More majordomo
+>info at  http://vger.kernel.org/majordomo-info.html
