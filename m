@@ -1,71 +1,82 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
-Date: Thu,  2 Feb 2017 20:30:08 +0200
-Message-ID: <20170202183008.23500-5-krzk@kernel.org>
-References: <20170202183008.23500-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170202183008.23500-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 0/4] phy/mfd/soc: exynos: Header cleanup
+Date: Thu, 2 Feb 2017 20:38:07 +0200
+Message-ID: <20170202183807.tylyvgpk5roecsvs@kozik-lap>
+References: <20170127200510.4444-1-krzk@kernel.org>
+ <588F039D.3090503@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33897 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbdBBSiN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 2 Feb 2017 13:38:13 -0500
+Content-Disposition: inline
+In-Reply-To: <588F039D.3090503@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Mon, Jan 30, 2017 at 02:43:01PM +0530, Kishon Vijay Abraham I wrote:
+> 
+> 
+> On Saturday 28 January 2017 01:35 AM, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > Suggested by Marek, continuation of cleanup of PMU register defines
+> > in headers.
+> > 
+> > Let's keep all of them in include/linux/soc/samsung/exynos-regs-pmu.h.
+> > 
+> > This is based on:
+> > 1. Marek's recent work around pinctrl/power domains/lpass:
+> >    https://git.linaro.org/people/marek.szyprowski/linux-srpol.git
+> >    branch: v4.10-next-tm2-pd
+> > 
+> > 2. My two previous patches for cleanup:
+> >    https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git
+> >    branch: for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends
+> > 
+> > Affected subsystems/drivers:
+> > 1. phy - drivers,
+> > 2. mfd - headers,
+> > 3. soc/samsung - header.
+> > 
+> > However because of dependency on Marek's patchset, I do not have a clue
+> > how to merge it... it is not an urgent stuff, so it may wait till
+> > dependencies get in.
+> 
+> I'll defer merging this.
 
-This includes clk-v4.11-samsung-dphy tag from Sylwester (clock) and a pinctrl
-header acked by Linus pinctrl header. The header goes through my tree but I provided
-a separate tag also for Linus.
+Okay, the compile dependency went to my tree and is available under
+samsung-drivers-soc-pmu-4.11-3 tag (see below). However the patches
+probably won't apply cleanly so if you wish, I can rebase them.
 
-On top of previous pull request.
+Also they miss an ack from Lee Jones.
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit 7547162ac351483df3641f64e99e10be329dd6a2:
+The following changes since commit ee55ae6194a5439bde3a3b8ee0abda63c610e740:
 
-  arm64: dts: exynos: Add clocks to Exynos5433 LPASS module (2017-01-26 22:04:20 +0200)
+  soc: samsung: pmu: Remove duplicated define for ARM_L2_OPTION register (2017-01-27 11:32:31 +0200)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.11-3
+  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-soc-pmu-4.11-3
 
-for you to fetch changes up to 6629490aa027a8af3160e63cffcddc97c1602c96:
+for you to fetch changes up to b343d77b94b6702082f4f402e1492e71ef87095b:
 
-  arm64: dts: exynos: Add regulators for Vbus and Vbus-Boost (2017-02-02 19:54:05 +0200)
-
-----------------------------------------------------------------
-Samsung DeviceTree ARM64 update for v4.11, third round:
-1. Add necessary initial configuration for clocks of display subsystem.
-   Till now it worked mostly thanks to bootloader.
-2. Use macro definitions instead of hard-coded values for pinctrl on Exynos7.
-3. Enable USB 3.0 (DWC3) on Exynos7.
+  soc: samsung: pmu: Add register defines for pad retention control (2017-02-02 20:00:28 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      Merge tag 'clk-v4.11-samsung-dphy' of git://linuxtv.org/snawrocki/samsung into next/dt64
-      Merge tag 'samsung-pinctrl-4.11' into next/dt64
+3rd round of improvements for Exynos PMU driver for v4.11:
+1. Add defines in header for future patches changing the pad
+   retention control.
 
-Marek Szyprowski (3):
-      clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
-      clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
-      arm64: dts: exynos: Add initial configuration for DISP clocks for TM2/TM2e
-
-Pankaj Dubey (2):
-      pinctrl: dt-bindings: samsung: Add Exynos7 specific pinctrl macro definitions
-      arm64: dts: exynos: Use macros for pinctrl configuration on Exynos7
-
-Vivek Gautam (2):
-      arm64: dts: exynos: Add USB 3.0 controller node for Exynos7
-      arm64: dts: exynos: Add regulators for Vbus and Vbus-Boost
-
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  12 -
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
- arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
- arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
- drivers/clk/samsung/clk-exynos5433.c               |   8 +-
- include/dt-bindings/clock/exynos5433.h             |   5 +-
- include/dt-bindings/pinctrl/samsung.h              |   8 +
- 9 files changed, 319 insertions(+), 167 deletions(-)
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      soc: samsung: pmu: Add register defines for pad retention control
