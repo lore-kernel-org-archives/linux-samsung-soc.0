@@ -1,94 +1,387 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/3] pinctrl: dt-bindings: samsung: Add Exynos7 specific
- pinctrl macro definitions
-Date: Thu, 2 Feb 2017 19:05:58 +0200
-Message-ID: <20170202170558.g6f4wwwz3gwaho5g@kozik-lap>
-References: <1484718141-28785-1-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170118054002epcas5p3b08e2f419976e17a3c584d64776810fd@epcas5p3.samsung.com>
- <1484718141-28785-3-git-send-email-pankaj.dubey@samsung.com>
- <20170118141935.eu7wmki7jnjdarkw@kozik-lap>
- <7a0d543f-37e8-98e9-15b4-7d3f808f8516@samsung.com>
- <20170127144123.slmwxorx7cjxwtcr@kozik-lap>
- <CACRpkdYLpQHT1ykYE1tNJpNRyUt7ezhyxznbe=dPu70mPn0OLQ@mail.gmail.com>
+From: Willy WOLFF <willy.mh.wolff@gmail.com>
+Subject: [PATCH] Exynos5422-odroidxu3: Incomplete thermal-zones definition
+Date: Thu, 2 Feb 2017 17:14:40 +0000
+Message-ID: <9e32c530-0d15-223f-c280-617f8ae2540d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34503 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752280AbdBBRGE (ORCPT
+Received: from mail-wj0-f196.google.com ([209.85.210.196]:35820 "EHLO
+        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbdBBRPR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Feb 2017 12:06:04 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYLpQHT1ykYE1tNJpNRyUt7ezhyxznbe=dPu70mPn0OLQ@mail.gmail.com>
+        Thu, 2 Feb 2017 12:15:17 -0500
+Received: by mail-wj0-f196.google.com with SMTP id i7so1742969wjf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2017 09:14:43 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, sanath@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, root <alim.akhtar@samsung.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 01, 2017 at 01:51:00PM +0100, Linus Walleij wrote:
-> On Fri, Jan 27, 2017 at 3:41 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Fri, Jan 27, 2017 at 01:25:42PM +0100, Sylwester Nawrocki wrote:
-> >> On 01/18/2017 03:19 PM, Krzysztof Kozlowski wrote:
-> >> > On Wed, Jan 18, 2017 at 11:12:20AM +0530, Pankaj Dubey wrote:
-> >> >> Exynos7 SoC pinctrl configurations are similar to existing Exynos4/5 except
-> >> >> for FSYS1 pinctrl drive strengths. So adding Exynos7 specific FSYS1 blocks
-> >> >> pinctrl driver strength related macros which will be used in Exynos7
-> >> >> DTSi files.
-> >> >>
-> >> >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> >> >> ---
-> >> >>  include/dt-bindings/pinctrl/samsung.h | 8 ++++++++
-> >> >>  1 file changed, 8 insertions(+)
-> >> >>
-> >> >
-> >> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> >
-> >> > I will need this header, so Sylwester if it is okay with you, could you
-> >> > provide a tag with it (or ack it)?
-> >>
-> >> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >>
-> >> I don't have pinctrl/samsung git tree, Linus applies patches directly.
-> >
-> > Oh, my mistake.
-> >
-> > Linus,
-> > This is similar case as "pinctrl: dt-bindings: samsung: add drive
-> > strength macros for Exynos5433" [1].
-> 
-> OK
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I expect that you take it through ARM SoC and/or send me a pull
-> request for it on an immutable branch, whatever is best.
+Odroid XU3-familly boards has thermal sensors per A15 core, but the actual thermal-zones define only cooling-maps action for cpu0.
+If the application is running on all cores but core4 (first core of the A15 cluster), the CPU can reach high temperature without cooling action.
 
-Yes, I'll include them in my pull request to arm-soc.
+Also, the comment for cpu_alert4 in cooling-maps definition is not accurate. 11 steps for A15 correspond to 700MHz.
 
-Below is stable tag if you need it:
+Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 287 +++++++++++++++++++--
+ 1 file changed, 269 insertions(+), 18 deletions(-)
 
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-pinctrl-4.11
-
-for you to fetch changes up to 860ac88abecab5d3d0e07306365f55cbc690c220:
-
-  pinctrl: dt-bindings: samsung: Add Exynos7 specific pinctrl macro definitions (2017-02-02 18:59:49 +0200)
-
-----------------------------------------------------------------
-Defines for GPIO drive strengths on Exynos5433 and Exynos7, used in Device Tree
-sources.
-
-----------------------------------------------------------------
-Andi Shyti (1):
-      pinctrl: dt-bindings: samsung: add drive strength macros for Exynos5433
-
-Pankaj Dubey (1):
-      pinctrl: dt-bindings: samsung: Add Exynos7 specific pinctrl macro definitions
-
- include/dt-bindings/pinctrl/samsung.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 05b9afdd..92328c1 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -64,22 +64,22 @@
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <0>;
+ 			trips {
+-				cpu_alert0: cpu-alert-0 {
++				cpu0_alert0: cpu-alert-0 {
+ 					temperature = <50000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_alert1: cpu-alert-1 {
++				cpu0_alert1: cpu-alert-1 {
+ 					temperature = <60000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_alert2: cpu-alert-2 {
++				cpu0_alert2: cpu-alert-2 {
+ 					temperature = <70000>; /* millicelsius */
+ 					hysteresis = <5000>; /* millicelsius */
+ 					type = "active";
+ 				};
+-				cpu_crit0: cpu-crit-0 {
++				cpu0_crit0: cpu-crit-0 {
+ 					temperature = <120000>; /* millicelsius */
+ 					hysteresis = <0>; /* millicelsius */
+ 					type = "critical";
+@@ -88,59 +88,310 @@
+ 				 * Exynos542x supports only 4 trip-points
+ 				 * so for these polling mode is required.
+ 				 * Start polling at temperature level of last
+-				 * interrupt-driven trip: cpu_alert2
++				 * interrupt-driven trip: cpu0_alert2
+ 				 */
+-				cpu_alert3: cpu-alert-3 {
++				cpu0_alert3: cpu-alert-3 {
+ 					temperature = <70000>; /* millicelsius */
+ 					hysteresis = <10000>; /* millicelsius */
+ 					type = "passive";
+ 				};
+-				cpu_alert4: cpu-alert-4 {
++				cpu0_alert4: cpu-alert-4 {
+ 					temperature = <85000>; /* millicelsius */
+ 					hysteresis = <10000>; /* millicelsius */
+ 					type = "passive";
+ 				};
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu0_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu0_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu0_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				/*
++				 * When reaching cpu0_alert3, reduce CPU
++				 * by 2 steps. On Exynos5422/5800 that would
++				 * be: 1600 MHz and 1100 MHz.
++				 */
++				map3 {
++					trip = <&cpu0_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu0_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
++
++				/*
++				 * When reaching cpu0_alert4, reduce CPU
++				 * further, down to 600 MHz (12 steps for big,
++				 * 7 steps for LITTLE).
++				 */
++				map5 {
++					trip = <&cpu0_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu0_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu1_thermal: cpu1-thermal {
++			thermal-sensors = <&tmu_cpu1 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu1_alert0: cpu-alert-0 {
++					temperature = <50000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu1_alert1: cpu-alert-1 {
++					temperature = <60000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu1_alert2: cpu-alert-2 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu1_crit0: cpu-crit-0 {
++					temperature = <120000>; /* millicelsius */
++					hysteresis = <0>; /* millicelsius */
++					type = "critical";
++				};
++				/*
++				 * Exynos542x supports only 4 trip-points
++				 * so for these polling mode is required.
++				 * Start polling at temperature level of last
++				 * interrupt-driven trip: cpu1_alert2
++				 */
++				cpu1_alert3: cpu-alert-3 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
++				cpu1_alert4: cpu-alert-4 {
++					temperature = <85000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu1_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu1_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu1_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				/*
++				 * When reaching cpu1_alert3, reduce CPU
++				 * by 2 steps. On Exynos5422/5800 that would
++				 * be: 1600 MHz and 1100 MHz.
++				 */
++				map3 {
++					trip = <&cpu1_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu1_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
+ 
++				/*
++				 * When reaching cpu1_alert4, reduce CPU
++				 * further, down to 600 MHz (12 steps for big,
++				 * 7 steps for LITTLE).
++				 */
++				map5 {
++					trip = <&cpu1_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu1_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu2_thermal: cpu2-thermal {
++			thermal-sensors = <&tmu_cpu2 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu2_alert0: cpu-alert-0 {
++					temperature = <50000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu2_alert1: cpu-alert-1 {
++					temperature = <60000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu2_alert2: cpu-alert-2 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu2_crit0: cpu-crit-0 {
++					temperature = <120000>; /* millicelsius */
++					hysteresis = <0>; /* millicelsius */
++					type = "critical";
++				};
++				/*
++				 * Exynos542x supports only 4 trip-points
++				 * so for these polling mode is required.
++				 * Start polling at temperature level of last
++				 * interrupt-driven trip: cpu2_alert2
++				 */
++				cpu2_alert3: cpu-alert-3 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
++				cpu2_alert4: cpu-alert-4 {
++					temperature = <85000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
++			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu2_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&cpu2_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&cpu2_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				/*
++				 * When reaching cpu2_alert3, reduce CPU
++				 * by 2 steps. On Exynos5422/5800 that would
++				 * be: 1600 MHz and 1100 MHz.
++				 */
++				map3 {
++					trip = <&cpu2_alert3>;
++					cooling-device = <&cpu0 0 2>;
++				};
++				map4 {
++					trip = <&cpu2_alert3>;
++					cooling-device = <&cpu4 0 2>;
++				};
++
++				/*
++				 * When reaching cpu2_alert4, reduce CPU
++				 * further, down to 600 MHz (12 steps for big,
++				 * 7 steps for LITTLE).
++				 */
++				map5 {
++					trip = <&cpu2_alert4>;
++					cooling-device = <&cpu0 3 7>;
++				};
++				map6 {
++					trip = <&cpu2_alert4>;
++					cooling-device = <&cpu4 3 12>;
++				};
++			};
++		};
++		cpu3_thermal: cpu3-thermal {
++			thermal-sensors = <&tmu_cpu3 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				cpu3_alert0: cpu-alert-0 {
++					temperature = <50000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu3_alert1: cpu-alert-1 {
++					temperature = <60000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu3_alert2: cpu-alert-2 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu3_crit0: cpu-crit-0 {
++					temperature = <120000>; /* millicelsius */
++					hysteresis = <0>; /* millicelsius */
++					type = "critical";
++				};
++				/*
++				 * Exynos542x supports only 4 trip-points
++				 * so for these polling mode is required.
++				 * Start polling at temperature level of last
++				 * interrupt-driven trip: cpu3_alert2
++				 */
++				cpu3_alert3: cpu-alert-3 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
++				cpu3_alert4: cpu-alert-4 {
++					temperature = <85000>; /* millicelsius */
++					hysteresis = <10000>; /* millicelsius */
++					type = "passive";
++				};
+ 			};
+ 			cooling-maps {
+ 				map0 {
+-					trip = <&cpu_alert0>;
++					trip = <&cpu3_alert0>;
+ 					cooling-device = <&fan0 0 1>;
+ 				};
+ 				map1 {
+-					trip = <&cpu_alert1>;
++					trip = <&cpu3_alert1>;
+ 					cooling-device = <&fan0 1 2>;
+ 				};
+ 				map2 {
+-					trip = <&cpu_alert2>;
++					trip = <&cpu3_alert2>;
+ 					cooling-device = <&fan0 2 3>;
+ 				};
+ 				/*
+-				 * When reaching cpu_alert3, reduce CPU
++				 * When reaching cpu3_alert3, reduce CPU
+ 				 * by 2 steps. On Exynos5422/5800 that would
+ 				 * be: 1600 MHz and 1100 MHz.
+ 				 */
+ 				map3 {
+-					trip = <&cpu_alert3>;
++					trip = <&cpu3_alert3>;
+ 					cooling-device = <&cpu0 0 2>;
+ 				};
+ 				map4 {
+-					trip = <&cpu_alert3>;
++					trip = <&cpu3_alert3>;
+ 					cooling-device = <&cpu4 0 2>;
+ 				};
+ 
+ 				/*
+-				 * When reaching cpu_alert4, reduce CPU
+-				 * further, down to 600 MHz (11 steps for big,
++				 * When reaching cpu3_alert4, reduce CPU
++				 * further, down to 600 MHz (12 steps for big,
+ 				 * 7 steps for LITTLE).
+ 				 */
+ 				map5 {
+-					trip = <&cpu_alert4>;
++					trip = <&cpu3_alert4>;
+ 					cooling-device = <&cpu0 3 7>;
+ 				};
+ 				map6 {
+-					trip = <&cpu_alert4>;
+-					cooling-device = <&cpu4 3 11>;
++					trip = <&cpu3_alert4>;
++					cooling-device = <&cpu4 3 12>;
+ 				};
+ 			};
+ 		};
+-- 
+2.1.4
