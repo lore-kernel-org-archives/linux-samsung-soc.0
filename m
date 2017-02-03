@@ -1,140 +1,96 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v3 4/7] drm/exynos/hdmi: add bridge support
-Date: Fri, 03 Feb 2017 15:38:42 +0900
-Message-ID: <58942572.604@samsung.com>
+Date: Fri, 03 Feb 2017 15:39:33 +0900
+Message-ID: <589425A5.8060302@samsung.com>
 References: <58919994.3060100@samsung.com>
  <CGME20170201082940eucas1p1f19e15328a787d6b77cba97bad92afce@eucas1p1.samsung.com>
  <1485937754-21440-1-git-send-email-a.hajda@samsung.com>
+ <58942572.604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47523 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751512AbdBCGir (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Feb 2017 01:38:47 -0500
-In-reply-to: <1485937754-21440-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <58942572.604@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-2017년 02월 01일 17:29에 Andrzej Hajda 이(가) 쓴 글:
-> On TM2/TM2e platforms HDMI output is connected to MHL bridge
-> SiI8620. To allow configure UltraHD modes on the bridge
-> and to eliminate unsupported modes this bridge should be
-> attached to drm_encoder implemented in exynos_hdmi.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 56 +++++++++++++++++++++++++++++-------
->  1 file changed, 46 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index a73b192..41fb894 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -35,6 +35,7 @@
->  #include <linux/io.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_graph.h>
->  #include <linux/hdmi.h>
->  #include <linux/component.h>
->  #include <linux/mfd/syscon.h>
-> @@ -133,6 +134,7 @@ struct hdmi_context {
->  	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
->  	struct regulator		*reg_hdmi_en;
->  	struct exynos_drm_clk		phy_clk;
-> +	struct drm_bridge		*bridge;
->  };
->  
->  static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
-> @@ -922,7 +924,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
->  	drm_connector_register(connector);
->  	drm_mode_connector_attach_encoder(connector, encoder);
->  
-> -	return 0;
-> +	if (hdata->bridge) {
-> +		encoder->bridge = hdata->bridge;
-> +		hdata->bridge->encoder = encoder;
-> +		ret = drm_bridge_attach(encoder->dev, hdata->bridge);
-
-arguments of drm_bridge_attach function has been changed so fixed it - trivial thing.
-Applied it including other patches.
-
-Thanks,
-Inki Dae
-
-> +		if (ret)
-> +			DRM_ERROR("Failed to attach bridge\n");
-> +	}
-> +
-> +	return ret;
->  }
->  
->  static bool hdmi_mode_fixup(struct drm_encoder *encoder,
-> @@ -1591,6 +1601,31 @@ static void hdmiphy_clk_enable(struct exynos_drm_clk *clk, bool enable)
->  		hdmiphy_disable(hdata);
->  }
->  
-> +static int hdmi_bridge_init(struct hdmi_context *hdata)
-> +{
-> +	struct device *dev = hdata->dev;
-> +	struct device_node *ep, *np;
-> +
-> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
-> +	if (!ep)
-> +		return 0;
-> +
-> +	np = of_graph_get_remote_port_parent(ep);
-> +	of_node_put(ep);
-> +	if (!np) {
-> +		DRM_ERROR("failed to get remote port parent");
-> +		return -EINVAL;
-> +	}
-> +
-> +	hdata->bridge = of_drm_find_bridge(np);
-> +	of_node_put(np);
-> +
-> +	if (!hdata->bridge)
-> +		return -EPROBE_DEFER;
-> +
-> +	return 0;
-> +}
-> +
->  static int hdmi_resources_init(struct hdmi_context *hdata)
->  {
->  	struct device *dev = hdata->dev;
-> @@ -1630,17 +1665,18 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
->  
->  	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
->  
-> -	if (PTR_ERR(hdata->reg_hdmi_en) == -ENODEV)
-> -		return 0;
-> +	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
-> +		if (IS_ERR(hdata->reg_hdmi_en))
-> +			return PTR_ERR(hdata->reg_hdmi_en);
->  
-> -	if (IS_ERR(hdata->reg_hdmi_en))
-> -		return PTR_ERR(hdata->reg_hdmi_en);
-> -
-> -	ret = regulator_enable(hdata->reg_hdmi_en);
-> -	if (ret)
-> -		DRM_ERROR("failed to enable hdmi-en regulator\n");
-> +		ret = regulator_enable(hdata->reg_hdmi_en);
-> +		if (ret) {
-> +			DRM_ERROR("failed to enable hdmi-en regulator\n");
-> +			return ret;
-> +		}
-> +	}
->  
-> -	return ret;
-> +	return hdmi_bridge_init(hdata);
->  }
->  
->  static struct of_device_id hdmi_match_types[] = {
-> 
+CgoyMDE364WEIDAy7JuUIDAz7J28IDE1OjM47JeQIElua2kgRGFlIOydtCjqsIApIOyTtCDquIA6
+Cj4gCj4gCj4gMjAxN+uFhCAwMuyblCAwMeydvCAxNzoyOeyXkCBBbmRyemVqIEhhamRhIOydtCjq
+sIApIOyTtCDquIA6Cj4+IE9uIFRNMi9UTTJlIHBsYXRmb3JtcyBIRE1JIG91dHB1dCBpcyBjb25u
+ZWN0ZWQgdG8gTUhMIGJyaWRnZQo+PiBTaUk4NjIwLiBUbyBhbGxvdyBjb25maWd1cmUgVWx0cmFI
+RCBtb2RlcyBvbiB0aGUgYnJpZGdlCj4+IGFuZCB0byBlbGltaW5hdGUgdW5zdXBwb3J0ZWQgbW9k
+ZXMgdGhpcyBicmlkZ2Ugc2hvdWxkIGJlCj4+IGF0dGFjaGVkIHRvIGRybV9lbmNvZGVyIGltcGxl
+bWVudGVkIGluIGV4eW5vc19oZG1pLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRh
+IDxhLmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2hkbWkuYyB8IDU2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLQo+
+PiAgMSBmaWxlIGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+Pgo+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4+IGluZGV4IGE3M2IxOTIuLjQxZmI4
+OTQgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPj4gQEAgLTM1LDYg
+KzM1LDcgQEAKPj4gICNpbmNsdWRlIDxsaW51eC9pby5oPgo+PiAgI2luY2x1ZGUgPGxpbnV4L29m
+X2FkZHJlc3MuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KPj4gKyNpbmNsdWRl
+IDxsaW51eC9vZl9ncmFwaC5oPgo+PiAgI2luY2x1ZGUgPGxpbnV4L2hkbWkuaD4KPj4gICNpbmNs
+dWRlIDxsaW51eC9jb21wb25lbnQuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9tZmQvc3lzY29uLmg+
+Cj4+IEBAIC0xMzMsNiArMTM0LDcgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7Cj4+ICAJc3RydWN0
+IHJlZ3VsYXRvcl9idWxrX2RhdGEJcmVndWxfYnVsa1tBUlJBWV9TSVpFKHN1cHBseSldOwo+PiAg
+CXN0cnVjdCByZWd1bGF0b3IJCSpyZWdfaGRtaV9lbjsKPj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9j
+bGsJCXBoeV9jbGs7Cj4+ICsJc3RydWN0IGRybV9icmlkZ2UJCSpicmlkZ2U7Cj4+ICB9Owo+PiAg
+Cj4+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCBoZG1pX2NvbnRleHQgKmVuY29kZXJfdG9faGRtaShz
+dHJ1Y3QgZHJtX2VuY29kZXIgKmUpCj4+IEBAIC05MjIsNyArOTI0LDE1IEBAIHN0YXRpYyBpbnQg
+aGRtaV9jcmVhdGVfY29ubmVjdG9yKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKPj4gIAlk
+cm1fY29ubmVjdG9yX3JlZ2lzdGVyKGNvbm5lY3Rvcik7Cj4+ICAJZHJtX21vZGVfY29ubmVjdG9y
+X2F0dGFjaF9lbmNvZGVyKGNvbm5lY3RvciwgZW5jb2Rlcik7Cj4+ICAKPj4gLQlyZXR1cm4gMDsK
+Pj4gKwlpZiAoaGRhdGEtPmJyaWRnZSkgewo+PiArCQllbmNvZGVyLT5icmlkZ2UgPSBoZGF0YS0+
+YnJpZGdlOwo+PiArCQloZGF0YS0+YnJpZGdlLT5lbmNvZGVyID0gZW5jb2RlcjsKPj4gKwkJcmV0
+ID0gZHJtX2JyaWRnZV9hdHRhY2goZW5jb2Rlci0+ZGV2LCBoZGF0YS0+YnJpZGdlKTsKPiAKPiBh
+cmd1bWVudHMgb2YgZHJtX2JyaWRnZV9hdHRhY2ggZnVuY3Rpb24gaGFzIGJlZW4gY2hhbmdlZCBz
+byBmaXhlZCBpdCAtIHRyaXZpYWwgdGhpbmcuCj4gQXBwbGllZCBpdCBpbmNsdWRpbmcgb3RoZXIg
+cGF0Y2hlcy4KClRoZSBhcmd1bWVudCB3YXMgY2hhbmdlZCBieSBiZWxvdyBwYXRjaCwKZHJtOiBi
+cmlkZ2U6IExpbmsgZW5jb2RlciBhbmQgYnJpZGdlIGluIGNvcmUgY29kZQoKVGhhbmtzLgoKPiAK
+PiBUaGFua3MsCj4gSW5raSBEYWUKPiAKPj4gKwkJaWYgKHJldCkKPj4gKwkJCURSTV9FUlJPUigi
+RmFpbGVkIHRvIGF0dGFjaCBicmlkZ2VcbiIpOwo+PiArCX0KPj4gKwo+PiArCXJldHVybiByZXQ7
+Cj4+ICB9Cj4+ICAKPj4gIHN0YXRpYyBib29sIGhkbWlfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2Vu
+Y29kZXIgKmVuY29kZXIsCj4+IEBAIC0xNTkxLDYgKzE2MDEsMzEgQEAgc3RhdGljIHZvaWQgaGRt
+aXBoeV9jbGtfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NsayAqY2xrLCBib29sIGVuYWJsZSkK
+Pj4gIAkJaGRtaXBoeV9kaXNhYmxlKGhkYXRhKTsKPj4gIH0KPj4gIAo+PiArc3RhdGljIGludCBo
+ZG1pX2JyaWRnZV9pbml0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhKQo+PiArewo+PiArCXN0
+cnVjdCBkZXZpY2UgKmRldiA9IGhkYXRhLT5kZXY7Cj4+ICsJc3RydWN0IGRldmljZV9ub2RlICpl
+cCwgKm5wOwo+PiArCj4+ICsJZXAgPSBvZl9ncmFwaF9nZXRfZW5kcG9pbnRfYnlfcmVncyhkZXYt
+Pm9mX25vZGUsIDEsIC0xKTsKPj4gKwlpZiAoIWVwKQo+PiArCQlyZXR1cm4gMDsKPj4gKwo+PiAr
+CW5wID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChlcCk7Cj4+ICsJb2Zfbm9kZV9w
+dXQoZXApOwo+PiArCWlmICghbnApIHsKPj4gKwkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IHJl
+bW90ZSBwb3J0IHBhcmVudCIpOwo+PiArCQlyZXR1cm4gLUVJTlZBTDsKPj4gKwl9Cj4+ICsKPj4g
+KwloZGF0YS0+YnJpZGdlID0gb2ZfZHJtX2ZpbmRfYnJpZGdlKG5wKTsKPj4gKwlvZl9ub2RlX3B1
+dChucCk7Cj4+ICsKPj4gKwlpZiAoIWhkYXRhLT5icmlkZ2UpCj4+ICsJCXJldHVybiAtRVBST0JF
+X0RFRkVSOwo+PiArCj4+ICsJcmV0dXJuIDA7Cj4+ICt9Cj4+ICsKPj4gIHN0YXRpYyBpbnQgaGRt
+aV9yZXNvdXJjZXNfaW5pdChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKPj4gIHsKPj4gIAlz
+dHJ1Y3QgZGV2aWNlICpkZXYgPSBoZGF0YS0+ZGV2Owo+PiBAQCAtMTYzMCwxNyArMTY2NSwxOCBA
+QCBzdGF0aWMgaW50IGhkbWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRh
+dGEpCj4+ICAKPj4gIAloZGF0YS0+cmVnX2hkbWlfZW4gPSBkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0
+aW9uYWwoZGV2LCAiaGRtaS1lbiIpOwo+PiAgCj4+IC0JaWYgKFBUUl9FUlIoaGRhdGEtPnJlZ19o
+ZG1pX2VuKSA9PSAtRU5PREVWKQo+PiAtCQlyZXR1cm4gMDsKPj4gKwlpZiAoUFRSX0VSUihoZGF0
+YS0+cmVnX2hkbWlfZW4pICE9IC1FTk9ERVYpIHsKPj4gKwkJaWYgKElTX0VSUihoZGF0YS0+cmVn
+X2hkbWlfZW4pKQo+PiArCQkJcmV0dXJuIFBUUl9FUlIoaGRhdGEtPnJlZ19oZG1pX2VuKTsKPj4g
+IAo+PiAtCWlmIChJU19FUlIoaGRhdGEtPnJlZ19oZG1pX2VuKSkKPj4gLQkJcmV0dXJuIFBUUl9F
+UlIoaGRhdGEtPnJlZ19oZG1pX2VuKTsKPj4gLQo+PiAtCXJldCA9IHJlZ3VsYXRvcl9lbmFibGUo
+aGRhdGEtPnJlZ19oZG1pX2VuKTsKPj4gLQlpZiAocmV0KQo+PiAtCQlEUk1fRVJST1IoImZhaWxl
+ZCB0byBlbmFibGUgaGRtaS1lbiByZWd1bGF0b3JcbiIpOwo+PiArCQlyZXQgPSByZWd1bGF0b3Jf
+ZW5hYmxlKGhkYXRhLT5yZWdfaGRtaV9lbik7Cj4+ICsJCWlmIChyZXQpIHsKPj4gKwkJCURSTV9F
+UlJPUigiZmFpbGVkIHRvIGVuYWJsZSBoZG1pLWVuIHJlZ3VsYXRvclxuIik7Cj4+ICsJCQlyZXR1
+cm4gcmV0Owo+PiArCQl9Cj4+ICsJfQo+PiAgCj4+IC0JcmV0dXJuIHJldDsKPj4gKwlyZXR1cm4g
+aGRtaV9icmlkZ2VfaW5pdChoZGF0YSk7Cj4+ICB9Cj4+ICAKPj4gIHN0YXRpYyBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkIGhkbWlfbWF0Y2hfdHlwZXNbXSA9IHsKPj4KX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
