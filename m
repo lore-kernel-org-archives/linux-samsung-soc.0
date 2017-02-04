@@ -1,88 +1,44 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 09/10] iommu/exynos: Make use of iommu_device_register
-	interface
-Date: Fri,  3 Feb 2017 16:17:47 +0100
-Message-ID: <1486135068-23994-10-git-send-email-joro@8bytes.org>
-References: <1486135068-23994-1-git-send-email-joro@8bytes.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 4/5] soc: samsung: pm_domains: Read domain name from
+ the new label property
+Date: Sat, 4 Feb 2017 17:46:57 +0200
+Message-ID: <20170204154657.c4pts6wppsq3wmf2@kozik-lap>
+References: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170130121915eucas1p23aa4f4be912bcd64f9521f6e6b51132f@eucas1p2.samsung.com>
+ <1485778740-30337-5-git-send-email-m.szyprowski@samsung.com>
+ <20170201162554.airhzowkqpyaxqpf@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1486135068-23994-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34543 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbdBDPrD (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sat, 4 Feb 2017 10:47:03 -0500
+Content-Disposition: inline
+In-Reply-To: <20170201162554.airhzowkqpyaxqpf@rob-hp-laptop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, devicetree@vger.kernel.org
 
-From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+On Wed, Feb 01, 2017 at 10:25:54AM -0600, Rob Herring wrote:
+> On Mon, Jan 30, 2017 at 01:18:59PM +0100, Marek Szyprowski wrote:
+> > Device tree nodes for each power domain should use generic "power-domain"
+> > name, so using it as a domain name doesn't give much benefits. This patch
+> > adds support for human readable names defined in 'label' property. Such
+> > names are visible to userspace and makes debugging much easier. When no
+> > 'label' property is found, driver keeps using the name constructed from
+> > full node name.
+> 
+> I'm not sure this is really a good use of label. label is intended for 
+> end user visible things like ports/connectors on a board. It's fine 
+> here, but I wouldn't want to see it used everywhere.
+>
 
-Register Exynos IOMMUs to the IOMMU core and make them
-visible in sysfs. This patch does not add the links between
-IOMMUs and translated devices yet.
+Thanks for comments. We want to use the label here for user visible
+output - through dmesg or debugfs. Otherwise, we would have to stick
+(always) to more descriptive node names, like "lcd-power-domain@xxxxx".
 
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 57ba0d3..90f0f52 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -276,6 +276,8 @@ struct sysmmu_drvdata {
- 	struct list_head owner_node;	/* node for owner controllers list */
- 	phys_addr_t pgtable;		/* assigned page table structure */
- 	unsigned int version;		/* our version */
-+
-+	struct iommu_device iommu;	/* IOMMU core handle */
- };
- 
- static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-@@ -556,6 +558,7 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct sysmmu_drvdata *data;
- 	struct resource *res;
-+	resource_size_t ioaddr;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -565,6 +568,7 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	data->sfrbase = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(data->sfrbase))
- 		return PTR_ERR(data->sfrbase);
-+	ioaddr = res->start;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
-@@ -611,6 +615,18 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	data->sysmmu = dev;
- 	spin_lock_init(&data->lock);
- 
-+	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
-+				     "sysmmu.%pa", &ioaddr);
-+	if (ret)
-+		return ret;
-+
-+	data->iommu.ops    = &exynos_iommu_ops;
-+	data->iommu.fwnode = &dev->of_node->fwnode;
-+
-+	ret = iommu_device_register(&data->iommu);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	__sysmmu_get_version(data);
--- 
-1.9.1
+Best regards,
+Krzysztof
