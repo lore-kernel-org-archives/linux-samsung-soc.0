@@ -1,44 +1,111 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 4/5] soc: samsung: pm_domains: Read domain name from
- the new label property
-Date: Sat, 4 Feb 2017 17:46:57 +0200
-Message-ID: <20170204154657.c4pts6wppsq3wmf2@kozik-lap>
-References: <1485778740-30337-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130121915eucas1p23aa4f4be912bcd64f9521f6e6b51132f@eucas1p2.samsung.com>
- <1485778740-30337-5-git-send-email-m.szyprowski@samsung.com>
- <20170201162554.airhzowkqpyaxqpf@rob-hp-laptop>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device pointer to
+ of_xlate callback
+Date: Sun, 5 Feb 2017 17:34:57 +0530
+Message-ID: <20170205120457.GX19244@localhost>
+References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
+ <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
+ <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
+ <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
+ <22bc3f1b-a629-482a-71b6-06a3c4df628c@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34543 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbdBDPrD (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Feb 2017 10:47:03 -0500
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170201162554.airhzowkqpyaxqpf@rob-hp-laptop>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <22bc3f1b-a629-482a-71b6-06a3c4df628c@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, devicetree@vger.kernel.org
 
-On Wed, Feb 01, 2017 at 10:25:54AM -0600, Rob Herring wrote:
-> On Mon, Jan 30, 2017 at 01:18:59PM +0100, Marek Szyprowski wrote:
-> > Device tree nodes for each power domain should use generic "power-domain"
-> > name, so using it as a domain name doesn't give much benefits. This patch
-> > adds support for human readable names defined in 'label' property. Such
-> > names are visible to userspace and makes debugging much easier. When no
-> > 'label' property is found, driver keeps using the name constructed from
-> > full node name.
+On Fri, Feb 03, 2017 at 02:01:27PM +0100, Marek Szyprowski wrote:
+> Hi All,
 > 
-> I'm not sure this is really a good use of label. label is intended for 
-> end user visible things like ports/connectors on a board. It's fine 
-> here, but I wouldn't want to see it used everywhere.
->
+> On 2017-01-26 15:43, Marek Szyprowski wrote:
+> >On 2017-01-25 14:12, Lars-Peter Clausen wrote:
+> >>On 01/25/2017 11:28 AM, Marek Szyprowski wrote:
+> >>>Add pointer to slave device to of_dma_xlate to let DMA engine driver
+> >>>to know which slave device is using given DMA channel. This will be
+> >>>later used to implement non-irq-safe runtime PM for DMA engine driver.
+> >>of_dma_xlate() is used to translate from a OF phandle and a
+> >>specifier to a
+> >>DMA channel. On one hand this does not necessarily mean that the
+> >>channel is
+> >>actually going to be used by the slave that called the xlate function.
+> >>Modifying the driver state when a lookup of the channel is done is a
+> >>layering violation. And this approach is also missing a way to
+> >>disassociate
+> >>a slave from a DMA channel, e.g. when it is no longer used.
+> >>
+> >>On the other hand there are other mechanisms to translate
+> >>between some kind
+> >>of firmware handle to a DMA channel which are completely ignored here.
+> >>
+> >>So this approach does not work. This is something that needs to
+> >>be done at
+> >>the dmaengine level, not a the firmware resource translation
+> >>level. And it
+> >>needs a matching method that is called when the channel is disassociated
+> >>from a device, when the device no longer uses the DMA channel.
+> >
+> >Frankly I agree that of_dma_xlate() should only return the
+> >requested channel
+> >to the dmaengine core and do not do any modification in the the
+> >driver state.
+> >
+> >However the current dma engine design and implementation breaks
+> >this rule.
+> >Please check the drivers - how do they implement of_xlate callback. They
+> >usually call dma_get_any_slave_channel, dma_get_slave_channel or
+> >__dma_request_channel there, which in turn calls dma_chan_get, which then
+> >calls back to device_alloc_chan_resources callback. Some of the
+> >drivers also
+> >do a hardware configuration or other resource allocation in of_xlate.
+> >This is a bit messy design and leave no place in the core to set
+> >slave device
+> >before device_alloc_chan_resources callback, where one would
+> >expect to have
+> >it already set.
+> >
+> >The best place to add new calls to the dmaengine drivers to set
+> >slave device
+> >would be just before device_alloc_chan_resources(), what in turn
+> >means that
+> >the current dmaengine core should do in dma_chan_get(). This would
+> >require to
+> >forward the slave device pointer via even more layers including
+> >the of_xlate
+> >callback too. IMHO this is not worth the effort.
+> >
+> >DMA engine core and API definitely needs some cleanup. During such
+> >cleanup
+> >the slave device pointer might be moved out of xlate into separate
+> >callback
+> >when the core gets ready for such operation.
+> >
+> >I ignored other paths for other firmware handle to a DMA channel
+> >translation
+> >mechanism because for the current pl330 driver they are simply not
+> >used. I
+> >assume that if one needs to implement similar things for drivers
+> >relying on
+> >them, he will update the respective DMA engine core parts.
+> >
+> >Slave device assignments can be cleared in
+> >device_chan_release_resources if
+> >this is needed and that what existing DMA engine drivers do with
+> >the resources
+> >allocated in the of_xlate callback...
+> 
+> Vinod: could you comment this patchset? Is there a chance to get it
+> merged or
+> at least give it a try in -next? If not, could you provide some
+> hints what should
+> I do?
 
-Thanks for comments. We want to use the label here for user visible
-output - through dmesg or debugfs. Otherwise, we would have to stick
-(always) to more descriptive node names, like "lcd-power-domain@xxxxx".
+Nothing :) I am slowly clearning up my queue and should process this series
+in couple of days or so...
 
-Best regards,
-Krzysztof
+-- 
+~Vinod
