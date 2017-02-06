@@ -1,16 +1,16 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH 3/5] arm: dts: Move the clock-frequency property for exynos3250
+Subject: [PATCH 4/5] arm: dts: Move the clock-frequency property for exynos4412
  dts
-Date: Mon, 06 Feb 2017 11:19:42 +0900
-Message-ID: <1486347584-6762-4-git-send-email-hoegeun.kwon@samsung.com>
+Date: Mon, 06 Feb 2017 11:19:43 +0900
+Message-ID: <1486347584-6762-5-git-send-email-hoegeun.kwon@samsung.com>
 References: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170206021951epcas1p35c354ff09d41ec6c7b0dd1d38f01efa4@epcas1p3.samsung.com>
+ <CGME20170206021951epcas1p33404f327a8f0648c7e5b57a351fdce51@epcas1p3.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37737 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752506AbdBFCT4 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:56174 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752036AbdBFCTz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Feb 2017 21:19:56 -0500
+        Sun, 5 Feb 2017 21:19:55 -0500
 In-reply-to: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -23,18 +23,18 @@ top.
 
 Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-rinato.dts | 23 ++---------------------
+ arch/arm/boot/dts/exynos4412-trats2.dts | 23 ++---------------------
  1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 548413e..82e676a 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -215,24 +215,11 @@
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 41ecd6d..86ce5e5 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -385,24 +385,11 @@
  &dsi_0 {
- 	vddcore-supply = <&ldo6_reg>;
- 	vddio-supply = <&ldo6_reg>;
-+	samsung,burst-clock-frequency = <250000000>;
+ 	vddcore-supply = <&ldo8_reg>;
+ 	vddio-supply = <&ldo10_reg>;
++	samsung,burst-clock-frequency = <500000000>;
 +	samsung,esc-clock-frequency = <20000000>;
  	samsung,pll-clock-frequency = <24000000>;
  	status = "okay";
@@ -48,16 +48,16 @@ index 548413e..82e676a 100644
 -
 -			dsi_out: endpoint {
 -				remote-endpoint = <&dsi_in>;
--				samsung,burst-clock-frequency = <250000000>;
+-				samsung,burst-clock-frequency = <500000000>;
 -				samsung,esc-clock-frequency = <20000000>;
 -			};
 -		};
 -	};
 -
  	panel@0 {
- 		compatible = "samsung,s6e63j0x03";
+ 		compatible = "samsung,s6e8aa0";
  		reg = <0>;
-@@ -262,12 +249,6 @@
+@@ -430,12 +417,6 @@
  				vsync-len = <2>;
  			};
  		};
