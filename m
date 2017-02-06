@@ -1,87 +1,51 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv4 2/9] exynos_hdmi: add HPD notifier support
-Date: Mon,  6 Feb 2017 11:29:44 +0100
-Message-ID: <20170206102951.12623-3-hverkuil@xs4all.nl>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: [PATCHv4 5/9] s5p-cec.txt: document the HDMI controller phandle
+Date: Mon,  6 Feb 2017 11:29:47 +0100
+Message-ID: <20170206102951.12623-6-hverkuil@xs4all.nl>
 References: <20170206102951.12623-1-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170206102951.12623-1-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170206102951.12623-1-hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKSW1wbGVtZW50IHRo
-ZSBIUEQgbm90aWZpZXIgc3VwcG9ydCB0byBhbGxvdyBDRUMgZHJpdmVycyB0bwpiZSBpbmZvcm1l
-ZCB3aGVuIHRoZXJlIGlzIGEgbmV3IEVESUQgYW5kIHdoZW4gYSBjb25uZWN0IG9yCmRpc2Nvbm5l
-Y3QgaGFwcGVucy4KClNpZ25lZC1vZmYtYnk6IEhhbnMgVmVya3VpbCA8aGFucy52ZXJrdWlsQGNp
-c2NvLmNvbT4KVGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3Vu
-Zy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgIHwgIDEgKwog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMjMgKysrKysrKysrKysrKysr
-KysrKystLS0KIDIgZmlsZXMgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL0tjb25maWcKaW5kZXggZDcwNmNhNGUyZjAyLi41MDMwOTQwOWQ0NTAg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZworKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL0tjb25maWcKQEAgLTc3LDYgKzc3LDcgQEAgY29uZmlnIERSTV9FWFlO
-T1NfRFAKIGNvbmZpZyBEUk1fRVhZTk9TX0hETUkKIAlib29sICJIRE1JIgogCWRlcGVuZHMgb24g
-RFJNX0VYWU5PU19NSVhFUiB8fCBEUk1fRVhZTk9TNTQzM19ERUNPTgorCXNlbGVjdCBIUERfTk9U
-SUZJRVIKIAloZWxwCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IHdhbnQgdG8gdXNlIEV4
-eW5vcyBIRE1JIGZvciBEUk0uCiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRl
-eCA1ZWQ4YjFlZmZlNzEuLjhkNDhhMGEyMTU2NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2hkbWkuYwpAQCAtMzEsNiArMzEsNyBAQAogI2luY2x1ZGUgPGxpbnV4L3BtX3J1bnRpbWUuaD4K
-ICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KICNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+
-CisjaW5jbHVkZSA8bGludXgvaHBkLW5vdGlmaWVyLmg+CiAjaW5jbHVkZSA8bGludXgvcmVndWxh
-dG9yL2NvbnN1bWVyLmg+CiAjaW5jbHVkZSA8bGludXgvaW8uaD4KICNpbmNsdWRlIDxsaW51eC9v
-Zl9hZGRyZXNzLmg+CkBAIC0xMTgsNiArMTE5LDcgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7CiAJ
-Ym9vbAkJCQlkdmlfbW9kZTsKIAlzdHJ1Y3QgZGVsYXllZF93b3JrCQlob3RwbHVnX3dvcms7CiAJ
-c3RydWN0IGRybV9kaXNwbGF5X21vZGUJCWN1cnJlbnRfbW9kZTsKKwlzdHJ1Y3QgaHBkX25vdGlm
-aWVyCQkqbm90aWZpZXI7CiAJY29uc3Qgc3RydWN0IGhkbWlfZHJpdmVyX2RhdGEJKmRydl9kYXRh
-OwogCiAJdm9pZCBfX2lvbWVtCQkJKnJlZ3M7CkBAIC04MDcsOSArODA5LDEyIEBAIHN0YXRpYyBl
-bnVtIGRybV9jb25uZWN0b3Jfc3RhdHVzIGhkbWlfZGV0ZWN0KHN0cnVjdCBkcm1fY29ubmVjdG9y
-ICpjb25uZWN0b3IsCiB7CiAJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBjb25uZWN0b3Jf
-dG9faGRtaShjb25uZWN0b3IpOwogCi0JaWYgKGdwaW9kX2dldF92YWx1ZShoZGF0YS0+aHBkX2dw
-aW8pKQorCWlmIChncGlvZF9nZXRfdmFsdWUoaGRhdGEtPmhwZF9ncGlvKSkgeworCQlocGRfZXZl
-bnRfY29ubmVjdChoZGF0YS0+bm90aWZpZXIpOwogCQlyZXR1cm4gY29ubmVjdG9yX3N0YXR1c19j
-b25uZWN0ZWQ7CisJfQogCisJaHBkX2V2ZW50X2Rpc2Nvbm5lY3QoaGRhdGEtPm5vdGlmaWVyKTsK
-IAlyZXR1cm4gY29ubmVjdG9yX3N0YXR1c19kaXNjb25uZWN0ZWQ7CiB9CiAKQEAgLTg0OCw2ICs4
-NTMsOCBAQCBzdGF0aWMgaW50IGhkbWlfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpj
-b25uZWN0b3IpCiAJCWVkaWQtPndpZHRoX2NtLCBlZGlkLT5oZWlnaHRfY20pOwogCiAJZHJtX21v
-ZGVfY29ubmVjdG9yX3VwZGF0ZV9lZGlkX3Byb3BlcnR5KGNvbm5lY3RvciwgZWRpZCk7CisJaHBk
-X2V2ZW50X25ld19lZGlkKGhkYXRhLT5ub3RpZmllciwgZWRpZCwKKwkJCSAgICBFRElEX0xFTkdU
-SCAqICgxICsgZWRpZC0+ZXh0ZW5zaW9ucykpOwogCiAJcmV0ID0gZHJtX2FkZF9lZGlkX21vZGVz
-KGNvbm5lY3RvciwgZWRpZCk7CiAKQEAgLTE0ODMsNiArMTQ5MCw3IEBAIHN0YXRpYyB2b2lkIGhk
-bWlfZGlzYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCiAJaWYgKGZ1bmNzICYmIGZ1
-bmNzLT5kaXNhYmxlKQogCQkoKmZ1bmNzLT5kaXNhYmxlKShjcnRjKTsKIAorCWhwZF9ldmVudF9k
-aXNjb25uZWN0KGhkYXRhLT5ub3RpZmllcik7CiAJY2FuY2VsX2RlbGF5ZWRfd29yaygmaGRhdGEt
-PmhvdHBsdWdfd29yayk7CiAKIAloZG1pcGh5X2Rpc2FibGUoaGRhdGEpOwpAQCAtMTgzMiwxNSAr
-MTg0MCwyMiBAQCBzdGF0aWMgaW50IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKIAkJfQogCX0KIAorCWhkYXRhLT5ub3RpZmllciA9IGhwZF9ub3RpZmllcl9nZXQoJnBk
-ZXYtPmRldik7CisJaWYgKGhkYXRhLT5ub3RpZmllciA9PSBOVUxMKSB7CisJCXJldCA9IC1FTk9N
-RU07CisJCWdvdG8gZXJyX2hkbWlwaHk7CisJfQorCiAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsK
-IAogCXJldCA9IGNvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgJmhkbWlfY29tcG9uZW50X29wcyk7
-CiAJaWYgKHJldCkKLQkJZ290byBlcnJfZGlzYWJsZV9wbV9ydW50aW1lOworCQlnb3RvIGVycl9u
-b3RpZmllcl9wdXQ7CiAKIAlyZXR1cm4gcmV0OwogCi1lcnJfZGlzYWJsZV9wbV9ydW50aW1lOgor
-ZXJyX25vdGlmaWVyX3B1dDoKKwlocGRfbm90aWZpZXJfcHV0KGhkYXRhLT5ub3RpZmllcik7CiAJ
-cG1fcnVudGltZV9kaXNhYmxlKGRldik7CiAKIGVycl9oZG1pcGh5OgpAQCAtMTg1OSw5ICsxODc0
-LDExIEBAIHN0YXRpYyBpbnQgaGRtaV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-dikKIAlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBk
-ZXYpOwogCiAJY2FuY2VsX2RlbGF5ZWRfd29ya19zeW5jKCZoZGF0YS0+aG90cGx1Z193b3JrKTsK
-KwlocGRfZXZlbnRfZGlzY29ubmVjdChoZGF0YS0+bm90aWZpZXIpOwogCiAJY29tcG9uZW50X2Rl
-bCgmcGRldi0+ZGV2LCAmaGRtaV9jb21wb25lbnRfb3BzKTsKIAorCWhwZF9ub3RpZmllcl9wdXQo
-aGRhdGEtPm5vdGlmaWVyKTsKIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7CiAKIAlp
-ZiAoIUlTX0VSUihoZGF0YS0+cmVnX2hkbWlfZW4pKQotLSAKMi4xMS4wCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+
+Update the bindings documenting the new hdmi phandle.
+
+Signed-off-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+CC: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+CC: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ Documentation/devicetree/bindings/media/s5p-cec.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/media/s5p-cec.txt b/Documentation/devicetree/bindings/media/s5p-cec.txt
+index 925ab4d72eaa..710fc005150c 100644
+--- a/Documentation/devicetree/bindings/media/s5p-cec.txt
++++ b/Documentation/devicetree/bindings/media/s5p-cec.txt
+@@ -15,6 +15,7 @@ Required properties:
+   - clock-names : from common clock binding: must contain "hdmicec",
+ 		  corresponding to entry in the clocks property.
+   - samsung,syscon-phandle - phandle to the PMU system controller
++  - samsung,hdmi-phandle - phandle to the HDMI controller
+ 
+ Example:
+ 
+@@ -25,6 +26,7 @@ hdmicec: cec@100B0000 {
+ 	clocks = <&clock CLK_HDMI_CEC>;
+ 	clock-names = "hdmicec";
+ 	samsung,syscon-phandle = <&pmu_system_controller>;
++	samsung,hdmi-phandle = <&hdmi>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&hdmi_cec>;
+ 	status = "okay";
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
