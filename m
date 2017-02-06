@@ -1,47 +1,35 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Sun,  5 Feb 2017 15:58:49 +0000
-Message-ID: <20170205155849.4362-1-weiyj.lk@gmail.com>
-References: <20170125140321.23911-1-weiyj.lk@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20170125140321.23911-1-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH 0/5] Fix the parse_dt of exynos dsi
+Date: Mon, 06 Feb 2017 11:19:39 +0900
+Message-ID: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170206021950epcas1p3b03ac70f840e5df8a991a24a2249d1cb@epcas1p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:56174 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752506AbdBFCTx (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 5 Feb 2017 21:19:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, robh+dt@kernel.org, krzk@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+This patch fixed the parse_dt function of exynos dsi and fixed the
+related exynos3250, exynos4210, exynos4412, exynos5433 dts.
 
-In case of error, the function devm_ioremap() returns NULL pointer not
-ERR_PTR(). Fix by using devm_ioremap_resource instead of devm_ioremap.
+Hoegeun Kwon (5):
+  drm/exynos: dsi: Fix the parse_dt function
+  arm64: dts: exynos: Move the clock-frequency property
+  arm: dts: Move the clock-frequency property for exynos3250 dts
+  arm: dts: Move the clock-frequency property for exynos4412 dts
+  arm: dts: Move the clock-frequency property for exynos4210 dts
 
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
-IORESOURCE_MEM for one pin-bank")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: use devm_ioremap_resource instead of devm_ioremap
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos3250-rinato.dts            | 23 ++--------------
+ arch/arm/boot/dts/exynos4210-trats.dts             | 23 ++--------------
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 23 ++--------------
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 16 ++---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 32 ++++++----------------
+ 5 files changed, 16 insertions(+), 101 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index d79eada..6dec061 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -988,10 +988,9 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 
- 	for (i = 0; i < ctrl->nr_ext_resources + 1; i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
--						resource_size(res));
-+		virt_base[i] = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(virt_base[i]))
--			return ERR_PTR(-EIO);
-+			return ERR_CAST(virt_base[i]);
- 	}
- 
- 	bank = d->pin_banks;
-
+-- 
+1.9.1
