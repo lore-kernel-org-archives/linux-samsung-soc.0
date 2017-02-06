@@ -1,129 +1,285 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv4 7/9] sti: hdmi: add HPD notifier support
-Date: Mon,  6 Feb 2017 11:29:49 +0100
-Message-ID: <20170206102951.12623-8-hverkuil@xs4all.nl>
+Subject: [PATCHv4 6/9] s5p-cec: add hpd-notifier support, move out of staging
+Date: Mon,  6 Feb 2017 11:29:48 +0100
+Message-ID: <20170206102951.12623-7-hverkuil@xs4all.nl>
 References: <20170206102951.12623-1-hverkuil@xs4all.nl>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lb3-smtp-cloud3.xs4all.net ([194.109.24.30]:54949 "EHLO
+        lb3-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751799AbdBFKaN (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 6 Feb 2017 05:30:13 -0500
 In-Reply-To: <20170206102951.12623-1-hverkuil@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-Implement the HPD notifier support to allow CEC drivers to
-be informed when there is a new EDID and when a connect or
-disconnect happens.
+By using the HPD notifier framework there is no longer any reason
+to manually set the physical address. This was the one blocking
+issue that prevented this driver from going out of staging, so do
+this move as well.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Update the bindings documenting the new hdmi phandle and
+update exynos4.dtsi accordingly.
+
+Tested with my Odroid U3.
+
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: linux-samsung-soc@vger.kernel.org
+CC: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpu/drm/sti/Kconfig    |  1 +
- drivers/gpu/drm/sti/sti_hdmi.c | 14 ++++++++++++++
- drivers/gpu/drm/sti/sti_hdmi.h |  3 +++
- 3 files changed, 18 insertions(+)
+ drivers/media/platform/Kconfig                     | 18 +++++++++++
+ drivers/media/platform/Makefile                    |  1 +
+ .../media => media/platform}/s5p-cec/Makefile      |  0
+ .../platform}/s5p-cec/exynos_hdmi_cec.h            |  0
+ .../platform}/s5p-cec/exynos_hdmi_cecctrl.c        |  0
+ .../media => media/platform}/s5p-cec/regs-cec.h    |  0
+ .../media => media/platform}/s5p-cec/s5p_cec.c     | 35 ++++++++++++++++++----
+ .../media => media/platform}/s5p-cec/s5p_cec.h     |  3 ++
+ drivers/staging/media/Kconfig                      |  2 --
+ drivers/staging/media/Makefile                     |  1 -
+ drivers/staging/media/s5p-cec/Kconfig              |  9 ------
+ drivers/staging/media/s5p-cec/TODO                 |  7 -----
+ 12 files changed, 52 insertions(+), 24 deletions(-)
+ rename drivers/{staging/media => media/platform}/s5p-cec/Makefile (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/exynos_hdmi_cecctrl.c (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/regs-cec.h (100%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.c (89%)
+ rename drivers/{staging/media => media/platform}/s5p-cec/s5p_cec.h (97%)
+ delete mode 100644 drivers/staging/media/s5p-cec/Kconfig
+ delete mode 100644 drivers/staging/media/s5p-cec/TODO
 
-diff --git a/drivers/gpu/drm/sti/Kconfig b/drivers/gpu/drm/sti/Kconfig
-index acd72865feac..f5c9572b4169 100644
---- a/drivers/gpu/drm/sti/Kconfig
-+++ b/drivers/gpu/drm/sti/Kconfig
-@@ -8,5 +8,6 @@ config DRM_STI
- 	select DRM_PANEL
- 	select FW_LOADER
- 	select SND_SOC_HDMI_CODEC if SND_SOC
-+	select HPD_NOTIFIER
- 	help
- 	  Choose this option to enable DRM on STM stiH4xx chipset
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 376b0763c874..d32a38362391 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -786,6 +786,8 @@ static void sti_hdmi_disable(struct drm_bridge *bridge)
- 	clk_disable_unprepare(hdmi->clk_pix);
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 0245af0b76e0..9920726f14d2 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -406,6 +406,24 @@ config VIDEO_TI_SC
+ config VIDEO_TI_CSC
+ 	tristate
  
- 	hdmi->enabled = false;
++menuconfig V4L_CEC_DRIVERS
++	bool "Platform HDMI CEC drivers"
++	depends on MEDIA_CEC_SUPPORT
 +
-+	hpd_event_disconnect(hdmi->notifier);
- }
- 
- static void sti_hdmi_pre_enable(struct drm_bridge *bridge)
-@@ -892,6 +894,9 @@ static int sti_hdmi_connector_get_modes(struct drm_connector *connector)
- 	if (!edid)
- 		goto fail;
- 
-+	hpd_event_new_edid(hdmi->notifier, edid,
-+			   EDID_LENGTH * (edid->extensions + 1));
++if V4L_CEC_DRIVERS
 +
- 	count = drm_add_edid_modes(connector, edid);
- 	drm_mode_connector_update_edid_property(connector, edid);
- 	drm_edid_to_eld(connector, edid);
-@@ -949,10 +954,12 @@ sti_hdmi_connector_detect(struct drm_connector *connector, bool force)
- 
- 	if (hdmi->hpd) {
- 		DRM_DEBUG_DRIVER("hdmi cable connected\n");
-+		hpd_event_connect(hdmi->notifier);
- 		return connector_status_connected;
- 	}
- 
- 	DRM_DEBUG_DRIVER("hdmi cable disconnected\n");
-+	hpd_event_disconnect(hdmi->notifier);
- 	return connector_status_disconnected;
- }
- 
-@@ -1464,6 +1471,10 @@ static int sti_hdmi_probe(struct platform_device *pdev)
- 		goto release_adapter;
- 	}
- 
-+	hdmi->notifier = hpd_notifier_get(&pdev->dev);
-+	if (!hdmi->notifier)
-+		goto release_adapter;
++config VIDEO_SAMSUNG_S5P_CEC
++       tristate "Samsung S5P CEC driver"
++       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST)
++       select HPD_NOTIFIER
++       ---help---
++         This is a driver for Samsung S5P HDMI CEC interface. It uses the
++         generic CEC framework interface.
++         CEC bus is present in the HDMI connector and enables communication
++         between compatible devices.
 +
- 	hdmi->reset = devm_reset_control_get(dev, "hdmi");
- 	/* Take hdmi out of reset */
- 	if (!IS_ERR(hdmi->reset))
-@@ -1483,11 +1494,14 @@ static int sti_hdmi_remove(struct platform_device *pdev)
++endif #V4L_CEC_DRIVERS
++
+ menuconfig V4L_TEST_DRIVERS
+ 	bool "Media test drivers"
+ 	depends on MEDIA_CAMERA_SUPPORT
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 5b3cb271d2b8..ad3bf22bfeae 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -33,6 +33,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_JPEG)	+= s5p-jpeg/
+ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_MFC)	+= s5p-mfc/
+ 
+ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
++obj-$(CONFIG_VIDEO_SAMSUNG_S5P_CEC)	+= s5p-cec/
+ obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
+ 
+ obj-$(CONFIG_VIDEO_STI_BDISP)		+= sti/bdisp/
+diff --git a/drivers/staging/media/s5p-cec/Makefile b/drivers/media/platform/s5p-cec/Makefile
+similarity index 100%
+rename from drivers/staging/media/s5p-cec/Makefile
+rename to drivers/media/platform/s5p-cec/Makefile
+diff --git a/drivers/staging/media/s5p-cec/exynos_hdmi_cec.h b/drivers/media/platform/s5p-cec/exynos_hdmi_cec.h
+similarity index 100%
+rename from drivers/staging/media/s5p-cec/exynos_hdmi_cec.h
+rename to drivers/media/platform/s5p-cec/exynos_hdmi_cec.h
+diff --git a/drivers/staging/media/s5p-cec/exynos_hdmi_cecctrl.c b/drivers/media/platform/s5p-cec/exynos_hdmi_cecctrl.c
+similarity index 100%
+rename from drivers/staging/media/s5p-cec/exynos_hdmi_cecctrl.c
+rename to drivers/media/platform/s5p-cec/exynos_hdmi_cecctrl.c
+diff --git a/drivers/staging/media/s5p-cec/regs-cec.h b/drivers/media/platform/s5p-cec/regs-cec.h
+similarity index 100%
+rename from drivers/staging/media/s5p-cec/regs-cec.h
+rename to drivers/media/platform/s5p-cec/regs-cec.h
+diff --git a/drivers/staging/media/s5p-cec/s5p_cec.c b/drivers/media/platform/s5p-cec/s5p_cec.c
+similarity index 89%
+rename from drivers/staging/media/s5p-cec/s5p_cec.c
+rename to drivers/media/platform/s5p-cec/s5p_cec.c
+index 2a07968b5ac6..2014f792eceb 100644
+--- a/drivers/staging/media/s5p-cec/s5p_cec.c
++++ b/drivers/media/platform/s5p-cec/s5p_cec.c
+@@ -14,15 +14,18 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/hpd-notifier.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/timer.h>
+ #include <linux/workqueue.h>
++#include <media/cec-edid.h>
+ #include <media/cec.h>
+ 
+ #include "exynos_hdmi_cec.h"
+@@ -167,10 +170,22 @@ static const struct cec_adap_ops s5p_cec_adap_ops = {
+ static int s5p_cec_probe(struct platform_device *pdev)
  {
- 	struct sti_hdmi *hdmi = dev_get_drvdata(&pdev->dev);
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np;
++	struct platform_device *hdmi_dev;
+ 	struct resource *res;
+ 	struct s5p_cec_dev *cec;
+ 	int ret;
  
-+	hpd_event_disconnect(hdmi->notifier);
++	np = of_parse_phandle(pdev->dev.of_node, "samsung,hdmi-phandle", 0);
 +
- 	i2c_put_adapter(hdmi->ddc_adapt);
- 	if (hdmi->audio_pdev)
- 		platform_device_unregister(hdmi->audio_pdev);
- 	component_del(&pdev->dev, &sti_hdmi_ops);
++	if (!np) {
++		dev_err(&pdev->dev, "Failed to find hdmi node in device tree\n");
++		return -ENODEV;
++	}
++	hdmi_dev = of_find_device_by_node(np);
++	if (hdmi_dev == NULL)
++		return -EPROBE_DEFER;
++
+ 	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
+ 	if (!cec)
+ 		return -ENOMEM;
+@@ -200,24 +215,33 @@ static int s5p_cec_probe(struct platform_device *pdev)
+ 	if (IS_ERR(cec->reg))
+ 		return PTR_ERR(cec->reg);
  
-+	hpd_notifier_put(hdmi->notifier);
++	cec->notifier = hpd_notifier_get(&hdmi_dev->dev);
++	if (cec->notifier == NULL)
++		return -ENOMEM;
++
+ 	cec->adap = cec_allocate_adapter(&s5p_cec_adap_ops, cec,
+ 		CEC_NAME,
+-		CEC_CAP_PHYS_ADDR | CEC_CAP_LOG_ADDRS | CEC_CAP_TRANSMIT |
++		CEC_CAP_LOG_ADDRS | CEC_CAP_TRANSMIT |
+ 		CEC_CAP_PASSTHROUGH | CEC_CAP_RC, 1);
+ 	ret = PTR_ERR_OR_ZERO(cec->adap);
+ 	if (ret)
+ 		return ret;
++
+ 	ret = cec_register_adapter(cec->adap, &pdev->dev);
+-	if (ret) {
+-		cec_delete_adapter(cec->adap);
+-		return ret;
+-	}
++	if (ret)
++		goto err_delete_adapter;
++
++	cec_register_hpd_notifier(cec->adap, cec->notifier);
+ 
+ 	platform_set_drvdata(pdev, cec);
+ 	pm_runtime_enable(dev);
+ 
+ 	dev_dbg(dev, "successfuly probed\n");
+ 	return 0;
++
++err_delete_adapter:
++	cec_delete_adapter(cec->adap);
++	return ret;
+ }
+ 
+ static int s5p_cec_remove(struct platform_device *pdev)
+@@ -225,6 +249,7 @@ static int s5p_cec_remove(struct platform_device *pdev)
+ 	struct s5p_cec_dev *cec = platform_get_drvdata(pdev);
+ 
+ 	cec_unregister_adapter(cec->adap);
++	hpd_notifier_put(cec->notifier);
+ 	pm_runtime_disable(&pdev->dev);
  	return 0;
  }
- 
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.h b/drivers/gpu/drm/sti/sti_hdmi.h
-index 119bc3582ac7..2109c97eb933 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.h
-+++ b/drivers/gpu/drm/sti/sti_hdmi.h
-@@ -8,6 +8,7 @@
- #define _STI_HDMI_H_
- 
- #include <linux/hdmi.h>
-+#include <linux/hpd-notifier.h>
- #include <linux/platform_device.h>
- 
- #include <drm/drmP.h>
-@@ -77,6 +78,7 @@ static const struct drm_prop_enum_list colorspace_mode_names[] = {
-  * @audio_pdev: ASoC hdmi-codec platform device
-  * @audio: hdmi audio parameters.
-  * @drm_connector: hdmi connector
-+ * @notifier: hotplug detect notifier
-  */
- struct sti_hdmi {
- 	struct device dev;
-@@ -102,6 +104,7 @@ struct sti_hdmi {
- 	struct platform_device *audio_pdev;
- 	struct hdmi_audio_params audio;
- 	struct drm_connector *drm_connector;
-+	struct hpd_notifier *notifier;
+diff --git a/drivers/staging/media/s5p-cec/s5p_cec.h b/drivers/media/platform/s5p-cec/s5p_cec.h
+similarity index 97%
+rename from drivers/staging/media/s5p-cec/s5p_cec.h
+rename to drivers/media/platform/s5p-cec/s5p_cec.h
+index 03732c13d19f..a6f5af6619a4 100644
+--- a/drivers/staging/media/s5p-cec/s5p_cec.h
++++ b/drivers/media/platform/s5p-cec/s5p_cec.h
+@@ -59,12 +59,15 @@ enum cec_state {
+ 	STATE_ERROR
  };
  
- u32 hdmi_read(struct sti_hdmi *hdmi, int offset);
++struct hpd_notifier;
++
+ struct s5p_cec_dev {
+ 	struct cec_adapter	*adap;
+ 	struct clk		*clk;
+ 	struct device		*dev;
+ 	struct mutex		lock;
+ 	struct regmap           *pmu;
++	struct hpd_notifier	*notifier;
+ 	int			irq;
+ 	void __iomem		*reg;
+ 
+diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
+index ffb8fa72c3da..1b7804cf4c51 100644
+--- a/drivers/staging/media/Kconfig
++++ b/drivers/staging/media/Kconfig
+@@ -27,8 +27,6 @@ source "drivers/staging/media/davinci_vpfe/Kconfig"
+ 
+ source "drivers/staging/media/omap4iss/Kconfig"
+ 
+-source "drivers/staging/media/s5p-cec/Kconfig"
+-
+ # Keep LIRC at the end, as it has sub-menus
+ source "drivers/staging/media/lirc/Kconfig"
+ 
+diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
+index a28e82cf6447..e11afbf99452 100644
+--- a/drivers/staging/media/Makefile
++++ b/drivers/staging/media/Makefile
+@@ -1,5 +1,4 @@
+ obj-$(CONFIG_I2C_BCM2048)	+= bcm2048/
+-obj-$(CONFIG_VIDEO_SAMSUNG_S5P_CEC) += s5p-cec/
+ obj-$(CONFIG_DVB_CXD2099)	+= cxd2099/
+ obj-$(CONFIG_LIRC_STAGING)	+= lirc/
+ obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
+diff --git a/drivers/staging/media/s5p-cec/Kconfig b/drivers/staging/media/s5p-cec/Kconfig
+deleted file mode 100644
+index 7a3489df3e70..000000000000
+--- a/drivers/staging/media/s5p-cec/Kconfig
++++ /dev/null
+@@ -1,9 +0,0 @@
+-config VIDEO_SAMSUNG_S5P_CEC
+-       tristate "Samsung S5P CEC driver"
+-       depends on VIDEO_DEV && MEDIA_CEC_SUPPORT && (ARCH_EXYNOS || COMPILE_TEST)
+-       ---help---
+-         This is a driver for Samsung S5P HDMI CEC interface. It uses the
+-         generic CEC framework interface.
+-         CEC bus is present in the HDMI connector and enables communication
+-         between compatible devices.
+-
+diff --git a/drivers/staging/media/s5p-cec/TODO b/drivers/staging/media/s5p-cec/TODO
+deleted file mode 100644
+index 64f21bab38f5..000000000000
+--- a/drivers/staging/media/s5p-cec/TODO
++++ /dev/null
+@@ -1,7 +0,0 @@
+-This driver requires that userspace sets the physical address.
+-However, this should be passed on from the corresponding
+-Samsung HDMI driver.
+-
+-We have to wait until the HDMI notifier framework has been merged
+-in order to handle this gracefully, until that time this driver
+-has to remain in staging.
 -- 
 2.11.0
