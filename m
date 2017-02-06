@@ -1,325 +1,87 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCHv4 1/9] video: add hotplug detect notifier support
-Date: Mon,  6 Feb 2017 11:29:43 +0100
-Message-ID: <20170206102951.12623-2-hverkuil@xs4all.nl>
+Subject: [PATCHv4 3/9] cec: integrate HPD notifier support
+Date: Mon,  6 Feb 2017 11:29:45 +0100
+Message-ID: <20170206102951.12623-4-hverkuil@xs4all.nl>
 References: <20170206102951.12623-1-hverkuil@xs4all.nl>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:53808 "EHLO
-        lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751552AbdBFKaF (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Feb 2017 05:30:05 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20170206102951.12623-1-hverkuil@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-media@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
-
-Add support for video hotplug detect and EDID/ELD notifiers, which is used
-to convey information from video drivers to their CEC and audio counterparts.
-
-Based on an earlier version from Russell King:
-
-https://patchwork.kernel.org/patch/9277043/
-
-The hpd_notifier is a reference counted object containing the HPD/EDID/ELD state
-of a video device.
-
-When a new notifier is registered the current state will be reported to
-that notifier at registration time.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/video/Kconfig        |   3 +
- drivers/video/Makefile       |   1 +
- drivers/video/hpd-notifier.c | 134 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/hpd-notifier.h | 109 +++++++++++++++++++++++++++++++++++
- 4 files changed, 247 insertions(+)
- create mode 100644 drivers/video/hpd-notifier.c
- create mode 100644 include/linux/hpd-notifier.h
-
-diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-index 3c20af999893..a3a58d8481e9 100644
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@ -36,6 +36,9 @@ config VIDEOMODE_HELPERS
- config HDMI
- 	bool
- 
-+config HPD_NOTIFIER
-+	bool
-+
- if VT
- 	source "drivers/video/console/Kconfig"
- endif
-diff --git a/drivers/video/Makefile b/drivers/video/Makefile
-index 9ad3c17d6456..2697ae5c4166 100644
---- a/drivers/video/Makefile
-+++ b/drivers/video/Makefile
-@@ -1,5 +1,6 @@
- obj-$(CONFIG_VGASTATE)            += vgastate.o
- obj-$(CONFIG_HDMI)                += hdmi.o
-+obj-$(CONFIG_HPD_NOTIFIER)        += hpd-notifier.o
- 
- obj-$(CONFIG_VT)		  += console/
- obj-$(CONFIG_LOGO)		  += logo/
-diff --git a/drivers/video/hpd-notifier.c b/drivers/video/hpd-notifier.c
-new file mode 100644
-index 000000000000..971e823ead00
---- /dev/null
-+++ b/drivers/video/hpd-notifier.c
-@@ -0,0 +1,134 @@
-+#include <linux/export.h>
-+#include <linux/hpd-notifier.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
-+
-+static LIST_HEAD(hpd_notifiers);
-+static DEFINE_MUTEX(hpd_notifiers_lock);
-+
-+struct hpd_notifier *hpd_notifier_get(struct device *dev)
-+{
-+	struct hpd_notifier *n;
-+
-+	mutex_lock(&hpd_notifiers_lock);
-+	list_for_each_entry(n, &hpd_notifiers, head) {
-+		if (n->dev == dev) {
-+			mutex_unlock(&hpd_notifiers_lock);
-+			kref_get(&n->kref);
-+			return n;
-+		}
-+	}
-+	n = kzalloc(sizeof(*n), GFP_KERNEL);
-+	if (!n)
-+		goto unlock;
-+	n->dev = dev;
-+	mutex_init(&n->lock);
-+	BLOCKING_INIT_NOTIFIER_HEAD(&n->notifiers);
-+	kref_init(&n->kref);
-+	list_add_tail(&n->head, &hpd_notifiers);
-+unlock:
-+	mutex_unlock(&hpd_notifiers_lock);
-+	return n;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_get);
-+
-+static void hpd_notifier_release(struct kref *kref)
-+{
-+	struct hpd_notifier *n =
-+		container_of(kref, struct hpd_notifier, kref);
-+
-+	list_del(&n->head);
-+	kfree(n->edid);
-+	kfree(n);
-+}
-+
-+void hpd_notifier_put(struct hpd_notifier *n)
-+{
-+	mutex_lock(&hpd_notifiers_lock);
-+	kref_put(&n->kref, hpd_notifier_release);
-+	mutex_unlock(&hpd_notifiers_lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_put);
-+
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_register(&n->notifiers, nb);
-+
-+	if (ret)
-+		return ret;
-+	kref_get(&n->kref);
-+	mutex_lock(&n->lock);
-+	if (n->connected) {
-+		blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+		if (n->edid_size)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+		if (n->has_eld)
-+			blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	}
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_register);
-+
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb)
-+{
-+	int ret = blocking_notifier_chain_unregister(&n->notifiers, nb);
-+
-+	if (ret == 0)
-+		hpd_notifier_put(n);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(hpd_notifier_unregister);
-+
-+void hpd_event_connect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_CONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_connect);
-+
-+void hpd_event_disconnect(struct hpd_notifier *n)
-+{
-+	mutex_lock(&n->lock);
-+	n->connected = false;
-+	n->has_eld = false;
-+	n->edid_size = 0;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_DISCONNECTED, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_disconnect);
-+
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size)
-+{
-+	mutex_lock(&n->lock);
-+	if (n->edid_allocated_size < size) {
-+		void *p = kmalloc(size, GFP_KERNEL);
-+
-+		if (p == NULL) {
-+			mutex_unlock(&n->lock);
-+			return -ENOMEM;
-+		}
-+		kfree(n->edid);
-+		n->edid = p;
-+		n->edid_allocated_size = size;
-+	}
-+	memcpy(n->edid, edid, size);
-+	n->edid_size = size;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_EDID, n);
-+	mutex_unlock(&n->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_edid);
-+
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128])
-+{
-+	mutex_lock(&n->lock);
-+	memcpy(n->eld, eld, sizeof(n->eld));
-+	n->has_eld = true;
-+	blocking_notifier_call_chain(&n->notifiers, HPD_NEW_ELD, n);
-+	mutex_unlock(&n->lock);
-+}
-+EXPORT_SYMBOL_GPL(hpd_event_new_eld);
-diff --git a/include/linux/hpd-notifier.h b/include/linux/hpd-notifier.h
-new file mode 100644
-index 000000000000..4dcb4515d2b2
---- /dev/null
-+++ b/include/linux/hpd-notifier.h
-@@ -0,0 +1,109 @@
-+/*
-+ * hpd-notifier.h - notify interested parties of (dis)connect and EDID
-+ * events
-+ *
-+ * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
-+ * Copyright 2016 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
-+ */
-+
-+#ifndef LINUX_HPD_NOTIFIER_H
-+#define LINUX_HPD_NOTIFIER_H
-+
-+#include <linux/types.h>
-+#include <linux/notifier.h>
-+#include <linux/kref.h>
-+
-+enum {
-+	HPD_CONNECTED,
-+	HPD_DISCONNECTED,
-+	HPD_NEW_EDID,
-+	HPD_NEW_ELD,
-+};
-+
-+struct device;
-+
-+struct hpd_notifier {
-+	struct mutex lock;
-+	struct list_head head;
-+	struct kref kref;
-+	struct blocking_notifier_head notifiers;
-+	struct device *dev;
-+
-+	/* Current state */
-+	bool connected;
-+	bool has_eld;
-+	unsigned char eld[128];
-+	void *edid;
-+	size_t edid_size;
-+	size_t edid_allocated_size;
-+};
-+
-+/**
-+ * hpd_notifier_get - find or create a new hpd_notifier for the given device.
-+ * @dev: device that sends the events.
-+ *
-+ * If a notifier for device @dev already exists, then increase the refcount
-+ * and return that notifier.
-+ *
-+ * If it doesn't exist, then allocate a new notifier struct and return a
-+ * pointer to that new struct.
-+ *
-+ * Return NULL if the memory could not be allocated.
-+ */
-+struct hpd_notifier *hpd_notifier_get(struct device *dev);
-+
-+/**
-+ * hpd_notifier_put - decrease refcount and delete when the refcount reaches 0.
-+ * @n: notifier
-+ */
-+void hpd_notifier_put(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_notifier_register - register the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_register(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_notifier_unregister - unregister the notifier with the notifier_block.
-+ * @n: the HPD notifier
-+ * @nb: the notifier_block
-+ */
-+int hpd_notifier_unregister(struct hpd_notifier *n, struct notifier_block *nb);
-+
-+/**
-+ * hpd_event_connect - send a connect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_CONNECTED event to any registered parties.
-+ */
-+void hpd_event_connect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_disconnect - send a disconnect event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_DISCONNECTED event to any registered parties.
-+ */
-+void hpd_event_disconnect(struct hpd_notifier *n);
-+
-+/**
-+ * hpd_event_new_edid - send a new EDID event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_EDID event to any registered parties.
-+ * This function will make a copy the EDID so it can return -ENOMEM if
-+ * no memory could be allocated.
-+ */
-+int hpd_event_new_edid(struct hpd_notifier *n, const void *edid, size_t size);
-+
-+/**
-+ * hpd_event_new_eld - send a new ELD event.
-+ * @n: the HPD notifier
-+ *
-+ * Send an HPD_NEW_ELD event to any registered parties.
-+ */
-+void hpd_event_new_eld(struct hpd_notifier *n, const u8 eld[128]);
-+
-+#endif
--- 
-2.11.0
+RnJvbTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28uY29tPgoKU3VwcG9ydCB0aGUg
+SFBEIG5vdGlmaWVyIGZyYW1ld29yaywgc2ltcGxpZnlpbmcgZHJpdmVycyB0aGF0CmRlcGVuZCBv
+biB0aGlzLgoKU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzY28u
+Y29tPgpUZXN0ZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
+bT4KLS0tCiBkcml2ZXJzL21lZGlhL2NlYy9jZWMtY29yZS5jIHwgNTAgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGluY2x1ZGUvbWVkaWEvY2VjLmggICAgICAg
+ICAgfCAxNSArKysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDY1IGluc2VydGlvbnMoKykK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL2NlYy9jZWMtY29yZS5jIGIvZHJpdmVycy9tZWRp
+YS9jZWMvY2VjLWNvcmUuYwppbmRleCAzNzIxN2UyMDUwNDAuLmYwNTU3MjBhMWM2NSAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9tZWRpYS9jZWMvY2VjLWNvcmUuYworKysgYi9kcml2ZXJzL21lZGlhL2Nl
+Yy9jZWMtY29yZS5jCkBAIC0xOTUsNiArMTk1LDUyIEBAIHN0YXRpYyB2b2lkIGNlY19kZXZub2Rl
+X3VucmVnaXN0ZXIoc3RydWN0IGNlY19kZXZub2RlICpkZXZub2RlKQogCXB1dF9kZXZpY2UoJmRl
+dm5vZGUtPmRldik7CiB9CiAKKyNpZmRlZiBDT05GSUdfSFBEX05PVElGSUVSCitzdGF0aWMgdTE2
+IHBhcnNlX2hkbWlfYWRkcihjb25zdCBzdHJ1Y3QgZWRpZCAqZWRpZCkKK3sKKwlpZiAoIWVkaWQg
+fHwgZWRpZC0+ZXh0ZW5zaW9ucyA9PSAwKQorCQlyZXR1cm4gQ0VDX1BIWVNfQUREUl9JTlZBTElE
+OworCisJcmV0dXJuIGNlY19nZXRfZWRpZF9waHlzX2FkZHIoKHU4ICopZWRpZCwKKwkJCQlFRElE
+X0xFTkdUSCAqIChlZGlkLT5leHRlbnNpb25zICsgMSksIE5VTEwpOworfQorCitzdGF0aWMgaW50
+IGNlY19ocGRfbm90aWZ5KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIsIHVuc2lnbmVkIGxvbmcg
+ZXZlbnQsCisJCQkgICB2b2lkICpkYXRhKQoreworCXN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCA9
+IGNvbnRhaW5lcl9vZihuYiwgc3RydWN0IGNlY19hZGFwdGVyLCBuYik7CisJc3RydWN0IGhwZF9u
+b3RpZmllciAqbiA9IGRhdGE7CisJdW5zaWduZWQgaW50IHBoeXM7CisKKwlkcHJpbnRrKDEsICJl
+dmVudCAlbHVcbiIsIGV2ZW50KTsKKworCXN3aXRjaCAoZXZlbnQpIHsKKwljYXNlIEhQRF9ESVND
+T05ORUNURUQ6CisJCWNlY19zX3BoeXNfYWRkcihhZGFwLCBDRUNfUEhZU19BRERSX0lOVkFMSUQs
+IGZhbHNlKTsKKwkJYnJlYWs7CisKKwljYXNlIEhQRF9ORVdfRURJRDoKKwkJcGh5cyA9IHBhcnNl
+X2hkbWlfYWRkcihuLT5lZGlkKTsKKwkJY2VjX3NfcGh5c19hZGRyKGFkYXAsIHBoeXMsIGZhbHNl
+KTsKKwkJYnJlYWs7CisJfQorCisJcmV0dXJuIE5PVElGWV9PSzsKK30KKwordm9pZCBjZWNfcmVn
+aXN0ZXJfaHBkX25vdGlmaWVyKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwKKwkJCQlzdHJ1Y3Qg
+aHBkX25vdGlmaWVyICpub3RpZmllcikKK3sKKwlpZiAoV0FSTl9PTighYWRhcC0+ZGV2bm9kZS5y
+ZWdpc3RlcmVkKSkKKwkJcmV0dXJuOworCisJYWRhcC0+bmIubm90aWZpZXJfY2FsbCA9IGNlY19o
+cGRfbm90aWZ5OworCWFkYXAtPm5vdGlmaWVyID0gbm90aWZpZXI7CisJaHBkX25vdGlmaWVyX3Jl
+Z2lzdGVyKGFkYXAtPm5vdGlmaWVyLCAmYWRhcC0+bmIpOworfQorRVhQT1JUX1NZTUJPTF9HUEwo
+Y2VjX3JlZ2lzdGVyX2hwZF9ub3RpZmllcik7CisjZW5kaWYKKwogc3RydWN0IGNlY19hZGFwdGVy
+ICpjZWNfYWxsb2NhdGVfYWRhcHRlcihjb25zdCBzdHJ1Y3QgY2VjX2FkYXBfb3BzICpvcHMsCiAJ
+CQkJCSB2b2lkICpwcml2LCBjb25zdCBjaGFyICpuYW1lLCB1MzIgY2FwcywKIAkJCQkJIHU4IGF2
+YWlsYWJsZV9sYXMpCkBAIC0zNDMsNiArMzg5LDEwIEBAIHZvaWQgY2VjX3VucmVnaXN0ZXJfYWRh
+cHRlcihzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXApCiAJYWRhcC0+cmMgPSBOVUxMOwogI2VuZGlm
+CiAJZGVidWdmc19yZW1vdmVfcmVjdXJzaXZlKGFkYXAtPmNlY19kaXIpOworI2lmZGVmIENPTkZJ
+R19IUERfTk9USUZJRVIKKwlpZiAoYWRhcC0+bm90aWZpZXIpCisJCWhwZF9ub3RpZmllcl91bnJl
+Z2lzdGVyKGFkYXAtPm5vdGlmaWVyLCAmYWRhcC0+bmIpOworI2VuZGlmCiAJY2VjX2Rldm5vZGVf
+dW5yZWdpc3RlcigmYWRhcC0+ZGV2bm9kZSk7CiB9CiBFWFBPUlRfU1lNQk9MX0dQTChjZWNfdW5y
+ZWdpc3Rlcl9hZGFwdGVyKTsKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbWVkaWEvY2VjLmggYi9pbmNs
+dWRlL21lZGlhL2NlYy5oCmluZGV4IDk2YTBhYTc3MGQ2MS4uZjg3YTA3ZWUzNmIzIDEwMDY0NAot
+LS0gYS9pbmNsdWRlL21lZGlhL2NlYy5oCisrKyBiL2luY2x1ZGUvbWVkaWEvY2VjLmgKQEAgLTI4
+LDYgKzI4LDExIEBACiAjaW5jbHVkZSA8bGludXgva3RocmVhZC5oPgogI2luY2x1ZGUgPGxpbnV4
+L3RpbWVyLmg+CiAjaW5jbHVkZSA8bGludXgvY2VjLWZ1bmNzLmg+CisjaWZkZWYgQ09ORklHX0hQ
+RF9OT1RJRklFUgorI2luY2x1ZGUgPGxpbnV4L25vdGlmaWVyLmg+CisjaW5jbHVkZSA8bGludXgv
+aHBkLW5vdGlmaWVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9lZGlkLmg+CisjZW5kaWYKICNpbmNs
+dWRlIDxtZWRpYS9yYy1jb3JlLmg+CiAjaW5jbHVkZSA8bWVkaWEvY2VjLWVkaWQuaD4KIApAQCAt
+MTczLDYgKzE3OCwxMSBAQCBzdHJ1Y3QgY2VjX2FkYXB0ZXIgewogCWJvb2wgcGFzc3Rocm91Z2g7
+CiAJc3RydWN0IGNlY19sb2dfYWRkcnMgbG9nX2FkZHJzOwogCisjaWZkZWYgQ09ORklHX0hQRF9O
+T1RJRklFUgorCXN0cnVjdCBocGRfbm90aWZpZXIJKm5vdGlmaWVyOworCXN0cnVjdCBub3RpZmll
+cl9ibG9jawluYjsKKyNlbmRpZgorCiAJc3RydWN0IGRlbnRyeSAqY2VjX2RpcjsKIAlzdHJ1Y3Qg
+ZGVudHJ5ICpzdGF0dXNfZmlsZTsKIApAQCAtMjEzLDYgKzIyMywxMSBAQCB2b2lkIGNlY190cmFu
+c21pdF9kb25lKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwgdTggc3RhdHVzLCB1OCBhcmJfbG9z
+dF9jbnQsCiAJCSAgICAgICB1OCBuYWNrX2NudCwgdTggbG93X2RyaXZlX2NudCwgdTggZXJyb3Jf
+Y250KTsKIHZvaWQgY2VjX3JlY2VpdmVkX21zZyhzdHJ1Y3QgY2VjX2FkYXB0ZXIgKmFkYXAsIHN0
+cnVjdCBjZWNfbXNnICptc2cpOwogCisjaWZkZWYgQ09ORklHX0hQRF9OT1RJRklFUgordm9pZCBj
+ZWNfcmVnaXN0ZXJfaHBkX25vdGlmaWVyKHN0cnVjdCBjZWNfYWRhcHRlciAqYWRhcCwKKwkJCQlz
+dHJ1Y3QgaHBkX25vdGlmaWVyICpub3RpZmllcik7CisjZW5kaWYKKwogI2Vsc2UKIAogc3RhdGlj
+IGlubGluZSBpbnQgY2VjX3JlZ2lzdGVyX2FkYXB0ZXIoc3RydWN0IGNlY19hZGFwdGVyICphZGFw
+LAotLSAKMi4xMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
