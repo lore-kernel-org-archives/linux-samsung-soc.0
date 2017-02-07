@@ -1,31 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] cpufreq: s3c2416: double free on driver init error path
-Date: Tue, 7 Feb 2017 16:19:06 +0300
-Message-ID: <20170207131906.GD27416@mwanda>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 3/4] ARM: dts: exynos: DT for v4.11, third round
+Date: Tue, 07 Feb 2017 15:52:30 +0100
+Message-ID: <7399407.dS76Bkhe6y@wuerfel>
+References: <20170202183008.23500-1-krzk@kernel.org>
+ <20170202183008.23500-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170202183008.23500-4-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
-so this is a double free.
+On Thursday, February 2, 2017 8:30:07 PM CET Krzysztof Kozlowski wrote:
+> Samsung DeviceTree update for v4.11, third round:
+> 1. Add descriptive user-friendly label names for power domains. This
+>    makes debugging easier.
+> 
 
-Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Pulled into next/dt, thanks!
 
-diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-index d6d425773fa4..5b2db3c6568f 100644
---- a/drivers/cpufreq/s3c2416-cpufreq.c
-+++ b/drivers/cpufreq/s3c2416-cpufreq.c
-@@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
- 	rate = clk_get_rate(s3c_freq->hclk);
- 	if (rate < 133 * 1000 * 1000) {
- 		pr_err("cpufreq: HCLK not at 133MHz\n");
--		clk_put(s3c_freq->hclk);
- 		ret = -EINVAL;
- 		goto err_armclk;
- 	}
+	Arnd
