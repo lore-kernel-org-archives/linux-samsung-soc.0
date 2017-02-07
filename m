@@ -1,32 +1,37 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [patch] cpufreq: s3c2416: double free on driver init error path
-Date: Tue, 7 Feb 2017 22:29:36 +0200
-Message-ID: <20170207202936.pc6uyk6jsghxdyzi@kozik-lap>
-References: <20170207131906.GD27416@mwanda>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: fix inconsistency between binding and
+ driver
+Date: Tue, 7 Feb 2017 22:33:36 +0200
+Message-ID: <20170207203336.3oetygxh4eofqlml@kozik-lap>
+References: <CGME20170207080820epcas5p3a680e8126abf88d53106b23c3aab9958@epcas5p3.samsung.com>
+ <20170207080748.9524-1-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34092 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbdBGUc5 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 15:32:57 -0500
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170207131906.GD27416@mwanda>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20170207080748.9524-1-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 07, 2017 at 04:19:06PM +0300, Dan Carpenter wrote:
-> The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
-> so this is a double free.
-> 
-> Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+On Tue, Feb 07, 2017 at 05:07:48PM +0900, Andi Shyti wrote:
+> Commit a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS
+> line is not connected") introduced an inconsistency between the
+> binding where the disconnected CS line was marked as
+> 'no-cs-readback' while the driver was erroneously checking for
+> 'broken-cs'.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Please describe in one sentence the visible output of this error to
+justify backporting and then:
+Fixes: a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS line is not connected")
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Reviewed-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
