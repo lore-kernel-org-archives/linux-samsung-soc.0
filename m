@@ -1,85 +1,32 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/5] arm64: dts: exynos: Move the clock-frequency property
-Date: Tue, 7 Feb 2017 22:13:35 +0200
-Message-ID: <20170207201335.lyc7yvwed7cm25nj@kozik-lap>
-References: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170206021951epcas1p365db9f08f22cc223ca45538b0dbc86d6@epcas1p3.samsung.com>
- <1486347584-6762-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [patch] cpufreq: s3c2416: double free on driver init error path
+Date: Tue, 7 Feb 2017 22:29:36 +0200
+Message-ID: <20170207202936.pc6uyk6jsghxdyzi@kozik-lap>
+References: <20170207131906.GD27416@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34092 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752563AbdBGUc5 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 7 Feb 2017 15:32:57 -0500
 Content-Disposition: inline
-In-Reply-To: <1486347584-6762-3-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20170207131906.GD27416@mwanda>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+On Tue, Feb 07, 2017 at 04:19:06PM +0300, Dan Carpenter wrote:
+> The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
+> so this is a double free.
+> 
+> Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
 
-I think the subject is not really matching the real work. You are rather
-removing the OF graph from DSI node.
-
-On Mon, Feb 06, 2017 at 11:19:41AM +0900, Hoegeun Kwon wrote:
-> The OF graph is not needed because the panel is a child of dsi. So
-> removed the ports and moved burst, esc clock-frequency property to the
-> top.
-
-Keep the commit style and tense - imperative mode (see
-submitting-patches.rstsubmitting-patches.rst), so last sentence could
-look like:
-
-"Remove the ports node abd move burst and esc clock frequency properties
-to the parent (DSI node)."
-
-The information which is missing is the answer for WHY? Why are you
-doing this?
-
-Does the patch depends on 1/5?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
-> 
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index 6ce93a3..77ba238 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -298,23 +298,11 @@
->  	status = "okay";
->  	vddcore-supply = <&ldo6_reg>;
->  	vddio-supply = <&ldo7_reg>;
-> +	samsung,burst-clock-frequency = <512000000>;
-> +	samsung,esc-clock-frequency = <16000000>;
->  	samsung,pll-clock-frequency = <24000000>;
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&te_irq>;
-> -
-> -	ports {
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
-> -
-> -		port@1 {
-> -			reg = <1>;
-> -
-> -			dsi_out: endpoint {
-> -				samsung,burst-clock-frequency = <512000000>;
-> -				samsung,esc-clock-frequency = <16000000>;
-> -			};
-> -		};
-> -	};
->  };
->  
->  &hdmi {
-> -- 
-> 1.9.1
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
