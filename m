@@ -1,72 +1,420 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Enable ir-spi in the tm2 and tm2e boards
-Date: Tue, 7 Feb 2017 23:12:33 +0200
-Message-ID: <20170207211233.ge3fzw5x2fvebpjq@kozik-lap>
-References: <CGME20170207081338epcas5p23530ff8663c58f8868a0f9dfa2e19f7a@epcas5p2.samsung.com>
- <20170207081325.9769-1-andi.shyti@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] Exynos5422-odroidxu3: Incomplete thermal-zones definition
+Date: Tue, 7 Feb 2017 23:28:30 +0200
+Message-ID: <20170207212830.23mzswabqplece2s@kozik-lap>
+References: <9e32c530-0d15-223f-c280-617f8ae2540d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33196 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752869AbdBGV2h (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 7 Feb 2017 16:28:37 -0500
+Received: by mail-wm0-f66.google.com with SMTP id v77so30591545wmv.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Feb 2017 13:28:36 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20170207081325.9769-1-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+In-Reply-To: <9e32c530-0d15-223f-c280-617f8ae2540d@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Willy WOLFF <willy.mh.wolff@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 07, 2017 at 05:13:25PM +0900, Andi Shyti wrote:
-> Add the device tree node for the ir-spi driver which enable the
-> ir led for remote controlling.
+Hi,
+
+Thanks for the patch. Please use:
+	git log --oneline arch/arm/boot/dts/exynos*
+to get the appropriate commit subject prefix.
+
+On Thu, Feb 02, 2017 at 05:14:40PM +0000, Willy WOLFF wrote:
+> Odroid XU3-familly boards has thermal sensors per A15 core, but the actual thermal-zones define only cooling-maps action for cpu0.
+> If the application is running on all cores but core4 (first core of the A15 cluster), the CPU can reach high temperature without cooling action.
+
+This is still the same cluster so it is a little bit surprising that
+only cpu0 stayed cool.
+
+Any specific reproduction steps (other than setting process affinity?)?
+It should also affect other SoCs, right?
+
 > 
-> This patch sets first the GPR3[3] gpio line as a regulator-fixed
-> for enabling an external regulator which powers the IR LED.
+> Also, the comment for cpu_alert4 in cooling-maps definition is not accurate. 11 steps for A15 correspond to 700MHz.
+
+Wrap lines using regular git or editor settings, which is 72-75
+characters. See "The canonical patch format". Usually the git commit
+editor does it already.
+
 > 
-> Removes also the default assignment of the GPG3[5] and GPG3[7]
-> related to the SPI3 line.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
 > ---
->  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 27 ++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 287 +++++++++++++++++++--
+>  1 file changed, 269 insertions(+), 18 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index 098ad557fee3..c61df2318d8b 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -106,6 +106,13 @@
->  		};
->  	};
->  
-> +	irda_regulator: irda-regulator {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpr3 3 0>;
-
-GPIO_ACTIVE_HIGH
-
-> +		regulator-name = "irda_regulator";
-> +	};
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index 05b9afdd..92328c1 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -64,22 +64,22 @@
+>  			polling-delay-passive = <250>;
+>  			polling-delay = <0>;
+>  			trips {
+> -				cpu_alert0: cpu-alert-0 {
+> +				cpu0_alert0: cpu-alert-0 {
+>  					temperature = <50000>; /* millicelsius */
+>  					hysteresis = <5000>; /* millicelsius */
+>  					type = "active";
+>  				};
+> -				cpu_alert1: cpu-alert-1 {
+> +				cpu0_alert1: cpu-alert-1 {
+>  					temperature = <60000>; /* millicelsius */
+>  					hysteresis = <5000>; /* millicelsius */
+>  					type = "active";
+>  				};
+> -				cpu_alert2: cpu-alert-2 {
+> +				cpu0_alert2: cpu-alert-2 {
+>  					temperature = <70000>; /* millicelsius */
+>  					hysteresis = <5000>; /* millicelsius */
+>  					type = "active";
+>  				};
+> -				cpu_crit0: cpu-crit-0 {
+> +				cpu0_crit0: cpu-crit-0 {
+>  					temperature = <120000>; /* millicelsius */
+>  					hysteresis = <0>; /* millicelsius */
+>  					type = "critical";
+> @@ -88,59 +88,310 @@
+>  				 * Exynos542x supports only 4 trip-points
+>  				 * so for these polling mode is required.
+>  				 * Start polling at temperature level of last
+> -				 * interrupt-driven trip: cpu_alert2
+> +				 * interrupt-driven trip: cpu0_alert2
+>  				 */
+> -				cpu_alert3: cpu-alert-3 {
+> +				cpu0_alert3: cpu-alert-3 {
+>  					temperature = <70000>; /* millicelsius */
+>  					hysteresis = <10000>; /* millicelsius */
+>  					type = "passive";
+>  				};
+> -				cpu_alert4: cpu-alert-4 {
+> +				cpu0_alert4: cpu-alert-4 {
+>  					temperature = <85000>; /* millicelsius */
+>  					hysteresis = <10000>; /* millicelsius */
+>  					type = "passive";
+>  				};
+> +			};
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu0_alert0>;
+> +					cooling-device = <&fan0 0 1>;
+> +				};
+> +				map1 {
+> +					trip = <&cpu0_alert1>;
+> +					cooling-device = <&fan0 1 2>;
+> +				};
+> +				map2 {
+> +					trip = <&cpu0_alert2>;
+> +					cooling-device = <&fan0 2 3>;
+> +				};
+> +				/*
+> +				 * When reaching cpu0_alert3, reduce CPU
+> +				 * by 2 steps. On Exynos5422/5800 that would
+> +				 * be: 1600 MHz and 1100 MHz.
+> +				 */
+> +				map3 {
+> +					trip = <&cpu0_alert3>;
+> +					cooling-device = <&cpu0 0 2>;
+> +				};
+> +				map4 {
+> +					trip = <&cpu0_alert3>;
+> +					cooling-device = <&cpu4 0 2>;
+> +				};
 > +
->  	sound {
->  		compatible = "samsung,tm2-audio";
->  		audio-codec = <&wm5110>;
-> @@ -1073,8 +1080,6 @@
->  
->  		PIN(INPUT, gpg3-0, DOWN, FAST_SR1);
->  		PIN(INPUT, gpg3-1, DOWN, FAST_SR1);
-> -		PIN(INPUT, gpg3-5, DOWN, FAST_SR1);
-> -		PIN(INPUT, gpg3-7, DOWN, FAST_SR1);
+> +				/*
+> +				 * When reaching cpu0_alert4, reduce CPU
+> +				 * further, down to 600 MHz (12 steps for big,
+> +				 * 7 steps for LITTLE).
+> +				 */
+> +				map5 {
+> +					trip = <&cpu0_alert4>;
+> +					cooling-device = <&cpu0 3 7>;
+> +				};
+> +				map6 {
+> +					trip = <&cpu0_alert4>;
+> +					cooling-device = <&cpu4 3 12>;
+> +				};
 
-I think gpg3-5 would be missing its configuration. It is not present in
-spi3 bus pins. Is it a chip select pin? If you remove the default
-configuration, it will still work as input-pull down because no one is
-setting different config. Why you need to touch gpg3-5?
+That is a quite big code duplication with a lot of possible errors to do
+(differs only by cpu number). We should do this in a smarter way.
+
+How about extending the thermal driver for setting the trips also for
+other thermal zones?
 
 
 Best regards,
 Krzysztof
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +			};
+> +		};
+> +		cpu1_thermal: cpu1-thermal {
+> +			thermal-sensors = <&tmu_cpu1 0>;
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <0>;
+> +			trips {
+> +				cpu1_alert0: cpu-alert-0 {
+> +					temperature = <50000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu1_alert1: cpu-alert-1 {
+> +					temperature = <60000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu1_alert2: cpu-alert-2 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu1_crit0: cpu-crit-0 {
+> +					temperature = <120000>; /* millicelsius */
+> +					hysteresis = <0>; /* millicelsius */
+> +					type = "critical";
+> +				};
+> +				/*
+> +				 * Exynos542x supports only 4 trip-points
+> +				 * so for these polling mode is required.
+> +				 * Start polling at temperature level of last
+> +				 * interrupt-driven trip: cpu1_alert2
+> +				 */
+> +				cpu1_alert3: cpu-alert-3 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+> +				cpu1_alert4: cpu-alert-4 {
+> +					temperature = <85000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+> +			};
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu1_alert0>;
+> +					cooling-device = <&fan0 0 1>;
+> +				};
+> +				map1 {
+> +					trip = <&cpu1_alert1>;
+> +					cooling-device = <&fan0 1 2>;
+> +				};
+> +				map2 {
+> +					trip = <&cpu1_alert2>;
+> +					cooling-device = <&fan0 2 3>;
+> +				};
+> +				/*
+> +				 * When reaching cpu1_alert3, reduce CPU
+> +				 * by 2 steps. On Exynos5422/5800 that would
+> +				 * be: 1600 MHz and 1100 MHz.
+> +				 */
+> +				map3 {
+> +					trip = <&cpu1_alert3>;
+> +					cooling-device = <&cpu0 0 2>;
+> +				};
+> +				map4 {
+> +					trip = <&cpu1_alert3>;
+> +					cooling-device = <&cpu4 0 2>;
+> +				};
+>  
+> +				/*
+> +				 * When reaching cpu1_alert4, reduce CPU
+> +				 * further, down to 600 MHz (12 steps for big,
+> +				 * 7 steps for LITTLE).
+> +				 */
+> +				map5 {
+> +					trip = <&cpu1_alert4>;
+> +					cooling-device = <&cpu0 3 7>;
+> +				};
+> +				map6 {
+> +					trip = <&cpu1_alert4>;
+> +					cooling-device = <&cpu4 3 12>;
+> +				};
+> +			};
+> +		};
+> +		cpu2_thermal: cpu2-thermal {
+> +			thermal-sensors = <&tmu_cpu2 0>;
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <0>;
+> +			trips {
+> +				cpu2_alert0: cpu-alert-0 {
+> +					temperature = <50000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu2_alert1: cpu-alert-1 {
+> +					temperature = <60000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu2_alert2: cpu-alert-2 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu2_crit0: cpu-crit-0 {
+> +					temperature = <120000>; /* millicelsius */
+> +					hysteresis = <0>; /* millicelsius */
+> +					type = "critical";
+> +				};
+> +				/*
+> +				 * Exynos542x supports only 4 trip-points
+> +				 * so for these polling mode is required.
+> +				 * Start polling at temperature level of last
+> +				 * interrupt-driven trip: cpu2_alert2
+> +				 */
+> +				cpu2_alert3: cpu-alert-3 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+> +				cpu2_alert4: cpu-alert-4 {
+> +					temperature = <85000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+> +			};
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu2_alert0>;
+> +					cooling-device = <&fan0 0 1>;
+> +				};
+> +				map1 {
+> +					trip = <&cpu2_alert1>;
+> +					cooling-device = <&fan0 1 2>;
+> +				};
+> +				map2 {
+> +					trip = <&cpu2_alert2>;
+> +					cooling-device = <&fan0 2 3>;
+> +				};
+> +				/*
+> +				 * When reaching cpu2_alert3, reduce CPU
+> +				 * by 2 steps. On Exynos5422/5800 that would
+> +				 * be: 1600 MHz and 1100 MHz.
+> +				 */
+> +				map3 {
+> +					trip = <&cpu2_alert3>;
+> +					cooling-device = <&cpu0 0 2>;
+> +				};
+> +				map4 {
+> +					trip = <&cpu2_alert3>;
+> +					cooling-device = <&cpu4 0 2>;
+> +				};
+> +
+> +				/*
+> +				 * When reaching cpu2_alert4, reduce CPU
+> +				 * further, down to 600 MHz (12 steps for big,
+> +				 * 7 steps for LITTLE).
+> +				 */
+> +				map5 {
+> +					trip = <&cpu2_alert4>;
+> +					cooling-device = <&cpu0 3 7>;
+> +				};
+> +				map6 {
+> +					trip = <&cpu2_alert4>;
+> +					cooling-device = <&cpu4 3 12>;
+> +				};
+> +			};
+> +		};
+> +		cpu3_thermal: cpu3-thermal {
+> +			thermal-sensors = <&tmu_cpu3 0>;
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <0>;
+> +			trips {
+> +				cpu3_alert0: cpu-alert-0 {
+> +					temperature = <50000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu3_alert1: cpu-alert-1 {
+> +					temperature = <60000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu3_alert2: cpu-alert-2 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <5000>; /* millicelsius */
+> +					type = "active";
+> +				};
+> +				cpu3_crit0: cpu-crit-0 {
+> +					temperature = <120000>; /* millicelsius */
+> +					hysteresis = <0>; /* millicelsius */
+> +					type = "critical";
+> +				};
+> +				/*
+> +				 * Exynos542x supports only 4 trip-points
+> +				 * so for these polling mode is required.
+> +				 * Start polling at temperature level of last
+> +				 * interrupt-driven trip: cpu3_alert2
+> +				 */
+> +				cpu3_alert3: cpu-alert-3 {
+> +					temperature = <70000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+> +				cpu3_alert4: cpu-alert-4 {
+> +					temperature = <85000>; /* millicelsius */
+> +					hysteresis = <10000>; /* millicelsius */
+> +					type = "passive";
+> +				};
+>  			};
+>  			cooling-maps {
+>  				map0 {
+> -					trip = <&cpu_alert0>;
+> +					trip = <&cpu3_alert0>;
+>  					cooling-device = <&fan0 0 1>;
+>  				};
+>  				map1 {
+> -					trip = <&cpu_alert1>;
+> +					trip = <&cpu3_alert1>;
+>  					cooling-device = <&fan0 1 2>;
+>  				};
+>  				map2 {
+> -					trip = <&cpu_alert2>;
+> +					trip = <&cpu3_alert2>;
+>  					cooling-device = <&fan0 2 3>;
+>  				};
+>  				/*
+> -				 * When reaching cpu_alert3, reduce CPU
+> +				 * When reaching cpu3_alert3, reduce CPU
+>  				 * by 2 steps. On Exynos5422/5800 that would
+>  				 * be: 1600 MHz and 1100 MHz.
+>  				 */
+>  				map3 {
+> -					trip = <&cpu_alert3>;
+> +					trip = <&cpu3_alert3>;
+>  					cooling-device = <&cpu0 0 2>;
+>  				};
+>  				map4 {
+> -					trip = <&cpu_alert3>;
+> +					trip = <&cpu3_alert3>;
+>  					cooling-device = <&cpu4 0 2>;
+>  				};
+>  
+>  				/*
+> -				 * When reaching cpu_alert4, reduce CPU
+> -				 * further, down to 600 MHz (11 steps for big,
+> +				 * When reaching cpu3_alert4, reduce CPU
+> +				 * further, down to 600 MHz (12 steps for big,
+>  				 * 7 steps for LITTLE).
+>  				 */
+>  				map5 {
+> -					trip = <&cpu_alert4>;
+> +					trip = <&cpu3_alert4>;
+>  					cooling-device = <&cpu0 3 7>;
+>  				};
+>  				map6 {
+> -					trip = <&cpu_alert4>;
+> -					cooling-device = <&cpu4 3 11>;
+> +					trip = <&cpu3_alert4>;
+> +					cooling-device = <&cpu4 3 12>;
+>  				};
+>  			};
+>  		};
+> -- 
+> 2.1.4
