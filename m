@@ -1,101 +1,31 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 09/10] iommu/exynos: Make use of iommu_device_register
- interface
-Date: Tue, 07 Feb 2017 13:36:15 +0100
-Message-ID: <3e4709a7-2231-7c76-18bd-6e2d6b802b8e@samsung.com>
-References: <1486397429-29327-1-git-send-email-joro@8bytes.org>
- <CGME20170206161330epcas3p185c7719afc89ab2ad87e55e9f62ccfa1@epcas3p1.samsung.com>
- <1486397429-29327-10-git-send-email-joro@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] cpufreq: s3c2416: double free on driver init error path
+Date: Tue, 7 Feb 2017 16:19:06 +0300
+Message-ID: <20170207131906.GD27416@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11907 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752833AbdBGMgV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Feb 2017 07:36:21 -0500
-In-reply-to: <1486397429-29327-10-git-send-email-joro@8bytes.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Alex Williamson <alex.williamson@redhat.com>, David Woodhouse <dwmw2@infradead.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Joerg,
+The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
+so this is a double free.
 
-On 2017-02-06 17:10, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> Register Exynos IOMMUs to the IOMMU core and make them
-> visible in sysfs. This patch does not add the links between
-> IOMMUs and translated devices yet.
->
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->   drivers/iommu/exynos-iommu.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 57ba0d3..90f0f52 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -276,6 +276,8 @@ struct sysmmu_drvdata {
->   	struct list_head owner_node;	/* node for owner controllers list */
->   	phys_addr_t pgtable;		/* assigned page table structure */
->   	unsigned int version;		/* our version */
-> +
-> +	struct iommu_device iommu;	/* IOMMU core handle */
->   };
->   
->   static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-> @@ -556,6 +558,7 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
->   	struct device *dev = &pdev->dev;
->   	struct sysmmu_drvdata *data;
->   	struct resource *res;
-> +	resource_size_t ioaddr;
->   
->   	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->   	if (!data)
-> @@ -565,6 +568,7 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
->   	data->sfrbase = devm_ioremap_resource(dev, res);
->   	if (IS_ERR(data->sfrbase))
->   		return PTR_ERR(data->sfrbase);
-> +	ioaddr = res->start;
->   
->   	irq = platform_get_irq(pdev, 0);
->   	if (irq <= 0) {
-> @@ -611,6 +615,18 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
->   	data->sysmmu = dev;
->   	spin_lock_init(&data->lock);
->   
-> +	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
-> +				     "sysmmu.%pa", &ioaddr);
+Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Can we stick to the common name across the /sysfs and use 
-dev_name(data->sysmmu)
-or even dev_name(dev) here?
-
-ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL, 
-dev_name(dev));
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	data->iommu.ops    = &exynos_iommu_ops;
-> +	data->iommu.fwnode = &dev->of_node->fwnode;
-> +
-> +	ret = iommu_device_register(&data->iommu);
-> +	if (ret)
-> +		return ret;
-> +
->   	platform_set_drvdata(pdev, data);
->   
->   	__sysmmu_get_version(data);
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+index d6d425773fa4..5b2db3c6568f 100644
+--- a/drivers/cpufreq/s3c2416-cpufreq.c
++++ b/drivers/cpufreq/s3c2416-cpufreq.c
+@@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
+ 	rate = clk_get_rate(s3c_freq->hclk);
+ 	if (rate < 133 * 1000 * 1000) {
+ 		pr_err("cpufreq: HCLK not at 133MHz\n");
+-		clk_put(s3c_freq->hclk);
+ 		ret = -EINVAL;
+ 		goto err_armclk;
+ 	}
