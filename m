@@ -1,75 +1,69 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 09/10] iommu/exynos: Make use of iommu_device_register
-	interface
-Date: Wed, 08 Feb 2017 15:09:33 +0100
-Message-ID: <5fef7241-bb87-54ed-2516-d3207334274d@samsung.com>
-References: <1486397429-29327-1-git-send-email-joro@8bytes.org>
-	<CGME20170206161330epcas3p185c7719afc89ab2ad87e55e9f62ccfa1@epcas3p1.samsung.com>
-	<1486397429-29327-10-git-send-email-joro@8bytes.org>
-	<3e4709a7-2231-7c76-18bd-6e2d6b802b8e@samsung.com>
-	<20170208135742.GE7339@8bytes.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RESEND PATCH] serial: samsung: enable clock before accessing
+ interrupt mask resister
+Date: Wed, 8 Feb 2017 14:23:09 +0100
+Message-ID: <12209c5e-d19a-f3af-eedc-442afda4daa6@math.uni-bielefeld.de>
+References: <CGME20170201102546epcas1p25107505cc2ff66f06211f945d2ddd679@epcas1p2.samsung.com>
+ <008c01d27c75$8cd73e60$a685bb20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <20170208135742.GE7339-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:52991 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932358AbdBHORk (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 8 Feb 2017 09:17:40 -0500
+In-Reply-To: <008c01d27c75$8cd73e60$a685bb20$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>, gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Joerg,
+Hello Youngmin,
 
-On 2017-02-08 14:57, Joerg Roedel wrote:
-> On Tue, Feb 07, 2017 at 01:36:15PM +0100, Marek Szyprowski wrote:
->>> +	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
->>> +				     "sysmmu.%pa", &ioaddr);
->> Can we stick to the common name across the /sysfs and use
->> dev_name(data->sysmmu)
->> or even dev_name(dev) here?
->>
->> ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
->> dev_name(dev));
-> That means that we have multiple 'struct device' with the same name,
-> no? I think will lead to confusion when using dev_printk, as its not
-> clear anymore which device is refered to in the message.
+I was wondering if this fixes an actual issue. The changes look sane,
+but shouldn't be current code trigger some imprecise external abort on
+system resume then?
 
-Each sysmmu device has unique name, like every other platform device
-instantiated from device tree. Here is an example from the OdroidXU3
-(Exynos5422 based):
+I'm asking because on my Exynos4412 board nothing like that happens on
+system resume. And if I read the code correctly,
+s3c24xx_serial_has_interrupt_mask() returns 1 in my case.
 
-# ls -1 /sys/bus/platform/devices/ | grep sysmmu
-10a60000.sysmmu
-10a70000.sysmmu
-11200000.sysmmu
-11210000.sysmmu
-11d40000.sysmmu
-11f10000.sysmmu
-11f20000.sysmmu
-12880000.sysmmu
-12890000.sysmmu
-128a0000.sysmmu
-128c0000.sysmmu
-128d0000.sysmmu
-128e0000.sysmmu
-13e80000.sysmmu
-13e90000.sysmmu
-14640000.sysmmu
-14650000.sysmmu
-14680000.sysmmu
+With best wishes,
+Tobias
 
-IMHO there is no need for open coding new unique names if device name,
-which already contains the base address, can be used instead.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+남영민 wrote:
+> Ensure that the uart clock is enabled prior to writing to the
+> interrupt mask register in s3c24xx_serial_resume_noirq function.
+> Without enabing the uart clock, the uart register cannot be accessed.
+> 
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> ---
+>  drivers/tty/serial/samsung.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index f44615f..06488fd 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
+>  static int s3c24xx_serial_resume_noirq(struct device *dev)
+>  {
+>  	struct uart_port *port = s3c24xx_dev_to_port(dev);
+> +	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>  
+>  	if (port) {
+>  		/* restore IRQ mask */
+> @@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+>  				uintm &= ~S3C64XX_UINTM_TXD_MSK;
+>  			if (rx_enabled(port))
+>  				uintm &= ~S3C64XX_UINTM_RXD_MSK;
+> +			clk_prepare_enable(ourport->clk);
+>  			wr_regl(port, S3C64XX_UINTM, uintm);
+> +			clk_disable_unprepare(ourport->clk);
+>  		}
+>  	}
+>  
+> 
