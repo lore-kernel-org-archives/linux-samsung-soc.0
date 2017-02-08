@@ -1,38 +1,70 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH V3 0/5] PCI: exynos: cleans the minor things
-Date: Wed, 8 Feb 2017 13:42:21 -0600
-Message-ID: <20170208194221.GA600@bhelgaas-glaptop.roam.corp.google.com>
-References: <CGME20170116063140epcas5p38fffe5effdcfd2650cad98c25c31335e@epcas5p3.samsung.com>
- <20170116063138.25805-1-jh80.chung@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv4 8/9] stih-cec: add HPD notifier support
+Date: Wed, 8 Feb 2017 17:17:08 -0600
+Message-ID: <20170208231708.gei5j5jmus4rsham@rob-hp-laptop>
+References: <20170206102951.12623-1-hverkuil@xs4all.nl>
+ <20170206102951.12623-9-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20170116063138.25805-1-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com
+In-Reply-To: <20170206102951.12623-9-hverkuil@xs4all.nl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 03:31:33PM +0900, Jaehoon Chung wrote:
-> Current pci-exynos.c is used for only EXYNOS5440.
-> It's too complex to support the other Exynos SoCs.
-> Before supporting the other Exynos SoCs, it needs to clean the codes.
-> 
-> Changelog on V3:
-> - Splits "PCI: exynos: replace to one register accessor from each accessors"
-> 
-> Changelog on V2:
-> - Changes the all pointer names as "ep" instead of "exynos_pcie"
-> 
-> Jaehoon Chung (5):
->   PCI: exynos: Rename all pointer names from "exynos_pcie" to "ep"
->   PCI: exynos: Replace the *_blk/*_phy/*_elb accessors
->   PCI: exynos: Remove the unnecessary variables
->   PCI: exynos: Use the bitops API to operate the bit shifting
->   PCI: exynos: remove the duplicated codes
-> 
->  drivers/pci/host/pci-exynos.c | 392 +++++++++++++++++++-----------------------
->  1 file changed, 181 insertions(+), 211 deletions(-)
-
-Applied with Jingoo's ack to pci/host-exynos for v4.11, thanks!
+T24gTW9uLCBGZWIgMDYsIDIwMTcgYXQgMTE6Mjk6NTBBTSArMDEwMCwgSGFucyBWZXJrdWlsIHdy
+b3RlOgo+IEZyb206IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8u
+b3JnPgo+IAo+IEJ5IHVzaW5nIHRoZSBIUEQgbm90aWZpZXIgZnJhbWV3b3JrIHRoZXJlIGlzIG5v
+IGxvbmdlciBhbnkgcmVhc29uCj4gdG8gbWFudWFsbHkgc2V0IHRoZSBwaHlzaWNhbCBhZGRyZXNz
+LiBUaGlzIHdhcyB0aGUgb25lIGJsb2NraW5nCj4gaXNzdWUgdGhhdCBwcmV2ZW50ZWQgdGhpcyBk
+cml2ZXIgZnJvbSBnb2luZyBvdXQgb2Ygc3RhZ2luZywgc28gZG8KPiB0aGlzIG1vdmUgYXMgd2Vs
+bC4KPiAKPiBVcGRhdGUgdGhlIGJpbmRpbmdzIGRvY3VtZW50YXRpb24gdGhlIG5ldyBoZG1pIHBo
+YW5kbGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdh
+aWduYXJkQGxpbmFyby5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZl
+cmt1aWxAY2lzY28uY29tPgo+IENDOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZwo+IC0tLQo+
+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zdGloLWNlYy50eHQgICAgICAgICB8ICAy
+ICsrCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
+IHwgMTAgKysrKysrKwo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAg
+ICAgICAgICAgICB8ICAxICsKPiAgLi4uL3N0LWNlYyA9PiBtZWRpYS9wbGF0Zm9ybS9zdGkvY2Vj
+fS9NYWtlZmlsZSAgICAgfCAgMAo+ICAuLi4vc3QtY2VjID0+IG1lZGlhL3BsYXRmb3JtL3N0aS9j
+ZWN9L3N0aWgtY2VjLmMgICB8IDMxICsrKysrKysrKysrKysrKysrKystLS0KPiAgZHJpdmVycy9z
+dGFnaW5nL21lZGlhL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgMiAtLQo+ICBkcml2
+ZXJzL3N0YWdpbmcvbWVkaWEvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAg
+ZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0LWNlYy9LY29uZmlnICAgICAgICAgICAgICAgfCAgOCAt
+LS0tLS0KPiAgZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0LWNlYy9UT0RPICAgICAgICAgICAgICAg
+ICAgfCAgNyAtLS0tLQo+ICA5IGZpbGVzIGNoYW5nZWQsIDQxIGluc2VydGlvbnMoKyksIDIxIGRl
+bGV0aW9ucygtKQo+ICByZW5hbWUgZHJpdmVycy97c3RhZ2luZy9tZWRpYS9zdC1jZWMgPT4gbWVk
+aWEvcGxhdGZvcm0vc3RpL2NlY30vTWFrZWZpbGUgKDEwMCUpCj4gIHJlbmFtZSBkcml2ZXJzL3tz
+dGFnaW5nL21lZGlhL3N0LWNlYyA9PiBtZWRpYS9wbGF0Zm9ybS9zdGkvY2VjfS9zdGloLWNlYy5j
+ICg5MyUpCj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvc3QtY2Vj
+L0tjb25maWcKPiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zdC1j
+ZWMvVE9ETwo+IAo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvbWVkaWEvc3RpaC1jZWMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L21lZGlhL3N0aWgtY2VjLnR4dAo+IGluZGV4IDcxYzRiMmY0YmNlZi4uN2Q4MjEyMWQxNDhhIDEw
+MDY0NAo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zdGlo
+LWNlYy50eHQKPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEv
+c3RpaC1jZWMudHh0Cj4gQEAgLTksNiArOSw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4gICAt
+IHBpbmN0cmwtbmFtZXM6IENvbnRhaW5zIG9ubHkgb25lIHZhbHVlIC0gImRlZmF1bHQiCj4gICAt
+IHBpbmN0cmwtMDogU3BlY2lmaWVzIHRoZSBwaW4gY29udHJvbCBncm91cHMgdXNlZCBmb3IgQ0VD
+IGhhcmR3YXJlLgo+ICAgLSByZXNldHM6IFJlZmVyZW5jZSB0byBhIHJlc2V0IGNvbnRyb2xsZXIK
+PiArIC0gc3QsaGRtaS1oYW5kbGU6IFBoYW5kbGUgdG8gdGhlIEhNREkgY29udHJvbGxlcgoKMiBj
+YXNlcyBpbiB0aGlzIHNlcmllcy4gSnVzdCBkcm9wIHRoZSB2ZW5kb3IgcHJlZml4IG9uIGJvdGgu
+CgpzL0hNREkvSERNSS8KCj4gIAo+ICBFeGFtcGxlIGZvciBTVElINDA3Ogo+ICAKPiBAQCAtMjIs
+NCArMjMsNSBAQCBzdGktY2VjQDA5NGEwODdjIHsKPiAgCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVs
+dCI7Cj4gIAlwaW5jdHJsLTAgPSA8JnBpbmN0cmxfY2VjMF9kZWZhdWx0PjsKPiAgCXJlc2V0cyA9
+IDwmc29mdHJlc2V0IFNUSUg0MDdfTFBNX1NPRlRSRVNFVD47Cj4gKwlzdCxoZG1pLWhhbmRsZSA9
+IDwmaGRtaT47Cj4gIH07Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
