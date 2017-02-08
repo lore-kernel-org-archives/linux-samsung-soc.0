@@ -1,30 +1,74 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [patch] pinctrl: samsung: checking for IS_ERR() instead of NULL
-Date: Wed, 8 Feb 2017 10:41:09 +0200
-Message-ID: <CAJKOXPcHYMGCGiq3X2vkpT9VtXe6hBBROjeZdJSvL2MMooYTPQ@mail.gmail.com>
-References: <20170208072310.GA12877@mwanda>
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/5] arm64: dts: exynos: Move the clock-frequency property
+Date: Wed, 08 Feb 2017 19:09:05 +0900
+Message-ID: <dceb0f53-9737-744b-db44-b2105e13816d@samsung.com>
+References: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170206021951epcas1p365db9f08f22cc223ca45538b0dbc86d6@epcas1p3.samsung.com>
+ <1486347584-6762-3-git-send-email-hoegeun.kwon@samsung.com>
+ <20170207201335.lyc7yvwed7cm25nj@kozik-lap>
+ <8c4f2a21-152d-eb41-3f26-44bb69f831c7@samsung.com>
+ <CAJKOXPe9Bjpobw1chuhG3vdt6sWZ69AcQbqYD9rRoMRyO1-cMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753922AbdBHIlQ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 03:41:16 -0500
-In-Reply-To: <20170208072310.GA12877@mwanda>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAJKOXPe9Bjpobw1chuhG3vdt6sWZ69AcQbqYD9rRoMRyO1-cMA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 8, 2017 at 9:23 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> devm_ioremap() returns NULL on error.  It doesn't return error pointers.
+On 02/08/2017 04:32 PM, Krzysztof Kozlowski wrote:
+> On Wed, Feb 8, 2017 at 9:24 AM, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> "Remove the ports node abd move burst and esc clock frequency properties
+>>> to the parent (DSI node)."
+>>>
+>>> The information which is missing is the answer for WHY? Why are you
+>>> doing this?
+>>
+>> The current mipi-dsi must have at least one OF graph.
+>> However, for example, dsi and panel are parent-child relationships,
+>> so OF graph is not needed, and fimd and dsi are not connected to the OF
+>> graph.
+>> In this case, an error occurred in dsi_parse in the code before patch (1/5).
+> The error occurred in case of DSI + FIMD? I do not get it whether you
+> are removing the something which is not needed or fixing something.
 >
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> So I modified dsi_parse_dt.
+>>
+>>> Does the patch depends on 1/5?
+>>
+>> Yes, it is.
+>> The 2/5 to 5/5 patches depend on the 1/5 patch.
+> So that's a break of DT ABI for no clear (yet) reasons. Please mention
+> this in 1/5 patch and explain what is really fixed.
 
-Fix already sent by Wei:
-https://www.spinics.net/lists/arm-kernel/msg560747.html
+I would like to post the s6e63j0x03 panel driver for exynos3250.
+However, as Rob Herring noted, dsi + panel is a parental relationship,
+so OF grpah is not needed.
+Therefore, the current dsi_parse_dt function will throw an error,
+because there is no linked OF graph for case such as fimd + dsi + panel.
+I think that the OF graph of dsi should be deleted even if it is not
+the purpose of the s6e63j0x03 panel driver.
 
-Best regards,
-Krzysztof
+So the 1/5 patch parse the Pll, burst and esc clock frequency properties
+in dsi_parse_dt and modified to create a bridge_node only if there is
+an OF graph associated with dsi.
+
+Best Regards,
+Hoegeun
+
+>
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
