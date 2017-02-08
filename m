@@ -1,69 +1,38 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RESEND PATCH] serial: samsung: enable clock before accessing
- interrupt mask resister
-Date: Wed, 8 Feb 2017 14:23:09 +0100
-Message-ID: <12209c5e-d19a-f3af-eedc-442afda4daa6@math.uni-bielefeld.de>
-References: <CGME20170201102546epcas1p25107505cc2ff66f06211f945d2ddd679@epcas1p2.samsung.com>
- <008c01d27c75$8cd73e60$a685bb20$@samsung.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH V3 0/5] PCI: exynos: cleans the minor things
+Date: Wed, 8 Feb 2017 13:42:21 -0600
+Message-ID: <20170208194221.GA600@bhelgaas-glaptop.roam.corp.google.com>
+References: <CGME20170116063140epcas5p38fffe5effdcfd2650cad98c25c31335e@epcas5p3.samsung.com>
+ <20170116063138.25805-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:52991 "EHLO
-        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932358AbdBHORk (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Feb 2017 09:17:40 -0500
-In-Reply-To: <008c01d27c75$8cd73e60$a685bb20$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170116063138.25805-1-jh80.chung@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Youngmin,
-
-I was wondering if this fixes an actual issue. The changes look sane,
-but shouldn't be current code trigger some imprecise external abort on
-system resume then?
-
-I'm asking because on my Exynos4412 board nothing like that happens on
-system resume. And if I read the code correctly,
-s3c24xx_serial_has_interrupt_mask() returns 1 in my case.
-
-With best wishes,
-Tobias
-
-
-남영민 wrote:
-> Ensure that the uart clock is enabled prior to writing to the
-> interrupt mask register in s3c24xx_serial_resume_noirq function.
-> Without enabing the uart clock, the uart register cannot be accessed.
+On Mon, Jan 16, 2017 at 03:31:33PM +0900, Jaehoon Chung wrote:
+> Current pci-exynos.c is used for only EXYNOS5440.
+> It's too complex to support the other Exynos SoCs.
+> Before supporting the other Exynos SoCs, it needs to clean the codes.
 > 
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> ---
->  drivers/tty/serial/samsung.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Changelog on V3:
+> - Splits "PCI: exynos: replace to one register accessor from each accessors"
 > 
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index f44615f..06488fd 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -1921,6 +1921,7 @@ static int s3c24xx_serial_resume(struct device *dev)
->  static int s3c24xx_serial_resume_noirq(struct device *dev)
->  {
->  	struct uart_port *port = s3c24xx_dev_to_port(dev);
-> +	struct s3c24xx_uart_port *ourport = to_ourport(port);
->  
->  	if (port) {
->  		/* restore IRQ mask */
-> @@ -1930,7 +1931,9 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
->  				uintm &= ~S3C64XX_UINTM_TXD_MSK;
->  			if (rx_enabled(port))
->  				uintm &= ~S3C64XX_UINTM_RXD_MSK;
-> +			clk_prepare_enable(ourport->clk);
->  			wr_regl(port, S3C64XX_UINTM, uintm);
-> +			clk_disable_unprepare(ourport->clk);
->  		}
->  	}
->  
+> Changelog on V2:
+> - Changes the all pointer names as "ep" instead of "exynos_pcie"
 > 
+> Jaehoon Chung (5):
+>   PCI: exynos: Rename all pointer names from "exynos_pcie" to "ep"
+>   PCI: exynos: Replace the *_blk/*_phy/*_elb accessors
+>   PCI: exynos: Remove the unnecessary variables
+>   PCI: exynos: Use the bitops API to operate the bit shifting
+>   PCI: exynos: remove the duplicated codes
+> 
+>  drivers/pci/host/pci-exynos.c | 392 +++++++++++++++++++-----------------------
+>  1 file changed, 181 insertions(+), 211 deletions(-)
+
+Applied with Jingoo's ack to pci/host-exynos for v4.11, thanks!
