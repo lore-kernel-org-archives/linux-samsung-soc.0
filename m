@@ -1,31 +1,31 @@
-From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] spi: s3c64xx: fix potential division by zero
-Date: Wed, 08 Feb 2017 13:19:08 +0900
-Message-ID: <20170208041908.ncy7vwf4j6cednmj@gangnam.samsung>
-References: <20170207081025.9671-1-andi.shyti@samsung.com>
- <CGME20170207081032epcas5p3af837bbe00278da4029fc7bb9eba6961@epcas5p3.samsung.com>
- <20170207081025.9671-2-andi.shyti@samsung.com>
- <20170207204924.4ns7di66fep3fwbi@kozik-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] pinctrl: samsung: checking for IS_ERR() instead of NULL
+Date: Wed, 8 Feb 2017 10:23:10 +0300
+Message-ID: <20170208072310.GA12877@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-disposition: inline
-In-reply-to: <20170207204924.4ns7di66fep3fwbi@kozik-lap>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> > This patch fixes '1397922 Division or modulo by zero' from
-> > scan.coverity.com
-> 
-> It is a false positive.
+devm_ioremap() returns NULL on error.  It doesn't return error pointers.
 
-Yes... sorry for these two spam/patches... they are just fast
-after holiday "fixes"... please ignore them.
+Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Andi
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index d79eadad6c5f..35b9d400d5c6 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -990,7 +990,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
+ 						resource_size(res));
+-		if (IS_ERR(virt_base[i]))
++		if (!virt_base[i])
+ 			return ERR_PTR(-EIO);
+ 	}
+ 
