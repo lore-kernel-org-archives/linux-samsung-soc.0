@@ -1,39 +1,31 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [patch] cpufreq: s3c2416: double free on driver init error path
-Date: Wed, 8 Feb 2017 08:54:21 +0530
-Message-ID: <20170208032421.GC14503@vireshk-i7>
-References: <20170207131906.GD27416@mwanda>
+From: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] spi: s3c64xx: fix potential division by zero
+Date: Wed, 08 Feb 2017 13:19:08 +0900
+Message-ID: <20170208041908.ncy7vwf4j6cednmj@gangnam.samsung>
+References: <20170207081025.9671-1-andi.shyti@samsung.com>
+ <CGME20170207081032epcas5p3af837bbe00278da4029fc7bb9eba6961@epcas5p3.samsung.com>
+ <20170207081025.9671-2-andi.shyti@samsung.com>
+ <20170207204924.4ns7di66fep3fwbi@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170207131906.GD27416@mwanda>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-disposition: inline
+In-reply-to: <20170207204924.4ns7di66fep3fwbi@kozik-lap>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07-02-17, 16:19, Dan Carpenter wrote:
-> The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
-> so this is a double free.
+> > This patch fixes '1397922 Division or modulo by zero' from
+> > scan.coverity.com
 > 
-> Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-> index d6d425773fa4..5b2db3c6568f 100644
-> --- a/drivers/cpufreq/s3c2416-cpufreq.c
-> +++ b/drivers/cpufreq/s3c2416-cpufreq.c
-> @@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
->  	rate = clk_get_rate(s3c_freq->hclk);
->  	if (rate < 133 * 1000 * 1000) {
->  		pr_err("cpufreq: HCLK not at 133MHz\n");
-> -		clk_put(s3c_freq->hclk);
->  		ret = -EINVAL;
->  		goto err_armclk;
->  	}
+> It is a false positive.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Yes... sorry for these two spam/patches... they are just fast
+after holiday "fixes"... please ignore them.
 
--- 
-viresh
+Andi
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
