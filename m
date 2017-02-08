@@ -1,90 +1,55 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 8/8] mfd: exynos-lpass: Add runtime PM support
-Date: Wed, 8 Feb 2017 10:58:35 +0000
-Message-ID: <20170208105835.sin35b3ayzgxlpgf@dell>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 7/8] mfd: exynos-lpass: Add missing remove() function
+Date: Wed, 8 Feb 2017 10:57:43 +0000
+Message-ID: <20170208105743.wgq4o6ev6ybvwbgz@dell>
 References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170126083406eucas1p20148fa4f3ca70d333400c806dd490aef@eucas1p2.samsung.com>
- <1485419634-28331-9-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170126083405eucas1p29a888fa3896e2bd131e23585f7d033d9@eucas1p2.samsung.com>
+ <1485419634-28331-8-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1485419634-28331-9-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1485419634-28331-8-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 26 Jan 2017, Marek Szyprowski wrote:
-
-> Convert exisitng lpass-suspend/resume callbacks into runtime PM callbacks.
-> This way Exynos LPASS driver will be ready for use with power domains
-> enabled. LPASS will be runtime resumed/suspended as a result of its child
-> devices runtime PM transitions.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
->  drivers/mfd/exynos-lpass.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-  
-> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-> index 9dbbedad916f..6d735e22acda 100644
-> --- a/drivers/mfd/exynos-lpass.c
-> +++ b/drivers/mfd/exynos-lpass.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/types.h>
->  
-> @@ -132,6 +133,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
->  	}
->  
->  	platform_set_drvdata(pdev, lpass);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
->  	exynos_lpass_enable(lpass);
->  
->  	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-> @@ -141,7 +144,9 @@ static int exynos_lpass_remove(struct platform_device *pdev)
->  {
->  	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
->  
-> -	exynos_lpass_disable(lpass);
-> +	pm_runtime_disable(&pdev->dev);
-> +	if (!pm_runtime_status_suspended(&pdev->dev))
-> +		exynos_lpass_disable(lpass);
->  	regmap_exit(lpass->top);
->  
->  	return 0;
-> @@ -165,8 +170,11 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
->  	return 0;
->  }
->  
-> -static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
-> -					exynos_lpass_resume);
-> +static const struct dev_pm_ops lpass_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(exynos_lpass_suspend, exynos_lpass_resume, NULL)
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				     pm_runtime_force_resume)
-> +};
->  
->  static const struct of_device_id exynos_lpass_of_match[] = {
->  	{ .compatible = "samsung,exynos5433-lpass" },
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gVGh1LCAyNiBKYW4gMjAxNywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKCj4gRGlzYWJsZSBk
+ZXZpY2Ugb24gZHJpdmVyIHJlbW92ZSBhbmQgcmVsZWFzZSBhbGxvY2F0ZWQgcmVnbWFwLgo+IAo+
+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
+bT4KPiAtLS0KPiAgZHJpdmVycy9tZmQvZXh5bm9zLWxwYXNzLmMgfCAxMSArKysrKysrKysrKwo+
+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKRm9yIG15IG93biByZWZlcmVuY2U6
+CiAgQWNrZWQtZm9yLU1GRC1ieTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KICAK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvZXh5bm9zLWxwYXNzLmMgYi9kcml2ZXJzL21mZC9l
+eHlub3MtbHBhc3MuYwo+IGluZGV4IGJlMjY0OTg4YmRjOS4uOWRiYmVkYWQ5MTZmIDEwMDY0NAo+
+IC0tLSBhL2RyaXZlcnMvbWZkL2V4eW5vcy1scGFzcy5jCj4gKysrIGIvZHJpdmVycy9tZmQvZXh5
+bm9zLWxwYXNzLmMKPiBAQCAtMTM3LDYgKzEzNywxNiBAQCBzdGF0aWMgaW50IGV4eW5vc19scGFz
+c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJcmV0dXJuIG9mX3BsYXRm
+b3JtX3BvcHVsYXRlKGRldi0+b2Zfbm9kZSwgTlVMTCwgTlVMTCwgZGV2KTsKPiAgfQo+ICAKPiAr
+c3RhdGljIGludCBleHlub3NfbHBhc3NfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCj4gK3sKPiArCXN0cnVjdCBleHlub3NfbHBhc3MgKmxwYXNzID0gcGxhdGZvcm1fZ2V0X2Ry
+dmRhdGEocGRldik7Cj4gKwo+ICsJZXh5bm9zX2xwYXNzX2Rpc2FibGUobHBhc3MpOwo+ICsJcmVn
+bWFwX2V4aXQobHBhc3MtPnRvcCk7Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gK30KPiArCj4gIHN0YXRp
+YyBpbnQgX19tYXliZV91bnVzZWQgZXh5bm9zX2xwYXNzX3N1c3BlbmQoc3RydWN0IGRldmljZSAq
+ZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2xwYXNzICpscGFzcyA9IGRldl9nZXRfZHJ2ZGF0
+YShkZXYpOwo+IEBAIC0xNzEsNiArMTgxLDcgQEAgc3RhdGljIFNJTVBMRV9ERVZfUE1fT1BTKGxw
+YXNzX3BtX29wcywgZXh5bm9zX2xwYXNzX3N1c3BlbmQsCj4gIAkJLm9mX21hdGNoX3RhYmxlCT0g
+ZXh5bm9zX2xwYXNzX29mX21hdGNoLAo+ICAJfSwKPiAgCS5wcm9iZQk9IGV4eW5vc19scGFzc19w
+cm9iZSwKPiArCS5yZW1vdmUJPSBleHlub3NfbHBhc3NfcmVtb3ZlLAo+ICB9Owo+ICBtb2R1bGVf
+cGxhdGZvcm1fZHJpdmVyKGV4eW5vc19scGFzc19kcml2ZXIpOwo+ICAKCi0tIApMZWUgSm9uZXMK
+TGluYXJvIFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKU
+giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJv
+b2sgfCBUd2l0dGVyIHwgQmxvZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
+bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
