@@ -1,75 +1,89 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/5] arm64: dts: exynos: Move the clock-frequency property
-Date: Wed, 8 Feb 2017 12:29:06 +0200
-Message-ID: <CAJKOXPeq2fXfM9PvOu7TsxhjHpZpH-sNYP_QuxwLzhfMjuD79g@mail.gmail.com>
-References: <1486347584-6762-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170206021951epcas1p365db9f08f22cc223ca45538b0dbc86d6@epcas1p3.samsung.com>
- <1486347584-6762-3-git-send-email-hoegeun.kwon@samsung.com>
- <20170207201335.lyc7yvwed7cm25nj@kozik-lap> <8c4f2a21-152d-eb41-3f26-44bb69f831c7@samsung.com>
- <CAJKOXPe9Bjpobw1chuhG3vdt6sWZ69AcQbqYD9rRoMRyO1-cMA@mail.gmail.com> <dceb0f53-9737-744b-db44-b2105e13816d@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 0/7] Pad retentions support for Exynos5433
+Date: Wed, 8 Feb 2017 11:46:15 +0000
+Message-ID: <20170208114615.c4wszjmnuackgzvx@dell>
+References: <CGME20170130123837eucas1p13c607f81a1775a805740dccc87fe8b87@eucas1p1.samsung.com>
+ <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <dceb0f53-9737-744b-db44-b2105e13816d-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 8, 2017 at 12:09 PM, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 02/08/2017 04:32 PM, Krzysztof Kozlowski wrote:
->>
->> On Wed, Feb 8, 2017 at 9:24 AM, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> wrote:
->>>>
->>>> "Remove the ports node abd move burst and esc clock frequency properties
->>>> to the parent (DSI node)."
->>>>
->>>> The information which is missing is the answer for WHY? Why are you
->>>> doing this?
->>>
->>>
->>> The current mipi-dsi must have at least one OF graph.
->>> However, for example, dsi and panel are parent-child relationships,
->>> so OF graph is not needed, and fimd and dsi are not connected to the OF
->>> graph.
->>> In this case, an error occurred in dsi_parse in the code before patch
->>> (1/5).
->>
->> The error occurred in case of DSI + FIMD? I do not get it whether you
->> are removing the something which is not needed or fixing something.
->>
->>> So I modified dsi_parse_dt.
->>>
->>>> Does the patch depends on 1/5?
->>>
->>>
->>> Yes, it is.
->>> The 2/5 to 5/5 patches depend on the 1/5 patch.
->>
->> So that's a break of DT ABI for no clear (yet) reasons. Please mention
->> this in 1/5 patch and explain what is really fixed.
->
->
-> I would like to post the s6e63j0x03 panel driver for exynos3250.
-> However, as Rob Herring noted, dsi + panel is a parental relationship,
-> so OF grpah is not needed.
-> Therefore, the current dsi_parse_dt function will throw an error,
-> because there is no linked OF graph for case such as fimd + dsi + panel.
-> I think that the OF graph of dsi should be deleted even if it is not
-> the purpose of the s6e63j0x03 panel driver.
->
-> So the 1/5 patch parse the Pll, burst and esc clock frequency properties
-> in dsi_parse_dt and modified to create a bridge_node only if there is
-> an OF graph associated with dsi.
->
-
-Thanks, now it makes sense. Such clear explanation should be part of
-commit 1/5 as a proof that ABI breakage is needed.
-
-BR,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gTW9uLCAzMCBKYW4gMjAxNywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKCj4gSGVsbG8sCj4g
+Cj4gVGhpcyBwYXRjaHNldCBpcyBhIGZpcnN0IHN0ZXAgdG8gYWRkIHN1cHBvcnQgZm9yIGFsbCBw
+b3dlciBkb21haW5zIG9uCj4gRXh5bm9zNTQzMyBTb0NzLiBUaGlzIHBhdGNoc2V0IGNvbnRhaW5z
+IHBhdGNoZXMgZm9yIEV4eW5vcyBwaW4gY29udHJvbAo+IGRyaXZlciBhbmQgRXh5bm9zIExQQVNT
+IE1GRCBkcml2ZXIsIHdoaWNoIGFyZSBuZWVkZWQgdG8gbWFrZSB0aGUKPiBwbGF0Zm9ybSByZWFk
+eSBmb3IgYWRkaW5nIHBvd2VyIGRvbWFpbnMgc3VwcG9ydC4KPiAKPiBQYXRjaGVzIGluIHRoaXMg
+cGF0Y2hzZXQgZGVwZW5kcyBvbiBlYWNoIG90aGVyLiBUaGV5IGFyZSBvcmRlciBpbiBzdWNoIGEK
+PiB3YXkgdG8gbWFrZSB0aGUgY2hhbmdlcyBiaXNlY3RhYmxlLgo+IAo+IFBhdGNoICMyIGhhcyBj
+b21waWxlIGRlcGVuZGVuY3kgb24gIzEuCj4gUGF0Y2ggIzMgaGFzIHJ1bnRpbWUgZGVwZW5kZW5j
+eSBvbiBjb21taXQgZmE1OWFhNzA5MDdiMiAoInNvYzogc2Ftc3VuZzoKPiAJcG11OiBBZGQgZHVt
+bXkgc3VwcG9ydCBmb3IgRXh5bm9zNTQzMyBTb0MiLAo+IAlmb3ItdjQuMTEvZHJpdmVycy1zb2Mt
+ZXh5bm9zLXBtdS10aGUtam95LW5ldmVyLWVuZHMgYnJhbmNoKS4KPiBQYXRjaCAjNCBoYXMgcnVu
+dGltZSBkZXBlbmRlbmN5IG9uICMzLgo+IFBhdGNoICM1IGhhcyBydW50aW1lIGRlcGVuZGVuY3kg
+b24gY29tbWl0IDc1NDcxNjJhYzM1MTQgKCJhcm02NDogZHRzOgo+IAlleHlub3M6IEFkZCBjbG9j
+a3MgdG8gRXh5bm9zNTQzMyBMUEFTUyBtb2R1bGUsIG5leHQvZHQ2NCBicmFuY2gpLgo+IAo+IFRo
+aXMgcGF0Y2hzZXQgYWxzbyBkaXJlY3RseSBkZXBlbmRzIG9uIHRoZSAiTW92ZSBwYWQgcmV0ZW50
+aW9uIGNvbnRyb2wgdG8KPiBFeHlub3MgcGluIGNvbnRyb2xsZXIgZHJpdmVyIiBwYXRjaHNldDoK
+PiBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzU1NjA3NC5odG1s
+Cj4gCj4gUGF0Y2hlcyBoYXZlIGJlZW4gZ2VuZXJhdGVkIG9uIHRvcCBvZiBsaW51eC1uZXh0IGZy
+b20gMzB0aCBKYW51YXJ5IDIwMTcKPiB3aXRoIHRoZSBhYm92ZSBtZW50aW9uZWQgcGF0Y2hzZXQg
+YXBwbGllZC4KPiAKPiBUaGlzIGlzIGEgcGFydCBvZiBhIGxhcmdlciB0YXNrLCB3aGljaCBnb2Fs
+IGlzIHRvIGFkZCBzdXBwb3J0IGZvciBwb3dlcgo+IGRvbWFpbnMgb24gRXh5bm9zNTQzMyBTb0Nz
+IC8gVE0yIGJvYXJkcy4gRmlyc3QgdmVyc2lvbiBvZiB0aGUgYWxsIHBhdGNoZXMKPiBuZWVkZWQg
+dG8gZ2V0IGl0IHdvcmtpbmcgaGF2ZSBiZWVuIHB1c2hlZCB0byB0aGUgZm9sbG93aW5nIGdpdCBy
+ZXBvOgo+IGh0dHBzOi8vZ2l0LmxpbmFyby5vcmcvcGVvcGxlL21hcmVrLnN6eXByb3dza2kvbGlu
+dXgtc3Jwb2wuZ2l0IHY0LjEwLW5leHQtdG0yLXBkCj4gCj4gQmVzdCByZWdhcmRzCj4gTWFyZWsg
+U3p5cHJvd3NraQo+IFNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCkxvb2tzIGxpa2UgSSBy
+ZXZpZXdlZCB2Mi4KCklmIHRoZSBwYXRjaGVzIGhhdmVuJ3QgY2hhbmdlZCB0aGF0IG11Y2gsIHBs
+ZWFzZSBhcHBseSBteSBBY2tzIHRvIHRoaXMKc2V0IGluc3RlYWQuICBBbnl0aGluZyB0aGF0IGhh
+cyBjaGFuZ2VkLCBwbGVhc2UgbGVhdmUgdGhlbSBvZmYgYW5kCnJlcG9zdC4KCj4gQ2hhbmdlbG9n
+Ogo+IHYzOgo+IC0gbW92ZWQgYWRkaW5nIG5ldyBQTVUgcmVnaXN0ZXIgZGVmaW5lcyB0byBzZXBh
+cmF0ZSBwYXRjaCAocmVxdWVzdGVkIGJ5Cj4gICBLcnp5c3p0b2YgS296bG93c2tpKQo+IC0gcmVi
+YXNlZCBvbnRvIExpbnV4IG5leHQtMjAxNzAxMzAgKHJlbW92ZWQgInNvYzogc2Ftc3VuZzogcG11
+OiBBZGQgZHVtbXkKPiAgIHN1cHBvcnQgZm9yIEV4eW5vczU0MzMgU29DIiBhbmQgImFybTY0OiBk
+dHM6IGV4eW5vczogQWRkIGNsb2NrcyB0bwo+ICAgRXh5bm9zNTQzMyBMUEFTUyBtb2R1bGUiIHBh
+dGNoZXMsIHdoaWNoIGFyZSBhbHJlYWR5IG1lcmdlZCkKPiAKPiB2MjoKPiAtIGZpeGVkIGlzc3Vl
+cyBwb2ludGVkIGJ5IEtyenlzenRvZiBLb3psb3dza2k6Cj4gICAxLiBhZGRlZCBtb3JlIGNoZWNr
+cyB0byBFeHlub3MgUE1VIGRyaXZlciBmb3IgTlVMTCBkcnZkYXRhCj4gICAyLiByZXVzZWQgRVhZ
+Tk9TX1dBS0VVUF9GUk9NX0xPV1BXUiBpbiByZXRlbnRpb24gZGF0YSBmb3IgRXh5bm9zNTQzMwo+
+ICAgMy4gY29udmVydGVkIGxwYXNzIGRyaXZlciB0byBkZXZtX2Nsa19nZXQKPiAgIDQuIGFkZGVk
+IG1pc3NpbmcgLT5yZW1vdmUgY2FsbGJhY2sgdG8gbHBhc3MgZHJpdmVyCj4gCj4gdjE6IGh0dHBz
+Oi8vbGttbC5vcmcvbGttbC8yMDE3LzEvMjUvMjE0Cj4gLSBpbml0aWFsIHZlcnNpb24KPiAKPiAK
+PiBQYXRjaCBzdW1tYXJ5Ogo+IAo+IE1hcmVrIFN6eXByb3dza2kgKDcpOgo+ICAgc29jOiBzbWFz
+dW5nOiBwbXU6IEFkZCByZWdpc3RlciBkZWZpbmVzIGZvciBwYWQgcmV0ZW50aW9uIGNvbnRyb2wK
+PiAgIHBpbmN0cmw6IHNhbXN1bmc6IEVuc3VyZSB0aGF0IHBhZCByZXRlbnRpb24gaXMgZGlzYWJs
+ZWQgb24gZHJpdmVyIGluaXQKPiAgIHBpbmN0cmw6IHNhbXN1bmc6IEFkZCBzdXBwb3J0IGZvciBw
+YWQgcmV0ZW50aW9uIGNvbnRyb2wgZm9yIEV4eW5vczU0MzMKPiAgICAgU29Dcwo+ICAgbWZkOiBl
+eHlub3MtbHBhc3M6IFJlbW92ZSBwYWQgcmV0ZW50aW9uIGNvbnRyb2wKPiAgIG1mZDogZXh5bm9z
+LWxwYXNzOiBBZGQgc3VwcG9ydCBmb3IgY2xvY2tzCj4gICBtZmQ6IGV4eW5vcy1scGFzczogQWRk
+IG1pc3NpbmcgcmVtb3ZlKCkgZnVuY3Rpb24KPiAgIG1mZDogZXh5bm9zLWxwYXNzOiBBZGQgcnVu
+dGltZSBQTSBzdXBwb3J0Cj4gCj4gIC4uLi9iaW5kaW5ncy9tZmQvc2Ftc3VuZyxleHlub3M1NDMz
+LWxwYXNzLnR4dCAgICAgIHwgIDggKystCj4gIGRyaXZlcnMvbWZkL2V4eW5vcy1scGFzcy5jICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgNDggKysrKysrKysrKy0tLS0tLS0KPiAgZHJpdmVycy9w
+aW5jdHJsL3NhbXN1bmcvcGluY3RybC1leHlub3MuYyAgICAgICAgICAgfCA2MyArKysrKysrKysr
+KysrKysrKysrKysrCj4gIGluY2x1ZGUvbGludXgvbWZkL3N5c2Nvbi9leHlub3M1LXBtdS5oICAg
+ICAgICAgICAgIHwgIDMgLS0KPiAgaW5jbHVkZS9saW51eC9zb2Mvc2Ftc3VuZy9leHlub3MtcmVn
+cy1wbXUuaCAgICAgICAgfCAxNiArKysrKysKPiAgNSBmaWxlcyBjaGFuZ2VkLCAxMTUgaW5zZXJ0
+aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCj4gCgotLSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3Jv
+ZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ug
+c29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8
+IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
