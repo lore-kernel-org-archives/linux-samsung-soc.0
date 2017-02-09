@@ -1,76 +1,65 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: Re: [PATCH v2 1/5] drm/exynos: dsi: Fix the parse_dt function
-Date: Thu, 09 Feb 2017 21:08:53 +0900
-Message-ID: <13fc2e1c-058b-f46d-e61b-6fe5263b11ee@samsung.com>
-References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170209012716epcas1p33915757c95d5defb88c7d2c54cee3582@epcas1p3.samsung.com>
- <1486603601-26826-2-git-send-email-hoegeun.kwon@samsung.com>
- <8afdbdea-5675-fd55-5195-47c6aded4202@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device
+ pointer to of_xlate callback
+Date: Thu, 09 Feb 2017 14:30:13 +0100
+Message-ID: <625feb31-58c5-cf23-8833-5f928bf4603d@samsung.com>
+References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
+ <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
+ <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
+ <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
+ <20170209041123.GK19244@localhost>
+ <ded8b3e8-2ef8-218b-fb6d-783825588fd8@samsung.com>
+ <CAPDyKFqYe0YJRzjaOo1N-fgZyJ8JqNnka66kSSg0nWiXOYj=BQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <8afdbdea-5675-fd55-5195-47c6aded4202@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, inki.dae@samsung.com, robh+dt@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <CAPDyKFqYe0YJRzjaOo1N-fgZyJ8JqNnka66kSSg0nWiXOYj=BQ@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgpPbiAwMi8wOS8yMDE3IDAzOjU3IFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDA5LjAy
-LjIwMTcgMDI6MjYsIEhvZWdldW4gS3dvbiB3cm90ZToKPj4gVGhlIGRzaSArIHBhbmVsIGlzIGEg
-cGFyZW50YWwgcmVsYXRpb25zaGlwLCBzbyBPRiBncnBhaCBpcyBub3QgbmVlZGVkLgo+PiBUaGVy
-ZWZvcmUsIHRoZSBjdXJyZW50IGRzaV9wYXJzZV9kdCBmdW5jdGlvbiB3aWxsIHRocm93IGFuIGVy
-cm9yLAo+PiBiZWNhdXNlIHRoZXJlIGlzIG5vIGxpbmtlZCBPRiBncmFwaCBmb3IgY2FzZSBzdWNo
-IGFzIGZpbWQgKyBkc2kgKwo+PiBwYW5lbC4gU28gdGhpcyBwYXRjaCBwYXJzZSB0aGUgUGxsLCBi
-dXJzdCBhbmQgZXNjIGNsb2NrIGZyZXF1ZW5jeQo+PiBwcm9wZXJ0aWVzIGluIGRzaV9wYXJzZV9k
-dCBhbmQgbW9kaWZpZWQgdG8gY3JlYXRlIGEgYnJpZGdlX25vZGUgb25seQo+PiBpZiB0aGVyZSBp
-cyBhbiBPRiBncmFwaCBhc3NvY2lhdGVkIHdpdGggZHNpLgo+PiBTbyBJIHRoaW5rIHRoZSBBQkkg
-YnJlYWthZ2UgaXMgbmVlZGVkLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhv
-ZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KPiBOaWNlIGRpZmZzdGF0LCBtb3JlIGltcG9ydGFudGx5
-IGl0IGZpeGVzIGJhZCBkZXNpZ24gb2YgZWFybHkgZGF5cyBvZgo+IG9mX2dyYXBoLgo+Cj4gUmV2
-aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4KPiBPbmUgY29t
-bWVudCBiZWxvdy4KPgo+PiAtLS0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHNpLmMgfCAzMiArKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiAgIDEgZmls
-ZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IGUwN2NiMWYuLjIxNGQ0ODYg
-MTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPj4gQEAgLTE2
-NTIsMzkgKzE2NTIsMjMgQEAgc3RhdGljIGludCBleHlub3NfZHNpX3BhcnNlX2R0KHN0cnVjdCBl
-eHlub3NfZHNpICpkc2kpCj4+ICAgCWlmIChyZXQgPCAwKQo+PiAgIAkJcmV0dXJuIHJldDsKPj4g
-ICAKPj4gLQllcCA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9ieV9yZWdzKG5vZGUsIERTSV9QT1JU
-X09VVCwgMCk7Cj4+IC0JaWYgKCFlcCkgewo+PiAtCQlkZXZfZXJyKGRldiwgIm5vIG91dHB1dCBw
-b3J0IHdpdGggZW5kcG9pbnQgc3BlY2lmaWVkXG4iKTsKPj4gLQkJcmV0dXJuIC1FSU5WQUw7Cj4+
-IC0JfQo+PiAtCj4+IC0JcmV0ID0gZXh5bm9zX2RzaV9vZl9yZWFkX3UzMihlcCwgInNhbXN1bmcs
-YnVyc3QtY2xvY2stZnJlcXVlbmN5IiwKPj4gKwlyZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMy
-KG5vZGUsICJzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSIsCj4+ICAgCQkJCSAgICAgJmRz
-aS0+YnVyc3RfY2xrX3JhdGUpOwo+PiAgIAlpZiAocmV0IDwgMCkKPj4gLQkJZ290byBlbmQ7Cj4+
-ICsJCXJldHVybiByZXQ7Cj4+ICAgCj4+IC0JcmV0ID0gZXh5bm9zX2RzaV9vZl9yZWFkX3UzMihl
-cCwgInNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSIsCj4+ICsJcmV0ID0gZXh5bm9zX2RzaV9v
-Zl9yZWFkX3UzMihub2RlLCAic2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5IiwKPj4gICAJCQkJ
-ICAgICAmZHNpLT5lc2NfY2xrX3JhdGUpOwo+PiAgIAlpZiAocmV0IDwgMCkKPj4gLQkJZ290byBl
-bmQ7Cj4+IC0KPj4gLQlvZl9ub2RlX3B1dChlcCk7Cj4+ICsJCXJldHVybiByZXQ7Cj4+ICAgCj4+
-ICAgCWVwID0gb2ZfZ3JhcGhfZ2V0X25leHRfZW5kcG9pbnQobm9kZSwgTlVMTCk7Cj4+IC0JaWYg
-KCFlcCkgewo+PiAtCQlyZXQgPSAtRUlOVkFMOwo+PiAtCQlnb3RvIGVuZDsKPj4gLQl9Cj4+IC0K
-Pj4gLQlkc2ktPmJyaWRnZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChl
-cCk7Cj4+IC0JaWYgKCFkc2ktPmJyaWRnZV9ub2RlKSB7Cj4+IC0JCXJldCA9IC1FSU5WQUw7Cj4+
-IC0JCWdvdG8gZW5kOwo+PiArCWlmIChlcCkgewo+PiArCQlkc2ktPmJyaWRnZV9ub2RlID0gb2Zf
-Z3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChlcCk7Cj4+ICsJCW9mX25vZGVfcHV0KGVwKTsK
-PiBJdCBsb29rcyBsaWtlIHRoZXJlIGlzIG5vIG9mX25vZGVfcHV0IG9uIGRzaS0+YnJpZGdlX25v
-ZGUsIGJ1dCB0aGlzIGlzCj4gZm9yIGFub3RoZXIgcGF0Y2guCgpUaGFua3MgZm9yIHlvdXIgcmV2
-aWV3LgoKWWVzIHJpZ2h0LCBzbyBpIHdpbGwgbWFrZSBhbm90aGVyIHBhdGNoLgoKQmVzdCBSZWdh
-cmRzLApIb2VnZXVuCgo+Cj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPgo+PiAgIAl9Cj4+IC1lbmQ6Cj4+
-IC0Jb2Zfbm9kZV9wdXQoZXApOwo+PiAgIAo+PiAtCXJldHVybiByZXQ7Cj4+ICsJcmV0dXJuIDA7
-Cj4+ICAgfQo+PiAgIAo+PiAgIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5kKHN0cnVjdCBkZXZp
-Y2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+Cj4KPgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Ulf,
+
+On 2017-02-09 10:55, Ulf Hansson wrote:
+>>> Yes agreed on that, plus the runtime handling needs to be built in, right
+>>> now the APIs dont work well with it, we disucssed these during the KS and
+>>> this goes without saying, patches are welcome :)
+>> Okay, so what is the conclusion? Do you want me to do the whole rework of
+>> dma
+>> engine core to get this runtime pm patchset for pl330 merged??? Is there any
+>> roadmap for this rework prepared, so I can at least take a look at the
+>> amount
+>> of work needed to be done?
+>>
+>> I'm rather new to dma engine framework and I only wanted to fix pl330 driver
+>> not to block turning off the power domain on Exynos5422/5433 SoCs.
+> As you probably know, this is a common problem for many dma devices,
+> slave devices and platforms.
+
+Right, this is a common issue and someone has to finally find a solution 
+for it.
+
+> If possible, it would be great if we could avoid a solution that
+> doesn't force changes to lots of "dma consumer" drivers.
+
+My current solution doesn't require changing ANY "dma consumer" driver. 
+However,
+I have one more idea how to avoid touching dma engine ("provider") 
+drivers as
+well. This will also address some issues pointed by Lars.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
