@@ -1,42 +1,72 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
-Date: Thu, 09 Feb 2017 16:19:57 +0100
-Message-ID: <2382634.UqDUkYPZrI@wuerfel>
-References: <20170202183008.23500-1-krzk@kernel.org>
- <20170202183008.23500-5-krzk@kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
+Date: Thu, 9 Feb 2017 17:27:36 +0100
+Message-ID: <20170209162736.nfyfd5dpjkjq65w7@ninjato>
+References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
+ <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170202183008.23500-5-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hhrdxy2zlc3n2zmi"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:45414 "EHLO pokefinder.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753170AbdBIQ1j (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 9 Feb 2017 11:27:39 -0500
+Content-Disposition: inline
+In-Reply-To: <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Thursday, February 2, 2017 8:30:08 PM CET Krzysztof Kozlowski wrote:
->  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
->  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
->  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
->  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
->  drivers/clk/samsung/clk-exynos5433.c               |   8 +-
->  include/dt-bindings/clock/exynos5433.h             |   5 +-
->  include/dt-bindings/pinctrl/samsung.h              |   8 +
-> 
 
-It seems a drivers/clk change slipped in there in addition to the header changes.
-We are trying to keep the next/dt branches free of driver changes, are you
-able to rework the branch without this?
+--hhrdxy2zlc3n2zmi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the late request.
+On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
+> In case of arbitration lost adequate interrupt sometimes is not signaled.=
+ As
+> a result transfer timeouts and is not retried, as it should. To avoid such
+> cases code is added to check transaction status in case of every interrup=
+t.
+>=20
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
 
-	Arnd
+> +
+> +		switch (trans_status & HSI2C_MASTER_ST_MASK) {
+> +		case HSI2C_MASTER_ST_LOSE:
+> +			i2c->state =3D -EAGAIN;
+> +			goto stop;
+> +		}
+
+Why not using if() instead of switch() as in the rest of the driver?
+
+And there is arbitration lost checking already with int_status &
+HSI2C_INT_TRANS_ABORT. Any guess why it doesn't trigger?
+
+
+--hhrdxy2zlc3n2zmi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlicmHQACgkQFA3kzBSg
+KbaDRg/+J990Pm2kGlvCqAsO9axyl+mWrgSBtbi720pZhqEzkaGEjw5TpIHlW+SZ
+7p8VskscILQ+QvXCRbb4xY7+SzafAZsUmrfJz+c6WM8XIZ4JN3Gli712CoRmolVU
++fgUIqIpmsPwKyIXzFaQvDzrOoSgOtrgraTlxJcwZ+zyaevwMEaySGAU/f7IhB8o
+4HK6EeVfxbdz/lfIZkHIY56cvJjaHwJvVt4CxypaeC9EZ7VKth/WpyX0x+Drg+C2
+vpZqQqs/YmXfihYqcdnBjC4pGgUjgKLz0VbBCppoHeOQSg3R+0cxK8RZY2PCcJvI
+sTHi+6c7l24CTK96LknIiXT2DSrA2Tztb+lm+Q2nlnV/48KTBUJjzTkHnTRihv1b
+ka4se9Ug+FCy6e7FOIFuBH3I25QvYersGcdmRiYrTS53CN1Fn/4HF7S/mRsqjTPq
+uVskxQbGBPEUoebhyyfWELJqMCMWvtndsGn0wDSMP+nDJ/SqiQl0kYA5VgduN1L/
+MZb0o+VJ857Z8mJTtWBn8iAb0Rdxg/XmiM8EuEpIi/RLaUt70DvxQXbATehBEGDc
+R8FIaRQoGZcXIeqpO3cxfCU+zyIWHrp5K2EyczQ5D7D0g7/a8FhDJ7FP0O/PEA5W
+4OHjjehFVHOoJuyQ7BJgJN5oF45ReUtP4N+a6soui6ZggicHXRs=
+=egU6
+-----END PGP SIGNATURE-----
+
+--hhrdxy2zlc3n2zmi--
