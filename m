@@ -1,100 +1,71 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device
- pointer to of_xlate callback
-Date: Thu, 9 Feb 2017 09:41:23 +0530
-Message-ID: <20170209041123.GK19244@localhost>
-References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
- <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
- <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
- <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 1/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Thu, 09 Feb 2017 07:57:40 +0100
+Message-ID: <8afdbdea-5675-fd55-5195-47c6aded4202@samsung.com>
+References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170209012716epcas1p33915757c95d5defb88c7d2c54cee3582@epcas1p3.samsung.com>
+ <1486603601-26826-2-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-pm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1486603601-26826-2-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>, inki.dae@samsung.com, robh+dt@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 26, 2017 at 03:43:05PM +0100, Marek Szyprowski wrote:
-> Hi Lars,
-> 
-> On 2017-01-25 14:12, Lars-Peter Clausen wrote:
-> >On 01/25/2017 11:28 AM, Marek Szyprowski wrote:
-> >>Add pointer to slave device to of_dma_xlate to let DMA engine driver
-> >>to know which slave device is using given DMA channel. This will be
-> >>later used to implement non-irq-safe runtime PM for DMA engine driver.
-> >of_dma_xlate() is used to translate from a OF phandle and a specifier to a
-> >DMA channel. On one hand this does not necessarily mean that the channel is
-> >actually going to be used by the slave that called the xlate function.
-> >Modifying the driver state when a lookup of the channel is done is a
-> >layering violation. And this approach is also missing a way to disassociate
-> >a slave from a DMA channel, e.g. when it is no longer used.
-> >
-> >On the other hand there are other mechanisms to translate between some kind
-> >of firmware handle to a DMA channel which are completely ignored here.
-> >
-> >So this approach does not work. This is something that needs to be done at
-> >the dmaengine level, not a the firmware resource translation level. And it
-> >needs a matching method that is called when the channel is disassociated
-> >from a device, when the device no longer uses the DMA channel.
-> 
-> Frankly I agree that of_dma_xlate() should only return the requested channel
-> to the dmaengine core and do not do any modification in the the
-> driver state.
-
-True..
-
-> However the current dma engine design and implementation breaks this rule.
-> Please check the drivers - how do they implement of_xlate callback. They
-> usually call dma_get_any_slave_channel, dma_get_slave_channel or
-> __dma_request_channel there, which in turn calls dma_chan_get, which then
-> calls back to device_alloc_chan_resources callback. Some of the drivers also
-> do a hardware configuration or other resource allocation in of_xlate.
-> This is a bit messy design and leave no place in the core to set
-> slave device
-> before device_alloc_chan_resources callback, where one would expect to have
-> it already set.
-
-We shouldn't be doing much at this stage. We operate on a channel, so the
-channel is returned to the client. We need to do these HW configurations
-when the channel has to be prepred for a txn.
-
-> The best place to add new calls to the dmaengine drivers to set slave device
-> would be just before device_alloc_chan_resources(), what in turn means that
-> the current dmaengine core should do in dma_chan_get(). This would
-> require to
-> forward the slave device pointer via even more layers including the of_xlate
-> callback too. IMHO this is not worth the effort.
-> 
-> DMA engine core and API definitely needs some cleanup. During such cleanup
-> the slave device pointer might be moved out of xlate into separate callback
-> when the core gets ready for such operation.
-
-Yes agreed on that, plus the runtime handling needs to be built in, right
-now the APIs dont work well with it, we disucssed these during the KS and
-this goes without saying, patches are welcome :)
-
-> I ignored other paths for other firmware handle to a DMA channel translation
-> mechanism because for the current pl330 driver they are simply not used. I
-> assume that if one needs to implement similar things for drivers relying on
-> them, he will update the respective DMA engine core parts.
-> 
-> Slave device assignments can be cleared in device_chan_release_resources if
-> this is needed and that what existing DMA engine drivers do with the
-> resources
-> allocated in the of_xlate callback...
-
--- 
-~Vinod
+T24gMDkuMDIuMjAxNyAwMjoyNiwgSG9lZ2V1biBLd29uIHdyb3RlOgo+IFRoZSBkc2kgKyBwYW5l
+bCBpcyBhIHBhcmVudGFsIHJlbGF0aW9uc2hpcCwgc28gT0YgZ3JwYWggaXMgbm90IG5lZWRlZC4K
+PiBUaGVyZWZvcmUsIHRoZSBjdXJyZW50IGRzaV9wYXJzZV9kdCBmdW5jdGlvbiB3aWxsIHRocm93
+IGFuIGVycm9yLAo+IGJlY2F1c2UgdGhlcmUgaXMgbm8gbGlua2VkIE9GIGdyYXBoIGZvciBjYXNl
+IHN1Y2ggYXMgZmltZCArIGRzaSArCj4gcGFuZWwuIFNvIHRoaXMgcGF0Y2ggcGFyc2UgdGhlIFBs
+bCwgYnVyc3QgYW5kIGVzYyBjbG9jayBmcmVxdWVuY3kKPiBwcm9wZXJ0aWVzIGluIGRzaV9wYXJz
+ZV9kdCBhbmQgbW9kaWZpZWQgdG8gY3JlYXRlIGEgYnJpZGdlX25vZGUgb25seQo+IGlmIHRoZXJl
+IGlzIGFuIE9GIGdyYXBoIGFzc29jaWF0ZWQgd2l0aCBkc2kuCj4gU28gSSB0aGluayB0aGUgQUJJ
+IGJyZWFrYWdlIGlzIG5lZWRlZC4KPgo+IFNpZ25lZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9l
+Z2V1bi5rd29uQHNhbXN1bmcuY29tPgoKTmljZSBkaWZmc3RhdCwgbW9yZSBpbXBvcnRhbnRseSBp
+dCBmaXhlcyBiYWQgZGVzaWduIG9mIGVhcmx5IGRheXMgb2YKb2ZfZ3JhcGguCgpSZXZpZXdlZC1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KCk9uZSBjb21tZW50IGJlbG93
+LgoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgMzIg
+KysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5z
+ZXJ0aW9ucygrKSwgMjQgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RzaS5jCj4gaW5kZXggZTA3Y2IxZi4uMjE0ZDQ4NiAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPiBAQCAtMTY1MiwzOSArMTY1MiwyMyBAQCBzdGF0
+aWMgaW50IGV4eW5vc19kc2lfcGFyc2VfZHQoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKPiAgCWlm
+IChyZXQgPCAwKQo+ICAJCXJldHVybiByZXQ7Cj4gIAo+IC0JZXAgPSBvZl9ncmFwaF9nZXRfZW5k
+cG9pbnRfYnlfcmVncyhub2RlLCBEU0lfUE9SVF9PVVQsIDApOwo+IC0JaWYgKCFlcCkgewo+IC0J
+CWRldl9lcnIoZGV2LCAibm8gb3V0cHV0IHBvcnQgd2l0aCBlbmRwb2ludCBzcGVjaWZpZWRcbiIp
+Owo+IC0JCXJldHVybiAtRUlOVkFMOwo+IC0JfQo+IC0KPiAtCXJldCA9IGV4eW5vc19kc2lfb2Zf
+cmVhZF91MzIoZXAsICJzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSIsCj4gKwlyZXQgPSBl
+eHlub3NfZHNpX29mX3JlYWRfdTMyKG5vZGUsICJzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5j
+eSIsCj4gIAkJCQkgICAgICZkc2ktPmJ1cnN0X2Nsa19yYXRlKTsKPiAgCWlmIChyZXQgPCAwKQo+
+IC0JCWdvdG8gZW5kOwo+ICsJCXJldHVybiByZXQ7Cj4gIAo+IC0JcmV0ID0gZXh5bm9zX2RzaV9v
+Zl9yZWFkX3UzMihlcCwgInNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSIsCj4gKwlyZXQgPSBl
+eHlub3NfZHNpX29mX3JlYWRfdTMyKG5vZGUsICJzYW1zdW5nLGVzYy1jbG9jay1mcmVxdWVuY3ki
+LAo+ICAJCQkJICAgICAmZHNpLT5lc2NfY2xrX3JhdGUpOwo+ICAJaWYgKHJldCA8IDApCj4gLQkJ
+Z290byBlbmQ7Cj4gLQo+IC0Jb2Zfbm9kZV9wdXQoZXApOwo+ICsJCXJldHVybiByZXQ7Cj4gIAo+
+ICAJZXAgPSBvZl9ncmFwaF9nZXRfbmV4dF9lbmRwb2ludChub2RlLCBOVUxMKTsKPiAtCWlmICgh
+ZXApIHsKPiAtCQlyZXQgPSAtRUlOVkFMOwo+IC0JCWdvdG8gZW5kOwo+IC0JfQo+IC0KPiAtCWRz
+aS0+YnJpZGdlX25vZGUgPSBvZl9ncmFwaF9nZXRfcmVtb3RlX3BvcnRfcGFyZW50KGVwKTsKPiAt
+CWlmICghZHNpLT5icmlkZ2Vfbm9kZSkgewo+IC0JCXJldCA9IC1FSU5WQUw7Cj4gLQkJZ290byBl
+bmQ7Cj4gKwlpZiAoZXApIHsKPiArCQlkc2ktPmJyaWRnZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3Jl
+bW90ZV9wb3J0X3BhcmVudChlcCk7Cj4gKwkJb2Zfbm9kZV9wdXQoZXApOwoKSXQgbG9va3MgbGlr
+ZSB0aGVyZSBpcyBubyBvZl9ub2RlX3B1dCBvbiBkc2ktPmJyaWRnZV9ub2RlLCBidXQgdGhpcyBp
+cwpmb3IgYW5vdGhlciBwYXRjaC4KClJlZ2FyZHMKQW5kcnplagoKPiAgCX0KPiAtZW5kOgo+IC0J
+b2Zfbm9kZV9wdXQoZXApOwo+ICAKPiAtCXJldHVybiByZXQ7Cj4gKwlyZXR1cm4gMDsKPiAgfQo+
+ICAKPiAgc3RhdGljIGludCBleHlub3NfZHNpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1
+Y3QgZGV2aWNlICptYXN0ZXIsCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
