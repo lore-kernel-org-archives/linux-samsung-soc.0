@@ -1,53 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
-Date: Thu, 9 Feb 2017 20:56:54 +0200
-Message-ID: <20170209185654.yxmubj3r4gjxcfm6@kozik-lap>
-References: <20170202183008.23500-1-krzk@kernel.org>
- <20170202183008.23500-5-krzk@kernel.org>
- <2382634.UqDUkYPZrI@wuerfel>
+From: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Subject: [PATCH 0/4] [media] Fixes for colorspace logic in exynos-gsc and
+ s5p-mfc drivers
+Date: Thu,  9 Feb 2017 16:43:10 -0300
+Message-ID: <20170209194314.5908-1-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33611 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752394AbdBIS5A (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Feb 2017 13:57:00 -0500
-Content-Disposition: inline
-In-Reply-To: <2382634.UqDUkYPZrI@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Feb 09, 2017 at 04:19:57PM +0100, Arnd Bergmann wrote:
-> On Thursday, February 2, 2017 8:30:08 PM CET Krzysztof Kozlowski wrote:
-> >  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
-> >  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
-> >  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
-> >  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
-> >  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
-> >  drivers/clk/samsung/clk-exynos5433.c               |   8 +-
-> >  include/dt-bindings/clock/exynos5433.h             |   5 +-
-> >  include/dt-bindings/pinctrl/samsung.h              |   8 +
-> > 
-> 
-> It seems a drivers/clk change slipped in there in addition to the header changes.
-> We are trying to keep the next/dt branches free of driver changes, are you
-> able to rework the branch without this?
+Hello,
 
-+Cc Sylwester,
+This patchset fixes a few issues on the colorspace logic for the exynos-gsc
+and s5p-mfc drivers.
 
-This came from clk tree from Sylwester. It contains two changes in
-clocks:
-1. Mew clock ID - we need only the header but Sylwester provided also
-   the source file change,
-2. Update of frequency (used in DTS as assigned clock rate) - this
-   is strictly source file change and we need it.
+We now handle the colorspace in those drivers, and make sure to respect user setting if
+possible.
 
-Overall, rework would not be trivial and it would involve Sylwester.
-I think it is better to stay with this as is. I will remember the policy
-for future dependencies.
+We also now set the 'v4l2_pix_format:field' if userspace passed ANY, avoiding GStreamer
+spamming error at us about the driver not following the standard.
 
 Best regards,
-Krzysztof
+
+Thibault Saunier
+
+
+Javier Martinez Canillas (1):
+  [media] exynos-gsc: Use 576p instead 720p as a threshold for
+    colorspaces
+
+Thibault Saunier (3):
+  [media] exynos-gsc: Respect userspace colorspace setting
+  [media] s5p-mfc: Set colorspace in VIDIO_{G,TRY}_FMT
+  [media] s5p-mfc: Always check and set 'v4l2_pix_format:field' field
+
+ drivers/media/platform/exynos-gsc/gsc-core.c | 22 +++++++++++----
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 42 ++++++++++++++++++++++++++--
+ 2 files changed, 57 insertions(+), 7 deletions(-)
+
+-- 
+2.11.1
