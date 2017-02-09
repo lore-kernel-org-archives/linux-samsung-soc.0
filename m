@@ -1,70 +1,55 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCHv4 8/9] stih-cec: add HPD notifier support
-Date: Wed, 8 Feb 2017 17:17:08 -0600
-Message-ID: <20170208231708.gei5j5jmus4rsham@rob-hp-laptop>
-References: <20170206102951.12623-1-hverkuil@xs4all.nl>
- <20170206102951.12623-9-hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170206102951.12623-9-hverkuil@xs4all.nl>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 0/5] Fix the parse_dt of exynos dsi and remove the OF graph
+Date: Thu, 09 Feb 2017 10:26:36 +0900
+Message-ID: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170209012715epcas1p3dbe1788b864c50d339dcfd791c0900ec@epcas1p3.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBGZWIgMDYsIDIwMTcgYXQgMTE6Mjk6NTBBTSArMDEwMCwgSGFucyBWZXJrdWlsIHdy
-b3RlOgo+IEZyb206IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8u
-b3JnPgo+IAo+IEJ5IHVzaW5nIHRoZSBIUEQgbm90aWZpZXIgZnJhbWV3b3JrIHRoZXJlIGlzIG5v
-IGxvbmdlciBhbnkgcmVhc29uCj4gdG8gbWFudWFsbHkgc2V0IHRoZSBwaHlzaWNhbCBhZGRyZXNz
-LiBUaGlzIHdhcyB0aGUgb25lIGJsb2NraW5nCj4gaXNzdWUgdGhhdCBwcmV2ZW50ZWQgdGhpcyBk
-cml2ZXIgZnJvbSBnb2luZyBvdXQgb2Ygc3RhZ2luZywgc28gZG8KPiB0aGlzIG1vdmUgYXMgd2Vs
-bC4KPiAKPiBVcGRhdGUgdGhlIGJpbmRpbmdzIGRvY3VtZW50YXRpb24gdGhlIG5ldyBoZG1pIHBo
-YW5kbGUuCj4gCj4gU2lnbmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdh
-aWduYXJkQGxpbmFyby5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZl
-cmt1aWxAY2lzY28uY29tPgo+IENDOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZwo+IC0tLQo+
-ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zdGloLWNlYy50eHQgICAgICAgICB8ICAy
-ICsrCj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
-IHwgMTAgKysrKysrKwo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAg
-ICAgICAgICAgICB8ICAxICsKPiAgLi4uL3N0LWNlYyA9PiBtZWRpYS9wbGF0Zm9ybS9zdGkvY2Vj
-fS9NYWtlZmlsZSAgICAgfCAgMAo+ICAuLi4vc3QtY2VjID0+IG1lZGlhL3BsYXRmb3JtL3N0aS9j
-ZWN9L3N0aWgtY2VjLmMgICB8IDMxICsrKysrKysrKysrKysrKysrKystLS0KPiAgZHJpdmVycy9z
-dGFnaW5nL21lZGlhL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgMiAtLQo+ICBkcml2
-ZXJzL3N0YWdpbmcvbWVkaWEvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAg
-ZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0LWNlYy9LY29uZmlnICAgICAgICAgICAgICAgfCAgOCAt
-LS0tLS0KPiAgZHJpdmVycy9zdGFnaW5nL21lZGlhL3N0LWNlYy9UT0RPICAgICAgICAgICAgICAg
-ICAgfCAgNyAtLS0tLQo+ICA5IGZpbGVzIGNoYW5nZWQsIDQxIGluc2VydGlvbnMoKyksIDIxIGRl
-bGV0aW9ucygtKQo+ICByZW5hbWUgZHJpdmVycy97c3RhZ2luZy9tZWRpYS9zdC1jZWMgPT4gbWVk
-aWEvcGxhdGZvcm0vc3RpL2NlY30vTWFrZWZpbGUgKDEwMCUpCj4gIHJlbmFtZSBkcml2ZXJzL3tz
-dGFnaW5nL21lZGlhL3N0LWNlYyA9PiBtZWRpYS9wbGF0Zm9ybS9zdGkvY2VjfS9zdGloLWNlYy5j
-ICg5MyUpCj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvc3QtY2Vj
-L0tjb25maWcKPiAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9zdC1j
-ZWMvVE9ETwo+IAo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbWVkaWEvc3RpaC1jZWMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L21lZGlhL3N0aWgtY2VjLnR4dAo+IGluZGV4IDcxYzRiMmY0YmNlZi4uN2Q4MjEyMWQxNDhhIDEw
-MDY0NAo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zdGlo
-LWNlYy50eHQKPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEv
-c3RpaC1jZWMudHh0Cj4gQEAgLTksNiArOSw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4gICAt
-IHBpbmN0cmwtbmFtZXM6IENvbnRhaW5zIG9ubHkgb25lIHZhbHVlIC0gImRlZmF1bHQiCj4gICAt
-IHBpbmN0cmwtMDogU3BlY2lmaWVzIHRoZSBwaW4gY29udHJvbCBncm91cHMgdXNlZCBmb3IgQ0VD
-IGhhcmR3YXJlLgo+ICAgLSByZXNldHM6IFJlZmVyZW5jZSB0byBhIHJlc2V0IGNvbnRyb2xsZXIK
-PiArIC0gc3QsaGRtaS1oYW5kbGU6IFBoYW5kbGUgdG8gdGhlIEhNREkgY29udHJvbGxlcgoKMiBj
-YXNlcyBpbiB0aGlzIHNlcmllcy4gSnVzdCBkcm9wIHRoZSB2ZW5kb3IgcHJlZml4IG9uIGJvdGgu
-CgpzL0hNREkvSERNSS8KCj4gIAo+ICBFeGFtcGxlIGZvciBTVElINDA3Ogo+ICAKPiBAQCAtMjIs
-NCArMjMsNSBAQCBzdGktY2VjQDA5NGEwODdjIHsKPiAgCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVs
-dCI7Cj4gIAlwaW5jdHJsLTAgPSA8JnBpbmN0cmxfY2VjMF9kZWZhdWx0PjsKPiAgCXJlc2V0cyA9
-IDwmc29mdHJlc2V0IFNUSUg0MDdfTFBNX1NPRlRSRVNFVD47Cj4gKwlzdCxoZG1pLWhhbmRsZSA9
-IDwmaGRtaT47Cj4gIH07Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hi,
+
+The dsi + panel is a parental relationship, so OF grpah is not needed.
+Therefore, the current dsi_parse_dt function will throw an error,
+because there is no linked OF graph for case such as fimd + dsi +
+panel.
+
+So the 1/5 patch parse the Pll, burst and esc clock frequency
+properties in dsi_parse_dt and modified to create a bridge_node only
+if there is an OF graph associated with dsi.
+
+Also fixed the dts, which depend on the 1/5 patch. So removed the
+ports node and move burst and esc clock frequency properties to the
+parent (DSI node).
+
+Changes for V2:
+- Added the clear explanation for commit. (1/5 patch)
+- Fixed it to the same subject as the actual work. (2/5 ~ 5/5 patches)
+
+Best Regards,
+Hoegeun
+
+Hoegeun Kwon (5):
+  drm/exynos: dsi: Fix the parse_dt function
+  arm64: dts: exynos: Remove the OF graph from DSI node for exynos5433
+    dts
+  arm: dts: Remove the OF graph from DSI node for exynos3250 dts
+  arm: dts: Remove the OF graph from DSI node for exynos4412 dts
+  arm: dts: Remove the OF graph from DSI node for exynos4210 dts
+
+ arch/arm/boot/dts/exynos3250-rinato.dts            | 23 ++--------------
+ arch/arm/boot/dts/exynos4210-trats.dts             | 23 ++--------------
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 23 ++--------------
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 16 ++---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 32 ++++++----------------
+ 5 files changed, 16 insertions(+), 101 deletions(-)
+
+-- 
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
