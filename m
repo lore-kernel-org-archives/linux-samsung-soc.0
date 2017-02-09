@@ -1,14 +1,14 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v2 2/5] arm64: dts: exynos: Remove the OF graph from DSI node
- for exynos5433 dts
-Date: Thu, 09 Feb 2017 10:26:38 +0900
-Message-ID: <1486603601-26826-3-git-send-email-hoegeun.kwon@samsung.com>
+Subject: [PATCH v2 5/5] arm: dts: Remove the OF graph from DSI node for
+ exynos4210 dts
+Date: Thu, 09 Feb 2017 10:26:41 +0900
+Message-ID: <1486603601-26826-6-git-send-email-hoegeun.kwon@samsung.com>
 References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170209012716epcas1p37a101e6937668ce09309bb636c8b6a52@epcas1p3.samsung.com>
+ <CGME20170209012717epcas1p37af99b9d7564a7a418a1977bd6be8972@epcas1p3.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52925 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752115AbdBIB1V (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:45975 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752512AbdBIB1V (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 8 Feb 2017 20:27:21 -0500
 In-reply-to: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
@@ -23,23 +23,22 @@ properties to the parent (DSI node).
 
 Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/exynos4210-trats.dts | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 6ce93a3..77ba238 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -298,23 +298,11 @@
- 	status = "okay";
- 	vddcore-supply = <&ldo6_reg>;
- 	vddio-supply = <&ldo7_reg>;
-+	samsung,burst-clock-frequency = <512000000>;
-+	samsung,esc-clock-frequency = <16000000>;
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 0ca1b4d..9452bed 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -197,24 +197,11 @@
+ &dsi_0 {
+ 	vddcore-supply = <&vusb_reg>;
+ 	vddio-supply = <&vmipi_reg>;
++	samsung,burst-clock-frequency = <500000000>;
++	samsung,esc-clock-frequency = <20000000>;
  	samsung,pll-clock-frequency = <24000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&te_irq>;
--
+ 	status = "okay";
+ 
 -	ports {
 -		#address-cells = <1>;
 -		#size-cells = <0>;
@@ -48,13 +47,28 @@ index 6ce93a3..77ba238 100644
 -			reg = <1>;
 -
 -			dsi_out: endpoint {
--				samsung,burst-clock-frequency = <512000000>;
--				samsung,esc-clock-frequency = <16000000>;
+-				remote-endpoint = <&dsi_in>;
+-				samsung,burst-clock-frequency = <500000000>;
+-				samsung,esc-clock-frequency = <20000000>;
 -			};
 -		};
 -	};
+-
+ 	panel@0 {
+ 		reg = <0>;
+ 		compatible = "samsung,s6e8aa0";
+@@ -242,12 +229,6 @@
+ 				vsync-len = <2>;
+ 			};
+ 		};
+-
+-		port {
+-			dsi_in: endpoint {
+-				remote-endpoint = <&dsi_out>;
+-			};
+-		};
+ 	};
  };
  
- &hdmi {
 -- 
 1.9.1
