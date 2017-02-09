@@ -1,117 +1,53 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v7 2/4] dmaengine: Forward slave device pointer to
- of_xlate callback
-Date: Thu, 9 Feb 2017 21:58:47 +0530
-Message-ID: <20170209162847.GL19244@localhost>
-References: <1485340088-25481-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125102824eucas1p1cf027184286131ff628eb7113c3f9e60@eucas1p1.samsung.com>
- <1485340088-25481-3-git-send-email-m.szyprowski@samsung.com>
- <26397455-1237-2a66-acf8-215aacc7c9ce@metafoo.de>
- <49c9c23d-ff0a-268a-5edd-931e04eb98b5@samsung.com>
- <20170209041123.GK19244@localhost>
- <ded8b3e8-2ef8-218b-fb6d-783825588fd8@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
+Date: Thu, 9 Feb 2017 20:56:54 +0200
+Message-ID: <20170209185654.yxmubj3r4gjxcfm6@kozik-lap>
+References: <20170202183008.23500-1-krzk@kernel.org>
+ <20170202183008.23500-5-krzk@kernel.org>
+ <2382634.UqDUkYPZrI@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33611 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752394AbdBIS5A (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 9 Feb 2017 13:57:00 -0500
 Content-Disposition: inline
-In-Reply-To: <ded8b3e8-2ef8-218b-fb6d-783825588fd8@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>
+In-Reply-To: <2382634.UqDUkYPZrI@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Feb 09, 2017 at 10:22:38AM +0100, Marek Szyprowski wrote:
-> Hi Vinod,
+On Thu, Feb 09, 2017 at 04:19:57PM +0100, Arnd Bergmann wrote:
+> On Thursday, February 2, 2017 8:30:08 PM CET Krzysztof Kozlowski wrote:
+> >  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
+> >  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
+> >  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
+> >  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
+> >  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
+> >  drivers/clk/samsung/clk-exynos5433.c               |   8 +-
+> >  include/dt-bindings/clock/exynos5433.h             |   5 +-
+> >  include/dt-bindings/pinctrl/samsung.h              |   8 +
+> > 
 > 
-> On 2017-02-09 05:11, Vinod Koul wrote:
-> >On Thu, Jan 26, 2017 at 03:43:05PM +0100, Marek Szyprowski wrote:
-> >>On 2017-01-25 14:12, Lars-Peter Clausen wrote:
-> >>>On 01/25/2017 11:28 AM, Marek Szyprowski wrote:
-> >>>>Add pointer to slave device to of_dma_xlate to let DMA engine driver
-> >>>>to know which slave device is using given DMA channel. This will be
-> >>>>later used to implement non-irq-safe runtime PM for DMA engine driver.
-> >>>of_dma_xlate() is used to translate from a OF phandle and a specifier to a
-> >>>DMA channel. On one hand this does not necessarily mean that the channel is
-> >>>actually going to be used by the slave that called the xlate function.
-> >>>Modifying the driver state when a lookup of the channel is done is a
-> >>>layering violation. And this approach is also missing a way to disassociate
-> >>>a slave from a DMA channel, e.g. when it is no longer used.
-> >>>
-> >>>On the other hand there are other mechanisms to translate between some kind
-> >>>of firmware handle to a DMA channel which are completely ignored here.
-> >>>
-> >>>So this approach does not work. This is something that needs to be done at
-> >>>the dmaengine level, not a the firmware resource translation level. And it
-> >>>needs a matching method that is called when the channel is disassociated
-> >>>from a device, when the device no longer uses the DMA channel.
-> >>
-> >>Frankly I agree that of_dma_xlate() should only return the requested channel
-> >>to the dmaengine core and do not do any modification in the the
-> >>driver state.
-> >True..
-> >
-> >>However the current dma engine design and implementation breaks this rule.
-> >>Please check the drivers - how do they implement of_xlate callback. They
-> >>usually call dma_get_any_slave_channel, dma_get_slave_channel or
-> >>__dma_request_channel there, which in turn calls dma_chan_get, which then
-> >>calls back to device_alloc_chan_resources callback. Some of the drivers also
-> >>do a hardware configuration or other resource allocation in of_xlate.
-> >>This is a bit messy design and leave no place in the core to set
-> >>slave device
-> >>before device_alloc_chan_resources callback, where one would expect to have
-> >>it already set.
-> >We shouldn't be doing much at this stage. We operate on a channel, so the
-> >channel is returned to the client. We need to do these HW configurations
-> >when the channel has to be prepred for a txn.
-> 
-> IMHO, any HW configurations should be done in alloc_chan_resources
-> callback and
-> it would be best if a pointer of slave device will come as a
-> parameter to it.
+> It seems a drivers/clk change slipped in there in addition to the header changes.
+> We are trying to keep the next/dt branches free of driver changes, are you
+> able to rework the branch without this?
 
-HW configuration is dependent upon the parameters passed, which are not part
-of alloc_chan_resources(). Consider it as kind of open() to get a handle for
-dmaengine
++Cc Sylwester,
 
-> 
-> >>The best place to add new calls to the dmaengine drivers to set slave device
-> >>would be just before device_alloc_chan_resources(), what in turn means that
-> >>the current dmaengine core should do in dma_chan_get(). This would
-> >>require to
-> >>forward the slave device pointer via even more layers including the of_xlate
-> >>callback too. IMHO this is not worth the effort.
-> >>
-> >>DMA engine core and API definitely needs some cleanup. During such cleanup
-> >>the slave device pointer might be moved out of xlate into separate callback
-> >>when the core gets ready for such operation.
-> >Yes agreed on that, plus the runtime handling needs to be built in, right
-> >now the APIs dont work well with it, we disucssed these during the KS and
-> >this goes without saying, patches are welcome :)
-> 
-> Okay, so what is the conclusion? Do you want me to do the whole
-> rework of dma
-> engine core to get this runtime pm patchset for pl330 merged??? Is there any
-> roadmap for this rework prepared, so I can at least take a look at
-> the amount
-> of work needed to be done?
-> 
-> I'm rather new to dma engine framework and I only wanted to fix pl330 driver
-> not to block turning off the power domain on Exynos5422/5433 SoCs.
-> 
-> I can also check again if there is any other way to find the slave device in
-> alloc_chan_resources, like for example scanning the device tree for
-> phandles,
-> to avoid changing dmaengine core as this turned out to be too problematic
-> before one will do the proper dma engine core rework.
+This came from clk tree from Sylwester. It contains two changes in
+clocks:
+1. Mew clock ID - we need only the header but Sylwester provided also
+   the source file change,
+2. Update of frequency (used in DTS as assigned clock rate) - this
+   is strictly source file change and we need it.
 
-There are few things we need to do for making APIs cleaner.
+Overall, rework would not be trivial and it would involve Sylwester.
+I think it is better to stay with this as is. I will remember the policy
+for future dependencies.
 
-We have a mini discussion during KS/Plumbers, Here are the notes
-http://www.spinics.net/lists/dmaengine/msg11570.html
-
-I don't want to block your series for this, I will take a look at v8, first
-thing in morning..
-
-Thanks
--- 
-~Vinod
+Best regards,
+Krzysztof
