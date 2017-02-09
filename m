@@ -1,10 +1,10 @@
 From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 3/5] arm: dts: Remove the OF graph from DSI node for
- exynos3250 dts
-Date: Thu, 09 Feb 2017 10:26:39 +0900
-Message-ID: <1486603601-26826-4-git-send-email-hoegeun.kwon@samsung.com>
+Subject: [PATCH v2 4/5] arm: dts: Remove the OF graph from DSI node for
+ exynos4412 dts
+Date: Thu, 09 Feb 2017 10:26:40 +0900
+Message-ID: <1486603601-26826-5-git-send-email-hoegeun.kwon@samsung.com>
 References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170209012717epcas5p2e48b2bc891e65f8860b22e6de4c18de7@epcas5p2.samsung.com>
+ <CGME20170209012717epcas1p35056ea95869b26cad29380e7494d1c51@epcas1p3.samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1486603601-26826-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -18,18 +18,18 @@ properties to the parent (DSI node).
 
 Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos3250-rinato.dts | 23 ++---------------------
+ arch/arm/boot/dts/exynos4412-trats2.dts | 23 ++---------------------
  1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 548413e..82e676a 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -215,24 +215,11 @@
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 41ecd6d..86ce5e5 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -385,24 +385,11 @@
  &dsi_0 {
- 	vddcore-supply = <&ldo6_reg>;
- 	vddio-supply = <&ldo6_reg>;
-+	samsung,burst-clock-frequency = <250000000>;
+ 	vddcore-supply = <&ldo8_reg>;
+ 	vddio-supply = <&ldo10_reg>;
++	samsung,burst-clock-frequency = <500000000>;
 +	samsung,esc-clock-frequency = <20000000>;
  	samsung,pll-clock-frequency = <24000000>;
  	status = "okay";
@@ -43,16 +43,16 @@ index 548413e..82e676a 100644
 -
 -			dsi_out: endpoint {
 -				remote-endpoint = <&dsi_in>;
--				samsung,burst-clock-frequency = <250000000>;
+-				samsung,burst-clock-frequency = <500000000>;
 -				samsung,esc-clock-frequency = <20000000>;
 -			};
 -		};
 -	};
 -
  	panel@0 {
- 		compatible = "samsung,s6e63j0x03";
+ 		compatible = "samsung,s6e8aa0";
  		reg = <0>;
-@@ -262,12 +249,6 @@
+@@ -430,12 +417,6 @@
  				vsync-len = <2>;
  			};
  		};
