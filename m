@@ -1,72 +1,76 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 10/11] iommu/exynos: Make use of iommu_device_register
-	interface
-Date: Thu,  9 Feb 2017 12:32:59 +0100
-Message-ID: <1486639981-32368-11-git-send-email-joro@8bytes.org>
-References: <1486639981-32368-1-git-send-email-joro@8bytes.org>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: Re: [PATCH v2 1/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Thu, 09 Feb 2017 21:08:53 +0900
+Message-ID: <13fc2e1c-058b-f46d-e61b-6fe5263b11ee@samsung.com>
+References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170209012716epcas1p33915757c95d5defb88c7d2c54cee3582@epcas1p3.samsung.com>
+ <1486603601-26826-2-git-send-email-hoegeun.kwon@samsung.com>
+ <8afdbdea-5675-fd55-5195-47c6aded4202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1486639981-32368-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <8afdbdea-5675-fd55-5195-47c6aded4202@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, inki.dae@samsung.com, robh+dt@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-
-Register Exynos IOMMUs to the IOMMU core and make them
-visible in sysfs. This patch does not add the links between
-IOMMUs and translated devices yet.
-
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 57ba0d3..64325d8 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -276,6 +276,8 @@ struct sysmmu_drvdata {
- 	struct list_head owner_node;	/* node for owner controllers list */
- 	phys_addr_t pgtable;		/* assigned page table structure */
- 	unsigned int version;		/* our version */
-+
-+	struct iommu_device iommu;	/* IOMMU core handle */
- };
- 
- static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-@@ -611,6 +613,18 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	data->sysmmu = dev;
- 	spin_lock_init(&data->lock);
- 
-+	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
-+				     dev_name(data->sysmmu));
-+	if (ret)
-+		return ret;
-+
-+	iommu_device_set_ops(&data->iommu, &exynos_iommu_ops);
-+	iommu_device_set_fwnode(&data->iommu, &dev->of_node->fwnode);
-+
-+	ret = iommu_device_register(&data->iommu);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	__sysmmu_get_version(data);
--- 
-1.9.1
+CgpPbiAwMi8wOS8yMDE3IDAzOjU3IFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDA5LjAy
+LjIwMTcgMDI6MjYsIEhvZWdldW4gS3dvbiB3cm90ZToKPj4gVGhlIGRzaSArIHBhbmVsIGlzIGEg
+cGFyZW50YWwgcmVsYXRpb25zaGlwLCBzbyBPRiBncnBhaCBpcyBub3QgbmVlZGVkLgo+PiBUaGVy
+ZWZvcmUsIHRoZSBjdXJyZW50IGRzaV9wYXJzZV9kdCBmdW5jdGlvbiB3aWxsIHRocm93IGFuIGVy
+cm9yLAo+PiBiZWNhdXNlIHRoZXJlIGlzIG5vIGxpbmtlZCBPRiBncmFwaCBmb3IgY2FzZSBzdWNo
+IGFzIGZpbWQgKyBkc2kgKwo+PiBwYW5lbC4gU28gdGhpcyBwYXRjaCBwYXJzZSB0aGUgUGxsLCBi
+dXJzdCBhbmQgZXNjIGNsb2NrIGZyZXF1ZW5jeQo+PiBwcm9wZXJ0aWVzIGluIGRzaV9wYXJzZV9k
+dCBhbmQgbW9kaWZpZWQgdG8gY3JlYXRlIGEgYnJpZGdlX25vZGUgb25seQo+PiBpZiB0aGVyZSBp
+cyBhbiBPRiBncmFwaCBhc3NvY2lhdGVkIHdpdGggZHNpLgo+PiBTbyBJIHRoaW5rIHRoZSBBQkkg
+YnJlYWthZ2UgaXMgbmVlZGVkLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhv
+ZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KPiBOaWNlIGRpZmZzdGF0LCBtb3JlIGltcG9ydGFudGx5
+IGl0IGZpeGVzIGJhZCBkZXNpZ24gb2YgZWFybHkgZGF5cyBvZgo+IG9mX2dyYXBoLgo+Cj4gUmV2
+aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4KPiBPbmUgY29t
+bWVudCBiZWxvdy4KPgo+PiAtLS0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHNpLmMgfCAzMiArKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiAgIDEgZmls
+ZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDI0IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IGUwN2NiMWYuLjIxNGQ0ODYg
+MTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPj4gQEAgLTE2
+NTIsMzkgKzE2NTIsMjMgQEAgc3RhdGljIGludCBleHlub3NfZHNpX3BhcnNlX2R0KHN0cnVjdCBl
+eHlub3NfZHNpICpkc2kpCj4+ICAgCWlmIChyZXQgPCAwKQo+PiAgIAkJcmV0dXJuIHJldDsKPj4g
+ICAKPj4gLQllcCA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9ieV9yZWdzKG5vZGUsIERTSV9QT1JU
+X09VVCwgMCk7Cj4+IC0JaWYgKCFlcCkgewo+PiAtCQlkZXZfZXJyKGRldiwgIm5vIG91dHB1dCBw
+b3J0IHdpdGggZW5kcG9pbnQgc3BlY2lmaWVkXG4iKTsKPj4gLQkJcmV0dXJuIC1FSU5WQUw7Cj4+
+IC0JfQo+PiAtCj4+IC0JcmV0ID0gZXh5bm9zX2RzaV9vZl9yZWFkX3UzMihlcCwgInNhbXN1bmcs
+YnVyc3QtY2xvY2stZnJlcXVlbmN5IiwKPj4gKwlyZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMy
+KG5vZGUsICJzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSIsCj4+ICAgCQkJCSAgICAgJmRz
+aS0+YnVyc3RfY2xrX3JhdGUpOwo+PiAgIAlpZiAocmV0IDwgMCkKPj4gLQkJZ290byBlbmQ7Cj4+
+ICsJCXJldHVybiByZXQ7Cj4+ICAgCj4+IC0JcmV0ID0gZXh5bm9zX2RzaV9vZl9yZWFkX3UzMihl
+cCwgInNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSIsCj4+ICsJcmV0ID0gZXh5bm9zX2RzaV9v
+Zl9yZWFkX3UzMihub2RlLCAic2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5IiwKPj4gICAJCQkJ
+ICAgICAmZHNpLT5lc2NfY2xrX3JhdGUpOwo+PiAgIAlpZiAocmV0IDwgMCkKPj4gLQkJZ290byBl
+bmQ7Cj4+IC0KPj4gLQlvZl9ub2RlX3B1dChlcCk7Cj4+ICsJCXJldHVybiByZXQ7Cj4+ICAgCj4+
+ICAgCWVwID0gb2ZfZ3JhcGhfZ2V0X25leHRfZW5kcG9pbnQobm9kZSwgTlVMTCk7Cj4+IC0JaWYg
+KCFlcCkgewo+PiAtCQlyZXQgPSAtRUlOVkFMOwo+PiAtCQlnb3RvIGVuZDsKPj4gLQl9Cj4+IC0K
+Pj4gLQlkc2ktPmJyaWRnZV9ub2RlID0gb2ZfZ3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChl
+cCk7Cj4+IC0JaWYgKCFkc2ktPmJyaWRnZV9ub2RlKSB7Cj4+IC0JCXJldCA9IC1FSU5WQUw7Cj4+
+IC0JCWdvdG8gZW5kOwo+PiArCWlmIChlcCkgewo+PiArCQlkc2ktPmJyaWRnZV9ub2RlID0gb2Zf
+Z3JhcGhfZ2V0X3JlbW90ZV9wb3J0X3BhcmVudChlcCk7Cj4+ICsJCW9mX25vZGVfcHV0KGVwKTsK
+PiBJdCBsb29rcyBsaWtlIHRoZXJlIGlzIG5vIG9mX25vZGVfcHV0IG9uIGRzaS0+YnJpZGdlX25v
+ZGUsIGJ1dCB0aGlzIGlzCj4gZm9yIGFub3RoZXIgcGF0Y2guCgpUaGFua3MgZm9yIHlvdXIgcmV2
+aWV3LgoKWWVzIHJpZ2h0LCBzbyBpIHdpbGwgbWFrZSBhbm90aGVyIHBhdGNoLgoKQmVzdCBSZWdh
+cmRzLApIb2VnZXVuCgo+Cj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPgo+PiAgIAl9Cj4+IC1lbmQ6Cj4+
+IC0Jb2Zfbm9kZV9wdXQoZXApOwo+PiAgIAo+PiAtCXJldHVybiByZXQ7Cj4+ICsJcmV0dXJuIDA7
+Cj4+ICAgfQo+PiAgIAo+PiAgIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5kKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+Cj4KPgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
