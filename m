@@ -1,39 +1,45 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 4/5] arm: dts: Remove the OF graph from DSI node for
- exynos4412 dts
-Date: Thu, 09 Feb 2017 10:26:40 +0900
-Message-ID: <1486603601-26826-5-git-send-email-hoegeun.kwon@samsung.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v2 2/5] arm64: dts: exynos: Remove the OF graph from DSI node
+ for exynos5433 dts
+Date: Thu, 09 Feb 2017 10:26:38 +0900
+Message-ID: <1486603601-26826-3-git-send-email-hoegeun.kwon@samsung.com>
 References: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170209012717epcas1p35056ea95869b26cad29380e7494d1c51@epcas1p3.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1486603601-26826-1-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+ <CGME20170209012716epcas1p37a101e6937668ce09309bb636c8b6a52@epcas1p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:52925 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752115AbdBIB1V (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 8 Feb 2017 20:27:21 -0500
+In-reply-to: <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, robh+dt@kernel.org, krzk@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
 The OF graph is not needed because the panel is a child of dsi. So
 Remove the ports node and move burst and esc clock frequency
 properties to the parent (DSI node).
 
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 23 ++---------------------
- 1 file changed, 2 insertions(+), 21 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 41ecd6d..86ce5e5 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -385,24 +385,11 @@
- &dsi_0 {
- 	vddcore-supply = <&ldo8_reg>;
- 	vddio-supply = <&ldo10_reg>;
-+	samsung,burst-clock-frequency = <500000000>;
-+	samsung,esc-clock-frequency = <20000000>;
- 	samsung,pll-clock-frequency = <24000000>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 6ce93a3..77ba238 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -298,23 +298,11 @@
  	status = "okay";
- 
+ 	vddcore-supply = <&ldo6_reg>;
+ 	vddio-supply = <&ldo7_reg>;
++	samsung,burst-clock-frequency = <512000000>;
++	samsung,esc-clock-frequency = <16000000>;
+ 	samsung,pll-clock-frequency = <24000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&te_irq>;
+-
 -	ports {
 -		#address-cells = <1>;
 -		#size-cells = <0>;
@@ -42,33 +48,13 @@ index 41ecd6d..86ce5e5 100644
 -			reg = <1>;
 -
 -			dsi_out: endpoint {
--				remote-endpoint = <&dsi_in>;
--				samsung,burst-clock-frequency = <500000000>;
--				samsung,esc-clock-frequency = <20000000>;
+-				samsung,burst-clock-frequency = <512000000>;
+-				samsung,esc-clock-frequency = <16000000>;
 -			};
 -		};
 -	};
--
- 	panel@0 {
- 		compatible = "samsung,s6e8aa0";
- 		reg = <0>;
-@@ -430,12 +417,6 @@
- 				vsync-len = <2>;
- 			};
- 		};
--
--		port {
--			dsi_in: endpoint {
--				remote-endpoint = <&dsi_out>;
--			};
--		};
- 	};
  };
  
+ &hdmi {
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
