@@ -1,89 +1,107 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
-Date: Fri, 10 Feb 2017 16:49:27 +0100
-Message-ID: <20170210154927.wypbqfnfkt52wvnc@ninjato>
-References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
- <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
- <20170209162736.nfyfd5dpjkjq65w7@ninjato>
- <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
+From: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Subject: Re: [PATCH v3 1/4] [media] exynos-gsc: Use 576p instead 720p as a
+ threshold for colorspaces
+Date: Fri, 10 Feb 2017 13:37:44 -0300
+Message-ID: <37b11e67-7ed7-244d-b27e-ec3bb7732b0e@osg.samsung.com>
+References: <20170210141022.25412-1-thibault.saunier@osg.samsung.com>
+ <20170210141022.25412-2-thibault.saunier@osg.samsung.com>
+ <4270fc60-579b-64d0-4256-403e4e5bf371@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bklvqca5xfslezzy"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47569 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753115AbdBJPv6 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 10:51:58 -0500
-Content-Disposition: inline
-In-Reply-To: <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4270fc60-579b-64d0-4256-403e4e5bf371@xs4all.nl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
+On 02/10/2017 12:07 PM, Hans Verkuil wrote:
+> On 02/10/2017 03:10 PM, Thibault Saunier wrote:
+>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+>> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
+>> don't agree on the display resolution that should be used as a threshold.
+>>
+>> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
+>> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
+>> use the latter and that also matches what user-space multimedia programs
+>> do (i.e: GStreamer), so change the driver logic to be aligned with this.
+>>
+>> Also, check for the resolution in G_FMT instead unconditionally setting
+>> the V4L2_COLORSPACE_REC709 colorspace.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>>
+>> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+>> ---
+>>
+>> Changes in v3:
+>> - Do not check values in the g_fmt functions as Andrzej explained in previous review
+>> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
+>>
+>> Changes in v2: None
+>>
+>>   drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+>> index 59a634201830..db7d9883861b 100644
+>> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+>> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+>> @@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>>   
+>>   	pix_mp->num_planes = fmt->num_planes;
+>>   
+>> -	if (pix_mp->width >= 1280) /* HD */
+>> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+>>   		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+>>   	else /* SD */
+>>   		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+>> @@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>>   	pix_mp->height		= frame->f_height;
+>>   	pix_mp->field		= V4L2_FIELD_NONE;
+>>   	pix_mp->pixelformat	= frame->fmt->pixelformat;
+>> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
+>>   	pix_mp->num_planes	= frame->fmt->num_planes;
+>>   
+>> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+>> +		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+>> +	else /* SD */
+>> +		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+>> +
+>>   	for (i = 0; i < pix_mp->num_planes; ++i) {
+>>   		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
+>>   			frame->fmt->depth[i]) / 8;
+>>
+> This is a mem2mem device, right? In the case of mem2mem devices the driver should never
+> set the colorspace, instead it just copies it from what the application provides (the
+> video output side) to the capture side.
+>
+> After all, you are just scaling here so the input and output colorspaces are
+> exactly the same, and the scaler doesn't care what the colorspace is.
 
---bklvqca5xfslezzy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This device also does color conversion so I think it matters here, am I 
+misunderstanding something?
+Also, is that comment only for the try_fmt part as it looks like in 
+g_fmt the driver should fill up the structure
+with its values?
 
-On Fri, Feb 10, 2017 at 08:39:58AM +0100, Andrzej Hajda wrote:
-> On 09.02.2017 17:27, Wolfram Sang wrote:
-> > On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
-> >> In case of arbitration lost adequate interrupt sometimes is not signal=
-ed. As
-> >> a result transfer timeouts and is not retried, as it should. To avoid =
-such
-> >> cases code is added to check transaction status in case of every inter=
-rupt.
-> >>
-> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >> ---
-> >> +
-> >> +		switch (trans_status & HSI2C_MASTER_ST_MASK) {
-> >> +		case HSI2C_MASTER_ST_LOSE:
-> >> +			i2c->state =3D -EAGAIN;
-> >> +			goto stop;
-> >> +		}
-> > Why not using if() instead of switch() as in the rest of the driver?
->=20
-> Following reasons (not serious ones):
+Thanks for you review.
 
-I see. It is probably a taste thing, but a switch() with just one case
-in it looks like something has been forgotten :) We can change it back
-to switch() if ever more states need to be added.
+Regards,
 
-Given that I am not super strict with the 80 char limit anyhow and it
-will miss the limit by a few chars only, I'd prefer the if statement
-actually.
-
-Other than this, I am OK with applying the patch for 4.11. Can you
-resend with the above change?
-
-Thanks,
-
-   Wolfram
-
-
---bklvqca5xfslezzy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlid4QYACgkQFA3kzBSg
-KbZRSg//RG4On9zu0kpyrlNo7oPf5weg3sHmUKuMVeIVbLxWuXEO0UAArqAkygjO
-T+tZ+2RMSYyqKHC7xe3cpCBt01CyNQLF/PLAPqu/TjOf0ssCI8qFjKuRrbmshqUQ
-PQp4IOOi+lFGyDgwA6grMGSz3sJ4LYE1dzZQg7U8eVOrhFVNUQHrSmf6/y5c540+
-+umuGynqBZo9QmW9mU+QAx1LPG+3zSshKfg5dclOiwmXoQWQkUOecRtJeg+b0rbh
-ptnGePEI+79q4Sr6fdoaabhNpKiPE4PWbWCFGewy3p5R7t2j4jxZsb/8goNW39ZD
-MA0+JkasAOU6IVxhsJOKZTPAy4db6w7cKmTs0xun/GYYq5pNlvhs7xyW33JqINVR
-Tajr2VL48I9XR6usUlfS1V1gkbmJwlFpzmKay84tvuSHeGFvfgOEAi2qADLTzZR3
-qXJ/Gkrom0DkrD0cZ/u6SAZxiIN6V5D0UZIcU9fBCfmVjyAEYdxL2GgIWDnh3Qws
-OqeGzTbhNMQa2cC3wS9/51qENprWKUbks4Fiu5CmbmycW+31/r5CwjG1/TklZWXN
-VcwzogXSpd3cfYr5VJ16S9eCQWIlDffZiZjVlHad9RYjPLuNl/IdpoVjqnyDVuwC
-CZL2HjyvHeqmjwf9OxxWhD85TbG1P1MIDLIHitI4Sqw6oZCAR44=
-=7JyP
------END PGP SIGNATURE-----
-
---bklvqca5xfslezzy--
+Thibault Saunier
+> Regards,
+>
+> 	Hans
