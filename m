@@ -1,126 +1,96 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 4/4] [media] s5p-mfc: Always check and set
- 'v4l2_pix_format:field' field
-Date: Fri, 10 Feb 2017 17:30:42 +0800
-Message-ID: <201702101749.p9AsAzh5%fengguang.wu@intel.com>
-References: <20170209194314.5908-5-thibault.saunier@osg.samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
+Date: Fri, 10 Feb 2017 12:01:22 +0100
+Message-ID: <ed0b9f20-98e2-69bc-3491-ce5534532fe4@samsung.com>
+References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
+ <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
+ <20170209162736.nfyfd5dpjkjq65w7@ninjato>
+ <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170209194314.5908-5-thibault.saunier@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, kbuild-all@01.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11216 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753011AbdBJLB3 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 10 Feb 2017 06:01:29 -0500
+In-reply-to: <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Thibault,
+On 10.02.2017 08:39, Andrzej Hajda wrote:
+> On 09.02.2017 17:27, Wolfram Sang wrote:
+>> On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
+>>> In case of arbitration lost adequate interrupt sometimes is not signaled. As
+>>> a result transfer timeouts and is not retried, as it should. To avoid such
+>>> cases code is added to check transaction status in case of every interrupt.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>> +
+>>> +		switch (trans_status & HSI2C_MASTER_ST_MASK) {
+>>> +		case HSI2C_MASTER_ST_LOSE:
+>>> +			i2c->state = -EAGAIN;
+>>> +			goto stop;
+>>> +		}
+>> Why not using if() instead of switch() as in the rest of the driver?
+> Following reasons (not serious ones):
+> 1. With if() the line should be split anyway to keep 80 chars per line
+> limit, and the result looks less readable, so no gain:
+>         if ((trans_status & HSI2C_MASTER_ST_MASK) ==
+>              HSI2C_MASTER_ST_LOSE) {
+>             i2c->state = -EAGAIN;
+>             goto stop;
+>         }
+> 2. It is ready to handle other status values as well, without repeating
+> long if() clause, in fact during tests I have added more values, but
+> finally they went out.
+> 3. In the rest of the functions if() is used because code tests if some
+> bits are set, here we test if some bit field have specific value,
+> slightly different thing.
+>
+> Of course I can change to if() if you prefer it.
+>
+>> And there is arbitration lost checking already with int_status &
+>> HSI2C_INT_TRANS_ABORT. Any guess why it doesn't trigger?
+>>
+> Nope. This patch is just a result of comparing register values during
+> good and bad transfer.
+> I have looked for similar issues over the net, but without ultimate
+> answer, some hints are that master can check status of SDA line too early.
+> Anyway it works correctly with gpio bit-banging driver, it suggests
+> there could be something wrong in hsi2c logic.
 
-[auto build test WARNING on linuxtv-media/master]
-[also build test WARNING on v4.10-rc7 next-20170209]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+I have just found in spec of newer version of the chip configuration bit
+NO_ARB_FASTSDA. Citation:
+> This bit deactivates the modified logic of the
+> abnormal operation when the SCL is falling. Then,
+> other I2C device quickly lowers the SDA line, and
+> SDA has fallen before the first PCLK period
+> elapses.
+> 0 = Skip the master arbitration checking during the
+> first PCLK period after SCL falls
+> 1 = Restore original logic
 
-url:    https://github.com/0day-ci/linux/commits/Thibault-Saunier/exynos-gsc-Use-576p-instead-720p-as-a-threshold-for-colorspaces/20170210-113658
-base:   git://linuxtv.org/media_tree.git master
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+I have no hardware with newer chip to really test if this solves the
+issue, but I suppose it could, the only problem is that this bit is not
+present in current chip version, Exynos5433.
+
+Regards
+Andrzej
 
 
-sparse warnings: (new ones prefixed by >>)
-
-   include/linux/compiler.h:253:8: sparse: attribute 'no_sanitize_address': unknown attribute
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:17: sparse: Expected ) in function call
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:17: sparse: got pix_mp
->> drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:17: sparse: incompatible types for operation (>=)
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:17:    left side has type int extern [signed] [addressable] [toplevel] mfc_debug_level
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:17:    right side has type char static *<noident>
-   In file included from drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:28:0:
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c: In function 'vidioc_try_fmt':
-   drivers/media/platform/s5p-mfc/s5p_mfc_debug.h:25:23: warning: comparison between pointer and integer
-      if (mfc_debug_level >= level)   \
-                          ^
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:3: note: in expansion of macro 'mfc_debug'
-      mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-      ^~~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_debug.h:25:23: warning: comparison with string literal results in unspecified behavior [-Waddress]
-      if (mfc_debug_level >= level)   \
-                          ^
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:3: note: in expansion of macro 'mfc_debug'
-      mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-      ^~~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:48: error: expected ')' before 'pix_mp'
-      mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-                                                   ^
-   drivers/media/platform/s5p-mfc/s5p_mfc_debug.h:26:32: note: in definition of macro 'mfc_debug'
-       printk(KERN_DEBUG "%s:%d: " fmt, \
-                                   ^~~
-   In file included from include/linux/printk.h:6:0,
-                    from include/linux/kernel.h:13,
-                    from include/linux/clk.h:16,
-                    from drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:14:
-   include/linux/kern_levels.h:4:18: warning: format '%s' expects a matching 'char *' argument [-Wformat=]
-    #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                     ^
-   include/linux/kern_levels.h:14:20: note: in expansion of macro 'KERN_SOH'
-    #define KERN_DEBUG KERN_SOH "7" /* debug-level messages */
-                       ^~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_debug.h:26:11: note: in expansion of macro 'KERN_DEBUG'
-       printk(KERN_DEBUG "%s:%d: " fmt, \
-              ^~~~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:3: note: in expansion of macro 'mfc_debug'
-      mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-      ^~~~~~~~~
-   include/linux/kern_levels.h:4:18: warning: format '%d' expects a matching 'int' argument [-Wformat=]
-    #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                     ^
-   include/linux/kern_levels.h:14:20: note: in expansion of macro 'KERN_SOH'
-    #define KERN_DEBUG KERN_SOH "7" /* debug-level messages */
-                       ^~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_debug.h:26:11: note: in expansion of macro 'KERN_DEBUG'
-       printk(KERN_DEBUG "%s:%d: " fmt, \
-              ^~~~~~~~~~
-   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c:404:3: note: in expansion of macro 'mfc_debug'
-      mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-      ^~~~~~~~~
-
-vim +404 drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-
-   388		mfc_debug_leave();
-   389		return 0;
-   390	}
-   391	
-   392	/* Try format */
-   393	static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
-   394	{
-   395		struct s5p_mfc_dev *dev = video_drvdata(file);
-   396		struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-   397		struct s5p_mfc_fmt *fmt;
-   398		enum v4l2_field field;
-   399	
-   400		field = f->fmt.pix.field;
-   401		if (field == V4L2_FIELD_ANY) {
-   402			field = V4L2_FIELD_NONE;
-   403		} else if (V4L2_FIELD_NONE != field) {
- > 404			mfc_debug("Not supported field order(%d)\n", pix_mp->field);
-   405			return -EINVAL;
-   406		}
-   407	
-   408		/* V4L2 specification suggests the driver corrects the format struct
-   409		 * if any of the dimensions is unsupported */
-   410		f->fmt.pix.field = field;
-   411	
-   412		mfc_debug(2, "Type is %d\n", f->type);
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
+> Regards
+> Andrzej
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
