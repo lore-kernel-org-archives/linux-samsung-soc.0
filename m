@@ -1,102 +1,63 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 4/4] [media] s5p-mfc: Always check and set
- 'v4l2_pix_format:field' field
-Date: Fri, 10 Feb 2017 08:08:04 +0100
-Message-ID: <828ec5c5-fddd-f3d1-264e-41adb2d8a69f@samsung.com>
-References: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
- <CGME20170209200606epcas2p2ba463850690a45b526b7b6d496545039@epcas2p2.samsung.com>
- <20170209200420.3046-5-thibault.saunier@osg.samsung.com>
+Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
+Date: Fri, 10 Feb 2017 08:39:58 +0100
+Message-ID: <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
+References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
+ <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
+ <20170209162736.nfyfd5dpjkjq65w7@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170209200420.3046-5-thibault.saunier@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-reply-to: <20170209162736.nfyfd5dpjkjq65w7@ninjato>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09.02.2017 21:04, Thibault Saunier wrote:
-> It is required by the standard that the field order is set by the
-> driver.
+On 09.02.2017 17:27, Wolfram Sang wrote:
+> On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
+>> In case of arbitration lost adequate interrupt sometimes is not signaled. As
+>> a result transfer timeouts and is not retried, as it should. To avoid such
+>> cases code is added to check transaction status in case of every interrupt.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>> +
+>> +		switch (trans_status & HSI2C_MASTER_ST_MASK) {
+>> +		case HSI2C_MASTER_ST_LOSE:
+>> +			i2c->state = -EAGAIN;
+>> +			goto stop;
+>> +		}
+> Why not using if() instead of switch() as in the rest of the driver?
+
+Following reasons (not serious ones):
+1. With if() the line should be split anyway to keep 80 chars per line
+limit, and the result looks less readable, so no gain:
+        if ((trans_status & HSI2C_MASTER_ST_MASK) ==
+             HSI2C_MASTER_ST_LOSE) {
+            i2c->state = -EAGAIN;
+            goto stop;
+        }
+2. It is ready to handle other status values as well, without repeating
+long if() clause, in fact during tests I have added more values, but
+finally they went out.
+3. In the rest of the functions if() is used because code tests if some
+bits are set, here we test if some bit field have specific value,
+slightly different thing.
+
+Of course I can change to if() if you prefer it.
+
+> And there is arbitration lost checking already with int_status &
+> HSI2C_INT_TRANS_ABORT. Any guess why it doesn't trigger?
 >
-> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 23 +++++++++++++++++++++--
->  1 file changed, 21 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> index 960d6c7052bd..309b0a1bbca5 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -345,7 +345,6 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  		   rectangle. */
->  		pix_mp->width = ctx->buf_width;
->  		pix_mp->height = ctx->buf_height;
-> -		pix_mp->field = V4L2_FIELD_NONE;
->  		pix_mp->num_planes = 2;
->  		/* Set pixelformat to the format in which MFC
->  		   outputs the decoded frame */
-> @@ -369,7 +368,6 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  		   so width and height have no meaning */
->  		pix_mp->width = 0;
->  		pix_mp->height = 0;
-> -		pix_mp->field = V4L2_FIELD_NONE;
->  		pix_mp->plane_fmt[0].bytesperline = ctx->dec_src_buf_size;
->  		pix_mp->plane_fmt[0].sizeimage = ctx->dec_src_buf_size;
->  		pix_mp->pixelformat = ctx->src_fmt->fourcc;
-> @@ -379,6 +377,14 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  		mfc_debug(2, "%s-- with error\n", __func__);
->  		return -EINVAL;
->  	}
-> +
-> +	if (pix_mp->field == V4L2_FIELD_ANY) {
-> +		pix_mp->field = V4L2_FIELD_NONE;
-> +	} else if (pix_mp->field != V4L2_FIELD_NONE) {
-> +		mfc_err("Not supported field order(%d)\n", pix_mp->field);
-> +		return -EINVAL;
-> +	}
-> +
 
-Again in g_fmt you should not check current value of the field.
-
->  	mfc_debug_leave();
->  	return 0;
->  }
-> @@ -389,6 +395,19 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  	struct s5p_mfc_dev *dev = video_drvdata(file);
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
->  	struct s5p_mfc_fmt *fmt;
-> +	enum v4l2_field field;
-> +
-> +	field = f->fmt.pix.field;
-> +	if (field == V4L2_FIELD_ANY) {
-> +		field = V4L2_FIELD_NONE;
-> +	} else if (V4L2_FIELD_NONE != field) {
-> +		mfc_debug(2, "Not supported field order(%d)\n", pix_mp->field);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* V4L2 specification suggests the driver corrects the format struct
-> +	 * if any of the dimensions is unsupported */
-> +	f->fmt.pix.field = field;
-
-According to docs [1], you should just adjust the field.
-
-[1]:
-http://hverkuil.home.xs4all.nl/spec/uapi/v4l/vidioc-g-fmt.html?highlight=g_fmt#c.VIDIOC_G_FMT
+Nope. This patch is just a result of comparing register values during
+good and bad transfer.
+I have looked for similar issues over the net, but without ultimate
+answer, some hints are that master can check status of SDA line too early.
+Anyway it works correctly with gpio bit-banging driver, it suggests
+there could be something wrong in hsi2c logic.
 
 Regards
 Andrzej
-
->  
->  	mfc_debug(2, "Type is %d\n", f->type);
->  	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
