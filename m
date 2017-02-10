@@ -1,77 +1,63 @@
-From: Thibault Saunier <thibault.saunier@osg.samsung.com>
-Subject: [PATCH v2 4/4] [media] s5p-mfc: Always check and set 'v4l2_pix_format:field' field
-Date: Thu,  9 Feb 2017 17:04:20 -0300
-Message-ID: <20170209200420.3046-5-thibault.saunier@osg.samsung.com>
-References: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Thibault Saunier <thibault.saunier@osg.samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: [PATCH v2 0/3] STM FingerTip S touchscreen support for TM2 board
+Date: Fri, 10 Feb 2017 11:17:18 +0900
+Message-ID: <20170210021721.12218-1-andi.shyti@samsung.com>
+References: <CGME20170210021728epcas1p3864184ab4ffe6e4cf6614984e83e307a@epcas1p3.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:54731 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751026AbdBJCRs (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 9 Feb 2017 21:17:48 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andi Shyti <andi@etezian.org>
 
-It is required by the standard that the field order is set by the
-driver.
+Hi,
 
-Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+this patchset provides support for the ST-Microelectronics
+FingerTip S device driver and enables it in the tm2 and tm2e
+devices.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-index 960d6c7052bd..309b0a1bbca5 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-@@ -345,7 +345,6 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 		   rectangle. */
- 		pix_mp->width = ctx->buf_width;
- 		pix_mp->height = ctx->buf_height;
--		pix_mp->field = V4L2_FIELD_NONE;
- 		pix_mp->num_planes = 2;
- 		/* Set pixelformat to the format in which MFC
- 		   outputs the decoded frame */
-@@ -369,7 +368,6 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 		   so width and height have no meaning */
- 		pix_mp->width = 0;
- 		pix_mp->height = 0;
--		pix_mp->field = V4L2_FIELD_NONE;
- 		pix_mp->plane_fmt[0].bytesperline = ctx->dec_src_buf_size;
- 		pix_mp->plane_fmt[0].sizeimage = ctx->dec_src_buf_size;
- 		pix_mp->pixelformat = ctx->src_fmt->fourcc;
-@@ -379,6 +377,14 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 		mfc_debug(2, "%s-- with error\n", __func__);
- 		return -EINVAL;
- 	}
-+
-+	if (pix_mp->field == V4L2_FIELD_ANY) {
-+		pix_mp->field = V4L2_FIELD_NONE;
-+	} else if (pix_mp->field != V4L2_FIELD_NONE) {
-+		mfc_err("Not supported field order(%d)\n", pix_mp->field);
-+		return -EINVAL;
-+	}
-+
- 	mfc_debug_leave();
- 	return 0;
- }
-@@ -389,6 +395,19 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 	struct s5p_mfc_dev *dev = video_drvdata(file);
- 	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
- 	struct s5p_mfc_fmt *fmt;
-+	enum v4l2_field field;
-+
-+	field = f->fmt.pix.field;
-+	if (field == V4L2_FIELD_ANY) {
-+		field = V4L2_FIELD_NONE;
-+	} else if (V4L2_FIELD_NONE != field) {
-+		mfc_debug(2, "Not supported field order(%d)\n", pix_mp->field);
-+		return -EINVAL;
-+	}
-+
-+	/* V4L2 specification suggests the driver corrects the format struct
-+	 * if any of the dimensions is unsupported */
-+	f->fmt.pix.field = field;
- 
- 	mfc_debug(2, "Type is %d\n", f->type);
- 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+It's tested on top of next-20170210 kernel and applies on
+Krzysztof's for-next branch.
+
+Thanks,
+Andi
+
+Changelog V1-V2
+===============
+V1: https://marc.info/?l=linux-kernel&m=148466204431327&w=2
+
+ - fixed Javier's, Krzysztof's and Dmitry's reviews
+ - added Javier's review tag on patch 1 and 3
+ - the main difference of the driver from v2 is that the driver
+   generates only one input interface instead of two (one for the
+   touchscreen and one for the touchkeys). The job of filtering
+   the events is demanded to userspace applications that are
+   accessing the device. This is done by making an ioctl call:
+
+	ioctl(fd, EVIOCSMASK, &mask);
+
+   where 'mask' is an 'input_mask' structure that contains the type
+   variable of the EV_* that needs to be filtered out.
+
+Andi Shyti (3):
+  Input: add STMicroelectronics FingerTip touchscreen driver
+  Input: add support for the STMicroelectronics FingerTip touchscreen
+  arm64: dts: exynos: Add stmfts touchscreen node for TM2 and TM2E
+
+ .../bindings/input/touchscreen/st,stmfts.txt       |  43 ++
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     |  15 +-
+ arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |   5 +
+ arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |   7 +
+ drivers/input/touchscreen/Kconfig                  |  12 +
+ drivers/input/touchscreen/Makefile                 |   1 +
+ drivers/input/touchscreen/stmfts.c                 | 794 +++++++++++++++++++++
+ 7 files changed, 876 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+ create mode 100644 drivers/input/touchscreen/stmfts.c
+
 -- 
-2.11.1
+2.11.0
