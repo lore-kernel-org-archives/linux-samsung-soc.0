@@ -1,84 +1,84 @@
-From: Richard Genoud <richard.genoud@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
-Date: Fri, 10 Feb 2017 16:12:14 +0100
-Message-ID: <CACQ1gAgBFb-+CjdH50e01Q-1gt7tK8CNH_y8pytq5MDzpc6K6Q@mail.gmail.com>
-References: <20170124134809.23315-1-richard.genoud@gmail.com>
- <CANAwSgRAT0-XETx=yVRgM4GfukFLLEw-hqHjYGEWs0tqAx8g2g@mail.gmail.com>
- <CGME20170125075556epcas1p4b916a6d6acda28f8fc1959a1227520fa@epcas1p4.samsung.com>
- <CAJKOXPesCuYsK23466=6W9PPX7DtztdymZLBfNz0Dmjzwp4qBA@mail.gmail.com>
- <ef6c0d33-73d6-805e-aeab-86190e8b0aa0@samsung.com> <CAJKOXPd+CnmVG282NEVCFqS_3YEURCWx41udyQKpL21keGJOWg@mail.gmail.com>
- <4dca1d8e-f955-7791-90c0-4e73a273fe62@gmail.com> <CACQ1gAj5ebug28CJ2xiYWKohMhNbGr=tmy6mS-57CFq=K-bqyQ@mail.gmail.com>
- <20170210133439.qfiuggbuoi7hq6el@kozik-lap>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] Exynos5422-odroidxu3: Incomplete thermal-zones definition
+Date: Fri, 10 Feb 2017 17:46:34 +0200
+Message-ID: <20170210154634.57z4kvmo7giz4zej@kozik-lap>
+References: <9e32c530-0d15-223f-c280-617f8ae2540d@gmail.com>
+ <20170207212830.23mzswabqplece2s@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:36707 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751577AbdBJPQo (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36540 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753209AbdBJPsG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 10:16:44 -0500
-In-Reply-To: <20170210133439.qfiuggbuoi7hq6el@kozik-lap>
+        Fri, 10 Feb 2017 10:48:06 -0500
+Received: by mail-wm0-f66.google.com with SMTP id r18so7958748wmd.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2017 07:46:41 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20170207212830.23mzswabqplece2s@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Felipe Balbi <balbi@kernel.org>, Huang Rui <ray.huang@amd.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Willy WOLFF <willy.mh.wolff@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-2017-02-10 14:34 GMT+01:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Thu, Feb 09, 2017 at 11:26:48AM +0100, Richard Genoud wrote:
->> I did some tests with XU3 and XU4, playing with USB2 and USB3 quirks
->> (snps,dis_u{2,3}_susphy_quirk)
->>
->> kernel for the tests: next-20170206
->> DTBs: exynos5422-odroidxu3-lite.dtb exynos5422-odroidxu4.dtb
->>
->> USB devices used for the tests: kingston USB3 key, Akasa sata/USB3
->> +SSD standard USB2 key
->> once recognized, a dd if=/dev/sda bs=1M count=100 of=/dev/null is done.
->>
->>
->> The results are:
->> - On XU4:
->>   - adding snps,dis_u2_susphy_quirk doesn't change anything:
->>     inserting an USB2 or USB3 device gives the error message:
->>     xhci-hcd xhci-hcd.2.auto: Port resume took longer than 20000 msec,
->> port status = 0xc400fe3
->>   - with snps,dis_u3_susphy_quirk, USB2 and USB3 devices are recognized
->>
->> - On XU3:
->>   - Without changing XU3 dts, USB2 devices are recognized.
->>   - With or without the snps,dis_u3_susphy_quirk, USB3 devices are not
->> recognized/not working properly
->>   (never seen or disconnected, unable to enumerate, etc.)
->>   However, adding an external powered USB3 hub in between works. (with
->> or without the snps,dis_u3_susphy_quirk)
->>   Anyway, this problem doesn't seems to be related to the other since
->>   addind the quirks doesn't change anything.
->
-> From this description I am missing where are you inserting the USB
-> devices.
->
-> Both boards have totally different USB port configuration. On XU3 the
-> hub is on USB 2.0 port. On XU4 the opposite - the hub is on USB 3.0
-> port.
-Yes, sorry.
-All the tests I did were on USB3.0 ports.
-So, for the XU4, it was the double USB3.0 connector.
-For the XU3, it was the single USB3.0 host port.
+On Tue, Feb 07, 2017 at 11:28:30PM +0200, Krzysztof Kozlowski wrote:
 
-(and the XU3 USB3.0 device port for the test bellow)
+(...)
 
-I didn't do any test on the USB2 ports.
+> > +				/*
+> > +				 * When reaching cpu0_alert4, reduce CPU
+> > +				 * further, down to 600 MHz (12 steps for big,
+> > +				 * 7 steps for LITTLE).
+> > +				 */
+> > +				map5 {
+> > +					trip = <&cpu0_alert4>;
+> > +					cooling-device = <&cpu0 3 7>;
+> > +				};
+> > +				map6 {
+> > +					trip = <&cpu0_alert4>;
+> > +					cooling-device = <&cpu4 3 12>;
+> > +				};
+> 
+> That is a quite big code duplication with a lot of possible errors to do
+> (differs only by cpu number). We should do this in a smarter way.
+> 
+> How about extending the thermal driver for setting the trips also for
+> other thermal zones?
+> 
+> > +			};
+> > +		};
+> > +		cpu1_thermal: cpu1-thermal {
+> > +			thermal-sensors = <&tmu_cpu1 0>;
 
->
-> Best regards,
-> Krzysztof
->
->> - On XU3 USB3 device port (dr_mode = "peripheral"):
->>   - acting as an ethernet gadget only works with the snps,dis_u3_susphy_quirk.
->>     It works well as USB2 or USB3 (tested with ethernet gadget+iperf)
->>
->> So, at the end, it does seem usefull to add the
->> snps,dis_u3_susphy_quirk at the exynos5420.dtsi level.
->> Adding the snps,dis_u2_susphy_quirk doesn't seems to change anything
->> for XU3/XU4 board,
->> so I don't know if it is necessary or not.
+I confirmed your findings (taskset -c 5 dd if=/dev/zero of=/dev/null)
+however thermal zones indices do not match CPU.
+
+busy CPU              | the most rising temp | TMU zone for this diff
+=====================================================================
+CPU4 (first A15)      | 52                   | thermal_zone0
+CPU5                  | 70                   | thermal_zone3
+CPU6                  | 74                   | thermal_zone2
+CPU7                  | 66                   | thermal_zone1
+CPU5-CPU7             | 97                   | thermal_zone3 (but 2 similar)
+
+The sensors are not showing the same temperature - neither in idle nor
+in busy cycle. Maybe they are not properly calibrated or located in
+symmetric location?
+
+However the difference between idle and busy states is more or less
+similar between thermal zones - making one A15 busy heats:
+1. associated thermal zone by 21-26 degrees of C,
+2. other thermal zones by 13-18 degrees (zone 3 is weird here).
+
+Thermal zone 4 is probably GPU.
+
+Anyway the bindings for thermal zones are not nice in this case and they
+require huge duplication of data... Maybe this could be done smarter
+way...
+
+Full data:
+https://docs.google.com/spreadsheets/d/1XOpRCK0YjnxaZgjLcasRdKXaFFVh3EqyvrDi_YcmBGE/edit?usp=sharing
+
+
+Best regards,
+Krzysztof
