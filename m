@@ -1,114 +1,54 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v3 1/4] [media] exynos-gsc: Use 576p instead 720p as a
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH v2 1/4] [media] exynos-gsc: Use 576p instead 720p as a
  threshold for colorspaces
-Date: Fri, 10 Feb 2017 18:14:34 +0100
-Message-ID: <a83175f9-80f9-0bc8-5447-53f1fa6a4caa@xs4all.nl>
-References: <20170210141022.25412-1-thibault.saunier@osg.samsung.com>
- <20170210141022.25412-2-thibault.saunier@osg.samsung.com>
- <4270fc60-579b-64d0-4256-403e4e5bf371@xs4all.nl>
- <37b11e67-7ed7-244d-b27e-ec3bb7732b0e@osg.samsung.com>
+Date: Fri, 10 Feb 2017 19:38:50 +0000
+Message-ID: <20170210193850.GN27312@n2100.armlinux.org.uk>
+References: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
+ <20170209200420.3046-2-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud6.xs4all.net ([194.109.24.28]:47037 "EHLO
-        lb2-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751141AbdBJROn (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 12:14:43 -0500
-In-Reply-To: <37b11e67-7ed7-244d-b27e-ec3bb7732b0e@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170209200420.3046-2-thibault.saunier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 02/10/2017 05:37 PM, Thibault Saunier wrote:
-> On 02/10/2017 12:07 PM, Hans Verkuil wrote:
->> On 02/10/2017 03:10 PM, Thibault Saunier wrote:
->>> From: Javier Martinez Canillas <javier@osg.samsung.com>
->>>
->>> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
->>> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
->>> don't agree on the display resolution that should be used as a threshold.
->>>
->>> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
->>> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
->>> use the latter and that also matches what user-space multimedia programs
->>> do (i.e: GStreamer), so change the driver logic to be aligned with this.
->>>
->>> Also, check for the resolution in G_FMT instead unconditionally setting
->>> the V4L2_COLORSPACE_REC709 colorspace.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>>
->>> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
->>> ---
->>>
->>> Changes in v3:
->>> - Do not check values in the g_fmt functions as Andrzej explained in previous review
->>> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
->>>
->>> Changes in v2: None
->>>
->>>   drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
->>>   1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
->>> index 59a634201830..db7d9883861b 100644
->>> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
->>> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
->>> @@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->>>   
->>>   	pix_mp->num_planes = fmt->num_planes;
->>>   
->>> -	if (pix_mp->width >= 1280) /* HD */
->>> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
->>>   		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->>>   	else /* SD */
->>>   		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
->>> @@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->>>   	pix_mp->height		= frame->f_height;
->>>   	pix_mp->field		= V4L2_FIELD_NONE;
->>>   	pix_mp->pixelformat	= frame->fmt->pixelformat;
->>> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
->>>   	pix_mp->num_planes	= frame->fmt->num_planes;
->>>   
->>> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
->>> +		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->>> +	else /* SD */
->>> +		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
->>> +
->>>   	for (i = 0; i < pix_mp->num_planes; ++i) {
->>>   		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
->>>   			frame->fmt->depth[i]) / 8;
->>>
->> This is a mem2mem device, right? In the case of mem2mem devices the driver should never
->> set the colorspace, instead it just copies it from what the application provides (the
->> video output side) to the capture side.
->>
->> After all, you are just scaling here so the input and output colorspaces are
->> exactly the same, and the scaler doesn't care what the colorspace is.
+On Thu, Feb 09, 2017 at 05:04:17PM -0300, Thibault Saunier wrote:
+> From: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
-> This device also does color conversion so I think it matters here, am I 
-> misunderstanding something?
+> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
+> don't agree on the display resolution that should be used as a threshold.
+> 
+> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
+> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
+> use the latter and that also matches what user-space multimedia programs
+> do (i.e: GStreamer), so change the driver logic to be aligned with this.
+> 
+> Also, check for the resolution in G_FMT instead unconditionally setting
+> the V4L2_COLORSPACE_REC709 colorspace.
 
-It almost certainly only does color encoding conversion (e.g. from RGB to YCbCr or
-vice versa, and from limited to full range or vice versa).
+It would be nice to refer to some specification to justify the change,
+rather than "let's follow what <random-piece-of-software> does".
 
-That only affects the ycbcr_enc and quantization fields (although these probably
-will just remain 0). The colorspace and xfer_func values remain constant since
-the HW is unlikely to support full colorspace conversions.
+EIA CEA 861B talks about colorimetry for various resolutions:
 
-See https://hverkuil.home.xs4all.nl/spec/uapi/v4l/colorspaces.html for more
-information on what colorspaces really are.
+5.1 480p, 480i, 576p, 576i, 240p, and 288p
+The color space used by the 480-line, 576-line, 240-line, and 288-line
+formats will likely be based on SMPTE 170M [1].
 
-> Also, is that comment only for the try_fmt part as it looks like in 
-> g_fmt the driver should fill up the structure
-> with its values?
+5.2 1080i, 1080p, and 720p
+The color space used by the high definition formats will likely be based
+on ITU-R BT.709-4 [6].
 
-Yes, same for try_fmt.
+Notice, however, that it says "will likely be" - it's not a requirement,
+as it's expected that the colorspace will be part of the media metadata
+(eg, contained in the transport stream.)  In other words, it should be
+configurable or ultimately provided by the ultimate source of the image.
 
-Regards,
-
-	Hans
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
