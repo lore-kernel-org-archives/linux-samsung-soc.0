@@ -1,86 +1,94 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v3 1/4] [media] exynos-gsc: Use 576p instead 720p as a
- threshold for colorspaces
-Date: Fri, 10 Feb 2017 16:07:54 +0100
-Message-ID: <4270fc60-579b-64d0-4256-403e4e5bf371@xs4all.nl>
+Subject: Re: [PATCH v3 3/4] [media] s5p-mfc: Set colorspace in
+ VIDIO_{G,TRY}_FMT
+Date: Fri, 10 Feb 2017 16:10:11 +0100
+Message-ID: <4b0714cf-d875-022c-eb73-1556568c0a51@xs4all.nl>
 References: <20170210141022.25412-1-thibault.saunier@osg.samsung.com>
- <20170210141022.25412-2-thibault.saunier@osg.samsung.com>
+ <20170210141022.25412-4-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170210141022.25412-2-thibault.saunier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170210141022.25412-4-thibault.saunier@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Jeongtae Park <jtp.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 02/10/2017 03:10 PM, Thibault Saunier wrote:
-> From: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
 > The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
-> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
-> don't agree on the display resolution that should be used as a threshold.
+> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV but the driver
+> didn't set the colorimetry, also respect usespace setting.
 > 
-> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
-> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
-> use the latter and that also matches what user-space multimedia programs
-> do (i.e: GStreamer), so change the driver logic to be aligned with this.
-> 
-> Also, check for the resolution in G_FMT instead unconditionally setting
-> the V4L2_COLORSPACE_REC709 colorspace.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Use 576p display resolution as a threshold to set this.
 > 
 > Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+> 
 > ---
 > 
 > Changes in v3:
 > - Do not check values in the g_fmt functions as Andrzej explained in previous review
-> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
+> - Set colorspace if user passed V4L2_COLORSPACE_DEFAULT in
 > 
 > Changes in v2: None
 > 
->  drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-> index 59a634201830..db7d9883861b 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-> @@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->  
->  	pix_mp->num_planes = fmt->num_planes;
->  
-> -	if (pix_mp->width >= 1280) /* HD */
-> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
->  		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->  	else /* SD */
->  		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
-> @@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->  	pix_mp->height		= frame->f_height;
->  	pix_mp->field		= V4L2_FIELD_NONE;
->  	pix_mp->pixelformat	= frame->fmt->pixelformat;
-> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
->  	pix_mp->num_planes	= frame->fmt->num_planes;
->  
-> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
-> +		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-> +	else /* SD */
-> +		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> index 367ef8e8dbf0..16bc3eaad0ff 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> @@ -354,6 +354,11 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  		pix_mp->plane_fmt[0].sizeimage = ctx->luma_size;
+>  		pix_mp->plane_fmt[1].bytesperline = ctx->buf_width;
+>  		pix_mp->plane_fmt[1].sizeimage = ctx->chroma_size;
 > +
->  	for (i = 0; i < pix_mp->num_planes; ++i) {
->  		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
->  			frame->fmt->depth[i]) / 8;
+> +		if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+> +			pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> +		else /* SD */
+> +			pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+>  	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+>  		/* This is run on OUTPUT
+>  		   The buffer contains compressed image
+> @@ -378,6 +383,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  {
+>  	struct s5p_mfc_dev *dev = video_drvdata(file);
+> +	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
+>  	struct s5p_mfc_fmt *fmt;
+>  
+>  	mfc_debug(2, "Type is %d\n", f->type);
+> @@ -405,6 +411,15 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  			mfc_err("Unsupported format by this MFC version.\n");
+>  			return -EINVAL;
+>  		}
+> +
+> +		if (pix_mp->colorspace != V4L2_COLORSPACE_REC709 &&
+> +			pix_mp->colorspace != V4L2_COLORSPACE_SMPTE170M) {
+> +			if (pix_mp->width > 720 &&
+> +					pix_mp->height > 576) /* HD */
+> +				pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> +			else /* SD */
+> +				pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> +		}
+>  	}
+>  
+>  	return 0;
 > 
 
-This is a mem2mem device, right? In the case of mem2mem devices the driver should never
-set the colorspace, instead it just copies it from what the application provides (the
-video output side) to the capture side.
+Same here: it is an mem2mem device, so it just preserves whatever colorspace the
+application passes in.
 
-After all, you are just scaling here so the input and output colorspaces are
-exactly the same, and the scaler doesn't care what the colorspace is.
+Just look at what several other mem2mem device drivers do.
 
 Regards,
 
