@@ -1,71 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Odroid XU4: fix USB3.0 ports
-Date: Fri, 10 Feb 2017 15:34:39 +0200
-Message-ID: <20170210133439.qfiuggbuoi7hq6el@kozik-lap>
-References: <20170124134809.23315-1-richard.genoud@gmail.com>
- <CANAwSgRAT0-XETx=yVRgM4GfukFLLEw-hqHjYGEWs0tqAx8g2g@mail.gmail.com>
- <CGME20170125075556epcas1p4b916a6d6acda28f8fc1959a1227520fa@epcas1p4.samsung.com>
- <CAJKOXPesCuYsK23466=6W9PPX7DtztdymZLBfNz0Dmjzwp4qBA@mail.gmail.com>
- <ef6c0d33-73d6-805e-aeab-86190e8b0aa0@samsung.com>
- <CAJKOXPd+CnmVG282NEVCFqS_3YEURCWx41udyQKpL21keGJOWg@mail.gmail.com>
- <4dca1d8e-f955-7791-90c0-4e73a273fe62@gmail.com>
- <CACQ1gAj5ebug28CJ2xiYWKohMhNbGr=tmy6mS-57CFq=K-bqyQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add stmfts touchscreen node
+ for TM2 and TM2E
+Date: Fri, 10 Feb 2017 15:39:53 +0200
+Message-ID: <20170210133953.ejktq2vddb7imsrc@kozik-lap>
+References: <20170210021721.12218-1-andi.shyti@samsung.com>
+ <CGME20170210021729epcas5p4101902873e65e0a8faeb2f9cbea5843c@epcas5p4.samsung.com>
+ <20170210021721.12218-4-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CACQ1gAj5ebug28CJ2xiYWKohMhNbGr=tmy6mS-57CFq=K-bqyQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Felipe Balbi <balbi@kernel.org>, Huang Rui <ray.huang@amd.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20170210021721.12218-4-andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi-ahk0KpmfxKRAfugRpC6u6w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 09, 2017 at 11:26:48AM +0100, Richard Genoud wrote:
-> I did some tests with XU3 and XU4, playing with USB2 and USB3 quirks
-> (snps,dis_u{2,3}_susphy_quirk)
+On Fri, Feb 10, 2017 at 11:17:21AM +0900, Andi Shyti wrote:
+> TM2 and TM2E devices are provided with a ST-Microelectronics
+> Finger Tip S device with small differences:
 > 
-> kernel for the tests: next-20170206
-> DTBs: exynos5422-odroidxu3-lite.dtb exynos5422-odroidxu4.dtb
+>  - screen size
+>  - TM2E uses the stmfts also as a touchkey for "back" and "menu"
 > 
-> USB devices used for the tests: kingston USB3 key, Akasa sata/USB3
-> +SSD standard USB2 key
-> once recognized, a dd if=/dev/sda bs=1M count=100 of=/dev/null is done.
+> In this commit the initial value of the interrupt line is set to
+> EXYNOS_PIN_PULL_UP as the interrupt is triggered when the line
+> goes down.
 > 
-> 
-> The results are:
-> - On XU4:
->   - adding snps,dis_u2_susphy_quirk doesn't change anything:
->     inserting an USB2 or USB3 device gives the error message:
->     xhci-hcd xhci-hcd.2.auto: Port resume took longer than 20000 msec,
-> port status = 0xc400fe3
->   - with snps,dis_u3_susphy_quirk, USB2 and USB3 devices are recognized
-> 
-> - On XU3:
->   - Without changing XU3 dts, USB2 devices are recognized.
->   - With or without the snps,dis_u3_susphy_quirk, USB3 devices are not
-> recognized/not working properly
->   (never seen or disconnected, unable to enumerate, etc.)
->   However, adding an external powered USB3 hub in between works. (with
-> or without the snps,dis_u3_susphy_quirk)
->   Anyway, this problem doesn't seems to be related to the other since
->   addind the quirks doesn't change anything.
+> Signed-off-by: Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 15 ++++++++++++++-
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts         |  5 +++++
+>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts        |  7 +++++++
+>  3 files changed, 26 insertions(+), 1 deletion(-)
+>
 
->From this description I am missing where are you inserting the USB
-devices.
-
-Both boards have totally different USB port configuration. On XU3 the
-hub is on USB 2.0 port. On XU4 the opposite - the hub is on USB 3.0
-port.
+Looks fine. I'll apply after v4.11-rc1 merge window.
 
 Best regards,
 Krzysztof
 
-> - On XU3 USB3 device port (dr_mode = "peripheral"):
->   - acting as an ethernet gadget only works with the snps,dis_u3_susphy_quirk.
->     It works well as USB2 or USB3 (tested with ethernet gadget+iperf)
-> 
-> So, at the end, it does seem usefull to add the
-> snps,dis_u3_susphy_quirk at the exynos5420.dtsi level.
-> Adding the snps,dis_u2_susphy_quirk doesn't seems to change anything
-> for XU3/XU4 board,
-> so I don't know if it is necessary or not.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
