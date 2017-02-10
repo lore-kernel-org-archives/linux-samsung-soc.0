@@ -1,96 +1,61 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] i2c: exynos5: fix arbitration lost handling
-Date: Fri, 10 Feb 2017 12:01:22 +0100
-Message-ID: <ed0b9f20-98e2-69bc-3491-ce5534532fe4@samsung.com>
-References: <CGME20170105120727eucas1p2b9452792b7d13d551974305b478a26e2@eucas1p2.samsung.com>
- <1483618013-10721-1-git-send-email-a.hajda@samsung.com>
- <20170209162736.nfyfd5dpjkjq65w7@ninjato>
- <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
+Date: Fri, 10 Feb 2017 12:30:48 +0100
+Message-ID: <8a236294-a561-a857-403e-3a3a794b31f3@samsung.com>
+References: <20170202183008.23500-1-krzk@kernel.org>
+ <20170202183008.23500-5-krzk@kernel.org> <2382634.UqDUkYPZrI@wuerfel>
+ <CGME20170209185703epcas3p181b744c7022b24d383bdce8409ece2ec@epcas3p1.samsung.com>
+ <20170209185654.yxmubj3r4gjxcfm6@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11216 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753011AbdBJLB3 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 06:01:29 -0500
-In-reply-to: <1b67bbf6-dd31-c473-8284-dba9a0ffe440@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170209185654.yxmubj3r4gjxcfm6@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 10.02.2017 08:39, Andrzej Hajda wrote:
-> On 09.02.2017 17:27, Wolfram Sang wrote:
->> On Thu, Jan 05, 2017 at 01:06:53PM +0100, Andrzej Hajda wrote:
->>> In case of arbitration lost adequate interrupt sometimes is not signaled. As
->>> a result transfer timeouts and is not retried, as it should. To avoid such
->>> cases code is added to check transaction status in case of every interrupt.
+On 02/09/2017 07:56 PM, Krzysztof Kozlowski wrote:
+> On Thu, Feb 09, 2017 at 04:19:57PM +0100, Arnd Bergmann wrote:
+>> On Thursday, February 2, 2017 8:30:08 PM CET Krzysztof Kozlowski wrote:
+>>>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
+>>>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
+>>>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
+>>>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
+>>>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
+>>>  drivers/clk/samsung/clk-exynos5433.c               |   8 +-
+>>>  include/dt-bindings/clock/exynos5433.h             |   5 +-
+>>>  include/dt-bindings/pinctrl/samsung.h              |   8 +
 >>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>> +
->>> +		switch (trans_status & HSI2C_MASTER_ST_MASK) {
->>> +		case HSI2C_MASTER_ST_LOSE:
->>> +			i2c->state = -EAGAIN;
->>> +			goto stop;
->>> +		}
->> Why not using if() instead of switch() as in the rest of the driver?
-> Following reasons (not serious ones):
-> 1. With if() the line should be split anyway to keep 80 chars per line
-> limit, and the result looks less readable, so no gain:
->         if ((trans_status & HSI2C_MASTER_ST_MASK) ==
->              HSI2C_MASTER_ST_LOSE) {
->             i2c->state = -EAGAIN;
->             goto stop;
->         }
-> 2. It is ready to handle other status values as well, without repeating
-> long if() clause, in fact during tests I have added more values, but
-> finally they went out.
-> 3. In the rest of the functions if() is used because code tests if some
-> bits are set, here we test if some bit field have specific value,
-> slightly different thing.
+>> It seems a drivers/clk change slipped in there in addition to the header changes.
+>> We are trying to keep the next/dt branches free of driver changes, are you
+>> able to rework the branch without this?
 >
-> Of course I can change to if() if you prefer it.
->
->> And there is arbitration lost checking already with int_status &
->> HSI2C_INT_TRANS_ABORT. Any guess why it doesn't trigger?
->>
-> Nope. This patch is just a result of comparing register values during
-> good and bad transfer.
-> I have looked for similar issues over the net, but without ultimate
-> answer, some hints are that master can check status of SDA line too early.
-> Anyway it works correctly with gpio bit-banging driver, it suggests
-> there could be something wrong in hsi2c logic.
+> +Cc Sylwester,
+> 
+> This came from clk tree from Sylwester. It contains two changes in
+> clocks:
+> 1. Mew clock ID - we need only the header but Sylwester provided also
+>    the source file change,
 
-I have just found in spec of newer version of the chip configuration bit
-NO_ARB_FASTSDA. Citation:
-> This bit deactivates the modified logic of the
-> abnormal operation when the SCL is falling. Then,
-> other I2C device quickly lowers the SDA line, and
-> SDA has fallen before the first PCLK period
-> elapses.
-> 0 = Skip the master arbitration checking during the
-> first PCLK period after SCL falls
-> 1 = Restore original logic
+That's a one patch made so there is no runtime regression.  If we stick
+to the next/dt branches being clean of driver changes I'm afraid we need
+to be prepared for the bisection breaks.
 
-I have no hardware with newer chip to really test if this solves the
-issue, but I suppose it could, the only problem is that this bit is not
-present in current chip version, Exynos5433.
+> 2. Update of frequency (used in DTS as assigned clock rate) - this
+>    is strictly source file change and we need it.
+> 
+> Overall, rework would not be trivial and it would involve Sylwester.
+> I think it is better to stay with this as is. I will remember the policy
+> for future dependencies.
 
-Regards
-Andrzej
+The clk changes are already pulled into clk tree, we would get conflicts
+with commits that are already in the clock tree if the branch is reworked
+now.  This might not be a big issue but bisection would be broken for sure.
 
+I'll also try to keep in future include/dt-bindings changes separate.
 
->
-> Regards
-> Andrzej
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+-- 
+Regards,
+Sylwester
