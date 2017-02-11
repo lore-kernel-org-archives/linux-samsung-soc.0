@@ -1,57 +1,144 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v2] arm64: dts: Enable ir-spi in the tm2 and tm2e boards
-Date: Sat, 11 Feb 2017 13:44:34 +0900
-Message-ID: <20170211044434.ujkayqmfg52rvw32@gangnam.samsung>
-References: <CGME20170210022252epcas1p2cad2a32fb74a5ecc17ed73387579c6ab@epcas1p2.samsung.com>
- <20170210022238.12401-1-andi.shyti@samsung.com>
- <287b5f0b-26b2-7811-9305-5194ebf0138a@osg.samsung.com>
+From: Willy WOLFF <willy.mh.wolff@gmail.com>
+Subject: Re: [PATCH] Exynos5422-odroidxu3: Incomplete thermal-zones definition
+Date: Sat, 11 Feb 2017 18:29:55 +0000
+Message-ID: <e64b5db4-fd77-afdf-f6a5-ae398570e5e6@gmail.com>
+References: <9e32c530-0d15-223f-c280-617f8ae2540d@gmail.com>
+ <20170207212830.23mzswabqplece2s@kozik-lap>
+ <20170210154634.57z4kvmo7giz4zej@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34192 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751149AbdBKEoj (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36406 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbdBKSaA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Feb 2017 23:44:39 -0500
-Content-disposition: inline
-In-reply-to: <287b5f0b-26b2-7811-9305-5194ebf0138a@osg.samsung.com>
+        Sat, 11 Feb 2017 13:30:00 -0500
+Received: by mail-wm0-f67.google.com with SMTP id r18so11738686wmd.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Feb 2017 10:29:59 -0800 (PST)
+In-Reply-To: <20170210154634.57z4kvmo7giz4zej@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>, Andi Shyti <andi.shyti@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Javier,
+Hi Krzysztof,
 
-On Fri, Feb 10, 2017 at 11:04:50AM -0300, Javier Martinez Canillas wrote:
-> On 02/09/2017 11:22 PM, Andi Shyti wrote:
-...
-> > +	irda_regulator: irda-regulator {
-> > +		compatible = "regulator-fixed";
-> > +		enable-active-high;
-> > +		gpio = <&gpr3 3 GPIO_ACTIVE_HIGH>;
-> > +		regulator-name = "irda_regulator";
+Thanks for your interest.
+
+On 10/02/2017 15:46, Krzysztof Kozlowski wrote:
+> On Tue, Feb 07, 2017 at 11:28:30PM +0200, Krzysztof Kozlowski wrote:
 > 
-> How is this regulator named in the board schematics? My
-> understanding is that regulator-name should match this.
+> (...)
 > 
-> I don't have access to this so it may be "irda_regulator"
-> although I was expecting something more like "VDD_IRDA".
-
-This is not a real regulator.
-
-This is an external regulator which is enabled with a gpio
-(GPR3[3]). The regulator-fixed allows me to use the regulator API
-even though I would only need to control a gpio (with the gpio
-API). I prefer using regulator to keep the same interface no
-matter how the irda is connected.
-
-About the name, I have full freedom to chose as of course it's
-not documented in the exynos5433 datasheet. Perhaps I could call
-it irda-gpio-regulator to make it more clear?
-
-> Patch looks good to me though:
+>>> +				/*
+>>> +				 * When reaching cpu0_alert4, reduce CPU
+>>> +				 * further, down to 600 MHz (12 steps for big,
+>>> +				 * 7 steps for LITTLE).
+>>> +				 */
+>>> +				map5 {
+>>> +					trip = <&cpu0_alert4>;
+>>> +					cooling-device = <&cpu0 3 7>;
+>>> +				};
+>>> +				map6 {
+>>> +					trip = <&cpu0_alert4>;
+>>> +					cooling-device = <&cpu4 3 12>;
+>>> +				};
+>>
+>> That is a quite big code duplication with a lot of possible errors to do
+>> (differs only by cpu number). We should do this in a smarter way.
+>>
+>> How about extending the thermal driver for setting the trips also for
+>> other thermal zones?
+>>
+>>> +			};
+>>> +		};
+>>> +		cpu1_thermal: cpu1-thermal {
+>>> +			thermal-sensors = <&tmu_cpu1 0>;
 > 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> I confirmed your findings (taskset -c 5 dd if=/dev/zero of=/dev/null)
+> however thermal zones indices do not match CPU.
+> 
+> busy CPU              | the most rising temp | TMU zone for this diff
+> =====================================================================
+> CPU4 (first A15)      | 52                   | thermal_zone0
+> CPU5                  | 70                   | thermal_zone3
+> CPU6                  | 74                   | thermal_zone2
+> CPU7                  | 66                   | thermal_zone1
+> CPU5-CPU7             | 97                   | thermal_zone3 (but 2 similar)
+> 
+> The sensors are not showing the same temperature - neither in idle nor
+> in busy cycle. Maybe they are not properly calibrated or located in
+> symmetric location?
+I think it's both. I have four xu3, two of them give wrong values,
+like around 20degC when busy, where the idle cores are around 55decC.
+But my two other boards give sound values. So, maybe the industrial
+process behind it's not the best, or something wrong happen on the initialisation ...
 
-Thanks,
-Andi
+Also, even if all cores are idling, it's not surprising that they don't
+have same thermal values. Depending on the floorplan, you will never have
+exact same homogeneous behaviour.
+
+
+> 
+> However the difference between idle and busy states is more or less
+> similar between thermal zones - making one A15 busy heats:
+> 1. associated thermal zone by 21-26 degrees of C,
+> 2. other thermal zones by 13-18 degrees (zone 3 is weird here).
+> 
+> Thermal zone 4 is probably GPU.
+Yes it is, the actual definition for the gpu is made by 
+includes chain exynos5800.dtsi -> exynos5420.dtsi
+And no cooling maps action are defined. I don't use the gpu at all for now, 
+so I don't check its thermal behaviour.
+
+> Anyway the bindings for thermal zones are not nice in this case and they
+> require huge duplication of data... Maybe this could be done smarter
+> way...
+Indeed! I check the thermal framework source code, and it's a known problem:
+https://git.kernel.org/cgit/linux/kernel/git/arm/arm-soc.git/tree/drivers/thermal/of-thermal.c?h=for-next#n461
+So, if we modify the thermal framework for handling multiple sensors by one
+thermal zone, what we can actually do in the dts is something like:
+[...]
+cpu_thermal: cpu-thermal {
+			thermal-sensors = <&tmu_cpu0 0 &tmu_cpu1 0 &tmu_cpu2 0 &tmu_cpu3 0>;
+			polling-delay-passive = <250>;
+			polling-delay = <0>;
+[...]
+gpu_thermal: ...
+[...]
+
+I plan to change that, but I will need some advice.
+I will start working on it next month. But feel free to do it correctly,
+I'm still young on kernel hacking.
+
+
+By the way, what is the purpose of the parameter
+ thermal-sensors = <&tmu_cpu0 0>; in it's current definition?
+I try to understand, but found no clue. 
+By https://git.kernel.org/cgit/linux/kernel/git/arm/arm-soc.git/tree/Documentation/devicetree/bindings/thermal/thermal.txt?h=for-next#n318
+the parameters are used to identify the accounting sensor from the sensors rail definition.
+But in the current definition, #thermal-sensor-cells is set to 0,
+by includes chain: exynos5800.dtsi -> exynos5420.dtsi -> exynos4412-tmu-sensor-conf.dtsi
+
+So something is wrong here, or I don't understand exactly.
+I see no difference by removing this paramter.
+
+
+I have only a xu3 board. I don't have any other derivate machine with exynos chip.
+Does all exynos big.LITTLE based has a thermal sensor per big core?
+
+> 
+> Full data:
+> https://docs.google.com/spreadsheets/d/1XOpRCK0YjnxaZgjLcasRdKXaFFVh3EqyvrDi_YcmBGE/edit?usp=sharing
+On your test, it's two different kernel, but executed on the same board?
+Stupid question but want to be sure.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Best Regards,
+Willy
