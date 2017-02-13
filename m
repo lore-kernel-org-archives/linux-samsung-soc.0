@@ -1,148 +1,61 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 4/4] PCI: exynos: support the using PHY generic framework
-Date: Mon, 13 Feb 2017 17:26:13 +0900
-Message-ID: <20170213082613.19628-5-jh80.chung@samsung.com>
-References: <20170213082613.19628-1-jh80.chung@samsung.com>
- <CGME20170213082616epcas5p2a20cca498e9ddde7c5d3f7664fb8606e@epcas5p2.samsung.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20170213082613.19628-1-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
+Subject: [PATCH V3 0/4] PCI: exynos: use the PHY generic framework
+Date: Mon, 13 Feb 2017 17:26:09 +0900
+Message-ID: <20170213082613.19628-1-jh80.chung@samsung.com>
+References: <CGME20170213082615epcas5p2f5ecabbd5853a8e27da5f88fcae85158@epcas5p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:38143 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbdBMI0V (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 13 Feb 2017 03:26:21 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-pci@vger.kernel.org
 Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Switch the pci-exynos driver to generic PHY framework. At the same time
-backward compatibility is preserved: Warning will be printed for old
-DTB.
+This patcheset is for using PHY generic framework.
+Current pci-exyns doesn't use the phy framework since there haven't been on
+PHY subsystem when Exynos5440 had bean upstreamed.
+It's making a difficult to upstream the other Exynos variants because of different
+PHY registers.
 
-Refer to the binding file:
-- Documentation/devictree/bindings/pci/samsung,exynos5440-pcie.txt
+This patcheset has the below modifications:
+1) Introduces the phy-exynos-pcie
+2) Handles PHY register from PHY framework for pci-exynos
+3) Modifies the dt-binding of pci-exynos
+4) Maintains the backward compatibility
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
----
 Changelog on V3:
-- Changes the commit-message
-- Fixes the merge conflict
+- Drops "ARM: dts: exynos5440: support the phy-pcie node of pcie"
+  : Will send this patch after applying this patchset.
+- Fixes typo
+- Based on latest PCI git repository (host-exynos branch)
+- Changes commit message
+- Removes the dependency
 
 Changelog on V2:
-- This patch is split from previous PATCH[1/4]
-- Maintain the backward compatibility
-- Adds 'using_phy' for cheching whether phy framework is used or not
-- Adds 'DEPRECATED' message for old dt-binding way
+- Keep current codes for backward compatibility
+- Fixes some typos
+- Split the patches for removing the dependency
+- Removes the unnecessary codes
+- Change the patch's sequence
+- Based on latest PCI git repository.(next branch)
 
- drivers/pci/host/pci-exynos.c | 54 +++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 50 insertions(+), 4 deletions(-)
+Jaehoon Chung (4):
+  Documetation: samsung-phy: add the exynos-pcie-phy binding
+  phy: phy-exynos-pcie: Add support for Exynos PCIe phy
+  Documetation: binding: modify the exynos5440 pcie binding
+  PCI: exynos: support the using PHY generic framework
 
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 758906b..f6a8b6e 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -21,6 +21,7 @@
- #include <linux/of_gpio.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
- #include <linux/types.h>
-@@ -110,6 +111,10 @@ struct exynos_pcie {
- 	struct exynos_pcie_clk_res	*clk_res;
- 	const struct exynos_pcie_ops	*ops;
- 	int				reset_gpio;
-+
-+	/* For Generic PHY Framework */
-+	bool				using_phy;
-+	struct phy			*phy;
- };
- 
- struct exynos_pcie_ops {
-@@ -126,6 +131,10 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
- 	struct resource *res;
- 	struct device *dev = ep->pp.dev;
- 
-+	/* If using the PHY framework, doesn't need to get other resource */
-+	if (ep->using_phy)
-+		return 0;
-+
- 	ep->mem_res = devm_kzalloc(dev, sizeof(*ep->mem_res), GFP_KERNEL);
- 	if (!ep->mem_res)
- 		return -ENOMEM;
-@@ -396,10 +405,28 @@ static int exynos_pcie_establish_link(struct exynos_pcie *ep)
- 	}
- 
- 	exynos_pcie_assert_core_reset(ep);
--	exynos_pcie_assert_phy_reset(ep);
--	exynos_pcie_deassert_phy_reset(ep);
--	exynos_pcie_power_on_phy(ep);
--	exynos_pcie_init_phy(ep);
-+
-+	if (ep->using_phy) {
-+		phy_reset(ep->phy);
-+
-+		exynos_pcie_writel(ep->mem_res->elbi_base, 1,
-+				PCIE_PWR_RESET);
-+
-+		phy_power_on(ep->phy);
-+		phy_init(ep->phy);
-+	} else {
-+		exynos_pcie_assert_phy_reset(ep);
-+		exynos_pcie_deassert_phy_reset(ep);
-+		exynos_pcie_power_on_phy(ep);
-+		exynos_pcie_init_phy(ep);
-+
-+		/* pulse for common reset */
-+		exynos_pcie_writel(ep->mem_res->block_base, 1,
-+					PCIE_PHY_COMMON_RESET);
-+		udelay(500);
-+		exynos_pcie_writel(ep->mem_res->block_base, 0,
-+					PCIE_PHY_COMMON_RESET);
-+	}
- 
- 	/* pulse for common reset */
- 	exynos_pcie_writel(ep->mem_res->block_base, 1, PCIE_PHY_COMMON_RESET);
-@@ -418,6 +445,11 @@ static int exynos_pcie_establish_link(struct exynos_pcie *ep)
- 	if (!dw_pcie_wait_for_link(pp))
- 		return 0;
- 
-+	if (ep->using_phy) {
-+		phy_power_off(ep->phy);
-+		return -ETIMEDOUT;
-+	}
-+
- 	while (exynos_pcie_readl(ep->mem_res->phy_base,
- 				PCIE_PHY_PLL_LOCKED) == 0) {
- 		val = exynos_pcie_readl(ep->mem_res->block_base,
-@@ -624,6 +656,17 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
- 
- 	ep->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
- 
-+	/* Assume that controller doesn't use the PHY framework */
-+	ep->using_phy = false;
-+
-+	ep->phy = devm_of_phy_get(dev, np, NULL);
-+	if (IS_ERR(ep->phy)) {
-+		if (PTR_ERR(ep->phy) == -EPROBE_DEFER)
-+			return PTR_ERR(ep->phy);
-+		dev_warn(dev, "Use the 'phy' property. Current DT of pci-exynos was deprecated!!\n");
-+	} else
-+		ep->using_phy = true;
-+
- 	if (ep->ops && ep->ops->get_mem_resources) {
- 		ret = ep->ops->get_mem_resources(pdev, ep);
- 		if (ret)
-@@ -647,6 +690,9 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
- 	return 0;
- 
- fail_probe:
-+	if (ep->using_phy)
-+		phy_exit(ep->phy);
-+
- 	if (ep->ops && ep->ops->deinit_clk_resources)
- 		ep->ops->deinit_clk_resources(ep);
- 	return ret;
+ .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 +++
+ .../devicetree/bindings/phy/samsung-phy.txt        |  17 ++
+ drivers/pci/host/pci-exynos.c                      |  54 +++-
+ drivers/phy/Kconfig                                |   8 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-exynos-pcie.c                      | 285 +++++++++++++++++++++
+ 6 files changed, 390 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/phy/phy-exynos-pcie.c
+
 -- 
 2.10.2
