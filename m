@@ -1,150 +1,83 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Use thermal fuse value for thermal zone
- 0 on Exynos5420
-Date: Mon, 13 Feb 2017 17:22:48 +0100
-Message-ID: <8266689.kdSZWCWITZ@amdc3058>
-References: <CGME20170211201512epcas2p2a49d26ddfbe2eaa6195927cbf01d48bb@epcas2p2.samsung.com>
- <20170211201456.27974-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: s3c64xx: fix inconsistency between binding and driver" to the spi tree
+Date: Mon, 13 Feb 2017 18:54:19 +0000
+Message-ID: <E1cdLlT-0001JZ-6b@debutante>
+References: <20170207080748.9524-1-andi.shyti@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57069 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbdBMQWy (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46440 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752661AbdBMSya (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 11:22:54 -0500
-In-reply-to: <20170211201456.27974-1-krzk@kernel.org>
+        Mon, 13 Feb 2017 13:54:30 -0500
+In-Reply-To: <20170207080748.9524-1-andi.shyti@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Willy WOLFF <willy.mh.wolff@gmail.com>, Anand Moon <linux.amoon@gmail.com>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>Mark Brown <broonie@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>linux-spi@vger.kernel.org
 
-On Saturday, February 11, 2017 10:14:56 PM Krzysztof Kozlowski wrote:
-> In Odroid XU3 Lite board, the temperature levels reported for thermal
-> zone 0 were weird. In warm room:
-> 	/sys/class/thermal/thermal_zone0/temp:32000
-> 	/sys/class/thermal/thermal_zone1/temp:51000
-> 	/sys/class/thermal/thermal_zone2/temp:55000
-> 	/sys/class/thermal/thermal_zone3/temp:54000
-> 	/sys/class/thermal/thermal_zone4/temp:51000
-> 
-> Sometimes after booting the value was even equal to ambient temperature
-> which is highly unlikely to be a real temperature of sensor in SoC.
-> 
-> The thermal sensor's calibration (trimming) is based on fused values.
-> In case of the board above, the fused values are: 35, 52, 43, 58 and 43
-> (corresponding to each TMU device).  However driver defined a minimum value
-> for fused data as 40 and for smaller values it was using a hard-coded 55
-> instead.  This lead to mapping data from sensor to wrong temperatures
-> for thermal zone 0.
-> 
-> Various vendor 3.10 trees (Hardkernel's based on Samsung LSI, Artik 10)
-> do not impose any limits on fused values.  Since we do not have any
-> knowledge about these limits, use 0 as a minimum accepted fused value.
-> This should essentially allow accepting any reasonable fused value thus
-> behaving like vendor driver.
-> 
-> The exynos5420-tmu-sensor-conf.dtsi is copied directly from existing
-> exynso4412 with one change - the samsung,tmu_min_efuse_value.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The patch
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+   spi: s3c64xx: fix inconsistency between binding and driver
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+has been applied to the spi tree at
 
-> ---
-> 
-> Testing on other Exynos542x boards is much appreciated. Especially I
-> wonder what efuse values are there.
-> ---
->  arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 25 +++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5420.dtsi                 | 10 ++++-----
->  2 files changed, 30 insertions(+), 5 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-> new file mode 100644
-> index 000000000000..c8771c660550
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-> @@ -0,0 +1,25 @@
-> +/*
-> + * Device tree sources for Exynos5420 TMU sensor configuration
-> + *
-> + * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-> + * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <dt-bindings/thermal/thermal_exynos.h>
-> +
-> +#thermal-sensor-cells = <0>;
-> +samsung,tmu_gain = <8>;
-> +samsung,tmu_reference_voltage = <16>;
-> +samsung,tmu_noise_cancel_mode = <4>;
-> +samsung,tmu_efuse_value = <55>;
-> +samsung,tmu_min_efuse_value = <0>;
-> +samsung,tmu_max_efuse_value = <100>;
-> +samsung,tmu_first_point_trim = <25>;
-> +samsung,tmu_second_point_trim = <85>;
-> +samsung,tmu_default_temp_offset = <50>;
-> +samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 7dc9dc82afd8..83b3899d228d 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -699,7 +699,7 @@
->  			interrupts = <0 65 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&clock CLK_TMU>;
->  			clock-names = "tmu_apbif";
-> -			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +			#include "exynos5420-tmu-sensor-conf.dtsi"
->  		};
->  
->  		tmu_cpu1: tmu@10064000 {
-> @@ -708,7 +708,7 @@
->  			interrupts = <0 183 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&clock CLK_TMU>;
->  			clock-names = "tmu_apbif";
-> -			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +			#include "exynos5420-tmu-sensor-conf.dtsi"
->  		};
->  
->  		tmu_cpu2: tmu@10068000 {
-> @@ -717,7 +717,7 @@
->  			interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
->  			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> -			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +			#include "exynos5420-tmu-sensor-conf.dtsi"
->  		};
->  
->  		tmu_cpu3: tmu@1006c000 {
-> @@ -726,7 +726,7 @@
->  			interrupts = <0 185 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
->  			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> -			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +			#include "exynos5420-tmu-sensor-conf.dtsi"
->  		};
->  
->  		tmu_gpu: tmu@100a0000 {
-> @@ -735,7 +735,7 @@
->  			interrupts = <0 215 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
->  			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> -			#include "exynos4412-tmu-sensor-conf.dtsi"
-> +			#include "exynos5420-tmu-sensor-conf.dtsi"
->  		};
->  
->  		sysmmu_g2dr: sysmmu@0x10A60000 {
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 379f831a927817c130a62e3ca0082ae685557324 Mon Sep 17 00:00:00 2001
+From: Andi Shyti <andi.shyti@samsung.com>
+Date: Fri, 10 Feb 2017 11:20:19 +0900
+Subject: [PATCH] spi: s3c64xx: fix inconsistency between binding and driver
+
+Commit a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS
+line is not connected") introduced an inconsistency between the
+binding, where the disconnected CS line was marked as
+'no-cs-readback', and the driver.
+
+The driver is erroneously checking for that attribute with
+property name of 'broken-cs'.
+
+Check for 'no-cs-readback' in the driver as well.
+
+Fixes: a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS line is not connected")
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ drivers/spi/spi-s3c64xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 3c09e94cf827..186342b74141 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1003,7 +1003,7 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ 		sci->num_cs = temp;
+ 	}
+ 
+-	sci->no_cs = of_property_read_bool(dev->of_node, "broken-cs");
++	sci->no_cs = of_property_read_bool(dev->of_node, "no-cs-readback");
+ 
+ 	return sci;
+ }
+-- 
+2.11.0
