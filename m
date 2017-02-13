@@ -1,32 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] [media] exynos-gsc: Add support for NV{16,21,61}M
- pixel formats
-Date: Mon, 13 Feb 2017 15:36:04 +0100
-Message-ID: <595d4d3f-dd0a-9c7a-9e85-329245346aa8@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 0/2] [media] exynos-gsc: Fix support for NV21 and NV61
+ formats
+Date: Mon, 13 Feb 2017 11:37:15 -0300
+Message-ID: <f36c4e80-c16e-5dca-e23a-1a904c7636a3@osg.samsung.com>
 References: <1485979523-32404-1-git-send-email-javier@osg.samsung.com>
- <1485979523-32404-3-git-send-email-javier@osg.samsung.com>
- <CGME20170213143611epcas5p43ef3a577a9f290c8b21d2d5baa8bf099@epcas5p4.samsung.com>
+ <CABxcv==+Di=i_KBY1LY0Ejo8UXMYa5yhS=bugsyxFkQTyh0xUw@mail.gmail.com>
+ <CGME20170213143429epcas5p1e9407c814e71352ccb5ec14b082f954e@epcas5p1.samsung.com>
+ <41ead50c-3a71-8c8c-3455-9571b5482f27@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36826 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbdBMOgP (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35020
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751842AbdBMOh0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 09:36:15 -0500
-In-reply-to: <1485979523-32404-3-git-send-email-javier@osg.samsung.com>
+        Mon, 13 Feb 2017 09:37:26 -0500
+In-Reply-To: <41ead50c-3a71-8c8c-3455-9571b5482f27@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Andi Shyti <andi.shyti@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Andi Shyti <andi.shyti@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>
 
-On 02/01/2017 09:05 PM, Javier Martinez Canillas wrote:
-> From: Thibault Saunier <thibault.saunier@osg.samsung.com>
-> 
-> Those are useful formats that should be handled.
-> 
-> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Hello Sylwester,
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 02/13/2017 11:34 AM, Sylwester Nawrocki wrote:
+> Hi Javier,
+> 
+> On 02/13/2017 01:53 PM, Javier Martinez Canillas wrote:
+>> Any comments on this series?
+> 
+> The patches look good to me, I will Ack the patches in case
+> Mauro wants to apply them directly.  Alternatively I will
+> add them to my tree for v4.12 after the merge window.
+> 
+
+Great, thanks a lot for your help!
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
