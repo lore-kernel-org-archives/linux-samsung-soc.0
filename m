@@ -1,61 +1,75 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 0/4] PCI: exynos: use the PHY generic framework
-Date: Mon, 13 Feb 2017 17:26:09 +0900
-Message-ID: <20170213082613.19628-1-jh80.chung@samsung.com>
-References: <CGME20170213082615epcas5p2f5ecabbd5853a8e27da5f88fcae85158@epcas5p2.samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 1/4] [media] exynos-gsc: Use 576p instead 720p as a
+ threshold for colorspaces
+Date: Mon, 13 Feb 2017 09:47:55 +0100
+Message-ID: <baf44c8e-2117-6252-bae0-54446059ecde@xs4all.nl>
+References: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
+ <20170209200420.3046-2-thibault.saunier@osg.samsung.com>
+ <20170210193850.GN27312@n2100.armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38143 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752299AbdBMI0V (ORCPT
+Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:56085 "EHLO
+        lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751050AbdBMIsE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 03:26:21 -0500
+        Mon, 13 Feb 2017 03:48:04 -0500
+In-Reply-To: <20170210193850.GN27312@n2100.armlinux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>, Thibault Saunier <thibault.saunier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patcheset is for using PHY generic framework.
-Current pci-exyns doesn't use the phy framework since there haven't been on
-PHY subsystem when Exynos5440 had bean upstreamed.
-It's making a difficult to upstream the other Exynos variants because of different
-PHY registers.
+On 02/10/2017 08:38 PM, Russell King - ARM Linux wrote:
+> On Thu, Feb 09, 2017 at 05:04:17PM -0300, Thibault Saunier wrote:
+>> From: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
+>> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+>> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
+>> don't agree on the display resolution that should be used as a threshold.
+>>
+>> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
+>> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
+>> use the latter and that also matches what user-space multimedia programs
+>> do (i.e: GStreamer), so change the driver logic to be aligned with this.
+>>
+>> Also, check for the resolution in G_FMT instead unconditionally setting
+>> the V4L2_COLORSPACE_REC709 colorspace.
+> 
+> It would be nice to refer to some specification to justify the change,
+> rather than "let's follow what <random-piece-of-software> does".
+> 
+> EIA CEA 861B talks about colorimetry for various resolutions:
+> 
+> 5.1 480p, 480i, 576p, 576i, 240p, and 288p
+> The color space used by the 480-line, 576-line, 240-line, and 288-line
+> formats will likely be based on SMPTE 170M [1].
+> 
+> 5.2 1080i, 1080p, and 720p
+> The color space used by the high definition formats will likely be based
+> on ITU-R BT.709-4 [6].
+> 
+> Notice, however, that it says "will likely be" - it's not a requirement,
+> as it's expected that the colorspace will be part of the media metadata
+> (eg, contained in the transport stream.)  In other words, it should be
+> configurable or ultimately provided by the ultimate source of the image.
 
-This patcheset has the below modifications:
-1) Introduces the phy-exynos-pcie
-2) Handles PHY register from PHY framework for pci-exynos
-3) Modifies the dt-binding of pci-exynos
-4) Maintains the backward compatibility
+Colorspace information is transmitted as part of HDMI/DisplayPort meta-information
+(AVI InfoFrames, see CEA/CTA 861).
 
-Changelog on V3:
-- Drops "ARM: dts: exynos5440: support the phy-pcie node of pcie"
-  : Will send this patch after applying this patchset.
-- Fixes typo
-- Based on latest PCI git repository (host-exynos branch)
-- Changes commit message
-- Removes the dependency
+Compressed video typically encodes the colorspace information as well.
 
-Changelog on V2:
-- Keep current codes for backward compatibility
-- Fixes some typos
-- Split the patches for removing the dependency
-- Removes the unnecessary codes
-- Change the patch's sequence
-- Based on latest PCI git repository.(next branch)
+SDTV never had metainformation and you should fall back to SMPTE170M.
 
-Jaehoon Chung (4):
-  Documetation: samsung-phy: add the exynos-pcie-phy binding
-  phy: phy-exynos-pcie: Add support for Exynos PCIe phy
-  Documetation: binding: modify the exynos5440 pcie binding
-  PCI: exynos: support the using PHY generic framework
+Webcams/sensors should give sRGB unless otherwise indicated. If it is a sensor
+that expects further processing, then COLORSPACE_RAW can be used.
 
- .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 +++
- .../devicetree/bindings/phy/samsung-phy.txt        |  17 ++
- drivers/pci/host/pci-exynos.c                      |  54 +++-
- drivers/phy/Kconfig                                |   8 +
- drivers/phy/Makefile                               |   1 +
- drivers/phy/phy-exynos-pcie.c                      | 285 +++++++++++++++++++++
- 6 files changed, 390 insertions(+), 4 deletions(-)
- create mode 100644 drivers/phy/phy-exynos-pcie.c
+Anything else is typically sRGB.
 
--- 
-2.10.2
+Note that sRGB and SMPTE170M can be considered fall-back colorspaces in the
+absence of any other information.
+
+Regards,
+
+	Hans
