@@ -1,44 +1,38 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/2] [media] exynos-gsc: Fix support for NV21 and NV61
- formats
-Date: Mon, 13 Feb 2017 11:37:15 -0300
-Message-ID: <f36c4e80-c16e-5dca-e23a-1a904c7636a3@osg.samsung.com>
-References: <1485979523-32404-1-git-send-email-javier@osg.samsung.com>
- <CABxcv==+Di=i_KBY1LY0Ejo8UXMYa5yhS=bugsyxFkQTyh0xUw@mail.gmail.com>
- <CGME20170213143429epcas5p1e9407c814e71352ccb5ec14b082f954e@epcas5p1.samsung.com>
- <41ead50c-3a71-8c8c-3455-9571b5482f27@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Mon, 13 Feb 2017 15:49:15 +0100
+Message-ID: <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com> <20170205155849.4362-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35020
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751842AbdBMOh0 (ORCPT
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35537 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751693AbdBMOtR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 09:37:26 -0500
-In-Reply-To: <41ead50c-3a71-8c8c-3455-9571b5482f27@samsung.com>
+        Mon, 13 Feb 2017 09:49:17 -0500
+Received: by mail-it0-f45.google.com with SMTP id 203so189511835ith.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Feb 2017 06:49:17 -0800 (PST)
+In-Reply-To: <20170205155849.4362-1-weiyj.lk@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Andi Shyti <andi.shyti@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello Sylwester,
+On Sun, Feb 5, 2017 at 4:58 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 
-On 02/13/2017 11:34 AM, Sylwester Nawrocki wrote:
-> Hi Javier,
-> 
-> On 02/13/2017 01:53 PM, Javier Martinez Canillas wrote:
->> Any comments on this series?
-> 
-> The patches look good to me, I will Ack the patches in case
-> Mauro wants to apply them directly.  Alternatively I will
-> add them to my tree for v4.12 after the merge window.
-> 
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> In case of error, the function devm_ioremap() returns NULL pointer not
+> ERR_PTR(). Fix by using devm_ioremap_resource instead of devm_ioremap.
+>
+> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
+> IORESOURCE_MEM for one pin-bank")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+> v1 -> v2: use devm_ioremap_resource instead of devm_ioremap
 
-Great, thanks a lot for your help!
+Patch applied with Krzysztof's ACK.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Yours,
+Linus Walleij
