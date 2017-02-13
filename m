@@ -1,131 +1,157 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ARM: dts: exynos: Use thermal fuse value for thermal zone 0 on Exynos5420
-Date: Sat, 11 Feb 2017 22:14:56 +0200
-Message-ID: <20170211201456.27974-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Willy WOLFF <willy.mh.wolff@gmail.com>, Anand Moon <linux.amoon@gmail.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v8 1/3] dmaengine: Add new device_{set,release}_slave
+ callbacks
+Date: Mon, 13 Feb 2017 07:12:29 +0530
+Message-ID: <20170213014229.GG2843@localhost>
+References: <1486650171-20598-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170209142307eucas1p180323d005f524760913b8d04ac966423@eucas1p1.samsung.com>
+ <1486650171-20598-2-git-send-email-m.szyprowski@samsung.com>
+ <20170210043442.GM19244@localhost>
+ <05d42359-1e72-3ec1-7d86-86135a8f013e@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <05d42359-1e72-3ec1-7d86-86135a8f013e@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In Odroid XU3 Lite board, the temperature levels reported for thermal
-zone 0 were weird. In warm room:
-	/sys/class/thermal/thermal_zone0/temp:32000
-	/sys/class/thermal/thermal_zone1/temp:51000
-	/sys/class/thermal/thermal_zone2/temp:55000
-	/sys/class/thermal/thermal_zone3/temp:54000
-	/sys/class/thermal/thermal_zone4/temp:51000
+On Fri, Feb 10, 2017 at 01:07:41PM +0100, Marek Szyprowski wrote:
+> Hi Vinod,
+> 
+> On 2017-02-10 05:34, Vinod Koul wrote:
+> >On Thu, Feb 09, 2017 at 03:22:49PM +0100, Marek Szyprowski wrote:
+> >>Add two new callbacks to DMA engine device. They will used to provide
+> >>access to slave device (the device which requested given DMA channel)
+> >You mean access to client devices?
+> 
+> Yes. It looks that I was confused by the code, where the term 'slave'
+> appears a few times. 'Client' is a bit more appropriate then.
+> 
+> >>for DMA engine driver. Access to slave device might be useful for example
+> >>for implementing advanced runtime power management.
+> >>
+> >>DMA slave channels are exclusive, so only one slave device can be set
+> >>for a given DMA slave channel.
+> >That is not a right assumption and my worry here. With virt-dma we don't
+> >really assume a hardware channel and exclusive. Certain implementation may
+> >do that but from framework we cannot assume that.
+> 
+> Okay, I came to such conclusion basing one the dma engine code, but maybe
+> I missed something. However in such case such callback will be called for
+> each client device and it will be up to the driver to handle that.
 
-Sometimes after booting the value was even equal to ambient temperature
-which is highly unlikely to be a real temperature of sensor in SoC.
+Thats right, but the assumption that we will have once physical channel
+maynot be true.
 
-The thermal sensor's calibration (trimming) is based on fused values.
-In case of the board above, the fused values are: 35, 52, 43, 58 and 43
-(corresponding to each TMU device).  However driver defined a minimum value
-for fused data as 40 and for smaller values it was using a hard-coded 55
-instead.  This lead to mapping data from sensor to wrong temperatures
-for thermal zone 0.
+> >>device_set_slave() will be called after the device_alloc_chan_resources()
+> >>and device_release_slave() before the device_free_chan_resources().
+> >Okay, I had to relook at the series to get around this part. Sorry but we
+> >can't call it set_slave, it is actually set_client/consumer
+> 
+> That's okay, the name of the callbacks should be changed.
+> 
+> >In our context slaves means dmaengine slave devices aka provider.
+> >Client would be the consumer and not slave.
+> 
+> I'm a new to the DMA engine framework, I'm sorry for using wrong terms.
 
-Various vendor 3.10 trees (Hardkernel's based on Samsung LSI, Artik 10)
-do not impose any limits on fused values.  Since we do not have any
-knowledge about these limits, use 0 as a minimum accepted fused value.
-This should essentially allow accepting any reasonable fused value thus
-behaving like vendor driver.
+That's fine :-) we all learn incrementally.
 
-The exynos5420-tmu-sensor-conf.dtsi is copied directly from existing
-exynso4412 with one change - the samsung,tmu_min_efuse_value.
+> 
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>---
+> >>  drivers/dma/dmaengine.c   | 27 ++++++++++++++++++++++++---
+> >>  include/linux/dmaengine.h | 10 ++++++++++
+> >>  2 files changed, 34 insertions(+), 3 deletions(-)
+> >>
+> >>diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> >>index 24e0221fd66d..5b7089d8be4d 100644
+> >>--- a/drivers/dma/dmaengine.c
+> >>+++ b/drivers/dma/dmaengine.c
+> >>@@ -705,6 +705,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> >>  {
+> >>  	struct dma_device *d, *_d;
+> >>  	struct dma_chan *chan = NULL;
+> >>+	int ret;
+> >>  	/* If device-tree is present get slave info from here */
+> >>  	if (dev->of_node)
+> >>@@ -715,8 +716,9 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> >>  		chan = acpi_dma_request_slave_chan_by_name(dev, name);
+> >>  	if (chan) {
+> >>-		/* Valid channel found or requester need to be deferred */
+> >>-		if (!IS_ERR(chan) || PTR_ERR(chan) == -EPROBE_DEFER)
+> >>+		if (!IS_ERR(chan))
+> >>+			goto found;
+> >>+		if (PTR_ERR(chan) == -EPROBE_DEFER)
+> >>  			return chan;
+> >>  	}
+> >>@@ -738,7 +740,21 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> >>  	}
+> >>  	mutex_unlock(&dma_list_mutex);
+> >>-	return chan ? chan : ERR_PTR(-EPROBE_DEFER);
+> >>+	if (!chan)
+> >>+		return ERR_PTR(-EPROBE_DEFER);
+> >>+	if (IS_ERR(chan))
+> >>+		return chan;
+> >>+found:
+> >>+	if (chan->device->device_set_slave) {
+> >>+		chan->slave = dev;
+> >>+		ret = chan->device->device_set_slave(chan, dev);
+> >>+		if (ret) {
+> >>+			chan->slave = NULL;
+> >>+			dma_release_channel(chan);
+> >>+			chan = ERR_PTR(ret);
+> >>+		}
+> >>+	}
+> >>+	return chan;
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(dma_request_chan);
+> >>@@ -786,6 +802,11 @@ void dma_release_channel(struct dma_chan *chan)
+> >>  	mutex_lock(&dma_list_mutex);
+> >>  	WARN_ONCE(chan->client_count != 1,
+> >>  		  "chan reference count %d != 1\n", chan->client_count);
+> >>+	if (chan->slave) {
+> >>+		if (chan->device->device_release_slave)
+> >>+			chan->device->device_release_slave(chan);
+> >>+		chan->slave = NULL;
+> >>+	}
+> >>  	dma_chan_put(chan);
+> >>  	/* drop PRIVATE cap enabled by __dma_request_channel() */
+> >>  	if (--chan->device->privatecnt == 0)
+> >>diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> >>index 533680860865..d22299e37e69 100644
+> >>--- a/include/linux/dmaengine.h
+> >>+++ b/include/linux/dmaengine.h
+> >>@@ -277,6 +277,9 @@ struct dma_chan {
+> >>  	struct dma_router *router;
+> >>  	void *route_data;
+> >>+	/* Only for SLAVE channels */
+> >>+	struct device *slave;
+> >so assuming you refer to consumer aka client here, why do we need set if we
+> >store it here.
+> 
+> DMA engine driver might need to do something with it (like setting up a pm
+> link for example) before starting any operations. It would be great if the
+> pointer to client device is available in device_alloc_chan_resources(), but
+> propagating it there is not possible without significant changes. That's why
+> I came with this a separate callback.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+But then it gets the client device using the callback as well. So if we
+retain that, this should go away.
 
----
+> Maybe the client device shouldn't be stored in the dma_chan structure at all
+> and left to the drivers to use or manage it if really needed. This will also
+> solve the issue with virt-dma you have mentioned.
+> 
+> In the previous version I managed to pass client device pointer to
+> device_alloc_chan_resources() via of_xlate callback (please take a look into
+> v7), but that approach was rejected by Lars-Peter Clausen.
 
-Testing on other Exynos542x boards is much appreciated. Especially I
-wonder what efuse values are there.
----
- arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 25 +++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                 | 10 ++++-----
- 2 files changed, 30 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+I feel this is better approach, perhaps we don't need the client pointer
+here..
 
-diff --git a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-new file mode 100644
-index 000000000000..c8771c660550
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-@@ -0,0 +1,25 @@
-+/*
-+ * Device tree sources for Exynos5420 TMU sensor configuration
-+ *
-+ * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-+ * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <dt-bindings/thermal/thermal_exynos.h>
-+
-+#thermal-sensor-cells = <0>;
-+samsung,tmu_gain = <8>;
-+samsung,tmu_reference_voltage = <16>;
-+samsung,tmu_noise_cancel_mode = <4>;
-+samsung,tmu_efuse_value = <55>;
-+samsung,tmu_min_efuse_value = <0>;
-+samsung,tmu_max_efuse_value = <100>;
-+samsung,tmu_first_point_trim = <25>;
-+samsung,tmu_second_point_trim = <85>;
-+samsung,tmu_default_temp_offset = <50>;
-+samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 7dc9dc82afd8..83b3899d228d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -699,7 +699,7 @@
- 			interrupts = <0 65 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
- 
- 		tmu_cpu1: tmu@10064000 {
-@@ -708,7 +708,7 @@
- 			interrupts = <0 183 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
- 
- 		tmu_cpu2: tmu@10068000 {
-@@ -717,7 +717,7 @@
- 			interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
- 
- 		tmu_cpu3: tmu@1006c000 {
-@@ -726,7 +726,7 @@
- 			interrupts = <0 185 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
- 
- 		tmu_gpu: tmu@100a0000 {
-@@ -735,7 +735,7 @@
- 			interrupts = <0 215 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#include "exynos5420-tmu-sensor-conf.dtsi"
- 		};
- 
- 		sysmmu_g2dr: sysmmu@0x10A60000 {
 -- 
-2.9.3
+~Vinod
