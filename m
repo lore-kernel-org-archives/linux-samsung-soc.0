@@ -1,94 +1,373 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 3/4] Documetation: binding: modify the exynos5440 pcie
- binding
-Date: Mon, 13 Feb 2017 17:26:12 +0900
-Message-ID: <20170213082613.19628-4-jh80.chung@samsung.com>
+From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V3 2/4] phy: phy-exynos-pcie: Add support for Exynos PCIe phy
+Date: Mon, 13 Feb 2017 17:26:11 +0900
+Message-ID: <20170213082613.19628-3-jh80.chung@samsung.com>
 References: <20170213082613.19628-1-jh80.chung@samsung.com>
- <CGME20170213082615epcas5p24028ab4bd4fabbbcdf37ff36f0ee27a2@epcas5p2.samsung.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20170213082613.19628-1-jh80.chung@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
+ <CGME20170213082615epcas5p2d6bc5521e68adf71bb64d9eb8262274d@epcas5p2.samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20170213082613.19628-1-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, niyas.ahmed-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-According to using PHY framework, updates the exynos5440-pcie binding.
-For maintaining backward compatibility, leaves the current dt-binding.
-(It should be deprecated.)
+This patch adds support for Generic PHY framework about Exynos SoCs.
+Current Exynos PCIe driver doesn't use the PHY framework.
+It's making a difficult to upstream the other Exynos variants because of
+different PHY registers.
 
-Recommends to use the Phy Framework and "config" property to follow
-the designware-pcie binding.
-If you use the old way, can see "mssing *config* reg space" message.
-Because the getting configuration space address from range is old way.
+Move the codes relevant to PHY from Exnyos PCIe driver to PHY Exynos PCIe
+driver.
 
-NOTE: When use the "config" property, first name of 'reg-names' must be
-set to "elbi". Otherwise driver can't maintain the backward capability.
-
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reviewed-by: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
 Changelog on V3:
-- Fixes a typo
+- Remove the dependency abot PCI_EXYNOS
+- Adds a depends on COMPILE_TEST
+- Use the readl_poll_timeout() instead of while()
+- Fixes const type
+- Adds MODULE_DESCRIPTION()/LICENCSE()/AUTHOR()
+- Changes commit message
 
 Changelog on V2:
-- Describes more commit message
-- Fixes the typos
-- Adds the new example for using PHY framework
-- Deprecated the old dt-binding description
-- Removes 'phy-names'
- .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+- Not include the codes relevant to pci-exynos.
+- Remove the getting child node.
 
-diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-index 4f9d23d..7d3b094 100644
---- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
-@@ -7,8 +7,19 @@ Required properties:
- - compatible: "samsung,exynos5440-pcie"
- - reg: base addresses and lengths of the pcie controller,
- 	the phy controller, additional register for the phy controller.
-+	(Registers for the phy controller are DEPRECATED.
-+	 Use the PHY framework.)
-+- reg-names : First name should be set to "elbi".
-+	And use the "config" instead of getting the confgiruation address space
-+	from "ranges".
-+	NOTE: When use the "config" property, reg-names must be set.
- - interrupts: A list of interrupt outputs for level interrupt,
- 	pulse interrupt, special interrupt.
-+- phys: From PHY binding. Phandle for the Generic PHY.
-+	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
+ drivers/phy/Kconfig           |   8 ++
+ drivers/phy/Makefile          |   1 +
+ drivers/phy/phy-exynos-pcie.c | 285 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 294 insertions(+)
+ create mode 100644 drivers/phy/phy-exynos-pcie.c
+
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index e8eb7f2..8659f38 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -331,6 +331,14 @@ config PHY_EXYNOS5_USBDRD
+ 	  This driver provides PHY interface for USB 3.0 DRD controller
+ 	  present on Exynos5 SoC series.
+ 
++config PHY_EXYNOS_PCIE
++	bool "Exynos PCIe PHY driver"
++	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
++	select GENERIC_PHY
++	help
++	  Enable PCIe PHY support for Exynos SoC series.
++	  This driver provides PHY interface for Exynos PCIe controller.
 +
-+Other common properties refer to
-+	Documentation/devicetree/binding/pci/designware-pcie.txt
- 
- Example:
- 
-@@ -54,6 +65,24 @@ SoC specific DT Entry:
- 		num-lanes = <4>;
- 	};
- 
-+With using PHY framework:
-+	pcie_phy0: pcie-phy@270000 {
-+		...
-+		reg = <0x270000 0x1000>, <0x271000 0x40>;
-+		reg-names = "phy", "block";
-+		...
-+	};
+ config PHY_PISTACHIO_USB
+ 	tristate "IMG Pistachio USB2.0 PHY driver"
+ 	depends on MACH_PISTACHIO
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 65eb2f4..081aeb4 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -37,6 +37,7 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+ phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)	+= phy-s5pv210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
++obj-$(CONFIG_PHY_EXYNOS_PCIE)	+= phy-exynos-pcie.o
+ obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
+ obj-$(CONFIG_PHY_ROCKCHIP_USB) += phy-rockchip-usb.o
+ obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+= phy-rockchip-inno-usb2.o
+diff --git a/drivers/phy/phy-exynos-pcie.c b/drivers/phy/phy-exynos-pcie.c
+new file mode 100644
+index 0000000..9ec1855
+--- /dev/null
++++ b/drivers/phy/phy-exynos-pcie.c
+@@ -0,0 +1,285 @@
++/*
++ * Samsung EXYNOS SoC series PCIe PHY driver
++ *
++ * Phy provider for PCIe controller on Exynos SoC series
++ *
++ * Copyright (C) 2016 Samsung Electronics Co., Ltd.
++ * Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+	pcie@290000 {
-+		...
-+		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
-+		reg-names = "elbi", "config";
-+		phys = <&pcie_phy0>;
-+		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000
-+			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>;
-+		...
-+	};
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/phy/phy.h>
++#include <linux/regmap.h>
 +
- Board specific DT Entry:
- 
- 	pcie@290000 {
++/* PCIe Purple registers */
++#define PCIE_PHY_GLOBAL_RESET		0x000
++#define PCIE_PHY_COMMON_RESET		0x004
++#define PCIE_PHY_CMN_REG		0x008
++#define PCIE_PHY_MAC_RESET		0x00c
++#define PCIE_PHY_PLL_LOCKED		0x010
++#define PCIE_PHY_TRSVREG_RESET		0x020
++#define PCIE_PHY_TRSV_RESET		0x024
++
++/* PCIe PHY registers */
++#define PCIE_PHY_IMPEDANCE		0x004
++#define PCIE_PHY_PLL_DIV_0		0x008
++#define PCIE_PHY_PLL_BIAS		0x00c
++#define PCIE_PHY_DCC_FEEDBACK		0x014
++#define PCIE_PHY_PLL_DIV_1		0x05c
++#define PCIE_PHY_COMMON_POWER		0x064
++#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
++#define PCIE_PHY_TRSV0_EMP_LVL		0x084
++#define PCIE_PHY_TRSV0_DRV_LVL		0x088
++#define PCIE_PHY_TRSV0_RXCDR		0x0ac
++#define PCIE_PHY_TRSV0_POWER		0x0c4
++#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
++#define PCIE_PHY_TRSV0_LVCC		0x0dc
++#define PCIE_PHY_TRSV1_EMP_LVL		0x144
++#define PCIE_PHY_TRSV1_RXCDR		0x16c
++#define PCIE_PHY_TRSV1_POWER		0x184
++#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
++#define PCIE_PHY_TRSV1_LVCC		0x19c
++#define PCIE_PHY_TRSV2_EMP_LVL		0x204
++#define PCIE_PHY_TRSV2_RXCDR		0x22c
++#define PCIE_PHY_TRSV2_POWER		0x244
++#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
++#define PCIE_PHY_TRSV2_LVCC		0x25c
++#define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
++#define PCIE_PHY_TRSV3_RXCDR		0x2ec
++#define PCIE_PHY_TRSV3_POWER		0x304
++#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
++#define PCIE_PHY_TRSV3_LVCC		0x31c
++
++struct exynos_pcie_phy_data {
++	const struct phy_ops	*ops;
++};
++
++/* For Exynos pcie phy */
++struct exynos_pcie_phy {
++	const struct exynos_pcie_phy_data *drv_data;
++	void __iomem *phy_base;
++	void __iomem *blk_base; /* For exynos5440 */
++};
++
++static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
++{
++	writel(val, base + offset);
++}
++
++static u32 exynos_pcie_phy_readl(void __iomem *base, u32 offset)
++{
++	return readl(base + offset);
++}
++
++/* For Exynos5440 specific functions */
++static int exynos5440_pcie_phy_init(struct phy *phy)
++{
++	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
++
++	/* DCC feedback control off */
++	exynos_pcie_phy_writel(ep->phy_base, 0x29, PCIE_PHY_DCC_FEEDBACK);
++
++	/* set TX/RX impedance */
++	exynos_pcie_phy_writel(ep->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
++
++	/* set 50Mhz PHY clock */
++	exynos_pcie_phy_writel(ep->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
++	exynos_pcie_phy_writel(ep->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
++
++	/* set TX Differential output for lane 0 */
++	exynos_pcie_phy_writel(ep->phy_base, 0x7f, PCIE_PHY_TRSV0_DRV_LVL);
++
++	/* set TX Pre-emphasis Level Control for lane 0 to minimum */
++	exynos_pcie_phy_writel(ep->phy_base, 0x0, PCIE_PHY_TRSV0_EMP_LVL);
++
++	/* set RX clock and data recovery bandwidth */
++	exynos_pcie_phy_writel(ep->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
++	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV0_RXCDR);
++	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV1_RXCDR);
++	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV2_RXCDR);
++	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV3_RXCDR);
++
++	/* change TX Pre-emphasis Level Control for lanes */
++	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV0_EMP_LVL);
++	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV1_EMP_LVL);
++	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV2_EMP_LVL);
++	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV3_EMP_LVL);
++
++	/* set LVCC */
++	exynos_pcie_phy_writel(ep->phy_base, 0x20, PCIE_PHY_TRSV0_LVCC);
++	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV1_LVCC);
++	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV2_LVCC);
++	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV3_LVCC);
++
++	/* pulse for common reset */
++	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_COMMON_RESET);
++	udelay(500);
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
++
++	return 0;
++}
++
++static int exynos5440_pcie_phy_power_on(struct phy *phy)
++{
++	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
++	u32 val;
++
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_CMN_REG);
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSVREG_RESET);
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSV_RESET);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
++	val &= ~PCIE_PHY_COMMON_PD_CMN;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
++	val &= ~PCIE_PHY_TRSV0_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
++	val &= ~PCIE_PHY_TRSV1_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
++	val &= ~PCIE_PHY_TRSV2_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
++	val &= ~PCIE_PHY_TRSV3_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
++
++	return 0;
++}
++
++static int exynos5440_pcie_phy_power_off(struct phy *phy)
++{
++	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
++	u32 val;
++
++	if (readl_poll_timeout(ep->phy_base + PCIE_PHY_PLL_LOCKED, val,
++				(val != 0), 1, 500)) {
++		dev_err(&phy->dev, "PLL Locked: 0x%x\n", val);
++		return -ETIMEDOUT;
++	}
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
++	val |= PCIE_PHY_COMMON_PD_CMN;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
++	val |= PCIE_PHY_TRSV0_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
++	val |= PCIE_PHY_TRSV1_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
++	val |= PCIE_PHY_TRSV2_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
++
++	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
++	val |= PCIE_PHY_TRSV3_PD_TSV;
++	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
++
++	return 0;
++}
++
++static int exynos5440_pcie_phy_reset(struct phy *phy)
++{
++	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
++
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_MAC_RESET);
++	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_GLOBAL_RESET);
++	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_GLOBAL_RESET);
++
++	return 0;
++}
++
++static const struct phy_ops exynos5440_phy_ops = {
++	.init		= exynos5440_pcie_phy_init,
++	.power_on	= exynos5440_pcie_phy_power_on,
++	.power_off	= exynos5440_pcie_phy_power_off,
++	.reset		= exynos5440_pcie_phy_reset,
++	.owner		= THIS_MODULE,
++};
++
++static const struct exynos_pcie_phy_data exynos5440_pcie_phy_data = {
++	.ops		= &exynos5440_phy_ops,
++};
++
++static const struct of_device_id exynos_pcie_phy_match[] = {
++	{
++		.compatible = "samsung,exynos5440-pcie-phy",
++		.data = &exynos5440_pcie_phy_data,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_pcie_phy_match);
++
++static int exynos_pcie_phy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct exynos_pcie_phy *exynos_phy;
++	struct phy *generic_phy;
++	struct phy_provider *phy_provider;
++	struct resource *res;
++	const struct exynos_pcie_phy_data *drv_data;
++
++	drv_data = of_device_get_match_data(dev);
++	if (!drv_data)
++		return -ENODEV;
++
++	exynos_phy = devm_kzalloc(dev, sizeof(*exynos_phy), GFP_KERNEL);
++	if (!exynos_phy)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	exynos_phy->phy_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(exynos_phy->phy_base))
++		return PTR_ERR(exynos_phy->phy_base);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	exynos_phy->blk_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(exynos_phy->phy_base))
++		return PTR_ERR(exynos_phy->phy_base);
++
++	exynos_phy->drv_data = drv_data;
++
++	generic_phy = devm_phy_create(dev, dev->of_node, drv_data->ops);
++	if (IS_ERR(generic_phy)) {
++		dev_err(dev, "failed to create PHY\n");
++		return PTR_ERR(generic_phy);
++	}
++
++	phy_set_drvdata(generic_phy, exynos_phy);
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static struct platform_driver exynos_pcie_phy_driver = {
++	.probe	= exynos_pcie_phy_probe,
++	.driver = {
++		.of_match_table	= exynos_pcie_phy_match,
++		.name		= "exynos_pcie_phy",
++	}
++};
++module_platform_driver(exynos_pcie_phy_driver);
++
++MODULE_DESCRIPTION("Samsung S5P/EXYNOS SoC PCIe PHY driver");
++MODULE_AUTHOR("Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.10.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
