@@ -1,79 +1,55 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] arm64: dts: Enable ir-spi in the tm2 and tm2e boards
-Date: Mon, 13 Feb 2017 08:55:40 -0300
-Message-ID: <70290326-2775-bcf9-a40d-01305d25f112@osg.samsung.com>
-References: <CGME20170210022252epcas1p2cad2a32fb74a5ecc17ed73387579c6ab@epcas1p2.samsung.com>
- <20170210022238.12401-1-andi.shyti@samsung.com>
- <287b5f0b-26b2-7811-9305-5194ebf0138a@osg.samsung.com>
- <20170211044434.ujkayqmfg52rvw32@gangnam.samsung>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Use thermal fuse value for thermal zone
+ 0 on Exynos5420
+Date: Mon, 13 Feb 2017 13:59:45 +0200
+Message-ID: <CAJKOXPeVLNRCWcWMT_subo2VRXdS1147MjFNCeGot8DpqguVNg@mail.gmail.com>
+References: <20170211201456.27974-1-krzk@kernel.org> <CANAwSgSJRv6XGKvysbw+cXYyVUEcNyGv=6tYSWsvOn42dX5f1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:34432
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752829AbdBMLzt (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 06:55:49 -0500
-In-Reply-To: <20170211044434.ujkayqmfg52rvw32@gangnam.samsung>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CANAwSgSJRv6XGKvysbw+cXYyVUEcNyGv=6tYSWsvOn42dX5f1w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Willy WOLFF <willy.mh.wolff@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-Hello Andi,
-
-On 02/11/2017 01:44 AM, Andi Shyti wrote:
-> Hi Javier,
-> 
-> On Fri, Feb 10, 2017 at 11:04:50AM -0300, Javier Martinez Canillas wrote:
->> On 02/09/2017 11:22 PM, Andi Shyti wrote:
-> ...
->>> +	irda_regulator: irda-regulator {
->>> +		compatible = "regulator-fixed";
->>> +		enable-active-high;
->>> +		gpio = <&gpr3 3 GPIO_ACTIVE_HIGH>;
->>> +		regulator-name = "irda_regulator";
->>
->> How is this regulator named in the board schematics? My
->> understanding is that regulator-name should match this.
->>
->> I don't have access to this so it may be "irda_regulator"
->> although I was expecting something more like "VDD_IRDA".
-> 
-> This is not a real regulator.
+On Mon, Feb 13, 2017 at 1:38 PM, Anand Moon <linux.amoon@gmail.com> wrote:
+> Hi Krzysztof,
 >
-
-I see, I misunderstood and thought it was a real regulator.
- 
-> This is an external regulator which is enabled with a gpio
-> (GPR3[3]). The regulator-fixed allows me to use the regulator API
-> even though I would only need to control a gpio (with the gpio
-> API). I prefer using regulator to keep the same interface no
-> matter how the irda is connected.
 >
-> About the name, I have full freedom to chose as of course it's
-> not documented in the exynos5433 datasheet. Perhaps I could call
-> it irda-gpio-regulator to make it more clear?
 >
-
-I don't have a strong opinion on the regulator-name in this
-case.
-
->> Patch looks good to me though:
+> On 12 February 2017 at 01:44, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> In Odroid XU3 Lite board, the temperature levels reported for thermal
+>> zone 0 were weird. In warm room:
+>>         /sys/class/thermal/thermal_zone0/temp:32000
+>>         /sys/class/thermal/thermal_zone1/temp:51000
+>>         /sys/class/thermal/thermal_zone2/temp:55000
+>>         /sys/class/thermal/thermal_zone3/temp:54000
+>>         /sys/class/thermal/thermal_zone4/temp:51000
 >>
->> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> Thanks,
-> Andi
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>> Sometimes after booting the value was even equal to ambient temperature
+>> which is highly unlikely to be a real temperature of sensor in SoC.
+>>
+>> The thermal sensor's calibration (trimming) is based on fused values.
+>> In case of the board above, the fused values are: 35, 52, 43, 58 and 43
+>> (corresponding to each TMU device).  However driver defined a minimum value
+>> for fused data as 40 and for smaller values it was using a hard-coded 55
+>> instead.  This lead to mapping data from sensor to wrong temperatures
+>> for thermal zone 0.
+>>
+>> Various vendor 3.10 trees (Hardkernel's based on Samsung LSI, Artik 10)
+>> do not impose any limits on fused values.  Since we do not have any
+>> knowledge about these limits, use 0 as a minimum accepted fused value.
+>> This should essentially allow accepting any reasonable fused value thus
+>> behaving like vendor driver.
+>>
+>
+> On HK following values are define in drivers/thermal/exynos_thermal.c
+>
+> #define EFUSE_MIN_VALUE                         40
+> #define EFUSE_MAX_VALUE                         100
+
+Are they being used?
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Krzysztof
