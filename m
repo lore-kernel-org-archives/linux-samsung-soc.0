@@ -1,83 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: s3c64xx: fix inconsistency between binding and driver" to the spi tree
-Date: Mon, 13 Feb 2017 18:54:19 +0000
-Message-ID: <E1cdLlT-0001JZ-6b@debutante>
-References: <20170207080748.9524-1-andi.shyti@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46440 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752661AbdBMSya (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 13:54:30 -0500
-In-Reply-To: <20170207080748.9524-1-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Subject: [PATCH v4 1/4] [media] exynos-gsc: Use 576p instead 720p as a threshold for colorspaces
+Date: Mon, 13 Feb 2017 16:08:33 -0300
+Message-ID: <20170213190836.26972-2-thibault.saunier@osg.samsung.com>
+References: <20170213190836.26972-1-thibault.saunier@osg.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170213190836.26972-1-thibault.saunier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>Mark Brown <broonie@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Shyti <andi@etezian.org>linux-spi@vger.kernel.org
 
-The patch
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 
-   spi: s3c64xx: fix inconsistency between binding and driver
+The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
+don't agree on the display resolution that should be used as a threshold.
 
-has been applied to the spi tree at
+>From EIA CEA 861B about colorimetry for various resolutions:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+  - 5.1 480p, 480i, 576p, 576i, 240p, and 288p
+    The color space used by the 480-line, 576-line, 240-line, and 288-line
+    formats will likely be based on SMPTE 170M [1].
+  - 5.2 1080i, 1080p, and 720p
+    The color space used by the high definition formats will likely be
+    based on ITU-R BT.709-4
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This indicates that in the case that userspace does not specify what
+colorspace should be used, we should use 576p  as a threshold to set
+V4L2_COLORSPACE_REC709 instead of V4L2_COLORSPACE_REC709. Even if it is
+only 'likely' and not a requirement it is the best guess we can make.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+The stream should have been encoded with the information and userspace
+has to pass it to the driver if it is not the case, otherwise we won't be
+able to handle it properly anyhow.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Also, check for the resolution in G_FMT instead unconditionally setting
+the V4L2_COLORSPACE_REC709 colorspace.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Thanks,
-Mark
-
->From 379f831a927817c130a62e3ca0082ae685557324 Mon Sep 17 00:00:00 2001
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Fri, 10 Feb 2017 11:20:19 +0900
-Subject: [PATCH] spi: s3c64xx: fix inconsistency between binding and driver
-
-Commit a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS
-line is not connected") introduced an inconsistency between the
-binding, where the disconnected CS line was marked as
-'no-cs-readback', and the driver.
-
-The driver is erroneously checking for that attribute with
-property name of 'broken-cs'.
-
-Check for 'no-cs-readback' in the driver as well.
-
-Fixes: a92e7c3d82a1 ("spi: s3c64xx: consider the case when the CS line is not connected")
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
 ---
- drivers/spi/spi-s3c64xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 3c09e94cf827..186342b74141 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1003,7 +1003,7 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- 		sci->num_cs = temp;
- 	}
+Changes in v4:
+- Reword commit message to better back our assumptions on specifications
+
+Changes in v3:
+- Do not check values in the g_fmt functions as Andrzej explained in previous review
+- Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
+
+Changes in v2: None
+
+ drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 59a634201830..db7d9883861b 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
  
--	sci->no_cs = of_property_read_bool(dev->of_node, "broken-cs");
-+	sci->no_cs = of_property_read_bool(dev->of_node, "no-cs-readback");
+ 	pix_mp->num_planes = fmt->num_planes;
  
- 	return sci;
- }
+-	if (pix_mp->width >= 1280) /* HD */
++	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+ 		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+ 	else /* SD */
+ 		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+@@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+ 	pix_mp->height		= frame->f_height;
+ 	pix_mp->field		= V4L2_FIELD_NONE;
+ 	pix_mp->pixelformat	= frame->fmt->pixelformat;
+-	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
+ 	pix_mp->num_planes	= frame->fmt->num_planes;
+ 
++	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
++		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
++	else /* SD */
++		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
++
+ 	for (i = 0; i < pix_mp->num_planes; ++i) {
+ 		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
+ 			frame->fmt->depth[i]) / 8;
 -- 
-2.11.0
+2.11.1
