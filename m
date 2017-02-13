@@ -1,47 +1,57 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH] drm/exynos: dsi: Remove bridge node reference in removal
-Date: Mon, 13 Feb 2017 15:19:15 +0900
-Message-ID: <1486966755-24517-1-git-send-email-hoegeun.kwon@samsung.com>
-References: <CGME20170213061933epcas1p40510b18ee1ae688f4e5e5187969830f0@epcas1p4.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44941 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbdBMGTn (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 01:19:43 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OLA00X7AUWM9K60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 13 Feb 2017 15:19:34 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH V3 1/4] Documetation: samsung-phy: add the exynos-pcie-phy
+ binding
+Date: Mon, 13 Feb 2017 17:26:10 +0900
+Message-ID: <20170213082613.19628-2-jh80.chung@samsung.com>
+References: <20170213082613.19628-1-jh80.chung@samsung.com>
+ <CGME20170213082615epcas5p21fa62201d4d610608e286fcfce97118d@epcas5p2.samsung.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20170213082613.19628-1-jh80.chung@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-Since bridge node is referenced during in the probe, it should be
-released on removal.
+Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
+This is for using generic PHY framework.
 
-Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changelog on V3:
+- None
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 214d486..2d4e118 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1821,6 +1821,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- static int exynos_dsi_remove(struct platform_device *pdev)
- {
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
+Changelog on V2:
+- Remove the child node.
+- Add 2nd address to the parent reg prop.
+
+ Documentation/devicetree/bindings/phy/samsung-phy.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index 9872ba8..ab80bfe 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -191,3 +191,20 @@ Example:
+ 		usbdrdphy0 = &usb3_phy0;
+ 		usbdrdphy1 = &usb3_phy1;
+ 	};
 +
-+	of_node_put(dsi->bridge_node);
++Samsung Exynos SoC series PCIe PHY controller
++--------------------------------------------------
++Required properties:
++- compatible : Should be set to "samsung,exynos5440-pcie-phy"
++- #phy-cells : Must be zero
++- reg : a register used by phy driver.
++	- First is for phy register, second is for block register.
++- reg-names : Must be set to "phy" and "block".
 +
- 	pm_runtime_disable(&pdev->dev);
- 
- 	component_del(&pdev->dev, &exynos_dsi_component_ops);
++Example:
++	pcie_phy0: pcie-phy@270000 {
++		#phy-cells = <0>;
++		compatible = "samsung,exynos5440-pcie-phy";
++		reg = <0x270000 0x1000>, <0x271000 0x40>;
++		reg-names = "phy", "block";
++	};
 -- 
-1.9.1
+2.10.2
