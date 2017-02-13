@@ -1,75 +1,57 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 1/4] [media] exynos-gsc: Use 576p instead 720p as a
- threshold for colorspaces
-Date: Mon, 13 Feb 2017 09:47:55 +0100
-Message-ID: <baf44c8e-2117-6252-bae0-54446059ecde@xs4all.nl>
-References: <20170209200420.3046-1-thibault.saunier@osg.samsung.com>
- <20170209200420.3046-2-thibault.saunier@osg.samsung.com>
- <20170210193850.GN27312@n2100.armlinux.org.uk>
+From: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH] drm/bridge: analogix_dp: Don't return -EBUSY when msg->size
+ is 0 in aux transaction
+Date: Mon, 13 Feb 2017 17:27:46 +0800
+Message-ID: <1486978066-5351-1-git-send-email-wzz@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:56085 "EHLO
-        lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751050AbdBMIsE (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Feb 2017 03:48:04 -0500
-In-Reply-To: <20170210193850.GN27312@n2100.armlinux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Mika Kahola <mika.kahola-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, Thibault Saunier <thibault.saunier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 02/10/2017 08:38 PM, Russell King - ARM Linux wrote:
-> On Thu, Feb 09, 2017 at 05:04:17PM -0300, Thibault Saunier wrote:
->> From: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
->> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
->> don't agree on the display resolution that should be used as a threshold.
->>
->> Some drivers set V4L2_COLORSPACE_REC709 for 720p and higher while others
->> set V4L2_COLORSPACE_REC709 for anything higher than 576p. Newers drivers
->> use the latter and that also matches what user-space multimedia programs
->> do (i.e: GStreamer), so change the driver logic to be aligned with this.
->>
->> Also, check for the resolution in G_FMT instead unconditionally setting
->> the V4L2_COLORSPACE_REC709 colorspace.
-> 
-> It would be nice to refer to some specification to justify the change,
-> rather than "let's follow what <random-piece-of-software> does".
-> 
-> EIA CEA 861B talks about colorimetry for various resolutions:
-> 
-> 5.1 480p, 480i, 576p, 576i, 240p, and 288p
-> The color space used by the 480-line, 576-line, 240-line, and 288-line
-> formats will likely be based on SMPTE 170M [1].
-> 
-> 5.2 1080i, 1080p, and 720p
-> The color space used by the high definition formats will likely be based
-> on ITU-R BT.709-4 [6].
-> 
-> Notice, however, that it says "will likely be" - it's not a requirement,
-> as it's expected that the colorspace will be part of the media metadata
-> (eg, contained in the transport stream.)  In other words, it should be
-> configurable or ultimately provided by the ultimate source of the image.
+The analogix_dp_transfer() will return -EBUSY if num_transferred is zero.
+But sometimes we will send a bare address packet to start the transaction,
+like drm_dp_i2c_xfer() show:
+	......
+	/* Send a bare address packet to start the transaction.
+	 * Zero sized messages specify an address only (bare
+	 * address) transaction.
+	 */
+	msg.buffer = NULL;
+	msg.size = 0;
+	err = drm_dp_i2c_do_msg(aux, &msg);
+	......
 
-Colorspace information is transmitted as part of HDMI/DisplayPort meta-information
-(AVI InfoFrames, see CEA/CTA 861).
+In this case, the msg->size is zero, so the num_transferred will be zero too.
+We can't return -EBUSY here, let's we return num_transferred if num_transferred
+equals msg->size.
 
-Compressed video typically encodes the colorspace information as well.
+Signed-off-by: zain wang <wzz-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-SDTV never had metainformation and you should fall back to SMPTE170M.
-
-Webcams/sensors should give sRGB unless otherwise indicated. If it is a sensor
-that expects further processing, then COLORSPACE_RAW can be used.
-
-Anything else is typically sRGB.
-
-Note that sRGB and SMPTE170M can be considered fall-back colorspaces in the
-absence of any other information.
-
-Regards,
-
-	Hans
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 303083a..5384aca 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -1162,5 +1162,5 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 		 (msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_NATIVE_READ)
+ 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
+ 
+-	return num_transferred > 0 ? num_transferred : -EBUSY;
++	return (num_transferred == msg->size) ? num_transferred : -EBUSY;
+ }
+-- 
+1.9.1
