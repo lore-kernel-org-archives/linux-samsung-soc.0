@@ -1,10 +1,10 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3 1/4] Documetation: samsung-phy: add the exynos-pcie-phy
+Subject: [PATCH V3 3/4] Documetation: binding: modify the exynos5440 pcie
  binding
-Date: Mon, 13 Feb 2017 17:26:10 +0900
-Message-ID: <20170213082613.19628-2-jh80.chung@samsung.com>
+Date: Mon, 13 Feb 2017 17:26:12 +0900
+Message-ID: <20170213082613.19628-4-jh80.chung@samsung.com>
 References: <20170213082613.19628-1-jh80.chung@samsung.com>
- <CGME20170213082615epcas5p21fa62201d4d610608e286fcfce97118d@epcas5p2.samsung.com>
+ <CGME20170213082615epcas5p24028ab4bd4fabbbcdf37ff36f0ee27a2@epcas5p2.samsung.com>
 Return-path: <linux-pci-owner@vger.kernel.org>
 In-reply-to: <20170213082613.19628-1-jh80.chung@samsung.com>
 Sender: linux-pci-owner@vger.kernel.org
@@ -12,46 +12,83 @@ To: linux-pci@vger.kernel.org
 Cc: bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds the exynos-pcie-phy binding for Exynos PCIe PHY.
-This is for using generic PHY framework.
+According to using PHY framework, updates the exynos5440-pcie binding.
+For maintaining backward compatibility, leaves the current dt-binding.
+(It should be deprecated.)
+
+Recommends to use the Phy Framework and "config" property to follow
+the designware-pcie binding.
+If you use the old way, can see "mssing *config* reg space" message.
+Because the getting configuration space address from range is old way.
+
+NOTE: When use the "config" property, first name of 'reg-names' must be
+set to "elbi". Otherwise driver can't maintain the backward capability.
 
 Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
 Changelog on V3:
-- None
+- Fixes a typo
 
 Changelog on V2:
-- Remove the child node.
-- Add 2nd address to the parent reg prop.
+- Describes more commit message
+- Fixes the typos
+- Adds the new example for using PHY framework
+- Deprecated the old dt-binding description
+- Removes 'phy-names'
+ .../bindings/pci/samsung,exynos5440-pcie.txt       | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
- Documentation/devicetree/bindings/phy/samsung-phy.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 9872ba8..ab80bfe 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -191,3 +191,20 @@ Example:
- 		usbdrdphy0 = &usb3_phy0;
- 		usbdrdphy1 = &usb3_phy1;
+diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+index 4f9d23d..7d3b094 100644
+--- a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+@@ -7,8 +7,19 @@ Required properties:
+ - compatible: "samsung,exynos5440-pcie"
+ - reg: base addresses and lengths of the pcie controller,
+ 	the phy controller, additional register for the phy controller.
++	(Registers for the phy controller are DEPRECATED.
++	 Use the PHY framework.)
++- reg-names : First name should be set to "elbi".
++	And use the "config" instead of getting the confgiruation address space
++	from "ranges".
++	NOTE: When use the "config" property, reg-names must be set.
+ - interrupts: A list of interrupt outputs for level interrupt,
+ 	pulse interrupt, special interrupt.
++- phys: From PHY binding. Phandle for the Generic PHY.
++	Refer to Documentation/devicetree/bindings/phy/samsung-phy.txt
++
++Other common properties refer to
++	Documentation/devicetree/binding/pci/designware-pcie.txt
+ 
+ Example:
+ 
+@@ -54,6 +65,24 @@ SoC specific DT Entry:
+ 		num-lanes = <4>;
  	};
-+
-+Samsung Exynos SoC series PCIe PHY controller
-+--------------------------------------------------
-+Required properties:
-+- compatible : Should be set to "samsung,exynos5440-pcie-phy"
-+- #phy-cells : Must be zero
-+- reg : a register used by phy driver.
-+	- First is for phy register, second is for block register.
-+- reg-names : Must be set to "phy" and "block".
-+
-+Example:
+ 
++With using PHY framework:
 +	pcie_phy0: pcie-phy@270000 {
-+		#phy-cells = <0>;
-+		compatible = "samsung,exynos5440-pcie-phy";
++		...
 +		reg = <0x270000 0x1000>, <0x271000 0x40>;
 +		reg-names = "phy", "block";
++		...
 +	};
++
++	pcie@290000 {
++		...
++		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
++		reg-names = "elbi", "config";
++		phys = <&pcie_phy0>;
++		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000
++			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>;
++		...
++	};
++
+ Board specific DT Entry:
+ 
+ 	pcie@290000 {
 -- 
 2.10.2
