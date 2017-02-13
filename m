@@ -1,127 +1,102 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH v8 3/3] dmaengine: pl330: Don't require irq-safe runtime PM
-Date: Mon, 13 Feb 2017 16:09:56 +0100
-Message-ID: <CAPDyKFr6qB7j23E2pVqkBn8OWRZkwE_Diex8ttPiyPWZrruFYw@mail.gmail.com>
+Date: Mon, 13 Feb 2017 16:32:32 +0100
+Message-ID: <CAPDyKFqnmhps5nhj-exZ0rnmkwdeD+iuz3CH7btjvxoJaZtVDg@mail.gmail.com>
 References: <1486650171-20598-1-git-send-email-m.szyprowski@samsung.com>
  <CGME20170209142309eucas1p2b1277d96139eafc0d1dcc14145600476@eucas1p2.samsung.com>
  <1486650171-20598-4-git-send-email-m.szyprowski@samsung.com>
- <20170210045004.GN19244@localhost>
- <d299ae6c-78dc-9049-6bed-dc84fff17db3@samsung.com>
+ <20170210045004.GN19244@localhost> <d299ae6c-78dc-9049-6bed-dc84fff17db3@samsung.com>
  <CAPDyKFqW2av1mjDvRP=R1my2kepeX69TS6cchzoHmwaoydT5Sg@mail.gmail.com>
- <cbccef67-54da-27ce-d0c0-ac57ef251b9b@samsung.com>
+ <20170213020340.GH2843@localhost> <CAPDyKFpt9O8GM-7xeNJ8bF0JqUJ7nPaRmmC+aMVsdMH-yWBCNg@mail.gmail.com>
+ <20170213122742.GL2843@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cbccef67-54da-27ce-d0c0-ac57ef251b9b@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170213122742.GL2843@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 [...]
 
->> The only related PM thing, that shall be the decision of the driver,
->> is whether it wants to enable runtime PM or not, during ->probe().
+>> Although, I don't know of other examples, besides the runtime PM use
+>> case, where non-atomic channel prepare/unprepare would make sense. Do
+>> you?
 >
->
-> So do you want to create the links during the DMAengine driver probe? How do
-> you
-> plan to find all the client devices? Please note that you really want to
-> create
-> links to devices which will really use the DMA engine calls. Some client
-> drivers might decide in runtime weather to use DMA engine or not, depending
-> on
-> other data.
+> The primary ask for that has been to enable runtime_pm for drivers. It's not
+> a new ask, but we somehow haven't gotten around to do it.
 
-I don't have great plan, just wanted to share my thoughts around the
-problems we want to solve.
+Okay, I see.
+
+>
+>> > As I said earlier, if we want to solve that problem a better idea is to
+>> > actually split the prepare as we discussed in [1]
+>> >
+>> > This way we can get a non atomic descriptor allocate/prepare and release.
+>> > Yes we need to redesign the APIs to solve this, but if you guys are up for
+>> > it, I think we can do it and avoid any further round abouts :)
+>>
+>> Adding/re-designing dma APIs is a viable option to solve the runtime PM case.
+>>
+>> Changes would be needed for all related dma client drivers as well,
+>> although if that's what we need to do - let's do it.
+>
+> Yes, but do bear in mind that some cases do need atomic prepare. The primary
+> cases for DMA had that in mind and also submitting next transaction from the
+> callback (tasklet) context, so that won't go away.
+>
+> It would help in other cases where clients know that they will not be in
+> atomic context so we provide additional non-atomic "allocation" followed by
+> prepare, so that drivers can split the work among these and people can do
+> runtime_pm and other things..
+
+That for sharing the details.
+
+It seems like some dma expert really need to be heavily involved if we
+ever are going to complete this work. :-)
 
 [...]
 
 >>
->> If we could set up the device link already at device initialization,
->> it should also be possible to avoid getting -EPROBE_DEFER for dma
->> client drivers when requesting their dma channels.
->
->
-> At the first glance this sounds like an ultimate solution for all problems,
-> but I don't think that device links can be used this way. If I get it right,
-> you would like to create links on client device initialization, preferably
-> somewhere in the kernel driver core. This will be handled somehow by a
-> completely generic code, which will create a link each pair of devices,
-> which are connected by a phandle. Is this what you meant? Please note that
-> that time no driver for both client and provider are probed. IMHO that
-> doesn't look like a right generic approach
->
-> How that code will know get following information:
-> 1. is it really needed to create a link for given device pair?
-> 2. what link flags should it use?
-> 3. what about circular dependencies?
-> 4. what about runtime optional dependencies?
-> 5. what about non-dt platforms? acpi?
->
-
-To give a good answer of these questions, I need to spend more time
-investigating.
-
-However, from a top-level point of view, I think the device links
-seems like the perfect match for solving the runtime/system PM
-problems.
-
-No matter whether we can set up the links at device initialization
-time, driver probe or whatever time.
-
-> This looks like another newer ending story of "how can we avoid deferred
-> probe
-> in a generic way". IMHO we should first solve the problem of irq-safe
-> runtime
-> PM in DMA engine drivers first. I proposed how it can be done with device
-> links.
-> With no changes in the client API. Later if one decide to extend the client
-> API
-> in a way it will allow other runtime PM implementation - I see no problem to
-> convert pl330 driver to the new approach, but for the time being - this
-> would
-> be the easiest way to get it really functional.
-
-Agree, let's drop the deferred probe topic from the discussions - it's
-just going to be overwhelming. :-)
-
-[...]
-
->> So besides solving the irq-safe issue for dma driver, using the
->> device-links has additionally two advantages. I already mentioned the
->> -EPROBE_DEFER issue above.
->
->
-> Not really. IMHO device links can be properly established once both drivers
-> are probed...
-
-Okay.
-
->
+>> 1) Dependencies between dma drivers and dma client drivers during system
+>> PM. For example, a dma client driver needs the dma controller to be
+>> operational (remain system resumed), until the dma client driver itself
+>> becomes system suspended.
 >>
->> The second thing, is the runtime/system PM relations we get for free
->> by using the links. In other words, the dma driver/core don't need to
->> care about dealing with pm_runtime_get|put() as that would be managed
->> by the dma client driver.
+>> The *only* currently available solution for this, is to try to system
+>> suspend the dma controller later than the dma client, via using the *late
+>> or the *noirq system PM callbacks. This works for most cases, but it
+>> becomes a problem when the dma client also needs to be system suspended at
+>> the *late or the *noirq phase. Clearly this solution that doesn't scale.
+>>
+>> Using device links explicitly solves this problem as it allows to specify
+>> this dependency between devices.
 >
->
-> IMHO there might be drivers which don't want to use device links based
-> runtime
-> PM in favor of irq-safe PM or something else. This should be really left to
-> drivers.
+> Yes this is an interesting point. Yes till now people have been doing above
+> to workaround this problem, but hey this is not a unique to dmaengine. Any
+> subsystem which provides services to others has this issue, so the solution
+> much be driver or pm framework and not unique to dmaengine.
 
-Okay.
+I definitely agree, these problems aren't unique to the dmaengine
+subsystem. Exactly how/where to manage them, that I guess, is the key
+question.
+
+However, I can't resist from finding the device links useful, as those
+really do address and solve our issues from a runtime/system PM point
+of view.
+
+>
+>> 2) We won't avoid dma clients from getting -EPROBE_DEFER when requesting
+>> their dma channels in their ->probe() routines. This would be possible, if
+>> we can set up the device links at device initialization.
+>
+> Well setting those links is not practical at initialization time. Most
+> modern dma controllers feature a SW mux, with multiple clients connecting
+> and requesting, would we link all of them? Most of times dmaengine driver
+> wont know about those..
+
+Okay, I see!
 
 Kind regards
 Uffe
