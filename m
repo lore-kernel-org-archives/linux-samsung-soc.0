@@ -1,9 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 15/15] ARM: dts: exynos: Remove MFC reserved buffers
-Date: Tue, 14 Feb 2017 08:52:08 +0100
-Message-ID: <1487058728-16501-16-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 01/15] media: s5p-mfc: Remove unused structures and dead code
+Date: Tue, 14 Feb 2017 08:51:54 +0100
+Message-ID: <1487058728-16501-2-git-send-email-m.szyprowski@samsung.com>
 References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075221eucas1p18648b047f71e9dd95626e5766c74601b@eucas1p1.samsung.com>
+ <CGME20170214075214eucas1p10569ef126fbab2e3f3ca2c9818c9b4d6@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
@@ -11,121 +11,143 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-During my research I found that some of the requirements for the memory
-buffers for MFC v6+ devices were blindly copied from the previous (v5)
-version and simply turned out to be excessive. The relaxed requirements
-are applied by the recent patches to the MFC driver and the driver is
-now fully functional even without the reserved memory blocks for all
-v6+ variants. This patch removes those reserved memory nodes from all
-boards having MFC v6+ hardware block.
+Remove unused structures, definitions and functions that are no longer
+called from the driver code.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts           | 1 -
- arch/arm/boot/dts/exynos5250-smdk5250.dts          | 1 -
- arch/arm/boot/dts/exynos5250-spring.dts            | 1 -
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 1 -
- arch/arm/boot/dts/exynos5420-peach-pit.dts         | 1 -
- arch/arm/boot/dts/exynos5420-smdk5420.dts          | 1 -
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
- arch/arm/boot/dts/exynos5800-peach-pi.dts          | 1 -
- 8 files changed, 8 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
+ 3 files changed, 35 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 6098dacd09f1..6a432460eb77 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -14,7 +14,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 05fe82be6584..3e1f22eb4339 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1422,16 +1422,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v5,
+ };
  
- / {
- 	model = "Insignal Arndale evaluation board based on EXYNOS5250";
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a97a785ccc6b..6632f657394e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -13,7 +13,6 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+-static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
+-	.base = MFC_BASE_ALIGN_ORDER,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v5 = {
+ 	.version	= MFC_VERSION,
+ 	.version_bit	= MFC_V5_BIT,
+ 	.port_num	= MFC_NUM_PORTS,
+ 	.buf_size	= &buf_size_v5,
+-	.buf_align	= &mfc_buf_align_v5,
+ 	.fw_name[0]	= "s5p-mfc.fw",
+ 	.clk_names	= {"mfc", "sclk_mfc"},
+ 	.num_clocks	= 2,
+@@ -1452,16 +1447,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v6,
+ };
  
- / {
- 	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index 4d7bdb735ed3..95c3bcace9dc 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -14,7 +14,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include "exynos5250.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+-static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
+-	.base = 0,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v6 = {
+ 	.version	= MFC_VERSION_V6,
+ 	.version_bit	= MFC_V6_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V6,
+ 	.buf_size	= &buf_size_v6,
+-	.buf_align	= &mfc_buf_align_v6,
+ 	.fw_name[0]     = "s5p-mfc-v6.fw",
+ 	/*
+ 	 * v6-v2 firmware contains bug fixes and interface change
+@@ -1486,16 +1476,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v7,
+ };
  
- / {
- 	model = "Google Spring";
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 9cc83c51c925..ee1bb9b8b366 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/clock/samsung,s2mps11.h>
--#include "exynos-mfc-reserved-memory.dtsi"
+-static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
+-	.base = 0,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v7 = {
+ 	.version	= MFC_VERSION_V7,
+ 	.version_bit	= MFC_V7_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V7,
+ 	.buf_size	= &buf_size_v7,
+-	.buf_align	= &mfc_buf_align_v7,
+ 	.fw_name[0]     = "s5p-mfc-v7.fw",
+ 	.clk_names	= {"mfc", "sclk_mfc"},
+ 	.num_clocks	= 2,
+@@ -1515,16 +1500,11 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.priv	= &mfc_buf_size_v8,
+ };
  
- / {
- 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 1f964ec35c5e..2cd65699a29c 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5420.dtsi"
- #include "exynos5420-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+-static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
+-	.base = 0,
+-};
+-
+ static struct s5p_mfc_variant mfc_drvdata_v8 = {
+ 	.version	= MFC_VERSION_V8,
+ 	.version_bit	= MFC_V8_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V8,
+ 	.buf_size	= &buf_size_v8,
+-	.buf_align	= &mfc_buf_align_v8,
+ 	.fw_name[0]     = "s5p-mfc-v8.fw",
+ 	.clk_names	= {"mfc"},
+ 	.num_clocks	= 1,
+@@ -1535,7 +1515,6 @@ static int s5p_mfc_resume(struct device *dev)
+ 	.version_bit	= MFC_V8_BIT,
+ 	.port_num	= MFC_NUM_PORTS_V8,
+ 	.buf_size	= &buf_size_v8,
+-	.buf_align	= &mfc_buf_align_v8,
+ 	.fw_name[0]     = "s5p-mfc-v8.fw",
+ 	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
+ 	.num_clocks	= 3,
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index ab23236aa942..3e0e8eaf8bfe 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -44,14 +44,6 @@
  
- / {
- 	model = "Google Peach Pit Rev 6+";
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index aaccd0da41e5..08c8ab173e87 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -13,7 +13,6 @@
- #include "exynos5420.dtsi"
- #include "exynos5420-cpus.dtsi"
- #include <dt-bindings/gpio/gpio.h>
--#include "exynos-mfc-reserved-memory.dtsi"
+ #include <media/videobuf2-dma-contig.h>
  
- / {
- 	model = "Samsung SMDK5420 board based on EXYNOS5420";
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 05b9afdd6757..657535e2e3cc 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+-static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
+-{
+-	/* Same functionality as the vb2_dma_contig_plane_paddr */
+-	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
+-
+-	return *paddr;
+-}
+-
+ /* MFC definitions */
+ #define MFC_MAX_EXTRA_DPB       5
+ #define MFC_MAX_BUFFERS		32
+@@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
+ 	void *priv;
+ };
+ 
+-struct s5p_mfc_buf_align {
+-	unsigned int base;
+-};
+-
+ struct s5p_mfc_variant {
+ 	unsigned int version;
+ 	unsigned int port_num;
+ 	u32 version_bit;
+ 	struct s5p_mfc_buf_size *buf_size;
+-	struct s5p_mfc_buf_align *buf_align;
+ 	char	*fw_name[MFC_FW_MAX_VERSIONS];
+ 	const char	*clk_names[MFC_MAX_CLOCKS];
+ 	int		num_clocks;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+index 8e5df041edf7..45c807bf19cc 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
 @@ -18,7 +18,6 @@
- #include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- #include "exynos5422-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
+ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
+ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
+ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
+-int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
  
- / {
- 	memory@40000000 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index f9ff7f07ae0c..ecf1c916e8fc 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -16,7 +16,6 @@
- #include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5800.dtsi"
- #include "exynos5420-cpus.dtsi"
--#include "exynos-mfc-reserved-memory.dtsi"
- 
- / {
- 	model = "Google Peach Pi Rev 10+";
+ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
+ void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
 -- 
 1.9.1
