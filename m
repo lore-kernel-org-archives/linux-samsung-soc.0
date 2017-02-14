@@ -1,10 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 10/15] media: s5p-mfc: Reduce firmware buffer size for MFC v6+
- variants
-Date: Tue, 14 Feb 2017 08:52:03 +0100
-Message-ID: <1487058728-16501-11-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 11/15] media: s5p-mfc: Split variant DMA memory configuration
+ into separate functions
+Date: Tue, 14 Feb 2017 08:52:04 +0100
+Message-ID: <1487058728-16501-12-git-send-email-m.szyprowski@samsung.com>
 References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075218eucas1p157d3da30dab72acd2bea1ea99795a274@eucas1p1.samsung.com>
+ <CGME20170214075219eucas1p193de247c3127167d68a2cca922e83fb3@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
@@ -12,55 +12,147 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Firmware for MFC v6+ variants is not larger than 400 KiB, so there is no
-need to allocate a full 1 MiB buffer for it. Reduce it to 512 KiB to keep
-proper alignment of allocated buffer.
+Move code for DMA memory configuration with IOMMU into separate function
+to make it easier to compare what is being done in each case.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/regs-mfc-v6.h | 2 +-
- drivers/media/platform/s5p-mfc/regs-mfc-v7.h | 2 +-
- drivers/media/platform/s5p-mfc/regs-mfc-v8.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 102 ++++++++++++++++++-------------
+ 1 file changed, 61 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-index d2cd35916dc5..c0166ee9a455 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-@@ -403,7 +403,7 @@
- #define MFC_OTHER_ENC_CTX_BUF_SIZE_V6	(12 * SZ_1K)	/*  12KB */
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 92a88c20b26d..a18740c81c55 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1107,41 +1107,13 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
+ 	return NULL;
+ }
  
- /* MFCv6 variant defines */
--#define MAX_FW_SIZE_V6			(SZ_1M)		/* 1MB */
-+#define MAX_FW_SIZE_V6			(SZ_512K)	/* 512KB */
- #define MAX_CPB_SIZE_V6			(3 * SZ_1M)	/* 3MB */
- #define MFC_VERSION_V6			0x61
- #define MFC_NUM_PORTS_V6		1
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-index 1a5c6fdf7846..9f220769d970 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
-@@ -34,7 +34,7 @@
- #define S5P_FIMV_E_VP8_NUM_T_LAYER_V7			0xfdc4
+-static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++static int s5p_mfc_configure_2port_memory(struct s5p_mfc_dev *mfc_dev)
+ {
+ 	struct device *dev = &mfc_dev->plat_dev->dev;
+ 	void *bank2_virt;
+ 	dma_addr_t bank2_dma_addr;
+ 	unsigned long align_size = 1 << MFC_BASE_ALIGN_ORDER;
+-	struct s5p_mfc_priv_buf *fw_buf = &mfc_dev->fw_buf;
+-
+-	/*
+-	 * When IOMMU is available, we cannot use the default configuration,
+-	 * because of MFC firmware requirements: address space limited to
+-	 * 256M and non-zero default start address.
+-	 * This is still simplified, not optimal configuration, but for now
+-	 * IOMMU core doesn't allow to configure device's IOMMUs channel
+-	 * separately.
+-	 */
+-	if (exynos_is_iommu_available(dev)) {
+-		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
+-						 S5P_MFC_IOMMU_DMA_SIZE);
+-		if (ret)
+-			return ret;
+-
+-		mfc_dev->mem_dev[BANK1_CTX] = mfc_dev->mem_dev[BANK2_CTX] = dev;
+-		ret = s5p_mfc_alloc_firmware(mfc_dev);
+-		if (ret) {
+-			exynos_unconfigure_iommu(dev);
+-			return ret;
+-		}
+-
+-		mfc_dev->dma_base[BANK1_CTX] = mfc_dev->fw_buf.dma;
+-		mfc_dev->dma_base[BANK2_CTX] = mfc_dev->fw_buf.dma;
+-		vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+-
+-		return 0;
+-	}
++	int ret;
  
- /* MFCv7 variant defines */
--#define MAX_FW_SIZE_V7			(SZ_1M)		/* 1MB */
-+#define MAX_FW_SIZE_V7			(SZ_512K)	/* 512KB */
- #define MAX_CPB_SIZE_V7			(3 * SZ_1M)	/* 3MB */
- #define MFC_VERSION_V7			0x72
- #define MFC_NUM_PORTS_V7		1
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-index 4d1c3750eb5e..75f5f7511d72 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-@@ -116,7 +116,7 @@
- #define S5P_FIMV_D_ALIGN_PLANE_SIZE_V8	64
+ 	/*
+ 	 * Create and initialize virtual devices for accessing
+@@ -1188,26 +1160,74 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+ 					DMA_BIT_MASK(32));
+ 	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
+ 					DMA_BIT_MASK(32));
+-
+ 	return 0;
+ }
  
- /* MFCv8 variant defines */
--#define MAX_FW_SIZE_V8			(SZ_1M)		/* 1MB */
-+#define MAX_FW_SIZE_V8			(SZ_512K)	/* 512KB */
- #define MAX_CPB_SIZE_V8			(3 * SZ_1M)	/* 3MB */
- #define MFC_VERSION_V8			0x80
- #define MFC_NUM_PORTS_V8		1
+-static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++static void s5p_mfc_unconfigure_2port_memory(struct s5p_mfc_dev *mfc_dev)
+ {
+-	struct device *dev = &mfc_dev->plat_dev->dev;
++	device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
++	device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK1_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK2_CTX]);
++}
+ 
+-	s5p_mfc_release_firmware(mfc_dev);
++static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	struct device *dev = &mfc_dev->plat_dev->dev;
++	/*
++	 * When IOMMU is available, we cannot use the default configuration,
++	 * because of MFC firmware requirements: address space limited to
++	 * 256M and non-zero default start address.
++	 * This is still simplified, not optimal configuration, but for now
++	 * IOMMU core doesn't allow to configure device's IOMMUs channel
++	 * separately.
++	 */
++	int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
++					 S5P_MFC_IOMMU_DMA_SIZE);
++	if (ret)
++		return ret;
+ 
+-	if (exynos_is_iommu_available(dev)) {
++	mfc_dev->mem_dev[BANK1_CTX] = mfc_dev->mem_dev[BANK2_CTX] = dev;
++	ret = s5p_mfc_alloc_firmware(mfc_dev);
++	if (ret) {
+ 		exynos_unconfigure_iommu(dev);
+-		vb2_dma_contig_clear_max_seg_size(dev);
+-		return;
++		return ret;
+ 	}
+ 
+-	device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
+-	device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
+-	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK1_CTX]);
+-	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK2_CTX]);
++	mfc_dev->dma_base[BANK1_CTX] = mfc_dev->fw_buf.dma;
++	mfc_dev->dma_base[BANK2_CTX] = mfc_dev->fw_buf.dma;
++	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
++
++	return 0;
++}
++
++static void s5p_mfc_unconfigure_common_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	struct device *dev = &mfc_dev->plat_dev->dev;
++
++	exynos_unconfigure_iommu(dev);
++	vb2_dma_contig_clear_max_seg_size(dev);
++}
++
++static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	struct device *dev = &mfc_dev->plat_dev->dev;
++
++	if (exynos_is_iommu_available(dev))
++		return s5p_mfc_configure_common_memory(mfc_dev);
++	else
++		return s5p_mfc_configure_2port_memory(mfc_dev);
++}
++
++static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
++{
++	struct device *dev = &mfc_dev->plat_dev->dev;
++
++	s5p_mfc_release_firmware(mfc_dev);
++	if (exynos_is_iommu_available(dev))
++		s5p_mfc_unconfigure_common_memory(mfc_dev);
++	else
++		s5p_mfc_unconfigure_2port_memory(mfc_dev);
+ }
+ 
+ /* MFC probe function */
 -- 
 1.9.1
