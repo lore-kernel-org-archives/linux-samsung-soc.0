@@ -1,32 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] drm/exynos/decon5433: & vs | typo
-Date: Tue, 14 Feb 2017 10:46:20 +0300
-Message-ID: <20170214074620.GA9710@mwanda>
+Subject: [bug report] drm/exynos/decon5433: configure sysreg in case of
+ hardware trigger
+Date: Tue, 14 Feb 2017 10:48:42 +0300
+Message-ID: <20170214074842.GA3772@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: a.hajda@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-"&" was obviously intended instead of "|".  The original condition is
-always true.
-
-Fixes: b93c2e8b5d9d ("drm/exynos/decon5433: configure sysreg in case of hardware trigger")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 0fd6f7a18364..cca32a4fdab3 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -678,7 +678,7 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
- 		ctx->out_type |= IFTYPE_I80;
- 	}
- 
--	if (ctx->out_type | I80_HW_TRG) {
-+	if (ctx->out_type & I80_HW_TRG) {
- 		ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
- 							"samsung,disp-sysreg");
- 		if (IS_ERR(ctx->sysreg)) {
+SGVsbG8gQW5kcnplaiBIYWpkYSwKClRoZSBwYXRjaCBiOTNjMmU4YjVkOWQ6ICJkcm0vZXh5bm9z
+L2RlY29uNTQzMzogY29uZmlndXJlIHN5c3JlZyBpbgpjYXNlIG9mIGhhcmR3YXJlIHRyaWdnZXIi
+IGZyb20gRmViIDEsIDIwMTcsIGxlYWRzIHRvIHRoZSBmb2xsb3dpbmcKc3RhdGljIGNoZWNrZXIg
+d2FybmluZzoKCglkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmM6
+MTMyIGRlY29uX3NldHVwX3RyaWdnZXIoKQoJJzB4MjAwMDAwMDEgfCAweDEnIGhhcyAnMHgxJyBz
+ZXQgb24gYm90aCBzaWRlcwoKZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
+ZWNvbi5jCiAgIDEyNSAgc3RhdGljIHZvaWQgZGVjb25fc2V0dXBfdHJpZ2dlcihzdHJ1Y3QgZGVj
+b25fY29udGV4dCAqY3R4KQogICAxMjYgIHsKICAgMTI3ICAgICAgICAgIGlmICghKGN0eC0+b3V0
+X3R5cGUgJiAoSUZUWVBFX0k4MCB8IEk4MF9IV19UUkcpKSkKICAgMTI4ICAgICAgICAgICAgICAg
+ICAgcmV0dXJuOwogICAxMjkgIAogICAxMzAgICAgICAgICAgaWYgKCEoY3R4LT5vdXRfdHlwZSAm
+IEk4MF9IV19UUkcpKSB7CiAgIDEzMSAgICAgICAgICAgICAgICAgIHdyaXRlbChUUklHQ09OX1RF
+X0FVVE9fTUFTSyB8IFRSSUdDT05fU1dUUklHRU4KICAgMTMyICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgVFJJR0NPTl9URV9BVVRPX01BU0sgfCBUUklHQ09OX1NXVFJJR0VOLAoKVGhlIG1hc2sg
+aXMgcmVwZWF0ZWQgdHdpY2UuICBObyBpZGVhIHdoYXQgd2FzIGludGVuZGVkLgoKICAgMTMzICAg
+ICAgICAgICAgICAgICAgICAgICAgIGN0eC0+YWRkciArIERFQ09OX1RSSUdDT04pOwogICAxMzQg
+ICAgICAgICAgICAgICAgICByZXR1cm47CiAgIDEzNSAgICAgICAgICB9CiAgIDEzNiAgCiAgIDEz
+NyAgICAgICAgICB3cml0ZWwoVFJJR0NPTl9UUklHRU5fUEVSX0YgfCBUUklHQ09OX1RSSUdFTl9G
+IHwgVFJJR0NPTl9IV1RSSUdNQVNLCiAgIDEzOCAgICAgICAgICAgICAgICAgfCBUUklHQ09OX0hX
+VFJJR0VOLCBjdHgtPmFkZHIgKyBERUNPTl9UUklHQ09OKTsKICAgMTM5ICAKICAgMTQwICAgICAg
+ICAgIGlmIChyZWdtYXBfdXBkYXRlX2JpdHMoY3R4LT5zeXNyZWcsIERTRF9DRkdfTVVYLAogICAx
+NDEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEU0RfQ0ZHX01VWF9URV9VTk1BU0tf
+R0xPQkFMLCB+MCkpCiAgIDE0MiAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiQ2Fubm90IHVw
+ZGF0ZSBzeXNyZWcuXG4iKTsKICAgMTQzICB9CgpyZWdhcmRzLApkYW4gY2FycGVudGVyCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
