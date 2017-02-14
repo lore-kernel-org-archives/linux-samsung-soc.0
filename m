@@ -1,103 +1,40 @@
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH v4 1/4] [media] exynos-gsc: Use 576p instead 720p as a
- threshold for colorspaces
-Date: Tue, 14 Feb 2017 15:19:37 +0000
-Message-ID: <72f8528b-fde1-e0ee-267b-a58602bbed46@st.com>
-References: <20170213190836.26972-1-thibault.saunier@osg.samsung.com>
- <20170213190836.26972-2-thibault.saunier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] media: s5p-mfc: Fix initialization of internal structures
+Date: Tue, 14 Feb 2017 13:32:51 -0300
+Message-ID: <37216e17-e6b4-2adb-2d34-d75aaf988ca0@osg.samsung.com>
+References: <CGME20170203140530eucas1p17e9d0bbb29da881bae025e8e3bc7cbbb@eucas1p1.samsung.com>
+ <1486130718-25998-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170213190836.26972-2-thibault.saunier@osg.samsung.com>
-Content-Language: en-US
-Content-ID: <E8DEE64CA666604EBAFBAA8F257642F1@st.com>
+In-Reply-To: <1486130718-25998-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thibault
+Hello Marek,
 
-
-On 13/02/17 20:08, Thibault Saunier wrote:
-> From: Javier Martinez Canillas <javier@osg.samsung.com>
->
-> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
-> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
-> don't agree on the display resolution that should be used as a threshold.
->
->  From EIA CEA 861B about colorimetry for various resolutions:
->
->    - 5.1 480p, 480i, 576p, 576i, 240p, and 288p
->      The color space used by the 480-line, 576-line, 240-line, and 288-line
->      formats will likely be based on SMPTE 170M [1].
->    - 5.2 1080i, 1080p, and 720p
->      The color space used by the high definition formats will likely be
->      based on ITU-R BT.709-4
->
-> This indicates that in the case that userspace does not specify what
-> colorspace should be used, we should use 576p  as a threshold to set
-> V4L2_COLORSPACE_REC709 instead of V4L2_COLORSPACE_REC709. Even if it is
-
-typo -> "V4L2_COLORSPACE_REC709 instead of V4L2_COLORSPACE_SMPTE170M"
-
-
-> only 'likely' and not a requirement it is the best guess we can make.
->
-> The stream should have been encoded with the information and userspace
-> has to pass it to the driver if it is not the case, otherwise we won't be
-> able to handle it properly anyhow.
->
-> Also, check for the resolution in G_FMT instead unconditionally setting
-> the V4L2_COLORSPACE_REC709 colorspace.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->
+On 02/03/2017 11:05 AM, Marek Szyprowski wrote:
+> Initialize members of the internal device and context structures as early
+> as possible to avoid access to uninitialized objects on initialization
+> failures. If loading firmware or creating of the hardware instance fails,
+> driver will access device or context queue in error handling path, which
+> might not be initialized yet, what causes kernel panic. Fix this by moving
+> initialization of all static members as early as possible.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->
-> Changes in v4:
-> - Reword commit message to better back our assumptions on specifications
->
-> Changes in v3:
-> - Do not check values in the g_fmt functions as Andrzej explained in previous review
-> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
->
-> Changes in v2: None
->
->   drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-> index 59a634201830..db7d9883861b 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-> @@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->   
->   	pix_mp->num_planes = fmt->num_planes;
->   
-> -	if (pix_mp->width >= 1280) /* HD */
-> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
->   		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->   	else /* SD */
->   		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
-> @@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->   	pix_mp->height		= frame->f_height;
->   	pix_mp->field		= V4L2_FIELD_NONE;
->   	pix_mp->pixelformat	= frame->fmt->pixelformat;
-> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
->   	pix_mp->num_planes	= frame->fmt->num_planes;
->   
-> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
-> +		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-> +	else /* SD */
-> +		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
-> +
->   	for (i = 0; i < pix_mp->num_planes; ++i) {
->   		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
->   			frame->fmt->depth[i]) / 8;
 
-BR
-Fabien
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Also tested on an Exynos5422 Odroid XU4 and Exynos5800 Peach Pi:
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
