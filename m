@@ -1,97 +1,75 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 06/15] media: s5p-mfc: Move setting DMA max segmetn size to DMA
- configure function
-Date: Tue, 14 Feb 2017 08:51:59 +0100
-Message-ID: <1487058728-16501-7-git-send-email-m.szyprowski@samsung.com>
-References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075217eucas1p26836eab5b19b43498b4a5186fb8f71db@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39229 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751932AbdBNHwV (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2017 02:52:21 -0500
-In-reply-to: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v8 3/3] dmaengine: pl330: Don't require irq-safe runtime PM
+Date: Tue, 14 Feb 2017 09:24:35 +0100
+Message-ID: <CAPDyKFrvsTQ+fkOLpgguAMsSyeComEgNxQ-hTb_torVrwZwU6g@mail.gmail.com>
+References: <1486650171-20598-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170209142309eucas1p2b1277d96139eafc0d1dcc14145600476@eucas1p2.samsung.com>
+ <1486650171-20598-4-git-send-email-m.szyprowski@samsung.com>
+ <20170210045004.GN19244@localhost> <d299ae6c-78dc-9049-6bed-dc84fff17db3@samsung.com>
+ <CAPDyKFqW2av1mjDvRP=R1my2kepeX69TS6cchzoHmwaoydT5Sg@mail.gmail.com>
+ <20170213020340.GH2843@localhost> <CAPDyKFpt9O8GM-7xeNJ8bF0JqUJ7nPaRmmC+aMVsdMH-yWBCNg@mail.gmail.com>
+ <20170213122742.GL2843@localhost> <CAPDyKFqnmhps5nhj-exZ0rnmkwdeD+iuz3CH7btjvxoJaZtVDg@mail.gmail.com>
+ <20170213154727.GN2843@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170213154727.GN2843@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Setting DMA max segment size to 32 bit mask is a part of DMA memory
-configuration, so move those calls to s5p_mfc_configure_dma_memory()
-function.
+On 13 February 2017 at 16:47, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Mon, Feb 13, 2017 at 04:32:32PM +0100, Ulf Hansson wrote:
+>> [...]
+>>
+>> >> Although, I don't know of other examples, besides the runtime PM use
+>> >> case, where non-atomic channel prepare/unprepare would make sense. Do
+>> >> you?
+>> >
+>> > The primary ask for that has been to enable runtime_pm for drivers. It's not
+>> > a new ask, but we somehow haven't gotten around to do it.
+>>
+>> Okay, I see.
+>>
+>> >
+>> >> > As I said earlier, if we want to solve that problem a better idea is to
+>> >> > actually split the prepare as we discussed in [1]
+>> >> >
+>> >> > This way we can get a non atomic descriptor allocate/prepare and release.
+>> >> > Yes we need to redesign the APIs to solve this, but if you guys are up for
+>> >> > it, I think we can do it and avoid any further round abouts :)
+>> >>
+>> >> Adding/re-designing dma APIs is a viable option to solve the runtime PM case.
+>> >>
+>> >> Changes would be needed for all related dma client drivers as well,
+>> >> although if that's what we need to do - let's do it.
+>> >
+>> > Yes, but do bear in mind that some cases do need atomic prepare. The primary
+>> > cases for DMA had that in mind and also submitting next transaction from the
+>> > callback (tasklet) context, so that won't go away.
+>> >
+>> > It would help in other cases where clients know that they will not be in
+>> > atomic context so we provide additional non-atomic "allocation" followed by
+>> > prepare, so that drivers can split the work among these and people can do
+>> > runtime_pm and other things..
+>>
+>> That for sharing the details.
+>>
+>> It seems like some dma expert really need to be heavily involved if we
+>> ever are going to complete this work. :-)
+>
+> Sure, I will help out :)
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+That sounds great! :-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index f7664910f12c..bc1aeb25ebeb 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1122,9 +1122,13 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	if (exynos_is_iommu_available(dev)) {
- 		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
- 						 S5P_MFC_IOMMU_DMA_SIZE);
--		if (ret == 0)
-+		if (ret == 0) {
- 			mfc_dev->mem_dev[BANK1_CTX] =
- 				mfc_dev->mem_dev[BANK2_CTX] = dev;
-+			vb2_dma_contig_set_max_seg_size(dev,
-+							DMA_BIT_MASK(32));
-+		}
-+
- 		return ret;
- 	}
- 
-@@ -1143,6 +1147,11 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 		return -ENODEV;
- 	}
- 
-+	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK1_CTX],
-+					DMA_BIT_MASK(32));
-+	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
-+					DMA_BIT_MASK(32));
-+
- 	return 0;
- }
- 
-@@ -1152,11 +1161,14 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 
- 	if (exynos_is_iommu_available(dev)) {
- 		exynos_unconfigure_iommu(dev);
-+		vb2_dma_contig_clear_max_seg_size(dev);
- 		return;
- 	}
- 
- 	device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
- 	device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
-+	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK1_CTX]);
-+	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK2_CTX]);
- }
- 
- /* MFC probe function */
-@@ -1214,11 +1226,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 		goto err_dma;
- 	}
- 
--	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK1_CTX],
--					DMA_BIT_MASK(32));
--	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK2_CTX],
--					DMA_BIT_MASK(32));
--
- 	mutex_init(&dev->mfc_mutex);
- 	init_waitqueue_head(&dev->queue);
- 	dev->hw_lock = 0;
-@@ -1351,8 +1358,6 @@ static int s5p_mfc_remove(struct platform_device *pdev)
- 	v4l2_device_unregister(&dev->v4l2_dev);
- 	s5p_mfc_release_firmware(dev);
- 	s5p_mfc_unconfigure_dma_memory(dev);
--	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK1_CTX]);
--	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK2_CTX]);
- 
- 	s5p_mfc_final_pm(dev);
- 	return 0;
--- 
-1.9.1
+>
+> If anyone of you are in Portland next week, then we can discuss these f2f. I
+> will try taking a stab at the new API design next week.
+>
+
+Unfortunate not. We will have to meet some other time. Anyway, please
+keep me posted on any related topics.
+
+Kind regards
+Uffe
