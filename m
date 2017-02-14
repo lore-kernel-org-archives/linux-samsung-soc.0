@@ -1,76 +1,114 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v8 3/3] dmaengine: pl330: Don't require irq-safe runtime PM
-Date: Tue, 14 Feb 2017 08:50:43 +0100
-Message-ID: <ea75ca9a-efc0-2d47-d6ef-fd32e675db49@samsung.com>
-References: <1486650171-20598-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170209142309eucas1p2b1277d96139eafc0d1dcc14145600476@eucas1p2.samsung.com>
- <1486650171-20598-4-git-send-email-m.szyprowski@samsung.com>
- <20170210045004.GN19244@localhost>
- <d299ae6c-78dc-9049-6bed-dc84fff17db3@samsung.com>
- <CAPDyKFqW2av1mjDvRP=R1my2kepeX69TS6cchzoHmwaoydT5Sg@mail.gmail.com>
- <20170213020340.GH2843@localhost>
- <CAPDyKFpt9O8GM-7xeNJ8bF0JqUJ7nPaRmmC+aMVsdMH-yWBCNg@mail.gmail.com>
- <20170213122742.GL2843@localhost>
- <CAPDyKFqnmhps5nhj-exZ0rnmkwdeD+iuz3CH7btjvxoJaZtVDg@mail.gmail.com>
- <20170213154727.GN2843@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170213154727.GN2843@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH 00/15] Exynos MFC v6+ - remove the need for the reserved memory
+Date: Tue, 14 Feb 2017 08:51:53 +0100
+Message-ID: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170214075214eucas1p1574c18c0fa166cdda50838b9fb8cc23b@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39761 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbdBNHwT (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 14 Feb 2017 02:52:19 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hi Vinod,
+Dear All,
 
+This patchset is a result of my work on enabling full support for MFC device
+(multimedia codec) on Exynos 5433 on ARM64 architecture. Initially I thought
+that to let it working on ARM64 architecture with IOMMU, I would need to
+solve the issue related to the fact that s5p-mfc driver was depending on the
+first-fit allocation method in the DMA-mapping / IOMMU glue code (ARM64 use
+different algorithm). It turned out, that there is a much simpler way.
 
-On 2017-02-13 16:47, Vinod Koul wrote:
-> On Mon, Feb 13, 2017 at 04:32:32PM +0100, Ulf Hansson wrote:
->> [...]
->>
->>>> Although, I don't know of other examples, besides the runtime PM use
->>>> case, where non-atomic channel prepare/unprepare would make sense. Do
->>>> you?
->>> The primary ask for that has been to enable runtime_pm for drivers. It's not
->>> a new ask, but we somehow haven't gotten around to do it.
->> Okay, I see.
->>
->>>>> As I said earlier, if we want to solve that problem a better idea is to
->>>>> actually split the prepare as we discussed in [1]
->>>>>
->>>>> This way we can get a non atomic descriptor allocate/prepare and release.
->>>>> Yes we need to redesign the APIs to solve this, but if you guys are up for
->>>>> it, I think we can do it and avoid any further round abouts :)
->>>> Adding/re-designing dma APIs is a viable option to solve the runtime PM case.
->>>>
->>>> Changes would be needed for all related dma client drivers as well,
->>>> although if that's what we need to do - let's do it.
->>> Yes, but do bear in mind that some cases do need atomic prepare. The primary
->>> cases for DMA had that in mind and also submitting next transaction from the
->>> callback (tasklet) context, so that won't go away.
->>>
->>> It would help in other cases where clients know that they will not be in
->>> atomic context so we provide additional non-atomic "allocation" followed by
->>> prepare, so that drivers can split the work among these and people can do
->>> runtime_pm and other things..
->> That for sharing the details.
->>
->> It seems like some dma expert really need to be heavily involved if we
->> ever are going to complete this work. :-)
-> Sure, I will help out :)
->
-> If anyone of you are in Portland next week, then we can discuss these f2f. I
-> will try taking a stab at the new API design next week.
+During my research I found that some of the requirements for the memory
+buffers for MFC v6+ devices were blindly copied from the previous
+hardware (v5) version and simply turned out to be excessive. It turned out
+that there is no strict requirement for ALL buffers to be allocated on
+the higher addresses than the firmware base. This requirement is true only
+for the device and per-context buffers. All video data buffers can be
+allocated anywhere for all MFC v6+ versions. This heavily simplifies
+memory management in the driver.
 
-I'm not going to Portland, but I hope that you will have a fruitful 
-discussion
-there.
+Such relaxed requirements for the memory buffers can be easily fulfilled
+by allocating firmware, device and per-context buffers from the probe-time
+preallocated larger buffer. There is no need to create special reserved
+memory regions. The only case, when those memory regions are needed is an
+oldest Exynos series - Exynos4210 or Exyno4412, which both have MFC v5
+hardware, and only when IOMMU is disabled.
 
-[...]
+This patchset has been tested on Odroid U3 (Exynos4412 with MFC v5), Google
+Snow (Exynos5250 with MFC v6), Odroid XU3 (Exynos5422 with MFC v8) and
+TM2 (Exynos5433 with MFC v8, ARM64) boards.
+
+To get it working on TM2/Exynos5433 with IOMMU enabled, the 'architectural
+clock gating' in SYSMMU has to be disabled. Fixing this will be handled
+separately. As a temporary solution, one need to clear CFG_ACGEN bit in
+REG_MMU_CFG of the SYSMMU, see __sysmmu_init_config function in
+drivers/iommu/exynos-iommu.c.
+
+Patches are based on linux-next from 9th February 2017 with "media:
+s5p-mfc: Fix initialization of internal structures" patch applied:
+https://patchwork.linuxtv.org/patch/39198/
+
+I've tried to split changes into small pieces to make it easier to review
+the code. I've also did a bit of cleanup while touching the driver.
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (15):
+  media: s5p-mfc: Remove unused structures and dead code
+  media: s5p-mfc: Use generic of_device_get_match_data helper
+  media: s5p-mfc: Replace mem_dev_* entries with an array
+  media: s5p-mfc: Replace bank1/bank2 entries with an array
+  media: s5p-mfc: Simplify alloc/release private buffer functions
+  media: s5p-mfc: Move setting DMA max segmetn size to DMA configure
+    function
+  media: s5p-mfc: Put firmware to private buffer structure
+  media: s5p-mfc: Move firmware allocation to DMA configure function
+  media: s5p-mfc: Allocate firmware with internal private buffer alloc
+    function
+  media: s5p-mfc: Reduce firmware buffer size for MFC v6+ variants
+  media: s5p-mfc: Split variant DMA memory configuration into separate
+    functions
+  media: s5p-mfc: Add support for probe-time preallocated block based
+    allocator
+  media: s5p-mfc: Remove special configuration of IOMMU domain
+  media: s5p-mfc: Use preallocated block allocator always for MFC v6+
+  ARM: dts: exynos: Remove MFC reserved buffers
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   1 -
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   1 -
+ arch/arm/boot/dts/exynos5250-spring.dts            |   1 -
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   1 -
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   1 -
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   1 -
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   1 -
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   1 -
+ drivers/media/platform/s5p-mfc/regs-mfc-v6.h       |   2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v7.h       |   2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 210 +++++++++++++--------
+ drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c    |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  43 ++---
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  71 +++----
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h      |   1 -
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   8 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |  10 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  51 +----
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.c       |  65 +++++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h       |   8 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  48 ++---
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  14 +-
+ 24 files changed, 264 insertions(+), 283 deletions(-)
+
+-- 
+1.9.1
