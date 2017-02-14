@@ -1,72 +1,46 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
-Date: Tue, 14 Feb 2017 18:52:29 +0200
-Message-ID: <20170214165229.y3udmy7w5gm27tys@kozik-lap>
-References: <20170202183008.23500-1-krzk@kernel.org>
- <20170202183008.23500-5-krzk@kernel.org>
- <2382634.UqDUkYPZrI@wuerfel>
- <CGME20170209185703epcas3p181b744c7022b24d383bdce8409ece2ec@epcas3p1.samsung.com>
- <20170209185654.yxmubj3r4gjxcfm6@kozik-lap>
- <8a236294-a561-a857-403e-3a3a794b31f3@samsung.com>
+Subject: Re: [PATCH 15/15] ARM: dts: exynos: Remove MFC reserved buffersg
+Date: Tue, 14 Feb 2017 19:03:16 +0200
+Message-ID: <20170214170316.nsp3g5ht3ldoxc43@kozik-lap>
+References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170214075221eucas1p18648b047f71e9dd95626e5766c74601b@eucas1p1.samsung.com>
+ <1487058728-16501-16-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33357 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752455AbdBNQwf (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Feb 2017 11:52:35 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8a236294-a561-a857-403e-3a3a794b31f3@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1487058728-16501-16-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Fri, Feb 10, 2017 at 12:30:48PM +0100, Sylwester Nawrocki wrote:
-> On 02/09/2017 07:56 PM, Krzysztof Kozlowski wrote:
-> > On Thu, Feb 09, 2017 at 04:19:57PM +0100, Arnd Bergmann wrote:
-> >> On Thursday, February 2, 2017 8:30:08 PM CET Krzysztof Kozlowski wrote:
-> >>>  arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  34 +++
-> >>>  arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     |  34 +++
-> >>>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  49 +++-
-> >>>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 302 +++++++++++----------
-> >>>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 +++
-> >>>  drivers/clk/samsung/clk-exynos5433.c               |   8 +-
-> >>>  include/dt-bindings/clock/exynos5433.h             |   5 +-
-> >>>  include/dt-bindings/pinctrl/samsung.h              |   8 +
-> >>>
-> >> It seems a drivers/clk change slipped in there in addition to the header changes.
-> >> We are trying to keep the next/dt branches free of driver changes, are you
-> >> able to rework the branch without this?
-> >
-> > +Cc Sylwester,
-> > 
-> > This came from clk tree from Sylwester. It contains two changes in
-> > clocks:
-> > 1. Mew clock ID - we need only the header but Sylwester provided also
-> >    the source file change,
+On Tue, Feb 14, 2017 at 08:52:08AM +0100, Marek Szyprowski wrote:
+> During my research I found that some of the requirements for the memory
+> buffers for MFC v6+ devices were blindly copied from the previous (v5)
+> version and simply turned out to be excessive. The relaxed requirements
+> are applied by the recent patches to the MFC driver and the driver is
+> now fully functional even without the reserved memory blocks for all
+> v6+ variants. This patch removes those reserved memory nodes from all
+> boards having MFC v6+ hardware block.
 > 
-> That's a one patch made so there is no runtime regression.  If we stick
-> to the next/dt branches being clean of driver changes I'm afraid we need
-> to be prepared for the bisection breaks.
-> 
-> > 2. Update of frequency (used in DTS as assigned clock rate) - this
-> >    is strictly source file change and we need it.
-> > 
-> > Overall, rework would not be trivial and it would involve Sylwester.
-> > I think it is better to stay with this as is. I will remember the policy
-> > for future dependencies.
-> 
-> The clk changes are already pulled into clk tree, we would get conflicts
-> with commits that are already in the clock tree if the branch is reworked
-> now.  This might not be a big issue but bisection would be broken for sure.
-> 
-> I'll also try to keep in future include/dt-bindings changes separate.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts           | 1 -
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          | 1 -
+>  arch/arm/boot/dts/exynos5250-spring.dts            | 1 -
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 1 -
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 1 -
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 1 -
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 -
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts          | 1 -
+>  8 files changed, 8 deletions(-)
+>
 
-Arnd,
+Looks okay (for v4.12). Full bisectability depends on changes in MFC
+driver, right?  I will need a stable branch/tag with driver changes
+(although recently Arnd did not want driver changes mixed with DTS...).
 
-Any further comments? Are you going to pull it in?
 
 Best regards,
 Krzysztof
