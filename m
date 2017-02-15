@@ -1,18 +1,23 @@
 From: Bjorn Helgaas <helgaas@kernel.org>
 Subject: Re: [PATCH V3 0/4] PCI: exynos: use the PHY generic framework
-Date: Wed, 15 Feb 2017 15:04:03 -0600
-Message-ID: <20170215210403.GB6981@bhelgaas-glaptop.roam.corp.google.com>
+Date: Wed, 15 Feb 2017 15:11:20 -0600
+Message-ID: <20170215211120.GC6981@bhelgaas-glaptop.roam.corp.google.com>
 References: <CGME20170213082615epcas5p2f5ecabbd5853a8e27da5f88fcae85158@epcas5p2.samsung.com>
  <20170213082613.19628-1-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:42842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751768AbdBOVLa (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 15 Feb 2017 16:11:30 -0500
 Content-Disposition: inline
 In-Reply-To: <20170213082613.19628-1-jh80.chung@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, Feb 13, 2017 at 05:26:09PM +0900, Jaehoon Chung wrote:
 > This patcheset is for using PHY generic framework.
@@ -58,8 +63,12 @@ On Mon, Feb 13, 2017 at 05:26:09PM +0900, Jaehoon Chung wrote:
 >  6 files changed, 390 insertions(+), 4 deletions(-)
 >  create mode 100644 drivers/phy/phy-exynos-pcie.c
 
-Kishon, how do you want to handle this series?  The bulk of the
-changes are in drivers/phy.  I acked the drivers/pci patch, so you can
-add that and apply the whole series if you want.  Otherwise, if you
-ack the PHY part, I can apply the whole thing.  Either is fine with
-me; just let me know.
+I made the updates Vivek suggested and provisionally added these to my
+pci/host-exynos branch to get some build testing.
+
+Kishon, I guess it probably makes more sense for me to apply this
+because even though the drivers/pci changes are small, I think they
+depend on other pci-exynos.c changes that are on my branch but not in
+Linus' tree yet.
+
+Bjorn
