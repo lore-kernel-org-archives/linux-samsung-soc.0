@@ -1,86 +1,80 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH V3 0/4] PCI: exynos: use the PHY generic framework
-Date: Thu, 16 Feb 2017 07:33:15 +0900
-Message-ID: <04b568d2-d85e-9cbd-1379-d657f574f279@samsung.com>
-References: <CGME20170213082615epcas5p2f5ecabbd5853a8e27da5f88fcae85158@epcas5p2.samsung.com>
- <20170213082613.19628-1-jh80.chung@samsung.com>
- <20170215211120.GC6981@bhelgaas-glaptop.roam.corp.google.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 00/10] PCI: dwc: Rework and cleanup designware driver
+Date: Wed, 15 Feb 2017 17:00:03 -0600
+Message-ID: <20170215230003.GA26758@bhelgaas-glaptop.roam.corp.google.com>
+References: <1487164699-30708-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20170215211120.GC6981@bhelgaas-glaptop.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, krzk@kernel.org, linux-kernel@vger.kernel.org, jingoohan1@gmail.com, javier@osg.samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, kishon@ti.com, devicetree@vger.kernel.org, mark.rutland@arm.com, vivek.gautam@codeaurora.org, robh+dt@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1487164699-30708-1-git-send-email-kishon@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, nsekhar@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Bjorn,
-
-On 02/16/2017 06:11 AM, Bjorn Helgaas wrote:
-> On Mon, Feb 13, 2017 at 05:26:09PM +0900, Jaehoon Chung wrote:
->> This patcheset is for using PHY generic framework.
->> Current pci-exyns doesn't use the phy framework since there haven't been on
->> PHY subsystem when Exynos5440 had bean upstreamed.
->> It's making a difficult to upstream the other Exynos variants because of different
->> PHY registers.
->>
->> This patcheset has the below modifications:
->> 1) Introduces the phy-exynos-pcie
->> 2) Handles PHY register from PHY framework for pci-exynos
->> 3) Modifies the dt-binding of pci-exynos
->> 4) Maintains the backward compatibility
->>
->> Changelog on V3:
->> - Drops "ARM: dts: exynos5440: support the phy-pcie node of pcie"
->>   : Will send this patch after applying this patchset.
->> - Fixes typo
->> - Based on latest PCI git repository (host-exynos branch)
->> - Changes commit message
->> - Removes the dependency
->>
->> Changelog on V2:
->> - Keep current codes for backward compatibility
->> - Fixes some typos
->> - Split the patches for removing the dependency
->> - Removes the unnecessary codes
->> - Change the patch's sequence
->> - Based on latest PCI git repository.(next branch)
->>
->> Jaehoon Chung (4):
->>   Documetation: samsung-phy: add the exynos-pcie-phy binding
->>   phy: phy-exynos-pcie: Add support for Exynos PCIe phy
->>   Documetation: binding: modify the exynos5440 pcie binding
->>   PCI: exynos: support the using PHY generic framework
->>
->>  .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 +++
->>  .../devicetree/bindings/phy/samsung-phy.txt        |  17 ++
->>  drivers/pci/host/pci-exynos.c                      |  54 +++-
->>  drivers/phy/Kconfig                                |   8 +
->>  drivers/phy/Makefile                               |   1 +
->>  drivers/phy/phy-exynos-pcie.c                      | 285 +++++++++++++++++++++
->>  6 files changed, 390 insertions(+), 4 deletions(-)
->>  create mode 100644 drivers/phy/phy-exynos-pcie.c
+On Wed, Feb 15, 2017 at 06:48:09PM +0530, Kishon Vijay Abraham I wrote:
+> This series reworks designware driver in preparation for adding endpoint
+> mode support to designware driver.
 > 
-> I made the updates Vivek suggested and provisionally added these to my
-> pci/host-exynos branch to get some build testing.
-
-Thanks!
-
+> This series was previously sent as part of endpoint support series
+> https://lkml.org/lkml/2017/1/13/562
 > 
-> Kishon, I guess it probably makes more sense for me to apply this
-> because even though the drivers/pci changes are small, I think they
-> depend on other pci-exynos.c changes that are on my branch but not in
-> Linus' tree yet.
+> Validate pci host only in pci-dra7xx. Any help in validating other
+> platforms would be highly appreciated.
+> 
+> This series is created after cherrypicking the following patch and
+> then applying pci/host-designware.
+> 
+> commit a782b5f986c3fa1cfa7f2b57941200c6a5809242
+> Author: Murali Karicheri <m-karicheri2@ti.com>
+> Date:   Wed Jan 4 14:32:30 2017 -0500
+> 
+>     PCI: designware: Check for iATU unroll only on platforms that use ATU
+> 
+> The patches has been pushed to
+> git://git.ti.com/linux-phy/linux-phy.git dwc-rework
+> 
+> Kishon Vijay Abraham I (10):
+>   PCI: dwc: designware: Move the register defines to designware header
+>     file
+>   PCI: dwc: *all*: Add platform_set_drvdata
+>   PCI: dwc: *all*: Rename cfg_read/cfg_write to read/write
+>   PCI: dwc: designware: Get device pointer at the start of
+>     dw_pcie_host_init
+>   PCI: dwc: *all*: Split *struct pcie_port* into host only and core
+>     structures
+>   PCI: dwc: designware: Parse *num-lanes* property in dw_pcie_setup_rc
+>   PCI: dwc: designware: Fix style errors in pcie-designware.c
+>   PCI: dwc: Split pcie-designware.c into host and core files
+>   PCI: dwc: Create a new config symbol to enable pci dwc host
+>   PCI: dwc: Remove dependency of designware to CONFIG_PCI
+> 
+>  drivers/Makefile                       |    3 +
+>  drivers/pci/Makefile                   |    3 -
+>  drivers/pci/dwc/Kconfig                |   39 +-
+>  drivers/pci/dwc/Makefile               |    1 +
+>  drivers/pci/dwc/pci-dra7xx.c           |   91 ++--
+>  drivers/pci/dwc/pci-exynos.c           |   81 ++--
+>  drivers/pci/dwc/pci-imx6.c             |  131 ++---
+>  drivers/pci/dwc/pci-keystone-dw.c      |   87 ++--
+>  drivers/pci/dwc/pci-keystone.c         |   56 ++-
+>  drivers/pci/dwc/pci-keystone.h         |    4 +-
+>  drivers/pci/dwc/pci-layerscape.c       |   93 ++--
+>  drivers/pci/dwc/pcie-armada8k.c        |   87 ++--
+>  drivers/pci/dwc/pcie-artpec6.c         |   50 +-
+>  drivers/pci/dwc/pcie-designware-host.c |  635 ++++++++++++++++++++++++
+>  drivers/pci/dwc/pcie-designware-plat.c |   29 +-
+>  drivers/pci/dwc/pcie-designware.c      |  823 +++-----------------------------
+>  drivers/pci/dwc/pcie-designware.h      |  170 +++++--
+>  drivers/pci/dwc/pcie-hisi.c            |   57 ++-
+>  drivers/pci/dwc/pcie-qcom.c            |   72 ++-
+>  drivers/pci/dwc/pcie-spear13xx.c       |   85 ++--
+>  20 files changed, 1434 insertions(+), 1163 deletions(-)
+>  create mode 100644 drivers/pci/dwc/pcie-designware-host.c
 
-I will send the patches relevant to Exynos5433(TM2) soon..
-Thanks a lot.
+I applied these to pci/host-designware with the intent of merging them
+for v4.11.  They're not in -next yet; I'll merge them into -next after
+the autobuilder completes.
 
-Best Regards,
-Jaehoon Chung
-
-> 
-> Bjorn
-> 
-> 
-> 
+Bjorn
