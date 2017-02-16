@@ -1,36 +1,31 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 37/37] ARM: dts: DRA7: Add pcie1 dt node for EP mode
-Date: Thu, 16 Feb 2017 15:30:57 +0530
-Message-ID: <58A57859.5090308@ti.com>
-References: <1484216786-17292-1-git-send-email-kishon@ti.com>
- <1484216786-17292-38-git-send-email-kishon@ti.com>
- <20170120183000.GF7403@atomide.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 4/4] pinctrl: samsung: Remove unused local variable
+Date: Thu, 16 Feb 2017 10:39:01 +0000
+Message-ID: <20170216103901.GD30007@localhost.localdomain>
+References: <1486980666-7143-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1486980666-7143-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20170215174303.2547hgentg6pldgo@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170120183000.GF7403-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joao Pinto <Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-VrBV9hrLPhE@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170215174303.2547hgentg6pldgo@kozik-lap>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linus.walleij@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tony,
-
-On Saturday 21 January 2017 12:00 AM, Tony Lindgren wrote:
-> * Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> [170112 02:34]:
->> Add pcie1 dt node in order for the controller to operate in
->> endpoint mode. However since none of the dra7 based boards have
->> slots configured to operate in endpoint mode, keep EP mode
->> disabled.
+On Wed, Feb 15, 2017 at 07:43:03PM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Feb 13, 2017 at 10:11:06AM +0000, Charles Keepax wrote:
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > 
-> Can this be merged separately later on without breaking anything?
+> "The local variable drvdata is not used in samsung_gpio_set_direction()"?
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 
-yes, I'll resend this once rest of the EP support gets in.
+Thanks, will update the commit messages with your
+recommendations and resend.
 
-Thanks
-Kishon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Charles
