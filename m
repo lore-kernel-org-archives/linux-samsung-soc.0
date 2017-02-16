@@ -1,80 +1,35 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 00/10] PCI: dwc: Rework and cleanup designware driver
-Date: Wed, 15 Feb 2017 17:00:03 -0600
-Message-ID: <20170215230003.GA26758@bhelgaas-glaptop.roam.corp.google.com>
-References: <1487164699-30708-1-git-send-email-kishon@ti.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] Input: add STMicroelectronics FingerTip
+ touchscreen driver
+Date: Wed, 15 Feb 2017 20:13:57 -0600
+Message-ID: <20170216021357.ma22e33y6253n3iq@rob-hp-laptop>
+References: <20170210021721.12218-1-andi.shyti@samsung.com>
+ <CGME20170210021728epcas5p46d0256d507157cd4387b707ec616c1d1@epcas5p4.samsung.com>
+ <20170210021721.12218-2-andi.shyti@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36493 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752513AbdBPCN7 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 15 Feb 2017 21:13:59 -0500
 Content-Disposition: inline
-In-Reply-To: <1487164699-30708-1-git-send-email-kishon@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com, nsekhar@ti.com
+In-Reply-To: <20170210021721.12218-2-andi.shyti@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On Wed, Feb 15, 2017 at 06:48:09PM +0530, Kishon Vijay Abraham I wrote:
-> This series reworks designware driver in preparation for adding endpoint
-> mode support to designware driver.
+On Fri, Feb 10, 2017 at 11:17:19AM +0900, Andi Shyti wrote:
+> Add binding for the STMicroelectronics FingerTip (stmfts)
+> touchscreen driver.
 > 
-> This series was previously sent as part of endpoint support series
-> https://lkml.org/lkml/2017/1/13/562
-> 
-> Validate pci host only in pci-dra7xx. Any help in validating other
-> platforms would be highly appreciated.
-> 
-> This series is created after cherrypicking the following patch and
-> then applying pci/host-designware.
-> 
-> commit a782b5f986c3fa1cfa7f2b57941200c6a5809242
-> Author: Murali Karicheri <m-karicheri2@ti.com>
-> Date:   Wed Jan 4 14:32:30 2017 -0500
-> 
->     PCI: designware: Check for iATU unroll only on platforms that use ATU
-> 
-> The patches has been pushed to
-> git://git.ti.com/linux-phy/linux-phy.git dwc-rework
-> 
-> Kishon Vijay Abraham I (10):
->   PCI: dwc: designware: Move the register defines to designware header
->     file
->   PCI: dwc: *all*: Add platform_set_drvdata
->   PCI: dwc: *all*: Rename cfg_read/cfg_write to read/write
->   PCI: dwc: designware: Get device pointer at the start of
->     dw_pcie_host_init
->   PCI: dwc: *all*: Split *struct pcie_port* into host only and core
->     structures
->   PCI: dwc: designware: Parse *num-lanes* property in dw_pcie_setup_rc
->   PCI: dwc: designware: Fix style errors in pcie-designware.c
->   PCI: dwc: Split pcie-designware.c into host and core files
->   PCI: dwc: Create a new config symbol to enable pci dwc host
->   PCI: dwc: Remove dependency of designware to CONFIG_PCI
-> 
->  drivers/Makefile                       |    3 +
->  drivers/pci/Makefile                   |    3 -
->  drivers/pci/dwc/Kconfig                |   39 +-
->  drivers/pci/dwc/Makefile               |    1 +
->  drivers/pci/dwc/pci-dra7xx.c           |   91 ++--
->  drivers/pci/dwc/pci-exynos.c           |   81 ++--
->  drivers/pci/dwc/pci-imx6.c             |  131 ++---
->  drivers/pci/dwc/pci-keystone-dw.c      |   87 ++--
->  drivers/pci/dwc/pci-keystone.c         |   56 ++-
->  drivers/pci/dwc/pci-keystone.h         |    4 +-
->  drivers/pci/dwc/pci-layerscape.c       |   93 ++--
->  drivers/pci/dwc/pcie-armada8k.c        |   87 ++--
->  drivers/pci/dwc/pcie-artpec6.c         |   50 +-
->  drivers/pci/dwc/pcie-designware-host.c |  635 ++++++++++++++++++++++++
->  drivers/pci/dwc/pcie-designware-plat.c |   29 +-
->  drivers/pci/dwc/pcie-designware.c      |  823 +++-----------------------------
->  drivers/pci/dwc/pcie-designware.h      |  170 +++++--
->  drivers/pci/dwc/pcie-hisi.c            |   57 ++-
->  drivers/pci/dwc/pcie-qcom.c            |   72 ++-
->  drivers/pci/dwc/pcie-spear13xx.c       |   85 ++--
->  20 files changed, 1434 insertions(+), 1163 deletions(-)
->  create mode 100644 drivers/pci/dwc/pcie-designware-host.c
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+>  .../bindings/input/touchscreen/st,stmfts.txt       | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
 
-I applied these to pci/host-designware with the intent of merging them
-for v4.11.  They're not in -next yet; I'll merge them into -next after
-the autobuilder completes.
-
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org> 
