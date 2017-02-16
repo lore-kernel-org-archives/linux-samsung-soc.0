@@ -1,35 +1,59 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] Input: add STMicroelectronics FingerTip
- touchscreen driver
-Date: Wed, 15 Feb 2017 20:13:57 -0600
-Message-ID: <20170216021357.ma22e33y6253n3iq@rob-hp-laptop>
-References: <20170210021721.12218-1-andi.shyti@samsung.com>
- <CGME20170210021728epcas5p46d0256d507157cd4387b707ec616c1d1@epcas5p4.samsung.com>
- <20170210021721.12218-2-andi.shyti@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 30/37] dt-bindings: PCI: dra7xx: Add dt bindings to enable
+ legacy mode
+Date: Thu, 16 Feb 2017 14:03:57 +0530
+Message-ID: <58A563F5.5040504@ti.com>
+References: <1484216786-17292-1-git-send-email-kishon@ti.com>
+ <1484216786-17292-31-git-send-email-kishon@ti.com>
+ <20170118214603.qnewy3sm6sgw7lbg@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36493 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752513AbdBPCN7 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Feb 2017 21:13:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20170210021721.12218-2-andi.shyti@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170118214603.qnewy3sm6sgw7lbg@rob-hp-laptop>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andi Shyti <andi@etezian.org>
 
-On Fri, Feb 10, 2017 at 11:17:19AM +0900, Andi Shyti wrote:
-> Add binding for the STMicroelectronics FingerTip (stmfts)
-> touchscreen driver.
+Hi,
+
+On Thursday 19 January 2017 03:16 AM, Rob Herring wrote:
+> On Thu, Jan 12, 2017 at 03:56:19PM +0530, Kishon Vijay Abraham I wrote:
+>> Update device tree binding documentation of TI's dra7xx PCI
+>> controller to include property for enabling legacy mode.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  Documentation/devicetree/bindings/pci/ti-pci.txt |    4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/ti-pci.txt b/Documentation/devicetree/bindings/pci/ti-pci.txt
+>> index 62f5f59..ed85e8e 100644
+>> --- a/Documentation/devicetree/bindings/pci/ti-pci.txt
+>> +++ b/Documentation/devicetree/bindings/pci/ti-pci.txt
+>> @@ -39,6 +39,10 @@ DEVICE MODE
+>>   - interrupts : one interrupt entries must be specified for main interrupt.
+>>   - num-ib-windows : number of inbound address translation windows
+>>   - num-ob-windows : number of outbound address translation windows
+>> + - syscon-legacy-mode: phandle to the syscon dt node. The 1st argument should
+>> +		       contain the register offset within syscon and the 2nd
+>> +		       argument should contain the bit field for setting the
+>> +		       legacy mode
 > 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> ---
->  .../bindings/input/touchscreen/st,stmfts.txt       | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/st,stmfts.txt
+> What's legacy mode?
 
-Acked-by: Rob Herring <robh@kernel.org> 
+It's the name of the bit-field defined in TRM used to add workaround for errata
+id i870 (See [PATCH 29/37] PCI: dwc: dra7xx: Workaround for errata id i870 of
+this series). I'm not sure what it does internally.
+
+Thanks
+Kishon
