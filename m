@@ -1,57 +1,57 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH v2 4/4] pinctrl: samsung: Use devres version of gpiochip_add_data
-Date: Thu, 16 Feb 2017 13:27:16 +0000
-Message-ID: <1487251636-2480-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 0/4] PCI: dwc: cleanup designware driver
+Date: Thu, 16 Feb 2017 18:59:08 +0530
+Message-ID: <1487251752-12478-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, krzk@kernel.org
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, nsekhar@ti.com, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use devm_gpiochip_add_data to simplify the error path in
-samsung_gpiolib_register. Additionally this would also fix a leak if
-the pinctrl driver was unbound, although admittedly I can't see any
-good use-case for doing so, but the driver does currently allow it.
+This series does additional cleanup on top of [1] in preparation
+for adding endpoint mode support to designware driver.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
+This series was previously sent as part of endpoint support series [2].
 
-Changes since v1:
- - Update commit message.
+Once this series is merged, PCI endpoint series can be merged. I'll wait
+for this series to be merged before sending the next revision of endpoint
+series.
 
- drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+The entire endpoint support is pushed here:
+git://git.kernel.org/pub/scm/linux/kernel/git/kishon/pci-endpoint.git next
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 4ab20ec..eb08f30 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -934,20 +934,15 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
- 		gc->of_node = bank->of_node;
- 		gc->label = bank->name;
- 
--		ret = gpiochip_add_data(gc, bank);
-+		ret = devm_gpiochip_add_data(&pdev->dev, gc, bank);
- 		if (ret) {
- 			dev_err(&pdev->dev, "failed to register gpio_chip %s, error code: %d\n",
- 							gc->label, ret);
--			goto fail;
-+			return ret;
- 		}
- 	}
- 
- 	return 0;
--
--fail:
--	for (--i, --bank; i >= 0; --i, --bank)
--		gpiochip_remove(&bank->gpio_chip);
--	return ret;
- }
- 
- /* retrieve the soc specific data */
+[1] -> https://lkml.org/lkml/2017/2/15/273
+[2] -> https://lkml.org/lkml/2017/1/13/562
+
+Kishon Vijay Abraham I (4):
+  PCI: dwc: designware: Add new *ops* for cpu addr fixup
+  PCI: dwc: dra7xx: Populate cpu_addr_fixup ops
+  PCI: dwc: all: Modify dbi accessors to take dbi_base as argument
+  PCI: dwc: all: Modify dbi accessors to access data of 4/2/1     
+    bytes
+
+ drivers/pci/dwc/pci-dra7xx.c           |   21 ++++---
+ drivers/pci/dwc/pci-exynos.c           |   14 +++--
+ drivers/pci/dwc/pci-imx6.c             |   67 +++++++++++---------
+ drivers/pci/dwc/pci-keystone-dw.c      |   16 +++--
+ drivers/pci/dwc/pcie-armada8k.c        |   39 +++++++-----
+ drivers/pci/dwc/pcie-artpec6.c         |    7 ++-
+ drivers/pci/dwc/pcie-designware-host.c |   20 +++---
+ drivers/pci/dwc/pcie-designware.c      |  108 ++++++++++++++++++++------------
+ drivers/pci/dwc/pcie-designware.h      |   13 ++--
+ drivers/pci/dwc/pcie-hisi.c            |   17 ++---
+ 10 files changed, 192 insertions(+), 130 deletions(-)
+
 -- 
-2.1.4
+1.7.9.5
