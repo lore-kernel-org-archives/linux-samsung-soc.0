@@ -1,218 +1,54 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH 01/10] PCI: dwc: designware: Move the register defines to
- designware header file
-Date: Thu, 16 Feb 2017 09:49:55 -0500
-Message-ID: <000001d28863$f291ffc0$d7b5ff40$@gmail.com>
-References: <1487164699-30708-1-git-send-email-kishon@ti.com>
- <1487164699-30708-2-git-send-email-kishon@ti.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DT64 for v4.11, third round
+Date: Thu, 16 Feb 2017 17:49:18 +0100
+Message-ID: <CAK8P3a1Q=6V07ORhEkA3MDd9OwRw4BHu91-uYyFd8MgLvggSig@mail.gmail.com>
+References: <20170202183008.23500-1-krzk@kernel.org> <20170202183008.23500-5-krzk@kernel.org>
+ <2382634.UqDUkYPZrI@wuerfel> <CGME20170209185703epcas3p181b744c7022b24d383bdce8409ece2ec@epcas3p1.samsung.com>
+ <20170209185654.yxmubj3r4gjxcfm6@kozik-lap> <8a236294-a561-a857-403e-3a3a794b31f3@samsung.com>
+ <20170214165229.y3udmy7w5gm27tys@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1487164699-30708-2-git-send-email-kishon@ti.com>
-Content-Language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com
-Cc: nsekhar@ti.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36464 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932505AbdBPQtU (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 16 Feb 2017 11:49:20 -0500
+In-Reply-To: <20170214165229.y3udmy7w5gm27tys@kozik-lap>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-Wednesday, February 15, 2017 8:18 AM, Kishon Vijay Abraham I wrote:
-> 
-> No functional change. Move the register defines and other macros from
-> pcie-designware.c to pcie-designware.h. This is in preparation to
-> split the pcie-designware.c file into designware core file and host
-> specific file.
-> 
-> While at that also fix a checkpatch warning.
-> 
-> Reviewed-By: Joao Pinto <jpinto@synopsys.com>
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+On Tue, Feb 14, 2017 at 5:52 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Fri, Feb 10, 2017 at 12:30:48PM +0100, Sylwester Nawrocki wrote:
+>> On 02/09/2017 07:56 PM, Krzysztof Kozlowski wrote:
+>> > On Thu, Feb 09, 2017 at 04:19:57PM +0100, Arnd Bergmann wrote:
+>>
+>> > 2. Update of frequency (used in DTS as assigned clock rate) - this
+>> >    is strictly source file change and we need it.
+>> >
+>> > Overall, rework would not be trivial and it would involve Sylwester.
+>> > I think it is better to stay with this as is. I will remember the policy
+>> > for future dependencies.
+>>
+>> The clk changes are already pulled into clk tree, we would get conflicts
+>> with commits that are already in the clock tree if the branch is reworked
+>> now.  This might not be a big issue but bisection would be broken for sure.
+>>
+>> I'll also try to keep in future include/dt-bindings changes separate.
+>
+> Arnd,
+>
+> Any further comments? Are you going to pull it in?
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Sorry, I haven't had a chance to discuss with Olof how we want to proceed.
+I've pulled it into a next/late branch for now, which is similar to what we
+did in the past, and we may or may not send it after the other pull
+requests.
 
-Best regards,
-Jingoo Han
+There is one other platform that has a similar problem and I'll pull that
+in the same branch, while all the others have been able to rework their
+trees to avoid it for 4.11.
 
-> ---
->  drivers/pci/dwc/pcie-designware.c |   70 --------------------------------
-> ----
->  drivers/pci/dwc/pcie-designware.h |   71
-> +++++++++++++++++++++++++++++++++++++
->  2 files changed, 71 insertions(+), 70 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-
-> designware.c
-> index af8f6e9..d0e4904 100644
-> --- a/drivers/pci/dwc/pcie-designware.c
-> +++ b/drivers/pci/dwc/pcie-designware.c
-> @@ -25,76 +25,6 @@
-> 
->  #include "pcie-designware.h"
-> 
-> -/* Parameters for the waiting for link up routine */
-> -#define LINK_WAIT_MAX_RETRIES		10
-> -#define LINK_WAIT_USLEEP_MIN		90000
-> -#define LINK_WAIT_USLEEP_MAX		100000
-> -
-> -/* Parameters for the waiting for iATU enabled routine */
-> -#define LINK_WAIT_MAX_IATU_RETRIES	5
-> -#define LINK_WAIT_IATU_MIN		9000
-> -#define LINK_WAIT_IATU_MAX		10000
-> -
-> -/* Synopsys-specific PCIe configuration registers */
-> -#define PCIE_PORT_LINK_CONTROL		0x710
-> -#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> -#define PORT_LINK_MODE_1_LANES		(0x1 << 16)
-> -#define PORT_LINK_MODE_2_LANES		(0x3 << 16)
-> -#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> -#define PORT_LINK_MODE_8_LANES		(0xf << 16)
-> -
-> -#define PCIE_LINK_WIDTH_SPEED_CONTROL	0x80C
-> -#define PORT_LOGIC_SPEED_CHANGE		(0x1 << 17)
-> -#define PORT_LOGIC_LINK_WIDTH_MASK	(0x1f << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_1_LANES	(0x1 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_2_LANES	(0x2 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_4_LANES	(0x4 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_8_LANES	(0x8 << 8)
-> -
-> -#define PCIE_MSI_ADDR_LO		0x820
-> -#define PCIE_MSI_ADDR_HI		0x824
-> -#define PCIE_MSI_INTR0_ENABLE		0x828
-> -#define PCIE_MSI_INTR0_MASK		0x82C
-> -#define PCIE_MSI_INTR0_STATUS		0x830
-> -
-> -#define PCIE_ATU_VIEWPORT		0x900
-> -#define PCIE_ATU_REGION_INBOUND		(0x1 << 31)
-> -#define PCIE_ATU_REGION_OUTBOUND	(0x0 << 31)
-> -#define PCIE_ATU_REGION_INDEX2		(0x2 << 0)
-> -#define PCIE_ATU_REGION_INDEX1		(0x1 << 0)
-> -#define PCIE_ATU_REGION_INDEX0		(0x0 << 0)
-> -#define PCIE_ATU_CR1			0x904
-> -#define PCIE_ATU_TYPE_MEM		(0x0 << 0)
-> -#define PCIE_ATU_TYPE_IO		(0x2 << 0)
-> -#define PCIE_ATU_TYPE_CFG0		(0x4 << 0)
-> -#define PCIE_ATU_TYPE_CFG1		(0x5 << 0)
-> -#define PCIE_ATU_CR2			0x908
-> -#define PCIE_ATU_ENABLE			(0x1 << 31)
-> -#define PCIE_ATU_BAR_MODE_ENABLE	(0x1 << 30)
-> -#define PCIE_ATU_LOWER_BASE		0x90C
-> -#define PCIE_ATU_UPPER_BASE		0x910
-> -#define PCIE_ATU_LIMIT			0x914
-> -#define PCIE_ATU_LOWER_TARGET		0x918
-> -#define PCIE_ATU_BUS(x)			(((x) & 0xff) << 24)
-> -#define PCIE_ATU_DEV(x)			(((x) & 0x1f) << 19)
-> -#define PCIE_ATU_FUNC(x)		(((x) & 0x7) << 16)
-> -#define PCIE_ATU_UPPER_TARGET		0x91C
-> -
-> -/*
-> - * iATU Unroll-specific register definitions
-> - * From 4.80 core version the address translation will be made by unroll
-> - */
-> -#define PCIE_ATU_UNR_REGION_CTRL1	0x00
-> -#define PCIE_ATU_UNR_REGION_CTRL2	0x04
-> -#define PCIE_ATU_UNR_LOWER_BASE		0x08
-> -#define PCIE_ATU_UNR_UPPER_BASE		0x0C
-> -#define PCIE_ATU_UNR_LIMIT		0x10
-> -#define PCIE_ATU_UNR_LOWER_TARGET	0x14
-> -#define PCIE_ATU_UNR_UPPER_TARGET	0x18
-> -
-> -/* Register address builder */
-> -#define PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(region)  ((0x3 << 20) | (region
-> << 9))
-> -
->  /* PCIe Port Logic registers */
->  #define PLR_OFFSET			0x700
->  #define PCIE_PHY_DEBUG_R1		(PLR_OFFSET + 0x2c)
-> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-
-> designware.h
-> index a567ea2..b5226d4 100644
-> --- a/drivers/pci/dwc/pcie-designware.h
-> +++ b/drivers/pci/dwc/pcie-designware.h
-> @@ -14,6 +14,77 @@
->  #ifndef _PCIE_DESIGNWARE_H
->  #define _PCIE_DESIGNWARE_H
-> 
-> +/* Parameters for the waiting for link up routine */
-> +#define LINK_WAIT_MAX_RETRIES		10
-> +#define LINK_WAIT_USLEEP_MIN		90000
-> +#define LINK_WAIT_USLEEP_MAX		100000
-> +
-> +/* Parameters for the waiting for iATU enabled routine */
-> +#define LINK_WAIT_MAX_IATU_RETRIES	5
-> +#define LINK_WAIT_IATU_MIN		9000
-> +#define LINK_WAIT_IATU_MAX		10000
-> +
-> +/* Synopsys-specific PCIe configuration registers */
-> +#define PCIE_PORT_LINK_CONTROL		0x710
-> +#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> +#define PORT_LINK_MODE_1_LANES		(0x1 << 16)
-> +#define PORT_LINK_MODE_2_LANES		(0x3 << 16)
-> +#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> +#define PORT_LINK_MODE_8_LANES		(0xf << 16)
-> +
-> +#define PCIE_LINK_WIDTH_SPEED_CONTROL	0x80C
-> +#define PORT_LOGIC_SPEED_CHANGE		(0x1 << 17)
-> +#define PORT_LOGIC_LINK_WIDTH_MASK	(0x1f << 8)
-> +#define PORT_LOGIC_LINK_WIDTH_1_LANES	(0x1 << 8)
-> +#define PORT_LOGIC_LINK_WIDTH_2_LANES	(0x2 << 8)
-> +#define PORT_LOGIC_LINK_WIDTH_4_LANES	(0x4 << 8)
-> +#define PORT_LOGIC_LINK_WIDTH_8_LANES	(0x8 << 8)
-> +
-> +#define PCIE_MSI_ADDR_LO		0x820
-> +#define PCIE_MSI_ADDR_HI		0x824
-> +#define PCIE_MSI_INTR0_ENABLE		0x828
-> +#define PCIE_MSI_INTR0_MASK		0x82C
-> +#define PCIE_MSI_INTR0_STATUS		0x830
-> +
-> +#define PCIE_ATU_VIEWPORT		0x900
-> +#define PCIE_ATU_REGION_INBOUND		(0x1 << 31)
-> +#define PCIE_ATU_REGION_OUTBOUND	(0x0 << 31)
-> +#define PCIE_ATU_REGION_INDEX2		(0x2 << 0)
-> +#define PCIE_ATU_REGION_INDEX1		(0x1 << 0)
-> +#define PCIE_ATU_REGION_INDEX0		(0x0 << 0)
-> +#define PCIE_ATU_CR1			0x904
-> +#define PCIE_ATU_TYPE_MEM		(0x0 << 0)
-> +#define PCIE_ATU_TYPE_IO		(0x2 << 0)
-> +#define PCIE_ATU_TYPE_CFG0		(0x4 << 0)
-> +#define PCIE_ATU_TYPE_CFG1		(0x5 << 0)
-> +#define PCIE_ATU_CR2			0x908
-> +#define PCIE_ATU_ENABLE			(0x1 << 31)
-> +#define PCIE_ATU_BAR_MODE_ENABLE	(0x1 << 30)
-> +#define PCIE_ATU_LOWER_BASE		0x90C
-> +#define PCIE_ATU_UPPER_BASE		0x910
-> +#define PCIE_ATU_LIMIT			0x914
-> +#define PCIE_ATU_LOWER_TARGET		0x918
-> +#define PCIE_ATU_BUS(x)			(((x) & 0xff) << 24)
-> +#define PCIE_ATU_DEV(x)			(((x) & 0x1f) << 19)
-> +#define PCIE_ATU_FUNC(x)		(((x) & 0x7) << 16)
-> +#define PCIE_ATU_UPPER_TARGET		0x91C
-> +
-> +/*
-> + * iATU Unroll-specific register definitions
-> + * From 4.80 core version the address translation will be made by unroll
-> + */
-> +#define PCIE_ATU_UNR_REGION_CTRL1	0x00
-> +#define PCIE_ATU_UNR_REGION_CTRL2	0x04
-> +#define PCIE_ATU_UNR_LOWER_BASE		0x08
-> +#define PCIE_ATU_UNR_UPPER_BASE		0x0C
-> +#define PCIE_ATU_UNR_LIMIT		0x10
-> +#define PCIE_ATU_UNR_LOWER_TARGET	0x14
-> +#define PCIE_ATU_UNR_UPPER_TARGET	0x18
-> +
-> +/* Register address builder */
-> +#define PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(region)	\
-> +			((0x3 << 20) | ((region) << 9))
-> +
->  /*
->   * Maximum number of MSI IRQs can be 256 per controller. But keep
->   * it 32 as of now. Probably we will never need more than 32. If needed,
-> --
-> 1.7.9.5
+      Arnd
