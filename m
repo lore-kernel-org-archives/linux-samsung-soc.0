@@ -1,59 +1,35 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v3 3/3] arm: sti: update sti-cec for HPD notifier support
-Date: Fri, 17 Feb 2017 11:46:52 +0100
-Message-ID: <1487328412-8305-4-git-send-email-benjamin.gaignard@linaro.org>
-References: <1487328412-8305-1-git-send-email-benjamin.gaignard@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/4] pinctrl: samsung: Use devres version of
+ gpiochip_add_data
+Date: Fri, 17 Feb 2017 15:35:04 +0200
+Message-ID: <20170217133504.5poemeadyunc4pyh@kozik-lap>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1487328412-8305-1-git-send-email-benjamin.gaignard@linaro.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: hverkuil@xs4all.nl
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, javier@osg.samsung.com, hans.verkuil@cisco.com, dri-devel@lists.freedesktop.org, daniel.vetter@intel.com, linux-media@vger.kernel.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33756 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933545AbdBQNfK (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 17 Feb 2017 08:35:10 -0500
+Content-Disposition: inline
+In-Reply-To: <1487251636-2480-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linus.walleij@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-VG8gdXNlIEhQRCBub3RpZmllciBzdGkgQ0VDIGRyaXZlciBuZWVkcyB0byBnZXQgcGhhbmRsZQpv
-ZiB0aGUgaGRtaSBkZXZpY2UuCgpTaWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVu
-amFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4KU2lnbmVkLW9mZi1ieTogSGFucyBWZXJrdWlsIDxo
-YW5zLnZlcmt1aWxAY2lzY28uY29tPgpDQzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcKCnZl
-cnNpb24gMzoKLSBjaGFuZ2UgaGRtaSBwaGFuZGxlIGZyb20gInN0LGhkbWktaGFuZGxlIiB0byAi
-aGRtaS1oYW5kbGUiCi0tLQogYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1pbHkuZHRzaSB8
-IDEyIC0tLS0tLS0tLS0tLQogYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC5kdHNpICAgICAgICB8
-IDEzICsrKysrKysrKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMTIg
-ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1p
-bHkuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N0aWg0MDctZmFtaWx5LmR0c2kKaW5kZXggYzhi
-Mjk0NC4uNTkyZDIzNSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQwNy1mYW1p
-bHkuZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpCkBAIC03
-NTYsMTggKzc1Niw2IEBACiAJCQkJIDwmY2xrX3NfYzBfZmxleGdlbiBDTEtfRVRIX1BIWT47CiAJ
-CX07CiAKLQkJY2VjOiBzdGktY2VjQDA5NGEwODdjIHsKLQkJCWNvbXBhdGlibGUgPSAic3Qsc3Rp
-aC1jZWMiOwotCQkJcmVnID0gPDB4OTRhMDg3YyAweDY0PjsKLQkJCWNsb2NrcyA9IDwmY2xrX3N5
-c2luPjsKLQkJCWNsb2NrLW5hbWVzID0gImNlYy1jbGsiOwotCQkJaW50ZXJydXB0cyA9IDxHSUNf
-U1BJIDE0MCBJUlFfVFlQRV9OT05FPjsKLQkJCWludGVycnVwdC1uYW1lcyA9ICJjZWMtaXJxIjsK
-LQkJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Ci0JCQlwaW5jdHJsLTAgPSA8JnBpbmN0cmxf
-Y2VjMF9kZWZhdWx0PjsKLQkJCXJlc2V0cyA9IDwmc29mdHJlc2V0IFNUSUg0MDdfTFBNX1NPRlRS
-RVNFVD47Ci0JCX07Ci0KIAkJcm5nMTA6IHJuZ0AwOGE4OTAwMCB7CiAJCQljb21wYXRpYmxlICAg
-ICAgPSAic3Qscm5nIjsKIAkJCXJlZwkJPSA8MHgwOGE4OTAwMCAweDEwMDA+OwpkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3Rp
-aDQxMC5kdHNpCmluZGV4IDI4MWExMjQuLjcxZGViMDIgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jv
-b3QvZHRzL3N0aWg0MTAuZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDEwLmR0c2kK
-QEAgLTI1OSw1ICsyNTksMTggQEAKIAkJCWNsb2NrcyA9IDwmY2xrX3N5c2luPjsKIAkJCWludGVy
-cnVwdHMgPSA8R0lDX1NQSSAyMDUgSVJRX1RZUEVfRURHRV9SSVNJTkc+OwogCQl9OworCisJCXN0
-aS1jZWNAMDk0YTA4N2MgeworCQkJY29tcGF0aWJsZSA9ICJzdCxzdGloLWNlYyI7CisJCQlyZWcg
-PSA8MHg5NGEwODdjIDB4NjQ+OworCQkJY2xvY2tzID0gPCZjbGtfc3lzaW4+OworCQkJY2xvY2st
-bmFtZXMgPSAiY2VjLWNsayI7CisJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMTQwIElSUV9UWVBF
-X05PTkU+OworCQkJaW50ZXJydXB0LW5hbWVzID0gImNlYy1pcnEiOworCQkJcGluY3RybC1uYW1l
-cyA9ICJkZWZhdWx0IjsKKwkJCXBpbmN0cmwtMCA9IDwmcGluY3RybF9jZWMwX2RlZmF1bHQ+Owor
-CQkJcmVzZXRzID0gPCZzb2Z0cmVzZXQgU1RJSDQwN19MUE1fU09GVFJFU0VUPjsKKwkJCWhkbWkt
-aGFuZGxlID0gPCZzdGlfaGRtaT47CisJCX07CiAJfTsKIH07Ci0tIAoxLjkuMQoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Feb 16, 2017 at 01:27:16PM +0000, Charles Keepax wrote:
+> Use devm_gpiochip_add_data to simplify the error path in
+> samsung_gpiolib_register. Additionally this would also fix a leak if
+> the pinctrl driver was unbound, although admittedly I can't see any
+> good use-case for doing so, but the driver does currently allow it.
+
+Driver does not allow unbinding (.suppress_bind_attrs = true)...
+
+Regardless of this:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
