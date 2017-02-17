@@ -1,182 +1,65 @@
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-Subject: Re: [PATCH 00/15] Exynos MFC v6+ - remove the need for the reserved
- memory
-Date: Thu, 16 Feb 2017 22:41:12 -0500
-Message-ID: <1487302872.30491.14.camel@ndufresne.ca>
-References: <CGME20170214075214eucas1p1574c18c0fa166cdda50838b9fb8cc23b@eucas1p1.samsung.com>
-         <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v3 0/3] video/sti/cec: add HPD notifier support
+Date: Fri, 17 Feb 2017 11:46:49 +0100
+Message-ID: <1487328412-8305-1-git-send-email-benjamin.gaignard@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-U0+Apvyp9/CufRjo3PSw"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:37073 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755134AbdBQDlQ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Feb 2017 22:41:16 -0500
-Received: by mail-it0-f49.google.com with SMTP id x75so3878986itb.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2017 19:41:16 -0800 (PST)
-In-Reply-To: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: hverkuil@xs4all.nl
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, javier@osg.samsung.com, hans.verkuil@cisco.com, dri-devel@lists.freedesktop.org, daniel.vetter@intel.com, linux-media@vger.kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-
---=-U0+Apvyp9/CufRjo3PSw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 14 f=C3=A9vrier 2017 =C3=A0 08:51 +0100, Marek Szyprowski a =C3=A9=
-crit=C2=A0:
-> Dear All,
->=20
-> This patchset is a result of my work on enabling full support for MFC dev=
-ice
-> (multimedia codec) on Exynos 5433 on ARM64 architecture. Initially I thou=
-ght
-> that to let it working on ARM64 architecture with IOMMU, I would need to
-> solve the issue related to the fact that s5p-mfc driver was depending on =
-the
-> first-fit allocation method in the DMA-mapping / IOMMU glue code (ARM64 u=
-se
-> different algorithm). It turned out, that there is a much simpler way.
->=20
-> During my research I found that some of the requirements for the memory
-> buffers for MFC v6+ devices were blindly copied from the previous
-> hardware (v5) version and simply turned out to be excessive. It turned ou=
-t
-> that there is no strict requirement for ALL buffers to be allocated on
-> the higher addresses than the firmware base. This requirement is true onl=
-y
-> for the device and per-context buffers. All video data buffers can be
-> allocated anywhere for all MFC v6+ versions. This heavily simplifies
-> memory management in the driver.
->=20
-> Such relaxed requirements for the memory buffers can be easily fulfilled
-> by allocating firmware, device and per-context buffers from the probe-tim=
-e
-> preallocated larger buffer. There is no need to create special reserved
-> memory regions. The only case, when those memory regions are needed is an
-> oldest Exynos series - Exynos4210 or Exyno4412, which both have MFC v5
-> hardware, and only when IOMMU is disabled.
->=20
-> This patchset has been tested on Odroid U3 (Exynos4412 with MFC v5), Goog=
-le
-> Snow (Exynos5250 with MFC v6), Odroid XU3 (Exynos5422 with MFC v8) and
-> TM2 (Exynos5433 with MFC v8, ARM64) boards.
->=20
-> To get it working on TM2/Exynos5433 with IOMMU enabled, the 'architectura=
-l
-> clock gating' in SYSMMU has to be disabled. Fixing this will be handled
-> separately. As a temporary solution, one need to clear CFG_ACGEN bit in
-> REG_MMU_CFG of the SYSMMU, see __sysmmu_init_config function in
-> drivers/iommu/exynos-iommu.c.
->=20
-> Patches are based on linux-next from 9th February 2017 with "media:
-> s5p-mfc: Fix initialization of internal structures" patch applied:
-> https://patchwork.linuxtv.org/patch/39198/
->=20
-> I've tried to split changes into small pieces to make it easier to review
-> the code. I've also did a bit of cleanup while touching the driver.
->=20
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->=20
->=20
-> Patch summary:
->=20
-> Marek Szyprowski (15):
-> =C2=A0 media: s5p-mfc: Remove unused structures and dead code
-> =C2=A0 media: s5p-mfc: Use generic of_device_get_match_data helper
-> =C2=A0 media: s5p-mfc: Replace mem_dev_* entries with an array
-> =C2=A0 media: s5p-mfc: Replace bank1/bank2 entries with an array
-> =C2=A0 media: s5p-mfc: Simplify alloc/release private buffer functions
-> =C2=A0 media: s5p-mfc: Move setting DMA max segmetn size to DMA configure
-> =C2=A0=C2=A0=C2=A0=C2=A0function
-
-Just notice this small typo "segmetn", associated patch will need
-update too.
-
-> =C2=A0 media: s5p-mfc: Put firmware to private buffer structure
-> =C2=A0 media: s5p-mfc: Move firmware allocation to DMA configure function
-> =C2=A0 media: s5p-mfc: Allocate firmware with internal private buffer all=
-oc
-> =C2=A0=C2=A0=C2=A0=C2=A0function
-> =C2=A0 media: s5p-mfc: Reduce firmware buffer size for MFC v6+ variants
-> =C2=A0 media: s5p-mfc: Split variant DMA memory configuration into separa=
-te
-> =C2=A0=C2=A0=C2=A0=C2=A0functions
-> =C2=A0 media: s5p-mfc: Add support for probe-time preallocated block base=
-d
-> =C2=A0=C2=A0=C2=A0=C2=A0allocator
-> =C2=A0 media: s5p-mfc: Remove special configuration of IOMMU domain
-> =C2=A0 media: s5p-mfc: Use preallocated block allocator always for MFC v6=
-+
-> =C2=A0 ARM: dts: exynos: Remove MFC reserved buffers
->=20
-> =C2=A0.../devicetree/bindings/media/s5p-mfc.txt=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +-
-> =C2=A0arch/arm/boot/dts/exynos5250-arndale.dts=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5250-smdk5250.dts=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5250-spring.dts=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5420-arndale-octa.dts=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5420-peach-pit.dts=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5420-smdk5420.dts=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |=C2=A0=C2=A0=C2=
-=A01 -
-> =C2=A0arch/arm/boot/dts/exynos5800-peach-pi.dts=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0drivers/media/platform/s5p-mfc/regs-mfc-v6.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +-
-> =C2=A0drivers/media/platform/s5p-mfc/regs-mfc-v7.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +-
-> =C2=A0drivers/media/platform/s5p-mfc/regs-mfc-v8.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +-
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 210 +++++++++++++--------
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A0=C2=A02 +-
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_common.h=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A043 ++---
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0|=C2=A0=C2=A071 +++----
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A01 -
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_dec.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A08 +-
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_enc.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A010 +-
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0|=C2=A0=C2=A051 +----
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_opr.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A065 +++++--
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_opr.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A08 +-
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A048 ++---
-> =C2=A0drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A014 +-
-> =C2=A024 files changed, 264 insertions(+), 283 deletions(-)
->=20
---=-U0+Apvyp9/CufRjo3PSw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEABECAAYFAlimcNgACgkQcVMCLawGqBwAwACgtvSnmGzYfCXaS8BPri+ZWVfz
-WDYAoIc0v9FgdrysEyEA7JoHxQXHJb+e
-=6tHD
------END PGP SIGNATURE-----
-
---=-U0+Apvyp9/CufRjo3PSw--
+VGhpcyBwYXRjaCBzZXJpZXMgZm9sbG93aW5nIHdoYXQgSGFucyBpcyBkb2luZyBvbiBleHlub3Mg
+dG8gc3VwcG9ydApob3RwbHVnIGRldGVjdCBub3RpZmllciBjb2RlLgoKSXQgYWRkIHN1cHBvcnQg
+b2YgSFBEIGluIHN0aV9oZG1pIGRybSBkcml2ZXIgYW5kIHN0aWgtY2VjIGRyaXZlciB3aGljaApt
+b3ZlIG91dCBvZiBzdGFnaW5nLgoKVGhvc2UgcGF0Y2hlcyBzaG91bGQgYmUgYXBwbGllZCBvbiB0
+b3Agb2YgSGFucyBicmFuY2ggZXh5bm9zNC1jZWMuCgpJIGhhdmUgdGVzdGVkIGhkbWkgbm90aWZp
+ZXIgYnkgcGx1Z2luZy91bnBsdWdpbmcgSERNSSBjYWJsZSBhbmQgY2hlY2sKdGhlIHZhbHVlIG9m
+IHRoZSBwaHlzaWNhbCBhZGRyZXNzIHdpdGggImNlYy1jdGwgLS10dW5lciIuCiJjZWMtY29tcGxp
+YW5jZSAtQSIgaXMgYWxzbyBmdW5jdGlvbmFsLgoKdmVyc2lvbiAzOgotIGNoYW5nZSBoZG1pIHBo
+YW5kbGUgZnJvbSAic3QsaGRtaS1oYW5kbGUiIHRvICJoZG1pLWhhbmRsZSIKLSBmaXggdHlwbyBp
+biBiaW5kaW5ncwoKdmVyc2lvbiAyOgotIHVzZSBIUEQgbm90aWZpZXIgaW5zdGVhZCBvZiBIRE1J
+IG5vdGlmaWVyCi0gbW92ZSBzdGloLWNlYyBvdXQgb2Ygc3RhZ2luZwotIHJlYmFzZSBjb2RlIG9u
+IHRvcCBvZiBnaXQ6Ly9saW51eHR2Lm9yZy9odmVya3VpbC9tZWRpYV90cmVlLmdpdCBleHlub3M0
+LWNlYwogIGJyYW5jaAotIHNwbGl0IERUIG1vZGlmaWNhdGlvbnMgaW4gYSBzZXBhcmF0ZSBwYXRj
+aAoKQmVuamFtaW4gR2FpZ25hcmQgKDMpOgogIHN0aTogaGRtaTogYWRkIEhQRCBub3RpZmllciBz
+dXBwb3J0CiAgc3RpaC1jZWM6IGFkZCBIUEQgbm90aWZpZXIgc3VwcG9ydAogIGFybTogc3RpOiB1
+cGRhdGUgc3RpLWNlYyBmb3IgSFBEIG5vdGlmaWVyIHN1cHBvcnQKCiAuLi4vZGV2aWNldHJlZS9i
+aW5kaW5ncy9tZWRpYS9zdGloLWNlYy50eHQgICAgICAgICB8ICAgMiArCiBhcmNoL2FybS9ib290
+L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpICAgICAgICAgICAgICB8ICAxMiAtCiBhcmNoL2FybS9i
+b290L2R0cy9zdGloNDEwLmR0c2kgICAgICAgICAgICAgICAgICAgICB8ICAxMyArCiBkcml2ZXJz
+L2dwdS9kcm0vc3RpL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBkcml2
+ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgICAgICAgICAgICAgICAgICAgICB8ICAxNCArCiBk
+cml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmggICAgICAgICAgICAgICAgICAgICB8ICAgMyAr
+CiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8ICAx
+MCArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICB8
+ICAgMSArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jZWMvTWFrZWZpbGUgICAgICAgICAg
+ICB8ICAgMSArCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0aS9jZWMvc3RpaC1jZWMuYyAgICAg
+ICAgICB8IDQwNCArKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvc3RhZ2luZy9tZWRpYS9L
+Y29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAyIC0KIGRyaXZlcnMvc3RhZ2luZy9tZWRp
+YS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgIHwgICAxIC0KIGRyaXZlcnMvc3RhZ2luZy9t
+ZWRpYS9zdC1jZWMvS2NvbmZpZyAgICAgICAgICAgICAgIHwgICA4IC0KIGRyaXZlcnMvc3RhZ2lu
+Zy9tZWRpYS9zdC1jZWMvTWFrZWZpbGUgICAgICAgICAgICAgIHwgICAxIC0KIGRyaXZlcnMvc3Rh
+Z2luZy9tZWRpYS9zdC1jZWMvVE9ETyAgICAgICAgICAgICAgICAgIHwgICA3IC0KIGRyaXZlcnMv
+c3RhZ2luZy9tZWRpYS9zdC1jZWMvc3RpaC1jZWMuYyAgICAgICAgICAgIHwgMzc5IC0tLS0tLS0t
+LS0tLS0tLS0tLS0KIDE2IGZpbGVzIGNoYW5nZWQsIDQ0OSBpbnNlcnRpb25zKCspLCA0MTAgZGVs
+ZXRpb25zKC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdGkv
+Y2VjL01ha2VmaWxlCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9z
+dGkvY2VjL3N0aWgtY2VjLmMKIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVk
+aWEvc3QtY2VjL0tjb25maWcKIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3N0YWdpbmcvbWVk
+aWEvc3QtY2VjL01ha2VmaWxlCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9zdGFnaW5nL21l
+ZGlhL3N0LWNlYy9UT0RPCiBkZWxldGUgbW9kZSAxMDA2NDQgZHJpdmVycy9zdGFnaW5nL21lZGlh
+L3N0LWNlYy9zdGloLWNlYy5jCgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
