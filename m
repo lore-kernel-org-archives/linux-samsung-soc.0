@@ -1,40 +1,85 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 10/15] media: s5p-mfc: Reduce firmware buffer size for MFC
- v6+ variants
-Date: Fri, 17 Feb 2017 16:30:44 -0300
-Message-ID: <e63c437d-95a9-42fa-a583-0625fa897339@osg.samsung.com>
-References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075218eucas1p157d3da30dab72acd2bea1ea99795a274@eucas1p1.samsung.com>
- <1487058728-16501-11-git-send-email-m.szyprowski@samsung.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V3 0/4] PCI: exynos: use the PHY generic framework
+Date: Fri, 17 Feb 2017 13:51:46 -0600
+Message-ID: <20170217195146.GA17762@bhelgaas-glaptop.roam.corp.google.com>
+References: <CGME20170213082615epcas5p2f5ecabbd5853a8e27da5f88fcae85158@epcas5p2.samsung.com>
+ <20170213082613.19628-1-jh80.chung@samsung.com>
+ <20170215211120.GC6981@bhelgaas-glaptop.roam.corp.google.com>
+ <04b568d2-d85e-9cbd-1379-d657f574f279@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56660
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753335AbdBQTav (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 14:30:51 -0500
-In-Reply-To: <1487058728-16501-11-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <04b568d2-d85e-9cbd-1379-d657f574f279-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, niyas.ahmed-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, vivek.gautam-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hello Marek,
-
-On 02/14/2017 04:52 AM, Marek Szyprowski wrote:
-> Firmware for MFC v6+ variants is not larger than 400 KiB, so there is no
-> need to allocate a full 1 MiB buffer for it. Reduce it to 512 KiB to keep
-> proper alignment of allocated buffer.
+On Thu, Feb 16, 2017 at 07:33:15AM +0900, Jaehoon Chung wrote:
+> Dear Bjorn,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+> On 02/16/2017 06:11 AM, Bjorn Helgaas wrote:
+> > On Mon, Feb 13, 2017 at 05:26:09PM +0900, Jaehoon Chung wrote:
+> >> This patcheset is for using PHY generic framework.
+> >> Current pci-exyns doesn't use the phy framework since there haven't been on
+> >> PHY subsystem when Exynos5440 had bean upstreamed.
+> >> It's making a difficult to upstream the other Exynos variants because of different
+> >> PHY registers.
+> >>
+> >> This patcheset has the below modifications:
+> >> 1) Introduces the phy-exynos-pcie
+> >> 2) Handles PHY register from PHY framework for pci-exynos
+> >> 3) Modifies the dt-binding of pci-exynos
+> >> 4) Maintains the backward compatibility
+> >>
+> >> Changelog on V3:
+> >> - Drops "ARM: dts: exynos5440: support the phy-pcie node of pcie"
+> >>   : Will send this patch after applying this patchset.
+> >> - Fixes typo
+> >> - Based on latest PCI git repository (host-exynos branch)
+> >> - Changes commit message
+> >> - Removes the dependency
+> >>
+> >> Changelog on V2:
+> >> - Keep current codes for backward compatibility
+> >> - Fixes some typos
+> >> - Split the patches for removing the dependency
+> >> - Removes the unnecessary codes
+> >> - Change the patch's sequence
+> >> - Based on latest PCI git repository.(next branch)
+> >>
+> >> Jaehoon Chung (4):
+> >>   Documetation: samsung-phy: add the exynos-pcie-phy binding
+> >>   phy: phy-exynos-pcie: Add support for Exynos PCIe phy
+> >>   Documetation: binding: modify the exynos5440 pcie binding
+> >>   PCI: exynos: support the using PHY generic framework
+> >>
+> >>  .../bindings/pci/samsung,exynos5440-pcie.txt       |  29 +++
+> >>  .../devicetree/bindings/phy/samsung-phy.txt        |  17 ++
+> >>  drivers/pci/host/pci-exynos.c                      |  54 +++-
+> >>  drivers/phy/Kconfig                                |   8 +
+> >>  drivers/phy/Makefile                               |   1 +
+> >>  drivers/phy/phy-exynos-pcie.c                      | 285 +++++++++++++++++++++
+> >>  6 files changed, 390 insertions(+), 4 deletions(-)
+> >>  create mode 100644 drivers/phy/phy-exynos-pcie.c
+> > 
+> > I made the updates Vivek suggested and provisionally added these to my
+> > pci/host-exynos branch to get some build testing.
+> 
+> Thanks!
+> 
+> > 
+> > Kishon, I guess it probably makes more sense for me to apply this
+> > because even though the drivers/pci changes are small, I think they
+> > depend on other pci-exynos.c changes that are on my branch but not in
+> > Linus' tree yet.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+I haven't heard from Kishon, but I merged these to my -next branch for
+v4.11.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Bjorn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
