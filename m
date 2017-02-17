@@ -1,21 +1,21 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 04/15] media: s5p-mfc: Replace bank1/bank2 entries with an
- array
-Date: Fri, 17 Feb 2017 14:54:18 -0300
-Message-ID: <fc4b773f-6b5c-0e6d-792d-b7b291906bda@osg.samsung.com>
+Subject: Re: [PATCH 05/15] media: s5p-mfc: Simplify alloc/release private
+ buffer functions
+Date: Fri, 17 Feb 2017 15:09:45 -0300
+Message-ID: <5d40394b-7705-97d7-aee6-f5d068c33fc5@osg.samsung.com>
 References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075216eucas1p24d953cf4977047973c5f030f4cb331f1@eucas1p2.samsung.com>
- <1487058728-16501-5-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170214075216eucas1p1e3ee119a7e6bbdcda45db5ec0502b6c3@eucas1p1.samsung.com>
+ <1487058728-16501-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56205
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56300
         "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934096AbdBQRy1 (ORCPT
+        with ESMTP id S934053AbdBQSJy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 12:54:27 -0500
-In-Reply-To: <1487058728-16501-5-git-send-email-m.szyprowski@samsung.com>
+        Fri, 17 Feb 2017 13:09:54 -0500
+In-Reply-To: <1487058728-16501-6-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
@@ -24,10 +24,9 @@ Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.
 Hello Marek,
 
 On 02/14/2017 04:51 AM, Marek Szyprowski wrote:
-> Internal MFC driver device structure contains two entries for keeping
-> addresses of the DMA memory banks. Replace them with the dma_base[] array
-> and use defines for accessing particular banks. This will help to simplify
-> code in the next patches.
+> Change parameters for s5p_mfc_alloc_priv_buf() and s5p_mfc_release_priv_buf()
+> functions. Instead of DMA device pointer and a base, provide common MFC
+> device structure and memory bank context identifier.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
