@@ -1,21 +1,21 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 11/15] media: s5p-mfc: Split variant DMA memory
- configuration into separate functions
-Date: Fri, 17 Feb 2017 17:04:43 -0300
-Message-ID: <fc726a1a-b1f3-0301-2432-f568eeeeec5d@osg.samsung.com>
+Subject: Re: [PATCH 12/15] media: s5p-mfc: Add support for probe-time
+ preallocated block based allocator
+Date: Fri, 17 Feb 2017 17:14:42 -0300
+Message-ID: <a83c8503-113a-fdbe-d2ca-0639c94e02b0@osg.samsung.com>
 References: <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170214075219eucas1p193de247c3127167d68a2cca922e83fb3@eucas1p1.samsung.com>
- <1487058728-16501-12-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170214075220eucas1p21d7f82fa19a9f058bb6fbe0a994478cc@eucas1p2.samsung.com>
+ <1487058728-16501-13-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56788
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56857
         "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934613AbdBQUEv (ORCPT
+        with ESMTP id S932673AbdBQUPg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Feb 2017 15:04:51 -0500
-In-Reply-To: <1487058728-16501-12-git-send-email-m.szyprowski@samsung.com>
+        Fri, 17 Feb 2017 15:15:36 -0500
+In-Reply-To: <1487058728-16501-13-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
@@ -24,79 +24,33 @@ Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.
 Hello Marek,
 
 On 02/14/2017 04:52 AM, Marek Szyprowski wrote:
-> Move code for DMA memory configuration with IOMMU into separate function
-> to make it easier to compare what is being done in each case.
+> Current MFC driver depends on the fact that when IOMMU is available, the
+> DMA-mapping framework and its IOMMU glue will use first-fit allocator.
+> This was true for ARM architecture, but its not for ARM64 arch. However, in
+> case of MFC v6+ hardware and latest firmware, it turned out that there is
+> no strict requirement for ALL buffers to be allocated on higher addresses
+> than the firmware base. This requirement is true only for the device and
+> per-context buffers. All video data buffers can be allocated anywhere for
+> all MFC v6+ versions.
+> 
+> Such relaxed requirements for the memory buffers can be easily fulfilled
+> by allocating firmware, device and per-context buffers from the probe-time
+> preallocated larger buffer. This patch adds support for it. This way the
+> driver finally works fine on ARM64 architecture. The size of the
+> preallocated buffer is 8 MiB, what is enough for three instances H264
+> decoders or encoders (other codecs have smaller memory requirements).
+> If one needs more for particular use case, one can use "mem" module
+> parameter to force larger (or smaller) buffer (for example by adding
+> "s5p_mfc.mem=16M" to kernel command line).
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c | 102 ++++++++++++++++++-------------
->  1 file changed, 61 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 92a88c20b26d..a18740c81c55 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1107,41 +1107,13 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
->  	return NULL;
->  }
->  
-> -static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
-> +static int s5p_mfc_configure_2port_memory(struct s5p_mfc_dev *mfc_dev)
->  {
->  	struct device *dev = &mfc_dev->plat_dev->dev;
->  	void *bank2_virt;
->  	dma_addr_t bank2_dma_addr;
->  	unsigned long align_size = 1 << MFC_BASE_ALIGN_ORDER;
-> -	struct s5p_mfc_priv_buf *fw_buf = &mfc_dev->fw_buf;
-> -
-> -	/*
-> -	 * When IOMMU is available, we cannot use the default configuration,
-> -	 * because of MFC firmware requirements: address space limited to
-> -	 * 256M and non-zero default start address.
-> -	 * This is still simplified, not optimal configuration, but for now
-> -	 * IOMMU core doesn't allow to configure device's IOMMUs channel
-> -	 * separately.
-> -	 */
-> -	if (exynos_is_iommu_available(dev)) {
-> -		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
-> -						 S5P_MFC_IOMMU_DMA_SIZE);
-> -		if (ret)
-> -			return ret;
-> -
-> -		mfc_dev->mem_dev[BANK1_CTX] = mfc_dev->mem_dev[BANK2_CTX] = dev;
-> -		ret = s5p_mfc_alloc_firmware(mfc_dev);
-> -		if (ret) {
-> -			exynos_unconfigure_iommu(dev);
-> -			return ret;
-> -		}
-> -
-> -		mfc_dev->dma_base[BANK1_CTX] = mfc_dev->fw_buf.dma;
-> -		mfc_dev->dma_base[BANK2_CTX] = mfc_dev->fw_buf.dma;
-> -		vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
-> -
-> -		return 0;
-> -	}
-> +	int ret;
-
-This should be declared in patch 8/15.
-
->  
->  	/*
->  	 * Create and initialize virtual devices for accessing
-> @@ -1188,26 +1160,74 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
->  					DMA_BIT_MASK(32));
->  	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
->  					DMA_BIT_MASK(32));
-> -
-
-This seems to be an unrelated change.
-
-The rest looks good to me.
 
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
 Best regards,
+
 -- 
 Javier Martinez Canillas
 Open Source Group
