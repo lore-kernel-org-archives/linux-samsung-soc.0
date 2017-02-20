@@ -1,102 +1,99 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 02/15] media: s5p-mfc: Use generic of_device_get_match_data
- helper
-Date: Mon, 20 Feb 2017 14:38:51 +0100
-Message-ID: <1487597944-2000-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 06/15] media: s5p-mfc: Move setting DMA max segment size to
+ DMA configure function
+Date: Mon, 20 Feb 2017 14:38:55 +0100
+Message-ID: <1487597944-2000-7-git-send-email-m.szyprowski@samsung.com>
 References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170220133911eucas1p17c0e5d66163593575edc5b8014aa9c30@eucas1p1.samsung.com>
+ <CGME20170220133913eucas1p15e11eb9f365d85f48afe724d168dd44f@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:21852 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752562AbdBTNjQ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:21520 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752726AbdBTNjS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 08:39:16 -0500
+        Mon, 20 Feb 2017 08:39:18 -0500
 In-reply-to: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Replace custom code with generic helper to retrieve driver data.
+Setting DMA max segment size to 32 bit mask is a part of DMA memory
+configuration, so move those calls to s5p_mfc_configure_dma_memory()
+function.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 17 ++---------------
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  4 ++--
- 2 files changed, 4 insertions(+), 17 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 3e1f22eb4339..ad3d7377f40d 100644
+index f7664910f12c..bc1aeb25ebeb 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -22,6 +22,7 @@
- #include <media/v4l2-event.h>
- #include <linux/workqueue.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <media/videobuf2-v4l2.h>
- #include "s5p_mfc_common.h"
-@@ -1157,8 +1158,6 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	device_unregister(mfc_dev->mem_dev_r);
- }
+@@ -1122,9 +1122,13 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+ 	if (exynos_is_iommu_available(dev)) {
+ 		int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
+ 						 S5P_MFC_IOMMU_DMA_SIZE);
+-		if (ret == 0)
++		if (ret == 0) {
+ 			mfc_dev->mem_dev[BANK1_CTX] =
+ 				mfc_dev->mem_dev[BANK2_CTX] = dev;
++			vb2_dma_contig_set_max_seg_size(dev,
++							DMA_BIT_MASK(32));
++		}
++
+ 		return ret;
+ 	}
  
--static void *mfc_get_drv_data(struct platform_device *pdev);
--
- /* MFC probe function */
- static int s5p_mfc_probe(struct platform_device *pdev)
- {
-@@ -1182,7 +1181,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+@@ -1143,6 +1147,11 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
  		return -ENODEV;
  	}
  
--	dev->variant = mfc_get_drv_data(pdev);
-+	dev->variant = of_device_get_match_data(&pdev->dev);
++	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK1_CTX],
++					DMA_BIT_MASK(32));
++	vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
++					DMA_BIT_MASK(32));
++
+ 	return 0;
+ }
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
-@@ -1541,18 +1540,6 @@ static int s5p_mfc_resume(struct device *dev)
- };
- MODULE_DEVICE_TABLE(of, exynos_mfc_match);
+@@ -1152,11 +1161,14 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
  
--static void *mfc_get_drv_data(struct platform_device *pdev)
--{
--	struct s5p_mfc_variant *driver_data = NULL;
--	const struct of_device_id *match;
+ 	if (exynos_is_iommu_available(dev)) {
+ 		exynos_unconfigure_iommu(dev);
++		vb2_dma_contig_clear_max_seg_size(dev);
+ 		return;
+ 	}
+ 
+ 	device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
+ 	device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK1_CTX]);
++	vb2_dma_contig_clear_max_seg_size(mfc_dev->mem_dev[BANK2_CTX]);
+ }
+ 
+ /* MFC probe function */
+@@ -1214,11 +1226,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_dma;
+ 	}
+ 
+-	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK1_CTX],
+-					DMA_BIT_MASK(32));
+-	vb2_dma_contig_set_max_seg_size(dev->mem_dev[BANK2_CTX],
+-					DMA_BIT_MASK(32));
 -
--	match = of_match_node(exynos_mfc_match, pdev->dev.of_node);
--	if (match)
--		driver_data = (struct s5p_mfc_variant *)match->data;
--
--	return driver_data;
--}
--
- static struct platform_driver s5p_mfc_driver = {
- 	.probe		= s5p_mfc_probe,
- 	.remove		= s5p_mfc_remove,
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 3e0e8eaf8bfe..2f1387a4c386 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -192,7 +192,7 @@ struct s5p_mfc_buf {
-  */
- struct s5p_mfc_pm {
- 	struct clk	*clock_gate;
--	const char	**clk_names;
-+	const char * const *clk_names;
- 	struct clk	*clocks[MFC_MAX_CLOCKS];
- 	int		num_clocks;
- 	bool		use_clock_gating;
-@@ -304,7 +304,7 @@ struct s5p_mfc_dev {
- 	struct v4l2_ctrl_handler dec_ctrl_handler;
- 	struct v4l2_ctrl_handler enc_ctrl_handler;
- 	struct s5p_mfc_pm	pm;
--	struct s5p_mfc_variant	*variant;
-+	const struct s5p_mfc_variant	*variant;
- 	int num_inst;
- 	spinlock_t irqlock;	/* lock when operating on context */
- 	spinlock_t condlock;	/* lock when changing/checking if a context is
+ 	mutex_init(&dev->mfc_mutex);
+ 	init_waitqueue_head(&dev->queue);
+ 	dev->hw_lock = 0;
+@@ -1351,8 +1358,6 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ 	s5p_mfc_release_firmware(dev);
+ 	s5p_mfc_unconfigure_dma_memory(dev);
+-	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK1_CTX]);
+-	vb2_dma_contig_clear_max_seg_size(dev->mem_dev[BANK2_CTX]);
+ 
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
 -- 
 1.9.1
