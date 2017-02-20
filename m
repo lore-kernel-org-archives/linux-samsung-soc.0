@@ -1,155 +1,121 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 01/15] media: s5p-mfc: Remove unused structures and dead code
-Date: Mon, 20 Feb 2017 14:38:50 +0100
-Message-ID: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
-References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170220133911eucas1p257b33c37da51473580724d4e8b1392fa@eucas1p2.samsung.com>
+Subject: [PATCH v2 00/15] Exynos MFC v6+ - remove the need for the reserved
+ memory
+Date: Mon, 20 Feb 2017 14:38:49 +0100
+Message-ID: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170220133910eucas1p10f347d7688dd51ea70d15994c9d5d1f1@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove unused structures, definitions and functions that are no longer
-called from the driver code.
+Dear All,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
- 3 files changed, 35 deletions(-)
+This patchset is a result of my work on enabling full support for MFC device
+(multimedia codec) on Exynos 5433 on ARM64 architecture. Initially I thought
+that to let it working on ARM64 architecture with IOMMU, I would need to
+solve the issue related to the fact that s5p-mfc driver was depending on the
+first-fit allocation method in the DMA-mapping / IOMMU glue code (ARM64 use
+different algorithm). It turned out, that there is a much simpler way.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 05fe82be6584..3e1f22eb4339 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1422,16 +1422,11 @@ static int s5p_mfc_resume(struct device *dev)
- 	.priv	= &mfc_buf_size_v5,
- };
- 
--static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
--	.base = MFC_BASE_ALIGN_ORDER,
--};
--
- static struct s5p_mfc_variant mfc_drvdata_v5 = {
- 	.version	= MFC_VERSION,
- 	.version_bit	= MFC_V5_BIT,
- 	.port_num	= MFC_NUM_PORTS,
- 	.buf_size	= &buf_size_v5,
--	.buf_align	= &mfc_buf_align_v5,
- 	.fw_name[0]	= "s5p-mfc.fw",
- 	.clk_names	= {"mfc", "sclk_mfc"},
- 	.num_clocks	= 2,
-@@ -1452,16 +1447,11 @@ static int s5p_mfc_resume(struct device *dev)
- 	.priv	= &mfc_buf_size_v6,
- };
- 
--static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
--	.base = 0,
--};
--
- static struct s5p_mfc_variant mfc_drvdata_v6 = {
- 	.version	= MFC_VERSION_V6,
- 	.version_bit	= MFC_V6_BIT,
- 	.port_num	= MFC_NUM_PORTS_V6,
- 	.buf_size	= &buf_size_v6,
--	.buf_align	= &mfc_buf_align_v6,
- 	.fw_name[0]     = "s5p-mfc-v6.fw",
- 	/*
- 	 * v6-v2 firmware contains bug fixes and interface change
-@@ -1486,16 +1476,11 @@ static int s5p_mfc_resume(struct device *dev)
- 	.priv	= &mfc_buf_size_v7,
- };
- 
--static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
--	.base = 0,
--};
--
- static struct s5p_mfc_variant mfc_drvdata_v7 = {
- 	.version	= MFC_VERSION_V7,
- 	.version_bit	= MFC_V7_BIT,
- 	.port_num	= MFC_NUM_PORTS_V7,
- 	.buf_size	= &buf_size_v7,
--	.buf_align	= &mfc_buf_align_v7,
- 	.fw_name[0]     = "s5p-mfc-v7.fw",
- 	.clk_names	= {"mfc", "sclk_mfc"},
- 	.num_clocks	= 2,
-@@ -1515,16 +1500,11 @@ static int s5p_mfc_resume(struct device *dev)
- 	.priv	= &mfc_buf_size_v8,
- };
- 
--static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
--	.base = 0,
--};
--
- static struct s5p_mfc_variant mfc_drvdata_v8 = {
- 	.version	= MFC_VERSION_V8,
- 	.version_bit	= MFC_V8_BIT,
- 	.port_num	= MFC_NUM_PORTS_V8,
- 	.buf_size	= &buf_size_v8,
--	.buf_align	= &mfc_buf_align_v8,
- 	.fw_name[0]     = "s5p-mfc-v8.fw",
- 	.clk_names	= {"mfc"},
- 	.num_clocks	= 1,
-@@ -1535,7 +1515,6 @@ static int s5p_mfc_resume(struct device *dev)
- 	.version_bit	= MFC_V8_BIT,
- 	.port_num	= MFC_NUM_PORTS_V8,
- 	.buf_size	= &buf_size_v8,
--	.buf_align	= &mfc_buf_align_v8,
- 	.fw_name[0]     = "s5p-mfc-v8.fw",
- 	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
- 	.num_clocks	= 3,
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index ab23236aa942..3e0e8eaf8bfe 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -44,14 +44,6 @@
- 
- #include <media/videobuf2-dma-contig.h>
- 
--static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
--{
--	/* Same functionality as the vb2_dma_contig_plane_paddr */
--	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
--
--	return *paddr;
--}
--
- /* MFC definitions */
- #define MFC_MAX_EXTRA_DPB       5
- #define MFC_MAX_BUFFERS		32
-@@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
- 	void *priv;
- };
- 
--struct s5p_mfc_buf_align {
--	unsigned int base;
--};
--
- struct s5p_mfc_variant {
- 	unsigned int version;
- 	unsigned int port_num;
- 	u32 version_bit;
- 	struct s5p_mfc_buf_size *buf_size;
--	struct s5p_mfc_buf_align *buf_align;
- 	char	*fw_name[MFC_FW_MAX_VERSIONS];
- 	const char	*clk_names[MFC_MAX_CLOCKS];
- 	int		num_clocks;
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-index 8e5df041edf7..45c807bf19cc 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-@@ -18,7 +18,6 @@
- int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
- int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
- int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
--int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
- 
- int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
- void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
+During my research I found that some of the requirements for the memory
+buffers for MFC v6+ devices were blindly copied from the previous
+hardware (v5) version and simply turned out to be excessive. It turned out
+that there is no strict requirement for ALL buffers to be allocated on
+the higher addresses than the firmware base. This requirement is true only
+for the device and per-context buffers. All video data buffers can be
+allocated anywhere for all MFC v6+ versions. This heavily simplifies
+memory management in the driver.
+
+Such relaxed requirements for the memory buffers can be easily fulfilled
+by allocating firmware, device and per-context buffers from the probe-time
+preallocated larger buffer. There is no need to create special reserved
+memory regions. The only case, when those memory regions are needed is an
+oldest Exynos series - Exynos4210 or Exyno4412, which both have MFC v5
+hardware, and only when IOMMU is disabled.
+
+This patchset has been tested on Odroid U3 (Exynos4412 with MFC v5), Google
+Snow (Exynos5250 with MFC v6), Odroid XU3 (Exynos5422 with MFC v8) and
+TM2 (Exynos5433 with MFC v8, ARM64) boards.
+
+To get it working on TM2/Exynos5433 with IOMMU enabled, the 'architectural
+clock gating' in SYSMMU has to be disabled. Fixing this will be handled
+separately. As a temporary solution, one need to clear CFG_ACGEN bit in
+REG_MMU_CFG of the SYSMMU, see __sysmmu_init_config function in
+drivers/iommu/exynos-iommu.c.
+
+Patches are based on linux-next from 20th February 2017 with "media:
+s5p-mfc: Fix initialization of internal structures" patch applied:
+https://patchwork.linuxtv.org/patch/39198/
+
+I've tried to split changes into small pieces to make it easier to review
+the code. I've also did a bit of cleanup while touching the driver.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+
+v2:
+- fixed issues pointed by Javier Martinez Canillas: code compiles now
+  after applying each patch, added missing cleanup
+- added tags
+
+v1: https://www.spinics.net/lists/linux-media/msg111156.html
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (15):
+  media: s5p-mfc: Remove unused structures and dead code
+  media: s5p-mfc: Use generic of_device_get_match_data helper
+  media: s5p-mfc: Replace mem_dev_* entries with an array
+  media: s5p-mfc: Replace bank1/bank2 entries with an array
+  media: s5p-mfc: Simplify alloc/release private buffer functions
+  media: s5p-mfc: Move setting DMA max segment size to DMA configure
+    function
+  media: s5p-mfc: Put firmware to private buffer structure
+  media: s5p-mfc: Move firmware allocation to DMA configure function
+  media: s5p-mfc: Allocate firmware with internal private buffer alloc
+    function
+  media: s5p-mfc: Reduce firmware buffer size for MFC v6+ variants
+  media: s5p-mfc: Split variant DMA memory configuration into separate
+    functions
+  media: s5p-mfc: Add support for probe-time preallocated block based
+    allocator
+  media: s5p-mfc: Remove special configuration of IOMMU domain
+  media: s5p-mfc: Use preallocated block allocator always for MFC v6+
+  ARM: dts: exynos: Remove MFC reserved buffers
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   1 -
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   1 -
+ arch/arm/boot/dts/exynos5250-spring.dts            |   1 -
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   1 -
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   1 -
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   1 -
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   1 -
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   1 -
+ drivers/media/platform/s5p-mfc/regs-mfc-v6.h       |   2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v7.h       |   2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 214 +++++++++++++--------
+ drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c    |   2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  43 ++---
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  71 ++-----
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h      |   1 -
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   8 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |  10 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  51 +----
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.c       |  65 +++++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h       |   8 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  48 ++---
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  14 +-
+ 24 files changed, 268 insertions(+), 283 deletions(-)
+
 -- 
 1.9.1
