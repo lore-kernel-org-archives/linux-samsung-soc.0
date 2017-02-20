@@ -1,112 +1,57 @@
-From: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v10 0/3] Add support for the S6E3HA2 panel on TM2 board
-Date: Mon, 20 Feb 2017 16:09:39 +0900
-Message-ID: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
-References: <CGME20170220071000epcas1p38e002e5064bdf4c3b1b4886207dcaaf4@epcas1p3.samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v10 1/3] dt-bindings: Add support for samsung s6e3ha2 panel
+ binding
+Date: Mon, 20 Feb 2017 16:09:40 +0900
+Message-ID: <1487574582-15746-2-git-send-email-hoegeun.kwon@samsung.com>
+References: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170220071000epcas1p3fbc906fa085931b73b895b6724432cd3@epcas1p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, Donghwa Lee <dh09.lee@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jh80.chung@samsung.com, andi.shyti@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Thierry,
-
-I understand that your opinion is:
-It is better to handle the error every time it is input to the
-register, rather than error handling at once in the struct using
-error. This not only makes the code easier to maintain, but also
-reduces unnecessary computation.
-
-So I modified the panel driver to code-by-code error handling.
-If this is not your opinion, could you tell me what your opinion?
-
-Best Regards,
-Hoegeun
-
-
-Changes for V10:
-- Fixed code-by-code error handling.
-
-Changes for V9:
-- Fixed the te-gpio to optional in bindings
-
-Changes for V8:
-- Applied below two patches: (drm/exynos)
-  : drm/exynos: mic: Add mode_set callback function
-  : drm/exynos: mic: Fix parse_dt function
-- The dt-binding patch and driver patch were divided.
-- Rebase these patches on samsung SoC tree[1] and tm2 touckey patch[2].
-
-Change for V7:
-- Fixed the mode_set callback function of mic device driver.
-  because the mic register is initialized when entering suspend
-  mode, so should set the reg value whenever pre_enable is
-  called.
-
-Changes for V6:
-- Fixed the parse_dt function of dsi device driver.
-- Removed OF graph of panel in DT and DT binding document.
-- Fixed the s6e3ha2 panel device driver.
-  - Fixed from number size to ARRAY_SIZE().
-  - Fixed error handling in mipi_dsi_dcs_* functions.
-  - Fixed the clock of display_mode.
-  - Removed unnecessary casting and error log.
-
-Change for V5:
-- The V5 has only one fix in V4 below.
-- Removed the enable check of the mic driver in mode_set
-  callback, because mode_set should be performed every time.
-
-Changes for V4:
-- Removed display-timings in devicetree, the display-timings has
-  been fixed to be provided by the device driver.
-- Added the mode_set callback function into exynos_drm_mic,
-  because the exynos_drm_mic driver can not parse a videomode
-  struct by removing the display-timings from the devicetree.
-
-Changes for V3:
-- In the DT binding document, made it clearly that the panel is a
-  child node of dsi.
-- Fix reset-gpio active from high to low.
-- Is the OF graph saying related to patch2?
-  Althogh the panel is a child of dsi, I think OF graph necessary.
-  because if a remote-endpoint is not specified, the dsi also
-  panel is not probed.
-- The display-timings has been fixed to be provided by the device
-  driver. however, I think display-timings is necessary in dts.
-  because if dts does not have display-timings, dsi will not load.
-
-Changes for V2:
-- Fixed the samsung,s6e3ha2.txt DT document.
-  - Added active high or low after the description of the GPIOs.
-  - Removed the reg and added a description of the virtual
-    channel number of a DSI peripheral.
-
-Depends on:
-[1] https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/ (for-next branch)
-[2] https://patchwork.kernel.org/patch/9504131/
-    - ("arm64: dts: exynos: Add tm2 touchkey node")
-
-Hoegeun Kwon (2):
-  dt-bindings: Add support for samsung s6e3ha2 panel binding
-  drm/panel: Add support for S6E3HA2 panel driver on TM2 board
-
-Hyungwon Hwang (1):
-  arm64: dts: exynos: Add support for S6E3HA2 panel device on TM2 board
-
- .../bindings/display/panel/samsung,s6e3ha2.txt     |  28 +
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      |  12 +
- drivers/gpu/drm/panel/Kconfig                      |   6 +
- drivers/gpu/drm/panel/Makefile                     |   1 +
- drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 739 +++++++++++++++++++++
- 5 files changed, 786 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
- create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c
-
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhlIFNhbXN1bmcgczZlM2hhMiBpcyBhIDUuNyIgMTQ0MHgyNTYwIEFNT0xFRCBwYW5lbCBjb25u
+ZWN0ZWQKdXNpbmcgTUlQSS1EU0kgaW50ZXJmYWNlcy4KClNpZ25lZC1vZmYtYnk6IERvbmdod2Eg
+TGVlIDxkaDA5LmxlZUBzYW1zdW5nLmNvbT4KU2lnbmVkLW9mZi1ieTogSHl1bmd3b24gSHdhbmcg
+PGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhv
+ZWdldW4ua3dvbkBzYW1zdW5nLmNvbT4KUmV2aWV3ZWQtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFq
+ZGFAc2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgot
+LS0KIC4uLi9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1bmcsczZlM2hhMi50eHQgICAgIHwg
+MjggKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDI4IGluc2VydGlvbnMo
+KykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+ZGlzcGxheS9wYW5lbC9zYW1zdW5nLHM2ZTNoYTIudHh0CgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvc2Ftc3VuZyxzNmUzaGEyLnR4
+dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1
+bmcsczZlM2hhMi50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uMTg4NTRm
+NAotLS0gL2Rldi9udWxsCisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
+aXNwbGF5L3BhbmVsL3NhbXN1bmcsczZlM2hhMi50eHQKQEAgLTAsMCArMSwyOCBAQAorU2Ftc3Vu
+ZyBTNkUzSEEyIDUuNyIgMTQ0MHgyNTYwIEFNT0xFRCBwYW5lbAorCitSZXF1aXJlZCBwcm9wZXJ0
+aWVzOgorICAtIGNvbXBhdGlibGU6ICJzYW1zdW5nLHM2ZTNoYTIiCisgIC0gcmVnOiB0aGUgdmly
+dHVhbCBjaGFubmVsIG51bWJlciBvZiBhIERTSSBwZXJpcGhlcmFsCisgIC0gdmRkMy1zdXBwbHk6
+IEkvTyB2b2x0YWdlIHN1cHBseQorICAtIHZjaS1zdXBwbHk6IHZvbHRhZ2Ugc3VwcGx5IGZvciBh
+bmFsb2cgY2lyY3VpdHMKKyAgLSByZXNldC1ncGlvczogYSBHUElPIHNwZWMgZm9yIHRoZSByZXNl
+dCBwaW4gKGFjdGl2ZSBsb3cpCisgIC0gZW5hYmxlLWdwaW9zOiBhIEdQSU8gc3BlYyBmb3IgdGhl
+IHBhbmVsIGVuYWJsZSBwaW4gKGFjdGl2ZSBoaWdoKQorCitPcHRpb25hbCBwcm9wZXJ0aWVzOgor
+ICAtIHRlLWdwaW9zOiBhIEdQSU8gc3BlYyBmb3IgdGhlIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9u
+aXphdGlvbiBzaWduYWwKKyAgICBncGlvIHBpbiAoYWN0aXZlIGhpZ2gpCisKK0V4YW1wbGU6Cism
+ZHNpIHsKKwkuLi4KKworCXBhbmVsQDAgeworCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZlM2hh
+MiI7CisJCXJlZyA9IDwwPjsKKwkJdmRkMy1zdXBwbHkgPSA8JmxkbzI3X3JlZz47CisJCXZjaS1z
+dXBwbHkgPSA8JmxkbzI4X3JlZz47CisJCXJlc2V0LWdwaW9zID0gPCZncGcwIDAgR1BJT19BQ1RJ
+VkVfTE9XPjsKKwkJZW5hYmxlLWdwaW9zID0gPCZncGYxIDUgR1BJT19BQ1RJVkVfSElHSD47CisJ
+CXRlLWdwaW9zID0gPCZncGYxIDMgR1BJT19BQ1RJVkVfSElHSD47CisJfTsKK307Ci0tIAoxLjku
+MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
