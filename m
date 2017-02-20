@@ -1,67 +1,115 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Add trackpad to exynos5250-snow-rev5
-Date: Mon, 20 Feb 2017 21:40:18 +0200
-Message-ID: <20170220194018.yqfk3k6ubu43e5yw@kozik-lap>
-References: <CAHd-4wCWykRVHfYz-kqA_bMLzYOsFcva2V6hDpvo+egO6CZ8pw@mail.gmail.com>
- <20170219174625.zct4lzglytmkd6i6@kozik-lap>
- <CAHd-4wCTc5HK1--GK=05A+_DAhMMueY2XE4fwpJ84Vi9kn3vHQ@mail.gmail.com>
- <b15abed0-2119-cf5e-bc80-1adb3ba820a9@osg.samsung.com>
- <CAJKOXPfsQBap8=3jK309Dzh7d8mpci8zc=aCs+Phexym89Ko-Q@mail.gmail.com>
- <CAHd-4wD0fBUf8vEQrj9G2EFai-t0nMViN0QSGrbttV-d88OxUQ@mail.gmail.com>
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] Fix the parse_dt of exynos dsi and remove the OF
+ graph
+Date: Tue, 21 Feb 2017 08:24:52 +0900
+Message-ID: <58AB7AC4.40606@samsung.com>
+References: <CGME20170209012715epcas1p3dbe1788b864c50d339dcfd791c0900ec@epcas1p3.samsung.com>
+ <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
+ <58AA95C1.4020809@samsung.com>
+ <CAJKOXPd7Roubdf_5B6pT1PkA9K9dZmjPydYOujXvrz8cVcKVmg@mail.gmail.com>
+ <58AAA996.3080900@samsung.com>
+ <CAJKOXPdqfZ6HG9OKiV9xFw1ybSZXKfGPQJdwdVyH-jjeizpUaw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35739 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751100AbdBTTkX (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 14:40:23 -0500
-Received: by mail-wr0-f196.google.com with SMTP id q39so13047964wrb.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2017 11:40:23 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CAHd-4wD0fBUf8vEQrj9G2EFai-t0nMViN0QSGrbttV-d88OxUQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAJKOXPdqfZ6HG9OKiV9xFw1ybSZXKfGPQJdwdVyH-jjeizpUaw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leandro Santiago <leandrosansilva@gmail.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 20, 2017 at 08:13:21PM +0100, Leandro Santiago wrote:
-> I am sending the v2 of the patch, with the following issues addressed:
-> - properties ordering by importance
-> - nodes ordering by address
-> - fixed commit message
-> - fixed interrupts property with edge failing interruption.
 
-You make reading the patches especially difficult. Let me make it clear:
-1. The previous one was v2 so this is the same?
-2. Changelog goes after --- separator.
-3. git format-patch -v2 (or whatever number)
-4. scripts/get_maintainer.pl v2-....
-5. git send-email --to ..... v2-...
 
-Instead you attached v2 to some old conversation. Also your patch seems
-to miss the mailing lists even though you CC-ed one of them here.
-Probably you need to subscribe it first.
+2017년 02월 20일 17:55에 Krzysztof Kozlowski 이(가) 쓴 글:
+> On Mon, Feb 20, 2017 at 10:32 AM, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>
+>>
+>> 2017년 02월 20일 16:27에 Krzysztof Kozlowski 이(가) 쓴 글:
+>>> On Mon, Feb 20, 2017 at 9:07 AM, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> Can you merge patch 2 and 5 to your tree so that they can go to mainline? Otherwise, I can merge them to my tree if you give me acked-by.
+>>>
+>>> Hi,
+>>>
+>>> Hm? Why do you need them to be merged? Do you mean that the first
+>>> patch breaks not only ABI but also bisectability? Then this has to be
+>>> reworked because:
+>>>
+>>> 1. The DTS patches cannot go through non-DT tree so no, you cannot
+>>> take them into your branch. I will merge them according to point 4
+>>> below.
+>>> 2. Bisectability has to be preserved.
+>>> 3. DTS changes in general should not be a dependency for driver changes.
+>>
+>> Krzysztof,
+>>
+>> I know that. I didn't check you gave a comment to Hoegun do rework this patch series. I just checked reviewed-by from Andrzej H. and thought no problem.
+>>
+>> Ideally you are right. DT changes should be no any dependency of driver changes but now Exynos DT is broken.
+> 
+> I didn't receive any bug reports that Exynos DT is broken so I am
+> quite surprised hearing that. What do you mean by that?
 
-Missing the mailing list means:
-1. It is not public.
-2. It is not present on Patchwork which I use to apply the patches:
-https://patchwork.kernel.org/project/linux-samsung-soc/list/
-
-The patch's subject is still wrong - no changes here.
-
-Beside the formal stuff, Javier's points remain valid. This should be
-added to proper revision.
-
-Best regards,
-Krzysztof
+Wrong usage of Display relevant DT ABI is being fixed without the backward compatibility of the DT ABI. This means device driver doesn't consider old DT binding.
+So the use of old DTB binary will make kernel booting not to work correctly.
 
 > 
-> Javier, I really I don't know exactly about the revision of my chromebook,
-> but with the chromeos kernel it boots using the revision 5 dtb.
+>> So if we have to keep the bisectability between driver and device tree patches - this means that all drivers should always keep the backward compatibility - then the drivers will be messed up.
 > 
-> From a59ffe148a03e9b66918c30a553d564db32b885f Mon Sep 17 00:00:00 2001
-> From: Leandro Santiago <leandrosansilva@gmail.com>
-> Date: Sun, 19 Feb 2017 16:50:18 +0100
-> Subject: [PATCH v2] ARM: dts: Add atmel maxtouch trackpad to
->  exynos5250-snow-rev5
+> No, you are mixing two things. Bisectability is different than
+> backward compatibility. For the backward DT ABI compatibility, we
+> agreed that in this case it can be dropped. However bisectability is
+> something totally different. The DTS changes always go through
+> separate branch, so the driver has to be *always* ready for such case
+> and should still be fully bisectable. This is a general rule existing
+
+I meant that if this patch series considers old DT binding to keep the bisectability, then this driver would be messed up because the driver should try to bind same properties at different places and one of these two cases should be bound.
+So this driver doesn't consider the old DT binding, which means that the old DTB binary isn't compatible with this driver - exynos_drm_dsi.c.
+
+This means if only one side is merged then this driver wouldn't work correctly. 
+
+> for long time and every deviation from the rule is pointed out by
+> arm-soc guys. Whenever I accepted breaking of this rule, I had hard
+> times with arm-soc so no - I am no longer giving up basic rule just
+> because developer might not care.
+
+Understood and reasonable. Seems I just hurried up. For the bisectability, this driver will have a little messed up code temporarily, and this messed up code will be removed after dt change is merged.
+This thing was really what I want to avoid - if even the messed up code should be keeped forever for the backward compatibility then it would be really terribble. :(
+
+
+Do you have a better idea?
+
+> 
+> There are many ways to solve the bisectability problem. Recently for
+> example Marek found nice way to solve the PMU syscon handle dependency
+
+Thanks for share but this would be a different case.
+
+Thanks,
+Inki Dae
+
+> [1]. One can also merge first DTS changes and in next release, merge
+> the driver.
+> 
+>> About this, we had a discussion and I think you agreed,
+>> https://patchwork.kernel.org/patch/9477957/
+> 
+> Again, this discussion was about DT ABI. Not bisectability.
+> 
+>> Do you want the backward compatibility to be kept always when new dt binding relevant patch - which fixes up the wrong usage of dt binding - is posted?
+>> It would be good for the backward compatibility to be kept as long as we can do but there would be several cases to make the driver to be messed up like this patch series.
+> 
+> Again, DT ABI not bisectability.
+> 
+> Best regards,
+> Krzysztof
+> 
+> [1] https://git.kernel.org/cgit/linux/kernel/git/krzk/linux.git/commit/?h=for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends&id=76640b84bd7a9d68c70d8bc8ecd02cdc4bd8855e
+> 
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
