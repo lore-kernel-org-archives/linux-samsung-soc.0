@@ -1,10 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 05/15] media: s5p-mfc: Simplify alloc/release private buffer
- functions
-Date: Mon, 20 Feb 2017 14:38:54 +0100
-Message-ID: <1487597944-2000-6-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 04/15] media: s5p-mfc: Replace bank1/bank2 entries with an
+ array
+Date: Mon, 20 Feb 2017 14:38:53 +0100
+Message-ID: <1487597944-2000-5-git-send-email-m.szyprowski@samsung.com>
 References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170220133913eucas1p1389444e1df79cd8c48157fd64212257b@eucas1p1.samsung.com>
+ <CGME20170220133912eucas1p19e2a64a41537bfcd25369a59a52ca057@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
@@ -12,263 +12,266 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change parameters for s5p_mfc_alloc_priv_buf() and s5p_mfc_release_priv_buf()
-functions. Instead of DMA device pointer and a base, provide common MFC
-device structure and memory bank context identifier.
+Internal MFC driver device structure contains two entries for keeping
+addresses of the DMA memory banks. Replace them with the dma_base[] array
+and use defines for accessing particular banks. This will help to simplify
+code in the next patches.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  2 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_opr.c    | 20 +++++++++++------
- drivers/media/platform/s5p-mfc/s5p_mfc_opr.h    |  8 +++----
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c | 30 ++++++++++---------------
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c | 15 +++++--------
- 5 files changed, 37 insertions(+), 38 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  6 ++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   | 27 +++++++++++-------
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c | 38 +++++++++++++------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c | 10 +++----
+ 4 files changed, 43 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index da601a2dba2f..9cf860f34c71 100644
+index 27d4c864e06e..da601a2dba2f 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -240,12 +240,14 @@ struct s5p_mfc_variant {
-  *			buffer accessed by driver
-  * @dma:		DMA address, only valid when kernel DMA API used
-  * @size:		size of the buffer
-+ * @ctx:		memory context (bank) used for this allocation
-  */
- struct s5p_mfc_priv_buf {
- 	unsigned long	ofs;
- 	void		*virt;
- 	dma_addr_t	dma;
- 	size_t		size;
-+	unsigned int	ctx;
- };
- 
- /**
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
-index 99f65a92a6be..9294ee124661 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
-@@ -37,12 +37,16 @@ void s5p_mfc_init_regs(struct s5p_mfc_dev *dev)
- 		dev->mfc_regs = s5p_mfc_init_regs_v6_plus(dev);
- }
- 
--int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
--					struct s5p_mfc_priv_buf *b)
-+int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
-+			   struct s5p_mfc_priv_buf *b)
- {
-+	struct device *mem_dev = dev->mem_dev[mem_ctx];
-+	dma_addr_t base = dev->dma_base[mem_ctx];
-+
- 	mfc_debug(3, "Allocating priv: %zu\n", b->size);
- 
--	b->virt = dma_alloc_coherent(dev, b->size, &b->dma, GFP_KERNEL);
-+	b->ctx = mem_ctx;
-+	b->virt = dma_alloc_coherent(mem_dev, b->size, &b->dma, GFP_KERNEL);
- 
- 	if (!b->virt) {
- 		mfc_err("Allocating private buffer of size %zu failed\n",
-@@ -53,7 +57,7 @@ int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
- 	if (b->dma < base) {
- 		mfc_err("Invalid memory configuration - buffer (%pad) is below base memory address(%pad)\n",
- 			&b->dma, &base);
--		dma_free_coherent(dev, b->size, b->virt, b->dma);
-+		dma_free_coherent(mem_dev, b->size, b->virt, b->dma);
- 		return -ENOMEM;
+@@ -273,8 +273,7 @@ struct s5p_mfc_priv_buf {
+  * @queue:		waitqueue for waiting for completion of device commands
+  * @fw_size:		size of firmware
+  * @fw_virt_addr:	virtual firmware address
+- * @bank1:		address of the beginning of bank 1 memory
+- * @bank2:		address of the beginning of bank 2 memory
++ * @dma_base[]:		address of the beginning of memory banks
+  * @hw_lock:		used for hardware locking
+  * @ctx:		array of driver contexts
+  * @curr_ctx:		number of the currently running context
+@@ -315,8 +314,7 @@ struct s5p_mfc_dev {
+ 	wait_queue_head_t queue;
+ 	size_t fw_size;
+ 	void *fw_virt_addr;
+-	dma_addr_t bank1;
+-	dma_addr_t bank2;
++	dma_addr_t dma_base[BANK_CTX_NUM];
+ 	unsigned long hw_lock;
+ 	struct s5p_mfc_ctx *ctx[MFC_NUM_CONTEXTS];
+ 	int curr_ctx;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+index cd1406c75d9a..c9bff3d0655f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+@@ -38,8 +38,8 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
  	}
  
-@@ -61,11 +65,13 @@ int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
+ 	dev->fw_virt_addr = dma_alloc_coherent(dev->mem_dev[BANK1_CTX],
+-					dev->fw_size, &dev->bank1, GFP_KERNEL);
+-
++					dev->fw_size, &dev->dma_base[BANK1_CTX],
++					GFP_KERNEL);
+ 	if (!dev->fw_virt_addr) {
+ 		mfc_err("Allocating bitprocessor buffer failed\n");
+ 		return -ENOMEM;
+@@ -52,7 +52,8 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 		if (!bank2_virt) {
+ 			mfc_err("Allocating bank2 base failed\n");
+ 			dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
+-					  dev->fw_virt_addr, dev->bank1);
++					  dev->fw_virt_addr,
++					  dev->dma_base[BANK1_CTX]);
+ 			dev->fw_virt_addr = NULL;
+ 			return -ENOMEM;
+ 		}
+@@ -61,7 +62,7 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 		 * should not have address of bank2 - MFC will treat it as a null frame.
+ 		 * To avoid such situation we set bank2 address below the pool address.
+ 		 */
+-		dev->bank2 = bank2_dma_addr - align_size;
++		dev->dma_base[BANK2_CTX] = bank2_dma_addr - align_size;
+ 
+ 		dma_free_coherent(dev->mem_dev[BANK2_CTX], align_size,
+ 				  bank2_virt, bank2_dma_addr);
+@@ -70,7 +71,7 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 		/* In this case bank2 can point to the same address as bank1.
+ 		 * Firmware will always occupy the beginning of this area so it is
+ 		 * impossible having a video frame buffer with zero address. */
+-		dev->bank2 = dev->bank1;
++		dev->dma_base[BANK2_CTX] = dev->dma_base[BANK1_CTX];
+ 	}
  	return 0;
  }
- 
--void s5p_mfc_release_priv_buf(struct device *dev,
--						struct s5p_mfc_priv_buf *b)
-+void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
-+			      struct s5p_mfc_priv_buf *b)
+@@ -125,7 +126,7 @@ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev)
+ 	if (!dev->fw_virt_addr)
+ 		return -EINVAL;
+ 	dma_free_coherent(dev->mem_dev[BANK1_CTX], dev->fw_size,
+-			  dev->fw_virt_addr, dev->bank1);
++			  dev->fw_virt_addr, dev->dma_base[BANK1_CTX]);
+ 	dev->fw_virt_addr = NULL;
+ 	return 0;
+ }
+@@ -211,13 +212,17 @@ int s5p_mfc_reset(struct s5p_mfc_dev *dev)
+ static inline void s5p_mfc_init_memctrl(struct s5p_mfc_dev *dev)
  {
-+	struct device *mem_dev = dev->mem_dev[b->ctx];
-+
- 	if (b->virt) {
--		dma_free_coherent(dev, b->size, b->virt, b->dma);
-+		dma_free_coherent(mem_dev, b->size, b->virt, b->dma);
- 		b->virt = NULL;
- 		b->dma = 0;
- 		b->size = 0;
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
-index b6ac417ab63e..108e59382e0c 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
-@@ -315,10 +315,10 @@ struct s5p_mfc_hw_ops {
+ 	if (IS_MFCV6_PLUS(dev)) {
+-		mfc_write(dev, dev->bank1, S5P_FIMV_RISC_BASE_ADDRESS_V6);
+-		mfc_debug(2, "Base Address : %pad\n", &dev->bank1);
++		mfc_write(dev, dev->dma_base[BANK1_CTX],
++			  S5P_FIMV_RISC_BASE_ADDRESS_V6);
++		mfc_debug(2, "Base Address : %pad\n",
++			  &dev->dma_base[BANK1_CTX]);
+ 	} else {
+-		mfc_write(dev, dev->bank1, S5P_FIMV_MC_DRAMBASE_ADR_A);
+-		mfc_write(dev, dev->bank2, S5P_FIMV_MC_DRAMBASE_ADR_B);
++		mfc_write(dev, dev->dma_base[BANK1_CTX],
++			  S5P_FIMV_MC_DRAMBASE_ADR_A);
++		mfc_write(dev, dev->dma_base[BANK2_CTX],
++			  S5P_FIMV_MC_DRAMBASE_ADR_B);
+ 		mfc_debug(2, "Bank1: %pad, Bank2: %pad\n",
+-				&dev->bank1, &dev->bank2);
++			  &dev->dma_base[BANK1_CTX], &dev->dma_base[BANK2_CTX]);
+ 	}
+ }
  
- void s5p_mfc_init_hw_ops(struct s5p_mfc_dev *dev);
- void s5p_mfc_init_regs(struct s5p_mfc_dev *dev);
--int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
--					struct s5p_mfc_priv_buf *b);
--void s5p_mfc_release_priv_buf(struct device *dev,
--					struct s5p_mfc_priv_buf *b);
-+int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
-+			   struct s5p_mfc_priv_buf *b);
-+void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
-+			      struct s5p_mfc_priv_buf *b);
- 
- 
- #endif /* S5P_MFC_OPR_H_ */
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
-index 32ce9ade2edb..20e8a1bdc984 100644
+index 65dd3e64b4db..32ce9ade2edb 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
-@@ -41,8 +41,7 @@ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
+@@ -30,8 +30,8 @@
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ 
+-#define OFFSETA(x)		(((x) - dev->bank1) >> MFC_OFFSET_SHIFT)
+-#define OFFSETB(x)		(((x) - dev->bank2) >> MFC_OFFSET_SHIFT)
++#define OFFSETA(x)		(((x) - dev->dma_base[BANK1_CTX]) >> MFC_OFFSET_SHIFT)
++#define OFFSETB(x)		(((x) - dev->dma_base[BANK2_CTX]) >> MFC_OFFSET_SHIFT)
+ 
+ /* Allocate temporary buffers for decoding */
+ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
+@@ -41,8 +41,8 @@ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
  	int ret;
  
  	ctx->dsc.size = buf_size->dsc;
--	ret =  s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				      dev->dma_base[BANK1_CTX], &ctx->dsc);
-+	ret =  s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->dsc);
+-	ret =  s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX], dev->bank1,
+-				      &ctx->dsc);
++	ret =  s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
++				      dev->dma_base[BANK1_CTX], &ctx->dsc);
  	if (ret) {
  		mfc_err("Failed to allocate temporary buffer\n");
  		return ret;
-@@ -58,7 +57,7 @@ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
- /* Release temporary buffers for decoding */
- static void s5p_mfc_release_dec_desc_buffer_v5(struct s5p_mfc_ctx *ctx)
- {
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->dsc);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->dsc);
- }
- 
- /* Allocate codec buffers */
-@@ -173,8 +172,7 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
- 	/* Allocate only if memory from bank 1 is necessary */
+@@ -174,7 +174,7 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
  	if (ctx->bank1.size > 0) {
  
--		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				     dev->dma_base[BANK1_CTX], &ctx->bank1);
-+		ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->bank1);
+ 		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-					     dev->bank1, &ctx->bank1);
++				     dev->dma_base[BANK1_CTX], &ctx->bank1);
  		if (ret) {
  			mfc_err("Failed to allocate Bank1 temporary buffer\n");
  			return ret;
-@@ -183,12 +181,10 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
- 	}
+@@ -184,7 +184,7 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
  	/* Allocate only if memory from bank 2 is necessary */
  	if (ctx->bank2.size > 0) {
--		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK2_CTX],
--				     dev->dma_base[BANK2_CTX], &ctx->bank2);
-+		ret = s5p_mfc_alloc_priv_buf(dev, BANK2_CTX, &ctx->bank2);
+ 		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK2_CTX],
+-					     dev->bank2, &ctx->bank2);
++				     dev->dma_base[BANK2_CTX], &ctx->bank2);
  		if (ret) {
  			mfc_err("Failed to allocate Bank2 temporary buffer\n");
--			s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX],
--						 &ctx->bank1);
-+			s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
- 			return ret;
- 		}
- 		BUG_ON(ctx->bank2.dma & ((1 << MFC_BANK2_ALIGN_ORDER) - 1));
-@@ -199,8 +195,8 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
- /* Release buffers allocated for codec */
- static void s5p_mfc_release_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
- {
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->bank1);
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK2_CTX], &ctx->bank2);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank2);
- }
- 
- /* Allocate memory for instance data buffer */
-@@ -216,8 +212,7 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ 			s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX],
+@@ -216,8 +216,8 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
  	else
  		ctx->ctx.size = buf_size->non_h264_ctx;
  
--	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				     dev->dma_base[BANK1_CTX], &ctx->ctx);
-+	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->ctx);
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX], dev->bank1,
+-				     &ctx->ctx);
++	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
++				     dev->dma_base[BANK1_CTX], &ctx->ctx);
  	if (ret) {
  		mfc_err("Failed to allocate instance buffer\n");
  		return ret;
-@@ -230,11 +225,10 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+@@ -230,8 +230,8 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
  
  	/* Initialize shared memory */
  	ctx->shm.size = buf_size->shm;
--	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				     dev->dma_base[BANK1_CTX], &ctx->shm);
-+	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->shm);
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX], dev->bank1,
+-				     &ctx->shm);
++	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
++				     dev->dma_base[BANK1_CTX], &ctx->shm);
  	if (ret) {
  		mfc_err("Failed to allocate shared memory buffer\n");
--		s5p_mfc_release_priv_buf(dev->mem_dev[BANK1_CTX], &ctx->ctx);
-+		s5p_mfc_release_priv_buf(dev, &ctx->ctx);
- 		return ret;
+ 		s5p_mfc_release_priv_buf(dev->mem_dev[BANK1_CTX], &ctx->ctx);
+@@ -239,7 +239,7 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
  	}
  
-@@ -250,8 +244,8 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
- /* Release instance buffer */
- static void s5p_mfc_release_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ 	/* shared memory offset only keeps the offset from base (port a) */
+-	ctx->shm.ofs = ctx->shm.dma - dev->bank1;
++	ctx->shm.ofs = ctx->shm.dma - dev->dma_base[BANK1_CTX];
+ 	BUG_ON(ctx->shm.ofs & ((1 << MFC_BANK1_ALIGN_ORDER) - 1));
+ 
+ 	memset(ctx->shm.virt, 0, buf_size->shm);
+@@ -538,10 +538,10 @@ static void s5p_mfc_get_enc_frame_buffer_v5(struct s5p_mfc_ctx *ctx,
  {
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->ctx);
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->shm);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->ctx);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->shm);
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+ 
+-	*y_addr = dev->bank2 + (mfc_read(dev, S5P_FIMV_ENCODED_Y_ADDR)
+-							<< MFC_OFFSET_SHIFT);
+-	*c_addr = dev->bank2 + (mfc_read(dev, S5P_FIMV_ENCODED_C_ADDR)
+-							<< MFC_OFFSET_SHIFT);
++	*y_addr = dev->dma_base[BANK2_CTX] +
++		  (mfc_read(dev, S5P_FIMV_ENCODED_Y_ADDR) << MFC_OFFSET_SHIFT);
++	*c_addr = dev->dma_base[BANK2_CTX] +
++		  (mfc_read(dev, S5P_FIMV_ENCODED_C_ADDR) << MFC_OFFSET_SHIFT);
  }
  
- static int s5p_mfc_alloc_dev_context_buffer_v5(struct s5p_mfc_dev *dev)
+ /* Set encoding ref & codec buffer */
+@@ -1218,7 +1218,8 @@ static int s5p_mfc_run_enc_frame(struct s5p_mfc_ctx *ctx)
+ 	}
+ 	if (list_empty(&ctx->src_queue)) {
+ 		/* send null frame */
+-		s5p_mfc_set_enc_frame_buffer_v5(ctx, dev->bank2, dev->bank2);
++		s5p_mfc_set_enc_frame_buffer_v5(ctx, dev->dma_base[BANK2_CTX],
++						dev->dma_base[BANK2_CTX]);
+ 		src_mb = NULL;
+ 	} else {
+ 		src_mb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf,
+@@ -1226,8 +1227,9 @@ static int s5p_mfc_run_enc_frame(struct s5p_mfc_ctx *ctx)
+ 		src_mb->flags |= MFC_BUF_FLAG_USED;
+ 		if (src_mb->b->vb2_buf.planes[0].bytesused == 0) {
+ 			/* send null frame */
+-			s5p_mfc_set_enc_frame_buffer_v5(ctx, dev->bank2,
+-								dev->bank2);
++			s5p_mfc_set_enc_frame_buffer_v5(ctx,
++						dev->dma_base[BANK2_CTX],
++						dev->dma_base[BANK2_CTX]);
+ 			ctx->state = MFCINST_FINISHING;
+ 		} else {
+ 			src_y_addr = vb2_dma_contig_plane_dma_addr(
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index 51053ed68741..4e5ead236455 100644
+index d2bc938253bc..51053ed68741 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -239,8 +239,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- 
+@@ -240,7 +240,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
  	/* Allocate only if memory from bank 1 is necessary */
  	if (ctx->bank1.size > 0) {
--		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--					dev->dma_base[BANK1_CTX], &ctx->bank1);
-+		ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->bank1);
+ 		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-					     dev->bank1, &ctx->bank1);
++					dev->dma_base[BANK1_CTX], &ctx->bank1);
  		if (ret) {
  			mfc_err("Failed to allocate Bank1 memory\n");
  			return ret;
-@@ -253,7 +252,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- /* Release buffers allocated for codec */
- static void s5p_mfc_release_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- {
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->bank1);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
- }
- 
- /* Allocate memory for instance data buffer */
-@@ -292,8 +291,7 @@ static int s5p_mfc_alloc_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
+@@ -292,8 +292,8 @@ static int s5p_mfc_alloc_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
  		break;
  	}
  
--	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				     dev->dma_base[BANK1_CTX], &ctx->ctx);
-+	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->ctx);
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX], dev->bank1,
+-				     &ctx->ctx);
++	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
++				     dev->dma_base[BANK1_CTX], &ctx->ctx);
  	if (ret) {
  		mfc_err("Failed to allocate instance buffer\n");
  		return ret;
-@@ -310,7 +308,7 @@ static int s5p_mfc_alloc_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
- /* Release instance buffer */
- static void s5p_mfc_release_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
- {
--	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->ctx);
-+	s5p_mfc_release_priv_buf(ctx->dev, &ctx->ctx);
- }
- 
- /* Allocate context buffers for SYS_INIT */
-@@ -322,8 +320,7 @@ static int s5p_mfc_alloc_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
+@@ -322,8 +322,8 @@ static int s5p_mfc_alloc_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
  	mfc_debug_enter();
  
  	dev->ctx_buf.size = buf_size->dev_ctx;
--	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
--				     dev->dma_base[BANK1_CTX], &dev->ctx_buf);
-+	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &dev->ctx_buf);
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX], dev->bank1,
+-				     &dev->ctx_buf);
++	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
++				     dev->dma_base[BANK1_CTX], &dev->ctx_buf);
  	if (ret) {
  		mfc_err("Failed to allocate device context buffer\n");
  		return ret;
-@@ -340,7 +337,7 @@ static int s5p_mfc_alloc_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
- /* Release context buffers for SYS_INIT */
- static void s5p_mfc_release_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
- {
--	s5p_mfc_release_priv_buf(dev->mem_dev[BANK1_CTX], &dev->ctx_buf);
-+	s5p_mfc_release_priv_buf(dev, &dev->ctx_buf);
- }
- 
- static int calc_plane(int width, int height)
 -- 
 1.9.1
