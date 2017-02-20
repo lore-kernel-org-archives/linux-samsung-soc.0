@@ -1,47 +1,43 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [patch] drm/exynos/decon5433: & vs | typo
-Date: Mon, 20 Feb 2017 16:11:13 +0900
-Message-ID: <58AA9691.90602@samsung.com>
-References: <CGME20170214074945epcas4p108ec7d0fd8042271ba25b4738e2dc8bc@epcas4p1.samsung.com>
- <20170214074620.GA9710@mwanda>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/5] Fix the parse_dt of exynos dsi and remove the OF graph
+Date: Mon, 20 Feb 2017 09:27:34 +0200
+Message-ID: <CAJKOXPd7Roubdf_5B6pT1PkA9K9dZmjPydYOujXvrz8cVcKVmg@mail.gmail.com>
+References: <CGME20170209012715epcas1p3dbe1788b864c50d339dcfd791c0900ec@epcas1p3.samsung.com>
+ <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com> <58AA95C1.4020809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20170214074620.GA9710@mwanda>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:43426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750861AbdBTH1j (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 20 Feb 2017 02:27:39 -0500
+In-Reply-To: <58AA95C1.4020809@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Hoegeun Kwon <hoegeun.kwon@samsung.com>, robh+dt@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-TWVyZ2VkLgoKVGhhbmtzLApJbmtpIERhZQoKMjAxN+uFhCAwMuyblCAxNOydvCAxNjo0NuyXkCBE
-YW4gQ2FycGVudGVyIOydtCjqsIApIOyTtCDquIA6Cj4gIiYiIHdhcyBvYnZpb3VzbHkgaW50ZW5k
-ZWQgaW5zdGVhZCBvZiAifCIuICBUaGUgb3JpZ2luYWwgY29uZGl0aW9uIGlzCj4gYWx3YXlzIHRy
-dWUuCj4gCj4gRml4ZXM6IGI5M2MyZThiNWQ5ZCAoImRybS9leHlub3MvZGVjb241NDMzOiBjb25m
-aWd1cmUgc3lzcmVnIGluIGNhc2Ugb2YgaGFyZHdhcmUgdHJpZ2dlciIpCj4gU2lnbmVkLW9mZi1i
-eTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgo+IAo+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPiBpbmRleCAwZmQ2Zjdh
-MTgzNjQuLmNjYTMyYTRmZGFiMyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vczU0MzNfZHJtX2RlY29uLmMKPiBAQCAtNjc4LDcgKzY3OCw3IEBAIHN0YXRpYyBpbnQgZXh5
-bm9zNTQzM19kZWNvbl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJCWN0
-eC0+b3V0X3R5cGUgfD0gSUZUWVBFX0k4MDsKPiAgCX0KPiAgCj4gLQlpZiAoY3R4LT5vdXRfdHlw
-ZSB8IEk4MF9IV19UUkcpIHsKPiArCWlmIChjdHgtPm91dF90eXBlICYgSTgwX0hXX1RSRykgewo+
-ICAJCWN0eC0+c3lzcmVnID0gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhhbmRsZShkZXYtPm9m
-X25vZGUsCj4gIAkJCQkJCQkic2Ftc3VuZyxkaXNwLXN5c3JlZyIpOwo+ICAJCWlmIChJU19FUlIo
-Y3R4LT5zeXNyZWcpKSB7Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2Vu
-ZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkg
-b2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9t
-byBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAK
-PiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, Feb 20, 2017 at 9:07 AM, Inki Dae <inki.dae@samsung.com> wrote:
+> Hi Krzysztof,
+>
+> Can you merge patch 2 and 5 to your tree so that they can go to mainline? Otherwise, I can merge them to my tree if you give me acked-by.
+
+Hi,
+
+Hm? Why do you need them to be merged? Do you mean that the first
+patch breaks not only ABI but also bisectability? Then this has to be
+reworked because:
+
+1. The DTS patches cannot go through non-DT tree so no, you cannot
+take them into your branch. I will merge them according to point 4
+below.
+2. Bisectability has to be preserved.
+3. DTS changes in general should not be a dependency for driver changes.
+4 . Usually DTS patches wait for driver to be acked by devicetree
+maintainers or merging by driver maintainer. This did not happen so
+DTS patches wait. Also these were sent too late to merge for this
+cycle so the only chance is v4.12.
+
+Best regards,
+Krzysztof
