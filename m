@@ -1,121 +1,274 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 00/15] Exynos MFC v6+ - remove the need for the reserved
- memory
-Date: Mon, 20 Feb 2017 14:38:49 +0100
-Message-ID: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170220133910eucas1p10f347d7688dd51ea70d15994c9d5d1f1@eucas1p1.samsung.com>
+Subject: [PATCH v2 05/15] media: s5p-mfc: Simplify alloc/release private buffer
+ functions
+Date: Mon, 20 Feb 2017 14:38:54 +0100
+Message-ID: <1487597944-2000-6-git-send-email-m.szyprowski@samsung.com>
+References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170220133913eucas1p1389444e1df79cd8c48157fd64212257b@eucas1p1.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
+Change parameters for s5p_mfc_alloc_priv_buf() and s5p_mfc_release_priv_buf()
+functions. Instead of DMA device pointer and a base, provide common MFC
+device structure and memory bank context identifier.
 
-This patchset is a result of my work on enabling full support for MFC device
-(multimedia codec) on Exynos 5433 on ARM64 architecture. Initially I thought
-that to let it working on ARM64 architecture with IOMMU, I would need to
-solve the issue related to the fact that s5p-mfc driver was depending on the
-first-fit allocation method in the DMA-mapping / IOMMU glue code (ARM64 use
-different algorithm). It turned out, that there is a much simpler way.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  2 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.c    | 20 +++++++++++------
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h    |  8 +++----
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c | 30 ++++++++++---------------
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c | 15 +++++--------
+ 5 files changed, 37 insertions(+), 38 deletions(-)
 
-During my research I found that some of the requirements for the memory
-buffers for MFC v6+ devices were blindly copied from the previous
-hardware (v5) version and simply turned out to be excessive. It turned out
-that there is no strict requirement for ALL buffers to be allocated on
-the higher addresses than the firmware base. This requirement is true only
-for the device and per-context buffers. All video data buffers can be
-allocated anywhere for all MFC v6+ versions. This heavily simplifies
-memory management in the driver.
-
-Such relaxed requirements for the memory buffers can be easily fulfilled
-by allocating firmware, device and per-context buffers from the probe-time
-preallocated larger buffer. There is no need to create special reserved
-memory regions. The only case, when those memory regions are needed is an
-oldest Exynos series - Exynos4210 or Exyno4412, which both have MFC v5
-hardware, and only when IOMMU is disabled.
-
-This patchset has been tested on Odroid U3 (Exynos4412 with MFC v5), Google
-Snow (Exynos5250 with MFC v6), Odroid XU3 (Exynos5422 with MFC v8) and
-TM2 (Exynos5433 with MFC v8, ARM64) boards.
-
-To get it working on TM2/Exynos5433 with IOMMU enabled, the 'architectural
-clock gating' in SYSMMU has to be disabled. Fixing this will be handled
-separately. As a temporary solution, one need to clear CFG_ACGEN bit in
-REG_MMU_CFG of the SYSMMU, see __sysmmu_init_config function in
-drivers/iommu/exynos-iommu.c.
-
-Patches are based on linux-next from 20th February 2017 with "media:
-s5p-mfc: Fix initialization of internal structures" patch applied:
-https://patchwork.linuxtv.org/patch/39198/
-
-I've tried to split changes into small pieces to make it easier to review
-the code. I've also did a bit of cleanup while touching the driver.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v2:
-- fixed issues pointed by Javier Martinez Canillas: code compiles now
-  after applying each patch, added missing cleanup
-- added tags
-
-v1: https://www.spinics.net/lists/linux-media/msg111156.html
-- initial version
-
-
-Patch summary:
-
-Marek Szyprowski (15):
-  media: s5p-mfc: Remove unused structures and dead code
-  media: s5p-mfc: Use generic of_device_get_match_data helper
-  media: s5p-mfc: Replace mem_dev_* entries with an array
-  media: s5p-mfc: Replace bank1/bank2 entries with an array
-  media: s5p-mfc: Simplify alloc/release private buffer functions
-  media: s5p-mfc: Move setting DMA max segment size to DMA configure
-    function
-  media: s5p-mfc: Put firmware to private buffer structure
-  media: s5p-mfc: Move firmware allocation to DMA configure function
-  media: s5p-mfc: Allocate firmware with internal private buffer alloc
-    function
-  media: s5p-mfc: Reduce firmware buffer size for MFC v6+ variants
-  media: s5p-mfc: Split variant DMA memory configuration into separate
-    functions
-  media: s5p-mfc: Add support for probe-time preallocated block based
-    allocator
-  media: s5p-mfc: Remove special configuration of IOMMU domain
-  media: s5p-mfc: Use preallocated block allocator always for MFC v6+
-  ARM: dts: exynos: Remove MFC reserved buffers
-
- .../devicetree/bindings/media/s5p-mfc.txt          |   2 +-
- arch/arm/boot/dts/exynos5250-arndale.dts           |   1 -
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   1 -
- arch/arm/boot/dts/exynos5250-spring.dts            |   1 -
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   1 -
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |   1 -
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   1 -
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   1 -
- arch/arm/boot/dts/exynos5800-peach-pi.dts          |   1 -
- drivers/media/platform/s5p-mfc/regs-mfc-v6.h       |   2 +-
- drivers/media/platform/s5p-mfc/regs-mfc-v7.h       |   2 +-
- drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc.c           | 214 +++++++++++++--------
- drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v5.c    |   2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  43 ++---
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  71 ++-----
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h      |   1 -
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   8 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |  10 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h     |  51 +----
- drivers/media/platform/s5p-mfc/s5p_mfc_opr.c       |  65 +++++--
- drivers/media/platform/s5p-mfc/s5p_mfc_opr.h       |   8 +-
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  48 ++---
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  14 +-
- 24 files changed, 268 insertions(+), 283 deletions(-)
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index da601a2dba2f..9cf860f34c71 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -240,12 +240,14 @@ struct s5p_mfc_variant {
+  *			buffer accessed by driver
+  * @dma:		DMA address, only valid when kernel DMA API used
+  * @size:		size of the buffer
++ * @ctx:		memory context (bank) used for this allocation
+  */
+ struct s5p_mfc_priv_buf {
+ 	unsigned long	ofs;
+ 	void		*virt;
+ 	dma_addr_t	dma;
+ 	size_t		size;
++	unsigned int	ctx;
+ };
+ 
+ /**
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
+index 99f65a92a6be..9294ee124661 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.c
+@@ -37,12 +37,16 @@ void s5p_mfc_init_regs(struct s5p_mfc_dev *dev)
+ 		dev->mfc_regs = s5p_mfc_init_regs_v6_plus(dev);
+ }
+ 
+-int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
+-					struct s5p_mfc_priv_buf *b)
++int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
++			   struct s5p_mfc_priv_buf *b)
+ {
++	struct device *mem_dev = dev->mem_dev[mem_ctx];
++	dma_addr_t base = dev->dma_base[mem_ctx];
++
+ 	mfc_debug(3, "Allocating priv: %zu\n", b->size);
+ 
+-	b->virt = dma_alloc_coherent(dev, b->size, &b->dma, GFP_KERNEL);
++	b->ctx = mem_ctx;
++	b->virt = dma_alloc_coherent(mem_dev, b->size, &b->dma, GFP_KERNEL);
+ 
+ 	if (!b->virt) {
+ 		mfc_err("Allocating private buffer of size %zu failed\n",
+@@ -53,7 +57,7 @@ int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
+ 	if (b->dma < base) {
+ 		mfc_err("Invalid memory configuration - buffer (%pad) is below base memory address(%pad)\n",
+ 			&b->dma, &base);
+-		dma_free_coherent(dev, b->size, b->virt, b->dma);
++		dma_free_coherent(mem_dev, b->size, b->virt, b->dma);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -61,11 +65,13 @@ int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
+ 	return 0;
+ }
+ 
+-void s5p_mfc_release_priv_buf(struct device *dev,
+-						struct s5p_mfc_priv_buf *b)
++void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
++			      struct s5p_mfc_priv_buf *b)
+ {
++	struct device *mem_dev = dev->mem_dev[b->ctx];
++
+ 	if (b->virt) {
+-		dma_free_coherent(dev, b->size, b->virt, b->dma);
++		dma_free_coherent(mem_dev, b->size, b->virt, b->dma);
+ 		b->virt = NULL;
+ 		b->dma = 0;
+ 		b->size = 0;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
+index b6ac417ab63e..108e59382e0c 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr.h
+@@ -315,10 +315,10 @@ struct s5p_mfc_hw_ops {
+ 
+ void s5p_mfc_init_hw_ops(struct s5p_mfc_dev *dev);
+ void s5p_mfc_init_regs(struct s5p_mfc_dev *dev);
+-int s5p_mfc_alloc_priv_buf(struct device *dev, dma_addr_t base,
+-					struct s5p_mfc_priv_buf *b);
+-void s5p_mfc_release_priv_buf(struct device *dev,
+-					struct s5p_mfc_priv_buf *b);
++int s5p_mfc_alloc_priv_buf(struct s5p_mfc_dev *dev, unsigned int mem_ctx,
++			   struct s5p_mfc_priv_buf *b);
++void s5p_mfc_release_priv_buf(struct s5p_mfc_dev *dev,
++			      struct s5p_mfc_priv_buf *b);
+ 
+ 
+ #endif /* S5P_MFC_OPR_H_ */
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+index 32ce9ade2edb..20e8a1bdc984 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+@@ -41,8 +41,7 @@ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
+ 	int ret;
+ 
+ 	ctx->dsc.size = buf_size->dsc;
+-	ret =  s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				      dev->dma_base[BANK1_CTX], &ctx->dsc);
++	ret =  s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->dsc);
+ 	if (ret) {
+ 		mfc_err("Failed to allocate temporary buffer\n");
+ 		return ret;
+@@ -58,7 +57,7 @@ static int s5p_mfc_alloc_dec_temp_buffers_v5(struct s5p_mfc_ctx *ctx)
+ /* Release temporary buffers for decoding */
+ static void s5p_mfc_release_dec_desc_buffer_v5(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->dsc);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->dsc);
+ }
+ 
+ /* Allocate codec buffers */
+@@ -173,8 +172,7 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
+ 	/* Allocate only if memory from bank 1 is necessary */
+ 	if (ctx->bank1.size > 0) {
+ 
+-		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				     dev->dma_base[BANK1_CTX], &ctx->bank1);
++		ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->bank1);
+ 		if (ret) {
+ 			mfc_err("Failed to allocate Bank1 temporary buffer\n");
+ 			return ret;
+@@ -183,12 +181,10 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
+ 	}
+ 	/* Allocate only if memory from bank 2 is necessary */
+ 	if (ctx->bank2.size > 0) {
+-		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK2_CTX],
+-				     dev->dma_base[BANK2_CTX], &ctx->bank2);
++		ret = s5p_mfc_alloc_priv_buf(dev, BANK2_CTX, &ctx->bank2);
+ 		if (ret) {
+ 			mfc_err("Failed to allocate Bank2 temporary buffer\n");
+-			s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX],
+-						 &ctx->bank1);
++			s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
+ 			return ret;
+ 		}
+ 		BUG_ON(ctx->bank2.dma & ((1 << MFC_BANK2_ALIGN_ORDER) - 1));
+@@ -199,8 +195,8 @@ static int s5p_mfc_alloc_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
+ /* Release buffers allocated for codec */
+ static void s5p_mfc_release_codec_buffers_v5(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->bank1);
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK2_CTX], &ctx->bank2);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank2);
+ }
+ 
+ /* Allocate memory for instance data buffer */
+@@ -216,8 +212,7 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ 	else
+ 		ctx->ctx.size = buf_size->non_h264_ctx;
+ 
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				     dev->dma_base[BANK1_CTX], &ctx->ctx);
++	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->ctx);
+ 	if (ret) {
+ 		mfc_err("Failed to allocate instance buffer\n");
+ 		return ret;
+@@ -230,11 +225,10 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ 
+ 	/* Initialize shared memory */
+ 	ctx->shm.size = buf_size->shm;
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				     dev->dma_base[BANK1_CTX], &ctx->shm);
++	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->shm);
+ 	if (ret) {
+ 		mfc_err("Failed to allocate shared memory buffer\n");
+-		s5p_mfc_release_priv_buf(dev->mem_dev[BANK1_CTX], &ctx->ctx);
++		s5p_mfc_release_priv_buf(dev, &ctx->ctx);
+ 		return ret;
+ 	}
+ 
+@@ -250,8 +244,8 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ /* Release instance buffer */
+ static void s5p_mfc_release_instance_buffer_v5(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->ctx);
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->shm);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->ctx);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->shm);
+ }
+ 
+ static int s5p_mfc_alloc_dev_context_buffer_v5(struct s5p_mfc_dev *dev)
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+index 51053ed68741..4e5ead236455 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -239,8 +239,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ 
+ 	/* Allocate only if memory from bank 1 is necessary */
+ 	if (ctx->bank1.size > 0) {
+-		ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-					dev->dma_base[BANK1_CTX], &ctx->bank1);
++		ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->bank1);
+ 		if (ret) {
+ 			mfc_err("Failed to allocate Bank1 memory\n");
+ 			return ret;
+@@ -253,7 +252,7 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ /* Release buffers allocated for codec */
+ static void s5p_mfc_release_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->bank1);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->bank1);
+ }
+ 
+ /* Allocate memory for instance data buffer */
+@@ -292,8 +291,7 @@ static int s5p_mfc_alloc_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
+ 		break;
+ 	}
+ 
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				     dev->dma_base[BANK1_CTX], &ctx->ctx);
++	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &ctx->ctx);
+ 	if (ret) {
+ 		mfc_err("Failed to allocate instance buffer\n");
+ 		return ret;
+@@ -310,7 +308,7 @@ static int s5p_mfc_alloc_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
+ /* Release instance buffer */
+ static void s5p_mfc_release_instance_buffer_v6(struct s5p_mfc_ctx *ctx)
+ {
+-	s5p_mfc_release_priv_buf(ctx->dev->mem_dev[BANK1_CTX], &ctx->ctx);
++	s5p_mfc_release_priv_buf(ctx->dev, &ctx->ctx);
+ }
+ 
+ /* Allocate context buffers for SYS_INIT */
+@@ -322,8 +320,7 @@ static int s5p_mfc_alloc_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
+ 	mfc_debug_enter();
+ 
+ 	dev->ctx_buf.size = buf_size->dev_ctx;
+-	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev[BANK1_CTX],
+-				     dev->dma_base[BANK1_CTX], &dev->ctx_buf);
++	ret = s5p_mfc_alloc_priv_buf(dev, BANK1_CTX, &dev->ctx_buf);
+ 	if (ret) {
+ 		mfc_err("Failed to allocate device context buffer\n");
+ 		return ret;
+@@ -340,7 +337,7 @@ static int s5p_mfc_alloc_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
+ /* Release context buffers for SYS_INIT */
+ static void s5p_mfc_release_dev_context_buffer_v6(struct s5p_mfc_dev *dev)
+ {
+-	s5p_mfc_release_priv_buf(dev->mem_dev[BANK1_CTX], &dev->ctx_buf);
++	s5p_mfc_release_priv_buf(dev, &dev->ctx_buf);
+ }
+ 
+ static int calc_plane(int width, int height)
 -- 
 1.9.1
