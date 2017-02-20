@@ -1,53 +1,67 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH] ARM: dts: Add trackpad to exynos5250-snow-rev5
-Date: Mon, 20 Feb 2017 21:32:05 +0200
-Message-ID: <20170220193205.4tmnjuz3k3s5vkqr@kozik-lap>
+Date: Mon, 20 Feb 2017 21:40:18 +0200
+Message-ID: <20170220194018.yqfk3k6ubu43e5yw@kozik-lap>
 References: <CAHd-4wCWykRVHfYz-kqA_bMLzYOsFcva2V6hDpvo+egO6CZ8pw@mail.gmail.com>
  <20170219174625.zct4lzglytmkd6i6@kozik-lap>
  <CAHd-4wCTc5HK1--GK=05A+_DAhMMueY2XE4fwpJ84Vi9kn3vHQ@mail.gmail.com>
  <b15abed0-2119-cf5e-bc80-1adb3ba820a9@osg.samsung.com>
  <CAJKOXPfsQBap8=3jK309Dzh7d8mpci8zc=aCs+Phexym89Ko-Q@mail.gmail.com>
- <ad94d12e-7121-f3ff-4738-70f7b7f08be0@osg.samsung.com>
+ <CAHd-4wD0fBUf8vEQrj9G2EFai-t0nMViN0QSGrbttV-d88OxUQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33436 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750938AbdBTTcL (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35739 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751100AbdBTTkX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 14:32:11 -0500
-Received: by mail-wr0-f193.google.com with SMTP id s27so3909032wrb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2017 11:32:10 -0800 (PST)
+        Mon, 20 Feb 2017 14:40:23 -0500
+Received: by mail-wr0-f196.google.com with SMTP id q39so13047964wrb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2017 11:40:23 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <ad94d12e-7121-f3ff-4738-70f7b7f08be0@osg.samsung.com>
+In-Reply-To: <CAHd-4wD0fBUf8vEQrj9G2EFai-t0nMViN0QSGrbttV-d88OxUQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Leandro Santiago <leandrosansilva@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: Leandro Santiago <leandrosansilva@gmail.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 20, 2017 at 04:11:17PM -0300, Javier Martinez Canillas wrote:
-> > (although having many trackpads looks weird). You think this is only
-> > for specific revisions of Snows?
-> >
-> 
-> Yes, all Chromebooks have only one trackpad and it varies between revisions.
-> 
-> The reason the downstream ChromiumOS tree have both I2C devices in the same
-> I2C bus was to have a common DTSI file to be used for all Exynos5250 boards.
-> 
-> This is the downstream commit in the ChromiumOS tree that added both devices
-> to the common DTSI file and you can see the intention in the commit [0]:
-> 
-> "Since we'd now like both defined for exynos5250-snow, move the definition
-> up to the cros5250-common device tree file.  This allows snow to work with
-> _either_ the cyapa or atmel touch pad dynamically."
-> 
-> So in the downstream tree both cyapa and atmel_mxt_ts drivers are probed and
-> only one succeeds. Obviously that's not the correct approach for doing this.
+On Mon, Feb 20, 2017 at 08:13:21PM +0100, Leandro Santiago wrote:
+> I am sending the v2 of the patch, with the following issues addressed:
+> - properties ordering by importance
+> - nodes ordering by address
+> - fixed commit message
+> - fixed interrupts property with edge failing interruption.
 
-Indeed, this does not look right. Also meaningless probing of invalid I2C
-devices usually takes some time... The trackpad should be added to
-DTS for given revision of Snow.
+You make reading the patches especially difficult. Let me make it clear:
+1. The previous one was v2 so this is the same?
+2. Changelog goes after --- separator.
+3. git format-patch -v2 (or whatever number)
+4. scripts/get_maintainer.pl v2-....
+5. git send-email --to ..... v2-...
+
+Instead you attached v2 to some old conversation. Also your patch seems
+to miss the mailing lists even though you CC-ed one of them here.
+Probably you need to subscribe it first.
+
+Missing the mailing list means:
+1. It is not public.
+2. It is not present on Patchwork which I use to apply the patches:
+https://patchwork.kernel.org/project/linux-samsung-soc/list/
+
+The patch's subject is still wrong - no changes here.
+
+Beside the formal stuff, Javier's points remain valid. This should be
+added to proper revision.
 
 Best regards,
 Krzysztof
+
+> 
+> Javier, I really I don't know exactly about the revision of my chromebook,
+> but with the chromeos kernel it boots using the revision 5 dtb.
+> 
+> From a59ffe148a03e9b66918c30a553d564db32b885f Mon Sep 17 00:00:00 2001
+> From: Leandro Santiago <leandrosansilva@gmail.com>
+> Date: Sun, 19 Feb 2017 16:50:18 +0100
+> Subject: [PATCH v2] ARM: dts: Add atmel maxtouch trackpad to
+>  exynos5250-snow-rev5
