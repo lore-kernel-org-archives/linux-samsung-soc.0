@@ -1,88 +1,101 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] arm64: dts: exynos: Add missing unit name to
- Exynos7 SoC node
-Date: Mon, 20 Feb 2017 11:00:50 -0300
-Message-ID: <33321d4d-645b-d29a-41dc-c5608cd9d096@osg.samsung.com>
-References: <1484069912-6534-1-git-send-email-javier@osg.samsung.com>
- <1484069912-6534-2-git-send-email-javier@osg.samsung.com>
- <20170110184728.2nff4r634ics4wb3@kozik-lap>
- <e60bf634-d60d-7316-76a9-3b2f2f1480e8@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add trackpad to exynos5250-snow-rev5
+Date: Mon, 20 Feb 2017 12:44:09 -0300
+Message-ID: <b15abed0-2119-cf5e-bc80-1adb3ba820a9@osg.samsung.com>
+References: <CAHd-4wCWykRVHfYz-kqA_bMLzYOsFcva2V6hDpvo+egO6CZ8pw@mail.gmail.com>
+ <20170219174625.zct4lzglytmkd6i6@kozik-lap>
+ <CAHd-4wCTc5HK1--GK=05A+_DAhMMueY2XE4fwpJ84Vi9kn3vHQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e60bf634-d60d-7316-76a9-3b2f2f1480e8-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andi Shyti <andi.shyti-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35464
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752767AbdBTPy1 (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 20 Feb 2017 10:54:27 -0500
+In-Reply-To: <CAHd-4wCTc5HK1--GK=05A+_DAhMMueY2XE4fwpJ84Vi9kn3vHQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leandro Santiago <leandrosansilva@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-Hello Rob,
+Hello Leandro,
 
-On 01/10/2017 04:55 PM, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On 02/19/2017 04:11 PM, Leandro Santiago wrote:
+> Thank you for the tips. I have just added linux-samsung-soc@vger.kernel.org
+> to cc, even though get_mantainer.pl did not suggested such mailing list.
 > 
-> On 01/10/2017 03:47 PM, Krzysztof Kozlowski wrote:
->> On Tue, Jan 10, 2017 at 02:38:30PM -0300, Javier Martinez Canillas wrote:
->>> This patch fixes the following DTC warning about a mismatch
->>> between a device node reg property and its unit name:
->>>
->>> Node /soc has a reg or ranges property, but no unit name
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->>> ---
->>>
->>>  arch/arm64/boot/dts/exynos/exynos7.dtsi | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>> index 80aa60e38237..0d2fedc6ac2f 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->>> @@ -69,7 +69,7 @@
->>>  		method = "smc";
->>>  	};
->>>  
->>> -	soc: soc {
->>> +	soc: soc@0 {
->>
->> This looks unnatural, like a fix just to silence the DTC. Mostly de do
->> not enumerate soc node, although there are few exceptions.
->>
+> About the interrupts property, on the original chromeos-3.8, it was defined
+> as <2 0>, I just replaced the second zero by it by IRQ_TYPE_NONE as it
+> evaluates to zero anyways and is compatible with the existing trackpad
+> node. I have fixed it by setting it to IRQ_TYPE_EDGE_FALLING as you
+> suggested. I have no access to the platform data though, so could not check
+> if it's really correct or not. But still works fine on my chromebook.
 > 
-> Yes, but OTOH arm32 Exynos SoCs just have an empty "ranges" property in their
-> soc device node (parent and child address space is the same, no translation)
-> so DTC doesn't complain about the unit address in those.
+> Here is the updated version of the patch:
 > 
-> But others SoCs DTSI with a non-empty ranges property have an unit name in
-> their soc nodes, i.e for arm64 and arm32:
+> From 458b5b891a98e6163321396514b9d9227ae50e69 Mon Sep 17 00:00:00 2001
+> From: Leandro Santiago <leandrosansilva@gmail.com>
+> Date: Sun, 19 Feb 2017 16:50:18 +0100
+> Subject: [PATCH] ARM: dts: Add trackpad to exynos5250-snow-rev5
 > 
-> arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> The Samsung Chromebook uses an Atmel maxTouch as trackpad.
 > 
-> arch/arm/boot/dts/da850.dtsi
->  
->> I would prefer ignore the warning... however I am happy to hear other opinions.
->>
+> The keymap was based on Exynos5250-based Google Spring and most of
+> the other values were based on chromeos-3.8 branch from the ChromeOS
+> kernel.
 > 
-> If is wrong/unnatural to have addresses for soc nodes then I think DTC should
-> be patched to ignore these (like it will be the case for the OPP nodes AFAIU).
+> Signed-off-by: Leandro Santiago <leandrosansilva@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> index 8f3a80430748..183ff57c6455 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
+> @@ -434,6 +434,20 @@
+>                 interrupt-parent = <&gpx1>;
+>                 wakeup-source;
+>         };
+> +
+> +       trackpad@4b {
+> +               compatible = "atmel,atmel_mxt_tp";
+> +               reg = <0x4b>;
+> +               interrupt-parent = <&gpx1>;
+> +               interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> +               linux,gpio-keymap = <KEY_RESERVED
+> +                                    KEY_RESERVED
+> +                                    KEY_RESERVED
+> +                                    KEY_RESERVED
+> +                                    KEY_RESERVED
+> +                                    BTN_LEFT>;
+> +               wakeup-source;
+> +       };
+>  };
 > 
 
-Any comments about this?
+I noticed that the downstream ChromiumOS tree does the same, but I don't
+think that's correct to add both trackpad devices under the same I2C bus.
 
->> Best regards,
->> Krzysztof
->>
-> 
-> Best regards,
-> 
+DT is a hardware description and so it should describe what the device
+truly has and not add all the possible combinations and make the driver
+fail or succeed if according to what's found on a particular board.
+
+So this is a DT hack and instead all the possible variations should be
+properly described in different DT with (possibly) common DTS snippets.
+
+I thought that all Snow variations used the Cypress cyapa chip but now
+recall a conversation on #linux-exynos about some Snow rev5 variations
+using the same Atmel chip used in the Exynos5420/5800 Peach Chromebooks.
+
+That definitely isn't the case for all Snow rev5 though since some have
+the Cypress chip like in previous revisions, according to other users.
 
 Best regards,
 -- 
 Javier Martinez Canillas
 Open Source Group
 Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
