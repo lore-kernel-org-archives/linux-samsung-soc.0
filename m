@@ -1,97 +1,72 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 14/15] media: s5p-mfc: Use preallocated block allocator
- always for MFC v6+
-Date: Mon, 20 Feb 2017 14:39:03 +0100
-Message-ID: <1487597944-2000-15-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 10/15] media: s5p-mfc: Reduce firmware buffer size for MFC
+ v6+ variants
+Date: Mon, 20 Feb 2017 14:38:59 +0100
+Message-ID: <1487597944-2000-11-git-send-email-m.szyprowski@samsung.com>
 References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170220133917eucas1p2f141e73392ee36596410ce308360a5d7@eucas1p2.samsung.com>
+ <CGME20170220133915eucas1p11c62869bc2eff0b2d2e6a515a0941768@eucas1p1.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:21520 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752520AbdBTNjU (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:21852 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753257AbdBTNjV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Feb 2017 08:39:20 -0500
+        Mon, 20 Feb 2017 08:39:21 -0500
 In-reply-to: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-It turned out that all versions of MFC v6+ hardware doesn't have a strict
-requirement for ALL buffers to be allocated on higher addresses than the
-firmware base like it was documented for MFC v5. This requirement is true
-only for the device and per-context buffers. All video data buffers can be
-allocated anywhere for all MFC v6+ versions. Basing on this fact, the
-special DMA configuration based on two reserved memory regions is not
-really needed for MFC v6+ devices, because the memory requirements for the
-firmware, device and per-context buffers can be fulfilled by the simple
-probe-time pre-allocated block allocator instroduced in previous patch.
-
-This patch enables support for such pre-allocated block based allocator
-always for MFC v6+ devices. Due to the limitations of the memory management
-subsystem the largest supported size of the pre-allocated buffer when no
-CMA (Contiguous Memory Allocator) is enabled is 4MiB.
-
-This patch also removes the requirement to provide two reserved memory
-regions for MFC v6+ devices in device tree. Now the driver is fully
-functional without them.
+Firmware for MFC v6+ variants is not larger than 400 KiB, so there is no
+need to allocate a full 1 MiB buffer for it. Reduce it to 512 KiB to keep
+proper alignment of allocated buffer.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- Documentation/devicetree/bindings/media/s5p-mfc.txt | 2 +-
- drivers/media/platform/s5p-mfc/s5p_mfc.c            | 9 ++++++---
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/media/platform/s5p-mfc/regs-mfc-v6.h | 2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v7.h | 2 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-index 2c901286d818..d3404b5d4d17 100644
---- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -28,7 +28,7 @@ Optional properties:
-   - memory-region : from reserved memory binding: phandles to two reserved
- 	memory regions, first is for "left" mfc memory bus interfaces,
- 	second if for the "right" mfc memory bus, used when no SYSMMU
--	support is available
-+	support is available; used only by MFC v5 present in Exynos4 SoCs
+diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+index d2cd35916dc5..c0166ee9a455 100644
+--- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
++++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+@@ -403,7 +403,7 @@
+ #define MFC_OTHER_ENC_CTX_BUF_SIZE_V6	(12 * SZ_1K)	/*  12KB */
  
- Obsolete properties:
-   - samsung,mfc-r, samsung,mfc-l : support removed, please use memory-region
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index b70cbd637851..b4a13e4cc9d4 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1182,9 +1182,12 @@ static void s5p_mfc_unconfigure_2port_memory(struct s5p_mfc_dev *mfc_dev)
- static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
--	unsigned long mem_size = SZ_8M;
-+	unsigned long mem_size = SZ_4M;
- 	unsigned int bitmap_size;
+ /* MFCv6 variant defines */
+-#define MAX_FW_SIZE_V6			(SZ_1M)		/* 1MB */
++#define MAX_FW_SIZE_V6			(SZ_512K)	/* 512KB */
+ #define MAX_CPB_SIZE_V6			(3 * SZ_1M)	/* 3MB */
+ #define MFC_VERSION_V6			0x61
+ #define MFC_NUM_PORTS_V6		1
+diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+index 1a5c6fdf7846..9f220769d970 100644
+--- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
++++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+@@ -34,7 +34,7 @@
+ #define S5P_FIMV_E_VP8_NUM_T_LAYER_V7			0xfdc4
  
-+	if (IS_ENABLED(CONFIG_DMA_CMA) || exynos_is_iommu_available(dev))
-+		mem_size = SZ_8M;
-+
- 	if (mfc_mem_size)
- 		mem_size = memparse(mfc_mem_size, NULL);
+ /* MFCv7 variant defines */
+-#define MAX_FW_SIZE_V7			(SZ_1M)		/* 1MB */
++#define MAX_FW_SIZE_V7			(SZ_512K)	/* 512KB */
+ #define MAX_CPB_SIZE_V7			(3 * SZ_1M)	/* 3MB */
+ #define MFC_VERSION_V7			0x72
+ #define MFC_NUM_PORTS_V7		1
+diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
+index 4d1c3750eb5e..75f5f7511d72 100644
+--- a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
++++ b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
+@@ -116,7 +116,7 @@
+ #define S5P_FIMV_D_ALIGN_PLANE_SIZE_V8	64
  
-@@ -1244,7 +1247,7 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 
--	if (exynos_is_iommu_available(dev))
-+	if (exynos_is_iommu_available(dev) || !IS_TWOPORT(mfc_dev))
- 		return s5p_mfc_configure_common_memory(mfc_dev);
- 	else
- 		return s5p_mfc_configure_2port_memory(mfc_dev);
-@@ -1255,7 +1258,7 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 
- 	s5p_mfc_release_firmware(mfc_dev);
--	if (exynos_is_iommu_available(dev))
-+	if (exynos_is_iommu_available(dev) || !IS_TWOPORT(mfc_dev))
- 		s5p_mfc_unconfigure_common_memory(mfc_dev);
- 	else
- 		s5p_mfc_unconfigure_2port_memory(mfc_dev);
+ /* MFCv8 variant defines */
+-#define MAX_FW_SIZE_V8			(SZ_1M)		/* 1MB */
++#define MAX_FW_SIZE_V8			(SZ_512K)	/* 512KB */
+ #define MAX_CPB_SIZE_V8			(3 * SZ_1M)	/* 3MB */
+ #define MFC_VERSION_V8			0x80
+ #define MFC_NUM_PORTS_V8		1
 -- 
 1.9.1
