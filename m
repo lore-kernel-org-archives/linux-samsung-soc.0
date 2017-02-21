@@ -1,62 +1,48 @@
 From: Thibault Saunier <thibault.saunier@osg.samsung.com>
-Subject: [PATCH v5 0/3] Fixes for colorspace logic in exynos-gsc and s5p-mfc drivers
-Date: Tue, 21 Feb 2017 16:20:56 -0300
-Message-ID: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
+Subject: [PATCH v5 3/3] [media] s5p-mfc: Check and set 'v4l2_pix_format:field' field in try_fmt
+Date: Tue, 21 Feb 2017 16:20:59 -0300
+Message-ID: <20170221192059.29745-4-thibault.saunier@osg.samsung.com>
+References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>, Andrzej Hajda <a.hajda@samsung.com>, Jeongtae Park <jtp.park@sam>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Kyungmin Park <kyungmin.park>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+It is required by the standard that the field order is set by the
+driver.
 
-This patchset fixes a few issues on the colorspace logic for the exynos-gsc
-and s5p-mfc drivers.
+Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
 
-We now handle the colorspace in those drivers, and make sure to respect user setting if
-possible.
-
-We also now set the 'v4l2_pix_format:field' if userspace passed ANY, avoiding GStreamer
-spamming error at us about the driver not following the standard.
-
-This is the fifth version of the patch serie.
-
-Best regards,
-
-Thibault Saunier
+---
 
 Changes in v5:
-- Squash commit to always use output colorspace on the capture side
-  inside this one
-- Fix typo in commit message
 - Just adapt the field and never error out.
 
-Changes in v4:
-- Reword commit message to better back our assumptions on specifications
-- Set the colorspace only if the user passed V4L2_COLORSPACE_DEFAULT, in
-  all other cases just use what userspace provided.
-
+Changes in v4: None
 Changes in v3:
-- Do not check values in the g_fmt functions as Andrzej explained in previous review
-- Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
-- Do not check values in the g_fmt functions as Andrzej explained in previous review
-- Set colorspace if user passed V4L2_COLORSPACE_DEFAULT in
 - Do not check values in the g_fmt functions as Andrzej explained in previous review
 
 Changes in v2:
 - Fix a silly build error that slipped in while rebasing the patches
 
-Thibault Saunier (3):
-  [media] exynos-gsc: Use user configured colorspace if provided
-  [media] s5p-mfc: Set colorspace in VIDIO_{G,TRY}_FMT if DEFAULT
-    provided
-  [media] s5p-mfc: Check and set 'v4l2_pix_format:field' field in
-    try_fmt
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/media/platform/exynos-gsc/gsc-core.c | 20 +++++++++++++++-----
- drivers/media/platform/exynos-gsc/gsc-core.h |  1 +
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 17 +++++++++++++++++
- 3 files changed, 33 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+index 0976c3e0a5ce..44ed2afe0780 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+@@ -386,6 +386,9 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
+ 	struct s5p_mfc_fmt *fmt;
+ 
++	if (f->fmt.pix.field == V4L2_FIELD_ANY)
++		f->fmt.pix.field = V4L2_FIELD_NONE;
++
+ 	mfc_debug(2, "Type is %d\n", f->type);
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		fmt = find_format(f, MFC_FMT_DEC);
 -- 
 2.11.1
