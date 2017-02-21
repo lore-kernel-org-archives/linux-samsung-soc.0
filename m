@@ -1,25 +1,21 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Tue, 21 Feb 2017 23:14:39 +0900
-Message-ID: <CA+Ln22GVoY7EdtsACK6G5XkkkPu+9oxVPGSAaKuZHC=VrOuFcw@mail.gmail.com>
+Date: Tue, 21 Feb 2017 17:32:58 +0200
+Message-ID: <CAJKOXPf=890hCFPRZLd1C0sQq9B3bEvvmRkm07ngknAnOYAW4g@mail.gmail.com>
 References: <20170125140321.23911-1-weiyj.lk@gmail.com> <20170205155849.4362-1-weiyj.lk@gmail.com>
  <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
  <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com> <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33904 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752778AbdBUOOl (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 09:14:41 -0500
+Return-path: <linux-gpio-owner@vger.kernel.org>
 In-Reply-To: <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyj.lk@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyj.lk@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-2017-02-21 22:49 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+On Tue, Feb 21, 2017 at 3:49 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 > Hi All,
 >
 > On 2017-02-13 15:49, Linus Walleij wrote:
@@ -52,13 +48,15 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyj.lk@gmail.com>, 
 >
 > This patch has to be reverted asap.
 
-Are IMEM and ALIVE pincontrollers really separate then? Typically one
-models the hardware as different blocks when the registers are
-separate and that's also why devm_ioremap_resource() behaves like it
-does. Maybe in this case there should be only one pin controller
-defined instead?
+Damn, the additional request_mem_region() raised my concerns but I
+didn't compare it with actual DTS layout... Which brings us to two
+important lessons:
+1. Do not accept untested code.
+2. Do not fix two things at the same time.
 
-In any case, I agree that the patch should be reverted for now.
+I vote for the revert as well + original version of patch (these two
+could be squashed) + a need of Tested-by. Otherwise an untested fix
+might not be a fix at all.
 
 Best regards,
-Tomasz
+Krzysztof
