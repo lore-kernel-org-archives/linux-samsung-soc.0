@@ -1,67 +1,168 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v4 4/4] [media] s5p-mfc: Check and set
- 'v4l2_pix_format:field' field in try_fmt
-Date: Tue, 21 Feb 2017 11:19:10 +0100
-Message-ID: <b5d7571f-7564-bf41-f2b8-e75fc1036d40@samsung.com>
-References: <20170213190836.26972-1-thibault.saunier@osg.samsung.com>
- <CGME20170213190920epcas2p4fb3f3c683f559cc2d5d9606130d85b55@epcas2p4.samsung.com>
- <20170213190836.26972-5-thibault.saunier@osg.samsung.com>
+Subject: Re: [PATCH v2 01/15] media: s5p-mfc: Remove unused structures and dead
+ code
+Date: Tue, 21 Feb 2017 12:11:55 +0100
+Message-ID: <2c2e42e6-eaa3-2b6a-b1d8-67b757f6f98d@samsung.com>
+References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170220133911eucas1p257b33c37da51473580724d4e8b1392fa@eucas1p2.samsung.com>
+ <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20170213190836.26972-5-thibault.saunier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Jeongtae Park <jtp.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <kamil@wypas.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 13.02.2017 20:08, Thibault Saunier wrote:
-> It is required by the standard that the field order is set by the
-> driver.
+On 20.02.2017 14:38, Marek Szyprowski wrote:
+> Remove unused structures, definitions and functions that are no longer
+> called from the driver code.
 >
-> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
->
-> ---
->
-> Changes in v4: None
-> Changes in v3:
-> - Do not check values in the g_fmt functions as Andrzej explained in previous review
->
-> Changes in v2:
-> - Fix a silly build error that slipped in while rebasing the patches
->
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> index 0976c3e0a5ce..c954b34cb988 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -385,6 +385,20 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  	struct s5p_mfc_dev *dev = video_drvdata(file);
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
->  	struct s5p_mfc_fmt *fmt;
-> +	enum v4l2_field field;
-> +
-> +	field = f->fmt.pix.field;
-> +	if (field == V4L2_FIELD_ANY) {
-> +		field = V4L2_FIELD_NONE;
-> +	} else if (field != V4L2_FIELD_NONE) {
-> +		mfc_debug(2, "Not supported field order(%d)\n", pix_mp->field);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* V4L2 specification suggests the driver corrects the format struct
-> +	 * if any of the dimensions is unsupported
-> +	 */
-> +	f->fmt.pix.field = field;
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-It looks like you missed my previous comment.
+For the whole patchset:
+
+Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 --
 Regards
 Andrzej
 
+
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
+>  3 files changed, 35 deletions(-)
+>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index 05fe82be6584..3e1f22eb4339 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -1422,16 +1422,11 @@ static int s5p_mfc_resume(struct device *dev)
+>  	.priv	= &mfc_buf_size_v5,
+>  };
 >  
->  	mfc_debug(2, "Type is %d\n", f->type);
->  	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+> -static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
+> -	.base = MFC_BASE_ALIGN_ORDER,
+> -};
+> -
+>  static struct s5p_mfc_variant mfc_drvdata_v5 = {
+>  	.version	= MFC_VERSION,
+>  	.version_bit	= MFC_V5_BIT,
+>  	.port_num	= MFC_NUM_PORTS,
+>  	.buf_size	= &buf_size_v5,
+> -	.buf_align	= &mfc_buf_align_v5,
+>  	.fw_name[0]	= "s5p-mfc.fw",
+>  	.clk_names	= {"mfc", "sclk_mfc"},
+>  	.num_clocks	= 2,
+> @@ -1452,16 +1447,11 @@ static int s5p_mfc_resume(struct device *dev)
+>  	.priv	= &mfc_buf_size_v6,
+>  };
+>  
+> -static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
+> -	.base = 0,
+> -};
+> -
+>  static struct s5p_mfc_variant mfc_drvdata_v6 = {
+>  	.version	= MFC_VERSION_V6,
+>  	.version_bit	= MFC_V6_BIT,
+>  	.port_num	= MFC_NUM_PORTS_V6,
+>  	.buf_size	= &buf_size_v6,
+> -	.buf_align	= &mfc_buf_align_v6,
+>  	.fw_name[0]     = "s5p-mfc-v6.fw",
+>  	/*
+>  	 * v6-v2 firmware contains bug fixes and interface change
+> @@ -1486,16 +1476,11 @@ static int s5p_mfc_resume(struct device *dev)
+>  	.priv	= &mfc_buf_size_v7,
+>  };
+>  
+> -static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
+> -	.base = 0,
+> -};
+> -
+>  static struct s5p_mfc_variant mfc_drvdata_v7 = {
+>  	.version	= MFC_VERSION_V7,
+>  	.version_bit	= MFC_V7_BIT,
+>  	.port_num	= MFC_NUM_PORTS_V7,
+>  	.buf_size	= &buf_size_v7,
+> -	.buf_align	= &mfc_buf_align_v7,
+>  	.fw_name[0]     = "s5p-mfc-v7.fw",
+>  	.clk_names	= {"mfc", "sclk_mfc"},
+>  	.num_clocks	= 2,
+> @@ -1515,16 +1500,11 @@ static int s5p_mfc_resume(struct device *dev)
+>  	.priv	= &mfc_buf_size_v8,
+>  };
+>  
+> -static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
+> -	.base = 0,
+> -};
+> -
+>  static struct s5p_mfc_variant mfc_drvdata_v8 = {
+>  	.version	= MFC_VERSION_V8,
+>  	.version_bit	= MFC_V8_BIT,
+>  	.port_num	= MFC_NUM_PORTS_V8,
+>  	.buf_size	= &buf_size_v8,
+> -	.buf_align	= &mfc_buf_align_v8,
+>  	.fw_name[0]     = "s5p-mfc-v8.fw",
+>  	.clk_names	= {"mfc"},
+>  	.num_clocks	= 1,
+> @@ -1535,7 +1515,6 @@ static int s5p_mfc_resume(struct device *dev)
+>  	.version_bit	= MFC_V8_BIT,
+>  	.port_num	= MFC_NUM_PORTS_V8,
+>  	.buf_size	= &buf_size_v8,
+> -	.buf_align	= &mfc_buf_align_v8,
+>  	.fw_name[0]     = "s5p-mfc-v8.fw",
+>  	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
+>  	.num_clocks	= 3,
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index ab23236aa942..3e0e8eaf8bfe 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -44,14 +44,6 @@
+>  
+>  #include <media/videobuf2-dma-contig.h>
+>  
+> -static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
+> -{
+> -	/* Same functionality as the vb2_dma_contig_plane_paddr */
+> -	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
+> -
+> -	return *paddr;
+> -}
+> -
+>  /* MFC definitions */
+>  #define MFC_MAX_EXTRA_DPB       5
+>  #define MFC_MAX_BUFFERS		32
+> @@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
+>  	void *priv;
+>  };
+>  
+> -struct s5p_mfc_buf_align {
+> -	unsigned int base;
+> -};
+> -
+>  struct s5p_mfc_variant {
+>  	unsigned int version;
+>  	unsigned int port_num;
+>  	u32 version_bit;
+>  	struct s5p_mfc_buf_size *buf_size;
+> -	struct s5p_mfc_buf_align *buf_align;
+>  	char	*fw_name[MFC_FW_MAX_VERSIONS];
+>  	const char	*clk_names[MFC_MAX_CLOCKS];
+>  	int		num_clocks;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+> index 8e5df041edf7..45c807bf19cc 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
+> @@ -18,7 +18,6 @@
+>  int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
+>  int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
+>  int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
+> -int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
+>  
+>  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
+>  void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
