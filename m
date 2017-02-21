@@ -1,98 +1,118 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/5] Fix the parse_dt of exynos dsi and remove the OF graph
-Date: Tue, 21 Feb 2017 08:59:19 +0200
-Message-ID: <CAJKOXPcHy=5B2eyQ_7hwDdx8QNnANo8qio4KtY-4s6h6WoYYVQ@mail.gmail.com>
-References: <CGME20170209012715epcas1p3dbe1788b864c50d339dcfd791c0900ec@epcas1p3.samsung.com>
- <1486603601-26826-1-git-send-email-hoegeun.kwon@samsung.com>
- <58AA95C1.4020809@samsung.com> <CAJKOXPd7Roubdf_5B6pT1PkA9K9dZmjPydYOujXvrz8cVcKVmg@mail.gmail.com>
- <58AAA996.3080900@samsung.com> <CAJKOXPdqfZ6HG9OKiV9xFw1ybSZXKfGPQJdwdVyH-jjeizpUaw@mail.gmail.com>
- <58AB7AC4.40606@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v4 1/4] [media] exynos-gsc: Use 576p instead 720p as a
+ threshold for colorspaces
+Date: Tue, 21 Feb 2017 10:56:09 +0100
+Message-ID: <a94f6241-373a-20c2-d306-48bd979fe6c6@samsung.com>
+References: <20170213190836.26972-1-thibault.saunier@osg.samsung.com>
+ <CGME20170213191052epcas3p3af2c3165d94bc82b77f7a7fab6550b15@epcas3p3.samsung.com>
+ <20170213190836.26972-2-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <58AB7AC4.40606-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52837 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750992AbdBUJ4W (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 21 Feb 2017 04:56:22 -0500
+In-reply-to: <20170213190836.26972-2-thibault.saunier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Tue, Feb 21, 2017 at 1:24 AM, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Ideally you are right. DT changes should be no any dependency of driver changes but now Exynos DT is broken.
->>
->> I didn't receive any bug reports that Exynos DT is broken so I am
->> quite surprised hearing that. What do you mean by that?
+On 13.02.2017 20:08, Thibault Saunier wrote:
+> From: Javier Martinez Canillas <javier@osg.samsung.com>
 >
-> Wrong usage of Display relevant DT ABI is being fixed without the backward compatibility of the DT ABI. This means device driver doesn't consider old DT binding.
-> So the use of old DTB binary will make kernel booting not to work correctly.
+> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
+> don't agree on the display resolution that should be used as a threshold.
+>
+> >From EIA CEA 861B about colorimetry for various resolutions:
+>
+>   - 5.1 480p, 480i, 576p, 576i, 240p, and 288p
+>     The color space used by the 480-line, 576-line, 240-line, and 288-line
+>     formats will likely be based on SMPTE 170M [1].
+>   - 5.2 1080i, 1080p, and 720p
+>     The color space used by the high definition formats will likely be
+>     based on ITU-R BT.709-4
+>
+> This indicates that in the case that userspace does not specify what
+> colorspace should be used, we should use 576p  as a threshold to set
+> V4L2_COLORSPACE_REC709 instead of V4L2_COLORSPACE_REC709. Even if it is
+> only 'likely' and not a requirement it is the best guess we can make.
+>
+> The stream should have been encoded with the information and userspace
+> has to pass it to the driver if it is not the case, otherwise we won't be
+> able to handle it properly anyhow.
+>
+> Also, check for the resolution in G_FMT instead unconditionally setting
+> the V4L2_COLORSPACE_REC709 colorspace.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-First you wrote that Exynos DT ABI is broken. Now you mention that
-wrong usage is being fixed and old DTB will not be supported. I really
-don't get what was your idea. Either something is broken or not. This
-is not a Shrodinger's cat.
+Hi Thibault,
+
+Have you analyzed Hans response for the previous patchset [1] ?
+I am not an expert in the subject but it seems he is right. GSCALER
+datasheet uses term 'color space conversion' to describe conversions
+between RGB and YCbCr, not for describe colorspaces as in V4L2.
+GSC_(IN|OUT)_RGB_(HD|SD)_(WIDE|NARROW) macros used to set IN_CON and
+OUT_CON registers of GSCALER are probably used incorrectly, they should
+not be set according to pix_mp->colorspace but rather according to
+pix_mp->ycbcr_enc and pix_mp->quantization. pix_mp->colorspace should be
+just copied from output to capture side.
+
+Please fix the patch accordingly, and if you are interested you can
+prepare another patch to fix register setting.
+
+[1]: https://lkml.org/lkml/2017/2/10/473
+
+Regards
+Andrzej
 
 >
->>
->>> So if we have to keep the bisectability between driver and device tree patches - this means that all drivers should always keep the backward compatibility - then the drivers will be messed up.
->>
->> No, you are mixing two things. Bisectability is different than
->> backward compatibility. For the backward DT ABI compatibility, we
->> agreed that in this case it can be dropped. However bisectability is
->> something totally different. The DTS changes always go through
->> separate branch, so the driver has to be *always* ready for such case
->> and should still be fully bisectable. This is a general rule existing
+> ---
 >
-> I meant that if this patch series considers old DT binding to keep the bisectability, then this driver would be messed up because the driver should try to bind same properties at different places and one of these two cases should be bound.
-> So this driver doesn't consider the old DT binding, which means that the old DTB binary isn't compatible with this driver - exynos_drm_dsi.c.
-
-Which is wrong. The driver breaks bisectability on first commit.
-
-Let me put it simple:
-1. First commit breaks all existing in-kernel DTS. When someone tries
-such commit during bisect, he will see some kind of failure. This
-means that bisectability is broken on first commit, regardless whether
-the rest of patches is on the same branch or not.
-
-2. If the DTS are applied directly after first commit, the
-bisectability breakage gap is one-commit wide.
-
-3. DTS commits go to different tree and different branch. This is a
-general rule. This means that bisectability breakage gap will be much
-wider, span over different trees and branches. This is bad. Bad by
-design.
-
-4. Overall: these patches will break bisectability *always*. How big
-the breakage will be, depends on way of applying.
-
-5. My merge window was closed some weeks ago. I sent an private email
-to Samsung folks, *including you*, on 24th of Jan reminding about
-arm-soc merge cycle and that it will close soon. You did not respond.
-Yesterday, v4.10 was released which opens Linus' merge window and now
-you want to apply these commits. The worst possible timing.
-Irresponsible.
-
-So let me put it straight. Please fix the first commit so it will not
-break bisectability.
-
-> This means if only one side is merged then this driver wouldn't work correctly.
+> Changes in v4:
+> - Reword commit message to better back our assumptions on specifications
 >
->> for long time and every deviation from the rule is pointed out by
->> arm-soc guys. Whenever I accepted breaking of this rule, I had hard
->> times with arm-soc so no - I am no longer giving up basic rule just
->> because developer might not care.
+> Changes in v3:
+> - Do not check values in the g_fmt functions as Andrzej explained in previous review
+> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
 >
-> Understood and reasonable. Seems I just hurried up. For the bisectability, this driver will have a little messed up code temporarily, and this messed up code will be removed after dt change is merged.
-
-Not necessarily. Maybe this can be made in a smart way. I believed
-that no one cared to keep it reasonable and that is a problem.
-
-> This thing was really what I want to avoid - if even the messed up code should be keeped forever for the backward compatibility then it would be really terribble. :(
-
-Again you are mixing DT ABI backward compatibility with bisectability.
-There is no point of explaining this again...
-
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Changes in v2: None
+>
+>  drivers/media/platform/exynos-gsc/gsc-core.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+> index 59a634201830..db7d9883861b 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+> @@ -472,7 +472,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>  
+>  	pix_mp->num_planes = fmt->num_planes;
+>  
+> -	if (pix_mp->width >= 1280) /* HD */
+> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+>  		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+>  	else /* SD */
+>  		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> @@ -519,9 +519,13 @@ int gsc_g_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
+>  	pix_mp->height		= frame->f_height;
+>  	pix_mp->field		= V4L2_FIELD_NONE;
+>  	pix_mp->pixelformat	= frame->fmt->pixelformat;
+> -	pix_mp->colorspace	= V4L2_COLORSPACE_REC709;
+>  	pix_mp->num_planes	= frame->fmt->num_planes;
+>  
+> +	if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+> +		pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> +	else /* SD */
+> +		pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> +
+>  	for (i = 0; i < pix_mp->num_planes; ++i) {
+>  		pix_mp->plane_fmt[i].bytesperline = (frame->f_width *
+>  			frame->fmt->depth[i]) / 8;
