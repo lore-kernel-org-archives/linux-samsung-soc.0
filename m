@@ -1,79 +1,38 @@
-From: Thibault Saunier <thibault.saunier@osg.samsung.com>
-Subject: [PATCH v5 2/3] [media] s5p-mfc: Set colorspace in VIDIO_{G,TRY}_FMT if DEFAULT provided
-Date: Tue, 21 Feb 2017 16:20:58 -0300
-Message-ID: <20170221192059.29745-3-thibault.saunier@osg.samsung.com>
-References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Kyungmin Park <kyungmin.park>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: next-20170221 build: 2 failures 9 warnings (next-20170221)
+Date: Tue, 21 Feb 2017 15:31:58 -0600
+Message-ID: <20170221213158.GA26036@bhelgaas-glaptop.roam.corp.google.com>
+References: <E1cg6WK-0000gP-QT@optimist>
+ <20170221174737.2gf63ywzdjrh33ub@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170221174737.2gf63ywzdjrh33ub@sirena.org.uk>
+Sender: linux-pci-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-samsung-soc@vger.kernel.org, kernel-build-reports@lists.linaro.org, linux-pci@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
-should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV but the driver
-didn't set the colorimetry when userspace provided
-V4L2_COLORSPACE_DEFAULT.
+On Tue, Feb 21, 2017 at 09:47:37AM -0800, Mark Brown wrote:
+> On Tue, Feb 21, 2017 at 09:14:04AM +0000, Build bot for Mark Brown wrote:
+> 
+> Today's -next fails to build an ARM allmodconfig due to:
+> 
+> > 	arm-allmodconfig
+> > ../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
+> > ../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
+> > ../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
+> 
+> due to b09d4ac91a3934e9 (PCI: dwc: all: Split struct pcie_port into
+> host-only and core structures) which replaced the struct member pp with
+> *pci but has missed some users.
 
-Use 576p display resolution as a threshold to set this as suggested by
-EIA CEA 861B.
+Thanks a lot, Mark!
 
-Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+b09d4ac91a3934e9 converted all the users at the time, but 327847808474
+("PCI: exynos: Refactor to make it easier to support other SoCs") from
+another branch added some new uses, and I missed those when I merged the
+branches together.  I think I fixed it but I can't build it personally.
 
----
-
-Changes in v5: None
-Changes in v4:
-- Set the colorspace only if the user passed V4L2_COLORSPACE_DEFAULT, in
-  all other cases just use what userspace provided.
-
-Changes in v3:
-- Do not check values in the g_fmt functions as Andrzej explained in previous review
-- Set colorspace if user passed V4L2_COLORSPACE_DEFAULT in
-
-Changes in v2: None
-
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-index 367ef8e8dbf0..0976c3e0a5ce 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-@@ -354,6 +354,11 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 		pix_mp->plane_fmt[0].sizeimage = ctx->luma_size;
- 		pix_mp->plane_fmt[1].bytesperline = ctx->buf_width;
- 		pix_mp->plane_fmt[1].sizeimage = ctx->chroma_size;
-+
-+		if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
-+			pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-+		else /* SD */
-+			pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
- 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
- 		/* This is run on OUTPUT
- 		   The buffer contains compressed image
-@@ -378,6 +383,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
- static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
- {
- 	struct s5p_mfc_dev *dev = video_drvdata(file);
-+	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
- 	struct s5p_mfc_fmt *fmt;
- 
- 	mfc_debug(2, "Type is %d\n", f->type);
-@@ -405,6 +411,14 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 			mfc_err("Unsupported format by this MFC version.\n");
- 			return -EINVAL;
- 		}
-+
-+		if (pix_mp->colorspace == V4L2_COLORSPACE_DEFAULT) {
-+			if (pix_mp->width > 720 &&
-+					pix_mp->height > 576) /* HD */
-+				pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-+			else /* SD */
-+				pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
-+		}
- 	}
- 
- 	return 0;
--- 
-2.11.1
+Bjorn
