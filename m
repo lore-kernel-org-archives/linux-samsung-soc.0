@@ -1,168 +1,53 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 01/15] media: s5p-mfc: Remove unused structures and dead
- code
-Date: Tue, 21 Feb 2017 12:11:55 +0100
-Message-ID: <2c2e42e6-eaa3-2b6a-b1d8-67b757f6f98d@samsung.com>
-References: <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170220133911eucas1p257b33c37da51473580724d4e8b1392fa@eucas1p2.samsung.com>
- <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in
+ samsung_pinctrl_get_soc_data()
+Date: Tue, 21 Feb 2017 14:49:34 +0100
+Message-ID: <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com>
+ <20170205155849.4362-1-weiyj.lk@gmail.com>
+ <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
+ <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20.02.2017 14:38, Marek Szyprowski wrote:
-> Remove unused structures, definitions and functions that are no longer
-> called from the driver code.
+Hi All,
+
+On 2017-02-13 15:49, Linus Walleij wrote:
+> On Sun, Feb 5, 2017 at 4:58 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> From: Wei Yongjun <weiyongjun1@huawei.com>
+>>
+>> In case of error, the function devm_ioremap() returns NULL pointer not
+>> ERR_PTR(). Fix by using devm_ioremap_resource instead of devm_ioremap.
+>>
+>> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
+>> IORESOURCE_MEM for one pin-bank")
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> ---
+>> v1 -> v2: use devm_ioremap_resource instead of devm_ioremap
+> Patch applied with Krzysztof's ACK.
 
-For the whole patchset:
+Sadly this patch breaks support for IMEM pinctrl block on Exynos5433/TM2
+and it took us some time to find the source of the problem.
 
-Acked-by: Andrzej Hajda <a.hajda@samsung.com>
---
-Regards
-Andrzej
+devm_ioremap_resource() is not functionally a full equivalent of
+devm_ioremap(). The problem here is that registers for IMEM and ALIVE
+pin controllers are shared and both devices have <0x11090000 0x1000>
+range in their reg property. devm_ioremap_resource() maps given
+resource exclusively for the device, while devm_ioremap() allows
+non-exclusive mappings.
 
+This patch has to be reverted asap.
 
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
->  drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
->  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
->  3 files changed, 35 deletions(-)
->
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 05fe82be6584..3e1f22eb4339 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1422,16 +1422,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v5,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
-> -	.base = MFC_BASE_ALIGN_ORDER,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v5 = {
->  	.version	= MFC_VERSION,
->  	.version_bit	= MFC_V5_BIT,
->  	.port_num	= MFC_NUM_PORTS,
->  	.buf_size	= &buf_size_v5,
-> -	.buf_align	= &mfc_buf_align_v5,
->  	.fw_name[0]	= "s5p-mfc.fw",
->  	.clk_names	= {"mfc", "sclk_mfc"},
->  	.num_clocks	= 2,
-> @@ -1452,16 +1447,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v6,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v6 = {
->  	.version	= MFC_VERSION_V6,
->  	.version_bit	= MFC_V6_BIT,
->  	.port_num	= MFC_NUM_PORTS_V6,
->  	.buf_size	= &buf_size_v6,
-> -	.buf_align	= &mfc_buf_align_v6,
->  	.fw_name[0]     = "s5p-mfc-v6.fw",
->  	/*
->  	 * v6-v2 firmware contains bug fixes and interface change
-> @@ -1486,16 +1476,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v7,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v7 = {
->  	.version	= MFC_VERSION_V7,
->  	.version_bit	= MFC_V7_BIT,
->  	.port_num	= MFC_NUM_PORTS_V7,
->  	.buf_size	= &buf_size_v7,
-> -	.buf_align	= &mfc_buf_align_v7,
->  	.fw_name[0]     = "s5p-mfc-v7.fw",
->  	.clk_names	= {"mfc", "sclk_mfc"},
->  	.num_clocks	= 2,
-> @@ -1515,16 +1500,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v8,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v8 = {
->  	.version	= MFC_VERSION_V8,
->  	.version_bit	= MFC_V8_BIT,
->  	.port_num	= MFC_NUM_PORTS_V8,
->  	.buf_size	= &buf_size_v8,
-> -	.buf_align	= &mfc_buf_align_v8,
->  	.fw_name[0]     = "s5p-mfc-v8.fw",
->  	.clk_names	= {"mfc"},
->  	.num_clocks	= 1,
-> @@ -1535,7 +1515,6 @@ static int s5p_mfc_resume(struct device *dev)
->  	.version_bit	= MFC_V8_BIT,
->  	.port_num	= MFC_NUM_PORTS_V8,
->  	.buf_size	= &buf_size_v8,
-> -	.buf_align	= &mfc_buf_align_v8,
->  	.fw_name[0]     = "s5p-mfc-v8.fw",
->  	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
->  	.num_clocks	= 3,
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> index ab23236aa942..3e0e8eaf8bfe 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> @@ -44,14 +44,6 @@
->  
->  #include <media/videobuf2-dma-contig.h>
->  
-> -static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
-> -{
-> -	/* Same functionality as the vb2_dma_contig_plane_paddr */
-> -	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
-> -
-> -	return *paddr;
-> -}
-> -
->  /* MFC definitions */
->  #define MFC_MAX_EXTRA_DPB       5
->  #define MFC_MAX_BUFFERS		32
-> @@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
->  	void *priv;
->  };
->  
-> -struct s5p_mfc_buf_align {
-> -	unsigned int base;
-> -};
-> -
->  struct s5p_mfc_variant {
->  	unsigned int version;
->  	unsigned int port_num;
->  	u32 version_bit;
->  	struct s5p_mfc_buf_size *buf_size;
-> -	struct s5p_mfc_buf_align *buf_align;
->  	char	*fw_name[MFC_FW_MAX_VERSIONS];
->  	const char	*clk_names[MFC_MAX_CLOCKS];
->  	int		num_clocks;
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> index 8e5df041edf7..45c807bf19cc 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> @@ -18,7 +18,6 @@
->  int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
->  int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
->  int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
-> -int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
->  
->  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
->  void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
