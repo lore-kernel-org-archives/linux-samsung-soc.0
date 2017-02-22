@@ -1,75 +1,48 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v10 1/3] dt-bindings: Add support for samsung s6e3ha2 panel
- binding
-Date: Wed, 22 Feb 2017 10:09:51 +0900
-Message-ID: <8e5109d0-6e6f-8bf8-7f9b-b7a5ddcbcf1e@samsung.com>
+Subject: [PATCH v10 3/3] arm64: dts: exynos: Add support for S6E3HA2 panel
+ device on TM2 board
+Date: Wed, 22 Feb 2017 10:09:54 +0900
+Message-ID: <5be15c1c-ba4c-94d9-30be-8d161e9be7b3@samsung.com>
 References: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170220071000epcas1p3fbc906fa085931b73b895b6724432cd3@epcas1p3.samsung.com>
+ <CGME20170220071001epcas1p3c2b32665942ba55c3ed4e06d2c66d661@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58192 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752951AbdBVBJy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Feb 2017 20:09:54 -0500
-In-reply-to: <CGME20170220071000epcas1p3fbc906fa085931b73b895b6724432cd3@epcas1p3.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CGME20170220071001epcas1p3c2b32665942ba55c3ed4e06d2c66d661@epcas1p3.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The Samsung s6e3ha2 is a 5.7" 1440x2560 AMOLED panel connected
-using MIPI-DSI interfaces.
-
-Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
-Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-  .../bindings/display/panel/samsung,s6e3ha2.txt     | 28 
-++++++++++++++++++++++
-  1 file changed, 28 insertions(+)
-  create mode 100644 
-Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
-
-diff --git 
-a/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt 
-b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
-new file mode 100644
-index 0000000..18854f4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
-@@ -0,0 +1,28 @@
-+Samsung S6E3HA2 5.7" 1440x2560 AMOLED panel
-+
-+Required properties:
-+  - compatible: "samsung,s6e3ha2"
-+  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: I/O voltage supply
-+  - vci-supply: voltage supply for analog circuits
-+  - reset-gpios: a GPIO spec for the reset pin (active low)
-+  - enable-gpios: a GPIO spec for the panel enable pin (active high)
-+
-+Optional properties:
-+  - te-gpios: a GPIO spec for the tearing effect synchronization signal
-+    gpio pin (active high)
-+
-+Example:
-+&dsi {
-+	...
-+
-+	panel@0 {
-+		compatible = "samsung,s6e3ha2";
-+		reg = <0>;
-+		vdd3-supply = <&ldo27_reg>;
-+		vci-supply = <&ldo28_reg>;
-+		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-+		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-+		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
-+	};
-+};
--- 
-1.9.1
+RnJvbTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgoKVGhpcyBwYXRj
+aCBhZGQgdGhlIHBhbmVsIGRldmljZSB0cmVlIG5vZGUgZm9yIFM2RTNIQTIgZGlzcGxheQpjb250
+cm9sbGVyIHRvIFRNMiBkdHMuCgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4u
+aHdhbmdAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFA
+c2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1
+bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIb2VnZXVuIEt3b24gPGhvZWdldW4ua3dvbkBzYW1zdW5n
+LmNvbT4KVGVzdGVkLWJ5OiBDaGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KLS0t
+CiAgYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIuZHRzIHwgMTIgKysr
+KysrKysrKysrCiAgMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQg
+YS9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5kdHMgCmIvYXJjaC9h
+cm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIuZHRzCmluZGV4IGRlYTBhNmYuLmRi
+M2ZlZDIgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMt
+dG0yLmR0cworKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi5k
+dHMKQEAgLTUyLDYgKzUyLDE4IEBACiAgCWFzc2lnbmVkLWNsb2NrLXJhdGVzID0gPDI1MDAwMDAw
+MD4sIDw0MDAwMDAwMDA+OwogIH07CiAgKyZkc2kgeworCXBhbmVsQDAgeworCQljb21wYXRpYmxl
+ID0gInNhbXN1bmcsczZlM2hhMiI7CisJCXJlZyA9IDwwPjsKKwkJdmRkMy1zdXBwbHkgPSA8Jmxk
+bzI3X3JlZz47CisJCXZjaS1zdXBwbHkgPSA8JmxkbzI4X3JlZz47CisJCXJlc2V0LWdwaW9zID0g
+PCZncGcwIDAgR1BJT19BQ1RJVkVfTE9XPjsKKwkJZW5hYmxlLWdwaW9zID0gPCZncGYxIDUgR1BJ
+T19BQ1RJVkVfSElHSD47CisJCXRlLWdwaW9zID0gPCZncGYxIDMgR1BJT19BQ1RJVkVfSElHSD47
+CisJfTsKK307CisKICAmaHNpMmNfOSB7CiAgCXN0YXR1cyA9ICJva2F5IjsKICAtLSAxLjkuMQoK
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
