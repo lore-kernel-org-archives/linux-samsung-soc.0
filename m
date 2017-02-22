@@ -1,161 +1,223 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v5 1/3] [media] exynos-gsc: Use user configured colorspace
- if provided
-Date: Wed, 22 Feb 2017 10:06:38 -0800
-Message-ID: <02a38e14-052b-faf2-a7a1-ef2f968f6d35@xs4all.nl>
-References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
- <20170221192059.29745-2-thibault.saunier@osg.samsung.com>
- <329a892b-eb57-26a5-d048-cfe4efc331b6@xs4all.nl>
- <58ee4eb5-981d-175f-52a9-445bbc265af0@osg.samsung.com>
+From: Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH v2 08/15] media: s5p-mfc: Move firmware allocation to DMA
+ configure function
+Date: Wed, 22 Feb 2017 11:07:48 -0700
+Message-ID: <CAKocOOPjYj+0yuMeGmR0-pnzzmoNBWeMRfZvcDw8N9_s3KjmyA@mail.gmail.com>
+References: <CGME20170220133914eucas1p1ed7898e67e5d580742875aceaac278e6@eucas1p1.samsung.com>
+ <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com> <1487597944-2000-9-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:41069 "EHLO
-        lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932566AbdBVSGy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Feb 2017 13:06:54 -0500
-In-Reply-To: <58ee4eb5-981d-175f-52a9-445bbc265af0@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1487597944-2000-9-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, shuahkh@osg.samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
 
+On Mon, Feb 20, 2017 at 6:38 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> To complete DMA memory configuration for MFC device, allocation of the
+> firmware buffer is needed, because some parameters are dependant on its base
+> address. Till now, this has been handled in the s5p_mfc_alloc_firmware()
+> function. This patch moves that logic to s5p_mfc_configure_dma_memory() to
+> keep DMA memory related operations in a single place. This way
+> s5p_mfc_alloc_firmware() is simplified and does what it name says. The
+> other consequence of this change is moving s5p_mfc_alloc_firmware() call
+> from the s5p_mfc_probe() function to the s5p_mfc_configure_dma_memory().
 
+Overall looks good. This patch makes subtle change in the dma and firwmare
+initialization sequence. Might be okay, but wanted to call out just in case,
 
-On 02/22/2017 05:05 AM, Thibault Saunier wrote:
-> Hello,
-> 
-> 
-> On 02/21/2017 11:19 PM, Hans Verkuil wrote:
->>
->> On 02/21/2017 11:20 AM, Thibault Saunier wrote:
->>> Use colorspace provided by the user as we are only doing scaling and
->>> color encoding conversion, we won't be able to transform the colorspace
->>> itself and the colorspace won't mater in that operation.
->>>
->>> Also always use output colorspace on the capture side.
->>>
->>> Start using 576p as a threashold to compute the colorspace.
->>> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
->>> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV. But drivers
->>> don't agree on the display resolution that should be used as a threshold.
->>>
->>>  From EIA CEA 861B about colorimetry for various resolutions:
->>>
->>>    - 5.1 480p, 480i, 576p, 576i, 240p, and 288p
->>>      The color space used by the 480-line, 576-line, 240-line, and 288-line
->>>      formats will likely be based on SMPTE 170M [1].
->>>    - 5.2 1080i, 1080p, and 720p
->>>      The color space used by the high definition formats will likely be
->>>      based on ITU-R BT.709-4
->>>
->>> This indicates that in the case that userspace does not specify what
->>> colorspace should be used, we should use 576p  as a threshold to set
->>> V4L2_COLORSPACE_REC709 instead of V4L2_COLORSPACE_SMPTE170M. Even if it is
->>> only 'likely' and not a requirement it is the best guess we can make.
->>>
->>> The stream should have been encoded with the information and userspace
->>> has to pass it to the driver if it is not the case, otherwise we won't be
->>> able to handle it properly anyhow.
->>>
->>> Also, check for the resolution in G_FMT instead unconditionally setting
->>> the V4L2_COLORSPACE_REC709 colorspace.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>>
->>> ---
->>>
->>> Changes in v5:
->>> - Squash commit to always use output colorspace on the capture side
->>>    inside this one
->>> - Fix typo in commit message
->>>
->>> Changes in v4:
->>> - Reword commit message to better back our assumptions on specifications
->>>
->>> Changes in v3:
->>> - Do not check values in the g_fmt functions as Andrzej explained in previous review
->>> - Added 'Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>'
->>>
->>> Changes in v2: None
->>>
->>>   drivers/media/platform/exynos-gsc/gsc-core.c | 20 +++++++++++++++-----
->>>   drivers/media/platform/exynos-gsc/gsc-core.h |  1 +
->>>   2 files changed, 16 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
->>> index 59a634201830..772599de8c13 100644
->>> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
->>> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
->>> @@ -454,6 +454,7 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->>>       } else {
->>>           min_w = variant->pix_min->target_rot_dis_w;
->>>           min_h = variant->pix_min->target_rot_dis_h;
->>> +        pix_mp->colorspace = ctx->out_colorspace;
->>>       }
->>>         pr_debug("mod_x: %d, mod_y: %d, max_w: %d, max_h = %d",
->>> @@ -472,10 +473,15 @@ int gsc_try_fmt_mplane(struct gsc_ctx *ctx, struct v4l2_format *f)
->>>         pix_mp->num_planes = fmt->num_planes;
->>>   -    if (pix_mp->width >= 1280) /* HD */
->>> -        pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->>> -    else /* SD */
->>> -        pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
->>> +    if (pix_mp->colorspace == V4L2_COLORSPACE_DEFAULT) {
->>> +        if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
->> I'd use || instead of && here. Ditto for the next patch.
->>
->>> +            pix_mp->colorspace = V4L2_COLORSPACE_REC709;
->>> +        else /* SD */
->>> +            pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
->>> +    }
->> Are you sure this is in fact how it is used? If the source of the video
->> is the sensor (camera), then the colorspace is typically SRGB. I'm not
->> really sure you should guess here. All a mem2mem driver should do is to
->> pass the colorspace etc. information from the output to the capture side,
->> and not invent things. That simply makes no sense.
-> 
-> This is not a camera device but a colorspace conversion device, in many
+Before this change:
+vb2_dma_contig_set_max_seg_size() is done for both iommu and non-iommu
+case before s5p_mfc_alloc_firmware(). With this change setting
+dma_contig max size happens after s5p_mfc_alloc_firmware(). From what
+I can tell this might not be an issue.
+vb2_dma_contig_clear_max_seg_size() still happens after
+s5p_mfc_release_firmware(), so that part hasn't changed.
 
-Not really, this is a color encoding conversion device. I.e. it only affects
-the Y'CbCr encoding and quantization range. The colorspace (aka chromaticities)
-and transfer function remain unchanged.
+Do any of the dma_* calls made from s5p_mfc_alloc_firmware() and later
+during the dma congiguration sequence depend on dmap_parms being
+allocated? Doesn't looks like it from what I can tell, but safe to
+ask.
 
-In fact, I suspect (correct me if I am wrong) that it only converts between
-RGB, Y'CbCr 601 and Y'CbCr 709 encodings, where RGB is full range and the Y'CbCr
-formats are limited range.
+thanks,
+-- Shuah
 
-If you pass in limited range RGB it will probably do the wrong thing as I don't
-seen any quantization checks in the code.
-
-So the colorspace and xfer_func fields remain unchanged by this driver.
-
-If you want to do this really correctly, then you need to do more. I don't have
-time right now to go into this in-depth, but I will try to get back to this on
-Monday. I am thinking of documenting this as part of the V4L2 colorspace
-documentation. This stuff is complex and if you don't know the rules then it
-can be hard to implement correctly.
-
-> cases the info will not be passed by the userspace, basically because the info
-> is not encoded in the media stream (this often happens). I am not inventing here,
-> just making sure we use the most likely value in case none was provided (and if none
-> was provided it should always be correct given that the encoded stream was not broken).
-> 
-> In the case the source is a camera and then we use the colorspace converter then the info
-> should copied from the camera to the transcoding node (by userspace) so there should be
-> no problem.
-> 
-> What I am doing here is what is done in other drivers.
-
-Most (all?) other mem2mem drivers do not do color encoding conversion, they just copy
-all the colorspace info from output to capture.
-
-If there are other m2m drivers that do this, then I doubt they do the right thing.
-They are probably right for most cases, but not all.
-
-Regards,
-
-	Hans
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c      | 62 +++++++++++++++++++++------
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c | 31 --------------
+>  2 files changed, 49 insertions(+), 44 deletions(-)
+>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index bc1aeb25ebeb..4403487a494a 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -1110,6 +1110,11 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
+>  static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+>  {
+>         struct device *dev = &mfc_dev->plat_dev->dev;
+> +       void *bank2_virt;
+> +       dma_addr_t bank2_dma_addr;
+> +       unsigned long align_size = 1 << MFC_BASE_ALIGN_ORDER;
+> +       struct s5p_mfc_priv_buf *fw_buf = &mfc_dev->fw_buf;
+> +       int ret;
+>
+>         /*
+>          * When IOMMU is available, we cannot use the default configuration,
+> @@ -1122,14 +1127,21 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+>         if (exynos_is_iommu_available(dev)) {
+>                 int ret = exynos_configure_iommu(dev, S5P_MFC_IOMMU_DMA_BASE,
+>                                                  S5P_MFC_IOMMU_DMA_SIZE);
+> -               if (ret == 0) {
+> -                       mfc_dev->mem_dev[BANK1_CTX] =
+> -                               mfc_dev->mem_dev[BANK2_CTX] = dev;
+> -                       vb2_dma_contig_set_max_seg_size(dev,
+> -                                                       DMA_BIT_MASK(32));
+> +               if (ret)
+> +                       return ret;
+> +
+> +               mfc_dev->mem_dev[BANK1_CTX] = mfc_dev->mem_dev[BANK2_CTX] = dev;
+> +               ret = s5p_mfc_alloc_firmware(mfc_dev);
+> +               if (ret) {
+> +                       exynos_unconfigure_iommu(dev);
+> +                       return ret;
+>                 }
+>
+> -               return ret;
+> +               mfc_dev->dma_base[BANK1_CTX] = fw_buf->dma;
+> +               mfc_dev->dma_base[BANK2_CTX] = fw_buf->dma;
+> +               vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+> +
+> +               return 0;
+>         }
+>
+>         /*
+> @@ -1147,6 +1159,35 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+>                 return -ENODEV;
+>         }
+>
+> +       /* Allocate memory for firmware and initialize both banks addresses */
+> +       ret = s5p_mfc_alloc_firmware(mfc_dev);
+> +       if (ret) {
+> +               device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
+> +               device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
+> +               return ret;
+> +       }
+> +
+> +       mfc_dev->dma_base[BANK1_CTX] = fw_buf->dma;
+> +
+> +       bank2_virt = dma_alloc_coherent(mfc_dev->mem_dev[BANK2_CTX], align_size,
+> +                                       &bank2_dma_addr, GFP_KERNEL);
+> +       if (!bank2_virt) {
+> +               mfc_err("Allocating bank2 base failed\n");
+> +               s5p_mfc_release_firmware(mfc_dev);
+> +               device_unregister(mfc_dev->mem_dev[BANK2_CTX]);
+> +               device_unregister(mfc_dev->mem_dev[BANK1_CTX]);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       /* Valid buffers passed to MFC encoder with LAST_FRAME command
+> +        * should not have address of bank2 - MFC will treat it as a null frame.
+> +        * To avoid such situation we set bank2 address below the pool address.
+> +        */
+> +       mfc_dev->dma_base[BANK2_CTX] = bank2_dma_addr - align_size;
+> +
+> +       dma_free_coherent(mfc_dev->mem_dev[BANK2_CTX], align_size, bank2_virt,
+> +                         bank2_dma_addr);
+> +
+>         vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK1_CTX],
+>                                         DMA_BIT_MASK(32));
+>         vb2_dma_contig_set_max_seg_size(mfc_dev->mem_dev[BANK2_CTX],
+> @@ -1159,6 +1200,8 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+>  {
+>         struct device *dev = &mfc_dev->plat_dev->dev;
+>
+> +       s5p_mfc_release_firmware(mfc_dev);
+> +
+>         if (exynos_is_iommu_available(dev)) {
+>                 exynos_unconfigure_iommu(dev);
+>                 vb2_dma_contig_clear_max_seg_size(dev);
+> @@ -1235,10 +1278,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>         dev->watchdog_timer.data = (unsigned long)dev;
+>         dev->watchdog_timer.function = s5p_mfc_watchdog;
+>
+> -       ret = s5p_mfc_alloc_firmware(dev);
+> -       if (ret)
+> -               goto err_res;
+> -
+>         ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
+>         if (ret)
+>                 goto err_v4l2_dev_reg;
+> @@ -1313,8 +1352,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>  err_dec_alloc:
+>         v4l2_device_unregister(&dev->v4l2_dev);
+>  err_v4l2_dev_reg:
+> -       s5p_mfc_release_firmware(dev);
+> -err_res:
+>         s5p_mfc_final_pm(dev);
+>  err_dma:
+>         s5p_mfc_unconfigure_dma_memory(dev);
+> @@ -1356,7 +1393,6 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+>         video_device_release(dev->vfd_enc);
+>         video_device_release(dev->vfd_dec);
+>         v4l2_device_unregister(&dev->v4l2_dev);
+> -       s5p_mfc_release_firmware(dev);
+>         s5p_mfc_unconfigure_dma_memory(dev);
+>
+>         s5p_mfc_final_pm(dev);
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> index 50d698968049..b0cf3970117a 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> @@ -26,9 +26,6 @@
+>  /* Allocate memory for firmware */
+>  int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+>  {
+> -       void *bank2_virt;
+> -       dma_addr_t bank2_dma_addr;
+> -       unsigned int align_size = 1 << MFC_BASE_ALIGN_ORDER;
+>         struct s5p_mfc_priv_buf *fw_buf = &dev->fw_buf;
+>
+>         fw_buf->size = dev->variant->buf_size->fw;
+> @@ -44,35 +41,7 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+>                 mfc_err("Allocating bitprocessor buffer failed\n");
+>                 return -ENOMEM;
+>         }
+> -       dev->dma_base[BANK1_CTX] = fw_buf->dma;
+> -
+> -       if (HAS_PORTNUM(dev) && IS_TWOPORT(dev)) {
+> -               bank2_virt = dma_alloc_coherent(dev->mem_dev[BANK2_CTX],
+> -                                      align_size, &bank2_dma_addr, GFP_KERNEL);
+> -
+> -               if (!bank2_virt) {
+> -                       mfc_err("Allocating bank2 base failed\n");
+> -                       dma_free_coherent(dev->mem_dev[BANK1_CTX], fw_buf->size,
+> -                                         fw_buf->virt, fw_buf->dma);
+> -                       fw_buf->virt = NULL;
+> -                       return -ENOMEM;
+> -               }
+> -
+> -               /* Valid buffers passed to MFC encoder with LAST_FRAME command
+> -                * should not have address of bank2 - MFC will treat it as a null frame.
+> -                * To avoid such situation we set bank2 address below the pool address.
+> -                */
+> -               dev->dma_base[BANK2_CTX] = bank2_dma_addr - align_size;
+>
+> -               dma_free_coherent(dev->mem_dev[BANK2_CTX], align_size,
+> -                                 bank2_virt, bank2_dma_addr);
+> -
+> -       } else {
+> -               /* In this case bank2 can point to the same address as bank1.
+> -                * Firmware will always occupy the beginning of this area so it is
+> -                * impossible having a video frame buffer with zero address. */
+> -               dev->dma_base[BANK2_CTX] = dev->dma_base[BANK1_CTX];
+> -       }
+>         return 0;
+>  }
+>
+> --
+> 1.9.1
+>
