@@ -1,90 +1,75 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v10 0/3] Add support for the S6E3HA2 panel on TM2 board
-Date: Wed, 22 Feb 2017 10:09:48 +0900
-Message-ID: <50768133-aabc-6050-c9b2-8898bb8046a6@samsung.com>
-References: <CGME20170220071000epcas1p38e002e5064bdf4c3b1b4886207dcaaf4@epcas1p3.samsung.com>
+Subject: [PATCH v10 1/3] dt-bindings: Add support for samsung s6e3ha2 panel
+ binding
+Date: Wed, 22 Feb 2017 10:09:51 +0900
+Message-ID: <8e5109d0-6e6f-8bf8-7f9b-b7a5ddcbcf1e@samsung.com>
+References: <1487574582-15746-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170220071000epcas1p3fbc906fa085931b73b895b6724432cd3@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CGME20170220071000epcas1p38e002e5064bdf4c3b1b4886207dcaaf4@epcas1p3.samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, jh80.chung@samsung.com, Andi Shyti <andi.shyti@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:58192 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752951AbdBVBJy (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 21 Feb 2017 20:09:54 -0500
+In-reply-to: <CGME20170220071000epcas1p3fbc906fa085931b73b895b6724432cd3@epcas1p3.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, inki.dae@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, andi.shyti@samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>
 
-RGVhciBUaGllcnJ5LAoKSSB1bmRlcnN0YW5kIHRoYXQgeW91ciBvcGluaW9uIGlzOgpJdCBpcyBi
-ZXR0ZXIgdG8gaGFuZGxlIHRoZSBlcnJvciBldmVyeSB0aW1lIGl0IGlzIGlucHV0IHRvIHRoZQpy
-ZWdpc3RlciwgcmF0aGVyIHRoYW4gZXJyb3IgaGFuZGxpbmcgYXQgb25jZSBpbiB0aGUgc3RydWN0
-IHVzaW5nCmVycm9yLiBUaGlzIG5vdCBvbmx5IG1ha2VzIHRoZSBjb2RlIGVhc2llciB0byBtYWlu
-dGFpbiwgYnV0IGFsc28KcmVkdWNlcyB1bm5lY2Vzc2FyeSBjb21wdXRhdGlvbi4KClNvIEkgbW9k
-aWZpZWQgdGhlIHBhbmVsIGRyaXZlciB0byBjb2RlLWJ5LWNvZGUgZXJyb3IgaGFuZGxpbmcuCklm
-IHRoaXMgaXMgbm90IHlvdXIgb3BpbmlvbiwgY291bGQgeW91IHRlbGwgbWUgd2hhdCB5b3VyIG9w
-aW5pb24/CgpCZXN0IFJlZ2FyZHMsCkhvZWdldW4KCgpDaGFuZ2VzIGZvciBWMTA6Ci0gRml4ZWQg
-Y29kZS1ieS1jb2RlIGVycm9yIGhhbmRsaW5nLgoKQ2hhbmdlcyBmb3IgVjk6Ci0gRml4ZWQgdGhl
-IHRlLWdwaW8gdG8gb3B0aW9uYWwgaW4gYmluZGluZ3MKCkNoYW5nZXMgZm9yIFY4OgotIEFwcGxp
-ZWQgYmVsb3cgdHdvIHBhdGNoZXM6IChkcm0vZXh5bm9zKQogICA6IGRybS9leHlub3M6IG1pYzog
-QWRkIG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uCiAgIDogZHJtL2V4eW5vczogbWljOiBGaXgg
-cGFyc2VfZHQgZnVuY3Rpb24KLSBUaGUgZHQtYmluZGluZyBwYXRjaCBhbmQgZHJpdmVyIHBhdGNo
-IHdlcmUgZGl2aWRlZC4KLSBSZWJhc2UgdGhlc2UgcGF0Y2hlcyBvbiBzYW1zdW5nIFNvQyB0cmVl
-WzFdIGFuZCB0bTIgdG91Y2tleSBwYXRjaFsyXS4KCkNoYW5nZSBmb3IgVjc6Ci0gRml4ZWQgdGhl
-IG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uIG9mIG1pYyBkZXZpY2UgZHJpdmVyLgogICBiZWNh
-dXNlIHRoZSBtaWMgcmVnaXN0ZXIgaXMgaW5pdGlhbGl6ZWQgd2hlbiBlbnRlcmluZyBzdXNwZW5k
-CiAgIG1vZGUsIHNvIHNob3VsZCBzZXQgdGhlIHJlZyB2YWx1ZSB3aGVuZXZlciBwcmVfZW5hYmxl
-IGlzCiAgIGNhbGxlZC4KCkNoYW5nZXMgZm9yIFY2OgotIEZpeGVkIHRoZSBwYXJzZV9kdCBmdW5j
-dGlvbiBvZiBkc2kgZGV2aWNlIGRyaXZlci4KLSBSZW1vdmVkIE9GIGdyYXBoIG9mIHBhbmVsIGlu
-IERUIGFuZCBEVCBiaW5kaW5nIGRvY3VtZW50LgotIEZpeGVkIHRoZSBzNmUzaGEyIHBhbmVsIGRl
-dmljZSBkcml2ZXIuCiAgIC0gRml4ZWQgZnJvbSBudW1iZXIgc2l6ZSB0byBBUlJBWV9TSVpFKCku
-CiAgIC0gRml4ZWQgZXJyb3IgaGFuZGxpbmcgaW4gbWlwaV9kc2lfZGNzXyogZnVuY3Rpb25zLgog
-ICAtIEZpeGVkIHRoZSBjbG9jayBvZiBkaXNwbGF5X21vZGUuCiAgIC0gUmVtb3ZlZCB1bm5lY2Vz
-c2FyeSBjYXN0aW5nIGFuZCBlcnJvciBsb2cuCgpDaGFuZ2UgZm9yIFY1OgotIFRoZSBWNSBoYXMg
-b25seSBvbmUgZml4IGluIFY0IGJlbG93LgotIFJlbW92ZWQgdGhlIGVuYWJsZSBjaGVjayBvZiB0
-aGUgbWljIGRyaXZlciBpbiBtb2RlX3NldAogICBjYWxsYmFjaywgYmVjYXVzZSBtb2RlX3NldCBz
-aG91bGQgYmUgcGVyZm9ybWVkIGV2ZXJ5IHRpbWUuCgpDaGFuZ2VzIGZvciBWNDoKLSBSZW1vdmVk
-IGRpc3BsYXktdGltaW5ncyBpbiBkZXZpY2V0cmVlLCB0aGUgZGlzcGxheS10aW1pbmdzIGhhcwog
-ICBiZWVuIGZpeGVkIHRvIGJlIHByb3ZpZGVkIGJ5IHRoZSBkZXZpY2UgZHJpdmVyLgotIEFkZGVk
-IHRoZSBtb2RlX3NldCBjYWxsYmFjayBmdW5jdGlvbiBpbnRvIGV4eW5vc19kcm1fbWljLAogICBi
-ZWNhdXNlIHRoZSBleHlub3NfZHJtX21pYyBkcml2ZXIgY2FuIG5vdCBwYXJzZSBhIHZpZGVvbW9k
-ZQogICBzdHJ1Y3QgYnkgcmVtb3ZpbmcgdGhlIGRpc3BsYXktdGltaW5ncyBmcm9tIHRoZSBkZXZp
-Y2V0cmVlLgoKQ2hhbmdlcyBmb3IgVjM6Ci0gSW4gdGhlIERUIGJpbmRpbmcgZG9jdW1lbnQsIG1h
-ZGUgaXQgY2xlYXJseSB0aGF0IHRoZSBwYW5lbCBpcyBhCiAgIGNoaWxkIG5vZGUgb2YgZHNpLgot
-IEZpeCByZXNldC1ncGlvIGFjdGl2ZSBmcm9tIGhpZ2ggdG8gbG93LgotIElzIHRoZSBPRiBncmFw
-aCBzYXlpbmcgcmVsYXRlZCB0byBwYXRjaDI/CiAgIEFsdGhvZ2ggdGhlIHBhbmVsIGlzIGEgY2hp
-bGQgb2YgZHNpLCBJIHRoaW5rIE9GIGdyYXBoIG5lY2Vzc2FyeS4KICAgYmVjYXVzZSBpZiBhIHJl
-bW90ZS1lbmRwb2ludCBpcyBub3Qgc3BlY2lmaWVkLCB0aGUgZHNpIGFsc28KICAgcGFuZWwgaXMg
-bm90IHByb2JlZC4KLSBUaGUgZGlzcGxheS10aW1pbmdzIGhhcyBiZWVuIGZpeGVkIHRvIGJlIHBy
-b3ZpZGVkIGJ5IHRoZSBkZXZpY2UKICAgZHJpdmVyLiBob3dldmVyLCBJIHRoaW5rIGRpc3BsYXkt
-dGltaW5ncyBpcyBuZWNlc3NhcnkgaW4gZHRzLgogICBiZWNhdXNlIGlmIGR0cyBkb2VzIG5vdCBo
-YXZlIGRpc3BsYXktdGltaW5ncywgZHNpIHdpbGwgbm90IGxvYWQuCgpDaGFuZ2VzIGZvciBWMjoK
-LSBGaXhlZCB0aGUgc2Ftc3VuZyxzNmUzaGEyLnR4dCBEVCBkb2N1bWVudC4KICAgLSBBZGRlZCBh
-Y3RpdmUgaGlnaCBvciBsb3cgYWZ0ZXIgdGhlIGRlc2NyaXB0aW9uIG9mIHRoZSBHUElPcy4KICAg
-LSBSZW1vdmVkIHRoZSByZWcgYW5kIGFkZGVkIGEgZGVzY3JpcHRpb24gb2YgdGhlIHZpcnR1YWwK
-ICAgICBjaGFubmVsIG51bWJlciBvZiBhIERTSSBwZXJpcGhlcmFsLgoKRGVwZW5kcyBvbjoKWzFd
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2tyemsvbGludXgu
-Z2l0LyAKKGZvci1uZXh0IGJyYW5jaCkKWzJdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
-cGF0Y2gvOTUwNDEzMS8KICAgICAtICgiYXJtNjQ6IGR0czogZXh5bm9zOiBBZGQgdG0yIHRvdWNo
-a2V5IG5vZGUiKQoKSG9lZ2V1biBLd29uICgyKToKICAgZHQtYmluZGluZ3M6IEFkZCBzdXBwb3J0
-IGZvciBzYW1zdW5nIHM2ZTNoYTIgcGFuZWwgYmluZGluZwogICBkcm0vcGFuZWw6IEFkZCBzdXBw
-b3J0IGZvciBTNkUzSEEyIHBhbmVsIGRyaXZlciBvbiBUTTIgYm9hcmQKCkh5dW5nd29uIEh3YW5n
-ICgxKToKICAgYXJtNjQ6IGR0czogZXh5bm9zOiBBZGQgc3VwcG9ydCBmb3IgUzZFM0hBMiBwYW5l
-bCBkZXZpY2Ugb24gVE0yIGJvYXJkCgogIC4uLi9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1
-bmcsczZlM2hhMi50eHQgICAgIHwgIDI4ICsKICBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9l
-eHlub3M1NDMzLXRtMi5kdHMgICAgICB8ICAxMiArCiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tj
-b25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKwogIGRyaXZlcnMvZ3B1L2RybS9wYW5l
-bC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKICBkcml2ZXJzL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMgICAgICB8IDczOSAKKysrKysrKysrKysrKysr
-KysrKysrCiAgNSBmaWxlcyBjaGFuZ2VkLCA3ODYgaW5zZXJ0aW9ucygrKQogIGNyZWF0ZSBtb2Rl
-IDEwMDY0NCAKRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwv
-c2Ftc3VuZyxzNmUzaGEyLnR4dAogIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMKCi0tIAoxLjkuMQoKCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The Samsung s6e3ha2 is a 5.7" 1440x2560 AMOLED panel connected
+using MIPI-DSI interfaces.
+
+Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
+Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+  .../bindings/display/panel/samsung,s6e3ha2.txt     | 28 
+++++++++++++++++++++++
+  1 file changed, 28 insertions(+)
+  create mode 100644 
+Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+
+diff --git 
+a/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt 
+b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+new file mode 100644
+index 0000000..18854f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha2.txt
+@@ -0,0 +1,28 @@
++Samsung S6E3HA2 5.7" 1440x2560 AMOLED panel
++
++Required properties:
++  - compatible: "samsung,s6e3ha2"
++  - reg: the virtual channel number of a DSI peripheral
++  - vdd3-supply: I/O voltage supply
++  - vci-supply: voltage supply for analog circuits
++  - reset-gpios: a GPIO spec for the reset pin (active low)
++  - enable-gpios: a GPIO spec for the panel enable pin (active high)
++
++Optional properties:
++  - te-gpios: a GPIO spec for the tearing effect synchronization signal
++    gpio pin (active high)
++
++Example:
++&dsi {
++	...
++
++	panel@0 {
++		compatible = "samsung,s6e3ha2";
++		reg = <0>;
++		vdd3-supply = <&ldo27_reg>;
++		vci-supply = <&ldo28_reg>;
++		reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
++		enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
++		te-gpios = <&gpf1 3 GPIO_ACTIVE_HIGH>;
++	};
++};
+-- 
+1.9.1
