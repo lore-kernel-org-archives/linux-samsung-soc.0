@@ -1,38 +1,90 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: next-20170221 build: 2 failures 9 warnings (next-20170221)
-Date: Tue, 21 Feb 2017 15:31:58 -0600
-Message-ID: <20170221213158.GA26036@bhelgaas-glaptop.roam.corp.google.com>
-References: <E1cg6WK-0000gP-QT@optimist>
- <20170221174737.2gf63ywzdjrh33ub@sirena.org.uk>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v10 0/3] Add support for the S6E3HA2 panel on TM2 board
+Date: Wed, 22 Feb 2017 10:09:48 +0900
+Message-ID: <50768133-aabc-6050-c9b2-8898bb8046a6@samsung.com>
+References: <CGME20170220071000epcas1p38e002e5064bdf4c3b1b4886207dcaaf4@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170221174737.2gf63ywzdjrh33ub@sirena.org.uk>
-Sender: linux-pci-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-samsung-soc@vger.kernel.org, kernel-build-reports@lists.linaro.org, linux-pci@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CGME20170220071000epcas1p38e002e5064bdf4c3b1b4886207dcaaf4@epcas1p3.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, kgene@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, jh80.chung@samsung.com, Andi Shyti <andi.shyti@samsung.com>, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 21, 2017 at 09:47:37AM -0800, Mark Brown wrote:
-> On Tue, Feb 21, 2017 at 09:14:04AM +0000, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build an ARM allmodconfig due to:
-> 
-> > 	arm-allmodconfig
-> > ../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
-> > ../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
-> > ../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
-> 
-> due to b09d4ac91a3934e9 (PCI: dwc: all: Split struct pcie_port into
-> host-only and core structures) which replaced the struct member pp with
-> *pci but has missed some users.
-
-Thanks a lot, Mark!
-
-b09d4ac91a3934e9 converted all the users at the time, but 327847808474
-("PCI: exynos: Refactor to make it easier to support other SoCs") from
-another branch added some new uses, and I missed those when I merged the
-branches together.  I think I fixed it but I can't build it personally.
-
-Bjorn
+RGVhciBUaGllcnJ5LAoKSSB1bmRlcnN0YW5kIHRoYXQgeW91ciBvcGluaW9uIGlzOgpJdCBpcyBi
+ZXR0ZXIgdG8gaGFuZGxlIHRoZSBlcnJvciBldmVyeSB0aW1lIGl0IGlzIGlucHV0IHRvIHRoZQpy
+ZWdpc3RlciwgcmF0aGVyIHRoYW4gZXJyb3IgaGFuZGxpbmcgYXQgb25jZSBpbiB0aGUgc3RydWN0
+IHVzaW5nCmVycm9yLiBUaGlzIG5vdCBvbmx5IG1ha2VzIHRoZSBjb2RlIGVhc2llciB0byBtYWlu
+dGFpbiwgYnV0IGFsc28KcmVkdWNlcyB1bm5lY2Vzc2FyeSBjb21wdXRhdGlvbi4KClNvIEkgbW9k
+aWZpZWQgdGhlIHBhbmVsIGRyaXZlciB0byBjb2RlLWJ5LWNvZGUgZXJyb3IgaGFuZGxpbmcuCklm
+IHRoaXMgaXMgbm90IHlvdXIgb3BpbmlvbiwgY291bGQgeW91IHRlbGwgbWUgd2hhdCB5b3VyIG9w
+aW5pb24/CgpCZXN0IFJlZ2FyZHMsCkhvZWdldW4KCgpDaGFuZ2VzIGZvciBWMTA6Ci0gRml4ZWQg
+Y29kZS1ieS1jb2RlIGVycm9yIGhhbmRsaW5nLgoKQ2hhbmdlcyBmb3IgVjk6Ci0gRml4ZWQgdGhl
+IHRlLWdwaW8gdG8gb3B0aW9uYWwgaW4gYmluZGluZ3MKCkNoYW5nZXMgZm9yIFY4OgotIEFwcGxp
+ZWQgYmVsb3cgdHdvIHBhdGNoZXM6IChkcm0vZXh5bm9zKQogICA6IGRybS9leHlub3M6IG1pYzog
+QWRkIG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uCiAgIDogZHJtL2V4eW5vczogbWljOiBGaXgg
+cGFyc2VfZHQgZnVuY3Rpb24KLSBUaGUgZHQtYmluZGluZyBwYXRjaCBhbmQgZHJpdmVyIHBhdGNo
+IHdlcmUgZGl2aWRlZC4KLSBSZWJhc2UgdGhlc2UgcGF0Y2hlcyBvbiBzYW1zdW5nIFNvQyB0cmVl
+WzFdIGFuZCB0bTIgdG91Y2tleSBwYXRjaFsyXS4KCkNoYW5nZSBmb3IgVjc6Ci0gRml4ZWQgdGhl
+IG1vZGVfc2V0IGNhbGxiYWNrIGZ1bmN0aW9uIG9mIG1pYyBkZXZpY2UgZHJpdmVyLgogICBiZWNh
+dXNlIHRoZSBtaWMgcmVnaXN0ZXIgaXMgaW5pdGlhbGl6ZWQgd2hlbiBlbnRlcmluZyBzdXNwZW5k
+CiAgIG1vZGUsIHNvIHNob3VsZCBzZXQgdGhlIHJlZyB2YWx1ZSB3aGVuZXZlciBwcmVfZW5hYmxl
+IGlzCiAgIGNhbGxlZC4KCkNoYW5nZXMgZm9yIFY2OgotIEZpeGVkIHRoZSBwYXJzZV9kdCBmdW5j
+dGlvbiBvZiBkc2kgZGV2aWNlIGRyaXZlci4KLSBSZW1vdmVkIE9GIGdyYXBoIG9mIHBhbmVsIGlu
+IERUIGFuZCBEVCBiaW5kaW5nIGRvY3VtZW50LgotIEZpeGVkIHRoZSBzNmUzaGEyIHBhbmVsIGRl
+dmljZSBkcml2ZXIuCiAgIC0gRml4ZWQgZnJvbSBudW1iZXIgc2l6ZSB0byBBUlJBWV9TSVpFKCku
+CiAgIC0gRml4ZWQgZXJyb3IgaGFuZGxpbmcgaW4gbWlwaV9kc2lfZGNzXyogZnVuY3Rpb25zLgog
+ICAtIEZpeGVkIHRoZSBjbG9jayBvZiBkaXNwbGF5X21vZGUuCiAgIC0gUmVtb3ZlZCB1bm5lY2Vz
+c2FyeSBjYXN0aW5nIGFuZCBlcnJvciBsb2cuCgpDaGFuZ2UgZm9yIFY1OgotIFRoZSBWNSBoYXMg
+b25seSBvbmUgZml4IGluIFY0IGJlbG93LgotIFJlbW92ZWQgdGhlIGVuYWJsZSBjaGVjayBvZiB0
+aGUgbWljIGRyaXZlciBpbiBtb2RlX3NldAogICBjYWxsYmFjaywgYmVjYXVzZSBtb2RlX3NldCBz
+aG91bGQgYmUgcGVyZm9ybWVkIGV2ZXJ5IHRpbWUuCgpDaGFuZ2VzIGZvciBWNDoKLSBSZW1vdmVk
+IGRpc3BsYXktdGltaW5ncyBpbiBkZXZpY2V0cmVlLCB0aGUgZGlzcGxheS10aW1pbmdzIGhhcwog
+ICBiZWVuIGZpeGVkIHRvIGJlIHByb3ZpZGVkIGJ5IHRoZSBkZXZpY2UgZHJpdmVyLgotIEFkZGVk
+IHRoZSBtb2RlX3NldCBjYWxsYmFjayBmdW5jdGlvbiBpbnRvIGV4eW5vc19kcm1fbWljLAogICBi
+ZWNhdXNlIHRoZSBleHlub3NfZHJtX21pYyBkcml2ZXIgY2FuIG5vdCBwYXJzZSBhIHZpZGVvbW9k
+ZQogICBzdHJ1Y3QgYnkgcmVtb3ZpbmcgdGhlIGRpc3BsYXktdGltaW5ncyBmcm9tIHRoZSBkZXZp
+Y2V0cmVlLgoKQ2hhbmdlcyBmb3IgVjM6Ci0gSW4gdGhlIERUIGJpbmRpbmcgZG9jdW1lbnQsIG1h
+ZGUgaXQgY2xlYXJseSB0aGF0IHRoZSBwYW5lbCBpcyBhCiAgIGNoaWxkIG5vZGUgb2YgZHNpLgot
+IEZpeCByZXNldC1ncGlvIGFjdGl2ZSBmcm9tIGhpZ2ggdG8gbG93LgotIElzIHRoZSBPRiBncmFw
+aCBzYXlpbmcgcmVsYXRlZCB0byBwYXRjaDI/CiAgIEFsdGhvZ2ggdGhlIHBhbmVsIGlzIGEgY2hp
+bGQgb2YgZHNpLCBJIHRoaW5rIE9GIGdyYXBoIG5lY2Vzc2FyeS4KICAgYmVjYXVzZSBpZiBhIHJl
+bW90ZS1lbmRwb2ludCBpcyBub3Qgc3BlY2lmaWVkLCB0aGUgZHNpIGFsc28KICAgcGFuZWwgaXMg
+bm90IHByb2JlZC4KLSBUaGUgZGlzcGxheS10aW1pbmdzIGhhcyBiZWVuIGZpeGVkIHRvIGJlIHBy
+b3ZpZGVkIGJ5IHRoZSBkZXZpY2UKICAgZHJpdmVyLiBob3dldmVyLCBJIHRoaW5rIGRpc3BsYXkt
+dGltaW5ncyBpcyBuZWNlc3NhcnkgaW4gZHRzLgogICBiZWNhdXNlIGlmIGR0cyBkb2VzIG5vdCBo
+YXZlIGRpc3BsYXktdGltaW5ncywgZHNpIHdpbGwgbm90IGxvYWQuCgpDaGFuZ2VzIGZvciBWMjoK
+LSBGaXhlZCB0aGUgc2Ftc3VuZyxzNmUzaGEyLnR4dCBEVCBkb2N1bWVudC4KICAgLSBBZGRlZCBh
+Y3RpdmUgaGlnaCBvciBsb3cgYWZ0ZXIgdGhlIGRlc2NyaXB0aW9uIG9mIHRoZSBHUElPcy4KICAg
+LSBSZW1vdmVkIHRoZSByZWcgYW5kIGFkZGVkIGEgZGVzY3JpcHRpb24gb2YgdGhlIHZpcnR1YWwK
+ICAgICBjaGFubmVsIG51bWJlciBvZiBhIERTSSBwZXJpcGhlcmFsLgoKRGVwZW5kcyBvbjoKWzFd
+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2tyemsvbGludXgu
+Z2l0LyAKKGZvci1uZXh0IGJyYW5jaCkKWzJdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
+cGF0Y2gvOTUwNDEzMS8KICAgICAtICgiYXJtNjQ6IGR0czogZXh5bm9zOiBBZGQgdG0yIHRvdWNo
+a2V5IG5vZGUiKQoKSG9lZ2V1biBLd29uICgyKToKICAgZHQtYmluZGluZ3M6IEFkZCBzdXBwb3J0
+IGZvciBzYW1zdW5nIHM2ZTNoYTIgcGFuZWwgYmluZGluZwogICBkcm0vcGFuZWw6IEFkZCBzdXBw
+b3J0IGZvciBTNkUzSEEyIHBhbmVsIGRyaXZlciBvbiBUTTIgYm9hcmQKCkh5dW5nd29uIEh3YW5n
+ICgxKToKICAgYXJtNjQ6IGR0czogZXh5bm9zOiBBZGQgc3VwcG9ydCBmb3IgUzZFM0hBMiBwYW5l
+bCBkZXZpY2Ugb24gVE0yIGJvYXJkCgogIC4uLi9iaW5kaW5ncy9kaXNwbGF5L3BhbmVsL3NhbXN1
+bmcsczZlM2hhMi50eHQgICAgIHwgIDI4ICsKICBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9l
+eHlub3M1NDMzLXRtMi5kdHMgICAgICB8ICAxMiArCiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL0tj
+b25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKwogIGRyaXZlcnMvZ3B1L2RybS9wYW5l
+bC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKICBkcml2ZXJzL2dwdS9kcm0v
+cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMgICAgICB8IDczOSAKKysrKysrKysrKysrKysr
+KysrKysrCiAgNSBmaWxlcyBjaGFuZ2VkLCA3ODYgaW5zZXJ0aW9ucygrKQogIGNyZWF0ZSBtb2Rl
+IDEwMDY0NCAKRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwv
+c2Ftc3VuZyxzNmUzaGEyLnR4dAogIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0v
+cGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMKCi0tIAoxLjkuMQoKCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
