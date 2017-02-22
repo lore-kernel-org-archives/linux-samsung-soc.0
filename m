@@ -1,63 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] pinctrl: samsung: Fix memory mapping code
-Date: Wed, 22 Feb 2017 08:59:33 +0100
-Message-ID: <b3d7a3f6-d5ea-6a3e-4d9c-91aa5ce49d7c@samsung.com>
-References: <CGME20170222074421eucas1p17bbab9c297450bca1c5908ada16d2fa6@eucas1p1.samsung.com>
- <1487749442-23806-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] i2c: exynos5: disable fifo-almost-empty irq signal when
+ necessary
+Date: Wed, 22 Feb 2017 10:07:45 +0100
+Message-ID: <1487754465-10190-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170222090808eucas1p28d2afb2a8752a0442f797983b8773ef2@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33200 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753309AbdBVH7k (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38877 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751347AbdBVJIM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Feb 2017 02:59:40 -0500
-In-reply-to: <1487749442-23806-1-git-send-email-a.hajda@samsung.com>
+        Wed, 22 Feb 2017 04:08:12 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi,
+Fifo-almost-empty irq signal should be disabled as soon as possible,
+to avoid unnecessary interrupt storm. The best moment is when there is
+no more data to feed fifo.
+This patch fixes system stalls caused by IRQ storm.
 
-On 2017-02-22 08:44, Andrzej Hajda wrote:
-> Some pinctrls share memory regions, and devm_ioremap_resource does not
-> allow to share resources, in opposition to devm_ioremap.
-> This patch restores back usage of devm_ioremap function, but with proper
-> error handling and logging.
->
-> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> ---
->   drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index f9ddba7..ebecff8 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -988,9 +988,12 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->   
->   	for (i = 0; i < ctrl->nr_ext_resources + 1; i++) {
->   		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-> -		virt_base[i] = devm_ioremap_resource(&pdev->dev, res);
-> -		if (IS_ERR(virt_base[i]))
-> -			return ERR_CAST(virt_base[i]);
-> +		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
-> +						resource_size(res));
-> +		if (!virt_base[i]) {
-> +			dev_err(&pdev->dev, "failed to ioremap %pR\n", res);
-> +			return ERR_PTR(-EIO);
-> +		}
->   	}
->   
->   	bank = d->pin_banks;
-
-Best regards
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index bea6071..2e11793 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -503,7 +503,13 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+ 
+ 		len = i2c->variant->fifo_depth - fifo_level;
+ 		if (len > (i2c->msg->len - i2c->msg_ptr))
++		if (len > (i2c->msg->len - i2c->msg_ptr)) {
++			u32 int_en = readl(i2c->regs + HSI2C_INT_ENABLE);
++
++			int_en &= ~HSI2C_INT_TX_ALMOSTEMPTY_EN;
++			writel(int_en, i2c->regs + HSI2C_INT_ENABLE);
+ 			len = i2c->msg->len - i2c->msg_ptr;
++		}
+ 
+ 		while (len > 0) {
+ 			byte = i2c->msg->buf[i2c->msg_ptr++];
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.7.4
