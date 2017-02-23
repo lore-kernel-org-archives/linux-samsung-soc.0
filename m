@@ -1,118 +1,118 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 3/3] [media] s5p-mfc: Check and set
- 'v4l2_pix_format:field' field in try_fmt
-Date: Thu, 23 Feb 2017 12:17:35 +0100
-Message-ID: <ded4b715-39a2-adfa-0f2d-7276a0024e29@samsung.com>
-References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
- <CGME20170221192135epcas4p1811fa9ce35481d42144bdab368c9243a@epcas4p1.samsung.com>
- <20170221192059.29745-4-thibault.saunier@osg.samsung.com>
- <78444dcd-169f-0c16-0e09-6b71d1a502b2@samsung.com>
- <ed287d5a-687b-b344-3f20-10154071852c@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <ed287d5a-687b-b344-3f20-10154071852c@osg.samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Jeongtae Park <jtp.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <kamil@wypas.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] media: mfc: Fix race between interrupt routine and device
+ functions
+Date: Thu, 23 Feb 2017 12:43:27 +0100
+Message-ID: <1487850219-6482-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170223114347eucas1p21e5aed393511b41e51aac1df2762db83@eucas1p2.samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kamil Debski <kamil@wypas.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 22.02.2017 14:10, Thibault Saunier wrote:
-> Hello,
->
-> On 02/22/2017 06:29 AM, Andrzej Hajda wrote:
->> On 21.02.2017 20:20, Thibault Saunier wrote:
->>> It is required by the standard that the field order is set by the
->>> driver.
->>>
->>> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
->>>
->>> ---
->>>
->>> Changes in v5:
->>> - Just adapt the field and never error out.
->>>
->>> Changes in v4: None
->>> Changes in v3:
->>> - Do not check values in the g_fmt functions as Andrzej explained in previous review
->>>
->>> Changes in v2:
->>> - Fix a silly build error that slipped in while rebasing the patches
->>>
->>>   drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>> index 0976c3e0a5ce..44ed2afe0780 100644
->>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
->>> @@ -386,6 +386,9 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
->>>   	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
->>>   	struct s5p_mfc_fmt *fmt;
->>>   
->>> +	if (f->fmt.pix.field == V4L2_FIELD_ANY)
->>> +		f->fmt.pix.field = V4L2_FIELD_NONE;
->>> +
->> In previous version the only supported field type was NONE, here you
->> support everything.
->> If the only supported format is none you should set 'field'
->> unconditionally to NONE, nothing more.
-> Afaict we  support 2 things:
->
->    1. NONE
->    2. INTERLACE
->
-> Until now we were not checking what was supported or not and basically 
-> ignoring that info, this patch
-> keeps the old behaviour making sure to be compliant.
->
-> I had a doubt and was pondering doing:
->
-> ``` diff
->
-> +	if (f->fmt.pix.field != V4L2_FIELD_INTERLACED)
-> +		f->fmt.pix.field = V4L2_FIELD_NONE;
-> +
->
-> ```
->
-> instead, it is probably more correct, do you think it is what should be 
-> done here?
+Interrupt routine must wake process waiting for given interrupt AFTER
+updating driver's internal structures and contexts. Doing it in-between
+is a serious bug. This patch moves all calls to the wake() function to
+the end of the interrupt processing block to avoid potential and real
+races, especially on multi-core platforms. This also fixes following issue
+reported from clock core (clocks were disabled in interrupt after being
+unprepared from the other place in the driver, the stack trace however
+points to the different place than s5p_mfc driver because of the race):
 
-I have realized I have forgot that it is not simple mem2mem device, it
-is decoder. It is feed with compressed data which is just byte stream,
-the only valid field value on output side is V4L2_FIELD_NONE.
-About possible interlacing we could only say in case of capture side.
-And in this case there are multiple questions:
-- how MFC decodes stream with interlaced content?
-- is it possible to convince it to decode it as user asks?
-- does it perform (de-)interlacing?
-- what is implemented in the driver?
+WARNING: CPU: 1 PID: 18 at drivers/clk/clk.c:544 clk_core_unprepare+0xc8/0x108
+Modules linked in:
+CPU: 1 PID: 18 Comm: kworker/1:0 Not tainted 4.10.0-next-20170223-00070-g04e18bc99ab9-dirty #2154
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: pm pm_runtime_work
+[<c010d8b0>] (unwind_backtrace) from [<c010a534>] (show_stack+0x10/0x14)
+[<c010a534>] (show_stack) from [<c033292c>] (dump_stack+0x74/0x94)
+[<c033292c>] (dump_stack) from [<c011cef4>] (__warn+0xd4/0x100)
+[<c011cef4>] (__warn) from [<c011cf40>] (warn_slowpath_null+0x20/0x28)
+[<c011cf40>] (warn_slowpath_null) from [<c0387a84>] (clk_core_unprepare+0xc8/0x108)
+[<c0387a84>] (clk_core_unprepare) from [<c0389d84>] (clk_unprepare+0x24/0x2c)
+[<c0389d84>] (clk_unprepare) from [<c03d4660>] (exynos_sysmmu_suspend+0x48/0x60)
+[<c03d4660>] (exynos_sysmmu_suspend) from [<c042b9b0>] (pm_generic_runtime_suspend+0x2c/0x38)
+[<c042b9b0>] (pm_generic_runtime_suspend) from [<c0437580>] (genpd_runtime_suspend+0x94/0x220)
+[<c0437580>] (genpd_runtime_suspend) from [<c042e240>] (__rpm_callback+0x134/0x208)
+[<c042e240>] (__rpm_callback) from [<c042e334>] (rpm_callback+0x20/0x80)
+[<c042e334>] (rpm_callback) from [<c042d3b8>] (rpm_suspend+0xdc/0x458)
+[<c042d3b8>] (rpm_suspend) from [<c042ea24>] (pm_runtime_work+0x80/0x90)
+[<c042ea24>] (pm_runtime_work) from [<c01322c4>] (process_one_work+0x120/0x318)
+[<c01322c4>] (process_one_work) from [<c0132520>] (worker_thread+0x2c/0x4ac)
+[<c0132520>] (worker_thread) from [<c0137ab0>] (kthread+0xfc/0x134)
+[<c0137ab0>] (kthread) from [<c0107978>] (ret_from_fork+0x14/0x3c)
+---[ end trace 1ead49a7bb83f0d8 ]---
 
-After answering above questions we will be able to say how fmt.pix.field
-should be treated on capture side.
-And similar question we can pose in case of encoder.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: af93574678108 ("[media] MFC: Add MFC 5.1 V4L2 driver")
+CC: stable@vger.kernel.org # v4.5+
+---
+This issue was there from the beggining of the driver, but this patch applies
+only to v4.5+ kernels.
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-So simple patch and so many doubts.
-
-Regards
-Andrzej
-
->
-> Regards,
->
-> Thibault
->
->> Regards
->> Andrzej
->>
->>>   	mfc_debug(2, "Type is %d\n", f->type);
->>>   	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->>>   		fmt = find_format(f, MFC_FMT_DEC);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 9e0685beb048..d6cb315dac60 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -657,9 +657,9 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 				break;
+ 			}
+ 			s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+-			wake_up_ctx(ctx, reason, err);
+ 			WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
+ 			s5p_mfc_clock_off();
++			wake_up_ctx(ctx, reason, err);
+ 			s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
+ 		} else {
+ 			s5p_mfc_handle_frame(ctx, reason, err);
+@@ -673,15 +673,11 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 	case S5P_MFC_R2H_CMD_OPEN_INSTANCE_RET:
+ 		ctx->inst_no = s5p_mfc_hw_call(dev->mfc_ops, get_inst_no, dev);
+ 		ctx->state = MFCINST_GOT_INST;
+-		clear_work_bit(ctx);
+-		wake_up(&ctx->queue);
+ 		goto irq_cleanup_hw;
+ 
+ 	case S5P_MFC_R2H_CMD_CLOSE_INSTANCE_RET:
+-		clear_work_bit(ctx);
+ 		ctx->inst_no = MFC_NO_INSTANCE_SET;
+ 		ctx->state = MFCINST_FREE;
+-		wake_up(&ctx->queue);
+ 		goto irq_cleanup_hw;
+ 
+ 	case S5P_MFC_R2H_CMD_SYS_INIT_RET:
+@@ -691,9 +687,9 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 		if (ctx)
+ 			clear_work_bit(ctx);
+ 		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+-		wake_up_dev(dev, reason, err);
+ 		clear_bit(0, &dev->hw_lock);
+ 		clear_bit(0, &dev->enter_suspend);
++		wake_up_dev(dev, reason, err);
+ 		break;
+ 
+ 	case S5P_MFC_R2H_CMD_INIT_BUFFERS_RET:
+@@ -708,9 +704,7 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 		break;
+ 
+ 	case S5P_MFC_R2H_CMD_DPB_FLUSH_RET:
+-		clear_work_bit(ctx);
+ 		ctx->state = MFCINST_RUNNING;
+-		wake_up(&ctx->queue);
+ 		goto irq_cleanup_hw;
+ 
+ 	default:
+@@ -729,6 +723,8 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
+ 		mfc_err("Failed to unlock hw\n");
+ 
+ 	s5p_mfc_clock_off();
++	clear_work_bit(ctx);
++	wake_up(&ctx->queue);
+ 
+ 	s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
+ 	spin_unlock(&dev->irqlock);
+-- 
+1.9.1
