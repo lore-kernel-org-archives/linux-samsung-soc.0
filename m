@@ -1,60 +1,51 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 08/15] media: s5p-mfc: Move firmware allocation to DMA
- configure function
-Date: Thu, 23 Feb 2017 08:30:12 +0100
-Message-ID: <84a7701f-b266-7084-c14b-be26a5f91a23@samsung.com>
-References: <CGME20170220133914eucas1p1ed7898e67e5d580742875aceaac278e6@eucas1p1.samsung.com>
- <1487597944-2000-1-git-send-email-m.szyprowski@samsung.com>
- <1487597944-2000-9-git-send-email-m.szyprowski@samsung.com>
- <CAKocOOPjYj+0yuMeGmR0-pnzzmoNBWeMRfZvcDw8N9_s3KjmyA@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
+Date: Thu, 23 Feb 2017 10:20:47 +0100
+Message-ID: <0eaf7f86-1380-ee3b-b094-3300b6ae881c@samsung.com>
+References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
+ <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+ <20170223062952.rkvnp2bkvau47txv@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CAKocOOPjYj+0yuMeGmR0-pnzzmoNBWeMRfZvcDw8N9_s3KjmyA@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Shuah Khan <shuahkhan@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, shuahkh@osg.samsung.com
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-reply-to: <20170223062952.rkvnp2bkvau47txv@gangnam.samsung>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Shuah,
-
-
-On 2017-02-22 19:07, Shuah Khan wrote:
-> On Mon, Feb 20, 2017 at 6:38 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> To complete DMA memory configuration for MFC device, allocation of the
->> firmware buffer is needed, because some parameters are dependant on its base
->> address. Till now, this has been handled in the s5p_mfc_alloc_firmware()
->> function. This patch moves that logic to s5p_mfc_configure_dma_memory() to
->> keep DMA memory related operations in a single place. This way
->> s5p_mfc_alloc_firmware() is simplified and does what it name says. The
->> other consequence of this change is moving s5p_mfc_alloc_firmware() call
->> from the s5p_mfc_probe() function to the s5p_mfc_configure_dma_memory().
-> Overall looks good. This patch makes subtle change in the dma and firwmare
-> initialization sequence. Might be okay, but wanted to call out just in case,
+On 23.02.2017 07:29, Andi Shyti wrote:
+> Hi Andrzej,
 >
-> Before this change:
-> vb2_dma_contig_set_max_seg_size() is done for both iommu and non-iommu
-> case before s5p_mfc_alloc_firmware(). With this change setting
-> dma_contig max size happens after s5p_mfc_alloc_firmware(). From what
-> I can tell this might not be an issue.
-> vb2_dma_contig_clear_max_seg_size() still happens after
-> s5p_mfc_release_firmware(), so that part hasn't changed.
+> On Wed, Feb 22, 2017 at 12:04:34PM +0100, Andrzej Hajda wrote:
+>> In case of arbitration lost adequate interrupt sometimes is not signaled.
+>> As a result transfer timeouts and is not retried, as it should. To avoid
+>> such cases code is added to check transaction status in case of every
+>> interrupt.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> you forgot:
 >
-> Do any of the dma_* calls made from s5p_mfc_alloc_firmware() and later
-> during the dma congiguration sequence depend on dmap_parms being
-> allocated? Doesn't looks like it from what I can tell, but safe to
-> ask.
+> Tested-by: Andi Shyti <andi.shyti@samsung.com>
+> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
-Firmware allocation doesn't depend on dma max segment size at all. The only
-calls which might depend on it are dma_map_sg(), which are performed much
-later as a part of video buffer allocation/preparation in videobuf2, when
-dma-buf or user pointer v4l2 modes are selected.
+Oops, my fault.
+>
+> in any case I tested it again on tm2e with next-20170223.
 
- > [...]
+Thanks again for testing.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Regards
+Andrzej
+
+>
+> Thanks,
+> Andi
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
