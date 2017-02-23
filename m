@@ -1,108 +1,88 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 2/3] [media] s5p-mfc: Set colorspace in
- VIDIO_{G,TRY}_FMT if DEFAULT provided
-Date: Thu, 23 Feb 2017 14:42:04 +0100
-Message-ID: <d926308d-10c1-f6e9-a023-372ebf35d6de@samsung.com>
-References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
- <CGME20170221192320epcas4p2d8933310c2ba3f5fc0c5dca97c973890@epcas4p2.samsung.com>
- <20170221192059.29745-3-thibault.saunier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170221192059.29745-3-thibault.saunier@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>, linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] i2c: exynos5: simplify timings calculation
+Date: Thu, 23 Feb 2017 17:47:26 +0100
+Message-ID: <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48377 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751110AbdBWQuI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Thu, 23 Feb 2017 11:50:08 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 21.02.2017 20:20, Thibault Saunier wrote:
-> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
-> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV but the driver
-> didn't set the colorimetry when userspace provided
-> V4L2_COLORSPACE_DEFAULT.
->
-> Use 576p display resolution as a threshold to set this as suggested by
-> EIA CEA 861B.
->
-> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
->
-> ---
->
-> Changes in v5: None
-> Changes in v4:
-> - Set the colorspace only if the user passed V4L2_COLORSPACE_DEFAULT, in
->   all other cases just use what userspace provided.
->
-> Changes in v3:
-> - Do not check values in the g_fmt functions as Andrzej explained in previous review
-> - Set colorspace if user passed V4L2_COLORSPACE_DEFAULT in
->
-> Changes in v2: None
->
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> index 367ef8e8dbf0..0976c3e0a5ce 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -354,6 +354,11 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  		pix_mp->plane_fmt[0].sizeimage = ctx->luma_size;
->  		pix_mp->plane_fmt[1].bytesperline = ctx->buf_width;
->  		pix_mp->plane_fmt[1].sizeimage = ctx->chroma_size;
-> +
-> +		if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
-> +			pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-> +		else /* SD */
-> +			pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+Instead of using cryptic loop direct calculation of timings
+can be used.
 
-Again, it seems much more complicated for decoder, I suppose colorspace
-field should be filled according to decoded information from the header
-of byte stream. It looks like MFC does not parse  stream header for such
-info. So it should be done either by the driver, either by userspace, if
-userspace is able to get such info. For example in H.264 this info is
-encoded in VUI header [1], I do not know about other codecs. I guess the
-best solution for now is to not touch this field unless you can retrieve
-this info from MFC.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 40 ++++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 26 deletions(-)
 
-[1]:
-https://github.com/copiousfreetime/mp4parser/blob/master/isoparser/src/main/java/com/googlecode/mp4parser/h264/model/SeqParameterSet.java#L227
-
-Regards
-Andrzej
-
->  	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->  		/* This is run on OUTPUT
->  		   The buffer contains compressed image
-> @@ -378,6 +383,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  {
->  	struct s5p_mfc_dev *dev = video_drvdata(file);
-> +	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
->  	struct s5p_mfc_fmt *fmt;
->  
->  	mfc_debug(2, "Type is %d\n", f->type);
-> @@ -405,6 +411,14 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
->  			mfc_err("Unsupported format by this MFC version.\n");
->  			return -EINVAL;
->  		}
-> +
-> +		if (pix_mp->colorspace == V4L2_COLORSPACE_DEFAULT) {
-> +			if (pix_mp->width > 720 &&
-> +					pix_mp->height > 576) /* HD */
-> +				pix_mp->colorspace = V4L2_COLORSPACE_REC709;
-> +			else /* SD */
-> +				pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
-> +		}
->  	}
->  
->  	return 0;
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index cbd93ce..04127b8 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -292,9 +292,9 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
+ 	unsigned int t_sr_release;
+ 	unsigned int t_ftl_cycle;
+ 	unsigned int clkin = clk_get_rate(i2c->clk);
+-	unsigned int div, utemp0 = 0, utemp1 = 0, clk_cycle;
+ 	unsigned int op_clk = (mode == HSI2C_HIGH_SPD) ?
+ 				i2c->hs_clock : i2c->fs_clock;
++	int div, clk_cycle, temp;
+ 
+ 	/*
+ 	 * In case of HSI2C controller in Exynos5 series
+@@ -305,33 +305,21 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
+ 	 * FPCLK / FI2C =
+ 	 * (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 8 + FLT_CYCLE
+ 	 *
+-	 * utemp0 = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2)
+-	 * utemp1 = (TSCLK_L + TSCLK_H + 2)
++	 * clk_cycle := TSCLK_L + TSCLK_H
++	 * temp := (CLK_DIV + 1) * (clk_cycle + 2)
++	 *
++	 * Constraints: 4 <= temp, 0 <= CLK_DIV < 256, 2 <= clk_cycle <= 510
++	 *
+ 	 */
+ 	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
+-	utemp0 = (clkin / op_clk) - 8;
+-
+-	if (i2c->variant->hw == HSI2C_EXYNOS7)
+-		utemp0 -= t_ftl_cycle;
+-	else
+-		utemp0 -= 2 * t_ftl_cycle;
+-
+-	/* CLK_DIV max is 256 */
+-	for (div = 0; div < 256; div++) {
+-		utemp1 = utemp0 / (div + 1);
+-
+-		/*
+-		 * SCL_L and SCL_H each has max value of 255
+-		 * Hence, For the clk_cycle to the have right value
+-		 * utemp1 has to be less then 512 and more than 4.
+-		 */
+-		if ((utemp1 < 512) && (utemp1 > 4)) {
+-			clk_cycle = utemp1 - 2;
+-			break;
+-		} else if (div == 255) {
+-			dev_warn(i2c->dev, "Failed to calculate divisor");
+-			return -EINVAL;
+-		}
++	temp = clkin / op_clk - 8 - t_ftl_cycle;
++	if (i2c->variant->hw != HSI2C_EXYNOS7)
++		temp -= t_ftl_cycle;
++	div = temp / 512;
++	clk_cycle = temp / (div + 1) - 2;
++	if (temp < 4 || div >= 256 || clk_cycle < 2) {
++		dev_warn(i2c->dev, "Failed to calculate divisor");
++		return -EINVAL;
+ 	}
+ 
+ 	t_scl_l = clk_cycle / 2;
+-- 
+2.7.4
