@@ -1,88 +1,61 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] i2c: exynos5: simplify timings calculation
-Date: Thu, 23 Feb 2017 17:47:26 +0100
-Message-ID: <1487868446-5339-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170223164733eucas1p11ad37a2334fe709a062ecc82b5224e1a@eucas1p1.samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
+Date: Thu, 23 Feb 2017 17:23:13 +0000
+Message-ID: <20170223172313.GF2742@localhost.localdomain>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48377 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbdBWQuI (ORCPT
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56456 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751275AbdBWRY7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Feb 2017 11:50:08 -0500
+        Thu, 23 Feb 2017 12:24:59 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
-Instead of using cryptic loop direct calculation of timings
-can be used.
+On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
+> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
+> <ckeepax@opensource.wolfsonmicro.com> wrote:
+> 
+> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
+> > some of its own GPIOs. The driver also uses gpiochip_generic_request
+> > which means that for any GPIO request to succeed the pinctrl needs to be
+> > registered. Currently however the driver registers the GPIO and then the
+> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
+> > the whole driver to fail probe. Fix this up by ensuring we register the
+> > pinctrl first. Although currently there are no users of GPIO hogs in
+> > mainline there are plenty of Samsung based boards that are widely used
+> > for development purposes of other hardware. Indeed we hit this issue
+> > whilst attaching some additional hardware to an Arndale system.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >
+> > Changes since v1:
+> >  - Updated commit message
+> 
+> Patch applied. Will not be visible in -next until after the merge window
+> though.
+> 
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/i2c/busses/i2c-exynos5.c | 40 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 26 deletions(-)
+Apologies but I think you might be best to drop this patch for
+now, it seems this causes the ranges passed to
+pinctrl_add_gpio_range to have the wrong .base, whilst I can
+actually see no ill effects from this on Arndale. I suspect this
+patch may be only part of the solution and may potentially cause
+issues for others even though it seems fine for me.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index cbd93ce..04127b8 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -292,9 +292,9 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
- 	unsigned int t_sr_release;
- 	unsigned int t_ftl_cycle;
- 	unsigned int clkin = clk_get_rate(i2c->clk);
--	unsigned int div, utemp0 = 0, utemp1 = 0, clk_cycle;
- 	unsigned int op_clk = (mode == HSI2C_HIGH_SPD) ?
- 				i2c->hs_clock : i2c->fs_clock;
-+	int div, clk_cycle, temp;
- 
- 	/*
- 	 * In case of HSI2C controller in Exynos5 series
-@@ -305,33 +305,21 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
- 	 * FPCLK / FI2C =
- 	 * (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 8 + FLT_CYCLE
- 	 *
--	 * utemp0 = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2)
--	 * utemp1 = (TSCLK_L + TSCLK_H + 2)
-+	 * clk_cycle := TSCLK_L + TSCLK_H
-+	 * temp := (CLK_DIV + 1) * (clk_cycle + 2)
-+	 *
-+	 * Constraints: 4 <= temp, 0 <= CLK_DIV < 256, 2 <= clk_cycle <= 510
-+	 *
- 	 */
- 	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
--	utemp0 = (clkin / op_clk) - 8;
--
--	if (i2c->variant->hw == HSI2C_EXYNOS7)
--		utemp0 -= t_ftl_cycle;
--	else
--		utemp0 -= 2 * t_ftl_cycle;
--
--	/* CLK_DIV max is 256 */
--	for (div = 0; div < 256; div++) {
--		utemp1 = utemp0 / (div + 1);
--
--		/*
--		 * SCL_L and SCL_H each has max value of 255
--		 * Hence, For the clk_cycle to the have right value
--		 * utemp1 has to be less then 512 and more than 4.
--		 */
--		if ((utemp1 < 512) && (utemp1 > 4)) {
--			clk_cycle = utemp1 - 2;
--			break;
--		} else if (div == 255) {
--			dev_warn(i2c->dev, "Failed to calculate divisor");
--			return -EINVAL;
--		}
-+	temp = clkin / op_clk - 8 - t_ftl_cycle;
-+	if (i2c->variant->hw != HSI2C_EXYNOS7)
-+		temp -= t_ftl_cycle;
-+	div = temp / 512;
-+	clk_cycle = temp / (div + 1) - 2;
-+	if (temp < 4 || div >= 256 || clk_cycle < 2) {
-+		dev_warn(i2c->dev, "Failed to calculate divisor");
-+		return -EINVAL;
- 	}
- 
- 	t_scl_l = clk_cycle / 2;
--- 
-2.7.4
+It does seem to there is some circular dependancy issues between
+setting up the pinctrl and setting up the gpio which crops up in
+the case of gpio hogs that may be more fundamental.
+
+Thanks,
+Charles
