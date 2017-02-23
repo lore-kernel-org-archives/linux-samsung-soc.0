@@ -1,61 +1,54 @@
 From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
-Date: Thu, 23 Feb 2017 17:23:13 +0000
-Message-ID: <20170223172313.GF2742@localhost.localdomain>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
+Subject: [PATCH] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
+Date: Thu, 23 Feb 2017 17:54:50 +0000
+Message-ID: <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <20170223172313.GF2742@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56456 "EHLO
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:57667 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751275AbdBWRY7 (ORCPT
+        by vger.kernel.org with ESMTP id S1751156AbdBWRyE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Feb 2017 12:24:59 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
+        Thu, 23 Feb 2017 12:54:04 -0500
+In-Reply-To: <20170223172313.GF2742@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
+To: linus.walleij@linaro.org, krzk@kernel.org
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
-> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
-> <ckeepax@opensource.wolfsonmicro.com> wrote:
-> 
-> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
-> > some of its own GPIOs. The driver also uses gpiochip_generic_request
-> > which means that for any GPIO request to succeed the pinctrl needs to be
-> > registered. Currently however the driver registers the GPIO and then the
-> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
-> > the whole driver to fail probe. Fix this up by ensuring we register the
-> > pinctrl first. Although currently there are no users of GPIO hogs in
-> > mainline there are plenty of Samsung based boards that are widely used
-> > for development purposes of other hardware. Indeed we hit this issue
-> > whilst attaching some additional hardware to an Arndale system.
-> >
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >
-> > Changes since v1:
-> >  - Updated commit message
-> 
-> Patch applied. Will not be visible in -next until after the merge window
-> though.
-> 
+As the pinctrl is now added before the GPIOs are registered we need to
+manually calculate what the GPIO base will be, otherwise the base for
+each gpio_range will be set to zero. Fortunately the driver
+already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+same calculation it does for the pin_base. Meaning the two will always
+be the same and allowing us to reuse the pinbase and avoid the issue.
 
-Apologies but I think you might be best to drop this patch for
-now, it seems this causes the ranges passed to
-pinctrl_add_gpio_range to have the wrong .base, whilst I can
-actually see no ill effects from this on Arndale. I suspect this
-patch may be only part of the solution and may potentially cause
-issues for others even though it seems fine for me.
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
 
-It does seem to there is some circular dependancy issues between
-setting up the pinctrl and setting up the gpio which crops up in
-the case of gpio hogs that may be more fundamental.
+Ok I might have spoken to soon there looks like there is a simple
+way to fix this up, at least in this case. It would be much more
+of an issue if the driver allocated its GPIO base dynamically.
 
 Thanks,
 Charles
+
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ddc8d6b..864d8b4d 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+ 		pin_bank->grange.id = bank;
+ 		pin_bank->grange.pin_base = drvdata->pin_base
+ 						+ pin_bank->pin_base;
+-		pin_bank->grange.base = pin_bank->gpio_chip.base;
++		pin_bank->grange.base = pin_bank->grange.pin_base;
+ 		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
+ 		pin_bank->grange.gc = &pin_bank->gpio_chip;
+ 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
+-- 
+2.1.4
