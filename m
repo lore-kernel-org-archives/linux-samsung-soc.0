@@ -1,40 +1,108 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
-Date: Thu, 23 Feb 2017 13:37:03 +0200
-Message-ID: <CAJKOXPdjGaA4yYBsby5pVENos2iQM_zaRxo_19sN2fHt9Jru2Q@mail.gmail.com>
-References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
- <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v5 2/3] [media] s5p-mfc: Set colorspace in
+ VIDIO_{G,TRY}_FMT if DEFAULT provided
+Date: Thu, 23 Feb 2017 14:42:04 +0100
+Message-ID: <d926308d-10c1-f6e9-a023-372ebf35d6de@samsung.com>
+References: <20170221192059.29745-1-thibault.saunier@osg.samsung.com>
+ <CGME20170221192320epcas4p2d8933310c2ba3f5fc0c5dca97c973890@epcas4p2.samsung.com>
+ <20170221192059.29745-3-thibault.saunier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751032AbdBWMbN (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Feb 2017 07:31:13 -0500
-In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20170221192059.29745-3-thibault.saunier@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>, linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thu, Feb 23, 2017 at 12:12 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Some pinctrls share memory regions, and devm_ioremap_resource does not
-> allow to share resources, in opposition to devm_ioremap.
-> This patch restores back usage of devm_ioremap function, but with proper
-> error handling and logging.
+On 21.02.2017 20:20, Thibault Saunier wrote:
+> The media documentation says that the V4L2_COLORSPACE_SMPTE170M colorspace
+> should be used for SDTV and V4L2_COLORSPACE_REC709 for HDTV but the driver
+> didn't set the colorimetry when userspace provided
+> V4L2_COLORSPACE_DEFAULT.
 >
-> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Use 576p display resolution as a threshold to set this as suggested by
+> EIA CEA 861B.
+>
+> Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+>
 > ---
-> v2:
-> - added platform_get_resource error check (thanks to Krzysztof)
 >
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+> Changes in v5: None
+> Changes in v4:
+> - Set the colorspace only if the user passed V4L2_COLORSPACE_DEFAULT, in
+>   all other cases just use what userspace provided.
+>
+> Changes in v3:
+> - Do not check values in the g_fmt functions as Andrzej explained in previous review
+> - Set colorspace if user passed V4L2_COLORSPACE_DEFAULT in
+>
+> Changes in v2: None
+>
+>  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> index 367ef8e8dbf0..0976c3e0a5ce 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+> @@ -354,6 +354,11 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  		pix_mp->plane_fmt[0].sizeimage = ctx->luma_size;
+>  		pix_mp->plane_fmt[1].bytesperline = ctx->buf_width;
+>  		pix_mp->plane_fmt[1].sizeimage = ctx->chroma_size;
+> +
+> +		if (pix_mp->width > 720 && pix_mp->height > 576) /* HD */
+> +			pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> +		else /* SD */
+> +			pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
 
-Thanks for update. Looks good:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Again, it seems much more complicated for decoder, I suppose colorspace
+field should be filled according to decoded information from the header
+of byte stream. It looks like MFC does not parse  stream header for such
+info. So it should be done either by the driver, either by userspace, if
+userspace is able to get such info. For example in H.264 this info is
+encoded in VUI header [1], I do not know about other codecs. I guess the
+best solution for now is to not touch this field unless you can retrieve
+this info from MFC.
 
-Best regards,
-Krzysztof
+[1]:
+https://github.com/copiousfreetime/mp4parser/blob/master/isoparser/src/main/java/com/googlecode/mp4parser/h264/model/SeqParameterSet.java#L227
+
+Regards
+Andrzej
+
+>  	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+>  		/* This is run on OUTPUT
+>  		   The buffer contains compressed image
+> @@ -378,6 +383,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  {
+>  	struct s5p_mfc_dev *dev = video_drvdata(file);
+> +	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
+>  	struct s5p_mfc_fmt *fmt;
+>  
+>  	mfc_debug(2, "Type is %d\n", f->type);
+> @@ -405,6 +411,14 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+>  			mfc_err("Unsupported format by this MFC version.\n");
+>  			return -EINVAL;
+>  		}
+> +
+> +		if (pix_mp->colorspace == V4L2_COLORSPACE_DEFAULT) {
+> +			if (pix_mp->width > 720 &&
+> +					pix_mp->height > 576) /* HD */
+> +				pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+> +			else /* SD */
+> +				pix_mp->colorspace = V4L2_COLORSPACE_SMPTE170M;
+> +		}
+>  	}
+>  
+>  	return 0;
