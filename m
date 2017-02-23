@@ -1,61 +1,54 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2] i2c: exynos5: disable fifo-almost-empty irq signal
- when necessary
-Date: Thu, 23 Feb 2017 13:03:04 +0100
-Message-ID: <20170223120303.uupbr2zkidcotydp@ninjato>
-References: <CGME20170222101123eucas1p25482d192dd5d119aaf6ddc15a01c60c0@eucas1p2.samsung.com>
- <1487758280-22801-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
+Date: Thu, 23 Feb 2017 13:03:15 +0100
+Message-ID: <20170223120315.htz7gcfmtudmt224@ninjato>
+References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
+ <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7p6aswoznlvmy7o2"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47104 "EHLO pokefinder.org"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751041AbdBWMMy (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Feb 2017 07:12:54 -0500
+        protocol="application/pgp-signature"; boundary="guxdo44meikh2ajj"
+Return-path: <linux-i2c-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1487758280-22801-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-i2c-owner@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---7p6aswoznlvmy7o2
+--guxdo44meikh2ajj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 22, 2017 at 11:11:20AM +0100, Andrzej Hajda wrote:
-> Fifo-almost-empty irq signal should be disabled as soon as possible,
-> to avoid unnecessary interrupt storm. The best moment is when there is
-> no more data to feed fifo.
-> This patch fixes system stalls caused by IRQ storm.
+On Wed, Feb 22, 2017 at 12:04:34PM +0100, Andrzej Hajda wrote:
+> In case of arbitration lost adequate interrupt sometimes is not signaled.
+> As a result transfer timeouts and is not retried, as it should. To avoid
+> such cases code is added to check transaction status in case of every
+> interrupt.
 >=20
 > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
 Applied to for-next (will be in this merge window), thanks!
 
-
---7p6aswoznlvmy7o2
+--guxdo44meikh2ajj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliuz2kACgkQFA3kzBSg
-KbadRA/+PCgyyeNV+leDM6g2oo/W64yf4HD+NO76VZO7lhZfAalj1wPCI3HdjNTz
-18tfjeGjKv95vp52nZtCO/QKQ91WsMgm1Uol/VzWWtfNnPogpmlP4B3ybkeFhezA
-sbQp2n35220a94zZek/XezI4B+lKux/liNc8CUeJythWdj+RmmjQqBDxs28MpoZ2
-epT6n8K81/11STXsbDGmQ0kAY4Z9TL0j8bU46EfrI875XH2imzG1gnzaALQrFqc8
-cN6SjfapwwiY2gstDTf4d6oYNyiLRa89dFuBOpow1NrtVMiVkNokxcjrj4nRTqAx
-IBbGe3f82kq/XFrjUyNGGb3xDABF9Tcy6Ujdg5d/6PgSBelaHvmwrghHsfA+kkF+
-nAKJ9aNedzLZaoQ97fQCh7DIJyXr6UUfthNee1ICeUnB+p+SC9R3fSGk9gDQJnkN
-qL/SEBkLLFZWqyJMlqhMosfRVb0LpQDzXXYO1H16WrMC2XXKhP04o5KMsmIbuQJv
-gPqV3vpCeJf8b+L0k/O2F/XHKh5vnTf4VnyUmciB9N/tzgE5n0lEgjW5ZJAOoI55
-mp9EiPlqQtmh2tN8ks6dTTiKdVY670Ymp0ANAoUL661kxf2F8wi5fhl5VDAI4ZJf
-IXefyjZLuSGBA2F/M84l4UU1tEYjVQIjm/8ylQf9JWDjsX32WdY=
-=JZg8
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliuz4MACgkQFA3kzBSg
+KbZ++w/+JYY7F/EO5p9oHCZuexfcREYGDH5RbAVr+CBybokQKY5DHtk6as2yKJDN
+jX4dDRr2OaQ76CirpUdOaK8t5/EWYR6JVplL7mnmJwwUpQCRz3FdRRX+/SLkSMYf
+HBovnbGUjMYahILoF5pLSGkLd6QOdLvMekIXHXrK49+wQSIC0LHTcR849uHO3KNH
+trMejRJ1aNVJUDP3x8udIMKAGOd8niRu62uh8GcsF4TtCSXYdupYDDsaadecHUBd
+SVHJHvHRyNJv8E/sAC27upSAqtPgY+Zmc4U4rbDzGKEjxzroAsvyVMtJbrEyCEj8
+czIahaNxhQiYv/L8T/aR8ruUV45NBlyUOl3GLiCM58W8Vz6q0ph973mPrcVg/zJG
+f83HUBqJ0haWCwFG4XqSuSfkzLbx44uQ5Z1xT3Zbayy12Qp9JP01xs3X3AYO64Nb
+ayOnYTGuR9Pvvbbx7vdfQIfONgtOChXDfSfrQpUQ+QJ5HT6anqZnrqIAbZ6U8iiQ
+aYu+FvNjNS9PAlF3rP9o4ttfjqFxP7tABatjOKHmwGUrhTVCAFlXmJgOu9CMW6xz
+IWvHjXzSlA10ZcWS7ge3PCrfjjoe04ZUj1iUyIkSTbFL3X2AzVGmMM44lR3k1pt2
+/8L6RnrAqzMsB7XB/KDAnroSCu+Xi/H4rvv9qkZzS0mTRWKv8Bg=
+=47aA
 -----END PGP SIGNATURE-----
 
---7p6aswoznlvmy7o2--
+--guxdo44meikh2ajj--
