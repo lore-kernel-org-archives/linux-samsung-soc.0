@@ -1,19 +1,20 @@
 From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v2] i2c: exynos5: fix arbitration lost handling
-Date: Thu, 23 Feb 2017 15:29:52 +0900
-Message-ID: <20170223062952.rkvnp2bkvau47txv@gangnam.samsung>
-References: <CGME20170222110438eucas1p2329ece7afd9e22ba185da64ccf4b2981@eucas1p2.samsung.com>
- <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH v2] i2c: exynos5: disable fifo-almost-empty irq signal when
+ necessary
+Date: Thu, 23 Feb 2017 15:31:12 +0900
+Message-ID: <20170223063112.mlmsdzqm7bwxlf4e@gangnam.samsung>
+References: <CGME20170222101123eucas1p25482d192dd5d119aaf6ddc15a01c60c0@eucas1p2.samsung.com>
+ <1487758280-22801-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43247 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbdBWG34 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59396 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbdBWHDW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Feb 2017 01:29:56 -0500
+        Thu, 23 Feb 2017 02:03:22 -0500
 Content-disposition: inline
-In-reply-to: <1487761474-11547-1-git-send-email-a.hajda@samsung.com>
+In-reply-to: <1487758280-22801-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>
@@ -21,20 +22,18 @@ Cc: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Jav
 
 Hi Andrzej,
 
-On Wed, Feb 22, 2017 at 12:04:34PM +0100, Andrzej Hajda wrote:
-> In case of arbitration lost adequate interrupt sometimes is not signaled.
-> As a result transfer timeouts and is not retried, as it should. To avoid
-> such cases code is added to check transaction status in case of every
-> interrupt.
+On Wed, Feb 22, 2017 at 11:11:20AM +0100, Andrzej Hajda wrote:
+> Fifo-almost-empty irq signal should be disabled as soon as possible,
+> to avoid unnecessary interrupt storm. The best moment is when there is
+> no more data to feed fifo.
+> This patch fixes system stalls caused by IRQ storm.
 > 
 > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
-you forgot:
+Looks good,
 
 Tested-by: Andi Shyti <andi.shyti@samsung.com>
 Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
-
-in any case I tested it again on tm2e with next-20170223.
 
 Thanks,
 Andi
