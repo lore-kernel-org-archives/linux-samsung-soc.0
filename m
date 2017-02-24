@@ -1,46 +1,52 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH 3/7] watchdog: s3c2410: Enable COMPILE_TEST
-Date: Fri, 24 Feb 2017 13:58:31 -0800
-Message-ID: <4e246dd4-d46a-ae33-c1e4-a2e6854e2fc2@roeck-us.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4/7] watchdog: s3c2410: Add prefix to local function
+Date: Fri, 24 Feb 2017 13:58:54 -0800
+Message-ID: <d86371e6-bc16-d4d5-cdca-af72a0a3d3d6@roeck-us.net>
 References: <20170224210746.12459-1-krzk@kernel.org>
- <20170224210746.12459-3-krzk@kernel.org>
+ <20170224210746.12459-4-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170224210746.12459-3-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170224210746.12459-4-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 02/24/2017 01:07 PM, Krzysztof Kozlowski wrote:
-> Driver can be compile tested on other architectures as well so use it to
-> increase build coverage.
+> Functions marked static inline might not be inlined so a driver-specific
+> prefix for function name helps when looking through call backtrace.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Already submitted as part of 'watchdog: Enable COMPILE_TEST where possible'.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/watchdog/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/watchdog/s3c2410_wdt.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 338c5bc46f73..82d5f07b5e64 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -333,7 +333,7 @@ config HAVE_S3C2410_WATCHDOG
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index f7aad19d20ff..a031842ffcb0 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -507,9 +507,8 @@ static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
+>  	return 0;
+>  }
 >
->  config S3C2410_WATCHDOG
->  	tristate "S3C2410 Watchdog"
-> -	depends on HAVE_S3C2410_WATCHDOG
-> +	depends on HAVE_S3C2410_WATCHDOG || COMPILE_TEST
->  	select WATCHDOG_CORE
->  	select MFD_SYSCON if ARCH_EXYNOS
->  	help
+> -/* s3c2410_get_wdt_driver_data */
+>  static inline struct s3c2410_wdt_variant *
+> -get_wdt_drv_data(struct platform_device *pdev)
+> +s3c2410_get_wdt_drv_data(struct platform_device *pdev)
+>  {
+>  	if (pdev->dev.of_node) {
+>  		const struct of_device_id *match;
+> @@ -541,7 +540,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>  	spin_lock_init(&wdt->lock);
+>  	wdt->wdt_device = s3c2410_wdd;
 >
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> -	wdt->drv_data = get_wdt_drv_data(pdev);
+> +	wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
+>  	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+>  		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+>  						"samsung,syscon-phandle");
+>
