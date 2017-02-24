@@ -1,82 +1,56 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5/7] watchdog: s3c2410: Constify local structures
-Date: Fri, 24 Feb 2017 23:07:44 +0200
-Message-ID: <20170224210746.12459-5-krzk@kernel.org>
-References: <20170224210746.12459-1-krzk@kernel.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] [media] exynos4-is: Add missing 'of_node_put'
+Date: Fri, 24 Feb 2017 18:19:17 -0300
+Message-ID: <2357ef6e-8d90-77d0-0399-21fec41389a1@osg.samsung.com>
+References: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170224210746.12459-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Structures watchdog_device, watchdog_ops and s3c2410_wdt_variant are not
-modified so they can be made const to increase code safeness.
+Hello Christophe,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/watchdog/s3c2410_wdt.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On 01/23/2017 06:16 PM, Christophe JAILLET wrote:
+> It is likely that a "of_node_put(ep)" is missing here.
+> There is one in the previous error handling code, and one a few lines
+> below in the normal case as well.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+> index e3a8709138fa..da5b76c1df98 100644
+> --- a/drivers/media/platform/exynos4-is/media-dev.c
+> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> @@ -402,8 +402,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+>  		return ret;
+>  	}
+>  
+> -	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS)
+> +	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
+> +		of_node_put(ep);
+>  		return -EINVAL;
+> +	}
+>  
+>  	pd->mux_id = (endpoint.base.port - 1) & 0x1;
+>  
+> 
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index a031842ffcb0..5eaec319e499 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -131,7 +131,7 @@ struct s3c2410_wdt {
- 	unsigned long		wtdat_save;
- 	struct watchdog_device	wdt_device;
- 	struct notifier_block	freq_transition;
--	struct s3c2410_wdt_variant *drv_data;
-+	const struct s3c2410_wdt_variant *drv_data;
- 	struct regmap *pmureg;
- };
- 
-@@ -392,7 +392,7 @@ static const struct watchdog_info s3c2410_wdt_ident = {
- 	.identity         =	"S3C2410 Watchdog",
- };
- 
--static struct watchdog_ops s3c2410wdt_ops = {
-+static const struct watchdog_ops s3c2410wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = s3c2410wdt_start,
- 	.stop = s3c2410wdt_stop,
-@@ -401,7 +401,7 @@ static struct watchdog_ops s3c2410wdt_ops = {
- 	.restart = s3c2410wdt_restart,
- };
- 
--static struct watchdog_device s3c2410_wdd = {
-+static const struct watchdog_device s3c2410_wdd = {
- 	.info = &s3c2410_wdt_ident,
- 	.ops = &s3c2410wdt_ops,
- 	.timeout = S3C2410_WATCHDOG_DEFAULT_TIME,
-@@ -507,15 +507,15 @@ static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
- 	return 0;
- }
- 
--static inline struct s3c2410_wdt_variant *
-+static inline const struct s3c2410_wdt_variant *
- s3c2410_get_wdt_drv_data(struct platform_device *pdev)
- {
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
- 		match = of_match_node(s3c2410_wdt_match, pdev->dev.of_node);
--		return (struct s3c2410_wdt_variant *)match->data;
-+		return (const struct s3c2410_wdt_variant *)match->data;
- 	} else {
--		return (struct s3c2410_wdt_variant *)
-+		return (const struct s3c2410_wdt_variant *)
- 			platform_get_device_id(pdev)->driver_data;
- 	}
- }
+Thanks for the patch, but Krzysztof sent the exact same patch before [0]. There
+was feedback from Sylwester at the time that you can also look at [0]. Could you
+please take that into account and post a patch according to what he suggested?
+
+[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-March/415207.html
+
+Best regards,
 -- 
-2.9.3
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
