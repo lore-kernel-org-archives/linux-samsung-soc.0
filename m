@@ -1,103 +1,136 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 14/15] media: s5p-mfc: Use preallocated block allocator
- always for MFC v6+
-Date: Fri, 24 Feb 2017 07:26:08 +0100
-Message-ID: <eb7357b5-d218-14a2-f9ba-c05902e6fa53@samsung.com>
-References: <CGME20170214075221eucas1p1c0acfa79289ebff6306c01e47c3e83a7@eucas1p1.samsung.com>
- <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <1487058728-16501-15-git-send-email-m.szyprowski@samsung.com>
- <CAKocOOO+JLD7pcL2A-8adi1hwDjw55Y2jMQ3Ki6oVTWdSn1W+A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59585 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbdBXG0P (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 01:26:15 -0500
-In-reply-to: <CAKocOOO+JLD7pcL2A-8adi1hwDjw55Y2jMQ3Ki6oVTWdSn1W+A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 1/2] i2c: exynos5: simplify clock frequency handling
+Date: Fri, 24 Feb 2017 12:16:01 +0100
+Message-ID: <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170224111634eucas1p22340b3b86a835e90ce981a9d9d4dc64a@eucas1p2.samsung.com>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkhan@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, shuahkh@osg.samsung.com
 
-Hi Shuah
+There is no need to keep separate settings for high and fast speed clock.
 
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 45 +++++++++++-----------------------------
+ 1 file changed, 12 insertions(+), 33 deletions(-)
 
-On 2017-02-23 22:43, Shuah Khan wrote:
-> On Tue, Feb 14, 2017 at 12:52 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> It turned out that all versions of MFC v6+ hardware doesn't have a strict
->> requirement for ALL buffers to be allocated on higher addresses than the
->> firmware base like it was documented for MFC v5. This requirement is true
->> only for the device and per-context buffers. All video data buffers can be
->> allocated anywhere for all MFC v6+ versions. Basing on this fact, the
->> special DMA configuration based on two reserved memory regions is not
->> really needed for MFC v6+ devices, because the memory requirements for the
->> firmware, device and per-context buffers can be fulfilled by the simple
->> probe-time pre-allocated block allocator instroduced in previous patch.
->>
->> This patch enables support for such pre-allocated block based allocator
->> always for MFC v6+ devices. Due to the limitations of the memory management
->> subsystem the largest supported size of the pre-allocated buffer when no
->> CMA (Contiguous Memory Allocator) is enabled is 4MiB.
->>
->> This patch also removes the requirement to provide two reserved memory
->> regions for MFC v6+ devices in device tree. Now the driver is fully
->> functional without them.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Hi Marek,
->
-> This patch breaks display manager. exynos_drm_gem_create() isn't happy.
-> dmesg and console are flooded with
->
-> odroid login: [  209.170566] [drm:exynos_drm_gem_create] *ERROR* failed to allo.
-> [  212.173222] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  215.354790] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  218.736464] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  221.837128] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  226.284827] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  229.242498] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  232.063150] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  235.799993] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  239.472061] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  242.567465] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  246.500541] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  249.996018] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  253.837272] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  257.048782] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  260.084819] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  263.448611] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  266.271074] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  269.011558] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  272.039066] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  275.404938] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  278.339033] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  281.274751] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  284.641202] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  287.461039] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  291.062011] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  294.746870] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
-> [  298.246570] [drm:exynos_drm_gem_create] *ERROR* failed to allocate buffer.
->
-> I don't think this is an acceptable behavior. It is a regression.
-
-This is a really poor bug report... Could you elaborate a bit how to 
-reproduce
-this? Could you provide your kernel config and information about test 
-environment?
-
-I suspect that you use CMA without IOMMU and you have too small global 
-CMA region.
-After this patch MFC driver uses global CMA region instead of the MFC's 
-private
-ones, so one has to ensure that the global region is large enough.
-
- > [...]
-
-Best regards
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 04127b8..54df9e6 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -168,8 +168,6 @@
+  */
+ #define HSI2C_HS_TX_CLOCK	1000000
+ #define HSI2C_FS_TX_CLOCK	100000
+-#define HSI2C_HIGH_SPD		1
+-#define HSI2C_FAST_SPD		0
+ 
+ #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ 
+@@ -200,15 +198,7 @@ struct exynos5_i2c {
+ 	int			trans_done;
+ 
+ 	/* Controller operating frequency */
+-	unsigned int		fs_clock;
+-	unsigned int		hs_clock;
+-
+-	/*
+-	 * HSI2C Controller can operate in
+-	 * 1. High speed upto 3.4Mbps
+-	 * 2. Fast speed upto 1Mbps
+-	 */
+-	int			speed_mode;
++	unsigned int		op_clock;
+ 
+ 	/* Version of HS-I2C Hardware */
+ 	struct exynos_hsi2c_variant	*variant;
+@@ -279,7 +269,7 @@ static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
+  * Returns 0 on success, -EINVAL if the cycle length cannot
+  * be calculated.
+  */
+-static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
++static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ {
+ 	u32 i2c_timing_s1;
+ 	u32 i2c_timing_s2;
+@@ -292,8 +282,9 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
+ 	unsigned int t_sr_release;
+ 	unsigned int t_ftl_cycle;
+ 	unsigned int clkin = clk_get_rate(i2c->clk);
+-	unsigned int op_clk = (mode == HSI2C_HIGH_SPD) ?
+-				i2c->hs_clock : i2c->fs_clock;
++	unsigned int op_clk = hs_timings ? i2c->op_clock :
++		(i2c->op_clock >= HSI2C_HS_TX_CLOCK) ? HSI2C_FS_TX_CLOCK :
++		i2c->op_clock;
+ 	int div, clk_cycle, temp;
+ 
+ 	/*
+@@ -344,7 +335,7 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
+ 		div, t_sr_release);
+ 	dev_dbg(i2c->dev, "tDATA_HD: %X\n", t_data_hd);
+ 
+-	if (mode == HSI2C_HIGH_SPD) {
++	if (hs_timings) {
+ 		writel(i2c_timing_s1, i2c->regs + HSI2C_TIMING_HS1);
+ 		writel(i2c_timing_s2, i2c->regs + HSI2C_TIMING_HS2);
+ 		writel(i2c_timing_s3, i2c->regs + HSI2C_TIMING_HS3);
+@@ -364,14 +355,14 @@ static int exynos5_hsi2c_clock_setup(struct exynos5_i2c *i2c)
+ 	 * Configure the Fast speed timing values
+ 	 * Even the High Speed mode initially starts with Fast mode
+ 	 */
+-	if (exynos5_i2c_set_timing(i2c, HSI2C_FAST_SPD)) {
++	if (exynos5_i2c_set_timing(i2c, false)) {
+ 		dev_err(i2c->dev, "HSI2C FS Clock set up failed\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* configure the High speed timing values */
+-	if (i2c->speed_mode == HSI2C_HIGH_SPD) {
+-		if (exynos5_i2c_set_timing(i2c, HSI2C_HIGH_SPD)) {
++	if (i2c->op_clock >= HSI2C_HS_TX_CLOCK) {
++		if (exynos5_i2c_set_timing(i2c, true)) {
+ 			dev_err(i2c->dev, "HSI2C HS Clock set up failed\n");
+ 			return -EINVAL;
+ 		}
+@@ -397,7 +388,7 @@ static void exynos5_i2c_init(struct exynos5_i2c *i2c)
+ 					i2c->regs + HSI2C_CTL);
+ 	writel(HSI2C_TRAILING_COUNT, i2c->regs + HSI2C_TRAILIG_CTL);
+ 
+-	if (i2c->speed_mode == HSI2C_HIGH_SPD) {
++	if (i2c->op_clock >= HSI2C_HS_TX_CLOCK) {
+ 		writel(HSI2C_MASTER_ID(MASTER_ID(i2c->adap.nr)),
+ 					i2c->regs + HSI2C_ADDR);
+ 		i2c_conf |= HSI2C_HS_MODE;
+@@ -734,26 +725,14 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct exynos5_i2c *i2c;
+ 	struct resource *mem;
+-	unsigned int op_clock;
+ 	int ret;
+ 
+ 	i2c = devm_kzalloc(&pdev->dev, sizeof(struct exynos5_i2c), GFP_KERNEL);
+ 	if (!i2c)
+ 		return -ENOMEM;
+ 
+-	if (of_property_read_u32(np, "clock-frequency", &op_clock)) {
+-		i2c->speed_mode = HSI2C_FAST_SPD;
+-		i2c->fs_clock = HSI2C_FS_TX_CLOCK;
+-	} else {
+-		if (op_clock >= HSI2C_HS_TX_CLOCK) {
+-			i2c->speed_mode = HSI2C_HIGH_SPD;
+-			i2c->fs_clock = HSI2C_FS_TX_CLOCK;
+-			i2c->hs_clock = op_clock;
+-		} else {
+-			i2c->speed_mode = HSI2C_FAST_SPD;
+-			i2c->fs_clock = op_clock;
+-		}
+-	}
++	if (of_property_read_u32(np, "clock-frequency", &i2c->op_clock))
++		i2c->op_clock = HSI2C_FS_TX_CLOCK;
+ 
+ 	strlcpy(i2c->adap.name, "exynos5-i2c", sizeof(i2c->adap.name));
+ 	i2c->adap.owner   = THIS_MODULE;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.7.4
