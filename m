@@ -1,142 +1,46 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 7/7] watchdog: s3c2410: Minor code cleanup
-Date: Fri, 24 Feb 2017 23:07:46 +0200
-Message-ID: <20170224210746.12459-7-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 2/7] watchdog: s3c2410: Select MFD_SYSCON on all Exynos
+ platforms
+Date: Fri, 24 Feb 2017 23:07:41 +0200
+Message-ID: <20170224210746.12459-2-krzk@kernel.org>
 References: <20170224210746.12459-1-krzk@kernel.org>
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170224210746.12459-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170224210746.12459-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Cleanup the code from minor readability issues (no functional changes):
-1. Fix checkpatch: ERROR: Do not include the paragraph about writing to
-   the Free Software Foundation's mailing address.
-2. Fix checkpatch: WARNING: quoted string split across lines
-3. Fix chechpatch: WARNING: Prefer 'unsigned int' to bare use of
-   'unsigned'
-4. Use 'dev' consistently in probe function instead of mixing dev with
-   &pdev->dev.
+Syscon is used not only on Exynos5 SoCs but also on Exynos3250,
+Exynos4412 and ARMv8 versions (Exynos5433, Exynos7).
 
-Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 35 +++++++++++++----------------------
- 1 file changed, 13 insertions(+), 22 deletions(-)
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index d7ddee0668c3..89c7e98ae278 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -1,5 +1,4 @@
--/* linux/drivers/char/watchdog/s3c2410_wdt.c
-- *
-+/*
-  * Copyright (c) 2004 Simtec Electronics
-  *	Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
-  *
-@@ -17,11 +16,7 @@
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
--*/
-+ */
- 
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -95,8 +90,7 @@ MODULE_PARM_DESC(tmr_atboot,
- 			__MODULE_STRING(S3C2410_WATCHDOG_ATBOOT));
- MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
- 			__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
--MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
--			"0 to reboot (default 0)");
-+MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, 0 to reboot (default 0)");
- 
- /**
-  * struct s3c2410_wdt_variant - Per-variant config data
-@@ -311,7 +305,8 @@ static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
- 	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
- }
- 
--static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeout)
-+static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
-+				    unsigned int timeout)
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
- 	unsigned long freq = clk_get_rate(wdt->clock);
-@@ -525,7 +520,7 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev)
- 
- static int s3c2410wdt_probe(struct platform_device *pdev)
- {
--	struct device *dev;
-+	struct device *dev = &pdev->dev;
- 	struct s3c2410_wdt *wdt;
- 	struct resource *wdt_mem;
- 	struct resource *wdt_irq;
-@@ -533,13 +528,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	int started = 0;
- 	int ret;
- 
--	dev = &pdev->dev;
--
- 	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
- 	if (!wdt)
- 		return -ENOMEM;
- 
--	wdt->dev = &pdev->dev;
-+	wdt->dev = dev;
- 	spin_lock_init(&wdt->lock);
- 	wdt->wdt_device = s3c2410_wdd;
- 
-@@ -595,7 +588,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	/* see if we can actually set the requested timer margin, and if
- 	 * not, try the default value */
- 
--	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, &pdev->dev);
-+	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, dev);
- 	ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
- 					wdt->wdt_device.timeout);
- 	if (ret) {
-@@ -604,11 +597,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 
- 		if (started == 0)
- 			dev_info(dev,
--			   "tmr_margin value out of range, default %d used\n",
--			       S3C2410_WATCHDOG_DEFAULT_TIME);
-+				 "tmr_margin value out of range, default %d used\n",
-+				 S3C2410_WATCHDOG_DEFAULT_TIME);
- 		else
--			dev_info(dev, "default timer value is out of range, "
--							"cannot start\n");
-+			dev_info(dev, "default timer value is out of range, cannot start\n");
- 	}
- 
- 	ret = devm_request_irq(dev, wdt_irq->start, s3c2410wdt_irq, 0,
-@@ -622,7 +614,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	watchdog_set_restart_priority(&wdt->wdt_device, 128);
- 
- 	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
--	wdt->wdt_device.parent = &pdev->dev;
-+	wdt->wdt_device.parent = dev;
- 
- 	ret = watchdog_register_device(&wdt->wdt_device);
- 	if (ret) {
-@@ -757,7 +749,6 @@ static struct platform_driver s3c2410wdt_driver = {
- 
- module_platform_driver(s3c2410wdt_driver);
- 
--MODULE_AUTHOR("Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>, "
--	      "Dimitry Andric <dimitry.andric-Jdzig1fPfSTQT0dZR+AlfA@public.gmane.org>");
-+MODULE_AUTHOR("Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>, Dimitry Andric <dimitry.andric-Jdzig1fPfSTQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("S3C2410 Watchdog Device Driver");
- MODULE_LICENSE("GPL");
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index acb00b53a520..338c5bc46f73 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -335,7 +335,7 @@ config S3C2410_WATCHDOG
+ 	tristate "S3C2410 Watchdog"
+ 	depends on HAVE_S3C2410_WATCHDOG
+ 	select WATCHDOG_CORE
+-	select MFD_SYSCON if ARCH_EXYNOS5
++	select MFD_SYSCON if ARCH_EXYNOS
+ 	help
+ 	  Watchdog timer block in the Samsung SoCs. This will reboot
+ 	  the system when the timer expires with the watchdog enabled.
 -- 
 2.9.3
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
