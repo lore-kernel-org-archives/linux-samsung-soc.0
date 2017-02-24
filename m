@@ -1,67 +1,68 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/2] i2c: exynos5: de-duplicate error logs on clock setup
-Date: Fri, 24 Feb 2017 12:16:02 +0100
-Message-ID: <1487934962-8703-2-git-send-email-a.hajda@samsung.com>
-References: <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
- <CGME20170224111634eucas1p28938c94c566c0aadf6dc7766b4eb96d9@eucas1p2.samsung.com>
+Subject: [PATCH] i2c: exynos5: use core helper to get driver data
+Date: Fri, 24 Feb 2017 14:36:00 +0100
+Message-ID: <1487943360-6421-1-git-send-email-a.hajda@samsung.com>
+References: <CGME20170224133606eucas1p2c3c6afb60b9e39ad501c1ddbdbfc180f@eucas1p2.samsung.com>
 Return-path: <linux-i2c-owner@vger.kernel.org>
-In-reply-to: <1487934962-8703-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-i2c-owner@vger.kernel.org
 To: Wolfram Sang <wsa@the-dreams.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In case of clock setup error it is enough to log it once.
-Moreover patch simplifies clock setup routines.
+Driver core provides of_device_get_match_data which can be used
+to get driver data instead of custom helper.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/i2c/busses/i2c-exynos5.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/i2c/busses/i2c-exynos5.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 54df9e6..bc2b5db 100644
+index bc2b5db..de3b6af 100644
 --- a/drivers/i2c/busses/i2c-exynos5.c
 +++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -309,7 +309,8 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
- 	div = temp / 512;
- 	clk_cycle = temp / (div + 1) - 2;
- 	if (temp < 4 || div >= 256 || clk_cycle < 2) {
--		dev_warn(i2c->dev, "Failed to calculate divisor");
-+		dev_err(i2c->dev, "%s clock set-up failed\n",
-+			hs_timings ? "HS" : "FS");
- 		return -EINVAL;
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/spinlock.h>
+ 
+@@ -201,7 +202,7 @@ struct exynos5_i2c {
+ 	unsigned int		op_clock;
+ 
+ 	/* Version of HS-I2C Hardware */
+-	struct exynos_hsi2c_variant	*variant;
++	const struct exynos_hsi2c_variant *variant;
+ };
+ 
+ /**
+@@ -247,15 +248,6 @@ static const struct of_device_id exynos5_i2c_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
+ 
+-static inline struct exynos_hsi2c_variant *exynos5_i2c_get_variant
+-					(struct platform_device *pdev)
+-{
+-	const struct of_device_id *match;
+-
+-	match = of_match_node(exynos5_i2c_match, pdev->dev.of_node);
+-	return (struct exynos_hsi2c_variant *)match->data;
+-}
+-
+ static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
+ {
+ 	writel(readl(i2c->regs + HSI2C_INT_STATUS),
+@@ -773,8 +765,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk;
  	}
  
-@@ -351,24 +352,13 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+-	/* Need to check the variant before setting up. */
+-	i2c->variant = exynos5_i2c_get_variant(pdev);
++	i2c->variant = of_device_get_match_data(&pdev->dev);
  
- static int exynos5_hsi2c_clock_setup(struct exynos5_i2c *i2c)
- {
--	/*
--	 * Configure the Fast speed timing values
--	 * Even the High Speed mode initially starts with Fast mode
--	 */
--	if (exynos5_i2c_set_timing(i2c, false)) {
--		dev_err(i2c->dev, "HSI2C FS Clock set up failed\n");
--		return -EINVAL;
--	}
-+	/* always set Fast Speed timings */
-+	int ret = exynos5_i2c_set_timing(i2c, false);
- 
--	/* configure the High speed timing values */
--	if (i2c->op_clock >= HSI2C_HS_TX_CLOCK) {
--		if (exynos5_i2c_set_timing(i2c, true)) {
--			dev_err(i2c->dev, "HSI2C HS Clock set up failed\n");
--			return -EINVAL;
--		}
--	}
-+	if (ret < 0 || i2c->op_clock < HSI2C_HS_TX_CLOCK)
-+		return ret;
- 
--	return 0;
-+	return exynos5_i2c_set_timing(i2c, true);
- }
- 
- /*
+ 	ret = exynos5_hsi2c_clock_setup(i2c);
+ 	if (ret)
 -- 
 2.7.4
