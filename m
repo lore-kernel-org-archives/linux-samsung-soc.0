@@ -1,64 +1,95 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/8] watchdog: s3c2410: Fix infinite interrupt in soft mode
-Date: Fri, 24 Feb 2017 19:30:57 +0200
-Message-ID: <20170224173057.ezbefenrxjro72ck@kozik-lap>
-References: <20170224151122.12142-1-krzk@kernel.org>
- <20170224151122.12142-3-krzk@kernel.org>
- <1348b7de-b485-832b-1743-8f810a174dd5@roeck-us.net>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/2] media: s5p-mfc: convert drivers to use the new
+ vb2_queue dev field
+Date: Fri, 24 Feb 2017 16:22:56 -0300
+Message-ID: <a4db0512-8a5b-aaea-713b-5e3c09c3e8c2@osg.samsung.com>
+References: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
+ <1481888915-19624-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1348b7de-b485-832b-1743-8f810a174dd5@roeck-us.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:56245
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751121AbdBXTXK (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 24 Feb 2017 14:23:10 -0500
+In-Reply-To: <1481888915-19624-2-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, Smitha T Murthy <smitha.t@samsung.com>
 
-On Fri, Feb 24, 2017 at 07:37:53AM -0800, Guenter Roeck wrote:
-> On 02/24/2017 07:11 AM, Krzysztof Kozlowski wrote:
-> > In soft (no-reboot) mode, the driver self-pings watchdog upon expiration
-> > of an interrupt.  However the interrupt itself was not cleared thus on
-> > first hit, the system enters infinite interrupt handling loop.
-> > 
-> > On Odroid U3 (Exynos4412), when booted with s3c2410_wdt.soft_noboot=1
-> > argument the console is flooded:
-> > 	# killall -9 watchdog
-> > 	[   60.523760] s3c2410-wdt 10060000.watchdog: watchdog timer expired (irq)
-> > 	[   60.536744] s3c2410-wdt 10060000.watchdog: watchdog timer expired (irq)
-> > 
-> > Fix this by writing something to the WTCLRINT register to clear the
-> > interrupt.  The register WTCLRINT however appeared in S3C6410 so a new
-> > watchdog quirk and flavor are needed.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> > 
-> > ---
-> > 
-> > I was thinking about CC-ing stable, especially when I thought about
-> > adding unconditional WTCLRINT clear.  However it appears that S3C2410
-> > does not have the WTCLRINT register, this a new chip flavor has to be
-> > added.  This makes the fix spread over driver and DTS changes.
-> > 
-> > Worth adding:
-> > 	Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > ?
-> 
-> How would that be different to Cc: stable ?
+Hello Pankaj,
 
-I guess not much... except for the metrics that some bug was fixed.
+On 12/16/2016 08:48 AM, Pankaj Dubey wrote:
+> From: Smitha T Murthy <smitha.t@samsung.com>
+> 
+> commit 2548fee63d9e ("[media] media/platform: convert drivers to use the new
+> vb2_queue dev field") has missed to set dev pointer of vb2_queue which will be
+> used in reqbufs of mfc driver. Without this change following error is observed:
+> 
+> ---------------------------------------------------------------
+> V4L2 Codec decoding example application
+> Kamil Debski <k.debski@samsung.com>
+> Copyright 2012 Samsung Electronics Co., Ltd.
+> 
+> Opening MFC.
+> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
+> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
+> 42.339165] Remapping memory failed, error: -6
+> 
+> MFC Open Success.
+> (main.c:main:711): Successfully opened all necessary files and devices
+> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
+> size=4194304 (requested=4194304)
+> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
+> (requested 2)
+> 
+> [App] Out buf phy : 0x00000000, virt : 0xffffffff
+> Output Length is = 0x300000
+> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
+> -------------------------------------------------------
+> 
+
+On which kernel version did you face this issue?
+
+> Signed-off-by: Smitha T Murthy <smitha.t@samsung.com>
+> [pankaj.dubey: debugging issue and formatting commit message]
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index 0a5b8f5..6ea8246 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -838,6 +838,7 @@ static int s5p_mfc_open(struct file *file)
+>  	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+>  	q->drv_priv = &ctx->fh;
+>  	q->lock = &dev->mfc_mutex;
+> +	q->dev = &dev->plat_dev->dev;
+>  	if (vdev == dev->vfd_dec) {
+>  		q->io_modes = VB2_MMAP;
+>  		q->ops = get_dec_queue_ops();
+> @@ -861,6 +862,7 @@ static int s5p_mfc_open(struct file *file)
+>  	q->io_modes = VB2_MMAP;
+>  	q->drv_priv = &ctx->fh;
+>  	q->lock = &dev->mfc_mutex;
+> +	q->dev = &dev->plat_dev->dev;
+>  	if (vdev == dev->vfd_dec) {
+>  		q->io_modes = VB2_MMAP;
+>  		q->ops = get_dec_queue_ops();
+>
+
+Please correct me if I'm wrong, but AFAIU this shouldn't be needed in
+the s5p-mfc driver since the videobuf2 core either uses the vb2_queue
+.dev field or the vb2_queue .alloc_devs. And the latter is set in the
+s5p_mfc_queue_setup() function, so the .dev field shouldn't be used.
 
 Best regards,
-Krzysztof
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
