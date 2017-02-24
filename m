@@ -1,78 +1,95 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/8] ARM: dts: exynos: Fix watchdog reset on Exynos4412
-Date: Fri, 24 Feb 2017 17:25:38 +0200
-Message-ID: <20170224152538.3zwgoa3oreuqkx6m@kozik-lap>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH 1/8] watchdog: s3c2410: Remove confusing CONFIG prefix
+ from local defines
+Date: Fri, 24 Feb 2017 07:32:47 -0800
+Message-ID: <a176ce28-e5ca-77b3-2f4c-58b7d27d98e4@roeck-us.net>
 References: <20170224151122.12142-1-krzk@kernel.org>
- <20170224151122.12142-4-krzk@kernel.org>
+ <20170224151122.12142-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36364 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751208AbdBXPZo (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Feb 2017 10:25:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20170224151122.12142-4-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170224151122.12142-2-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 24, 2017 at 05:11:17PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos4412 has the same watchdog as newer SoCs (e.g. Exynos5250).
-> Just like the others, for working it requires additional steps in Power
-> Management Unit: unmasking the reset request and enabling the system
-> reset.  Without these additional steps in PMU, the watchdog will not be
-> able to reset the system on expiration event.
-> 
-> Change the compatible of Exynos4412 watchdog device node to
-> samsung,exynos5250-wdt which includes the additional PMU steps.
-> 
-> This will also fix infinite watchdog interrupt in soft mode (lack of
-> interrupt clear) because it is also included in samsung,exynos5250-wdt.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On 02/24/2017 07:11 AM, Krzysztof Kozlowski wrote:
+> The CONFIG prefix from defines in the s3c2410_wdt.c might suggest that
+> these constants come from Kconfig.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+
 > ---
->  arch/arm/boot/dts/exynos4.dtsi    |  9 ---------
->  arch/arm/boot/dts/exynos4210.dtsi |  9 +++++++++
->  arch/arm/boot/dts/exynos4412.dtsi | 10 ++++++++++
->  3 files changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 18def1c774d5..71e2cdae6068 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -283,15 +283,6 @@
->  		};
->  	};
->  
-> -	watchdog: watchdog@10060000 {
-> -		compatible = "samsung,s3c2410-wdt";
-> -		reg = <0x10060000 0x100>;
-> -		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> -		clocks = <&clock CLK_WDT>;
-> -		clock-names = "watchdog";
-> -		status = "disabled";
-> -	};
-> -
->  	rtc: rtc@10070000 {
->  		compatible = "samsung,s3c6410-rtc";
->  		reg = <0x10070000 0x100>;
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index f9408188f97f..e126357aba9a 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -119,6 +119,15 @@
->  		};
->  	};
->  
-> +	watchdog: watchdog@10060000 {
-> +		compatible = "samsung,s3c6410-wdt";
+>  drivers/watchdog/s3c2410_wdt.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 59e95762a6de..3e216f54cb6f 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -64,8 +64,8 @@
+>  #define S3C2410_WTCON_PRESCALE_MASK	(0xff << 8)
+>  #define S3C2410_WTCON_PRESCALE_MAX	0xff
+>
+> -#define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
+> -#define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+> +#define S3C2410_WATCHDOG_ATBOOT		(0)
+> +#define S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+>
+>  #define EXYNOS5_RST_STAT_REG_OFFSET		0x0404
+>  #define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
+> @@ -79,7 +79,7 @@
+>
+>  static bool nowayout	= WATCHDOG_NOWAYOUT;
+>  static int tmr_margin;
+> -static int tmr_atboot	= CONFIG_S3C2410_WATCHDOG_ATBOOT;
+> +static int tmr_atboot	= S3C2410_WATCHDOG_ATBOOT;
+>  static int soft_noboot;
+>  static int debug;
+>
+> @@ -90,10 +90,10 @@ module_param(soft_noboot, int, 0);
+>  module_param(debug,	  int, 0);
+>
+>  MODULE_PARM_DESC(tmr_margin, "Watchdog tmr_margin in seconds. (default="
+> -		__MODULE_STRING(CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME) ")");
+> +		__MODULE_STRING(S3C2410_WATCHDOG_DEFAULT_TIME) ")");
+>  MODULE_PARM_DESC(tmr_atboot,
+>  		"Watchdog is started at boot time if set to 1, default="
+> -			__MODULE_STRING(CONFIG_S3C2410_WATCHDOG_ATBOOT));
+> +			__MODULE_STRING(S3C2410_WATCHDOG_ATBOOT));
+>  MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>  			__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+>  MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
+> @@ -406,7 +406,7 @@ static struct watchdog_ops s3c2410wdt_ops = {
+>  static struct watchdog_device s3c2410_wdd = {
+>  	.info = &s3c2410_wdt_ident,
+>  	.ops = &s3c2410wdt_ops,
+> -	.timeout = CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME,
+> +	.timeout = S3C2410_WATCHDOG_DEFAULT_TIME,
+>  };
+>
+>  /* interrupt handler code */
+> @@ -600,12 +600,12 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>  					wdt->wdt_device.timeout);
+>  	if (ret) {
+>  		started = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
+> -					CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME);
+> +					S3C2410_WATCHDOG_DEFAULT_TIME);
+>
+>  		if (started == 0)
+>  			dev_info(dev,
+>  			   "tmr_margin value out of range, default %d used\n",
+> -			       CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME);
+> +			       S3C2410_WATCHDOG_DEFAULT_TIME);
+>  		else
+>  			dev_info(dev, "default timer value is out of range, "
+>  							"cannot start\n");
+>
 
-My mistake - here it should still remain at samsung,s3c2410-wdt because
-I am just copying existing nodes to Exynso4210. The compatible should be
-changed in patch 6/8.
-
-
-Best regards,
-Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
