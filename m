@@ -1,134 +1,53 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] [media] exynos4-is: Add missing 'of_node_put'
-Date: Sat, 25 Feb 2017 09:01:19 +0100
-Message-ID: <c3c046ca-4f03-5023-83b9-353351a7696f@wanadoo.fr>
-References: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
- <2357ef6e-8d90-77d0-0399-21fec41389a1@osg.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] serial: samsung: Continue to work if DMA request fails
+Date: Sat, 25 Feb 2017 18:24:42 +0200
+Message-ID: <20170225162442.31848-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <2357ef6e-8d90-77d0-0399-21fec41389a1@osg.samsung.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Le 24/02/2017 � 22:19, Javier Martinez Canillas a �crit :
-> Thanks for the patch, but Krzysztof sent the exact same patch before 
-> [0]. There
-> was feedback from Sylwester at the time that you can also look at [0]. Could you
-> please take that into account and post a patch according to what he suggested?
->
-> [0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2016-March/415207.html
->
-> Best regards,
+If DMA is not available (even when configured in DeviceTree), the driver
+will fail the startup procedure thus making serial console not
+available.
 
-Hi,
+For example this causes boot failure on QEMU ARMv7 (Exynos4210, SMDKC210):
+    [    1.302575] OF: amba_device_add() failed (-19) for /amba/pdma@12680000
+    ...
+    [   11.435732] samsung-uart 13800000.serial: DMA request failed
+    [   72.963893] samsung-uart 13800000.serial: DMA request failed
+    [   73.143361] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000000
 
-apparently, the patch has already been taken into -next by Mauro 
-Carvalho Chehab.
+DMA is not necessary for serial to work, so continue with UART startup
+after emitting a warning.
 
-Moreover, I personally don't think that what is proposed in [0] is more 
-readable.
-There is not that much code between 'of_get_next_child' and 
-'of_node_put' in the normal path and not so many error handling paths 
-between the 2 function calls.
-Adding some indentation level is not an improvement, IMHO.
+Fixes: Fixes: 62c37eedb74c ("serial: samsung: add dma reqest/release functions")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/tty/serial/samsung.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-If you really want, I could propose something like the code below (not 
-carefully checked, just to give an idea), but honestly, I don't think it 
-is needed.
-It avoids some new indent and avoids duplicating 'of_node_put'.
-
-Tell me if you think it is an improvement and I'll send a patch.
-
-CJ
-
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c 
-b/drivers/media/platform/exynos4-is/media-dev.c
-index e3a8709138fa..da5b76c1df98 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -385,38 +385,35 @@ static void fimc_md_pipelines_free(struct fimc_md 
-*fmd)
-  static int fimc_md_parse_port_node(struct fimc_md *fmd,
-                     struct device_node *port,
-                     unsigned int index)
-  {
-      struct fimc_source_info *pd = &fmd->sensor[index].pdata;
--    struct device_node *rem, *ep, *np;
-+    struct device_node *rem = NULL, *ep = NULL, *np;
-      struct v4l2_of_endpoint endpoint;
-      int ret;
-
-      /* Assume here a port node can have only one endpoint node. */
-      ep = of_get_next_child(port, NULL);
-      if (!ep)
-          return 0;
-
-      ret = v4l2_of_parse_endpoint(ep, &endpoint);
--    if (ret) {
--        of_node_put(ep);
--        return ret;
--    }
-+    if (ret)
-+        goto put_ep;
-
-      if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
--        of_node_put(ep);
--        return -EINVAL;
-+        ret = -EINVAL;
-+        goto put_ep;
-      }
-
-      pd->mux_id = (endpoint.base.port - 1) & 0x1;
-
-      rem = of_graph_get_remote_port_parent(ep);
--    of_node_put(ep);
-      if (rem == NULL) {
-          v4l2_info(&fmd->v4l2_dev, "Remote device at %s not found\n",
-                              ep->full_name);
--        return 0;
-+        goto out;
-      }
-
-      if (fimc_input_is_parallel(endpoint.base.port)) {
-          if (endpoint.bus_type == V4L2_MBUS_PARALLEL)
-              pd->sensor_bus_type = FIMC_BUS_TYPE_ITU_601;
-@@ -447,22 +444,28 @@ static int fimc_md_parse_port_node(struct fimc_md 
-*fmd,
-          pd->fimc_bus_type = FIMC_BUS_TYPE_ISP_WRITEBACK;
-      else
-          pd->fimc_bus_type = pd->sensor_bus_type;
-
-      if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
--        of_node_put(rem);
--        return -EINVAL;
-+        ret = -EINVAL;
-+        goto put_rem;
-      }
-
-      fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
-      fmd->sensor[index].asd.match.of.node = rem;
-      fmd->async_subdevs[index] = &fmd->sensor[index].asd;
-
-      fmd->num_sensors++;
-+out:
-+    ret = 0;
-
-+put_rem:
-      of_node_put(rem);
--    return 0;
-+
-+put_ep:
-+    of_node_put(ep);
-+    return ret;
-  }
-
-  /* Register all SoC external sub-devices */
-  static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
-  {
-
-
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index b4f86c219db1..7a17aedbf902 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1031,8 +1031,10 @@ static int s3c64xx_serial_startup(struct uart_port *port)
+ 	if (ourport->dma) {
+ 		ret = s3c24xx_serial_request_dma(ourport);
+ 		if (ret < 0) {
+-			dev_warn(port->dev, "DMA request failed\n");
+-			return ret;
++			dev_warn(port->dev,
++				 "DMA request failed, DMA will not be used\n");
++			devm_kfree(port->dev, ourport->dma);
++			ourport->dma = NULL;
+ 		}
+ 	}
+ 
+-- 
+2.9.3
