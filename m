@@ -1,150 +1,203 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/2] drm/exynos: kill exynos_drm_crtc::pipe
-Date: Mon, 27 Feb 2017 11:15:20 +0100
-Message-ID: <1488190521-3946-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170227101525eucas1p22873cec92d678920224d172eb32f003b@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 2/2] drm/exynos: kill exynos_drm_private::pipe
+Date: Mon, 27 Feb 2017 11:15:21 +0100
+Message-ID: <1488190521-3946-2-git-send-email-a.hajda@samsung.com>
+References: <1488190521-3946-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170227101526eucas1p211b35ca6a35483a0cb53179d09d962d9@eucas1p2.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15044 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751668AbdB0KPb (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 27 Feb 2017 05:15:31 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OM1003Z435R2W00@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Feb 2017 10:15:27 +0000 (GMT)
+In-reply-to: <1488190521-3946-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-U2luY2UgY3J0YyBpbmRleCBpcyBzdG9yZWQgaW4gZHJtX2NydGMgcGlwZSBmaWVsZCBiZWNhbWUg
-cmVkdW5kYW50LgpUaGUgcGF0Y2ggYmVzaWRlIHJlbW92aW5nIHRoZSBmaWVsZCBzaW1wbGlmaWVz
-IGFsc28KZXh5bm9zX2RybV9jcnRjX2dldF9waXBlX2Zyb21fdHlwZS4KClNpZ25lZC1vZmYtYnk6
-IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQpIaSBJbmtpLAoKVGhlc2Ug
-dHdvIGNsZWFudXAgcGF0Y2hlcyBhcmUgYmFzZWQgb24gU2hhd24ncyBwYXRjaCBbMV0sIHdoaWNo
-IGlzIGFscmVhZHkKaW4gZHJtLXRpcCBicmFuY2guIEkgZ3Vlc3Mgd2l0aG91dCBpdCB0aGV5IHdp
-bGwgbm90IGFwcGx5LgoKWzFdOiBkcm06IGV4eW5vczogdXNlIHZibGFuayBob29rcyBpbiBzdHJ1
-Y3QgZHJtX2NydGNfZnVuY3MKClJlZ2FyZHMKQW5kcnplagoKIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYyB8ICAzICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3M3X2RybV9kZWNvbi5jICAgIHwgIDMgKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fY3J0Yy5jICAgICAgfCAxMiArKystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggICAgICB8ICAxIC0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgICB8ICA4IC0tLS0tLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAgMyArLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICAzICstLQogZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwgIDMgKy0tCiA4IGZpbGVzIGNoYW5nZWQs
-IDggaW5zZXJ0aW9ucygrKSwgMjggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCmluZGV4IDI2OTRiMzIuLjExNjhmZWMgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24uYworKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKQEAgLTU1OCw4
-ICs1NTgsNyBAQCBzdGF0aWMgaW50IGRlY29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1
-Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCiAJb3V0X3R5cGUgPSAoY3R4LT5vdXRfdHlw
-ZSAmIElGVFlQRV9IRE1JKSA/IEVYWU5PU19ESVNQTEFZX1RZUEVfSERNSQogCQkJCQkJICA6IEVY
-WU5PU19ESVNQTEFZX1RZUEVfTENEOwogCWN0eC0+Y3J0YyA9IGV4eW5vc19kcm1fY3J0Y19jcmVh
-dGUoZHJtX2RldiwgJmV4eW5vc19wbGFuZS0+YmFzZSwKLQkJCQkJY3R4LT5waXBlLCBvdXRfdHlw
-ZSwKLQkJCQkJJmRlY29uX2NydGNfb3BzLCBjdHgpOworCQkJb3V0X3R5cGUsICZkZWNvbl9jcnRj
-X29wcywgY3R4KTsKIAlpZiAoSVNfRVJSKGN0eC0+Y3J0YykpIHsKIAkJcmV0ID0gUFRSX0VSUihj
-dHgtPmNydGMpOwogCQlnb3RvIGVycjsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19k
-cm1fZGVjb24uYwppbmRleCA0ODgxMTgwLi4wY2NiMzM0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC02NTYsOCArNjU2LDcgQEAgc3RhdGljIGludCBk
-ZWNvbl9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lk
-ICpkYXRhKQogCiAJZXh5bm9zX3BsYW5lID0gJmN0eC0+cGxhbmVzW0RFRkFVTFRfV0lOXTsKIAlj
-dHgtPmNydGMgPSBleHlub3NfZHJtX2NydGNfY3JlYXRlKGRybV9kZXYsICZleHlub3NfcGxhbmUt
-PmJhc2UsCi0JCQkJCSAgIGN0eC0+cGlwZSwgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QsCi0JCQkJ
-CSAgICZkZWNvbl9jcnRjX29wcywgY3R4KTsKKwkJCUVYWU5PU19ESVNQTEFZX1RZUEVfTENELCAm
-ZGVjb25fY3J0Y19vcHMsIGN0eCk7CiAJaWYgKElTX0VSUihjdHgtPmNydGMpKSB7CiAJCWRlY29u
-X2N0eF9yZW1vdmUoY3R4KTsKIAkJcmV0dXJuIFBUUl9FUlIoY3R4LT5jcnRjKTsKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IDkxODQ5NzQuLjMyNzkzMDAgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMTU1LDcgKzE1NSw2
-IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2NydGNfZnVuY3MgZXh5bm9zX2NydGNfZnVuY3Mg
-PSB7CiAKIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAJCQkJCXN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAot
-CQkJCQlpbnQgcGlwZSwKIAkJCQkJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlIHR5cGUsCiAJ
-CQkJCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzICpvcHMsCiAJCQkJCXZvaWQgKmN0
-eCkKQEAgLTE2OCw3ICsxNjcsNiBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfZHJt
-X2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAogCWlmICghZXh5bm9zX2Ny
-dGMpCiAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwogCi0JZXh5bm9zX2NydGMtPnBpcGUgPSBw
-aXBlOwogCWV4eW5vc19jcnRjLT50eXBlID0gdHlwZTsKIAlleHlub3NfY3J0Yy0+b3BzID0gb3Bz
-OwogCWV4eW5vc19jcnRjLT5jdHggPSBjdHg7CkBAIC0xOTUsMTMgKzE5Myw5IEBAIGludCBleHlu
-b3NfZHJtX2NydGNfZ2V0X3BpcGVfZnJvbV90eXBlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2
-LAogewogCXN0cnVjdCBkcm1fY3J0YyAqY3J0YzsKIAotCWxpc3RfZm9yX2VhY2hfZW50cnkoY3J0
-YywgJmRybV9kZXYtPm1vZGVfY29uZmlnLmNydGNfbGlzdCwgaGVhZCkgewotCQlzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpleHlub3NfY3J0YzsKLQotCQlleHlub3NfY3J0YyA9IHRvX2V4eW5vc19j
-cnRjKGNydGMpOwotCQlpZiAoZXh5bm9zX2NydGMtPnR5cGUgPT0gb3V0X3R5cGUpCi0JCQlyZXR1
-cm4gZXh5bm9zX2NydGMtPnBpcGU7Ci0JfQorCWRybV9mb3JfZWFjaF9jcnRjKGNydGMsIGRybV9k
-ZXYpCisJCWlmICh0b19leHlub3NfY3J0YyhjcnRjKS0+dHlwZSA9PSBvdXRfdHlwZSkKKwkJCXJl
-dHVybiBkcm1fY3J0Y19pbmRleChjcnRjKTsKIAogCXJldHVybiAtRVBFUk07CiB9CmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaAppbmRleCA5NjM0ZmU1Li5lZjU4YjY0IDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmgKQEAgLTE5LDcgKzE5LDYg
-QEAKIAogc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2RybV9jcnRjX2NyZWF0ZShzdHJ1
-Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKIAkJCQkJc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCi0J
-CQkJCWludCBwaXBlLAogCQkJCQllbnVtIGV4eW5vc19kcm1fb3V0cHV0X3R5cGUgdHlwZSwKIAkJ
-CQkJY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMgKm9wcywKIAkJCQkJdm9pZCAqY29u
-dGV4dCk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggY2IzMTc2
-OS4uZDgxOWQwYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAt
-MTUzLDEzICsxNTMsNiBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9jbGsgewogICoKICAqIEBiYXNlOiBj
-cnRjIG9iamVjdC4KICAqIEB0eXBlOiBvbmUgb2YgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QgYW5k
-IEhETUkuCi0gKiBAcGlwZTogYSBjcnRjIGluZGV4IGNyZWF0ZWQgYXQgbG9hZCgpIHdpdGggYSBu
-ZXcgY3J0YyBvYmplY3QgY3JlYXRpb24KLSAqCWFuZCB0aGUgY3J0YyBvYmplY3Qgd291bGQgYmUg
-c2V0IHRvIHByaXZhdGUtPmNydGMgYXJyYXkKLSAqCXRvIGdldCBhIGNydGMgb2JqZWN0IGNvcnJl
-c3BvbmRpbmcgdG8gdGhpcyBwaXBlIGZyb20gcHJpdmF0ZS0+Y3J0YwotICoJYXJyYXkgd2hlbiBp
-cnEgaW50ZXJydXB0IG9jY3VycmVkLiB0aGUgcmVhc29uIG9mIHVzaW5nIHRoaXMgcGlwZSBpcyB0
-aGF0Ci0gKglkcm0gZnJhbWV3b3JrIGRvZXNuJ3Qgc3VwcG9ydCBtdWx0aXBsZSBpcnEgeWV0Lgot
-ICoJd2UgY2FuIHJlZmVyIHRvIHRoZSBjcnRjIHRvIGN1cnJlbnQgaGFyZHdhcmUgaW50ZXJydXB0
-IG9jY3VycmVkIHRocm91Z2gKLSAqCXRoaXMgcGlwZSB2YWx1ZS4KICAqIEBlbmFibGVkOiBpZiB0
-aGUgY3J0YyBpcyBlbmFibGVkIG9yIG5vdAogICogQGV2ZW50OiB2YmxhbmsgZXZlbnQgdGhhdCBp
-cyBjdXJyZW50bHkgcXVldWVkIGZvciBmbGlwCiAgKiBAd2FpdF91cGRhdGU6IHdhaXQgYWxsIHBl
-bmRpbmcgcGxhbmVzIHVwZGF0ZXMgdG8gZmluaXNoCkBAIC0xNzAsNyArMTYzLDYgQEAgc3RydWN0
-IGV4eW5vc19kcm1fY2xrIHsKIHN0cnVjdCBleHlub3NfZHJtX2NydGMgewogCXN0cnVjdCBkcm1f
-Y3J0YwkJCWJhc2U7CiAJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlCXR5cGU7Ci0JdW5zaWdu
-ZWQgaW50CQkJcGlwZTsKIAljb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcwkqb3BzOwog
-CXZvaWQJCQkJKmN0eDsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9jbGsJCSpwaXBlX2NsazsKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4IDY5ZWJlZDAuLmRjNzM2YzIg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtMTAxNyw4ICsx
-MDE3LDcgQEAgc3RhdGljIGludCBmaW1kX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
-ZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCiAKIAlleHlub3NfcGxhbmUgPSAmY3R4LT5wbGFu
-ZXNbREVGQVVMVF9XSU5dOwogCWN0eC0+Y3J0YyA9IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoZHJt
-X2RldiwgJmV4eW5vc19wbGFuZS0+YmFzZSwKLQkJCQkJICAgY3R4LT5waXBlLCBFWFlOT1NfRElT
-UExBWV9UWVBFX0xDRCwKLQkJCQkJICAgJmZpbWRfY3J0Y19vcHMsIGN0eCk7CisJCQlFWFlOT1Nf
-RElTUExBWV9UWVBFX0xDRCwgJmZpbWRfY3J0Y19vcHMsIGN0eCk7CiAJaWYgKElTX0VSUihjdHgt
-PmNydGMpKQogCQlyZXR1cm4gUFRSX0VSUihjdHgtPmNydGMpOwogCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3ZpZGkuYwppbmRleCA1ZDlhNjJhLi42N2YzNjVmIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKQEAgLTQxNyw4ICs0MTcsNyBAQCBzdGF0
-aWMgaW50IHZpZGlfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rl
-ciwgdm9pZCAqZGF0YSkKIAogCWV4eW5vc19wbGFuZSA9ICZjdHgtPnBsYW5lc1tERUZBVUxUX1dJ
-Tl07CiAJY3R4LT5jcnRjID0gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZShkcm1fZGV2LCAmZXh5bm9z
-X3BsYW5lLT5iYXNlLAotCQkJCQkgICBjdHgtPnBpcGUsIEVYWU5PU19ESVNQTEFZX1RZUEVfVklE
-SSwKLQkJCQkJICAgJnZpZGlfY3J0Y19vcHMsIGN0eCk7CisJCQlFWFlOT1NfRElTUExBWV9UWVBF
-X1ZJREksICZ2aWRpX2NydGNfb3BzLCBjdHgpOwogCWlmIChJU19FUlIoY3R4LT5jcnRjKSkgewog
-CQlEUk1fRVJST1IoImZhaWxlZCB0byBjcmVhdGUgY3J0Yy5cbiIpOwogCQlyZXR1cm4gUFRSX0VS
-UihjdHgtPmNydGMpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-bWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggMjVl
-ZGI2My4uM2ZiOGNmMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-bWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC0x
-MTY1LDggKzExNjUsNyBAQCBzdGF0aWMgaW50IG1peGVyX2JpbmQoc3RydWN0IGRldmljZSAqZGV2
-LCBzdHJ1Y3QgZGV2aWNlICptYW5hZ2VyLCB2b2lkICpkYXRhKQogCiAJZXh5bm9zX3BsYW5lID0g
-JmN0eC0+cGxhbmVzW0RFRkFVTFRfV0lOXTsKIAljdHgtPmNydGMgPSBleHlub3NfZHJtX2NydGNf
-Y3JlYXRlKGRybV9kZXYsICZleHlub3NfcGxhbmUtPmJhc2UsCi0JCQkJCSAgIGN0eC0+cGlwZSwg
-RVhZTk9TX0RJU1BMQVlfVFlQRV9IRE1JLAotCQkJCQkgICAmbWl4ZXJfY3J0Y19vcHMsIGN0eCk7
-CisJCQlFWFlOT1NfRElTUExBWV9UWVBFX0hETUksICZtaXhlcl9jcnRjX29wcywgY3R4KTsKIAlp
-ZiAoSVNfRVJSKGN0eC0+Y3J0YykpIHsKIAkJbWl4ZXJfY3R4X3JlbW92ZShjdHgpOwogCQlyZXQg
-PSBQVFJfRVJSKGN0eC0+Y3J0Yyk7Ci0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+The field duplicates drm_dev->mode_config.num_crtc.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 18 ++++--------------
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 11 ++---------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  3 ---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  9 ++-------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  4 +---
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  8 ++------
+ 6 files changed, 11 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 1168fec..2cb7736 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -531,14 +531,13 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct decon_context *ctx = dev_get_drvdata(dev);
+ 	struct drm_device *drm_dev = data;
+-	struct exynos_drm_private *priv = drm_dev->dev_private;
+ 	struct exynos_drm_plane *exynos_plane;
+ 	enum exynos_drm_output_type out_type;
+ 	unsigned int win;
+ 	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	ctx->pipe = priv->pipe++;
++	ctx->pipe = drm_dev->mode_config.num_crtc;
+ 
+ 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
+ 		int tmp = (win == ctx->first_win) ? 0 : win;
+@@ -559,21 +558,12 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 						  : EXYNOS_DISPLAY_TYPE_LCD;
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, &exynos_plane->base,
+ 			out_type, &decon_crtc_ops, ctx);
+-	if (IS_ERR(ctx->crtc)) {
+-		ret = PTR_ERR(ctx->crtc);
+-		goto err;
+-	}
++	if (IS_ERR(ctx->crtc))
++		return PTR_ERR(ctx->crtc);
+ 
+ 	decon_clear_channels(ctx->crtc);
+ 
+-	ret = drm_iommu_attach_device(drm_dev, dev);
+-	if (ret)
+-		goto err;
+-
+-	return ret;
+-err:
+-	priv->pipe--;
+-	return ret;
++	return drm_iommu_attach_device(drm_dev, dev);
+ }
+ 
+ static void decon_unbind(struct device *dev, struct device *master, void *data)
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 0ccb334..206e779 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -130,19 +130,12 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ static int decon_ctx_initialize(struct decon_context *ctx,
+ 			struct drm_device *drm_dev)
+ {
+-	struct exynos_drm_private *priv = drm_dev->dev_private;
+-	int ret;
+-
+ 	ctx->drm_dev = drm_dev;
+-	ctx->pipe = priv->pipe++;
++	ctx->pipe = drm_dev->mode_config.num_crtc;
+ 
+ 	decon_clear_channels(ctx->crtc);
+ 
+-	ret = drm_iommu_attach_device(drm_dev, ctx->dev);
+-	if (ret)
+-		priv->pipe--;
+-
+-	return ret;
++	return drm_iommu_attach_device(drm_dev, ctx->dev);
+ }
+ 
+ static void decon_ctx_remove(struct decon_context *ctx)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index d819d0c..c12b390 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -195,7 +195,6 @@ struct drm_exynos_file_private {
+  *	otherwise default one.
+  * @da_space_size: size of device address space.
+  *	if 0 then default value is used for it.
+- * @pipe: the pipe number for this crtc/manager.
+  * @pending: the crtcs that have pending updates to finish
+  * @lock: protect access to @pending
+  * @wait: wait an atomic commit to finish
+@@ -206,8 +205,6 @@ struct exynos_drm_private {
+ 	struct device *dma_dev;
+ 	void *mapping;
+ 
+-	unsigned int pipe;
+-
+ 	/* for atomic commit */
+ 	u32			pending;
+ 	spinlock_t		lock;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index dc736c2..df4dc34 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -996,13 +996,12 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct fimd_context *ctx = dev_get_drvdata(dev);
+ 	struct drm_device *drm_dev = data;
+-	struct exynos_drm_private *priv = drm_dev->dev_private;
+ 	struct exynos_drm_plane *exynos_plane;
+ 	unsigned int i;
+ 	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	ctx->pipe = priv->pipe++;
++	ctx->pipe = drm_dev->mode_config.num_crtc;
+ 
+ 	for (i = 0; i < WINDOWS_NR; i++) {
+ 		ctx->configs[i].pixel_formats = fimd_formats;
+@@ -1032,11 +1031,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 	if (is_drm_iommu_supported(drm_dev))
+ 		fimd_clear_channels(ctx->crtc);
+ 
+-	ret = drm_iommu_attach_device(drm_dev, dev);
+-	if (ret)
+-		priv->pipe--;
+-
+-	return ret;
++	return drm_iommu_attach_device(drm_dev, dev);
+ }
+ 
+ static void fimd_unbind(struct device *dev, struct device *master,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 67f365f..cb5e3c6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -156,10 +156,8 @@ static void vidi_disable(struct exynos_drm_crtc *crtc)
+ static int vidi_ctx_initialize(struct vidi_context *ctx,
+ 			struct drm_device *drm_dev)
+ {
+-	struct exynos_drm_private *priv = drm_dev->dev_private;
+-
+ 	ctx->drm_dev = drm_dev;
+-	ctx->pipe = priv->pipe++;
++	ctx->pipe = drm_dev->mode_config.num_crtc;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 3fb8cf3..1474982 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -900,7 +900,7 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
+ 	priv = drm_dev->dev_private;
+ 
+ 	mixer_ctx->drm_dev = drm_dev;
+-	mixer_ctx->pipe = priv->pipe++;
++	mixer_ctx->pipe = drm_dev->mode_config.num_crtc;
+ 
+ 	/* acquire resources: regs, irqs, clocks */
+ 	ret = mixer_resources_init(mixer_ctx);
+@@ -918,11 +918,7 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
+ 		}
+ 	}
+ 
+-	ret = drm_iommu_attach_device(drm_dev, mixer_ctx->dev);
+-	if (ret)
+-		priv->pipe--;
+-
+-	return ret;
++	return drm_iommu_attach_device(drm_dev, mixer_ctx->dev);
+ }
+ 
+ static void mixer_ctx_remove(struct mixer_context *mixer_ctx)
+-- 
+2.7.4
