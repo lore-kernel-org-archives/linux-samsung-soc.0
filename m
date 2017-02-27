@@ -1,159 +1,229 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 14/15] media: s5p-mfc: Use preallocated block allocator
- always for MFC v6+
-Date: Mon, 27 Feb 2017 13:50:25 +0100
-Message-ID: <672f6a9a-3acc-f089-c6fd-3ffa3b9b2bc5@samsung.com>
-References: <CGME20170214075221eucas1p1c0acfa79289ebff6306c01e47c3e83a7@eucas1p1.samsung.com>
- <1487058728-16501-1-git-send-email-m.szyprowski@samsung.com>
- <1487058728-16501-15-git-send-email-m.szyprowski@samsung.com>
- <CAKocOOO+JLD7pcL2A-8adi1hwDjw55Y2jMQ3Ki6oVTWdSn1W+A@mail.gmail.com>
- <eb7357b5-d218-14a2-f9ba-c05902e6fa53@samsung.com>
- <CAKocOOM5-NF=jiGw=VKkD+mtx_Unh4-SF8XqvXerJVwknVu7wA@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCHv4 1/9] video: add hotplug detect notifier support
+Date: Mon, 27 Feb 2017 17:08:41 +0100
+Message-ID: <20170227160841.3pgmpqwtidvjbnzn@phenom.ffwll.local>
+References: <20170206102951.12623-1-hverkuil@xs4all.nl>
+ <20170206102951.12623-2-hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23692 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbdB0MvM (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Feb 2017 07:51:12 -0500
-In-reply-to: <CAKocOOM5-NF=jiGw=VKkD+mtx_Unh4-SF8XqvXerJVwknVu7wA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170206102951.12623-2-hverkuil@xs4all.nl>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkhan@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, shuahkh@osg.samsung.com
 
-Hi Shuah,
-
-On 2017-02-24 15:23, Shuah Khan wrote:
-> On Thu, Feb 23, 2017 at 11:26 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> On 2017-02-23 22:43, Shuah Khan wrote:
->>> On Tue, Feb 14, 2017 at 12:52 AM, Marek Szyprowski
->>> <m.szyprowski@samsung.com> wrote:
->>>> It turned out that all versions of MFC v6+ hardware doesn't have a strict
->>>> requirement for ALL buffers to be allocated on higher addresses than the
->>>> firmware base like it was documented for MFC v5. This requirement is true
->>>> only for the device and per-context buffers. All video data buffers can
->>>> be
->>>> allocated anywhere for all MFC v6+ versions. Basing on this fact, the
->>>> special DMA configuration based on two reserved memory regions is not
->>>> really needed for MFC v6+ devices, because the memory requirements for
->>>> the
->>>> firmware, device and per-context buffers can be fulfilled by the simple
->>>> probe-time pre-allocated block allocator instroduced in previous patch.
->>>>
->>>> This patch enables support for such pre-allocated block based allocator
->>>> always for MFC v6+ devices. Due to the limitations of the memory
->>>> management
->>>> subsystem the largest supported size of the pre-allocated buffer when no
->>>> CMA (Contiguous Memory Allocator) is enabled is 4MiB.
->>>>
->>>> This patch also removes the requirement to provide two reserved memory
->>>> regions for MFC v6+ devices in device tree. Now the driver is fully
->>>> functional without them.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Hi Marek,
->>>
->>> This patch breaks display manager. exynos_drm_gem_create() isn't happy.
->>> dmesg and console are flooded with
->>>
->>> odroid login: [  209.170566] [drm:exynos_drm_gem_create] *ERROR* failed to
->>> allo.
->>> [  212.173222] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  215.354790] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  218.736464] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  221.837128] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  226.284827] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  229.242498] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  232.063150] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  235.799993] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  239.472061] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  242.567465] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  246.500541] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  249.996018] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  253.837272] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  257.048782] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  260.084819] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  263.448611] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  266.271074] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  269.011558] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  272.039066] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  275.404938] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  278.339033] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  281.274751] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  284.641202] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  287.461039] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  291.062011] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  294.746870] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>> [  298.246570] [drm:exynos_drm_gem_create] *ERROR* failed to allocate
->>> buffer.
->>>
->>> I don't think this is an acceptable behavior. It is a regression.
->>
->> This is a really poor bug report... Could you elaborate a bit how to
->> reproduce
->> this? Could you provide your kernel config and information about test
->> environment?
-> Yeah. I should have give you more information. My bad.
->
->> I suspect that you use CMA without IOMMU and you have too small global CMA
->> region.
-> Yes. I have CMA and using exynos_defconfig. Nothing fancy. I think
-> what's happening is s5p_mfc pre-allocates and there is nothing left
-> when disaply manager starts requestuing gem buffers. This failure
-> happens when systemd kicks off lightdm.
->
->> After this patch MFC driver uses global CMA region instead of the MFC's
->> private
->> ones, so one has to ensure that the global region is large enough.
-> This is still a regression since it requires users to take some
-> action. I think we need some kind of checks to warn users there isn't
-> a large enough CMA region. This is the same config I have been using
-> forever and with this patch, it breaks.
->
-> Easy to reproduce on odroid-xu4 with HDMI display. You just have to
-> boot the system with exynos_defconfig. Display manager will fail when
-> it requests buffers.
-
-That is still a bit strange. MFC pre-allocates 8MiB buffer. The default CMA
-global region size is 64MiB, which should be enough for a few display 
-buffers.
-It looks that your display manager consumes quite a lot of memory and it
-already almost hits the limit from the exynos_defconfig.
-
-It should be safe to increase default CMA region size to 80MiB or even 96MiB
-in the exynos_defconfig to avoid such problem.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gTW9uLCBGZWIgMDYsIDIwMTcgYXQgMTE6Mjk6NDNBTSArMDEwMCwgSGFucyBWZXJrdWlsIHdy
+b3RlOgo+IEZyb206IEhhbnMgVmVya3VpbCA8aGFucy52ZXJrdWlsQGNpc2NvLmNvbT4KPiAKPiBB
+ZGQgc3VwcG9ydCBmb3IgdmlkZW8gaG90cGx1ZyBkZXRlY3QgYW5kIEVESUQvRUxEIG5vdGlmaWVy
+cywgd2hpY2ggaXMgdXNlZAo+IHRvIGNvbnZleSBpbmZvcm1hdGlvbiBmcm9tIHZpZGVvIGRyaXZl
+cnMgdG8gdGhlaXIgQ0VDIGFuZCBhdWRpbyBjb3VudGVycGFydHMuCj4gCj4gQmFzZWQgb24gYW4g
+ZWFybGllciB2ZXJzaW9uIGZyb20gUnVzc2VsbCBLaW5nOgo+IAo+IGh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvOTI3NzA0My8KPiAKPiBUaGUgaHBkX25vdGlmaWVyIGlzIGEgcmVm
+ZXJlbmNlIGNvdW50ZWQgb2JqZWN0IGNvbnRhaW5pbmcgdGhlIEhQRC9FRElEL0VMRCBzdGF0ZQo+
+IG9mIGEgdmlkZW8gZGV2aWNlLgo+IAo+IFdoZW4gYSBuZXcgbm90aWZpZXIgaXMgcmVnaXN0ZXJl
+ZCB0aGUgY3VycmVudCBzdGF0ZSB3aWxsIGJlIHJlcG9ydGVkIHRvCj4gdGhhdCBub3RpZmllciBh
+dCByZWdpc3RyYXRpb24gdGltZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBIYW5zIFZlcmt1aWwgPGhh
+bnMudmVya3VpbEBjaXNjby5jb20+Cj4gVGVzdGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6
+eXByb3dza2lAc2Ftc3VuZy5jb20+CgpTbyBJJ20gc3VwZXIgbGF0ZSB0byB0aGUgcGFydHkgYmVj
+YXVzZSBJIGtpbmRhIGlnbm9yZWQgYWxsIHRoaW5ncyBDRUMgdGh1cwpmYXIuIEnNhCdtIG5vdCBz
+dXJlIHRoaXMgaXMgYSBncmVhdCBkZXNpZ24sIHdpdGggdHdvIG1haW4gY29uY2VybnM6CgotIG5v
+dGlmaWVycyBoYXZlIGEgdGVuZGVuY3kgdG8gbWFrZSBsb2NraW5nIHV0dGVyIHBhaW5mdWwuIEJ5
+IGRlc2lnbgogIG5vdGlmaWVycyB1c2UgdGhlaXIgb3duIGxvY2sgdG8gbWFrZSBzdXJlIGFueSBj
+YWxsYmFja3MgZG9uJ3QgZGlzYXBwZWFyCiAgdW5kdWx5LCBidXQgdGhlbiBvbiB0aGUgb3RoZXIg
+aGFuZCB0aGUgbG9ja2luZyBvcmRlciBhdAogIHJlZ2lzdGVyL3VucmVnaXN0ZXIgdGltZSBpcyBp
+bnZlcnRlZC4gT3IgYW55dGhpbmcgd2hlcmUgeW91IG5lZWQgdG8gZ28KICB0aGUgb3RoZXIgd2F5
+LiBGb3Igc2ltcGxlIHRoaW5ncyBpdCB3b3JrcywgYnV0IG15IGV4cGVyaWVuY2UgaXMgdGhhdAog
+IHNvb25lciBvciBsYXRlciB0aGluZ3Mgc3RvcCBiZWluZyBzaW1wbGUsIGFuZCB0aGVuIHlvdSdy
+ZSBpbiBjb21wbGV0ZQogIHBhaW4uIFZpeiBmYmRldiBub3RpZmllci4gSSBtdWNoIG1vcmUgcHJl
+ZmVyIGlmIHdlIGhhdmUgYSBkaXJlY3QKICBpbnRlcmZhY2UsIHdoZXJlIHdlIGNhbiBkZWZpbmUg
+dGhlIGxpZmV0aW1lIHJ1bGVzIGFuZCBsb2NraW5nIHJ1bGVzCiAgc2VwZXJhdGVseSwgYW5kIGlm
+IG5lZWRlZCBzZXBhcmF0ZWx5IGZvciBlYWNoIGludGVyZmFjZS4gRXNwZWNpYWxseSBmb3IKICBz
+b21ldGhpbmcgd2hpY2ggaXMgbWVhbnQgdG8gY29ubmVjdCBkaWZmZXJlbnQgZHJpdmVycyBmcm9t
+IGRpZmZlcmVudAogIHN1YnN5c3RlbXMgc28gd2lkZWx5LgogIAogIFlvdSBjb3VsZCBvYmplY3Qg
+dGhhdCB0aGlzIGlzIHRoZSBvbmx5IGludGVyYWN0aW9uLCBhbmQgdGhlcmVmb3JlIHRoZXJlCiAg
+Y2FuJ3QgYmUgbG9vcHMsIGJ1dCB3ZSBoYXZlIGRtYS1idWYsIHJlc2VydmF0aW9uX29iaiBhbmQg
+ZG1hX2ZlbmNlCiAgc2hhcmluZyBnb2luZyBvbiBiZXR3ZWVuIGxvdHMgb2YgZHJpdmVycyBhbHJl
+YWR5LCBhbmQgbG90cyBtb3JlIHdpbGwKICBmb2xsb3csIHNvIHRoZXJlJ3MgcGxlbnR5IG9mIG90
+aGVyIGNyb3NzLXN1YnN5c3RlbSBpbnRlcmFjdGlvbnMgZ29pbmcgb24KICB0byBoZWxwIGNvbXBs
+ZXRlIHRoZSBsb29wLgoKLSBUaGUgb3RoZXIgY29uY2VybiBJIGhhdmUgaXMgdGhhdCB3ZSBhbHJl
+YWR5IGhhdmUgaW50ZXJmYWNlcyBmb3IgRUxEIGFuZAogIGhvdHBsdWcgbm90aWZpY2F0aW9uLiBB
+dG0gdGhlaXIgb25seSByZXN0cmljdGVkIGZvciB1c2UgYmV0d2VlbiBnZnggYW5kCiAgc25kLCBh
+bmQgZS5nLiBpOTE1IHJvbGxzIDIgZGlmZmVyZW50IGtpbmRzIG9mIGl0cyBvd24sIGJ1dCB0aGVy
+ZSBpcyBhCiAgc2VtaS1zdGFuZGFyZCBvbmU6CgogIGluY2x1ZGUvc291bmQvaGRtaS1jb2RlYy5o
+CgogIFRoYXQgYWxzbyBkZWFscyB3aXRoIEVMRCBhbmQgc3R1ZmYsIHdvdWxkIGJlIGdyZWF0IGlm
+IHdlIGRvbid0IGZvcmNlCiAgZHJpdmVycyB0byBzaWduYWwgRUxEIGNoYW5nZXMgaW4gbXVsdGlw
+bGUgZGlmZmVyZW50IHdheXMuIEFsc28sIENFQwogIHNob3VsZCBvbmx5IGV4aXN0IHdpdGggYSBI
+RE1JIG91dHB1dCwgc28gc2FtZSB0aGluZy4KCi0gQWZhaXVpIHdlJ2xsIGFsd2F5cyBzaG91bGQg
+aGF2ZSBhIDE6MSBtYXBwaW5nIGJldHdlZW4gZHJtIEhETUkgY29ubmVjdG9yCiAgYW5kIGEgZ2l2
+ZW4gQ0VDIHBpbi4gTm90aWZpZXJzIGFyZSBmb3IgbjptLCBob3cgaXMgdGhpcyBzdXBwb3NlZCB0
+byB3b3JrCiAgaWYgeW91IGhhdmUgbXVsdGlwbGUgSERNSSBwb3J0cyBhcm91bmQ/IEkgc2VlIHRo
+YXQgeW91IGxvb2sgdXAgYnkgc3RydWN0CiAgZGV2aWNlLCBidXQgaXQncyBhIGJpdCB1bmNsZWFy
+IHdoYXQga2luZCBvZiBkZXZpY2UgaXMgc3VwcG9zZWQgdG8gYmUKICB1c2VkIGFzIHRoZSBrZXku
+IElmIHdlIGV4dGVuZCB0aGUgaGRtaS1jb2RlYyBzdHVmZiBmcm9tIHNvdW5kIGFuZCBtYWtlCiAg
+aXQgYSBub3RjaCBtb3JlIGdlbmVyaWMsIHRoZW4gd2UnZCBhbHJlYWR5IGhhdmUgdGhlIGFyYml0
+ZXIgb2JqZWN0IHRvCiAgdGllcyB0aGluZ3MgdG9nZXRoZXIuCgpKdXN0IHNvbWUgdGhvdWdodHMg
+b24gdGhpcy4gQW5kIGFnYWluIG15IGFwb2xvZ2llcyBmb3IgYmVpbmcgbGF0ZSB3aXRoIG15Cmlu
+cHV0LgoKVGhhbmtzLCBEYW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvdmlkZW8vS2NvbmZpZyAgICAg
+ICAgfCAgIDMgKwo+ICBkcml2ZXJzL3ZpZGVvL01ha2VmaWxlICAgICAgIHwgICAxICsKPiAgZHJp
+dmVycy92aWRlby9ocGQtbm90aWZpZXIuYyB8IDEzNCArKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrCj4gIGluY2x1ZGUvbGludXgvaHBkLW5vdGlmaWVyLmggfCAxMDkg
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgNCBmaWxlcyBjaGFuZ2VkLCAy
+NDcgaW5zZXJ0aW9ucygrKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy92aWRlby9ocGQt
+bm90aWZpZXIuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9ocGQtbm90aWZp
+ZXIuaAo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL0tjb25maWcgYi9kcml2ZXJzL3Zp
+ZGVvL0tjb25maWcKPiBpbmRleCAzYzIwYWY5OTk4OTMuLmEzYTU4ZDg0ODFlOSAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL3ZpZGVvL0tjb25maWcKPiArKysgYi9kcml2ZXJzL3ZpZGVvL0tjb25maWcK
+PiBAQCAtMzYsNiArMzYsOSBAQCBjb25maWcgVklERU9NT0RFX0hFTFBFUlMKPiAgY29uZmlnIEhE
+TUkKPiAgCWJvb2wKPiAgCj4gK2NvbmZpZyBIUERfTk9USUZJRVIKPiArCWJvb2wKPiArCj4gIGlm
+IFZUCj4gIAlzb3VyY2UgImRyaXZlcnMvdmlkZW8vY29uc29sZS9LY29uZmlnIgo+ICBlbmRpZgo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL01ha2VmaWxlIGIvZHJpdmVycy92aWRlby9NYWtl
+ZmlsZQo+IGluZGV4IDlhZDNjMTdkNjQ1Ni4uMjY5N2FlNWM0MTY2IDEwMDY0NAo+IC0tLSBhL2Ry
+aXZlcnMvdmlkZW8vTWFrZWZpbGUKPiArKysgYi9kcml2ZXJzL3ZpZGVvL01ha2VmaWxlCj4gQEAg
+LTEsNSArMSw2IEBACj4gIG9iai0kKENPTkZJR19WR0FTVEFURSkgICAgICAgICAgICArPSB2Z2Fz
+dGF0ZS5vCj4gIG9iai0kKENPTkZJR19IRE1JKSAgICAgICAgICAgICAgICArPSBoZG1pLm8KPiAr
+b2JqLSQoQ09ORklHX0hQRF9OT1RJRklFUikgICAgICAgICs9IGhwZC1ub3RpZmllci5vCj4gIAo+
+ICBvYmotJChDT05GSUdfVlQpCQkgICs9IGNvbnNvbGUvCj4gIG9iai0kKENPTkZJR19MT0dPKQkJ
+ICArPSBsb2dvLwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2hwZC1ub3RpZmllci5jIGIv
+ZHJpdmVycy92aWRlby9ocGQtbm90aWZpZXIuYwo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5k
+ZXggMDAwMDAwMDAwMDAwLi45NzFlODIzZWFkMDAKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvZHJp
+dmVycy92aWRlby9ocGQtbm90aWZpZXIuYwo+IEBAIC0wLDAgKzEsMTM0IEBACj4gKyNpbmNsdWRl
+IDxsaW51eC9leHBvcnQuaD4KPiArI2luY2x1ZGUgPGxpbnV4L2hwZC1ub3RpZmllci5oPgo+ICsj
+aW5jbHVkZSA8bGludXgvc3RyaW5nLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+Cj4gKyNp
+bmNsdWRlIDxsaW51eC9saXN0Lmg+Cj4gKwo+ICtzdGF0aWMgTElTVF9IRUFEKGhwZF9ub3RpZmll
+cnMpOwo+ICtzdGF0aWMgREVGSU5FX01VVEVYKGhwZF9ub3RpZmllcnNfbG9jayk7Cj4gKwo+ICtz
+dHJ1Y3QgaHBkX25vdGlmaWVyICpocGRfbm90aWZpZXJfZ2V0KHN0cnVjdCBkZXZpY2UgKmRldikK
+PiArewo+ICsJc3RydWN0IGhwZF9ub3RpZmllciAqbjsKPiArCj4gKwltdXRleF9sb2NrKCZocGRf
+bm90aWZpZXJzX2xvY2spOwo+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeShuLCAmaHBkX25vdGlmaWVy
+cywgaGVhZCkgewo+ICsJCWlmIChuLT5kZXYgPT0gZGV2KSB7Cj4gKwkJCW11dGV4X3VubG9jaygm
+aHBkX25vdGlmaWVyc19sb2NrKTsKPiArCQkJa3JlZl9nZXQoJm4tPmtyZWYpOwo+ICsJCQlyZXR1
+cm4gbjsKPiArCQl9Cj4gKwl9Cj4gKwluID0ga3phbGxvYyhzaXplb2YoKm4pLCBHRlBfS0VSTkVM
+KTsKPiArCWlmICghbikKPiArCQlnb3RvIHVubG9jazsKPiArCW4tPmRldiA9IGRldjsKPiArCW11
+dGV4X2luaXQoJm4tPmxvY2spOwo+ICsJQkxPQ0tJTkdfSU5JVF9OT1RJRklFUl9IRUFEKCZuLT5u
+b3RpZmllcnMpOwo+ICsJa3JlZl9pbml0KCZuLT5rcmVmKTsKPiArCWxpc3RfYWRkX3RhaWwoJm4t
+PmhlYWQsICZocGRfbm90aWZpZXJzKTsKPiArdW5sb2NrOgo+ICsJbXV0ZXhfdW5sb2NrKCZocGRf
+bm90aWZpZXJzX2xvY2spOwo+ICsJcmV0dXJuIG47Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwo
+aHBkX25vdGlmaWVyX2dldCk7Cj4gKwo+ICtzdGF0aWMgdm9pZCBocGRfbm90aWZpZXJfcmVsZWFz
+ZShzdHJ1Y3Qga3JlZiAqa3JlZikKPiArewo+ICsJc3RydWN0IGhwZF9ub3RpZmllciAqbiA9Cj4g
+KwkJY29udGFpbmVyX29mKGtyZWYsIHN0cnVjdCBocGRfbm90aWZpZXIsIGtyZWYpOwo+ICsKPiAr
+CWxpc3RfZGVsKCZuLT5oZWFkKTsKPiArCWtmcmVlKG4tPmVkaWQpOwo+ICsJa2ZyZWUobik7Cj4g
+K30KPiArCj4gK3ZvaWQgaHBkX25vdGlmaWVyX3B1dChzdHJ1Y3QgaHBkX25vdGlmaWVyICpuKQo+
+ICt7Cj4gKwltdXRleF9sb2NrKCZocGRfbm90aWZpZXJzX2xvY2spOwo+ICsJa3JlZl9wdXQoJm4t
+PmtyZWYsIGhwZF9ub3RpZmllcl9yZWxlYXNlKTsKPiArCW11dGV4X3VubG9jaygmaHBkX25vdGlm
+aWVyc19sb2NrKTsKPiArfQo+ICtFWFBPUlRfU1lNQk9MX0dQTChocGRfbm90aWZpZXJfcHV0KTsK
+PiArCj4gK2ludCBocGRfbm90aWZpZXJfcmVnaXN0ZXIoc3RydWN0IGhwZF9ub3RpZmllciAqbiwg
+c3RydWN0IG5vdGlmaWVyX2Jsb2NrICpuYikKPiArewo+ICsJaW50IHJldCA9IGJsb2NraW5nX25v
+dGlmaWVyX2NoYWluX3JlZ2lzdGVyKCZuLT5ub3RpZmllcnMsIG5iKTsKPiArCj4gKwlpZiAocmV0
+KQo+ICsJCXJldHVybiByZXQ7Cj4gKwlrcmVmX2dldCgmbi0+a3JlZik7Cj4gKwltdXRleF9sb2Nr
+KCZuLT5sb2NrKTsKPiArCWlmIChuLT5jb25uZWN0ZWQpIHsKPiArCQlibG9ja2luZ19ub3RpZmll
+cl9jYWxsX2NoYWluKCZuLT5ub3RpZmllcnMsIEhQRF9DT05ORUNURUQsIG4pOwo+ICsJCWlmIChu
+LT5lZGlkX3NpemUpCj4gKwkJCWJsb2NraW5nX25vdGlmaWVyX2NhbGxfY2hhaW4oJm4tPm5vdGlm
+aWVycywgSFBEX05FV19FRElELCBuKTsKPiArCQlpZiAobi0+aGFzX2VsZCkKPiArCQkJYmxvY2tp
+bmdfbm90aWZpZXJfY2FsbF9jaGFpbigmbi0+bm90aWZpZXJzLCBIUERfTkVXX0VMRCwgbik7Cj4g
+Kwl9Cj4gKwltdXRleF91bmxvY2soJm4tPmxvY2spOwo+ICsJcmV0dXJuIDA7Cj4gK30KPiArRVhQ
+T1JUX1NZTUJPTF9HUEwoaHBkX25vdGlmaWVyX3JlZ2lzdGVyKTsKPiArCj4gK2ludCBocGRfbm90
+aWZpZXJfdW5yZWdpc3RlcihzdHJ1Y3QgaHBkX25vdGlmaWVyICpuLCBzdHJ1Y3Qgbm90aWZpZXJf
+YmxvY2sgKm5iKQo+ICt7Cj4gKwlpbnQgcmV0ID0gYmxvY2tpbmdfbm90aWZpZXJfY2hhaW5fdW5y
+ZWdpc3Rlcigmbi0+bm90aWZpZXJzLCBuYik7Cj4gKwo+ICsJaWYgKHJldCA9PSAwKQo+ICsJCWhw
+ZF9ub3RpZmllcl9wdXQobik7Cj4gKwlyZXR1cm4gcmV0Owo+ICt9Cj4gK0VYUE9SVF9TWU1CT0xf
+R1BMKGhwZF9ub3RpZmllcl91bnJlZ2lzdGVyKTsKPiArCj4gK3ZvaWQgaHBkX2V2ZW50X2Nvbm5l
+Y3Qoc3RydWN0IGhwZF9ub3RpZmllciAqbikKPiArewo+ICsJbXV0ZXhfbG9jaygmbi0+bG9jayk7
+Cj4gKwluLT5jb25uZWN0ZWQgPSB0cnVlOwo+ICsJYmxvY2tpbmdfbm90aWZpZXJfY2FsbF9jaGFp
+bigmbi0+bm90aWZpZXJzLCBIUERfQ09OTkVDVEVELCBuKTsKPiArCW11dGV4X3VubG9jaygmbi0+
+bG9jayk7Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwoaHBkX2V2ZW50X2Nvbm5lY3QpOwo+ICsK
+PiArdm9pZCBocGRfZXZlbnRfZGlzY29ubmVjdChzdHJ1Y3QgaHBkX25vdGlmaWVyICpuKQo+ICt7
+Cj4gKwltdXRleF9sb2NrKCZuLT5sb2NrKTsKPiArCW4tPmNvbm5lY3RlZCA9IGZhbHNlOwo+ICsJ
+bi0+aGFzX2VsZCA9IGZhbHNlOwo+ICsJbi0+ZWRpZF9zaXplID0gMDsKPiArCWJsb2NraW5nX25v
+dGlmaWVyX2NhbGxfY2hhaW4oJm4tPm5vdGlmaWVycywgSFBEX0RJU0NPTk5FQ1RFRCwgbik7Cj4g
+KwltdXRleF91bmxvY2soJm4tPmxvY2spOwo+ICt9Cj4gK0VYUE9SVF9TWU1CT0xfR1BMKGhwZF9l
+dmVudF9kaXNjb25uZWN0KTsKPiArCj4gK2ludCBocGRfZXZlbnRfbmV3X2VkaWQoc3RydWN0IGhw
+ZF9ub3RpZmllciAqbiwgY29uc3Qgdm9pZCAqZWRpZCwgc2l6ZV90IHNpemUpCj4gK3sKPiArCW11
+dGV4X2xvY2soJm4tPmxvY2spOwo+ICsJaWYgKG4tPmVkaWRfYWxsb2NhdGVkX3NpemUgPCBzaXpl
+KSB7Cj4gKwkJdm9pZCAqcCA9IGttYWxsb2Moc2l6ZSwgR0ZQX0tFUk5FTCk7Cj4gKwo+ICsJCWlm
+IChwID09IE5VTEwpIHsKPiArCQkJbXV0ZXhfdW5sb2NrKCZuLT5sb2NrKTsKPiArCQkJcmV0dXJu
+IC1FTk9NRU07Cj4gKwkJfQo+ICsJCWtmcmVlKG4tPmVkaWQpOwo+ICsJCW4tPmVkaWQgPSBwOwo+
+ICsJCW4tPmVkaWRfYWxsb2NhdGVkX3NpemUgPSBzaXplOwo+ICsJfQo+ICsJbWVtY3B5KG4tPmVk
+aWQsIGVkaWQsIHNpemUpOwo+ICsJbi0+ZWRpZF9zaXplID0gc2l6ZTsKPiArCWJsb2NraW5nX25v
+dGlmaWVyX2NhbGxfY2hhaW4oJm4tPm5vdGlmaWVycywgSFBEX05FV19FRElELCBuKTsKPiArCW11
+dGV4X3VubG9jaygmbi0+bG9jayk7Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICtFWFBPUlRfU1lNQk9M
+X0dQTChocGRfZXZlbnRfbmV3X2VkaWQpOwo+ICsKPiArdm9pZCBocGRfZXZlbnRfbmV3X2VsZChz
+dHJ1Y3QgaHBkX25vdGlmaWVyICpuLCBjb25zdCB1OCBlbGRbMTI4XSkKPiArewo+ICsJbXV0ZXhf
+bG9jaygmbi0+bG9jayk7Cj4gKwltZW1jcHkobi0+ZWxkLCBlbGQsIHNpemVvZihuLT5lbGQpKTsK
+PiArCW4tPmhhc19lbGQgPSB0cnVlOwo+ICsJYmxvY2tpbmdfbm90aWZpZXJfY2FsbF9jaGFpbigm
+bi0+bm90aWZpZXJzLCBIUERfTkVXX0VMRCwgbik7Cj4gKwltdXRleF91bmxvY2soJm4tPmxvY2sp
+Owo+ICt9Cj4gK0VYUE9SVF9TWU1CT0xfR1BMKGhwZF9ldmVudF9uZXdfZWxkKTsKPiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9ocGQtbm90aWZpZXIuaCBiL2luY2x1ZGUvbGludXgvaHBkLW5v
+dGlmaWVyLmgKPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAwMDAwMC4uNGRj
+YjQ1MTVkMmIyCj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL2luY2x1ZGUvbGludXgvaHBkLW5vdGlm
+aWVyLmgKPiBAQCAtMCwwICsxLDEwOSBAQAo+ICsvKgo+ICsgKiBocGQtbm90aWZpZXIuaCAtIG5v
+dGlmeSBpbnRlcmVzdGVkIHBhcnRpZXMgb2YgKGRpcyljb25uZWN0IGFuZCBFRElECj4gKyAqIGV2
+ZW50cwo+ICsgKgo+ICsgKiBDb3B5cmlnaHQgMjAxNiBSdXNzZWxsIEtpbmcgPHJtaytrZXJuZWxA
+YXJtLmxpbnV4Lm9yZy51az4KPiArICogQ29weXJpZ2h0IDIwMTYgQ2lzY28gU3lzdGVtcywgSW5j
+LiBhbmQvb3IgaXRzIGFmZmlsaWF0ZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQuCj4gKyAqLwo+ICsK
+PiArI2lmbmRlZiBMSU5VWF9IUERfTk9USUZJRVJfSAo+ICsjZGVmaW5lIExJTlVYX0hQRF9OT1RJ
+RklFUl9ICj4gKwo+ICsjaW5jbHVkZSA8bGludXgvdHlwZXMuaD4KPiArI2luY2x1ZGUgPGxpbnV4
+L25vdGlmaWVyLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9rcmVmLmg+Cj4gKwo+ICtlbnVtIHsKPiAr
+CUhQRF9DT05ORUNURUQsCj4gKwlIUERfRElTQ09OTkVDVEVELAo+ICsJSFBEX05FV19FRElELAo+
+ICsJSFBEX05FV19FTEQsCj4gK307Cj4gKwo+ICtzdHJ1Y3QgZGV2aWNlOwo+ICsKPiArc3RydWN0
+IGhwZF9ub3RpZmllciB7Cj4gKwlzdHJ1Y3QgbXV0ZXggbG9jazsKPiArCXN0cnVjdCBsaXN0X2hl
+YWQgaGVhZDsKPiArCXN0cnVjdCBrcmVmIGtyZWY7Cj4gKwlzdHJ1Y3QgYmxvY2tpbmdfbm90aWZp
+ZXJfaGVhZCBub3RpZmllcnM7Cj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXY7Cj4gKwo+ICsJLyogQ3Vy
+cmVudCBzdGF0ZSAqLwo+ICsJYm9vbCBjb25uZWN0ZWQ7Cj4gKwlib29sIGhhc19lbGQ7Cj4gKwl1
+bnNpZ25lZCBjaGFyIGVsZFsxMjhdOwo+ICsJdm9pZCAqZWRpZDsKPiArCXNpemVfdCBlZGlkX3Np
+emU7Cj4gKwlzaXplX3QgZWRpZF9hbGxvY2F0ZWRfc2l6ZTsKPiArfTsKPiArCj4gKy8qKgo+ICsg
+KiBocGRfbm90aWZpZXJfZ2V0IC0gZmluZCBvciBjcmVhdGUgYSBuZXcgaHBkX25vdGlmaWVyIGZv
+ciB0aGUgZ2l2ZW4gZGV2aWNlLgo+ICsgKiBAZGV2OiBkZXZpY2UgdGhhdCBzZW5kcyB0aGUgZXZl
+bnRzLgo+ICsgKgo+ICsgKiBJZiBhIG5vdGlmaWVyIGZvciBkZXZpY2UgQGRldiBhbHJlYWR5IGV4
+aXN0cywgdGhlbiBpbmNyZWFzZSB0aGUgcmVmY291bnQKPiArICogYW5kIHJldHVybiB0aGF0IG5v
+dGlmaWVyLgo+ICsgKgo+ICsgKiBJZiBpdCBkb2Vzbid0IGV4aXN0LCB0aGVuIGFsbG9jYXRlIGEg
+bmV3IG5vdGlmaWVyIHN0cnVjdCBhbmQgcmV0dXJuIGEKPiArICogcG9pbnRlciB0byB0aGF0IG5l
+dyBzdHJ1Y3QuCj4gKyAqCj4gKyAqIFJldHVybiBOVUxMIGlmIHRoZSBtZW1vcnkgY291bGQgbm90
+IGJlIGFsbG9jYXRlZC4KPiArICovCj4gK3N0cnVjdCBocGRfbm90aWZpZXIgKmhwZF9ub3RpZmll
+cl9nZXQoc3RydWN0IGRldmljZSAqZGV2KTsKPiArCj4gKy8qKgo+ICsgKiBocGRfbm90aWZpZXJf
+cHV0IC0gZGVjcmVhc2UgcmVmY291bnQgYW5kIGRlbGV0ZSB3aGVuIHRoZSByZWZjb3VudCByZWFj
+aGVzIDAuCj4gKyAqIEBuOiBub3RpZmllcgo+ICsgKi8KPiArdm9pZCBocGRfbm90aWZpZXJfcHV0
+KHN0cnVjdCBocGRfbm90aWZpZXIgKm4pOwo+ICsKPiArLyoqCj4gKyAqIGhwZF9ub3RpZmllcl9y
+ZWdpc3RlciAtIHJlZ2lzdGVyIHRoZSBub3RpZmllciB3aXRoIHRoZSBub3RpZmllcl9ibG9jay4K
+PiArICogQG46IHRoZSBIUEQgbm90aWZpZXIKPiArICogQG5iOiB0aGUgbm90aWZpZXJfYmxvY2sK
+PiArICovCj4gK2ludCBocGRfbm90aWZpZXJfcmVnaXN0ZXIoc3RydWN0IGhwZF9ub3RpZmllciAq
+biwgc3RydWN0IG5vdGlmaWVyX2Jsb2NrICpuYik7Cj4gKwo+ICsvKioKPiArICogaHBkX25vdGlm
+aWVyX3VucmVnaXN0ZXIgLSB1bnJlZ2lzdGVyIHRoZSBub3RpZmllciB3aXRoIHRoZSBub3RpZmll
+cl9ibG9jay4KPiArICogQG46IHRoZSBIUEQgbm90aWZpZXIKPiArICogQG5iOiB0aGUgbm90aWZp
+ZXJfYmxvY2sKPiArICovCj4gK2ludCBocGRfbm90aWZpZXJfdW5yZWdpc3RlcihzdHJ1Y3QgaHBk
+X25vdGlmaWVyICpuLCBzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sgKm5iKTsKPiArCj4gKy8qKgo+ICsg
+KiBocGRfZXZlbnRfY29ubmVjdCAtIHNlbmQgYSBjb25uZWN0IGV2ZW50Lgo+ICsgKiBAbjogdGhl
+IEhQRCBub3RpZmllcgo+ICsgKgo+ICsgKiBTZW5kIGFuIEhQRF9DT05ORUNURUQgZXZlbnQgdG8g
+YW55IHJlZ2lzdGVyZWQgcGFydGllcy4KPiArICovCj4gK3ZvaWQgaHBkX2V2ZW50X2Nvbm5lY3Qo
+c3RydWN0IGhwZF9ub3RpZmllciAqbik7Cj4gKwo+ICsvKioKPiArICogaHBkX2V2ZW50X2Rpc2Nv
+bm5lY3QgLSBzZW5kIGEgZGlzY29ubmVjdCBldmVudC4KPiArICogQG46IHRoZSBIUEQgbm90aWZp
+ZXIKPiArICoKPiArICogU2VuZCBhbiBIUERfRElTQ09OTkVDVEVEIGV2ZW50IHRvIGFueSByZWdp
+c3RlcmVkIHBhcnRpZXMuCj4gKyAqLwo+ICt2b2lkIGhwZF9ldmVudF9kaXNjb25uZWN0KHN0cnVj
+dCBocGRfbm90aWZpZXIgKm4pOwo+ICsKPiArLyoqCj4gKyAqIGhwZF9ldmVudF9uZXdfZWRpZCAt
+IHNlbmQgYSBuZXcgRURJRCBldmVudC4KPiArICogQG46IHRoZSBIUEQgbm90aWZpZXIKPiArICoK
+PiArICogU2VuZCBhbiBIUERfTkVXX0VESUQgZXZlbnQgdG8gYW55IHJlZ2lzdGVyZWQgcGFydGll
+cy4KPiArICogVGhpcyBmdW5jdGlvbiB3aWxsIG1ha2UgYSBjb3B5IHRoZSBFRElEIHNvIGl0IGNh
+biByZXR1cm4gLUVOT01FTSBpZgo+ICsgKiBubyBtZW1vcnkgY291bGQgYmUgYWxsb2NhdGVkLgo+
+ICsgKi8KPiAraW50IGhwZF9ldmVudF9uZXdfZWRpZChzdHJ1Y3QgaHBkX25vdGlmaWVyICpuLCBj
+b25zdCB2b2lkICplZGlkLCBzaXplX3Qgc2l6ZSk7Cj4gKwo+ICsvKioKPiArICogaHBkX2V2ZW50
+X25ld19lbGQgLSBzZW5kIGEgbmV3IEVMRCBldmVudC4KPiArICogQG46IHRoZSBIUEQgbm90aWZp
+ZXIKPiArICoKPiArICogU2VuZCBhbiBIUERfTkVXX0VMRCBldmVudCB0byBhbnkgcmVnaXN0ZXJl
+ZCBwYXJ0aWVzLgo+ICsgKi8KPiArdm9pZCBocGRfZXZlbnRfbmV3X2VsZChzdHJ1Y3QgaHBkX25v
+dGlmaWVyICpuLCBjb25zdCB1OCBlbGRbMTI4XSk7Cj4gKwo+ICsjZW5kaWYKPiAtLSAKPiAyLjEx
+LjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+
+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
+bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
