@@ -1,58 +1,115 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
-Date: Mon, 27 Feb 2017 11:13:59 +0900
-Message-ID: <CA+Ln22FJ=Kg_HmfjhDst4fNeUoA8jh=QVsF-rUVeXgPrzunJ+w@mail.gmail.com>
-References: <20170223172313.GF2742@localhost.localdomain> <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/2] media: s5p-mfc: convert drivers to use the new
+ vb2_queue dev field
+Date: Mon, 27 Feb 2017 08:39:16 +0530
+Message-ID: <63c351de-6b2f-3d32-ccbd-898e4443a4bf@samsung.com>
+References: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
+ <1481888915-19624-2-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20170224192311epcas1p34370fb737bd0d30e592431809d0dc540@epcas1p3.samsung.com>
+ <a4db0512-8a5b-aaea-713b-5e3c09c3e8c2@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:35855 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751487AbdB0DGl (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 26 Feb 2017 22:06:41 -0500
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0OM001A1AJAP7WA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Feb 2017 12:06:25 +0900 (KST)
+In-reply-to: <a4db0512-8a5b-aaea-713b-5e3c09c3e8c2@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, Smitha T Murthy <smitha.t@samsung.com>
 
-Hi Charles,
+Hello Javier,
 
-2017-02-24 2:54 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
-> As the pinctrl is now added before the GPIOs are registered we need to
-> manually calculate what the GPIO base will be, otherwise the base for
-> each gpio_range will be set to zero. Fortunately the driver
-> already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-> same calculation it does for the pin_base. Meaning the two will always
-> be the same and allowing us to reuse the pinbase and avoid the issue.
+On Saturday 25 February 2017 12:52 AM, Javier Martinez Canillas wrote:
+> Hello Pankaj,
+> 
+> On 12/16/2016 08:48 AM, Pankaj Dubey wrote:
+>> From: Smitha T Murthy <smitha.t@samsung.com>
+>>
+>> commit 2548fee63d9e ("[media] media/platform: convert drivers to use the new
+>> vb2_queue dev field") has missed to set dev pointer of vb2_queue which will be
+>> used in reqbufs of mfc driver. Without this change following error is observed:
+>>
+>> ---------------------------------------------------------------
+>> V4L2 Codec decoding example application
+>> Kamil Debski <k.debski@samsung.com>
+>> Copyright 2012 Samsung Electronics Co., Ltd.
+>>
+>> Opening MFC.
+>> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
+>> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
+>> 42.339165] Remapping memory failed, error: -6
+>>
+>> MFC Open Success.
+>> (main.c:main:711): Successfully opened all necessary files and devices
+>> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
+>> size=4194304 (requested=4194304)
+>> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
+>> (requested 2)
+>>
+>> [App] Out buf phy : 0x00000000, virt : 0xffffffff
+>> Output Length is = 0x300000
+>> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
+>> -------------------------------------------------------
+>>
+> 
+> On which kernel version did you face this issue?
+> 
 
-Please see my comment inline.
+We observed this issue, on Linux 4.9 kernel while doing some experiment
+for using reserved-memory for MFC on Exynos7880 based development board.
 
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->
-> Ok I might have spoken to soon there looks like there is a simple
-> way to fix this up, at least in this case. It would be much more
-> of an issue if the driver allocated its GPIO base dynamically.
->
-> Thanks,
-> Charles
->
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index ddc8d6b..864d8b4d 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
->                 pin_bank->grange.id = bank;
->                 pin_bank->grange.pin_base = drvdata->pin_base
->                                                 + pin_bank->pin_base;
-> -               pin_bank->grange.base = pin_bank->gpio_chip.base;
-> +               pin_bank->grange.base = pin_bank->grange.pin_base;
+Anyways FYI, This patch is series is superseded by patch [1] after
+review comments and suggestion from Marek. Patch [1] has been accepted
+and merged and working well for us.
 
-If we are not reading the base from the GPIO bank anymore, maybe it
-could make sense to actually make samsung_gpiolib_register() use
-bank->grange.base as gc->base? This way we would avoid explicitly
-numbering two times.
+[1]: https://patchwork.kernel.org/patch/9482499/
 
-Best regards,
-Tomasz
+Thanks,
+Pankaj Dubey
+
+>> Signed-off-by: Smitha T Murthy <smitha.t@samsung.com>
+>> [pankaj.dubey: debugging issue and formatting commit message]
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>  drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> index 0a5b8f5..6ea8246 100644
+>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> @@ -838,6 +838,7 @@ static int s5p_mfc_open(struct file *file)
+>>  	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+>>  	q->drv_priv = &ctx->fh;
+>>  	q->lock = &dev->mfc_mutex;
+>> +	q->dev = &dev->plat_dev->dev;
+>>  	if (vdev == dev->vfd_dec) {
+>>  		q->io_modes = VB2_MMAP;
+>>  		q->ops = get_dec_queue_ops();
+>> @@ -861,6 +862,7 @@ static int s5p_mfc_open(struct file *file)
+>>  	q->io_modes = VB2_MMAP;
+>>  	q->drv_priv = &ctx->fh;
+>>  	q->lock = &dev->mfc_mutex;
+>> +	q->dev = &dev->plat_dev->dev;
+>>  	if (vdev == dev->vfd_dec) {
+>>  		q->io_modes = VB2_MMAP;
+>>  		q->ops = get_dec_queue_ops();
+>>
+> 
+> Please correct me if I'm wrong, but AFAIU this shouldn't be needed in
+> the s5p-mfc driver since the videobuf2 core either uses the vb2_queue
+> .dev field or the vb2_queue .alloc_devs. And the latter is set in the
+> s5p_mfc_queue_setup() function, so the .dev field shouldn't be used.
+> 
+> Best regards,
+> 
