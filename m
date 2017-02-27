@@ -1,61 +1,58 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3] serial: samsung: Continue to work if DMA request fails
-Date: Sat, 25 Feb 2017 18:36:44 +0200
-Message-ID: <20170225163644.439-1-krzk@kernel.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
+Date: Mon, 27 Feb 2017 11:13:59 +0900
+Message-ID: <CA+Ln22FJ=Kg_HmfjhDst4fNeUoA8jh=QVsF-rUVeXgPrzunJ+w@mail.gmail.com>
+References: <20170223172313.GF2742@localhost.localdomain> <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-If DMA is not available (even when configured in DeviceTree), the driver
-will fail the startup procedure thus making serial console not
-available.
+Hi Charles,
 
-For example this causes boot failure on QEMU ARMv7 (Exynos4210, SMDKC210):
-    [    1.302575] OF: amba_device_add() failed (-19) for /amba/pdma@12680000
-    ...
-    [   11.435732] samsung-uart 13800000.serial: DMA request failed
-    [   72.963893] samsung-uart 13800000.serial: DMA request failed
-    [   73.143361] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000000
+2017-02-24 2:54 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
+> As the pinctrl is now added before the GPIOs are registered we need to
+> manually calculate what the GPIO base will be, otherwise the base for
+> each gpio_range will be set to zero. Fortunately the driver
+> already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+> same calculation it does for the pin_base. Meaning the two will always
+> be the same and allowing us to reuse the pinbase and avoid the issue.
 
-DMA is not necessary for serial to work, so continue with UART startup
-after emitting a warning.
+Please see my comment inline.
 
-Fixes: 62c37eedb74c ("serial: samsung: add dma reqest/release functions")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+>
+> Ok I might have spoken to soon there looks like there is a simple
+> way to fix this up, at least in this case. It would be much more
+> of an issue if the driver allocated its GPIO base dynamically.
+>
+> Thanks,
+> Charles
+>
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index ddc8d6b..864d8b4d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+>                 pin_bank->grange.id = bank;
+>                 pin_bank->grange.pin_base = drvdata->pin_base
+>                                                 + pin_bank->pin_base;
+> -               pin_bank->grange.base = pin_bank->gpio_chip.base;
+> +               pin_bank->grange.base = pin_bank->grange.pin_base;
 
----
+If we are not reading the base from the GPIO bank anymore, maybe it
+could make sense to actually make samsung_gpiolib_register() use
+bank->grange.base as gc->base? This way we would avoid explicitly
+numbering two times.
 
-Changes since v2:
-1. Fix patch corruption around NULL assignment (pointed by Tobias).
-
-Changes since v1:
-1. Fix tag "Fixes"
----
- drivers/tty/serial/samsung.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index b4f86c219db1..7a17aedbf902 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1031,8 +1031,10 @@ static int s3c64xx_serial_startup(struct uart_port *port)
- 	if (ourport->dma) {
- 		ret = s3c24xx_serial_request_dma(ourport);
- 		if (ret < 0) {
--			dev_warn(port->dev, "DMA request failed\n");
--			return ret;
-+			dev_warn(port->dev,
-+				 "DMA request failed, DMA will not be used\n");
-+			devm_kfree(port->dev, ourport->dma);
-+			ourport->dma = NULL;
- 		}
- 	}
- 
--- 
-2.9.3
+Best regards,
+Tomasz
