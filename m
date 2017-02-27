@@ -1,80 +1,49 @@
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 2/2] media: s5p-mfc: fix MMAP of mfc buffer during reqbufs
-Date: Mon, 27 Feb 2017 08:47:18 +0530
-Message-ID: <384899ef-4e7e-d7f5-8f4f-ef2f023cb681@samsung.com>
-References: <1481888915-19624-1-git-send-email-pankaj.dubey@samsung.com>
- <1481888915-19624-3-git-send-email-pankaj.dubey@samsung.com>
- <CGME20170224194302epcas2p2edea64bf7b2fc89ee97b6f5391b2dad0@epcas2p2.samsung.com>
- <81c11e69-b7eb-ccb5-a377-2848ec551274@osg.samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 5/7] watchdog: s3c2410: Constify local structures
+Date: Sun, 26 Feb 2017 20:06:20 -0800
+Message-ID: <85c5bfa6-8c6c-d438-143f-f11d872776fc@roeck-us.net>
+References: <20170224210746.12459-1-krzk@kernel.org>
+ <20170224210746.12459-5-krzk@kernel.org>
+ <7100fd29-a21d-25c0-b989-644e1358b34b@roeck-us.net>
+ <20170225074237.txpetwb6e5p4bqyt@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <81c11e69-b7eb-ccb5-a377-2848ec551274@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, jtp.park@samsung.com, mchehab@kernel.org, mchehab@osg.samsung.com, hans.verkuil@cisco.com, krzk@kernel.org, kgene@kernel.org, Smitha T Murthy <smitha.t@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170225074237.txpetwb6e5p4bqyt@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Javier,
-
-On Saturday 25 February 2017 01:12 AM, Javier Martinez Canillas wrote:
-> Hello Pankaj,
-> 
-> On 12/16/2016 08:48 AM, Pankaj Dubey wrote:
->> From: Smitha T Murthy <smitha.t@samsung.com>
+On 02/24/2017 11:42 PM, Krzysztof Kozlowski wrote:
+> On Fri, Feb 24, 2017 at 02:05:56PM -0800, Guenter Roeck wrote:
+>> On 02/24/2017 01:07 PM, Krzysztof Kozlowski wrote:
+>>> Structures watchdog_device, watchdog_ops and s3c2410_wdt_variant are not
+>>> modified so they can be made const to increase code safeness.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 >>
->> It has been observed on ARM64 based Exynos SoC, if IOMMU is not enabled
->> and we try to use reserved memory for MFC, reqbufs fails with below
->> mentioned error
->> ---------------------------------------------------------------------------
->> V4L2 Codec decoding example application
->> Kamil Debski <k.debski@samsung.com>
->> Copyright 2012 Samsung Electronics Co., Ltd.
->>
->> Opening MFC.
->> (mfc.c:mfc_open:58): MFC Info (/dev/video0): driver="s5p-mfc" \
->> bus_info="platform:12c30000.mfc0" card="s5p-mfc-dec" fd=0x4[
->> 42.339165] Remapping memory failed, error: -6
->>
->> MFC Open Success.
->> (main.c:main:711): Successfully opened all necessary files and devices
->> (mfc.c:mfc_dec_setup_output:103): Setup MFC decoding OUTPUT buffer \
->> size=4194304 (requested=4194304)
->> (mfc.c:mfc_dec_setup_output:120): Number of MFC OUTPUT buffers is 2 \
->> (requested 2)
->>
->> [App] Out buf phy : 0x00000000, virt : 0xffffffff
->> Output Length is = 0x300000
->> Error (mfc.c:mfc_dec_setup_output:145): Failed to MMAP MFC OUTPUT buffer
->> -------------------------------------------------------------------------
->> This is because the device requesting for memory is mfc0.left not the parent mfc0.
->> Hence setting of alloc_devs need to be done only if IOMMU is enabled
->> and in that case both the left and right device is treated as mfc0 only.
->>
-> 
-> I see, so likely you were facing the issue described in patch 1/2 after this
-> patch since the driver doesn't set alloc_devs when IOMMU is disabled, right?
-> 
+>> Conflicts with "watchdog: constify watchdog_ops structures" in my tree.
+>> I rebased my tree to v4.10 (which I should not really have done ;-), but
+>> it still doesn't apply due to "fatal: sha1 information is lacking or useless"
+>> and "error: could not build fake ancestor". The subsequent patches also don't
+>> apply. You may have to wait until after -rc1, rebase your patches, and
+>> resubmit.
+>
+> Sure, I'll resend after merge window. These aren't important fixes so
+> there is no problem in waiting for merge window to end.
+>
 
-Yes.
-
-> In any case, I guess these patches have been superseded by Marek's series[0]
-> so they are no longer needed?
-> 
-
-Yes, these patches have been superseded but now by Marek's series.
-I missed to check Marek's series [0] due to some official assignment,
-but we followed up our patch series with Marek, and fix was provided in
-of_reserved_mem.c via patch [1] which has been accepted and merged as
-well. I will try to find out some time and test Marek's patch series [0].
-
-[1]: https://patchwork.kernel.org/patch/9482499/
+Watchdog patches are in, so please feel free to resubmit at your convenience.
 
 Thanks,
-Pankaj Dubey
-
-> [0]: https://www.spinics.net/lists/linux-media/msg111156.html
-> 
-> Best regards,
-> 
+Guenter
