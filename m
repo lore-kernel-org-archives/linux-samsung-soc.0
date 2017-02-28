@@ -1,64 +1,87 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH v2] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
-Date: Tue, 28 Feb 2017 17:04:35 +0000
-Message-ID: <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <20170228090143.GG2742@localhost.localdomain>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm: exynos increase CONFIG_CMA_SIZE_MBYTES to 96
+Date: Tue, 28 Feb 2017 19:19:25 +0200
+Message-ID: <20170228171925.wwr66u4k4vdqg27z@kozik-lap>
+References: <20170228002353.3101-1-shuahkh@osg.samsung.com>
+ <28dfa72b-13f5-2674-92de-d5a264a89e1a@osg.samsung.com>
+ <82fe7b00-b1bc-cd32-8ff1-a079adfd8607@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:54388 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751135AbdB1RGQ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Feb 2017 12:06:16 -0500
-In-Reply-To: <20170228090143.GG2742@localhost.localdomain>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <82fe7b00-b1bc-cd32-8ff1-a079adfd8607@osg.samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, viresh.kumar@linaro.org, rafael.j.wysocki@intel.com, robie@justgohome.co.uk, linux@armlinux.org.uk, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, a.hajda@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>, b.zolnierkie@samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linus.walleij@linaro.org, krzk@kernel.org
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-As the pinctrl is now added before the GPIOs are registered we need to
-manually calculate what the GPIO base will be, otherwise the base for
-each gpio_range will be set to zero. Fortunately the driver
-already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-same calculation it does for the pin_base. Meaning the two will always
-be the same and allowing us to reuse the pinbase and avoid the issue.
+On Tue, Feb 28, 2017 at 09:52:33AM -0700, Shuah Khan wrote:
+> On 02/28/2017 09:42 AM, Javier Martinez Canillas wrote:
+> > Hello Shuah,
+> > 
+> > The subject line isn't consistent with what's used for exynos_defconfig
+> > changes, please use instead:
+> > 
+> > ARM: exynos_defconfig: Increase CONFIG_CMA_SIZE_MBYTES to 96
+> > 
+> 
+> oops - I meant o make it exynos_defconfig
+> 
+> > On 02/27/2017 09:23 PM, Shuah Khan wrote:
+> >> Current CMA size of 64 Mbytes is right on the edge of being too small
+> >> for some display managers.  With the proposed s5p_mfc patch series that
+> >> pre-allocate buffers, when display manager starts, it fails to get GEM
+> >> buffers.  Increasing the CMA size to 96 solves the problem.
+> >>
+> >> Change CONFIG_CMA_SIZE_MBYTES to 96 in exynos_defconfig to address the
+> >> problem.
+> >>
+> > 
+> > As you mention, the problem is when a driver pre-allocates a lot of CMA
+> > memory. So instead of mentioning an in-flight patch series, I would make
+> > the commit message more generic. Something along the following lines:
+> 
+> I thought about making it generic and decided to mention the problem I am
+> seeing, so there is a context to it. Without this patch, some display
+> managers will see regression.
+> 
+> > 
+> > Current CMA size is 64 Mbytes, but this may not be enough if different
+> > drivers need to allocate big memory chunks.
+> > 
+> > For example, the s5p-mfc driver may need to do a pre-allocation of N MiB
+> > to decode a H.264 1080p video, and there won't be enough CMA memory left
+> > for others drivers, like the exynos-drm driver that may need to allocate
+> > GEM buffers for the display manager.
+> > 
+> > Increasing the CMA size to 96 MiB should be enough for most use cases.
+> 
+> I will add the current problem to throw away section of the patch for more
+> information.
+> 
+> > 
+> >> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> >> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> > 
+> > Patch looks good to me though.
+> > 
+> > Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> thanks for the review. I will send v2 with your reviewed by tag
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
-
-Changes since v1:
- - Use grange.base in samsung_gpiolib_register to make it more
-   clear the two are related in the driver.
-
-Thanks,
-Charles
+While at it, please put Suggested-by before Sob tag (let's say
+chronological order).
 
 
- drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ddc8d6b..27d5157 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
- 		pin_bank->grange.id = bank;
- 		pin_bank->grange.pin_base = drvdata->pin_base
- 						+ pin_bank->pin_base;
--		pin_bank->grange.base = pin_bank->gpio_chip.base;
-+		pin_bank->grange.base = pin_bank->grange.pin_base;
- 		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
- 		pin_bank->grange.gc = &pin_bank->gpio_chip;
- 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
-@@ -928,7 +928,7 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
- 		bank->gpio_chip = samsung_gpiolib_chip;
- 
- 		gc = &bank->gpio_chip;
--		gc->base = drvdata->pin_base + bank->pin_base;
-+		gc->base = bank->grange.base;
- 		gc->ngpio = bank->nr_pins;
- 		gc->parent = &pdev->dev;
- 		gc->of_node = bank->of_node;
--- 
-2.1.4
+Best regards,
+Krzysztof
