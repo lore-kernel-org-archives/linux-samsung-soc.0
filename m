@@ -1,109 +1,52 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH V3] ARM: dts: exynos5440: support the phy-pcie node for pcie
-Date: Tue, 28 Feb 2017 16:00:26 +0900
-Message-ID: <20170228070026.8725-1-jh80.chung@samsung.com>
-References: <CGME20170228070028epcas1p1dba363a5f02d2a6fd412679190f17139@epcas1p1.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:46417 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbdB1HB0 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Feb 2017 02:01:26 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [RESEND PATCH v2 4/5] arm: dts: Remove the OF graph from DSI node for
+ exynos4412 dts
+Date: Tue, 28 Feb 2017 17:17:58 +0900
+Message-ID: <1488269879-28876-5-git-send-email-hoegeun.kwon@samsung.com>
+References: <1488269879-28876-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170228081812epcas5p3d20eddc91da42ec4a0d973ddc59d184a@epcas5p3.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1488269879-28876-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, krzk@kernel.org, kgene@kernel.org, robh+dt@kernel.org, javier@osg.samsung.com, niyas.ahmed@samsung.com, alim.akhtar@samsung.com, pankaj.dubey@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 
-Add pcie-phy node for using phy-exynos-pcie.
-
-There are some modifications.
-1. Remove the configuration space values in "ranges" property.
-- The getting configuration space from ranges is old way.
-- Instead, It can be got from "config"
-
-2. Use the reg-names as "elbi", "config".
-- Can know the purpose of use with reg-names.
-
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-Changelog on V3:
-- Split from the patches relevant to pcie
-- Modify the commit-message
-- Keep the original comment in dt-file
-- Send this patch after applying the other patches
-
-Changelog on V2:
-- Removes the child-node
-- Fixes the typo
-- Removes the unnecessary comments
-
- arch/arm/boot/dts/exynos5440.dtsi | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 2a2e570..a7165b5 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -290,11 +290,22 @@
- 		clock-names = "usbhost";
- 	};
- 
-+	pcie_phy0: pcie-phy@270000 {
-+		#phy-cells = <0>;
-+		compatible = "samsung,exynos5440-pcie-phy";
-+		reg = <0x270000 0x1000>, <0x271000 0x40>;
-+	};
-+
-+	pcie_phy1: pcie-phy@272000 {
-+		#phy-cells = <0>;
-+		compatible = "samsung,exynos5440-pcie-phy";
-+		reg = <0x272000 0x1000>, <0x271040 0x40>;
-+	};
-+
- 	pcie_0: pcie@290000 {
- 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
--		reg = <0x290000 0x1000
--			0x270000 0x1000
--			0x271000 0x40>;
-+		reg = <0x290000 0x1000>, <0x40000000 0x1000>;
-+		reg-names = "elbi", "config";
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-@@ -303,8 +314,8 @@
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
--		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
--			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
-+		phys = <&pcie_phy0>;
-+		ranges = <0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
- 			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
-@@ -315,9 +326,8 @@
- 
- 	pcie_1: pcie@2a0000 {
- 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
--		reg = <0x2a0000 0x1000
--			0x272000 0x1000
--			0x271040 0x40>;
-+		reg = <0x2a0000 0x1000>, <0x60000000 0x1000>;
-+		reg-names = "elbi", "config";
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-@@ -326,8 +336,8 @@
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
--		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
--			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
-+		phys = <&pcie_phy1>;
-+		ranges = <0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
- 			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
--- 
-2.10.2
+VGhlIE9GIGdyYXBoIGlzIG5vdCBuZWVkZWQgYmVjYXVzZSB0aGUgcGFuZWwgaXMgYSBjaGlsZCBv
+ZiBkc2kuIFNvClJlbW92ZSB0aGUgcG9ydHMgbm9kZSBhbmQgbW92ZSBidXJzdCBhbmQgZXNjIGNs
+b2NrIGZyZXF1ZW5jeQpwcm9wZXJ0aWVzIHRvIHRoZSBwYXJlbnQgKERTSSBub2RlKS4KClNpZ25l
+ZC1vZmYtYnk6IEhvZWdldW4gS3dvbiA8aG9lZ2V1bi5rd29uQHNhbXN1bmcuY29tPgpSZXZpZXdl
+ZC1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9i
+b290L2R0cy9leHlub3M0NDEyLXRyYXRzMi5kdHMgfCAyMyArKy0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMjEgZGVsZXRpb25zKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10cmF0czIuZHRzIGIvYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10cmF0czIuZHRzCmluZGV4IDQxZWNkNmQuLjg2Y2U1ZTUg
+MTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItdHJhdHMyLmR0cworKysg
+Yi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLXRyYXRzMi5kdHMKQEAgLTM4NSwyNCArMzg1
+LDExIEBACiAmZHNpXzAgewogCXZkZGNvcmUtc3VwcGx5ID0gPCZsZG84X3JlZz47CiAJdmRkaW8t
+c3VwcGx5ID0gPCZsZG8xMF9yZWc+OworCXNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVlbmN5ID0g
+PDUwMDAwMDAwMD47CisJc2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5ID0gPDIwMDAwMDAwPjsK
+IAlzYW1zdW5nLHBsbC1jbG9jay1mcmVxdWVuY3kgPSA8MjQwMDAwMDA+OwogCXN0YXR1cyA9ICJv
+a2F5IjsKIAotCXBvcnRzIHsKLQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47Ci0JCSNzaXplLWNlbGxz
+ID0gPDA+OwotCi0JCXBvcnRAMSB7Ci0JCQlyZWcgPSA8MT47Ci0KLQkJCWRzaV9vdXQ6IGVuZHBv
+aW50IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9pbj47Ci0JCQkJc2Ftc3VuZyxidXJz
+dC1jbG9jay1mcmVxdWVuY3kgPSA8NTAwMDAwMDAwPjsKLQkJCQlzYW1zdW5nLGVzYy1jbG9jay1m
+cmVxdWVuY3kgPSA8MjAwMDAwMDA+OwotCQkJfTsKLQkJfTsKLQl9OwotCiAJcGFuZWxAMCB7CiAJ
+CWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmU4YWEwIjsKIAkJcmVnID0gPDA+OwpAQCAtNDMwLDEy
+ICs0MTcsNiBAQAogCQkJCXZzeW5jLWxlbiA9IDwyPjsKIAkJCX07CiAJCX07Ci0KLQkJcG9ydCB7
+Ci0JCQlkc2lfaW46IGVuZHBvaW50IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+
+OwotCQkJfTsKLQkJfTsKIAl9OwogfTsKIAotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
