@@ -1,89 +1,69 @@
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Subject: Re: [PATCH v6 2/2] [media] s5p-mfc: Handle 'v4l2_pix_format:field'
- in try_fmt and g_fmt
-Date: Wed, 01 Mar 2017 10:21:06 -0500
-Message-ID: <1488381666.14858.5.camel@collabora.com>
-References: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
- <CGME20170301115141epcas2p37801b1fbe0951cc37a4e01bf2bcae3da@epcas2p3.samsung.com>
- <20170301115108.14187-3-thibault.saunier@osg.samsung.com>
- <33dbd3fa-04b2-3d94-5163-0a10589ff1c7@samsung.com>
-Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] ARM: exynos_defconfig: increase
+ CONFIG_CMA_SIZE_MBYTES to 96
+Date: Wed, 1 Mar 2017 19:09:10 +0200
+Message-ID: <20170301170910.4vvn4eeolkjbgzw5@kozik-lap>
+References: <20170228191221.18135-1-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6040362246283967286=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <33dbd3fa-04b2-3d94-5163-0a10589ff1c7@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Jeongtae Park <jtp.park@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Kamil Debski <kamil@wypas.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170228191221.18135-1-shuahkh@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: linux@armlinux.org.uk, kgene@kernel.org, javier@osg.samsung.com, arnd@arndb.de, cw00.choi@samsung.com, rafael.j.wysocki@intel.com, robie@justgohome.co.uk, b.zolnierkie@samsung.com, viresh.kumar@linaro.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com, a.hajda@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Tue, Feb 28, 2017 at 12:12:21PM -0700, Shuah Khan wrote:
+> Current CMA size of 64 Mbytes is right on the edge of being small when
+> several drivers need to allocate large CMA buffers.
+> 
+> For example, if the s5p-mfc driver needs to pre-allocate N MiB CMA memory
 
---===============6040362246283967286==
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-5KLx2Z2sFaHo8dfK52QR"
+Everything looks good but I don't get this "N MiB". What do you mean by
+that? If N is infinite (or not known) then how do you know that 96 MiB
+will be enough?
 
-
---=-5KLx2Z2sFaHo8dfK52QR
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mercredi 01 mars 2017 =C3=A0 14:12 +0100, Andrzej Hajda a =C3=A9crit=C2=
-=A0:
-> - on output side you have encoded bytestream - you cannot say about
-> interlacing in such case, so the only valid value is NONE,
-> - on capture side you have decoded frames, and in this case it
-> depends
-> on the device and driver capabilities, if the driver/device does not
-> support (de-)interlacing (I suppose this is MFC case), interlace type
-> field should be filled according to decoded bytestream header (on
-> output
-> side), but no direct copying from output side!!!
-
-I think we need some nuance here for this to actually be usable. If the
-information is not provided by the driver (yes, hardware is limiting
-sometimes), it would make sense to copy over the information that
-userspace provided. Setting NONE is just the worst approximation in my
-opinion.
-
-About MFC, it will be worth trying to read the DISPLAY_STATUS after the
-headers has been processed. It's not clearly stated in the spec if this
-will be set or not.
-
-Nicolas
---=-5KLx2Z2sFaHo8dfK52QR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEABECAAYFAli25uIACgkQcVMCLawGqBx/NACfdRcqUkYfV6LuBaShllkq7XMd
-ntAAn0UbeFhdrIQCyUame0/p+0d2UwnI
-=Vexr
------END PGP SIGNATURE-----
-
---=-5KLx2Z2sFaHo8dfK52QR--
+Best regards,
+Krzysztof
 
 
-
---===============6040362246283967286==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6040362246283967286==--
+> to decode a H.264 1080p video, then there won't be enough CMA memory left
+> for other drivers, such as the exynos-drm driver that may need to allocate
+> GEM buffers for the display manager.
+> 
+> Increasing CMA size to 96 Mbytes in exynos_defconfig addresses use-cases
+> such as these.
+> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+> Changes since v1:
+> Fix short and long commit log.
+> 
+> Reason for this patch:
+> With the proposed s5p_mfc patch series that pre-allocate buffers, when
+> display manager starts, it fails to get GEM buffers.  Increasing the CMA
+> size to 96 solved the problem.
+> 
+>  arch/arm/configs/exynos_defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 742baf0..2541414 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -53,7 +53,7 @@ CONFIG_RFKILL_REGULATOR=y
+>  CONFIG_DEVTMPFS=y
+>  CONFIG_DEVTMPFS_MOUNT=y
+>  CONFIG_DMA_CMA=y
+> -CONFIG_CMA_SIZE_MBYTES=64
+> +CONFIG_CMA_SIZE_MBYTES=96
+>  CONFIG_BLK_DEV_LOOP=y
+>  CONFIG_BLK_DEV_CRYPTOLOOP=y
+>  CONFIG_BLK_DEV_RAM=y
+> -- 
+> 2.7.4
+> 
