@@ -1,18 +1,17 @@
-From: Thibault Saunier <thibault.saunier@osg.samsung.com>
-Subject: Re: [PATCH v6 2/2] [media] s5p-mfc: Handle 'v4l2_pix_format:field' in
- try_fmt and g_fmt
-Date: Wed, 1 Mar 2017 11:41:27 -0300
-Message-ID: <52c7eb8c-88f2-992a-321b-89b8d1a698c6@osg.samsung.com>
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: Re: [PATCH v6 2/2] [media] s5p-mfc: Handle 'v4l2_pix_format:field'
+ in try_fmt and g_fmt
+Date: Wed, 01 Mar 2017 10:21:06 -0500
+Message-ID: <1488381666.14858.5.camel@collabora.com>
 References: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
  <CGME20170301115141epcas2p37801b1fbe0951cc37a4e01bf2bcae3da@epcas2p3.samsung.com>
  <20170301115108.14187-3-thibault.saunier@osg.samsung.com>
  <33dbd3fa-04b2-3d94-5163-0a10589ff1c7@samsung.com>
- <1488378936.14858.1.camel@collabora.com>
+Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============6040362246283967286=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1488378936.14858.1.camel@collabora.com>
+In-Reply-To: <33dbd3fa-04b2-3d94-5163-0a10589ff1c7@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,98 +21,69 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
 Cc: Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Jeongtae Park <jtp.park@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Kamil Debski <kamil@wypas.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8sCgoKT24gMDMvMDEvMjAxNyAxMTozNSBBTSwgTmljb2xhcyBEdWZyZXNuZSB3cm90ZToK
-PiBMZSBtZXJjcmVkaSAwMSBtYXJzIDIwMTcgw6AgMTQ6MTIgKzAxMDAsIEFuZHJ6ZWogSGFqZGEg
-YSDDqWNyaXQgOgo+PiBPbiAwMS4wMy4yMDE3IDEyOjUxLCBUaGliYXVsdCBTYXVuaWVyIHdyb3Rl
-Ogo+Pj4gSXQgaXMgcmVxdWlyZWQgYnkgdGhlIHN0YW5kYXJkIHRoYXQgdGhlIGZpZWxkIG9yZGVy
-IGlzIHNldCBieSB0aGUKPj4+IGRyaXZlciwgZGVmYXVsdCB0byBOT05FIGluIGNhc2UgYW55IGlz
-IHByb3ZpZGVkLCBidXQgd2UgY2FuCj4+PiBiYXNpY2FsbHkKPj4+IGFjY2VwdCBhbnkgdmFsdWUg
-cHJvdmlkZWQgYnkgdGhlIHVzZXJzcGFjZSBhcyB3ZSB3aWxsIGFueXdheSBub3QKPj4+IGJlIGFi
-bGUgdG8gZG8gYW55IGRlaW50ZXJsYWNpbmcuCj4+Pgo+Pj4gSW4gdGhpcyBwYXRjaCB3ZSBhbHNv
-IG1ha2Ugc3VyZSB0byBwYXNzIHRoZSBpbnRlcmxhY2luZyBtb2RlCj4+PiBwcm92aWRlZAo+Pj4g
-YnkgdXNlcnNwYWNlIGZyb20gdGhlIG91dHB1dCB0byB0aGUgY2FwdHVyZSBzaWRlIG9mIHRoZSBk
-ZXZpY2Ugc28KPj4+IHRoYXQgdGhlIGluZm9ybWF0aW9uIGlzIGdpdmVuIGJhY2sgdG8gdXNlcnNw
-YWNlLiBUaGlzIHdheSBpdCBjYW4KPj4+IGhhbmRsZSBpdCBhbmQgcG90ZW50aWFsbHkgZGVpbnRl
-cmxhY2UgYWZ0ZXJ3YXJkLgo+PiBBcyBJIHdyb3RlIHByZXZpb3VzbHk6Cj4+IC0gb24gb3V0cHV0
-IHNpZGUgeW91IGhhdmUgZW5jb2RlZCBieXRlc3RyZWFtIC0geW91IGNhbm5vdCBzYXkgYWJvdXQK
-Pj4gaW50ZXJsYWNpbmcgaW4gc3VjaCBjYXNlLCBzbyB0aGUgb25seSB2YWxpZCB2YWx1ZSBpcyBO
-T05FLAo+IFVzZXJzcGFjZSBtYXkga25vdy4gSXQncyBpbXBvcnRhbnQgZm9yIHRoZSBkcml2ZXIg
-bm90IHRvIHJlc2V0IGl0IGJhY2sKPiB0byBOT05FLCBpdCB3b3VsZCB0ZWxsIHRoZSB1c2Vyc3Bh
-Y2UgdGhhdCB0aGlzIGVuY29kZWQgZm9ybWF0IGlzIG5vdAo+IHN1cHBvcnRlZCB3aGVuIGludGVy
-bGFjZWQuCj4KPiBPYnZpb3VzbHksIHdoZW4gdXNlcnNwYWNlIGRvbid0IGtub3cgKEFOWSksIGl0
-IGRvZXMgbm90IG1hdHRlciwgaXQgd2lsbAo+IGZhaWwgd2hlbiB3ZSB0cnkgdG8gc2V0IHRoZSBD
-QVBUVVJFIGZvcm1hdC4gVGhvdWdoLCBpdCdzIHF1aXRlIGxhdGUgaW4KPiB0aGUgcHJvY2VzcyBm
-b3IgdGhlIHVzZXJzcGFjZSwgd2hpY2ggbWFrZXMgaW1wbGVtZW50aW5nIHNvZnR3YXJlCj4gZmFs
-bGJhY2sgZGlmZmljdWx0Lgo+Cj4+IC0gb24gY2FwdHVyZSBzaWRlIHlvdSBoYXZlIGRlY29kZWQg
-ZnJhbWVzLCBhbmQgaW4gdGhpcyBjYXNlIGl0Cj4+IGRlcGVuZHMKPj4gb24gdGhlIGRldmljZSBh
-bmQgZHJpdmVyIGNhcGFiaWxpdGllcywgaWYgdGhlIGRyaXZlci9kZXZpY2UgZG9lcyBub3QKPj4g
-c3VwcG9ydCAoZGUtKWludGVybGFjaW5nIChJIHN1cHBvc2UgdGhpcyBpcyBNRkMgY2FzZSksIGlu
-dGVybGFjZSB0eXBlCj4+IGZpZWxkIHNob3VsZCBiZSBmaWxsZWQgYWNjb3JkaW5nIHRvIGRlY29k
-ZWQgYnl0ZXN0cmVhbSBoZWFkZXIgKG9uCj4+IG91dHB1dAo+PiBzaWRlKSwgYnV0IG5vIGRpcmVj
-dCBjb3B5aW5nIGZyb20gb3V0cHV0IHNpZGUhISEKPiBUaGF0IGlzIGV4YWN0LgpJdCBpcyB5ZXMs
-IGluIGNhc2UgdGhlIGRyaXZlciBpcyBkZXRlcm1pbmluZyBpdCBwcm9wZXJseSwgd2hpY2ggaXMg
-bm90CnRoZSBjYXNlIGhlcmUuIFNvIHRoZSBpbmZvcm1hdGlvbiB3ZSBoYXZlIGlzIHdoYXQgdGhl
-IHVzZXJzcGFjZQpmaWd1cmVkLiBUaGF0IHBhcnQgc2hvdWxkIGJlIGZpeGVkIGluIHRoZSBkcml2
-ZXIsIGJ1dCBtZWFud2hpbGUgaXQgaXMKYmV0dGVyIHRvIGNvcHkgdG8gdGhlIG91dHB1dCBzaWRl
-IHRoYW4ganVzdCBsb29zaW5nIHRoZSBpbmZvIGFzIG90aGVyd2lzZQp0aGUgdXNlcnNwYWNlIG5l
-dmVyIHRyaWVzIHRvIGRlaW50ZXJsYWNlIGFmdGVyIHRoZSBkZWNvZGluZyBiZWNhdXNlIHRoZQpk
-cml2ZXIgYWx3YXlzIHNheXMgZmllbGQ9Tk9ORSBub3cuCgpSZWdhcmRzLAoKVGhpYmF1bHQKCgo+
-PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4KPj4+IFNpZ25lZC1vZmYtYnk6IFRoaWJhdWx0IFNhdW5p
-ZXIgPHRoaWJhdWx0LnNhdW5pZXJAb3NnLnNhbXN1bmcuY29tPgo+Pj4KPj4+IC0tLQo+Pj4KPj4+
-IENoYW5nZXMgaW4gdjY6Cj4+PiAtIFBhc3MgdXNlciBvdXRwdXQgZmllbGQgdmFsdWUgdG8gdGhl
-IGNhcHR1cmUgYXMgdGhlIGRldmljZSBpcyBub3QKPj4+ICAgIGRvaW5nIGFueSBkZWludGVybGFj
-aW5nIGFuZCB0aHVzIGRlY29kZWQgY29udGVudCB3aWxsIHN0aWxsIGJlCj4+PiAgICBpbnRlcmxh
-Y2VkIG9uIHRoZSBvdXRwdXQuCj4+Pgo+Pj4gQ2hhbmdlcyBpbiB2NToKPj4+IC0gSnVzdCBhZGFw
-dCB0aGUgZmllbGQgYW5kIG5ldmVyIGVycm9yIG91dC4KPj4+Cj4+PiBDaGFuZ2VzIGluIHY0OiBO
-b25lCj4+PiBDaGFuZ2VzIGluIHYzOgo+Pj4gLSBEbyBub3QgY2hlY2sgdmFsdWVzIGluIHRoZSBn
-X2ZtdCBmdW5jdGlvbnMgYXMgQW5kcnplaiBleHBsYWluZWQKPj4+IGluIHByZXZpb3VzIHJldmll
-dwo+Pj4KPj4+IENoYW5nZXMgaW4gdjI6Cj4+PiAtIEZpeCBhIHNpbGx5IGJ1aWxkIGVycm9yIHRo
-YXQgc2xpcHBlZCBpbiB3aGlsZSByZWJhc2luZyB0aGUKPj4+IHBhdGNoZXMKPj4+Cj4+PiAgIGRy
-aXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLW1mYy9zNXBfbWZjX2NvbW1vbi5oIHwgMiArKwo+Pj4g
-ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3M1cC1tZmMvczVwX21mY19kZWMuYyAgICB8IDYgKysr
-KystCj4+PiAgIDIgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
-Cj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLW1mYy9zNXBf
-bWZjX2NvbW1vbi5oCj4+PiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLW1mYy9zNXBfbWZj
-X2NvbW1vbi5oCj4+PiBpbmRleCBhYjIzMjM2YWE5NDIuLjM4MTZhMzdkZTRiYyAxMDA2NDQKPj4+
-IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLW1mYy9zNXBfbWZjX2NvbW1vbi5oCj4+
-PiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3M1cC1tZmMvczVwX21mY19jb21tb24uaAo+
-Pj4gQEAgLTY1Miw2ICs2NTIsOCBAQCBzdHJ1Y3QgczVwX21mY19jdHggewo+Pj4gICAJc2l6ZV90
-IG1lX2J1ZmZlcl9zaXplOwo+Pj4gICAJc2l6ZV90IHRtdl9idWZmZXJfc2l6ZTsKPj4+ICAgCj4+
-PiArCWVudW0gdjRsMl9maWVsZCBmaWVsZDsKPj4+ICsKPj4+ICAgCWVudW0gdjRsMl9tcGVnX21m
-YzUxX3ZpZGVvX2ZvcmNlX2ZyYW1lX3R5cGUKPj4+IGZvcmNlX2ZyYW1lX3R5cGU7Cj4+PiAgIAo+
-Pj4gICAJc3RydWN0IGxpc3RfaGVhZCByZWZfcXVldWU7Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9tZWRpYS9wbGF0Zm9ybS9zNXAtbWZjL3M1cF9tZmNfZGVjLmMKPj4+IGIvZHJpdmVycy9tZWRp
-YS9wbGF0Zm9ybS9zNXAtbWZjL3M1cF9tZmNfZGVjLmMKPj4+IGluZGV4IDM2N2VmOGU4ZGJmMC4u
-NmU1Y2E4NmZiMzMxIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zNXAt
-bWZjL3M1cF9tZmNfZGVjLmMKPj4+ICsrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vczVwLW1m
-Yy9zNXBfbWZjX2RlYy5jCj4+PiBAQCAtMzQ1LDcgKzM0NSw3IEBAIHN0YXRpYyBpbnQgdmlkaW9j
-X2dfZm10KHN0cnVjdCBmaWxlICpmaWxlLCB2b2lkCj4+PiAqcHJpdiwgc3RydWN0IHY0bDJfZm9y
-bWF0ICpmKQo+Pj4gICAJCSAgIHJlY3RhbmdsZS4gKi8KPj4+ICAgCQlwaXhfbXAtPndpZHRoID0g
-Y3R4LT5idWZfd2lkdGg7Cj4+PiAgIAkJcGl4X21wLT5oZWlnaHQgPSBjdHgtPmJ1Zl9oZWlnaHQ7
-Cj4+PiAtCQlwaXhfbXAtPmZpZWxkID0gVjRMMl9GSUVMRF9OT05FOwo+Pj4gKwkJcGl4X21wLT5m
-aWVsZCA9IGN0eC0+ZmllbGQ7Cj4+PiAgIAkJcGl4X21wLT5udW1fcGxhbmVzID0gMjsKPj4+ICAg
-CQkvKiBTZXQgcGl4ZWxmb3JtYXQgdG8gdGhlIGZvcm1hdCBpbiB3aGljaCBNRkMKPj4+ICAgCQkg
-ICBvdXRwdXRzIHRoZSBkZWNvZGVkIGZyYW1lICovCj4+PiBAQCAtMzgwLDYgKzM4MCw5IEBAIHN0
-YXRpYyBpbnQgdmlkaW9jX3RyeV9mbXQoc3RydWN0IGZpbGUgKmZpbGUsCj4+PiB2b2lkICpwcml2
-LCBzdHJ1Y3QgdjRsMl9mb3JtYXQgKmYpCj4+PiAgIAlzdHJ1Y3QgczVwX21mY19kZXYgKmRldiA9
-IHZpZGVvX2RydmRhdGEoZmlsZSk7Cj4+PiAgIAlzdHJ1Y3QgczVwX21mY19mbXQgKmZtdDsKPj4+
-ICAgCj4+PiArCWlmIChmLT5mbXQucGl4LmZpZWxkID09IFY0TDJfRklFTERfQU5ZKQo+Pj4gKwkJ
-Zi0+Zm10LnBpeC5maWVsZCA9IFY0TDJfRklFTERfTk9ORTsKPj4+ICsKPj4+ICAgCW1mY19kZWJ1
-ZygyLCAiVHlwZSBpcyAlZFxuIiwgZi0+dHlwZSk7Cj4+PiAgIAlpZiAoZi0+dHlwZSA9PSBWNEwy
-X0JVRl9UWVBFX1ZJREVPX09VVFBVVF9NUExBTkUpIHsKPj4+ICAgCQlmbXQgPSBmaW5kX2Zvcm1h
-dChmLCBNRkNfRk1UX0RFQyk7Cj4+PiBAQCAtNDM2LDYgKzQzOSw3IEBAIHN0YXRpYyBpbnQgdmlk
-aW9jX3NfZm10KHN0cnVjdCBmaWxlICpmaWxlLCB2b2lkCj4+PiAqcHJpdiwgc3RydWN0IHY0bDJf
-Zm9ybWF0ICpmKQo+Pj4gICAJCWdvdG8gb3V0Owo+Pj4gICAJfSBlbHNlIGlmIChmLT50eXBlID09
-IFY0TDJfQlVGX1RZUEVfVklERU9fT1VUUFVUX01QTEFORSkgewo+Pj4gICAJCS8qIHNyY19mbXQg
-aXMgdmFsaWRhdGVkIGJ5IGNhbGwgdG8gdmlkaW9jX3RyeV9mbXQKPj4+ICovCj4+PiArCQljdHgt
-PmZpZWxkID0gZi0+Zm10LnBpeC5maWVsZDsKPj4+ICAgCQljdHgtPnNyY19mbXQgPSBmaW5kX2Zv
-cm1hdChmLCBNRkNfRk1UX0RFQyk7Cj4+PiAgIAkJY3R4LT5jb2RlY19tb2RlID0gY3R4LT5zcmNf
-Zm10LT5jb2RlY19tb2RlOwo+Pj4gICAJCW1mY19kZWJ1ZygyLCAiVGhlIGNvZGVjIG51bWJlciBp
-czogJWRcbiIsIGN0eC0KPj4+PiBjb2RlY19tb2RlKTsKCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+
+--===============6040362246283967286==
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-5KLx2Z2sFaHo8dfK52QR"
+
+
+--=-5KLx2Z2sFaHo8dfK52QR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le mercredi 01 mars 2017 =C3=A0 14:12 +0100, Andrzej Hajda a =C3=A9crit=C2=
+=A0:
+> - on output side you have encoded bytestream - you cannot say about
+> interlacing in such case, so the only valid value is NONE,
+> - on capture side you have decoded frames, and in this case it
+> depends
+> on the device and driver capabilities, if the driver/device does not
+> support (de-)interlacing (I suppose this is MFC case), interlace type
+> field should be filled according to decoded bytestream header (on
+> output
+> side), but no direct copying from output side!!!
+
+I think we need some nuance here for this to actually be usable. If the
+information is not provided by the driver (yes, hardware is limiting
+sometimes), it would make sense to copy over the information that
+userspace provided. Setting NONE is just the worst approximation in my
+opinion.
+
+About MFC, it will be worth trying to read the DISPLAY_STATUS after the
+headers has been processed. It's not clearly stated in the spec if this
+will be set or not.
+
+Nicolas
+--=-5KLx2Z2sFaHo8dfK52QR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEABECAAYFAli25uIACgkQcVMCLawGqBx/NACfdRcqUkYfV6LuBaShllkq7XMd
+ntAAn0UbeFhdrIQCyUame0/p+0d2UwnI
+=Vexr
+-----END PGP SIGNATURE-----
+
+--=-5KLx2Z2sFaHo8dfK52QR--
+
+
+
+--===============6040362246283967286==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6040362246283967286==--
