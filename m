@@ -1,90 +1,91 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: kill mode_set_nofb callback
-Date: Wed, 01 Mar 2017 11:22:20 +0100
-Message-ID: <1488363740-4912-1-git-send-email-a.hajda@samsung.com>
-References: <CGME20170301102225eucas1p1e0f9d8b5692722950590c2d636866fc3@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Thibault Saunier <thibault.saunier@osg.samsung.com>
+Subject: [PATCH v6 2/2] [media] s5p-mfc: Handle 'v4l2_pix_format:field' in try_fmt and g_fmt
+Date: Wed,  1 Mar 2017 08:51:08 -0300
+Message-ID: <20170301115108.14187-3-thibault.saunier@osg.samsung.com>
+References: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>, Andi Shyti <andi.shyti@samsung.com>, linux-media@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-arm-kernel@lists.infradead.org, Ulf Hansson <ulf.hansson@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Kyungmin Park <kyungmin.park>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWxsIEV4eW5vcyBDUlRDcyBhcmUgZnVsbHkgY29uZmlndXJlZCBieSAuZW5hYmxlIGNhbGxiYWNr
-LiBUaGUgb25seSB1c2VycwpvZiBtb2RlX3NldF9ub2ZiIGFjdHVhbGx5IGRpZCBub3RoaW5nIGlu
-IHRoZWlyIGNhbGxiYWNrcyAtIHRoZXkgaW1tZWRpYXRlbHkKcmV0dXJuZWQgYmVjYXVzZSBkZXZp
-Y2VzIHdlcmUgaW4gc3VzcGVuZCBzdGF0ZSAtIG1vZGVfc2V0X25vZmIgaXMgYWx3YXlzCmNhbGxl
-ZCBvbiBkaXNhYmxlZCBkZXZpY2UuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhh
-amRhQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1f
-ZGVjb24uYyB8ICAxIC0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMg
-ICB8IDEwIC0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aCAgICB8ICAyIC0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAg
-fCAgMSAtCiA0IGZpbGVzIGNoYW5nZWQsIDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwppbmRleCAxZmZiMGIxLi4zZTg4MjY5IDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCkBAIC01ODEsNyArNTgx
-LDYgQEAgc3RhdGljIHZvaWQgZGVjb25fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
-cnRjKQogc3RhdGljIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNf
-b3BzID0gewogCS5lbmFibGUgPSBkZWNvbl9lbmFibGUsCiAJLmRpc2FibGUgPSBkZWNvbl9kaXNh
-YmxlLAotCS5jb21taXQgPSBkZWNvbl9jb21taXQsCiAJLmVuYWJsZV92YmxhbmsgPSBkZWNvbl9l
-bmFibGVfdmJsYW5rLAogCS5kaXNhYmxlX3ZibGFuayA9IGRlY29uX2Rpc2FibGVfdmJsYW5rLAog
-CS5hdG9taWNfYmVnaW4gPSBkZWNvbl9hdG9taWNfYmVnaW4sCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NydGMuYwppbmRleCAzMjc5MzAwLi4wYzlhNzc1IDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTQ5LDE1ICs0OSw2IEBAIHN0YXRpYyB2
-b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIAl9CiB9
-CiAKLXN0YXRpYyB2b2lkCi1leHlub3NfZHJtX2NydGNfbW9kZV9zZXRfbm9mYihzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMpCi17Ci0Jc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0
-b19leHlub3NfY3J0YyhjcnRjKTsKLQotCWlmIChleHlub3NfY3J0Yy0+b3BzLT5jb21taXQpCi0J
-CWV4eW5vc19jcnRjLT5vcHMtPmNvbW1pdChleHlub3NfY3J0Yyk7Ci19Ci0KIHN0YXRpYyBpbnQg
-ZXh5bm9zX2NydGNfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIAkJCQkgICAg
-IHN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqc3RhdGUpCiB7CkBAIC05Myw3ICs4NCw2IEBAIHN0YXRp
-YyB2b2lkIGV4eW5vc19jcnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiBz
-dGF0aWMgY29uc3Qgc3RydWN0IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxw
-ZXJfZnVuY3MgPSB7CiAJLmVuYWJsZQkJPSBleHlub3NfZHJtX2NydGNfZW5hYmxlLAogCS5kaXNh
-YmxlCT0gZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUsCi0JLm1vZGVfc2V0X25vZmIJPSBleHlub3Nf
-ZHJtX2NydGNfbW9kZV9zZXRfbm9mYiwKIAkuYXRvbWljX2NoZWNrCT0gZXh5bm9zX2NydGNfYXRv
-bWljX2NoZWNrLAogCS5hdG9taWNfYmVnaW4JPSBleHlub3NfY3J0Y19hdG9taWNfYmVnaW4sCiAJ
-LmF0b21pY19mbHVzaAk9IGV4eW5vc19jcnRjX2F0b21pY19mbHVzaCwKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kcnYuaAppbmRleCBjMTJiMzkwLi5lNTJmNzBhIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCkBAIC0xMTUsNyArMTE1LDYgQEAgc3RydWN0
-IGV4eW5vc19kcm1fcGxhbmVfY29uZmlnIHsKICAqCiAgKiBAZW5hYmxlOiBlbmFibGUgdGhlIGRl
-dmljZQogICogQGRpc2FibGU6IGRpc2FibGUgdGhlIGRldmljZQotICogQGNvbW1pdDogc2V0IGN1
-cnJlbnQgaHcgc3BlY2lmaWMgZGlzcGxheSBtb2RlIHRvIGh3LgogICogQGVuYWJsZV92Ymxhbms6
-IHNwZWNpZmljIGRyaXZlciBjYWxsYmFjayBmb3IgZW5hYmxpbmcgdmJsYW5rIGludGVycnVwdC4K
-ICAqIEBkaXNhYmxlX3ZibGFuazogc3BlY2lmaWMgZHJpdmVyIGNhbGxiYWNrIGZvciBkaXNhYmxp
-bmcgdmJsYW5rIGludGVycnVwdC4KICAqIEBhdG9taWNfY2hlY2s6IHZhbGlkYXRlIHN0YXRlCkBA
-IC0xMzAsNyArMTI5LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fY3J0YzsKIHN0cnVjdCBleHlub3Nf
-ZHJtX2NydGNfb3BzIHsKIAl2b2lkICgqZW5hYmxlKShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
-cnRjKTsKIAl2b2lkICgqZGlzYWJsZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7Ci0J
-dm9pZCAoKmNvbW1pdCkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7CiAJaW50ICgqZW5h
-YmxlX3ZibGFuaykoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yyk7CiAJdm9pZCAoKmRpc2Fi
-bGVfdmJsYW5rKShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKIAlpbnQgKCphdG9taWNf
-Y2hlY2spKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAwYjc0ZTU3Li5iZjUxMzVjIDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTk0Miw3ICs5NDIsNiBAQCBzdGF0aWMg
-dm9pZCBmaW1kX2RwX2Nsb2NrX2VuYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jbGsgKmNsaywgYm9v
-bCBlbmFibGUpCiBzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMgZmltZF9j
-cnRjX29wcyA9IHsKIAkuZW5hYmxlID0gZmltZF9lbmFibGUsCiAJLmRpc2FibGUgPSBmaW1kX2Rp
-c2FibGUsCi0JLmNvbW1pdCA9IGZpbWRfY29tbWl0LAogCS5lbmFibGVfdmJsYW5rID0gZmltZF9l
-bmFibGVfdmJsYW5rLAogCS5kaXNhYmxlX3ZibGFuayA9IGZpbWRfZGlzYWJsZV92YmxhbmssCiAJ
-LmF0b21pY19iZWdpbiA9IGZpbWRfYXRvbWljX2JlZ2luLAotLSAKMi43LjQKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+It is required by the standard that the field order is set by the
+driver, default to NONE in case any is provided, but we can basically
+accept any value provided by the userspace as we will anyway not
+be able to do any deinterlacing.
+
+In this patch we also make sure to pass the interlacing mode provided
+by userspace from the output to the capture side of the device so
+that the information is given back to userspace. This way it can
+handle it and potentially deinterlace afterward.
+
+Signed-off-by: Thibault Saunier <thibault.saunier@osg.samsung.com>
+
+---
+
+Changes in v6:
+- Pass user output field value to the capture as the device is not
+  doing any deinterlacing and thus decoded content will still be
+  interlaced on the output.
+
+Changes in v5:
+- Just adapt the field and never error out.
+
+Changes in v4: None
+Changes in v3:
+- Do not check values in the g_fmt functions as Andrzej explained in previous review
+
+Changes in v2:
+- Fix a silly build error that slipped in while rebasing the patches
+
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 2 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c    | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index ab23236aa942..3816a37de4bc 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -652,6 +652,8 @@ struct s5p_mfc_ctx {
+ 	size_t me_buffer_size;
+ 	size_t tmv_buffer_size;
+ 
++	enum v4l2_field field;
++
+ 	enum v4l2_mpeg_mfc51_video_force_frame_type force_frame_type;
+ 
+ 	struct list_head ref_queue;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+index 367ef8e8dbf0..6e5ca86fb331 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+@@ -345,7 +345,7 @@ static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 		   rectangle. */
+ 		pix_mp->width = ctx->buf_width;
+ 		pix_mp->height = ctx->buf_height;
+-		pix_mp->field = V4L2_FIELD_NONE;
++		pix_mp->field = ctx->field;
+ 		pix_mp->num_planes = 2;
+ 		/* Set pixelformat to the format in which MFC
+ 		   outputs the decoded frame */
+@@ -380,6 +380,9 @@ static int vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	struct s5p_mfc_dev *dev = video_drvdata(file);
+ 	struct s5p_mfc_fmt *fmt;
+ 
++	if (f->fmt.pix.field == V4L2_FIELD_ANY)
++		f->fmt.pix.field = V4L2_FIELD_NONE;
++
+ 	mfc_debug(2, "Type is %d\n", f->type);
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		fmt = find_format(f, MFC_FMT_DEC);
+@@ -436,6 +439,7 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 		goto out;
+ 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		/* src_fmt is validated by call to vidioc_try_fmt */
++		ctx->field = f->fmt.pix.field;
+ 		ctx->src_fmt = find_format(f, MFC_FMT_DEC);
+ 		ctx->codec_mode = ctx->src_fmt->codec_mode;
+ 		mfc_debug(2, "The codec number is: %d\n", ctx->codec_mode);
+-- 
+2.11.1
