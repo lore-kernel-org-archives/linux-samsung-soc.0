@@ -1,17 +1,18 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RESEND PATCH v2 0/5] Fix the parse_dt of exynos dsi and remove
- the OF graph
-Date: Thu, 2 Mar 2017 09:23:27 +0200
-Message-ID: <CAJKOXPeP-86=AsNH-xodkMpLJm1uLG0tKq2bz93FE5oFBDB4mw@mail.gmail.com>
-References: <CGME20170228081811epcas5p3c0a8151d94511e47a0e0d2b8787b1fb0@epcas5p3.samsung.com>
- <1488269879-28876-1-git-send-email-hoegeun.kwon@samsung.com>
- <CAJKOXPfv8wJ+0L4G_0sB1Qh-svXx4VvNJH_1THSy5SsXuUstzA@mail.gmail.com>
- <a9e52516-bb05-7ad3-01d5-da1fe3bc7548@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v6 2/2] [media] s5p-mfc: Handle 'v4l2_pix_format:field' in
+ try_fmt and g_fmt
+Date: Thu, 02 Mar 2017 08:42:51 +0100
+Message-ID: <54862f6b-290d-7e87-4297-57ffc35d357a@samsung.com>
+References: <20170301115108.14187-1-thibault.saunier@osg.samsung.com>
+ <CGME20170301115141epcas2p37801b1fbe0951cc37a4e01bf2bcae3da@epcas2p3.samsung.com>
+ <20170301115108.14187-3-thibault.saunier@osg.samsung.com>
+ <33dbd3fa-04b2-3d94-5163-0a10589ff1c7@samsung.com>
+ <1488381666.14858.5.camel@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <a9e52516-bb05-7ad3-01d5-da1fe3bc7548@samsung.com>
+In-reply-to: <1488381666.14858.5.camel@collabora.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,58 +22,43 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, airlied@linux.ie, catalin.marinas@arm.com, Seung Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, robh+dt@kernel.org, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, Thibault Saunier <thibault.saunier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Jeongtae Park <jtp.park@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Kamil Debski <kamil@wypas.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 2, 2017 at 3:44 AM, Hoegeun Kwon <hoegeun.kwon@samsung.com> wrote:
-> On 02/28/2017 06:58 PM, Krzysztof Kozlowski wrote:
->> Discussions in previous thread lead us to bisectability problem.
->> Bisectability in regular driver changes is one thing but in case of
->> driver + DTS the gap is much bigger. DTS will go through separate tree
->> and branches. How do you want to solve the problem?
->
->
-> Sorry for the delay in reply, Mar 1st was the holiday.
-> I thought of two solutions.
->
-> 1. squash the patches in a single patch
-
-No, for the same reason. DTS code/patches have to go through arm-soc
-DTS branch without mixing with any driver changes. Otherwise arm-soc
-guys are angry.
-
-> 2. split the dts related patches so that the first part adds the:
-> +    samsung,burst-clock-frequency = <512000000>;
-> +    samsung,esc-clock-frequency = <16000000>;
->
-> and the second part at the end removes the 'port' node
-> So it consists of 6 patches in total.
-
-That's a solution. The remaining DTS patches would go in next release...
-
-Another solution would be for this release cycle:
-        if (of_property_does_not_exist(node, "samsung,burst-clock-frequency") {
-                // Fallback to old parsing mode
-                node = of_graph_get_endpoint_by_regs(node, DSI_PORT_OUT, 0);
-                if (!node) {
-                        dev_err(dev, "no burst-clock-frequency nor
-output port with endpoint specified\n");
-                        return -EINVAL;
-                }
-        }
-        ret = exynos_dsi_of_read_u32(node, "samsung,burst-clock-frequency",
-                                     &dsi->burst_clk_rate);
-        ...
-
-...and in next release the DTS patches would go in. This would give
-you also DTB backward compatibility. However still DTS could be
-applied later, after driver changes gets into mainline.
-
-Personally I would prefer your solution #2 (with separate DTS patch
-adding new properties). Does it sound reasonable for Inki?
-
-Thanks for looking into this problem.
-
-Best regards,
-Krzysztof
+T24gMDEuMDMuMjAxNyAxNjoyMSwgTmljb2xhcyBEdWZyZXNuZSB3cm90ZToKPiBMZSBtZXJjcmVk
+aSAwMSBtYXJzIDIwMTcgw6AgMTQ6MTIgKzAxMDAsIEFuZHJ6ZWogSGFqZGEgYSDDqWNyaXQgOgo+
+PiAtIG9uIG91dHB1dCBzaWRlIHlvdSBoYXZlIGVuY29kZWQgYnl0ZXN0cmVhbSAtIHlvdSBjYW5u
+b3Qgc2F5IGFib3V0Cj4+IGludGVybGFjaW5nIGluIHN1Y2ggY2FzZSwgc28gdGhlIG9ubHkgdmFs
+aWQgdmFsdWUgaXMgTk9ORSwKPj4gLSBvbiBjYXB0dXJlIHNpZGUgeW91IGhhdmUgZGVjb2RlZCBm
+cmFtZXMsIGFuZCBpbiB0aGlzIGNhc2UgaXQKPj4gZGVwZW5kcwo+PiBvbiB0aGUgZGV2aWNlIGFu
+ZCBkcml2ZXIgY2FwYWJpbGl0aWVzLCBpZiB0aGUgZHJpdmVyL2RldmljZSBkb2VzIG5vdAo+PiBz
+dXBwb3J0IChkZS0paW50ZXJsYWNpbmcgKEkgc3VwcG9zZSB0aGlzIGlzIE1GQyBjYXNlKSwgaW50
+ZXJsYWNlIHR5cGUKPj4gZmllbGQgc2hvdWxkIGJlIGZpbGxlZCBhY2NvcmRpbmcgdG8gZGVjb2Rl
+ZCBieXRlc3RyZWFtIGhlYWRlciAob24KPj4gb3V0cHV0Cj4+IHNpZGUpLCBidXQgbm8gZGlyZWN0
+IGNvcHlpbmcgZnJvbSBvdXRwdXQgc2lkZSEhIQo+IEkgdGhpbmsgd2UgbmVlZCBzb21lIG51YW5j
+ZSBoZXJlIGZvciB0aGlzIHRvIGFjdHVhbGx5IGJlIHVzYWJsZS4gSWYgdGhlCj4gaW5mb3JtYXRp
+b24gaXMgbm90IHByb3ZpZGVkIGJ5IHRoZSBkcml2ZXIgKHllcywgaGFyZHdhcmUgaXMgbGltaXRp
+bmcKPiBzb21ldGltZXMpLCBpdCB3b3VsZCBtYWtlIHNlbnNlIHRvIGNvcHkgb3ZlciB0aGUgaW5m
+b3JtYXRpb24gdGhhdAo+IHVzZXJzcGFjZSBwcm92aWRlZC4gU2V0dGluZyBOT05FIGlzIGp1c3Qg
+dGhlIHdvcnN0IGFwcHJveGltYXRpb24gaW4gbXkKPiBvcGluaW9uLgoKVGhlIHdob2xlIHBvaW50
+IGlzIHRoYXQgc19mbXQgb24gb3V0cHV0IHNpZGUgaXMgdG8gZGVzY3JpYmUgZm9ybWF0IG9mCnRo
+ZSBzdHJlYW0gcGFzc2VkIHRvIHRoZSBkZXZpY2UsIGFuZCBpbiBjYXNlIG9mIGRlY29kZXIgaXQg
+aXMganVzdAptcGVnL2guMjZ4Ly4uLiBzdHJlYW0uIEl0IGRvZXMgbm90IGNvbnRhaW4gZnJhbWVz
+LCBmaWVsZHMsIHdpZHRoLCBoZWlnaHQKLSBpdCBpcyBqdXN0IHJhdyBzdHJlYW0gb2YgYnl0ZXMu
+IFdlIGNhbm5vdCBzYXkgaW4gc3VjaCBjYXNlIGFib3V0IGZpZWxkCnR5cGUsIHRoZXJlIGlzIG5v
+dCBzdWNoIHRoaW5nIGFzIGludGVybGFjZWQgYnl0ZSBzdHJlYW0uClVzaW5nIHNfZm10IG9uIG91
+dHB1dCB0byBkZXNjcmliZSB0aGluZ3Mgb24gY2FwdHVyZSBzaWRlIGxvb2sgZm9yIG1lCnVubmVj
+ZXNzYXJ5IGFuZCBhYnVzZXMgVjRMMiBBUEkgSU1PLgoKPgo+IEFib3V0IE1GQywgaXQgd2lsbCBi
+ZSB3b3J0aCB0cnlpbmcgdG8gcmVhZCB0aGUgRElTUExBWV9TVEFUVVMgYWZ0ZXIgdGhlCj4gaGVh
+ZGVycyBoYXMgYmVlbiBwcm9jZXNzZWQuIEl0J3Mgbm90IGNsZWFybHkgc3RhdGVkIGluIHRoZSBz
+cGVjIGlmIHRoaXMKPiB3aWxsIGJlIHNldCBvciBub3QuCj4KRG9jdW1lbnRhdGlvbiBmb3IgTUZD
+Ni41IHN0YXRlcyBjbGVhcmx5OgoKPiBOb3RlOiBPbiBTRVFfRE9ORSwgSU5URVJMQUNFX1BJQ1RV
+UkUgd2lsbCByZXR1cm4gdGhlIHBpY3R1cmUgdHlwZSB0bwo+IGJlIGRlY29kZWQgYmFzZWQgb24g
+dGhlCj4gc2VxdWVuY2UgaGVhZGVyIGluZm9ybWF0aW9uLgoKSW4gY2FzZSBvZiBNRkM1LjEgaXQg
+aXMgdW5jbGVhciwgYnV0IEkgaG9wZSBIVyBiZWhhdmVzIHRoZSBzYW1lIHdheS4KCkFueXdheSBJ
+IGFncmVlIGl0IHdpbGwgYmUgZ29vZCB0byBmaXggaXQgYXQgbGVhc3QgZm9yIE1GQzYuNSssIGFu
+eQp2b2x1bnRlZXI/CgoKUmVnYXJkcwoKQW5kcnplagoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cmxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFk
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
