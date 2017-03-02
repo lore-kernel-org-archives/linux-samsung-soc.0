@@ -1,8 +1,8 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v3 0/7] Fix the parse_dt of exynos dsi and remove the OF graph
-Date: Thu, 02 Mar 2017 19:20:12 +0900
-Message-ID: <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
-References: <CGME20170302102112epcas5p476b30508bbaffbf1fe9781b941cd418f@epcas5p4.samsung.com>
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Subject: [PATCH] pinctrl: samsung: fix segfault when using external interrupts
+ on s3c24xx
+Date: Thu,  2 Mar 2017 18:23:19 -0300
+Message-ID: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,54 +16,55 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sergio Prado <sergio.prado@e-labworks.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi All,
+We are getting a NULL pointer dereference when working with external
+interrupts on s3c24xx:
 
-The dsi + panel is a parental relationship, so OF grpah is not needed.
-Therefore, the current dsi_parse_dt function will throw an error,
-because there is no linked OF graph for case such as fimd + dsi +
-panel.
+Unable to handle kernel NULL pointer dereference at virtual address 000000a8
+pgd = c0104000
+[000000a8] *pgd=00000000
+Internal error: Oops: 5 [#1] ARM
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
+Hardware name: Samsung S3C2416 (Flattened Device Tree)
+task: c07399f8 task.stack: c0734000
+PC is at s3c24xx_demux_eint4_7+0x24/0x10c
+LR is at s3c24xx_demux_eint4_7+0x108/0x10c
 
-So the 1/5 patch parse the Pll, burst and esc clock frequency
-properties in dsi_parse_dt and modified to create a bridge_node only
-if there is an OF graph associated with dsi.
+The problem is in the function s3c24xx_demux_eint() when dereferencing
+bank->eint_base.
 
-Also fixed the dts, which depend on the 1/5 patch. So removed the
-ports node and move burst and esc clock frequency properties to the
-parent (DSI node).
+At this point, we cannot get the bank pointer from the irq_desc
+structure since it is pointing to the hardware irq, not virq.
 
-Changes for V3:
-- Split the patches considering the bisectability problem.
+So let's get the bank pointer directly from data->drvdata.
 
-Changes for V2:
-- Added the clear explanation for commit. (1/5 patch)
-- Fixed it to the same subject as the actual work. (2/5 ~ 5/5 patches)
+This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
 
-Best Regards,
-Hoegeun
+Tested on FriendlyARM mini2440.
 
-Hoegeun Kwon (7):
-  arm64: dts: exynos: Add the burst and esc clock frequency properties
-    for exynos5433 dts
-  arm: dts: Add the burst and esc clock frequency properties for
-    exynos3250 dts
-  arm: dts: Add the burst and esc clock frequency properties for
-    exynos4412 dts
-  arm: dts: Add the burst and esc clock frequency properties for
-    exynos4210 dts
-  drm/exynos: dsi: Fix the parse_dt function
-  arm64: dts: exynos: Remove the OF graph from DSI node
-  arm: dts: Remove the OF graph from DSI node
+Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+---
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/exynos3250-rinato.dts            | 23 ++--------------
- arch/arm/boot/dts/exynos4210-trats.dts             | 23 ++--------------
- arch/arm/boot/dts/exynos4412-trats2.dts            | 23 ++--------------
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 16 ++---------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 32 ++++++----------------
- 5 files changed, 16 insertions(+), 101 deletions(-)
-
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index b82a003546ae..1b8d887796e8 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+ {
+ 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+-	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = data->drvdata;
++	struct samsung_pin_bank *bank = d->pin_banks;
+ 	unsigned int pend, mask;
+ 
+ 	chained_irq_enter(chip, desc);
 -- 
 1.9.1
