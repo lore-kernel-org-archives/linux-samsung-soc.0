@@ -1,44 +1,69 @@
 From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v3 2/7] arm: dts: Add the burst and esc clock frequency
- properties for exynos3250 dts
-Date: Thu, 02 Mar 2017 19:20:14 +0900
-Message-ID: <1488450019-6482-3-git-send-email-hoegeun.kwon@samsung.com>
-References: <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170302102113epcas1p343e9da20f05be0a2359bf32834626c4a@epcas1p3.samsung.com>
+Subject: [PATCH v3 0/7] Fix the parse_dt of exynos dsi and remove the OF graph
+Date: Thu, 02 Mar 2017 19:20:12 +0900
+Message-ID: <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
+References: <CGME20170302102112epcas5p476b30508bbaffbf1fe9781b941cd418f@epcas5p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIE9GIGdyYXBoIGlzIG5vdCBuZWVkZWQgYmVjYXVzZSB0aGUgcGFuZWwgaXMgYSBjaGlsZCBv
-ZiBkc2kuIFNvCmFkZGVkIHRoZSBidXJzdCBhbmQgZXNjIGNsb2NrIGZyZXF1ZW5jeSBwcm9wZXJ0
-aWVzIHRvIHRoZSBwYXJlbnQgKERTSQpub2RlKSwgdGFraW5nIGludG8gYWNjb3VudCB0aGUgYmlz
-ZWN0YWJpbGl0eSBwcm9ibGVtIHNvIHRoYXQgcmVtb3ZlCnRoZSBPRiBncmFwaCBmcm9tIERTSSBu
-b2RlLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25Ac2Ftc3VuZy5j
-b20+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgotLS0K
-IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cyB8IDIgKysKIDEgZmlsZSBj
-aGFuZ2VkLCAyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3MzMjUwLXJpbmF0by5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0
-by5kdHMKaW5kZXggNTQ4NDEzZS4uYzlmMTkxYyAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMy
-NTAtcmluYXRvLmR0cwpAQCAtMjE1LDYgKzIxNSw4IEBACiAmZHNpXzAgewogCXZkZGNvcmUtc3Vw
-cGx5ID0gPCZsZG82X3JlZz47CiAJdmRkaW8tc3VwcGx5ID0gPCZsZG82X3JlZz47CisJc2Ftc3Vu
-ZyxidXJzdC1jbG9jay1mcmVxdWVuY3kgPSA8MjUwMDAwMDAwPjsKKwlzYW1zdW5nLGVzYy1jbG9j
-ay1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+OwogCXNhbXN1bmcscGxsLWNsb2NrLWZyZXF1ZW5jeSA9
-IDwyNDAwMDAwMD47CiAJc3RhdHVzID0gIm9rYXkiOwogCi0tIAoxLjkuMQoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi All,
+
+The dsi + panel is a parental relationship, so OF grpah is not needed.
+Therefore, the current dsi_parse_dt function will throw an error,
+because there is no linked OF graph for case such as fimd + dsi +
+panel.
+
+So the 1/5 patch parse the Pll, burst and esc clock frequency
+properties in dsi_parse_dt and modified to create a bridge_node only
+if there is an OF graph associated with dsi.
+
+Also fixed the dts, which depend on the 1/5 patch. So removed the
+ports node and move burst and esc clock frequency properties to the
+parent (DSI node).
+
+Changes for V3:
+- Split the patches considering the bisectability problem.
+
+Changes for V2:
+- Added the clear explanation for commit. (1/5 patch)
+- Fixed it to the same subject as the actual work. (2/5 ~ 5/5 patches)
+
+Best Regards,
+Hoegeun
+
+Hoegeun Kwon (7):
+  arm64: dts: exynos: Add the burst and esc clock frequency properties
+    for exynos5433 dts
+  arm: dts: Add the burst and esc clock frequency properties for
+    exynos3250 dts
+  arm: dts: Add the burst and esc clock frequency properties for
+    exynos4412 dts
+  arm: dts: Add the burst and esc clock frequency properties for
+    exynos4210 dts
+  drm/exynos: dsi: Fix the parse_dt function
+  arm64: dts: exynos: Remove the OF graph from DSI node
+  arm: dts: Remove the OF graph from DSI node
+
+ arch/arm/boot/dts/exynos3250-rinato.dts            | 23 ++--------------
+ arch/arm/boot/dts/exynos4210-trats.dts             | 23 ++--------------
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 23 ++--------------
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 16 ++---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 32 ++++++----------------
+ 5 files changed, 16 insertions(+), 101 deletions(-)
+
+-- 
+1.9.1
