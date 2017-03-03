@@ -1,47 +1,37 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Subject: Re: [PATCH v3 2/7] arm: dts: Add the burst and esc clock frequency
- properties for exynos3250 dts
-Date: Fri, 03 Mar 2017 09:26:07 +0900
-Message-ID: <20170303002607.fdw6ipqzzvo6j5wh@gangnam.samsung>
-References: <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170302102113epcas1p343e9da20f05be0a2359bf32834626c4a@epcas1p3.samsung.com>
- <1488450019-6482-3-git-send-email-hoegeun.kwon@samsung.com>
+From: Smitha T Murthy <smitha.t@samsung.com>
+Subject: Re: [v2,01/15] media: s5p-mfc: Remove unused structures and dead code
+Date: Fri, 03 Mar 2017 14:54:55 +0530
+Message-ID: <1488533095.2691.2.camel@smitha-fedora>
+References: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170303092341epcas5p1e7f35d8911c06f9f43023b0e0177b31c@epcas5p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-disposition: inline
-In-reply-to: <1488450019-6482-3-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, javier@osg.samsung.com, airlied@linux.ie, catalin.marinas@arm.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, inki.dae@samsung.com, robh+dt@kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Hoegeun,
+On Mon, 2017-02-20 at 14:38 +0100, Marek Szyprowski wrote:
+> Remove unused structures, definitions and functions that are no longer
+> called from the driver code.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Acked-by: Andrzej Hajda <a.hajda@samsung.com>
 
-On Thu, Mar 02, 2017 at 07:20:14PM +0900, Hoegeun Kwon wrote:
-> The OF graph is not needed because the panel is a child of dsi. So
-> added the burst and esc clock frequency properties to the parent (DSI
-> node), taking into account the bisectability problem so that remove
-> the OF graph from DSI node.
+Hi Marek,
+I tested this complete series on Exynos7880, along with my MFC v10.10
+patchset v2 [1] and it's working fine.
 
-nitpick:
+Please review MFC v10.10 series. 
 
-1. bisectability is not a problem (and for bisectability you
-   should not mention it in the commit log, you would confuse
-   bisecting people)
+Tested-by: Smitha T Murthy <smitha.t@samsung.com>
 
-2. you should use the imperative form, not "added the burst... "
-   but "add the burst..."
+[1]: https://www.spinics.net/lists/arm-kernel/msg566019.html
 
-Same for the other patches.
-
-Andi
+Thanks,
+Smitha T Murthy
