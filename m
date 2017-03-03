@@ -1,37 +1,59 @@
-From: Smitha T Murthy <smitha.t@samsung.com>
-Subject: Re: [v2,01/15] media: s5p-mfc: Remove unused structures and dead code
-Date: Fri, 03 Mar 2017 14:54:55 +0530
-Message-ID: <1488533095.2691.2.camel@smitha-fedora>
-References: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20170303092341epcas5p1e7f35d8911c06f9f43023b0e0177b31c@epcas5p1.samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
+Date: Fri,  3 Mar 2017 14:40:51 +0100
+Message-ID: <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 2017-02-20 at 14:38 +0100, Marek Szyprowski wrote:
-> Remove unused structures, definitions and functions that are no longer
-> called from the driver code.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Andrzej Hajda <a.hajda@samsung.com>
-
-Hi Marek,
-I tested this complete series on Exynos7880, along with my MFC v10.10
-patchset v2 [1] and it's working fine.
-
-Please review MFC v10.10 series. 
-
-Tested-by: Smitha T Murthy <smitha.t@samsung.com>
-
-[1]: https://www.spinics.net/lists/arm-kernel/msg566019.html
-
-Thanks,
-Smitha T Murthy
+Q29udmVydCBpZi1zdGF0ZW1lbnRzIHRvIHN3aXRjaCBzdGF0ZW1lbnQuIFJlbW92ZXMKZHVwbGlj
+YXRlZCBjb2RlLgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVu
+aS1iaWVsZWZlbGQuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
+YyB8IDMwICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDgg
+aW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X21peGVyLmMKaW5kZXggNzIxNDNhYy4uNDFkMGMzNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jCkBAIC0zODIsMjkgKzM4MiwxNCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdf
+cmdiX2ZtdChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQog
+CXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKIAl1MzIgdmFs
+OwogCi0JaWYgKGhlaWdodCA9PSA0ODApIHsKKwlzd2l0Y2ggKGhlaWdodCkgeworCWNhc2UgNDgw
+OgorCWNhc2UgNTc2OgogCQl2YWwgPSBNWFJfQ0ZHX1JHQjYwMV8wXzI1NTsKLQl9IGVsc2UgaWYg
+KGhlaWdodCA9PSA1NzYpIHsKLQkJdmFsID0gTVhSX0NGR19SR0I2MDFfMF8yNTU7Ci0JfSBlbHNl
+IGlmIChoZWlnaHQgPT0gNzIwKSB7Ci0JCXZhbCA9IE1YUl9DRkdfUkdCNzA5XzE2XzIzNTsKLQkJ
+bWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX1ksCi0JCQkJKDEgPDwgMzApIHwgKDk0
+IDw8IDIwKSB8ICgzMTQgPDwgMTApIHwKLQkJCQkoMzIgPDwgMCkpOwotCQltaXhlcl9yZWdfd3Jp
+dGUocmVzLCBNWFJfQ01fQ09FRkZfQ0IsCi0JCQkJKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEwKSB8
+ICgyMjUgPDwgMCkpOwotCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCi0J
+CQkJKDIyNSA8PCAyMCkgfCAoODIwIDw8IDEwKSB8ICgxMDA0IDw8IDApKTsKLQl9IGVsc2UgaWYg
+KGhlaWdodCA9PSAxMDgwKSB7Ci0JCXZhbCA9IE1YUl9DRkdfUkdCNzA5XzE2XzIzNTsKLQkJbWl4
+ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0NNX0NPRUZGX1ksCi0JCQkJKDEgPDwgMzApIHwgKDk0IDw8
+IDIwKSB8ICgzMTQgPDwgMTApIHwKLQkJCQkoMzIgPDwgMCkpOwotCQltaXhlcl9yZWdfd3JpdGUo
+cmVzLCBNWFJfQ01fQ09FRkZfQ0IsCi0JCQkJKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEwKSB8ICgy
+MjUgPDwgMCkpOwotCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1IsCi0JCQkJ
+KDIyNSA8PCAyMCkgfCAoODIwIDw8IDEwKSB8ICgxMDA0IDw8IDApKTsKLQl9IGVsc2UgeworCQli
+cmVhazsKKwljYXNlIDcyMDoKKwljYXNlIDEwODA6CisJZGVmYXVsdDoKIAkJdmFsID0gTVhSX0NG
+R19SR0I3MDlfMTZfMjM1OwogCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfWSwK
+IAkJCQkoMSA8PCAzMCkgfCAoOTQgPDwgMjApIHwgKDMxNCA8PCAxMCkgfApAQCAtNDEzLDYgKzM5
+OCw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBtaXhlcl9jb250ZXh0
+ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCiAJCQkJKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEw
+KSB8ICgyMjUgPDwgMCkpOwogCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ1Is
+CiAJCQkJKDIyNSA8PCAyMCkgfCAoODIwIDw8IDEwKSB8ICgxMDA0IDw8IDApKTsKKwkJYnJlYWs7
+CiAJfQogCiAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhSX0NGR19S
+R0JfRk1UX01BU0spOwotLSAKMi43LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
