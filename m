@@ -1,96 +1,105 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/2] drm/exynos: mixer: document YCbCr magic numbers
-Date: Fri,  3 Mar 2017 14:40:52 +0100
-Message-ID: <1488548452-4011-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Smitha T Murthy <smitha.t@samsung.com>
+Subject: Re: [v2, 02/15] media: s5p-mfc: Use generic of_device_get_match_data
+ helper
+Date: Fri, 03 Mar 2017 19:21:46 +0530
+Message-ID: <1488549106.3182.17.camel@smitha-fedora>
+References: <1487597944-2000-3-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170303134843epcas5p1c1c714d0b1c240ffdc4ec38173296bbf@epcas5p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1487597944-2000-3-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIG91dHB1dCBzdGFnZSBvZiB0aGUgbWl4ZXIgdXNlcyBZQ2JDciBmb3IgdGhlIGludGVybmFs
-CmNvbXB1dGF0aW9ucywgd2hpY2ggaXMgdGhlIHJlYXNvbiB0aGF0IHNvbWUgcmVnaXN0ZXJzIHRh
-a2UKWUNiQ3IgcmVsYXRlZCBkYXRhIGFzIGlucHV0LiBJbiBwYXJ0aWN1bGFyIHRoaXMgYXBwbGll
-cwp0byBNWFJfQkdfQ09MT1J7MCwxLDJ9IGFuZCBNWFJfQ01fQ09FRkZfe1ksQ0IsQ1J9LgoKRG9j
-dW1lbnQgdGhlIGZvcm1hdHRpbmcgb2YgdGhlIGRhdGEgd2hpY2ggd2Ugd3JpdGUgdG8KdGhlc2Ug
-cmVnaXN0ZXJzLgoKV2hpbGUgYXQgaXQsIHVuaWZ5IHdvcmRpbmcgb2YgY29tbWVudHMgaW4gdGhl
-IHJlZ2lzdGVyIGhlYWRlci4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlA
-bWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMgfCAzNSArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmggICB8ICA3ICsrKysrLS0KIDIgZmlsZXMgY2hh
-bmdlZCwgMzIgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX21peGVyLmMKaW5kZXggNDFkMGMzNi4uM2IwYjA3ZCAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC00NSw2ICs0NSwyMCBAQAogI2RlZmluZSBNSVhFUl9X
-SU5fTlIJCTMKICNkZWZpbmUgVlBfREVGQVVMVF9XSU4JCTIKIAorLyoKKyAqIE1peGVyIGNvbG9y
-IHNwYWNlIGNvbnZlcnNpb24gY29lZmZpY2llbnQgdHJpcGxldC4KKyAqIFVzZWQgZm9yIENTQyBm
-cm9tIFJHQiB0byBZQ2JDci4KKyAqIEVhY2ggY29lZmZpY2llbnQgaXMgYSAxMC1iaXQgZml4ZWQg
-cG9pbnQgbnVtYmVyIHdpdGgKKyAqIHNpZ24gYW5kIG5vIGludGVnZXIgcGFydCwgaS5lLgorICog
-WzA6OF0gPSBmcmFjdGlvbmFsIHBhcnQgKHJlcHJlc2VudGluZyBhIHZhbHVlIHkgPSB4IC8gMl45
-KQorICogWzldID0gc2lnbgorICogTmVnYXRpdmUgdmFsdWVzIGFyZSBlbmNvZGVkIHdpdGggdHdv
-J3MgY29tcGxlbWVudC4KKyAqLworI2RlZmluZSBNWFJfQ1NDX0NUKGEwLCBhMSwgYTIpICgoKGEw
-KSA8PCAyMCkgfCAoKGExKSA8PCAxMCkgfCAoKGEyKSA8PCAwKSkKKworLyogWUNiQ3IgdmFsdWUs
-IHVzZWQgZm9yIG1peGVyIGJhY2tncm91bmQgY29sb3IgY29uZmlndXJhdGlvbi4gKi8KKyNkZWZp
-bmUgTVhSX1lDQkNSX1ZBTCh5LCBjYiwgY3IpICgoKHkpIDw8IDE2KSB8ICgoY2IpIDw8IDgpIHwg
-KChjcikgPDwgMCkpCisKIC8qIFRoZSBwaXhlbGZvcm1hdHMgdGhhdCBhcmUgbmF0aXZlbHkgc3Vw
-cG9ydGVkIGJ5IHRoZSBtaXhlci4gKi8KICNkZWZpbmUgTVhSX0ZPUk1BVF9SR0I1NjUJNAogI2Rl
-ZmluZSBNWFJfRk9STUFUX0FSR0IxNTU1CTUKQEAgLTM5MSwxMyArNDA1LDE4IEBAIHN0YXRpYyB2
-b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVk
-IGludCBoZWlnaHQpCiAJY2FzZSAxMDgwOgogCWRlZmF1bHQ6CiAJCXZhbCA9IE1YUl9DRkdfUkdC
-NzA5XzE2XzIzNTsKKwkJLyoKKwkJICogQ29uZmlndXJlIHRoZSBCVC43MDkgQ1NDIG1hdHJpeCBN
-IGZvciBmdWxsIHJhbmdlIFJHQi4KKwkJICogICAgIHwgMC4xODM1ICAwLjYxMzIgIDAuMDYyNXwK
-KwkJICogTSA9IHwtMC4xMDE1IC0wLjMzNzggIDAuNDM5NHwKKwkJICogICAgIHwgMC40Mzk0IC0w
-LjM5ODQgLTAuMDM5MHwKKwkJICovCiAJCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9DT0VG
-Rl9ZLAotCQkJCSgxIDw8IDMwKSB8ICg5NCA8PCAyMCkgfCAoMzE0IDw8IDEwKSB8Ci0JCQkJKDMy
-IDw8IDApKTsKKwkJCU1YUl9DU0NfQ1QoMHgwNUUsIDB4MTNBLCAweDAyMCkgfCBNWFJfQ01fQ09F
-RkZfUkdCX0ZVTEwpOwogCQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQ01fQ09FRkZfQ0IsCi0J
-CQkJKDk3MiA8PCAyMCkgfCAoODUxIDw8IDEwKSB8ICgyMjUgPDwgMCkpOworCQkJTVhSX0NTQ19D
-VCgweDNDQywgMHgzNTMsIDB4MEUxKSk7CiAJCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9DTV9D
-T0VGRl9DUiwKLQkJCQkoMjI1IDw8IDIwKSB8ICg4MjAgPDwgMTApIHwgKDEwMDQgPDwgMCkpOwor
-CQkJTVhSX0NTQ19DVCgweDBFMSwgMHgzMzQsIDB4M0VDKSk7CiAJCWJyZWFrOwogCX0KIApAQCAt
-NzE1LDEwICs3MzQsMTAgQEAgc3RhdGljIHZvaWQgbWl4ZXJfd2luX3Jlc2V0KHN0cnVjdCBtaXhl
-cl9jb250ZXh0ICpjdHgpCiAJLyogcmVzZXQgZGVmYXVsdCBsYXllciBwcmlvcml0eSAqLwogCW1p
-eGVyX3JlZ193cml0ZShyZXMsIE1YUl9MQVlFUl9DRkcsIDApOwogCi0JLyogc2V0dGluZyBiYWNr
-Z3JvdW5kIGNvbG9yICovCi0JbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0JHX0NPTE9SMCwgMHgw
-MDgwODApOwotCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9CR19DT0xPUjEsIDB4MDA4MDgwKTsK
-LQltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IyLCAweDAwODA4MCk7CisJLyogc2V0
-IGFsbCBiYWNrZ3JvdW5kIGNvbG9ycyB0byBSR0IgKDAsMCwwKSAqLworCW1peGVyX3JlZ193cml0
-ZShyZXMsIE1YUl9CR19DT0xPUjAsIE1YUl9ZQ0JDUl9WQUwoMCwgMTI4LCAxMjgpKTsKKwltaXhl
-cl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IxLCBNWFJfWUNCQ1JfVkFMKDAsIDEyOCwgMTI4
-KSk7CisJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0JHX0NPTE9SMiwgTVhSX1lDQkNSX1ZBTCgw
-LCAxMjgsIDEyOCkpOwogCiAJaWYgKHRlc3RfYml0KE1YUl9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+
-ZmxhZ3MpKSB7CiAJCS8qIGNvbmZpZ3VyYXRpb24gb2YgVmlkZW8gUHJvY2Vzc29yIFJlZ2lzdGVy
-cyAqLwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmggYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaAppbmRleCA3ZjIyZGY1Li5jMzExZjU3
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaAorKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaApAQCAtMTQwLDExICsxNDAsMTEgQEAK
-ICNkZWZpbmUgTVhSX0lOVF9FTl9WU1lOQwkJKDEgPDwgMTEpCiAjZGVmaW5lIE1YUl9JTlRfRU5f
-QUxMCQkJKDB4MGYgPDwgOCkKIAotLyogYml0IGZvciBNWFJfSU5UX1NUQVRVUyAqLworLyogYml0
-cyBmb3IgTVhSX0lOVF9TVEFUVVMgKi8KICNkZWZpbmUgTVhSX0lOVF9DTEVBUl9WU1lOQwkJKDEg
-PDwgMTEpCiAjZGVmaW5lIE1YUl9JTlRfU1RBVFVTX1ZTWU5DCQkoMSA8PCAwKQogCi0vKiBiaXQg
-Zm9yIE1YUl9MQVlFUl9DRkcgKi8KKy8qIGJpdHMgZm9yIE1YUl9MQVlFUl9DRkcgKi8KICNkZWZp
-bmUgTVhSX0xBWUVSX0NGR19HUlAxX1ZBTCh4KQlNWFJfTUFTS19WQUwoeCwgMTEsIDgpCiAjZGVm
-aW5lIE1YUl9MQVlFUl9DRkdfR1JQMV9NQVNLCQlNWFJfTEFZRVJfQ0ZHX0dSUDFfVkFMKH4wKQog
-I2RlZmluZSBNWFJfTEFZRVJfQ0ZHX0dSUDBfVkFMKHgpCU1YUl9NQVNLX1ZBTCh4LCA3LCA0KQpA
-QCAtMTUyLDUgKzE1Miw4IEBACiAjZGVmaW5lIE1YUl9MQVlFUl9DRkdfVlBfVkFMKHgpCQlNWFJf
-TUFTS19WQUwoeCwgMywgMCkKICNkZWZpbmUgTVhSX0xBWUVSX0NGR19WUF9NQVNLCQlNWFJfTEFZ
-RVJfQ0ZHX1ZQX1ZBTCh+MCkKIAorLyogYml0cyBmb3IgTVhSX0NNX0NPRUZGX1kgKi8KKyNkZWZp
-bmUgTVhSX0NNX0NPRUZGX1JHQl9GVUxMCQkoMSA8PCAzMCkKKwogI2VuZGlmIC8qIFNBTVNVTkdf
-UkVHU19NSVhFUl9IICovCiAKLS0gCjIuNy4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+On Mon, 2017-02-20 at 14:38 +0100, Marek Szyprowski wrote: 
+> Replace custom code with generic helper to retrieve driver data.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Reviewed-by: Smitha T Murthy <smitha.t@samsung.com>
+
+Regards,
+Smitha T Murthy
+
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c        | 17 ++---------------
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  4 ++--
+>  2 files changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index 3e1f22eb4339..ad3d7377f40d 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -22,6 +22,7 @@
+>  #include <media/v4l2-event.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <media/videobuf2-v4l2.h>
+>  #include "s5p_mfc_common.h"
+> @@ -1157,8 +1158,6 @@ static void s5p_mfc_unconfigure_dma_memory(struct s5p_mfc_dev *mfc_dev)
+>  	device_unregister(mfc_dev->mem_dev_r);
+>  }
+>  
+> -static void *mfc_get_drv_data(struct platform_device *pdev);
+> -
+>  /* MFC probe function */
+>  static int s5p_mfc_probe(struct platform_device *pdev)
+>  {
+> @@ -1182,7 +1181,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> -	dev->variant = mfc_get_drv_data(pdev);
+> +	dev->variant = of_device_get_match_data(&pdev->dev);
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+> @@ -1541,18 +1540,6 @@ static int s5p_mfc_resume(struct device *dev)
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_mfc_match);
+>  
+> -static void *mfc_get_drv_data(struct platform_device *pdev)
+> -{
+> -	struct s5p_mfc_variant *driver_data = NULL;
+> -	const struct of_device_id *match;
+> -
+> -	match = of_match_node(exynos_mfc_match, pdev->dev.of_node);
+> -	if (match)
+> -		driver_data = (struct s5p_mfc_variant *)match->data;
+> -
+> -	return driver_data;
+> -}
+> -
+>  static struct platform_driver s5p_mfc_driver = {
+>  	.probe		= s5p_mfc_probe,
+>  	.remove		= s5p_mfc_remove,
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 3e0e8eaf8bfe..2f1387a4c386 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -192,7 +192,7 @@ struct s5p_mfc_buf {
+>   */
+>  struct s5p_mfc_pm {
+>  	struct clk	*clock_gate;
+> -	const char	**clk_names;
+> +	const char * const *clk_names;
+>  	struct clk	*clocks[MFC_MAX_CLOCKS];
+>  	int		num_clocks;
+>  	bool		use_clock_gating;
+> @@ -304,7 +304,7 @@ struct s5p_mfc_dev {
+>  	struct v4l2_ctrl_handler dec_ctrl_handler;
+>  	struct v4l2_ctrl_handler enc_ctrl_handler;
+>  	struct s5p_mfc_pm	pm;
+> -	struct s5p_mfc_variant	*variant;
+> +	const struct s5p_mfc_variant	*variant;
+>  	int num_inst;
+>  	spinlock_t irqlock;	/* lock when operating on context */
+>  	spinlock_t condlock;	/* lock when changing/checking if a context is
