@@ -1,163 +1,123 @@
-From: Smitha T Murthy <smitha.t@samsung.com>
-Subject: Re: [v2,01/15] media: s5p-mfc: Remove unused structures and dead code
-Date: Fri, 03 Mar 2017 17:26:51 +0530
-Message-ID: <1488542211.3182.14.camel@smitha-fedora>
-References: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20170303115347epcas5p1a4d81408a974580cd1c1f2c6d216f10a@epcas5p1.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Use thermal fuse value for thermal zone
+ 0 on Exynos5420
+Date: Fri, 3 Mar 2017 18:50:06 -0300
+Message-ID: <252f9e32-ff2c-a1ce-3c98-6383a1148e02@osg.samsung.com>
+References: <20170211201456.27974-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1487597944-2000-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170211201456.27974-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Willy WOLFF <willy.mh.wolff@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 2017-02-20 at 14:38 +0100, Marek Szyprowski wrote:
-> Remove unused structures, definitions and functions that are no longer
-> called from the driver code.
+Hello Krzysztof,
+
+On 02/11/2017 05:14 PM, Krzysztof Kozlowski wrote:
+> In Odroid XU3 Lite board, the temperature levels reported for thermal
+> zone 0 were weird. In warm room:
+> 	/sys/class/thermal/thermal_zone0/temp:32000
+> 	/sys/class/thermal/thermal_zone1/temp:51000
+> 	/sys/class/thermal/thermal_zone2/temp:55000
+> 	/sys/class/thermal/thermal_zone3/temp:54000
+> 	/sys/class/thermal/thermal_zone4/temp:51000
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Acked-by: Andrzej Hajda <a.hajda@samsung.com>
-
-Reviewed-by: Smitha T Murthy <smitha.t@samsung.com>
-
-Regards,
-Smitha T Murthy
+> Sometimes after booting the value was even equal to ambient temperature
+> which is highly unlikely to be a real temperature of sensor in SoC.
+> 
+> The thermal sensor's calibration (trimming) is based on fused values.
+> In case of the board above, the fused values are: 35, 52, 43, 58 and 43
+> (corresponding to each TMU device).  However driver defined a minimum value
+> for fused data as 40 and for smaller values it was using a hard-coded 55
+> instead.  This lead to mapping data from sensor to wrong temperatures
+> for thermal zone 0.
+> 
+> Various vendor 3.10 trees (Hardkernel's based on Samsung LSI, Artik 10)
+> do not impose any limits on fused values.  Since we do not have any
+> knowledge about these limits, use 0 as a minimum accepted fused value.
+> This should essentially allow accepting any reasonable fused value thus
+> behaving like vendor driver.
+> 
+> The exynos5420-tmu-sensor-conf.dtsi is copied directly from existing
+> exynso4412 with one change - the samsung,tmu_min_efuse_value.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 > ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c        | 21 ---------------------
->  drivers/media/platform/s5p-mfc/s5p_mfc_common.h | 13 -------------
->  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h   |  1 -
->  3 files changed, 35 deletions(-)
 > 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 05fe82be6584..3e1f22eb4339 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1422,16 +1422,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v5,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v5 = {
-> -	.base = MFC_BASE_ALIGN_ORDER,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v5 = {
->  	.version	= MFC_VERSION,
->  	.version_bit	= MFC_V5_BIT,
->  	.port_num	= MFC_NUM_PORTS,
->  	.buf_size	= &buf_size_v5,
-> -	.buf_align	= &mfc_buf_align_v5,
->  	.fw_name[0]	= "s5p-mfc.fw",
->  	.clk_names	= {"mfc", "sclk_mfc"},
->  	.num_clocks	= 2,
-> @@ -1452,16 +1447,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v6,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v6 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v6 = {
->  	.version	= MFC_VERSION_V6,
->  	.version_bit	= MFC_V6_BIT,
->  	.port_num	= MFC_NUM_PORTS_V6,
->  	.buf_size	= &buf_size_v6,
-> -	.buf_align	= &mfc_buf_align_v6,
->  	.fw_name[0]     = "s5p-mfc-v6.fw",
->  	/*
->  	 * v6-v2 firmware contains bug fixes and interface change
-> @@ -1486,16 +1476,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v7,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v7 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v7 = {
->  	.version	= MFC_VERSION_V7,
->  	.version_bit	= MFC_V7_BIT,
->  	.port_num	= MFC_NUM_PORTS_V7,
->  	.buf_size	= &buf_size_v7,
-> -	.buf_align	= &mfc_buf_align_v7,
->  	.fw_name[0]     = "s5p-mfc-v7.fw",
->  	.clk_names	= {"mfc", "sclk_mfc"},
->  	.num_clocks	= 2,
-> @@ -1515,16 +1500,11 @@ static int s5p_mfc_resume(struct device *dev)
->  	.priv	= &mfc_buf_size_v8,
->  };
->  
-> -static struct s5p_mfc_buf_align mfc_buf_align_v8 = {
-> -	.base = 0,
-> -};
-> -
->  static struct s5p_mfc_variant mfc_drvdata_v8 = {
->  	.version	= MFC_VERSION_V8,
->  	.version_bit	= MFC_V8_BIT,
->  	.port_num	= MFC_NUM_PORTS_V8,
->  	.buf_size	= &buf_size_v8,
-> -	.buf_align	= &mfc_buf_align_v8,
->  	.fw_name[0]     = "s5p-mfc-v8.fw",
->  	.clk_names	= {"mfc"},
->  	.num_clocks	= 1,
-> @@ -1535,7 +1515,6 @@ static int s5p_mfc_resume(struct device *dev)
->  	.version_bit	= MFC_V8_BIT,
->  	.port_num	= MFC_NUM_PORTS_V8,
->  	.buf_size	= &buf_size_v8,
-> -	.buf_align	= &mfc_buf_align_v8,
->  	.fw_name[0]     = "s5p-mfc-v8.fw",
->  	.clk_names	= {"pclk", "aclk", "aclk_xiu"},
->  	.num_clocks	= 3,
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> index ab23236aa942..3e0e8eaf8bfe 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-> @@ -44,14 +44,6 @@
->  
->  #include <media/videobuf2-dma-contig.h>
->  
-> -static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
-> -{
-> -	/* Same functionality as the vb2_dma_contig_plane_paddr */
-> -	dma_addr_t *paddr = vb2_dma_contig_memops.cookie(b);
-> -
-> -	return *paddr;
-> -}
-> -
->  /* MFC definitions */
->  #define MFC_MAX_EXTRA_DPB       5
->  #define MFC_MAX_BUFFERS		32
-> @@ -229,16 +221,11 @@ struct s5p_mfc_buf_size {
->  	void *priv;
->  };
->  
-> -struct s5p_mfc_buf_align {
-> -	unsigned int base;
-> -};
-> -
->  struct s5p_mfc_variant {
->  	unsigned int version;
->  	unsigned int port_num;
->  	u32 version_bit;
->  	struct s5p_mfc_buf_size *buf_size;
-> -	struct s5p_mfc_buf_align *buf_align;
->  	char	*fw_name[MFC_FW_MAX_VERSIONS];
->  	const char	*clk_names[MFC_MAX_CLOCKS];
->  	int		num_clocks;
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> index 8e5df041edf7..45c807bf19cc 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.h
-> @@ -18,7 +18,6 @@
->  int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev);
->  int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev);
->  int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev);
-> -int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev);
->  
->  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev);
->  void s5p_mfc_deinit_hw(struct s5p_mfc_dev *dev);
+> Testing on other Exynos542x boards is much appreciated. Especially I
+> wonder what efuse values are there.
+
+I tested on both Exynos5422 Odroid XU4 and Exynos5800 Peach Pi boards.
+
+The temperatures levels reported for these two boards on a warm room are:
+
+Odroid XU4
+
+# cat /sys/class/thermal/thermal_zone*/temp
+50000
+50000
+54000
+51000
+48000
+
+Peach Pi
+
+# cat /sys/class/thermal/thermal_zone*/temp
+42000
+44000
+27000 <-- weird value for thermal zone 2 like zone 0 in your XU3 lite
+45000
+45000
+
+And the efuse values for the TMU devices are:
+
+Odroid XU4
+
+TMU0 = 45
+TMU1 = 44
+TMU2 = 44
+TMU3 = 46
+TMU3 = 46
+
+Peach Pi
+
+TMU0 = 44
+TMU1 = 46
+TMU2 = 36
+TMU3 = 53
+TMU3 = 46
+
+The fused value for TMU2 is < 40 so that explains the weird temperature
+level for thermal zone 2 in Peach. So after your patch, makes more sense:
+
+# cat /sys/class/thermal/thermal_zone*/temp
+41000
+42000
+45000
+43000
+43000
+
+I wonder though if 0 is the best value or if we should just lower more
+to cover the used e-fuse values in Exynos5 boards. But as you said,
+we have no knowledge about these limits...
+
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
