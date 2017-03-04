@@ -1,129 +1,76 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: Use thermal fuse value for thermal
- zone 0 on Exynos5420
-Date: Sat, 4 Mar 2017 10:01:09 +0200
-Message-ID: <20170304080109.j2kuwmqj7mgfx3ky@kozik-lap>
-References: <20170211201456.27974-1-krzk@kernel.org>
- <252f9e32-ff2c-a1ce-3c98-6383a1148e02@osg.samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Sat, 4 Mar 2017 10:15:04 +0200
+Message-ID: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <252f9e32-ff2c-a1ce-3c98-6383a1148e02@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Willy WOLFF <willy.mh.wolff@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 03, 2017 at 06:50:06PM -0300, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
+On Thu, Mar 02, 2017 at 06:23:19PM -0300, Sergio Prado wrote:
+> We are getting a NULL pointer dereference when working with external
+> interrupts on s3c24xx:
 > 
-> On 02/11/2017 05:14 PM, Krzysztof Kozlowski wrote:
-> > In Odroid XU3 Lite board, the temperature levels reported for thermal
-> > zone 0 were weird. In warm room:
-> > 	/sys/class/thermal/thermal_zone0/temp:32000
-> > 	/sys/class/thermal/thermal_zone1/temp:51000
-> > 	/sys/class/thermal/thermal_zone2/temp:55000
-> > 	/sys/class/thermal/thermal_zone3/temp:54000
-> > 	/sys/class/thermal/thermal_zone4/temp:51000
-> > 
-> > Sometimes after booting the value was even equal to ambient temperature
-> > which is highly unlikely to be a real temperature of sensor in SoC.
-> > 
-> > The thermal sensor's calibration (trimming) is based on fused values.
-> > In case of the board above, the fused values are: 35, 52, 43, 58 and 43
-> > (corresponding to each TMU device).  However driver defined a minimum value
-> > for fused data as 40 and for smaller values it was using a hard-coded 55
-> > instead.  This lead to mapping data from sensor to wrong temperatures
-> > for thermal zone 0.
-> > 
-> > Various vendor 3.10 trees (Hardkernel's based on Samsung LSI, Artik 10)
-> > do not impose any limits on fused values.  Since we do not have any
-> > knowledge about these limits, use 0 as a minimum accepted fused value.
-> > This should essentially allow accepting any reasonable fused value thus
-> > behaving like vendor driver.
-> > 
-> > The exynos5420-tmu-sensor-conf.dtsi is copied directly from existing
-> > exynso4412 with one change - the samsung,tmu_min_efuse_value.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Testing on other Exynos542x boards is much appreciated. Especially I
-> > wonder what efuse values are there.
+> Unable to handle kernel NULL pointer dereference at virtual address 000000a8
+> pgd = c0104000
+> [000000a8] *pgd=00000000
+> Internal error: Oops: 5 [#1] ARM
+> Modules linked in:
+> CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
+> Hardware name: Samsung S3C2416 (Flattened Device Tree)
+> task: c07399f8 task.stack: c0734000
+> PC is at s3c24xx_demux_eint4_7+0x24/0x10c
+> LR is at s3c24xx_demux_eint4_7+0x108/0x10c
 > 
-> I tested on both Exynos5422 Odroid XU4 and Exynos5800 Peach Pi boards.
+> The problem is in the function s3c24xx_demux_eint() when dereferencing
+> bank->eint_base.
 > 
-> The temperatures levels reported for these two boards on a warm room are:
+> At this point, we cannot get the bank pointer from the irq_desc
+> structure since it is pointing to the hardware irq, not virq.
 > 
-> Odroid XU4
+> So let's get the bank pointer directly from data->drvdata.
 > 
-> # cat /sys/class/thermal/thermal_zone*/temp
-> 50000
-> 50000
-> 54000
-> 51000
-> 48000
-> 
-> Peach Pi
-> 
-> # cat /sys/class/thermal/thermal_zone*/temp
-> 42000
-> 44000
-> 27000 <-- weird value for thermal zone 2 like zone 0 in your XU3 lite
-> 45000
-> 45000
-> 
-> And the efuse values for the TMU devices are:
-> 
-> Odroid XU4
-> 
-> TMU0 = 45
-> TMU1 = 44
-> TMU2 = 44
-> TMU3 = 46
-> TMU3 = 46
-> 
-> Peach Pi
-> 
-> TMU0 = 44
-> TMU1 = 46
-> TMU2 = 36
-> TMU3 = 53
-> TMU3 = 46
-> 
-> The fused value for TMU2 is < 40 so that explains the weird temperature
-> level for thermal zone 2 in Peach. So after your patch, makes more sense:
-> 
-> # cat /sys/class/thermal/thermal_zone*/temp
-> 41000
-> 42000
-> 45000
-> 43000
-> 43000
+> This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
 
-Great! Thanks for testing!
+Checkpatch should complain here about commit format.
 
-
-> I wonder though if 0 is the best value or if we should just lower more
-> to cover the used e-fuse values in Exynos5 boards. But as you said,
-> we have no knowledge about these limits...
-
-Yeah... we could set value of 10 or 20... but that would be blind shot.
 > 
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Tested on FriendlyARM mini2440.
 > 
 
-Thanks,
+Please add:
+  Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+  Cc: <stable@vger.kernel.org>
+
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> index b82a003546ae..1b8d887796e8 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+>  {
+>  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+> -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> +	struct samsung_pinctrl_drv_data *d = data->drvdata;
+> +	struct samsung_pin_bank *bank = d->pin_banks;
+
+I think 'pin_banks' point to all banks of given controller not to the
+currently accessed one.
+
+
+Best regards,
 Krzysztof
+
