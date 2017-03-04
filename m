@@ -1,92 +1,83 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Sat, 4 Mar 2017 20:45:13 +0900
-Message-ID: <CA+Ln22E1FOTdU+drwy8aV8=2Ww=FBs+fZUiPS974vU2N=sD6AA@mail.gmail.com>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com> <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+From: Wolfgang Wiedmeyer <wreg@wiedmeyer.de>
+Subject: Investigating U-Boot for the Galaxy S3
+Date: Sat, 04 Mar 2017 23:09:21 +0100
+Message-ID: <87bmtgy9ri.fsf@machinist.wiedmeyer.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34445 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbdCDLpP (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Mar 2017 06:45:15 -0500
-In-Reply-To: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============4340746081307707434=="
+Return-path: <replicant-bounces@lists.osuosl.org>
+List-Unsubscribe: <http://lists.osuosl.org/mailman/options/replicant>,
+ <mailto:replicant-request@lists.osuosl.org?subject=unsubscribe>
+List-Archive: <http://lists.osuosl.org/pipermail/replicant/>
+List-Post: <mailto:replicant@lists.osuosl.org>
+List-Help: <mailto:replicant-request@lists.osuosl.org?subject=help>
+List-Subscribe: <http://lists.osuosl.org/mailman/listinfo/replicant>,
+ <mailto:replicant-request@lists.osuosl.org?subject=subscribe>
+Errors-To: replicant-bounces@lists.osuosl.org
+Sender: "Replicant" <replicant-bounces@lists.osuosl.org>
+To: replicant <replicant@lists.osuosl.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sergio Prado <sergio.prado@e-labworks.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-[+Chanwoo]
+--===============4340746081307707434==
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-2017-03-04 17:15 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Thu, Mar 02, 2017 at 06:23:19PM -0300, Sergio Prado wrote:
->> We are getting a NULL pointer dereference when working with external
->> interrupts on s3c24xx:
->>
->> Unable to handle kernel NULL pointer dereference at virtual address 000000a8
->> pgd = c0104000
->> [000000a8] *pgd=00000000
->> Internal error: Oops: 5 [#1] ARM
->> Modules linked in:
->> CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
->> Hardware name: Samsung S3C2416 (Flattened Device Tree)
->> task: c07399f8 task.stack: c0734000
->> PC is at s3c24xx_demux_eint4_7+0x24/0x10c
->> LR is at s3c24xx_demux_eint4_7+0x108/0x10c
->>
->> The problem is in the function s3c24xx_demux_eint() when dereferencing
->> bank->eint_base.
->>
->> At this point, we cannot get the bank pointer from the irq_desc
->> structure since it is pointing to the hardware irq, not virq.
->>
->> So let's get the bank pointer directly from data->drvdata.
->>
->> This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
->
-> Checkpatch should complain here about commit format.
->
->>
->> Tested on FriendlyARM mini2440.
->>
->
-> Please add:
->   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
->   Cc: <stable@vger.kernel.org>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, that patch seems to have also affected s3c64xx...
+Hi all,
 
->
->> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
->> ---
->>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> index b82a003546ae..1b8d887796e8 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
->>  {
->>       struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
->>       struct irq_chip *chip = irq_desc_get_chip(desc);
->> -     struct irq_data *irqd = irq_desc_get_irq_data(desc);
->> -     struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
->> +     struct samsung_pinctrl_drv_data *d = data->drvdata;
->> +     struct samsung_pin_bank *bank = d->pin_banks;
->
-> I think 'pin_banks' point to all banks of given controller not to the
-> currently accessed one.
+some time ago, I collected information about running U-Boot on the
+Galaxy S3 and wrote a blog post about it[1]. I thought that this might
+be interesting for the subscribers of this lists.
 
-Yeah, this doesn't seem to be a logically correct fix, although it
-should work since in s3c24xx all banks would have the same eint_base
-value.
-
-I would suggest a partial revert of 8b1bd11c1f8f, i.e. bringing back
-samsung_pinctrl_drv_data::virt_base and undoing the changes made in
-s3c24xx and s3c64xx EINT code.
+I actually wanted to make this a 3-part post series with a second post
+about the currently used kernel for the S3 and a third post about my little
+adventure running the mainline kernel with Replicant on the
+S3. Unfortunately, I keep delaying writing the third post because of
+other Replicant work, but I already wrote the second post a few months
+ago[2].
 
 Best regards,
-Tomasz
+Wolfgang
+
+
+[1]  https://blog.fossencdi.org/u-boot-galaxys3.html
+
+[2]  https://blog.fossencdi.org/newer-kernel-galaxys3.html
+
+=2D-=20
+Website: https://fossencdi.org
+OpenPGP: 0F30 D1A0 2F73 F70A 6FEE  048E 5816 A24C 1075 7FC4
+Key download: https://wiedmeyer.de/keys/ww.asc
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJYuzsRAAoJEFgWokwQdX/EcL0QAIvvl+1ni9CsGxmtIsXh8BP6
+vXMsXV3F8sq0cu60apRdtCXpitu0pPwD2ndKOOlaLy51owkEZ8y1cWboXd3srmc6
+GldHxbexfP9pYiq62graNgd2LtKFTmGX0LKMGtaKYWK+7MXOR3zpYmrXp3NjvB6A
+YR2FPZEo7gF2Ahe7GCrM3gAnPlOAUS1hrkspvQ9twRsBK2p3Pr5s1c/uSt3XWLDX
+iUFPMkEaCpBEoHm1Sn37zQlDWuVWrFEYGJoGxxqKa2lzO8tSvNGWlNIBhkA4L8Kk
+i+THoyeGIwGdiHLmPjPjYRqePRH8qvrpazcammbtWf6T3AFaa47ydGWi70SouFaQ
+7NVDdJrReTBUVu6I8klMKF/z1wQmpOfmfsG1IYfP0p0XIptzJoy4SnaE2xc+hEhg
+C3NTfv4opdq7d1T15VJGCL6B51bMfmoPwBs+x7hLoNS229IpyT+yz+CCLGWyfvDc
+7Qi4ikwKvamBUFbxuBblGCRukzkws8I+tvTpILvLj3sZ55twMrIRzT6haccu066p
+psPn/tl8GujOt4fALuEaUKbR1izN2BFaVYYwdLdaH20FWZ0YKVUYIGpHycbhEEzP
+cIWMNIOXotlmGHGKjz1/IGjRutrNXzkpBCG6SECJuQV7Q9rDLLtGA5AuAQg+PA84
+Rz2PPyn/MYbFSUngEQAB
+=0OVl
+-----END PGP SIGNATURE-----
+--=-=-=--
+
+--===============4340746081307707434==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4340746081307707434==--
