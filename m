@@ -1,76 +1,66 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Sat, 4 Mar 2017 10:15:04 +0200
-Message-ID: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+Subject: Re: [PATCH v3 0/7] Fix the parse_dt of exynos dsi and remove the OF
+ graph
+Date: Sat, 4 Mar 2017 10:23:13 +0200
+Message-ID: <20170304082313.c6muov76oiwl23tr@kozik-lap>
+References: <CGME20170302102112epcas5p476b30508bbaffbf1fe9781b941cd418f@epcas5p4.samsung.com>
+ <1488450019-6482-1-git-send-email-hoegeun.kwon@samsung.com>
+ <20170303002206.zh56dsx7iuysg374@gangnam.samsung>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20170303002206.zh56dsx7iuysg374@gangnam.samsung>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, airlied@linux.ie, catalin.marinas@arm.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, inki.dae@samsung.com, javier@osg.samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 02, 2017 at 06:23:19PM -0300, Sergio Prado wrote:
-> We are getting a NULL pointer dereference when working with external
-> interrupts on s3c24xx:
+On Fri, Mar 03, 2017 at 09:22:06AM +0900, Andi Shyti wrote:
+> Hi Hoegeun,
 > 
-> Unable to handle kernel NULL pointer dereference at virtual address 000000a8
-> pgd = c0104000
-> [000000a8] *pgd=00000000
-> Internal error: Oops: 5 [#1] ARM
-> Modules linked in:
-> CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
-> Hardware name: Samsung S3C2416 (Flattened Device Tree)
-> task: c07399f8 task.stack: c0734000
-> PC is at s3c24xx_demux_eint4_7+0x24/0x10c
-> LR is at s3c24xx_demux_eint4_7+0x108/0x10c
+> > Hoegeun Kwon (7):
+> >   arm64: dts: exynos: Add the burst and esc clock frequency properties
+> >     for exynos5433 dts
+> >   arm: dts: Add the burst and esc clock frequency properties for
+> >     exynos3250 dts
+> >   arm: dts: Add the burst and esc clock frequency properties for
+> >     exynos4412 dts
+> >   arm: dts: Add the burst and esc clock frequency properties for
+> >     exynos4210 dts
+> >   drm/exynos: dsi: Fix the parse_dt function
+> >   arm64: dts: exynos: Remove the OF graph from DSI node
+> >   arm: dts: Remove the OF graph from DSI node
 > 
-> The problem is in the function s3c24xx_demux_eint() when dereferencing
-> bank->eint_base.
+> for all of them:
 > 
-> At this point, we cannot get the bank pointer from the irq_desc
-> structure since it is pointing to the hardware irq, not virq.
-> 
-> So let's get the bank pointer directly from data->drvdata.
-> 
-> This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
+> Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
 
-Checkpatch should complain here about commit format.
+Andi,
+
+Thanks for review. It is much welcomed.
+
+I am trying not loose such review tags but it might happen because:
+1. Patchwork does not store them,
+2. Mail does not sit in inbox for long (inbox zero),
+so if it is possible the most convenient for me is to reply with review
+to each email.
 
 > 
-> Tested on FriendlyARM mini2440.
-> 
+> although I would have squashed patch 2, 3 and 4, but no need to
+> resend, unless someone else agrees.
 
-Please add:
-  Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-  Cc: <stable@vger.kernel.org>
-
-> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> index b82a003546ae..1b8d887796e8 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
->  {
->  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
-> -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-> +	struct samsung_pinctrl_drv_data *d = data->drvdata;
-> +	struct samsung_pin_bank *bank = d->pin_banks;
-
-I think 'pin_banks' point to all banks of given controller not to the
-currently accessed one.
-
+Yes, these are small additions to the same arch so they could be
+indeed squashed. I don't mind keeping them separated though.
 
 Best regards,
 Krzysztof
-
