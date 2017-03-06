@@ -1,14 +1,13 @@
-From: Brian Kim <brian.kim@hardkernel.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add power button for Odroid XU3/4
-Date: Mon, 6 Mar 2017 18:49:43 +0900
-Message-ID: <ae78c84d-796b-609b-ba00-c253a1f63a84@hardkernel.com>
-References: <1488768729-9435-1-git-send-email-brian.kim@hardkernel.com>
- <CAJKOXPcwzy_hAMLoUNcJxYHjHfUF+YmeqSLPy2spvyCwck=TaA@mail.gmail.com>
+From: David Binderman <dcb314@hotmail.com>
+Subject: linux-4.11-rc1/drivers/gpu/drm/exynos/exynos5433_drm_decon.c:681:
+ suspicious mask ?
+Date: Mon, 6 Mar 2017 10:05:19 +0000
+Message-ID: <DB5PR08MB0967CD7B84545DE129126A619C2C0@DB5PR08MB0967.eurprd08.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAJKOXPcwzy_hAMLoUNcJxYHjHfUF+YmeqSLPy2spvyCwck=TaA@mail.gmail.com>
+Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,37 +17,26 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, =?UTF-8?Q?=c5=81ukasz_Majewski?= <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux.amoon@gmail.com, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, robh+dt@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+To: "inki.dae@samsung.com" <inki.dae@samsung.com>, "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "airlied@linux.ie" <airlied@linux.ie>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxN+uFhCAwM+yblCAwNuydvCAxNjoyNCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBPbiBNb24sIE1hciA2LCAyMDE3IGF0IDQ6NTIgQU0sIEJyaWFuIEtpbSA8YnJpYW4ua2ltQGhh
-cmRrZXJuZWwuY29tPiB3cm90ZToKPj4gVGhlIHBvd2VyIGJ1dHRvbiBvbiBPZHJvaWQgWFUzLzQg
-aXMgY29ubmVjdGVkIHdpdGggdGhlIFBXUk9OIHBpbiBvZgo+PiBzMm1wczExIFBNSUMuIFRoZSBz
-Mm1wczExIHNlbmRzIGxvdyBzaWduYWwgdG8gR1BJTyBpbnB1dCBpbiBleHlub3MgNTQyMgo+PiB2
-aWEgT05PQiBwaW4uCj4+Cj4+IFRoaXMgcGF0Y2ggYWRkcyBkZXZpY2V0cmVlIGJpbmRpbmdzIGZv
-ciB0aGUgcG93ZXIgYnV0dG9uIG9mIE9kcm9pZAo+PiBYVTMvNC4KPj4KPj4gU2lnbmVkLW9mZi1i
-eTogQnJpYW4gS2ltIDxicmlhbi5raW1AaGFyZGtlcm5lbC5jb20+Cj4+IC0tLQo+PiAgYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kgfCAyMiArKysrKysr
-KysrKysrKysrKysrKysrCj4+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKQo+Pgo+
-IEhpLAo+Cj4gVGhhbmtzIGZvciB0aGUgcGF0Y2guCj4KPiBZb3Ugc2VudCBhbG1vc3QgdGhlIHNh
-bWUgcGF0Y2ggYXMgQW5hbmQgZGlkIHNvbWUgdGltZSBhZ28gKHdpdGggZmV3Cj4gbWlzc2luZyB0
-aGluZ3MpIDoKPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzgzODg0OTEvCkkn
-bSBzb3JyeSwgS3J6eXN6dG9mLiBJIGhhdmVuJ3Qgc2VlbiBpdCBiZWZvcmUuCgpXaGVuIEkgY2hl
-Y2tlZCBnaXQgbG9nIGhpc3RvcnkgaW4gdGhlIGtlcm5lbCBzb3VyY2UsIHRoaXMgcGF0Y2ggd2Fz
-IG1pc3NlZC4KU28sIEkgc3VibWl0dGVkIGl0LgoKPgo+IEFsbCBwcmV2aW91cyBjb21tZW50cyBh
-cHBseSwgaW5jbHVkaW5nIHRoYXQgeW91IGFkZGVkIGEga2V5IGZvciBncHgwLTMKPiB3aGljaCBp
-cyBub3QgYSBQV1JPTiBhbmQgaXQgZG9lcyBub3QgbWF0Y2ggZGVzY3JpcHRpb24gYXQgYWxsLgpZ
-ZXMsIGdweDAtMyBpcyBub3QgUFdST04uClBXUk9OIGlzIHRoZSA1ViBwb3dlciBpbnB1dCBzaWdu
-YWwgZ2VuZXJhdGVkIGJ5IHRoZSBTVzIgcHVzaCBidXR0b24gb24gT2Ryb2lkLVh1My80IGJvYXJk
-cwoKKGFjdGl2ZSBoaWdoKS4gUFdST04gbm90aWZpZXMgInBvd2VyIHVwIGV2ZW50IHRvIHN0YXJ0
-IiB0byBzMm1wczEzIFBNSUMuCgpncHgwLTMgaW4gRXh5bm9zIDU0MjIgaXMgY29ubmVjdGVkIHRv
-IHRoZSBPTk9CIHBpbiBvZiBQTUlDLgpBY2NvcmRpbmcgdG8gczJtcHMxMyBkYXRhc2hlZXQsIE9O
-T0Igb3BlcmF0ZXMgYXMgJ1BXUk9OIGtleSBhY3RpdmUgbG93IHNpZ25hbCcuCnMybXBzMTMgUE1J
-QyBnZW5lcmF0ZXMgdGhlIG9wcG9zaXRlIHNpZ25hbCBmcm9tIHRoZSBQV1JPTiB2aWEgT05PQiAo
-YWN0aXZlIGxvdykuClNvLCB3ZSBjYW4gZ2V0IHRoZSBzdGF0ZSBvZiBwb3dlciBidXR0b24gYnkg
-Z3B4MC0zLgoKPgo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPgoKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
-ZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
-aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Hello there,
+
+linux-4.11-rc1/drivers/gpu/drm/exynos/exynos5433_drm_decon.c:681]: (warning) Result of operator '|' is always true if one operand is non-zero. Did you intend to use '&'?
+
+Source code is
+
+    if (ctx->out_type | I80_HW_TRG) {
+
+Also in the same file:
+
+[drivers/gpu/drm/exynos/exynos5433_drm_decon.c:131]: (style) Same expression on both sides of '|'.
+
+Source code is
+
+       writel(TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN
+               | TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN,
+
+Regards
+
+David Binderman
