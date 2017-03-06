@@ -1,77 +1,41 @@
-From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Subject: [PATCH v4 5/5] arm: dts: Remove the OF graph from DSI node
-Date: Mon, 06 Mar 2017 13:42:23 +0900
-Message-ID: <1488775343-6236-6-git-send-email-hoegeun.kwon@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+Subject: Re: [PATCH v4 1/5] arm64: dts: exynos: Add the burst and esc clock
+ frequency properties to DSI node
+Date: Mon, 06 Mar 2017 13:49:12 +0900
+Message-ID: <20170306044912.b7syhwilwxygpjlj@gangnam.samsung>
 References: <1488775343-6236-1-git-send-email-hoegeun.kwon@samsung.com>
- <CGME20170306044239epcas1p2cf8ad82b218e72119af0a35af249148f@epcas1p2.samsung.com>
+ <CGME20170306044233epcas1p20b5e6c764a7752290e5ed25cc13a69af@epcas1p2.samsung.com>
+ <1488775343-6236-2-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1488775343-6236-1-git-send-email-hoegeun.kwon@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-disposition: inline
+In-reply-to: <1488775343-6236-2-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, javier@osg.samsung.com, airlied@linux.ie, catalin.marinas@arm.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, inki.dae@samsung.com, robh+dt@kernel.org, kgene@kernel.org, dri-devel@lists.freedesktop.org, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIE9GIGdyYXBoIGlzIG5vdCBuZWVkZWQgYmVjYXVzZSB0aGUgcGFuZWwgaXMgYSBjaGlsZCBv
-ZiBkc2kuIFJlbW92ZQp0aGUgcG9ydHMgbm9kZSBpbiBEU0kgbm9kZSwgYW5kIHBvcnQgbm9kZSBp
-biBwYW5lbCBub2RlLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2VnZXVuLmt3b25A
-c2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcu
-Y29tPgotLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cyB8IDIxIC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC10cmF0cy5k
-dHMgIHwgMjEgLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0
-NDEyLXRyYXRzMi5kdHMgfCAyMSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDMgZmlsZXMgY2hhbmdl
-ZCwgNjMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
-MzI1MC1yaW5hdG8uZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRz
-CmluZGV4IGM5ZjE5MWMuLjgyZTY3NmEgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczMyNTAtcmluYXRvLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJp
-bmF0by5kdHMKQEAgLTIyMCwyMSArMjIwLDYgQEAKIAlzYW1zdW5nLHBsbC1jbG9jay1mcmVxdWVu
-Y3kgPSA8MjQwMDAwMDA+OwogCXN0YXR1cyA9ICJva2F5IjsKIAotCXBvcnRzIHsKLQkJI2FkZHJl
-c3MtY2VsbHMgPSA8MT47Ci0JCSNzaXplLWNlbGxzID0gPDA+OwotCi0JCXBvcnRAMSB7Ci0JCQly
-ZWcgPSA8MT47Ci0KLQkJCWRzaV9vdXQ6IGVuZHBvaW50IHsKLQkJCQlyZW1vdGUtZW5kcG9pbnQg
-PSA8JmRzaV9pbj47Ci0JCQkJc2Ftc3VuZyxidXJzdC1jbG9jay1mcmVxdWVuY3kgPSA8MjUwMDAw
-MDAwPjsKLQkJCQlzYW1zdW5nLGVzYy1jbG9jay1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+OwotCQkJ
-fTsKLQkJfTsKLQl9OwotCiAJcGFuZWxAMCB7CiAJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNmU2
-M2oweDAzIjsKIAkJcmVnID0gPDA+OwpAQCAtMjY0LDEyICsyNDksNiBAQAogCQkJCXZzeW5jLWxl
-biA9IDwyPjsKIAkJCX07CiAJCX07Ci0KLQkJcG9ydCB7Ci0JCQlkc2lfaW46IGVuZHBvaW50IHsK
-LQkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+OwotCQkJfTsKLQkJfTsKIAl9OwogfTsK
-IApkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC10cmF0cy5kdHMgYi9h
-cmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLXRyYXRzLmR0cwppbmRleCAxNzQzY2E4Li45NDUy
-YmVkIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLXRyYXRzLmR0cwor
-KysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLXRyYXRzLmR0cwpAQCAtMjAyLDIxICsy
-MDIsNiBAQAogCXNhbXN1bmcscGxsLWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47CiAJc3Rh
-dHVzID0gIm9rYXkiOwogCi0JcG9ydHMgewotCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKLQkJI3Np
-emUtY2VsbHMgPSA8MD47Ci0KLQkJcG9ydEAxIHsKLQkJCXJlZyA9IDwxPjsKLQotCQkJZHNpX291
-dDogZW5kcG9pbnQgewotCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNpX2luPjsKLQkJCQlzYW1z
-dW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSA9IDw1MDAwMDAwMDA+OwotCQkJCXNhbXN1bmcsZXNj
-LWNsb2NrLWZyZXF1ZW5jeSA9IDwyMDAwMDAwMD47Ci0JCQl9OwotCQl9OwotCX07Ci0KIAlwYW5l
-bEAwIHsKIAkJcmVnID0gPDA+OwogCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZlOGFhMCI7CkBA
-IC0yNDQsMTIgKzIyOSw2IEBACiAJCQkJdnN5bmMtbGVuID0gPDI+OwogCQkJfTsKIAkJfTsKLQot
-CQlwb3J0IHsKLQkJCWRzaV9pbjogZW5kcG9pbnQgewotCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwm
-ZHNpX291dD47Ci0JCQl9OwotCQl9OwogCX07CiB9OwogCmRpZmYgLS1naXQgYS9hcmNoL2FybS9i
-b290L2R0cy9leHlub3M0NDEyLXRyYXRzMi5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M0
-NDEyLXRyYXRzMi5kdHMKaW5kZXggODIyMjFhMC4uODZjZTVlNSAxMDA2NDQKLS0tIGEvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10cmF0czIuZHRzCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczQ0MTItdHJhdHMyLmR0cwpAQCAtMzkwLDIxICszOTAsNiBAQAogCXNhbXN1bmcscGxs
-LWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47CiAJc3RhdHVzID0gIm9rYXkiOwogCi0JcG9y
-dHMgewotCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKLQkJI3NpemUtY2VsbHMgPSA8MD47Ci0KLQkJ
-cG9ydEAxIHsKLQkJCXJlZyA9IDwxPjsKLQotCQkJZHNpX291dDogZW5kcG9pbnQgewotCQkJCXJl
-bW90ZS1lbmRwb2ludCA9IDwmZHNpX2luPjsKLQkJCQlzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1
-ZW5jeSA9IDw1MDAwMDAwMDA+OwotCQkJCXNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSA9IDwy
-MDAwMDAwMD47Ci0JCQl9OwotCQl9OwotCX07Ci0KIAlwYW5lbEAwIHsKIAkJY29tcGF0aWJsZSA9
-ICJzYW1zdW5nLHM2ZThhYTAiOwogCQlyZWcgPSA8MD47CkBAIC00MzIsMTIgKzQxNyw2IEBACiAJ
-CQkJdnN5bmMtbGVuID0gPDI+OwogCQkJfTsKIAkJfTsKLQotCQlwb3J0IHsKLQkJCWRzaV9pbjog
-ZW5kcG9pbnQgewotCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNpX291dD47Ci0JCQl9OwotCQl9
-OwogCX07CiB9OwogCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+Hi Hoegeun,
+
+On Mon, Mar 06, 2017 at 01:42:19PM +0900, Hoegeun Kwon wrote:
+> The OF graph is not needed because the panel is a child of dsi. Add
+> the burst and esc clock frequency properties to the parent (DSI node).
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+you forgot to put me in Cc and add my
+
+Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+
+Andi
