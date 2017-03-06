@@ -1,104 +1,82 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: mixer: simplify mixer_cfg_rgb_fmt()
-Date: Mon, 06 Mar 2017 09:22:16 +0100
-Message-ID: <d1a34f61-b3b2-c41b-ee3b-ba9583104d2a@samsung.com>
-References: <CGME20170303134134epcas1p2195b73b9ab0c5011ac2c53f39699eb33@epcas1p2.samsung.com>
- <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW-bxm8fMRDkQLDiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org>
+Subject: Re: [PATCH v4 2/5] arm: dts: Add the burst and esc clock frequency
+ properties to DSI node
+Date: Mon, 6 Mar 2017 09:38:51 +0100
+Message-ID: <20170306093851.3870ab29@ipc1.ka-ro>
+References: <1488775343-6236-1-git-send-email-hoegeun.kwon@samsung.com>
+        <CGME20170306044234epcas1p22e9481182e11330cea0d169ce0ad2666@epcas1p2.samsung.com>
+        <1488775343-6236-3-git-send-email-hoegeun.kwon@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12088 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752580AbdCFIWW (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Mar 2017 03:22:22 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OMD00IVSWL6K180@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 06 Mar 2017 08:22:18 +0000 (GMT)
-In-reply-to: <1488548452-4011-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1488775343-6236-3-git-send-email-hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
 
-Hi Tobias,
+Hi,
 
-On 03.03.2017 14:40, Tobias Jakobi wrote:
-> Convert if-statements to switch statement. Removes
-> duplicated code.
+On Mon, 06 Mar 2017 13:42:20 +0900 Hoegeun Kwon wrote:
+> The OF graph is not needed because the panel is a child of dsi. Add
 >
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+This is obviously from your patch #5 and doesn't make sense in this
+context.
+
+> the burst and esc clock frequency properties to the parent (DSI node).
+> 
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 30 ++++++++----------------------
->  1 file changed, 8 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 72143ac..41d0c36 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -382,29 +382,14 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->  	struct mixer_resources *res = &ctx->mixer_res;
->  	u32 val;
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 2 ++
+>  arch/arm/boot/dts/exynos4210-trats.dts  | 2 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 2 ++
+>  3 files changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 548413e..c9f191c 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -215,6 +215,8 @@
+>  &dsi_0 {
+>  	vddcore-supply = <&ldo6_reg>;
+>  	vddio-supply = <&ldo6_reg>;
+> +	samsung,burst-clock-frequency = <250000000>;
+> +	samsung,esc-clock-frequency = <20000000>;
+>  	samsung,pll-clock-frequency = <24000000>;
+>  	status = "okay";
 >  
-> -	if (height == 480) {
-> +	switch (height) {
-> +	case 480:
-> +	case 576:
->  		val = MXR_CFG_RGB601_0_255;
-> -	} else if (height == 576) {
-> -		val = MXR_CFG_RGB601_0_255;
-> -	} else if (height == 720) {
-> -		val = MXR_CFG_RGB709_16_235;
-> -		mixer_reg_write(res, MXR_CM_COEFF_Y,
-> -				(1 << 30) | (94 << 20) | (314 << 10) |
-> -				(32 << 0));
-> -		mixer_reg_write(res, MXR_CM_COEFF_CB,
-> -				(972 << 20) | (851 << 10) | (225 << 0));
-> -		mixer_reg_write(res, MXR_CM_COEFF_CR,
-> -				(225 << 20) | (820 << 10) | (1004 << 0));
-> -	} else if (height == 1080) {
-> -		val = MXR_CFG_RGB709_16_235;
-> -		mixer_reg_write(res, MXR_CM_COEFF_Y,
-> -				(1 << 30) | (94 << 20) | (314 << 10) |
-> -				(32 << 0));
-> -		mixer_reg_write(res, MXR_CM_COEFF_CB,
-> -				(972 << 20) | (851 << 10) | (225 << 0));
-> -		mixer_reg_write(res, MXR_CM_COEFF_CR,
-> -				(225 << 20) | (820 << 10) | (1004 << 0));
-> -	} else {
-> +		break;
-> +	case 720:
-> +	case 1080:
-> +	default:
->  		val = MXR_CFG_RGB709_16_235;
->  		mixer_reg_write(res, MXR_CM_COEFF_Y,
->  				(1 << 30) | (94 << 20) | (314 << 10) |
-> @@ -413,6 +398,7 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
->  				(972 << 20) | (851 << 10) | (225 << 0));
->  		mixer_reg_write(res, MXR_CM_COEFF_CR,
->  				(225 << 20) | (820 << 10) | (1004 << 0));
-> +		break;
->  	}
-
-Good change.
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
-One small nitpick.
-As I see this conditional/switch is to decide about BT standard
-depending on the height. The similar problem is addressed in exynos-gsc
-patches [1].
-It would be good to have the same criteria to distinguish SD/HD mode. I
-think ((height > 576) || (width > 720)) is more generic, in this case
-even (height > 576) looks better, but as this changes logic of the code
-it could be in separate patch.
-
-[1]: https://lkml.org/lkml/2017/2/21/864
-
-Regards
-Andrzej
-
+> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+> index 0ca1b4d..1743ca8 100644
+> --- a/arch/arm/boot/dts/exynos4210-trats.dts
+> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
+> @@ -197,6 +197,8 @@
+>  &dsi_0 {
+>  	vddcore-supply = <&vusb_reg>;
+>  	vddio-supply = <&vmipi_reg>;
+> +	samsung,burst-clock-frequency = <500000000>;
+> +	samsung,esc-clock-frequency = <20000000>;
+>  	samsung,pll-clock-frequency = <24000000>;
+>  	status = "okay";
 >  
->  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_RGB_FMT_MASK);
+> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+> index 41ecd6d..82221a0 100644
+> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+> @@ -385,6 +385,8 @@
+>  &dsi_0 {
+>  	vddcore-supply = <&ldo8_reg>;
+>  	vddio-supply = <&ldo10_reg>;
+> +	samsung,burst-clock-frequency = <500000000>;
+> +	samsung,esc-clock-frequency = <20000000>;
+>  	samsung,pll-clock-frequency = <24000000>;
+>  	status = "okay";
+>  
+
+
+Lothar Waßmann
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
