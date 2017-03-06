@@ -1,82 +1,63 @@
-From: Brian Kim <brian.kim@hardkernel.com>
-Subject: [PATCH] ARM: dts: exynos: Add power button for Odroid XU3/4
-Date: Mon,  6 Mar 2017 11:52:09 +0900
-Message-ID: <1488768729-9435-1-git-send-email-brian.kim@hardkernel.com>
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Subject: [PATCH v4 3/5] drm/exynos: dsi: Fix the parse_dt function
+Date: Mon, 06 Mar 2017 13:42:21 +0900
+Message-ID: <1488775343-6236-4-git-send-email-hoegeun.kwon@samsung.com>
+References: <1488775343-6236-1-git-send-email-hoegeun.kwon@samsung.com>
+ <CGME20170306044236epcas5p326440b0139bee5a33fd6545d0400bb57@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux.amoon@gmail.com, l.majewski@samsung.com, krzk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, mark.rutland@arm.com, javier@osg.samsung.com
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1488775343-6236-1-git-send-email-hoegeun.kwon@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, airlied@linux.ie, kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, javier@osg.samsung.com, Hoegeun Kwon <hoegeun.kwon@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The power button on Odroid XU3/4 is connected with the PWRON pin of
-s2mps11 PMIC. The s2mps11 sends low signal to GPIO input in exynos 5422
-via ONOB pin.
-
-This patch adds devicetree bindings for the power button of Odroid
-XU3/4.
-
-Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 05b9afdd..671d87f 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -13,6 +13,7 @@
- */
- 
- #include <dt-bindings/clock/samsung,s2mps11.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/sound/samsung-i2s.h>
-@@ -42,6 +43,22 @@
- 		};
- 	};
- 
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_power_key>;
-+
-+		power_key {
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <3 0>;
-+			gpios = <&gpx0 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	emmc_pwrseq: pwrseq {
- 		pinctrl-0 = <&emmc_nrst_pin>;
- 		pinctrl-names = "default";
-@@ -557,6 +574,11 @@
- };
- 
- &pinctrl_0 {
-+	gpio_power_key: power_key {
-+		samsung,pins = "gpx0-3";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
--- 
-2.7.4
+VGhlIGRzaSArIHBhbmVsIGlzIGEgcGFyZW50YWwgcmVsYXRpb25zaGlwLCBzbyBPRiBncnBhaCBp
+cyBub3QgbmVlZGVkLgpUaGVyZWZvcmUsIHRoZSBjdXJyZW50IGRzaV9wYXJzZV9kdCBmdW5jdGlv
+biB3aWxsIHRocm93IGFuIGVycm9yLApiZWNhdXNlIHRoZXJlIGlzIG5vIGxpbmtlZCBPRiBncmFw
+aCBmb3IgY2FzZSBzdWNoIGFzIGZpbWQgKyBkc2kgKwpwYW5lbC4gU28gdGhpcyBwYXRjaCBwYXJz
+ZSB0aGUgUGxsLCBidXJzdCBhbmQgZXNjIGNsb2NrIGZyZXF1ZW5jeQpwcm9wZXJ0aWVzIGluIGRz
+aV9wYXJzZV9kdCBhbmQgbW9kaWZpZWQgdG8gY3JlYXRlIGEgYnJpZGdlX25vZGUgb25seQppZiB0
+aGVyZSBpcyBhbiBPRiBncmFwaCBhc3NvY2lhdGVkIHdpdGggZHNpLgpTbyBJIHRoaW5rIHRoZSBB
+QkkgYnJlYWthZ2UgaXMgbmVlZGVkLgoKU2lnbmVkLW9mZi1ieTogSG9lZ2V1biBLd29uIDxob2Vn
+ZXVuLmt3b25Ac2Ftc3VuZy5jb20+ClJldmlld2VkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRh
+QHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2ku
+YyB8IDMyICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwg
+OCBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMKaW5kZXggZjVjMDRkMC4uMmQ0ZTExOCAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kc2kuYwpAQCAtMTY1MiwzOSArMTY1MiwyMyBAQCBzdGF0aWMgaW50
+IGV4eW5vc19kc2lfcGFyc2VfZHQoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKIAlpZiAocmV0IDwg
+MCkKIAkJcmV0dXJuIHJldDsKIAotCWVwID0gb2ZfZ3JhcGhfZ2V0X2VuZHBvaW50X2J5X3JlZ3Mo
+bm9kZSwgRFNJX1BPUlRfT1VULCAwKTsKLQlpZiAoIWVwKSB7Ci0JCWRldl9lcnIoZGV2LCAibm8g
+b3V0cHV0IHBvcnQgd2l0aCBlbmRwb2ludCBzcGVjaWZpZWRcbiIpOwotCQlyZXR1cm4gLUVJTlZB
+TDsKLQl9Ci0KLQlyZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMyKGVwLCAic2Ftc3VuZyxidXJz
+dC1jbG9jay1mcmVxdWVuY3kiLAorCXJldCA9IGV4eW5vc19kc2lfb2ZfcmVhZF91MzIobm9kZSwg
+InNhbXN1bmcsYnVyc3QtY2xvY2stZnJlcXVlbmN5IiwKIAkJCQkgICAgICZkc2ktPmJ1cnN0X2Ns
+a19yYXRlKTsKIAlpZiAocmV0IDwgMCkKLQkJZ290byBlbmQ7CisJCXJldHVybiByZXQ7CiAKLQly
+ZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMyKGVwLCAic2Ftc3VuZyxlc2MtY2xvY2stZnJlcXVl
+bmN5IiwKKwlyZXQgPSBleHlub3NfZHNpX29mX3JlYWRfdTMyKG5vZGUsICJzYW1zdW5nLGVzYy1j
+bG9jay1mcmVxdWVuY3kiLAogCQkJCSAgICAgJmRzaS0+ZXNjX2Nsa19yYXRlKTsKIAlpZiAocmV0
+IDwgMCkKLQkJZ290byBlbmQ7Ci0KLQlvZl9ub2RlX3B1dChlcCk7CisJCXJldHVybiByZXQ7CiAK
+IAllcCA9IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KG5vZGUsIE5VTEwpOwotCWlmICghZXAp
+IHsKLQkJcmV0ID0gLUVJTlZBTDsKLQkJZ290byBlbmQ7Ci0JfQotCi0JZHNpLT5icmlkZ2Vfbm9k
+ZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfcG9ydF9wYXJlbnQoZXApOwotCWlmICghZHNpLT5icmlk
+Z2Vfbm9kZSkgewotCQlyZXQgPSAtRUlOVkFMOwotCQlnb3RvIGVuZDsKKwlpZiAoZXApIHsKKwkJ
+ZHNpLT5icmlkZ2Vfbm9kZSA9IG9mX2dyYXBoX2dldF9yZW1vdGVfcG9ydF9wYXJlbnQoZXApOwor
+CQlvZl9ub2RlX3B1dChlcCk7CiAJfQotZW5kOgotCW9mX25vZGVfcHV0KGVwKTsKIAotCXJldHVy
+biByZXQ7CisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9iaW5kKHN0cnVj
+dCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAotLSAKMS45LjEKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
