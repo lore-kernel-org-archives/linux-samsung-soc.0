@@ -1,851 +1,153 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 4/7] PCI: dwc: all: Modify dbi accessors to take dbi_base as argument
-Date: Tue, 7 Mar 2017 15:22:49 +0530
-Message-ID: <1488880372-7390-5-git-send-email-kishon@ti.com>
-References: <1488880372-7390-1-git-send-email-kishon@ti.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 3/4] drm/exynos/decon5433: fix vblank event handling
+Date: Tue, 07 Mar 2017 10:58:54 +0100
+Message-ID: <066f255d-076c-f16f-d3c6-29cb2b2e4b53@samsung.com>
+References: <1487779505-4062-1-git-send-email-a.hajda@samsung.com>
+ <CGME20170222160516eucas1p102bcb93b7f0356cfafbb707987b9e85f@eucas1p1.samsung.com>
+ <1487779505-4062-4-git-send-email-a.hajda@samsung.com>
+ <58BE797B.1070308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1488880372-7390-1-git-send-email-kishon@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>, Joao Pinto <Joao.Pinto@synopsys.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com
-Cc: nsekhar@ti.com, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Murali Karicheri <m-karicheri2@ti.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Niklas Cassel <niklas.cassel@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Zhou Wang <wangzhou1@hisilicon.com>, Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <58BE797B.1070308@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-dwc has 2 dbi address space labeled dbics and dbics2. The existing
-helper to access dbi address space can access only dbics. However
-dbics2 has to be accessed for programming the BAR registers in the
-case of EP mode. This is in preparation for adding EP mode support
-to dwc driver.
-
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Murali Karicheri <m-karicheri2@ti.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Niklas Cassel <niklas.cassel@axis.com>
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Joao Pinto <Joao.Pinto@synopsys.com>
-Cc: Zhou Wang <wangzhou1@hisilicon.com>
-Cc: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/dwc/pci-dra7xx.c           |   10 +++--
- drivers/pci/dwc/pci-exynos.c           |   10 +++--
- drivers/pci/dwc/pci-imx6.c             |   62 +++++++++++++++-----------
- drivers/pci/dwc/pci-keystone-dw.c      |   15 ++++---
- drivers/pci/dwc/pcie-armada8k.c        |   39 +++++++++-------
- drivers/pci/dwc/pcie-artpec6.c         |    7 +--
- drivers/pci/dwc/pcie-designware-host.c |   20 +++++----
- drivers/pci/dwc/pcie-designware.c      |   76 ++++++++++++++++++--------------
- drivers/pci/dwc/pcie-designware.h      |   10 +++--
- drivers/pci/dwc/pcie-hisi.c            |   17 ++++---
- 10 files changed, 152 insertions(+), 114 deletions(-)
-
-diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
-index 07c45ec..3708bd6 100644
---- a/drivers/pci/dwc/pci-dra7xx.c
-+++ b/drivers/pci/dwc/pci-dra7xx.c
-@@ -495,12 +495,13 @@ static int dra7xx_pcie_suspend(struct device *dev)
- {
- 	struct dra7xx_pcie *dra7xx = dev_get_drvdata(dev);
- 	struct dw_pcie *pci = dra7xx->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 
- 	/* clear MSE */
--	val = dw_pcie_readl_dbi(pci, PCI_COMMAND);
-+	val = dw_pcie_readl_dbi(pci, base, PCI_COMMAND);
- 	val &= ~PCI_COMMAND_MEMORY;
--	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
-+	dw_pcie_writel_dbi(pci, base, PCI_COMMAND, val);
- 
- 	return 0;
- }
-@@ -509,12 +510,13 @@ static int dra7xx_pcie_resume(struct device *dev)
- {
- 	struct dra7xx_pcie *dra7xx = dev_get_drvdata(dev);
- 	struct dw_pcie *pci = dra7xx->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 
- 	/* set MSE */
--	val = dw_pcie_readl_dbi(pci, PCI_COMMAND);
-+	val = dw_pcie_readl_dbi(pci, base, PCI_COMMAND);
- 	val |= PCI_COMMAND_MEMORY;
--	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
-+	dw_pcie_writel_dbi(pci, base, PCI_COMMAND, val);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/dwc/pci-exynos.c b/drivers/pci/dwc/pci-exynos.c
-index 993b650..a0d40f7 100644
---- a/drivers/pci/dwc/pci-exynos.c
-+++ b/drivers/pci/dwc/pci-exynos.c
-@@ -521,23 +521,25 @@ static void exynos_pcie_enable_interrupts(struct exynos_pcie *ep)
- 		exynos_pcie_msi_init(ep);
- }
- 
--static u32 exynos_pcie_readl_dbi(struct dw_pcie *pci, u32 reg)
-+static u32 exynos_pcie_readl_dbi(struct dw_pcie *pci, void __iomem *base,
-+				 u32 reg)
- {
- 	struct exynos_pcie *ep = to_exynos_pcie(pci);
- 	u32 val;
- 
- 	exynos_pcie_sideband_dbi_r_mode(ep, true);
--	val = readl(pci->dbi_base + reg);
-+	val = readl(base + reg);
- 	exynos_pcie_sideband_dbi_r_mode(ep, false);
- 	return val;
- }
- 
--static void exynos_pcie_writel_dbi(struct dw_pcie *pci, u32 reg, u32 val)
-+static void exynos_pcie_writel_dbi(struct dw_pcie *pci, void __iomem *base,
-+				   u32 reg, u32 val)
- {
- 	struct exynos_pcie *ep = to_exynos_pcie(pci);
- 
- 	exynos_pcie_sideband_dbi_w_mode(ep, true);
--	writel(val, pci->dbi_base + reg);
-+	writel(val, base + reg);
- 	exynos_pcie_sideband_dbi_w_mode(ep, false);
- }
- 
-diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
-index 801e46c..85dd901 100644
---- a/drivers/pci/dwc/pci-imx6.c
-+++ b/drivers/pci/dwc/pci-imx6.c
-@@ -98,12 +98,13 @@ struct imx6_pcie {
- static int pcie_phy_poll_ack(struct imx6_pcie *imx6_pcie, int exp_val)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 	u32 max_iterations = 10;
- 	u32 wait_counter = 0;
- 
- 	do {
--		val = dw_pcie_readl_dbi(pci, PCIE_PHY_STAT);
-+		val = dw_pcie_readl_dbi(pci, base, PCIE_PHY_STAT);
- 		val = (val >> PCIE_PHY_STAT_ACK_LOC) & 0x1;
- 		wait_counter++;
- 
-@@ -119,21 +120,22 @@ static int pcie_phy_poll_ack(struct imx6_pcie *imx6_pcie, int exp_val)
- static int pcie_phy_wait_ack(struct imx6_pcie *imx6_pcie, int addr)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 	int ret;
- 
- 	val = addr << PCIE_PHY_CTRL_DATA_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, val);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, val);
- 
- 	val |= (0x1 << PCIE_PHY_CTRL_CAP_ADR_LOC);
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, val);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, val);
- 
- 	ret = pcie_phy_poll_ack(imx6_pcie, 1);
- 	if (ret)
- 		return ret;
- 
- 	val = addr << PCIE_PHY_CTRL_DATA_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, val);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, val);
- 
- 	return pcie_phy_poll_ack(imx6_pcie, 0);
- }
-@@ -142,6 +144,7 @@ static int pcie_phy_wait_ack(struct imx6_pcie *imx6_pcie, int addr)
- static int pcie_phy_read(struct imx6_pcie *imx6_pcie, int addr, int *data)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val, phy_ctl;
- 	int ret;
- 
-@@ -151,17 +154,17 @@ static int pcie_phy_read(struct imx6_pcie *imx6_pcie, int addr, int *data)
- 
- 	/* assert Read signal */
- 	phy_ctl = 0x1 << PCIE_PHY_CTRL_RD_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, phy_ctl);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, phy_ctl);
- 
- 	ret = pcie_phy_poll_ack(imx6_pcie, 1);
- 	if (ret)
- 		return ret;
- 
--	val = dw_pcie_readl_dbi(pci, PCIE_PHY_STAT);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_PHY_STAT);
- 	*data = val & 0xffff;
- 
- 	/* deassert Read signal */
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, 0x00);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, 0x00);
- 
- 	return pcie_phy_poll_ack(imx6_pcie, 0);
- }
-@@ -169,6 +172,7 @@ static int pcie_phy_read(struct imx6_pcie *imx6_pcie, int addr, int *data)
- static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, int data)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 var;
- 	int ret;
- 
-@@ -179,11 +183,11 @@ static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, int data)
- 		return ret;
- 
- 	var = data << PCIE_PHY_CTRL_DATA_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, var);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, var);
- 
- 	/* capture data */
- 	var |= (0x1 << PCIE_PHY_CTRL_CAP_DAT_LOC);
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, var);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, var);
- 
- 	ret = pcie_phy_poll_ack(imx6_pcie, 1);
- 	if (ret)
-@@ -191,7 +195,7 @@ static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, int data)
- 
- 	/* deassert cap data */
- 	var = data << PCIE_PHY_CTRL_DATA_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, var);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, var);
- 
- 	/* wait for ack de-assertion */
- 	ret = pcie_phy_poll_ack(imx6_pcie, 0);
-@@ -200,7 +204,7 @@ static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, int data)
- 
- 	/* assert wr signal */
- 	var = 0x1 << PCIE_PHY_CTRL_WR_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, var);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, var);
- 
- 	/* wait for ack */
- 	ret = pcie_phy_poll_ack(imx6_pcie, 1);
-@@ -209,14 +213,14 @@ static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, int data)
- 
- 	/* deassert wr signal */
- 	var = data << PCIE_PHY_CTRL_DATA_LOC;
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, var);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, var);
- 
- 	/* wait for ack de-assertion */
- 	ret = pcie_phy_poll_ack(imx6_pcie, 0);
- 	if (ret)
- 		return ret;
- 
--	dw_pcie_writel_dbi(pci, PCIE_PHY_CTRL, 0x0);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PHY_CTRL, 0x0);
- 
- 	return 0;
- }
-@@ -411,6 +415,7 @@ static void imx6_pcie_init_phy(struct imx6_pcie *imx6_pcie)
- static int imx6_pcie_wait_for_link(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	struct device *dev = pci->dev;
- 
- 	/* check if the link is up or not */
-@@ -418,20 +423,22 @@ static int imx6_pcie_wait_for_link(struct imx6_pcie *imx6_pcie)
- 		return 0;
- 
- 	dev_dbg(dev, "DEBUG_R0: 0x%08x, DEBUG_R1: 0x%08x\n",
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R0),
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R1));
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R0),
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R1));
- 	return -ETIMEDOUT;
- }
- 
- static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	struct device *dev = pci->dev;
- 	u32 tmp;
- 	unsigned int retries;
- 
- 	for (retries = 0; retries < 200; retries++) {
--		tmp = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+		tmp = dw_pcie_readl_dbi(pci, base,
-+					PCIE_LINK_WIDTH_SPEED_CONTROL);
- 		/* Test if the speed change finished. */
- 		if (!(tmp & PORT_LOGIC_SPEED_CHANGE))
- 			return 0;
-@@ -454,6 +461,7 @@ static irqreturn_t imx6_pcie_msi_handler(int irq, void *arg)
- static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	struct device *dev = pci->dev;
- 	u32 tmp;
- 	int ret;
-@@ -463,10 +471,10 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 	 * started in Gen2 mode, there is a possibility the devices on the
- 	 * bus will not be detected at all.  This happens with PCIe switches.
- 	 */
--	tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCR);
-+	tmp = dw_pcie_readl_dbi(pci, base, PCIE_RC_LCR);
- 	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
- 	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
--	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
-+	dw_pcie_writel_dbi(pci, base, PCIE_RC_LCR, tmp);
- 
- 	/* Start LTSSM. */
- 	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-@@ -478,10 +486,10 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 
- 	if (imx6_pcie->link_gen == 2) {
- 		/* Allow Gen2 mode after the link is up. */
--		tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCR);
-+		tmp = dw_pcie_readl_dbi(pci, base, PCIE_RC_LCR);
- 		tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
- 		tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2;
--		dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
-+		dw_pcie_writel_dbi(pci, base, PCIE_RC_LCR, tmp);
- 	} else {
- 		dev_info(dev, "Link: Gen2 disabled\n");
- 	}
-@@ -490,9 +498,9 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 	 * Start Directed Speed Change so the best possible speed both link
- 	 * partners support can be negotiated.
- 	 */
--	tmp = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	tmp = dw_pcie_readl_dbi(pci, base, PCIE_LINK_WIDTH_SPEED_CONTROL);
- 	tmp |= PORT_LOGIC_SPEED_CHANGE;
--	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
-+	dw_pcie_writel_dbi(pci, base, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
- 
- 	ret = imx6_pcie_wait_for_speed_change(imx6_pcie);
- 	if (ret) {
-@@ -507,14 +515,14 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 		goto err_reset_phy;
- 	}
- 
--	tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCSR);
-+	tmp = dw_pcie_readl_dbi(pci, base, PCIE_RC_LCSR);
- 	dev_info(dev, "Link up, Gen%i\n", (tmp >> 16) & 0xf);
- 	return 0;
- 
- err_reset_phy:
- 	dev_dbg(dev, "PHY DEBUG_R0=0x%08x DEBUG_R1=0x%08x\n",
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R0),
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R1));
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R0),
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R1));
- 	imx6_pcie_reset_phy(imx6_pcie);
- 	return ret;
- }
-@@ -536,7 +544,9 @@ static void imx6_pcie_host_init(struct pcie_port *pp)
- 
- static int imx6_pcie_link_up(struct dw_pcie *pci)
- {
--	return dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R1) &
-+	void __iomem *base = pci->dbi_base;
-+
-+	return dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R1) &
- 			PCIE_PHY_DEBUG_R1_XMLH_LINK_UP;
- }
- 
-diff --git a/drivers/pci/dwc/pci-keystone-dw.c b/drivers/pci/dwc/pci-keystone-dw.c
-index 6b396f6..7220c04 100644
---- a/drivers/pci/dwc/pci-keystone-dw.c
-+++ b/drivers/pci/dwc/pci-keystone-dw.c
-@@ -378,6 +378,7 @@ static void ks_dw_pcie_clear_dbi_mode(struct keystone_pcie *ks_pcie)
- void ks_dw_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
- {
- 	struct dw_pcie *pci = ks_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	struct pcie_port *pp = &pci->pp;
- 	u32 start = pp->mem->start, end = pp->mem->end;
- 	int i, tr_size;
-@@ -385,8 +386,8 @@ void ks_dw_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
- 
- 	/* Disable BARs for inbound access */
- 	ks_dw_pcie_set_dbi_mode(ks_pcie);
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_0, 0);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_1, 0);
- 	ks_dw_pcie_clear_dbi_mode(ks_pcie);
- 
- 	/* Set outbound translation size per window division */
-@@ -482,14 +483,15 @@ int ks_dw_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
- void ks_dw_pcie_v3_65_scan_bus(struct pcie_port *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	void __iomem *base = pci->dbi_base;
- 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
- 
- 	/* Configure and set up BAR0 */
- 	ks_dw_pcie_set_dbi_mode(ks_pcie);
- 
- 	/* Enable BAR0 */
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 1);
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, SZ_4K - 1);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_0, 1);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_0, SZ_4K - 1);
- 
- 	ks_dw_pcie_clear_dbi_mode(ks_pcie);
- 
-@@ -497,7 +499,7 @@ void ks_dw_pcie_v3_65_scan_bus(struct pcie_port *pp)
- 	  * For BAR0, just setting bus address for inbound writes (MSI) should
- 	  * be sufficient.  Use physical address to avoid any conflicts.
- 	  */
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, ks_pcie->app.start);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_0, ks_pcie->app.start);
- }
- 
- /**
-@@ -506,8 +508,9 @@ void ks_dw_pcie_v3_65_scan_bus(struct pcie_port *pp)
- int ks_dw_pcie_link_up(struct dw_pcie *pci)
- {
- 	u32 val;
-+	void __iomem *base = pci->dbi_base;
- 
--	val = dw_pcie_readl_dbi(pci, DEBUG0);
-+	val = dw_pcie_readl_dbi(pci, base, DEBUG0);
- 	return (val & LTSSM_STATE_MASK) == LTSSM_STATE_L0;
- }
- 
-diff --git a/drivers/pci/dwc/pcie-armada8k.c b/drivers/pci/dwc/pcie-armada8k.c
-index f110e3b..b2328df 100644
---- a/drivers/pci/dwc/pcie-armada8k.c
-+++ b/drivers/pci/dwc/pcie-armada8k.c
-@@ -73,8 +73,9 @@ static int armada8k_pcie_link_up(struct dw_pcie *pci)
- {
- 	u32 reg;
- 	u32 mask = PCIE_GLB_STS_RDLH_LINK_UP | PCIE_GLB_STS_PHY_LINK_UP;
-+	void __iomem *base = pci->dbi_base;
- 
--	reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_STATUS_REG);
-+	reg = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_STATUS_REG);
- 
- 	if ((reg & mask) == mask)
- 		return 1;
-@@ -86,47 +87,50 @@ static int armada8k_pcie_link_up(struct dw_pcie *pci)
- static void armada8k_pcie_establish_link(struct armada8k_pcie *pcie)
- {
- 	struct dw_pcie *pci = pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 reg;
- 
- 	if (!dw_pcie_link_up(pci)) {
- 		/* Disable LTSSM state machine to enable configuration */
--		reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_CONTROL_REG);
-+		reg = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG);
- 		reg &= ~(PCIE_APP_LTSSM_EN);
--		dw_pcie_writel_dbi(pci, PCIE_GLOBAL_CONTROL_REG, reg);
-+		dw_pcie_writel_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG, reg);
- 	}
- 
- 	/* Set the device to root complex mode */
--	reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_CONTROL_REG);
-+	reg = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG);
- 	reg &= ~(PCIE_DEVICE_TYPE_MASK << PCIE_DEVICE_TYPE_SHIFT);
- 	reg |= PCIE_DEVICE_TYPE_RC << PCIE_DEVICE_TYPE_SHIFT;
--	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_CONTROL_REG, reg);
-+	dw_pcie_writel_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG, reg);
- 
- 	/* Set the PCIe master AxCache attributes */
--	dw_pcie_writel_dbi(pci, PCIE_ARCACHE_TRC_REG, ARCACHE_DEFAULT_VALUE);
--	dw_pcie_writel_dbi(pci, PCIE_AWCACHE_TRC_REG, AWCACHE_DEFAULT_VALUE);
-+	dw_pcie_writel_dbi(pci, base, PCIE_ARCACHE_TRC_REG,
-+			   ARCACHE_DEFAULT_VALUE);
-+	dw_pcie_writel_dbi(pci, base, PCIE_AWCACHE_TRC_REG,
-+			   AWCACHE_DEFAULT_VALUE);
- 
- 	/* Set the PCIe master AxDomain attributes */
--	reg = dw_pcie_readl_dbi(pci, PCIE_ARUSER_REG);
-+	reg = dw_pcie_readl_dbi(pci, base, PCIE_ARUSER_REG);
- 	reg &= ~(AX_USER_DOMAIN_MASK << AX_USER_DOMAIN_SHIFT);
- 	reg |= DOMAIN_OUTER_SHAREABLE << AX_USER_DOMAIN_SHIFT;
--	dw_pcie_writel_dbi(pci, PCIE_ARUSER_REG, reg);
-+	dw_pcie_writel_dbi(pci, base, PCIE_ARUSER_REG, reg);
- 
--	reg = dw_pcie_readl_dbi(pci, PCIE_AWUSER_REG);
-+	reg = dw_pcie_readl_dbi(pci, base, PCIE_AWUSER_REG);
- 	reg &= ~(AX_USER_DOMAIN_MASK << AX_USER_DOMAIN_SHIFT);
- 	reg |= DOMAIN_OUTER_SHAREABLE << AX_USER_DOMAIN_SHIFT;
--	dw_pcie_writel_dbi(pci, PCIE_AWUSER_REG, reg);
-+	dw_pcie_writel_dbi(pci, base, PCIE_AWUSER_REG, reg);
- 
- 	/* Enable INT A-D interrupts */
--	reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_MASK1_REG);
-+	reg = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_INT_MASK1_REG);
- 	reg |= PCIE_INT_A_ASSERT_MASK | PCIE_INT_B_ASSERT_MASK |
- 	       PCIE_INT_C_ASSERT_MASK | PCIE_INT_D_ASSERT_MASK;
--	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_MASK1_REG, reg);
-+	dw_pcie_writel_dbi(pci, base, PCIE_GLOBAL_INT_MASK1_REG, reg);
- 
- 	if (!dw_pcie_link_up(pci)) {
- 		/* Configuration done. Start LTSSM */
--		reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_CONTROL_REG);
-+		reg = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG);
- 		reg |= PCIE_APP_LTSSM_EN;
--		dw_pcie_writel_dbi(pci, PCIE_GLOBAL_CONTROL_REG, reg);
-+		dw_pcie_writel_dbi(pci, base, PCIE_GLOBAL_CONTROL_REG, reg);
- 	}
- 
- 	/* Wait until the link becomes active again */
-@@ -147,6 +151,7 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
- {
- 	struct armada8k_pcie *pcie = arg;
- 	struct dw_pcie *pci = pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 
- 	/*
-@@ -154,8 +159,8 @@ static irqreturn_t armada8k_pcie_irq_handler(int irq, void *arg)
- 	 * PCI device. However, they are also latched into the PCIe
- 	 * controller, so we simply discard them.
- 	 */
--	val = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_INT_CAUSE1_REG);
--	dw_pcie_writel_dbi(pci, PCIE_GLOBAL_INT_CAUSE1_REG, val);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_GLOBAL_INT_CAUSE1_REG);
-+	dw_pcie_writel_dbi(pci, base, PCIE_GLOBAL_INT_CAUSE1_REG, val);
- 
- 	return IRQ_HANDLED;
- }
-diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
-index 5b3b3af..e3ba11c 100644
---- a/drivers/pci/dwc/pcie-artpec6.c
-+++ b/drivers/pci/dwc/pcie-artpec6.c
-@@ -86,6 +86,7 @@ static u64 artpec6_pcie_cpu_addr_fixup(u64 pci_addr)
- static int artpec6_pcie_establish_link(struct artpec6_pcie *artpec6_pcie)
- {
- 	struct dw_pcie *pci = artpec6_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	struct pcie_port *pp = &pci->pp;
- 	u32 val;
- 	unsigned int retries;
-@@ -145,7 +146,7 @@ static int artpec6_pcie_establish_link(struct artpec6_pcie *artpec6_pcie)
- 	 * Enable writing to config regs. This is required as the Synopsys
- 	 * driver changes the class code. That register needs DBI write enable.
- 	 */
--	dw_pcie_writel_dbi(pci, MISC_CONTROL_1_OFF, DBI_RO_WR_EN);
-+	dw_pcie_writel_dbi(pci, base, MISC_CONTROL_1_OFF, DBI_RO_WR_EN);
- 
- 	/* setup root complex */
- 	dw_pcie_setup_rc(pp);
-@@ -160,8 +161,8 @@ static int artpec6_pcie_establish_link(struct artpec6_pcie *artpec6_pcie)
- 		return 0;
- 
- 	dev_dbg(pci->dev, "DEBUG_R0: 0x%08x, DEBUG_R1: 0x%08x\n",
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R0),
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R1));
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R0),
-+		dw_pcie_readl_dbi(pci, base, PCIE_PHY_DEBUG_R1));
- 
- 	return -ETIMEDOUT;
- }
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 5ba3349..9df620d 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -566,8 +566,9 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
- static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
- {
- 	u32 val;
-+	void __iomem *base = pci->dbi_base;
- 
--	val = dw_pcie_readl_dbi(pci, PCIE_ATU_VIEWPORT);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_ATU_VIEWPORT);
- 	if (val == 0xffffffff)
- 		return 1;
- 
-@@ -578,31 +579,32 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- {
- 	u32 val;
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	void __iomem *base = pci->dbi_base;
- 
- 	dw_pcie_setup(pci);
- 
- 	/* setup RC BARs */
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
--	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_0, 0x00000004);
-+	dw_pcie_writel_dbi(pci, base, PCI_BASE_ADDRESS_1, 0x00000000);
- 
- 	/* setup interrupt pins */
--	val = dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
-+	val = dw_pcie_readl_dbi(pci, base, PCI_INTERRUPT_LINE);
- 	val &= 0xffff00ff;
- 	val |= 0x00000100;
--	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
-+	dw_pcie_writel_dbi(pci, base, PCI_INTERRUPT_LINE, val);
- 
- 	/* setup bus numbers */
--	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
-+	val = dw_pcie_readl_dbi(pci, base, PCI_PRIMARY_BUS);
- 	val &= 0xff000000;
- 	val |= 0x00010100;
--	dw_pcie_writel_dbi(pci, PCI_PRIMARY_BUS, val);
-+	dw_pcie_writel_dbi(pci, base, PCI_PRIMARY_BUS, val);
- 
- 	/* setup command register */
--	val = dw_pcie_readl_dbi(pci, PCI_COMMAND);
-+	val = dw_pcie_readl_dbi(pci, base, PCI_COMMAND);
- 	val &= 0xffff0000;
- 	val |= PCI_COMMAND_IO | PCI_COMMAND_MEMORY |
- 		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
--	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
-+	dw_pcie_writel_dbi(pci, base, PCI_COMMAND, val);
- 
- 	/*
- 	 * If the platform provides ->rd_other_conf, it means the platform
-diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-designware.c
-index 14ee7a3..f8eaeea 100644
---- a/drivers/pci/dwc/pcie-designware.c
-+++ b/drivers/pci/dwc/pcie-designware.c
-@@ -61,75 +61,82 @@ int dw_pcie_write(void __iomem *addr, int size, u32 val)
- 	return PCIBIOS_SUCCESSFUL;
- }
- 
--u32 dw_pcie_readl_dbi(struct dw_pcie *pci, u32 reg)
-+u32 dw_pcie_readl_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg)
- {
- 	if (pci->ops->readl_dbi)
--		return pci->ops->readl_dbi(pci, reg);
-+		return pci->ops->readl_dbi(pci, base, reg);
- 
--	return readl(pci->dbi_base + reg);
-+	return readl(base + reg);
- }
- 
--void dw_pcie_writel_dbi(struct dw_pcie *pci, u32 reg, u32 val)
-+void dw_pcie_writel_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
-+			u32 val)
- {
- 	if (pci->ops->writel_dbi)
--		pci->ops->writel_dbi(pci, reg, val);
-+		pci->ops->writel_dbi(pci, base, reg, val);
- 	else
--		writel(val, pci->dbi_base + reg);
-+		writel(val, base + reg);
- }
- 
--static u32 dw_pcie_readl_unroll(struct dw_pcie *pci, u32 index, u32 reg)
-+static u32 dw_pcie_readl_unroll(struct dw_pcie *pci, void __iomem *base,
-+				u32 index, u32 reg)
- {
- 	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
- 
--	return dw_pcie_readl_dbi(pci, offset + reg);
-+	return dw_pcie_readl_dbi(pci, base, offset + reg);
- }
- 
--static void dw_pcie_writel_unroll(struct dw_pcie *pci, u32 index, u32 reg,
--				  u32 val)
-+static void dw_pcie_writel_unroll(struct dw_pcie *pci, void __iomem *base,
-+				  u32 index, u32 reg, u32 val)
- {
- 	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
- 
--	dw_pcie_writel_dbi(pci, offset + reg, val);
-+	dw_pcie_writel_dbi(pci, base, offset + reg, val);
- }
- 
- void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
- 			       u64 cpu_addr, u64 pci_addr, u32 size)
- {
- 	u32 retries, val;
-+	void __iomem *base = pci->dbi_base;
- 
--	if (pp->ops->cpu_addr_fixup)
--		cpu_addr = pp->ops->cpu_addr_fixup(cpu_addr);
-+	if (pci->ops->cpu_addr_fixup)
-+		cpu_addr = pci->ops->cpu_addr_fixup(cpu_addr);
- 
- 	if (pci->iatu_unroll_enabled) {
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_LOWER_BASE,
-+		dw_pcie_writel_unroll(pci, base, index, PCIE_ATU_UNR_LOWER_BASE,
- 				      lower_32_bits(cpu_addr));
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_UPPER_BASE,
-+		dw_pcie_writel_unroll(pci, base, index, PCIE_ATU_UNR_UPPER_BASE,
- 				      upper_32_bits(cpu_addr));
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_LIMIT,
-+		dw_pcie_writel_unroll(pci, base, index, PCIE_ATU_UNR_LIMIT,
- 				      lower_32_bits(cpu_addr + size - 1));
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_LOWER_TARGET,
-+		dw_pcie_writel_unroll(pci, base, index,
-+				      PCIE_ATU_UNR_LOWER_TARGET,
- 				      lower_32_bits(pci_addr));
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
-+		dw_pcie_writel_unroll(pci, base, index,
-+				      PCIE_ATU_UNR_UPPER_TARGET,
- 				      upper_32_bits(pci_addr));
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1,
-+		dw_pcie_writel_unroll(pci, base, index,
-+				      PCIE_ATU_UNR_REGION_CTRL1,
- 				      type);
--		dw_pcie_writel_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
-+		dw_pcie_writel_unroll(pci, base, index,
-+				      PCIE_ATU_UNR_REGION_CTRL2,
- 				      PCIE_ATU_ENABLE);
- 	} else {
--		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_VIEWPORT,
- 				   PCIE_ATU_REGION_OUTBOUND | index);
--		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_BASE,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_LOWER_BASE,
- 				   lower_32_bits(cpu_addr));
--		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_BASE,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_UPPER_BASE,
- 				   upper_32_bits(cpu_addr));
--		dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_LIMIT,
- 				   lower_32_bits(cpu_addr + size - 1));
--		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_LOWER_TARGET,
- 				   lower_32_bits(pci_addr));
--		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_TARGET,
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_UPPER_TARGET,
- 				   upper_32_bits(pci_addr));
--		dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, type);
--		dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_CR1, type);
-+		dw_pcie_writel_dbi(pci, base, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
- 	}
- 
- 	/*
-@@ -138,10 +145,10 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
- 	 */
- 	for (retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; retries++) {
- 		if (pci->iatu_unroll_enabled)
--			val = dw_pcie_readl_unroll(pci, index,
-+			val = dw_pcie_readl_unroll(pci, base, index,
- 						   PCIE_ATU_UNR_REGION_CTRL2);
- 		else
--			val = dw_pcie_readl_dbi(pci, PCIE_ATU_CR2);
-+			val = dw_pcie_readl_dbi(pci, base, PCIE_ATU_CR2);
- 
- 		if (val == PCIE_ATU_ENABLE)
- 			return;
-@@ -188,13 +195,14 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 	u32 lanes;
- 	struct device *dev = pci->dev;
- 	struct device_node *np = dev->of_node;
-+	void __iomem *base = pci->dbi_base;
- 
- 	ret = of_property_read_u32(np, "num-lanes", &lanes);
- 	if (ret)
- 		lanes = 0;
- 
- 	/* set the number of lanes */
--	val = dw_pcie_readl_dbi(pci, PCIE_PORT_LINK_CONTROL);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_PORT_LINK_CONTROL);
- 	val &= ~PORT_LINK_MODE_MASK;
- 	switch (lanes) {
- 	case 1:
-@@ -213,10 +221,10 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		dev_err(pci->dev, "num-lanes %u: invalid value\n", lanes);
- 		return;
- 	}
--	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);
-+	dw_pcie_writel_dbi(pci, base, PCIE_PORT_LINK_CONTROL, val);
- 
- 	/* set link width speed control register */
--	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_LINK_WIDTH_SPEED_CONTROL);
- 	val &= ~PORT_LOGIC_LINK_WIDTH_MASK;
- 	switch (lanes) {
- 	case 1:
-@@ -232,5 +240,5 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		val |= PORT_LOGIC_LINK_WIDTH_8_LANES;
- 		break;
- 	}
--	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+	dw_pcie_writel_dbi(pci, base, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- }
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index 8f3dcb2..fe93f7f 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -144,8 +144,9 @@ struct pcie_port {
- 
- struct dw_pcie_ops {
- 	u64	(*cpu_addr_fixup)(u64 cpu_addr);
--	u32	(*readl_dbi)(struct dw_pcie *pcie, u32 reg);
--	void	(*writel_dbi)(struct dw_pcie *pcie, u32 reg, u32 val);
-+	u32	(*readl_dbi)(struct dw_pcie *pcie, void __iomem *base, u32 reg);
-+	void	(*writel_dbi)(struct dw_pcie *pcie, void __iomem *base, u32 reg,
-+			      u32 val);
- 	int	(*link_up)(struct dw_pcie *pcie);
- };
- 
-@@ -163,8 +164,9 @@ struct dw_pcie {
- int dw_pcie_read(void __iomem *addr, int size, u32 *val);
- int dw_pcie_write(void __iomem *addr, int size, u32 val);
- 
--u32 dw_pcie_readl_dbi(struct dw_pcie *pci, u32 reg);
--void dw_pcie_writel_dbi(struct dw_pcie *pci, u32 reg, u32 val);
-+u32 dw_pcie_readl_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg);
-+void dw_pcie_writel_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
-+			u32 val);
- int dw_pcie_link_up(struct dw_pcie *pci);
- int dw_pcie_wait_for_link(struct dw_pcie *pci);
- void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
-diff --git a/drivers/pci/dwc/pcie-hisi.c b/drivers/pci/dwc/pcie-hisi.c
-index fd66a31..409b54b 100644
---- a/drivers/pci/dwc/pcie-hisi.c
-+++ b/drivers/pci/dwc/pcie-hisi.c
-@@ -152,10 +152,11 @@ static int hisi_pcie_cfg_read(struct pcie_port *pp, int where, int size,
- 	u32 reg_val;
- 	void *walker = &reg_val;
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	void __iomem *base = pci->dbi_base;
- 
- 	walker += (where & 0x3);
- 	reg = where & ~0x3;
--	reg_val = dw_pcie_readl_dbi(pci, reg);
-+	reg_val = dw_pcie_readl_dbi(pci, base, reg);
- 
- 	if (size == 1)
- 		*val = *(u8 __force *) walker;
-@@ -177,19 +178,20 @@ static int hisi_pcie_cfg_write(struct pcie_port *pp, int where, int  size,
- 	u32 reg;
- 	void *walker = &reg_val;
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	void __iomem *base = pci->dbi_base;
- 
- 	walker += (where & 0x3);
- 	reg = where & ~0x3;
- 	if (size == 4)
--		dw_pcie_writel_dbi(pci, reg, val);
-+		dw_pcie_writel_dbi(pci, base, reg, val);
- 	else if (size == 2) {
--		reg_val = dw_pcie_readl_dbi(pci, reg);
-+		reg_val = dw_pcie_readl_dbi(pci, base, reg);
- 		*(u16 __force *) walker = val;
--		dw_pcie_writel_dbi(pci, reg, reg_val);
-+		dw_pcie_writel_dbi(pci, base, reg, reg_val);
- 	} else if (size == 1) {
--		reg_val = dw_pcie_readl_dbi(pci, reg);
-+		reg_val = dw_pcie_readl_dbi(pci, base, reg);
- 		*(u8 __force *) walker = val;
--		dw_pcie_writel_dbi(pci, reg, reg_val);
-+		dw_pcie_writel_dbi(pci, base, reg, reg_val);
- 	} else
- 		return PCIBIOS_BAD_REGISTER_NUMBER;
- 
-@@ -209,9 +211,10 @@ static int hisi_pcie_link_up_hip05(struct hisi_pcie *hisi_pcie)
- static int hisi_pcie_link_up_hip06(struct hisi_pcie *hisi_pcie)
- {
- 	struct dw_pcie *pci = hisi_pcie->pci;
-+	void __iomem *base = pci->dbi_base;
- 	u32 val;
- 
--	val = dw_pcie_readl_dbi(pci, PCIE_SYS_STATE4);
-+	val = dw_pcie_readl_dbi(pci, base, PCIE_SYS_STATE4);
- 
- 	return ((val & PCIE_LTSSM_STATE_MASK) == PCIE_LTSSM_LINKUP_STATE);
- }
--- 
-1.7.9.5
+T24gMDcuMDMuMjAxNyAxMDoxMiwgSW5raSBEYWUgd3JvdGU6Cj4gVGhhbmtzIGZvciBmaXhpbmcg
+aXQuCj4KPiBBbmRyemVqLAo+IERFQ09OX0NSRk1JRCByZWdpc3RlciBpcyBuZXcgdG8gbWUuIFdo
+ZXJlIGRpZCB5b3UgcmVmZXIgdGhpcyByZWdpc3RlciBkZXNjcmlwdGlvbiBmcm9tPyBJIGNvdWxk
+bid0IGZpbmQgdGhpcyByZWdpc3RlciBpbiBkYXRhc2hlZXQgSSBoYXZlIGZvciBFeHlub3M1NDMz
+LgoKSSBoYXZlIGZvdW5kIGl0IGluIGFuZHJvaWQgc291cmNlcy4KCj4KPiBCZWxvdyBhcmUgYSBs
+aXR0bGUgYml0IHRyaXZpYWwgY29tbWVudHMuCj4KPiAyMDE364WEIDAy7JuUIDIz7J28IDAxOjA1
+7JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gQ3VycmVudCBpbXBsZW1lbnRh
+dGlvbiBvZiBldmVudCBoYW5kbGluZyBhc3N1bWVzIHRoYXQgdmJsYW5rIGludGVycnVwdCBpcwo+
+PiBhbHdheXMgY2FsbGVkIGF0IHRoZSByaWdodCB0aW1lLiBJdCBpcyBub3QgdHJ1ZSwgaXQgY2Fu
+IGJlIGRlbGF5ZWQgZHVlIHRvCj4+IHZhcmlvdXMgcmVhc29ucy4gQXMgYSByZXN1bHQgZGlmZmVy
+ZW50IHJhY2VzIGNhbiBoYXBwZW4uIFRoZSBwYXRjaCBmaXhlcwo+PiB0aGUgaXNzdWUgYnkgdXNp
+bmcgaGFyZHdhcmUgZnJhbWUgY291bnRlciBwcmVzZW50IGluIERFQ09OIHRvIHNlcmlhbGl6ZQo+
+PiB2YmxhbmsgYW5kIGNvbW1pdCBjb21wbGV0aW9uIGV2ZW50cy4KPj4KPj4gU2lnbmVkLW9mZi1i
+eTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCA2MiArKysrKysrKysrKysr
+KysrKysrKysrKysrLS0KPj4gIGluY2x1ZGUvdmlkZW8vZXh5bm9zNTQzM19kZWNvbi5oICAgICAg
+ICAgICAgICB8ICA5ICsrKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgNjcgaW5zZXJ0aW9ucygrKSwg
+NCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zNTQzM19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQz
+M19kcm1fZGVjb24uYwo+PiBpbmRleCAxNDc5MTFlLi5iZmE5Mzk2IDEwMDY0NAo+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMKPj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jCj4+IEBAIC02OCw2ICs2
+OCw4IEBAIHN0cnVjdCBkZWNvbl9jb250ZXh0IHsKPj4gIAl1bnNpZ25lZCBsb25nCQkJZmxhZ3M7
+Cj4+ICAJdW5zaWduZWQgbG9uZwkJCW91dF90eXBlOwo+PiAgCWludAkJCQlmaXJzdF93aW47Cj4+
+ICsJc3BpbmxvY2tfdAkJCXZibGFua19sb2NrOwo+PiArCXUzMgkJCQlmcmFtZV9pZDsKPj4gIH07
+Cj4+ICAKPj4gIHN0YXRpYyBjb25zdCB1aW50MzJfdCBkZWNvbl9mb3JtYXRzW10gPSB7Cj4+IEBA
+IC0zNjUsMjUgKzM2NywzMiBAQCBzdGF0aWMgdm9pZCBkZWNvbl9kaXNhYmxlX3BsYW5lKHN0cnVj
+dCBleHlub3NfZHJtX2NydGMgKmNydGMsCj4+ICBzdGF0aWMgdm9pZCBkZWNvbl9hdG9taWNfZmx1
+c2goc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4gIHsKPj4gIAlzdHJ1Y3QgZGVjb25f
+Y29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+PiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+ICAJ
+aW50IGk7Cj4+ICAKPj4gIAlpZiAodGVzdF9iaXQoQklUX1NVU1BFTkRFRCwgJmN0eC0+ZmxhZ3Mp
+KQo+PiAgCQlyZXR1cm47Cj4+ICAKPj4gKwlzcGluX2xvY2tfaXJxc2F2ZSgmY3R4LT52Ymxhbmtf
+bG9jaywgZmxhZ3MpOwo+PiArCj4+ICAJZm9yIChpID0gY3R4LT5maXJzdF93aW47IGkgPCBXSU5E
+T1dTX05SOyBpKyspCj4+ICAJCWRlY29uX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIGksIGZhbHNl
+KTsKPj4gIAo+PiArCWlmIChjdHgtPm91dF90eXBlICYgSUZUWVBFX0k4MCkKPj4gKwkJc2V0X2Jp
+dChCSVRfV0lOX1VQREFURUQsICZjdHgtPmZsYWdzKTsKPj4gKwo+PiAgCWlmICh0ZXN0X2FuZF9j
+bGVhcl9iaXQoQklUX1JFUVVFU1RfVVBEQVRFLCAmY3R4LT5mbGFncykpCj4+ICAJCWRlY29uX3Nl
+dF9iaXRzKGN0eCwgREVDT05fVVBEQVRFLCBTVEFOREFMT05FX1VQREFURV9GLCB+MCk7Cj4+ICAK
+Pj4gLQlpZiAoY3R4LT5vdXRfdHlwZSAmIElGVFlQRV9JODApCj4+IC0JCXNldF9iaXQoQklUX1dJ
+Tl9VUERBVEVELCAmY3R4LT5mbGFncyk7Cj4+IC0JZXh5bm9zX2NydGNfaGFuZGxlX2V2ZW50KGNy
+dGMpOwo+PiArCWV4eW5vc19jcnRjX2hhbmRsZV9ldmVudChjdHgtPmNydGMpOwo+IFlvdSBkb24n
+dCBoYXZlIHRvIGNoYW5nZSAnY3J0YycgdG8gJ2N0eC0+Y3J0YycuIEtlZXAgJ2NydGMnLgoKT0sK
+Cj4KPj4gKwo+PiArCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmN0eC0+dmJsYW5rX2xvY2ssIGZs
+YWdzKTsKPj4gIH0KPj4gIAo+PiAgc3RhdGljIHZvaWQgZGVjb25fc3dyZXNldChzdHJ1Y3QgZGVj
+b25fY29udGV4dCAqY3R4KQo+PiAgewo+PiAgCXVuc2lnbmVkIGludCB0cmllczsKPj4gKwl1bnNp
+Z25lZCBsb25nIGZsYWdzOwo+PiAgCj4+ICAJd3JpdGVsKDAsIGN0eC0+YWRkciArIERFQ09OX1ZJ
+RENPTjApOwo+PiAgCWZvciAodHJpZXMgPSAyMDAwOyB0cmllczsgLS10cmllcykgewo+PiBAQCAt
+NDAxLDYgKzQxMCwxMCBAQCBzdGF0aWMgdm9pZCBkZWNvbl9zd3Jlc2V0KHN0cnVjdCBkZWNvbl9j
+b250ZXh0ICpjdHgpCj4+ICAKPj4gIAlXQVJOKHRyaWVzID09IDAsICJmYWlsZWQgdG8gc29mdHdh
+cmUgcmVzZXQgREVDT05cbiIpOwo+PiAgCj4+ICsJc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+dmJs
+YW5rX2xvY2ssIGZsYWdzKTsKPj4gKwljdHgtPmZyYW1lX2lkID0gMDsKPj4gKwlzcGluX3VubG9j
+a19pcnFyZXN0b3JlKCZjdHgtPnZibGFua19sb2NrLCBmbGFncyk7Cj4+ICsKPj4gIAlpZiAoIShj
+dHgtPm91dF90eXBlICYgSUZUWVBFX0hETUkpKQo+PiAgCQlyZXR1cm47Cj4+ICAKPj4gQEAgLTU3
+OSw2ICs1OTIsNDYgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjb21wb25lbnRfb3BzIGRlY29uX2Nv
+bXBvbmVudF9vcHMgPSB7Cj4+ICAJLnVuYmluZCA9IGRlY29uX3VuYmluZCwKPj4gIH07Cj4+ICAK
+Pj4gK3N0YXRpYyB2b2lkIGRlY29uX2hhbmRsZV92Ymxhbmsoc3RydWN0IGRlY29uX2NvbnRleHQg
+KmN0eCkKPj4gK3sKPj4gKwl1MzIgZnJtLCBwZnJtLCBzdGF0dXMsIGNudDsKPj4gKwo+PiArCXNw
+aW5fbG9jaygmY3R4LT52YmxhbmtfbG9jayk7Cj4+ICsKPj4gKwkvKiBUbyBnZXQgY29uc2lzdGVu
+dCByZXN1bHQgcmVwZWF0IHJlYWQgdW50aWwgZnJhbWUgaWQgaXMgc3RhYmxlLiAqLwo+PiArCWZy
+bSA9IHJlYWRsKGN0eC0+YWRkciArIERFQ09OX0NSRk1JRCk7Cj4+ICsJY250ID0gMzsKPiBJcyB0
+aGVyZSBzb21lIGd1aWRlIHRoYXQgaW5pdGlhbCB2YWx1ZSBvZiBjbnQgc2hvdWxkIGJlIDM/CgpO
+bywgdGhpcyBpcyBteSBhcmJpdHJhcnkgY2hvaWNlLiBJbiBnZW5lcmFsIHRoZSBsb29wIHdpbGwg
+YmUgcGFzc2VkIG9ubHkKb25jZS4gSW4gcmFyZSBjYXNlIHdoZW4gY29kZSBydW5zIGF0IGZyYW1l
+IGNoYW5nZSB0aW1lIGl0IHdpbGwgYmUgcnVuCnR3aWNlLiBJdCBuZXZlciBzaG91bGQgcnVuIG1v
+cmUgdGhhbiB0d28gdGltZXMgLSBpdCB3b3VsZCBiZSBzaWduIG9mIEhXCmVycm9yLCBpbmNvcnJl
+Y3QgREVDT04gcHJvZ3JhbW1pbmcgb3Igc2VyaW91cyBib3R0bGVuZWNrLgpJIGluaXRpYWxseSBs
+ZWZ0IGNudD0zIHRvIGRldGVjdCBzdWNoIGNhc2UsIGJ1dCBhZnRlciBhbGwgSSBkaWQgbm90CnJl
+cG9ydCBzdWNoIHNpdHVhdGlvbiwgc28gSSBjYW4gZWl0aGVyIGNoYW5nZSBjbnQgdG8gMiwgb3Ig
+YWRkIGVycm9yIGxvZwppZiBhZnRlciBsb29wIGNudCBpcyAwLCB3aGF0IGRvIHlvdSBwcmVmZXI/
+Cgo+Cj4+ICsJZG8gewo+PiArCQlzdGF0dXMgPSByZWFkbChjdHgtPmFkZHIgKyBERUNPTl9WSURD
+T04xKTsKPj4gKwkJcGZybSA9IGZybTsKPj4gKwkJZnJtID0gcmVhZGwoY3R4LT5hZGRyICsgREVD
+T05fQ1JGTUlEKTsKPj4gKwl9IHdoaWxlIChmcm0gIT0gcGZybSAmJiAtLWNudCk7Cj4+ICsKPj4g
+KwlzdGF0dXMgJj0gVklEQ09OMV9WU1RBVFVTX01BU0sgfCBWSURDT04xX0k4MF9BQ1RJVkU7Cj4g
+SSBjb3VsZG4ndCBmaW5kIEk4MF9BQ1RJVkUgZmllbGQgb24gREVDT05fVklEQ09OMSByZWdpc3Rl
+ciBkZXNjcnB0aW9uLiBEbyB5b3UgaGF2ZSBvdGhlciBkYXRhc2hlZXQsIG5ldyBvbmU/CgpObywg
+dGhpcyBpcyBqdXN0IHJlc3VsdCBvZiBteSBoYXJkd2FyZSBhbmFseXNpcy9kZWJ1Z2dpbmcuCgo+
+Cj4+ICsKPj4gKwkvKiBJbiBjYXNlIG9mIGRlbGF5ZWQgdmJsYW5rIENSRk1JRCBjb3VsZCBiZSBh
+bHJlYWR5IGluY3JlbWVudGVkLAo+PiArCSAqIGl0IHNob3VsZCBiZSB0YWtlbiBpbnRvIGFjY291
+bnQuCj4+ICsJICovCj4+ICsJaWYgKGZybSA+IDApCj4+ICsJCXN3aXRjaCAoc3RhdHVzKSB7Cj4+
+ICsJCWNhc2UgVklEQ09OMV9WU1RBVFVTX1ZTOgo+PiArCQkJaWYgKGN0eC0+b3V0X3R5cGUgJiBJ
+RlRZUEVfSTgwKQo+PiArCQkJCWJyZWFrOwo+PiArCQljYXNlIFZJRENPTjFfSTgwX0FDVElWRToK
+Pj4gKwkJY2FzZSBWSURDT04xX1ZTVEFUVVNfQlA6Cj4+ICsJCWNhc2UgVklEQ09OMV9WU1RBVFVT
+X0FDOgo+PiArCQkJLS1mcm07Cj4gTGV0J3MgYWRkICdicmVhazsnIGFuZCAnZGVmYXVsdDogYnJl
+YWs7JyBleHBsaWNpdGx5LgoKT0ssIGFueXdheSB0aGlzIGNvZGUgd2lsbCBiZSBzdXBlcnNlZGVk
+IGJ5IGZyYW1lIGNvdW50ZXIgcGF0Y2guCgo+Cj4+ICsJCX0KPj4gKwo+PiArCWlmIChmcm0gIT0g
+Y3R4LT5mcmFtZV9pZCkgewo+PiArCQlpZiAoZnJtID4gY3R4LT5mcmFtZV9pZCkKPj4gKwkJCWRy
+bV9jcnRjX2hhbmRsZV92YmxhbmsoJmN0eC0+Y3J0Yy0+YmFzZSk7Cj4+ICsJCWN0eC0+ZnJhbWVf
+aWQgPSBmcm07Cj4+ICsJfQo+PiArCj4+ICsJc3Bpbl91bmxvY2soJmN0eC0+dmJsYW5rX2xvY2sp
+Owo+PiArfQo+PiArCj4+ICBzdGF0aWMgaXJxcmV0dXJuX3QgZGVjb25faXJxX2hhbmRsZXIoaW50
+IGlycSwgdm9pZCAqZGV2X2lkKQo+PiAgewo+PiAgCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgg
+PSBkZXZfaWQ7Cj4+IEBAIC01OTksNyArNjUyLDcgQEAgc3RhdGljIGlycXJldHVybl90IGRlY29u
+X2lycV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKPj4gIAkJCSAgICAoVklET1VUX0lO
+VEVSTEFDRV9FTl9GIHwgVklET1VUX0lOVEVSTEFDRV9GSUVMRF9GKSkKPj4gIAkJCQlyZXR1cm4g
+SVJRX0hBTkRMRUQ7Cj4+ICAJCX0KPj4gLQkJZHJtX2NydGNfaGFuZGxlX3ZibGFuaygmY3R4LT5j
+cnRjLT5iYXNlKTsKPj4gKwkJZGVjb25faGFuZGxlX3ZibGFuayhjdHgpOwo+PiAgCX0KPj4gIAo+
+PiAgb3V0Ogo+PiBAQCAtNjcyLDYgKzcyNSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zNTQzM19kZWNv
+bl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCV9fc2V0X2JpdChCSVRf
+U1VTUEVOREVELCAmY3R4LT5mbGFncyk7Cj4+ICAJY3R4LT5kZXYgPSBkZXY7Cj4+ICAJY3R4LT5v
+dXRfdHlwZSA9ICh1bnNpZ25lZCBsb25nKW9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOwo+
+PiArCXNwaW5fbG9ja19pbml0KCZjdHgtPnZibGFua19sb2NrKTsKPj4gIAo+PiAgCWlmIChjdHgt
+Pm91dF90eXBlICYgSUZUWVBFX0hETUkpIHsKPj4gIAkJY3R4LT5maXJzdF93aW4gPSAxOwo+PiBk
+aWZmIC0tZ2l0IGEvaW5jbHVkZS92aWRlby9leHlub3M1NDMzX2RlY29uLmggYi9pbmNsdWRlL3Zp
+ZGVvL2V4eW5vczU0MzNfZGVjb24uaAo+PiBpbmRleCBlZjhlMmE4Li5iZWVmYzYyIDEwMDY0NAo+
+PiAtLS0gYS9pbmNsdWRlL3ZpZGVvL2V4eW5vczU0MzNfZGVjb24uaAo+PiArKysgYi9pbmNsdWRl
+L3ZpZGVvL2V4eW5vczU0MzNfZGVjb24uaAo+PiBAQCAtNDYsNiArNDYsOCBAQAo+PiAgI2RlZmlu
+ZSBERUNPTl9GUkFNRUZJRk9fU1RBVFVTCQkweDA1MjQKPj4gICNkZWZpbmUgREVDT05fQ01VCQkJ
+MHgxNDA0Cj4+ICAjZGVmaW5lIERFQ09OX1VQREFURQkJCTB4MTQxMAo+PiArI2RlZmluZSBERUNP
+Tl9DUkZNSUQJCQkweDE0MTQKPj4gKyNkZWZpbmUgREVDT05fUlJGUk1JRAkJCTB4MTQxOAo+IEFi
+b3ZlIGRlZmluaXRpb24gaXMgbm90IHVzZWQgaW4gdGhpcyBwYXRjaC4KCkkgaGF2ZSBhZGRlZCBp
+dCB0byBtYWtlIERFQ09OIHJlZ2lzdHJ5IHNwYWNlIGJldHRlciBkb2N1bWVudGVkLgpPZiBjb3Vy
+c2UgSSB3aWxsIHJlbW92ZSBpdCBpZiB5b3UgbGlrZSwgYXMgaXQgZG9lcyBub3Qgc2VydmVzIGFu
+eQpwdXJwb3NlIGF0IHRoZSBtb21lbnQuCgpSZWdhcmRzCkFuZHJ6ZWoKCgo+Cj4gVGhhbmtzLgo+
+Cj4+ICAjZGVmaW5lIERFQ09OX1VQREFURV9TQ0hFTUUJCTB4MTQzOAo+PiAgI2RlZmluZSBERUNP
+Tl9WSURDT04xCQkJMHgyMDAwCj4+ICAjZGVmaW5lIERFQ09OX1ZJRENPTjIJCQkweDIwMDQKPj4g
+QEAgLTE0Miw2ICsxNDQsMTMgQEAKPj4gICNkZWZpbmUgU1RBTkRBTE9ORV9VUERBVEVfRgkJKDEg
+PDwgMCkKPj4gIAo+PiAgLyogREVDT05fVklEQ09OMSAqLwo+PiArI2RlZmluZSBWSURDT04xX0xJ
+TkVDTlRfTUFTSwkJKDB4MGZmZiA8PCAxNikKPj4gKyNkZWZpbmUgVklEQ09OMV9JODBfQUNUSVZF
+CQkoMSA8PCAxNSkKPj4gKyNkZWZpbmUgVklEQ09OMV9WU1RBVFVTX01BU0sJCSgweDMgPDwgMTMp
+Cj4+ICsjZGVmaW5lIFZJRENPTjFfVlNUQVRVU19WUwkJKDAgPDwgMTMpCj4+ICsjZGVmaW5lIFZJ
+RENPTjFfVlNUQVRVU19CUAkJKDEgPDwgMTMpCj4+ICsjZGVmaW5lIFZJRENPTjFfVlNUQVRVU19B
+QwkJKDIgPDwgMTMpCj4+ICsjZGVmaW5lIFZJRENPTjFfVlNUQVRVU19GUAkJKDMgPDwgMTMpCj4+
+ICAjZGVmaW5lIFZJRENPTjFfVkNMS19NQVNLCQkoMHgzIDw8IDkpCj4+ICAjZGVmaW5lIFZJRENP
+TjFfVkNMS19SVU5fVkRFTl9ESVNBQkxFCSgweDMgPDwgOSkKPj4gICNkZWZpbmUgVklEQ09OMV9W
+Q0xLX0hPTEQJCSgweDAgPDwgOSkKPj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
